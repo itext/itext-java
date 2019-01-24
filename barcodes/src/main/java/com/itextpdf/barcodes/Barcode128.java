@@ -45,6 +45,7 @@ package com.itextpdf.barcodes;
 
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -221,18 +222,31 @@ public class Barcode128 extends Barcode1D {
     private static Map<Integer, Integer> ais = new HashMap<>();
 
     /**
-     * Creates new Barcode128
-     * @param document The document
+     * Creates new Barcode128.
+     * To generate the font the {@link PdfDocument#getDefaultFont()} will be implicitly called.
+     * If you want to use this barcode in PDF/A documents, please consider using {@link #Barcode128(PdfDocument, PdfFont)}.
+     *
+     * @param document The document to which the barcode will be added
      */
     public Barcode128(PdfDocument document) {
+        this(document, document.getDefaultFont());
+    }
+
+    /**
+     * Creates new Barcode128, which will use the provided font
+     *
+     * @param document The document to which the barcode will be added
+     * @param font The font to use
+     */
+    public Barcode128(PdfDocument document, PdfFont font) {
         super(document);
-        x = 0.8f;
-        font = document.getDefaultFont();
-        size = 8;
-        baseline = size;
-        barHeight = size * 3;
-        textAlignment = ALIGN_CENTER;
-        codeType = CODE128;
+        this.x = 0.8f;
+        this.font = font;
+        this.size = 8;
+        this.baseline = size;
+        this.barHeight = size * 3;
+        this.textAlignment = ALIGN_CENTER;
+        this.codeType = CODE128;
     }
     public enum Barcode128CodeSet {
         A,

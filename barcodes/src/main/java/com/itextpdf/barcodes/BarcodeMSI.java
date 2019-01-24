@@ -43,6 +43,7 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -92,13 +93,27 @@ public class BarcodeMSI extends Barcode1D {
     private static final int BARS_PER_CHARACTER = 12;
 
     /**
-     * Creates a new BarcodeMSI
+     * Creates a new BarcodeMSI.
+     * To generate the font the {@link PdfDocument#getDefaultFont()} will be implicitly called.
+     * If you want to use this barcode in PDF/A documents, please consider using {@link #BarcodeMSI(PdfDocument, PdfFont)}.
+     *
+     * @param document The document to which the barcode will be added
      */
     public BarcodeMSI(PdfDocument document) {
+        this(document, document.getDefaultFont());
+    }
+
+    /**
+     * Creates a new BarcodeMSI
+     *
+     * @param document The document to which the barcode will be added
+     * @param font The font to use
+     */
+    public BarcodeMSI(PdfDocument document, PdfFont font) {
         super(document);
         this.x = 0.8f;
         this.n = 2.0f;
-        this.font = document.getDefaultFont();
+        this.font = font;
         this.size = 8.0f;
         this.baseline = this.size;
         this.barHeight = this.size * 3.0f;
