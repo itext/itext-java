@@ -54,6 +54,7 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -2840,11 +2841,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         // check if /Comb has been set
         if (this.getFieldFlag(PdfTextFormField.FF_COMB)) {
             // calculate space per character
+            int maxLen;
             PdfNumber maxLenEntry = this.getPdfObject().getAsNumber(PdfName.MaxLen);
             if (maxLenEntry == null) {
-                throw new PdfException(PdfException.NoMaxLenPresent);
+                maxLen = 1;
+                Logger logger = LoggerFactory.getLogger(PdfFormField.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT, maxLen));
+            } else {
+                maxLen = maxLenEntry.intValue();
             }
-            int maxLen = maxLenEntry.intValue();
             float widthPerCharacter = width / maxLen;
 
             Paragraph paragraph = new Paragraph().setFont(font).setFontSize(fontSize).setMultipliedLeading(1);

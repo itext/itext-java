@@ -205,6 +205,10 @@ public class PdfException extends RuntimeException {
     public static final String NoCompatibleEncryptionFound = "No compatible encryption found.";
     public static final String NoCryptoDictionaryDefined = "No crypto dictionary defined.";
     public static final String NoKidWithSuchRole = "No kid with such role.";
+    /**
+     * @deprecated Now we log a warning rather than throw an exception.
+     */
+    @Deprecated
     public static final String NoMaxLenPresent = "No /MaxLen has been set even though the Comb flag has been set.";
     public static final String NotAPlaceableWindowsMetafile = "Not a placeable windows metafile.";
     public static final String NotAValidPkcs7ObjectNotASequence = "Not a valid PKCS#7 object - not a sequence";
