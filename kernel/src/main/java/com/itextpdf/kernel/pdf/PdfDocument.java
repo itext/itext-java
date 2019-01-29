@@ -1670,7 +1670,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (defaultFont == null) {
             try {
                 defaultFont = PdfFontFactory.createFont();
-                addFont(defaultFont);
+                defaultFont.makeIndirect(this);
             } catch (IOException e) {
                 Logger logger = LoggerFactory.getLogger(PdfDocument.class);
                 logger.error(LogMessageConstant.EXCEPTION_WHILE_CREATING_DEFAULT_FONT, e);
