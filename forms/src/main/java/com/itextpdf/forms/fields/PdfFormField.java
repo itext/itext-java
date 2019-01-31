@@ -2839,17 +2839,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
 
         // check if /Comb has been set
-        if (this.getFieldFlag(PdfTextFormField.FF_COMB)) {
+        if (this.getFieldFlag(PdfTextFormField.FF_COMB) && null != this.getPdfObject().getAsNumber(PdfName.MaxLen)) {
             // calculate space per character
-            int maxLen;
             PdfNumber maxLenEntry = this.getPdfObject().getAsNumber(PdfName.MaxLen);
-            if (maxLenEntry == null) {
-                maxLen = 1;
-                Logger logger = LoggerFactory.getLogger(PdfFormField.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT, maxLen));
-            } else {
-                maxLen = maxLenEntry.intValue();
-            }
+            int maxLen = maxLenEntry.intValue();
             float widthPerCharacter = width / maxLen;
 
             Paragraph paragraph = new Paragraph().setFont(font).setFontSize(fontSize).setMultipliedLeading(1);
@@ -2874,6 +2867,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 paragraph.getChildren().remove(0);
             }
         } else {
+            if (this.getFieldFlag(PdfTextFormField.FF_COMB)) {
+                Logger logger = LoggerFactory.getLogger(PdfFormField.class);
+                logger.error(MessageFormatUtil.format(LogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT));
+            }
             Paragraph paragraph = new Paragraph(value).setFont(font).setFontSize(fontSize).setMultipliedLeading(1).setPaddings(0, X_OFFSET, 0, X_OFFSET);
             if (color != null) {
                 paragraph.setFontColor(color);
