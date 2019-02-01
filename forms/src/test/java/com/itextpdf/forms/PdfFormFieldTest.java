@@ -720,7 +720,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         // The line below should throw an exception, because the Comb flag may be set only if the MaxLen entry is present in the text field dictionary
         textField.setValue("12345678");
-        
+
         textField.setMaxLen(1);
 
         form.addField(textField);
@@ -733,4 +733,31 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             Assert.fail(errorMessage);
         }
     }
+
+
+    @Test
+    public void maxLenWithSetCombFlagAppearanceTest() throws IOException, InterruptedException {
+        String srcPdf = sourceFolder + "maxLenFields.pdf";
+        String outPdf = destinationFolder + "maxLenWithSetCombFlagAppearanceTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_maxLenWithSetCombFlagAppearanceTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+
+        form.getField("text1").setValue("123");
+        form.getField("text2").setJustification(1).setValue("123");
+        form.getField("text3").setJustification(2).setValue("123");
+        form.getField("text4").setValue("12345678");
+        form.getField("text5").setValue("123456789101112131415161718");
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
 }

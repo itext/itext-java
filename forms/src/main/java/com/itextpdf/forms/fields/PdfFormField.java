@@ -85,7 +85,10 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.layout.Canvas;
+import com.itextpdf.layout.Style;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
@@ -2838,40 +2841,38 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(0, -height, 0, 2 * height));
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
 
+        Style paragraphStyle = new Style().setFont(font).setFontSize(fontSize);
+        paragraphStyle.setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, 1));
+
         // check if /Comb has been set
         if (this.getFieldFlag(PdfTextFormField.FF_COMB) && null != this.getPdfObject().getAsNumber(PdfName.MaxLen)) {
-            // calculate space per character
             PdfNumber maxLenEntry = this.getPdfObject().getAsNumber(PdfName.MaxLen);
             int maxLen = maxLenEntry.intValue();
             float widthPerCharacter = width / maxLen;
+            int numberOfCharacters = Math.min(maxLen, value.length());
 
-            Paragraph paragraph = new Paragraph().setFont(font).setFontSize(fontSize).setMultipliedLeading(1);
-            if (color != null) {
-                paragraph.setFontColor(color);
+            int start;
+            switch (textAlignment) {
+                case RIGHT:
+                    start = (maxLen - numberOfCharacters);
+                    break;
+                case CENTER:
+                    start = (maxLen - numberOfCharacters) / 2;
+                    break;
+                default:
+                    start = 0;
             }
-
-            int numberOfCharacters = maxLen >= value.length() ? value.length() : maxLen;
-
+            float startOffset = widthPerCharacter * (start + 0.5f);
             for (int i = 0; i < numberOfCharacters; i++) {
-                // Get width of each character
-                String characterToPlace = value.substring(i, i + 1);
-                float characterWidth = font.getWidth(characterToPlace, fontSize);
-                // Find x-offset for this character so that we can place it in the center of this comb-section
-                float xOffset = characterWidth == 0 ? characterWidth : (widthPerCharacter - characterWidth) / 2;
-
-                paragraph.setPaddings(0f, xOffset, 0f, xOffset);
-                paragraph.add(characterToPlace);
-
-                modelCanvas.showTextAligned(paragraph, widthPerCharacter * i, 0, textAlignment);
-
-                paragraph.getChildren().remove(0);
+                modelCanvas.showTextAligned(new Paragraph(value.substring(i, i+1)).addStyle(paragraphStyle),
+                         startOffset + widthPerCharacter * i, rect.getHeight() / 2, TextAlignment.CENTER, VerticalAlignment.MIDDLE);
             }
         } else {
             if (this.getFieldFlag(PdfTextFormField.FF_COMB)) {
                 Logger logger = LoggerFactory.getLogger(PdfFormField.class);
                 logger.error(MessageFormatUtil.format(LogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT));
             }
-            Paragraph paragraph = new Paragraph(value).setFont(font).setFontSize(fontSize).setMultipliedLeading(1).setPaddings(0, X_OFFSET, 0, X_OFFSET);
+            Paragraph paragraph = new Paragraph(value).addStyle(paragraphStyle).setPaddings(0, X_OFFSET, 0, X_OFFSET);
             if (color != null) {
                 paragraph.setFontColor(color);
             }
