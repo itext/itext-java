@@ -44,6 +44,10 @@
 package com.itextpdf.io.source;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.Serializable;
@@ -291,8 +295,17 @@ public class PdfTokenizer implements Closeable, Serializable {
                         if (tokenValueEqualsTo(R)) {
                             assert n2 != null;
                             type = TokenType.Ref;
-                            reference = Integer.parseInt(new String(n1));
-                            generation = Integer.parseInt(new String(n2));
+                            try {
+                                reference = Integer.parseInt(new String(n1));
+                                generation = Integer.parseInt(new String(n2));
+                            } catch (Exception ex) {
+                                //warn about incorrect reference number
+                                //Exception: NumberFormatException for java, FormatException or OverflowException for .NET
+                                Logger logger = LoggerFactory.getLogger(PdfTokenizer.class);
+                                logger.error(MessageFormatUtil.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, new String(n1), new String(n2)));
+                                reference = -1;
+                                generation = 0;
+                            }
                             return;
                         } else if (tokenValueEqualsTo(Obj)) {
                             assert n2 != null;

@@ -1560,6 +1560,32 @@ public class PdfReaderTest extends ExtendedITextTest {
         pdfDoc.close();
     }
 
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE, count =1),
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR),
+            @LogMessage(messageTemplate = LogMessageConstant.ENCOUNTERED_INVALID_MCR)})
+    public void wrongTagStructureFlushingTest() throws IOException {
+        //wrong /Pg number
+        String source = sourceFolder + "wrongTagStructureFlushingTest.pdf";
+        String dest = destinationFolder + "wrongTagStructureFlushingTest.pdf";
+        PdfDocument   pdfDoc = new PdfDocument(new PdfReader(source), new PdfWriter(dest));
+        pdfDoc.setTagged();
+        Assert.assertEquals(PdfNull.PDF_NULL, ((PdfDictionary)pdfDoc.getPdfObject(12)).get(PdfName.Pg));
+        pdfDoc.close();
+    }
+
+    @Test
+    @Ignore("DEVSIX-2649")
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE, count =1),
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR)})
+    public void wrongStructureFlushingTest() throws IOException {
+        //TODO: update after DEVSIX-2649 fix
+        //wrong /key number
+        String source = sourceFolder + "wrongStructureFlushingTest.pdf";
+        String dest = destinationFolder + "wrongStructureFlushingTest.pdf";
+        PdfDocument   pdfDoc = new PdfDocument(new PdfReader(source), new PdfWriter(dest));
+        pdfDoc.close();
+    }
 
     private boolean objectTypeEqualTo(PdfObject object, PdfName type) {
         PdfName objectType = ((PdfDictionary) object).getAsName(PdfName.Type);
