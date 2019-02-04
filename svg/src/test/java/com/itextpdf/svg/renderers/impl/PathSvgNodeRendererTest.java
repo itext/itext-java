@@ -408,6 +408,16 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
+    public void moveToRelativeMultipleTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "moveToRelativeMultiple");
+    }
+
+    @Test
+    public void moveToAbsoluteMultipleTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "moveToAbsoluteMultiple");
+    }
+
+    @Test
     public void iTextLogoTest() throws IOException, InterruptedException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "iTextLogo");
     }

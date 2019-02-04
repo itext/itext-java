@@ -57,6 +57,7 @@ import java.util.Arrays;
 public class MoveTo extends AbstractPathShape {
 
     private String[] coordinates;
+    private LineTo additionalLines;
 
     public MoveTo() {
         this(false);
@@ -71,6 +72,9 @@ public class MoveTo extends AbstractPathShape {
         float x = CssUtils.parseAbsoluteLength(coordinates[0]);
         float y = CssUtils.parseAbsoluteLength(coordinates[1]);
         canvas.moveTo(x, y);
+        if (additionalLines != null) {
+            additionalLines.draw(canvas);
+        }
     }
 
     @Override
@@ -78,15 +82,16 @@ public class MoveTo extends AbstractPathShape {
         if (coordinates.length == 0 || coordinates.length % 2 != 0) {
             throw new IllegalArgumentException(MessageFormatUtil.format(SvgExceptionMessageConstant.MOVE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0, Arrays.toString(coordinates)));
         }
-        if (coordinates.length > 2) {
-            // (x y)+ parameters will be implemented in the future
-            throw new UnsupportedOperationException();
-        }
 
         this.coordinates = new String[] {coordinates[0], coordinates[1]};
-
         if (isRelative()) {
             this.coordinates = SvgCoordinateUtils.makeRelativeOperatorCoordinatesAbsolute(coordinates, new double[]{startPoint.x, startPoint.y});
+        }
+
+        // If a moveto is followed by multiple pairs of coordinates, the subsequent pairs are treated as implicit lineto commands
+        if (coordinates.length > 2) {
+            additionalLines = new LineTo(isRelative());
+            additionalLines.setCoordinates(Arrays.copyOfRange(coordinates, 2, coordinates.length), getEndingPoint());
         }
     }
 
