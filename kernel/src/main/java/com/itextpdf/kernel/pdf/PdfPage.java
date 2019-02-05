@@ -176,7 +176,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * The situation when Contents object is a {@link PdfStream} is treated like a one element array.
      *
      * @param index the {@code int} index of returned {@link PdfStream}.
-     * @return {@link PdfStream} object at specified index.
+     * @return {@link PdfStream} object at specified index;
+     * will return null in case page dictionary doesn't adhere to the specification, meaning that the document is an invalid PDF.
      * @throws IndexOutOfBoundsException if the index is out of range
      */
     public PdfStream getContentStream(int index) {
@@ -188,7 +189,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             return (PdfStream) contents;
         else if (contents instanceof PdfArray) {
             PdfArray a = (PdfArray) contents;
-            return (PdfStream) a.get(index);
+            return a.getAsStream(index);
         } else {
             return null;
         }
@@ -497,7 +498,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
         int contentStreamCount = getContentStreamCount();
         for (int i = 0; i < contentStreamCount; i++) {
-            getContentStream(i).flush(false);
+            PdfStream contentStream = getContentStream(i);
+            if (contentStream != null) {
+                contentStream.flush(false);
+            }
         }
 
         resources = null;

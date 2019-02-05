@@ -43,9 +43,13 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.annot.PdfStampAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -61,6 +65,7 @@ import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -460,6 +465,27 @@ public class PdfPagesTest extends ExtendedITextTest{
         pdfDoc.close();
 
         Assert.assertTrue(testPageTreeParentsValid(src) && testPageTreeParentsValid(dest));
+    }
+
+    @Test
+    public void pdfNumberInPageContentArrayTest() throws IOException {
+        String src = sourceFolder + "pdfNumberInPageContentArray.pdf";
+        String dest = destinationFolder + "pdfNumberInPageContentArray_saved.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+        pdfDoc.close();
+
+        // test is mainly to ensure document is successfully opened-and-closed without exceptions
+
+        pdfDoc = new PdfDocument(new PdfReader(dest));
+        PdfObject pageDictWithInvalidContents = pdfDoc.getPdfObject(10);
+        PdfArray invalidContentsArray = ((PdfDictionary) pageDictWithInvalidContents).getAsArray(PdfName.Contents);
+        Assert.assertEquals(5, invalidContentsArray.size());
+
+        Assert.assertFalse(invalidContentsArray.get(0).isStream());
+        Assert.assertFalse(invalidContentsArray.get(1).isStream());
+        Assert.assertFalse(invalidContentsArray.get(2).isStream());
+        Assert.assertFalse(invalidContentsArray.get(3).isStream());
+        Assert.assertTrue(invalidContentsArray.get(4).isStream());
     }
 
     private boolean testPageTreeParentsValid(String src) throws com.itextpdf.io.IOException, java.io.IOException {
