@@ -109,7 +109,7 @@ public class CertificateSupportedCriticalExtensionsTest {
                 .setExtendedKeyUsage("Not ID KP TIMESTAMPING.")
                 .setKeyUsage(true, true);
 
-        Assert.assertTrue(SignUtils.hasUnsupportedCriticalExtension(cert));
+        Assert.assertFalse(SignUtils.hasUnsupportedCriticalExtension(cert));
     }
 
     @Test

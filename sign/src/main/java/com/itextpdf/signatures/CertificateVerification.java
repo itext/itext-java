@@ -115,7 +115,7 @@ public class CertificateVerification {
      * @param certs    the certificate chain
      * @param keystore the <CODE>KeyStore</CODE>
      * @param crls     the certificate revocation list or <CODE>null</CODE>
-     * @return <CODE>null</CODE> if the certificate chain could be validated or a
+     * @return empty list if the certificate chain could be validated or a
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
      */
@@ -130,7 +130,7 @@ public class CertificateVerification {
      * @param keystore the <CODE>KeyStore</CODE>
      * @param crls     the certificate revocation list or <CODE>null</CODE>
      * @param calendar the date, shall not be null
-     * @return <CODE>null</CODE> if the certificate chain could be validated or a
+     * @return empty list if the certificate chain could be validated or a
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
      */
