@@ -139,4 +139,11 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     public void TSpanAbsolutePositionAndRelativeMoveFunctionalTest() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePositionAndRelativeMove");
     }
+
+    //Text-anchor test
+    @Test
+    public void TSpanTextAnchorFunctionalTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-textAnchor");
+    }
+
 }

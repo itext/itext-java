@@ -766,6 +766,11 @@ public final class SvgConstants {
         public static final String TEXT_CONTENT = "text_content";
 
         /**
+         * Attribute defining the text anchor used by the text
+         */
+        public static final String TEXT_ANCHOR = "text-anchor";
+
+        /**
          * Attribute defining a transformation that needs to be applied.
          */
         public static final String TRANSFORM = "transform";
@@ -847,6 +852,11 @@ public final class SvgConstants {
         public static final String DEFER = "defer";
 
         /**
+         * Value representing the text-alignment end for text objects
+         */
+        public static final String TEXT_ANCHOR_END = "end";
+
+        /**
          * Value representing the fill rule "even odd".
          */
         public static final String FILL_RULE_EVEN_ODD = "evenodd";
@@ -857,9 +867,19 @@ public final class SvgConstants {
         public static final String FILL_RULE_NONZERO = "nonzero";
 
         /**
+         * Value representing the text-alignment middle for text objects
+         */
+        public static final String TEXT_ANCHOR_MIDDLE = "middle";
+
+        /**
          * Value representing the "none" value".
          */
         public static final String NONE = "none";
+
+        /**
+         * Value representing the text-alignment start for text objects
+         */
+        public static final String TEXT_ANCHOR_START = "start";
 
         /**
          * The value corresponding with the namespace url for SVG

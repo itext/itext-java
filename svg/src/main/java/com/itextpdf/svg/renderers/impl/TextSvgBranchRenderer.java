@@ -153,6 +153,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
                 resolveFont(context);
                 currentCanvas.setFontAndSize(font, fontSize);
                 for (ISvgTextNodeRenderer c : children) {
+                    float childLength = c.getTextContentLength(fontSize, font);
                     if (c.containsAbsolutePositionChange()) {
                         //TODO(DEVSIX-2507) support rotate and other attributes
                         float[][] absolutePositions = c.getAbsolutePositionChanges();
@@ -164,6 +165,12 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
                         //Absolute position changes requires resetting the current text move in the context
                         context.resetTextMove();
                     }
+
+                    //Handle Text-Anchor declarations
+                    float textAnchorCorrection = getTextAnchorAlignmentCorrection(childLength);
+                    if (!CssUtils.compareFloats(0f, textAnchorCorrection)) {
+                        context.addTextMove(textAnchorCorrection, 0);
+                    }
                     //Move needs to happen before the saving of the state in order for it to cascade beyond
                     if (c.containsRelativeMove()) {
                         float[] childMove = c.getRelativeTranslation();
@@ -171,8 +178,8 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
                     }
                     currentCanvas.saveState();
                     c.draw(context);
-                    float length = c.getTextContentLength(fontSize, font);
-                    context.addTextMove(length, 0);
+
+                    context.addTextMove(childLength, 0);
                     currentCanvas.restoreState();
                     //Restore transformation matrix
                     if (!context.getLastTextTransform().isIdentity()) {
@@ -314,5 +321,27 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
             child.setParent(deepCopy);
             deepCopy.addChild(newChild);
         }
+    }
+
+    private float getTextAnchorAlignmentCorrection(float childContentLength) {
+        // Resolve text anchor
+        //TODO DEVSIX-2631 properly resolve text-anchor by taking entire line into account, not only children of the current TextSvgBranchRenderer
+        float textAnchorXCorrection = 0.0f;
+        if (this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_ANCHOR)) {
+            String textAnchorValue = this.getAttribute(SvgConstants.Attributes.TEXT_ANCHOR);
+            //Middle
+            if (textAnchorValue.equals(SvgConstants.Values.TEXT_ANCHOR_MIDDLE)) {
+                if (xPos != null && xPos.length > 0) {
+                    textAnchorXCorrection -= childContentLength / 2;
+                }
+            }
+            //End
+            if (textAnchorValue.equals(SvgConstants.Values.TEXT_ANCHOR_END)) {
+                if (xPos != null && xPos.length > 0) {
+                    textAnchorXCorrection -= childContentLength;
+                }
+            }
+        }
+        return textAnchorXCorrection;
     }
 }
