@@ -42,8 +42,20 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Random;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.source.IRandomAccessSource;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -54,15 +66,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.Random;
 
 @Category(IntegrationTest.class)
 public class PdfPagesTest extends ExtendedITextTest{
@@ -450,6 +453,21 @@ public class PdfPagesTest extends ExtendedITextTest{
         Assert.assertEquals("Inherited value is invalid", 90, page.getRotation());
     }
 
+    @Test
+    public void twoDocumentsForSingleReaderBreaksPageReading() throws Exception {
+        String filename = "twoDocumentsForSingleReaderBreaksPageReading.pdf";
+        
+        PdfReader reader = new PdfReader(sourceFolder + filename);
+        
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        int pageCount1 = pdfDoc.getNumberOfPages();
+        
+        PdfDocument pdfDoc2 = new PdfDocument(reader);
+        int pageCount2 = pdfDoc2.getNumberOfPages();
+        
+        PdfPage page = pdfDoc2.getPage(1);
+    }
+    
     @Test
     public void pageTreeCleanupParentRefTest() throws IOException {
         String src = sourceFolder + "CatalogWithPageAndPagesEntries.pdf";
