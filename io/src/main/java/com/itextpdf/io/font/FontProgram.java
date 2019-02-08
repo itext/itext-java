@@ -43,13 +43,10 @@
  */
 package com.itextpdf.io.font;
 
-import com.itextpdf.io.IOException;
 import com.itextpdf.io.font.constants.FontMacStyleFlags;
 import com.itextpdf.io.font.constants.FontStretches;
 import com.itextpdf.io.font.constants.FontWeights;
-import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
-import com.itextpdf.io.util.FileUtil;
 
 import java.io.Serializable;
 import java.util.HashMap;
