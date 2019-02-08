@@ -9,7 +9,7 @@
   <artifactId>hyph</artifactId>
   <name>iText 7 - hyph</name>
   <description>XML files that can be used for hyphenation</description>
-  <url>http://itextpdf.com/</url>
+  <url>https://itextpdf.com/</url>
   <licenses>
     <license>
       <name>Various licenses (see individual files)</name>

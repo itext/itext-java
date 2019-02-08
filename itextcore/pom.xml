@@ -7,11 +7,11 @@
   <packaging>pom</packaging>
   <name>iText 7 Core</name>
   <description>A Free Java-PDF library</description>
-  <url>http://itextpdf.com/</url>
+  <url>https://itextpdf.com/</url>
   <inceptionYear>1998</inceptionYear>
   <organization>
     <name>iText Group NV</name>
-    <url>http://itextpdf.com/</url>
+    <url>https://itextpdf.com/</url>
   </organization>
   <licenses>
     <license>
@@ -24,14 +24,14 @@
       <id>itext</id>
       <name>iText Software</name>
       <email>info@itextpdf.com</email>
-      <url>http://www.itextpdf.com</url>
+      <url>https://www.itextpdf.com</url>
     </developer>
   </developers>
   <mailingLists>
     <mailingList>
       <name>iText on StackOverflow</name>
-      <subscribe>http://stackoverflow.com/questions/tagged/itext7</subscribe>
-      <archive>http://stackoverflow.com/questions/tagged/itext7</archive>
+      <subscribe>https://stackoverflow.com/questions/tagged/itext7</subscribe>
+      <archive>https://stackoverflow.com/questions/tagged/itext7</archive>
       <otherArchives>
         <otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
         <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
@@ -51,7 +51,7 @@
   </issueManagement>
   <ciManagement>
     <system>jenkins-ci</system>
-    <url>http://ci.itextsupport.com/</url>
+    <url>https://jenkins.itextsupport.com/</url>
   </ciManagement>
   <dependencies>
     <dependency>

@@ -7,11 +7,11 @@
   <packaging>pom</packaging>
   <name>iText 7</name>
   <description>A Free Java-PDF library</description>
-  <url>http://itextpdf.com/</url>
+  <url>https://itextpdf.com/</url>
   <inceptionYear>1998</inceptionYear>
   <organization>
     <name>iText Group NV</name>
-    <url>http://itextpdf.com/</url>
+    <url>https://itextpdf.com/</url>
   </organization>
   <licenses>
     <license>
@@ -24,14 +24,14 @@
       <id>itext</id>
       <name>iText Software</name>
       <email>info@itextpdf.com</email>
-      <url>http://www.itextpdf.com</url>
+      <url>https://www.itextpdf.com</url>
     </developer>
   </developers>
   <mailingLists>
     <mailingList>
       <name>iText on StackOverflow</name>
-      <subscribe>http://stackoverflow.com/questions/tagged/itext7</subscribe>
-      <archive>http://stackoverflow.com/questions/tagged/itext7</archive>
+      <subscribe>https://stackoverflow.com/questions/tagged/itext7</subscribe>
+      <archive>https://stackoverflow.com/questions/tagged/itext7</archive>
       <otherArchives>
         <otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
         <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
@@ -66,13 +66,13 @@
   </issueManagement>
   <ciManagement>
     <system>jenkins-ci</system>
-    <url>http://ci.itextsupport.com/</url>
+    <url>https://jenkins.itextsupport.com/</url>
   </ciManagement>
   <properties>
     <argLine>-Xmx1024m</argLine>
     <bouncycastle.version>1.49</bouncycastle.version>
     <checkstyle.version>2.15</checkstyle.version>
-    <failsafe.version>2.18.1</failsafe.version>
+    <failsafe.version>3.0.0-M3</failsafe.version>
     <fb-contrib.version>6.2.1</fb-contrib.version>
     <findbugs.version>3.0.1</findbugs.version>
     <hsqldb.version>2.3.3</hsqldb.version>
@@ -80,11 +80,15 @@
     <itext.legacy.version>5.5.8</itext.legacy.version>
     <jacoco.version>0.7.9</jacoco.version>
     <java.version>1.7</java.version>
-    <javadoc.version>3.0.0</javadoc.version>
+    <javadoc.version>3.0.1</javadoc.version>
+    <javadoc-additionalOptions />
+    <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
     <jfreechart.version>1.0.19</jfreechart.version>
     <junit.version>4.12</junit.version>
     <junitparams.version>1.0.4</junitparams.version>
     <logback.version>1.1.3</logback.version>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
     <performancetests>com.itextpdf.test.annotations.type.PerformanceTest</performancetests>
     <pitest.version>1.1.11</pitest.version>
     <pmd.version>3.5</pmd.version>
@@ -95,7 +99,7 @@
     <slf4j.version>1.7.13</slf4j.version>
     <slowtests>com.itextpdf.test.annotations.type.SlowTest</slowtests>
     <sonar.clirr.reportPath>${project.build.directory}/clirr-report.txt</sonar.clirr.reportPath>
-    <surefire.version>2.18.1</surefire.version>
+    <surefire.version>3.0.0-M3</surefire.version>
     <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
   </properties>
   <repositories>
@@ -287,33 +291,14 @@
         <configuration>
           <additionalparam>${javadoc.doclint.none}</additionalparam>
           <quiet>true</quiet>
+          <failOnError>true</failOnError>
+          <source>7</source>
+          <additionalOptions>${javadoc-additionalOptions}</additionalOptions>
+          <links>
+            <link>${javadoc-link}</link>
+          </links>
         </configuration>
       </plugin>
-      <!--
-                  <plugin>
-                      <groupId>com.soebes.maven.plugins.dmg</groupId>
-                      <artifactId>doxygen-maven-plugin</artifactId>
-                      <version>1.0.1</version>
-                      <configuration>
-                          <projectName>${project.name}</projectName>
-                          <projectNumber>${project.version}</projectNumber>
-                          <optimizeOutputJava>true</optimizeOutputJava>
-                          <extractAll>true</extractAll>
-                          <extractStatic>true</extractStatic>
-                          <recursive>true</recursive>
-                          <exclude>.git</exclude>
-                          <excludePatterns>*/test/*</excludePatterns>
-                          <inlineSources>true</inlineSources>
-                          <referencedByRelation>true</referencedByRelation>
-                          <referencesRelation>true</referencesRelation>
-                          <hideUndocRelations>false</hideUndocRelations>
-                          <umlLook>true</umlLook>
-                          <callGraph>true</callGraph>
-                          <callerGraph>true</callerGraph>
-                          <generateLatex>false</generateLatex>
-                      </configuration>
-                  </plugin>
-                  -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
@@ -383,6 +368,16 @@
       </activation>
       <properties>
         <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
+      </properties>
+    </profile>
+    <profile>
+      <id>java9+</id>
+      <activation>
+        <jdk>[9,)</jdk>
+      </activation>
+      <properties>
+        <javadoc-additionalOptions>-html5</javadoc-additionalOptions>
+        <javadoc-link>https://docs.oracle.com/javase/9/docs/api/</javadoc-link>
       </properties>
     </profile>
     <profile>
@@ -661,7 +656,7 @@
               <quiet>true</quiet>
               <failOnError>false</failOnError>
               <detectLinks>true</detectLinks>
-              <subpackages>com.itextpdf.barcodes:com.itextpdf.forms:com.itextpdf.io:com.itextpdf.kernel:com.itextpdf.layout:com.itextpdf.pdfa:com.itextpdf.signatures:com.itextpdf.test</subpackages>
+              <subpackages>com.itextpdf.barcodes:com.itextpdf.forms:com.itextpdf.io:com.itextpdf.kernel:com.itextpdf.layout:com.itextpdf.pdfa:com.itextpdf.signatures:com.itextpdf.styled-xml-parser:com.itextpdf.svg:com.itextpdf.test</subpackages>
               <groups>
                 <group>
                   <title>Barcodes</title>
@@ -698,6 +693,14 @@
                 <group>
                   <title>Signatures</title>
                   <packages>com.itextpdf.signatures*</packages>
+                </group>
+                <group>
+                  <title>Styled XML Parser</title>
+                  <packages>com.itextpdf.styled-xml-parser*</packages>
+                </group>
+                <group>
+                  <title>SVG</title>
+                  <packages>com.itextpdf.svg*</packages>
                 </group>
               </groups>
             </configuration>

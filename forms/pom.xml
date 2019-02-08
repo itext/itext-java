@@ -8,7 +8,7 @@
   </parent>
   <artifactId>forms</artifactId>
   <name>iText 7 - forms</name>
-  <url>http://itextpdf.com/</url>
+  <url>https://itextpdf.com/</url>
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>

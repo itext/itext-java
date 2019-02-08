@@ -9,7 +9,7 @@
   <artifactId>font-asian</artifactId>
   <name>iText 7 - Asian fonts</name>
   <description>iText Asian fonts for use in conjunction with iText 7, a free Java-PDF library</description>
-  <url>http://itextpdf.com/</url>
+  <url>https://itextpdf.com/</url>
   <licenses>
     <license>
       <name>Various licenses (see individual files)</name>

@@ -8,7 +8,7 @@
   </parent>
   <artifactId>kernel</artifactId>
   <name>iText 7 - kernel</name>
-  <url>http://itextpdf.com/</url>
+  <url>https://itextpdf.com/</url>
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>

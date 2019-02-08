@@ -8,7 +8,7 @@
   </parent>
   <artifactId>pdftest</artifactId>
   <name>iText 7 - pdftest</name>
-  <url>http://itextpdf.com/</url>
+  <url>https://itextpdf.com/</url>
   <dependencies>
     <dependency>
       <groupId>ch.qos.logback</groupId>

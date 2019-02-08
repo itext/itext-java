@@ -151,6 +151,7 @@ nbactions*.xml
 .pmdruleset.xml
 
 # Ignore generated files
-filmfestival.log
+*.log
 
 .vagrant/
+.vscode/
