@@ -48,10 +48,12 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfStampAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -508,4 +510,27 @@ public class PdfPagesTest extends ExtendedITextTest{
         return valid;
     }
 
+    @Test
+    public void testExcessiveXrefEntriesForCopyXObject() throws IOException {
+        PdfDocument inputPdf = new PdfDocument(new PdfReader(sourceFolder + "input500.pdf"));
+        PdfDocument outputPdf = new PdfDocument(new PdfWriter(destinationFolder + "output500.pdf"));
+
+        float scaleX = 595f / 612f;
+        float scaleY = 842f / 792f;
+
+        for (int i = 1; i <= inputPdf.getNumberOfPages(); ++i) {
+            PdfPage sourcePage = inputPdf.getPage(i);
+            PdfFormXObject pageCopy = sourcePage.copyAsFormXObject(outputPdf);
+            PdfPage page = outputPdf.addNewPage(PageSize.A4);
+            PdfCanvas outputCanvas = new PdfCanvas(page);
+            outputCanvas.addXObject(pageCopy, scaleX, 0, 0, scaleY, 0, 0);
+            page.flush();
+        }
+
+        outputPdf.close();
+        inputPdf.close();
+
+        Assert.assertNotNull(outputPdf.getXref());
+        Assert.assertEquals(500, outputPdf.getXref().size() - inputPdf.getXref().size());
+    }
 }

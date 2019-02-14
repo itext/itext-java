@@ -423,10 +423,17 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 PdfName.Contents)
         );
         excludedKeys.addAll(this.excludedKeys);
-        PdfDictionary dictionary = getPdfObject().copyTo(toDocument, excludedKeys, true);
-
+        for (PdfName key : getPdfObject().keySet()) {
+            if (excludedKeys.contains(key)) {
+                continue;
+            }
+            PdfObject obj = getPdfObject().get(key);
+            if (!xObject.getPdfObject().containsKey(key)) {
+                PdfObject copyObj = obj.copyTo(toDocument, false);
+                xObject.getPdfObject().put(key, copyObj);
+            }
+        }
         xObject.getPdfObject().getOutputStream().write(getContentBytes());
-        xObject.getPdfObject().mergeDifferent(dictionary);
         //Copy inherited resources
         if (!xObject.getPdfObject().containsKey(PdfName.Resources)) {
             PdfObject copyResource = getResources().getPdfObject().copyTo(toDocument, true);
