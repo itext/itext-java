@@ -54,6 +54,7 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.TransformUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,7 +62,6 @@ import java.util.Map;
  * {@link ISvgNodeRenderer} abstract implementation.
  */
 public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
-    private ISvgNodeRenderer parent;
 
     /**
      * Map that contains attributes and styles used for drawing operations
@@ -71,6 +71,8 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
     boolean partOfClipPath;
     boolean doFill = false;
     boolean doStroke = false;
+
+    private ISvgNodeRenderer parent;
 
     @Override
     public void setParent(ISvgNodeRenderer parent) {
@@ -85,6 +87,30 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
     @Override
     public void setAttributesAndStyles(Map<String, String> attributesAndStyles) {
         this.attributesAndStyles = attributesAndStyles;
+    }
+
+    @Override
+    public String getAttribute(String key) {
+        return attributesAndStyles.get(key);
+    }
+
+    @Override
+    public void setAttribute(String key, String value) {
+        if (this.attributesAndStyles == null) {
+            this.attributesAndStyles = new HashMap<>();
+        }
+
+        this.attributesAndStyles.put(key, value);
+    }
+
+    @Override
+    public Map<String, String> getAttributeMapCopy() {
+        HashMap<String, String> copy = new HashMap<>();
+        if (attributesAndStyles == null) {
+            return copy;
+        }
+        copy.putAll(attributesAndStyles);
+        return copy;
     }
 
     /**
@@ -126,26 +152,46 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         }
     }
 
-    private boolean drawInClipPath(SvgDrawContext context) {
-        if (attributesAndStyles.containsKey(SvgConstants.Attributes.CLIP_PATH)) {
-            String clipPathName = attributesAndStyles.get(SvgConstants.Attributes.CLIP_PATH);
-            ISvgNodeRenderer template = context.getNamedObject(normalizeName(clipPathName));
-            //Clone template to avoid muddying the state
-            if (template instanceof ClipPathSvgNodeRenderer) {
-                ClipPathSvgNodeRenderer clipPath = (ClipPathSvgNodeRenderer) template.createDeepCopy();
-                clipPath.setClippedRenderer(this);
-                clipPath.draw(context);
-                return !clipPath.getChildren().isEmpty();
-            }
-        }
+    /**
+     * Method to see if a certain renderer can use fill.
+     *
+     * @return true if the renderer can use fill
+     */
+    protected boolean canElementFill() {
+        return true;
+    }
+
+    /**
+     * Method to see if the renderer can create a viewport
+     *
+     * @return true if the renderer can construct a viewport
+     */
+    public boolean canConstructViewPort() {
         return false;
     }
 
-    private String normalizeName(String name) {
-        return name.replace("url(#", "").replace(")", "").trim();
+    /**
+     * Make a deep copy of the styles and attributes of this renderer
+     * Helper method for deep copying logic
+     *
+     * @param deepCopy renderer to insert the deep copied attributes into
+     */
+    protected void deepCopyAttributesAndStyles(ISvgNodeRenderer deepCopy) {
+        Map<String, String> stylesDeepCopy = new HashMap<>();
+        if (this.attributesAndStyles != null) {
+            stylesDeepCopy.putAll(this.attributesAndStyles);
+            deepCopy.setAttributesAndStyles(stylesDeepCopy);
+        }
     }
 
-    private static float getAlphaFromRGBA(String value) {
+    /**
+     * Draws this element to a canvas-like object maintained in the context.
+     *
+     * @param context the object that knows the place to draw this element and maintains its state
+     */
+    protected abstract void doDraw(SvgDrawContext context);
+
+    static float getAlphaFromRGBA(String value) {
         try {
             return WebColors.getRGBAColor(value)[3];
         } catch (ArrayIndexOutOfBoundsException | NullPointerException exc) {
@@ -153,18 +199,66 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         }
     }
 
-    private float getOpacity() {
-        float result = 1f;
 
-        String opacityValue = getAttribute(SvgConstants.Attributes.OPACITY);
-        if (opacityValue != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityValue)) {
-            result = Float.valueOf(opacityValue);
-        }
-        if (parent != null && parent instanceof AbstractSvgNodeRenderer) {
-            result *= ((AbstractSvgNodeRenderer) parent).getOpacity();
-        }
+    /**
+     * Calculate the transformation for the viewport based on the context. Only used by elements that can create viewports
+     *
+     * @param context the SVG draw context
+     * @return the transformation that needs to be applied to this renderer
+     */
+    AffineTransform calculateViewPortTranslation(SvgDrawContext context) {
+        Rectangle viewPort = context.getCurrentViewPort();
+        AffineTransform transform;
+        transform = AffineTransform.getTranslateInstance(viewPort.getX(), viewPort.getY());
+        return transform;
+    }
 
-        return result;
+
+    /**
+     * Operations to be performed after drawing the element.
+     * This includes filling, stroking.
+     *
+     * @param context the svg draw context
+     */
+    void postDraw(SvgDrawContext context) {
+        if (this.attributesAndStyles != null) {
+            PdfCanvas currentCanvas = context.getCurrentCanvas();
+
+            // fill-rule
+            if (partOfClipPath) {
+                if (SvgConstants.Values.FILL_RULE_EVEN_ODD.equalsIgnoreCase(this.getAttribute(SvgConstants.Attributes.CLIP_RULE))) {
+                    currentCanvas.eoClip();
+                } else {
+                    currentCanvas.clip();
+                }
+                currentCanvas.newPath();
+            } else {
+                if (doFill && canElementFill()) {
+                    String fillRuleRawValue = getAttribute(SvgConstants.Attributes.FILL_RULE);
+
+                    if (SvgConstants.Values.FILL_RULE_EVEN_ODD.equalsIgnoreCase(fillRuleRawValue)) {
+                        if (doStroke) {
+                            currentCanvas.eoFillStroke();
+                        } else {
+                            currentCanvas.eoFill();
+                        }
+                    } else {
+                        if (doStroke) {
+                            currentCanvas.fillStroke();
+                        } else {
+                            currentCanvas.fill();
+                        }
+                    }
+                } else if (doStroke) {
+                    currentCanvas.stroke();
+                }
+                currentCanvas.closePath(); // TODO: see if this is necessary DEVSIX-2583
+            }
+        }
+    }
+
+    void setPartOfClipPath(boolean value) {
+        partOfClipPath = value;
     }
 
     /**
@@ -249,127 +343,37 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         }
     }
 
-    /**
-     * Method to see if a certain renderer can use fill.
-     *
-     * @return true if the renderer can use fill
-     */
-    protected boolean canElementFill() {
-        return true;
-    }
 
-    /**
-     * Method to see if the renderer can create a viewport
-     *
-     * @return true if the renderer can construct a viewport
-     */
-    public boolean canConstructViewPort() {
+    private boolean drawInClipPath(SvgDrawContext context) {
+        if (attributesAndStyles.containsKey(SvgConstants.Attributes.CLIP_PATH)) {
+            String clipPathName = attributesAndStyles.get(SvgConstants.Attributes.CLIP_PATH);
+            ISvgNodeRenderer template = context.getNamedObject(normalizeClipPathName(clipPathName));
+            //Clone template to avoid muddying the state
+            if (template instanceof ClipPathSvgNodeRenderer) {
+                ClipPathSvgNodeRenderer clipPath = (ClipPathSvgNodeRenderer) template.createDeepCopy();
+                clipPath.setClippedRenderer(this);
+                clipPath.draw(context);
+                return !clipPath.getChildren().isEmpty();
+            }
+        }
         return false;
     }
 
-
-    /**
-     * Calculate the transformation for the viewport based on the context. Only used by elements that can create viewports
-     *
-     * @param context the SVG draw context
-     * @return the transformation that needs to be applied to this renderer
-     */
-    AffineTransform calculateViewPortTranslation(SvgDrawContext context) {
-        Rectangle viewPort = context.getCurrentViewPort();
-        AffineTransform transform;
-        transform = AffineTransform.getTranslateInstance(viewPort.getX(), viewPort.getY());
-        return transform;
+    private String normalizeClipPathName(String name) {
+        return name.replace("url(#", "").replace(")", "").trim();
     }
 
+    private float getOpacity() {
+        float result = 1f;
 
-    /**
-     * Operations to be performed after drawing the element.
-     * This includes filling, stroking.
-     *
-     * @param context the svg draw context
-     */
-    void postDraw(SvgDrawContext context) {
-        if (this.attributesAndStyles != null) {
-            PdfCanvas currentCanvas = context.getCurrentCanvas();
-
-            // fill-rule
-            if (partOfClipPath) {
-                if (SvgConstants.Values.FILL_RULE_EVEN_ODD.equalsIgnoreCase(this.getAttribute(SvgConstants.Attributes.CLIP_RULE))) {
-                    currentCanvas.eoClip();
-                } else {
-                    currentCanvas.clip();
-                }
-                currentCanvas.newPath();
-            } else {
-                if (doFill && canElementFill()) {
-                    String fillRuleRawValue = getAttribute(SvgConstants.Attributes.FILL_RULE);
-
-                    if (SvgConstants.Values.FILL_RULE_EVEN_ODD.equalsIgnoreCase(fillRuleRawValue)) {
-                        if (doStroke) {
-                            currentCanvas.eoFillStroke();
-                        } else {
-                            currentCanvas.eoFill();
-                        }
-                    } else {
-                        if (doStroke) {
-                            currentCanvas.fillStroke();
-                        } else {
-                            currentCanvas.fill();
-                        }
-                    }
-                } else if (doStroke) {
-                    currentCanvas.stroke();
-                }
-                currentCanvas.closePath(); // TODO: see if this is necessary DEVSIX-2583
-            }
+        String opacityValue = getAttribute(SvgConstants.Attributes.OPACITY);
+        if (opacityValue != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityValue)) {
+            result = Float.valueOf(opacityValue);
         }
-    }
-
-    /**
-     * Draws this element to a canvas-like object maintained in the context.
-     *
-     * @param context the object that knows the place to draw this element and maintains its state
-     */
-    protected abstract void doDraw(SvgDrawContext context);
-
-    @Override
-    public String getAttribute(String key) {
-        return attributesAndStyles.get(key);
-    }
-
-    @Override
-    public void setAttribute(String key, String value) {
-        if (this.attributesAndStyles == null) {
-            this.attributesAndStyles = new HashMap<>();
+        if (parent != null && parent instanceof AbstractSvgNodeRenderer) {
+            result *= ((AbstractSvgNodeRenderer) parent).getOpacity();
         }
 
-        this.attributesAndStyles.put(key, value);
-    }
-
-    @Override
-    public Map<String, String> getAttributeMapCopy(){
-        HashMap<String, String> copy = new HashMap<>();
-        if(attributesAndStyles == null){
-            return copy;
-        }
-        copy.putAll(attributesAndStyles);
-        return copy;
-    }
-
-    /**
-     * Make a deep copy of the styles and attributes of this renderer
-     * Helper method for deep copying logic
-     * @param deepCopy renderer to insert the deep copied attributes into
-     */
-    protected void deepCopyAttributesAndStyles(ISvgNodeRenderer deepCopy){
-        Map<String,String> stylesDeepCopy = new HashMap<>();
-        if(this.attributesAndStyles != null) {
-            stylesDeepCopy.putAll(this.attributesAndStyles);
-            deepCopy.setAttributesAndStyles(stylesDeepCopy);
-        }
-    }
-
-    void setPartOfClipPath(boolean value) {
-        partOfClipPath = value;
+        return result;
     }
 }
