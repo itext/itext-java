@@ -65,7 +65,7 @@ public final class FontCharacteristics {
      * Sets preferred font weight
      *
      * @param fw font weight in css notation.
-     * @seealso com.itextpdf.io.font.constants.FontWeights.
+     * @see com.itextpdf.io.font.constants.FontWeights
      * @return this instance.
      */
     public FontCharacteristics setFontWeight(short fw) {

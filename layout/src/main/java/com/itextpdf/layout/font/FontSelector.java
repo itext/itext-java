@@ -69,6 +69,7 @@ public class FontSelector {
      *
      * @param allFonts     Unsorted set of all available fonts.
      * @param fontFamilies Sorted list of preferred font families.
+     * @param fc
      */
     public FontSelector(Collection<FontInfo> allFonts, List<String> fontFamilies, FontCharacteristics fc) {
         this.fonts = new ArrayList<>(allFonts);

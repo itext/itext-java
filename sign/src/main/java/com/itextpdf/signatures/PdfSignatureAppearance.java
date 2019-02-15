@@ -454,6 +454,8 @@ public class PdfSignatureAppearance {
 
     /**
      * Indicates that the existing appearances needs to be reused as layer 0.
+     *
+     * @param reuseAppearance
      */
     public PdfSignatureAppearance setReuseAppearance(boolean reuseAppearance) {
         this.reuseAppearance = reuseAppearance;
@@ -596,6 +598,7 @@ public class PdfSignatureAppearance {
      * for further details.
      *
      * @return a top-level signature appearance
+     * @throws IOException
      */
     protected PdfFormXObject getAppearance() throws IOException {
         PdfCanvas canvas;

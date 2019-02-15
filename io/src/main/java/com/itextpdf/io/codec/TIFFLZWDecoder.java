@@ -172,6 +172,8 @@ public class TIFFLZWDecoder {
 
     /**
      * Write out the string just uncompressed.
+     *
+     * @param str
      */
     public void writeString(byte[] str) {
         // Fix for broken tiff files
@@ -184,6 +186,9 @@ public class TIFFLZWDecoder {
 
     /**
      * Add a new string to the string table.
+     *
+     * @param oldString
+     * @param newString
      */
     public void addStringToTable(byte[] oldString, byte newString) {
         int length = oldString.length;
@@ -205,6 +210,8 @@ public class TIFFLZWDecoder {
 
     /**
      * Add a new string to the string table.
+     *
+     * @param str
      */
     public void addStringToTable(byte[] str) {
 
@@ -222,6 +229,9 @@ public class TIFFLZWDecoder {
 
     /**
      * Append <code>newString</code> to the end of <code>oldString</code>.
+     *
+     * @param oldString
+     * @param newString
      */
     public byte[] composeString(byte[] oldString, byte newString) {
         int length = oldString.length;

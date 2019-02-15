@@ -78,7 +78,7 @@ public final class FontStretches {
 
     /**
      * Convert from Open Type font width class notation.
-     * <br/>
+     * <p>
      * https://www.microsoft.com/typography/otspec/os2.htm#wdc
      *
      * @param fontWidth Open Type font width.

@@ -93,6 +93,8 @@ public class HyphenationConfig {
      *
      * @return {@link Hyphenation} object representing possible hyphenation points
      * or {@code null} if no hyphenation points are found.
+     *
+     * @param word Tee word to hyphenate
      */
     public Hyphenation hyphenate(String word) {
         return hyphenator != null ? hyphenator.hyphenate(word) : null;

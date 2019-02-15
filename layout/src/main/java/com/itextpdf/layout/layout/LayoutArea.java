@@ -93,6 +93,8 @@ public class LayoutArea {
 
     /**
      * Sets the {@link Rectangle box} which bounds the area.
+     *
+     * @param bbox
      */
     public void setBBox(Rectangle bbox) {
         this.bBox = bbox;

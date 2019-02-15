@@ -660,6 +660,8 @@ public class CFFFont {
      * only a single font from the CFF package (this again is
      * a PDF restriction) and to subset the CharStrings glyph
      * description.
+     *
+     * @param fontName
      */
 
 

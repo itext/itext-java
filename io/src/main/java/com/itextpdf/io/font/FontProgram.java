@@ -221,7 +221,7 @@ public abstract class FontProgram implements Serializable {
 
     /**
      * Sets the PostScript italic angel.
-     * <br/>
+     * <p>
      * Italic angle in counter-clockwise degrees from the vertical. Zero for upright text, negative for text that leans to the right (forward).
      *
      * @param italicAngle in counter-clockwise degrees from the vertical
@@ -283,7 +283,7 @@ public abstract class FontProgram implements Serializable {
 
     /**
      * Sets the PostScript name of the font.
-     * <br />
+     * <p>
      * If full name is null, it will be set as well.
      *
      * @param fontName the PostScript name of the font, shall not be null or empty.

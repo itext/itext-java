@@ -360,7 +360,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     /**
      * Moves structure associated with specified page and insert it in a specified position in the document.
-     * <br/><br/>
+     * <p>
      * NOTE: Works only for document with not flushed pages.
      *
      * @param fromPage page which tag structure will be moved

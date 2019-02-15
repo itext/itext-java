@@ -480,6 +480,8 @@ public class PdfSigner {
 
     /**
      * Sets the PdfDocument.
+     *
+     * @param document The PdfDocument
      */
     protected void setDocument(PdfDocument document) {
         this.document = document;
@@ -487,6 +489,8 @@ public class PdfSigner {
 
     /**
      * Setter for the OutputStream.
+     *
+     * @param originalOS OutputStream for the bytes of the document
      */
     public void setOriginalOutputStream(OutputStream originalOS) {
         this.originalOS = originalOS;
@@ -1032,6 +1036,7 @@ public class PdfSigner {
      * {@link #preClose(Map)}, {@link #getRangeStream()} and {@link #close(PdfDictionary)}.
      *
      * @return The {@link InputStream} of bytes to be signed.
+     * @throws IOException
      */
     protected InputStream getRangeStream() throws IOException {
         RandomAccessSourceFactory fac = new RandomAccessSourceFactory();
@@ -1146,6 +1151,7 @@ public class PdfSigner {
      * This method is only used for signatures that lock fields.
      *
      * @param crypto the signature dictionary
+     * @param fieldLock
      */
     protected void addFieldMDP(PdfSignature crypto, PdfSigFieldLock fieldLock) {
         PdfDictionary reference = new PdfDictionary();

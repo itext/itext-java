@@ -293,7 +293,7 @@ public class Glyph implements Serializable {
     /**
      * Two Glyphs are equal if their unicode characters, code and normalized width are equal.
      *
-     * @param obj
+     * @param obj The object
      * @return True if this equals obj cast to Glyph, false otherwise.
      */
     public boolean equals(Object obj) {

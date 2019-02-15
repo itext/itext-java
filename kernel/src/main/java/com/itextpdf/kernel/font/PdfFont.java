@@ -475,6 +475,9 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Adds a unique subset prefix to be added to the font name when the font is embedded and subset.
      *
+     * @param fontName
+     * @param isSubset
+     * @param isEmbedded
      * @return the font name with subset prefix if isSubset and isEmbedded are true.s
      */
     protected static String updateSubsetPrefix(String fontName, boolean isSubset, boolean isEmbedded) {

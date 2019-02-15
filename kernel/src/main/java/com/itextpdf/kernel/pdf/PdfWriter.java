@@ -405,7 +405,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * Flushes all objects which have not been flushed yet.
-     * @param forbiddenToFlush {@link Set<PdfIndirectReference>} of references that are forbidden to be flushed automatically.
+     * @param forbiddenToFlush {@link Set}&lt;{@link PdfIndirectReference}&gt; of references that are forbidden to be flushed automatically.
      */
     protected void flushWaitingObjects(Set<PdfIndirectReference> forbiddenToFlush) {
         PdfXrefTable xref = document.getXref();
@@ -433,7 +433,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * Flushes all modified objects which have not been flushed yet. Used in case incremental updates.
-     * @param forbiddenToFlush {@link Set<PdfIndirectReference>} of references that are forbidden to be flushed automatically.
+     * @param forbiddenToFlush {@link Set}&lt;{@link PdfIndirectReference}&gt; of references that are forbidden to be flushed automatically.
      */
     protected void flushModifiedWaitingObjects(Set<PdfIndirectReference> forbiddenToFlush) {
         PdfXrefTable xref = document.getXref();

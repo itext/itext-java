@@ -94,6 +94,9 @@ public abstract class ContextualSubTable implements Serializable {
      * Checks if given glyph line at the given position matches given rule.
      * @return either index which corresponds to the last glyph of the matching context inside the glyph line if context matches,
      * or -1 if context doesn't match.
+     *
+     * @param line
+     * @param rule
      */
     protected int checkIfContextMatch(GlyphLine line, ContextualSubstRule rule) {
         int j;

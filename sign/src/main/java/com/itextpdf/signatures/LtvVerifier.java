@@ -133,6 +133,8 @@ public class LtvVerifier extends RootStoreVerifier {
 
     /**
      * Set the verifyRootCertificate to false if you can't verify the root certificate.
+     *
+     * @param verifyRootCertificate
      */
     public void setVerifyRootCertificate(boolean verifyRootCertificate) {
         this.verifyRootCertificate = verifyRootCertificate;
@@ -149,6 +151,8 @@ public class LtvVerifier extends RootStoreVerifier {
 
     /**
      * Verifies all the document-level timestamps and all the signatures in the document.
+     *
+     * @param result
      * @throws IOException
      * @throws GeneralSecurityException
      */

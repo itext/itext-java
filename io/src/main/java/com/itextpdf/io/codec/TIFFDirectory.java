@@ -129,6 +129,7 @@ public class TIFFDirectory implements Serializable {
      *
      * @param stream    a SeekableStream to read from.
      * @param directory the index of the directory to read.
+     * @throws          java.io.IOException
      */
     public TIFFDirectory(RandomAccessFileOrArray stream, int directory)
             throws java.io.IOException {
@@ -181,6 +182,7 @@ public class TIFFDirectory implements Serializable {
      * @param directory  the index of the directory to read beyond the
      *                   one at the current stream offset; zero indicates the IFD
      *                   at the current offset.
+     * @throws           java.io.IOException
      */
     public TIFFDirectory(RandomAccessFileOrArray stream, long ifd_offset, int directory)
             throws java.io.IOException {
@@ -490,6 +492,10 @@ public class TIFFDirectory implements Serializable {
      * long.  The caller is responsible for ensuring that the tag is
      * present and has type TIFF_BYTE, TIFF_SBYTE, TIFF_UNDEFINED,
      * TIFF_SHORT, TIFF_SSHORT, TIFF_SLONG or TIFF_LONG.
+     *
+     * @param tag       The tag
+     * @param index     The index
+     * @return          The value of the given index of the given tag as a long
      */
     public long getFieldAsLong(int tag, int index) {
         Integer i = fieldIndex.get(tag);
@@ -501,6 +507,9 @@ public class TIFFDirectory implements Serializable {
      * long.  The caller is responsible for ensuring that the tag is
      * present and has type TIFF_BYTE, TIFF_SBYTE, TIFF_UNDEFINED,
      * TIFF_SHORT, TIFF_SSHORT, TIFF_SLONG or TIFF_LONG.
+     *
+     * @param tag       The tag
+     * @return          The value of index 0 of the given tag as a long
      */
     public long getFieldAsLong(int tag) {
         return getFieldAsLong(tag, 0);
@@ -511,6 +520,10 @@ public class TIFFDirectory implements Serializable {
      * float.  The caller is responsible for ensuring that the tag is
      * present and has numeric type (all but TIFF_UNDEFINED and
      * TIFF_ASCII).
+     *
+     * @param tag       The tag
+     * @param index     The index
+     * @return          The value of the given index of the given tag as a float
      */
     public float getFieldAsFloat(int tag, int index) {
         Integer i = fieldIndex.get(tag);
@@ -521,6 +534,9 @@ public class TIFFDirectory implements Serializable {
      * Returns the value of index 0 of a given tag as a float.  The
      * caller is responsible for ensuring that the tag is present and
      * has numeric type (all but TIFF_UNDEFINED and TIFF_ASCII).
+     *
+     * @param tag       The tag
+     * @return          The value of index 0 of the given tag as a float
      */
     public float getFieldAsFloat(int tag) {
         return getFieldAsFloat(tag, 0);
@@ -531,6 +547,10 @@ public class TIFFDirectory implements Serializable {
      * double.  The caller is responsible for ensuring that the tag is
      * present and has numeric type (all but TIFF_UNDEFINED and
      * TIFF_ASCII).
+     *
+     * @param tag       The tag
+     * @param index     The index
+     * @return          The value of the given index of the given tag as a double
      */
     public double getFieldAsDouble(int tag, int index) {
         Integer i = fieldIndex.get(tag);
@@ -541,6 +561,9 @@ public class TIFFDirectory implements Serializable {
      * Returns the value of index 0 of a given tag as a double.  The
      * caller is responsible for ensuring that the tag is present and
      * has numeric type (all but TIFF_UNDEFINED and TIFF_ASCII).
+     *
+     * @param tag       The tag
+     * @return          The value of index 0 of the given tag as a double
      */
     public double getFieldAsDouble(int tag) {
         return getFieldAsDouble(tag, 0);
@@ -636,6 +659,11 @@ public class TIFFDirectory implements Serializable {
     /**
      * Returns the number of image directories (subimages) stored in a
      * given TIFF file, represented by a <code>SeekableStream</code>.
+     *
+     * @param stream       RandomAccessFileOrArray
+     * @return             The number of image directories (subimages) stored
+     *                     in a given TIFF file
+     * @throws java.io.IOException
      */
     public static int getNumDirectories(RandomAccessFileOrArray stream)
             throws java.io.IOException {

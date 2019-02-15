@@ -803,7 +803,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @param index         the index at which specified annotation will be added. If {@code -1} then annotation will be added
      *                      to the end of array.
      * @param annotation    the {@link PdfAnnotation} to add.
-     * @param tagAnnotation if {@code true} the added annotation will be autotagged. <br/>
+     * @param tagAnnotation if {@code true} the added annotation will be autotagged. <p>
      *                      (see {@link com.itextpdf.kernel.pdf.tagutils.TagStructureContext#getAutoTaggingPointer()})
      * @return this {@link PdfPage} instance.
      */

@@ -238,7 +238,7 @@ public class TagTreePointer {
      * Adds a new tag with given role to the tag structure.
      * This method call moves this {@code TagTreePointer} to the added kid.
      * <br>
-     * This call is equivalent of calling sequentially {@link #setNextNewKidIndex(int)} and {@link #addTag(PdfName)}.
+     * This call is equivalent of calling sequentially {@link #setNextNewKidIndex(int)} and {@link #addTag(String)}.
      *
      * @param index zero-based index in kids array of parent tag at which new tag will be added.
      * @param role  role of the new tag.
@@ -309,7 +309,7 @@ public class TagTreePointer {
      * By default, new tag is added at the end of the parent kids array. This property affects only the next added tag,
      * all tags added after will be added with the default behaviour.
      * <br><br>
-     * This method could be used with any overload of {@link #addTag(PdfName)} method,
+     * This method could be used with any overload of {@link #addTag(String)} method,
      * with {@link #relocateKid(int, TagTreePointer)} and {@link #addAnnotationTag(PdfAnnotation)}.
      * <br>
      * Keep in mind, that this method set property to the {@code TagTreePointer} and not to the tag itself, which means

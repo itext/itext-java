@@ -688,6 +688,7 @@ public class PdfType0Font extends PdfFont {
     /**
      * Generates the CIDFontTyte2 dictionary.
      *
+     * @param ttf
      * @param fontDescriptor the indirect reference to the font descriptor
      * @param fontName       a name of the font
      * @param metrics        the horizontal width metrics
@@ -891,6 +892,7 @@ public class PdfType0Font extends PdfFont {
     /**
      * Generates the CIDFontTyte2 dictionary.
      *
+     * @param ttf
      * @param fontDescriptor the indirect reference to the font descriptor
      * @param fontName       a name of the font
      * @param metrics        the horizontal width metrics

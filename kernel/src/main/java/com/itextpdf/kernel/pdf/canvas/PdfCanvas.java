@@ -395,6 +395,7 @@ public class PdfCanvas implements Serializable {
      * in the content stream managed by this Canvas.
      * See also {@link #concatMatrix(double, double, double, double, double, double)}
      *
+     * @param transform
      * @return current canvas
      */
     public PdfCanvas concatMatrix(AffineTransform transform) {

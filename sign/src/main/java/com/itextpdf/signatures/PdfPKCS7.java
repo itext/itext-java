@@ -791,6 +791,9 @@ public class PdfPKCS7 {
      *
      * @param secondDigest the digest in the authenticatedAttributes
      * @param tsaClient    TSAClient - null or an optional time stamp authority client
+     * @param ocsp
+     * @param crlBytes
+     * @param sigtype
      * @return byte[] the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7(byte[] secondDigest, ITSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
@@ -968,6 +971,9 @@ public class PdfPKCS7 {
      * </pre>
      *
      * @param secondDigest the content digest
+     * @param ocsp
+     * @param crlBytes
+     * @param sigtype
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
     public byte[] getAuthenticatedAttributeBytes(byte[] secondDigest, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {

@@ -299,7 +299,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
      * A {@link PdfName#Ref} identifies the structure element or elements to which the item of content, contained
      * within this structure element, refers (e.g. footnotes, endnotes, sidebars, etc.).
      *
-     * @return a {@link List<  PdfStructElem  >} containing zero, one or more structure elements.
+     * @return a {@link List}&lt;{@link PdfStructElem}&gt; containing zero, one or more structure elements.
      */
     public List<PdfStructElem> getRefsList() {
         PdfArray refsArray = getPdfObject().getAsArray(PdfName.Ref);

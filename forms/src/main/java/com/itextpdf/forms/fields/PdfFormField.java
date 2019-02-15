@@ -370,6 +370,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Creates an empty {@link PdfTextFormField text form field}.
      *
      * @param doc the {@link PdfDocument} to create the text field in
+     * @param pdfAConformanceLevel
      * @return a new {@link PdfTextFormField}
      */
     public static PdfTextFormField createText(PdfDocument doc, PdfAConformanceLevel pdfAConformanceLevel) {
@@ -599,6 +600,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param flags                an <code>int</code>, containing a set of binary behavioral
      *                             flags. Do binary <code>OR</code> on this <code>int</code> to set the
      *                             flags you require.
+     * @param font
      * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
      * @return a new {@link PdfChoiceFormField}
      */
@@ -972,6 +974,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param value                the initial value
      * @param options              a two-dimensional array of Strings which will be converted
      *                             to a PdfArray.
+     * @param font
      * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
      * @return a new {@link PdfChoiceFormField} as a combobox
      */
@@ -1007,6 +1010,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param name                 the name of the form field
      * @param value                the initial value
      * @param options              an array of Strings which will be converted to a PdfArray.
+     * @param font
      * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
      * @return a new {@link PdfChoiceFormField} as a combobox
      */
@@ -1044,6 +1048,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param value                the initial value
      * @param options              a two-dimensional array of Strings which will be converted
      *                             to a PdfArray.
+     * @param font
      * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
      * @return a new {@link PdfChoiceFormField} as a list field
      */
@@ -1079,6 +1084,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param name                 the name of the form field
      * @param value                the initial value
      * @param options              an array of Strings which will be converted to a PdfArray.
+     * @param font
      * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
      * @return a new {@link PdfChoiceFormField} as a list field
      */
@@ -2677,6 +2683,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param font     preferred font. If {@link #getFont()} is not null, it will be used instead.
      * @param fontSize preferred font size. If {@link PdfFormField#fontSize} is valid,
      *                 it will be used instead.
+     * @param color
+     * @param res
      * @return generated string
      */
     protected String generateDefaultAppearanceString(PdfFont font, float fontSize, Color color, PdfResources res) {
@@ -3190,6 +3198,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * @deprecated use {@link #drawPdfA2CheckAppearance(float, float, String, int)} instead.
+     *
+     * @param width
+     * @param height
+     * @param selectedValue
+     * @param checkType
      */
     @Deprecated
     protected void drawPdfA1CheckAppearance(float width, float height, String selectedValue, int checkType) {

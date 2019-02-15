@@ -200,6 +200,7 @@ public final class ImageDataFactory {
      * @param image the java.awt.Image to convert
      * @param color if different from <CODE>null</CODE> the transparency pixels are replaced by this color
      * @return RawImage
+     * @throws java.io.IOException
      */
     public static ImageData create(java.awt.Image image, java.awt.Color color) throws java.io.IOException {
         return ImageDataFactory.create(image, color, false);
@@ -212,6 +213,7 @@ public final class ImageDataFactory {
      * @param color   if different from <CODE>null</CODE> the transparency pixels are replaced by this color
      * @param forceBW if <CODE>true</CODE> the image is treated as black and white
      * @return RawImage
+     * @throws java.io.IOException
      */
     public static ImageData create(java.awt.Image image, java.awt.Color color, boolean forceBW) throws java.io.IOException {
         return AwtImageDataFactory.create(image, color, forceBW);
@@ -406,7 +408,7 @@ public final class ImageDataFactory {
 
     /**
      * Create a ImageData instance from a Jpeg image url
-     * @param url
+     * @param url URL
      */
     public static ImageData createJpeg(URL url) {
         byte[] imageType = readImageType(url);

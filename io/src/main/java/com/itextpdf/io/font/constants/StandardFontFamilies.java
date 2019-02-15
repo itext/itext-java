@@ -44,7 +44,7 @@ package com.itextpdf.io.font.constants;
 
 /**
  * Class containing families for {@link StandardFonts}.
- * This class was made for {@link com.itextpdf.io.font.FontRegisterProvider}.
+ * This class was made for com.itextpdf.io.font.FontRegisterProvider.
  */
 public final class StandardFontFamilies {
 

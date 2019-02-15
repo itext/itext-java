@@ -173,6 +173,9 @@ public class CMapEncoding implements Serializable {
 
     /**
      * @deprecated Will be removed in 7.2. Use {@link #getCmapBytes(int)} instead.
+     *
+     * @param cid a CID
+     * @return CMAP code as an int
      */
     @Deprecated
     public int getCmapCode(int cid) {

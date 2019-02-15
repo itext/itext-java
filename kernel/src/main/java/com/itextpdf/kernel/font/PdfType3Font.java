@@ -180,7 +180,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
     /**
      * Sets the PostScript italic angle.
-     * <br/>
+     * <p>
      * Italic angle in counter-clockwise degrees from the vertical. Zero for upright text, negative for text that leans to the right (forward).
      *
      * @param italicAngle in counter-clockwise degrees from the vertical

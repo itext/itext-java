@@ -918,6 +918,7 @@ public final class SvgConverter {
      * defaulting to respective viewbox values if either one is not present or
      * to browser default if viewbox is missing as well
      *
+     * @param topSvgRenderer
      * @return float[2], width is in position 0, height in position 1
      */
     public static float[] extractWidthAndHeight(ISvgNodeRenderer topSvgRenderer) {

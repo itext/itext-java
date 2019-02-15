@@ -462,7 +462,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * Sets the Domain with the {@link PdfArray} of two {@code float} [t0, t1] that represent the limiting values
          * of a parametric variable t, that becomes an input of color function(s).
          *
-         * @param domain the {@PdfArray} that represents domain
+         * @param domain the {@link PdfArray} that represents domain
          */
         public void setDomain(PdfArray domain) {
             getPdfObject().put(PdfName.Domain, domain);
@@ -672,7 +672,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * Sets the Domain with the {@link PdfArray} of two {@code float} [t0, t1] that represent the limiting values
          * of a parametric variable t, that becomes an input of color function(s).
          *
-         * @param domain the {@PdfArray} that represents domain
+         * @param domain the {@link PdfArray} that represents domain
          */
         public void setDomain(PdfArray domain) {
             getPdfObject().put(PdfName.Domain, domain);

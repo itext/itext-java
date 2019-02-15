@@ -68,6 +68,8 @@ public class UnitValue {
 
     /**
      * Creates a copy of UnitValue object.
+     *
+     * @param unitValue
      */
     public UnitValue(UnitValue unitValue) {
         this(unitValue.unitType, unitValue.value);

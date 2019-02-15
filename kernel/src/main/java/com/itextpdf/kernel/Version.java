@@ -95,7 +95,7 @@ public final class Version {
     private boolean expired;
 
     /**
-     * @depricated Use {@link Version#getInstance()} instead. Will be removed in next major release.
+     * @deprecated Use {@link Version#getInstance()} instead. Will be removed in next major release.
      */
     @Deprecated
     public Version() {

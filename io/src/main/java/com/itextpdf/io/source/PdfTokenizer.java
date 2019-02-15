@@ -498,6 +498,10 @@ public class PdfTokenizer implements Closeable, Serializable {
      * NOTE Due to PdfReference 1.7 part 3.2.3 String value contain ASCII characters,
      * so we can convert it directly to byte array.
      *
+     * @param content
+     * @param from
+     * @param to
+     * @param hexWriting
      * @return byte[] for decrypting or for creating {@link java.lang.String}.
      */
     protected static byte[] decodeStringContent(byte[] content, int from, int to, boolean hexWriting) {
@@ -592,6 +596,8 @@ public class PdfTokenizer implements Closeable, Serializable {
      * NOTE Due to PdfReference 1.7 part 3.2.3 String value contain ASCII characters,
      * so we can convert it directly to byte array.
      *
+     * @param content
+     * @param hexWriting
      * @return byte[] for decrypting or for creating {@link java.lang.String}.
      */
     public static byte[] decodeStringContent(byte[] content, boolean hexWriting) {

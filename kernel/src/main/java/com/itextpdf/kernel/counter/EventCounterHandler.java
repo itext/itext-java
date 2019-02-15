@@ -53,7 +53,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Manager that works with {@link IEventCounterFactory}. Create {@link EventCounter} for each registered {@link IEventCounterFactory}
  * and send corresponding events when calling {@link #onEvent(IEvent, IMetaInfo, Class)} method.
- * <br/>
+ * <p>
  * You can implement your own {@link IEventCounterFactory} and register them with {@link EventCounterHandler#register(IEventCounterFactory)}
  * Or implement {@link EventCounter} and register it with {@link SimpleEventCounterFactory} like this:
  * <code>EventCounterManager.getInstance().register(new SimpleEventCounterFactory(new SystemOutEventCounter());</code>
@@ -87,6 +87,10 @@ public class EventCounterHandler {
     /**
      * Triggers all registered {@link IEventCounterFactory} to produce {@link EventCounter} instance
      * and count the event.
+     *
+     * @param event
+     * @param metaInfo
+     * @param caller
      */
     public void onEvent(IEvent event, IMetaInfo metaInfo, Class<?> caller) {
         IContext context = null;
