@@ -46,6 +46,7 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -72,7 +73,6 @@ import java.util.regex.Pattern;
  */
 public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
-    private static final String SEPARATOR = "";
     private static final String SPACE_CHAR = " ";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PathSvgNodeRenderer.class);
@@ -89,7 +89,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
     /**
      * The regular expression to split the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of the &ltpath&gt element</a>
      * <p>
-     * Since {@link PathSvgNodeRenderer#containsInvalidAttributes(String)} is called before the use of this expression in {@link PathSvgNodeRenderer#parsePropertiesAndStyles()} the attribute to be split is valid.
+     * Since {@link PathSvgNodeRenderer#containsInvalidAttributes(String)} is called before the use of this expression in {@link PathSvgNodeRenderer#parsePathOperations()} the attribute to be split is valid.
      * The regex splits at each letter.
      */
     private static final String SPLIT_REGEX = "(?=[\\p{L}])";
@@ -125,12 +125,12 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
     }
 
     /**
-     * Gets the coordinates that shall be passed to {@link IPathShape#setCoordinates(String[])} for the current shape.
+     * Gets the coordinates that shall be passed to {@link IPathShape#setCoordinates} for the current shape.
      *
      * @param shape          The current shape.
      * @param previousShape  The previous shape which can affect the coordinates of the current shape.
      * @param pathProperties The operator and all arguments as a {@link String[]}
-     * @return a {@link String[]} of coordinates that shall be passed to {@link IPathShape#setCoordinates(String[])}
+     * @return a {@link String[]} of coordinates that shall be passed to {@link IPathShape#setCoordinates}
      */
     private String[] getShapeCoordinates(IPathShape shape, IPathShape previousShape, String[] pathProperties) {
         if (shape instanceof ClosePath) {
@@ -178,7 +178,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
      */
     private List<IPathShape> processPathOperator(String[] pathProperties, IPathShape previousShape) {
         List<IPathShape> shapes = new ArrayList<>();
-        if (pathProperties.length == 0 || pathProperties[0].equals(SEPARATOR)) {
+        if (pathProperties.length == 0 || pathProperties[0].isEmpty()) {
             return shapes;
         }
         //Implements (absolute) command value only
@@ -219,7 +219,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
      * @return a {@link Collection} of each {@link IPathShape} that should be drawn to represent the path.
      */
     Collection<IPathShape> getShapes() {
-        Collection<String> parsedResults = parsePropertiesAndStyles();
+        Collection<String> parsedResults = parsePathOperations();
         List<IPathShape> shapes = new ArrayList<>();
 
         for (String parsedResult : parsedResults) {
@@ -243,28 +243,28 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
         return SvgRegexUtils.containsAtLeastOneMatch(invalidRegexPattern,attributes);
     }
 
-    private Collection<String> parsePropertiesAndStyles() {
-        StringBuilder result = new StringBuilder();
+    Collection<String> parsePathOperations() {
+        Collection<String> result = new ArrayList<>();
         String attributes = attributesAndStyles.get(SvgConstants.Attributes.D);
+        if (attributes == null) {
+            throw new SvgProcessingException(SvgExceptionMessageConstant.PATH_OBJECT_MUST_HAVE_D_ATTRIBUTE);
+        }
         if (containsInvalidAttributes(attributes)) {
             throw new SvgProcessingException(SvgLogMessageConstant.INVALID_PATH_D_ATTRIBUTE_OPERATORS).setMessageParams(attributes);
         }
         String[] coordinates = attributes.split(SPLIT_REGEX);//gets an array attributesAr of {M 100 100, L 300 100, L200, 300, z}
 
         for (String inst : coordinates) {
-            if (!inst.equals(SEPARATOR)) {
-                String instTrim = inst.trim();
-                String instruction = instTrim.charAt(0) + SPACE_CHAR;
-                String temp = instruction + instTrim.replace(instTrim.charAt(0) + SEPARATOR, SEPARATOR).replace(",", SPACE_CHAR).trim();
+            String instTrim = inst.trim();
+            if (!instTrim.isEmpty()) {
+                char instruction = instTrim.charAt(0);
+                String temp = instruction + SPACE_CHAR + instTrim.substring(1).replace(",", SPACE_CHAR).trim();
                 //Do a run-through for decimal point separation
                 temp = separateDecimalPoints(temp);
-                result.append(SPACE_CHAR);
-                result.append(temp);
+                result.add(temp);
             }
         }
-
-        String[] resultArray = result.toString().split(SPLIT_REGEX);
-        return new ArrayList<>(Arrays.asList(resultArray));
+        return result;
     }
 
     /**

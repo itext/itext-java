@@ -137,52 +137,8 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void decimalPointParsingTest(){
-        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
-        String input = "2.35.96";
-
-        String expected = "2.35 .96";
-        String actual = path.separateDecimalPoints(input);
-        Assert.assertEquals(expected,actual);
-    }
-
-    @Test
-    public void decimalPointParsingSpaceTest(){
-        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
-        String input = "2.35.96 3.25 .25";
-
-        String expected = "2.35 .96 3.25 .25";
-        String actual = path.separateDecimalPoints(input);
-        Assert.assertEquals(expected,actual);
-    }
-
-    @Test
-    public void decimalPointParsingTabTest(){
-        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
-        String input = "2.35.96 3.25\t.25";
-
-        String expected = "2.35 .96 3.25\t.25";
-        String actual = path.separateDecimalPoints(input);
-        Assert.assertEquals(expected,actual);
-    }
-    @Test
-    public void decimalPointParsingMinusTest(){
-        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
-        String input = "2.35.96 3.25-.25";
-
-        String expected = "2.35 .96 3.25 -.25";
-        String actual = path.separateDecimalPoints(input);
-        Assert.assertEquals(expected,actual);
-    }
-
-    @Test
-    public void negativeAfterPositiveTest(){
-        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
-        String input = "40-50";
-
-        String expected = "40 -50";
-        String actual = path.separateDecimalPoints(input);
-        Assert.assertEquals(expected,actual);
+    public void precedingSpacesTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "precedingSpaces");
     }
 }
 

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="400" viewBox="0 0 1000 400">
+
+ <path d="   M250 100
+             V            -10
+               M 260 100
+             V0
+              M           270 100
+             V100
+
+             M280 100
+             V100.5
+             M290 100
+             V200
+             M295 100
+             V200 200 200   "
+       style="stroke: #3333cc;"/>
+ <text x="20" y="150" font-size="12">
+  Sample path with spaces before (purple blue)
+ </text>
+</svg>
