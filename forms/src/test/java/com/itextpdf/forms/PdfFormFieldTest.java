@@ -777,8 +777,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    //DEVSIX-2393
-    //TODO change cmp file after fix
     public void multilineFormFieldNewLineTest() throws IOException, InterruptedException {
         String testName = "multilineFormFieldNewLineTest";
         String outPdf = destinationFolder + testName + ".pdf";
@@ -796,6 +794,30 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void multilineFormFieldNewLineFontType3Test() throws IOException, InterruptedException {
+        String testName = "multilineFormFieldNewLineFontType3Test";
+
+        String outPdf = destinationFolder + testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_"+ testName + ".pdf";
+        String srcPdf = sourceFolder + testName + ".pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfReader reader = new PdfReader(srcPdf);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfTextFormField info = (PdfTextFormField) form.getField("info");
+        info.setValue("A\n\nE");
+       
+        pdfDoc.close();
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (errorMessage != null) {
