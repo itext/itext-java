@@ -531,9 +531,20 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (mediaBox == null) {
             throw new PdfException(PdfException.CannotRetrieveMediaBoxAttribute);
         }
-        if (mediaBox.size() != 4) {
-            throw new PdfException(PdfException.WrongMediaBoxSize1).setMessageParams(mediaBox.size());
+        int mediaBoxSize;
+        if ((mediaBoxSize = mediaBox.size()) != 4) {
+            if (mediaBoxSize > 4) {
+                Logger logger = LoggerFactory.getLogger(PdfPage.class);
+                if (logger.isErrorEnabled()) {
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS, mediaBoxSize));
+
+                }
+            }
+            if (mediaBoxSize < 4) {
+                throw new PdfException(PdfException.WRONGMEDIABOXSIZETOOFEWARGUMENTS).setMessageParams(mediaBox.size());
+            }
         }
+
         PdfNumber llx = mediaBox.getAsNumber(0);
         PdfNumber lly = mediaBox.getAsNumber(1);
         PdfNumber urx = mediaBox.getAsNumber(2);

@@ -292,7 +292,12 @@ public class PdfException extends RuntimeException {
     public static final String WhitePointIsIncorrectlySpecified = "White point is incorrectly specified.";
     public static final String WmfImageException = "WMF image exception.";
     public static final String WrongFormFieldAddAnnotationToTheField = "Wrong form field. Add annotation to the field.";
-    public static final String WrongMediaBoxSize1 = "Wrong media box size: {0}.";
+    /**
+     * @deprecated in favour of more informative named constant
+     */
+    @Deprecated
+    public static final String WrongMediaBoxSize1= "Wrong media box size: {0}.";
+    public static final String WRONGMEDIABOXSIZETOOFEWARGUMENTS = "Wrong media box size: {0}. Need at least 4 arguments";
     public static final String XrefSubsectionNotFound = "xref subsection not found.";
     public static final String YouHaveToDefineABooleanArrayForThisCollectionSortDictionary = "You have to define a boolean array for this collection sort dictionary.";
     public static final String YouMustSetAValueBeforeAddingAPrefix = "You must set a value before adding a prefix.";
