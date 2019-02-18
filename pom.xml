@@ -289,9 +289,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${javadoc.version}</version>
         <configuration>
-          <additionalparam>${javadoc.doclint.none}</additionalparam>
           <quiet>true</quiet>
-          <failOnError>true</failOnError>
           <source>7</source>
           <additionalOptions>${javadoc-additionalOptions}</additionalOptions>
           <links>
@@ -362,15 +360,6 @@
   </reporting>
   <profiles>
     <profile>
-      <id>java8-disable-strict-javadoc</id>
-      <activation>
-        <jdk>[1.8,)</jdk>
-      </activation>
-      <properties>
-        <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
-      </properties>
-    </profile>
-    <profile>
       <id>java9+</id>
       <activation>
         <jdk>[9,)</jdk>
@@ -432,6 +421,19 @@
                 </configuration>
               </execution>
             </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>${javadoc.version}</version>
+            <configuration>
+              <quiet>true</quiet>
+              <source>7</source>
+              <additionalOptions>${javadoc-additionalOptions}</additionalOptions>
+              <links>
+                <link>${javadoc-link}</link>
+              </links>
+            </configuration>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -652,9 +654,7 @@
               </execution>
             </executions>
             <configuration>
-              <additionalparam>${javadoc.doclint.none}</additionalparam>
               <quiet>true</quiet>
-              <failOnError>false</failOnError>
               <detectLinks>true</detectLinks>
               <subpackages>com.itextpdf.barcodes:com.itextpdf.forms:com.itextpdf.io:com.itextpdf.kernel:com.itextpdf.layout:com.itextpdf.pdfa:com.itextpdf.signatures:com.itextpdf.styled-xml-parser:com.itextpdf.svg:com.itextpdf.test</subpackages>
               <groups>
