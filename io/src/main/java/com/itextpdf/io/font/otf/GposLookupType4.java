@@ -98,11 +98,20 @@ public class GposLookupType4 extends OpenTableLookup {
             if (gpas == null)
                 continue;
             int markClass = omr.markClass;
+            int xPlacement = 0;
+            int yPlacement = 0;
             GposAnchor baseAnchor = gpas[markClass];
+            if (baseAnchor != null) {
+                xPlacement = baseAnchor.XCoordinate;
+                yPlacement = baseAnchor.YCoordinate;
+            }
             GposAnchor markAnchor = omr.anchor;
+            if (markAnchor != null) {
+                xPlacement -= markAnchor.XCoordinate;
+                yPlacement -= markAnchor.YCoordinate;
+            }
             line.set(line.idx, new Glyph(line.get(line.idx),
-                    -markAnchor.XCoordinate + baseAnchor.XCoordinate,
-                    -markAnchor.YCoordinate + baseAnchor.YCoordinate,
+                    xPlacement, yPlacement,
                     0, 0, gi.idx - line.idx));
             changed = true;
             break;

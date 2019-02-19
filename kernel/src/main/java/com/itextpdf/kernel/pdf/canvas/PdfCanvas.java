@@ -781,8 +781,8 @@ public class PdfCanvas implements Serializable {
                                 if (currentGlyph.getAnchorDelta() == 0) {
                                     break;
                                 } else {
-                                    currentGlyph = text.get(currentGlyphIndex + currentGlyph.getAnchorDelta());
                                     currentGlyphIndex += currentGlyph.getAnchorDelta();
+                                    currentGlyph = text.get(currentGlyphIndex);
                                 }
                             }
                             yPlacement = -getSubrangeYDelta(text, currentGlyphIndex, i) + yPlacementAddition * fontSize;
