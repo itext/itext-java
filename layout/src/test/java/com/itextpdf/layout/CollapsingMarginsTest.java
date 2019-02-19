@@ -44,6 +44,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -51,15 +52,24 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.renderer.DivRenderer;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Category(IntegrationTest.class)
 public class CollapsingMarginsTest extends ExtendedITextTest {
@@ -70,6 +80,9 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void collapsingMarginsTest01() throws IOException, InterruptedException {
@@ -104,14 +117,14 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
         Div div1 = new Div();
         Div div2 = new Div();
 
-        div1.add(p).setBackgroundColor(new DeviceRgb(65,151,29));
-        div2.add(p).setBackgroundColor(new DeviceRgb(209,247,29));
+        div1.add(p).setBackgroundColor(new DeviceRgb(65, 151, 29));
+        div2.add(p).setBackgroundColor(new DeviceRgb(209, 247, 29));
 
         div1.setMarginBottom(20);
         div2.setMarginTop(150);
         div2.setMarginBottom(150);
 
-        Div div = new Div().setMarginTop(20).setMarginBottom(10).setBackgroundColor(new DeviceRgb(78,151,205));
+        Div div = new Div().setMarginTop(20).setMarginBottom(10).setBackgroundColor(new DeviceRgb(78, 151, 205));
         div.add(div1);
         div.add(div2);
         doc.add(div);
@@ -160,14 +173,14 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
         Div div1 = new Div();
         Div div2 = new Div();
 
-        div1.add(p).setBackgroundColor(new DeviceRgb(65,151,29));
-        div2.add(p).setBackgroundColor(new DeviceRgb(209,247,29));
+        div1.add(p).setBackgroundColor(new DeviceRgb(65, 151, 29));
+        div2.add(p).setBackgroundColor(new DeviceRgb(209, 247, 29));
 
         div1.setMarginBottom(40);
         div2.setMarginTop(20);
         div2.setMarginBottom(150);
 
-        Div div = new Div().setMarginTop(20).setMarginBottom(10).setBackgroundColor(new DeviceRgb(78,151,205));
+        Div div = new Div().setMarginTop(20).setMarginBottom(10).setBackgroundColor(new DeviceRgb(78, 151, 205));
         div.add(div1);
         div.add(div2);
         doc.add(div);
@@ -215,8 +228,8 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
         Div div1 = new Div();
         Div div2 = new Div();
 
-        div1.add(p).setBackgroundColor(new DeviceRgb(65,151,29));
-        div2.add(p).setBackgroundColor(new DeviceRgb(209,247,29));
+        div1.add(p).setBackgroundColor(new DeviceRgb(65, 151, 29));
+        div2.add(p).setBackgroundColor(new DeviceRgb(209, 247, 29));
 
         div1.setMarginBottom(80);
         div2.setMarginTop(80);
@@ -267,14 +280,14 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
         p.add(new Text("small text").setFontSize(5.1f));
         p.add(
                 "\nAnd is always as nobly requited;\n" +
-                "Then battle for Freedom wherever you can,\n" +
-                "And, if not shot or hanged, you'll get knighted.");
+                        "Then battle for Freedom wherever you can,\n" +
+                        "And, if not shot or hanged, you'll get knighted.");
 
         Div div1 = new Div();
         Div div2 = new Div();
 
-        div1.add(p).setBackgroundColor(new DeviceRgb(65,151,29));
-        div2.add(p).setBackgroundColor(new DeviceRgb(209,247,29));
+        div1.add(p).setBackgroundColor(new DeviceRgb(65, 151, 29));
+        div2.add(p).setBackgroundColor(new DeviceRgb(209, 247, 29));
 
         div1.setMarginBottom(80);
         div2.setMarginTop(80);
@@ -320,7 +333,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
         p.setMarginTop(80);
         Div div = new Div();
 
-        div.add(p).setBackgroundColor(new DeviceRgb(65,151,29));
+        div.add(p).setBackgroundColor(new DeviceRgb(65, 151, 29));
 
         doc.add(div);
 
@@ -340,6 +353,73 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
             canvas.rectangle(36, 36, 595 - 36 * 2, 842 - 36 * 2);
             canvas.stroke();
             canvas.restoreState();
+        }
+    }
+
+    @Test
+    // TODO DEVSIX-2901 the exception should not be thrown
+    public void columnRendererTest() throws IOException, InterruptedException {
+        junitExpectedException.expect(ArrayIndexOutOfBoundsException.class);
+        String outFileName = destinationFolder + "columnRendererTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_columnRendererTest.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        String textByron =
+                "When a man hath no freedom to fight for at home,\n" +
+                        "    Let him combat for that of his neighbours;\n" +
+                        "Let him think of the glories of Greece and of Rome,\n" +
+                        "    And get knocked on the head for his labours.\n" +
+                        "\n" +
+                        "To do good to Mankind is the chivalrous plan,\n" +
+                        "    And is always as nobly requited;\n" +
+                        "Then battle for Freedom wherever you can,\n" +
+                        "    And, if not shot or hanged, you'll get knighted.";
+
+        Document doc = new Document(pdfDocument);
+        doc.setProperty(Property.COLLAPSING_MARGINS, true);
+
+
+        Paragraph p = new Paragraph();
+        for (int i = 0; i < 10; i++) {
+            p.add(textByron);
+        }
+
+        Div div = new Div().add(p);
+        List<Rectangle> areas = new ArrayList<>();
+        areas.add(new Rectangle(30, 30, 150, 600));
+        areas.add(new Rectangle(200, 30, 150, 600));
+        areas.add(new Rectangle(370, 30, 150, 600));
+        div.setNextRenderer(new CustomColumnDocumentRenderer(div, areas));
+
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    private static class CustomColumnDocumentRenderer extends DivRenderer {
+        private List<Rectangle> areas;
+
+        public CustomColumnDocumentRenderer(Div modelElement, List<Rectangle> areas) {
+            super(modelElement);
+            this.areas = areas;
+        }
+
+        @Override
+        public LayoutResult layout(LayoutContext layoutContext) {
+            LayoutResult result = super.layout(layoutContext);
+            return result;
+        }
+
+        @Override
+        public List<Rectangle> initElementAreas(LayoutArea area) {
+            return areas;
+        }
+
+        @Override
+        public IRenderer getNextRenderer() {
+            return new CustomColumnDocumentRenderer((Div) modelElement, areas);
         }
     }
 }
