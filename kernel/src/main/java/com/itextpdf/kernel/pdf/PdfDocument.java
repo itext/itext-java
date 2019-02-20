@@ -1004,6 +1004,12 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return structTreeRoot != null;
     }
 
+    /**
+     * Specifies that document shall contain tag structure.
+     * See ISO 32000-1, section 14.8 "Tagged PDF"
+     *
+     * @return this PdfDocument
+     */
     public PdfDocument setTagged() {
         checkClosingStatus();
         if (structTreeRoot == null) {
