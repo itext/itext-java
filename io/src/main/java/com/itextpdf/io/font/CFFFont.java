@@ -47,7 +47,6 @@ import com.itextpdf.io.IOException;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 public class CFFFont {

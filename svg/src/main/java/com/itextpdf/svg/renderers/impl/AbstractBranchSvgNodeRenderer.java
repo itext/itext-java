@@ -59,9 +59,7 @@ import com.itextpdf.svg.utils.SvgCssUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Abstract class that will be the superclass for any element that can function

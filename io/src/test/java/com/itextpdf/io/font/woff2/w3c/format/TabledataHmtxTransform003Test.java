@@ -43,7 +43,6 @@
 package com.itextpdf.io.font.woff2.w3c.format;
 
 import com.itextpdf.io.font.woff2.w3c.W3CWoff2DecodeTest;
-import org.junit.Ignore;
 
 public class TabledataHmtxTransform003Test extends W3CWoff2DecodeTest {
     @Override

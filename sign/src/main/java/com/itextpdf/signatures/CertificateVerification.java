@@ -53,7 +53,11 @@ import java.security.KeyStore;
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.List;
+
 
 /**
  * This class consists of some methods that allow you to verify certificates.

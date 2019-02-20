@@ -43,14 +43,15 @@
 package com.itextpdf.signatures.sign;
 
 import com.itextpdf.signatures.CrlClientOnline;
+import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.experimental.categories.Category;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
+@Category(UnitTest.class)
 public class CrlClientOnlineTest {
 
     private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/";

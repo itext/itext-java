@@ -43,12 +43,12 @@
 package com.itextpdf.svg.renderers.path.impl;
 
 import com.itextpdf.kernel.geom.Point;
+import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@Category(UnitTest.class)
 public class EllipticalPathOperatorTest {
     // tests for coordinates
     @Test

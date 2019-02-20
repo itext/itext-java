@@ -43,7 +43,6 @@
  */
 package com.itextpdf.kernel.pdf.layer;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;

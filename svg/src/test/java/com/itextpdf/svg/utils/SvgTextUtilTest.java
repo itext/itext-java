@@ -42,7 +42,6 @@
  */
 package com.itextpdf.svg.utils;
 
-import com.itextpdf.styledxmlparser.util.WhiteSpaceUtil;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.impl.TextLeafSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer;

@@ -43,10 +43,13 @@
 package com.itextpdf.svg.renderers.path;
 
 import com.itextpdf.svg.renderers.path.impl.PathShapeMapper;
+import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+@Category(UnitTest.class)
 public class PathShapeMapperTest {
 
     private static IPathShapeMapper mapper;

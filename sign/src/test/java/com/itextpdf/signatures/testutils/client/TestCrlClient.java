@@ -50,7 +50,6 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 
 public class TestCrlClient implements ICrlClient {
 

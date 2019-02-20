@@ -66,7 +66,6 @@ import java.util.List;
 
 import static com.itextpdf.styledxmlparser.jsoup.nodes.Document.OutputSettings.Syntax;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 /**
  * Tests XmlTreeBuilder.

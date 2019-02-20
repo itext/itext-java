@@ -66,7 +66,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Assert;

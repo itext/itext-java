@@ -42,10 +42,10 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.nodes;
 
+import com.itextpdf.styledxmlparser.jsoup.helper.StringUtil;
+
 import java.io.IOException;
 
-import com.itextpdf.styledxmlparser.jsoup.helper.StringUtil;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Document.OutputSettings.*;
 
 /**
  * A {@code <!DOCTYPE>} node.
@@ -78,7 +78,7 @@ public class DocumentType extends Node {
 
     @Override
     void outerHtmlHead(Appendable accum, int depth, Document.OutputSettings out) throws IOException {
-        if (out.syntax() == Syntax.html && !has(PUBLIC_ID) && !has(SYSTEM_ID)) {
+        if (out.syntax() == Document.OutputSettings.Syntax.html && !has(PUBLIC_ID) && !has(SYSTEM_ID)) {
             // looks like a html5 doctype, go lowercase for aesthetics
             accum.append("<!doctype");
         } else {

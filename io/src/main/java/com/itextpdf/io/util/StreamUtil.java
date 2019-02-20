@@ -45,10 +45,15 @@ package com.itextpdf.io.util;
 
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.IRandomAccessSource;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 
 /**
  * This file is a helper class for internal usage only.

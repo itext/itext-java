@@ -140,7 +140,6 @@ import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.util.FileUtil;
 
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 /**

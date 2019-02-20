@@ -44,7 +44,6 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.svg.converter.SvgConverter;
-import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.test.annotations.type.UnitTest;

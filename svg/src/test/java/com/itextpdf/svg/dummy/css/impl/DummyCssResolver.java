@@ -47,7 +47,6 @@ import com.itextpdf.styledxmlparser.css.resolve.AbstractCssContext;
 import com.itextpdf.styledxmlparser.node.IAttribute;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.INode;
-import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 
 import java.util.HashMap;
 import java.util.Map;

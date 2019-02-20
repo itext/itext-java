@@ -49,7 +49,10 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.esf.*;
+import org.bouncycastle.asn1.esf.OtherHashAlgAndValue;
+import org.bouncycastle.asn1.esf.SigPolicyQualifierInfo;
+import org.bouncycastle.asn1.esf.SignaturePolicyId;
+import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 

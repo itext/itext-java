@@ -49,7 +49,6 @@ import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.LinkedList;

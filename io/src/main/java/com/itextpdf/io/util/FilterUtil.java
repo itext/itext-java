@@ -44,7 +44,6 @@
 package com.itextpdf.io.util;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.codec.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

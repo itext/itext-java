@@ -43,7 +43,6 @@
 package com.itextpdf.svg.utils;
 
 import com.itextpdf.kernel.geom.AffineTransform;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.annotations.type.UnitTest;

@@ -43,11 +43,14 @@
 package com.itextpdf.svg.renderers.path.impl;
 
 import com.itextpdf.kernel.geom.Point;
+import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import static com.itextpdf.svg.renderers.path.impl.EllipticalCurveTo.EllipseArc;
 
+@Category(UnitTest.class)
 public class EllipseArcTest {
 
     private static final double DELTA = 0.00001;

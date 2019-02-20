@@ -43,12 +43,8 @@
  */
 package com.itextpdf.kernel.counter;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.SystemUtil;
 import com.itextpdf.kernel.counter.context.GenericContext;
 import com.itextpdf.kernel.counter.context.IContext;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collection;

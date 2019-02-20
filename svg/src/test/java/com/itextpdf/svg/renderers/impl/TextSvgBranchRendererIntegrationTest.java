@@ -43,15 +43,12 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
-import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;

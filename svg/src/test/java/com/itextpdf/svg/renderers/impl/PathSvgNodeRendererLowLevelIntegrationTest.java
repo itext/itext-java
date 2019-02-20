@@ -48,13 +48,16 @@ import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.path.IPathShape;
 import com.itextpdf.svg.renderers.path.impl.EllipticalCurveTo;
 import com.itextpdf.svg.renderers.path.impl.MoveTo;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 import java.util.List;
 
+@Category(IntegrationTest.class)
 public class PathSvgNodeRendererLowLevelIntegrationTest {
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();

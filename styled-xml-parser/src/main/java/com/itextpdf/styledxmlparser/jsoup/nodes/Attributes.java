@@ -46,7 +46,16 @@ import com.itextpdf.styledxmlparser.jsoup.SerializationException;
 import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.AbstractSet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 
 /**
  * The attributes of an Element.
@@ -278,7 +287,7 @@ public class Attributes implements Iterable<Attribute>, Cloneable {
             return oldValue;
         }
 
-        private class EntrySet extends AbstractSet<Map.Entry<String, String>> {
+        private class EntrySet extends AbstractSet<Entry<String, String>> {
 
             @Override
             public Iterator<Map.Entry<String, String>> iterator() {

@@ -49,7 +49,6 @@ import com.itextpdf.kernel.pdf.collection.PdfCollection;
 import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
-import com.itextpdf.kernel.pdf.navigation.PdfNamedDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

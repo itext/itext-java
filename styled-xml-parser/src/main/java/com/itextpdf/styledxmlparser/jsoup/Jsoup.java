@@ -47,7 +47,6 @@ import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
 import com.itextpdf.styledxmlparser.jsoup.safety.Cleaner;
 import com.itextpdf.styledxmlparser.jsoup.safety.Whitelist;
 import com.itextpdf.styledxmlparser.jsoup.helper.DataUtil;
-import com.itextpdf.styledxmlparser.jsoup.parser.XmlTreeBuilder;
 
 import java.io.File;
 import java.io.IOException;

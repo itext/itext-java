@@ -42,12 +42,9 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
-import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;

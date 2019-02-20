@@ -43,12 +43,18 @@
 package com.itextpdf.styledxmlparser.jsoup.select;
 
 import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
-import com.itextpdf.styledxmlparser.jsoup.safety.Cleaner;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.nodes.FormElement;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
+import com.itextpdf.styledxmlparser.jsoup.safety.Cleaner;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 
 /**
  A list of {@link Element}s, with methods that act on every element in the list.

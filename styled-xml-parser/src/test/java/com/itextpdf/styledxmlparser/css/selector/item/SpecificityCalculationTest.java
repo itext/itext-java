@@ -44,7 +44,6 @@ package com.itextpdf.styledxmlparser.css.selector.item;
 
 import com.itextpdf.styledxmlparser.css.selector.CssPageSelector;
 import com.itextpdf.styledxmlparser.css.selector.CssSelector;
-import com.itextpdf.styledxmlparser.css.selector.item.CssSpecificityConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
