@@ -477,7 +477,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         field.setMultiline(multiline);
         field.font = font;
-        field.fontSize = fontSize;
+        if (fontSize != -1)
+            field.fontSize = fontSize;
         field.setValue(value);
         field.setFieldName(name);
 
@@ -1151,8 +1152,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 for (int i = 0; i < kids.size(); i++) {
                     PdfObject kid = kids.get(i);
                     PdfFormField field = new PdfFormField((PdfDictionary) kid);
-                    field.font = font;
-                    field.fontSize = fontSize;
+                    if (field.font == null)
+                        field.font = font;
+                    if (field.fontSize == -1)
+                        field.fontSize = fontSize;
                     field.setValue(value);
                 }
             }
@@ -1209,6 +1212,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the edited field
      */
     public PdfFormField setValue(String value, PdfFont font, float fontSize) {
+        this.fontSize = fontSize;
+        this.font = font;
         PdfName formType = getFormType();
         if (!formType.equals(PdfName.Tx) && !formType.equals(PdfName.Ch)) {
             return setValue(value);
@@ -1738,6 +1743,16 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Gets the current fontSize of the form field.
+     *
+     * @return the current fontSize
+     */
+    public float getFontSize() {
+        return fontSize;
+    }
+
+
+    /**
      * Gets the current font of the form field.
      *
      * @return the current {@link PdfFont font}
@@ -1959,8 +1974,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
                 Object[] fontAndSize = getFontAndSize(asNormal);
                 PdfFont localFont = (PdfFont) fontAndSize[0];
-                PdfName localFontName = (PdfName) fontAndSize[2];
-                float fontSize = normalizeFontSize((float) fontAndSize[1], localFont, bBox, value);
+                PdfName localFontName = (PdfName) fontAndSize[1];
+                float normalizedFontSize = normalizeFontSize(this.fontSize >= 0 ? this.fontSize : (float) DEFAULT_FONT_SIZE, localFont, bBox, value);
 
                 //Apply Page rotation
                 int pageRotation = 0;
@@ -2047,9 +2062,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 //Create text appearance
                 if (PdfName.Tx.equals(type)) {
                     if (!isMultiline()) {
-                        drawTextAppearance(bBox.toRectangle(), localFont, fontSize, value, appearance);
+                        drawTextAppearance(bBox.toRectangle(), localFont, normalizedFontSize, value, appearance);
                     } else {
-                        drawMultiLineTextAppearance(bBox.toRectangle(), localFont, fontSize, value, appearance);
+                        drawMultiLineTextAppearance(bBox.toRectangle(), localFont, normalizedFontSize, value, appearance);
                     }
 
                 } else {
@@ -2061,7 +2076,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                             value = optionsArrayToString(visibleOptions);
                         }
                     }
-                    drawMultiLineTextAppearance(bBox.toRectangle(), localFont, fontSize, value, appearance);
+                    drawMultiLineTextAppearance(bBox.toRectangle(), localFont, normalizedFontSize, value, appearance);
                 }
 
                 appearance.getResources().addFont(getDocument(), localFont);
@@ -2103,10 +2118,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         //TODO DEVSIX-2528 what if PdfName.N is PdfDictionary?
                         Object[] fontAndSize = getFontAndSize(apDic.getAsStream(PdfName.N));
                         PdfFont localFont = (PdfFont) fontAndSize[0];
-                        PdfName localFontName = (PdfName) fontAndSize[2];
-                        float fontSize = (float) fontAndSize[1];
+                        PdfName localFontName = (PdfName) fontAndSize[1];
+                        PdfArray bBox = getPdfObject().getAsArray(PdfName.Rect);
+                        if (bBox == null) {
+                            PdfArray kids = getKids();
+                            if (kids == null) {
+                                throw new PdfException(PdfException.WrongFormFieldAddAnnotationToTheField);
+                            }
+                            bBox = ((PdfDictionary) kids.get(0)).getAsArray(PdfName.Rect);
+                        }
+                        float normalizedFontSize = normalizeFontSize(this.fontSize >= 0 ? this.fontSize : (float) DEFAULT_FONT_SIZE, localFont, bBox, value);
                         appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value,
-                                localFont, localFontName, fontSize);
+                                localFont, localFontName, normalizedFontSize);
                     }
                     apDic.put(PdfName.N, appearance.getPdfObject());
 
@@ -2217,7 +2240,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * According to spec (ISO-32000-1, 12.7.3.3) zero font size should interpretaded as auto size.
+     * According to spec (ISO-32000-1, 12.7.3.3) zero font size should interpreted as auto size.
      */
     private float normalizeFontSize(float fs, PdfFont localFont, PdfArray bBox, String value) {
         if (fs == 0) {
@@ -2702,7 +2725,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     protected Object[] getFontAndSize(PdfDictionary asNormal) throws IOException {
-        Object[] fontAndSize = new Object[3];
+        Object[] fontAndSize = new Object[2];
         PdfDictionary normalResources = null;
         PdfDictionary defaultResources = null;
         PdfDocument document = getDocument();
@@ -2739,17 +2762,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         } else if (daFontDict != null) {
             PdfFont daFont = document != null ? document.getFont(daFontDict) : PdfFontFactory.createFont(daFontDict);
             fontAndSize[0] = daFont;
-            fontAndSize[2] = daFontName;
+            fontAndSize[1] = daFontName;
         } else {
             fontAndSize[0] = PdfFontFactory.createFont();
-        }
-
-        if (fontSize >= 0) {
-            fontAndSize[1] = fontSize;
-        } else if (dab[DA_SIZE] != null) {
-            fontAndSize[1] = dab[DA_SIZE];
-        } else {
-            fontAndSize[1] = (float) DEFAULT_FONT_SIZE;
         }
 
         if (color == null) {
@@ -3467,6 +3482,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 Color extractedBorderColor = getColor(appearanceCharacteristics, PdfName.BC);
                 if (extractedBorderColor != null)
                     borderColor = extractedBorderColor;
+            }
+        }
+        PdfString fontCharacteristics = getDefaultAppearance();
+        if (fontCharacteristics != null) {
+            Object[] fontData = splitDAelements(fontCharacteristics.getValue());
+            if (fontData[DA_SIZE] != null && fontData[DA_FONT] != null) {
+                color = (Color) fontData[DA_COLOR];
+                fontSize = (float) fontData[DA_SIZE];
             }
         }
     }

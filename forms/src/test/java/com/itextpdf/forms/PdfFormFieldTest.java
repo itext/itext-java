@@ -767,4 +767,43 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         }
     }
 
+    @Test
+    public void preserveFontPropsTest() throws IOException, InterruptedException {
+        String srcPdf = sourceFolder + "preserveFontPropsTest.pdf";
+        String outPdf = destinationFolder + "preserveFontPropsTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_preserveFontPropsTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+        PdfFormField field1 = form.getField("emptyField");
+        field1.setValue("Do fields on the left look the same?", field1.getFont() != null ? field1.getFont() : PdfFontFactory.createFont(), field1.getFontSize());
+        PdfFormField field2 = form.getField("emptyField2");
+        field2.setValue("Do fields on the right look the same?", field2.getFont() != null ? field2.getFont() : PdfFontFactory.createFont(), field2.getFontSize());
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void fontAutoSizeButtonFieldTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "fontAutoSizeButtonFieldTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_fontAutoSizeButtonFieldTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        String itext = "itextpdf";
+
+        PdfButtonFormField button = PdfFormField.createPushButton(pdfDoc, new Rectangle(36, 500, 200, 200), itext, itext);
+        button.setFontSize(0);
+        button.setBackgroundColor(ColorConstants.GRAY);
+        button.setValue(itext);
+        button.setVisibility(PdfFormField.VISIBLE_BUT_DOES_NOT_PRINT);
+        form.addField(button);
+
+        pdfDoc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
 }
