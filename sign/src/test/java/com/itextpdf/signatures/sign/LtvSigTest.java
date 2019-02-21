@@ -48,8 +48,12 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.signatures.BouncyCastleDigest;
+import com.itextpdf.signatures.DigestAlgorithms;
+import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.LtvVerification;
 import com.itextpdf.signatures.PdfSigner;
+import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.testutils.Pkcs12FileHelper;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
@@ -64,6 +68,7 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -111,6 +116,39 @@ public class LtvSigTest extends ExtendedITextTest {
         signer.timestamp(testTsa, "timestampSig1");
 
         basicCheckLtvDoc("ltvEnabledTsTest01.pdf", "timestampSig1");
+    }
+
+    @Test
+    public void ltvEnabledSingleSignatureTest01() throws IOException, GeneralSecurityException {
+        String signCertFileName = certsSrc + "signCertRsaWithChain.p12";
+        String tsaCertFileName = certsSrc + "tsCertRsa.p12";
+        String intermediateCertFileName = certsSrc + "intermediateRsa.p12";
+        String caCertFileName = certsSrc + "rootRsa.p12";
+        String srcFileName = sourceFolder + "helloWorldDoc.pdf";
+        String ltvFileName = destinationFolder + "ltvEnabledSingleSignatureTest01.pdf";
+
+        Certificate[] tsaChain = Pkcs12FileHelper.readFirstChain(tsaCertFileName, password);
+        PrivateKey tsaPrivateKey = Pkcs12FileHelper.readFirstKey(tsaCertFileName, password, password);
+
+        X509Certificate intermediateCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(intermediateCertFileName, password)[0];
+        PrivateKey intermediatePrivateKey = Pkcs12FileHelper.readFirstKey(intermediateCertFileName, password, password);
+        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertFileName, password)[0];
+        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
+
+        TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
+        TestOcspClient testOcspClient = new TestOcspClient()
+                .addBuilderForCertIssuer(intermediateCert, intermediatePrivateKey)
+                .addBuilderForCertIssuer(caCert, caPrivateKey);
+
+        Certificate[] signChain = Pkcs12FileHelper.readFirstChain(signCertFileName, password);
+        PrivateKey signPrivateKey = Pkcs12FileHelper.readFirstKey(signCertFileName, password, password);
+        IExternalSignature pks = new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
+
+        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(ltvFileName), new StampingProperties());
+        signer.setFieldName("Signature1");
+        signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, testOcspClient, testTsa, 0, PdfSigner.CryptoStandard.CADES);
+
+        PadesSigTest.basicCheckSignedDoc(destinationFolder + "ltvEnabledSingleSignatureTest01.pdf", "Signature1");
     }
 
     @Test

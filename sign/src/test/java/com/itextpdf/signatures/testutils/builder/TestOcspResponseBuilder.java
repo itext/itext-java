@@ -83,10 +83,10 @@ public class TestOcspResponseBuilder {
     public TestOcspResponseBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey) throws CertificateEncodingException {
         this.issuerCert = issuerCert;
         this.issuerPrivateKey = issuerPrivateKey;
-        X500Name issuerDN = new X500Name(PrincipalUtil.getIssuerX509Principal(issuerCert).getName());
+        X500Name subjectDN = new X500Name(PrincipalUtil.getSubjectX509Principal(issuerCert).getName());
         thisUpdate = DateTimeUtil.addDaysToCalendar(thisUpdate, -1);
         nextUpdate = DateTimeUtil.addDaysToCalendar(nextUpdate, 30);
-        responseBuilder = new BasicOCSPRespBuilder(new RespID(issuerDN));
+        responseBuilder = new BasicOCSPRespBuilder(new RespID(subjectDN));
     }
 
     public X509Certificate getIssuerCert() {

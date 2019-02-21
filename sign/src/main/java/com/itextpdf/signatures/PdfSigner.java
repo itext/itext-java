@@ -632,15 +632,20 @@ public class PdfSigner {
         }
         InputStream data = getRangeStream();
         byte[] hash = DigestAlgorithms.digest(data, SignUtils.getMessageDigest(hashAlgorithm, externalDigest));
-        byte[] ocsp = null;
-        if (chain.length >= 2 && ocspClient != null) {
-            ocsp = ocspClient.getEncoded((X509Certificate) chain[0], (X509Certificate) chain[1], null);
+        List<byte[]> ocspList = new ArrayList<>();
+        if (chain.length > 1 && ocspClient != null) {
+            for (int j = 0; j < chain.length - 1; ++j) {
+                byte[] ocsp = ocspClient.getEncoded((X509Certificate) chain[j], (X509Certificate) chain[j + 1], null);
+                if (ocsp != null) {
+                    ocspList.add(ocsp);
+                }
+            }
         }
-        byte[] sh = sgn.getAuthenticatedAttributeBytes(hash, ocsp, crlBytes, sigtype);
+        byte[] sh = sgn.getAuthenticatedAttributeBytes(hash, sigtype, ocspList, crlBytes);
         byte[] extSignature = externalSignature.sign(sh);
         sgn.setExternalDigest(extSignature, null, externalSignature.getEncryptionAlgorithm());
 
-        byte[] encodedSig = sgn.getEncodedPKCS7(hash, tsaClient, ocsp, crlBytes, sigtype);
+        byte[] encodedSig = sgn.getEncodedPKCS7(hash, sigtype, tsaClient, ocspList, crlBytes);
 
         if (estimatedSize < encodedSig.length)
             throw new IOException("Not enough space");
