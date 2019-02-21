@@ -48,11 +48,8 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
-import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.signatures.LtvVerification;
-import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSigner;
-import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.testutils.Pkcs12FileHelper;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
@@ -67,8 +64,6 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.tsp.TSPException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -102,7 +97,8 @@ public class LtvSigTest extends ExtendedITextTest {
         PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
-        TestOcspClient testOcspClient = new TestOcspClient(caCert, caPrivateKey);
+        TestOcspClient testOcspClient = new TestOcspClient()
+                .addBuilderForCertIssuer(caCert, caPrivateKey);
         TestCrlClient testCrlClient = new TestCrlClient(caCert, caPrivateKey);
 
         PdfDocument document = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(ltvFileName), new StampingProperties().useAppendMode());
@@ -131,7 +127,7 @@ public class LtvSigTest extends ExtendedITextTest {
         PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
-        TestOcspClient testOcspClient = new TestOcspClient(caCert, caPrivateKey);
+        TestOcspClient testOcspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, caPrivateKey);
         TestCrlClient testCrlClient = new TestCrlClient(caCert, caPrivateKey);
 
         PdfDocument document = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(ltvFileName), new StampingProperties().useAppendMode());

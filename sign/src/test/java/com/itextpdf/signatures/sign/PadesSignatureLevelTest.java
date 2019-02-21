@@ -137,7 +137,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
         PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
 
         ICrlClient crlClient = new TestCrlClient(caCert, caPrivateKey);
-        TestOcspClient ocspClient = new TestOcspClient(caCert, caPrivateKey);
+        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, caPrivateKey);
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
 
         PdfDocument document = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(outFileName), new StampingProperties().useAppendMode());

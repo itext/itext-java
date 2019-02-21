@@ -85,24 +85,26 @@ public class LtvWithTwoSignatures extends ExtendedITextTest {
     }
 
     @Test
-    public void AddLtvInfo() throws GeneralSecurityException, java.io.IOException {
-        String tsaCertFileName = certsSrc + "tsCertRsa.p12";
+    public void addLtvInfo() throws GeneralSecurityException, java.io.IOException {
         String caCertFileName = certsSrc + "rootRsa.p12";
-        String srcFileName = sourceFolder + "signedDoc.pdf";
+        String interCertFileName = certsSrc + "intermediateRsa.p12";
+        String srcFileName = sourceFolder + "signedTwice.pdf";
         String ltvFileName = destinationFolder + "ltvEnabledTest01.pdf";
         String ltvFileName2 = destinationFolder + "ltvEnabledTest02.pdf";
 
-        Certificate[] tsaChain = Pkcs12FileHelper.readFirstChain(tsaCertFileName, password);
-        PrivateKey tsaPrivateKey = Pkcs12FileHelper.readFirstKey(tsaCertFileName, password, password);
         X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertFileName, password)[0];
         PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
 
-        TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
-        TestOcspClient testOcspClient = new TestOcspClient(caCert, caPrivateKey);
+        X509Certificate interCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(interCertFileName, password)[0];
+        PrivateKey interPrivateKey = Pkcs12FileHelper.readFirstKey(interCertFileName, password, password);
+
+        TestOcspClient testOcspClient = new TestOcspClient()
+                .addBuilderForCertIssuer(interCert, interPrivateKey)
+                .addBuilderForCertIssuer(caCert, caPrivateKey);
         TestCrlClient testCrlClient = new TestCrlClient(caCert, caPrivateKey);
 
-        AddLtvInfo(srcFileName,ltvFileName,"sig",testOcspClient,testCrlClient);
-        AddLtvInfo(ltvFileName,ltvFileName2,"sig2",testOcspClient,testCrlClient);
+        addLtvInfo(srcFileName, ltvFileName, "Signature1", testOcspClient, testCrlClient);
+        addLtvInfo(ltvFileName, ltvFileName2, "Signature2", testOcspClient, testCrlClient);
 
         PdfReader reader = new PdfReader(ltvFileName2);
         PdfDocument document = new PdfDocument(reader);
@@ -115,21 +117,21 @@ public class LtvWithTwoSignatures extends ExtendedITextTest {
 
         PdfArray ocsps = dssDictionary.getAsArray(PdfName.OCSPs);
         Assert.assertNotNull(ocsps);
-        Assert.assertEquals(2, ocsps.size());
+        Assert.assertEquals(5, ocsps.size());
 
         PdfArray certs = dssDictionary.getAsArray(PdfName.Certs);
         Assert.assertNotNull(certs);
-        Assert.assertEquals(2, certs.size());
+        Assert.assertEquals(5, certs.size());
 
         PdfArray crls = dssDictionary.getAsArray(PdfName.CRLs);
         Assert.assertNotNull(crls);
         Assert.assertEquals(1, crls.size());
     }
 
-    private void AddLtvInfo(String src, String dest, String sigName, TestOcspClient testOcspClient,TestCrlClient testCrlClient ) throws java.io.IOException, GeneralSecurityException {
+    private void addLtvInfo(String src, String dest, String sigName, TestOcspClient testOcspClient, TestCrlClient testCrlClient ) throws java.io.IOException, GeneralSecurityException {
         PdfDocument document = new PdfDocument(new PdfReader(src), new PdfWriter(dest), new StampingProperties().useAppendMode());
         LtvVerification ltvVerification = new LtvVerification(document, "BC");
-        ltvVerification.addVerification(sigName, testOcspClient, testCrlClient, LtvVerification.CertificateOption.SIGNING_CERTIFICATE, LtvVerification.Level.OCSP_CRL, LtvVerification.CertificateInclusion.YES);
+        ltvVerification.addVerification(sigName, testOcspClient, testCrlClient, LtvVerification.CertificateOption.WHOLE_CHAIN, LtvVerification.Level.OCSP_CRL, LtvVerification.CertificateInclusion.YES);
         ltvVerification.merge();
         document.close();
     }
