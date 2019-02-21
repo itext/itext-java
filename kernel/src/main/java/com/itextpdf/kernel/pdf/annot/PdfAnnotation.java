@@ -307,6 +307,8 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
                 annotation = new PdfRedactAnnotation((PdfDictionary) pdfObject);
             } else if (PdfName.Watermark.equals(subtype)) {
                 annotation = new PdfWatermarkAnnotation((PdfDictionary) pdfObject);
+            } else {
+                annotation = new PdfUnknownAnnotation((PdfDictionary) pdfObject);
             }
         }
         return annotation;
@@ -1120,5 +1122,18 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;
+    }
+
+    // Created as a private static class in order to facilitate autoport.
+    static class PdfUnknownAnnotation extends PdfAnnotation {
+
+        protected PdfUnknownAnnotation(PdfDictionary pdfObject) {
+            super(pdfObject);
+        }
+
+        @Override
+        public PdfName getSubtype() {
+            return getPdfObject().getAsName(PdfName.Subtype);
+        }
     }
 }
