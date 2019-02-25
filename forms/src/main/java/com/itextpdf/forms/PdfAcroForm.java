@@ -718,10 +718,14 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             PdfDictionary parent = fieldObject.getAsDictionary(PdfName.Parent);
             if (parent != null) {
                 PdfArray kids = parent.getAsArray(PdfName.Kids);
-                kids.remove(fieldObject);
-                // TODO what if parent was in it's turn the only child of it's parent (parent of parent)?
-                // shouldn't we remove them recursively? check it
-                if (kids.isEmpty()) {
+                if(kids!=null) {
+                    kids.remove(fieldObject);
+                    // TODO what if parent was in it's turn the only child of it's parent (parent of parent)?
+                    // shouldn't we remove them recursively? check it
+                    if (kids.isEmpty()) {
+                        fFields.remove(parent);
+                    }
+                } else {
                     fFields.remove(parent);
                 }
             }
