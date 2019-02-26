@@ -454,12 +454,31 @@ public class PdfTokenizer implements Closeable, Serializable {
                         // as we need to know that fact only in case if there are any minuses.
                         ch = file.read();
                     }
-                    while (ch != -1 && ((ch >= '0' && ch <= '9') || ch == '.')) {
-                        if (ch == '.')
-                            isReal = true;
+                    while (ch >= '0' && ch <= '9') {
                         outBuf.append(ch);
                         ch = file.read();
                     }
+
+                    if ( ch == '.'){
+                        isReal = true;
+                        outBuf.append(ch);
+                        ch = file.read();
+
+                        //verify if there is minus after '.'
+                        //In that case just ignore minus chars and everything after as Adobe Reader does
+                        int numberOfMinusesAfterDot = 0;
+                        if (ch == '-') {
+                            numberOfMinusesAfterDot++;
+                            ch = file.read();
+                        }
+                        while (ch >= '0' && ch <= '9') {
+                            if (numberOfMinusesAfterDot == 0) {
+                                outBuf.append(ch);
+                            }
+                            ch = file.read();
+                        }
+                    }
+
                     if (numberOfMinuses > 1 && !isReal) {
                         // Numbers of integer type and with more than one minus before them
                         // are interpreted by Acrobat as zero.
