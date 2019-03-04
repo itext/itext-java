@@ -59,6 +59,7 @@ public final class PdfTextExtractor {
      * Extract text from a specified page using an extraction strategy.
      * Also allows registration of custom IContentOperators that can influence
      * how (and whether or not) the PDF instructions will be parsed.
+     * Extraction strategy must be passed as a new object for every single page.
      *
      * @param page     the page for the text to be extracted from
      * @param strategy the strategy to use for extracting text
@@ -73,6 +74,7 @@ public final class PdfTextExtractor {
     
     /**
      * Extract text from a specified page using an extraction strategy.
+     * Extraction strategy must be passed as a new object for every single page.
      *
      * @param page     the page for the text to be extracted from
      * @param strategy the strategy to use for extracting text
