@@ -169,7 +169,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param document         the document to retrieve the {@link PdfAcroForm} from
      * @param createIfNotExist when <code>true</code>, this method will create a {@link PdfAcroForm} if none exists for this document
-     * @return the {@link PdfDocument document}'s AcroForm, or a new one
+     * @return the {@link PdfDocument document}'s AcroForm,
+     * or a new one provided that <code>createIfNotExist</code> parameter is <code>true</code>, otherwise <code>null</code>.
      */
     public static PdfAcroForm getAcroForm(PdfDocument document, boolean createIfNotExist) {
         PdfDictionary acroFormDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
