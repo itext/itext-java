@@ -105,6 +105,32 @@ public class OpacityTest extends ExtendedITextTest {
     }
 
     @Test
+    public void backgroundOpacityTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "backgroundOpacityTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_backgroundOpacityTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        document.add(new Paragraph("Paragraph with ").setBackgroundColor(ColorConstants.RED).
+                    add(new Text("text element with transparent (0.0) background").setBackgroundColor(ColorConstants.WHITE, 0.0f)));
+        document.add(new Paragraph("Paragraph with ").setBackgroundColor(ColorConstants.RED).
+                    add(new Text("text element with transparent (0.3) background").setBackgroundColor(ColorConstants.WHITE, 0.3f)));
+        document.add(new Paragraph("Paragraph with ").setBackgroundColor(ColorConstants.RED).
+                    add(new Text("text element with transparent (0.5) background").setBackgroundColor(ColorConstants.WHITE, 0.5f)));
+        document.add(new Paragraph("Paragraph with ").setBackgroundColor(ColorConstants.RED).
+                    add(new Text("text element with transparent (0.7) background").setBackgroundColor(ColorConstants.WHITE, 0.7f)));
+        document.add(new Paragraph("Paragraph with ").setBackgroundColor(ColorConstants.RED).
+                    add(new Text("text element with transparent (1.0) background").setBackgroundColor(ColorConstants.WHITE, 1.0f)));
+        document.add(new Paragraph("Paragraph with ").setBackgroundColor(ColorConstants.RED).
+                    add(new Text("text element with background").setBackgroundColor(ColorConstants.WHITE)));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+    
+    @Test
     public void borderOpacityTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "borderOpacityTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_borderOpacityTest01.pdf";
