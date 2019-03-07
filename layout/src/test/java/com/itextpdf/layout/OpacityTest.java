@@ -123,6 +123,12 @@ public class OpacityTest extends ExtendedITextTest {
         document.add(new Paragraph("Paragraph with ").setBackgroundColor(ColorConstants.RED).
                     add(new Text("text element with transparent (1.0) background").setBackgroundColor(ColorConstants.WHITE, 1.0f)));
         document.add(new Paragraph("Paragraph with ").setBackgroundColor(ColorConstants.RED).
+                    add(new Text("text element with transparent (-1.0) background").setBackgroundColor(ColorConstants.WHITE, -1.0f)));
+        document.add(new Paragraph("Paragraph with ").setBackgroundColor(ColorConstants.RED).
+                    add(new Text("text element with transparent (100.0) background").setBackgroundColor(ColorConstants.WHITE, 100.0f)));
+        document.add(new Paragraph("Paragraph with ").setBackgroundColor(ColorConstants.RED).
+                    add(new Text("text element with transparent (NaN) background").setBackgroundColor(ColorConstants.WHITE, Float.NaN)));
+        document.add(new Paragraph("Paragraph with ").setBackgroundColor(ColorConstants.RED).
                     add(new Text("text element with background").setBackgroundColor(ColorConstants.WHITE)));
 
         document.close();
