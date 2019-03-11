@@ -2762,11 +2762,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 if (fontNameObj != null) {
                     daFontName = new PdfName(fontNameObj.toString());
                     // according to spec, DA font shall be taken from the DR
-                    if (defaultFontDic != null && null != defaultFontDic.getAsDictionary(daFontName)) {
-                        daFontDict = defaultFontDic.getAsDictionary(daFontName);
-                    } else if (normalFontDic != null) {
-                        // search normal appearance as a fall back in case it was not found in DR
+                    if (normalFontDic != null && null != normalFontDic.getAsDictionary(daFontName)) {
                         daFontDict = normalFontDic.getAsDictionary(daFontName);
+                    } else if (defaultFontDic != null) {
+                        daFontDict = defaultFontDic.getAsDictionary(daFontName);
                     }
                 }
             }
