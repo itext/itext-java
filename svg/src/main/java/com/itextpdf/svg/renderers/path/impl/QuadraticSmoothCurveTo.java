@@ -42,55 +42,19 @@
  */
 package com.itextpdf.svg.renderers.path.impl;
 
-import com.itextpdf.kernel.geom.Point;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.renderers.path.IPathShape;
 
-import java.util.Map;
+/***
+ * Implements shorthand/smooth quadraticCurveTo (T) attribute of SVG's path element
+ * */
+public class QuadraticSmoothCurveTo extends QuadraticCurveTo {
 
-/**
- * This class handles common behaviour in IPathShape implementations
- */
-public abstract class AbstractPathShape implements IPathShape {
+    static final int ARGUMENT_SIZE = 2;
 
-    /**
-     * The properties of this shape.
-     */
-    protected Map<String, String> properties;
-
-    /**
-     * Whether this is a relative operator or not.
-     */
-    protected boolean relative;
-    protected final IOperatorConverter copier;
-    // Original coordinates from path instruction, according to the (x1 y1 x2 y2 x y)+ spec
-    protected String[] coordinates;
-
-    public AbstractPathShape() {
+    public QuadraticSmoothCurveTo() {
         this(false);
     }
 
-    public AbstractPathShape(boolean relative) {
-        this(relative, new DefaultOperatorConverter());
+    public QuadraticSmoothCurveTo(boolean relative) {
+        super(relative, new SmoothOperatorConverter());
     }
-
-    public AbstractPathShape(boolean relative, IOperatorConverter copier) {
-        this.relative = relative;
-        this.copier = copier;
-    }
-
-    @Override
-    public boolean isRelative() {
-        return this.relative;
-    }
-
-    protected Point createPoint(String coordX, String coordY) {
-        return new Point((float)CssUtils.parseFloat(coordX), (float)CssUtils.parseFloat(coordY));
-    }
-
-    @Override
-    public Point getEndingPoint() {
-        return createPoint(coordinates[coordinates.length - 2], coordinates[coordinates.length - 1]);
-    }
-
 }

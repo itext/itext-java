@@ -50,6 +50,7 @@ import com.itextpdf.svg.utils.SvgCssUtils;
  * */
 public class VerticalLineTo extends LineTo {
 
+    static final int ARGUMENT_SIZE = 1;
     /**
      * Creates an absolute Vertical LineTo.
      */
@@ -67,13 +68,11 @@ public class VerticalLineTo extends LineTo {
     }
 
     @Override
-    public void setCoordinates(String[] coordinates, Point startPoint) {
-        String[] normalizedCoords = new String[coordinates.length * 2];
+    public void setCoordinates(String[] inputCoordinates, Point startPoint) {
+        String[] normalizedCoords = new String[LineTo.ARGUMENT_SIZE];
         // A V or v command is equivalent to an L or l command with 0 specified for the x coordinate.
-        for (int i = 0; i < coordinates.length; i++) {
-            normalizedCoords[i * 2] = isRelative() ? "0" : SvgCssUtils.convertDoubleToString(startPoint.getX());
-            normalizedCoords[i * 2 + 1] = coordinates[i];
-        }
+        normalizedCoords[0] = isRelative() ? "0" : SvgCssUtils.convertDoubleToString(startPoint.getX());
+        normalizedCoords[1] = inputCoordinates[0];
         super.setCoordinates(normalizedCoords, startPoint);
     }
 }

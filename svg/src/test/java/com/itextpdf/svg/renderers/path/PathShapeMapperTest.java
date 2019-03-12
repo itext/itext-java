@@ -103,8 +103,16 @@ public class PathShapeMapperTest {
         Assert.assertNotNull(mapper.getMapping().get("Q"));
     }
     @Test
+    public void testExistsQuadRel() {
+        Assert.assertNotNull(mapper.getMapping().get("q"));
+    }
+    @Test
     public void testExistsSmoothCubicAbs() {
         Assert.assertNotNull(mapper.getMapping().get("S"));
+    }
+    @Test
+    public void testExistsSmoothCubicRel() {
+        Assert.assertNotNull(mapper.getMapping().get("s"));
     }
     @Test
     public void testExistsVerticalLineRel() {
@@ -122,26 +130,13 @@ public class PathShapeMapperTest {
     public void testExistsClosePathAbs() {
         Assert.assertNotNull(mapper.getMapping().get("Z"));
     }
-
-    /* TODO: implement currently unsupported operator
-     * DEVSIX-2267: relative alternatives for existing absolute operators
-     * DEVSIX-2611: smooth quadratic curves (absolute and relative)
-     */
     @Test
-    public void testNotExistsQuadRel() {
-        Assert.assertNull(mapper.getMapping().get("q"));
+    public void testExistsSmoothQuadAbs() {
+        Assert.assertNotNull(mapper.getMapping().get("T"));
     }
     @Test
-    public void testNotExistsSmoothCubicRel() {
-        Assert.assertNull(mapper.getMapping().get("s"));
-    }
-    @Test
-    public void testNotExistsSmoothQuadRel() {
-        Assert.assertNull(mapper.getMapping().get("t"));
-    }
-    @Test
-    public void testNotExistsSmoothQuadAbs() {
-        Assert.assertNull(mapper.getMapping().get("T"));
+    public void testExistsSmoothQuadRel() {
+        Assert.assertNotNull(mapper.getMapping().get("t"));
     }
 
     // nonsensical operators

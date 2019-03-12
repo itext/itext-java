@@ -53,9 +53,21 @@ import java.util.Arrays;
 /**
  * Implements quadratic Bezier curveTo(Q) attribute of SVG's path element
  */
-public class QuadraticCurveTo extends AbstractPathShape {
+public class QuadraticCurveTo extends AbstractPathShape implements IControlPointCurve {
 
-    private String[] coordinates;
+    static final int ARGUMENT_SIZE = 4;
+
+    public QuadraticCurveTo() {
+        this(false);
+    }
+
+    public QuadraticCurveTo(boolean relative) {
+        this(relative, new DefaultOperatorConverter());
+    }
+
+    public QuadraticCurveTo(boolean relative, IOperatorConverter copier) {
+        super(relative, copier);
+    }
 
     /**
      * Draws a quadratic Bezier curve from the current point to (x,y) using (x1,y1) as the control point
@@ -70,22 +82,22 @@ public class QuadraticCurveTo extends AbstractPathShape {
     }
 
     @Override
-    public void setCoordinates(String[] coordinates, Point startPoint) {
+    public void setCoordinates(String[] inputCoordinates, Point startPoint) {
         // startPoint will be used when relative quadratic curve is implemented
-        if (coordinates.length == 0 || coordinates.length % 4 != 0) {
+        if (inputCoordinates.length < ARGUMENT_SIZE) {
             throw new IllegalArgumentException(MessageFormatUtil.format(SvgExceptionMessageConstant.QUADRATIC_CURVE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0, Arrays.toString(coordinates)));
         }
-        if (coordinates.length > 4) {
-            // (x1 y1 x y)+ parameters will be implemented in the future
-            throw new UnsupportedOperationException();
-        } else {
-            this.coordinates = new String[]{coordinates[0], coordinates[1], coordinates[2], coordinates[3]};
+        coordinates = new String[ARGUMENT_SIZE];
+        System.arraycopy(inputCoordinates, 0, coordinates, 0, ARGUMENT_SIZE);
+        double[] initialPoint = new double[] {startPoint.getX(), startPoint.getY()};
+        if (isRelative()) {
+            coordinates = copier.makeCoordinatesAbsolute(coordinates, initialPoint);
         }
     }
 
     @Override
-    public Point getEndingPoint() {
-        return createPoint(coordinates[2], coordinates[3]);
+    public Point getLastControlPoint() {
+        return createPoint(coordinates[0], coordinates[1]);
     }
 
 }

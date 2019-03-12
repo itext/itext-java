@@ -47,7 +47,6 @@ import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
-import com.itextpdf.svg.utils.SvgCoordinateUtils;
 
 import java.util.Arrays;
 
@@ -56,15 +55,14 @@ import java.util.Arrays;
  * */
 public class MoveTo extends AbstractPathShape {
 
-    private String[] coordinates;
-    private LineTo additionalLines;
+    static final int ARGUMENT_SIZE = 2;
 
     public MoveTo() {
         this(false);
     }
 
     public MoveTo(boolean relative) {
-        this.relative = relative;
+        super(relative);
     }
 
     @Override
@@ -72,31 +70,16 @@ public class MoveTo extends AbstractPathShape {
         float x = CssUtils.parseAbsoluteLength(coordinates[0]);
         float y = CssUtils.parseAbsoluteLength(coordinates[1]);
         canvas.moveTo(x, y);
-        if (additionalLines != null) {
-            additionalLines.draw(canvas);
-        }
     }
 
     @Override
-    public void setCoordinates(String[] coordinates, Point startPoint) {
-        if (coordinates.length == 0 || coordinates.length % 2 != 0) {
+    public void setCoordinates(String[] inputCoordinates, Point startPoint) {
+        if (inputCoordinates.length != ARGUMENT_SIZE) {
             throw new IllegalArgumentException(MessageFormatUtil.format(SvgExceptionMessageConstant.MOVE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0, Arrays.toString(coordinates)));
         }
-
-        this.coordinates = new String[] {coordinates[0], coordinates[1]};
+        this.coordinates = new String[] {inputCoordinates[0], inputCoordinates[1]};
         if (isRelative()) {
-            this.coordinates = SvgCoordinateUtils.makeRelativeOperatorCoordinatesAbsolute(coordinates, new double[]{startPoint.x, startPoint.y});
+            this.coordinates = copier.makeCoordinatesAbsolute(coordinates, new double[]{startPoint.x, startPoint.y});
         }
-
-        // If a moveto is followed by multiple pairs of coordinates, the subsequent pairs are treated as implicit lineto commands
-        if (coordinates.length > 2) {
-            additionalLines = new LineTo(isRelative());
-            additionalLines.setCoordinates(Arrays.copyOfRange(coordinates, 2, coordinates.length), getEndingPoint());
-        }
-    }
-
-    @Override
-    public Point getEndingPoint() {
-        return createPoint(coordinates[0], coordinates[1]);
     }
 }

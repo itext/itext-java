@@ -50,8 +50,6 @@ import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
-import com.itextpdf.svg.utils.SvgCoordinateUtils;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -64,7 +62,7 @@ import java.util.List;
  */
 public class EllipticalCurveTo extends AbstractPathShape {
 
-    private String[][] coordinates;
+    static final int ARGUMENT_SIZE = 7;
 
     private Point startPoint;
 
@@ -81,111 +79,93 @@ public class EllipticalCurveTo extends AbstractPathShape {
      * @param relative whether this is a relative EllipticalCurveTo or not
      */
     public EllipticalCurveTo(boolean relative) {
-        super.relative = relative;
+        super(relative);
     }
 
     @Override
-    public void setCoordinates(String[] coordinates, Point previous) {
+    public void setCoordinates(String[] inputCoordinates, Point previous) {
         startPoint = previous;
-        if (coordinates.length == 0 || coordinates.length % 7 != 0) {
-            LoggerFactory.getLogger(EllipticalCurveTo.class).warn(MessageFormatUtil.format(SvgLogMessageConstant.ARC_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0, Arrays.toString(coordinates)));
+        if (inputCoordinates.length < ARGUMENT_SIZE) {
+            throw new IllegalArgumentException(MessageFormatUtil.format(SvgLogMessageConstant.ARC_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0, Arrays.toString(inputCoordinates)));
         }
-        this.coordinates = new String[coordinates.length / 7][];
+        coordinates = new String[ARGUMENT_SIZE];
+        System.arraycopy(inputCoordinates, 0, coordinates, 0, ARGUMENT_SIZE);
 
         double[] initialPoint = new double[]{previous.getX(), previous.getY()};
         // ignore partial argument groups, which do not form a fixed set of 7 elements
-        for (int i = 0; i / 7 < coordinates.length / 7; i += 7) {
-            String[] curCoordinates = new String[]{coordinates[i], coordinates[i + 1], coordinates[i + 2],
-                    coordinates[i + 3], coordinates[i + 4], coordinates[i + 5], coordinates[i + 6]};
-            if (isRelative()) {
-                String[] relativeEndPoint = {coordinates[i + 5], coordinates[i + 6]};
-                String[] absoluteEndPoint = SvgCoordinateUtils.makeRelativeOperatorCoordinatesAbsolute(relativeEndPoint, initialPoint);
-                curCoordinates[i + 5] = absoluteEndPoint[0];
-                curCoordinates[i + 6] = absoluteEndPoint[1];
-
-                initialPoint[0] = Double.parseDouble(curCoordinates[i + 5]);
-                initialPoint[1] = Double.parseDouble(curCoordinates[i + 6]);
-            }
-            this.coordinates[i / 7] = curCoordinates;
+        if (isRelative()) {
+            String[] relativeEndPoint = {inputCoordinates[5], inputCoordinates[6]};
+            String[] absoluteEndPoint = copier.makeCoordinatesAbsolute(relativeEndPoint, initialPoint);
+            coordinates[5] = absoluteEndPoint[0];
+            coordinates[6] = absoluteEndPoint[1];
         }
     }
 
     @Override
     public void draw(PdfCanvas canvas) {
-        Point previousPoint = startPoint;
-        for (String[] coordinate : coordinates) {
-            Point start = new Point(previousPoint.x * .75, previousPoint.y * .75); // pixels to points
-            double rx = Math.abs(CssUtils.parseAbsoluteLength(coordinate[0]));
-            double ry = Math.abs(CssUtils.parseAbsoluteLength(coordinate[1]));
+        Point start = new Point(startPoint.x * .75, startPoint.y * .75); // pixels to points
+        double rx = Math.abs(CssUtils.parseAbsoluteLength(coordinates[0]));
+        double ry = Math.abs(CssUtils.parseAbsoluteLength(coordinates[1]));
 
-            // φ is taken mod 360 degrees.
-            double rotation = Double.parseDouble(coordinate[2]) % 360.0;
-            // rotation argument is given in degrees, but we need radians for easier trigonometric calculations
-            rotation = Math.toRadians(rotation);
+        // φ is taken mod 360 degrees.
+        double rotation = Double.parseDouble(coordinates[2]) % 360.0;
+        // rotation argument is given in degrees, but we need radians for easier trigonometric calculations
+        rotation = Math.toRadians(rotation);
 
-            // binary flags (Value correction: any nonzero value for either of the flags fA or fS is taken to mean the value 1.)
-            boolean largeArc = !CssUtils.compareFloats((float) CssUtils.parseFloat(coordinate[3]), 0);
-            boolean sweep = !CssUtils.compareFloats((float) CssUtils.parseFloat(coordinate[4]), 0);
+        // binary flags (Value correction: any nonzero value for either of the flags fA or fS is taken to mean the value 1.)
+        boolean largeArc = !CssUtils.compareFloats((float) CssUtils.parseFloat(coordinates[3]), 0);
+        boolean sweep = !CssUtils.compareFloats((float) CssUtils.parseFloat(coordinates[4]), 0);
 
-            Point end = new Point(CssUtils.parseAbsoluteLength(coordinate[5]), CssUtils.parseAbsoluteLength(coordinate[6]));
+        Point end = new Point(CssUtils.parseAbsoluteLength(coordinates[5]), CssUtils.parseAbsoluteLength(coordinates[6]));
 
-            if (CssUtils.compareFloats(start.x, end.x) && CssUtils.compareFloats(start.y, end.y)) {
-                /* edge case: If the endpoints (x1, y1) and (x2, y2) are identical,
-                 * then this is equivalent to omitting the elliptical arc segment entirely.
-                 */
-                continue;
-            } else if (CssUtils.compareFloats(rx, 0) || CssUtils.compareFloats(ry, 0)) {
-                /* edge case: If rx = 0 or ry = 0 then this arc is treated as a straight line segment (a "lineto")
-                 * joining the endpoints.
-                 */
-                canvas.lineTo(end.x, end.y);
-            } else {
-                /* This is the first step of calculating a rotated elliptical path.
-                We must simulate a transformation on the end-point in order to calculate appropriate EllipseArc angles;
-                if we don't do this, then the EllipseArc class will calculate the correct bounding rectangle,
-                but an incorrect starting angle and/or extent.
-                */
-
-                EllipseArc arc;
-                if (CssUtils.compareFloats(rotation, 0)) {
-                    arc = EllipseArc.getEllipse(start, end, rx, ry, sweep, largeArc);
-                } else {
-                    AffineTransform normalizer = AffineTransform.getRotateInstance(-rotation);
-                    normalizer.translate(-start.x, -start.y);
-                    Point newArcEnd = normalizer.transform(end, null);
-                    newArcEnd.translate(start.x, start.y);
-                    arc = EllipseArc.getEllipse(start, newArcEnd, rx, ry, sweep, largeArc);
-                }
-                Point[][] points = makePoints(PdfCanvas.bezierArc(arc.ll.x, arc.ll.y, arc.ur.x, arc.ur.y, arc.startAng, arc.extent));
-                /** This is the second step of calculating a rotated elliptical path.
-                 We must rotate all points returned by {@link PdfCanvas#bezierArc} around the starting point of the arc.
-                 An added bit of complexity is that {@link PdfCanvas#bezierArc} will force a clockwise order of the
-                 control points, whereas we need counterclockwise if sweep is false (*).
-                 This is important for clipping and filling, when the non-zero winding rule is used.
-                 Thus, we must rotate around the actual first point, which is the last point of the last partial path if sweep is false
-                 (*) SVG's axis system uses top left as the origin, whereas PDF uses bottom left - so counterclockwise and clockwise are switched.
-                 */
-                if (sweep) {
-                    points = rotate(points, rotation, points[0][0]);
-                    for (int i = 0; i < points.length; i++) {
-                        drawCurve(canvas, points[i][1], points[i][2], points[i][3]);
-                    }
-                } else {
-                    points = rotate(points, rotation, points[points.length - 1][3]);
-                    for (int i = points.length - 1; i >= 0; i--) {
-                        drawCurve(canvas, points[i][2], points[i][1], points[i][0]);
-                    }
-                }
-
-            }
-            previousPoint = createPoint(coordinate[5], coordinate[6]);
+        if (CssUtils.compareFloats(start.x, end.x) && CssUtils.compareFloats(start.y, end.y)) {
+            /* edge case: If the endpoints (x1, y1) and (x2, y2) are identical,
+             * then this is equivalent to omitting the elliptical arc segment entirely.
+             */
+            return;
         }
-
-    }
-
-    @Override
-    public Point getEndingPoint() {
-        return createPoint(coordinates[coordinates.length - 1][5], coordinates[coordinates.length - 1][6]);
+        if (CssUtils.compareFloats(rx, 0) || CssUtils.compareFloats(ry, 0)) {
+            /* edge case: If rx = 0 or ry = 0 then this arc is treated as a straight line segment (a "lineto")
+             * joining the endpoints.
+             */
+            canvas.lineTo(end.x, end.y);
+        } else {
+            /* This is the first step of calculating a rotated elliptical path.
+            We must simulate a transformation on the end-point in order to calculate appropriate EllipseArc angles;
+            if we don't do this, then the EllipseArc class will calculate the correct bounding rectangle,
+            but an incorrect starting angle and/or extent.
+            */
+            EllipseArc arc;
+            if (CssUtils.compareFloats(rotation, 0)) {
+                arc = EllipseArc.getEllipse(start, end, rx, ry, sweep, largeArc);
+            } else {
+                AffineTransform normalizer = AffineTransform.getRotateInstance(-rotation);
+                normalizer.translate(-start.x, -start.y);
+                Point newArcEnd = normalizer.transform(end, null);
+                newArcEnd.translate(start.x, start.y);
+                arc = EllipseArc.getEllipse(start, newArcEnd, rx, ry, sweep, largeArc);
+            }
+            Point[][] points = makePoints(PdfCanvas.bezierArc(arc.ll.x, arc.ll.y, arc.ur.x, arc.ur.y, arc.startAng, arc.extent));
+            /** This is the second step of calculating a rotated elliptical path.
+             We must rotate all points returned by {@link PdfCanvas#bezierArc} around the starting point of the arc.
+             An added bit of complexity is that {@link PdfCanvas#bezierArc} will force a clockwise order of the
+             control points, whereas we need counterclockwise if sweep is false (*).
+             This is important for clipping and filling, when the non-zero winding rule is used.
+             Thus, we must rotate around the actual first point, which is the last point of the last partial path if sweep is false
+             (*) SVG's axis system uses top left as the origin, whereas PDF uses bottom left - so counterclockwise and clockwise are switched.
+             */
+            if (sweep) {
+                points = rotate(points, rotation, points[0][0]);
+                for (int i = 0; i < points.length; i++) {
+                    drawCurve(canvas, points[i][1], points[i][2], points[i][3]);
+                }
+            } else {
+                points = rotate(points, rotation, points[points.length - 1][3]);
+                for (int i = points.length - 1; i >= 0; i--) {
+                    drawCurve(canvas, points[i][2], points[i][1], points[i][0]);
+                }
+            }
+        }
     }
 
     /**
@@ -215,7 +195,7 @@ public class EllipticalCurveTo extends AbstractPathShape {
         return list;
     }
 
-    String[][] getCoordinates() {
+    String[] getCoordinates() {
         return coordinates;
     }
 

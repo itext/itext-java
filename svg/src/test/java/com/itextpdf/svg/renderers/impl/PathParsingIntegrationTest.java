@@ -91,7 +91,6 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void missingOperandArgument() throws IOException, InterruptedException {
-        junitExpectedException.expect(IllegalArgumentException.class);
         convertAndCompareVisually(sourceFolder, destinationFolder, "missingOperandArgument");
     }
 

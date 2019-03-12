@@ -46,8 +46,10 @@ import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.path.IPathShape;
+import com.itextpdf.svg.renderers.path.impl.ClosePath;
 import com.itextpdf.svg.renderers.path.impl.EllipticalCurveTo;
 import com.itextpdf.svg.renderers.path.impl.MoveTo;
+import com.itextpdf.svg.renderers.path.impl.SmoothSCurveTo;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -150,7 +152,6 @@ public class PathSvgNodeRendererLowLevelIntegrationTest {
 
     @Test
     public void testMoveNoArgsOperator() {
-        junitExpectedException.expect(IllegalArgumentException.class);
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         String instructions = "M";
         path.setAttribute(SvgConstants.Attributes.D, instructions);
@@ -159,10 +160,43 @@ public class PathSvgNodeRendererLowLevelIntegrationTest {
 
     @Test
     public void testMoveOddArgsOperator() {
-        junitExpectedException.expect(IllegalArgumentException.class);
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         String instructions = "M 500";
         path.setAttribute(SvgConstants.Attributes.D, instructions);
         Assert.assertTrue(path.getShapes().isEmpty());
+    }
+
+    @Test
+    public void testAddMultipleArgsOperator() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        String instructions = "M 500 500 200 200 300 300";
+        path.setAttribute(SvgConstants.Attributes.D, instructions);
+        Assert.assertEquals(3, path.getShapes().size());
+    }
+
+    @Test
+    public void testAddMultipleOddArgsOperator() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        String instructions = "L 500 500 200 200 300";
+        path.setAttribute(SvgConstants.Attributes.D, instructions);
+        Assert.assertEquals(2, path.getShapes().size());
+    }
+
+    @Test
+    public void testAddMultipleOddArgsOperatorThenOtherStuff() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        String instructions = "M 500 500 200 200 300 z";
+        path.setAttribute(SvgConstants.Attributes.D, instructions);
+        Assert.assertEquals(3, path.getShapes().size());
+        Assert.assertTrue(((List<IPathShape>) path.getShapes()).get(2) instanceof ClosePath);
+    }
+
+    @Test
+    public void testAddDoubleArgsOperator() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        String instructions = "M 500 500 S 200 100 100 200 300 300 400 400";
+        path.setAttribute(SvgConstants.Attributes.D, instructions);
+        Assert.assertEquals(3, path.getShapes().size());
+        Assert.assertTrue(((List<IPathShape>) path.getShapes()).get(2) instanceof SmoothSCurveTo);
     }
 }

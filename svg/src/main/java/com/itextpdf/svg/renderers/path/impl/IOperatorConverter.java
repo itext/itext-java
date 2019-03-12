@@ -40,36 +40,51 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.svg.utils;
+package com.itextpdf.svg.renderers.path.impl;
 
-import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.svg.utils.SvgCoordinateUtils;
 
-public class SvgCoordinateUtils {
-
+/**
+ * A locally used strategy for converting relative coordinates to absolute coordinates (in the current SVG coordinate
+ * space). Its implementation differs between Smooth (Shorthand) Bézier curves and all other path commands.
+ */
+public interface IOperatorConverter {
     /**
-     * Converts relative coordinates to absolute ones. Assumes that relative coordinates are represented by
-     * an array of coordinates with length proportional to the length of current coordinates array,
-     * so that current coordinates array is applied in segments to the relative coordinates array
+     * Convert an array of relative coordinates to an array with the same size containing absolute coordinates.
      *
      * @param relativeCoordinates the initial set of coordinates
-     * @param currentCoordinates  an array representing the point relative to which the relativeCoordinates are defined
+     * @param initialPoint        an array representing the point relative to which the relativeCoordinates are defined
      * @return a String array of absolute coordinates, with the same length as the input array
      */
-    public static String[] makeRelativeOperatorCoordinatesAbsolute(String[] relativeCoordinates, double[] currentCoordinates) {
-        if (relativeCoordinates.length % currentCoordinates.length != 0) {
-            throw new IllegalArgumentException(SvgExceptionMessageConstant.COORDINATE_ARRAY_LENGTH_MUST_BY_DIVISIBLE_BY_CURRENT_COORDINATES_ARRAY_LENGTH);
-        }
-        String[] absoluteOperators = new String[relativeCoordinates.length];
+    String[] makeCoordinatesAbsolute(String[] relativeCoordinates, double[] initialPoint);
+}
 
-        for (int i = 0; i < relativeCoordinates.length; ) {
-            for (int j = 0; j < currentCoordinates.length; j++, i++) {
-                double relativeDouble = Double.parseDouble(relativeCoordinates[i]);
-                relativeDouble += currentCoordinates[j];
-                absoluteOperators[i] = SvgCssUtils.convertDoubleToString(relativeDouble);
-            }
-        }
-
-        return absoluteOperators;
+/**
+ * Implementation of {@link IOperatorConverter} specifically for smooth curves. It will convert all operators from
+ * relative to absolute coordinates except the first coordinate pair.
+ * This implementation is used by the Smooth (Shorthand) Bézier curve commands, because the conversion of the first
+ * coordinate pair is calculated in {@link com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer#getShapeCoordinates}.
+ */
+class SmoothOperatorConverter implements IOperatorConverter {
+    @Override
+    public String[] makeCoordinatesAbsolute(String[] relativeCoordinates, double[] initialPoint) {
+        String[] result = new String[relativeCoordinates.length];
+        System.arraycopy(relativeCoordinates, 0, result, 0, 2);
+        // convert all relative operators to absolute operators ...
+        relativeCoordinates = SvgCoordinateUtils.makeRelativeOperatorCoordinatesAbsolute(relativeCoordinates, initialPoint);
+        // ... but don't store the first coordinate pair
+        System.arraycopy(relativeCoordinates, 2, result, 2, relativeCoordinates.length - 2);
+        return result;
     }
+}
 
+/**
+ * Default implementation of {@link IOperatorConverter} used by the regular (not-smooth) curves and other path commands.
+ * It will convert all operators from relative to absolute coordinates.
+ */
+class DefaultOperatorConverter implements IOperatorConverter {
+    @Override
+    public String[] makeCoordinatesAbsolute(String[] relativeCoordinates, double[] initialPoint) {
+        return SvgCoordinateUtils.makeRelativeOperatorCoordinatesAbsolute(relativeCoordinates, initialPoint);
+    }
 }

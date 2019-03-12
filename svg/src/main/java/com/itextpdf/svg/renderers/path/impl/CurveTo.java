@@ -47,70 +47,55 @@ import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
-import com.itextpdf.svg.utils.SvgCoordinateUtils;
 
 import java.util.Arrays;
 
 /***
- * Implements curveTo(L) attribute of SVG's path element
+ * Implements curveTo(C) attribute of SVG's path element
  * */
-public class CurveTo extends AbstractPathShape {
+public class CurveTo extends AbstractPathShape implements IControlPointCurve {
 
-    // Original coordinates from path instruction, according to the (x1 y1 x2 y2 x y)+ spec
-    private String[][] coordinates;
+    static final int ARGUMENT_SIZE = 6;
 
     public CurveTo() {
         this(false);
     }
 
     public CurveTo(boolean relative) {
-        this.relative = relative;
+        this(relative, new DefaultOperatorConverter());
+    }
+
+    public CurveTo(boolean relative, IOperatorConverter copier) {
+        super(relative, copier);
     }
 
     @Override
     public void draw(PdfCanvas canvas) {
-        for (int i = 0; i < coordinates.length; i++) {
-            float x1 = CssUtils.parseAbsoluteLength(coordinates[i][0]);
-            float y1 = CssUtils.parseAbsoluteLength(coordinates[i][1]);
-            float x2 = CssUtils.parseAbsoluteLength(coordinates[i][2]);
-            float y2 = CssUtils.parseAbsoluteLength(coordinates[i][3]);
-            float x = CssUtils.parseAbsoluteLength(coordinates[i][4]);
-            float y = CssUtils.parseAbsoluteLength(coordinates[i][5]);
-            canvas.curveTo(x1, y1, x2, y2, x, y);
-        }
+        float x1 = CssUtils.parseAbsoluteLength(coordinates[0]);
+        float y1 = CssUtils.parseAbsoluteLength(coordinates[1]);
+        float x2 = CssUtils.parseAbsoluteLength(coordinates[2]);
+        float y2 = CssUtils.parseAbsoluteLength(coordinates[3]);
+        float x = CssUtils.parseAbsoluteLength(coordinates[4]);
+        float y = CssUtils.parseAbsoluteLength(coordinates[5]);
+        canvas.curveTo(x1, y1, x2, y2, x, y);
     }
 
     @Override
-    public void setCoordinates(String[] coordinates, Point startPoint) {
-        if (coordinates.length == 0 || coordinates.length % 6 != 0) {
-            throw new IllegalArgumentException(MessageFormatUtil.format(SvgExceptionMessageConstant.CURVE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0, Arrays.toString(coordinates)));
+    public void setCoordinates(String[] inputCoordinates, Point startPoint) {
+        if (inputCoordinates.length < ARGUMENT_SIZE) {
+            throw new IllegalArgumentException(MessageFormatUtil.format(SvgExceptionMessageConstant.CURVE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0, Arrays.toString(inputCoordinates)));
         }
-        this.coordinates = new String[coordinates.length / 6][];
+        coordinates = new String[ARGUMENT_SIZE];
+        System.arraycopy(inputCoordinates, 0, coordinates, 0, ARGUMENT_SIZE);
         double[] initialPoint = new double[] {startPoint.getX(), startPoint.getY()};
-        for (int i = 0; i < coordinates.length; i += 6) {
-            String[] curCoordinates = new String[]{coordinates[i], coordinates[i + 1], coordinates[i + 2],
-                    coordinates[i + 3], coordinates[i + 4], coordinates[i + 5]};
-            if (isRelative()) {
-                curCoordinates = SvgCoordinateUtils.makeRelativeOperatorCoordinatesAbsolute(curCoordinates, initialPoint);
-                initialPoint[0] = (float)CssUtils.parseFloat(curCoordinates[4]);
-                initialPoint[1] = (float)CssUtils.parseFloat(curCoordinates[5]);
-            }
-            this.coordinates[i / 6] = curCoordinates;
+        if (isRelative()) {
+            coordinates = copier.makeCoordinatesAbsolute(coordinates, initialPoint);
         }
     }
 
-    /**
-     * Returns coordinates of the last control point (the one closer to the ending point)
-     * in the series of Bezier curves (possibly, one curve), in SVG space coordinates
-     * @return coordinates of the last control points in SVG space coordinates
-     */
-    public Point getLastControlPoint() {
-        return createPoint(coordinates[coordinates.length - 1][2], coordinates[coordinates.length - 1][3]);
-    }
-
     @Override
-    public Point getEndingPoint() {
-        return createPoint(coordinates[coordinates.length - 1][4], coordinates[coordinates.length - 1][5]);
+    public Point getLastControlPoint() {
+        return createPoint(coordinates[2], coordinates[3]);
     }
 
 }

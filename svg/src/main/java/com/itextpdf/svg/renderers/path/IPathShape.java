@@ -59,11 +59,11 @@ public interface IPathShape {
     /**
      * This method sets the coordinates for the path painting operator and does internal
      * preprocessing, if necessary
-     * @param coordinates an array containing point values for path coordinates
+     * @param inputCoordinates an array containing point values for path coordinates
      * @param startPoint the ending point of the previous operator, or, in broader terms,
      *                   the point that the coordinates should be absolutized against, for relative operators
      */
-    void setCoordinates(String[] coordinates, Point startPoint);
+    void setCoordinates(String[] inputCoordinates, Point startPoint);
 
     /**
      * Gets the ending point on the canvas after the path shape has been drawn
