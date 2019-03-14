@@ -48,7 +48,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
 import java.security.cert.CertificateEncodingException;
@@ -90,5 +92,11 @@ public class SignTestPortUtil {
 
     public static CRL parseCrlFromStream(InputStream input) throws CertificateException, CRLException {
         return CertificateFactory.getInstance("X.509").generateCRL(input);
+    }
+
+    public static KeyPairGenerator buildRSA2048KeyPairGenerator() throws NoSuchAlgorithmException {
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        return keyGen;
     }
 }

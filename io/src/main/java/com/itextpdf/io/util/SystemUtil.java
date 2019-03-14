@@ -56,6 +56,9 @@ import java.util.regex.Pattern;
  */
 public final class SystemUtil {
 
+    /**
+     * @deprecated To be removed in iText version 7.2. For time-based seed, please use {@link #getTimeBasedSeed()} instead.
+     */
     @Deprecated
     public static long getSystemTimeMillis() {
         return System.currentTimeMillis();
@@ -63,6 +66,10 @@ public final class SystemUtil {
 
     public static long getTimeBasedSeed() {
         return System.currentTimeMillis();
+    }
+
+    public static int getTimeBasedIntSeed() {
+        return (int) System.currentTimeMillis();
     }
 
     /**

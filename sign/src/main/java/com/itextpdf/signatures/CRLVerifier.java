@@ -130,8 +130,7 @@ public class CRLVerifier extends RootStoreVerifier {
         if (crl == null || signDate == SignUtils.UNDEFINED_TIMESTAMP_DATE)
             return false;
         // We only check CRLs valid on the signing date for which the issuer matches
-        if (crl.getIssuerX500Principal().equals(signCert.getIssuerX500Principal())
-                && signDate.after(crl.getThisUpdate()) && signDate.before(crl.getNextUpdate())) {
+        if (crl.getIssuerX500Principal().equals(signCert.getIssuerX500Principal()) && signDate.before(crl.getNextUpdate())) {
             // the signing certificate may not be revoked
             if (isSignatureValid(crl, issuerCert) && crl.isRevoked(signCert)) {
                 throw new VerificationException(signCert, "The certificate has been revoked.");
