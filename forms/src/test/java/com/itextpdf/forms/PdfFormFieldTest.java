@@ -600,7 +600,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     public void formRegenerateWithInvalidDefaultAppearance01() throws IOException, InterruptedException {
         String testName = "formRegenerateWithInvalidDefaultAppearance01";
         String outPdf = destinationFolder + testName + ".pdf";
-        String cmpPdf = sourceFolder + "cmp_"+ testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
         String srcPdf = sourceFolder + "invalidDA.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf);
@@ -629,7 +629,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     public void multilineFormFieldNewLineTest() throws IOException, InterruptedException {
         String testName = "multilineFormFieldNewLineTest";
         String outPdf = destinationFolder + testName + ".pdf";
-        String cmpPdf = sourceFolder + "cmp_"+ testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
         String srcPdf = sourceFolder + testName + ".pdf";
 
         PdfWriter writer = new PdfWriter(outPdf);
@@ -685,7 +685,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, true);
         PdfTextFormField[] fields = new PdfTextFormField[3];
-        String[] names = new String[] {"fieldNoPattern", "fieldEmptyPattern", "fieldSingleEntryPattern"};
+        String[] names = new String[]{"fieldNoPattern", "fieldEmptyPattern", "fieldSingleEntryPattern"};
         float y = 830;
         PdfDictionary borderDict = new PdfDictionary();
         borderDict.put(PdfName.S, PdfName.D);
@@ -806,4 +806,39 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
+    @Test
+    public void maxLenInheritanceTest() throws IOException, InterruptedException {
+        String srcPdf = sourceFolder + "maxLenInheritanceTest.pdf";
+        String outPdf = destinationFolder + "maxLenInheritanceTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_maxLenInheritanceTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        form.getField("text").setValue("iText!");
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void maxLenDeepInheritanceTest() throws IOException, InterruptedException {
+        String srcFilename = sourceFolder + "maxLenDeepInheritanceTest.pdf";
+        String destFilename = destinationFolder + "maxLenDeepInheritanceTest.pdf";
+        String cmpFilename = sourceFolder + "cmp_maxLenDeepInheritanceTest.pdf";
+
+        PdfDocument destDoc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(destFilename));
+
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(destDoc, false);
+        acroForm.getField("text.1").setValue("WoOooOw");
+
+        destDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFilename, destinationFolder, "diff_"));
+    }
 }

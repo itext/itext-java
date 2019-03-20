@@ -2866,10 +2866,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         Style paragraphStyle = new Style().setFont(font).setFontSize(fontSize);
         paragraphStyle.setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, 1));
 
+        int maxLen = new PdfTextFormField(getPdfObject()).getMaxLen();
         // check if /Comb has been set
-        if (this.getFieldFlag(PdfTextFormField.FF_COMB) && null != this.getPdfObject().getAsNumber(PdfName.MaxLen)) {
-            PdfNumber maxLenEntry = this.getPdfObject().getAsNumber(PdfName.MaxLen);
-            int maxLen = maxLenEntry.intValue();
+        if (this.getFieldFlag(PdfTextFormField.FF_COMB) && 0 != maxLen) {
             float widthPerCharacter = width / maxLen;
             int numberOfCharacters = Math.min(maxLen, value.length());
 

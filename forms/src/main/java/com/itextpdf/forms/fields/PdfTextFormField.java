@@ -202,12 +202,22 @@ public class PdfTextFormField extends PdfFormField {
 
     /**
      * Gets the maximum length of the field's text, in characters.
-     * This is an optional parameter, so if it is not specified, <code>null</code> will be returned.
+     * This is an optional parameter, so if it is not specified, 0 value will be returned.
      * @return the current maximum text length
      */
     public int getMaxLen() {
-        PdfNumber number = getPdfObject().getAsNumber(PdfName.MaxLen);
-        return number != null ? number.intValue() : 0;
+        PdfNumber maxLenEntry = this.getPdfObject().getAsNumber(PdfName.MaxLen);
+        if (maxLenEntry != null) {
+            return maxLenEntry.intValue();
+        } else {
+            PdfDictionary parent = getParent();
+            // MaxLen is an inherited form field property, therefore we try to recursively extract it from the ancestors
+            if (parent != null) {
+                return new PdfTextFormField(parent).getMaxLen();
+            } else {
+                return 0;
+            }
+        }
     }
 
     /**
