@@ -1162,10 +1162,34 @@ public class PdfPKCS7 {
      * Verify the digest.
      *
      * @return <CODE>true</CODE> if the signature checks out, <CODE>false</CODE> otherwise
-     * @throws SignatureException                     on error
-     * @throws java.security.GeneralSecurityException
+     * @throws java.security.GeneralSecurityException if this signature object is not initialized properly,
+     * the passed-in signature is improperly encoded or of the wrong type, if this signature algorithm is unable to
+     * process the input data provided, if the public key is invalid or if security provider or signature algorithm
+     * are not recognized, etc.
+     * @deprecated This method will be removed in future versions. Please use {@link #verifySignatureIntegrityAndAuthenticity()} instead.
      */
+    @Deprecated
     public boolean verify() throws GeneralSecurityException {
+        return verifySignatureIntegrityAndAuthenticity();
+    }
+
+    /**
+     * Verifies that signature integrity is intact (or in other words that signed data wasn't modified)
+     * by checking that embedded data digest corresponds to the calculated one. Also ensures that signature
+     * is genuine and is created by the owner of private key that corresponds to the declared public certificate.
+     * <p>
+     * Even though signature can be authentic and signed data integrity can be intact,
+     * one shall also always check that signed data is not only a part of PDF contents but is actually a complete PDF file.
+     * In order to check that given signature covers the current {@link com.itextpdf.kernel.pdf.PdfDocument} please
+     * use {@link SignatureUtil#signatureCoversWholeDocument(String)} method.
+     * </p>
+     * @return <CODE>true</CODE> if the signature checks out, <CODE>false</CODE> otherwise
+     * @throws java.security.GeneralSecurityException if this signature object is not initialized properly,
+     * the passed-in signature is improperly encoded or of the wrong type, if this signature algorithm is unable to
+     * process the input data provided, if the public key is invalid or if security provider or signature algorithm
+     * are not recognized, etc.
+     */
+    public boolean verifySignatureIntegrityAndAuthenticity() throws GeneralSecurityException {
         if (verified)
             return verifyResult;
         if (isTsp) {

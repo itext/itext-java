@@ -193,7 +193,7 @@ public class LtvVerification {
     public boolean addVerification(String signatureName, IOcspClient ocsp, ICrlClient crl, CertificateOption certOption, Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
         if (used)
             throw new IllegalStateException(PdfException.VerificationAlreadyOutput);
-        PdfPKCS7 pk = sgnUtil.verifySignature(signatureName, securityProviderCode);
+        PdfPKCS7 pk = sgnUtil.readSignatureData(signatureName, securityProviderCode);
         LOGGER.info("Adding verification for " + signatureName);
         Certificate[] xc = pk.getCertificates();
         X509Certificate cert;

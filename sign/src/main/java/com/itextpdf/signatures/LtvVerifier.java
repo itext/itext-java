@@ -364,14 +364,14 @@ public class LtvVerifier extends RootStoreVerifier {
      * @throws GeneralSecurityException
      */
     protected PdfPKCS7 coversWholeDocument() throws GeneralSecurityException {
-        PdfPKCS7 pkcs7 = sgnUtil.verifySignature(signatureName, securityProviderCode);
+        PdfPKCS7 pkcs7 = sgnUtil.readSignatureData(signatureName, securityProviderCode);
         if (sgnUtil.signatureCoversWholeDocument(signatureName)) {
             LOGGER.info("The timestamp covers whole document.");
         }
         else {
             throw new VerificationException((Certificate) null, "Signature doesn't cover whole document.");
         }
-        if (pkcs7.verify()) {
+        if (pkcs7.verifySignatureIntegrityAndAuthenticity()) {
             LOGGER.info("The signed document has not been modified.");
             return pkcs7;
         }

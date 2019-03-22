@@ -38,8 +38,8 @@ public class IncrementalSavingAttackTest extends ExtendedITextTest {
 
         PdfDocument document = new PdfDocument(new PdfReader(filePath));
         SignatureUtil sigUtil = new SignatureUtil(document);
-        PdfPKCS7 pdfPKCS7 = sigUtil.verifySignature(signatureName);
-        Assert.assertTrue(pdfPKCS7.verify());
+        PdfPKCS7 pdfPKCS7 = sigUtil.readSignatureData(signatureName);
+        Assert.assertTrue(pdfPKCS7.verifySignatureIntegrityAndAuthenticity());
         Assert.assertFalse(sigUtil.signatureCoversWholeDocument(signatureName));
         document.close();
     }
@@ -51,8 +51,8 @@ public class IncrementalSavingAttackTest extends ExtendedITextTest {
 
         PdfDocument document = new PdfDocument(new PdfReader(filePath));
         SignatureUtil sigUtil = new SignatureUtil(document);
-        PdfPKCS7 pdfPKCS7 = sigUtil.verifySignature(signatureName);
-        Assert.assertTrue(pdfPKCS7.verify());
+        PdfPKCS7 pdfPKCS7 = sigUtil.readSignatureData(signatureName);
+        Assert.assertTrue(pdfPKCS7.verifySignatureIntegrityAndAuthenticity());
         Assert.assertFalse(sigUtil.signatureCoversWholeDocument(signatureName));
 
         String textFromPage = PdfTextExtractor.getTextFromPage(document.getPage(1));
@@ -68,8 +68,8 @@ public class IncrementalSavingAttackTest extends ExtendedITextTest {
         PdfDocument sigRevDocument = new PdfDocument(new PdfReader(sigInputStream));
 
         SignatureUtil sigRevUtil = new SignatureUtil(sigRevDocument);
-        PdfPKCS7 sigRevSignatureData = sigRevUtil.verifySignature(signatureName);
-        Assert.assertTrue(sigRevSignatureData.verify());
+        PdfPKCS7 sigRevSignatureData = sigRevUtil.readSignatureData(signatureName);
+        Assert.assertTrue(sigRevSignatureData.verifySignatureIntegrityAndAuthenticity());
         Assert.assertTrue(sigRevUtil.signatureCoversWholeDocument(signatureName));
 
         sigRevDocument.close();
