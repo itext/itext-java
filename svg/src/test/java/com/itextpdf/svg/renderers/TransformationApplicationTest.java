@@ -63,7 +63,7 @@ public class TransformationApplicationTest {
 
     @Test
     public void normalDrawTest() {
-        byte[] expected = "1 0 0 1 7.5 0 cm\n0 0 0 rg\nf\nh\n".getBytes(StandardCharsets.UTF_8);
+        byte[] expected = "1 0 0 1 7.5 0 cm\n0 0 0 rg\nf\n".getBytes(StandardCharsets.UTF_8);
 
         ISvgNodeRenderer nodeRenderer = new AbstractSvgNodeRenderer() {
 

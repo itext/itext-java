@@ -252,7 +252,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                 } else if (doStroke) {
                     currentCanvas.stroke();
                 }
-                currentCanvas.closePath(); // TODO: see if this is necessary DEVSIX-2583
             }
         }
     }
