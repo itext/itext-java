@@ -21,6 +21,16 @@ pipeline {
     }
 
     stages {
+        stage('Clean workspace') {
+            options {
+                timeout(time: 5, unit: 'MINUTES')
+            }
+            steps {
+                withMaven(jdk: '1.8', maven: 'M3') {
+                    sh 'mvn clean'
+                }
+            }
+        }
         stage('Compile') {
             options {
                 timeout(time: 5, unit: 'MINUTES')
@@ -134,7 +144,6 @@ pipeline {
     post {
         always {
             echo 'One way or another, I have finished \uD83E\uDD16'
-            deleteDir() /* clean up our workspace */
         }
         success {
             echo 'I succeeeded! \u263A'
