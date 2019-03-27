@@ -586,9 +586,6 @@
                 <include>**/*Test.java</include>
               </includes>
               <groups>${unittests}</groups>
-              <forkCount>1</forkCount>
-              <reuseForks>false</reuseForks>
-              <threadCount>10</threadCount>
               <argLine>@{jacoco.agent.argLine}</argLine>
             </configuration>
           </plugin>
