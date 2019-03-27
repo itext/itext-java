@@ -42,7 +42,7 @@ pipeline {
             }
         }
         stage('Run Tests') {
-            parallel {
+            stages {
                 stage('Surefire (Unit Tests)') {
                     options {
                         timeout(time: 30, unit: 'MINUTES')
