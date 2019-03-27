@@ -71,6 +71,8 @@ import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -286,6 +288,16 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
         }
         return fields;
+    }
+
+    /**
+     * Gets a collection of {@link PdfFormField form field}s, prepared for flattening using {@link #partialFormFlattening} method.
+     * If returned collection is empty, all form fields will be flattened on {@link #flattenFields flattenFields} call.
+     *
+     * @return a collection of {@link PdfFormField form field}s for flattening
+     */
+    public Collection<PdfFormField> getFieldsForFlattening() {
+        return Collections.unmodifiableCollection(fieldsForFlattening);
     }
 
     /**
@@ -605,7 +617,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Flattens interactive {@link PdfFormField form field}s in the document. If
-     * no fields have been explicitly included via {#link #partialFormFlattening},
+     * no fields have been explicitly included via {@link #partialFormFlattening},
      * then all fields are flattened. Otherwise only the included fields are
      * flattened.
      */
