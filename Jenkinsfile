@@ -9,7 +9,7 @@ pipeline {
         disableConcurrentBuilds()
         skipStagesAfterUnstable()
         retry(1)
-        timeout(time: 30, unit: 'MINUTES')
+        timeout(time: 60, unit: 'MINUTES')
     }
 
     tools {
@@ -19,6 +19,9 @@ pipeline {
 
     stages {
         stage('Compile') {
+            options {
+                timeout(time: 5, unit: 'MINUTES')
+            }
             steps {
                 sh 'mvn -B compile test-compile'
             }
@@ -26,11 +29,17 @@ pipeline {
         stage('Run Tests') {
             parallel {
                 stage('Surefire (Unit Tests)') {
+                    options {
+                        timeout(time: 30, unit: 'MINUTES')
+                    }
                     steps {
                         sh 'mvn -B surefire:test -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false -Dmaven.javadoc.failOnError=false'
                     }
                 }
                 stage('Failsafe (Integration Tests)') {
+                    options {
+                        timeout(time: 30, unit: 'MINUTES')
+                    }
                     steps {
                         sh 'mvn -B failsafe:integration-test failsafe:verify -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false -Dmaven.javadoc.failOnError=false'
                     }
@@ -38,6 +47,9 @@ pipeline {
             }
         }
         stage('Package') {
+            options {
+                timeout(time: 5, unit: 'MINUTES')
+            }
             steps {
                 sh 'mvn compile package -Dmaven.test.skip=true'
             }
@@ -45,17 +57,26 @@ pipeline {
         stage('Static Code Analysis') {
             parallel {
                 stage('Checkstyle') {
+                    options {
+                        timeout(time: 5, unit: 'MINUTES')
+                    }
                     steps {
                         sh 'mvn -B checkstyle:checkstyle'
                     }
                 }
                 stage('Findbugs') {
+                    options {
+                        timeout(time: 10, unit: 'MINUTES')
+                    }
                     steps {
                         /* Change treshold to Default or remove treshold to find more bugs */
                         sh 'mvn -B findbugs:check -Dfindbugs.threshold="High"'
                     }
                 }
                 stage('PMD') {
+                    options {
+                        timeout(time: 5, unit: 'MINUTES')
+                    }
                     steps {
                         sh 'mvn -B pmd:pmd -Dpmd.analysisCache=true'
                     }
@@ -63,11 +84,17 @@ pipeline {
             }
         }
         stage('Archive Artifacts') {
+            options {
+                timeout(time: 5, unit: 'MINUTES')
+            }
             steps {
                 archiveArtifacts artifacts: '**', onlyIfSuccessful: true
             }
         }
         stage('Artifactory Deploy') {
+            options {
+                timeout(time: 5, unit: 'MINUTES')
+            }
             when {
                 anyOf {
                     branch "master"
