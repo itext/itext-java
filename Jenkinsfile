@@ -115,7 +115,7 @@ pipeline {
                 timeout(time: 5, unit: 'MINUTES')
             }
             steps {
-                archiveArtifacts artifacts: '**', onlyIfSuccessful: true
+                archiveArtifacts allowEmptyArchive: true, artifacts: '**/*.jar'
             }
         }
         stage('Artifactory Deploy') {
