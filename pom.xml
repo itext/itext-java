@@ -266,6 +266,33 @@
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>${findbugs.version}</version>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <effort>Max</effort>
+          <threshold>Low</threshold>
+          <xmlOutput>true</xmlOutput>
+          <failOnError>false</failOnError>
+          <skip>true</skip>
+          <plugins>
+            <plugin>
+              <groupId>com.mebigfatguy.fb-contrib</groupId>
+              <artifactId>fb-contrib</artifactId>
+              <version>${fb-contrib.version}</version>
+            </plugin>
+          </plugins>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
         <artifactId>tidy-maven-plugin</artifactId>
         <version>1.0.0</version>
         <executions>
@@ -484,32 +511,6 @@
               <textOutputFile>${project.build.directory}/clirr-report.txt</textOutputFile>
               <linkXRef>false</linkXRef>
               <failOnError>false</failOnError>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>findbugs-maven-plugin</artifactId>
-            <version>${findbugs.version}</version>
-            <executions>
-              <execution>
-                <phase>verify</phase>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <effort>Max</effort>
-              <threshold>Low</threshold>
-              <xmlOutput>true</xmlOutput>
-              <failOnError>false</failOnError>
-              <plugins>
-                <plugin>
-                  <groupId>com.mebigfatguy.fb-contrib</groupId>
-                  <artifactId>fb-contrib</artifactId>
-                  <version>${fb-contrib.version}</version>
-                </plugin>
-              </plugins>
             </configuration>
           </plugin>
           <plugin>
