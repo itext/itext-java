@@ -23,6 +23,25 @@ pipeline {
                 sh 'mvn -B compile test-compile'
             }
         }
+        stage('Run Tests') {
+            parallel {
+                stage('Surefire (Unit Tests)') {
+                    steps {
+                        sh 'mvn -B surefire:test -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false -Dmaven.javadoc.failOnError=false'
+                    }
+                }
+                stage('Failsafe (Integration Tests)') {
+                    steps {
+                        sh 'mvn -B failsafe:integration-test failsafe:verify -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false -Dmaven.javadoc.failOnError=false'
+                    }
+                }
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn compile package -Dmaven.test.skip=true'
+            }
+        }
         stage('Static Code Analysis') {
             parallel {
                 stage('Checkstyle') {
@@ -41,25 +60,6 @@ pipeline {
                         sh 'mvn -B pmd:pmd -Dpmd.analysisCache=true'
                     }
                 }
-            }
-        }
-        stage('Run Tests') {
-            parallel {
-                stage('Surefire (Unit Tests)') {
-                    steps {
-                        sh 'mvn -B surefire:test -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false -Dmaven.javadoc.failOnError=false'
-                    }
-                }
-                stage('Failsafe (Integration Tests)') {
-                    steps {
-                        sh 'mvn -B failsafe:integration-test failsafe:verify -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false -Dmaven.javadoc.failOnError=false'
-                    }
-                }
-            }
-        }
-        stage('Build') {
-            steps {
-                sh 'mvn compile package -Dmaven.test.skip=true'
             }
         }
         stage('Archive Artifacts') {
