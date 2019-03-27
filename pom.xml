@@ -82,6 +82,7 @@
     <failsafe.version>3.0.0-M3</failsafe.version>
     <fb-contrib.version>7.4.3</fb-contrib.version>
     <findbugs.version>3.0.5</findbugs.version>
+    <findsecbugs.version>1.8.0</findsecbugs.version>
     <hsqldb.version>2.3.3</hsqldb.version>
     <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>
     <itext.legacy.version>5.5.8</itext.legacy.version>
@@ -288,6 +289,11 @@
               <artifactId>fb-contrib</artifactId>
               <version>${fb-contrib.version}</version>
             </plugin>
+            <plugin>
+              <groupId>com.h3xstream.findsecbugs</groupId>
+              <artifactId>findsecbugs-plugin</artifactId>
+              <version>${findsecbugs.version}</version>
+            </plugin>
           </plugins>
         </configuration>
       </plugin>
@@ -390,6 +396,11 @@
               <groupId>com.mebigfatguy.fb-contrib</groupId>
               <artifactId>fb-contrib</artifactId>
               <version>${fb-contrib.version}</version>
+            </plugin>
+            <plugin>
+              <groupId>com.h3xstream.findsecbugs</groupId>
+              <artifactId>findsecbugs-plugin</artifactId>
+              <version>${findsecbugs.version}</version>
             </plugin>
           </plugins>
         </configuration>
