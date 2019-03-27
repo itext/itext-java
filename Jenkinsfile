@@ -5,11 +5,14 @@ pipeline {
     agent any
 
     options {
-        buildDiscarder(logRotator(daysToKeepStr:'7',  numToKeepStr:'20', artifactNumToKeepStr:'3'))
-        disableConcurrentBuilds()
-        skipStagesAfterUnstable()
+        ansiColor('xterm')
+        buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
+        compressBuildLog()
+        parallelsAlwaysFailFast()
         retry(1)
+        skipStagesAfterUnstable()
         timeout(time: 60, unit: 'MINUTES')
+        timestamps()
     }
 
     tools {
@@ -23,7 +26,9 @@ pipeline {
                 timeout(time: 5, unit: 'MINUTES')
             }
             steps {
-                sh 'mvn -B compile test-compile'
+                withMaven(jdk: '1.8', maven: 'M3') {
+                    sh 'mvn compile test-compile'
+                }
             }
         }
         stage('Run Tests') {
@@ -33,7 +38,9 @@ pipeline {
                         timeout(time: 30, unit: 'MINUTES')
                     }
                     steps {
-                        sh 'mvn -B surefire:test -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false -Dmaven.javadoc.failOnError=false'
+                        withMaven(jdk: '1.8', maven: 'M3') {
+                            sh 'mvn --activate-profiles test test -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false'
+                        }
                     }
                 }
                 stage('Failsafe (Integration Tests)') {
@@ -41,7 +48,9 @@ pipeline {
                         timeout(time: 30, unit: 'MINUTES')
                     }
                     steps {
-                        sh 'mvn -B failsafe:integration-test failsafe:verify -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false -Dmaven.javadoc.failOnError=false'
+                        withMaven(jdk: '1.8', maven: 'M3') {
+                            sh 'mvn --activate-profiles test verify -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false'
+                        }
                     }
                 }
             }
@@ -51,7 +60,9 @@ pipeline {
                 timeout(time: 5, unit: 'MINUTES')
             }
             steps {
-                sh 'mvn compile package -Dmaven.test.skip=true'
+                withMaven(jdk: '1.8', maven: 'M3') {
+                    sh 'mvn package -Dmaven.test.skip=true'
+                }
             }
         }
         stage('Static Code Analysis') {
@@ -61,7 +72,9 @@ pipeline {
                         timeout(time: 5, unit: 'MINUTES')
                     }
                     steps {
-                        sh 'mvn -B checkstyle:checkstyle'
+                        withMaven(jdk: '1.8', maven: 'M3') {
+                            sh 'mvn --activate-profiles qa checkstyle:checkstyle'
+                        }
                     }
                 }
                 stage('Findbugs') {
@@ -70,7 +83,9 @@ pipeline {
                     }
                     steps {
                         /* Change treshold to Default or remove treshold to find more bugs */
-                        sh 'mvn -B findbugs:check -Dfindbugs.threshold="High"'
+                        withMaven(jdk: '1.8', maven: 'M3') {
+                            sh 'mvn --activate-profiles qa findbugs:check -Dfindbugs.threshold="High"'
+                        }
                     }
                 }
                 stage('PMD') {
@@ -78,7 +93,9 @@ pipeline {
                         timeout(time: 5, unit: 'MINUTES')
                     }
                     steps {
-                        sh 'mvn -B pmd:pmd -Dpmd.analysisCache=true'
+                        withMaven(jdk: '1.8', maven: 'M3') {
+                            sh 'mvn --activate-profiles qa pmd:pmd -Dpmd.analysisCache=true'
+                        }
                     }
                 }
             }
