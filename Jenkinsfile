@@ -37,7 +37,7 @@ pipeline {
                 }
             }
         }
-        stage('Build') {
+        stage('Package') {
             steps {
                 sh 'mvn compile package -Dmaven.test.skip=true'
             }
