@@ -478,6 +478,11 @@ final class TableWidths {
             firtsRow = null;
         }
 
+        float[] columnWidthIfPercent = new float[columnWidths.length];
+        for (int i = 0; i < columnWidthIfPercent.length; i++) {
+            columnWidthIfPercent[i] = -1;
+        }
+        float sumOfPercents = 0;
         if (firtsRow != null && getTable().isComplete() && 0 == getTable().getLastRowBottomBorder().size()) { // only for not large tables
             for (int i = 0; i < numberOfColumns; i++) {
                 if (columnWidths[i] == -1) {
@@ -486,9 +491,14 @@ final class TableWidths {
                         UnitValue cellWidth = getCellWidth(cell, true);
                         if (cellWidth != null) {
                             assert cellWidth.getValue() >= 0;
-                            float width = cellWidth.isPercentValue()
-                                    ? tableWidth * cellWidth.getValue() / 100
-                                    : cellWidth.getValue();
+                            float width = 0;
+                            if (cellWidth.isPercentValue()) {
+                                width = tableWidth * cellWidth.getValue() / 100;
+                                columnWidthIfPercent[i] = cellWidth.getValue();
+                                sumOfPercents += columnWidthIfPercent[i];
+                            } else {
+                                width = cellWidth.getValue();
+                            }
                             int colspan = ((Cell) cell.getModelElement()).getColspan();
                             for (int j = 0; j < colspan; j++) {
                                 columnWidths[i + j] = width / colspan;
@@ -510,31 +520,31 @@ final class TableWidths {
                 }
             }
         }
-
+        if (sumOfPercents > 100) {
+            warn100percent();
+        }
         if (remainWidth > 0) {
             if (numberOfColumns == processedColumns) {
                 //Set remaining width to all columns.
                 for (int i = 0; i < numberOfColumns; i++) {
                     columnWidths[i] = tableWidth * columnWidths[i] / (tableWidth - remainWidth);
                 }
-            } else {
-                // Set remaining width to the unprocessed columns.
-                for (int i = 0; i < numberOfColumns; i++) {
-                    if (columnWidths[i] == -1) {
-                        columnWidths[i] = remainWidth / (numberOfColumns - processedColumns);
-                    }
-                }
             }
-        } else if (numberOfColumns != processedColumns) {
-//            Logger logger = LoggerFactory.getLogger(TableWidths.class);
-//            logger.warn(LogMessageConstant.SUM_OF_TABLE_COLUMNS_IS_GREATER_THAN_TABLE_WIDTH);
+        } else if (remainWidth < 0){
+            //Only columns with a width of percentage type should suffer.
             for (int i = 0; i < numberOfColumns; i++) {
-                if (columnWidths[i] == -1) {
-                    columnWidths[i] = 0;
-                }
+                columnWidths[i] += -1 != columnWidthIfPercent[i]
+                        ? remainWidth * columnWidthIfPercent[i] / sumOfPercents
+                        : 0;
+            }
+        }
+        for (int i = 0; i < numberOfColumns; i++) {
+            if (columnWidths[i] == -1) {
+                columnWidths[i] = Math.max(0, remainWidth / (numberOfColumns - processedColumns));
             }
         }
 
+        // Set remaining width to the unprocessed columns.
         if (tableRenderer.bordersHandler instanceof SeparatedTableBorders) {
             for (int i = 0; i < numberOfColumns; i++) {
                 columnWidths[i] += horizontalBorderSpacing;
