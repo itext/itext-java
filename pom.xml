@@ -63,8 +63,8 @@
   </modules>
 
   <scm>
-    <connection>ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
-    <url>ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</url>
+    <connection>scm:git:ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
+    <url>https://git.itextsupport.com/projects/I7J/repos/itextcore</url>
   </scm>
   <issueManagement>
     <system>jira</system>
