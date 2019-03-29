@@ -221,11 +221,14 @@ public class PdfTextFormField extends PdfFormField {
     }
 
     /**
-     * Sets the maximum length of the field?s text, in characters.
+     * Sets the maximum length of the field's text, in characters.
      * @param maxLen the maximum text length
      * @return current
      */
     public PdfTextFormField setMaxLen(int maxLen) {
-        return (PdfTextFormField) put(PdfName.MaxLen, new PdfNumber(maxLen));
+        put(PdfName.MaxLen, new PdfNumber(maxLen));
+        if (getFieldFlag(FF_COMB))
+            regenerateField();
+        return this;
     }
 }

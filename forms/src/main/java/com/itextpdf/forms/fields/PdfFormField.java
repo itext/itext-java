@@ -90,6 +90,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1486,7 +1487,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the edited field
      */
     public PdfFormField setFieldFlags(int flags) {
-        return put(PdfName.Ff, new PdfNumber(flags));
+        int oldFlags = getFieldFlags();
+        put(PdfName.Ff, new PdfNumber(flags));
+        if (((oldFlags ^ flags) & PdfTextFormField.FF_COMB) != 0
+                && PdfName.Tx.equals(getFormType()) && new PdfTextFormField(getPdfObject()).getMaxLen() != 0)
+            regenerateField();
+        return this;
     }
 
     /**
@@ -2865,6 +2871,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         Style paragraphStyle = new Style().setFont(font).setFontSize(fontSize);
         paragraphStyle.setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, 1));
+        if (color != null)
+            paragraphStyle.setProperty(Property.FONT_COLOR, new TransparentColor(color));
 
         int maxLen = new PdfTextFormField(getPdfObject()).getMaxLen();
         // check if /Comb has been set
@@ -2886,18 +2894,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             float startOffset = widthPerCharacter * (start + 0.5f);
             for (int i = 0; i < numberOfCharacters; i++) {
                 modelCanvas.showTextAligned(new Paragraph(value.substring(i, i+1)).addStyle(paragraphStyle),
-                         startOffset + widthPerCharacter * i, rect.getHeight() / 2, TextAlignment.CENTER, VerticalAlignment.MIDDLE);
+                        startOffset + widthPerCharacter * i, rect.getHeight() / 2, TextAlignment.CENTER, VerticalAlignment.MIDDLE);
             }
         } else {
             if (this.getFieldFlag(PdfTextFormField.FF_COMB)) {
                 Logger logger = LoggerFactory.getLogger(PdfFormField.class);
                 logger.error(MessageFormatUtil.format(LogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT));
             }
-            Paragraph paragraph = new Paragraph(value).addStyle(paragraphStyle).setPaddings(0, X_OFFSET, 0, X_OFFSET);
-            if (color != null) {
-                paragraph.setFontColor(color);
-            }
-            modelCanvas.showTextAligned(paragraph, x, rect.getHeight() / 2, textAlignment, VerticalAlignment.MIDDLE);
+            modelCanvas.showTextAligned(new Paragraph(value).addStyle(paragraphStyle).setPaddings(0, X_OFFSET, 0, X_OFFSET),
+                    x, rect.getHeight() / 2, textAlignment, VerticalAlignment.MIDDLE);
         }
         canvas.
                 restoreState().

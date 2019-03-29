@@ -841,4 +841,50 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFilename, destinationFolder, "diff_"));
     }
+
+    @Test
+    public void maxLenColoredTest() throws IOException, InterruptedException {
+        String srcPdf = sourceFolder + "maxLenColoredTest.pdf";
+        String outPdf = destinationFolder + "maxLenColoredTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_maxLenColoredTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+        form.getField("magenta").setColor(ColorConstants.MAGENTA);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT, count = 2)})
+    public void regenerateMaxLenCombTest() throws IOException, InterruptedException {
+        String srcPdf = sourceFolder + "regenerateMaxLenCombTest.pdf";
+        String outPdf = destinationFolder + "regenerateMaxLenCombTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_regenerateMaxLenCombTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        for (int i = 0; i < 12; i++) {
+            PdfTextFormField field = (PdfTextFormField) form.getField("field " + i);
+            if (i < 8)
+                field.setMaxLen(i < 4 ? 7 : 0);
+            if (i % 6 > 1)
+                field.setFieldFlag(PdfTextFormField.FF_COMB, i % 2 == 0 ? true : false);
+
+        }
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
 }
