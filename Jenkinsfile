@@ -134,7 +134,7 @@ pipeline {
                     def rtMaven = Artifactory.newMavenBuild()
                     rtMaven.deployer server: server, releaseRepo: 'releases', snapshotRepo: 'snapshot'
                     rtMaven.tool = 'M3'
-                    def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'install'
+                    def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'package'
                     server.publishBuildInfo buildInfo
                 }
             }
