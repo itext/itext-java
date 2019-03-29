@@ -77,13 +77,24 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     private PdfResources resources = null;
     private int mcid = -1;
     PdfPages parentPages;
-    private List<PdfName> excludedKeys = new ArrayList<>(Arrays.asList(
+    private static final List<PdfName> PAGE_EXCLUDED_KEYS = new ArrayList<>(Arrays.asList(
             PdfName.Parent,
             PdfName.Annots,
             PdfName.StructParents,
             // This key contains reference to all articles, while this articles could reference to lots of pages.
             // See DEVSIX-191
             PdfName.B));
+
+    private static final List<PdfName> XOBJECT_EXCLUDED_KEYS;
+
+    static {
+        XOBJECT_EXCLUDED_KEYS = new ArrayList<>(Arrays.asList(PdfName.MediaBox,
+                PdfName.CropBox,
+                PdfName.TrimBox,
+                PdfName.Contents));
+        XOBJECT_EXCLUDED_KEYS.addAll(PAGE_EXCLUDED_KEYS);
+    }
+
 
     /**
      * Automatically rotate new content if the page has a rotation ( is disabled by default )
@@ -377,7 +388,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return copied {@link PdfPage}.
      */
     public PdfPage copyTo(PdfDocument toDocument, IPdfPageExtraCopier copier) {
-        PdfDictionary dictionary = getPdfObject().copyTo(toDocument, excludedKeys, true);
+        PdfDictionary dictionary = getPdfObject().copyTo(toDocument, PAGE_EXCLUDED_KEYS, true);
         PdfPage page = new PdfPage(dictionary);
         copyInheritedProperties(page, toDocument);
         for (PdfAnnotation annot : getAnnotations()) {
@@ -418,13 +429,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfFormXObject copyAsFormXObject(PdfDocument toDocument) throws IOException {
         PdfFormXObject xObject = new PdfFormXObject(getCropBox());
-        List<PdfName> excludedKeys = new ArrayList<>(Arrays.asList(PdfName.MediaBox,
-                PdfName.CropBox,
-                PdfName.Contents)
-        );
-        excludedKeys.addAll(this.excludedKeys);
+
         for (PdfName key : getPdfObject().keySet()) {
-            if (excludedKeys.contains(key)) {
+            if (XOBJECT_EXCLUDED_KEYS.contains(key)) {
                 continue;
             }
             PdfObject obj = getPdfObject().get(key);

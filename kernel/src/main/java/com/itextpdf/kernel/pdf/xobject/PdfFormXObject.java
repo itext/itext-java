@@ -88,6 +88,9 @@ public class PdfFormXObject extends PdfXObject {
      */
     public PdfFormXObject(PdfStream pdfStream) {
         super(pdfStream);
+        if (!getPdfObject().containsKey(PdfName.Subtype)) {
+            getPdfObject().put(PdfName.Subtype, PdfName.Form);
+        }
     }
 
     /**
