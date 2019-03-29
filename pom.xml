@@ -677,7 +677,7 @@
             <configuration>
               <quiet>true</quiet>
               <detectLinks>true</detectLinks>
-              <subpackages>com.itextpdf.barcodes:com.itextpdf.forms:com.itextpdf.io:com.itextpdf.kernel:com.itextpdf.layout:com.itextpdf.pdfa:com.itextpdf.signatures:com.itextpdf.styled-xml-parser:com.itextpdf.svg:com.itextpdf.test</subpackages>
+              <subpackages>com.itextpdf.barcodes:com.itextpdf.forms:com.itextpdf.io:com.itextpdf.kernel:com.itextpdf.layout:com.itextpdf.pdfa:com.itextpdf.signatures:com.itextpdf.styledxmlparser:com.itextpdf.svg:com.itextpdf.test</subpackages>
               <groups>
                 <group>
                   <title>Barcodes</title>
@@ -717,7 +717,7 @@
                 </group>
                 <group>
                   <title>Styled XML Parser</title>
-                  <packages>com.itextpdf.styled-xml-parser*</packages>
+                  <packages>com.itextpdf.styledxmlparser*</packages>
                 </group>
                 <group>
                   <title>SVG</title>
