@@ -42,13 +42,6 @@
           <include>**/*.*</include>
         </includes>
       </testResource>
-      <testResource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>com/itextpdf/io/font/cmap/**</include>
-          <include>**/cmap_info.txt</include>
-        </includes>
-      </testResource>
     </testResources>
     <plugins>
       <plugin>
