@@ -1425,12 +1425,26 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Checks whether PDF document conforms a specific standard.
      * Shall be override.
+     * @deprecated This method will be replaced by {@link #checkIsoConformance(Object, IsoKey, PdfResources, PdfStream) checkIsoConformance} in  7.2 release
      *
      * @param obj       an object to conform.
      * @param key       type of object to conform.
      * @param resources {@link PdfResources} associated with an object to check.
      */
+    @Deprecated
     public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources) {
+    }
+
+    /**
+     * Checks whether PDF document conforms a specific standard.
+     * Shall be override.
+     *
+     * @param obj       an object to conform.
+     * @param key       type of object to conform.
+     * @param resources {@link PdfResources} associated with an object to check.
+     * @param contentStream current content stream
+     */
+    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream) {
     }
 
     /**

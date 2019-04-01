@@ -135,6 +135,11 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
+    public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill, PdfStream stream) {
+        checkColorSpace(color.getColorSpace(), currentColorSpaces, true, fill);
+    }
+
+    @Override
     public void checkColorSpace(PdfColorSpace colorSpace, PdfDictionary currentColorSpaces, boolean checkAlternate, Boolean fill) {
         if (colorSpace instanceof PdfSpecialCs.Separation) {
             colorSpace = ((PdfSpecialCs.Separation) colorSpace).getBaseCs();
@@ -187,6 +192,11 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     public void checkExtGState(CanvasGraphicsState extGState) {
+        checkExtGState(extGState, null);
+    }
+
+    @Override
+    public void checkExtGState(CanvasGraphicsState extGState, PdfStream contentStream) {
         if (extGState.getTransferFunction() != null) {
             throw new PdfAConformanceException(PdfAConformanceException.AN_EXTGSTATE_DICTIONARY_SHALL_NOT_CONTAIN_THE_TR_KEY);
         }

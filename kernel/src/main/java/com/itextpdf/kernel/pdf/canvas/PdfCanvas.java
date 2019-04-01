@@ -721,6 +721,7 @@ public class PdfCanvas implements Serializable {
      * @return current canvas.
      */
     public PdfCanvas showText(GlyphLine text, Iterator<GlyphLine.GlyphLinePart> iterator) {
+        document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
         PdfFont font;
         if ((font = currentGs.getFont()) == null) {
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
@@ -890,6 +891,7 @@ public class PdfCanvas implements Serializable {
      * @return current canvas.
      */
     public PdfCanvas showText(PdfArray textArray) {
+        document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
         if (currentGs.getFont() == null)
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("["));
@@ -1643,7 +1645,7 @@ public class PdfCanvas implements Serializable {
             }
             contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? scn : SCN);
         }
-        document.checkIsoConformance(currentGs, fill ? IsoKey.FILL_COLOR : IsoKey.STROKE_COLOR, resources);
+        document.checkIsoConformance(currentGs, fill ? IsoKey.FILL_COLOR : IsoKey.STROKE_COLOR, resources, contentStream);
         return this;
     }
 
@@ -2084,7 +2086,7 @@ public class PdfCanvas implements Serializable {
             currentGs.updateFromExtGState(extGState, document);
         PdfName name = resources.addExtGState(extGState);
         contentStream.getOutputStream().write(name).writeSpace().writeBytes(gs);
-        document.checkIsoConformance(currentGs, IsoKey.EXTENDED_GRAPHICS_STATE);
+        document.checkIsoConformance(currentGs, IsoKey.EXTENDED_GRAPHICS_STATE, null, contentStream);
         return this;
     }
 
@@ -2237,7 +2239,7 @@ public class PdfCanvas implements Serializable {
      * @param f            an element of the transformation matrix
      */
     protected void addInlineImage(PdfImageXObject imageXObject, float a, float b, float c, float d, float e, float f) {
-        document.checkIsoConformance(imageXObject.getPdfObject(), IsoKey.INLINE_IMAGE, resources);
+        document.checkIsoConformance(imageXObject.getPdfObject(), IsoKey.INLINE_IMAGE, resources, contentStream);
         saveState();
         concatMatrix(a, b, c, d, e, f);
         PdfOutputStream os = contentStream.getOutputStream();
@@ -2445,6 +2447,7 @@ public class PdfCanvas implements Serializable {
      * @param text the text to write.
      */
     private void showTextInt(String text) {
+        document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
         if (currentGs.getFont() == null)
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         currentGs.getFont().writeText(text, contentStream.getOutputStream());

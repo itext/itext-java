@@ -432,7 +432,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     @Test
     public void transparencyCheckTest1() {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.IF_THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_TRANSPARENCY_IS_FORBIDDEN);
+        junitExpectedException.expectMessage(PdfAConformanceException.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, null);

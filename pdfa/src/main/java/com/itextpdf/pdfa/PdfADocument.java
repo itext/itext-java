@@ -165,11 +165,17 @@ public class PdfADocument extends PdfDocument {
 
     @Override
     public void checkIsoConformance(Object obj, IsoKey key) {
-        checkIsoConformance(obj, key, null);
+        checkIsoConformance(obj, key, null, null);
     }
 
     @Override
+    @Deprecated
     public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources) {
+        checkIsoConformance(obj, key, resources, null);
+    }
+
+    @Override
+    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream) {
         CanvasGraphicsState gState;
         PdfDictionary currentColorSpaces = null;
         if (resources != null) {
@@ -190,21 +196,24 @@ public class PdfADocument extends PdfDocument {
                 break;
             case EXTENDED_GRAPHICS_STATE:
                 gState = (CanvasGraphicsState) obj;
-                checker.checkExtGState(gState);
+                checker.checkExtGState(gState, contentStream);
                 break;
             case FILL_COLOR:
                 gState = (CanvasGraphicsState) obj;
-                checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
+                checker.checkColor(gState.getFillColor(), currentColorSpaces, true, contentStream);
                 break;
             case PAGE:
                 checker.checkSinglePage((PdfPage) obj);
                 break;
             case STROKE_COLOR:
                 gState = (CanvasGraphicsState) obj;
-                checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
+                checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false, contentStream);
                 break;
             case TAG_STRUCTURE_ELEMENT:
                 checker.checkTagStructureElement((PdfObject) obj);
+                break;
+            case FONT_GLYPHS:
+                checker.checkFontGlyphs(((CanvasGraphicsState) obj).getFont(), contentStream);
                 break;
         }
     }
