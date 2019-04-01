@@ -64,6 +64,8 @@ import com.itextpdf.kernel.pdf.PdfString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 /**
  * Low-level API class for Type 3 fonts.
  * <p>
@@ -141,13 +143,38 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         }
         setFontMatrix(fontMatrix);
 
-        for (PdfName glyphName : charProcsDic.keySet()) {
-            int unicode = AdobeGlyphList.nameToUnicode(glyphName.getValue());
-            if (unicode != -1 && fontEncoding.canEncode(unicode)) {
-                int code = fontEncoding.convertToByte(unicode);
-                ((Type3Font) getFontProgram()).addGlyph(code, unicode, widths[code], null, new Type3Glyph(charProcsDic.getAsStream(glyphName), getDocument()));
+        if (toUnicode != null && toUnicode.hasByteMappings() && fontEncoding.hasDifferences()) {
+            for (int i = 0; i < 256; i++) {
+                int unicode = fontEncoding.getUnicode(i);
+                PdfName glyphName = new PdfName(fontEncoding.getDifference(i));
+                if (unicode != -1
+                        && !glyphName.getValue().equals(FontEncoding.NOTDEF)
+                        && charProcsDic.containsKey(glyphName)) {
+                    ((Type3Font) getFontProgram()).addGlyph(i, unicode, widths[i], null, new Type3Glyph(charProcsDic.getAsStream(glyphName), getDocument()));
+                }
             }
         }
+
+
+        Map<Integer, Integer> unicodeToCode = null;
+        if (toUnicode != null) {
+            try { unicodeToCode = toUnicode.createReverseMapping(); } catch (Exception ignored){}
+        }
+
+        for (PdfName glyphName : charProcsDic.keySet()) {
+            int unicode = AdobeGlyphList.nameToUnicode(glyphName.getValue());
+            int code = -1;
+            if (fontEncoding.canEncode(unicode)) {
+                code = fontEncoding.convertToByte(unicode);
+            } else if (unicodeToCode != null && unicodeToCode.containsKey(unicode)) {
+                code = (int) unicodeToCode.get(unicode);
+            }
+            if (code != -1 && getFontProgram().getGlyphByCode(code) == null) {
+                ((Type3Font) getFontProgram()).addGlyph(code, unicode, widths[code],
+                        null, new Type3Glyph(charProcsDic.getAsStream(glyphName), getDocument()));
+            }
+        }
+
         fillFontDescriptor(fontDictionary.getAsDictionary(PdfName.FontDescriptor));
     }
 

@@ -46,10 +46,12 @@ import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -71,6 +73,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -218,6 +221,30 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
 
         Assert.assertEquals("Preface", text);
+    }
+
+    @Test
+    public void testType3FontWithDifferences() throws IOException {
+        String sourcePdf = sourceFolder + "DocumentWithType3FontWithDifferences.pdf";
+        String comparedTextFile = sourceFolder + "textFromDocWithType3FontWithDifferences.txt";
+
+        PdfDocument pdf = new PdfDocument(new PdfReader(sourcePdf));
+        String result = PdfTextExtractor.getTextFromPage(pdf.getPage(1), new LocationTextExtractionStrategy());
+
+        PdfDictionary pdfType3FontDict = (PdfDictionary) pdf.getPdfObject(292);
+        PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory.createFont(pdfType3FontDict);
+
+        pdf.close();
+
+        Assert.assertEquals(new String(java.nio.file.Files.readAllBytes(new java.io.File(comparedTextFile).toPath()), StandardCharsets.UTF_8), result);
+
+        Assert.assertEquals(83, pdfType3Font.getNumberOfGlyphs());
+
+        Assert.assertEquals("gA", pdfType3Font.getFontEncoding().getDifference(10));
+        Assert.assertEquals(41, pdfType3Font.getFontProgram().getGlyphByCode(10).getUnicode());
+
+        Assert.assertEquals(".notdef", pdfType3Font.getFontEncoding().getDifference(210));
+        Assert.assertEquals(928, pdfType3Font.getFontProgram().getGlyphByCode(210).getUnicode());
     }
 
     private byte[] createPdfWithNegativeCharSpacing(String str1, float charSpacing, String str2) throws Exception {
