@@ -121,7 +121,7 @@ public final class FontCharacteristics {
     }
 
     public boolean isBold() {
-        return isBold || fontWeight > 600;
+        return isBold || fontWeight > 500;
     }
 
     public boolean isMonospace() {
