@@ -635,6 +635,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             initialPageResourceClones.put(i, resources == null ? null : resources.clone());
         }
 
+        Set<PdfPage> wrappedPages = new LinkedHashSet<PdfPage>();
         PdfPage page;
         for (PdfFormField field : fields) {
             PdfDictionary fieldObject = field.getPdfObject();
@@ -683,7 +684,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                     if (page.isFlushed()) {
                         throw new PdfException(PdfException.PageAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
                     }
-                    PdfCanvas canvas = new PdfCanvas(page);
+                    PdfCanvas canvas = new PdfCanvas(page, !wrappedPages.contains(page));
+                    wrappedPages.add(page);
 
                     // Here we avoid circular reference which might occur when page resources and the appearance xObject's
                     // resources are the same object

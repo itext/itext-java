@@ -64,6 +64,8 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Canvas;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -883,6 +885,36 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void wrapPrecedingContentOnFlattenTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "wrapPrecedingContentOnFlattenTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+        canvas.setFillColor(ColorConstants.MAGENTA);
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfTextFormField[] fields = new PdfTextFormField[4];
+        for (int i = 0; i < 4; i++)
+            fields[i] = PdfFormField.createText(pdfDoc, new Rectangle(90, 700 - i * 100, 150, 22), "black" + i, "black");
+        form.addField(fields[0]);
+        form.addField(fields[1]);
+        Document doc = new Document(pdfDoc);
+        doc.add(new AreaBreak());
+        canvas = new PdfCanvas(pdfDoc.getPage(2));
+        canvas.setFillColor(ColorConstants.CYAN);
+        form.addField(fields[2]);
+        form.addField(fields[3], pdfDoc.getFirstPage());
+        form.flattenFields();
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_wrapPrecedingContentOnFlattenTest.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
