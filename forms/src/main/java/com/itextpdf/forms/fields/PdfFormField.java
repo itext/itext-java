@@ -1768,6 +1768,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Gets the current color of the form field.
+     *
+     * @return the current {@link Color color}
+     */
+    public Color getColor() {
+        return color;
+    }
+
+    /**
      * Basic setter for the <code>font</code> property. Regenerates the field
      * appearance after setting the new value.
      * Note that the font will be added to the document so ensure that the font is embedded
@@ -3482,8 +3491,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (subType != null && subType.equals(PdfName.Widget)) {
             PdfDictionary appearanceCharacteristics = getPdfObject().getAsDictionary(PdfName.MK);
             if (appearanceCharacteristics != null) {
-                backgroundColor = getColor(appearanceCharacteristics, PdfName.BG);
-                Color extractedBorderColor = getColor(appearanceCharacteristics, PdfName.BC);
+                backgroundColor = appearancePropToColor(appearanceCharacteristics, PdfName.BG);
+                Color extractedBorderColor = appearancePropToColor(appearanceCharacteristics, PdfName.BC);
                 if (extractedBorderColor != null)
                     borderColor = extractedBorderColor;
             }
@@ -3498,7 +3507,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private Color getColor(PdfDictionary appearanceCharacteristics, PdfName property) {
+    private Color appearancePropToColor(PdfDictionary appearanceCharacteristics, PdfName property) {
         PdfArray colorData = appearanceCharacteristics.getAsArray(property);
         if (colorData != null) {
             float[] backgroundFloat = new float[colorData.size()];
