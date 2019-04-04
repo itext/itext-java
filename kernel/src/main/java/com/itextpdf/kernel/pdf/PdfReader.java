@@ -538,7 +538,7 @@ public class PdfReader implements Closeable, Serializable {
             readXref();
         } catch (RuntimeException ex) {
             Logger logger = LoggerFactory.getLogger(PdfReader.class);
-            logger.warn(LogMessageConstant.XREF_ERROR, ex);
+            logger.error(LogMessageConstant.XREF_ERROR, ex);
 
             rebuildXref();
         }
