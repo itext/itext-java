@@ -629,7 +629,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    //DEVSIX-2069
     //Create a document with formfields and paragraphs in both fonts, and fill them before closing the document
     public void fillFieldWithHebrewCase1() throws IOException, InterruptedException {
         String testName = "fillFieldWithHebrewCase1";
@@ -661,7 +660,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    //DEVSIX-2069, cmp_file will have to be changed after fix
     //Create a document with formfields and paragraphs in both fonts, and fill them after closing and reopening the document
     public void fillFieldWithHebrewCase2() throws IOException, InterruptedException {
         String testName = "fillFieldWithHebrewCase2";
@@ -698,7 +696,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    //DEVSIX-2069
     //Create a document with formfields in both fonts, and fill them before closing the document
     public void fillFieldWithHebrewCase3() throws IOException, InterruptedException {
         String testName = "fillFieldWithHebrewCase3";
@@ -725,7 +722,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    //DEVSIX-2069, cmp_file will have to be changed after fix
     //Create a document with formfields in both fonts, and fill them after closing and reopening the document
     public void fillFieldWithHebrewCase4() throws IOException, InterruptedException {
         String testName = "fillFieldWithHebrewCase4";
