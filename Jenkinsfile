@@ -65,16 +65,6 @@ pipeline {
                 }
             }
         }
-        stage('Package') {
-            options {
-                timeout(time: 5, unit: 'MINUTES')
-            }
-            steps {
-                withMaven(jdk: '1.8', maven: 'M3') {
-                    sh 'mvn package -Dmaven.test.skip=true'
-                }
-            }
-        }
         stage('Static Code Analysis') {
             parallel {
                 stage('Checkstyle') {
@@ -110,14 +100,6 @@ pipeline {
                 }
             }
         }
-        stage('Archive Artifacts') {
-            options {
-                timeout(time: 5, unit: 'MINUTES')
-            }
-            steps {
-                archiveArtifacts allowEmptyArchive: true, artifacts: '**/*.jar'
-            }
-        }
         stage('Artifactory Deploy') {
             options {
                 timeout(time: 5, unit: 'MINUTES')
@@ -126,6 +108,8 @@ pipeline {
                 anyOf {
                     branch "master"
                     branch "develop"
+                    branch "7.0"
+                    branch "7.0-master"
                 }
             }
             steps {
@@ -134,9 +118,17 @@ pipeline {
                     def rtMaven = Artifactory.newMavenBuild()
                     rtMaven.deployer server: server, releaseRepo: 'releases', snapshotRepo: 'snapshot'
                     rtMaven.tool = 'M3'
-                    def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'package'
+                    def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'package -Dmaven.test.skip=true'
                     server.publishBuildInfo buildInfo
                 }
+            }
+        }
+        stage('Archive Artifacts') {
+            options {
+                timeout(time: 5, unit: 'MINUTES')
+            }
+            steps {
+                archiveArtifacts allowEmptyArchive: true, artifacts: '**/*.jar'
             }
         }
     }
