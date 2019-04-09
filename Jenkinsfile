@@ -49,7 +49,7 @@ pipeline {
                     }
                     steps {
                         withMaven(jdk: '1.8', maven: 'M3') {
-                            sh 'mvn --activate-profiles test test -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false'
+                            sh 'mvn --activate-profiles test test -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.test.skip=false'
                         }
                     }
                 }
@@ -59,7 +59,7 @@ pipeline {
                     }
                     steps {
                         withMaven(jdk: '1.8', maven: 'M3') {
-                            sh 'mvn --activate-profiles test verify -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false'
+                            sh 'mvn --activate-profiles test test -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.test.skip=false'
                         }
                     }
                 }
