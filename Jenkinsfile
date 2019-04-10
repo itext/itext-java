@@ -4,6 +4,10 @@ pipeline {
 
     agent any
 
+    environment {
+        JDK_VERSION = 'jdk-8-oracle'
+    }
+
     options {
         ansiColor('xterm')
         buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
@@ -21,7 +25,7 @@ pipeline {
 
     tools {
         maven 'M3'
-        jdk '1.8'
+        jdk "${JDK_VERSION}"
     }
 
     stages {
@@ -30,7 +34,7 @@ pipeline {
                 timeout(time: 5, unit: 'MINUTES')
             }
             steps {
-                withMaven(jdk: '1.8', maven: 'M3') {
+                withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
                     sh 'mvn clean'
                 }
             }
@@ -40,7 +44,7 @@ pipeline {
                 timeout(time: 5, unit: 'MINUTES')
             }
             steps {
-                withMaven(jdk: '1.8', maven: 'M3') {
+                withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
                     sh 'mvn compile test-compile'
                 }
             }
@@ -52,7 +56,7 @@ pipeline {
                         timeout(time: 30, unit: 'MINUTES')
                     }
                     steps {
-                        withMaven(jdk: '1.8', maven: 'M3') {
+                        withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
                             sh 'mvn --activate-profiles test test -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.test.skip=false'
                         }
                     }
@@ -62,7 +66,7 @@ pipeline {
                         timeout(time: 30, unit: 'MINUTES')
                     }
                     steps {
-                        withMaven(jdk: '1.8', maven: 'M3') {
+                        withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
                             sh 'mvn --activate-profiles test verify -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.test.skip=false -Dmaven.javadoc.skip=true'
                         }
                     }
@@ -76,7 +80,7 @@ pipeline {
                         timeout(time: 5, unit: 'MINUTES')
                     }
                     steps {
-                        withMaven(jdk: '1.8', maven: 'M3') {
+                        withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
                             sh 'mvn --activate-profiles qa checkstyle:checkstyle'
                         }
                     }
@@ -87,7 +91,7 @@ pipeline {
                     }
                     steps {
                         /* Change treshold to Default or remove treshold to find more bugs */
-                        withMaven(jdk: '1.8', maven: 'M3') {
+                        withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
                             sh 'mvn --activate-profiles qa findbugs:check -Dfindbugs.threshold="High"'
                         }
                     }
@@ -97,7 +101,7 @@ pipeline {
                         timeout(time: 5, unit: 'MINUTES')
                     }
                     steps {
-                        withMaven(jdk: '1.8', maven: 'M3') {
+                        withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
                             sh 'mvn --activate-profiles qa pmd:pmd -Dpmd.analysisCache=true'
                         }
                     }
