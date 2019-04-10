@@ -15,6 +15,10 @@ pipeline {
         timestamps()
     }
 
+    triggers {
+        cron(env.BRANCH_NAME == 'develop' ? '@midnight' : '')
+    }
+
     tools {
         maven 'M3'
         jdk '1.8'
