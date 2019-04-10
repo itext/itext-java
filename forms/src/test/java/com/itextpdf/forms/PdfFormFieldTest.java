@@ -1266,4 +1266,33 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
+
+    @Test
+    //TODO DEVSIX-2822
+    public void appendModeAppearance() throws IOException, InterruptedException{
+        String inputFile = "appendModeAppearance.pdf";
+        String outputFile = "appendModeAppearance.pdf";
+
+        String line1 = "ABC";
+
+        // borders in with or without append mode are different
+        //PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + inputFile),
+        //          new PdfWriter(destinationFolder + outputFile));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + inputFile),
+                new PdfWriter(destinationFolder + outputFile),
+                new StampingProperties().useAppendMode());
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
+        form.setNeedAppearances(true);
+
+        PdfFormField field;
+        for (Map.Entry<String, PdfFormField> entry : form.getFormFields().entrySet()){
+            field = entry.getValue();
+            field.setValue(line1);
+        }
+
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + outputFile,
+                sourceFolder + "cmp_" + outputFile, destinationFolder, "diff_"));
+    }
 }
