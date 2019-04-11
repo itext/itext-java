@@ -54,9 +54,10 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Note. For TrueType FontNames.getStyle() is the same to Subfamily(). So, we shouldn't add style to /BaseFont.
@@ -140,31 +141,12 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         super.flush();
     }
 
+    /**
+     * @deprecated use {@link TrueTypeFont#updateUsedGlyphs(SortedSet, boolean, List)}
+     */
+    @Deprecated
     protected void addRangeUni(Set<Integer> longTag) {
-        if (!subset && (subsetRanges != null || ((TrueTypeFont) getFontProgram()).getDirectoryOffset() > 0)) {
-            int[] rg = subsetRanges == null && ((TrueTypeFont) getFontProgram()).getDirectoryOffset() > 0
-                    ? new int[]{0, 0xffff} : compactRanges(subsetRanges);
-            Map<Integer, int[]> usemap = ((TrueTypeFont) getFontProgram()).getActiveCmap();
-            assert usemap != null;
-            for (Map.Entry<Integer, int[]> e : usemap.entrySet()) {
-                int[] v = e.getValue();
-                int gi = v[0];
-                if (longTag.contains(gi)) {
-                    continue;
-                }
-                int c = (int) e.getKey();
-                boolean skip = true;
-                for (int k = 0; k < rg.length; k += 2) {
-                    if (c >= rg[k] && c <= rg[k + 1]) {
-                        skip = false;
-                        break;
-                    }
-                }
-                if (!skip) {
-                    longTag.add(gi);
-                }
-            }
-        }
+        ((TrueTypeFont) getFontProgram()).updateUsedGlyphs((SortedSet<Integer>)longTag, subset, subsetRanges);
     }
 
     @Override
@@ -188,7 +170,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                 }
             } else {
                 fontFileName = PdfName.FontFile2;
-                Set<Integer> glyphs = new HashSet<>();
+                SortedSet<Integer> glyphs = new TreeSet<>();
                 for (int k = 0; k < shortTag.length; k++) {
                     if (shortTag[k] != 0) {
                         int uni = fontEncoding.getUnicode(k);
@@ -198,12 +180,12 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                         }
                     }
                 }
-                addRangeUni(glyphs);
+                ((TrueTypeFont) getFontProgram()).updateUsedGlyphs(glyphs, subset, subsetRanges);
                 try {
                     byte[] fontStreamBytes;
-                    if (subset || ((TrueTypeFont) getFontProgram()).getDirectoryOffset() != 0 || subsetRanges != null) {
-                        //clone glyphs due to possible cache issue
-                        fontStreamBytes = ((TrueTypeFont) getFontProgram()).getSubset(new HashSet<>(glyphs), subset);
+                    //getDirectoryOffset() > 0 means ttc, which shall be subset anyway.
+                    if (subset || ((TrueTypeFont) getFontProgram()).getDirectoryOffset() > 0) {
+                        fontStreamBytes = ((TrueTypeFont) getFontProgram()).getSubset(glyphs, subset);
                     } else {
                         fontStreamBytes = ((TrueTypeFont) getFontProgram()).getFontStreamBytes();
                     }

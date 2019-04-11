@@ -384,6 +384,16 @@ public class CFFFontSubset extends CFFFont {
     }
 
     /**
+     * The Process function extracts one font out of the CFF file and returns a
+     * subset version of the original with the first name.
+     *
+     * @return The new font stream
+     */
+    public byte[] Process() {
+        return Process(getNames()[0]);
+    }
+
+    /**
      * Function calcs bias according to the CharString type and the count
      * of the subrs
      *

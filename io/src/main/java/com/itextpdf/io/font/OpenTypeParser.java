@@ -373,9 +373,9 @@ class OpenTypeParser implements Serializable, Closeable {
         }
     }
 
-    public byte[] getSubset(Set<Integer> glyphs, boolean subset) throws java.io.IOException {
+    byte[] getSubset(Set<Integer> glyphs, boolean subset) throws java.io.IOException {
         TrueTypeFontSubset sb = new TrueTypeFontSubset(fileName,
-                raf.createView(), glyphs, directoryOffset, true, !subset);
+                raf.createView(), glyphs, directoryOffset, subset);
         return sb.process();
     }
 

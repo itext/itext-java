@@ -377,11 +377,11 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Indicates if all the glyphs and widths for that particular
      * encoding should be included in the document. When set to <CODE>true</CODE>
-     * only the glyphs used will be included in the font. When set to <CODE>false</CODE>
-     * and {@link #addSubsetRange(int[])} was not called the full font will be included
-     * otherwise just the characters ranges will be included.
+     * only the glyphs used will be included in the font. When set to <CODE>false</CODE
+     * the full font will be included and all subset ranges will be removed.
      *
      * @param subset new value of property subset
+     * @see #addSubsetRange(int[])
      */
     public void setSubset(boolean subset) {
         this.subset = subset;
@@ -391,6 +391,8 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * Adds a character range when subsetting. The range is an <CODE>int</CODE> array
      * where the first element is the start range inclusive and the second element is the
      * end range inclusive. Several ranges are allowed in the same array.
+     * Note, #setSubset(true) will be called implicitly
+     * therefore this range is an addition to the used glyphs.
      *
      * @param range the character range
      */
@@ -399,6 +401,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             subsetRanges = new ArrayList<>();
         }
         subsetRanges.add(range);
+        setSubset(true);
     }
 
     public List<String> splitString(String text, float fontSize, float maxWidth) {
@@ -511,6 +514,10 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return fontStream;
     }
 
+    /**
+     * @deprecated The logic has been moved to {@link com.itextpdf.io.font.TrueTypeFont}.
+     */
+    @Deprecated
     protected static int[] compactRanges(List<int[]> ranges) {
         List<int[]> simp = new ArrayList<>();
         for (int[] range : ranges) {
