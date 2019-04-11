@@ -66,7 +66,7 @@ public abstract class ITextTest {
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Rule
-    public Timeout testTimeout = new Timeout(5, TimeUnit.MINUTES);
+    public Timeout testTimeout = getTestTimeout();
 
     /**
      * Creates a folder with a given path, including all necessary nonexistent parent directories.
@@ -151,21 +151,8 @@ public abstract class ITextTest {
         }
     }
 
-    private static void deleteDirectoryContents(String path, boolean removeParentDirectory) {
-        File file = new File(path);
-        if (file.exists() && file.listFiles() != null) {
-            for (File f : file.listFiles()) {
-                if (f.isDirectory()) {
-                    deleteDirectoryContents(f.getPath(), false);
-                    f.delete();
-                } else {
-                    f.delete();
-                }
-            }
-            if (removeParentDirectory) {
-                file.delete();
-            }
-        }
+    protected Timeout getTestTimeout() {
+        return new Timeout(5, TimeUnit.MINUTES);
     }
 
     protected byte[] readFile(String filename) throws IOException {
@@ -189,6 +176,23 @@ public abstract class ITextTest {
             buf.append((char) b.intValue());
         }
         return buf.toString();
+    }
+
+    private static void deleteDirectoryContents(String path, boolean removeParentDirectory) {
+        File file = new File(path);
+        if (file.exists() && file.listFiles() != null) {
+            for (File f : file.listFiles()) {
+                if (f.isDirectory()) {
+                    deleteDirectoryContents(f.getPath(), false);
+                    f.delete();
+                } else {
+                    f.delete();
+                }
+            }
+            if (removeParentDirectory) {
+                file.delete();
+            }
+        }
     }
 
 }
