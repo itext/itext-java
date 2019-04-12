@@ -378,6 +378,25 @@ public class GlyphLine implements Serializable {
         return true;
     }
 
+    @Override
+    public int hashCode() {
+        int result = 0;
+        result = 31*result + start;
+        result = 31*result + end;
+        for (int i = start; i < end; i++) {
+            result = 31*result + glyphs.get(i).hashCode();
+        }
+        if (null != actualText) {
+            for (int i = start; i < end; i++) {
+                result = 31*result;
+                if (null != actualText.get(i)) {
+                    result += actualText.get(i).hashCode();
+                }
+            }
+        }
+        return result;
+    }
+
     private void removeGlyph(int index) {
         glyphs.remove(index);
         if (actualText != null) {
@@ -439,6 +458,11 @@ public class GlyphLine implements Serializable {
             }
             ActualText other = (ActualText) obj;
             return value == null && other.value == null || value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return 31*value.hashCode();
         }
     }
 }
