@@ -59,7 +59,7 @@ pipeline {
                     }
                     steps {
                         withMaven(jdk: '1.8', maven: 'M3') {
-                            sh 'mvn --activate-profiles test test -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.test.skip=false'
+                            sh 'mvn --activate-profiles test verify -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.test.skip=false -Dmaven.javadoc.skip=true'
                         }
                     }
                 }
@@ -118,7 +118,7 @@ pipeline {
                     def rtMaven = Artifactory.newMavenBuild()
                     rtMaven.deployer server: server, releaseRepo: 'releases', snapshotRepo: 'snapshot'
                     rtMaven.tool = 'M3'
-                    def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'package -Dmaven.test.skip=true'
+                    def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'package -Dmaven.test.skip=true -Dmaven.javadoc.failOnError=false'
                     server.publishBuildInfo buildInfo
                 }
             }
