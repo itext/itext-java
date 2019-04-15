@@ -583,14 +583,18 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     public static void setAdditionalAction(PdfObjectWrapper<PdfDictionary> wrapper, PdfName key, PdfAction action) {
         PdfDictionary dic;
         PdfObject obj = wrapper.getPdfObject().get(PdfName.AA);
-        if (obj != null && obj.isDictionary()) {
+        boolean aaExists = obj != null && obj.isDictionary();
+        if (aaExists) {
             dic = (PdfDictionary) obj;
         } else {
             dic = new PdfDictionary();
         }
         dic.put(key, action.getPdfObject());
+        dic.setModified();
         wrapper.getPdfObject().put(PdfName.AA, dic);
-        wrapper.getPdfObject().setModified();
+        if (!aaExists || !dic.isIndirect()) {
+            wrapper.getPdfObject().setModified();
+        }
     }
 
     /**
@@ -621,6 +625,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfAction put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
         return this;
     }
 

@@ -62,7 +62,7 @@ class PdfPagesTree implements Serializable {
 
     private final int leafSize = 10;
 
-    private List<PdfDictionary> pageRefs;
+    private List<PdfIndirectReference> pageRefs;
     private List<PdfPages> parents;
     private List<PdfPage> pages;
     private PdfDocument document;
@@ -113,7 +113,7 @@ class PdfPagesTree implements Serializable {
             loadPage(pageNum);
             if (pageRefs.get(pageNum) != null) {
                 int parentIndex = findPageParent(pageNum);
-                pdfPage = new PdfPage(pageRefs.get(pageNum));
+                pdfPage = new PdfPage((PdfDictionary) pageRefs.get(pageNum).getRefersTo());
                 pdfPage.parentPages = parents.get(parentIndex);
             } else {
                 LoggerFactory.getLogger(getClass()).error(MessageFormatUtil.format(LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, pageNum + 1));
@@ -160,7 +160,7 @@ class PdfPagesTree implements Serializable {
      * specified by it's PdfDictionary, or 0 if this tree does not contain the page.
      */
     public int getPageNumber(PdfDictionary pageDictionary) {
-        int pageNum = pageRefs.indexOf(pageDictionary);
+        int pageNum = pageRefs.indexOf(pageDictionary.getIndirectReference());
         if (pageNum >= 0) {
             return pageNum + 1;
         }
@@ -168,7 +168,7 @@ class PdfPagesTree implements Serializable {
             if (pageRefs.get(i) == null) {
                 loadPage(i);
             }
-            if (pageRefs.get(i).equals(pageDictionary)) {
+            if (pageRefs.get(i).equals(pageDictionary.getIndirectReference())) {
                 return i + 1;
             }
         }
@@ -202,7 +202,7 @@ class PdfPagesTree implements Serializable {
         pdfPage.makeIndirect(document);
         pdfPages.addPage(pdfPage.getPdfObject());
         pdfPage.parentPages = pdfPages;
-        pageRefs.add(pdfPage.getPdfObject());
+        pageRefs.add(pdfPage.getPdfObject().getIndirectReference());
         pages.add(pdfPage);
     }
 
@@ -227,7 +227,7 @@ class PdfPagesTree implements Serializable {
         parentPages.addPage(index, pdfPage);
         pdfPage.parentPages = parentPages;
         correctPdfPagesFromProperty(parentIndex + 1, +1);
-        pageRefs.add(index, pdfPage.getPdfObject());
+        pageRefs.add(index, pdfPage.getPdfObject().getIndirectReference());
         pages.add(index, pdfPage);
     }
 
@@ -249,6 +249,15 @@ class PdfPagesTree implements Serializable {
             return pdfPage;
         } else {
             return null;
+        }
+    }
+
+    void releasePage(int pageNumber) {
+        --pageNumber;
+        if (pageRefs.get(pageNumber) != null && !pageRefs.get(pageNumber).checkState(PdfObject.FLUSHED)
+                && !pageRefs.get(pageNumber).checkState(PdfObject.MODIFIED)
+                && (pageRefs.get(pageNumber).getOffset() > 0 || pageRefs.get(pageNumber).getIndex() >= 0)) {
+            pages.set(pageNumber, null);
         }
     }
 
@@ -313,7 +322,7 @@ class PdfPagesTree implements Serializable {
     }
 
     private void loadPage(int pageNum) {
-        PdfDictionary targetPage = pageRefs.get(pageNum);
+        PdfIndirectReference targetPage = pageRefs.get(pageNum);
         if (targetPage != null)
             return;
         //if we go here, we have to split PdfPages that contains pageNum
@@ -385,7 +394,10 @@ class PdfPagesTree implements Serializable {
             // In any case parent.getCount() has higher priority.
             // NOTE optimization? when we already found needed index
             for (int i = 0; i < parent.getCount(); i++) {
-                pageRefs.set(from + i, kids.getAsDictionary(i));
+                PdfDictionary kid = kids.getAsDictionary(i);
+                if (kid != null) { // make sure it's a dictionary
+                    pageRefs.set(from + i, kid.getIndirectReference());
+                }
             }
         }
     }

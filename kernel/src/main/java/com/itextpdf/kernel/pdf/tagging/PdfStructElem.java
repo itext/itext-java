@@ -86,14 +86,16 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
 
     public PdfStructElem(PdfDocument document, PdfName role, PdfPage page) {
         this(document, role);
-        getPdfObject().put(PdfName.Pg, page.getPdfObject());
+        // Explicitly using object indirect reference here in order to correctly process released objects.
+        getPdfObject().put(PdfName.Pg, page.getPdfObject().getIndirectReference());
     }
 
     public PdfStructElem(PdfDocument document, PdfName role, PdfAnnotation annot) {
         this(document, role);
         if (annot.getPage() == null)
             throw new PdfException(PdfException.AnnotationShallHaveReferenceToPage);
-        getPdfObject().put(PdfName.Pg, annot.getPage().getPdfObject());
+        // Explicitly using object indirect reference here in order to correctly process released objects.
+        getPdfObject().put(PdfName.Pg, annot.getPage().getPdfObject().getIndirectReference());
     }
 
     public PdfStructElem(PdfDocument document, PdfName role) {

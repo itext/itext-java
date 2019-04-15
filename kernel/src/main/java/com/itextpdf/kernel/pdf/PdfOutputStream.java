@@ -219,7 +219,9 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
             logger.error(LogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE);
             write(PdfNull.PDF_NULL);
-        } else if (indirectReference.getRefersTo() == null) {
+        } else if (indirectReference.refersTo == null
+                && (indirectReference.checkState(PdfObject.MODIFIED) || indirectReference.getReader() == null
+                    || !(indirectReference.getOffset() > 0 || indirectReference.getIndex() >= 0))) {
             Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
             logger.error(LogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT);
             write(PdfNull.PDF_NULL);

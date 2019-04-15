@@ -3557,8 +3557,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (fontName != null && defaultFontDic != null) {
             PdfDictionary daFontDict = defaultFontDic.getAsDictionary(new PdfName(fontName));
             if (daFontDict != null) {
-                PdfFont daFont = getDocument().getFont(daFontDict);
-                return daFont != null ? daFont : PdfFontFactory.createFont(daFontDict);
+                return getDocument().getFont(daFontDict);
             }
         }
         return null;

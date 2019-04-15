@@ -204,7 +204,8 @@ public class PdfExplicitDestination extends PdfDestination {
     }
 
     private PdfExplicitDestination add(PdfPage page) {
-        ((PdfArray)getPdfObject()).add(page.getPdfObject());
+        // Explicitly using object indirect reference here in order to correctly process released objects.
+        ((PdfArray)getPdfObject()).add(page.getPdfObject().getIndirectReference());
         return this;
     }
 

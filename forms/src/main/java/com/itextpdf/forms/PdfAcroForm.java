@@ -861,7 +861,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         int index = 1;
         for (PdfObject field : array) {
             if (field.isFlushed()) {
-                logger.warn(LogMessageConstant.FORM_FIELD_WAS_FLUSHED);
+                logger.info(LogMessageConstant.FORM_FIELD_WAS_FLUSHED);
                 continue;
             }
             PdfFormField formField = PdfFormField.makeFormField(field, document);

@@ -112,7 +112,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Currently active page.
+     * @deprecated Will be removed in iText 7.2
      */
+    @Deprecated
     protected PdfPage currentPage = null;
 
     /**
@@ -473,7 +475,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         currentPage = page;
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_PAGE, page));
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.INSERT_PAGE, page));
-        return currentPage;
+        return page;
     }
 
     /**
@@ -503,7 +505,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         checkAndAddPage(index, page);
         currentPage = page;
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.INSERT_PAGE, page));
-        return currentPage;
+        return page;
     }
 
     /**
@@ -828,6 +830,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         catalog.put(PdfName.Pages, pageRoot);
                         catalog.getPdfObject().flush(false);
                     }
+
 
                     if (info.getPdfObject().isModified()) {
                         info.getPdfObject().flush(false);
@@ -1708,6 +1711,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public PdfFont addFont(PdfFont font) {
         font.makeIndirect(this);
+        font.setForbidRelease(); // forbid release for font dictionaries that are stored in #documentFonts collection
         documentFonts.put(font.getPdfObject().getIndirectReference(), font);
         return font;
     }
@@ -1746,6 +1750,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     PdfXrefTable getXref() {
         return xref;
+    }
+
+    boolean isDocumentFont(PdfIndirectReference indRef) {
+        return indRef != null && documentFonts.containsKey(indRef);
     }
 
     /**
