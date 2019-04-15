@@ -52,7 +52,6 @@
           <threshold>High</threshold>
           <failOnError>true</failOnError>
           <excludeFilterFile>findbugs-filter.xml</excludeFilterFile>
-          <skip>false</skip>
         </configuration>
       </plugin>
     </plugins>

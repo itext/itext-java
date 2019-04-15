@@ -378,7 +378,6 @@
           <threshold>Low</threshold>
           <xmlOutput>true</xmlOutput>
           <failOnError>false</failOnError>
-          <skip>true</skip>
           <plugins>
             <plugin>
               <groupId>com.mebigfatguy.fb-contrib</groupId>
@@ -683,6 +682,25 @@
               <groups>${unittests}</groups>
               <argLine>@{jacoco.agent.argLine}</argLine>
             </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+            <version>${findbugs.version}</version>
+            <executions>
+              <execution>
+                <id>default</id>
+                <configuration>
+                  <skip>true</skip>
+                </configuration>
+              </execution>
+              <execution>
+                <id>findbugs</id>
+                <configuration>
+                  <skip>true</skip>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
           <!-- Compute test coverage for Sonar BEWARE: Sonar
                                   doesn't run the verify phase, it has to be forced by setting -Dsonar.phase=verify -->
