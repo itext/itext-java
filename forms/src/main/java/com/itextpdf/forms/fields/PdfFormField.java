@@ -2869,7 +2869,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 newPath();
 
         TextAlignment textAlignment = convertJustificationToTextAlignment();
-        float x = X_OFFSET;
+        float x = 0;
         if (textAlignment == TextAlignment.RIGHT) {
             x = rect.getWidth();
         } else if (textAlignment == TextAlignment.CENTER) {

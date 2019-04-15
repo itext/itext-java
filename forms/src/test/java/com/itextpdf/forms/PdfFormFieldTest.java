@@ -851,9 +851,9 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    public void dashedBorderApearanceTest() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "dashedBorderApearanceTest.pdf";
-        String cmpPdf = sourceFolder + "cmp_dashedBorderApearanceTest.pdf";
+    public void dashedBorderAppearanceTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "dashedBorderAppearanceTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_dashedBorderAppearanceTest.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf);
         PdfDocument pdfDoc = new PdfDocument(writer);
