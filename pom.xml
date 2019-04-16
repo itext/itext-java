@@ -569,7 +569,8 @@
                   <goal>check</goal>
                 </goals>
                 <configuration>
-                  <consoleOutput>false</consoleOutput>
+                  <consoleOutput>true</consoleOutput>
+                  <logViolationsToConsole>true</logViolationsToConsole>
                   <failOnViolation>false</failOnViolation>
                   <failsOnError>false</failsOnError>
                   <linkXRef>false</linkXRef>
@@ -605,7 +606,8 @@
                   <goal>check</goal>
                 </goals>
                 <configuration>
-                  <consoleOutput>false</consoleOutput>
+                  <consoleOutput>true</consoleOutput>
+                  <printFailingErrors>true</printFailingErrors>
                   <failOnViolation>false</failOnViolation>
                   <failsOnError>false</failsOnError>
                   <linkXRef>false</linkXRef>
