@@ -74,37 +74,12 @@ pipeline {
             }
         }
         stage('Static Code Analysis') {
-            parallel {
-                stage('Checkstyle') {
-                    options {
-                        timeout(time: 5, unit: 'MINUTES')
-                    }
-                    steps {
-                        withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
-                            sh 'mvn --activate-profiles qa checkstyle:checkstyle'
-                        }
-                    }
-                }
-                stage('Spotbugs') {
-                    options {
-                        timeout(time: 10, unit: 'MINUTES')
-                    }
-                    steps {
-                        /* Change treshold to Default or remove treshold to find more bugs */
-                        withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
-                            sh 'mvn --activate-profiles qa spotbugs:check -Dspotbugs.threshold="High"'
-                        }
-                    }
-                }
-                stage('PMD') {
-                    options {
-                        timeout(time: 5, unit: 'MINUTES')
-                    }
-                    steps {
-                        withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
-                            sh 'mvn --activate-profiles qa pmd:pmd -Dpmd.analysisCache=true'
-                        }
-                    }
+            options {
+                timeout(time: 30, unit: 'MINUTES')
+            }
+            steps {
+                withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
+                    sh 'mvn --activate-profiles qa verify -Dpmd.analysisCache=true'
                 }
             }
         }
