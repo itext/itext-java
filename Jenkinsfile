@@ -85,14 +85,14 @@ pipeline {
                         }
                     }
                 }
-                stage('Findbugs') {
+                stage('Spotbugs') {
                     options {
                         timeout(time: 10, unit: 'MINUTES')
                     }
                     steps {
                         /* Change treshold to Default or remove treshold to find more bugs */
                         withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
-                            sh 'mvn --activate-profiles qa findbugs:check -Dfindbugs.threshold="High"'
+                            sh 'mvn --activate-profiles qa spotbugs:check -Dspotbugs.threshold="High"'
                         }
                     }
                 }
