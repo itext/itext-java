@@ -139,7 +139,7 @@
       <plugin>
         <groupId>org.revapi</groupId>
         <artifactId>revapi-maven-plugin</artifactId>
-        <version>0.10.4</version>
+        <version>0.11.0</version>
         <configuration>
           <skip>true</skip>
         </configuration>
