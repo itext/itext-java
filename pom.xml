@@ -300,6 +300,9 @@
             <goals>
               <goal>aggregate</goal>
             </goals>
+            <configuration>
+              <failOnError>false</failOnError>
+            </configuration>
           </execution>
           <execution>
             <id>attach-javadocs</id>
@@ -307,6 +310,9 @@
             <goals>
               <goal>jar</goal>
             </goals>
+            <configuration>
+              <failOnError>false</failOnError>
+            </configuration>
           </execution>
         </executions>
         <configuration>
@@ -451,6 +457,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${javadoc.version}</version>
         <configuration>
+          <failOnError>false</failOnError>
           <quiet>true</quiet>
           <source>7</source>
           <additionalOptions>${javadoc-additionalOptions}</additionalOptions>
