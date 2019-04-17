@@ -310,6 +310,7 @@
           </execution>
         </executions>
         <configuration>
+          <failOnError>false</failOnError>
           <quiet>true</quiet>
           <source>7</source>
           <detectLinks>true</detectLinks>
