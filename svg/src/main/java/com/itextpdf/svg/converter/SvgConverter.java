@@ -477,6 +477,14 @@ public final class SvgConverter {
         }
     }
 
+    /**
+     * Copies properties from custom ISvgConverterProperties into new SvgConverterProperties.
+     * Since ISvgConverterProperties itself is immutable we have to do it.
+     *
+     * @param props
+     * @param baseUri
+     * @return
+     */
     private static SvgConverterProperties convertToSvgConverterProps(ISvgConverterProperties props, String baseUri) {
         return new SvgConverterProperties().setBaseUri(baseUri)
                 .setMediaDeviceDescription(props.getMediaDeviceDescription())
@@ -539,14 +547,18 @@ public final class SvgConverter {
     public static void createPdf(InputStream svgStream, OutputStream pdfDest, ISvgConverterProperties props, WriterProperties writerProps) throws IOException {
 
         //create doc
-        if (writerProps == null) writerProps = new WriterProperties();
+        if (writerProps == null) {
+            writerProps = new WriterProperties();
+        }
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(pdfDest, writerProps));
         //TODO DEVSIX-2095
         //process
         ISvgProcessorResult processorResult = process(parse(svgStream, props), props);
         ISvgNodeRenderer topSvgRenderer = processorResult.getRootRenderer();
-        String baseUri = props != null ? props.getBaseUri() : "";
-        SvgDrawContext drawContext = new SvgDrawContext(new ResourceResolver(baseUri), processorResult.getFontProvider());
+
+        String baseUri = tryToExtractBaseUri(props);
+        SvgDrawContext drawContext =
+                new SvgDrawContext(new ResourceResolver(baseUri), processorResult.getFontProvider());
 
         drawContext.addNamedObjects(processorResult.getNamedObjects());
         //Add temp fonts
@@ -839,7 +851,8 @@ public final class SvgConverter {
      */
     public static ISvgProcessorResult parseAndProcess(InputStream svgStream, ISvgConverterProperties props) throws IOException {
         IXmlParser parser = new JsoupXmlParser();
-        INode nodeTree = parser.parse(svgStream, props != null ? props.getCharset() : null);
+        String charset = tryToExtractCharset(props);
+        INode nodeTree = parser.parse(svgStream, charset);
         return new DefaultSvgProcessor().process(nodeTree, props);
     }
 
@@ -909,7 +922,7 @@ public final class SvgConverter {
     public static INode parse(InputStream stream, ISvgConverterProperties props) throws IOException {
         checkNull(stream); // props is allowed to be null
         IXmlParser xmlParser = new JsoupXmlParser();
-        return xmlParser.parse(stream, props != null ? props.getCharset() : null);
+        return xmlParser.parse(stream, tryToExtractCharset(props));
     }
 
     /**
@@ -969,4 +982,29 @@ public final class SvgConverter {
 
 
     }
+
+    /**
+     * Tries to extract charset from {@see ISvgConverterProperties}.
+     *
+     * @param props converter properties
+     * @return charset  | null
+     */
+    private static String tryToExtractCharset(final ISvgConverterProperties props) {
+        return props != null ? props.getCharset() : null;
+    }
+
+    /**
+     * Tries to extract baseUri from {@see ISvgConverterProperties}.
+     *
+     * @param props converter properties
+     * @return baseUrl  | null
+     */
+    private static String tryToExtractBaseUri(final ISvgConverterProperties props) {
+        if (props == null || props.getBaseUri() == null) {
+            return null;
+        }
+        String baseUrl = props.getBaseUri().trim();
+        return baseUrl.isEmpty() ? null : baseUrl;
+    }
+
 }

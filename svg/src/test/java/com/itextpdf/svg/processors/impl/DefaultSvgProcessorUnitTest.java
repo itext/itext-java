@@ -42,22 +42,33 @@
  */
 package com.itextpdf.svg.processors.impl;
 
+import com.itextpdf.io.util.UrlUtil;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.dummy.processors.impl.DummySvgConverterProperties;
 import com.itextpdf.svg.dummy.renderers.impl.DummyBranchSvgNodeRenderer;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
+import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
+import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
 import com.itextpdf.test.annotations.type.UnitTest;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Path;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -67,7 +78,6 @@ import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class DefaultSvgProcessorUnitTest {
-
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -246,18 +256,6 @@ public class DefaultSvgProcessorUnitTest {
         Assert.assertNull(rootActual);
     }
 
-    private static class EmptySvgConverterProperties extends SvgConverterProperties {
-        @Override
-        public ISvgNodeRendererFactory getRendererFactory() {
-            return null;
-        }
-
-        @Override
-        public String getCharset() {
-            return null;
-        }
-    }
-
     @Test
     public void findFirstElementNullTest() {
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
@@ -286,5 +284,64 @@ public class DefaultSvgProcessorUnitTest {
         dsp.performSetup(root, scp);
         // below method must not throw a NullPointerException
         dsp.executeDepthFirstTraversal(root);
+    }
+
+    @Test
+    public void xLinkAttributeBaseDirDoesNotExistTest() throws IOException {
+        INode root = createSvgContainingImage();
+        String resolvedBaseUrl = "/i7j/itextcore";
+        String baseUrl = resolvedBaseUrl + "/wrongDirName";
+        ISvgConverterProperties props = new SvgConverterProperties().setBaseUri(baseUrl);
+        SvgTagSvgNodeRenderer rootActual = (SvgTagSvgNodeRenderer) processor().process(root, props).getRootRenderer();
+
+        String fileName = resolvedBaseUrl + "/img.png";
+        String expectedURL  = UrlUtil.toNormalizedURI(fileName).toString();
+
+        ISvgNodeRenderer imageRendered = rootActual.getChildren().get(0);
+        String url = imageRendered.getAttribute(SvgConstants.Attributes.XLINK_HREF);
+        Assert.assertEquals(expectedURL, url);
+    }
+
+    @Test
+    public void xLinkAttributeResolveNonEmptyBaseUrlTest() throws IOException {
+        INode root = createSvgContainingImage();
+        String baseUrl = "./src/test/resources/com/itextpdf/svg/processors/impl/DefaultSvgProcessorIntegrationTest";
+        ISvgConverterProperties props = new SvgConverterProperties().setBaseUri(baseUrl);
+        SvgTagSvgNodeRenderer rootActual = (SvgTagSvgNodeRenderer) processor().process(root, props).getRootRenderer();
+
+        String fileName = baseUrl + "/img.png";
+        String expectedURL  = UrlUtil.toNormalizedURI(fileName).toString();
+
+        ISvgNodeRenderer imageRendered = rootActual.getChildren().get(0);
+        String url = imageRendered.getAttribute(SvgConstants.Attributes.XLINK_HREF);
+
+        Assert.assertEquals(expectedURL, url);
+    }
+
+    private INode createSvgContainingImage() {
+        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
+        Attributes attr = new Attributes();
+        attr.put(SvgConstants.Attributes.XLINK_HREF, "img.png");
+        Element jsoupSVGImage = new Element(Tag.valueOf("image"), "", attr);
+        INode root = new JsoupElementNode(jsoupSVGRoot);
+        root.addChild(new JsoupElementNode(jsoupSVGImage));
+        return root;
+    }
+
+    private static ISvgProcessor processor() {
+        return new DefaultSvgProcessor();
+    }
+
+    private static class EmptySvgConverterProperties extends SvgConverterProperties {
+
+        @Override
+        public ISvgNodeRendererFactory getRendererFactory() {
+            return null;
+        }
+
+        @Override
+        public String getCharset() {
+            return null;
+        }
     }
 }

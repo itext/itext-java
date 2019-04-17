@@ -50,6 +50,8 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import com.itextpdf.svg.dummy.sdk.ExceptionInputStream;
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
+import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -125,16 +127,7 @@ public class DefaultStylesTest extends ExtendedITextTest {
         new SvgStyleResolver(new ExceptionInputStream());
     }
 
-    @Test
-    public void overrideDefaultStyleTest() {
-        ICssResolver styleResolver = new SvgStyleResolver();
-        Element svg = new Element(Tag.valueOf("svg"), "");
-        svg.attributes().put(SvgConstants.Attributes.STROKE, "white");
-        INode svgNode = new JsoupElementNode(svg);
-        Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
 
-        Assert.assertEquals("white", resolvedStyles.get(SvgConstants.Attributes.STROKE));
-    }
 
     @Test
     @Ignore("RND-1089")
