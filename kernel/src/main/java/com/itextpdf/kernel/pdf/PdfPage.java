@@ -777,11 +777,18 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (annots != null) {
             for (int i = 0; i < annots.size(); i++) {
                 PdfDictionary annot = annots.getAsDictionary(i);
+                if (annot == null) {
+                    continue;
+                }
                 PdfAnnotation annotation = PdfAnnotation.makeAnnotation(annot);
-                // PdfAnnotation.makeAnnotation returns null if annotation SubType is not recognized or not present at all
-                // (although SubType is required according to the spec)
-                if (annotation != null) {
-                    annotations.add(annotation.setPage(this));
+                if (annotation == null) {
+                    continue;
+                }
+                boolean hasBeenNotModified = annot.getIndirectReference() != null && !annot.getIndirectReference().checkState(PdfObject.MODIFIED);
+                annotations.add(annotation.setPage(this));
+                if (hasBeenNotModified) {
+                    annot.getIndirectReference().clearState(PdfObject.MODIFIED);
+                    annot.getIndirectReference().clearState(PdfObject.FORBID_RELEASE);
                 }
             }
         }
