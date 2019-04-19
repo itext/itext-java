@@ -122,9 +122,10 @@ public abstract class CssPseudoClassSelectorItem implements ICssSelectorItem {
             case CommonCssConstants.TARGET:
             case CommonCssConstants.VISITED:
                 return new AlwaysNotApplySelectorItem(pseudoClass, arguments);
+            case CommonCssConstants.DISABLED:
+                return CssPseudoClassDisabledSelectorItem.getInstance();
             //Still unsupported, should be addressed in DEVSIX-1440
             //case CommonCssConstants.CHECKED:
-            //case CommonCssConstants.DISABLED:
             //case CommonCssConstants.ENABLED:
             //case CommonCssConstants.IN_RANGE:
             //case CommonCssConstants.INVALID:
