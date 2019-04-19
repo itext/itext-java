@@ -2251,6 +2251,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             names.makeIndirect(this);
         }
         names.put(treeType, treeRoot);
+        names.setModified();
     }
 
     private static boolean isXmpMetaHasProperty(XMPMeta xmpMeta, String schemaNS, String propName) throws XMPException {

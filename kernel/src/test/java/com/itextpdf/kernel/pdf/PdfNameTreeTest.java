@@ -48,6 +48,7 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotationAppearance;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -56,6 +57,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
@@ -71,7 +74,7 @@ public class PdfNameTreeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void EmbeddedFileAndJavascriptTest() throws IOException {
+    public void embeddedFileAndJavascriptTest() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "FileWithSingleAttachment.pdf"));
         PdfNameTree embeddedFilesNameTree = pdfDocument.getCatalog().getNameTree(PdfName.EmbeddedFiles);
         Map<String, PdfObject> objs = embeddedFilesNameTree.getNames();
@@ -83,7 +86,47 @@ public class PdfNameTreeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void AnnotationAppearanceTest() throws IOException {
+    public void embeddedFileAddedInAppendModeTest() throws  IOException{
+        //Create input document
+        ByteArrayOutputStream boasEmpty = new ByteArrayOutputStream();
+        PdfWriter emptyDocWriter = new PdfWriter(boasEmpty);
+        PdfDocument emptyDoc = new PdfDocument(emptyDocWriter);
+        emptyDoc.addNewPage();
+        PdfDictionary emptyNamesDic = new PdfDictionary();
+        emptyNamesDic.makeIndirect(emptyDoc);
+        emptyDoc.getCatalog().getPdfObject().put(PdfName.Names,emptyNamesDic);
+
+        emptyDoc.close();
+
+        //Create input document
+        ByteArrayOutputStream boasAttached = new ByteArrayOutputStream();
+        PdfWriter attachDocWriter = new PdfWriter(boasAttached);
+        PdfDocument attachDoc = new PdfDocument(attachDocWriter);
+        attachDoc.addNewPage();
+        attachDoc.close();
+
+        //Attach file in append mode
+        PdfReader appendReader = new PdfReader(new ByteArrayInputStream(boasEmpty.toByteArray()));
+        ByteArrayOutputStream boasAppend = new ByteArrayOutputStream();
+        PdfWriter appendWriter = new PdfWriter(boasAppend);
+        PdfDocument appendDoc = new PdfDocument(appendReader,appendWriter,new StampingProperties().useAppendMode());
+
+        appendDoc.addFileAttachment("Test File", PdfFileSpec.createEmbeddedFileSpec(appendDoc,boasAttached.toByteArray(),"Append Embedded File test","Test file",null));
+        appendDoc.close();
+
+        //Check final result
+        PdfReader finalReader = new PdfReader(new ByteArrayInputStream(boasAppend.toByteArray()));
+        PdfDocument finalDoc = new PdfDocument(finalReader);
+
+        PdfNameTree embeddedFilesNameTree = finalDoc.getCatalog().getNameTree(PdfName.EmbeddedFiles);
+        Map<String, PdfObject> embeddedFilesMap = embeddedFilesNameTree.getNames();
+
+        Assert.assertTrue(embeddedFilesMap.size()>0);
+        Assert.assertTrue(embeddedFilesMap.containsKey("Test File"));
+    }
+
+    @Test
+    public void annotationAppearanceTest() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "AnnotationAppearanceTest.pdf"));
         PdfPage page = pdfDocument.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
