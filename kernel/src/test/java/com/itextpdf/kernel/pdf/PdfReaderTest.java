@@ -54,8 +54,10 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 import com.itextpdf.io.util.MessageFormatUtil;
@@ -73,6 +75,9 @@ public class PdfReaderTest extends ExtendedITextTest {
     static final String author = "Alexander Chingarev";
     static final String creator = "iText 6";
     static final String title = "Empty iText 6 Document";
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -1585,6 +1590,18 @@ public class PdfReaderTest extends ExtendedITextTest {
         String dest = destinationFolder + "wrongStructureFlushingTest.pdf";
         PdfDocument   pdfDoc = new PdfDocument(new PdfReader(source), new PdfWriter(dest));
         pdfDoc.close();
+    }
+
+    @Test
+    public void readerReuseTest() throws IOException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(PdfException.PdfReaderHasBeenAlreadyUtilized);
+
+        String filename = sourceFolder + "hello.pdf";
+
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument pdfDoc1 = new PdfDocument(reader);
+        PdfDocument pdfDoc2 = new PdfDocument(reader);
     }
 
     private boolean objectTypeEqualTo(PdfObject object, PdfName type) {

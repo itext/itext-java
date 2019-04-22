@@ -233,6 +233,7 @@ public class PdfException extends RuntimeException {
     public static final String PdfFormXobjectHasInvalidBbox = "PdfFormXObject has invalid BBox.";
     public static final String PdfObjectStreamReachMaxSize = "PdfObjectStream reach max size.";
     public static final String PdfPagesTreeCouldBeGeneratedOnlyOnce = "PdfPages tree could be generated only once.";
+    public static final String PdfReaderHasBeenAlreadyUtilized = "Given PdfReader instance has already been utilized. The PdfReader cannot be reused, please create a new instance.";
     public static final String PdfStartxrefIsNotFollowedByANumber = "PDF startxref is not followed by a number.";
     public static final String PdfStartxrefNotFound = "PDF startxref not found.";
     public static final String PdfIndirectObjectBelongsToOtherPdfDocument = "Pdf indirect object belongs to other PDF document. Copy object to current pdf document.";

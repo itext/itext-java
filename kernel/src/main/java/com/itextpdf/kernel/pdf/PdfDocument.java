@@ -1811,6 +1811,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         try {
             EventCounterHandler.getInstance().onEvent(CoreEvent.PROCESS, properties.metaInfo, getClass());
             if (reader != null) {
+                if (reader.pdfDocument != null) {
+                    throw new PdfException(PdfException.PdfReaderHasBeenAlreadyUtilized);
+                }
                 reader.pdfDocument = this;
                 reader.readPdf();
                 for (ICounter counter : getCounters()) {
