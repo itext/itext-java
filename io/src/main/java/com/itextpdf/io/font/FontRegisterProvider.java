@@ -71,13 +71,6 @@ class FontRegisterProvider {
      */
     private final Map<String, String> fontNames = new HashMap<>();
 
-    private static String[] TTFamilyOrder = {
-            "3", "1", "1033",
-            "3", "0", "1033",
-            "1", "0", "0",
-            "0", "3", "0"
-    };
-
     /**
      * This is a map of fontfamilies.
      */
@@ -253,9 +246,8 @@ class FontRegisterProvider {
     void registerFont(String path, String alias) {
         try {
             if (path.toLowerCase().endsWith(".ttf") || path.toLowerCase().endsWith(".otf") || path.toLowerCase().indexOf(".ttc,") > 0) {
-                FontProgram fontProgram = FontProgramFactory.createFont(path);
-                Object[] allNames = new Object[]{fontProgram.getFontNames().getFontName(), fontProgram.getFontNames().getFamilyName(), fontProgram.getFontNames().getFullName()};
-                fontNames.put(((String) allNames[0]).toLowerCase(), path);
+                FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(path);
+                fontNames.put(descriptor.getFontNameLowerCase(), path);
                 if (alias != null) {
                     String lcAlias = alias.toLowerCase();
                     fontNames.put(lcAlias, path);
@@ -265,42 +257,18 @@ class FontRegisterProvider {
                     }
                 }
                 // register all the font names with all the locales
-                String[][] names = (String[][]) allNames[2]; //full name
-                for (String[] name : names) {
-                    String lcName = name[3].toLowerCase();
-                    fontNames.put(lcName, path);
-                    if (lcName.endsWith("regular")) {
+                for (String name : descriptor.getFullNameAllLangs()) {
+                    fontNames.put(name, path);
+                    if (name.endsWith("regular")) {
                         //do this job to give higher priority to regular fonts in comparison with light, narrow, etc
-                        saveCopyOfRegularFont(lcName, path);
+                        saveCopyOfRegularFont(name, path);
                     }
                 }
-                String fullName;
-                String familyName = null;
-                names = (String[][]) allNames[1]; //family name
-                for (int k = 0; k < TTFamilyOrder.length; k += 3) {
-                    for (String[] name : names) {
-                        if (TTFamilyOrder[k].equals(name[0]) && TTFamilyOrder[k + 1].equals(name[1]) && TTFamilyOrder[k + 2].equals(name[2])) {
-                            familyName = name[3].toLowerCase();
-                            k = TTFamilyOrder.length;
-                            break;
-                        }
-                    }
-                }
-                if (familyName != null) {
-                    String lastName = "";
-                    names = (String[][]) allNames[2]; //full name
-                    for (String[] name : names) {
-                        for (int k = 0; k < TTFamilyOrder.length; k += 3) {
-                            if (TTFamilyOrder[k].equals(name[0]) && TTFamilyOrder[k + 1].equals(name[1]) && TTFamilyOrder[k + 2].equals(name[2])) {
-                                fullName = name[3];
-                                if (fullName.equals(lastName))
-                                    continue;
-                                lastName = fullName;
-                                registerFontFamily(familyName, fullName, null);
-                                break;
-                            }
-                        }
-                    }
+
+                if (descriptor.getFamilyNameEnglishOpenType() != null) {
+                    for (String fullName : descriptor.getFullNamesEnglishOpenType())
+                         registerFontFamily(descriptor.getFamilyNameEnglishOpenType(), fullName, null);
+
                 }
             } else if (path.toLowerCase().endsWith(".ttc")) {
                 TrueTypeCollection ttc = new TrueTypeCollection(path);
@@ -313,13 +281,10 @@ class FontRegisterProvider {
                     }
                 }
             } else if (path.toLowerCase().endsWith(".afm") || path.toLowerCase().endsWith(".pfm")) {
-                FontProgram fontProgram = FontProgramFactory.createFont(path);
-                String fullName = fontProgram.getFontNames().getFullName()[0][3].toLowerCase();
-                String familyName = fontProgram.getFontNames().getFamilyName()[0][3].toLowerCase();
-                String psName = fontProgram.getFontNames().getFontName().toLowerCase();
-                registerFontFamily(familyName, fullName, null);
-                fontNames.put(psName, path);
-                fontNames.put(fullName, path);
+                FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(path);
+                registerFontFamily(descriptor.getFamilyNameLowerCase(), descriptor.getFullNameLowerCase(), null);
+                fontNames.put(descriptor.getFontNameLowerCase(), path);
+                fontNames.put(descriptor.getFullNameLowerCase(), path);
             }
             LOGGER.trace(MessageFormatUtil.format("Registered {0}", path));
         } catch (java.io.IOException e) {

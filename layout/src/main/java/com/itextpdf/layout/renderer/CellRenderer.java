@@ -43,6 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
@@ -121,7 +122,7 @@ public class CellRenderer extends BlockRenderer {
             try {
                 transform = transform.createInverse();
             } catch (NoninvertibleTransformException e) {
-                throw new RuntimeException(e.getMessage(), e);
+                throw new PdfException(PdfException.NoninvertibleMatrixCannotBeProcessed, e);
             }
             transform.concatenate(new AffineTransform());
             canvas.concatMatrix(transform);

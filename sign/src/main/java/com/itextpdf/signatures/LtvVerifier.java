@@ -45,8 +45,15 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.io.util.DateTimeUtil;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.counter.event.IMetaInfo;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.DocumentProperties;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfStream;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPResp;
@@ -59,7 +66,6 @@ import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -133,6 +139,8 @@ public class LtvVerifier extends RootStoreVerifier {
 
     /**
      * Set the verifyRootCertificate to false if you can't verify the root certificate.
+     *
+     * @param verifyRootCertificate
      */
     public void setVerifyRootCertificate(boolean verifyRootCertificate) {
         this.verifyRootCertificate = verifyRootCertificate;
@@ -149,6 +157,8 @@ public class LtvVerifier extends RootStoreVerifier {
 
     /**
      * Verifies all the document-level timestamps and all the signatures in the document.
+     *
+     * @param result
      * @throws IOException
      * @throws GeneralSecurityException
      */
@@ -354,14 +364,14 @@ public class LtvVerifier extends RootStoreVerifier {
      * @throws GeneralSecurityException
      */
     protected PdfPKCS7 coversWholeDocument() throws GeneralSecurityException {
-        PdfPKCS7 pkcs7 = sgnUtil.verifySignature(signatureName, securityProviderCode);
+        PdfPKCS7 pkcs7 = sgnUtil.readSignatureData(signatureName, securityProviderCode);
         if (sgnUtil.signatureCoversWholeDocument(signatureName)) {
             LOGGER.info("The timestamp covers whole document.");
         }
         else {
             throw new VerificationException((Certificate) null, "Signature doesn't cover whole document.");
         }
-        if (pkcs7.verify()) {
+        if (pkcs7.verifySignatureIntegrityAndAuthenticity()) {
             LOGGER.info("The signed document has not been modified.");
             return pkcs7;
         }

@@ -84,6 +84,8 @@ public class CrlClientOnline implements ICrlClient {
 
     /**
      * Creates a CrlClientOnline instance using one or more URLs.
+     *
+     * @param crls
      */
     public CrlClientOnline(String... crls) {
         for (String url : crls) {
@@ -93,6 +95,8 @@ public class CrlClientOnline implements ICrlClient {
 
     /**
      * Creates a CrlClientOnline instance using one or more URLs.
+     *
+     * @param crls
      */
     public CrlClientOnline(URL... crls) {
         for (URL url : crls) {
@@ -102,6 +106,8 @@ public class CrlClientOnline implements ICrlClient {
 
     /**
      * Creates a CrlClientOnline instance using a certificate chain.
+     *
+     * @param chain
      */
     public CrlClientOnline(Certificate[] chain) {
         for (int i = 0; i < chain.length; i++) {

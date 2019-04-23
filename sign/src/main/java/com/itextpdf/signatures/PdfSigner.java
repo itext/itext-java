@@ -56,7 +56,6 @@ import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.counter.event.IMetaInfo;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -480,6 +479,8 @@ public class PdfSigner {
 
     /**
      * Sets the PdfDocument.
+     *
+     * @param document The PdfDocument
      */
     protected void setDocument(PdfDocument document) {
         this.document = document;
@@ -487,6 +488,8 @@ public class PdfSigner {
 
     /**
      * Setter for the OutputStream.
+     *
+     * @param originalOS OutputStream for the bytes of the document
      */
     public void setOriginalOutputStream(OutputStream originalOS) {
         this.originalOS = originalOS;
@@ -628,15 +631,20 @@ public class PdfSigner {
         }
         InputStream data = getRangeStream();
         byte[] hash = DigestAlgorithms.digest(data, SignUtils.getMessageDigest(hashAlgorithm, externalDigest));
-        byte[] ocsp = null;
-        if (chain.length >= 2 && ocspClient != null) {
-            ocsp = ocspClient.getEncoded((X509Certificate) chain[0], (X509Certificate) chain[1], null);
+        List<byte[]> ocspList = new ArrayList<>();
+        if (chain.length > 1 && ocspClient != null) {
+            for (int j = 0; j < chain.length - 1; ++j) {
+                byte[] ocsp = ocspClient.getEncoded((X509Certificate) chain[j], (X509Certificate) chain[j + 1], null);
+                if (ocsp != null) {
+                    ocspList.add(ocsp);
+                }
+            }
         }
-        byte[] sh = sgn.getAuthenticatedAttributeBytes(hash, ocsp, crlBytes, sigtype);
+        byte[] sh = sgn.getAuthenticatedAttributeBytes(hash, sigtype, ocspList, crlBytes);
         byte[] extSignature = externalSignature.sign(sh);
         sgn.setExternalDigest(extSignature, null, externalSignature.getEncryptionAlgorithm());
 
-        byte[] encodedSig = sgn.getEncodedPKCS7(hash, tsaClient, ocsp, crlBytes, sigtype);
+        byte[] encodedSig = sgn.getEncodedPKCS7(hash, sigtype, tsaClient, ocspList, crlBytes);
 
         if (estimatedSize < encodedSig.length)
             throw new IOException("Not enough space");
@@ -1032,6 +1040,7 @@ public class PdfSigner {
      * {@link #preClose(Map)}, {@link #getRangeStream()} and {@link #close(PdfDictionary)}.
      *
      * @return The {@link InputStream} of bytes to be signed.
+     * @throws IOException
      */
     protected InputStream getRangeStream() throws IOException {
         RandomAccessSourceFactory fac = new RandomAccessSourceFactory();
@@ -1146,6 +1155,7 @@ public class PdfSigner {
      * This method is only used for signatures that lock fields.
      *
      * @param crypto the signature dictionary
+     * @param fieldLock
      */
     protected void addFieldMDP(PdfSignature crypto, PdfSigFieldLock fieldLock) {
         PdfDictionary reference = new PdfDictionary();

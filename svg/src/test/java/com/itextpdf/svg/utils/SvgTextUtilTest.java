@@ -42,6 +42,9 @@
  */
 package com.itextpdf.svg.utils;
 
+import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.renderers.impl.TextLeafSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -200,5 +203,91 @@ public class SvgTextUtilTest {
         String actual = SvgTextUtil.trimTrailingWhitespace(toTrim);
         String expected = "A";
         Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void processWhiteSpaceBreakLine() {
+        //Create tree
+        TextSvgBranchRenderer root = new TextSvgBranchRenderer();
+
+        TextLeafSvgNodeRenderer textBefore = new TextLeafSvgNodeRenderer();
+        textBefore.setAttribute(SvgConstants.Attributes.TEXT_CONTENT,
+                "\n" +
+                        "            text\n" +
+                        "            ");
+        root.addChild(textBefore);
+
+        TextSvgBranchRenderer span = new TextSvgBranchRenderer();
+        TextLeafSvgNodeRenderer textInSpan = new TextLeafSvgNodeRenderer();
+        textInSpan.setAttribute(SvgConstants.Attributes.TEXT_CONTENT,
+                "\n" +
+                        "                tspan text\n" +
+                        "            ");
+        span.addChild(textInSpan);
+        root.addChild(span);
+
+        TextLeafSvgNodeRenderer textAfter = new TextLeafSvgNodeRenderer();
+        textAfter.setAttribute(SvgConstants.Attributes.TEXT_CONTENT,
+                "\n" +
+                        "            after text\n" +
+                        "        ");
+        root.addChild(textAfter);
+
+        //Run
+        SvgTextUtil.processWhiteSpace(root, true);
+        root.getChildren().get(0).getAttribute(SvgConstants.Attributes.TEXT_CONTENT);
+        //Create result array
+        String[] actual = new String[]{
+                root.getChildren().get(0).getAttribute(SvgConstants.Attributes.TEXT_CONTENT),
+                ((TextSvgBranchRenderer) root.getChildren().get(1)).getChildren().get(0).getAttribute(SvgConstants.Attributes.TEXT_CONTENT),
+                root.getChildren().get(2).getAttribute(SvgConstants.Attributes.TEXT_CONTENT)
+        };
+        //Create expected
+        String[] expected = new String[]{"text", " tspan text", " after text"};
+        Assert.assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    public void processWhiteSpaceAbsPositionChange() {
+        //Create tree
+        TextSvgBranchRenderer root = new TextSvgBranchRenderer();
+
+        TextLeafSvgNodeRenderer textBefore = new TextLeafSvgNodeRenderer();
+        textBefore.setAttribute(SvgConstants.Attributes.TEXT_CONTENT,
+                "\n" +
+                        "            text\n" +
+                        "            ");
+        root.addChild(textBefore);
+
+        TextSvgBranchRenderer span = new TextSvgBranchRenderer();
+        span.setAttribute(SvgConstants.Attributes.X, "10");
+        span.setAttribute(SvgConstants.Attributes.Y, "20");
+        TextLeafSvgNodeRenderer textInSpan = new TextLeafSvgNodeRenderer();
+        textInSpan.setAttribute(SvgConstants.Attributes.TEXT_CONTENT,
+                "\n" +
+                        "                tspan text\n" +
+                        "            ");
+        span.addChild(textInSpan);
+        root.addChild(span);
+
+        TextLeafSvgNodeRenderer textAfter = new TextLeafSvgNodeRenderer();
+        textAfter.setAttribute(SvgConstants.Attributes.TEXT_CONTENT,
+                "\n" +
+                        "            after text\n" +
+                        "        ");
+        root.addChild(textAfter);
+
+        //Run
+        SvgTextUtil.processWhiteSpace(root, true);
+        root.getChildren().get(0).getAttribute(SvgConstants.Attributes.TEXT_CONTENT);
+        //Create result array
+        String[] actual = new String[]{
+                root.getChildren().get(0).getAttribute(SvgConstants.Attributes.TEXT_CONTENT),
+                ((TextSvgBranchRenderer) root.getChildren().get(1)).getChildren().get(0).getAttribute(SvgConstants.Attributes.TEXT_CONTENT),
+                root.getChildren().get(2).getAttribute(SvgConstants.Attributes.TEXT_CONTENT)
+        };
+        //Create expected
+        String[] expected = new String[]{"text", "tspan text", " after text"};//No preceding whitespace on the second element
+        Assert.assertArrayEquals(expected, actual);
     }
 }

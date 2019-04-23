@@ -58,4 +58,5 @@ public interface IPathShapeMapper {
      */
     Map<String, IPathShape> getMapping();
 
+    Map<String, Integer> getArgumentCount();
 }

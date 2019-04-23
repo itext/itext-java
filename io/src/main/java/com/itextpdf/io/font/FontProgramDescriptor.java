@@ -44,6 +44,9 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.font.constants.FontMacStyleFlags;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Base font descriptor.
  */
@@ -61,6 +64,21 @@ public class FontProgramDescriptor {
     private final float italicAngle;
     private final boolean isMonospace;
 
+    private final Set<String> fullNamesAllLangs;
+    private final Set<String> fullNamesEnglishOpenType;
+    private final String familyNameEnglishOpenType;
+
+    // Initially needed for open type fonts only.
+    // The following sequence represents four triplets.
+    // In each triplet items sequentially stand for platformID encodingID languageID (see open type naming table spec).
+    // Each triplet is used further to determine whether the font name item is represented in English
+    private static final String[] TT_FAMILY_ORDER = {
+            "3", "1", "1033",
+            "3", "0", "1033",
+            "1", "0", "0",
+            "0", "3", "0"
+    };
+
     FontProgramDescriptor(FontNames fontNames, float italicAngle, boolean isMonospace) {
         this.fontName = fontNames.getFontName();
         this.fontNameLowerCase = this.fontName.toLowerCase();
@@ -71,6 +89,9 @@ public class FontProgramDescriptor {
         this.macStyle = fontNames.getMacStyle();
         this.italicAngle = italicAngle;
         this.isMonospace = isMonospace;
+        this.familyNameEnglishOpenType = extractFamilyNameEnglishOpenType(fontNames);
+        this.fullNamesAllLangs = extractFullFontNames(fontNames);
+        this.fullNamesEnglishOpenType = extractFullNamesEnglishOpenType(fontNames);
     }
 
     FontProgramDescriptor(FontNames fontNames, FontMetrics fontMetrics) {
@@ -115,5 +136,48 @@ public class FontProgramDescriptor {
 
     public String getFamilyNameLowerCase() {
         return familyNameLowerCase;
+    }
+
+    public Set<String> getFullNameAllLangs() { return fullNamesAllLangs; }
+
+    public Set<String> getFullNamesEnglishOpenType() { return fullNamesEnglishOpenType; }
+
+    String getFamilyNameEnglishOpenType() { return familyNameEnglishOpenType; }
+
+    private Set<String> extractFullFontNames(FontNames fontNames) {
+        Set<String> uniqueFullNames = new HashSet<>();
+        for (String[] fullName : fontNames.getFullName())
+            uniqueFullNames.add(fullName[3].toLowerCase());
+        return uniqueFullNames;
+    }
+
+    private String extractFamilyNameEnglishOpenType(FontNames fontNames) {
+        if (fontNames.getFamilyName() != null) {
+            for (int k = 0; k < TT_FAMILY_ORDER.length; k += 3) {
+                for (String[] name : fontNames.getFamilyName()) {
+                    if (TT_FAMILY_ORDER[k].equals(name[0]) && TT_FAMILY_ORDER[k + 1].equals(name[1]) && TT_FAMILY_ORDER[k + 2].equals(name[2])) {
+                        return name[3].toLowerCase();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private Set<String> extractFullNamesEnglishOpenType(FontNames fontNames) {
+        if (familyNameEnglishOpenType != null) {
+            Set<String> uniqueTtfSuitableFullNames = new HashSet<>();
+            String[][] names = fontNames.getFullName();
+            for (String[] name : names) {
+                for (int k = 0; k < TT_FAMILY_ORDER.length; k += 3) {
+                    if (TT_FAMILY_ORDER[k].equals(name[0]) && TT_FAMILY_ORDER[k + 1].equals(name[1]) && TT_FAMILY_ORDER[k + 2].equals(name[2])) {
+                        uniqueTtfSuitableFullNames.add(name[3]);
+                        break;
+                    }
+                }
+            }
+            return uniqueTtfSuitableFullNames;
+        }
+        return new HashSet<>();
     }
 }

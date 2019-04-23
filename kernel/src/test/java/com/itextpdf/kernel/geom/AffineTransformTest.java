@@ -96,4 +96,20 @@ public class AffineTransformTest {
         Assert.assertNotEquals(hash1, hash2);
         Assert.assertFalse(affineTransform1.equals(affineTransform2));
     }
+
+    @Test
+    public void rotateTest(){
+        AffineTransform rotateOne  = AffineTransform.getRotateInstance(Math.PI/2);
+        AffineTransform expected = new AffineTransform(0,1,-1,0,0,0);
+
+        Assert.assertEquals(rotateOne,expected);
+    }
+
+    @Test
+    public void rotateTranslateTest(){
+        AffineTransform rotateTranslate = AffineTransform.getRotateInstance(Math.PI/2, 10,5);
+        AffineTransform expected = new AffineTransform(0,1,-1,0,15,-5);
+
+        Assert.assertEquals(rotateTranslate,expected);
+    }
 }

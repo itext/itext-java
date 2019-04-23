@@ -78,7 +78,7 @@ public final class Version {
      * This String contains the version number of this iText release.
      * For debugging purposes, we request you NOT to change this constant.
      */
-    private static final String release = "7.1.5";
+    private static final String release = "7.1.6";
     /**
      * This String contains the iText version as shown in the producer line.
      * iText is a product developed by iText Group NV.
@@ -95,7 +95,7 @@ public final class Version {
     private boolean expired;
 
     /**
-     * @depricated Use {@link Version#getInstance()} instead. Will be removed in next major release.
+     * @deprecated Use {@link Version#getInstance()} instead. Will be removed in next major release.
      */
     @Deprecated
     public Version() {

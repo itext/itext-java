@@ -74,17 +74,23 @@ public class TestOcspResponseBuilder {
     private static final String SIGN_ALG = "SHA256withRSA";
 
     private BasicOCSPRespBuilder responseBuilder;
-    private X509Certificate caCert;
+    private X509Certificate issuerCert;
+    private PrivateKey issuerPrivateKey;
     private CertificateStatus certificateStatus = CertificateStatus.GOOD;
     private Calendar thisUpdate = DateTimeUtil.getCurrentTimeCalendar();
     private Calendar nextUpdate = DateTimeUtil.getCurrentTimeCalendar();
 
-    public TestOcspResponseBuilder(X509Certificate caCert) throws CertificateEncodingException {
-        this.caCert = caCert;
-        X500Name issuerDN = new X500Name(PrincipalUtil.getIssuerX509Principal(caCert).getName());
+    public TestOcspResponseBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey) throws CertificateEncodingException {
+        this.issuerCert = issuerCert;
+        this.issuerPrivateKey = issuerPrivateKey;
+        X500Name subjectDN = new X500Name(PrincipalUtil.getSubjectX509Principal(issuerCert).getName());
         thisUpdate = DateTimeUtil.addDaysToCalendar(thisUpdate, -1);
         nextUpdate = DateTimeUtil.addDaysToCalendar(nextUpdate, 30);
-        responseBuilder = new BasicOCSPRespBuilder(new RespID(issuerDN));
+        responseBuilder = new BasicOCSPRespBuilder(new RespID(subjectDN));
+    }
+
+    public X509Certificate getIssuerCert() {
+        return issuerCert;
     }
 
     public void setCertificateStatus(CertificateStatus certificateStatus) {
@@ -99,7 +105,7 @@ public class TestOcspResponseBuilder {
         this.nextUpdate = nextUpdate;
     }
 
-    public byte[] makeOcspResponse(byte[] requestBytes, PrivateKey caPrivateKey) throws IOException, CertificateException, OperatorCreationException, OCSPException {
+    public byte[] makeOcspResponse(byte[] requestBytes) throws IOException, CertificateException, OperatorCreationException, OCSPException {
         OCSPReq ocspRequest = new OCSPReq(requestBytes);
         Req[] requestList = ocspRequest.getRequestList();
 
@@ -115,8 +121,8 @@ public class TestOcspResponseBuilder {
 
         Date time = DateTimeUtil.getCurrentTimeDate();
 
-        X509CertificateHolder[] chain = {new JcaX509CertificateHolder(caCert)};
-        ContentSigner signer = new JcaContentSignerBuilder(SIGN_ALG).setProvider(BouncyCastleProvider.PROVIDER_NAME).build(caPrivateKey);
+        X509CertificateHolder[] chain = {new JcaX509CertificateHolder(issuerCert)};
+        ContentSigner signer = new JcaContentSignerBuilder(SIGN_ALG).setProvider(BouncyCastleProvider.PROVIDER_NAME).build(issuerPrivateKey);
         BasicOCSPResp ocspResponse = responseBuilder.build(signer, chain, time);
 //        return new OCSPRespBuilder().build(ocspResult, ocspResponse).getEncoded();
         return ocspResponse.getEncoded();

@@ -47,7 +47,6 @@ import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
-import com.itextpdf.svg.utils.SvgCoordinateUtils;
 
 import java.util.Arrays;
 
@@ -56,14 +55,14 @@ import java.util.Arrays;
  * */
 public class MoveTo extends AbstractPathShape {
 
-    private String[] coordinates;
+    static final int ARGUMENT_SIZE = 2;
 
     public MoveTo() {
         this(false);
     }
 
     public MoveTo(boolean relative) {
-        this.relative = relative;
+        super(relative);
     }
 
     @Override
@@ -74,24 +73,13 @@ public class MoveTo extends AbstractPathShape {
     }
 
     @Override
-    public void setCoordinates(String[] coordinates, Point startPoint) {
-        if (coordinates.length == 0 || coordinates.length % 2 != 0) {
+    public void setCoordinates(String[] inputCoordinates, Point startPoint) {
+        if (inputCoordinates.length != ARGUMENT_SIZE) {
             throw new IllegalArgumentException(MessageFormatUtil.format(SvgExceptionMessageConstant.MOVE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0, Arrays.toString(coordinates)));
         }
-        if (coordinates.length > 2) {
-            // (x y)+ parameters will be implemented in the future
-            throw new UnsupportedOperationException();
-        }
-
-        this.coordinates = new String[] {coordinates[0], coordinates[1]};
-
+        this.coordinates = new String[] {inputCoordinates[0], inputCoordinates[1]};
         if (isRelative()) {
-            this.coordinates = SvgCoordinateUtils.makeRelativeOperatorCoordinatesAbsolute(coordinates, new double[]{startPoint.x, startPoint.y});
+            this.coordinates = copier.makeCoordinatesAbsolute(coordinates, new double[]{startPoint.x, startPoint.y});
         }
-    }
-
-    @Override
-    public Point getEndingPoint() {
-        return createPoint(coordinates[0], coordinates[1]);
     }
 }

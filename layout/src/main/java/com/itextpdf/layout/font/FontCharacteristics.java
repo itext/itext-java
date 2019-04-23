@@ -65,7 +65,7 @@ public final class FontCharacteristics {
      * Sets preferred font weight
      *
      * @param fw font weight in css notation.
-     * @seealso com.itextpdf.io.font.constants.FontWeights.
+     * @see com.itextpdf.io.font.constants.FontWeights
      * @return this instance.
      */
     public FontCharacteristics setFontWeight(short fw) {
@@ -121,7 +121,7 @@ public final class FontCharacteristics {
     }
 
     public boolean isBold() {
-        return isBold || fontWeight > 600;
+        return isBold || fontWeight > 500;
     }
 
     public boolean isMonospace() {

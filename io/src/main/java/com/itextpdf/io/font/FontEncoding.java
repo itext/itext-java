@@ -218,7 +218,7 @@ public class FontEncoding implements Serializable {
      * @return {@code true} if {@code ch} could be encoded.
      */
     public boolean canEncode(int unicode) {
-        return unicodeToCode.containsKey(unicode) || TextUtil.isNonPrintable(unicode);
+        return unicodeToCode.containsKey(unicode) || TextUtil.isNonPrintable(unicode) || TextUtil.isNewLine(unicode);
     }
 
     /**

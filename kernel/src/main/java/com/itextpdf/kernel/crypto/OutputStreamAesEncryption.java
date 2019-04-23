@@ -52,6 +52,11 @@ public class OutputStreamAesEncryption extends OutputStreamEncryption {
 
     /**
      * Creates a new instance of OutputStreamCounter
+     *
+     * @param out
+     * @param key
+     * @param off
+     * @param len
      */
     public OutputStreamAesEncryption(java.io.OutputStream out, byte[] key, int off, int len) {
         super(out);

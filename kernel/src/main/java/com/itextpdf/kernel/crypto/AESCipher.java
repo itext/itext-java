@@ -58,7 +58,13 @@ public class AESCipher {
 
     private PaddedBufferedBlockCipher bp;
     
-    /** Creates a new instance of AESCipher */
+    /**
+     * Creates a new instance of AESCipher
+     *
+     * @param forEncryption
+     * @param key
+     * @param iv
+     */
     public AESCipher(boolean forEncryption, byte[] key, byte[] iv) {
         BlockCipher aes = new AESFastEngine();
         BlockCipher cbc = new CBCBlockCipher(aes);

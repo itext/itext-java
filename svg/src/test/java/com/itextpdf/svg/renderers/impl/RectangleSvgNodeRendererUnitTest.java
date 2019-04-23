@@ -42,8 +42,6 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Before;
@@ -107,13 +105,5 @@ public class RectangleSvgNodeRendererUnitTest {
     public void findCircularRadiusSmallWidthTest() {
         float rad = renderer.findCircularRadius(0f, 20f, 5f, 200f);
         Assert.assertEquals(2.5f, rad, EPSILON);
-    }
-
-    @Test
-    public void deepCopyTest(){
-        RectangleSvgNodeRenderer expected = new RectangleSvgNodeRenderer();
-        expected.setAttribute(SvgConstants.Attributes.FILL,"blue");
-        ISvgNodeRenderer actual =expected.createDeepCopy();
-        Assert.assertEquals(expected,actual);
     }
 }

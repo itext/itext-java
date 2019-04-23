@@ -59,9 +59,7 @@ import com.itextpdf.svg.utils.SvgCssUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Abstract class that will be the superclass for any element that can function
@@ -295,24 +293,6 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
 
     @Override
     public abstract ISvgNodeRenderer createDeepCopy();
-
-    @Override
-    public boolean equals(Object other){
-        if (other == null || this.getClass() != other.getClass()) {
-            return false;
-        }
-        AbstractBranchSvgNodeRenderer oabr = (AbstractBranchSvgNodeRenderer) other;
-        boolean result = super.equals(oabr);
-        if(result){
-            result &= children.equals(oabr.getChildren());
-        }
-        return result;
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode()*7 + 255 + children.hashCode();
-    }
 
     @Override
     void setPartOfClipPath(boolean isPart) {

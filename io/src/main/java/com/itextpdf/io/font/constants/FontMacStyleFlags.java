@@ -44,7 +44,7 @@ package com.itextpdf.io.font.constants;
 
 /**
  * Represents Open Type head.macStyle bits.
- * <br/>
+ * <p>
  * https://www.microsoft.com/typography/otspec/head.htm
  */
 public final class FontMacStyleFlags {

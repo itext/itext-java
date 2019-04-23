@@ -53,14 +53,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 /**
  * @author Michael Demey
  */
+@Category(IntegrationTest.class)
 public class TrailerTest extends ExtendedITextTest {
 
     private ProductInfo productInfo;

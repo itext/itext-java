@@ -284,7 +284,10 @@ public class ResourceResolver {
     }
 
     /**
-     * Throws exception if error occurred
+     * Create a iText XObject based on the image stored at the passed location
+     * @param url location of the Image file
+     * @return {@link PdfXObject} containing the Image loaded in
+     * @throws Exception thrown if error occurred during fetching or constructing the image
      */
     protected PdfXObject createImageByUrl(URL url) throws Exception {
         return new PdfImageXObject(ImageDataFactory.create(url));

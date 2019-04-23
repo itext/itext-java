@@ -102,6 +102,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -786,14 +787,35 @@ public class PdfPKCS7 {
 
     /**
      * Gets the bytes for the PKCS7SignedData object. Optionally the authenticatedAttributes
-     * in the signerInfo can also be set, OR a time-stamp-authority client
+     * in the signerInfo can also be set, and/or a time-stamp-authority client
      * may be provided.
      *
      * @param secondDigest the digest in the authenticatedAttributes
      * @param tsaClient    TSAClient - null or an optional time stamp authority client
+     * @param ocsp DER-encoded OCSP response for the first certificate in the signature certificates chain, or null if OCSP revocation data is not to be added.
+     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain, or null if CRL revocation data is not to be added.
+     * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere: either basic CMS or CAdES
+     * @return byte[] the bytes for the PKCS7SignedData object
+     * @deprecated This overload is deprecated, use {@link #getEncodedPKCS7(byte[], PdfSigner.CryptoStandard, ITSAClient, Collection, Collection)} instead.
+     */
+    @Deprecated
+    public byte[] getEncodedPKCS7(byte[] secondDigest, ITSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
+        return getEncodedPKCS7(secondDigest, sigtype, tsaClient, ocsp != null ? Collections.singleton(ocsp) : null, crlBytes);
+    }
+
+    /**
+     * Gets the bytes for the PKCS7SignedData object. Optionally the authenticatedAttributes
+     * in the signerInfo can also be set, and/or a time-stamp-authority client
+     * may be provided.
+     *
+     * @param secondDigest the digest in the authenticatedAttributes
+     * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere: either basic CMS or CAdES
+     * @param tsaClient    TSAClient - null or an optional time stamp authority client
+     * @param ocsp collection of DER-encoded OCSP responses for the  certificate in the signature certificates chain, or null if OCSP revocation data is not to be added.
+     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain, or null if CRL revocation data is not to be added.
      * @return byte[] the bytes for the PKCS7SignedData object
      */
-    public byte[] getEncodedPKCS7(byte[] secondDigest, ITSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
+    public byte[] getEncodedPKCS7(byte[] secondDigest, PdfSigner.CryptoStandard sigtype, ITSAClient tsaClient, Collection<byte[]> ocsp, Collection<byte[]> crlBytes) {
         try {
             if (externalDigest != null) {
                 digest = externalDigest;
@@ -968,9 +990,48 @@ public class PdfPKCS7 {
      * </pre>
      *
      * @param secondDigest the content digest
+     * @param ocsp collection of DER-encoded OCSP responses for the  certificate in the signature certificates chain, or null if OCSP revocation data is not to be added.
+     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain, or null if CRL revocation data is not to be added.
+     * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere: either basic CMS or CAdES
+     * @return the byte array representation of the authenticatedAttributes ready to be signed
+     * @deprecated This method overload is deprecated. Please use {@link #getAuthenticatedAttributeBytes(byte[], PdfSigner.CryptoStandard, Collection, Collection)}
+     */
+    @Deprecated
+    public byte[] getAuthenticatedAttributeBytes(byte[] secondDigest, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
+        return getAuthenticatedAttributeBytes(secondDigest, sigtype, ocsp != null ? Collections.singleton(ocsp) : null, crlBytes);
+    }
+
+    /**
+     * When using authenticatedAttributes the authentication process is different.
+     * The document digest is generated and put inside the attribute. The signing is done over the DER encoded
+     * authenticatedAttributes. This method provides that encoding and the parameters must be
+     * exactly the same as in {@link #getEncodedPKCS7(byte[])}.
+     * <p>
+     * A simple example:
+     * <p>
+     * <pre>
+     * Calendar cal = Calendar.getInstance();
+     * PdfPKCS7 pk7 = new PdfPKCS7(key, chain, null, "SHA1", null, false);
+     * MessageDigest messageDigest = MessageDigest.getInstance("SHA1");
+     * byte[] buf = new byte[8192];
+     * int n;
+     * InputStream inp = sap.getRangeStream();
+     * while ((n = inp.read(buf)) &gt; 0) {
+     *    messageDigest.update(buf, 0, n);
+     * }
+     * byte[] hash = messageDigest.digest();
+     * byte[] sh = pk7.getAuthenticatedAttributeBytes(hash, cal);
+     * pk7.update(sh, 0, sh.length);
+     * byte[] sg = pk7.getEncodedPKCS7(hash, cal);
+     * </pre>
+     *
+     * @param secondDigest the content digest
+     * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere: either basic CMS or CAdES
+     * @param ocsp collection of DER-encoded OCSP responses for the  certificate in the signature certificates chain, or null if OCSP revocation data is not to be added.
+     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain, or null if CRL revocation data is not to be added.
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    public byte[] getAuthenticatedAttributeBytes(byte[] secondDigest, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
+    public byte[] getAuthenticatedAttributeBytes(byte[] secondDigest, PdfSigner.CryptoStandard sigtype, Collection<byte[]> ocsp, Collection<byte[]> crlBytes) {
         try {
             return getAuthenticatedAttributeSet(secondDigest, ocsp, crlBytes, sigtype).getEncoded(ASN1Encoding.DER);
         } catch (Exception e) {
@@ -985,7 +1046,7 @@ public class PdfPKCS7 {
      * @param secondDigest the content digest
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    private DERSet getAuthenticatedAttributeSet(byte[] secondDigest, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
+    private DERSet getAuthenticatedAttributeSet(byte[] secondDigest, Collection<byte[]> ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
         try {
             ASN1EncodableVector attribute = new ASN1EncodableVector();
             ASN1EncodableVector v = new ASN1EncodableVector();
@@ -1005,7 +1066,7 @@ public class PdfPKCS7 {
                     }
                 }
             }
-            if (ocsp != null || haveCrl) {
+            if (ocsp != null && !ocsp.isEmpty() || haveCrl) {
                 v = new ASN1EncodableVector();
                 v.add(new ASN1ObjectIdentifier(SecurityIDs.ID_ADBE_REVOCATION));
 
@@ -1022,17 +1083,19 @@ public class PdfPKCS7 {
                     revocationV.add(new DERTaggedObject(true, 0, new DERSequence(v2)));
                 }
 
-                if (ocsp != null) {
-                    DEROctetString doctet = new DEROctetString(ocsp);
+                if (ocsp != null && !ocsp.isEmpty()) {
                     ASN1EncodableVector vo1 = new ASN1EncodableVector();
-                    ASN1EncodableVector v2 = new ASN1EncodableVector();
-                    v2.add(OCSPObjectIdentifiers.id_pkix_ocsp_basic);
-                    v2.add(doctet);
-                    ASN1Enumerated den = new ASN1Enumerated(0);
-                    ASN1EncodableVector v3 = new ASN1EncodableVector();
-                    v3.add(den);
-                    v3.add(new DERTaggedObject(true, 0, new DERSequence(v2)));
-                    vo1.add(new DERSequence(v3));
+                    for (byte[] ocspBytes : ocsp) {
+                        DEROctetString doctet = new DEROctetString(ocspBytes);
+                        ASN1EncodableVector v2 = new ASN1EncodableVector();
+                        v2.add(OCSPObjectIdentifiers.id_pkix_ocsp_basic);
+                        v2.add(doctet);
+                        ASN1Enumerated den = new ASN1Enumerated(0);
+                        ASN1EncodableVector v3 = new ASN1EncodableVector();
+                        v3.add(den);
+                        v3.add(new DERTaggedObject(true, 0, new DERSequence(v2)));
+                        vo1.add(new DERSequence(v3));
+                    }
                     revocationV.add(new DERTaggedObject(true, 1, new DERSequence(vo1)));
                 }
 
@@ -1099,10 +1162,34 @@ public class PdfPKCS7 {
      * Verify the digest.
      *
      * @return <CODE>true</CODE> if the signature checks out, <CODE>false</CODE> otherwise
-     * @throws SignatureException                     on error
-     * @throws java.security.GeneralSecurityException
+     * @throws java.security.GeneralSecurityException if this signature object is not initialized properly,
+     * the passed-in signature is improperly encoded or of the wrong type, if this signature algorithm is unable to
+     * process the input data provided, if the public key is invalid or if security provider or signature algorithm
+     * are not recognized, etc.
+     * @deprecated This method will be removed in future versions. Please use {@link #verifySignatureIntegrityAndAuthenticity()} instead.
      */
+    @Deprecated
     public boolean verify() throws GeneralSecurityException {
+        return verifySignatureIntegrityAndAuthenticity();
+    }
+
+    /**
+     * Verifies that signature integrity is intact (or in other words that signed data wasn't modified)
+     * by checking that embedded data digest corresponds to the calculated one. Also ensures that signature
+     * is genuine and is created by the owner of private key that corresponds to the declared public certificate.
+     * <p>
+     * Even though signature can be authentic and signed data integrity can be intact,
+     * one shall also always check that signed data is not only a part of PDF contents but is actually a complete PDF file.
+     * In order to check that given signature covers the current {@link com.itextpdf.kernel.pdf.PdfDocument} please
+     * use {@link SignatureUtil#signatureCoversWholeDocument(String)} method.
+     * </p>
+     * @return <CODE>true</CODE> if the signature checks out, <CODE>false</CODE> otherwise
+     * @throws java.security.GeneralSecurityException if this signature object is not initialized properly,
+     * the passed-in signature is improperly encoded or of the wrong type, if this signature algorithm is unable to
+     * process the input data provided, if the public key is invalid or if security provider or signature algorithm
+     * are not recognized, etc.
+     */
+    public boolean verifySignatureIntegrityAndAuthenticity() throws GeneralSecurityException {
         if (verified)
             return verifyResult;
         if (isTsp) {

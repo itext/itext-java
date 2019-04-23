@@ -70,83 +70,29 @@ Before you submit your pull request consider the following guidelines:
 * Please sign the [iText Contributor License Agreement (iCLA)](#cla) before sending pull
   requests for any change of more than 20 significant lines of code (we're not counting curly braces and other syntactical sugar).
   We cannot accept code without this agreement.
-* Clone **iText 7 Community** to your local machine.
-
-     ```shell
-     git clone git@github.com:itext/itext7.git
-     cd itext7
-     git fetch origin
-     git checkout -b develop origin/develop
-     ```
-
-* Make your changes in a new git branch based off the develop branch:
-
-     ```shell
-     git checkout -b my-fix-branch develop
-     ```
-
-* Create your patch, **including appropriate test cases**.
+* Fork the iText repository on GitHub.
+* Clone your iText fork to your local machine.
+* Make your changes, **including appropriate test cases**.
 * Follow our [Coding Rules](#rules).
-* Run the full **iText 7 Community** test suite and ensure that all tests pass.
 * Commit your changes using a descriptive commit message that follows our
   [commit message conventions](#commit-message-format).
-
-     ```shell
-     git commit -a
-     ```
-  Note: the optional commit `-a` command line option will automatically `add` and `rm` edited files.
-
 * Now would be a good time to fix up your commits (if you want or need to) with `git rebase --interactive`.
 * Build your changes locally to ensure all the tests pass.
-* Push your branch to your GitHub account:
-
-    ```shell
-    git remote add my-remote git@github.com:my-remote/itext7.git
-    git push my-remote my-fix-branch
-    ```
-
-* In GitHub, send a pull request to `itext7:develop`.
+* Push your changes to your GitHub account.
+* Create a pull request in GitHub.
+"Head fork" should be your repository, and the "base fork" should be the iText7 official repository.
 * If we suggest changes then:
   * Make the required updates.
-  * Re-run the **iText 7 Community** test suite to ensure tests are still passing.
-  * Rebase your branch and force push to your GitHub repository (this will update your Pull Request):
-
-    ```shell
-    git fetch origin
-    git rebase develop -i
-    git push my-remote my-fix-branch -f
-    ```
+  * Fix up your commits if needed, with an interactive rebase.
+  * Re-run the tests and make sure that they are still passing.
+  * Force push to your GitHub repository. This will update your Pull Request.
 
 That's it! Thank you for your contribution!
 
 #### After your pull request is merged
 
-After your pull request is merged, you can safely delete your branch and pull the changes
-from the main (upstream) repository:
-
-* Delete the remote branch on GitHub either through the GitHub web UI or your local shell as follows:
-
-    ```shell
-    git push my-remote --delete my-fix-branch
-    ```
-
-* Check out the develop branch:
-
-    ```shell
-    git checkout develop -f
-    ```
-
-* Delete the local branch:
-
-    ```shell
-    git branch -D my-fix-branch
-    ```
-
-* Update your develop with the latest upstream version:
-
-    ```shell
-    git pull --ff upstream develop
-    ```
+After your pull request is merged, you can safely delete your fork and pull the changes
+from the main (upstream) repository.
 
 
 ## <a name="rules">Coding Rules</a>

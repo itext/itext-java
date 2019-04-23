@@ -51,7 +51,7 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.invoke.MethodHandle;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.Buffer;
 import java.nio.BufferUnderflowException;
@@ -61,10 +61,6 @@ import java.security.PrivilegedAction;
 import java.nio.ByteBuffer;
 import java.util.Objects;
 import java.lang.reflect.Field;
-
-import static java.lang.invoke.MethodHandles.Lookup;
-import static java.lang.invoke.MethodHandles.lookup;
-import static java.lang.invoke.MethodType.methodType;
 
 
 /**
@@ -244,19 +240,26 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource, Serializable 
      * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      * See the License for the specific language governing permissions and
      * limitations under the License.
+     *
+     * NOTE: that this code was edited since original code is compatible with android sdk not lower than 26.
+     * This edited code has been verified to be compatible with android sdk 19.
      */
     
     private static class BufferCleaner {
         Class<?> unmappableBufferClass;
-        final MethodHandle unmapper;
+        final Method method;
+        final Object theUnsafe;
 
-        BufferCleaner(final Class<?> unmappableBufferClass, final MethodHandle unmapper) {
+        BufferCleaner(final Class<?> unmappableBufferClass, final Method method, final Object theUnsafe) {
             this.unmappableBufferClass = unmappableBufferClass;
-            this.unmapper = unmapper;
+            this.method = method;
+            this.theUnsafe = theUnsafe;
         }
 
         void freeBuffer(String resourceDescription, final ByteBuffer buffer) throws IOException {
-            assert Objects.equals(methodType(void.class, ByteBuffer.class), unmapper.type());
+            assert Objects.equals(void.class, method.getReturnType());
+            assert method.getParameterTypes().length == 1;
+            assert Objects.equals(ByteBuffer.class, method.getParameterTypes()[0]);
             if (!buffer.isDirect()) {
                 throw new IllegalArgumentException("unmapping only works with direct buffers");
             }
@@ -266,10 +269,10 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource, Serializable 
             final Throwable error = AccessController.doPrivileged(new PrivilegedAction<Throwable>() {
                 public Throwable run() {
                     try {
-                        unmapper.invokeExact(buffer);
+                        method.invoke(theUnsafe, buffer);
                         return null;
-                    } catch (Throwable t) {
-                        return t;
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        return e;
                     }
                 }
             });
@@ -280,19 +283,14 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource, Serializable 
     }
 
     private static Object unmapHackImpl() {
-        final Lookup lookup = lookup();
         try {
             // *** sun.misc.Unsafe unmapping (Java 9+) ***
             final Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
-            // first check if Unsafe has the right method, otherwise we can give up
-            // without doing any security critical stuff:
-            final MethodHandle unmapper = lookup.findVirtual(unsafeClass, "invokeCleaner",
-                    methodType(void.class, ByteBuffer.class));
-            // fetch the unsafe instance and bind it to the virtual MH:
+            final Method method = unsafeClass.getDeclaredMethod("invokeCleaner", ByteBuffer.class);
             final Field f = unsafeClass.getDeclaredField("theUnsafe");
             f.setAccessible(true);
             final Object theUnsafe = f.get(null);
-            return new BufferCleaner(ByteBuffer.class, unmapper.bindTo(theUnsafe));
+            return new BufferCleaner(ByteBuffer.class, method, theUnsafe);
         } catch (Exception e) {
             return e.getMessage();
         }

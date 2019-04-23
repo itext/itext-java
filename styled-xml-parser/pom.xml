@@ -4,12 +4,12 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.1.5</version>
+    <version>7.1.6</version>
   </parent>
   <artifactId>styled-xml-parser</artifactId>
   <name>iText 7 - Styled XML Parser</name>
   <description>Styled XML parser is used by iText7 modules to parse HTML and XML</description>
-  <url>http://itextpdf.com/</url>
+  <url>https://itextpdf.com/</url>
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>
@@ -50,6 +50,16 @@
       </resource>
     </resources>
     <plugins>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <version>${spotbugs.version}</version>
+        <configuration>
+          <threshold>High</threshold>
+          <failOnError>true</failOnError>
+          <excludeFilterFile>findbugs-filter.xml</excludeFilterFile>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>

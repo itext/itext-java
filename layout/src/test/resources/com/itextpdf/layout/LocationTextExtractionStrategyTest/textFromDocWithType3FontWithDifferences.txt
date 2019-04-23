@@ -1,0 +1,51 @@
+11/27/2018 Pravilnik o zaštiti radnika od izloženosti opasnim kemikalijama na radu, graničnim vrijednostima izloženosti i biološkim graničnim vrijednostima
+OZNAKE U TABLICI
+– EZ broj – EINECS, ELINCS ili NLP slu žbeni je broj tvari u Europskoj uniji, kako je utvrđeno pod točkom 1.1.1.2., dio 1.
+Priloga VI. Uredbe (EZ) br. 1272/2008
+– CAS broj – registarski broj prema Međunarodnom popisu kemijskih tvari (engl. Chemical Abstract Service)
+Oznake za kolone »GVI« i »KGVI«:
+3 3 3
+– ppm – dijelova na milijun u volumenu zraka (ml/m i cm /m )
+3
+– mg/m – miligrami po kubičnom metru zraka pri 20 °C i 101,3 kPa (760 mm tlaka žive)
+3 3
+– vl/cm – broj vlakana po kubičnom centimetru (posebno je označeno ispod broja u koloni za »mg/m «)
+3
+– U – ukupna pra šina, inhalabilne čestice (sve vrijednosti u kolonama za »mg/m « odnose se na ukupnu pra šinu,
+posebno se označava samo u kombinaciji s oznakama za R-respirabilnu pra šinu)
+– R – respirabilna pra šina, frakcija koja udisanjem može doprijeti u pluća
+Oznake za kolonu »Direktiva«:
+– sve oznake odnose se na brojeve iz direktiva navedenih u članku 2. ovoga Pravilnika
+Oznake za kolonu »Napomena«:
+– odnose se na tvari koje se nalaze na popisu usklađenog razvrstavanja i označavanja u Prilogu VI. Uredbe (EZ) br.
+1272/2008, a navedene su samo sljedeći razredi i kategorije:
+– Karc 1A ili 1B
+– tvar koja je prema Uredbi (EZ) br. 1272/2008 razvrstana kao karcinogena 1.A ili 1.B kategorije
+– Muta 1A ili 1B
+– tvar koja je prema Uredbi (EZ) br. 1272/2008 razvrstana kao mutagena 1.A ili 1.B kategorije
+– Repr 1A ili 1B
+– tvar koja je prema Uredbi (EZ) br. 1272/2008 razvrstana kao reproduktivno toksična 1.A ili 1.B kategorije.
+– koža
+– razvrstana kao tvar koja nadra žuje kožu (H315)
+– ili je takva napomena navedena u direktivama
+– alergen koža
+– tvar koja može izazvati alergijsku reakciju na koži (H317)
+– alergen udisanjem
+– tvar koja udisanjem može izazvati simptome alergije ili astme ili poteškoće s disanjem (H334)
+GVI KGVI
+CAS EZ 
+IME TVARI Direktiva Napomena
+broj broj
+ppm mg/m³ ppm mg/m³
+                 
+75-07-0 200-836-8 Acetaldehid 20 37 50 92
+108-24-7 203564-8 Acetanhidrid 0,5 2,5 2 10
+50-78-2 200-064-1 o-Acetil-salicilna kiselina 5
+67-64-1 200-662-2 Aceton 500 1210 2000/39/EZ
+Acetonitril; 
+75-05-8 200-835-2 40 70 2006/15/EZ koža
+cijanometan
+koža, alergen koža,
+79-06-1 201-173-7 Akrilamid 0,3 2017/2398 Karc 1B, 
+Muta 1B
+https://narodne-novine.nn.hr/clanci/sluzbeni/2018_10_91_1774.html 14/42

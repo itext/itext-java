@@ -77,13 +77,24 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     private PdfResources resources = null;
     private int mcid = -1;
     PdfPages parentPages;
-    private List<PdfName> excludedKeys = new ArrayList<>(Arrays.asList(
+    private static final List<PdfName> PAGE_EXCLUDED_KEYS = new ArrayList<>(Arrays.asList(
             PdfName.Parent,
             PdfName.Annots,
             PdfName.StructParents,
             // This key contains reference to all articles, while this articles could reference to lots of pages.
             // See DEVSIX-191
             PdfName.B));
+
+    private static final List<PdfName> XOBJECT_EXCLUDED_KEYS;
+
+    static {
+        XOBJECT_EXCLUDED_KEYS = new ArrayList<>(Arrays.asList(PdfName.MediaBox,
+                PdfName.CropBox,
+                PdfName.TrimBox,
+                PdfName.Contents));
+        XOBJECT_EXCLUDED_KEYS.addAll(PAGE_EXCLUDED_KEYS);
+    }
+
 
     /**
      * Automatically rotate new content if the page has a rotation ( is disabled by default )
@@ -176,7 +187,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * The situation when Contents object is a {@link PdfStream} is treated like a one element array.
      *
      * @param index the {@code int} index of returned {@link PdfStream}.
-     * @return {@link PdfStream} object at specified index.
+     * @return {@link PdfStream} object at specified index;
+     * will return null in case page dictionary doesn't adhere to the specification, meaning that the document is an invalid PDF.
      * @throws IndexOutOfBoundsException if the index is out of range
      */
     public PdfStream getContentStream(int index) {
@@ -188,7 +200,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             return (PdfStream) contents;
         else if (contents instanceof PdfArray) {
             PdfArray a = (PdfArray) contents;
-            return (PdfStream) a.get(index);
+            return a.getAsStream(index);
         } else {
             return null;
         }
@@ -376,7 +388,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return copied {@link PdfPage}.
      */
     public PdfPage copyTo(PdfDocument toDocument, IPdfPageExtraCopier copier) {
-        PdfDictionary dictionary = getPdfObject().copyTo(toDocument, excludedKeys, true);
+        PdfDictionary dictionary = getPdfObject().copyTo(toDocument, PAGE_EXCLUDED_KEYS, true);
         PdfPage page = new PdfPage(dictionary);
         copyInheritedProperties(page, toDocument);
         for (PdfAnnotation annot : getAnnotations()) {
@@ -417,15 +429,18 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfFormXObject copyAsFormXObject(PdfDocument toDocument) throws IOException {
         PdfFormXObject xObject = new PdfFormXObject(getCropBox());
-        List<PdfName> excludedKeys = new ArrayList<>(Arrays.asList(PdfName.MediaBox,
-                PdfName.CropBox,
-                PdfName.Contents)
-        );
-        excludedKeys.addAll(this.excludedKeys);
-        PdfDictionary dictionary = getPdfObject().copyTo(toDocument, excludedKeys, true);
 
+        for (PdfName key : getPdfObject().keySet()) {
+            if (XOBJECT_EXCLUDED_KEYS.contains(key)) {
+                continue;
+            }
+            PdfObject obj = getPdfObject().get(key);
+            if (!xObject.getPdfObject().containsKey(key)) {
+                PdfObject copyObj = obj.copyTo(toDocument, false);
+                xObject.getPdfObject().put(key, copyObj);
+            }
+        }
         xObject.getPdfObject().getOutputStream().write(getContentBytes());
-        xObject.getPdfObject().mergeDifferent(dictionary);
         //Copy inherited resources
         if (!xObject.getPdfObject().containsKey(PdfName.Resources)) {
             PdfObject copyResource = getResources().getPdfObject().copyTo(toDocument, true);
@@ -497,7 +512,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
         int contentStreamCount = getContentStreamCount();
         for (int i = 0; i < contentStreamCount; i++) {
-            getContentStream(i).flush(false);
+            PdfStream contentStream = getContentStream(i);
+            if (contentStream != null) {
+                contentStream.flush(false);
+            }
         }
 
         resources = null;
@@ -520,9 +538,20 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (mediaBox == null) {
             throw new PdfException(PdfException.CannotRetrieveMediaBoxAttribute);
         }
-        if (mediaBox.size() != 4) {
-            throw new PdfException(PdfException.WrongMediaBoxSize1).setMessageParams(mediaBox.size());
+        int mediaBoxSize;
+        if ((mediaBoxSize = mediaBox.size()) != 4) {
+            if (mediaBoxSize > 4) {
+                Logger logger = LoggerFactory.getLogger(PdfPage.class);
+                if (logger.isErrorEnabled()) {
+                    logger.error(MessageFormatUtil.format(LogMessageConstant.WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS, mediaBoxSize));
+
+                }
+            }
+            if (mediaBoxSize < 4) {
+                throw new PdfException(PdfException.WRONGMEDIABOXSIZETOOFEWARGUMENTS).setMessageParams(mediaBox.size());
+            }
         }
+
         PdfNumber llx = mediaBox.getAsNumber(0);
         PdfNumber lly = mediaBox.getAsNumber(1);
         PdfNumber urx = mediaBox.getAsNumber(2);
@@ -748,11 +777,18 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (annots != null) {
             for (int i = 0; i < annots.size(); i++) {
                 PdfDictionary annot = annots.getAsDictionary(i);
+                if (annot == null) {
+                    continue;
+                }
                 PdfAnnotation annotation = PdfAnnotation.makeAnnotation(annot);
-                // PdfAnnotation.makeAnnotation returns null if annotation SubType is not recognized or not present at all
-                // (although SubType is required according to the spec)
-                if (annotation != null) {
-                    annotations.add(annotation.setPage(this));
+                if (annotation == null) {
+                    continue;
+                }
+                boolean hasBeenNotModified = annot.getIndirectReference() != null && !annot.getIndirectReference().checkState(PdfObject.MODIFIED);
+                annotations.add(annotation.setPage(this));
+                if (hasBeenNotModified) {
+                    annot.getIndirectReference().clearState(PdfObject.MODIFIED);
+                    annot.getIndirectReference().clearState(PdfObject.FORBID_RELEASE);
                 }
             }
         }
@@ -792,7 +828,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @param index         the index at which specified annotation will be added. If {@code -1} then annotation will be added
      *                      to the end of array.
      * @param annotation    the {@link PdfAnnotation} to add.
-     * @param tagAnnotation if {@code true} the added annotation will be autotagged. <br/>
+     * @param tagAnnotation if {@code true} the added annotation will be autotagged. <p>
      *                      (see {@link com.itextpdf.kernel.pdf.tagutils.TagStructureContext#getAutoTaggingPointer()})
      * @return this {@link PdfPage} instance.
      */

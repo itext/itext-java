@@ -68,6 +68,8 @@ public class Range {
 
     /**
      * Binary search over ordered segments.
+     *
+     * @param n
      */
     public boolean contains(int n) {
         int low = 0;

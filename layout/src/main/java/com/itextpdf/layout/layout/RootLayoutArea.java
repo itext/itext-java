@@ -69,6 +69,8 @@ public class RootLayoutArea extends LayoutArea {
 
     /**
      * Defines whether the area already has some placed content or not.
+     *
+     * @param emptyArea
      */
     public void setEmptyArea(boolean emptyArea) {
         this.emptyArea = emptyArea;

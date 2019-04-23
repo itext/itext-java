@@ -51,6 +51,9 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Map;
+
 import com.itextpdf.io.util.MessageFormatUtil;
 
 @Category(UnitTest.class)
@@ -74,5 +77,32 @@ public class FontProgramTest {
         Assert.assertTrue("Bold expected", (fp.getPdfFontFlags() & (1 << 18)) != 0);
         fp.setBold(false);
         Assert.assertTrue("Not Bold expected", (fp.getPdfFontFlags() & (1 << 18)) == 0);
+    }
+
+    @Test
+    public void registerDirectoryOpenTypeTest() {
+        FontProgramFactory.clearRegisteredFonts();
+        FontProgramFactory.clearRegisteredFontFamilies();
+        int cacheSize = -1;
+        try {
+            Field f = FontCache.class.getDeclaredField("fontCache");
+            f.setAccessible(true);
+            Map<FontCacheKey, FontProgram> cachedFonts = ((Map<FontCacheKey, FontProgram>) f.get(null));
+            cachedFonts.clear();
+            FontProgramFactory.registerFontDirectory("./src/test/resources/com/itextpdf/io/font/otf/");
+            cacheSize = cachedFonts.size();
+        } catch (Exception e) { }
+        Assert.assertEquals(43, FontProgramFactory.getRegisteredFonts().size());
+        Assert.assertTrue(FontProgramFactory.getRegisteredFonts().contains("free sans lihavoitu"));
+        Assert.assertEquals(0, cacheSize);
+    }
+
+    @Test
+    public void registerDirectoryType1Test() throws IOException {
+        FontProgramFactory.registerFontDirectory("./src/test/resources/com/itextpdf/io/font/type1/");
+        FontProgram computerModern = FontProgramFactory.createRegisteredFont("computer modern");
+        FontProgram cmr10 = FontProgramFactory.createRegisteredFont("cmr10");
+        Assert.assertNotNull(computerModern);
+        Assert.assertNotNull(cmr10);
     }
 }

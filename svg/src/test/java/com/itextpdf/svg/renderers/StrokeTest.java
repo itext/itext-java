@@ -81,4 +81,10 @@ public class StrokeTest extends SvgIntegrationTest {
     public void noLineStrokeWidthTest() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "noLineStrokeWidth");
     }
+
+    @Test
+    //TODO: update cmp-file after DEVSIX-2258
+    public void advanced_stroke_Test() throws IOException, InterruptedException {
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke_advanced");
+    }
 }

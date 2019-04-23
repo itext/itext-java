@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="600"
+        height="100"
+        version="1.1">
+
+    <rect width="600" height="50" stroke="red" fill="none"/>
+    <g transform="translate(30,10)">
+        <text font-size="10" font-family="Arial">
+            text before span
+            <tspan
+                    style="stroke-width:0.26458332"
+                    font-size="12"
+                    stroke="red"
+            >
+            text in span
+            </tspan>
+            text after new span
+        </text>
+    </g>
+    <g transform="translate(30,30)">
+        <text font-size="10" font-family="Arial">
+            text before span
+            <tspan
+                    style="stroke-width:0.26458332"
+                    font-size="12"
+                    stroke="green"
+                    dy="20"
+            >
+                text in span
+            </tspan>
+            text after new span
+        </text>
+    </g>
+
+</svg>

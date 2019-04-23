@@ -46,11 +46,8 @@ import com.itextpdf.io.font.woff2.Woff2DecodeTest;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 public abstract class W3CWoff2DecodeTest extends Woff2DecodeTest{
     private static final String baseSourceFolder = "./src/test/resources/com/itextpdf/io/font/woff2/w3c/";

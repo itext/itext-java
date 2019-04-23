@@ -58,9 +58,12 @@ import com.itextpdf.svg.processors.impl.font.SvgFontProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
+import com.itextpdf.svg.renderers.impl.ISvgTextNodeRenderer;
 import com.itextpdf.svg.renderers.impl.NoDrawOperationSvgNodeRenderer;
-import com.itextpdf.svg.renderers.impl.TextSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.TextLeafSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer;
 import com.itextpdf.svg.utils.SvgTextUtil;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -192,8 +195,13 @@ public class DefaultSvgProcessor implements ISvgProcessor {
                     }
 
                     // don't add the NoDrawOperationSvgNodeRenderer or its subtree to the ISvgNodeRenderer tree
-                    if (processorState.top() instanceof IBranchSvgNodeRenderer && !(renderer instanceof NoDrawOperationSvgNodeRenderer)) {
-                        ((IBranchSvgNodeRenderer) processorState.top()).addChild(renderer);
+                    if (!(renderer instanceof NoDrawOperationSvgNodeRenderer)) {
+                        if (processorState.top() instanceof IBranchSvgNodeRenderer) {
+                            ((IBranchSvgNodeRenderer) processorState.top()).addChild(renderer);
+                        } else if (processorState.top() instanceof TextSvgBranchRenderer && renderer instanceof ISvgTextNodeRenderer) {
+                            //Text branch node renderers only accept ISvgTextNodeRenderers
+                            ((TextSvgBranchRenderer) processorState.top()).addChild((ISvgTextNodeRenderer) renderer);
+                        }
                     }
 
                     processorState.push(renderer);
@@ -241,17 +249,14 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     private void processText(ITextNode textNode) {
         ISvgNodeRenderer parentRenderer = this.processorState.top();
 
-        if (parentRenderer instanceof TextSvgNodeRenderer) {
-            // when svg is parsed by jsoup it leaves all whitespace in text element as is. Meaning that
-            // tab/space indented xml files will retain their tabs and spaces.
-            // The following regex replaces all whitespace with a single space.
-            //TODO(RND-906) evaluate regex and trim methods
-            String trimmedText = textNode.wholeText().replaceAll("\\s+", " ");
-            //Trim leading whitespace
-            trimmedText = SvgTextUtil.trimLeadingWhitespace(trimmedText);
-            //Trim trailing whitespace
-            trimmedText = SvgTextUtil.trimTrailingWhitespace(trimmedText);
-            parentRenderer.setAttribute(SvgConstants.Attributes.TEXT_CONTENT, trimmedText);
+        if (parentRenderer instanceof TextSvgBranchRenderer) {
+            String wholeText = textNode.wholeText();
+            if (!wholeText.equals("") && !SvgTextUtil.isOnlyWhiteSpace(wholeText)) {
+                TextLeafSvgNodeRenderer textLeaf = new TextLeafSvgNodeRenderer();
+                textLeaf.setParent(parentRenderer);
+                textLeaf.setAttribute(SvgConstants.Attributes.TEXT_CONTENT, wholeText);
+                ((TextSvgBranchRenderer) parentRenderer).addChild(textLeaf);
+            }
         }
     }
 

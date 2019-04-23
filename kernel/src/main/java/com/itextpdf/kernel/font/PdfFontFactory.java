@@ -290,6 +290,7 @@ public final class PdfFontFactory {
      * Created a {@link PdfFont} instance by the bytes of the underlying font program.
      *
      * @param fontProgram the bytes of the underlying font program
+     * @param encoding
      * @return created {@link PdfFont} instance
      * @throws IOException signals that an I/O exception has occurred.
      */
@@ -364,6 +365,12 @@ public final class PdfFontFactory {
     /**
      * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
      *
+     * @param fontName
+     * @param encoding
+     * @param embedded
+     * @param style
+     * @param cached
+     * @throws IOException
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)
@@ -380,6 +387,11 @@ public final class PdfFontFactory {
     /**
      * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
      *
+     * @param fontName
+     * @param encoding
+     * @param embedded
+     * @param cached
+     * @throws IOException
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)
@@ -395,6 +407,10 @@ public final class PdfFontFactory {
     /**
      * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
      *
+     * @param fontName
+     * @param encoding
+     * @param embedded
+     * @throws IOException
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)
@@ -410,6 +426,11 @@ public final class PdfFontFactory {
     /**
      * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
      *
+     * @param fontName
+     * @param encoding
+     * @param embedded
+     * @param style
+     * @throws IOException
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)
@@ -425,6 +446,9 @@ public final class PdfFontFactory {
     /**
      * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
      *
+     * @param fontName
+     * @param encoding
+     * @throws IOException
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)
@@ -440,6 +464,8 @@ public final class PdfFontFactory {
     /**
      * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
      *
+     * @param fontName
+     * @throws IOException
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)

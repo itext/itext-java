@@ -44,6 +44,7 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.colors.Color;
@@ -203,19 +204,32 @@ public class BarcodeEAN extends Barcode1D {
             };
 
     /**
-     * Creates new BarcodeEAN
-     * @param document The document
+     * Creates new BarcodeEAN.
+     * To generate the font the {@link PdfDocument#getDefaultFont()} will be implicitly called.
+     * If you want to use this barcode in PDF/A documents, please consider using {@link #BarcodeEAN(PdfDocument, PdfFont)}.
+     *
+     * @param document The document to which the barcode will be added
      */
     public BarcodeEAN(PdfDocument document) {
+        this(document, document.getDefaultFont());
+    }
+
+    /**
+     * Creates new BarcodeEAN
+     *
+     * @param document The document to which the barcode will be added
+     * @param font The font to use
+     */
+    public BarcodeEAN(PdfDocument document, PdfFont font) {
         super(document);
-        x = 0.8f;
-        font = document.getDefaultFont();
-        size = 8;
-        baseline = size;
-        barHeight = size * 3;
-        guardBars = true;
-        codeType = EAN13;
-        code = "";
+        this.x = 0.8f;
+        this.font = font;
+        this.size = 8;
+        this.baseline = size;
+        this.barHeight = size * 3;
+        this.guardBars = true;
+        this.codeType = EAN13;
+        this.code = "";
     }
 
     /**

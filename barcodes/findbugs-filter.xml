@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Class name="com.itextpdf.barcodes.BarcodeDataMatrix"/>
+        <Method name="EdifactEncodation"/>
+        <Bug pattern="CC_CYCLOMATIC_COMPLEXITY"/>
+    </Match>
+    <Match>
+        <Class name="com.itextpdf.barcodes.Barcode128"/>
+        <Method name="setCode"/>
+        <Bug pattern="DM_BOXED_PRIMITIVE_TOSTRING"/>
+    </Match>
+    <Match>
+        <Or>
+            <And>
+                <Class name="com.itextpdf.barcodes.BarcodeDataMatrix"/>
+                <Method name="setCode" params="java.lang.String"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.barcodes.BarcodeQRCode"/>
+                <Method name="regenerate"/>
+            </And>
+        </Or>
+        <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+    </Match>
+    <Match>
+        <Class name="com.itextpdf.barcodes.BarcodeEAN"/>
+        <Method name="convertUPCAtoUPCE"/>
+        <Bug pattern="LSC_LITERAL_STRING_COMPARISON"/>
+    </Match>
+    <Match>
+        <Or>
+            <And>
+                <Class name="com.itextpdf.barcodes.BarcodePDF417"/>
+                <Or>
+                    <Method name="append" params="int,int"/>
+                    <Method name="dumpList"/>
+                </Or>
+            </And>
+            <And>
+                <Or>
+                    <Class name="com.itextpdf.barcodes.qrcode.BitArray"/>
+                    <Class name="com.itextpdf.barcodes.qrcode.BitMatrix"/>
+                    <Class name="com.itextpdf.barcodes.qrcode.BitVector"/>
+                    <Class name="com.itextpdf.barcodes.qrcode.ByteMatrix"/>
+                    <Class name="com.itextpdf.barcodes.qrcode.GF256Poly"/>
+                    <Class name="com.itextpdf.barcodes.qrcode.QRCode"/>
+                </Or>
+                <Method name="toString"/>
+            </And>
+        </Or>
+        <Bug pattern="LSYC_LOCAL_SYNCHRONIZED_COLLECTION"/>
+    </Match>
+    <Match>
+        <Class name="com.itextpdf.barcodes.BarcodePostnet"/>
+        <Or>
+            <Field name="TYPE_PLANET"/>
+            <Field name="TYPE_POSTNET"/>
+        </Or>
+        <Bug pattern="MS_SHOULD_BE_FINAL"/>
+    </Match>
+</FindBugsFilter>

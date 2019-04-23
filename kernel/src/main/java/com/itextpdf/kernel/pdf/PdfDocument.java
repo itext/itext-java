@@ -1004,6 +1004,12 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return structTreeRoot != null;
     }
 
+    /**
+     * Specifies that document shall contain tag structure.
+     * See ISO 32000-1, section 14.8 "Tagged PDF"
+     *
+     * @return this PdfDocument
+     */
     public PdfDocument setTagged() {
         checkClosingStatus();
         if (structTreeRoot == null) {
@@ -1419,12 +1425,26 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Checks whether PDF document conforms a specific standard.
      * Shall be override.
+     * @deprecated This method will be replaced by {@link #checkIsoConformance(Object, IsoKey, PdfResources, PdfStream) checkIsoConformance} in  7.2 release
      *
      * @param obj       an object to conform.
      * @param key       type of object to conform.
      * @param resources {@link PdfResources} associated with an object to check.
      */
+    @Deprecated
     public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources) {
+    }
+
+    /**
+     * Checks whether PDF document conforms a specific standard.
+     * Shall be override.
+     *
+     * @param obj       an object to conform.
+     * @param key       type of object to conform.
+     * @param resources {@link PdfResources} associated with an object to check.
+     * @param contentStream current content stream
+     */
+    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream) {
     }
 
     /**
@@ -1670,7 +1690,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (defaultFont == null) {
             try {
                 defaultFont = PdfFontFactory.createFont();
-                addFont(defaultFont);
+                defaultFont.makeIndirect(this);
             } catch (IOException e) {
                 Logger logger = LoggerFactory.getLogger(PdfDocument.class);
                 logger.error(LogMessageConstant.EXCEPTION_WHILE_CREATING_DEFAULT_FONT, e);
@@ -1791,6 +1811,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         try {
             EventCounterHandler.getInstance().onEvent(CoreEvent.PROCESS, properties.metaInfo, getClass());
             if (reader != null) {
+                if (reader.pdfDocument != null) {
+                    throw new PdfException(PdfException.PdfReaderHasBeenAlreadyUtilized);
+                }
                 reader.pdfDocument = this;
                 reader.readPdf();
                 for (ICounter counter : getCounters()) {
@@ -2231,6 +2254,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             names.makeIndirect(this);
         }
         names.put(treeType, treeRoot);
+        names.setModified();
     }
 
     private static boolean isXmpMetaHasProperty(XMPMeta xmpMeta, String schemaNS, String propName) throws XMPException {

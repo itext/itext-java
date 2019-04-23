@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.BezierCurve;
 import com.itextpdf.kernel.geom.IShape;
@@ -80,6 +81,7 @@ public class ParserGraphicsState extends CanvasGraphicsState {
 
     /**
      * Copy constructor.
+     *
      * @param source the Graphics State to copy from
      */
     ParserGraphicsState(ParserGraphicsState source) {
@@ -90,23 +92,9 @@ public class ParserGraphicsState extends CanvasGraphicsState {
         }
     }
 
-    /**
-     * Sets the current clipping path to the specified path.
-     *
-     * <strong>Note:</strong>This method doesn't modify existing clipping path,
-     * it simply replaces it with the new one instead.
-     * @param clippingPath New clipping path.
-     */
-    public void setClippingPath(Path clippingPath) {
-        Path pathCopy = new Path(clippingPath);
-        pathCopy.closeAllSubpaths();
-        this.clippingPath = pathCopy;
-    }
-
     @Override
     public void updateCtm(Matrix newCtm) {
         super.updateCtm(newCtm);
-
         if (clippingPath != null) {
             transformClippingPath(newCtm);
         }
@@ -117,7 +105,8 @@ public class ParserGraphicsState extends CanvasGraphicsState {
      *
      * <strong>Note:</strong> Coordinates of the given path should be in
      * the transformed user space.
-     * @param path The path to be intersected with the current clipping path.
+     *
+     * @param path        The path to be intersected with the current clipping path.
      * @param fillingRule The filling rule which should be applied to the given path.
      *                    It should be either {@link FillingRule#EVEN_ODD} or
      *                    {@link FillingRule#NONZERO_WINDING}
@@ -145,10 +134,25 @@ public class ParserGraphicsState extends CanvasGraphicsState {
      *
      * <strong>Note:</strong> The returned clipping path is in the transformed user space, so
      * if you want to get it in default user space, apply transformation matrix ({@link CanvasGraphicsState#getCtm()}).
+     *
      * @return The current clipping path.
      */
     public Path getClippingPath() {
         return clippingPath;
+    }
+
+    /**
+     * Sets the current clipping path to the specified path.
+     *
+     * <strong>Note:</strong>This method doesn't modify existing clipping path,
+     * it simply replaces it with the new one instead.
+     *
+     * @param clippingPath New clipping path.
+     */
+    public void setClippingPath(Path clippingPath) {
+        Path pathCopy = new Path(clippingPath);
+        pathCopy.closeAllSubpaths();
+        this.clippingPath = pathCopy;
     }
 
     private void transformClippingPath(Matrix newCtm) {
@@ -203,7 +207,7 @@ public class ParserGraphicsState extends CanvasGraphicsState {
             return transformed;
 
         } catch (NoninvertibleTransformException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new PdfException(PdfException.NoninvertibleMatrixCannotBeProcessed, e);
         }
     }
 }

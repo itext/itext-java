@@ -44,7 +44,6 @@
 package com.itextpdf.io.util;
 
 import java.io.Serializable;
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.Arrays;
 
 /**

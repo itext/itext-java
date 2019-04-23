@@ -3,15 +3,15 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>itext7-core</artifactId>
-  <version>7.1.5</version>
+  <version>7.1.6</version>
   <packaging>pom</packaging>
   <name>iText 7 Core</name>
   <description>A Free Java-PDF library</description>
-  <url>http://itextpdf.com/</url>
+  <url>https://itextpdf.com/</url>
   <inceptionYear>1998</inceptionYear>
   <organization>
     <name>iText Group NV</name>
-    <url>http://itextpdf.com/</url>
+    <url>https://itextpdf.com/</url>
   </organization>
   <licenses>
     <license>
@@ -24,14 +24,14 @@
       <id>itext</id>
       <name>iText Software</name>
       <email>info@itextpdf.com</email>
-      <url>http://www.itextpdf.com</url>
+      <url>https://www.itextpdf.com</url>
     </developer>
   </developers>
   <mailingLists>
     <mailingList>
       <name>iText on StackOverflow</name>
-      <subscribe>http://stackoverflow.com/questions/tagged/itext7</subscribe>
-      <archive>http://stackoverflow.com/questions/tagged/itext7</archive>
+      <subscribe>https://stackoverflow.com/questions/tagged/itext7</subscribe>
+      <archive>https://stackoverflow.com/questions/tagged/itext7</archive>
       <otherArchives>
         <otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
         <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
@@ -51,8 +51,32 @@
   </issueManagement>
   <ciManagement>
     <system>jenkins-ci</system>
-    <url>http://ci.itextsupport.com/</url>
+    <url>https://jenkins.itextsupport.com/</url>
   </ciManagement>
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>itext-snapshot</id>
+      <name>iText Repository - snapshots</name>
+      <url>https://repo.itextsupport.com/snapshot</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>itext-releases</id>
+      <name>iText Repository - releases</name>
+      <url>https://repo.itextsupport.com/releases</url>
+    </repository>
+  </repositories>
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>
@@ -115,7 +139,15 @@
       <plugin>
         <groupId>org.revapi</groupId>
         <artifactId>revapi-maven-plugin</artifactId>
-        <version>0.8.2</version>
+        <version>0.11.0</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <version>3.1.11</version>
         <configuration>
           <skip>true</skip>
         </configuration>

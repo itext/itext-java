@@ -333,7 +333,7 @@ public class CFFFontSubset extends CFFFont {
     /**
      * Read the FDArray count, offsize and Offset array
      *
-     * @param Font
+     * @param Font the Number of font being processed
      */
     protected void ReadFDArray(int Font) {
         seek(fonts[Font].fdarrayOffset);
@@ -381,6 +381,16 @@ public class CFFFontSubset extends CFFFont {
                 // empty on purpose
             }
         }
+    }
+
+    /**
+     * The Process function extracts one font out of the CFF file and returns a
+     * subset version of the original with the first name.
+     *
+     * @return The new font stream
+     */
+    public byte[] Process() {
+        return Process(getNames()[0]);
     }
 
     /**
@@ -615,6 +625,7 @@ public class CFFFontSubset extends CFFFont {
      * @param LBias the bias of the Local Subrs
      * @param hSubr the Map for the lSubrs
      * @param lSubr the list for the lSubrs
+     * @param LSubrsOffsets
      */
     protected void ReadASubr(int begin, int end, int GBias, int LBias, Set<Integer> hSubr, List<Integer> lSubr, int[] LSubrsOffsets) {
         // Clear the stack for the subrs

@@ -44,6 +44,8 @@ package com.itextpdf.svg.renderers.path;
 
 import com.itextpdf.svg.renderers.path.impl.PathShapeMapper;
 
+import java.util.Map;
+
 /**
  * A factory for creating {@link IPathShape} objects.
  */
@@ -60,5 +62,19 @@ public class SvgPathShapeFactory {
      */
     public static IPathShape createPathShape(String name) {
         return new PathShapeMapper().getMapping().get(name);
+    }
+
+    /**
+     * Finds the appropriate number of arguments for a path command, based on the passed Svg path data instruction tag.
+     *
+     * @param name svg path element's path-data instruction name.
+     * @return an integer value with the required number of arguments or null if there is no mapping for the given value
+     */
+    public static int getArgumentCount(String name) {
+        Map<String, Integer> map = new PathShapeMapper().getArgumentCount();
+        if (map.containsKey(name.toUpperCase())) {
+            return (int) map.get(name.toUpperCase());
+        }
+        return -1;
     }
 }

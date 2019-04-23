@@ -421,6 +421,8 @@ public final class FontSet {
      * Gets union of available and temporary fonts.
      * <p>
      * Note, the collection is unmodifiable.
+     *
+     * @param tempFonts
      */
     public Collection<FontInfo> getFonts(FontSet tempFonts) {
         return new FontSetCollection(fonts, tempFonts != null ? tempFonts.fonts : null);

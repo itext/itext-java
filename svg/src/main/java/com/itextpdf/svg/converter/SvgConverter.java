@@ -54,7 +54,6 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.styledxmlparser.IXmlParser;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
@@ -918,6 +917,7 @@ public final class SvgConverter {
      * defaulting to respective viewbox values if either one is not present or
      * to browser default if viewbox is missing as well
      *
+     * @param topSvgRenderer
      * @return float[2], width is in position 0, height in position 1
      */
     public static float[] extractWidthAndHeight(ISvgNodeRenderer topSvgRenderer) {

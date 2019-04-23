@@ -153,6 +153,11 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      * <tr>
      * <td><tt>TIFF_DOUBLE</tt></td>    <td><tt>double</tt></td>
      * </table>
+     *
+     * @param tag The tag
+     * @param type
+     * @param count
+     * @param data
      */
     public TIFFField(int tag, int type, int count, Object data) {
         this.tag = tag;
@@ -307,6 +312,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      * <p> A ClassCastException will be thrown if the field is not of
      * type TIFF_BYTE, TIFF_SBYTE, TIFF_UNDEFINED, TIFF_SHORT,
      * TIFF_SSHORT, or TIFF_SLONG.
+     *
+     * @param index The index
      */
     public int getAsInt(int index) {
         switch (type) {
@@ -337,6 +344,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      * <p> A ClassCastException will be thrown if the field is not of
      * type TIFF_BYTE, TIFF_SBYTE, TIFF_UNDEFINED, TIFF_SHORT,
      * TIFF_SSHORT, TIFF_SLONG, or TIFF_LONG.
+     *
+     * @param index The index
      */
     public long getAsLong(int index) {
         switch (type) {
@@ -367,6 +376,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      *
      * <p> A ClassCastException will be thrown if the field is
      * of type TIFF_UNDEFINED or TIFF_ASCII.
+     *
+     * @param index The index
      */
     public float getAsFloat(int index) {
         switch (type) {
@@ -405,6 +416,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      *
      * <p> A ClassCastException will be thrown if the field is of
      * type TIFF_UNDEFINED or TIFF_ASCII.
+     *
+     * @param index The index
      */
     public double getAsDouble(int index) {
         switch (type) {
@@ -440,6 +453,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      *
      * <p> A ClassCastException will be thrown if the field is not
      * of type TIFF_ASCII.
+     *
+     * @param index The index
      */
     public String getAsString(int index) {
         return ((String[])data)[index];
@@ -451,6 +466,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      *
      * <p> A ClassCastException will be thrown if the field is not
      * of type TIFF_SRATIONAL.
+     *
+     * @param index The index
      */
     public int[] getAsSRational(int index) {
         return ((int[][])data)[index];
@@ -462,6 +479,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      *
      * <p> A ClassCastException will be thrown if the field is not
      * of type TIFF_RATIONAL.
+     *
+     * @param index The index
      */
     public long[] getAsRational(int index) {
         if (type == TIFF_LONG)

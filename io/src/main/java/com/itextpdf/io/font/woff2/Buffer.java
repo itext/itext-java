@@ -22,11 +22,6 @@ import static com.itextpdf.io.font.woff2.JavaUnsignedUtil.asU8;
 import static com.itextpdf.io.font.woff2.JavaUnsignedUtil.toU16;
 import static com.itextpdf.io.font.woff2.JavaUnsignedUtil.toU8;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-
 // -----------------------------------------------------------------------------
 // Buffer helper class
 //

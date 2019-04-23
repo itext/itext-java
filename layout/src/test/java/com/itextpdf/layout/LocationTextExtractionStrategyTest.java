@@ -44,12 +44,16 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfTextArray;
@@ -69,6 +73,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -200,6 +205,48 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         Assert.assertEquals(expectedText, text);
     }
 
+    @Test
+    public void testFontSpacingEqualsCharSpacing() throws Exception {
+        byte[] content = createPdfWithFontSpacingEqualsCharSpacing();
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(content)));
+        String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
+
+        Assert.assertEquals("Preface", text);
+    }
+
+    @Test
+    public void testLittleFontSize() throws Exception {
+        byte[] content = createPdfWithLittleFontSize();
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(content)));
+        String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
+
+        Assert.assertEquals("Preface", text);
+    }
+
+    @Test
+    public void testType3FontWithDifferences() throws IOException {
+        String sourcePdf = sourceFolder + "DocumentWithType3FontWithDifferences.pdf";
+        String comparedTextFile = sourceFolder + "textFromDocWithType3FontWithDifferences.txt";
+
+        PdfDocument pdf = new PdfDocument(new PdfReader(sourcePdf));
+        String result = PdfTextExtractor.getTextFromPage(pdf.getPage(1), new LocationTextExtractionStrategy());
+
+        PdfDictionary pdfType3FontDict = (PdfDictionary) pdf.getPdfObject(292);
+        PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory.createFont(pdfType3FontDict);
+
+        pdf.close();
+
+        Assert.assertEquals(new String(java.nio.file.Files.readAllBytes(new java.io.File(comparedTextFile).toPath()), StandardCharsets.UTF_8), result);
+
+        Assert.assertEquals(83, pdfType3Font.getNumberOfGlyphs());
+
+        Assert.assertEquals("gA", pdfType3Font.getFontEncoding().getDifference(10));
+        Assert.assertEquals(41, pdfType3Font.getFontProgram().getGlyphByCode(10).getUnicode());
+
+        Assert.assertEquals(".notdef", pdfType3Font.getFontEncoding().getDifference(210));
+        Assert.assertEquals(928, pdfType3Font.getFontProgram().getGlyphByCode(210).getUnicode());
+    }
+
     private byte[] createPdfWithNegativeCharSpacing(String str1, float charSpacing, String str2) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos).setCompressionLevel(0));
@@ -324,4 +371,72 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         return byteStream.toByteArray();
     }
 
+    private byte[] createPdfWithFontSpacingEqualsCharSpacing() throws IOException {
+        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        final PdfDocument document = new PdfDocument(new PdfWriter(byteStream));
+
+        PdfPage page1 = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1);
+        PdfFont font = PdfFontFactory.createFont();
+        PdfTextArray textArray = new PdfTextArray();
+        textArray.add(font.convertToBytes("P"));
+        textArray.add(-226.2f);
+        textArray.add(font.convertToBytes("r"));
+        textArray.add(-231.8f);
+        textArray.add(font.convertToBytes("e"));
+        textArray.add(-230.8f);
+        textArray.add(font.convertToBytes("f"));
+        textArray.add(-238);
+        textArray.add(font.convertToBytes("a"));
+        textArray.add(-238.9f);
+        textArray.add(font.convertToBytes("c"));
+        textArray.add(-228.9f);
+        textArray.add(font.convertToBytes("e"));
+        float charSpace = font.getWidth(' ', 12);
+        canvas
+                .saveState()
+                .beginText()
+                .setFontAndSize(font, 12)
+                .setCharacterSpacing(-charSpace)
+                .showText(textArray)
+                .endText()
+                .restoreState();
+        canvas.release();
+        document.close();
+
+        return byteStream.toByteArray();
+    }
+
+    private byte[] createPdfWithLittleFontSize() throws IOException {
+        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        final PdfDocument document = new PdfDocument(new PdfWriter(byteStream));
+        PdfPage page1 = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1);
+        PdfTextArray textArray = new PdfTextArray();
+        PdfFont font = PdfFontFactory.createFont();
+        textArray.add(font.convertToBytes("P"));
+        textArray.add(1);
+        textArray.add(font.convertToBytes("r"));
+        textArray.add(1);
+        textArray.add(font.convertToBytes("e"));
+        textArray.add(1);
+        textArray.add(font.convertToBytes("f"));
+        textArray.add(1);
+        textArray.add(font.convertToBytes("a"));
+        textArray.add(1);
+        textArray.add(font.convertToBytes("c"));
+        textArray.add(1);
+        textArray.add(font.convertToBytes("e"));
+        canvas
+                .saveState()
+                .beginText()
+                .setFontAndSize(font, 0.2f)
+                .showText(textArray)
+                .endText()
+                .restoreState();
+        canvas.release();
+        document.close();
+
+        return byteStream.toByteArray();
+    }
 }

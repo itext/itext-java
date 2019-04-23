@@ -49,8 +49,6 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -88,15 +86,6 @@ public class SvgTagSvgNodeRendererUnitTest {
 
         Rectangle actual = renderer.calculateViewPort(context);
         Assert.assertTrue(expected.equalsWithEpsilon(actual));
-    }
-
-    @Test
-    public void deepCopyTest(){
-        SvgTagSvgNodeRenderer expected = new SvgTagSvgNodeRenderer();
-        expected.setAttribute(SvgConstants.Attributes.FILL,"blue");
-        expected.addChild(new CircleSvgNodeRenderer());
-        ISvgNodeRenderer actual =expected.createDeepCopy();
-        Assert.assertEquals(expected,actual);
     }
 
     @Test

@@ -44,7 +44,10 @@
 package com.itextpdf.kernel.pdf;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class PdfNumTree implements Serializable {
 

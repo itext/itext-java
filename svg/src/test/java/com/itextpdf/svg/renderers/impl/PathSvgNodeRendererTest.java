@@ -48,7 +48,6 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
-import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
@@ -111,7 +110,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    //This test should fail when RND-904 (relative line operator l ) is implemented.
+    //TODO (RND-904) This test should fail when RND-904 (relative line operator l ) is implemented.
     public void pathNodeRendererMoveToTest1() throws IOException, InterruptedException {
         String filename = "pathNodeRendererMoveToTest1.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
@@ -303,14 +302,6 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void deepCopyTest() {
-        PathSvgNodeRenderer expected = new PathSvgNodeRenderer();
-        expected.setAttribute(SvgConstants.Attributes.FILL, "blue");
-        ISvgNodeRenderer actual = expected.createDeepCopy();
-        Assert.assertEquals(expected, actual);
-    }
-
-    @Test
     public void pathZOperatorTest01() throws IOException, InterruptedException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "pathZOperatorTest01");
     }
@@ -405,6 +396,16 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void multipleRelativeVerticalLineToTest() throws IOException, InterruptedException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "multipleRelativeVerticalLineTo");
+    }
+
+    @Test
+    public void moveToRelativeMultipleTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "moveToRelativeMultiple");
+    }
+
+    @Test
+    public void moveToAbsoluteMultipleTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "moveToAbsoluteMultiple");
     }
 
     @Test

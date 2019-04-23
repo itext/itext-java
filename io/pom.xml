@@ -4,11 +4,11 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.1.5</version>
+    <version>7.1.6</version>
   </parent>
   <artifactId>io</artifactId>
   <name>iText 7 - io</name>
-  <url>http://itextpdf.com/</url>
+  <url>https://itextpdf.com/</url>
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>
@@ -37,13 +37,18 @@
           <include>**/*.*</include>
         </includes>
       </testResource>
-      <testResource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>com/itextpdf/io/font/cmap/**</include>
-          <include>**/cmap_info.txt</include>
-        </includes>
-      </testResource>
     </testResources>
+    <plugins>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <version>${spotbugs.version}</version>
+        <configuration>
+          <threshold>High</threshold>
+          <failOnError>true</failOnError>
+          <excludeFilterFile>findbugs-filter.xml</excludeFilterFile>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>

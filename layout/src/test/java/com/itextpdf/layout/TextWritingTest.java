@@ -354,4 +354,26 @@ public class TextWritingTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
+
+    @Test
+    public void lineThroughTest() throws IOException, InterruptedException {
+        //TODO: update after DEVSIX-2623 fix
+        String outFileName = destinationFolder + "lineThrough.pdf";
+        String cmpFileName = sourceFolder + "cmp_lineThrough.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+        Text textUp = new Text("textRise10f_with_lineThrough");
+        textUp.setTextRise(10f);
+        textUp.setLineThrough();
+        Text textDown = new Text("textRise-10f_with_lineThrough");
+        textDown.setTextRise(-10f);
+        textDown.setLineThrough();
+        Paragraph n= new Paragraph("baseline");
+        n.add(textUp).add(textDown);
+        document.add(n);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
 }

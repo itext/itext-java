@@ -137,6 +137,8 @@ public class LayoutResult {
 
     /**
      * Sets the status of {@link IRenderer#layout(LayoutContext)}.
+     *
+     * @param status
      */
     public void setStatus(int status) {
         this.status = status;
@@ -162,6 +164,8 @@ public class LayoutResult {
 
     /**
      * Sets the split {@link IRenderer renderer}.
+     *
+     * @param splitRenderer
      */
     public void setSplitRenderer(IRenderer splitRenderer) {
         this.splitRenderer = splitRenderer;
@@ -178,6 +182,8 @@ public class LayoutResult {
 
     /**
      * Sets the overflow {@link IRenderer renderer}.
+     *
+     * @param overflowRenderer
      */
     public void setOverflowRenderer(IRenderer overflowRenderer) {
         this.overflowRenderer = overflowRenderer;

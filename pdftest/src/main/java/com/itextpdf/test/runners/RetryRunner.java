@@ -100,6 +100,10 @@ public class RetryRunner extends BlockJUnit4ClassRunner {
 
     /**
      * Runs an atomic test
+     *
+     * @param statement Statement
+     * @param description Description
+     * @param notifier RunNotifier
      */
     protected final void runTestUnit(Statement statement, Description description,
                                      RunNotifier notifier) {

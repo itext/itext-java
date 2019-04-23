@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="595pt" height="842pt" version="1.1">
+
+  <polyline points="111 61.5 217.984 61.5 123.035 180.231 229.738 180.06" fill="none" stroke="teal" stroke-width="80" stroke-linecap="square"></polyline>
+
+  <polyline points="122 61.5 217.984 61.5 123.035 180.231 218.738 180.06" fill="none" stroke="lightseagreen" stroke-width="50" stroke-linejoin="round" stroke-linecap="round"></polyline>
+
+  <polyline points="125 61.5 217.984 61.5 123.035 180.231 215.738 180.06" fill="none" stroke="gold" stroke-width="10" stroke-linejoin="bevel" stroke-linecap="square"></polyline>
+
+
+
+  <rect fill="khaki" stroke="darkkhaki" width="10" height="70" x="145" y="490" ></rect>
+
+  <circle  stroke="darkkhaki" r="100" cx="150" cy="400" fill="gold"></circle>
+
+  <circle r="80" cx="150" cy="400" fill="darkorange" ></circle>
+
+  <circle r="60" cx="150" cy="400" fill="none" stroke="teal" stroke-opacity=".5" stroke-width="40" stroke-dasharray="40 40 40 40 35 40 35 40" stroke-dashoffset="4" ></circle>
+
+  <circle r="50" cx="150" cy="400" fill="gold" stroke="yellowgreen" stroke-width="20"></circle>
+</svg>

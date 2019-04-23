@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.renderers;
 
+import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.font.FontProvider;
@@ -62,13 +63,15 @@ import java.util.Stack;
 public class SvgDrawContext {
 
     private final Map<String, ISvgNodeRenderer> namedObjects = new HashMap<>();
-
     private final Stack<PdfCanvas> canvases = new Stack<>();
     private final Stack<Rectangle> viewports = new Stack<>();
     private final Stack<String> useIds = new Stack<>();
     private ResourceResolver resourceResolver;
     private FontProvider fontProvider;
     private FontSet tempFonts;
+
+    private AffineTransform lastTextTransform = new AffineTransform();
+    private float textMove[] = new float[]{0.0f, 0.0f};
 
     public SvgDrawContext(ResourceResolver resourceResolver, FontProvider fontProvider) {
         if (resourceResolver == null) resourceResolver = new ResourceResolver("");
@@ -212,7 +215,7 @@ public class SvgDrawContext {
     /**
      * Sets the FontSet.
      *
-     * @param tempFonts  font set to be used during drawing operations
+     * @param tempFonts font set to be used during drawing operations
      */
     public void setTempFonts(FontSet tempFonts) {
         this.tempFonts = tempFonts;
@@ -245,4 +248,49 @@ public class SvgDrawContext {
     public void removeUsedId(String elementId) {
         this.useIds.pop();
     }
+
+    /**
+     * Get the text transformation that was last applied
+     * @return {@link AffineTransform} representing the last text transformation
+     */
+    public AffineTransform getLastTextTransform() {
+        if (lastTextTransform == null) {
+            lastTextTransform = new AffineTransform();
+        }
+        return this.lastTextTransform;
+    }
+
+    /**
+     * Set the last text transformation
+     * @param newTransform last text transformation
+     */
+    public void setLastTextTransform(AffineTransform newTransform) {
+        this.lastTextTransform = newTransform;
+    }
+
+    /**
+     * Get the stored current text move
+     * @return [horizontal text move, vertical text move]
+     */
+    public float[] getTextMove() {
+        return textMove;
+    }
+
+    /**
+     * Reset the stored text move to [0f,0f]
+     */
+    public void resetTextMove() {
+        textMove = new float[]{0.0f, 0.0f};
+    }
+
+    /**
+     * Increment the stored text move
+     * @param additionalMoveX horizontal value to add
+     * @param additionalMoveY vertical value to add
+     */
+    public void addTextMove(float additionalMoveX, float additionalMoveY) {
+        textMove[0] += additionalMoveX;
+        textMove[1] += additionalMoveY;
+    }
+
 }

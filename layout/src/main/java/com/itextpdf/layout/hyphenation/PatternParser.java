@@ -80,6 +80,7 @@ public class PatternParser extends DefaultHandler {
      * Parses a hyphenation pattern file.
      * @param filename the filename
      * @throws HyphenationException In case of an exception while parsing
+     * @throws FileNotFoundException
      */
     public void parse(String filename) throws HyphenationException, FileNotFoundException {
         parse(new FileInputStream(filename), filename);

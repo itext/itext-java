@@ -177,24 +177,25 @@ public class AffineTransform implements Serializable {
 
     /**
      * Method returns type of affine transformation.
-     *
+     * <p>
      * Transform matrix is
-     *   m00 m01 m02
-     *   m10 m11 m12
-     *
+     * m00 m01 m02
+     * m10 m11 m12
+     * <p>
      * According analytic geometry new basis vectors are (m00, m01) and (m10, m11),
      * translation vector is (m02, m12). Original basis vectors are (1, 0) and (0, 1).
      * Type transformations classification:
      * <ul>
-     *   <li>{@link AffineTransform#TYPE_IDENTITY} - new basis equals original one and zero translation</li>
-     *   <li>{@link AffineTransform#TYPE_TRANSLATION} - translation vector isn't zero</li>
-     *   <li>{@link AffineTransform#TYPE_UNIFORM_SCALE} - vectors length of new basis equals</li>
-     *   <li>{@link AffineTransform#TYPE_GENERAL_SCALE} - vectors length of new basis doesn't equal</li>
-     *   <li>{@link AffineTransform#TYPE_FLIP} - new basis vector orientation differ from original one</li>
-     *   <li>{@link AffineTransform#TYPE_QUADRANT_ROTATION} - new basis is rotated by 90, 180, 270, or 360 degrees</li>
-     *   <li>{@link AffineTransform#TYPE_GENERAL_ROTATION} - new basis is rotated by arbitrary angle</li>
-     *   <li>{@link AffineTransform#TYPE_GENERAL_TRANSFORM} - transformation can't be inversed</li>
+     * <li>{@link AffineTransform#TYPE_IDENTITY} - new basis equals original one and zero translation</li>
+     * <li>{@link AffineTransform#TYPE_TRANSLATION} - translation vector isn't zero</li>
+     * <li>{@link AffineTransform#TYPE_UNIFORM_SCALE} - vectors length of new basis equals</li>
+     * <li>{@link AffineTransform#TYPE_GENERAL_SCALE} - vectors length of new basis doesn't equal</li>
+     * <li>{@link AffineTransform#TYPE_FLIP} - new basis vector orientation differ from original one</li>
+     * <li>{@link AffineTransform#TYPE_QUADRANT_ROTATION} - new basis is rotated by 90, 180, 270, or 360 degrees</li>
+     * <li>{@link AffineTransform#TYPE_GENERAL_ROTATION} - new basis is rotated by arbitrary angle</li>
+     * <li>{@link AffineTransform#TYPE_GENERAL_TRANSFORM} - transformation can't be inversed</li>
      * </ul>
+     *
      * @return the type of this AffineTransform
      */
     public int getType() {
@@ -211,8 +212,7 @@ public class AffineTransform implements Serializable {
 
         if (m02 != 0.0 || m12 != 0.0) {
             type |= TYPE_TRANSLATION;
-        } else
-        if (m00 == 1.0 && m11 == 1.0 && m01 == 0.0 && m10 == 0.0) {
+        } else if (m00 == 1.0 && m11 == 1.0 && m01 == 0.0 && m10 == 0.0) {
             type = TYPE_IDENTITY;
             return type;
         }
@@ -225,17 +225,14 @@ public class AffineTransform implements Serializable {
         double dy = m01 * m01 + m11 * m11;
         if (dx != dy) {
             type |= TYPE_GENERAL_SCALE;
-        } else
-        if (dx != 1.0) {
+        } else if (dx != 1.0) {
             type |= TYPE_UNIFORM_SCALE;
         }
 
         if ((m00 == 0.0 && m11 == 0.0) ||
-                (m10 == 0.0 && m01 == 0.0 && (m00 < 0.0 || m11 < 0.0)))
-        {
+                (m10 == 0.0 && m01 == 0.0 && (m00 < 0.0 || m11 < 0.0))) {
             type |= TYPE_QUADRANT_ROTATION;
-        } else
-        if (m01 != 0.0 || m10 != 0.0) {
+        } else if (m01 != 0.0 || m10 != 0.0) {
             type |= TYPE_GENERAL_ROTATION;
         }
 
@@ -362,14 +359,18 @@ public class AffineTransform implements Serializable {
         }
     }
 
+    /**
+     * Set this affine transformation to represent a rotation over the passed angle
+     *
+     * @param angle angle to rotate over in radians
+     */
     public void setToRotation(double angle) {
         double sin = Math.sin(angle);
         double cos = Math.cos(angle);
         if (Math.abs(cos) < ZERO) {
             cos = 0.0;
             sin = sin > 0.0 ? 1.0 : -1.0;
-        } else
-        if (Math.abs(sin) < ZERO) {
+        } else if (Math.abs(sin) < ZERO) {
             sin = 0.0;
             cos = cos > 0.0 ? 1.0 : -1.0;
         }
@@ -380,6 +381,14 @@ public class AffineTransform implements Serializable {
         type = TYPE_UNKNOWN;
     }
 
+    /**
+     * Set this affine transformation to represent a rotation over the passed angle,
+     * using the passed point as the center of rotation
+     * 
+     * @param angle angle to rotate over in radians
+     * @param px x-coordinate of center of rotation
+     * @param py y-coordinate of center of rotation
+     */
     public void setToRotation(double angle, double px, double py) {
         setToRotation(angle);
         m02 = px * (1 - m00) + py * m10;
@@ -405,12 +414,27 @@ public class AffineTransform implements Serializable {
         return m;
     }
 
+    /**
+     * Get an affine transformation representing a counter-clockwise rotation over the passed angle
+     *
+     * @param angle angle in radians to rotate over
+     * @return {@link AffineTransform} representing the rotation
+     */
     public static AffineTransform getRotateInstance(double angle) {
         AffineTransform t = new AffineTransform();
         t.setToRotation(angle);
         return t;
     }
 
+    /**
+     * Get an affine transformation representing a counter-clockwise rotation over the passed angle,
+     * using the passed point as the center of rotation
+     *
+     * @param angle angle in radians to rotate over
+     * @param x x-coordinate of center of rotation
+     * @param y y-coordinate of center of rotation
+     * @return {@link AffineTransform} representing the rotation
+     */
     public static AffineTransform getRotateInstance(double angle, double x, double y) {
         AffineTransform t = new AffineTransform();
         t.setToRotation(angle, x, y);
@@ -429,16 +453,29 @@ public class AffineTransform implements Serializable {
         concatenate(AffineTransform.getShearInstance(shx, shy));
     }
 
+    /**
+     * Add a counter-clockwise rotation to this transformation
+     *
+     * @param angle angle in radians to rotate over
+     */
     public void rotate(double angle) {
         concatenate(AffineTransform.getRotateInstance(angle));
     }
 
+    /**
+     * Add a counter-clockwise rotation to this transformation,
+     * using the passed point as the center of rotation
+     * @param angle angle in radians to rotate over
+     * @param px x-coordinate of center of rotation
+     * @param py y-coordinate of center of rotation
+     */
     public void rotate(double angle, double px, double py) {
         concatenate(AffineTransform.getRotateInstance(angle, px, py));
     }
 
     /**
      * Multiply matrix of two AffineTransform objects
+     *
      * @param t1 - the AffineTransform object is a multiplicand
      * @param t2 - the AffineTransform object is a multiplier
      * @return an AffineTransform object that is a result of t1 multiplied by matrix t2.
@@ -530,8 +567,8 @@ public class AffineTransform implements Serializable {
         while (--length >= 0) {
             float x = src[srcOff + 0];
             float y = src[srcOff + 1];
-            dst[dstOff + 0] = (float)(x * m00 + y * m01 + m02);
-            dst[dstOff + 1] = (float)(x * m10 + y * m11 + m12);
+            dst[dstOff + 0] = (float) (x * m00 + y * m01 + m02);
+            dst[dstOff + 1] = (float) (x * m10 + y * m11 + m12);
             srcOff += step;
             dstOff += step;
         }
@@ -550,8 +587,8 @@ public class AffineTransform implements Serializable {
         while (--length >= 0) {
             double x = src[srcOff++];
             double y = src[srcOff++];
-            dst[dstOff++] = (float)(x * m00 + y * m01 + m02);
-            dst[dstOff++] = (float)(x * m10 + y * m11 + m12);
+            dst[dstOff++] = (float) (x * m00 + y * m01 + m02);
+            dst[dstOff++] = (float) (x * m10 + y * m11 + m12);
         }
     }
 
@@ -595,8 +632,7 @@ public class AffineTransform implements Serializable {
     }
 
     public void inverseTransform(double[] src, int srcOff, double[] dst, int dstOff, int length)
-            throws NoninvertibleTransformException
-    {
+            throws NoninvertibleTransformException {
         double det = getDeterminant();
         if (Math.abs(det) < ZERO) {
             // awt.204=Determinant is zero
@@ -612,8 +648,7 @@ public class AffineTransform implements Serializable {
     }
 
     public void inverseTransform(float[] src, int srcOff, float[] dst, int dstOff, int length)
-            throws NoninvertibleTransformException
-    {
+            throws NoninvertibleTransformException {
         float det = (float) getDeterminant();
         if (Math.abs(det) < ZERO) {
             // awt.204=Determinant is zero

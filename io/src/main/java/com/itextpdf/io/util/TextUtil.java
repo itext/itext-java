@@ -221,8 +221,35 @@ public final class TextUtil {
         return String.valueOf(ch);
     }
 
+    /**
+     * Check if a glyph is a newline by checking if it's unicode value is a newline
+     *
+     * @param glyph glyph to check
+     * @return True if the glyph represents a newline, false otherwise
+     */
     public static boolean isNewLine(Glyph glyph) {
         int unicode = glyph.getUnicode();
+        return isNewLine(unicode);
+    }
+
+    /**
+     * Check if a character is a newline by checking if it's integer value is a newline in unicode
+     *
+     * @param c character to check
+     * @return True if the character represents a newline, false otherwise
+     */
+    public static boolean isNewLine(char c) {
+        int unicode = (int) c;
+        return isNewLine(unicode);
+    }
+
+    /**
+     * Check if a character is a newline by checking if it's integer value is a newline in unicode
+     *
+     * @param unicode unicode value to check
+     * @return True if the character represents a newline, false otherwise
+     */
+    public static boolean isNewLine(int unicode) {
         return unicode == '\n' || unicode == '\r';
     }
 

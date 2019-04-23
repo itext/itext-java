@@ -49,6 +49,10 @@ public class StandardDecryptor implements IDecryptor {
 
     /**
      * Creates a new instance of StandardDecryption
+     *
+     * @param key
+     * @param off
+     * @param len
      */
     public StandardDecryptor(byte[] key, int off, int len) {
         arcfour = new ARCFOUREncryption();

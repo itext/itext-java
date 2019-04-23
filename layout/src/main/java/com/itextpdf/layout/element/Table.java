@@ -44,7 +44,6 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
@@ -230,10 +229,10 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * <br>
      * Since 7.0.2 table layout was introduced. Auto layout is default, except large tables.
      * For large table fixed layout set implicitly.
-     * <br/>
+     * <p>
      * Since 7.1 table will have undefined column widths, that will be determined during layout.
      * In oder to set equal percent width as column width, use {@link UnitValue#createPercentArray(int)}
-     * <br>
+     * <p>
      * Note, the eventual columns width depends on selected layout, table width,
      * cell's width, cell's min-widths, and cell's max-widths.
      * Table layout algorithm has the same behaviour as expected for CSS table-layout property,

@@ -45,7 +45,12 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.geom.Rectangle;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
 
 /**
  * A representation of a Dictionary as described by the PDF Specification. A Dictionary is a mapping between keys

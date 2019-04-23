@@ -43,7 +43,6 @@
 package com.itextpdf.layout.minmaxwidth;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.renderer.AbstractRenderer;
 
 /**
  * Class for min-max-width of rotated elements.

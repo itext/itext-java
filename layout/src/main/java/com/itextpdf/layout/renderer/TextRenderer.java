@@ -865,6 +865,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
             boolean backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
             canvas.saveState().setFillColor(background.getColor());
+            TransparentColor backgroundColor = new TransparentColor(background.getColor(), background.getOpacity());
+            backgroundColor.applyFillTransparency(drawContext.getCanvas());
             canvas.rectangle(leftBBoxX - background.getExtraLeft(), bottomBBoxY + (float) textRise - background.getExtraBottom(),
                     backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
                     backgroundArea.getHeight() - (float) textRise + background.getExtraTop() + background.getExtraBottom());

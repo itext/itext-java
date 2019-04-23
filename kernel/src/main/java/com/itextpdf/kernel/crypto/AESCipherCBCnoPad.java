@@ -60,6 +60,9 @@ public class AESCipherCBCnoPad {
 
     /**
      * Creates a new instance of AESCipher
+     *
+     * @param forEncryption
+     * @param key
      */
     public AESCipherCBCnoPad(boolean forEncryption, byte[] key) {
         BlockCipher aes = new AESFastEngine();

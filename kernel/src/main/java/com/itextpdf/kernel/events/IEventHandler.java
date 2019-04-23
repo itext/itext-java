@@ -43,8 +43,6 @@
  */
 package com.itextpdf.kernel.events;
 
-import java.io.Serializable;
-
 /**
  * Interface for handling events. EventHandlers are added to the {@link EventDispatcher}.
  */

@@ -48,21 +48,22 @@ import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import java.security.PrivateKey;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.bouncycastle.cert.ocsp.CertificateID;
 
 public class TestOcspClient implements IOcspClient {
 
-    private final TestOcspResponseBuilder builder;
-    private final PrivateKey caPrivateKey;
+    private final Map<String, TestOcspResponseBuilder> issuerIdToResponseBuilder = new LinkedHashMap<>();
 
-    public TestOcspClient(TestOcspResponseBuilder builder, PrivateKey caPrivateKey) {
-        this.builder = builder;
-        this.caPrivateKey = caPrivateKey;
+    public TestOcspClient addBuilderForCertIssuer(X509Certificate cert, PrivateKey privateKey) throws CertificateEncodingException {
+        issuerIdToResponseBuilder.put(cert.getSerialNumber().toString(16), new TestOcspResponseBuilder(cert, privateKey));
+        return this;
     }
 
-    public TestOcspClient(X509Certificate caCert, PrivateKey caPrivateKey) throws CertificateEncodingException {
-        this.builder = new TestOcspResponseBuilder(caCert);
-        this.caPrivateKey = caPrivateKey;
+    public TestOcspClient addBuilderForCertIssuer(X509Certificate cert, TestOcspResponseBuilder builder) throws CertificateEncodingException {
+        issuerIdToResponseBuilder.put(cert.getSerialNumber().toString(16), builder);
+        return this;
     }
 
     @Override
@@ -70,8 +71,15 @@ public class TestOcspClient implements IOcspClient {
         byte[] bytes = null;
         try {
             CertificateID id = SignTestPortUtil.generateCertificateId(issuerCert, checkCert.getSerialNumber(), CertificateID.HASH_SHA1);
-            bytes = builder.makeOcspResponse(SignTestPortUtil.generateOcspRequestWithNonce(id).getEncoded(), caPrivateKey);
+            TestOcspResponseBuilder builder = issuerIdToResponseBuilder.get(issuerCert.getSerialNumber().toString(16));
+            if (builder == null) {
+                throw new IllegalArgumentException("This TestOcspClient instance is not capable of providing OCSP response for the given issuerCert:" + issuerCert.getSubjectDN().toString());
+            }
+            bytes = builder.makeOcspResponse(SignTestPortUtil.generateOcspRequestWithNonce(id).getEncoded());
         } catch (Exception ignored) {
+            if (ignored instanceof RuntimeException) {
+                throw (RuntimeException) ignored;
+            }
         }
 
         return bytes;

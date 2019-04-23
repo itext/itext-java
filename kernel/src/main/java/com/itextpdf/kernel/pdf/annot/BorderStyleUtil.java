@@ -76,7 +76,7 @@ class BorderStyleUtil {
     /**
      * Setter for the dashed border style. This property has affect only if {@link PdfAnnotation#STYLE_DASHED}
      * style was used for border style (see {@link #setStyle(PdfDictionary, PdfName)}.
-     * See ISO-320001 8.4.3.6, “Line Dash Pattern” for the format in which dash pattern shall be specified.
+     * See ISO-320001 8.4.3.6, "Line Dash Pattern" for the format in which dash pattern shall be specified.
      *
      * @param bs original border style dictionary.
      * @param dashPattern a dash array defining a pattern of dashes and gaps that

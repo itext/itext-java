@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Class name="com.itextpdf.styledxmlparser.css.media.MediaExpression"/>
+        <Method name="matches"/>
+        <Bug pattern="CC_CYCLOMATIC_COMPLEXITY"/>
+    </Match>
+    <Match>
+        <Or>
+            <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$2"/>
+            <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$3"/>
+            <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$4"/>
+            <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$5"/>
+            <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$6"/>
+            <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$7"/>
+            <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$9"/>
+            <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$11"/>
+            <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$12"/>
+            <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$13"/>
+            <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$14"/>
+            <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$16"/>
+            <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$18"/>
+            <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$19"/>
+            <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$20"/>
+            <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$21"/>
+            <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$22"/>
+        </Or>
+        <Method name="process"/>
+        <Or>
+            <Bug pattern="CC_CYCLOMATIC_COMPLEXITY"/>
+            <Bug pattern="LSC_LITERAL_STRING_COMPARISON"/>
+        </Or>
+    </Match>
+    <Match>
+        <Or>
+            <And>
+                <Or>
+                    <Class name="com.itextpdf.styledxmlparser.jsoup.nodes.Attribute"/>
+                    <Class name="com.itextpdf.styledxmlparser.jsoup.nodes.Attributes"/>
+                </Or>
+                <Method name="html" params="" returns="java.lang.String"/>
+            </And>
+            <And>
+                <Or>
+                    <Class name="com.itextpdf.styledxmlparser.jsoup.nodes.Document$OutputSettings"/>
+                    <Class name="com.itextpdf.styledxmlparser.jsoup.nodes.Node"/>
+                </Or>
+                <Method name="partialClone"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.jsoup.nodes.Entities"/>
+                <Or>
+                    <Method name="escape" params="java.lang.String, com.itextpdf.styledxmlparser.jsoup.nodes.Document$OutputSettings" returns="java.lang.String"/>
+                    <Method name="loadEntities"/>
+                </Or>
+            </And>
+        </Or>
+        <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+    </Match>
+    <Match>
+        <Or>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.css.resolve.CssQuotes"/>
+                <Method name="createQuotes"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.AbstractBorderShorthandResolver"/>
+                <Method name="resolveShorthand"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.css.selector.item.CssPagePseudoClassSelectorItem"/>
+                <Method name="&lt;init&gt;"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.css.selector.item.CssPseudoClassNthSelectorItem"/>
+                <Method name="getNthArguments"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.css.util.CssUtils"/>
+                <Method name="parseAbsoluteLength" params="java.lang.String, java.lang.String" returns="float"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssTransformValidator"/>
+                <Method name="isValidComponent"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssTransformValidator"/>
+                <Method name="isValidForTranslate"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.jsoup.helper.DataUtil"/>
+                <Method name="parseByteData"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.jsoup.nodes.Document"/>
+                <Method name="ensureMetaCharsetElement"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.jsoup.nodes.Element"/>
+                <Or>
+                    <Method name="val"/>
+                    <Method name="accumulateParents"/>
+                    <Method name="appendWhitespaceIfBr"/>
+                    <Method name="hasClass"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.jsoup.nodes.Element$1"/>
+                <Method name="head"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.jsoup.nodes.Node"/>
+                <Method name="hasAttr"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.jsoup.nodes.Node$OuterHtmlVisitor"/>
+                <Method name="tail"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilder"/>
+                <Or>
+                    <Method name="parseFragment"/>
+                    <Method name="clearStackToContext"/>
+                    <Method name="insert" params="com.itextpdf.styledxmlparser.jsoup.parser.Token$Character" returns="void"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.jsoup.nodes.Entities"/>
+                <Method name="getCoreCharsetByName"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.jsoup.parser.TokeniserState"/>
+                <Method name="handleDataDoubleEscapeTag"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.styledxmlparser.jsoup.safety.Whitelist"/>
+                <Or>
+                    <Method name="isSafeAttribute"/>
+                    <Method name="removeAttributes"/>
+                    <Method name="testValidProtocol"/>
+                </Or>
+            </And>
+        </Or>
+        <Bug pattern="LSC_LITERAL_STRING_COMPARISON"/>
+    </Match>
+    <Match>
+        <Class name="com.itextpdf.styledxmlparser.resolver.resource.UriEncodeUtil"/>
+        <Method name="encode" params="java.lang.String, java.lang.String"/>
+        <Bug pattern="LSYC_LOCAL_SYNCHRONIZED_COLLECTION"/>
+    </Match>
+</FindBugsFilter>

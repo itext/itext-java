@@ -68,6 +68,7 @@ public abstract class PdfObjectWrapper<T extends PdfObject> implements Serializa
      * Marks object behind wrapper to be saved as indirect.
      *
      * @param document a document the indirect reference will belong to.
+     * @param reference
      * @return object itself.
      */
     public PdfObjectWrapper<T> makeIndirect(PdfDocument document, PdfIndirectReference reference) {

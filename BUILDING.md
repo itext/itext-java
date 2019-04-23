@@ -4,7 +4,6 @@ Running install without a profile will generate the **iText 7 Community** jars:
 ```bash
 $ mvn clean install \
     -Dmaven.test.skip=true \
-    -Dmaven.javadoc.failOnError=false \
     > >(tee mvn.log) 2> >(tee mvn-error.log >&2)
 ```
 
@@ -14,7 +13,6 @@ $ mvn clean install \
     -Dmaven.test.failure.ignore=false \
     -DgsExec=$(which gs) \
     -DcompareExec=$(which compare) \
-    -Dmaven.javadoc.failOnError=false \
     > >(tee mvn.log) 2> >(tee mvn-error.log >&2)
 ```
 
@@ -23,7 +21,7 @@ You can use the supplied `Vagrantfile` to get a [Vagrant][4] VM ([Ubuntu][5] 14.
 $ vagrant box add ubuntu/trusty64
 $ vagrant up
 $ vagrant ssh -- \
-    'cd /vagrant ; mvn clean install -Dmaven.test.skip=true -Dmaven.javadoc.failOnError=false' \
+    'cd /vagrant ; mvn clean install -Dmaven.test.skip=true' \
     > >(tee mvn.log) 2> >(tee mvn-error.log >&2)
 ```
 

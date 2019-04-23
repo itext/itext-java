@@ -49,8 +49,6 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
-import java.util.HashMap;
-
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;svg&gt; tag.
  */

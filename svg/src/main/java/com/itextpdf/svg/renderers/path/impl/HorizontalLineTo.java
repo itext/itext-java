@@ -50,6 +50,7 @@ import com.itextpdf.svg.utils.SvgCssUtils;
  * */
 public class HorizontalLineTo extends LineTo {
 
+    static final int ARGUMENT_SIZE = 1;
     /**
      * Creates an absolute Horizontal LineTo.
      */
@@ -67,13 +68,11 @@ public class HorizontalLineTo extends LineTo {
     }
 
     @Override
-    public void setCoordinates(String[] coordinates, Point startPoint) {
-        String[] normalizedCoords = new String[coordinates.length * 2];
+    public void setCoordinates(String[] inputCoordinates, Point startPoint) {
+        String[] normalizedCoords = new String[LineTo.ARGUMENT_SIZE];
         // An H or h command is equivalent to an L or l command with 0 specified for the y coordinate.
-        for (int i = 0; i < coordinates.length; i++) {
-            normalizedCoords[i * 2] = coordinates[i];
-            normalizedCoords[i * 2 + 1] = isRelative() ? "0" : SvgCssUtils.convertDoubleToString(startPoint.getY());
-        }
+        normalizedCoords[0] = inputCoordinates[0];
+        normalizedCoords[1] = isRelative() ? "0" : SvgCssUtils.convertDoubleToString(startPoint.getY());
         super.setCoordinates(normalizedCoords, startPoint);
     }
 }

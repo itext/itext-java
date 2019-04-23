@@ -205,7 +205,12 @@ public class PdfException extends RuntimeException {
     public static final String NoCompatibleEncryptionFound = "No compatible encryption found.";
     public static final String NoCryptoDictionaryDefined = "No crypto dictionary defined.";
     public static final String NoKidWithSuchRole = "No kid with such role.";
+    /**
+     * @deprecated Now we log a warning rather than throw an exception.
+     */
+    @Deprecated
     public static final String NoMaxLenPresent = "No /MaxLen has been set even though the Comb flag has been set.";
+    public static final String NoninvertibleMatrixCannotBeProcessed = "A noninvertible matrix has been parsed. The behaviour is unpredictable.";
     public static final String NotAPlaceableWindowsMetafile = "Not a placeable windows metafile.";
     public static final String NotAValidPkcs7ObjectNotASequence = "Not a valid PKCS#7 object - not a sequence";
     public static final String NotAValidPkcs7ObjectNotSignedData = "Not a valid PKCS#7 object - not signed data.";
@@ -228,6 +233,7 @@ public class PdfException extends RuntimeException {
     public static final String PdfFormXobjectHasInvalidBbox = "PdfFormXObject has invalid BBox.";
     public static final String PdfObjectStreamReachMaxSize = "PdfObjectStream reach max size.";
     public static final String PdfPagesTreeCouldBeGeneratedOnlyOnce = "PdfPages tree could be generated only once.";
+    public static final String PdfReaderHasBeenAlreadyUtilized = "Given PdfReader instance has already been utilized. The PdfReader cannot be reused, please create a new instance.";
     public static final String PdfStartxrefIsNotFollowedByANumber = "PDF startxref is not followed by a number.";
     public static final String PdfStartxrefNotFound = "PDF startxref not found.";
     public static final String PdfIndirectObjectBelongsToOtherPdfDocument = "Pdf indirect object belongs to other PDF document. Copy object to current pdf document.";
@@ -288,7 +294,12 @@ public class PdfException extends RuntimeException {
     public static final String WhitePointIsIncorrectlySpecified = "White point is incorrectly specified.";
     public static final String WmfImageException = "WMF image exception.";
     public static final String WrongFormFieldAddAnnotationToTheField = "Wrong form field. Add annotation to the field.";
-    public static final String WrongMediaBoxSize1 = "Wrong media box size: {0}.";
+    /**
+     * @deprecated in favour of more informative named constant
+     */
+    @Deprecated
+    public static final String WrongMediaBoxSize1= "Wrong media box size: {0}.";
+    public static final String WRONGMEDIABOXSIZETOOFEWARGUMENTS = "Wrong media box size: {0}. Need at least 4 arguments";
     public static final String XrefSubsectionNotFound = "xref subsection not found.";
     public static final String YouHaveToDefineABooleanArrayForThisCollectionSortDictionary = "You have to define a boolean array for this collection sort dictionary.";
     public static final String YouMustSetAValueBeforeAddingAPrefix = "You must set a value before adding a prefix.";

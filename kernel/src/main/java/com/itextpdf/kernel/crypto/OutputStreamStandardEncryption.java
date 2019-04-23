@@ -50,6 +50,11 @@ public class OutputStreamStandardEncryption extends OutputStreamEncryption {
 
     /**
      * Creates a new instance of OutputStreamStandardEncryption
+     *
+     * @param out
+     * @param key
+     * @param off
+     * @param len
      */
     public OutputStreamStandardEncryption(java.io.OutputStream out, byte[] key, int off, int len) {
         super(out);

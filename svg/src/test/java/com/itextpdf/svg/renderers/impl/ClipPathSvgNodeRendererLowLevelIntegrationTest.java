@@ -51,16 +51,18 @@ import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.util.HashMap;
 
+@Category(IntegrationTest.class)
 public class ClipPathSvgNodeRendererLowLevelIntegrationTest {
 
     private PdfCanvas cv;
@@ -170,7 +172,6 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest {
                 "-63 -34.79 -34.79 -63 0 -63 c\n" +
                 "34.79 -63 63 -34.79 63 0 c\n" +
                 "f\n" +
-                "h\n" +
                 "Q\n";
         Assert.assertEquals(expected, new String(cv.getContentStream().getBytes()));
     }
@@ -209,7 +210,6 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest {
                 "-63 -34.79 -34.79 -63 0 -63 c\n" +
                 "34.79 -63 63 -34.79 63 0 c\n" +
                 "f\n" +
-                "h\n" +
                 "Q\n" +
                 "Q\n";
         Assert.assertEquals(expected, new String(cv.getContentStream().getBytes()));
@@ -256,7 +256,6 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest {
                 "-63 -34.79 -34.79 -63 0 -63 c\n" +
                 "34.79 -63 63 -34.79 63 0 c\n" +
                 "f\n" +
-                "h\n" +
                 "Q\n" +
                 "q\n" +
                 "% rect\n" +
@@ -270,7 +269,6 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest {
                 "-63 -34.79 -34.79 -63 0 -63 c\n" +
                 "34.79 -63 63 -34.79 63 0 c\n" +
                 "f\n" +
-                "h\n" +
                 "Q\n" +
                 "Q\n";
         Assert.assertEquals(expected, new String(cv.getContentStream().getBytes()));

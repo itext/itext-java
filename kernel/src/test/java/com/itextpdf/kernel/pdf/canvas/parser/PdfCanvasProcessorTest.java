@@ -54,10 +54,12 @@ import com.itextpdf.kernel.pdf.canvas.parser.data.ImageRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.PathRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -146,6 +148,23 @@ public class PdfCanvasProcessorTest extends ExtendedITextTest {
         PdfCanvasProcessor processor = new PdfCanvasProcessor(new NoOpEventListener());
         // Assert than no exception is thrown when an empty path is handled
         processor.processPageContent(document.getPage(1));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX, count = 1))
+    public void testNoninvertibleMatrix() throws IOException {
+        String fileName = "noninvertibleMatrix.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + fileName));
+
+        LocationTextExtractionStrategy strategy = new LocationTextExtractionStrategy();
+        PdfCanvasProcessor processor = new PdfCanvasProcessor(strategy);
+        PdfPage page = pdfDocument.getFirstPage();
+        processor.processPageContent(page);
+
+        String resultantText = strategy.getResultantText();
+        pdfDocument.close();
+
+        Assert.assertEquals("Hello World!\nHello World!\nHello World!\nHello World! Hello World! Hello World!", resultantText);
     }
 
     private static class NoOpEventListener implements IEventListener {

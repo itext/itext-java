@@ -44,9 +44,16 @@
 package com.itextpdf.kernel.pdf.collection;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfDate;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfObjectWrapper;
+import com.itextpdf.kernel.pdf.PdfString;
 
-public class PdfCollectionItem extends PdfObjectWrapper<PdfDictionary>{
+
+public class PdfCollectionItem extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -6471103872805179766L;
 	private PdfCollectionSchema schema;

@@ -43,6 +43,7 @@
  */
 package com.itextpdf.barcodes;
 
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.colors.Color;
@@ -125,22 +126,34 @@ public class Barcode39 extends Barcode1D {
 
     /**
      * Creates a new Barcode39.
-     * @param document The document
+     * To generate the font the {@link PdfDocument#getDefaultFont()} will be implicitly called.
+     * If you want to use this barcode in PDF/A documents, please consider using {@link #Barcode39(PdfDocument, PdfFont)}.
+     *
+     * @param document The document to which the barcode will be added
      */
     public Barcode39(PdfDocument document) {
-        super(document);
-        x = 0.8f;
-        n = 2;
-        font = document.getDefaultFont();
-        size = 8;
-        baseline = size;
-        barHeight = size * 3;
-        generateChecksum = false;
-        checksumText = false;
-        startStopText = true;
-        extended = false;
+        this(document, document.getDefaultFont());
     }
 
+    /**
+     * Creates a new Barcode39.
+     *
+     * @param document The document to which the barcode will be added
+     * @param font The font to use
+     */
+    public Barcode39(PdfDocument document, PdfFont font) {
+        super(document);
+        this.x = 0.8f;
+        this.n = 2;
+        this.font = font;
+        this.size = 8;
+        this.baseline = size;
+        this.barHeight = size * 3;
+        this.generateChecksum = false;
+        this.checksumText = false;
+        this.startStopText = true;
+        this.extended = false;
+    }
     /**
      * Creates the bars.
      *

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Class name="com.itextpdf.signatures.KeyStoreUtil"/>
+        <Method name="loadCacertsKeyStore" params="java.lang.String"/>
+        <Bug pattern="DE_MIGHT_IGNORE"/>
+    </Match>
+    <Match>
+        <Class name="com.itextpdf.signatures.CRLVerifier"/>
+        <Method name="getCRL"/>
+        <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+    </Match>
+    <Match>
+        <Or>
+            <And>
+                <Class name="com.itextpdf.signatures.CertificateInfo"/>
+                <Or>
+                    <Method name="getIssuer"/>
+                    <Method name="getIssuerFields"/>
+                    <Method name="getSubject"/>
+                    <Method name="getSubjectFields"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.signatures.CrlClientOffline"/>
+                <Method name="&lt;init&gt;"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.signatures.KeyStoreUtil"/>
+                <Method name="loadCacertsKeyStore" params="java.lang.String"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.signatures.PdfPKCS7"/>
+                <Or>
+                    <Method name="&lt;init&gt;"/>
+                    <Method name="getAuthenticatedAttributeBytes"/>
+                    <Method name="getAuthenticatedAttributeSet"/>
+                    <Method name="getEncodedPKCS1"/>
+                    <Method name="getEncodedPKCS7"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.signatures.SignUtils"/>
+                <Method name="getTsaResponseForUserRequest"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.signatures.SignatureUtil"/>
+                <Or>
+                    <Method name="readSignatureData" params="java.lang.String,java.lang.String"/>
+                    <Method name="signatureCoversWholeDocument"/>
+                    <Method name="updateByteRange"/>
+                </Or>
+            </And>
+        </Or>
+        <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+    </Match>
+    <Match>
+        <Or>
+            <And>
+                <Class name="com.itextpdf.signatures.PdfPKCS7"/>
+                <Or>
+                    <Method name="&lt;init&gt;"/>
+                    <Method name="setExternalDigest"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.signatures.SignUtils"/>
+                <Or>
+                    <Method name="getPrivateKeyAlgorithm"/>
+                    <Method name="getTsaResponseForUserRequest"/>
+                </Or>
+            </And>
+        </Or>
+        <Bug pattern="LSC_LITERAL_STRING_COMPARISON"/>
+    </Match>
+    <Match>
+        <Class name="com.itextpdf.signatures.SignaturePermissions"/>
+        <Method name="&lt;init&gt;"/>
+        <Bug pattern="NS_DANGEROUS_NON_SHORT_CIRCUIT"/>
+    </Match>
+    <Match>
+        <Or>
+            <And>
+                <Class name="com.itextpdf.signatures.CertificateInfo"/>
+                <Or>
+                    <Method name="getIssuer"/>
+                    <Method name="getSubject"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.signatures.CertificateUtil"/>
+                <Method name="getExtensionValue"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.signatures.LtvVerification"/>
+                <Method name="getSignatureHashKey"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.signatures.PdfPKCS7"/>
+                <Or>
+                    <Method name="&lt;init&gt;"/>
+                    <Method name="buildUnauthenticatedAttributes"/>
+                    <Method name="findOcsp"/>
+                    <Method name="getAuthenticatedAttributeSet"/>
+                    <Method name="getEncodedPKCS7"/>
+                </Or>
+            </And>
+        </Or>
+        <Bug pattern="OBJECT_DESERIALIZATION"/>
+    </Match>
+</FindBugsFilter>

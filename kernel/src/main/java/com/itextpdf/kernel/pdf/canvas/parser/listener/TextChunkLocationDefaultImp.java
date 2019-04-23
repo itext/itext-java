@@ -174,18 +174,6 @@ class TextChunkLocationDefaultImp implements ITextChunkLocation {
     }
 
     public boolean isAtWordBoundary(ITextChunkLocation previous) {
-        /*
-         * Here we handle a very specific case which in PDF may look like:
-         * -.232 Tc [( P)-226.2(r)-231.8(e)-230.8(f)-238(a)-238.9(c)-228.9(e)]TJ
-         * The font's charSpace width is 0.232 and it's compensated with charSpacing of 0.232.
-         * And a resultant TextChunk.charSpaceWidth comes to TextChunk constructor as 0.
-         * In this case every chunk is considered as a word boundary and space is added.
-         * We should consider charSpaceWidth equal (or close) to zero as a no-space.
-         */
-        if (getCharSpaceWidth() < 0.1f) {
-            return false;
-        }
-
         // In case a text chunk is of zero length, this probably means this is a mark character,
         // and we do not actually want to insert a space in such case
         if (startLocation.equals(endLocation) || previous.getEndLocation().equals(previous.getStartLocation())) {
@@ -194,7 +182,15 @@ class TextChunkLocationDefaultImp implements ITextChunkLocation {
 
         float dist = distanceFromEndOf(previous);
 
-        return dist < -getCharSpaceWidth() || dist > getCharSpaceWidth() / 2.0f;
+        if (dist < 0) {
+            dist = previous.distanceFromEndOf(this);
+
+            //The situation when the chunks intersect. We don't need to add space in this case
+            if (dist < 0) {
+                return false;
+            }
+        }
+        return dist > getCharSpaceWidth() / 2.0f;
     }
 
     static boolean containsMark(ITextChunkLocation baseLocation, ITextChunkLocation markLocation) {

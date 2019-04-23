@@ -49,6 +49,7 @@ public final class SvgLogMessageConstant {
 
     private SvgLogMessageConstant(){};
 
+    public static final String ARC_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0 = "(rx ry rot largearc sweep x y)+ parameters are expected for elliptical arcs. Got: {0}";
     public static final String ATTRIBUTES_NULL = "The attributes of this element are null.";
     public static final String COORDINATE_VALUE_ABSENT = "The coordinate value is empty or null.";
     public static final String COULDNOTINSTANTIATE = "Could not instantiate Renderer for tag {0}";

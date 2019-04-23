@@ -513,6 +513,16 @@ public final class SvgConstants {
         public static final String D = "d";
 
         /**
+         * Attribute defining the relative x-translation of a text-element
+         */
+        public static final String DX = "dx";
+
+        /**
+         * Attribute defining the relative y-translation of a text-element
+         */
+        public static final String DY = "dy";
+
+        /**
          * Attribute defining the fill color.
          */
         public static final String FILL = "fill";
@@ -586,6 +596,11 @@ public final class SvgConstants {
          * Attribute defining the y-axis of an ellipse or the y-axis radius of rounded rectangles.
          */
         public static final String RY = "ry";
+
+        /**
+         * Attribute defining the opacity of a group or graphic element.
+         */
+        public static final String OPACITY = "opacity";
 
         /**
          * Close Path Operator.
@@ -756,6 +771,11 @@ public final class SvgConstants {
         public static final String TEXT_CONTENT = "text_content";
 
         /**
+         * Attribute defining the text anchor used by the text
+         */
+        public static final String TEXT_ANCHOR = "text-anchor";
+
+        /**
          * Attribute defining a transformation that needs to be applied.
          */
         public static final String TRANSFORM = "transform";
@@ -837,6 +857,11 @@ public final class SvgConstants {
         public static final String DEFER = "defer";
 
         /**
+         * Value representing the text-alignment end for text objects
+         */
+        public static final String TEXT_ANCHOR_END = "end";
+
+        /**
          * Value representing the fill rule "even odd".
          */
         public static final String FILL_RULE_EVEN_ODD = "evenodd";
@@ -847,9 +872,19 @@ public final class SvgConstants {
         public static final String FILL_RULE_NONZERO = "nonzero";
 
         /**
+         * Value representing the text-alignment middle for text objects
+         */
+        public static final String TEXT_ANCHOR_MIDDLE = "middle";
+
+        /**
          * Value representing the "none" value".
          */
         public static final String NONE = "none";
+
+        /**
+         * Value representing the text-alignment start for text objects
+         */
+        public static final String TEXT_ANCHOR_START = "start";
 
         /**
          * The value corresponding with the namespace url for SVG

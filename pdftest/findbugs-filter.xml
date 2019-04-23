@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Class name="com.itextpdf.test.ITextTest"/>
+        <Method name="createStringByEscaped"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
+    <Match>
+        <Class name="com.itextpdf.test.WrappedSamplesRunner"/>
+        <Or>
+            <Method name="checkIfTestAndCreateParams"/>
+            <Method name="initClass"/>
+        </Or>
+        <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+    </Match>
+</FindBugsFilter>

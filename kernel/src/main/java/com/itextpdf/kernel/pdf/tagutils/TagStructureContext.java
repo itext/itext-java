@@ -123,7 +123,7 @@ public class TagStructureContext {
     /**
      * Do not use this constructor, instead use {@link PdfDocument#getTagStructureContext()}
      * method.
-     * <br/><br/>
+     * <p>
      * Creates {@code TagStructureContext} for document. There shall be only one instance of this
      * class per {@code PdfDocument}.
      * @param document the document which tag structure will be manipulated with this class.

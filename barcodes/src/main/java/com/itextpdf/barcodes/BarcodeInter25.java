@@ -45,6 +45,7 @@ package com.itextpdf.barcodes;
 
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.colors.Color;
@@ -90,20 +91,33 @@ public class BarcodeInter25 extends Barcode1D {
             };
 
     /**
-     * Creates new BarcodeInter25
-     * @param document The document
+     * Creates new BarcodeInter25.
+     * To generate the font the {@link PdfDocument#getDefaultFont()} will be implicitly called.
+     * If you want to use this barcode in PDF/A documents, please consider using {@link #BarcodeInter25(PdfDocument, PdfFont)}.
+     *
+     * @param document The document to which the barcode will be added
      */
     public BarcodeInter25(PdfDocument document) {
+        this(document, document.getDefaultFont());
+    }
+
+    /**
+     * Creates new BarcodeInter25
+     *
+     * @param document The document to which the barcode will be added
+     * @param font The font to use
+     */
+    public BarcodeInter25(PdfDocument document, PdfFont font) {
         super(document);
-        x = 0.8f;
-        n = 2;
-        font = document.getDefaultFont();
-        size = 8;
-        baseline = size;
-        barHeight = size * 3;
-        textAlignment = ALIGN_CENTER;
-        generateChecksum = false;
-        checksumText = false;
+        this.x = 0.8f;
+        this.n = 2;
+        this.font = font;
+        this.size = 8;
+        this.baseline = size;
+        this.barHeight = size * 3;
+        this.textAlignment = ALIGN_CENTER;
+        this.generateChecksum = false;
+        this.checksumText = false;
     }
 
     /**

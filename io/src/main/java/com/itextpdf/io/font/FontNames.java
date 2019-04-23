@@ -217,7 +217,7 @@ public class FontNames implements Serializable {
 
     /**
      * Sets Open Type head.macStyle.
-     * <br/>
+     * <p>
      * {@link FontMacStyleFlags}
      * @param macStyle
      */

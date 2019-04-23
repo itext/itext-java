@@ -50,6 +50,10 @@ public class SvgCoordinateUtils {
      * Converts relative coordinates to absolute ones. Assumes that relative coordinates are represented by
      * an array of coordinates with length proportional to the length of current coordinates array,
      * so that current coordinates array is applied in segments to the relative coordinates array
+     *
+     * @param relativeCoordinates the initial set of coordinates
+     * @param currentCoordinates  an array representing the point relative to which the relativeCoordinates are defined
+     * @return a String array of absolute coordinates, with the same length as the input array
      */
     public static String[] makeRelativeOperatorCoordinatesAbsolute(String[] relativeCoordinates, double[] currentCoordinates) {
         if (relativeCoordinates.length % currentCoordinates.length != 0) {
@@ -57,7 +61,7 @@ public class SvgCoordinateUtils {
         }
         String[] absoluteOperators = new String[relativeCoordinates.length];
 
-        for (int i = 0; i < relativeCoordinates.length;) {
+        for (int i = 0; i < relativeCoordinates.length; ) {
             for (int j = 0; j < currentCoordinates.length; j++, i++) {
                 double relativeDouble = Double.parseDouble(relativeCoordinates[i]);
                 relativeDouble += currentCoordinates[j];

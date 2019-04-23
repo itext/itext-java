@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Or>
+            <Class name="com.itextpdf.pdfa.checker.PdfA1Checker"/>
+            <Class name="com.itextpdf.pdfa.checker.PdfA2Checker"/>
+        </Or>
+        <Method name="checkNonSymbolicTrueTypeFont"/>
+        <Bug pattern="LSC_LITERAL_STRING_COMPARISON"/>
+    </Match>
+</FindBugsFilter>

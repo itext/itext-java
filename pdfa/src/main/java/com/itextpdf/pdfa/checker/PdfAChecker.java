@@ -264,12 +264,27 @@ public abstract class PdfAChecker implements Serializable {
     /**
      * This method checks compliance with the color restrictions imposed by the
      * available color spaces in the document.
+     * @deprecated This method will be replaced by {@link #checkColor(Color, PdfDictionary, Boolean, PdfStream) checkColor} in 7.2 release
      *
      * @param color the color to check
      * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
      * @param fill whether the color is used for fill or stroke operations
      */
+    @Deprecated
     public abstract void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill);
+
+    /**
+     * This method checks compliance with the color restrictions imposed by the
+     * available color spaces in the document.
+     * This method will be abstract in update 7.2
+     *
+     * @param color the color to check
+     * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
+     * @param fill whether the color is used for fill or stroke operations
+     * @param contentStream current content stream
+     */
+    public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill, PdfStream contentStream) {
+    }
 
     /**
      * This method performs a range of checks on the given color space, depending
@@ -294,10 +309,23 @@ public abstract class PdfAChecker implements Serializable {
     /**
      * Performs a number of checks on the graphics state, among others ISO
      * 19005-1 section 6.2.8 and 6.4 and ISO 19005-2 section 6.2.5 and 6.2.10.
+     * @deprecated This method will be replaced by {@link #checkExtGState(CanvasGraphicsState, PdfStream) checkExtGState} in 7.2 release
      *
      * @param extGState the graphics state to be checked
      */
+    @Deprecated
     public abstract void checkExtGState(CanvasGraphicsState extGState);
+
+    /**
+     * Performs a number of checks on the graphics state, among others ISO
+     * 19005-1 section 6.2.8 and 6.4 and ISO 19005-2 section 6.2.5 and 6.2.10.
+     * This method will be abstract in the update 7.2
+     *
+     * @param extGState the graphics state to be checked
+     * @param contentStream current content stream
+     */
+    public void checkExtGState(CanvasGraphicsState extGState, PdfStream contentStream) {
+    }
 
     /**
      * Performs a number of checks on the font. See ISO 19005-1 section 6.3,
@@ -307,6 +335,21 @@ public abstract class PdfAChecker implements Serializable {
      * @param pdfFont font to be checked
      */
     public abstract void checkFont(PdfFont pdfFont);
+
+
+    /**
+     * Performs a check of the each font glyph as a Form XObject. See ISO 19005-2 Annex A.5.
+     * This only applies to type 3 fonts.
+     * This method will be abstract in update 7.2
+     *
+     * @param font {@link PdfFont} to be checked
+     * @param contentStream stream containing checked font
+     */
+    public void checkFontGlyphs(PdfFont font, PdfStream contentStream) {
+    }
+
+    protected void checkPageTransparency(PdfDictionary pageDict, PdfDictionary pageResources) {
+    }
 
     protected abstract Set<PdfName> getForbiddenActions();
     protected abstract Set<PdfName> getAllowedNamedActions();
@@ -329,7 +372,6 @@ public abstract class PdfAChecker implements Serializable {
     protected abstract void checkPdfString(PdfString string);
     protected abstract void checkSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont);
     protected abstract void checkTrailer(PdfDictionary trailer);
-
 
 
     protected void checkResources(PdfDictionary resources) {
@@ -428,7 +470,7 @@ public abstract class PdfAChecker implements Serializable {
         checkResources(pageResources);
         checkAnnotations(pageDict);
         checkPageSize(pageDict);
-
+        checkPageTransparency(pageDict, page.getResources().getPdfObject());
 
         int contentStreamCount = page.getContentStreamCount();
         for (int j = 0; j < contentStreamCount; ++j) {

@@ -53,7 +53,7 @@ import java.util.Set;
 /**
  * Manager that works with {@link ICounterFactory}. Create {@link ICounter} for each registered {@link ICounterFactory}
  * and send corresponding events on document read and write.
- * <br/>
+ * <p>
  * You can implement your own {@link ICounterFactory} and register them with {@link CounterManager#register(ICounterFactory)}
  * Or implement {@link ICounter} and register it with {@link SimpleCounterFactory} like this:
  * <code>CounterManager.getInstance().register(new SimpleCounterFactory(new SystemOutCounter());</code>

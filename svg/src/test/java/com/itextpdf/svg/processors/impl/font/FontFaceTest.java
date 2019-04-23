@@ -45,7 +45,6 @@ package com.itextpdf.svg.processors.impl.font;
 
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.kernel.pdf.WriterProperties;
-import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.media.MediaType;
 import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
@@ -61,7 +60,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import org.junit.Assert;
+
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;

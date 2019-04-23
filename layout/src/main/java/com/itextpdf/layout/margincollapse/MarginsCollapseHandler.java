@@ -55,7 +55,6 @@ import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
-import com.itextpdf.layout.renderer.RootRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -164,6 +163,8 @@ public class MarginsCollapseHandler {
 
     /**
      * This method shall be called after child occupied area is included into parent occupied area.
+     *
+     * @param layoutBox
      */
     public void endChildMarginsHandling(Rectangle layoutBox) {
         int childIndex = processedChildrenNum - 1;

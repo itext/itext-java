@@ -44,10 +44,14 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -56,8 +60,10 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -65,15 +71,17 @@ import java.util.List;
 import java.util.Random;
 
 @Category(IntegrationTest.class)
-public class PdfPagesTest extends ExtendedITextTest{
+public class PdfPagesTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfPagesTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfPagesTest/";
     static final PdfName PageNum = new PdfName("PageNum");
     static final PdfName PageNum5 = new PdfName("PageNum");
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void setup() {
-       createDestinationFolder(destinationFolder);
+        createDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -332,7 +340,7 @@ public class PdfPagesTest extends ExtendedITextTest{
         Assert.assertEquals(10, gState.getLineWidth().intValue());
     }
 
-//    @Test(expected = PdfException.class)
+    //    @Test(expected = PdfException.class)
 //    public void testCircularReferencesInResources() throws IOException {
 //        String inputFileName1 = sourceFolder + "circularReferencesInResources.pdf";
 //        PdfReader reader1 = new PdfReader(inputFileName1);
@@ -382,7 +390,7 @@ public class PdfPagesTest extends ExtendedITextTest{
         String filename = sourceFolder + "1000PagesDocument.pdf";
         PdfReader reader = new PdfReader(filename);
         PdfDocument pdfDoc = new PdfDocument(reader);
-        PdfObject[] pageDictionaries =  new PdfObject[] {
+        PdfObject[] pageDictionaries = new PdfObject[]{
                 pdfDoc.getPdfObject(4),
                 pdfDoc.getPdfObject(255),
                 pdfDoc.getPdfObject(512),
@@ -391,7 +399,7 @@ public class PdfPagesTest extends ExtendedITextTest{
                 pdfDoc.getPdfObject(3100)
         };
 
-        for (PdfObject pageObject: pageDictionaries) {
+        for (PdfObject pageObject : pageDictionaries) {
             PdfDictionary pageDictionary = (PdfDictionary) pageObject;
             Assert.assertEquals(PdfName.Page, pageDictionary.get(PdfName.Type));
             PdfPage page = pdfDoc.getPage(pageDictionary);
@@ -456,10 +464,31 @@ public class PdfPagesTest extends ExtendedITextTest{
         String dest = destinationFolder + "CatalogWithPageAndPagesEntries_opened.pdf";
         PdfReader reader = new PdfReader(src);
         PdfWriter writer = new PdfWriter(dest);
-        PdfDocument pdfDoc = new PdfDocument(reader,writer);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
         pdfDoc.close();
 
         Assert.assertTrue(testPageTreeParentsValid(src) && testPageTreeParentsValid(dest));
+    }
+
+    @Test
+    public void pdfNumberInPageContentArrayTest() throws IOException {
+        String src = sourceFolder + "pdfNumberInPageContentArray.pdf";
+        String dest = destinationFolder + "pdfNumberInPageContentArray_saved.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+        pdfDoc.close();
+
+        // test is mainly to ensure document is successfully opened-and-closed without exceptions
+
+        pdfDoc = new PdfDocument(new PdfReader(dest));
+        PdfObject pageDictWithInvalidContents = pdfDoc.getPdfObject(10);
+        PdfArray invalidContentsArray = ((PdfDictionary) pageDictWithInvalidContents).getAsArray(PdfName.Contents);
+        Assert.assertEquals(5, invalidContentsArray.size());
+
+        Assert.assertFalse(invalidContentsArray.get(0).isStream());
+        Assert.assertFalse(invalidContentsArray.get(1).isStream());
+        Assert.assertFalse(invalidContentsArray.get(2).isStream());
+        Assert.assertFalse(invalidContentsArray.get(3).isStream());
+        Assert.assertTrue(invalidContentsArray.get(4).isStream());
     }
 
     private boolean testPageTreeParentsValid(String src) throws com.itextpdf.io.IOException, java.io.IOException {
@@ -482,4 +511,57 @@ public class PdfPagesTest extends ExtendedITextTest{
         return valid;
     }
 
+    @Test
+    public void testExcessiveXrefEntriesForCopyXObject() throws IOException {
+        PdfDocument inputPdf = new PdfDocument(new PdfReader(sourceFolder + "input500.pdf"));
+        PdfDocument outputPdf = new PdfDocument(new PdfWriter(destinationFolder + "output500.pdf"));
+
+        float scaleX = 595f / 612f;
+        float scaleY = 842f / 792f;
+
+        for (int i = 1; i <= inputPdf.getNumberOfPages(); ++i) {
+            PdfPage sourcePage = inputPdf.getPage(i);
+            PdfFormXObject pageCopy = sourcePage.copyAsFormXObject(outputPdf);
+            PdfPage page = outputPdf.addNewPage(PageSize.A4);
+            PdfCanvas outputCanvas = new PdfCanvas(page);
+            outputCanvas.addXObject(pageCopy, scaleX, 0, 0, scaleY, 0, 0);
+            page.flush();
+        }
+
+        outputPdf.close();
+        inputPdf.close();
+
+        Assert.assertNotNull(outputPdf.getXref());
+        Assert.assertEquals(500, outputPdf.getXref().size() - inputPdf.getXref().size());
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS, count = 1),
+    })
+    public void pageGetMediaBoxTooManyArgumentsTest() throws IOException {
+        PdfReader reader = new PdfReader(sourceFolder + "helloWorldMediaboxTooManyArguments.pdf");
+        Rectangle expected = new Rectangle(0, 0, 375, 300);
+
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfPage pageOne = pdfDoc.getPage(1);
+        Rectangle actual = pageOne.getPageSize();
+
+        Assert.assertTrue(expected.equalsWithEpsilon(actual));
+
+    }
+
+    @Test
+    public void pageGetMediaBoxNotEnoughArgumentsTest() throws IOException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfException.WRONGMEDIABOXSIZETOOFEWARGUMENTS,3));
+
+        PdfReader reader = new PdfReader(sourceFolder + "helloWorldMediaboxNotEnoughArguments.pdf");
+
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfPage pageOne = pdfDoc.getPage(1);
+        Rectangle actual = pageOne.getPageSize();
+
+        Assert.fail("Exception was not thrown");
+    }
 }

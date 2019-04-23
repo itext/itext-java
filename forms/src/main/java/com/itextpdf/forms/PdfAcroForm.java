@@ -169,7 +169,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param document         the document to retrieve the {@link PdfAcroForm} from
      * @param createIfNotExist when <code>true</code>, this method will create a {@link PdfAcroForm} if none exists for this document
-     * @return the {@link PdfDocument document}'s AcroForm, or a new one
+     * @return the {@link PdfDocument document}'s AcroForm,
+     * or a new one provided that <code>createIfNotExist</code> parameter is <code>true</code>, otherwise <code>null</code>.
      */
     public static PdfAcroForm getAcroForm(PdfDocument document, boolean createIfNotExist) {
         PdfDictionary acroFormDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
@@ -634,6 +635,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             initialPageResourceClones.put(i, resources == null ? null : resources.clone());
         }
 
+        Set<PdfPage> wrappedPages = new LinkedHashSet<PdfPage>();
         PdfPage page;
         for (PdfFormField field : fields) {
             PdfDictionary fieldObject = field.getPdfObject();
@@ -682,7 +684,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                     if (page.isFlushed()) {
                         throw new PdfException(PdfException.PageAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
                     }
-                    PdfCanvas canvas = new PdfCanvas(page);
+                    PdfCanvas canvas = new PdfCanvas(page, !wrappedPages.contains(page));
+                    wrappedPages.add(page);
 
                     // Here we avoid circular reference which might occur when page resources and the appearance xObject's
                     // resources are the same object
@@ -718,10 +721,14 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             PdfDictionary parent = fieldObject.getAsDictionary(PdfName.Parent);
             if (parent != null) {
                 PdfArray kids = parent.getAsArray(PdfName.Kids);
-                kids.remove(fieldObject);
-                // TODO what if parent was in it's turn the only child of it's parent (parent of parent)?
-                // shouldn't we remove them recursively? check it
-                if (kids.isEmpty()) {
+                if(kids!=null) {
+                    kids.remove(fieldObject);
+                    // TODO what if parent was in it's turn the only child of it's parent (parent of parent)?
+                    // shouldn't we remove them recursively? check it
+                    if (kids.isEmpty()) {
+                        fFields.remove(parent);
+                    }
+                } else {
                     fFields.remove(parent);
                 }
             }

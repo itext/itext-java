@@ -52,7 +52,6 @@ import com.itextpdf.svg.css.impl.SvgNodeRendererInheritanceResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
-import com.itextpdf.svg.utils.SvgMathUtils;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -94,9 +93,8 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
                         if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.Y)) {
                             y = CssUtils.parseAbsoluteLength(this.attributesAndStyles.get(SvgConstants.Attributes.Y));
                         }
-
                         AffineTransform inverseMatrix = null;
-                        if (!SvgMathUtils.compareFloats(x,0) || !SvgMathUtils.compareFloats(y,0)) {
+                        if (!CssUtils.compareFloats(x,0) || !CssUtils.compareFloats(y,0)) {
                             AffineTransform translation = AffineTransform.getTranslateInstance(x, y);
                             currentCanvas.concatMatrix(translation);
                             if (partOfClipPath) {

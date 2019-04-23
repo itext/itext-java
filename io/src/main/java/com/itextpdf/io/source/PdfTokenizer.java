@@ -44,6 +44,10 @@
 package com.itextpdf.io.source;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.Serializable;
@@ -291,8 +295,17 @@ public class PdfTokenizer implements Closeable, Serializable {
                         if (tokenValueEqualsTo(R)) {
                             assert n2 != null;
                             type = TokenType.Ref;
-                            reference = Integer.parseInt(new String(n1));
-                            generation = Integer.parseInt(new String(n2));
+                            try {
+                                reference = Integer.parseInt(new String(n1));
+                                generation = Integer.parseInt(new String(n2));
+                            } catch (Exception ex) {
+                                //warn about incorrect reference number
+                                //Exception: NumberFormatException for java, FormatException or OverflowException for .NET
+                                Logger logger = LoggerFactory.getLogger(PdfTokenizer.class);
+                                logger.error(MessageFormatUtil.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, new String(n1), new String(n2)));
+                                reference = -1;
+                                generation = 0;
+                            }
                             return;
                         } else if (tokenValueEqualsTo(Obj)) {
                             assert n2 != null;
@@ -441,12 +454,31 @@ public class PdfTokenizer implements Closeable, Serializable {
                         // as we need to know that fact only in case if there are any minuses.
                         ch = file.read();
                     }
-                    while (ch != -1 && ((ch >= '0' && ch <= '9') || ch == '.')) {
-                        if (ch == '.')
-                            isReal = true;
+                    while (ch >= '0' && ch <= '9') {
                         outBuf.append(ch);
                         ch = file.read();
                     }
+
+                    if ( ch == '.'){
+                        isReal = true;
+                        outBuf.append(ch);
+                        ch = file.read();
+
+                        //verify if there is minus after '.'
+                        //In that case just ignore minus chars and everything after as Adobe Reader does
+                        int numberOfMinusesAfterDot = 0;
+                        if (ch == '-') {
+                            numberOfMinusesAfterDot++;
+                            ch = file.read();
+                        }
+                        while (ch >= '0' && ch <= '9') {
+                            if (numberOfMinusesAfterDot == 0) {
+                                outBuf.append(ch);
+                            }
+                            ch = file.read();
+                        }
+                    }
+
                     if (numberOfMinuses > 1 && !isReal) {
                         // Numbers of integer type and with more than one minus before them
                         // are interpreted by Acrobat as zero.
@@ -498,6 +530,10 @@ public class PdfTokenizer implements Closeable, Serializable {
      * NOTE Due to PdfReference 1.7 part 3.2.3 String value contain ASCII characters,
      * so we can convert it directly to byte array.
      *
+     * @param content
+     * @param from
+     * @param to
+     * @param hexWriting
      * @return byte[] for decrypting or for creating {@link java.lang.String}.
      */
     protected static byte[] decodeStringContent(byte[] content, int from, int to, boolean hexWriting) {
@@ -592,6 +628,8 @@ public class PdfTokenizer implements Closeable, Serializable {
      * NOTE Due to PdfReference 1.7 part 3.2.3 String value contain ASCII characters,
      * so we can convert it directly to byte array.
      *
+     * @param content
+     * @param hexWriting
      * @return byte[] for decrypting or for creating {@link java.lang.String}.
      */
     public static byte[] decodeStringContent(byte[] content, boolean hexWriting) {

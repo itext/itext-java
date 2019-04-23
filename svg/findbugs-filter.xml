@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Or>
+            <And>
+                <Class name="com.itextpdf.svg.css.impl.SvgStyleResolver"/>
+                <Or>
+                    <Method name="processAttribute"/>
+                    <Method name="collectCssDeclarations"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.svg.processors.impl.DefaultSvgProcessor"/>
+                <Method name="processText"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer"/>
+                <Method name="resolveFont"/>
+
+            </And>
+        </Or>
+        <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+    </Match>
+    <Match>
+        <Or>
+            <And>
+                <Class name="com.itextpdf.svg.css.impl.SvgStyleResolver"/>
+                <Method name="collectCssDeclarations"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.svg.processors.impl.DefaultSvgProcessor"/>
+                <Method name="processText"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer"/>
+                <Or>
+                    <Method name="getTextAnchorAlignmentCorrection"/>
+                    <Method name="resolveFontName"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer"/>
+                <Method name="getTextAnchorAlignmentCorrection"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.svg.css.impl.SvgStyleResolver"/>
+                <Method name="processAttribute"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.svg.utils.SvgCssUtils"/>
+                <Method name="isStyleSheetLink"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.svg.utils.SvgTextUtil"/>
+                <Method name="isOnlyWhiteSpace"/>
+            </And>
+        </Or>
+        <Bug pattern="LSC_LITERAL_STRING_COMPARISON"/>
+    </Match>
+</FindBugsFilter>

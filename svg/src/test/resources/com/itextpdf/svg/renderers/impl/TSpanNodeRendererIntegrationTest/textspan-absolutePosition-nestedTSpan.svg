@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="600"
+        height="100"
+        version="1.1">
+
+    <rect width="600" height="50" stroke="red" fill="none"/>
+    <line x2="30" y2="30" stroke="blue" stroke-width="1"/>
+    <line x2="20" y2="10" stroke="green" stroke-width="1"/>
+    <line x1="20" y1="10" x2="320" y2="10" stroke="green" stroke-width="1" />
+
+    <line x2="80" y2="45" stroke="orange" stroke-width="1"/>
+
+    <line x2="110" y2="20" stroke="yellow" stroke-width="1"/>
+    <g transform="translate(30,30)">
+        <text font-size="10" font-family="Arial">
+            text before span
+            <tspan
+                    style="stroke-width:0.26458332"
+                    font-size="12"
+                    stroke="red"
+                    x="50"
+                    y="15"
+            >
+                new span
+                <tspan
+                        style="stroke-width:0.26458332"
+                        font-size="12"
+                        stroke="red"
+                        y="-10"
+                        x="80"
+                >
+                    tspan inside tspan
+                </tspan>
+            </tspan>
+            text after new span
+        </text>
+    </g>
+
+</svg>

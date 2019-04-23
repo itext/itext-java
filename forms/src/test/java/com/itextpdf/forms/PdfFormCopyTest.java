@@ -131,14 +131,12 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_copyFields03.pdf", destinationFolder, "diff_"));
     }
 
-    @Test(timeout = 100000)
-    public void largeFilePerformanceTest() throws IOException, InterruptedException {
+    @Test
+    public void largeFileTest() throws IOException, InterruptedException {
         String srcFilename1 = sourceFolder + "frontpage.pdf";
         String srcFilename2 = sourceFolder + "largeFile.pdf";
 
         String filename = destinationFolder + "copyLargeFile.pdf";
-
-        long timeStart = System.nanoTime();
 
         PdfDocument doc1 = new PdfDocument(new PdfReader(srcFilename1));
         PdfDocument doc2 = new PdfDocument(new PdfReader(srcFilename2));
@@ -147,11 +145,9 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         PdfPageFormCopier formCopier = new PdfPageFormCopier();
         doc1.copyPagesTo(1, doc1.getNumberOfPages(), pdfDoc, formCopier);
-        doc2.copyPagesTo(1, doc2.getNumberOfPages(), pdfDoc, formCopier);
+        doc2.copyPagesTo(1, 10, pdfDoc, formCopier);
 
         pdfDoc.close();
-
-        System.out.println(((System.nanoTime() - timeStart) / 1000 / 1000));
 
         Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_copyLargeFile.pdf", destinationFolder, "diff_"));
     }

@@ -47,7 +47,6 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.experimental.categories.Category;
 
-import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;

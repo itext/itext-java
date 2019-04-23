@@ -55,10 +55,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itextpdf.io.util.MessageFormatUtil;
+
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedSet;
 
 public class TrueTypeFont extends FontProgram {
 
@@ -85,32 +89,30 @@ public class TrueTypeFont extends FontProgram {
 
     private byte[] fontStreamBytes;
 
+    private TrueTypeFont(OpenTypeParser fontParser) throws java.io.IOException {
+        this.fontParser = fontParser;
+        this.fontParser.loadTables(true);
+        initializeFontProperties();
+    }
+
     protected TrueTypeFont() {
         fontNames = new FontNames();
     }
 
     public TrueTypeFont(String path) throws java.io.IOException {
-        fontParser = new OpenTypeParser(path);
-        fontParser.loadTables(true);
-        initializeFontProperties();
+        this(new OpenTypeParser(path));
     }
 
     public TrueTypeFont(byte[] ttf) throws java.io.IOException {
-        fontParser = new OpenTypeParser(ttf);
-        fontParser.loadTables(true);
-        initializeFontProperties();
+        this(new OpenTypeParser(ttf));
     }
 
     TrueTypeFont(String ttcPath, int ttcIndex) throws java.io.IOException {
-        fontParser = new OpenTypeParser(ttcPath, ttcIndex);
-        fontParser.loadTables(true);
-        initializeFontProperties();
+        this(new OpenTypeParser(ttcPath, ttcIndex));
     }
 
     TrueTypeFont(byte[] ttc, int ttcIndex) throws java.io.IOException {
-        fontParser = new OpenTypeParser(ttc, ttcIndex);
-        fontParser.loadTables(true);
-        initializeFontProperties();
+        this(new OpenTypeParser(ttc, ttcIndex));
     }
 
     @Override
@@ -369,5 +371,62 @@ public class TrueTypeFont extends FontProgram {
             fontParser.close();
         }
         fontParser = null;
+    }
+
+    /**
+     * The method will update usedGlyphs with additional range or with all glyphs if there is no subset.
+     * usedGlyphs can be used for width array and ToUnicode CMAP.
+     *
+     * @param usedGlyphs used glyphs that will be updated if needed.
+     * @param subset subset status
+     * @param subsetRanges additional subset ranges
+     */
+    public void updateUsedGlyphs(SortedSet<Integer> usedGlyphs, boolean subset, List<int[]> subsetRanges) {
+        int[] compactRange;
+        if (subsetRanges != null) {
+            compactRange = toCompactRange(subsetRanges);
+        } else if (!subset) {
+            compactRange = new int[] {0, 0xFFFF};
+        } else {
+            compactRange = new int[] {};
+        }
+
+        for (int k = 0; k < compactRange.length; k += 2) {
+            int from = compactRange[k];
+            int to = compactRange[k + 1];
+            for (int glyphId = from; glyphId <= to; glyphId++) {
+                if (getGlyphByCode(glyphId) != null) {
+                    usedGlyphs.add(glyphId);
+                }
+            }
+        }
+    }
+
+    private static int[] toCompactRange(List<int[]> ranges) {
+        List<int[]> simp = new ArrayList<>();
+        for (int[] range : ranges) {
+            for (int j = 0; j < range.length; j += 2) {
+                simp.add(new int[]{Math.max(0, Math.min(range[j], range[j + 1])), Math.min(0xffff, Math.max(range[j], range[j + 1]))});
+            }
+        }
+        for (int k1 = 0; k1 < simp.size() - 1; ++k1) {
+            for (int k2 = k1 + 1; k2 < simp.size(); ++k2) {
+                int[] r1 = simp.get(k1);
+                int[] r2 = simp.get(k2);
+                if (r1[0] >= r2[0] && r1[0] <= r2[1] || r1[1] >= r2[0] && r1[0] <= r2[1]) {
+                    r1[0] = Math.min(r1[0], r2[0]);
+                    r1[1] = Math.max(r1[1], r2[1]);
+                    simp.remove(k2);
+                    --k2;
+                }
+            }
+        }
+        int[] s = new int[simp.size() * 2];
+        for (int k = 0; k < simp.size(); ++k) {
+            int[] r = simp.get(k);
+            s[k * 2] = r[0];
+            s[k * 2 + 1] = r[1];
+        }
+        return s;
     }
 }

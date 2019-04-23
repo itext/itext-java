@@ -87,6 +87,7 @@ public abstract class StandardSecurityHandler extends SecurityHandler {
     /**
      * Gets bytes of String-value without considering encoding.
      *
+     * @param string
      * @return byte array
      */
     protected byte[] getIsoBytes(PdfString string) {

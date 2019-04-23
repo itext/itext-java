@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Or>
+            <And>
+                <Or>
+                    <Class name="com.itextpdf.io.font.Type1Font"/>
+                    <Class name="com.itextpdf.io.image.BmpImageHelper"/>
+                </Or>
+                <Method name="process"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.image.TiffImageHelper"/>
+                <Method name="processTiffImageColor"/>
+            </And>
+        </Or>
+        <Bug pattern="CC_CYCLOMATIC_COMPLEXITY"/>
+    </Match>
+    <Match>
+        <Class name="com.itextpdf.io.font.CFFFont"/>
+        <Or>
+            <Method name="getCID"/>
+            <Method name="getIndex"/>
+        </Or>
+        <Bug pattern="DLS_DEAD_LOCAL_STORE_SHADOWS_FIELD"/>
+    </Match>
+    <Match>
+        <Or>
+            <And>
+                <Class name="com.itextpdf.io.codec.TIFFFaxDecompressor"/>
+                <Method name="decodeT4"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.CFFFontSubset"/>
+                <Method name="Process"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.OpenTypeParser"/>
+                <Or>
+                    <Method name="getFullFont"/>
+                    <Method name="readCffFont"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.TrueTypeFontSubset"/>
+                <Method name="process"/>
+            </And>
+        </Or>
+        <Bug pattern="DE_MIGHT_IGNORE"/>
+    </Match>
+    <Match>
+        <Class name="com.itextpdf.io.font.woff2.JavaUnsignedUtil"/>
+        <Method name="compareAsUnsigned"/>
+        <Bug pattern="DM_BOXED_PRIMITIVE_FOR_COMPARE"/>
+    </Match>
+    <Match>
+        <Or>
+            <And>
+                <Class name="com.itextpdf.io.codec.Base64"/>
+                <Or>
+                    <Method name="decode" params="java.lang.String, int"/>
+                    <Method name="encodeBytes"/>
+                    <Method name="encodeObject" params="java.io.Serializable, int"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.codec.TIFFDirectory"/>
+                <Method name="initialize"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.FontIdentification"/>
+                <Method name="setPanose"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.cmap.CMapContentParser"/>
+                <Method name="decodeCMapObject"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.source.PdfTokenizer"/>
+                <Or>
+                    <Method name="getStringValue"/>
+                    <Method name="nextValidToken"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.util.SystemUtil"/>
+                <Or>
+                    <Method name="printProcessErrorsOutput"/>
+                    <Method name="printProcessOutput"/>
+                </Or>
+            </And>
+        </Or>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
+    <Match>
+        <Or>
+            <And>
+                <Class name="com.itextpdf.io.codec.TIFFFaxDecompressor"/>
+                <Method name="decodeT4"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.codec.brotli.dec.BitReader"/>
+                <Or>
+                    <Method name="copyBytes"/>
+                    <Method name="readMoreInput"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.colors.IccProfile"/>
+                <Or>
+                    <Method name="getIccColorSpaceName"/>
+                    <Method name="getIccDeviceClass"/>
+                    <Method name="getInstance" params="com.itextpdf.io.source.RandomAccessFileOrArray"/>
+                    <Method name="getInstance" params="java.io.InputStream"/>
+                    <Method name="getInstance" params="java.lang.String"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.CFFFont"/>
+                <Or>
+                    <Method name="getCard16"/>
+                    <Method name="getCard8"/>
+                    <Method name="getInt"/>
+                    <Method name="getPosition"/>
+                    <Method name="getShort"/>
+                    <Method name="seek"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.CFFFontSubset"/>
+                <Method name="Process"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.FontCache"/>
+                <Method name="parseCmap"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.FontRegisterProvider"/>
+                <Method name="registerFont"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.PdfEncodings"/>
+                <Or>
+                    <Method name="convertToBytes" params="char,java.lang.String"/>
+                    <Method name="convertToBytes" params="java.lang.String, java.lang.String"/>
+                    <Method name="convertToString"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.TrueTypeFont"/>
+                <Or>
+                    <Method name="getFontStreamBytes"/>
+                    <Method name="getSubset"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.TrueTypeFontSubset"/>
+                <Method name="readStandardString"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.Type1Parser"/>
+                <Method name="getMetricsFile"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.woff2.Woff2Dec"/>
+                <Method name="woff2Uncompress"/>
+            </And>
+            <And>
+                <Or>
+                    <Class name="com.itextpdf.io.image.BmpImageHelper"/>
+                    <Class name="com.itextpdf.io.image.GifImageHelper"/>
+                    <Class name="com.itextpdf.io.image.Jbig2ImageHelper"/>
+                    <Class name="com.itextpdf.io.image.JpegImageHelper"/>
+                    <Class name="com.itextpdf.io.image.PngImageHelper"/>
+                    <Class name="com.itextpdf.io.image.TiffImageHelper"/>
+                </Or>
+                <Method name="processImage"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.image.GifImageHelper"/>
+                <Method name="readFrame"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.image.ImageDataFactory"/>
+                <Method name="readImageType"/>
+            </And>
+            <And>
+                <Or>
+                    <Class name="com.itextpdf.io.image.Jbig2ImageData"/>
+                    <Class name="com.itextpdf.io.image.TiffImageData"/>
+                </Or>
+                <Method name="getNumberOfPages" params="com.itextpdf.io.source.RandomAccessFileOrArray"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.image.Jpeg2000ImageHelper"/>
+                <Method name="processParameters"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.image.PngImageHelper"/>
+                <Method name="processPng"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.image.TiffImageHelper"/>
+                <Or>
+                    <Method name="processTiffImage"/>
+                    <Method name="processTiffImageColor"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.source.OutputStream"/>
+                <Or>
+                    <Method name="writeByte" params="byte"/>
+                    <Method name="writeByte" params="int"/>
+                    <Method name="writeBytes"/>
+                    <Method name="writeDouble"/>
+                    <Method name="writeInteger"/>
+                    <Method name="writeLong"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.source.PdfTokenizer"/>
+                <Method name="throwError"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.util.DateTimeUtil"/>
+                <Method name="parseSimpleFormat"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.util.FilterUtil"/>
+                <Method name="inflateData"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.util.StreamUtil"/>
+                <Or>
+                    <Method name="writeEscapedString"/>
+                    <Method name="writeHexedString"/>
+                </Or>
+            </And>
+        </Or>
+        <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+    </Match>
+    <Match>
+        <Or>
+            <Class name="com.itextpdf.io.font.otf.GlyphLine"/>
+            <Class name="com.itextpdf.io.font.otf.GlyphLine$ActualText"/>
+        </Or>
+        <Bug pattern="HE_EQUALS_USE_HASHCODE"/>
+    </Match>
+    <Match>
+        <Or>
+            <And>
+                <Class name="com.itextpdf.io.font.CidFont"/>
+                <Method name="compatibleWith"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.CidFontProperties"/>
+                <Method name="isCidFont"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.CMapEncoding"/>
+                <Or>
+                    <Method name="&lt;init&gt;" params="java.lang.String"/>
+                    <Method name="&lt;init&gt;" params="java.lang.String, java.lang.String"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.FontEncoding"/>
+                <Method name="fillCustomEncoding"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.FontRegisterProvider"/>
+                <Method name="getFont"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.OpenTypeParser"/>
+                <Method name="initializeSfntTables"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.PdfEncodings"/>
+                <Or>
+                    <Method name="convertToBytes" params="char,java.lang.String"/>
+                    <Method name="convertToBytes" params="java.lang.String, java.lang.String"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.Type1Font"/>
+                <Method name="process"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.TrueTypeCollection"/>
+                <Method name="initFontSize"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.TrueTypeFontSubset"/>
+                <Method name="assembleFont"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.cmap.CMapContentParser"/>
+                <Or>
+                    <Method name="readArray"/>
+                    <Method name="readDictionary"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.font.cmap.CMapParser"/>
+                <Method name="parseCid"/>
+            </And>
+            <And>
+                <Or>
+                    <Class name="com.itextpdf.io.font.PdfEncodings"/>
+                    <Class name="com.itextpdf.io.util.EncodingUtil"/>
+                </Or>
+                <Method name="convertToString"/>
+            </And>
+            <And>
+                <Class name="com.itextpdf.io.image.JpegImageHelper"/>
+                <Method name="processParameters"/>
+            </And>
+        </Or>
+        <Bug pattern="LSC_LITERAL_STRING_COMPARISON"/>
+    </Match>
+    <Match>
+        <Class name="com.itextpdf.io.font.CFFFont"/>
+        <Method name="getString"/>
+        <Bug pattern="LSYC_LOCAL_SYNCHRONIZED_COLLECTION"/>
+    </Match>
+    <Match>
+        <Or>
+            <Class name="com.itextpdf.io.source.ByteArrayOutputStream"/>
+            <Class name="com.itextpdf.io.source.DeflaterOutputStream"/>
+            <Class name="com.itextpdf.io.source.OutputStream"/>
+        </Or>
+        <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+    </Match>
+    <Match>
+        <Class name="com.itextpdf.io.codec.Base64"/>
+        <Method name="decodeToObject"/>
+        <Bug pattern="OBJECT_DESERIALIZATION"/>
+    </Match>
+    <Match>
+        <Class name="com.itextpdf.io.image.TiffImageHelper"/>
+        <Or>
+            <Method name="processTiffImage"/>
+            <Method name="processTiffImageColor"/>
+        </Or>
+        <Bug pattern="REC_CATCH_EXCEPTION"/>
+    </Match>
+    <Match>
+        <Class name="com.itextpdf.io.font.OpenTypeParser"/>
+        <Bug pattern="UC_USELESS_CONDITION"/>
+    </Match>
+</FindBugsFilter>

@@ -54,8 +54,10 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 import com.itextpdf.io.util.MessageFormatUtil;
@@ -73,6 +75,9 @@ public class PdfReaderTest extends ExtendedITextTest {
     static final String author = "Alexander Chingarev";
     static final String creator = "iText 6";
     static final String title = "Empty iText 6 Document";
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -1560,6 +1565,44 @@ public class PdfReaderTest extends ExtendedITextTest {
         pdfDoc.close();
     }
 
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE, count =1),
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR),
+            @LogMessage(messageTemplate = LogMessageConstant.ENCOUNTERED_INVALID_MCR)})
+    public void wrongTagStructureFlushingTest() throws IOException {
+        //wrong /Pg number
+        String source = sourceFolder + "wrongTagStructureFlushingTest.pdf";
+        String dest = destinationFolder + "wrongTagStructureFlushingTest.pdf";
+        PdfDocument   pdfDoc = new PdfDocument(new PdfReader(source), new PdfWriter(dest));
+        pdfDoc.setTagged();
+        Assert.assertEquals(PdfNull.PDF_NULL, ((PdfDictionary)pdfDoc.getPdfObject(12)).get(PdfName.Pg));
+        pdfDoc.close();
+    }
+
+    @Test
+    @Ignore("DEVSIX-2649")
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE, count =1),
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR)})
+    public void wrongStructureFlushingTest() throws IOException {
+        //TODO: update after DEVSIX-2649 fix
+        //wrong /key number
+        String source = sourceFolder + "wrongStructureFlushingTest.pdf";
+        String dest = destinationFolder + "wrongStructureFlushingTest.pdf";
+        PdfDocument   pdfDoc = new PdfDocument(new PdfReader(source), new PdfWriter(dest));
+        pdfDoc.close();
+    }
+
+    @Test
+    public void readerReuseTest() throws IOException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(PdfException.PdfReaderHasBeenAlreadyUtilized);
+
+        String filename = sourceFolder + "hello.pdf";
+
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument pdfDoc1 = new PdfDocument(reader);
+        PdfDocument pdfDoc2 = new PdfDocument(reader);
+    }
 
     private boolean objectTypeEqualTo(PdfObject object, PdfName type) {
         PdfName objectType = ((PdfDictionary) object).getAsName(PdfName.Type);

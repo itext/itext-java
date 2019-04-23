@@ -44,9 +44,8 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.io.util.DateTimeUtil;
+import com.itextpdf.io.util.MessageFormatUtil;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.CertificateStatus;
 import org.bouncycastle.cert.ocsp.OCSPException;
@@ -56,8 +55,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.cert.*;
-import com.itextpdf.io.util.MessageFormatUtil;
+import java.security.cert.CRL;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateParsingException;
+import java.security.cert.X509CRL;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -131,7 +133,7 @@ public class OCSPVerifier extends RootStoreVerifier {
      * Verifies a certificate against a single OCSP response
      * @param ocspResp the OCSP response
      * @param signCert the certificate that needs to be checked
-     * @param issuerCert the certificate of CA
+     * @param issuerCert the certificate of CA (certificate that issued signCert). This certificate is considered trusted and valid by this method.
      * @param signDate sign date
      * @return {@code true}, in case successful check, otherwise false.
      * @throws GeneralSecurityException
@@ -175,7 +177,7 @@ public class OCSPVerifier extends RootStoreVerifier {
             Object status = resp[i].getCertStatus();
             if (status == CertificateStatus.GOOD) {
                 // check if the OCSP response was genuine
-                isValidResponse(ocspResp, issuerCert);
+                isValidResponse(ocspResp, issuerCert, signDate);
                 return true;
             }
         }
@@ -187,22 +189,37 @@ public class OCSPVerifier extends RootStoreVerifier {
      * If it doesn't verify against the issuer certificate and response's certificates, it may verify
      * using a trusted anchor or cert.
      * @param ocspResp the OCSP response
-     * @param issuerCert the issuer certificate
+     * @param issuerCert the issuer certificate. This certificate is considered trusted and valid by this method.
      * @throws GeneralSecurityException
      * @throws IOException
+     * @deprecated Will be removed in iText 7.2. Use {@link #isValidResponse(BasicOCSPResp, X509Certificate, Date)} instead
      */
+    @Deprecated
     public void isValidResponse(BasicOCSPResp ocspResp, X509Certificate issuerCert) throws GeneralSecurityException, IOException {
-        //OCSP response might be signed by the issuer certificate or
-        //the Authorized OCSP responder certificate containing the id-kp-OCSPSigning extended key usage extension
+        isValidResponse(ocspResp, issuerCert, DateTimeUtil.getCurrentTimeDate());
+    }
+
+    /**
+     * Verifies if an OCSP response is genuine
+     * If it doesn't verify against the issuer certificate and response's certificates, it may verify
+     * using a trusted anchor or cert.
+     * @param ocspResp the OCSP response
+     * @param issuerCert the issuer certificate. This certificate is considered trusted and valid by this method.
+     * @param signDate sign date
+     * @throws GeneralSecurityException
+     */
+    public void isValidResponse(BasicOCSPResp ocspResp, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException {
+        // OCSP response might be signed by the issuer certificate or
+        // the Authorized OCSP responder certificate containing the id-kp-OCSPSigning extended key usage extension
         X509Certificate responderCert = null;
 
-        //first check if the issuer certificate signed the response
-        //since it is expected to be the most common case
+        // first check if the issuer certificate signed the response
+        // since it is expected to be the most common case
         if (isSignatureValid(ocspResp, issuerCert)) {
             responderCert = issuerCert;
         }
 
-        //if the issuer certificate didn't sign the ocsp response, look for authorized ocsp responses
+        // if the issuer certificate didn't sign the ocsp response, look for authorized ocsp responses
         // from properties or from certificate chain received with response
         if (responderCert == null) {
             if (ocspResp.getCerts() != null) {
@@ -219,18 +236,63 @@ public class OCSPVerifier extends RootStoreVerifier {
                     } catch (CertificateParsingException ignored) {
                     }
                 }
+
                 // Certificate signing the ocsp response is not found in ocsp response's certificate chain received
                 // and is not signed by the issuer certificate.
                 if (responderCert == null) {
                     throw new VerificationException(issuerCert, "OCSP response could not be verified");
                 }
+
+                // RFC 6960 4.2.2.2. Authorized Responders:
+                // "Systems relying on OCSP responses MUST recognize a delegation certificate as being issued
+                // by the CA that issued the certificate in question only if the delegation certificate and the
+                // certificate being checked for revocation were signed by the same key."
+                // and
+                // "This certificate MUST be issued directly by the CA that is identified in the request"
+                responderCert.verify(issuerCert.getPublicKey());
+
+                // check if lifetime of certificate is ok
+                responderCert.checkValidity(signDate);
+
+                // validating ocsp signers certificate
+                // Check if responders certificate has id-pkix-ocsp-nocheck extension,
+                // in which case we do not validate (perform revocation check on) ocsp certs for lifetime of certificate
+                if (responderCert.getExtensionValue(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck.getId()) == null) {
+                    CRL crl;
+                    try {
+                        // TODO should also check for Authority Information Access according to RFC6960 4.2.2.2.1. "Revocation Checking of an Authorized Responder"
+                        // TODO should also respect onlineCheckingAllowed property?
+                        crl = CertificateUtil.getCRL(responderCert);
+                    } catch (Exception ignored) {
+                        crl = (CRL) null;
+                    }
+                    if (crl != null && crl instanceof X509CRL) {
+                        CRLVerifier crlVerifier = new CRLVerifier(null, null);
+                        crlVerifier.setRootStore(rootStore);
+                        crlVerifier.setOnlineCheckingAllowed(onlineCheckingAllowed);
+                        if (!crlVerifier.verify((X509CRL)crl, responderCert, issuerCert, signDate)) {
+                            throw new VerificationException(issuerCert, "Authorized OCSP responder certificate was revoked.");
+                        }
+                    } else {
+                        Logger logger = LoggerFactory.getLogger(OCSPVerifier.class);
+                        logger.error("Authorized OCSP responder certificate revocation status cannot be checked");
+                        // TODO throw exception starting from iText version 7.2, but only after OCSPVerifier would allow explicit setting revocation check end points/provide revocation data
+                        // throw new VerificationException(issuerCert, "Authorized OCSP responder certificate revocation status cannot be checked.");
+                    }
+                }
+
             } else {
-                //certificate chain is not present in response received
-                //try to verify using rootStore
+                // certificate chain is not present in response received
+                // try to verify using rootStore according to RFC 6960 2.2. Response:
+                // "The key used to sign the response MUST belong to one of the following:
+                // - ...
+                // - a Trusted Responder whose public key is trusted by the requestor;
+                // - ..."
                 if (rootStore != null) {
                     try {
                         for (X509Certificate anchor : SignUtils.getCertificates(rootStore) ) {
                             if (isSignatureValid(ocspResp, anchor)) {
+                                // certificate from the root store is considered trusted and valid by this method
                                 responderCert = anchor;
                                 break;
                             }
@@ -240,38 +302,11 @@ public class OCSPVerifier extends RootStoreVerifier {
                     }
                 }
 
-                // OCSP Response does not contain certificate chain, and response is not signed by any
-                // of the rootStore or the issuer certificate.
                 if (responderCert == null) {
-                    throw new VerificationException(issuerCert, "OCSP response could not be verified");
+                    throw new VerificationException(issuerCert, "OCSP response could not be verified: it does not contain certificate chain and response is not signed by issuer certificate or any from the root store.");
                 }
             }
         }
-
-        //check "This certificate MUST be issued directly by the CA that issued the certificate in question".
-        responderCert.verify(issuerCert.getPublicKey());
-
-        // validating ocsp signers certificate
-        // Check if responders certificate has id-pkix-ocsp-nocheck extension,
-        // in which case we do not validate (perform revocation check on) ocsp certs for lifetime of certificate
-        if (responderCert.getExtensionValue(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck.getId()) == null) {
-            CRL crl;
-            try {
-                crl = CertificateUtil.getCRL(responderCert);
-            } catch (Exception ignored) {
-                crl = (CRL) null;
-            }
-            if (crl != null && crl instanceof X509CRL) {
-                CRLVerifier crlVerifier = new CRLVerifier(null, null);
-                crlVerifier.setRootStore(rootStore);
-                crlVerifier.setOnlineCheckingAllowed(onlineCheckingAllowed);
-                crlVerifier.verify((X509CRL)crl, responderCert, issuerCert, DateTimeUtil.getCurrentTimeDate());
-                return;
-            }
-        }
-
-        //check if lifetime of certificate is ok
-        responderCert.checkValidity();
     }
 
     /**

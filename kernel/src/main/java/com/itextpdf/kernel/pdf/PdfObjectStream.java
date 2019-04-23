@@ -46,8 +46,6 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 
-import java.io.IOException;
-
 
 class PdfObjectStream extends PdfStream {
 

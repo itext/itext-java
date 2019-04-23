@@ -73,7 +73,6 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -117,9 +116,6 @@ import org.bouncycastle.x509.util.StreamParsingException;
 
 final class SignUtils {
     static final Object UNDEFINED_TIMESTAMP_DATE = null;
-
-    private static final int KEY_USAGE_DIGITAL_SIGNATURE = 0;
-    private static final int KEY_USAGE_NON_REPUDIATION = 1;
 
     static String getPrivateKeyAlgorithm(PrivateKey pk) {
         String algorithm = pk.getAlgorithm();
@@ -298,7 +294,16 @@ final class SignUtils {
      *
      * @param cert X509Certificate instance to check
      * @return true if there are unsupported critical extensions, false if there are none
+     * @deprecated this behavior is different in Java and .NET, because in Java we use this
+     * two-step check: first via #hasUnsupportedCriticalExtension method, and then additionally allowing
+     * standard critical extensions; in .NET there's only second step. However, removing
+     * first step in Java can be a breaking change for some users and moreover we don't
+     * have any means of providing customization for unsupported extensions check as of right now.
+     * <p>
+     * During major release I'd suggest changing java unsupported extensions check logic to the same as in .NET,
+     * but only if it is possible to customize this logic.
      */
+    @Deprecated
     static boolean hasUnsupportedCriticalExtension(X509Certificate cert) {
         if ( cert == null ) {
             throw new IllegalArgumentException("X509Certificate can't be null.");
@@ -306,27 +311,9 @@ final class SignUtils {
 
         if (cert.hasUnsupportedCriticalExtension()) {
             for (String oid : cert.getCriticalExtensionOIDs()) {
-                // KEY USAGE and DIGITAL SIGNING or NONREPUDIATION is ALLOWED
-                if (OID.X509Extensions.KEY_USAGE.equals(oid)) {
-                    if(cert.getKeyUsage()[KEY_USAGE_DIGITAL_SIGNATURE] || cert.getKeyUsage()[KEY_USAGE_NON_REPUDIATION]) { // allow digSig and nonRepudiation
-                        continue;
-                    }
-                }
-
-                // BASIC CONSTRAINTS is ALLOWED
-                if (OID.X509Extensions.BASIC_CONSTRAINTS.equals(oid)) { // allow basicConstraints, can be checked later
+                if (OID.X509Extensions.SUPPORTED_CRITICAL_EXTENSIONS.contains(oid)) {
                     continue;
                 }
-
-                try {
-                    // EXTENDED KEY USAGE and TIMESTAMPING is ALLOWED
-                    if (OID.X509Extensions.EXTENDED_KEY_USAGE.equals(oid) && cert.getExtendedKeyUsage().contains(OID.X509Extensions.ID_KP_TIMESTAMPING)) {
-                        continue;
-                    }
-                } catch (CertificateParsingException e) {
-                    // DO NOTHING;
-                }
-
                 return true;
             }
         }
@@ -392,7 +379,7 @@ final class SignUtils {
                         while (keyStoreAliases.hasMoreElements()) {
                             try {
                                 String alias = keyStoreAliases.nextElement();
-                                if (keyStore.isCertificateEntry(alias)) {
+                                if (keyStore.isCertificateEntry(alias) || keyStore.isKeyEntry(alias)) {
                                     nextCert = (X509Certificate) keyStore.getCertificate(alias);
                                     break;
                                 }

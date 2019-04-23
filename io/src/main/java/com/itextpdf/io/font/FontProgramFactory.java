@@ -73,6 +73,7 @@ public final class FontProgramFactory {
      * Creates a new standard Helvetica font program file.
      *
      * @return a {@link FontProgram} object with Helvetica font description
+     * @throws java.io.IOException
      */
     public static FontProgram createFont() throws java.io.IOException {
         return createFont(StandardFonts.HELVETICA);
@@ -91,6 +92,7 @@ public final class FontProgramFactory {
      *
      * @param fontProgram the name of the font or its location on file
      * @return returns a new {@link FontProgram}. This font program may come from the cache
+     * @throws java.io.IOException
      */
     public static FontProgram createFont(String fontProgram) throws java.io.IOException {
         return createFont(fontProgram, null, DEFAULT_CACHED);
@@ -110,6 +112,7 @@ public final class FontProgramFactory {
      * @param fontProgram the name of the font or its location on file
      * @param cached whether to to cache this font program after it has been loaded
      * @return returns a new {@link FontProgram}. This font program may come from the cache
+     * @throws java.io.IOException
      */
     public static FontProgram createFont(String fontProgram, boolean cached) throws java.io.IOException {
         return createFont(fontProgram, null, cached);
@@ -128,6 +131,7 @@ public final class FontProgramFactory {
      *
      * @param fontProgram the byte contents of the font program
      * @return returns a new {@link FontProgram}. This font program may come from the cache
+     * @throws java.io.IOException
      */
     public static FontProgram createFont(byte[] fontProgram) throws java.io.IOException {
         return createFont(null, fontProgram, DEFAULT_CACHED);
@@ -147,6 +151,7 @@ public final class FontProgramFactory {
      * @param fontProgram the byte contents of the font program
      * @param cached whether to to cache this font program
      * @return returns a new {@link FontProgram}. This font program may come from the cache
+     * @throws java.io.IOException
      */
     public static FontProgram createFont(byte[] fontProgram, boolean cached) throws java.io.IOException {
         return createFont(null, fontProgram, cached);
@@ -247,9 +252,11 @@ public final class FontProgramFactory {
 
     /**
      * Creates a new Type 1 font by the byte contents of the corresponding AFM/PFM and PFB files
+     *
      * @param afm the contents of the AFM or PFM metrics file
      * @param pfb the contents of the PFB file
      * @return created {@link FontProgram} instance
+     * @throws java.io.IOException
      */
     public static FontProgram createType1Font(byte[] afm, byte[] pfb) throws java.io.IOException {
         return createType1Font(afm, pfb, DEFAULT_CACHED);
@@ -257,10 +264,12 @@ public final class FontProgramFactory {
 
     /**
      * Creates a new Type 1 font by the byte contents of the corresponding AFM/PFM and PFB files
+     *
      * @param afm the contents of the AFM or PFM metrics file
      * @param pfb the contents of the PFB file
      * @param cached specifies whether to cache the created {@link FontProgram} or not
      * @return created {@link FontProgram} instance
+     * @throws java.io.IOException
      */
     public static FontProgram createType1Font(byte[] afm, byte[] pfb, boolean cached) throws java.io.IOException {
         return createType1Font(null, null, afm, pfb, cached);
@@ -268,9 +277,11 @@ public final class FontProgramFactory {
 
     /**
      * Creates a new Type 1 font by the corresponding AFM/PFM and PFB files
+     *
      * @param metricsPath path to the AFM or PFM metrics file
      * @param binaryPath path to the contents of the PFB file
      * @return created {@link FontProgram} instance
+     * @throws java.io.IOException
      */
     public static FontProgram createType1Font(String metricsPath, String binaryPath) throws java.io.IOException {
         return createType1Font(metricsPath, binaryPath, DEFAULT_CACHED);
@@ -278,10 +289,12 @@ public final class FontProgramFactory {
 
     /**
      * Creates a new Type 1 font by the corresponding AFM/PFM and PFB files
+     *
      * @param metricsPath path to the AFM or PFM metrics file
      * @param binaryPath path to the contents of the PFB file
      * @param cached specifies whether to cache the created {@link FontProgram} or not
      * @return created {@link FontProgram} instance
+     * @throws java.io.IOException
      */
     public static FontProgram createType1Font(String metricsPath, String binaryPath, boolean cached) throws java.io.IOException {
         return createType1Font(metricsPath, binaryPath, null, null, cached);
@@ -296,6 +309,7 @@ public final class FontProgramFactory {
      *                 the cache if new, false if the font is always created new
      * @return returns a new {@link FontProgram} instance. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
+     * @throws java.io.IOException
      */
     public static FontProgram createFont(String ttc, int ttcIndex, boolean cached) throws java.io.IOException {
         FontCacheKey fontCacheKey = FontCacheKey.create(ttc, ttcIndex);
@@ -318,6 +332,7 @@ public final class FontProgramFactory {
      *                 the cache if new, false if the font is always created new
      * @return returns a new {@link FontProgram} instance. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
+     * @throws java.io.IOException
      */
     public static FontProgram createFont(byte[] ttc, int ttcIndex, boolean cached) throws java.io.IOException {
         FontCacheKey fontKey = FontCacheKey.create(ttc, ttcIndex);
@@ -333,6 +348,7 @@ public final class FontProgramFactory {
 
     /**
      * Creates a FontProgram from the font file that has been previously registered.
+     *
      * @param fontName either a font alias, if the font file has been registered with an alias,
      *                 or just a font name otherwise
      * @param style the style of the font to look for. Possible values are listed in {@link FontStyles}.
@@ -340,6 +356,7 @@ public final class FontProgramFactory {
      *              {@link FontStyles#BOLDITALIC}, {@link FontStyles#UNDEFINED}
      * @param cached whether to try to get the font program from cache
      * @return created {@link FontProgram}
+     * @throws java.io.IOException
      */
     public static FontProgram createRegisteredFont(String fontName, int style, boolean cached) throws java.io.IOException {
         return fontRegisterProvider.getFont(fontName, style, cached);
@@ -347,12 +364,14 @@ public final class FontProgramFactory {
 
     /**
      * Creates a FontProgram from the font file that has been previously registered.
+     *
      * @param fontName either a font alias, if the font file has been registered with an alias,
      *                 or just a font name otherwise
      * @param style the style of the font to look for. Possible values are listed in {@link FontStyles}.
      *              See {@link FontStyles#BOLD}, {@link FontStyles#ITALIC}, {@link FontStyles#NORMAL},
      *              {@link FontStyles#BOLDITALIC}, {@link FontStyles#UNDEFINED}
      * @return created {@link FontProgram}
+     * @throws java.io.IOException
      */
     public static FontProgram createRegisteredFont(String fontName, int style) throws java.io.IOException {
         return fontRegisterProvider.getFont(fontName, style);
@@ -360,9 +379,11 @@ public final class FontProgramFactory {
 
     /**
      * Creates a FontProgram from the font file that has been previously registered.
+     *
      * @param fontName either a font alias, if the font file has been registered with an alias,
      *                 or just a font name otherwise
      * @return created {@link FontProgram}
+     * @throws java.io.IOException
      */
     public static FontProgram createRegisteredFont(String fontName) throws java.io.IOException {
         return fontRegisterProvider.getFont(fontName, FontStyles.UNDEFINED);
