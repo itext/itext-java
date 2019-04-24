@@ -765,7 +765,10 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR))
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR),
+            @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
+    })
     public void correctSimpleDoc4() throws IOException {
         String filename = sourceFolder + "correctSimpleDoc4.pdf";
 
@@ -1162,6 +1165,23 @@ public class PdfReaderTest extends ExtendedITextTest {
             String content = new String(page.getContentStream(0).getBytes());
             Assert.assertTrue(content.contains("(" + i + ")"));
         }
+
+        document.close();
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
+    public void fixPdfTest18() throws IOException {
+        String filename = sourceFolder + "noXrefAndTrailerWithInfo.pdf";
+
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument document = new PdfDocument(reader);
+        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
+
+        int pageCount = document.getNumberOfPages();
+        Assert.assertEquals(1, pageCount);
+
+        Assert.assertTrue(document.getDocumentInfo().getProducer().contains("iText Group NV (AGPL-version)"));
 
         document.close();
     }
@@ -1602,6 +1622,20 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument pdfDoc1 = new PdfDocument(reader);
         PdfDocument pdfDoc2 = new PdfDocument(reader);
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE))
+    public void hugeInvalidIndRefObjNumberTest() throws IOException {
+        String filename = sourceFolder + "hugeIndRefObjNum.pdf";
+
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfObject pdfObject = pdfDoc.getPdfObject(4);
+        Assert.assertTrue(pdfObject.isDictionary());
+        Assert.assertEquals(PdfNull.PDF_NULL, ((PdfDictionary)pdfObject).get(PdfName.Pg));
+
+        pdfDoc.close();
     }
 
     private boolean objectTypeEqualTo(PdfObject object, PdfName type) {

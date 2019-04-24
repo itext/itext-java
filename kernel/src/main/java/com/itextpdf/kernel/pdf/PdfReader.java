@@ -542,6 +542,7 @@ public class PdfReader implements Closeable, Serializable {
 
             rebuildXref();
         }
+        pdfDocument.getXref().markReadingCompleted();
         readDecryptObj();
     }
 
@@ -631,8 +632,14 @@ public class PdfReader implements Closeable, Serializable {
                 }
             }
         } else {
-            reference = table.add((PdfIndirectReference) new PdfIndirectReference(pdfDocument,
-                    num, tokens.getGenNr(), 0).setState(PdfObject.READING));
+            if (table.isReadingCompleted()) {
+                Logger logger = LoggerFactory.getLogger(PdfReader.class);
+                logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
+                return createPdfNullInstance(readAsDirect);
+            } else {
+                reference = table.add((PdfIndirectReference) new PdfIndirectReference(pdfDocument,
+                        num, tokens.getGenNr(), 0).setState(PdfObject.READING));
+            }
         }
         return reference;
     }
@@ -843,7 +850,7 @@ public class PdfReader implements Closeable, Serializable {
 
                 if (refFirstEncountered) {
                     reference = new PdfIndirectReference(pdfDocument, num, gen, pos);
-                } else if (reference.checkState(PdfObject.READING) && reference.getGenNumber() == gen) {
+                } else if (refReadingState) {
                     reference.setOffset(pos);
                     reference.clearState(PdfObject.READING);
                 } else {
