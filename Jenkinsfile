@@ -50,25 +50,13 @@ pipeline {
             }
         }
         stage('Run Tests') {
-            stages {
-                stage('Surefire (Unit Tests)') {
-                    options {
-                        timeout(time: 30, unit: 'MINUTES')
-                    }
-                    steps {
-                        withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
-                            sh 'mvn --activate-profiles test test -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.test.skip=false'
-                        }
-                    }
-                }
-                stage('Failsafe (Integration Tests)') {
-                    options {
-                        timeout(time: 30, unit: 'MINUTES')
-                    }
-                    steps {
-                        withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
-                            sh 'mvn --activate-profiles test verify -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.test.skip=false -Dmaven.javadoc.skip=true'
-                        }
+            options {
+                timeout(time: 30, unit: 'MINUTES')
+            }
+            steps {
+                withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
+                    withSonarQubeEnv('Sonar') {
+                        sh 'mvn --activate-profiles test test verify org.jacoco:jacoco-maven-plugin:prepare-agent org.jacoco:jacoco-maven-plugin:report sonar:sonar -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.test.skip=false -Dmaven.test.failure.ignore=false -Dmaven.javadoc.skip=true -Dsonar.branch.name="${BRANCH_NAME}"'
                     }
                 }
             }
@@ -80,6 +68,13 @@ pipeline {
             steps {
                 withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
                     sh 'mvn --activate-profiles qa verify -Dpmd.analysisCache=true'
+                }
+            }
+        }
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
