@@ -1626,17 +1626,14 @@ public class PdfCanvas implements Serializable {
         Color newColor = createColor(colorSpace, colorValue, pattern);
         if (oldColor.equals(newColor))
             return this;
-        else if (oldColor.getColorSpace().equals(colorSpace)) {
-            oldColor.setColorValue(colorValue);
-            if (oldColor instanceof PatternColor) {
-                ((PatternColor) oldColor).setPattern(pattern);
-            }
-            setColorValueOnly = true;
-        } else {
+        else {
             if (fill) {
                 currentGs.setFillColor(newColor);
             } else {
                 currentGs.setStrokeColor(newColor);
+            }
+            if (oldColor.getColorSpace().getPdfObject().equals(colorSpace.getPdfObject())) {
+                setColorValueOnly = true;
             }
         }
         if (colorSpace instanceof PdfDeviceCs.Gray)
