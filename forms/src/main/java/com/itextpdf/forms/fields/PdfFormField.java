@@ -2866,7 +2866,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         canvas.
                 beginVariableText().
                 saveState().
-                newPath();
+                endPath();
 
         TextAlignment textAlignment = convertJustificationToTextAlignment();
         float x = 0;
@@ -2950,7 +2950,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 saveState().
                 rectangle(3, 3, width - widthBorder, height - heightBorder).
                 clip().
-                newPath();
+                endPath();
 
         Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(3, 0, Math.max(0, width - widthBorder), Math.max(0, height - heightBorder)));
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);

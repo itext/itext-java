@@ -445,9 +445,9 @@ public class PdfCanvas implements Serializable {
     /**
      * Sets font and size (PDF Tf operator).
      *
-     * @param font  The font
-     * @param size  The font size.
-     * @return      The edited canvas.
+     * @param font The font
+     * @param size The font size.
+     * @return The edited canvas.
      */
     public PdfCanvas setFontAndSize(PdfFont font, float size) {
         currentGs.setFontSize(size);
@@ -482,7 +482,7 @@ public class PdfCanvas implements Serializable {
      * <br>
      * The leading parameter is measured in text space units. It specifies the vertical distance
      * between the baselines of adjacent lines of text.
-     *<br>
+     * <br>
      *
      * @param leading the new leading.
      * @return current canvas.
@@ -668,11 +668,13 @@ public class PdfCanvas implements Serializable {
                 .writeBytes(Tm);
         return this;
     }
+
     /**
      * Replaces the text matrix. Contrast with {@link PdfCanvas#concatMatrix}
+     *
      * @param transform new textmatrix as transformation
      * @return current canvas
-     * */
+     */
     public PdfCanvas setTextMatrix(AffineTransform transform) {
         float[] matrix = new float[6];
         transform.getMatrix(matrix);
@@ -1266,11 +1268,22 @@ public class PdfCanvas implements Serializable {
     }
 
     /**
+     * @deprecated in favour of endPath(), which does exactly the same thing but is better named
+     * @return current canvas.
+     * Ends the path without filling or stroking it.
+     */
+    @Deprecated
+    public PdfCanvas newPath() {
+        contentStream.getOutputStream().writeBytes(n);
+        return this;
+    }
+
+    /**
      * Ends the path without filling or stroking it.
      *
      * @return current canvas.
      */
-    public PdfCanvas newPath() {
+    public PdfCanvas endPath() {
         contentStream.getOutputStream().writeBytes(n);
         return this;
     }
@@ -1801,7 +1814,7 @@ public class PdfCanvas implements Serializable {
      * is built in.
      *
      * @param layer The layer to begin
-     * @return      The edited canvas.
+     * @return The edited canvas.
      */
     public PdfCanvas beginLayer(IPdfOCG layer) {
         if (layer instanceof PdfLayer && ((PdfLayer) layer).getTitle() != null)
@@ -2023,7 +2036,7 @@ public class PdfCanvas implements Serializable {
      * or {@link PdfCanvas#addXObject(PdfXObject, float, float, float, float, float, float)}.
      *
      * @param xObject the XObject to add
-     * @param rect rectangle containing x and y coordinates and scaling information
+     * @param rect    rectangle containing x and y coordinates and scaling information
      * @return current canvas.
      */
     public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) {
@@ -2254,7 +2267,7 @@ public class PdfCanvas implements Serializable {
         }
         if (document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0) {
             os.write(PdfName.Length).writeSpace();
-            os.write(new PdfNumber(imageBytes.length)).writeNewLine();;
+            os.write(new PdfNumber(imageBytes.length)).writeNewLine();
         }
         os.writeBytes(ID);
         os.writeBytes(imageBytes).writeNewLine().writeBytes(EI).writeNewLine();
@@ -2388,7 +2401,7 @@ public class PdfCanvas implements Serializable {
      * Adds {@code PdfImageXObject} to specified rectangle on canvas and scale it using the rectangle's width and height.
      *
      * @param image PdfImageXObject to add
-     * @param rect rectangle containing x and y coordinates and scaling information
+     * @param rect  rectangle containing x and y coordinates and scaling information
      * @return current canvas
      */
     private PdfCanvas addImage(PdfImageXObject image, Rectangle rect) {

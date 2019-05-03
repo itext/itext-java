@@ -535,7 +535,7 @@ public abstract class AbstractRenderer implements IRenderer {
                         logger.warn(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
                     } else {
                         applyBorderBox(backgroundArea, true);
-                        drawContext.getCanvas().saveState().rectangle(backgroundArea).clip().newPath();
+                        drawContext.getCanvas().saveState().rectangle(backgroundArea).clip().endPath();
                         float initialX = backgroundImage.isRepeatX() ? imageRectangle.getX() - imageRectangle.getWidth() : imageRectangle.getX();
                         float initialY = backgroundImage.isRepeatY() ? imageRectangle.getTop() : imageRectangle.getY();
                         imageRectangle.setY(initialY);
@@ -649,7 +649,7 @@ public abstract class AbstractRenderer implements IRenderer {
                     .lineTo(right, top)
                     .lineTo(right, bottom)
                     .lineTo(left, bottom);
-            canvas.clip().newPath();
+            canvas.clip().endPath();
         }
         // right top corner
         if (0 != horizontalRadii[1] || 0 != verticalRadii[1]) {
@@ -660,7 +660,7 @@ public abstract class AbstractRenderer implements IRenderer {
                     .lineTo(right, bottom)
                     .lineTo(left, bottom)
                     .lineTo(left, top);
-            canvas.clip().newPath();
+            canvas.clip().endPath();
         }
         // right bottom corner
         if (0 != horizontalRadii[2] || 0 != verticalRadii[2]) {
@@ -671,7 +671,7 @@ public abstract class AbstractRenderer implements IRenderer {
                     .lineTo(left, bottom)
                     .lineTo(left, top)
                     .lineTo(right, top);
-            canvas.clip().newPath();
+            canvas.clip().endPath();
         }
         // left bottom corner
         if (0 != horizontalRadii[3] || 0 != verticalRadii[3]) {
@@ -682,7 +682,7 @@ public abstract class AbstractRenderer implements IRenderer {
                     .lineTo(left, top)
                     .lineTo(right, top)
                     .lineTo(right, bottom);
-            canvas.clip().newPath();
+            canvas.clip().endPath();
         }
     }
 
@@ -719,7 +719,7 @@ public abstract class AbstractRenderer implements IRenderer {
                     .lineTo(right + rightBorderWidth, top + topBorderWidth)
                     .lineTo(left - leftBorderWidth, top + topBorderWidth)
                     .lineTo(left - leftBorderWidth, y1);
-            canvas.clip().newPath();
+            canvas.clip().endPath();
         }
         // right top corner
         if (0 != horizontalRadii[1] || 0 != verticalRadii[1]) {
@@ -739,7 +739,7 @@ public abstract class AbstractRenderer implements IRenderer {
                     .lineTo(right + rightBorderWidth, bottom - bottomBorderWidth)
                     .lineTo(right + rightBorderWidth, top + topBorderWidth)
                     .lineTo(x2, top + topBorderWidth);
-            canvas.clip().newPath();
+            canvas.clip().endPath();
         }
         // right bottom corner
         if (0 != horizontalRadii[2] || 0 != verticalRadii[2]) {
@@ -759,7 +759,7 @@ public abstract class AbstractRenderer implements IRenderer {
                     .lineTo(left - leftBorderWidth, bottom - bottomBorderWidth)
                     .lineTo(right + rightBorderWidth, bottom - bottomBorderWidth)
                     .lineTo(right + rightBorderWidth, y3);
-            canvas.clip().newPath();
+            canvas.clip().endPath();
         }
         // left bottom corner
         if (0 != horizontalRadii[3] || 0 != verticalRadii[3]) {
@@ -779,7 +779,7 @@ public abstract class AbstractRenderer implements IRenderer {
                     .lineTo(left - leftBorderWidth, top + topBorderWidth)
                     .lineTo(left - leftBorderWidth, bottom - bottomBorderWidth)
                     .lineTo(x4, bottom - bottomBorderWidth);
-            canvas.clip().newPath();
+            canvas.clip().endPath();
         }
     }
 

@@ -48,6 +48,7 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Point;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.property.TransparentColor;
 import org.slf4j.Logger;
@@ -62,6 +63,11 @@ public abstract class Border {
      * The null Border, i.e. the presence of such border is equivalent to the absence of the border
      */
     public static final Border NO_BORDER = null;
+
+    /**
+     * Value used by discontinuous borders during the drawing process
+     */
+    private static final float CURV = 0.447f;
     /**
      * The solid border.
      *
@@ -426,7 +432,6 @@ public abstract class Border {
         NONE, TOP, RIGHT, BOTTOM, LEFT
     }
 
-
     protected Point getIntersectionPoint(Point lineBeg, Point lineEnd, Point clipLineBeg, Point clipLineEnd) {
         double A1 = lineBeg.getY() - lineEnd.getY(), A2 = clipLineBeg.getY() - clipLineEnd.getY();
         double B1 = lineEnd.getX() - lineBeg.getX(), B2 = clipLineEnd.getX() - clipLineBeg.getX();
@@ -436,5 +441,250 @@ public abstract class Border {
         double M = B1 * A2 - B2 * A1;
 
         return new Point((B2 * C1 - B1 * C2) / M, (C2 * A1 - C1 * A2) / M);
+    }
+
+    /**
+     * Adjusts the size of the gap between dots
+     *
+     * @param distance   the {@link Border border} length
+     * @param initialGap the initial size of the gap
+     * @return the adjusted size of the gap
+     */
+    protected float getDotsGap(double distance, float initialGap) {
+        double gapsNum = Math.ceil(distance / initialGap);
+        if (gapsNum == 0) {
+            return initialGap;
+        }
+        return (float) (distance / gapsNum);
+    }
+
+    /**
+     * Perform drawing operations to draw discontinuous borders. Used by {@link DashedBorder}, {@link DottedBorder} and {@link RoundDotsBorder}.
+     *
+     * @param canvas            canvas to draw on
+     * @param defaultSide       the {@link Border.Side}, that we will fallback to, if it cannot be determined by border coordinates
+     * @param borderWidthBefore defines width of the border that is before the current one
+     * @param borderWidthAfter  defines width of the border that is after the current one
+     */
+    /**
+     * Perform drawing operations to draw discontinuous borders. Used by {@link DashedBorder}, {@link DottedBorder} and {@link RoundDotsBorder}.
+     *
+     * @param canvas            canvas to draw on
+     * @param boundingRectangle rectangle representing the bounding box of the drawing operations
+     * @param horizontalRadii   the horizontal radius of the border's two corners
+     * @param verticalRadii     the vertical radius of the border's two corners
+     * @param defaultSide       the {@link Border.Side}, that we will fallback to, if it cannot be determined by border coordinates
+     * @param borderWidthBefore defines width of the border that is before the current one
+     * @param borderWidthAfter  defines width of the border that is after the current one
+     */
+    protected void drawDiscontinuousBorders(PdfCanvas canvas, Rectangle boundingRectangle, float[] horizontalRadii, float[] verticalRadii, Side defaultSide, float borderWidthBefore, float borderWidthAfter) {
+        float x1 = boundingRectangle.getX();
+        float y1 = boundingRectangle.getY();
+        float x2 = boundingRectangle.getRight();
+        float y2 = boundingRectangle.getTop();
+
+        float horizontalRadius1 = horizontalRadii[0];
+        float horizontalRadius2 = horizontalRadii[1];
+
+        float verticalRadius1 = verticalRadii[0];
+        float verticalRadius2 = verticalRadii[1];
+
+        // Points (x0, y0) and (x3, y3) are used to produce Bezier curve
+        float x0 = boundingRectangle.getX();
+        float y0 = boundingRectangle.getY();
+        float x3 = boundingRectangle.getRight();
+        float y3 = boundingRectangle.getTop();
+
+        float innerRadiusBefore;
+        float innerRadiusFirst;
+        float innerRadiusSecond;
+        float innerRadiusAfter;
+
+        float widthHalf = width / 2;
+
+        Point clipPoint1;
+        Point clipPoint2;
+        Point clipPoint;
+        Border.Side borderSide = getBorderSide(x1, y1, x2, y2, defaultSide);
+        switch (borderSide) {
+            case TOP:
+
+                innerRadiusBefore = Math.max(0, horizontalRadius1 - borderWidthBefore);
+                innerRadiusFirst = Math.max(0, verticalRadius1 - width);
+                innerRadiusSecond = Math.max(0, verticalRadius2 - width);
+                innerRadiusAfter = Math.max(0, horizontalRadius2 - borderWidthAfter);
+
+
+                x0 -= borderWidthBefore / 2;
+                y0 -= innerRadiusFirst;
+
+                x3 += borderWidthAfter / 2;
+                y3 -= innerRadiusSecond;
+
+                clipPoint1 = getIntersectionPoint(new Point(x1 - borderWidthBefore, y1 + width), new Point(x1, y1), new Point(x0, y0), new Point(x0 + 10, y0));
+                clipPoint2 = getIntersectionPoint(new Point(x2 + borderWidthAfter, y2 + width), new Point(x2, y2), new Point(x3, y3), new Point(x3 - 10, y3));
+                if (clipPoint1.x > clipPoint2.x) {
+                    clipPoint = getIntersectionPoint(new Point(x1 - borderWidthBefore, y1 + width), clipPoint1, clipPoint2, new Point(x2 + borderWidthAfter, y2 + width));
+                    canvas.moveTo(x1 - borderWidthBefore, y1 + width).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 + borderWidthAfter, y2 + width).lineTo(x1 - borderWidthBefore, y1 + width);
+                } else {
+                    canvas.moveTo(x1 - borderWidthBefore, y1 + width).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 + borderWidthAfter, y2 + width).lineTo(x1 - borderWidthBefore, y1 + width);
+                }
+                canvas.clip().endPath();
+
+                x1 += innerRadiusBefore;
+                y1 += widthHalf;
+
+                x2 -= innerRadiusAfter;
+                y2 += widthHalf;
+
+                canvas
+                        .moveTo(x0, y0).curveTo(x0, y0 + innerRadiusFirst * CURV, x1 - innerRadiusBefore * CURV, y1, x1, y1)
+                        .lineTo(x2, y2)
+                        .curveTo(x2 + innerRadiusAfter * CURV, y2, x3, y3 + innerRadiusSecond * CURV, x3, y3);
+                break;
+            case RIGHT:
+                innerRadiusBefore = Math.max(0, verticalRadius1 - borderWidthBefore);
+                innerRadiusFirst = Math.max(0, horizontalRadius1 - width);
+                innerRadiusSecond = Math.max(0, horizontalRadius2 - width);
+                innerRadiusAfter = Math.max(0, verticalRadius2 - borderWidthAfter);
+
+                x0 -= innerRadiusFirst;
+                y0 += borderWidthBefore / 2;
+
+                x3 -= innerRadiusSecond;
+                y3 -= borderWidthAfter / 2;
+
+                clipPoint1 = getIntersectionPoint(new Point(x1 + width, y1 + borderWidthBefore), new Point(x1, y1), new Point(x0, y0), new Point(x0, y0 - 10));
+                clipPoint2 = getIntersectionPoint(new Point(x2 + width, y2 - borderWidthAfter), new Point(x2, y2), new Point(x3, y3), new Point(x3, y3 - 10));
+                if (clipPoint1.y < clipPoint2.y) {
+                    clipPoint = getIntersectionPoint(new Point(x1 + width, y1 + borderWidthBefore), clipPoint1, clipPoint2, new Point(x2 + width, y2 - borderWidthAfter));
+                    canvas.moveTo(x1 + width, y1 + borderWidthBefore).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 + width, y2 - borderWidthAfter).lineTo(x1 + width, y1 + borderWidthBefore).clip().endPath();
+                } else {
+                    canvas.moveTo(x1 + width, y1 + borderWidthBefore).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 + width, y2 - borderWidthAfter).lineTo(x1 + width, y1 + borderWidthBefore).clip().endPath();
+                }
+                canvas.clip().endPath();
+
+                x1 += widthHalf;
+                y1 -= innerRadiusBefore;
+
+                x2 += widthHalf;
+                y2 += innerRadiusAfter;
+
+                canvas
+                        .moveTo(x0, y0).curveTo(x0 + innerRadiusFirst * CURV, y0, x1, y1 + innerRadiusBefore * CURV, x1, y1)
+                        .lineTo(x2, y2)
+                        .curveTo(x2, y2 - innerRadiusAfter * CURV, x3 + innerRadiusSecond * CURV, y3, x3, y3);
+
+                break;
+            case BOTTOM:
+                innerRadiusBefore = Math.max(0, horizontalRadius1 - borderWidthBefore);
+                innerRadiusFirst = Math.max(0, verticalRadius1 - width);
+                innerRadiusSecond = Math.max(0, verticalRadius2 - width);
+                innerRadiusAfter = Math.max(0, horizontalRadius2 - borderWidthAfter);
+
+                x0 += borderWidthBefore / 2;
+                y0 += innerRadiusFirst;
+
+                x3 -= borderWidthAfter / 2;
+                y3 += innerRadiusSecond;
+
+                clipPoint1 = getIntersectionPoint(new Point(x1 + borderWidthBefore, y1 - width), new Point(x1, y1), new Point(x0, y0), new Point(x0 - 10, y0));
+                clipPoint2 = getIntersectionPoint(new Point(x2 - borderWidthAfter, y2 - width), new Point(x2, y2), new Point(x3, y3), new Point(x3 + 10, y3));
+                if (clipPoint1.x < clipPoint2.x) {
+                    clipPoint = getIntersectionPoint(new Point(x1 + borderWidthBefore, y1 - width), clipPoint1, clipPoint2, new Point(x2 - borderWidthAfter, y2 - width));
+                    canvas.moveTo(x1 + borderWidthBefore, y1 - width).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 - borderWidthAfter, y2 - width).lineTo(x1 + borderWidthBefore, y1 - width);
+                } else {
+                    canvas.moveTo(x1 + borderWidthBefore, y1 - width).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 - borderWidthAfter, y2 - width).lineTo(x1 + borderWidthBefore, y1 - width);
+                }
+                canvas.clip().endPath();
+
+                x1 -= innerRadiusBefore;
+                y1 -= widthHalf;
+
+                x2 += innerRadiusAfter;
+                y2 -= widthHalf;
+
+                canvas
+                        .moveTo(x0, y0).curveTo(x0, y0 - innerRadiusFirst * CURV, x1 + innerRadiusBefore * CURV, y1, x1, y1)
+                        .lineTo(x2, y2)
+                        .curveTo(x2 - innerRadiusAfter * CURV, y2, x3, y3 - innerRadiusSecond * CURV, x3, y3);
+
+                break;
+            case LEFT:
+                innerRadiusBefore = Math.max(0, verticalRadius1 - borderWidthBefore);
+                innerRadiusFirst = Math.max(0, horizontalRadius1 - width);
+                innerRadiusSecond = Math.max(0, horizontalRadius2 - width);
+                innerRadiusAfter = Math.max(0, verticalRadius2 - borderWidthAfter);
+
+                x0 += innerRadiusFirst;
+                y0 -= borderWidthBefore / 2;
+
+                x3 += innerRadiusSecond;
+                y3 += borderWidthAfter / 2;
+
+                clipPoint1 = getIntersectionPoint(new Point(x1 - width, y1 - borderWidthBefore), new Point(x1, y1), new Point(x0, y0), new Point(x0, y0 + 10));
+                clipPoint2 = getIntersectionPoint(new Point(x2 - width, y2 + borderWidthAfter), new Point(x2, y2), new Point(x3, y3), new Point(x3, y3 + 10));
+                if (clipPoint1.y > clipPoint2.y) {
+                    clipPoint = getIntersectionPoint(new Point(x1 - width, y1 - borderWidthBefore), clipPoint1, clipPoint2, new Point(x2 - width, y2 + borderWidthAfter));
+                    canvas.moveTo(x1 - width, y1 - borderWidthBefore).lineTo(clipPoint.x, clipPoint.y).lineTo(x2 - width, y2 + borderWidthAfter).lineTo(x1 - width, y1 - borderWidthBefore);
+                } else {
+                    canvas.moveTo(x1 - width, y1 - borderWidthBefore).lineTo(clipPoint1.x, clipPoint1.y).lineTo(clipPoint2.x, clipPoint2.y).lineTo(x2 - width, y2 + borderWidthAfter).lineTo(x1 - width, y1 - borderWidthBefore);
+                }
+                canvas.clip().endPath();
+
+                x1 -= widthHalf;
+                y1 += innerRadiusBefore;
+
+                x2 -= widthHalf;
+                y2 -= innerRadiusAfter;
+
+                canvas
+                        .moveTo(x0, y0).curveTo(x0 - innerRadiusFirst * CURV, y0, x1, y1 - innerRadiusBefore * CURV, x1, y1)
+                        .lineTo(x2, y2)
+                        .curveTo(x2, y2 + innerRadiusAfter * CURV, x3 - innerRadiusSecond * CURV, y3, x3, y3);
+                break;
+            default:
+                break;
+        }
+        canvas
+                .stroke()
+                .restoreState();
+    }
+
+    /**
+     * Calculate adjusted starting points for non-continuous borders, given two opposing points (A and B) that define the bounding rectangle
+     *
+     * @param x1          x-ordinate of point A
+     * @param y1          y-ordinate of point A
+     * @param x2          x-ordinate of point B
+     * @param y2          y-ordinate of point B
+     * @param defaultSide default side of the border used to determine the side given by points A and B
+     * @return float[] containing the adjusted starting points in the form {x1,y1,x2,y2}
+     */
+    protected float[] getStartingPointsForBorderSide(float x1, float y1, float x2, float y2, Side defaultSide) {
+        float widthHalf = width / 2;
+
+        Border.Side borderSide = getBorderSide(x1, y1, x2, y2, defaultSide);
+        switch (borderSide) {
+            case TOP:
+                y1 += widthHalf;
+                y2 += widthHalf;
+                break;
+            case RIGHT:
+                x1 += widthHalf;
+                x2 += widthHalf;
+                break;
+            case BOTTOM:
+                y1 -= widthHalf;
+                y2 -= widthHalf;
+                break;
+            case LEFT:
+                x1 -= widthHalf;
+                x2 -= widthHalf;
+                break;
+            default:
+                break;
+        }
+        return new float[]{x1, y1, x2, y2};
     }
 }
