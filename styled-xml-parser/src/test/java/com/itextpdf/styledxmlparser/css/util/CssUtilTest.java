@@ -62,6 +62,8 @@ import static org.junit.Assert.assertNull;
 @Category(UnitTest.class)
 public class CssUtilTest extends ExtendedITextTest {
 
+    public static float EPS = 0.0001f;
+
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
 
@@ -197,5 +199,26 @@ public class CssUtilTest extends ExtendedITextTest {
         assertNull(CssUtils.parseUnicodeRange("UU+7-10")); // wrong syntax
         assertNull(CssUtils.parseUnicodeRange("U+7?-9?")); // wrong syntax
         assertNull(CssUtils.parseUnicodeRange("U+7-")); // wrong syntax
+    }
+
+    @Test
+    public void parseAbsoluteFontSizeTest() {
+        assertEquals(75, CssUtils.parseAbsoluteFontSize("100", CommonCssConstants.PX), EPS);
+        assertEquals(75, CssUtils.parseAbsoluteFontSize("100px"), EPS);
+        assertEquals(12, CssUtils.parseAbsoluteFontSize(CommonCssConstants.MEDIUM), EPS);
+        assertEquals(0, CssUtils.parseAbsoluteFontSize("", ""), EPS);
+    }
+
+    @Test
+    public void parseRelativeFontSizeTest() {
+        assertEquals(120, CssUtils.parseRelativeFontSize("10em", 12), EPS);
+        assertEquals(12.5f, CssUtils.parseRelativeFontSize(CommonCssConstants.SMALLER, 15), EPS);
+    }
+
+
+    @Test
+    public void parseAbsoluteLengthTest() {
+        assertEquals(75, CssUtils.parseAbsoluteLength("100", CommonCssConstants.PX), EPS);
+        assertEquals(75, CssUtils.parseAbsoluteLength("100px"), EPS);
     }
 }

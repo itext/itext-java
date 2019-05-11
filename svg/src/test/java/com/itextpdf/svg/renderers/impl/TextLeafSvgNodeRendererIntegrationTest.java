@@ -82,13 +82,12 @@ public class TextLeafSvgNodeRendererIntegrationTest {
 
     @Test
     public void getContentLengthNaNTest() throws Exception {
-        junitExpectedException.expect(StyledXMLParserException.class);
         TextLeafSvgNodeRenderer toTest = new TextLeafSvgNodeRenderer();
         toTest.setAttribute(SvgConstants.Attributes.TEXT_CONTENT, "Hello");
         toTest.setAttribute(SvgConstants.Attributes.FONT_SIZE, "spice");
         PdfFont font = PdfFontFactory.createFont();
         float actual = toTest.getTextContentLength(12, font);
-        float expected = 27.336f;
+        float expected = 0.0f;
         Assert.assertEquals(expected, actual, 1e-6f);
     }
 

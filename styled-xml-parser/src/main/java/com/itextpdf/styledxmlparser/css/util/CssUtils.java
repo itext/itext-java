@@ -267,6 +267,59 @@ public class CssUtils {
     }
 
     /**
+     * Parses the absolute font size.
+     * <p>
+     * A numeric value (without px, pt, etc in the given length string) is considered to be in the default metric that
+     * was given.
+     *
+     * @param fontSizeValue the font size value as a {@link String}
+     * @param defaultMetric the string containing the metric if it is possible that the length string does not contain
+     *                      one. If null the length is considered to be in px as is default in HTML/CSS.
+     * @return the font size value as a {@code float}
+     */
+    public static float parseAbsoluteFontSize(String fontSizeValue, String defaultMetric) {
+        if (null != fontSizeValue && CommonCssConstants.FONT_ABSOLUTE_SIZE_KEYWORDS_VALUES.containsKey(fontSizeValue)) {
+            fontSizeValue = CommonCssConstants.FONT_ABSOLUTE_SIZE_KEYWORDS_VALUES.get(fontSizeValue);
+        }
+        try {
+            /* Styled XML Parser will throw an exception when it can't parse the given value
+               but in html2pdf, we want to fall back to the default value of 0
+             */
+            return CssUtils.parseAbsoluteLength(fontSizeValue, defaultMetric);
+        } catch (StyledXMLParserException sxpe) {
+            return 0f;
+        }
+    }
+
+    /**
+     * Parses the absolute font size.
+     * <p>
+     * A numeric value (without px, pt, etc in the given length string) is considered to be in the px.
+     *
+     * @param fontSizeValue the font size value as a {@link String}
+     * @return the font size value as a {@code float}
+     */
+    public static float parseAbsoluteFontSize(String fontSizeValue) {
+        return parseAbsoluteFontSize(fontSizeValue, CommonCssConstants.PX);
+    }
+
+    /**
+     * Parses the relative font size.
+     *
+     * @param relativeFontSizeValue the relative font size value as a {@link String}
+     * @param baseValue             the base value
+     * @return the relative font size value as a {@code float}
+     */
+    public static float parseRelativeFontSize(final String relativeFontSizeValue, final float baseValue) {
+        if (CommonCssConstants.SMALLER.equals(relativeFontSizeValue)) {
+            return (float) (baseValue / 1.2);
+        } else if (CommonCssConstants.LARGER.equals(relativeFontSizeValue)) {
+            return (float) (baseValue * 1.2);
+        }
+        return CssUtils.parseRelativeValue(relativeFontSizeValue, baseValue);
+    }
+
+    /**
      * Parses the border radius of specific corner.
      *
      * @param specificBorderRadius string that defines the border radius of specific corner.
@@ -475,7 +528,6 @@ public class CssUtils {
     public static boolean compareFloats(float f1, float f2) {
         return (Math.abs(f1 - f2) < EPSILON);
     }
-
 
     /**
      * Parses the RGBA color.

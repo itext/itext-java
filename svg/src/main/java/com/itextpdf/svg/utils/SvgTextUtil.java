@@ -183,28 +183,20 @@ public final class SvgTextUtil {
      */
     public static float resolveFontSize(ISvgTextNodeRenderer renderer, float parentFontSize) {
         //Use own font-size declaration if it is present, parent's otherwise
-        float fontSize = SvgTextUtil.extractFontSize(renderer);
+        float fontSize = Float.NaN;
+        String elementFontSize = renderer.getAttribute(SvgConstants.Attributes.FONT_SIZE);
+        if (null != elementFontSize && !elementFontSize.isEmpty()) {
+            if (CssUtils.isRelativeValue(elementFontSize) || CommonCssConstants.LARGER.equals(elementFontSize) || CommonCssConstants.SMALLER.equals(elementFontSize)) {
+                // TODO DEVSIX-2866 Support rem value for svgs
+                fontSize = CssUtils.parseRelativeFontSize(elementFontSize, parentFontSize);
+            } else {
+                // TODO DEVSIX-2882 Switch to PX
+                fontSize = CssUtils.parseAbsoluteFontSize(elementFontSize, CommonCssConstants.PT);
+            }
+        }
         if ((Float.isNaN(fontSize)) || fontSize < 0f) {
             fontSize = parentFontSize;
         }
         return fontSize;
     }
-
-    /**
-     * Extract and parse the font-size declaration stored inside the attributes of the passed renderer
-     *
-     * @param renderer renderer to extract font-size declaration from
-     * @return a float containing the font-size interpreted as pt, or NaN if the font-size was not specified in the passed renderer
-     */
-    private static float extractFontSize(ISvgTextNodeRenderer renderer) {
-        float fontSize = Float.NaN;
-        if (renderer.getAttribute(SvgConstants.Attributes.FONT_SIZE) != null) {
-            String fontSizeRawValue = renderer.getAttribute(SvgConstants.Attributes.FONT_SIZE);
-            if (fontSizeRawValue != null && !fontSizeRawValue.isEmpty()) {
-                fontSize = CssUtils.parseAbsoluteLength(fontSizeRawValue, CommonCssConstants.PT);
-            }
-        }
-        return fontSize;
-    }
-
 }

@@ -53,6 +53,8 @@ import org.junit.experimental.categories.Category;
 @Category(UnitTest.class)
 public class SvgTextUtilTest {
 
+    public static float EPS = 0.0001f;
+
     //Trim leading tests
     @Test
     public void trimLeadingTest() {
@@ -289,5 +291,62 @@ public class SvgTextUtilTest {
         //Create expected
         String[] expected = new String[]{"text", "tspan text", " after text"};//No preceding whitespace on the second element
         Assert.assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    public void processFontSizeInEM() {
+        float expected = 120;
+
+        // Create a renderer
+        TextSvgBranchRenderer root = new TextSvgBranchRenderer();
+        root.setAttribute(SvgConstants.Attributes.FONT_SIZE, "12em");
+
+        //Run
+        float actual = SvgTextUtil.resolveFontSize(root, 10);
+
+        Assert.assertEquals(expected, actual, EPS);
+    }
+
+    @Test
+    public void processFontSizeInPX() {
+        float expected = 24;
+
+        // Create a renderer
+        TextSvgBranchRenderer root = new TextSvgBranchRenderer();
+        root.setAttribute(SvgConstants.Attributes.FONT_SIZE, "32px");
+
+        //Run
+        float actual = SvgTextUtil.resolveFontSize(root, 10);
+
+        Assert.assertEquals(expected, actual, EPS);
+    }
+
+    @Test
+    public void processFontSizeInPT() {
+        float expected = 24;
+
+        // Create a renderer
+        TextSvgBranchRenderer root = new TextSvgBranchRenderer();
+        root.setAttribute(SvgConstants.Attributes.FONT_SIZE, "24pt");
+
+        //Run
+        float actual = SvgTextUtil.resolveFontSize(root, 10);
+
+        Assert.assertEquals(expected, actual, EPS);
+    }
+
+    @Test
+    public void processKeywordedFontSize() {
+        float expected = 24;
+
+        // Create a renderer
+        TextSvgBranchRenderer root = new TextSvgBranchRenderer();
+        root.setAttribute(SvgConstants.Attributes.FONT_SIZE, "xx-large");
+
+        //Run
+        // Parent's font-size doesn't impact the result in this test
+        float actual = SvgTextUtil.resolveFontSize(root, 10);
+
+        Assert.assertEquals(expected, actual, EPS);
     }
 }
