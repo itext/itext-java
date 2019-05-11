@@ -1050,7 +1050,7 @@ public class BarcodeDataMatrix extends Barcode2D {
                     for (i = unlatch + 1; i < dataOffset; i++) {
                         if (data[i] == EXTENDED_ASCII)
                             i++;
-                        if (data[i] >= -127 && data[i] <= -27)
+                        if (data[i] >= (byte) 129 && data[i] <= (byte) 229)
                             amountOfEncodedWithASCII++;
                         amountOfEncodedWithASCII++;
                     }
