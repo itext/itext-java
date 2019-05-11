@@ -11,7 +11,7 @@
             <rect x="117.15" y="117.15" width="565.77" height="565.77" fill="red" stroke-width="2" stroke="black"/>
             <circle cx="400" cy="400" r="282.885" fill="blue"/>
         </g>
-        <text x="820" y="135" font-family="Verdana" font-size="20" color="black">
+        <text x="820" y="135"  font-size="20" color="black">
             Without a clipping path applied to the inner group
         </text>
     </g>
@@ -23,7 +23,7 @@
             <rect x="117.15" y="117.15" width="565.77" height="565.77" fill="red" stroke-width="2" stroke="black"/>
             <circle cx="400" cy="400" r="282.885" fill="blue"/>
         </g>
-        <text x="820" y="135" font-family="Verdana" font-size="20" color="black">
+        <text x="820" y="135"  font-size="20" color="black">
             With a clipping path applied to the inner group
         </text>
     </g>

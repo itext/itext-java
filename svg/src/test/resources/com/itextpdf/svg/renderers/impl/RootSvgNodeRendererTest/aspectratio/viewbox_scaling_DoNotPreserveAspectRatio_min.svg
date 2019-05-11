@@ -6,7 +6,7 @@
         <!-- A large, red triangle -->
         <path fill="red" d="M 750,100 L 250,900 L 1250,900 L 750,100"/>
         <!-- A text string that spans most of the viewport -->
-        <text x="100" y="600" font-size="200" font-family="Verdana">
+        <text x="100" y="600" font-size="200" >
             Stretch to fit
         </text>
     </svg>

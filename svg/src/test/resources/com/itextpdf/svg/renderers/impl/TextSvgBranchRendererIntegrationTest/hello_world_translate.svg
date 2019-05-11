@@ -8,7 +8,7 @@
     <line x1="0" y1="0" x2="70" y2="185" stroke="black"/>
     <circle cx="70" cy="185" r="5" fill="none" stroke="black"/>
 
-    <text x="20" y="135" font-family="Verdana" font-size="35" transform="translate(50,50)">
+    <text x="20" y="135"  font-size="35" transform="translate(50,50)">
         Hello world
     </text>
 </svg>
