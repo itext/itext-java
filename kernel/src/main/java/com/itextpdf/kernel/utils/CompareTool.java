@@ -75,6 +75,7 @@ import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.XMPUtils;
+import com.itextpdf.kernel.xmp.options.ParseOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -644,7 +645,7 @@ public class CompareTool {
             outDocument = new PdfDocument(new PdfReader(this.outPdf), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
             byte[] cmpBytes = cmpDocument.getXmpMetadata(), outBytes = outDocument.getXmpMetadata();
             if (ignoreDateAndProducerProperties) {
-                XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(cmpBytes);
+                XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(cmpBytes, new ParseOptions().setOmitNormalization(true));
 
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, PdfConst.CreateDate, true, true);
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, PdfConst.ModifyDate, true, true);
@@ -653,7 +654,7 @@ public class CompareTool {
 
                 cmpBytes = XMPMetaFactory.serializeToBuffer(xmpMeta, new SerializeOptions(SerializeOptions.SORT));
 
-                xmpMeta = XMPMetaFactory.parseFromBuffer(outBytes);
+                xmpMeta = XMPMetaFactory.parseFromBuffer(outBytes, new ParseOptions().setOmitNormalization(true));
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, PdfConst.CreateDate, true, true);
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, PdfConst.ModifyDate, true, true);
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, PdfConst.MetadataDate, true, true);
