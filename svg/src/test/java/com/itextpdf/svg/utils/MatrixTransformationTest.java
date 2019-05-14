@@ -61,7 +61,7 @@ public class MatrixTransformationTest {
 
     @Test
     public void normalMatrixTest() {
-        AffineTransform expected = new AffineTransform(7.5d, 15d, 22.5d, 30d, 37.5d, 45d);
+        AffineTransform expected = new AffineTransform(10d, 20d, 30d, 40d, 37.5d, 45d);
         AffineTransform actual = TransformUtils.parseTransform("matrix(10 20 30 40 50 60)");
 
         Assert.assertEquals(expected, actual);

@@ -88,8 +88,7 @@ public class TransformUtilsTest {
 
     @Test
     public void wrongTypeOfValuesTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "a"));
+        junitExpectedException.expect(NumberFormatException.class);
 
         TransformUtils.parseTransform("matrix(a b c d e f)");
     }
@@ -136,7 +135,7 @@ public class TransformUtilsTest {
 
     @Test
     public void commasWithWhitespaceTest() {
-        AffineTransform expected = new AffineTransform(7.5d,15d,22.5d,30d,37.5d, 45d);
+        AffineTransform expected = new AffineTransform(10d,20d,30d,40d,37.5d, 45d);
         AffineTransform actual = TransformUtils.parseTransform("matrix(10, 20, 30, 40, 50, 60)");
 
         Assert.assertEquals(expected, actual);
@@ -144,7 +143,7 @@ public class TransformUtilsTest {
 
     @Test
     public void commasTest() {
-        AffineTransform expected = new AffineTransform(7.5d,15d,22.5d,30d,37.5d, 45d);
+        AffineTransform expected = new AffineTransform(10d,20d,30d,40d,37.5d, 45d);
         AffineTransform actual = TransformUtils.parseTransform("matrix(10,20,30,40,50,60)");
 
         Assert.assertEquals(expected, actual);

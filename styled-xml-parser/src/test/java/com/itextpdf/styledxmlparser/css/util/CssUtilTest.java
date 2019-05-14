@@ -58,6 +58,7 @@ import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @Category(UnitTest.class)
 public class CssUtilTest extends ExtendedITextTest {
@@ -220,5 +221,15 @@ public class CssUtilTest extends ExtendedITextTest {
     public void parseAbsoluteLengthTest() {
         assertEquals(75, CssUtils.parseAbsoluteLength("100", CommonCssConstants.PX), EPS);
         assertEquals(75, CssUtils.parseAbsoluteLength("100px"), EPS);
+    }
+
+    @Test
+    public void parseInvalidFloat() {
+        String value = "invalidFloat";
+        try {
+            assertNull(CssUtils.parseFloat(value));
+        } catch (Exception e){
+            Assert.fail();
+        }
     }
 }
