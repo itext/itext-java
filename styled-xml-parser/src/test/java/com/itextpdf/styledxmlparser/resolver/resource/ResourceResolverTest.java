@@ -123,21 +123,6 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, count = 1))
-    public void retrieveBytesExceptionTest() throws IOException {
-        String fileName = "resourceResolverTest.png";
-        ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        RandomAccessFile ra = new RandomAccessFile(baseUri + fileName, "rw");
-        FileLock lock = ra.getChannel().lock();
-        try {
-            byte[] bytes = resourceResolver.retrieveBytesFromResource(fileName);
-            Assert.assertNull(bytes);
-        } finally {
-            lock.release();
-        }
-    }
-
-    @Test
     public void retrieveBytesTest() throws IOException {
         String fileName = "resourceResolverTest.png";
         byte[] expected = Files.readAllBytes(new File(baseUri + fileName).toPath());
