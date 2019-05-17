@@ -228,6 +228,54 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
                 "diff_"));
     }
 
+    @Test
+    public void signaturesOnRotatedPages() throws IOException, GeneralSecurityException, InterruptedException {
+        StringBuilder assertionResults = new StringBuilder();
+
+        for (int i = 1; i <= 4; i++) {
+            testSignatureOnRotatedPage(i, PdfSignatureAppearance.RenderingMode.GRAPHIC_AND_DESCRIPTION, assertionResults);
+            testSignatureOnRotatedPage(i, PdfSignatureAppearance.RenderingMode.GRAPHIC, assertionResults);
+            testSignatureOnRotatedPage(i, PdfSignatureAppearance.RenderingMode.NAME_AND_DESCRIPTION, assertionResults);
+            testSignatureOnRotatedPage(i, PdfSignatureAppearance.RenderingMode.DESCRIPTION, assertionResults);
+        }
+
+        Assert.assertEquals("", assertionResults.toString());
+    }
+
+    private void testSignatureOnRotatedPage(int pageNum, PdfSignatureAppearance.RenderingMode renderingMode, StringBuilder assertionResults) throws IOException, GeneralSecurityException, InterruptedException {
+        String fileName = "signaturesOnRotatedPages" + pageNum + "_mode_" + renderingMode.name() + ".pdf";
+        String src = sourceFolder + "documentWithRotatedPages.pdf";
+        String dest = destinationFolder + fileName;
+
+        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties().useAppendMode());
+
+        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
+
+        appearance
+                .setLayer2Text("Digitally signed by Test User. All rights reserved. Take care!")
+                .setPageRect(new Rectangle(100, 100, 100, 50))
+                .setRenderingMode(renderingMode)
+                .setSignatureGraphic(ImageDataFactory.create(sourceFolder + "itext.png"))
+                .setPageNumber(pageNum);
+
+        signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
+
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        // Make sure iText can open the document
+        new PdfDocument(new PdfReader(dest)).close();
+
+        try {
+            String testResult = new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_");
+            if (null != testResult) {
+                assertionResults.append(testResult);
+            }
+        } catch (CompareTool.CompareToolExecutionException e) {
+            assertionResults.append(e.getMessage());
+        }
+    }
+
     private void testSignatureAppearanceAutoscale(String dest, Rectangle rect, PdfSignatureAppearance.RenderingMode renderingMode) throws IOException, GeneralSecurityException {
         String src = sourceFolder + "simpleDocument.pdf";
 
