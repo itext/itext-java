@@ -125,7 +125,7 @@ public class LtvWithTwoSignatures extends ExtendedITextTest {
 
         PdfArray crls = dssDictionary.getAsArray(PdfName.CRLs);
         Assert.assertNotNull(crls);
-        Assert.assertEquals(1, crls.size());
+        Assert.assertEquals(2, crls.size());
     }
 
     private void addLtvInfo(String src, String dest, String sigName, TestOcspClient testOcspClient, TestCrlClient testCrlClient ) throws java.io.IOException, GeneralSecurityException {
