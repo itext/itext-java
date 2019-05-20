@@ -227,7 +227,7 @@ public class SvgStyleResolver implements ICssResolver {
             INode currentNode = q.pop();
             if (currentNode instanceof IElementNode) {
                 IElementNode headChildElement = (IElementNode) currentNode;
-                if (SvgConstants.Attributes.STYLE.equals(headChildElement.name())) {//XML parser will parse style tag contents as text nodes
+                if (SvgConstants.Tags.STYLE.equals(headChildElement.name())) {//XML parser will parse style tag contents as text nodes
                     if (!currentNode.childNodes().isEmpty() && (currentNode.childNodes().get(0) instanceof IDataNode ||
                             currentNode.childNodes().get(0) instanceof ITextNode)) {
                         String styleData;
