@@ -44,7 +44,7 @@ package com.itextpdf.signatures.verify;
 
 import com.itextpdf.signatures.CertificateVerification;
 import com.itextpdf.signatures.VerificationException;
-import com.itextpdf.signatures.testutils.Pkcs12FileHelper;
+import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;

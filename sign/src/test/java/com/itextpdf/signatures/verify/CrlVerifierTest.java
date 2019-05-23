@@ -45,7 +45,7 @@ package com.itextpdf.signatures.verify;
 import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.signatures.CRLVerifier;
 import com.itextpdf.signatures.VerificationException;
-import com.itextpdf.signatures.testutils.Pkcs12FileHelper;
+import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;

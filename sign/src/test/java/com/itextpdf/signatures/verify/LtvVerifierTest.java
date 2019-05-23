@@ -47,7 +47,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.LtvVerification;
 import com.itextpdf.signatures.LtvVerifier;
 import com.itextpdf.signatures.VerificationOK;
-import com.itextpdf.signatures.testutils.Pkcs12FileHelper;
+import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;

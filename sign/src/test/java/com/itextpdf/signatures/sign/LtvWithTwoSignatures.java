@@ -50,19 +50,16 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.LtvVerification;
-import com.itextpdf.signatures.testutils.Pkcs12FileHelper;
+import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
-import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
-import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;

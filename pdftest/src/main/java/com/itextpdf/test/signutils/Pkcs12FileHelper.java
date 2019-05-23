@@ -40,7 +40,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.signatures.testutils;
+package com.itextpdf.test.signutils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
