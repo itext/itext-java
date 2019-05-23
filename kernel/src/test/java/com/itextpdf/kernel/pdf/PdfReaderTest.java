@@ -45,6 +45,8 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -59,8 +61,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
+import java.io.File;
 import java.io.IOException;
-import com.itextpdf.io.util.MessageFormatUtil;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1636,6 +1639,24 @@ public class PdfReaderTest extends ExtendedITextTest {
         Assert.assertEquals(PdfNull.PDF_NULL, ((PdfDictionary)pdfObject).get(PdfName.Pg));
 
         pdfDoc.close();
+    }
+
+    @Test
+    @Ignore("DEVSIX-2133")
+    public void testFileIsNotLockedOnException() throws IOException {
+        File nonPdfFileName = new File(sourceFolder + "text_file.txt");
+        Assert.assertTrue(nonPdfFileName.exists());
+        boolean exceptionThrown = false;
+        try {
+            PdfReader reader = new PdfReader(nonPdfFileName);
+        } catch (com.itextpdf.io.IOException e) {
+            exceptionThrown = true;
+
+            // File should be available for writing
+            OutputStream stream = FileUtil.getFileOutputStream(nonPdfFileName);
+            stream.write(new byte[] {0});
+        }
+        Assert.assertTrue(exceptionThrown);
     }
 
     private boolean objectTypeEqualTo(PdfObject object, PdfName type) {
