@@ -1395,7 +1395,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     private static GlyphLine replaceSpecialWhitespaceGlyphs(GlyphLine line, PdfFont font) {
-        if (null != line) {
+        if (null != line && line.start <= 0) {
             Glyph space = font.getGlyph('\u0020');
             Glyph glyph;
             for (int i = 0; i < line.size(); i++) {
