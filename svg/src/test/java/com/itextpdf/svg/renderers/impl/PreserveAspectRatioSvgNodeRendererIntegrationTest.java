@@ -71,17 +71,19 @@ public class PreserveAspectRatioSvgNodeRendererIntegrationTest extends SvgIntegr
         ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Ignore("RND-876")
     @Test
     public void xMinYMinTest() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"xminymin");
     }
 
-
-    @Ignore("RND-876")
     @Test
     public void viewBoxScalingTestPreserveAspect_Default_All() throws IOException, InterruptedException {
         convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_PreserveAspectRatio_Default_all");
+    }
+
+    @Test
+    public void viewBoxWithoutSetPreserveAspectRatio() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewBox_without_set_preserve_aspect_ratio");
     }
 
     @Test
