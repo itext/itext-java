@@ -77,32 +77,32 @@ public class PreserveAspectRatioSvgNodeRendererIntegrationTest extends SvgIntegr
     }
 
     @Test
-    public void viewBoxScalingTestPreserveAspect_Default_All() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_PreserveAspectRatio_Default_all");
+    public void viewBoxScalingTestPreserveAspectDefaultAll() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewBoxScalingTestPreserveAspectDefaultAll");
     }
 
     @Test
     public void viewBoxWithoutSetPreserveAspectRatio() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewBox_without_set_preserve_aspect_ratio");
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewBoxWithoutSetPreserveAspectRatio");
     }
 
     @Test
-    public void viewBoxScalingTestDoNotPreserveAspect_Min() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_DoNotPreserveAspectRatio_min");
+    public void viewBoxScalingTestDoNotPreserveAspectMin() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewBoxScalingTestDoNotPreserveAspectMin");
     }
 
     @Test
-    public void viewBoxScalingTestDoNotPreserveAspect_All() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_DoNotPreserveAspectRatio_all");
+    public void viewBoxScalingTestDoNotPreserveAspectAll() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewBoxScalingTestDoNotPreserveAspectAll");
     }
 
     @Test
-    public void viewBoxScalingTestDoNotPreserveAspect_MetricDimensions_Min() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_DoNotPreserveAspectRatio_MetricDimensions_min");
+    public void viewBoxScalingTestDoNotPreserveAspectMetricDimensionsMin() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewBoxScalingTestDoNotPreserveAspectMetricDimensionsMin");
     }
 
     @Test
-    public void viewBoxScalingTestDoNotPreserveAspect_MetricDimensions_All() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_scaling_DoNotPreserveAspectRatio_MetricDimensions_all");
+    public void viewBoxScalingTestDoNotPreserveAspectMetricDimensionsAll() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewBoxScalingTestDoNotPreserveAspectMetricDimensionsAll");
     }
 }
