@@ -220,6 +220,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     Map<PdfIndirectReference, byte[]> serializedObjectsCache = new HashMap<>();
 
     /**
+     * Handler which will be used for decompression of pdf streams.
+     */
+    MemoryLimitsAwareHandler memoryLimitsAwareHandler = null;
+
+    /**
      * Open PDF document in reading mode.
      *
      * @param reader PDF reader.
@@ -1816,6 +1821,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     throw new PdfException(PdfException.PdfReaderHasBeenAlreadyUtilized);
                 }
                 reader.pdfDocument = this;
+                memoryLimitsAwareHandler = reader.properties.memoryLimitsAwareHandler;
+                if (null == memoryLimitsAwareHandler) {
+                    memoryLimitsAwareHandler = new MemoryLimitsAwareHandler(reader.tokens.getSafeFile().length());
+                }
                 reader.readPdf();
                 for (ICounter counter : getCounters()) {
                     counter.onDocumentRead(reader.getFileLength());

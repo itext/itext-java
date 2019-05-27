@@ -1,8 +1,7 @@
 /*
-
     This file is part of the iText (R) project.
     Copyright (c) 1998-2019 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -41,70 +40,39 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf.filters;
+package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.source.ByteBuffer;
-import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.MemoryLimitsAwareFilter;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
-
-import java.io.ByteArrayOutputStream;
 
 /**
- * Handles ASCIIHexDecode filter
+ * Exception class for exceptions occurred during decompressed pdf streams processing.
  */
-public class ASCIIHexDecodeFilter extends MemoryLimitsAwareFilter {
-
+public class MemoryLimitsAwareException extends PdfException {
     /**
-     * {@inheritDoc}
+     * Creates a new instance of MemoryLimitsAwareException.
+     *
+     * @param message the detail message.
      */
-    @Override
-    public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
-        ByteArrayOutputStream outputStream = enableMemoryLimitsAwareHandler(streamDictionary);
-        b = ASCIIHexDecode(b, outputStream);
-        return b;
+    public MemoryLimitsAwareException(String message) {
+        super(message);
     }
 
     /**
-     * Decodes a byte[] according to ASCII Hex encoding.
+     * Creates a new instance of MemoryLimitsAwareException.
      *
-     * @param in byte[] to be decoded
-     * @return decoded byte[]
+     * @param cause the cause (which is saved for later retrieval by {@link #getCause()} method).
      */
-    public static byte[] ASCIIHexDecode(byte[] in) {
-        return ASCIIHexDecode(in, new ByteArrayOutputStream());
+    public MemoryLimitsAwareException(Throwable cause) {
+        this(UnknownPdfException, cause);
     }
 
     /**
-     * Decodes a byte[] according to ASCII Hex encoding.
+     * Creates a new instance of MemoryLimitsAwareException.
      *
-     * @param in  byte[] to be decoded
-     * @param out the out stream which will be used to write the bytes.
-     * @return decoded byte[]
+     * @param message the detail message.
+     * @param cause   the cause (which is saved for later retrieval by {@link #getCause()} method).
      */
-    private static byte[] ASCIIHexDecode(byte[] in, ByteArrayOutputStream out) {
-        boolean first = true;
-        int n1 = 0;
-        for (int k = 0; k < in.length; ++k) {
-            int ch = in[k] & 0xff;
-            if (ch == '>')
-                break;
-            if (PdfTokenizer.isWhitespace(ch))
-                continue;
-            int n = ByteBuffer.getHex(ch);
-            if (n == -1)
-                throw new PdfException(PdfException.IllegalCharacterInAsciihexdecode);
-            if (first)
-                n1 = n;
-            else
-                out.write((byte)((n1 << 4) + n));
-            first = !first;
-        }
-        if (!first)
-            out.write((byte)(n1 << 4));
-        return out.toByteArray();
+    public MemoryLimitsAwareException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

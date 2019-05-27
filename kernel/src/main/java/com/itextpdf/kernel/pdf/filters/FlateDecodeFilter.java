@@ -44,6 +44,8 @@
 package com.itextpdf.kernel.pdf.filters;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.MemoryLimitsAwareException;
+import com.itextpdf.kernel.pdf.MemoryLimitsAwareFilter;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
@@ -58,12 +60,7 @@ import java.util.zip.InflaterInputStream;
 /**
  * Handles FlateDecode filter.
  */
-public class FlateDecodeFilter implements IFilterHandler {
-
-    /**
-     * Defines how the corrupted streams should be treated.
-     */
-    private boolean strictDecoding = false;
+public class FlateDecodeFilter extends MemoryLimitsAwareFilter {
 
     /**
      * Creates a FlateDecodeFilter.
@@ -76,7 +73,9 @@ public class FlateDecodeFilter implements IFilterHandler {
      * Creates a FlateDecodeFilter.
      *
      * @param strictDecoding defines whether the decoder will try to read a corrupted stream
+     * @deprecated will be removed in 7.2, use {@link FlateDecodeStrictFilter} instead.
      */
+    @Deprecated
     public FlateDecodeFilter(boolean strictDecoding) {
         this.strictDecoding = strictDecoding;
     }
@@ -85,7 +84,9 @@ public class FlateDecodeFilter implements IFilterHandler {
      * Checks whether the decoder will try to read a corrupted stream (not strict) or not (strict)
      *
      * @return true if the decoder will try to read a corrupted stream otherwise false
+     * @deprecated will be removed in 7.2, use {@link FlateDecodeStrictFilter} instead.
      */
+    @Deprecated
     public boolean isStrictDecoding() {
         return strictDecoding;
     }
@@ -95,21 +96,36 @@ public class FlateDecodeFilter implements IFilterHandler {
      *
      * @param strict true if the decoder should try to read a corrupted stream otherwise false
      * @return the decoder
+     * @deprecated will be removed in 7.2, use {@link FlateDecodeStrictFilter} instead.
      */
+    @Deprecated
     public FlateDecodeFilter setStrictDecoding(boolean strict) {
         this.strictDecoding = strict;
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
-        byte[] res = flateDecode(b, true);
+        ByteArrayOutputStream outputStream = enableMemoryLimitsAwareHandler(streamDictionary);
+        byte[] res = flateDecode(b, true, outputStream);
         if (res == null && !strictDecoding) {
-            res = flateDecode(b, false);
+            outputStream.reset();
+            res = flateDecode(b, false, outputStream);
         }
         b = decodePredictor(res, decodeParams);
         return b;
     }
+
+    /**
+     * Defines how the corrupted streams should be treated.
+     *
+     * @deprecated will be removed in 7.2, use {@link FlateDecodeStrictFilter} instead.
+     */
+    @Deprecated
+    private boolean strictDecoding = false;
 
     /**
      * A helper to flateDecode.
@@ -119,9 +135,20 @@ public class FlateDecodeFilter implements IFilterHandler {
      * @return the decoded data
      */
     public static byte[] flateDecode(byte[] in, boolean strict) {
+        return flateDecode(in, strict, new ByteArrayOutputStream());
+    }
+
+    /**
+     * A helper to flateDecode.
+     *
+     * @param in     the input data
+     * @param strict {@code true} to read a correct stream. {@code false} to try to read a corrupted stream.
+     * @param out    the out stream which will be used to write the bytes.
+     * @return the decoded data
+     */
+    private static byte[] flateDecode(byte[] in, boolean strict, ByteArrayOutputStream out) {
         ByteArrayInputStream stream = new ByteArrayInputStream(in);
         InflaterInputStream zip = new InflaterInputStream(stream);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
         byte[] b = new byte[strict ? 4092 : 1];
         try {
             int n;
@@ -131,9 +158,12 @@ public class FlateDecodeFilter implements IFilterHandler {
             zip.close();
             out.close();
             return out.toByteArray();
+        } catch (MemoryLimitsAwareException e) {
+            throw e;
         } catch (Exception e) {
-            if (strict)
+            if (strict) {
                 return null;
+            }
             return out.toByteArray();
         }
     }

@@ -144,6 +144,9 @@ public class PdfException extends RuntimeException {
     public static final String DocumentHasNoPdfCatalogObject = "Document has no PDF Catalog object.";
     public static final String DocumentMustBePreClosed = "Document must be preClosed.";
     public static final String DocumentForCopyToCannotBeNull = "Document for copyTo cannot be null.";
+    public static final String DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed = "During decompression multiple streams in sum occupied more memory than allowed. Please either check your pdf or increase the allowed single decompressed pdf stream maximum size value by setting the appropriate parameter of ReaderProperties's MemoryLimitsAwareHandler.";
+    public static final String DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed = "During decompression a single stream occupied more memory than allowed. Please either check your pdf or increase the allowed multiple decompressed pdf streams maximum size value by setting the appropriate parameter of ReaderProperties's MemoryLimitsAwareHandler.";
+    public static final String DuringDecompressionSingleStreamOccupiedMoreThanMaxIntegerValue = "During decompression a single stream occupied more than a maximum integer value. Please check your pdf.";
     public static final String EndOfContentStreamReachedBeforeEndOfImageData = "End of content stream reached before end of image data.";
     public static final String ErrorWhileReadingObjectStream = "Error while reading Object Stream.";
     public static final String EncryptedPayloadFileSpecDoesntHaveEncryptedPayloadDictionary = "Encrypted payload file spec shall have encrypted payload dictionary.";

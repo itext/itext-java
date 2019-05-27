@@ -1,8 +1,7 @@
 /*
-
     This file is part of the iText (R) project.
     Copyright (c) 1998-2019 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -41,70 +40,56 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf.filters;
+package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.source.ByteBuffer;
-import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.MemoryLimitsAwareFilter;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.test.annotations.type.UnitTest;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
-import java.io.ByteArrayOutputStream;
+@Category(UnitTest.class)
+public class MemoryLimitsAwareOutputStreamTest {
 
-/**
- * Handles ASCIIHexDecode filter
- */
-public class ASCIIHexDecodeFilter extends MemoryLimitsAwareFilter {
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
-        ByteArrayOutputStream outputStream = enableMemoryLimitsAwareHandler(streamDictionary);
-        b = ASCIIHexDecode(b, outputStream);
-        return b;
+    @Test
+    public void testMaxSize() {
+        junitExpectedException.expect(MemoryLimitsAwareException.class);
+        byte[] bigArray = new byte[70];
+        byte[] smallArray = new byte[31];
+
+        MemoryLimitsAwareOutputStream stream = new MemoryLimitsAwareOutputStream();
+
+        stream.setMaxStreamSize(100);
+        Assert.assertEquals(100, stream.getMaxStreamSize());
+
+        stream.write(bigArray, 0, bigArray.length);
+        Assert.assertEquals(bigArray.length, stream.size());
+
+        stream.write(smallArray, 0, smallArray.length);
     }
 
-    /**
-     * Decodes a byte[] according to ASCII Hex encoding.
-     *
-     * @param in byte[] to be decoded
-     * @return decoded byte[]
-     */
-    public static byte[] ASCIIHexDecode(byte[] in) {
-        return ASCIIHexDecode(in, new ByteArrayOutputStream());
+    @Test
+    public void testNegativeSize() {
+        junitExpectedException.expect(MemoryLimitsAwareException.class);
+        byte[] zeroArray = new byte[0];
+
+        MemoryLimitsAwareOutputStream stream = new MemoryLimitsAwareOutputStream();
+
+        stream.setMaxStreamSize(-100);
+        Assert.assertEquals(-100, stream.getMaxStreamSize());
+
+        stream.write(zeroArray, 0, zeroArray.length);
     }
 
-    /**
-     * Decodes a byte[] according to ASCII Hex encoding.
-     *
-     * @param in  byte[] to be decoded
-     * @param out the out stream which will be used to write the bytes.
-     * @return decoded byte[]
-     */
-    private static byte[] ASCIIHexDecode(byte[] in, ByteArrayOutputStream out) {
-        boolean first = true;
-        int n1 = 0;
-        for (int k = 0; k < in.length; ++k) {
-            int ch = in[k] & 0xff;
-            if (ch == '>')
-                break;
-            if (PdfTokenizer.isWhitespace(ch))
-                continue;
-            int n = ByteBuffer.getHex(ch);
-            if (n == -1)
-                throw new PdfException(PdfException.IllegalCharacterInAsciihexdecode);
-            if (first)
-                n1 = n;
-            else
-                out.write((byte)((n1 << 4) + n));
-            first = !first;
-        }
-        if (!first)
-            out.write((byte)(n1 << 4));
-        return out.toByteArray();
+    @Test
+    public void testIncorrectLength() {
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
+        MemoryLimitsAwareOutputStream stream = new MemoryLimitsAwareOutputStream();
+        stream.write(new byte[1],0,  -1);
     }
 }

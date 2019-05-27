@@ -1,8 +1,7 @@
 /*
-
     This file is part of the iText (R) project.
     Copyright (c) 1998-2019 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -43,20 +42,19 @@
  */
 package com.itextpdf.kernel.pdf.filters;
 
-import com.itextpdf.io.source.ByteBuffer;
-import com.itextpdf.io.source.PdfTokenizer;
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.MemoryLimitsAwareFilter;
+import com.itextpdf.kernel.pdf.MemoryLimitsAwareException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.zip.InflaterInputStream;
 
 /**
- * Handles ASCIIHexDecode filter
+ * Handles strict FlateDecode filter.
  */
-public class ASCIIHexDecodeFilter extends MemoryLimitsAwareFilter {
+public class FlateDecodeStrictFilter extends FlateDecodeFilter {
 
     /**
      * {@inheritDoc}
@@ -64,47 +62,34 @@ public class ASCIIHexDecodeFilter extends MemoryLimitsAwareFilter {
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
         ByteArrayOutputStream outputStream = enableMemoryLimitsAwareHandler(streamDictionary);
-        b = ASCIIHexDecode(b, outputStream);
+        byte[] res = flateDecode(b, outputStream);
+        b = decodePredictor(res, decodeParams);
         return b;
     }
 
     /**
-     * Decodes a byte[] according to ASCII Hex encoding.
+     * A helper to flateDecode.
      *
-     * @param in byte[] to be decoded
-     * @return decoded byte[]
+     * @param in     the input data
+     * @param out    the out stream which will be used to write the bytes.
+     * @return the decoded data
      */
-    public static byte[] ASCIIHexDecode(byte[] in) {
-        return ASCIIHexDecode(in, new ByteArrayOutputStream());
-    }
-
-    /**
-     * Decodes a byte[] according to ASCII Hex encoding.
-     *
-     * @param in  byte[] to be decoded
-     * @param out the out stream which will be used to write the bytes.
-     * @return decoded byte[]
-     */
-    private static byte[] ASCIIHexDecode(byte[] in, ByteArrayOutputStream out) {
-        boolean first = true;
-        int n1 = 0;
-        for (int k = 0; k < in.length; ++k) {
-            int ch = in[k] & 0xff;
-            if (ch == '>')
-                break;
-            if (PdfTokenizer.isWhitespace(ch))
-                continue;
-            int n = ByteBuffer.getHex(ch);
-            if (n == -1)
-                throw new PdfException(PdfException.IllegalCharacterInAsciihexdecode);
-            if (first)
-                n1 = n;
-            else
-                out.write((byte)((n1 << 4) + n));
-            first = !first;
+    private static byte[] flateDecode(byte[] in, ByteArrayOutputStream out) {
+        ByteArrayInputStream stream = new ByteArrayInputStream(in);
+        InflaterInputStream zip = new InflaterInputStream(stream);
+        byte[] b = new byte[4092];
+        try {
+            int n;
+            while ((n = zip.read(b)) >= 0) {
+                out.write(b, 0, n);
+            }
+            zip.close();
+            out.close();
+            return out.toByteArray();
+        } catch (MemoryLimitsAwareException e) {
+            throw e;
+        } catch (Exception e) {
+            return null;
         }
-        if (!first)
-            out.write((byte)(n1 << 4));
-        return out.toByteArray();
     }
 }

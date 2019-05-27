@@ -65,7 +65,6 @@ import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -736,11 +735,18 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public byte[] getContentBytes() {
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            MemoryLimitsAwareHandler handler = getDocument().memoryLimitsAwareHandler;
+            long usedMemory = null == handler ? -1 : handler.getAllMemoryUsedForDecompression();
+
+            MemoryLimitsAwareOutputStream baos = new MemoryLimitsAwareOutputStream();
             int streamCount = getContentStreamCount();
             byte[] streamBytes;
             for (int i = 0; i < streamCount; i++) {
                 streamBytes = getStreamBytes(i);
+                // usedMemory has changed, that means that some of currently processed pdf streams are suspicious
+                if (null != handler && usedMemory < handler.getAllMemoryUsedForDecompression()) {
+                    baos.setMaxStreamSize(handler.getMaxSizeOfSingleDecompressedPdfStream());
+                }
                 baos.write(streamBytes);
                 if (0 != streamBytes.length && !Character.isWhitespace((char) streamBytes[streamBytes.length - 1])) {
                     baos.write('\n');

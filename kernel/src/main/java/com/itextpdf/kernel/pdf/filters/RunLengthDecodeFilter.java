@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.filters;
 
+import com.itextpdf.kernel.pdf.MemoryLimitsAwareFilter;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -52,11 +53,14 @@ import java.io.ByteArrayOutputStream;
 /**
  * Handles RunLengthDecode filter.
  */
-public class RunLengthDecodeFilter implements IFilterHandler {
+public class RunLengthDecodeFilter extends MemoryLimitsAwareFilter {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream outputStream = enableMemoryLimitsAwareHandler(streamDictionary);
         byte dupCount;
         for (int i = 0; i < b.length; i++) {
             dupCount = b[i];
@@ -65,15 +69,15 @@ public class RunLengthDecodeFilter implements IFilterHandler {
             }
             if ((dupCount & 0x80) == 0) {
                 int bytesToCopy = dupCount + 1;
-                baos.write(b, i + 1, bytesToCopy);
+                outputStream.write(b, i + 1, bytesToCopy);
                 i += bytesToCopy;
             } else {                // make dupcount copies of the next byte
                 i++;
                 for (int j = 0; j < 257 - (dupCount & 0xff); j++) {
-                    baos.write(b[i]);
+                    outputStream.write(b[i]);
                 }
             }
         }
-        return baos.toByteArray();
+        return outputStream.toByteArray();
     }
 }

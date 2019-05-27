@@ -1,8 +1,7 @@
 /*
-
     This file is part of the iText (R) project.
     Copyright (c) 1998-2019 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -41,70 +40,37 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf.filters;
+package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.source.ByteBuffer;
-import com.itextpdf.io.source.PdfTokenizer;
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.MemoryLimitsAwareFilter;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 
 import java.io.ByteArrayOutputStream;
 
 /**
- * Handles ASCIIHexDecode filter
+ * Handles memory limits aware processing.
+ *
+ * @see {@link MemoryLimitsAwareHandler}
  */
-public class ASCIIHexDecodeFilter extends MemoryLimitsAwareFilter {
+public abstract class MemoryLimitsAwareFilter implements IFilterHandler {
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
-        ByteArrayOutputStream outputStream = enableMemoryLimitsAwareHandler(streamDictionary);
-        b = ASCIIHexDecode(b, outputStream);
-        return b;
-    }
-
-    /**
-     * Decodes a byte[] according to ASCII Hex encoding.
+     * Creates a {@link MemoryLimitsAwareOutputStream} which will be used for decompression of the passed pdf stream.
      *
-     * @param in byte[] to be decoded
-     * @return decoded byte[]
+     * @param streamDictionary the pdf stream which is going to be decompressed.
+     * @return the {@link ByteArrayOutputStream} which will be used for decompression of the passed pdf stream
      */
-    public static byte[] ASCIIHexDecode(byte[] in) {
-        return ASCIIHexDecode(in, new ByteArrayOutputStream());
-    }
-
-    /**
-     * Decodes a byte[] according to ASCII Hex encoding.
-     *
-     * @param in  byte[] to be decoded
-     * @param out the out stream which will be used to write the bytes.
-     * @return decoded byte[]
-     */
-    private static byte[] ASCIIHexDecode(byte[] in, ByteArrayOutputStream out) {
-        boolean first = true;
-        int n1 = 0;
-        for (int k = 0; k < in.length; ++k) {
-            int ch = in[k] & 0xff;
-            if (ch == '>')
-                break;
-            if (PdfTokenizer.isWhitespace(ch))
-                continue;
-            int n = ByteBuffer.getHex(ch);
-            if (n == -1)
-                throw new PdfException(PdfException.IllegalCharacterInAsciihexdecode);
-            if (first)
-                n1 = n;
-            else
-                out.write((byte)((n1 << 4) + n));
-            first = !first;
+    public ByteArrayOutputStream enableMemoryLimitsAwareHandler(PdfDictionary streamDictionary) {
+        MemoryLimitsAwareOutputStream outputStream = new MemoryLimitsAwareOutputStream();
+        MemoryLimitsAwareHandler memoryLimitsAwareHandler = null;
+        if (null != streamDictionary.getIndirectReference()) {
+            memoryLimitsAwareHandler = streamDictionary.getIndirectReference().getDocument().memoryLimitsAwareHandler;
+        } else {
+            // We do not reuse some static instance because one can process pdfs in different threads.
+            memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
         }
-        if (!first)
-            out.write((byte)(n1 << 4));
-        return out.toByteArray();
+        if (null != memoryLimitsAwareHandler && memoryLimitsAwareHandler.considerCurrentPdfStream) {
+            outputStream.setMaxStreamSize(memoryLimitsAwareHandler.getMaxSizeOfSingleDecompressedPdfStream());
+        }
+        return outputStream;
     }
 }
