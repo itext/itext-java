@@ -74,20 +74,19 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Map;
-
 @Category(IntegrationTest.class)
 public class PdfFormFieldTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldTest/";
 
     @BeforeClass
     public static void beforeClass() {
@@ -634,7 +633,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     public void fillFieldWithHebrewCase1() throws IOException, InterruptedException {
         String testName = "fillFieldWithHebrewCase1";
         String outPdf = destinationFolder + testName + ".pdf";
-        String cmpPdf = sourceFolder + "cmp_"+ testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
 
         PdfWriter writer = new PdfWriter(outPdf);
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -657,7 +656,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName+ "_"));
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
     }
 
     @Test
@@ -665,7 +664,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     public void fillFieldWithHebrewCase2() throws IOException, InterruptedException {
         String testName = "fillFieldWithHebrewCase2";
         String outPdf = destinationFolder + testName + ".pdf";
-        String cmpPdf = sourceFolder + "cmp_"+ testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -693,7 +692,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         fillAcroForm(pdfDocument, text);
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName+ "_"));
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
     }
 
     @Test
@@ -701,7 +700,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     public void fillFieldWithHebrewCase3() throws IOException, InterruptedException {
         String testName = "fillFieldWithHebrewCase3";
         String outPdf = destinationFolder + testName + ".pdf";
-        String cmpPdf = sourceFolder + "cmp_"+ testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
 
         PdfWriter writer = new PdfWriter(outPdf);
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -719,7 +718,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName+ "_"));
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
     }
 
     @Test
@@ -727,7 +726,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     public void fillFieldWithHebrewCase4() throws IOException, InterruptedException {
         String testName = "fillFieldWithHebrewCase4";
         String outPdf = destinationFolder + testName + ".pdf";
-        String cmpPdf = sourceFolder + "cmp_"+ testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -751,30 +750,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         fillAcroForm(pdfDocument, text);
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName+ "_"));
-    }
-
-    private void createAcroForm(PdfDocument pdfDoc, PdfAcroForm form, PdfFont font, String text, int offSet){
-        for (int x = offSet; x < (offSet + 3); x++) {
-            Rectangle rect = new Rectangle(100 + (30 * x), 100 + (100 * x), 55, 30);
-            PdfFormField field = PdfFormField.createText(pdfDoc, rect, "f-" + x, "", font, 12.0f);
-            field.setJustification(PdfFormField.ALIGN_RIGHT);
-            if(text != null) {
-                field.setValue(text);
-            }
-            form.addField(field);
-        }
-    }
-
-    private void addParagraph(Document document, String text, PdfFont font){
-        document.add(new Paragraph("Hello world ").add(text).setFont(font));
-    }
-
-    private void fillAcroForm(PdfDocument pdfDocument, String text){
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
-        for (PdfFormField field : acroForm.getFormFields().values()) {
-            field.setValue(text);
-        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
     }
 
     @Test
@@ -807,7 +783,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String testName = "multilineFormFieldNewLineFontType3Test";
 
         String outPdf = destinationFolder + testName + ".pdf";
-        String cmpPdf = sourceFolder + "cmp_"+ testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
         String srcPdf = sourceFolder + testName + ".pdf";
 
         PdfWriter writer = new PdfWriter(outPdf);
@@ -817,7 +793,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         PdfTextFormField info = (PdfTextFormField) form.getField("info");
         info.setValue("A\n\nE");
-       
+
         pdfDoc.close();
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
@@ -916,7 +892,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             Assert.fail(errorMessage);
         }
     }
-
 
     @Test
     public void maxLenWithSetCombFlagAppearanceTest() throws IOException, InterruptedException {
@@ -1195,5 +1170,69 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertEquals("/F1 25 Tf", da.toString());
+    }
+
+    @Test
+    public void setPageNewField() throws IOException {
+        String filename = destinationFolder + "setPageNewField.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        pdfDoc.addNewPage();
+        pdfDoc.addNewPage();
+        pdfDoc.addNewPage();
+
+        String fieldName = "field1";
+        int pageNum = 2;
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfTextFormField field1 = PdfFormField.createText(pdfDoc, new Rectangle(90, 700, 150, 22), fieldName, "new field");
+        field1.setPage(pageNum);
+        form.addField(field1);
+
+        pdfDoc.close();
+
+        // -------------------------------------------
+        printOutputPdfNameAndDir(filename);
+        PdfDocument resPdf = new PdfDocument(new PdfReader(filename));
+        PdfArray fieldsArr = resPdf.getCatalog().getPdfObject()
+                .getAsDictionary(PdfName.AcroForm).getAsArray(PdfName.Fields);
+        Assert.assertEquals(1, fieldsArr.size());
+
+        PdfDictionary field = fieldsArr.getAsDictionary(0);
+        PdfDictionary fieldP = field.getAsDictionary(PdfName.P);
+        // TODO DEVSIX-2912: shall be equal to second page object
+        Assert.assertEquals(resPdf.getPage(3).getPdfObject(), fieldP);
+
+        Assert.assertNull(resPdf.getPage(1).getPdfObject().getAsArray(PdfName.Annots));
+
+        PdfArray secondPageAnnots = resPdf.getPage(2).getPdfObject().getAsArray(PdfName.Annots);
+        Assert.assertEquals(1, secondPageAnnots.size());
+        Assert.assertEquals(field, secondPageAnnots.get(0));
+
+        // TODO DEVSIX-2912: third page annotations array shall be null
+        PdfArray thirdPageAnnots = resPdf.getPage(3).getPdfObject().getAsArray(PdfName.Annots);
+        Assert.assertEquals(1, thirdPageAnnots.size());
+        Assert.assertEquals(field, thirdPageAnnots.get(0));
+    }
+
+    private void createAcroForm(PdfDocument pdfDoc, PdfAcroForm form, PdfFont font, String text, int offSet) {
+        for (int x = offSet; x < (offSet + 3); x++) {
+            Rectangle rect = new Rectangle(100 + (30 * x), 100 + (100 * x), 55, 30);
+            PdfFormField field = PdfFormField.createText(pdfDoc, rect, "f-" + x, "", font, 12.0f);
+            field.setJustification(PdfFormField.ALIGN_RIGHT);
+            if (text != null) {
+                field.setValue(text);
+            }
+            form.addField(field);
+        }
+    }
+
+    private void addParagraph(Document document, String text, PdfFont font) {
+        document.add(new Paragraph("Hello world ").add(text).setFont(font));
+    }
+
+    private void fillAcroForm(PdfDocument pdfDocument, String text) {
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
+        for (PdfFormField field : acroForm.getFormFields().values()) {
+            field.setValue(text);
+        }
     }
 }
