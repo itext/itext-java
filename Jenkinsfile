@@ -56,7 +56,13 @@ pipeline {
             steps {
                 withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
                     withSonarQubeEnv('Sonar') {
-                        sh 'mvn --activate-profiles test test verify org.jacoco:jacoco-maven-plugin:prepare-agent org.jacoco:jacoco-maven-plugin:report sonar:sonar -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.test.skip=false -Dmaven.test.failure.ignore=false -Dmaven.javadoc.skip=true -Dsonar.branch.name="${BRANCH_NAME}"'
+                        script{
+                            if ((env.BRANCH_NAME == 'master') || (env.BRANCH_NAME == 'develop')) {
+                                sh 'mvn --activate-profiles test test verify org.jacoco:jacoco-maven-plugin:prepare-agent org.jacoco:jacoco-maven-plugin:report sonar:sonar -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.test.skip=false -Dmaven.test.failure.ignore=false -Dmaven.javadoc.skip=true -Dsonar.branch.name="${BRANCH_NAME}"'
+                            } else {
+                                sh 'mvn --activate-profiles test test verify org.jacoco:jacoco-maven-plugin:prepare-agent org.jacoco:jacoco-maven-plugin:report sonar:sonar -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.test.skip=false -Dmaven.test.failure.ignore=false -Dmaven.javadoc.skip=true -Dsonar.branch.name="${BRANCH_NAME}" -Dsonar.branch.target=develop'
+                            }
+                        }
                     }
                 }
             }
