@@ -42,11 +42,14 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -68,6 +71,21 @@ public class FlatteningTest extends ExtendedITextTest {
     @Test
     public void formFlatteningTestWithAPWithoutSubtype() throws IOException, InterruptedException {
         String filename = "job_application_filled";
+        String src = sourceFolder + filename + ".pdf";
+        String dest = destinationFolder + filename + "_flattened.pdf";
+        String cmp = sourceFolder + "cmp_" + filename + "_flattened.pdf";
+        PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+
+        PdfAcroForm.getAcroForm(doc, false).flattenFields();
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY))
+    public void formFlatteningTestWithoutNEntry() throws IOException, InterruptedException {
+        String filename = "formFlatteningTestWithoutNEntry";
         String src = sourceFolder + filename + ".pdf";
         String dest = destinationFolder + filename + "_flattened.pdf";
         String cmp = sourceFolder + "cmp_" + filename + "_flattened.pdf";

@@ -676,51 +676,56 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                     appDic = fieldObject.getAsDictionary(PdfName.AP);
                 }
             }
-            if (appDic != null) {
+            if (null != appDic) {
                 PdfObject normal = appDic.get(PdfName.N);
-                PdfFormXObject xObject = null;
-                if (normal.isStream()) {
-                    xObject = new PdfFormXObject((PdfStream) normal);
-                } else if (normal.isDictionary()) {
-                    PdfName as = fieldObject.getAsName(PdfName.AS);
-                    if (((PdfDictionary) normal).getAsStream(as) != null) {
-                        xObject = new PdfFormXObject(((PdfDictionary) normal).getAsStream(as));
-                        xObject.makeIndirect(document);
-                    }
-                }
-
-                if (xObject != null) {
-                    //subtype is required field for FormXObject, but can be omitted in normal appearance.
-                    xObject.put(PdfName.Subtype, PdfName.Form);
-                    Rectangle annotBBox = fieldObject.getAsRectangle(PdfName.Rect);
-                    if (page.isFlushed()) {
-                        throw new PdfException(PdfException.PageAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
-                    }
-                    PdfCanvas canvas = new PdfCanvas(page, !wrappedPages.contains(page));
-                    wrappedPages.add(page);
-
-                    // Here we avoid circular reference which might occur when page resources and the appearance xObject's
-                    // resources are the same object
-                    PdfObject xObjectResources = xObject.getPdfObject().get(PdfName.Resources);
-                    PdfObject pageResources = page.getResources().getPdfObject();
-                    if (xObjectResources != null && pageResources != null &&
-                            xObjectResources == pageResources) {
-                        xObject.getPdfObject().put(PdfName.Resources, initialPageResourceClones.get(document.getPageNumber(page)));
+                if (null == normal) {
+                    Logger logger = LoggerFactory.getLogger(PdfAcroForm.class);
+                    logger.error(LogMessageConstant.N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY);
+                } else {
+                    PdfFormXObject xObject = null;
+                    if (normal.isStream()) {
+                        xObject = new PdfFormXObject((PdfStream) normal);
+                    } else if (normal.isDictionary()) {
+                        PdfName as = fieldObject.getAsName(PdfName.AS);
+                        if (((PdfDictionary) normal).getAsStream(as) != null) {
+                            xObject = new PdfFormXObject(((PdfDictionary) normal).getAsStream(as));
+                            xObject.makeIndirect(document);
+                        }
                     }
 
-                    if (tagPointer != null) {
-                        tagPointer.setPageForTagging(page);
-                        TagReference tagRef = tagPointer.getTagReference();
-                        canvas.openTag(tagRef);
-                    }
+                    if (xObject != null) {
+                        //subtype is required field for FormXObject, but can be omitted in normal appearance.
+                        xObject.put(PdfName.Subtype, PdfName.Form);
+                        Rectangle annotBBox = fieldObject.getAsRectangle(PdfName.Rect);
+                        if (page.isFlushed()) {
+                            throw new PdfException(PdfException.PageAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
+                        }
+                        PdfCanvas canvas = new PdfCanvas(page, !wrappedPages.contains(page));
+                        wrappedPages.add(page);
 
-                    AffineTransform at = calcFieldAppTransformToAnnotRect(xObject, annotBBox);
-                    float[] m = new float[6];
-                    at.getMatrix(m);
-                    canvas.addXObject(xObject, m[0], m[1], m[2], m[3], m[4], m[5]);
+                        // Here we avoid circular reference which might occur when page resources and the appearance xObject's
+                        // resources are the same object
+                        PdfObject xObjectResources = xObject.getPdfObject().get(PdfName.Resources);
+                        PdfObject pageResources = page.getResources().getPdfObject();
+                        if (xObjectResources != null && pageResources != null &&
+                                xObjectResources == pageResources) {
+                            xObject.getPdfObject().put(PdfName.Resources, initialPageResourceClones.get(document.getPageNumber(page)));
+                        }
 
-                    if (tagPointer != null) {
-                        canvas.closeTag();
+                        if (tagPointer != null) {
+                            tagPointer.setPageForTagging(page);
+                            TagReference tagRef = tagPointer.getTagReference();
+                            canvas.openTag(tagRef);
+                        }
+
+                        AffineTransform at = calcFieldAppTransformToAnnotRect(xObject, annotBBox);
+                        float[] m = new float[6];
+                        at.getMatrix(m);
+                        canvas.addXObject(xObject, m[0], m[1], m[2], m[3], m[4], m[5]);
+
+                        if (tagPointer != null) {
+                            canvas.closeTag();
+                        }
                     }
                 }
             }
