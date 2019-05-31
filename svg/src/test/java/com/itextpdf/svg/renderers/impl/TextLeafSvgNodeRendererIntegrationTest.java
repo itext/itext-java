@@ -66,7 +66,7 @@ public class TextLeafSvgNodeRendererIntegrationTest {
         toTest.setAttribute(SvgConstants.Attributes.FONT_SIZE, "10");
         PdfFont font = PdfFontFactory.createFont();
         float actual = toTest.getTextContentLength(12, font);
-        float expected = 22.78f;
+        float expected = 17.085f;
         Assert.assertEquals(expected, actual, 1e-6f);
     }
 

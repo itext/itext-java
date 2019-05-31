@@ -190,8 +190,7 @@ public final class SvgTextUtil {
                 // TODO DEVSIX-2866 Support rem value for svgs
                 fontSize = CssUtils.parseRelativeFontSize(elementFontSize, parentFontSize);
             } else {
-                // TODO DEVSIX-2882 Switch to PX
-                fontSize = CssUtils.parseAbsoluteFontSize(elementFontSize, CommonCssConstants.PT);
+                fontSize = CssUtils.parseAbsoluteFontSize(elementFontSize, CommonCssConstants.PX);
             }
         }
         if ((Float.isNaN(fontSize)) || fontSize < 0f) {

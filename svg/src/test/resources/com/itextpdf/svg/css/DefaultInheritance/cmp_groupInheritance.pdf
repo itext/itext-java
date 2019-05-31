@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20190114153824+01'00')/ModDate(D:20190114153824+01'00')/Producer(iText® 7.1.5-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20190531072456-03'00')/ModDate(D:20190531072456-03'00')/Producer(iText® 7.1.7-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,28 +36,26 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 375 375]/Length 1987/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 375 375]/Length 1958/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 q
 0.50196 0.50196 0.50196 rg
 % rect
 0 0 375 375 re
 f
-h
 Q
 q
 0 0 0 rg
 BT
 1 0 0 -1 15 11.25 Tm
 0 Tr
-/F1 10 Tf
+/F1 7.5 Tf
 q
 0 0 Td
 (Inheritance in groups test)Tj
-h
+n
 Q
 ET
 f
-h
 Q
 q
 0 0 1 rg
@@ -67,21 +65,19 @@ q
 % rect
 15 15 300 120 re
 B
-h
 Q
 q
 BT
 1 0 0 -1 22.5 30 Tm
 2 Tr
-/F1 16 Tf
+/F1 12 Tf
 q
 0 0 Td
 (Text inheriting font-size 16 and stroke and fill properties)Tj
-h
+n
 Q
 ET
 B
-h
 Q
 q
 % ellipse
@@ -91,7 +87,6 @@ q
 37.5 54.29 54.29 37.5 75 37.5 c
 95.71 37.5 112.5 54.29 112.5 75 c
 B
-h
 Q
 q
 1 0 0 RG
@@ -102,7 +97,6 @@ q
 112.5 54.29 129.29 37.5 150 37.5 c
 170.71 37.5 187.5 54.29 187.5 75 c
 B
-h
 Q
 q
 1 0 0 rg
@@ -113,7 +107,6 @@ q
 187.5 54.29 204.29 37.5 225 37.5 c
 245.71 37.5 262.5 54.29 262.5 75 c
 B
-h
 Q
 q
 0.50196 0.50196 0.50196 rg
@@ -121,15 +114,14 @@ q
 BT
 1 0 0 -1 37.5 127.5 Tm
 2 Tr
-/F1 12 Tf
+/F1 9 Tf
 q
 0 0 Td
 (Text with its own properties overwriting inherited properties)Tj
-h
+n
 Q
 ET
 B
-h
 Q
 q
 0.50196 0 0.50196 rg
@@ -138,21 +130,19 @@ q
 % rect
 15 150 300 150 re
 B
-h
 Q
 q
 BT
 1 0 0 -1 22.5 165 Tm
 2 Tr
-/F1 16 Tf
+/F1 12 Tf
 q
 0 0 Td
 (nested group tag only overwriting fill property)Tj
-h
+n
 Q
 ET
 B
-h
 Q
 q
 % ellipse
@@ -162,7 +152,6 @@ q
 37.5 204.29 54.29 187.5 75 187.5 c
 95.71 187.5 112.5 204.29 112.5 225 c
 B
-h
 Q
 q
 1 0 0 RG
@@ -173,7 +162,6 @@ q
 112.5 204.29 129.29 187.5 150 187.5 c
 170.71 187.5 187.5 204.29 187.5 225 c
 B
-h
 Q
 q
 1 0 0 rg
@@ -184,7 +172,6 @@ q
 187.5 204.29 204.29 187.5 225 187.5 c
 245.71 187.5 262.5 204.29 262.5 225 c
 B
-h
 Q
 q
 0.50196 0.50196 0.50196 rg
@@ -192,15 +179,14 @@ q
 BT
 1 0 0 -1 37.5 277.5 Tm
 2 Tr
-/F1 12 Tf
+/F1 9 Tf
 q
 0 0 Td
 (Text with its own properties overwriting inherited properties)Tj
-h
+n
 Q
 ET
 B
-h
 Q
 Q
 Q
@@ -219,8 +205,8 @@ xref
 0000000578 00000 n 
 0000000761 00000 n 
 trailer
-<</ID [<d2f7f06d25bb4610baae7e38e27f6127><d2f7f06d25bb4610baae7e38e27f6127>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-7.1.5-SNAPSHOT
+<</ID [<2e9798071a9cb505c1c72182e823d92f><2e9798071a9cb505c1c72182e823d92f>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-7.1.7-SNAPSHOT
 startxref
-2873
+2844
 %%EOF
