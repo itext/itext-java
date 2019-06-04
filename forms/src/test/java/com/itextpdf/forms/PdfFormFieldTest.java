@@ -61,6 +61,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -950,9 +951,9 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
         PdfFormField field1 = form.getField("emptyField");
-        field1.setValue("Do fields on the left look the same?", field1.getFont() != null ? field1.getFont() : PdfFontFactory.createFont(), field1.getFontSize());
+        field1.setValue("Do fields on the left look the same?", field1.getFont(), field1.getFontSize());
         PdfFormField field2 = form.getField("emptyField2");
-        field2.setValue("Do fields on the right look the same?", field2.getFont() != null ? field2.getFont() : PdfFontFactory.createFont(), field2.getFontSize());
+        field2.setValue("Do fields on the right look the same?", field2.getFont(), field2.getFontSize());
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
@@ -1051,7 +1052,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             if (i < 8)
                 field.setMaxLen(i < 4 ? 7 : 0);
             if (i % 6 > 1)
-                field.setFieldFlag(PdfTextFormField.FF_COMB, i % 2 == 0 ? true : false);
+                field.setFieldFlag(PdfTextFormField.FF_COMB, i % 2 == 0);
 
         }
         pdfDoc.close();
@@ -1091,5 +1092,71 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
+    }
+
+    @Test
+    public void pdfWithDifferentFieldsTest() throws IOException, InterruptedException {
+        String fileName = destinationFolder + "pdfWithDifferentFieldsTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileName));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        pdfDoc.addNewPage();
+        PdfFormField emptyField = PdfFormField.createEmptyField(pdfDoc).setFieldName("empty");
+        form.addField(emptyField);
+        PdfArray options = new PdfArray();
+        options.add(new PdfString("1"));
+        options.add(new PdfString("2"));
+        form.addField(PdfFormField.createChoice(pdfDoc, new Rectangle(36, 696, 20, 20), "choice", "1", options, 0));
+        // combo
+        form.addField(PdfFormField.createComboBox(pdfDoc, new Rectangle(36, 666, 20, 20), "list", "1", new String[]{"1", "2", "3"}));
+        // list
+        PdfChoiceFormField f = PdfFormField.createList(pdfDoc, new Rectangle(36, 556, 50, 100), "combo", "9", new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"});
+        f.setValue("4");
+        f.setTopIndex(2);
+        f.setListSelected(new String[] {"3", "5"});
+        form.addField(f);
+        // push button
+        form.addField(PdfFormField.createPushButton(pdfDoc, new Rectangle(36, 526, 80, 20), "push button", "push"));
+        // radio button
+        PdfButtonFormField radioGroup = PdfFormField.createRadioGroup(pdfDoc, "radio group", "1");
+        form.addField(PdfFormField.createRadioButton(pdfDoc, new Rectangle(36, 496, 20, 20), radioGroup, "1").setFieldName("radio 1"));
+        form.addField(PdfFormField.createRadioButton(pdfDoc, new Rectangle(66, 496, 20, 20), radioGroup, "2").setFieldName("radio 2"));
+        // signature
+        form.addField(PdfFormField.createSignature(pdfDoc).setFieldName("signature").setValue("Signature").setFontSize(20));
+        // text
+        form.addField(PdfFormField.createText(pdfDoc, new Rectangle(36, 466, 80, 20), "text", "text").setValue("la la land"));
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(fileName, sourceFolder + "cmp_pdfWithDifferentFieldsTest.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void testMakeField() {
+        Assert.assertNull(PdfFormField.makeFormField(new PdfNumber(1), null));
+        Assert.assertNull(PdfFormField.makeFormField(new PdfArray(), null));
+    }
+
+    @Test
+    public void testDaInAppendMode() throws IOException, InterruptedException {
+        String testName = "testDaInAppendMode.pdf";
+
+        String srcPdf = sourceFolder + testName;
+        ByteArrayOutputStream outPdf = new ByteArrayOutputStream();
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf),
+                new StampingProperties().useAppendMode());
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+        PdfFormField field = form.getField("magenta");
+        field.setDefaultAppearance("/F1 25 Tf");
+        int objectNumer = field.getPdfObject().getIndirectReference().getObjNumber();
+
+        pdfDoc.close();
+
+        pdfDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(outPdf.toByteArray())));
+        PdfString da = ((PdfDictionary) pdfDoc.getPdfObject(objectNumer)).getAsString(PdfName.DA);
+        pdfDoc.close();
+
+        Assert.assertEquals("/F1 25 Tf", da.toString());
     }
 }

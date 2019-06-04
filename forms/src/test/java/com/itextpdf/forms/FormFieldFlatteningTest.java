@@ -132,7 +132,6 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         form.flattenFields();
         doc.close();
 
-
         Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
     }
 

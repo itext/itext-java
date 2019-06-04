@@ -1938,4 +1938,14 @@ public class PdfFontTest extends ExtendedITextTest {
         Assert.assertEquals(descriptor.getStyle(), "Regular");
         Assert.assertEquals(descriptor.getFontWeight(), 400);
     }
+
+    @Test
+    public void testDefaultFontWithReader() throws IOException {
+        String inputFileName = sourceFolder + "type3Font.pdf";
+
+        try(PdfDocument pdfDoc = new PdfDocument(new PdfReader(inputFileName))) {
+            Assert.assertNotNull(pdfDoc.getDefaultFont());
+            Assert.assertNull(pdfDoc.getDefaultFont().getPdfObject().getIndirectReference());
+        }
+    }
 }

@@ -58,6 +58,7 @@ public final class LogMessageConstant {
     public static final String CANNOT_ADD_FINISHED_HINT_AS_A_NEW_KID_HINT = "Layout tagging hints addition failed: cannot add a hint that is already marked as finished. Consider using com.itextpdf.layout.tagging.LayoutTaggingHelper#moveKidHint method for moving already finished kid hint from not yet finished parent hint.";
     public static final String CANNOT_ADD_HINTS_TO_FINISHED_PARENT = "Layout tagging hints addition failed: cannot add new kid hints to a parent which hint is already marked as finished. Consider using com.itextpdf.layout.tagging.LayoutTaggingHelper#replaceKidHint method for replacing not yet finished kid hint of a finished parent hint.";
     public static final String CANNOT_ADD_KID_HINT_WHICH_IS_ALREADY_ADDED_TO_ANOTHER_PARENT = "Layout tagging hints addition failed: cannot add a kid hint to a new parent if it is already added to another parent. Consider using com.itextpdf.layout.tagging.LayoutTaggingHelper#moveHint method instead.";
+    public static final String CANNOT_CREATE_FORMFIELD = "Cannot create form field from a given PDF object: {0}";
     public static final String CANNOT_MOVE_FINISHED_HINT = "Layout tagging hints modification failed: cannot move kid hint for which both itself and it's parent are already marked as finished.";
     public static final String CANNOT_MOVE_HINT_TO_FINISHED_PARENT = "Layout tagging hints modification failed: cannot move kid hint to a parent that is already marked as finished.";
     public static final String CANNOT_REPLACE_FINISHED_HINT = "Layout tagging hints modification failed: cannot replace a kid hint that is already marked as finished.";
@@ -175,6 +176,7 @@ public final class LogMessageConstant {
     public static final String UNKNOWN_COLOR_FORMAT_MUST_BE_RGB_OR_RRGGBB = "Unknown color format: must be rgb or rrggbb.";
     public static final String UNKNOWN_DIGEST_METHOD = "Unknown digest method. Valid values are MD5, SHA1 SHA256, SHA384, SHA512 and RIPEMD160.";
     public static final String UNKNOWN_ERROR_WHILE_PROCESSING_CMAP = "Unknown error while processing CMap.";
+    public static final String UNSUPPORTED_COLOR_IN_DA = "Unsupported color in FormField's DA";
     public static final String VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY = "\"{0}\" entry in the \"{1}\" dictionary is a {2} and higher version feature. It is meaningless for the current {3} version.";
     public static final String WRITER_ENCRYPTION_IS_IGNORED_APPEND = "Writer encryption will be ignored, because append mode is used. Document will preserve the original encryption (or will stay unencrypted)";
     public static final String WRITER_ENCRYPTION_IS_IGNORED_PRESERVE = "Writer encryption will be ignored, because preservation of encryption is enabled. Document will preserve the original encryption (or will stay unencrypted)";
