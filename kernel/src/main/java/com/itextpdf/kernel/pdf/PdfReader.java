@@ -628,18 +628,27 @@ public class PdfReader implements Closeable, Serializable {
                 tokens.seek(address[k]);
                 tokens.nextToken();
                 PdfObject obj;
+                PdfIndirectReference reference = pdfDocument.getXref().get(objNumber[k]);
+                if (reference.refersTo != null || reference.getObjStreamNumber() != objectStreamNumber) {
+                    // We skip reading of objects stream's element k if either it is already available in xref
+                    // or if corresponding indirect object reference points to a different object stream.
+                    // The first check prevents from re-initializing objects which are already read. One of the cases
+                    // when this can happen is that some other object from this objects stream was released and requested
+                    // to be re-read.
+                    // Second check ensures that object has no incremental updates and is not freed in append mode.
+
+                    continue;
+                }
                 if (tokens.getTokenType() == PdfTokenizer.TokenType.Number) {
+                    // This ensure that we don't even try to read as indirect reference token (two numbers and "R")
+                    // which are forbidden in object streams.
                     obj = new PdfNumber(tokens.getByteContent());
                 } else {
                     tokens.seek(address[k]);
                     obj = readObject(false, true);
                 }
-                PdfIndirectReference reference = pdfDocument.getXref().get(objNumber[k]);
-                // Check if this object has no incremental updates (e.g. no append mode)
-                if (reference.getObjStreamNumber() == objectStreamNumber) {
-                    reference.setRefersTo(obj);
-                    obj.setIndirectReference(reference);
-                }
+                reference.setRefersTo(obj);
+                obj.setIndirectReference(reference);
             }
             objectStream.getIndirectReference().setState(PdfObject.ORIGINAL_OBJECT_STREAM);
         } finally {
