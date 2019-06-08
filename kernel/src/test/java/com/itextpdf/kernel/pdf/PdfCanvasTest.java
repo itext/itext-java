@@ -1510,6 +1510,23 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "wmfImageTest04.pdf", sourceFolder + "cmp_wmfImageTest04.pdf", destinationFolder, "diff_"));
     }
+    
+    @Test
+    public void wmfImageTest05() throws IOException, InterruptedException {
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "wmfImageTest05.pdf"));
+        PdfPage page = document.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        InputStream stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "example2.wmf"));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        StreamUtil.transferBytes(stream, baos);
+        ImageData img = new WmfImageData(baos.toByteArray());
+        canvas.addImage(img, 0, 0, 1, false);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "wmfImageTest05.pdf", sourceFolder + "cmp_wmfImageTest05.pdf", destinationFolder, "diff_"));
+    }
 
     @Test
     public void gifImageTest01() throws IOException, InterruptedException {
