@@ -1728,14 +1728,21 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 .writeBytes(Tf);
 
         if (textColor != null) {
-            pdfStream.writeSpace();
-            pdfStream.writeFloats(textColor.getColorValue()).writeSpace();
             if (textColor instanceof DeviceGray) {
-                pdfStream.writeBytes(g);
+                pdfStream.writeSpace()
+                        .writeFloats(textColor.getColorValue())
+                        .writeSpace()
+                        .writeBytes(g);
             } else if (textColor instanceof DeviceRgb) {
-                pdfStream.writeBytes(rg);
+                pdfStream.writeSpace()
+                        .writeFloats(textColor.getColorValue())
+                        .writeSpace()
+                        .writeBytes(rg);
             } else if (textColor instanceof DeviceCmyk) {
-                pdfStream.writeBytes(k);
+                pdfStream.writeSpace()
+                        .writeFloats(textColor.getColorValue())
+                        .writeSpace()
+                        .writeBytes(k);
             } else {
                 Logger logger = LoggerFactory.getLogger(PdfFormField.class);
                 logger.error(LogMessageConstant.UNSUPPORTED_COLOR_IN_DA);
