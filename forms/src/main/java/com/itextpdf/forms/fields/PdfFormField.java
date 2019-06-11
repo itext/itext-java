@@ -3357,8 +3357,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Performs the low-level drawing operations to draw a button object.
      *
      * @param canvas   the {@link PdfCanvas} of the page to draw on.
-     * @param x        the x coordinate of the lower left corner of the button rectangle
-     * @param y        the y coordinate of the lower left corner of the button rectangle
+     * @param x        will be ignored, according to spec it shall be 0
+     * @param y        will be ignored, according to spec it shall be 0
      * @param width    the width of the button
      * @param height   the width of the button
      * @param text     the text to display on the button
