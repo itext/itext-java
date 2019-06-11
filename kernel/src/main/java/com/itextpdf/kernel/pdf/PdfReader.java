@@ -506,17 +506,34 @@ public class PdfReader implements Closeable, Serializable {
     }
 
     /**
-     * Gets file ID, either {@link PdfName#ID} key of trailer or a newly generated id.
+     * Gets original file ID, the first element in {@link PdfName#ID} key of trailer.
+     * If the size of ID array does not equal 2, an empty array will be returned.
      *
-     * @return byte array represents file ID.
-     * @see PdfEncryption#generateNewDocumentId()
+     * @return byte array represents original file ID.
+     * @see PdfDocument#getOriginalDocumentId(). The ultimate document id should be taken from PdfDocument
      */
     public byte[] getOriginalFileId() {
         PdfArray id = trailer.getAsArray(PdfName.ID);
-        if (id != null) {
+        if (id != null && id.size() == 2) {
             return ByteUtils.getIsoBytes(id.getAsString(0).getValue());
         } else {
-            return PdfEncryption.generateNewDocumentId();
+            return new byte[0];
+        }
+    }
+
+    /**
+     * Gets modified file ID, the second element in {@link PdfName#ID} key of trailer.
+     * If the size of ID array does not equal 2, an empty array will be returned.
+     *
+     * @return byte array represents modified file ID.
+     * @see PdfDocument#getModifiedDocumentId()
+     */
+    public byte[] getModifiedFileId() {
+        PdfArray id = trailer.getAsArray(PdfName.ID);
+        if (id != null && id.size() == 2) {
+            return ByteUtils.getIsoBytes(id.getAsString(1).getValue());
+        } else {
+            return new byte[0];
         }
     }
 

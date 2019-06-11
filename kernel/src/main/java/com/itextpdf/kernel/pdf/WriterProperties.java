@@ -223,7 +223,6 @@ public class WriterProperties implements Serializable {
         this.modifiedDocumentId = modifiedDocumentId;
         return this;
     }
-
     /**
      * This activates debug mode with pdfDebug tool.
      * It causes additional overhead of duplicating document bytes into memory, so use it careful.
