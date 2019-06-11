@@ -42,7 +42,11 @@
  */
 package com.itextpdf.io.source;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.DecimalFormatUtil;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.nio.charset.StandardCharsets;
@@ -53,14 +57,14 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class WriteNumbersTest {
+public class WriteNumbersTest extends ExtendedITextTest {
 
     public static double round(double value, int places) {
         return Math.round(value * Math.pow(10, places)) / Math.pow(10, places);
     }
 
     @Test
-    public void WriteNumber1Test() {
+    public void writeNumber1Test() {
         Random rnd = new Random();
         for (int i = 0; i < 100000; i++) {
             double d = (double)rnd.nextInt(2120000000)/100000;
@@ -77,7 +81,7 @@ public class WriteNumbersTest {
     }
 
     @Test
-    public void WriteNumber2Test() {
+    public void writeNumber2Test() {
         Random rnd = new Random();
         for (int i = 0; i < 100000; i++) {
             double d = (double)rnd.nextInt(1000000)/1000000;
@@ -91,7 +95,7 @@ public class WriteNumbersTest {
     }
 
     @Test
-    public void WriteNumber3Test() {
+    public void writeNumber3Test() {
         Random rnd = new Random();
         for (int i = 0; i < 100000; i++) {
             double d = rnd.nextDouble(); if (d < 32700) d*= 100000;
@@ -101,5 +105,29 @@ public class WriteNumbersTest {
             String message = "Expects: " + new String(expecteds) + ", actual: " + new String(actuals) + " \\\\ "+ d;
             Assert.assertArrayEquals(message, expecteds, actuals);
         }
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ATTEMPT_PROCESS_NAN))
+    public void writeNanTest() {
+        double d = Double.NaN;
+
+        byte[] actuals = ByteUtils.getIsoBytes(d);
+        byte[] expecteds = DecimalFormatUtil.formatNumber(0, "0.##").getBytes(StandardCharsets.ISO_8859_1);
+
+        String message = "Expects: " + new String(expecteds) + ", actual: " + new String(actuals) + " \\\\ "+ d;
+        Assert.assertArrayEquals(message, expecteds, actuals);
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ATTEMPT_PROCESS_NAN))
+    public void writeNanHighPrecisionTest() {
+        double d = Double.NaN;
+
+        byte[] actuals = ByteUtils.getIsoBytes(d, null, true);
+        byte[] expecteds = DecimalFormatUtil.formatNumber(0, "0.##").getBytes(StandardCharsets.ISO_8859_1);
+
+        String message = "Expects: " + new String(expecteds) + ", actual: " + new String(actuals) + " \\\\ "+ d;
+        Assert.assertArrayEquals(message, expecteds, actuals);
     }
 }

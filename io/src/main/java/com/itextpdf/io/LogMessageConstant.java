@@ -52,6 +52,7 @@ public final class LogMessageConstant {
     public static final String ALREADY_FLUSHED_INDIRECT_OBJECT_MADE_FREE = "An attempt is made to free already flushed indirect object reference. Indirect reference wasn't freed.";
     public static final String ALREADY_TAGGED_HINT_MARKED_ARTIFACT = "A layout tagging hint for which an actual tag was already created in tags structure is marked as artifact. Existing tag will be left in the tags tree.";
     public static final String ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP = "For associated files their associated file specification dictionaries shall include the AFRelationship key.";
+    public static final String ATTEMPT_PROCESS_NAN = "Attempt to process NaN in PdfNumber or when writing to PDF. Zero value will be used as a fallback.";
     public static final String ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT = "Attempt to create a tag for a hint which is already marked as finished, tag will not be created.";
     public static final String ATTEMPT_TO_MOVE_TO_FLUSHED_PARENT = "An attempt is made to move the tag tree pointer to the tag parent which has been already flushed. Tag tree pointer is moved to the root tag instead.";
     public static final String CALCULATE_HASHCODE_FOR_MODIFIED_PDFNUMBER = "Calculate hashcode for modified PdfNumber.";
@@ -126,10 +127,10 @@ public final class LogMessageConstant {
     public static final String MAPPING_IN_STRUCT_ROOT_OVERWRITTEN = "Existing mapping for {0} in structure tree root role map was {1} and it was overwritten with {2}.";
     public static final String METHOD_IS_NOT_IMPLEMENTED_BY_DEFAULT_OTHER_METHOD_WILL_BE_USED = "Method {0} is not implemented by default: please, override and implement it. {1} will be used instead.";
     public static final String NAME_ALREADY_EXISTS_IN_THE_NAME_TREE = "Name \"{0}\" already exists in the name tree; old value will be replaced by the new one.";
-    public static final String N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY = "\\N entry is required to be present in an appearance dictionary.";
     public static final String NOT_TAGGED_PAGES_IN_TAGGED_DOCUMENT = "Not tagged pages are copied to the tagged document. Destination document now may contain not tagged content.";
     public static final String NO_FIELDS_IN_ACROFORM = "Required AcroForm entry /Fields does not exist in the document. Empty array /Fields will be created.";
     public static final String NUM_TREE_SHALL_NOT_END_WITH_KEY = "Number tree ends with a key which is invalid according to the PDF specification.";
+    public static final String N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY = "\\N entry is required to be present in an appearance dictionary.";
     public static final String OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED = "Occupied area has not been initialized. {0}";
     public static final String OCSP_STATUS_IS_REVOKED = "OCSP status is revoked.";
     public static final String OCSP_STATUS_IS_UNKNOWN = "OCSP status is unknown.";

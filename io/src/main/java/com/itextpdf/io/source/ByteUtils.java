@@ -43,9 +43,12 @@
  */
 package com.itextpdf.io.source;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.DecimalFormatUtil;
 
 import java.nio.charset.StandardCharsets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ByteUtils {
 
@@ -125,6 +128,11 @@ public final class ByteUtils {
     }
 
     static byte[] getIsoBytes(double d, ByteBuffer buffer, boolean highPrecision) {
+        if (Double.isNaN(d)) {
+            Logger logger = LoggerFactory.getLogger(ByteUtils.class);
+            logger.error(LogMessageConstant.ATTEMPT_PROCESS_NAN);
+            d = 0;
+        }
         if (highPrecision) {
             if (Math.abs(d) < 0.000001) {
                 if (buffer != null) {
