@@ -1132,6 +1132,43 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    public void textFieldWithWideUnicodeRange() throws IOException, InterruptedException {
+        String filename = "textFieldWithWideUnicodeRange.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        pdfDoc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        form.addField(PdfFormField.createText(pdfDoc,
+                new Rectangle(36, 400, 100, 40),
+                "text_helvetica",
+                "Helvetica"));
+
+
+        PdfFont noto = PdfFontFactory.createFont(sourceFolder + "NotoSans-Regular.ttf", PdfEncodings.IDENTITY_H);
+        noto.setSubset(false);
+        String value = "aAáÁàÀăĂắẮằẰẵẴẳẲâÂấẤầẦẫẪǎǍåÅǻǺäÄǟǞãÃą" +
+                "ĄāĀảẢạẠặẶẬæÆǽǼbBḃḂcCćĆčČċĊçÇdDd̂D̂ďĎḋḊḑḐđĐðÐeE" +
+                "éÉèÈĕĔêÊếẾềỀễỄěĚëËẽẼėĖęĘēĒẻẺẹẸệỆəƏfFḟḞgGǵǴğĞ" +
+                "ǧǦġĠģĢḡḠǥǤhHȟȞḧḦħĦḥḤiIíÍìÌĭĬîÎǐǏïÏĩĨİįĮīĪỉỈị" +
+                "ỊıjJĵĴǰJ̌kKḱḰǩǨķĶlLĺĹl̂L̂ľĽļĻłŁŀĿmMm̂M̂ṁṀnNńŃn̂N̂ňŇ" +
+                "ñÑṅṄņŅŋŊoOóÓòÒŏŎôÔốỐồỒỗỖǒǑöÖȫȪőŐõÕȯȮȱȰøØǿǾǫǪ" +
+                "ǭǬōŌỏỎơƠớỚờỜọỌộỘœŒpPṗṖqQĸrRŕŔřŘŗŖsSśŚšŠṡṠşŞṣ" +
+                "ṢșȘßẞtTťŤṫṪţŢțȚŧŦuUúÚùÙûÛǔǓůŮüÜűŰũŨųŲūŪủỦưƯứ" +
+                "ỨừỪữỮửỬựỰụỤvVwWẃẂẁẀŵŴẅẄxXẍẌyYýÝỳỲŷŶÿŸỹỸẏẎȳȲỷỶ" +
+                "ỵỴzZźŹẑẐžŽżŻẓẒʒƷǯǮþÞŉ";
+        PdfFormField textField = PdfFormField.createText(pdfDoc,
+                new Rectangle(36, 500, 400, 300),
+                "text",
+                value, noto, 12, true);
+
+        form.addField(textField);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+
+    @Test
     public void testMakeField() {
         Assert.assertNull(PdfFormField.makeFormField(new PdfNumber(1), null));
         Assert.assertNull(PdfFormField.makeFormField(new PdfArray(), null));
