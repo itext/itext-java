@@ -45,10 +45,12 @@ package com.itextpdf.kernel.geom;
 
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfPage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -125,6 +127,62 @@ public class Rectangle implements Serializable {
         }
 
         return new Rectangle(llx, lly, urx - llx, ury - lly);
+    }
+
+    /**
+     * Gets the rectangle as it looks on the rotated page
+     * and returns the rectangle in coordinates relevant to the true page origin.
+     * This rectangle can be used to add annotations, fields, and other objects
+     * to the rotated page.
+     *
+     * @param rect the rectangle as it looks on the rotated page.
+     * @param page the page on which one want to process the rectangle.
+     * @return the newly created rectangle with translated coordinates.
+     */
+    public static Rectangle getRectangleOnRotatedPage(Rectangle rect, PdfPage page) {
+        Rectangle resultRect = rect;
+        int rotation = page.getRotation();
+        if (0 != rotation) {
+            Rectangle pageSize = page.getPageSize();
+            switch ((rotation / 90) % 4) {
+                case 1: // 90 degrees
+                    resultRect = new Rectangle(pageSize.getWidth() - resultRect.getTop(), resultRect.getLeft(), resultRect.getHeight(), resultRect.getWidth());
+                    break;
+                case 2: // 180 degrees
+                    resultRect = new Rectangle(pageSize.getWidth() - resultRect.getRight(), pageSize.getHeight() - resultRect.getTop(), resultRect.getWidth(), resultRect.getHeight());
+                    break;
+                case 3: // 270 degrees
+                    resultRect = new Rectangle(resultRect.getLeft(), pageSize.getHeight() - resultRect.getRight(), resultRect.getHeight(), resultRect.getWidth());
+                    break;
+                case 4: // 0 degrees
+                default:
+                    break;
+            }
+        }
+        return resultRect;
+    }
+
+    /**
+     * Calculates the bounding box of passed points.
+     *
+     * @param points the points which appear inside the area
+     *
+     * @return the bounding box of passed points.
+     */
+    public static Rectangle calculateBBox(List<Point> points) {
+        List<Double> xs = new ArrayList<>();
+        List<Double> ys = new ArrayList<>();
+        for (Point point : points) {
+            xs.add(point.getX());
+            ys.add(point.getY());
+        }
+
+        double left = Collections.min(xs);
+        double bottom = Collections.min(ys);
+        double right = Collections.max(xs);
+        double top = Collections.max(ys);
+
+        return new Rectangle((float) left, (float) bottom, (float) (right - left), (float) (top - bottom));
     }
 
     /**

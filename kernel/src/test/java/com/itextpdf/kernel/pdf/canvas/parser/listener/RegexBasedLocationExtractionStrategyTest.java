@@ -207,4 +207,30 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
 
         pdfDocument.close();
     }
+
+    @Test
+    public void testRotatedText() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "rotatedText.pdf"));
+
+        // build strategy
+        RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("abc");
+
+        // get locations
+        List<IPdfTextLocation> locationList = new ArrayList<>();
+        for (int x = 1; x <= pdfDocument.getNumberOfPages(); x++) {
+            new PdfCanvasProcessor(extractionStrategy).processPageContent(pdfDocument.getPage(x));
+            for(IPdfTextLocation location : extractionStrategy.getResultantLocations()) {
+                if(location != null) {
+                    locationList.add(location);
+                }
+            }
+        }
+
+        // compare
+        Assert.assertEquals(2, locationList.size());
+        Assert.assertTrue(locationList.get(0).getRectangle().equalsWithEpsilon(new Rectangle(188.512f, 450f, 14.800003f, 25.791992f)));
+        Assert.assertTrue(locationList.get(1).getRectangle().equalsWithEpsilon(new Rectangle(36f, 746.688f, 25.792f, 14.799988f)));
+
+        pdfDocument.close();
+    }
 }

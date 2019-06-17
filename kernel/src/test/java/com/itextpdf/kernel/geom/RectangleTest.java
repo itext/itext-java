@@ -44,13 +44,18 @@ package com.itextpdf.kernel.geom;
 
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Category(UnitTest.class)
@@ -399,7 +404,7 @@ public class RectangleTest extends ExtendedITextTest {
         expected.add(new Rectangle(-2, 0, 4, 2));
         expected.add(new Rectangle(-2, -1, 4, 2));
         actual = Rectangle.createBoundingRectanglesFromQuadPoint(quadpoints);
-        for(int i=0; i<expected.size();i++){
+        for (int i = 0; i < expected.size(); i++) {
             areEqual = areEqual && expected.get(i).equalsWithEpsilon(actual.get(i));
         }
         Assert.assertTrue(areEqual);
@@ -419,5 +424,71 @@ public class RectangleTest extends ExtendedITextTest {
         }
 
         Assert.assertTrue(exception);
+    }
+
+    @Test
+    public void translateOnRotatedPageTest01() {
+        // we need a page with set rotation and page size to test Rectangle#getRectangleOnRotatedPage
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+
+        PdfPage page = pdfDocument.addNewPage();
+        Assert.assertTrue(PageSize.A4.equalsWithEpsilon(page.getPageSize()));
+
+        // Test rectangle
+        Rectangle testRectangle = new Rectangle(200, 200, 100, 200);
+
+        Assert.assertEquals(0, page.getRotation());
+        Assert.assertTrue(new Rectangle(200, 200, 100, 200).equalsWithEpsilon(Rectangle.getRectangleOnRotatedPage(testRectangle, page)));
+
+        page.setRotation(90);
+        Assert.assertEquals(90, page.getRotation());
+        Assert.assertTrue(new Rectangle(195, 200, 200, 100).equalsWithEpsilon(Rectangle.getRectangleOnRotatedPage(testRectangle, page)));
+
+        page.setRotation(180);
+        Assert.assertEquals(180, page.getRotation());
+        Assert.assertTrue(new Rectangle(295, 442, 100, 200).equalsWithEpsilon(Rectangle.getRectangleOnRotatedPage(testRectangle, page)));
+
+        page.setRotation(270);
+        Assert.assertEquals(270, page.getRotation());
+        Assert.assertTrue(new Rectangle(200, 542, 200, 100).equalsWithEpsilon(Rectangle.getRectangleOnRotatedPage(testRectangle, page)));
+
+        page.setRotation(360);
+        Assert.assertEquals(0, page.getRotation());
+        Assert.assertTrue(new Rectangle(200, 200, 100, 200).equalsWithEpsilon(Rectangle.getRectangleOnRotatedPage(testRectangle, page)));
+    }
+
+    @Test
+    public void calculateBBoxTest() {
+        Point a = new Point(100, 100);
+        Point b = new Point(200, 100);
+        Point c = new Point(200, 200);
+        Point d = new Point(100, 200);
+
+
+        // Zero rotation
+        Rectangle.calculateBBox(Arrays.asList(a, b, c, d));
+        Assert.assertTrue(new Rectangle(100, 100, 100, 100).equalsWithEpsilon(Rectangle.calculateBBox(Arrays.asList(a, b, c, d))));
+
+        // 270 degree rotation
+        a = new Point(200, 100);
+        b = new Point(200, 200);
+        c = new Point(100, 200);
+        d = new Point(100, 100);
+
+        Assert.assertTrue(new Rectangle(100, 100, 100, 100).equalsWithEpsilon(Rectangle.calculateBBox(Arrays.asList(a, b, c, d))));
+
+        // it looks as follows:
+        // dxxxxxx
+        // xxxxxxx
+        // cxxxxxa
+        // xxxxxxx
+        // xxxxxxb
+        a = new Point(200, 100);
+        b = new Point(200, 0);
+        c = new Point(0, 100);
+        d = new Point(0, 200);
+
+        Assert.assertTrue(new Rectangle(0, 0, 200, 200).equalsWithEpsilon(Rectangle.calculateBBox(Arrays.asList(a, b, c, d))));
+
     }
 }
