@@ -11,7 +11,6 @@ pipeline {
     options {
         ansiColor('xterm')
         buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
-        compressBuildLog()
         parallelsAlwaysFailFast()
         retry(1)
         skipStagesAfterUnstable()

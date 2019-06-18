@@ -13,6 +13,10 @@
   <name>iText 7 - pdftest</name>
   <url>https://itextpdf.com/</url>
 
+  <properties>
+    <sonar.skip>true</sonar.skip>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>ch.qos.logback</groupId>

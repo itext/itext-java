@@ -19,6 +19,10 @@
     </license>
   </licenses>
 
+  <properties>
+    <sonar.skip>true</sonar.skip>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
