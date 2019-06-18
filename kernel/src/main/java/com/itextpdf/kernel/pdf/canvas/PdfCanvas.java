@@ -1268,14 +1268,13 @@ public class PdfCanvas implements Serializable {
     }
 
     /**
-     * @deprecated in favour of endPath(), which does exactly the same thing but is better named
      * @return current canvas.
      * Ends the path without filling or stroking it.
+     * @deprecated in favour of endPath(), which does exactly the same thing but is better named
      */
     @Deprecated
     public PdfCanvas newPath() {
-        contentStream.getOutputStream().writeBytes(n);
-        return this;
+        return this.endPath();
     }
 
     /**

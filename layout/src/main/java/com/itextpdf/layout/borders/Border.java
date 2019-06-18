@@ -652,11 +652,11 @@ public abstract class Border {
     }
 
     /**
-     * Calculate adjusted starting points for non-continuous borders, given two opposing points (A and B) that define the bounding rectangle
+     * Calculate adjusted starting points for discontinuous borders, given two opposing points (A and B) that define the bounding rectangle
      *
-     * @param x1          x-ordinate of point A
+     * @param x1          x-coordinate of point A
      * @param y1          y-ordinate of point A
-     * @param x2          x-ordinate of point B
+     * @param x2          x-coordinate of point B
      * @param y2          y-ordinate of point B
      * @param defaultSide default side of the border used to determine the side given by points A and B
      * @return float[] containing the adjusted starting points in the form {x1,y1,x2,y2}

@@ -180,4 +180,15 @@ public class RoundDotsBorder extends Border {
 
         drawDiscontinuousBorders(canvas, boundingRectangle, horizontalRadii, verticalRadii, defaultSide, borderWidthBefore, borderWidthAfter);
     }
+
+    /**
+     * Adjusts the size of the gap between dots
+     *
+     * @param distance   the {@link Border border} length
+     * @param initialGap the initial size of the gap
+     * @return the adjusted size of the gap
+     */
+    protected float getDotsGap(double distance, float initialGap) {
+        return super.getDotsGap(distance, initialGap);
+    }
 }
