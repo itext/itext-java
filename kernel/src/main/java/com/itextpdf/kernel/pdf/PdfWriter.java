@@ -347,8 +347,9 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             copiedObjectKey = new PdfDocument.IndirectRefDescription(indirectReference);
 
             PdfIndirectReference copiedIndirectReference = copiedObjects.get(copiedObjectKey);
-            if (copiedIndirectReference != null)
+            if (copiedIndirectReference != null) {
                 return copiedIndirectReference.getRefersTo();
+            }
         }
 
         SerializedObjectContent serializedContent = null;
