@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <clipPath id="_ABSTRACT_RENDERER_ID_0">
+            <rect x="161" y="96" width="579" height="309">
+            </rect>
+        </clipPath>
+        <filter id="_ABSTRACT_RENDERER_ID_1">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2">
+            </feGaussianBlur>
+            <feOffset dx="1" dy="1">
+            </feOffset>
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.1">
+                </feFuncA>
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode>
+                </feMergeNode>
+                <feMergeNode in="SourceGraphic">
+                </feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <rect x="0" y="0" width="900" height="500" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <text text-anchor="start" x="161" y="70.9" font-size="14" font-weight="bold" stroke="none" stroke-width="0" fill="#000000">Area, default
+        </text>
+        <rect x="161" y="59" width="579" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+    </g>
+    <g>
+        <rect x="161" y="96" width="579" height="309" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g clip-path="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+            <g>
+                <rect x="161" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="306" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="450" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="595" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="739" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="327" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="250" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="173" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="96" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+            </g>
+            <g>
+                <g>
+                    <path d="M198.5,173.5C198.5,173.5,246.5,141.09583333333333,270.5,135C294.5,128.90416666666667,318.5,122.48750000000001,342.5,136.925C366.5,151.3625,390.5,200.86312785388128,414.5,221.625C438.5,242.38687214611872,463.5,244.49646118721455,487.5,262.04999999999995C511.5,279.60353881278536,535.5,332.6333333333333,559.5,327.5C583.5,322.3666666666667,607.5,253.70833333333334,631.5,231.25C655.5,208.79166666666666,703.5,192.75,703.5,192.75L703.5,231.25C703.5,231.25,655.5,239.91249999999997,631.5,256.275C607.5,272.6375,583.5,327.8208333333333,559.5,329.425C535.5,331.0291666666667,511.5,280.601198630137,487.5,265.9C463.5,251.198801369863,438.5,251.40536529680364,414.5,240.875C390.5,230.34463470319636,366.5,205.58333333333334,342.5,202.375C318.5,199.16666666666666,294.5,216.8125,270.5,221.625C246.5,226.4375,198.5,231.25,198.5,231.25" stroke="none" stroke-width="0" fill-opacity="0.3" fill="#b5982c">
+                    </path>
+                </g>
+                <g>
+                    <path d="M198.5,192.75C198.5,192.75,246.5,163.875,270.5,154.25C294.5,144.625,318.5,123.77083333333333,342.5,135C366.5,146.22916666666666,390.5,199.27654109589042,414.5,221.625C438.5,243.97345890410958,463.5,250.2890410958904,487.5,269.75C511.5,289.2109589041096,535.5,343.8625,559.5,339.05C583.5,334.2375,607.5,265.2583333333333,631.5,240.875C655.5,216.49166666666667,703.5,192.75,703.5,192.75L703.5,208.15C703.5,208.15,655.5,219.05833333333334,631.5,244.725C607.5,270.39166666666665,583.5,355.7333333333333,559.5,362.15C535.5,368.56666666666666,511.5,305.55587899543383,487.5,283.225C463.5,260.8941210045662,438.5,249.7308789954338,414.5,227.4C390.5,205.0691210045662,366.5,158.74166666666665,342.5,148.47499999999997C318.5,138.2083333333333,294.5,156.4958333333333,270.5,165.79999999999998C246.5,175.10416666666666,198.5,204.29999999999998,198.5,204.29999999999998" stroke="none" stroke-width="0" fill-opacity="0.3" fill="#b5982c">
+                    </path>
+                </g>
+                <g>
+                    <path d="M198.5,219.7C198.5,219.7,246.5,193.7125,270.5,186.975C294.5,180.23749999999998,318.5,171.25416666666666,342.5,179.275C366.5,187.29583333333335,390.5,219.78350456621004,414.5,235.1C438.5,250.41649543378995,463.5,252.50850456620998,487.5,271.67499999999995C511.5,290.84149543378993,535.5,353.1666666666667,559.5,350.6C583.5,348.03333333333336,607.5,277.7708333333333,631.5,256.275C655.5,234.77916666666664,703.5,221.625,703.5,221.625L703.5,240.875C703.5,240.875,655.5,249.21666666666667,631.5,269.75C607.5,290.2833333333333,583.5,363.1125,559.5,364.075C535.5,365.03749999999997,511.5,295.9792237442922,487.5,275.525C463.5,255.07077625570776,438.5,251.3833904109589,414.5,240.875C390.5,230.3666095890411,366.5,213.60416666666666,342.5,212C318.5,210.39583333333334,294.5,226.4375,270.5,231.25C246.5,236.0625,198.5,240.875,198.5,240.875" stroke="none" stroke-width="0" fill-opacity="0.3" fill="#b5982c">
+                    </path>
+                </g>
+            </g>
+            <g>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#333333">
+                </rect>
+            </g>
+            <g>
+                <g>
+                </g>
+                <g>
+                </g>
+                <g>
+                </g>
+                <g>
+                </g>
+                <g>
+                </g>
+                <g>
+                </g>
+                <g>
+                </g>
+                <g>
+                </g>
+            </g>
+            <g>
+                <path d="M197.625,212C197.625,212,245.79166666666669,183.125,269.875,173.5C293.95833333333337,163.875,318.04166666666663,144.625,342.125,154.25C366.20833333333337,163.875,390.29166666666663,212,414.375,231.25C438.4583333333333,250.5,462.5416666666667,250.5,486.625,269.75C510.7083333333333,289,534.7916666666667,349.9583333333333,558.875,346.75C582.9583333333333,343.5416666666667,607.0416666666667,272.95833333333337,631.125,250.5C655.2083333333333,228.04166666666666,703.375,212,703.375,212" stroke="#f1ca3a" stroke-width="2" fill-opacity="1" fill="none">
+                </path>
+            </g>
+        </g>
+        <g>
+        </g>
+        <g>
+            <g>
+                <text text-anchor="middle" x="161.5" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">0.5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="306" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">2.5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="450.5" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">4.5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="595" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">6.5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="739.5" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">8.5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="409.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="332.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">40
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="255.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">80
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="178.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">120
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="101.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">160
+                </text>
+            </g>
+        </g>
+    </g>
+    <g>
+    </g>
+</svg>

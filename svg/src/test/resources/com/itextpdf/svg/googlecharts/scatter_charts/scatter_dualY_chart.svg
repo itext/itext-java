@@ -1,0 +1,238 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="500">
+    <defs>
+    </defs>
+    <g>
+        <rect x="0" y="0" width="800" height="500" fill="#ffffff" fill-opacity="1" stroke="#ffffff" stroke-opacity="0" stroke-width="0">
+        </rect>
+        <text font-size="12" x="0" y="15.59375" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 16px;" fill="#757575" dx="0px">Students' Final Grades
+        </text>
+        <text font-size="12" x="0" y="36.390625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 14px;" fill="#BDBDBD" dx="0px">based on hours studied
+        </text>
+        <rect x="679.109375" y="84.5" width="12" height="12" rx="2" ry="2" fill="#4285f4">
+        </rect>
+        <text font-size="12" x="699.109375" y="100.109375" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto;" fill="#757575" dx="0px">Hours Studied
+        </text>
+        <rect x="679.109375" y="119.6875" width="12" height="12" rx="2" ry="2" fill="#db4437">
+        </rect>
+        <text font-size="12" x="699.109375" y="135.296875" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto;" fill="#757575" dx="0px">Final
+        </text>
+        <rect x="54.5" y="84.5" width="524" height="360" fill="#ffffff" fill-opacity="1" stroke="#ffffff" stroke-opacity="0" stroke-width="1">
+        </rect>
+    </g>
+    <g>
+        <line x1="54.5" x2="578.5" y1="444.5" y2="444.5" stroke="#9E9E9E" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="578.5" y1="372.5" y2="372.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="578.5" y1="300.5" y2="300.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="578.5" y1="228.5" y2="228.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="578.5" y1="156.5" y2="156.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="578.5" y1="84.5" y2="84.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="578.5" y1="444.5" y2="444.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="578.5" y1="399.5" y2="399.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="578.5" y1="354.5" y2="354.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="578.5" y1="309.5" y2="309.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="578.5" y1="264.5" y2="264.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="578.5" y1="219.5" y2="219.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="578.5" y1="174.5" y2="174.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="578.5" y1="129.5" y2="129.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="578.5" y1="84.5" y2="84.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="66.5" x2="66.5" y1="84.5" y2="444.5" stroke="#9E9E9E" stroke-width="1">
+        </line>
+        <line x1="233.16666666666666" x2="233.16666666666666" y1="84.5" y2="444.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="399.8333333333333" x2="399.8333333333333" y1="84.5" y2="444.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="566.5" x2="566.5" y1="84.5" y2="444.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+    </g>
+    <g>
+        <circle cx="66.5" cy="444.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="83.16666666666667" cy="408.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="99.83333333333334" cy="372.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="116.5" cy="336.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="133.16666666666669" cy="300.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="149.83333333333331" cy="264.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="166.5" cy="228.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="183.16666666666669" cy="192.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="199.83333333333334" cy="156.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="216.5" cy="120.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="233.16666666666666" cy="84.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="249.83333333333331" cy="444.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="266.5" cy="264.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="283.1666666666667" cy="336.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="299.83333333333337" cy="408.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="316.5" cy="264.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="333.1666666666667" cy="228.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="349.8333333333333" cy="192.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="366.5" cy="336.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="383.16666666666663" cy="120.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="399.8333333333333" cy="372.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="416.5" cy="372.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="433.16666666666663" cy="372.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="449.83333333333337" cy="336.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="466.5" cy="300.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="483.1666666666667" cy="372.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="499.83333333333337" cy="228.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="516.5" cy="372.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="533.1666666666667" cy="156.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="549.8333333333333" cy="120.5" r="6" fill="#4285f4" fill-opacity="0.6">
+        </circle>
+        <circle cx="66.5" cy="381.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="83.16666666666667" cy="192.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="99.83333333333334" cy="291.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="116.5" cy="147.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="133.16666666666669" cy="219.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="149.83333333333331" cy="165.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="166.5" cy="345.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="183.16666666666669" cy="282.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="199.83333333333334" cy="147.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="216.5" cy="264.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="233.16666666666666" cy="246.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="249.83333333333331" cy="309.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="266.5" cy="264.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="283.1666666666667" cy="174.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="299.83333333333337" cy="336.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="316.5" cy="309.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="333.1666666666667" cy="372.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="349.8333333333333" cy="102.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="366.5" cy="246.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="383.16666666666663" cy="138.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="399.8333333333333" cy="273.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="416.5" cy="129.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="433.16666666666663" cy="210.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="449.83333333333337" cy="381.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="466.5" cy="444.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="483.1666666666667" cy="264.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="499.83333333333337" cy="156.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="516.5" cy="255.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="533.1666666666667" cy="273.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+        <circle cx="549.8333333333333" cy="237.5" r="6" fill="#db4437" fill-opacity="0.6">
+        </circle>
+    </g>
+    <g>
+    </g>
+    <g>
+        <text font-size="12" x="66.5" y="462.5" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="-3.369140386581421px">0
+        </text>
+        <text font-size="12" x="233.16666666666666" y="462.5" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">10
+        </text>
+        <text font-size="12" x="399.8333333333333" y="462.5" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">20
+        </text>
+        <text font-size="12" x="566.5" y="462.5" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">30
+        </text>
+        <text font-size="12" x="318.1875" y="496.09375" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#424242" dx="-27.711912155151367px">Student ID
+        </text>
+        <text font-size="12" x="48.5" y="448.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">0
+        </text>
+        <text font-size="12" x="48.5" y="376.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">2
+        </text>
+        <text font-size="12" x="48.5" y="304.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">4
+        </text>
+        <text font-size="12" x="48.5" y="232.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">6
+        </text>
+        <text font-size="12" x="48.5" y="160.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">8
+        </text>
+        <text font-size="12" x="48.5" y="88.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">10
+        </text>
+        <text font-size="12" x="16.5625" y="260.90625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#424242" dx="-37.845703125px" transform="rotate(-90 16.5625 264.5)">Hours Studied
+        </text>
+        <text font-size="12" x="584.5" y="448.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="0px">60
+        </text>
+        <text font-size="12" x="584.5" y="403.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="0px">65
+        </text>
+        <text font-size="12" x="584.5" y="358.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="0px">70
+        </text>
+        <text font-size="12" x="584.5" y="313.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="0px">75
+        </text>
+        <text font-size="12" x="584.5" y="268.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="0px">80
+        </text>
+        <text font-size="12" x="584.5" y="223.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="0px">85
+        </text>
+        <text font-size="12" x="584.5" y="178.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="0px">90
+        </text>
+        <text font-size="12" x="584.5" y="133.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="0px">95
+        </text>
+        <text font-size="12" x="584.5" y="88.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#757575" dx="0px">100
+        </text>
+        <text font-size="12" x="623.171875" y="260.90625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-family: Roboto; font-size: 12px;" fill="#424242" dx="-46.505855560302734px" transform="rotate(90 623.171875 264.5)">Final Exam Grade
+        </text>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+</svg>

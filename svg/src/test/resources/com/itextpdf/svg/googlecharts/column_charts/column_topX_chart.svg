@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="600">
+    <defs>
+        <clipPath id="rablfilter0">
+            <rect x="20.5" y="132.5" width="779" height="460">
+            </rect>
+        </clipPath>
+    </defs>
+    <g>
+        <rect x="0" y="0" width="800" height="600" fill="#ffffff" fill-opacity="1" stroke="#ffffff" stroke-opacity="0" stroke-width="0">
+        </rect>
+        <text x="0" y="15.59375" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 16px;" fill="#757575" dx="0px">Chess opening moves
+        </text>
+        <text x="0" y="36.390625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#BDBDBD" dx="0px">popularity by percentage
+        </text>
+        <rect x="20.5" y="132.5" width="779" height="460" fill="#ffffff" fill-opacity="1" stroke="#ffffff" stroke-opacity="0" stroke-width="1">
+        </rect>
+    </g>
+    <g>
+        <line x1="20.5" x2="799.5" y1="592.5" y2="592.5" stroke="#9E9E9E" stroke-width="1">
+        </line>
+        <line x1="20.5" x2="799.5" y1="541.3888888888889" y2="541.3888888888889" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="20.5" x2="799.5" y1="490.27777777777777" y2="490.27777777777777" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="20.5" x2="799.5" y1="439.16666666666663" y2="439.16666666666663" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="20.5" x2="799.5" y1="388.05555555555554" y2="388.05555555555554" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="20.5" x2="799.5" y1="336.94444444444446" y2="336.94444444444446" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="20.5" x2="799.5" y1="285.8333333333333" y2="285.8333333333333" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="20.5" x2="799.5" y1="234.72222222222223" y2="234.72222222222223" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="20.5" x2="799.5" y1="183.61111111111111" y2="183.61111111111111" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="20.5" x2="799.5" y1="132.5" y2="132.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+    </g>
+    <g>
+        <path d="M 168.6734693877551 143.22222222222223 A 2 2 0 0 1 170.6734693877551 145.22222222222223 L 170.6734693877551 592 A 0 0 0 0 1 170.6734693877551 592 L 33 592 A 0 0 0 0 1 33 592 L 33 145.22222222222223 A 2 2 0 0 1 35 143.22222222222223 Z" fill="#4285f4" clip-path="url(#rablfilter0)">
+        </path>
+        <path d="M 322.75510204081627 276.1111111111111 A 2 2 0 0 1 324.75510204081627 278.1111111111111 L 324.75510204081627 592 A 0 0 0 0 1 324.75510204081627 592 L 187.0816326530612 592 A 0 0 0 0 1 187.0816326530612 592 L 187.0816326530612 278.1111111111111 A 2 2 0 0 1 189.0816326530612 276.1111111111111 Z" fill="#4285f4" clip-path="url(#rablfilter0)">
+        </path>
+        <path d="M 476.83673469387753 470.3333333333333 A 2 2 0 0 1 478.83673469387753 472.3333333333333 L 478.83673469387753 592 A 0 0 0 0 1 478.83673469387753 592 L 341.16326530612236 592 A 0 0 0 0 1 341.16326530612236 592 L 341.16326530612236 472.3333333333333 A 2 2 0 0 1 343.16326530612236 470.3333333333333 Z" fill="#4285f4" clip-path="url(#rablfilter0)">
+        </path>
+        <path d="M 630.9183673469388 490.77777777777777 A 2 2 0 0 1 632.9183673469388 492.77777777777777 L 632.9183673469388 592 A 0 0 0 0 1 632.9183673469388 592 L 495.2448979591836 592 A 0 0 0 0 1 495.2448979591836 592 L 495.2448979591836 492.77777777777777 A 2 2 0 0 1 497.2448979591836 490.77777777777777 Z" fill="#4285f4" clip-path="url(#rablfilter0)">
+        </path>
+        <path d="M 785 562.3333333333333 A 2 2 0 0 1 787 564.3333333333333 L 787 592 A 0 0 0 0 1 787 592 L 649.3265306122448 592 A 0 0 0 0 1 649.3265306122448 592 L 649.3265306122448 564.3333333333333 A 2 2 0 0 1 651.3265306122448 562.3333333333333 Z" fill="#4285f4" clip-path="url(#rablfilter0)">
+        </path>
+    </g>
+    <g>
+    </g>
+    <g>
+        <text x="101.83673469387755" y="122.90625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-43.904293060302734px">King's pawn (e4)
+        </text>
+        <text x="255.91836734693877" y="122.90625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-49.010738372802734px">Queen's pawn (d4)
+        </text>
+        <text x="410" y="122.90625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-57.486324310302734px">Knight to King 3 (Nf3)
+        </text>
+        <text x="564.0816326530612" y="122.90625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-68.26171875px">Queen's bishop pawn (c4)
+        </text>
+        <text x="718.1632653061224" y="122.90625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-14.598631858825684px">Other
+        </text>
+        <text x="410" y="89.3125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#424242" dx="-38.2001953125px">White to move
+        </text>
+        <text x="14.5" y="596.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">0
+        </text>
+        <text x="14.5" y="545.6059027777778" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">5
+        </text>
+        <text x="14.5" y="494.49305555555554" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">10
+        </text>
+        <text x="14.5" y="443.38020833333326" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">15
+        </text>
+        <text x="14.5" y="392.2673611111111" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">20
+        </text>
+        <text x="14.5" y="341.1545138888889" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">25
+        </text>
+        <text x="14.5" y="290.04166666666663" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">30
+        </text>
+        <text x="14.5" y="238.92881944444446" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">35
+        </text>
+        <text x="14.5" y="187.81597222222223" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">40
+        </text>
+        <text x="14.5" y="136.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">45
+        </text>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+</svg>

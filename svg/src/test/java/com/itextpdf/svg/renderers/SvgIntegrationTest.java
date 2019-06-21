@@ -82,6 +82,14 @@ public class SvgIntegrationTest extends ExtendedITextTest {
         doc.close();
     }
 
+    public static PdfDocument convertWithResult(String svg, String output) throws IOException {
+        PdfDocument doc = new PdfDocument(new PdfWriter(output, new WriterProperties().setCompressionLevel(0)));
+        doc.addNewPage();
+        ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(svg);
+        SvgConverter.drawOnDocument(new FileInputStream(svg), doc, 1, properties);
+        return doc;
+    }
+
     public void convertToSinglePage(InputStream svg, OutputStream pdfOutputStream) throws IOException {
         WriterProperties writerprops = new WriterProperties().setCompressionLevel(0);
         SvgConverter.createPdf(svg, pdfOutputStream, writerprops);

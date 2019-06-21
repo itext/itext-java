@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <clipPath id="_ABSTRACT_RENDERER_ID_0">
+            <rect x="161" y="96" width="579" height="309">
+            </rect>
+        </clipPath>
+    </defs>
+    <rect x="0" y="0" width="900" height="500" stroke="none" stroke-width="0" fill="#dddddd">
+    </rect>
+    <g>
+        <rect x="335" y="466" width="230" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g>
+            <rect x="335" y="466" width="139" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="368" y="477.9"  font-size="14" stroke="none" stroke-width="0" fill="#222222">Rotten Tomatoes
+                </text>
+            </g>
+            <rect x="335" y="466" width="28" height="14" stroke="none" stroke-width="0" fill="#4374e0">
+            </rect>
+        </g>
+        <g>
+            <rect x="497" y="466" width="68" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="530" y="477.9"  font-size="14" stroke="none" stroke-width="0" fill="#222222">IMDB
+                </text>
+            </g>
+            <rect x="497" y="466" width="28" height="14" stroke="none" stroke-width="0" fill="#53a8fb">
+            </rect>
+        </g>
+    </g>
+    <g>
+        <rect x="161" y="96" width="579" height="309" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g clip-path="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+            <g>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="327" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="250" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="173" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="96" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+            </g>
+            <g>
+                <g>
+                    <rect x="161" y="275.14" width="145" height="129.36" stroke="none" stroke-width="0" fill-opacity="0.3" fill="#4374e0">
+                    </rect>
+                    <path d="M161,275.14L306,275.14" stroke="#4374e0" stroke-width="2" fill-opacity="1" fill="none">
+                    </path>
+                </g>
+                <g>
+                    <rect x="306" y="298.24" width="144" height="106.25999999999999" stroke="none" stroke-width="0" fill-opacity="0.3" fill="#4374e0">
+                    </rect>
+                    <path d="M306,298.24L450,298.24" stroke="#4374e0" stroke-width="2" fill-opacity="1" fill="none">
+                    </path>
+                </g>
+                <g>
+                    <rect x="450" y="304.4" width="145" height="100.10000000000002" stroke="none" stroke-width="0" fill-opacity="0.3" fill="#4374e0">
+                    </rect>
+                    <path d="M450,304.4L595,304.4" stroke="#4374e0" stroke-width="2" fill-opacity="1" fill="none">
+                    </path>
+                </g>
+                <g>
+                    <rect x="595" y="336.74" width="144" height="67.75999999999999" stroke="none" stroke-width="0" fill-opacity="0.3" fill="#4374e0">
+                    </rect>
+                    <path d="M595,336.74L739,336.74" stroke="#4374e0" stroke-width="2" fill-opacity="1" fill="none">
+                    </path>
+                </g>
+                <g>
+                    <rect x="161" y="153.48" width="145" height="121.66" stroke="none" stroke-width="0" fill-opacity="0.3" fill="#53a8fb">
+                    </rect>
+                    <path d="M161,153.48L306,153.48" stroke="#53a8fb" stroke-width="2" fill-opacity="1" fill="none">
+                    </path>
+                </g>
+                <g>
+                    <rect x="306" y="198.14" width="144" height="100.10000000000002" stroke="none" stroke-width="0" fill-opacity="0.3" fill="#53a8fb">
+                    </rect>
+                    <path d="M306,198.14L450,198.14" stroke="#53a8fb" stroke-width="2" fill-opacity="1" fill="none">
+                    </path>
+                </g>
+                <g>
+                    <rect x="450" y="205.84" width="145" height="98.55999999999997" stroke="none" stroke-width="0" fill-opacity="0.3" fill="#53a8fb">
+                    </rect>
+                    <path d="M450,205.84L595,205.84" stroke="#53a8fb" stroke-width="2" fill-opacity="1" fill="none">
+                    </path>
+                </g>
+                <g>
+                    <rect x="595" y="241.25999999999996" width="144" height="95.48000000000005" stroke="none" stroke-width="0" fill-opacity="0.3" fill="#53a8fb">
+                    </rect>
+                    <path d="M595,241.25999999999996L739,241.25999999999996" stroke="#53a8fb" stroke-width="2" fill-opacity="1" fill="none">
+                    </path>
+                </g>
+            </g>
+            <g>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#333333">
+                </rect>
+            </g>
+        </g>
+        <g>
+        </g>
+        <g>
+            <g>
+                <text text-anchor="middle" x="233.75" y="425.9"  font-size="14" stroke="none" stroke-width="0" fill="#222222">Alfred Hitchcock
+                </text>
+                <text text-anchor="middle" x="233.75" y="443.9"  font-size="14" stroke="none" stroke-width="0" fill="#222222">(1935)
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="378.25" y="425.9"  font-size="14" stroke="none" stroke-width="0" fill="#222222">Ralph Thomas
+                </text>
+                <text text-anchor="middle" x="378.25" y="443.9"  font-size="14" stroke="none" stroke-width="0" fill="#222222">(1959)
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="522.75" y="425.9"  font-size="14" stroke="none" stroke-width="0" fill="#222222">Don Sharp (1978)
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="667.25" y="425.9"  font-size="14" stroke="none" stroke-width="0" fill="#222222">James Hawes
+                </text>
+                <text text-anchor="middle" x="667.25" y="443.9"  font-size="14" stroke="none" stroke-width="0" fill="#222222">(2008)
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="409.4"  font-size="14" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="332.4"  font-size="14" stroke="none" stroke-width="0" fill="#444444">5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="255.4"  font-size="14" stroke="none" stroke-width="0" fill="#444444">10
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="178.4"  font-size="14" stroke="none" stroke-width="0" fill="#444444">15
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="101.4"  font-size="14" stroke="none" stroke-width="0" fill="#444444">20
+                </text>
+            </g>
+        </g>
+    </g>
+    <g>
+    </g>
+</svg>

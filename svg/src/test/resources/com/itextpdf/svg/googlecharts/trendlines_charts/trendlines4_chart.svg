@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="350" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <clipPath id="_ABSTRACT_RENDERER_ID_0">
+            <rect x="200" y="67" width="400" height="216">
+            </rect>
+        </clipPath>
+        <filter id="_ABSTRACT_RENDERER_ID_1">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2">
+            </feGaussianBlur>
+            <feOffset dx="1" dy="1">
+            </feOffset>
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.1">
+                </feFuncA>
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode>
+                </feMergeNode>
+                <feMergeNode in="SourceGraphic">
+                </feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <rect x="0" y="0" width="800" height="350" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <rect x="613" y="67" width="174" height="51" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g>
+            <rect x="613" y="67" width="174" height="13" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="644" y="78.05" font-family="Arial" font-size="13" stroke="none" stroke-width="0" fill="#222222">Weight
+                </text>
+            </g>
+            <path d="M613,73.5L639,73.5" stroke="none" stroke-width="0" fill-opacity="1" fill="none">
+            </path>
+            <circle cx="626" cy="73.5" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+        </g>
+        <g column-id="_trendline">
+            <rect x="613" y="88" width="174" height="30" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="644" y="99.05" font-size="13" stroke="none" stroke-width="0" fill="#222222">y = 1.344 * x - 0.34
+                </text>
+                <text text-anchor="start" x="644" y="116.05" font-size="13" stroke="none" stroke-width="0" fill="#222222">r^2 = 0.944
+                </text>
+            </g>
+            <rect x="613" y="88" width="26" height="13" stroke="none" stroke-width="0" fill-opacity="0.5" fill="#3366cc">
+            </rect>
+        </g>
+    </g>
+    <g>
+        <rect x="200" y="67" width="400" height="216" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g clip-path="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+            <g>
+                <rect x="200" y="67" width="1" height="216" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="300" y="67" width="1" height="216" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="400" y="67" width="1" height="216" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="499" y="67" width="1" height="216" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="599" y="67" width="1" height="216" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="200" y="282" width="400" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="200" y="228" width="400" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="200" y="175" width="400" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="200" y="121" width="400" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="200" y="67" width="400" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+            </g>
+            <g>
+                <rect x="200" y="67" width="1" height="216" stroke="none" stroke-width="0" fill="#333333">
+                </rect>
+                <rect x="200" y="282" width="400" height="1" stroke="none" stroke-width="0" fill="#333333">
+                </rect>
+            </g>
+            <g>
+                <path d="M200.5,286.1544183949504L204.49,283.26577998196575L208.48,280.3771415689811L212.47,277.4885031559964L216.46,274.5998647430118L220.45,271.7112263300271L224.44,268.8225879170424L228.43,265.93394950405775L232.42000000000002,263.0453110910731L236.41,260.1566726780884L240.4,257.2680342651037L244.39,254.37939585211905L248.38,251.49075743913437L252.37,248.6021190261497L256.36,245.71348061316505L260.35,242.82484220018037L264.34000000000003,239.9362037871957L268.33,237.04756537421102L272.32,234.15892696122634L276.31,231.2702885482417L280.3,228.38165013525702L280.3,228.38165013525702L284.13653846153846,225.6041131996948L287.9730769230769,222.82657626413263L291.80961538461537,220.04903932857044L295.6461538461538,217.27150239300826L299.48269230769233,214.49396545744608L303.3192307692308,211.7164285218839L307.15576923076924,208.93889158632172L310.9923076923077,206.1613546507595L314.82884615384614,203.38381771519732L318.6653846153846,200.60628077963514L322.50192307692305,197.82874384407296L326.33846153846156,195.05120690851078L330.17499999999995,192.2736699729486L333.915625,189.5655714607755L337.65625,186.85747294860232L341.396875,184.14937443642924L345.1375,181.4412759242561L348.87812499999995,178.73317741208294L352.61875,176.02507889990983L356.359375,173.3169803877367L360.1,170.60888187556358L364.09,167.7202434625789L368.08000000000004,164.8316050495942L372.07,161.94296663660958L376.06,159.05432822362485L380.04999999999995,156.16568981064017L384.03999999999996,153.27705139765555L388.03,150.38841298467085L392.02,147.49977457168617L396.01,144.61113615870153L400,141.72249774571685L403.99,138.83385933273217L407.98,135.9452209197475L411.97,133.05658250676285L415.96000000000004,130.16794409377815L419.95,127.2793056807935L423.93999999999994,124.39066726780882L427.93,121.50202885482412L431.91999999999996,118.6133904418395L435.90999999999997,115.7247520288548L439.9,112.83611361587015L443.89,109.9474752028855L447.88,107.0588367899008L451.87,104.17019837691612L455.86,101.28155996393144L459.84999999999997,98.39292155094677L463.84,95.50428313796212L467.83,92.61564472497744L471.82,89.72700631199277L475.81,86.83836789900809L479.8,83.94972948602344L483.78999999999996,81.06109107303877L487.78,78.17245266005406L491.77,75.28381424706942L495.76,72.39517583408471L499.75,69.50653742110006L503.73999999999995,66.61789900811542L507.72999999999996,63.72926059513074L511.71999999999997,60.840622182146035L515.71,57.95198376916136L519.7,55.06334535617671L523.69,52.174706943192035L527.68,49.28606853020736L531.6700000000001,46.397430117222655L535.6600000000001,43.50879170423798L539.65,40.62015329125336L543.64,37.73151487826868L547.6299999999999,34.84287646528401L551.62,31.954238052299303L555.61,29.065599639314655L559.5999999999999,26.17696122632998L563.5899999999999,23.288322813345303L567.5799999999999,20.399684400360684L571.5699999999999,17.51104598737595L575.56,14.622407574391275L579.55,11.733769161406656L583.54,8.84513074842198L587.53,5.956492335437304L591.52,3.0678539224525707L595.51,0.17921550946800835L599.5,-2.7094229035167245" stroke="#3366cc" stroke-width="2" stroke-opacity="0.5" fill-opacity="1" fill="none">
+                </path>
+            </g>
+        </g>
+        <g>
+            <circle cx="360.1" cy="153.5" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+            <circle cx="280.3" cy="223.375" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+            <circle cx="419.95" cy="132" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+            <circle cx="280.3" cy="228.75" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+            <circle cx="260.35" cy="244.875" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+            <circle cx="330.17499999999995" cy="207.25" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+        </g>
+        <g>
+            <g>
+                <text text-anchor="middle" x="200.5" y="302.05" font-size="13" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="300.25" y="302.05" font-size="13" stroke="none" stroke-width="0" fill="#444444">5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="400" y="302.05" font-size="13" stroke="none" stroke-width="0" fill="#444444">10
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="499.75" y="302.05" font-size="13" stroke="none" stroke-width="0" fill="#444444">15
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="599.5" y="302.05" font-size="13" stroke="none" stroke-width="0" fill="#444444">20
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="187" y="287.05" font-size="13" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="187" y="233.3" font-size="13" stroke="none" stroke-width="0" fill="#444444">5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="187" y="179.55" font-size="13" stroke="none" stroke-width="0" fill="#444444">10
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="187" y="125.8" font-size="13" stroke="none" stroke-width="0" fill="#444444">15
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="187" y="72.05" font-size="13" stroke="none" stroke-width="0" fill="#444444">20
+                </text>
+            </g>
+        </g>
+    </g>
+    <g>
+    </g>
+</svg>

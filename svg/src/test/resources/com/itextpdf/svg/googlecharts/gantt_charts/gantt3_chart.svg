@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1099" height="275">
+    <defs>
+    </defs>
+    <g>
+        <rect x="0" y="0" width="1099" height="275" fill="#ffffff">
+        </rect>
+    </g>
+    <g>
+        <rect x="0" y="0" width="1099" height="42" fill="#ffffff">
+        </rect>
+        <rect x="0" y="42" width="1099" height="42" fill="#f5f5f5">
+        </rect>
+        <rect x="0" y="84" width="1099" height="42" fill="#ffffff">
+        </rect>
+        <rect x="0" y="126" width="1099" height="42" fill="#f5f5f5">
+        </rect>
+        <rect x="0" y="168" width="1099" height="42" fill="#ffffff">
+        </rect>
+        <rect x="0" y="0" width="1099" height="210" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </rect>
+        <line x1="0" x2="1099" y1="42" y2="42" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <line x1="0" x2="1099" y1="84" y2="84" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <line x1="0" x2="1099" y1="126" y2="126" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <line x1="0" x2="1099" y1="168" y2="168" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <text x="144.5625" y="231.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: bold;" fill="black" dx="0px">Thu
+        </text>
+        <text x="144.5625" y="246.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: bold;" fill="black" dx="0px"> 1/1
+        </text>
+        <text x="250.6111111111111" y="231.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-7.574414253234863px">Fri
+        </text>
+        <text x="356.6597222222222" y="231.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-9.750317573547363px">Sat
+        </text>
+        <text x="462.7083333333333" y="231.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: bold;" fill="black" dx="-12.268786430358887px">Sun
+        </text>
+        <text x="462.7083333333333" y="246.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: bold;" fill="black" dx="-9.030298233032227px"> 1/4
+        </text>
+        <text x="568.7569444444443" y="231.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-12.636731147766113px">Mon
+        </text>
+        <text x="674.8055555555555" y="231.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-10.95245361328125px">Tue
+        </text>
+        <text x="780.8541666666666" y="231.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-13.2393798828125px">Wed
+        </text>
+        <text x="886.9027777777777" y="231.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-11.193517684936523px">Thu
+        </text>
+        <text x="992.9513888888888" y="231.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-7.574414253234863px">Fri
+        </text>
+        <text x="1099" y="231.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-19.500635147094727px">Sat
+        </text>
+    </g>
+    <g>
+        <path d="M 356.6597222222222 34 L 356.6597222222222 34 A 29 29 0 0 0 385.6597222222222 63 L 666.8055555555555 63 M 661.1487013060631 57.34314575050762 L 667.8055555555555 63 L 661.1487013060631 68.65685424949238" fill="none" stroke="#424242" stroke-width="1.4">
+        </path>
+        <path d="M 727.8298611111111 76 L 727.8298611111111 159 A 30 30 0 0 0 757.8298611111111 189 L 984.9513888888888 189 M 979.2945346393964 183.34314575050763 L 985.9513888888888 189 L 979.2945346393964 194.65685424949237" fill="none" stroke="#424242" stroke-width="1.4">
+        </path>
+    </g>
+    <g>
+        <path d="M 356.6597222222222 34 L 356.6597222222222 117 A 30 30 0 0 0 386.6597222222222 147 L 666.8055555555555 147 M 661.1487013060631 141.34314575050763 L 667.8055555555555 147 L 661.1487013060631 152.65685424949237" fill="none" stroke="#db4437" stroke-width="1.4">
+        </path>
+        <path d="M 356.6597222222222 34 L 356.6597222222222 75 A 30 30 0 0 0 386.6597222222222 105 L 560.7569444444443 105 M 555.1000901949519 99.34314575050762 L 561.7569444444443 105 L 555.1000901949519 110.65685424949238" fill="none" stroke="#db4437" stroke-width="1.4">
+        </path>
+        <path d="M 621.78125 118 L 621.78125 118 A 29 29 0 0 0 650.78125 147 L 666.8055555555555 147 M 661.1487013060631 141.34314575050763 L 667.8055555555555 147 L 661.1487013060631 152.65685424949237" fill="none" stroke="#db4437" stroke-width="1.4">
+        </path>
+        <path d="M 833.8784722222222 160 L 833.8784722222222 160 A 29 29 0 0 0 862.8784722222222 189 L 984.9513888888888 189 M 979.2945346393964 183.34314575050763 L 985.9513888888888 189 L 979.2945346393964 194.65685424949237" fill="none" stroke="#db4437" stroke-width="1.4">
+        </path>
+    </g>
+    <g>
+        <rect x="144.5625" y="9" width="424.19444444444434" height="26" rx="5" ry="5" fill="#424242">
+        </rect>
+        <rect x="674.8055555555555" y="51" width="106.04861111111109" height="26" rx="5" ry="5" fill="#424242">
+        </rect>
+        <rect x="568.7569444444443" y="93" width="106.0486111111112" height="26" rx="5" ry="5" fill="#424242">
+        </rect>
+        <rect x="674.8055555555555" y="135" width="318.14583333333326" height="26" rx="5" ry="5" fill="#424242">
+        </rect>
+    </g>
+    <g>
+        <rect x="144.5625" y="8" width="424.19444444444434" height="26" rx="5" ry="5" fill="#5e97f6">
+        </rect>
+        <rect x="674.8055555555555" y="50" width="106.04861111111109" height="26" rx="5" ry="5" fill="#db4437">
+        </rect>
+        <rect x="568.7569444444443" y="92" width="106.0486111111112" height="26" rx="5" ry="5" fill="#db4437">
+        </rect>
+        <rect x="674.8055555555555" y="134" width="318.14583333333326" height="26" rx="5" ry="5" fill="#db4437">
+        </rect>
+        <rect x="992.9513888888888" y="176" width="106.0486111111112" height="26" rx="5" ry="5" fill="#f2a600">
+        </rect>
+    </g>
+    <g>
+        <path d="M 563.7569444444443 8 A 5 5 0 0 1 568.7569444444443 13 L 568.7569444444443 29 A 5 5 0 0 1 563.7569444444443 34 L 149.5625 34 A 5 5 0 0 1 144.5625 29 L 144.5625 13 A 5 5 0 0 1 149.5625 8 Z" fill="#2a56c6">
+        </path>
+        <path d="M 696.0152777777778 50 A 0 0 0 0 1 696.0152777777778 50 L 696.0152777777778 76 A 0 0 0 0 1 696.0152777777778 76 L 679.8055555555555 76 A 5 5 0 0 1 674.8055555555555 71 L 674.8055555555555 55 A 5 5 0 0 1 679.8055555555555 50 Z" fill="#a52714">
+        </path>
+        <path d="M 669.8055555555555 92 A 5 5 0 0 1 674.8055555555555 97 L 674.8055555555555 113 A 5 5 0 0 1 669.8055555555555 118 L 573.7569444444443 118 A 5 5 0 0 1 568.7569444444443 113 L 568.7569444444443 97 A 5 5 0 0 1 573.7569444444443 92 Z" fill="#a52714">
+        </path>
+        <path d="M 754.3420138888889 134 A 0 0 0 0 1 754.3420138888889 134 L 754.3420138888889 160 A 0 0 0 0 1 754.3420138888889 160 L 679.8055555555555 160 A 5 5 0 0 1 674.8055555555555 155 L 674.8055555555555 139 A 5 5 0 0 1 679.8055555555555 134 Z" fill="#a52714">
+        </path>
+    </g>
+    <g>
+        <text x="128.5625" y="25.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#5e97f6" dx="-71.162109375px">Find sources
+        </text>
+        <text x="128.5625" y="67.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#db4437" dx="-111.576171875px">Create bibliography
+        </text>
+        <text x="128.5625" y="109.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#db4437" dx="-76.5830078125px">Outline paper
+        </text>
+        <text x="128.5625" y="151.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#db4437" dx="-65.8984375px">Write paper
+        </text>
+        <text x="128.5625" y="193.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#f2a600" dx="-79.3037109375px">Hand in paper
+        </text>
+    </g>
+    <g>
+    </g>
+</svg>

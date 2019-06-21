@@ -1,0 +1,194 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <clipPath id="_ABSTRACT_RENDERER_ID_0">
+            <rect x="161" y="96" width="579" height="309">
+            </rect>
+        </clipPath>
+    </defs>
+    <rect x="0" y="0" width="900" height="500" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <text text-anchor="start" x="161" y="70.9" font-size="14" font-weight="bold" stroke="none" stroke-width="0" fill="#000000">Box Plot
+        </text>
+        <rect x="161" y="59" width="579" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+    </g>
+    <g>
+        <rect x="161" y="96" width="579" height="309" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g clip-path="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+            <g>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="327" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="250" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="173" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="96" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+            </g>
+            <g>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#333333">
+                </rect>
+            </g>
+            <g>
+                <g>
+                    <path d="M198,173.5L198,240.875" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                    <rect x="175" y="198.525" width="45" height="26.94999999999999" stroke="#a63359" stroke-width="2" fill-opacity="0.3" fill="#a63359">
+                    </rect>
+                    <path d="M175,212L220,212" stroke="#a63359" stroke-width="2" fill-opacity="0.3" fill="#a63359">
+                    </path>
+                    <path d="M175,173.5L220,173.5" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                    <path d="M175,240.875L220,240.875" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                </g>
+                <g>
+                    <path d="M270,135L270,231.25" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                    <rect x="248" y="160.025" width="44" height="44.27499999999998" stroke="#a63359" stroke-width="2" fill-opacity="0.3" fill="#a63359">
+                    </rect>
+                    <path d="M248,173.5L292,173.5" stroke="#a63359" stroke-width="2" fill-opacity="0.3" fill="#a63359">
+                    </path>
+                    <path d="M248,135L292,135" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                    <path d="M248,231.25L292,231.25" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                </g>
+                <g>
+                    <path d="M342,135L342,212" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                    <rect x="320" y="142.7" width="44" height="48.125" stroke="#a63359" stroke-width="2" fill-opacity="0.3" fill="#a63359">
+                    </rect>
+                    <path d="M320,154.25L364,154.25" stroke="#a63359" stroke-width="2" fill-opacity="0.3" fill="#a63359">
+                    </path>
+                    <path d="M320,135L364,135" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                    <path d="M320,212L364,212" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                </g>
+                <g>
+                    <path d="M414,221.625L414,240.875" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                    <rect x="392" y="224.5125" width="45" height="13.474999999999994" stroke="#a63359" stroke-width="2" fill-opacity="0.3" fill="#a63359">
+                    </rect>
+                    <path d="M392,231.25L437,231.25" stroke="#a63359" stroke-width="2" fill-opacity="0.3" fill="#a63359">
+                    </path>
+                    <path d="M392,221.625L437,221.625" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                    <path d="M392,240.875L437,240.875" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                </g>
+                <g>
+                    <path d="M487,262.04999999999995L487,283.225" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                    <rect x="464" y="267.825" width="45" height="5.775000000000034" stroke="#a63359" stroke-width="2" fill-opacity="0.3" fill="#a63359">
+                    </rect>
+                    <path d="M464,269.75L509,269.75" stroke="#a63359" stroke-width="2" fill-opacity="0.3" fill="#a63359">
+                    </path>
+                    <path d="M464,262.04999999999995L509,262.04999999999995" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                    <path d="M464,283.225L509,283.225" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                </g>
+                <g>
+                    <path d="M559,327.5L559,364.075" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                    <rect x="537" y="334.2375" width="44" height="22.13749999999999" stroke="#a63359" stroke-width="2" fill-opacity="0.3" fill="#a63359">
+                    </rect>
+                    <path d="M537,346.75L581,346.75" stroke="#a63359" stroke-width="2" fill-opacity="0.3" fill="#a63359">
+                    </path>
+                    <path d="M537,327.5L581,327.5" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                    <path d="M537,364.075L581,364.075" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                </g>
+                <g>
+                    <path d="M631,231.25L631,269.75" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                    <rect x="609" y="242.79999999999998" width="44" height="13.474999999999994" stroke="#a63359" stroke-width="2" fill-opacity="0.3" fill="#a63359">
+                    </rect>
+                    <path d="M609,250.5L653,250.5" stroke="#a63359" stroke-width="2" fill-opacity="0.3" fill="#a63359">
+                    </path>
+                    <path d="M609,231.25L653,231.25" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                    <path d="M609,269.75L653,269.75" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                </g>
+                <g>
+                    <path d="M703,192.75L703,240.875" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                    <rect x="681" y="200.45" width="45" height="25.98750000000001" stroke="#a63359" stroke-width="2" fill-opacity="0.3" fill="#a63359">
+                    </rect>
+                    <path d="M681,212L726,212" stroke="#a63359" stroke-width="2" fill-opacity="0.3" fill="#a63359">
+                    </path>
+                    <path d="M681,192.75L726,192.75" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                    <path d="M681,240.875L726,240.875" stroke="#777777" stroke-width="2" fill="#777777">
+                    </path>
+                </g>
+            </g>
+        </g>
+        <g>
+        </g>
+        <g>
+            <g>
+                <text text-anchor="middle" x="197.625" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">a
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="269.875" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">b
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="342.125" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">c
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="414.375" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">d
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="486.625" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">e
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="558.875" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">f
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="631.125" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">g
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="703.375" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">h
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="409.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="332.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">40
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="255.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">80
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="178.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">120
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="101.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">160
+                </text>
+            </g>
+        </g>
+    </g>
+    <g>
+    </g>
+</svg>

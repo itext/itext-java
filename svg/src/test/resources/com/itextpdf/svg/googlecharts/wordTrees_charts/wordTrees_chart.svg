@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="901" height="501" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+    </defs>
+    <g>
+        <rect x="0" y="0" width="901" height="501" stroke="none" stroke-width="0" fill="#ffffff">
+        </rect>
+        <text text-anchor="start" x="10" y="255.1"  font-size="36" stroke="none" stroke-width="0" fill="#000000" id="4">cats
+        </text>
+        <path d="M87,243.82C107,243.82,107,119.41176470588235,127,119.41176470588235L127,120.81176470588235C109.0734705882353,120.81176470588235,109.0734705882353,248.01999999999998,87,248.01999999999998L87,243.82" stroke="none" stroke-width="0" fill="#a0a0a0">
+        </path>
+        <text text-anchor="start" x="137" y="129.01176470588234"  font-size="36" stroke="none" stroke-width="0" fill="#000000" id="5">are
+        </text>
+        <path d="M200,117.73176470588234C220,117.73176470588234,220,49.904411764705884,240,49.904411764705884L240,51.30441176470588C221.13045588235295,51.30441176470588,221.13045588235295,121.93176470588234,200,121.93176470588234L200,117.73176470588234" stroke="none" stroke-width="0" fill="#a0a0a0">
+        </path>
+        <text text-anchor="start" x="250" y="59.504411764705885"  font-size="36" stroke="none" stroke-width="0" fill="#000000" id="6">better
+        </text>
+        <text text-anchor="start" x="355" y="59.504411764705885"  font-size="36" stroke="none" stroke-width="0" fill="#000000" id="7">than
+        </text>
+        <path d="M435,48.224411764705884C455,48.224411764705884,455,22.301470588235293,475,22.301470588235293L475,23.034803921568628C455.43204901960786,23.034803921568628,455.43204901960786,52.42441176470589,435,52.42441176470589L435,48.224411764705884" stroke="none" stroke-width="0" fill="#a0a0a0">
+        </path>
+        <text text-anchor="start" x="485" y="28.301470588235293"  font-size="20" stroke="none" stroke-width="0" fill="#000000" id="8">dogs
+        </text>
+        <path d="M435,48.224411764705884C455,48.224411764705884,455,46.904411764705884,475,46.904411764705884L475,47.63774509803922C455.022,47.63774509803922,455.022,52.42441176470589,435,52.42441176470589L435,48.224411764705884" stroke="none" stroke-width="0" fill="#a0a0a0">
+        </path>
+        <text text-anchor="start" x="485" y="52.904411764705884"  font-size="20" stroke="none" stroke-width="0" fill="#000000" id="24">hamsters
+        </text>
+        <path d="M435,48.224411764705884C455,48.224411764705884,455,71.50735294117646,475,71.50735294117646L475,72.2406862745098C454.6119509803922,72.2406862745098,454.6119509803922,52.42441176470589,435,52.42441176470589L435,48.224411764705884" stroke="none" stroke-width="0" fill="#a0a0a0">
+        </path>
+        <text text-anchor="start" x="485" y="77.50735294117646"  font-size="20" stroke="none" stroke-width="0" fill="#000000" id="66">kittens
+        </text>
+        <path d="M200,117.73176470588234C220,117.73176470588234,220,103.11029411764706,240,103.11029411764706L240,103.91029411764706C220.24369117647058,103.91029411764706,220.24369117647058,121.93176470588234,200,121.93176470588234L200,117.73176470588234" stroke="none" stroke-width="0" fill="#a0a0a0">
+        </path>
+        <text text-anchor="start" x="250" y="108.96029411764707"  font-size="21" stroke="none" stroke-width="0" fill="#000000" id="29">awesome
+        </text>
+        <path d="M200,117.73176470588234C220,117.73176470588234,220,129.71323529411762,240,129.71323529411762L240,130.51323529411764C219.8003088235294,130.51323529411764,219.8003088235294,121.93176470588234,200,121.93176470588234L200,117.73176470588234" stroke="none" stroke-width="0" fill="#a0a0a0">
+        </path>
+        <text text-anchor="start" x="250" y="135.56323529411762"  font-size="21" stroke="none" stroke-width="0" fill="#000000" id="32">people
+        </text>
+        <text text-anchor="start" x="321" y="135.56323529411762"  font-size="21" stroke="none" stroke-width="0" fill="#000000" id="33">too
+        </text>
+        <path d="M200,117.73176470588234C220,117.73176470588234,220,156.31617647058823,240,156.31617647058823L240,157.11617647058824C219.35692647058823,157.11617647058824,219.35692647058823,121.93176470588234,200,121.93176470588234L200,117.73176470588234" stroke="none" stroke-width="0" fill="#a0a0a0">
+        </path>
+        <text text-anchor="start" x="250" y="162.16617647058823"  font-size="21" stroke="none" stroke-width="0" fill="#000000" id="63">family
+        </text>
+        <path d="M200,117.73176470588234C220,117.73176470588234,220,182.91911764705878,240,182.91911764705878L240,183.7191176470588C218.91354411764706,183.7191176470588,218.91354411764706,121.93176470588234,200,121.93176470588234L200,117.73176470588234" stroke="none" stroke-width="0" fill="#a0a0a0">
+        </path>
+        <text text-anchor="start" x="250" y="188.76911764705878"  font-size="21" stroke="none" stroke-width="0" fill="#000000" id="71">evil
+        </text>
+        <path d="M200,117.73176470588234C220,117.73176470588234,220,209.5220588235294,240,209.5220588235294L240,210.3220588235294C218.4701617647059,210.3220588235294,218.4701617647059,121.93176470588234,200,121.93176470588234L200,117.73176470588234" stroke="none" stroke-width="0" fill="#a0a0a0">
+        </path>
+        <text text-anchor="start" x="250" y="215.3720588235294"  font-size="21" stroke="none" stroke-width="0" fill="#000000" id="74">weird
+        </text>
+        <path d="M87,243.82C107,243.82,107,310.88235294117646,127,310.88235294117646L127,312.28235294117644C105.88229411764706,312.28235294117644,105.88229411764706,248.01999999999998,87,248.01999999999998L87,243.82" stroke="none" stroke-width="0" fill="#a0a0a0">
+        </path>
+        <text text-anchor="start" x="137" y="320.4823529411765"  font-size="36" stroke="none" stroke-width="0" fill="#000000" id="19">eat
+        </text>
+        <path d="M198,309.20235294117646C218,309.20235294117646,218,255.17647058823528,238,255.17647058823528L238,256.5764705882353C218.900431372549,256.5764705882353,218.900431372549,313.40235294117645,198,313.40235294117645L198,309.20235294117646" stroke="none" stroke-width="0" fill="#a0a0a0">
+        </path>
+        <text text-anchor="start" x="248" y="264.77647058823527"  font-size="36" stroke="none" stroke-width="0" fill="#000000" id="20">kibble
+        </text>
+        <path d="M198,309.20235294117646C218,309.20235294117646,218,334.235294117647,238,334.235294117647L238,335.635294117647C217.58278431372548,335.635294117647,217.58278431372548,313.40235294117645,198,313.40235294117645L198,309.20235294117646" stroke="none" stroke-width="0" fill="#a0a0a0">
+        </path>
+        <text text-anchor="start" x="248" y="343.83529411764704"  font-size="36" stroke="none" stroke-width="0" fill="#000000" id="39">mice
+        </text>
+        <path d="M87,243.82C107,243.82,107,406.61764705882354,127,406.61764705882354L127,407.41764705882355C104.28670588235295,407.41764705882355,104.28670588235295,248.01999999999998,87,248.01999999999998L87,243.82" stroke="none" stroke-width="0" fill="#a0a0a0">
+        </path>
+        <text text-anchor="start" x="137" y="413.3176470588235"  font-size="22" stroke="none" stroke-width="0" fill="#000000" id="42">meowing
+        </text>
+        <path d="M87,243.82C107,243.82,107,433.97058823529414,127,433.97058823529414L127,434.77058823529416C103.83082352941176,434.77058823529416,103.83082352941176,248.01999999999998,87,248.01999999999998L87,243.82" stroke="none" stroke-width="0" fill="#a0a0a0">
+        </path>
+        <text text-anchor="start" x="137" y="440.67058823529413"  font-size="22" stroke="none" stroke-width="0" fill="#000000" id="44">in
+        </text>
+        <text text-anchor="start" x="163" y="440.67058823529413"  font-size="22" stroke="none" stroke-width="0" fill="#000000" id="45">the
+        </text>
+        <text text-anchor="start" x="203" y="440.67058823529413"  font-size="22" stroke="none" stroke-width="0" fill="#000000" id="46">cradle
+        </text>
+        <text text-anchor="start" x="272" y="440.67058823529413"  font-size="22" stroke="none" stroke-width="0" fill="#000000" id="53">lyrics
+        </text>
+        <path d="M87,243.82C107,243.82,107,461.32352941176475,127,461.32352941176475L127,462.12352941176476C103.37494117647059,462.12352941176476,103.37494117647059,248.01999999999998,87,248.01999999999998L87,243.82" stroke="none" stroke-width="0" fill="#a0a0a0">
+        </path>
+        <text text-anchor="start" x="137" y="468.02352941176474"  font-size="22" stroke="none" stroke-width="0" fill="#000000" id="58">for
+        </text>
+        <text text-anchor="start" x="171" y="468.02352941176474"  font-size="22" stroke="none" stroke-width="0" fill="#000000" id="59">adoption
+        </text>
+    </g>
+    <g>
+        <rect x="0" y="0" width="901" height="501" stroke="none" stroke-width="0" fill-opacity="0" fill="none">
+        </rect>
+    </g>
+</svg>

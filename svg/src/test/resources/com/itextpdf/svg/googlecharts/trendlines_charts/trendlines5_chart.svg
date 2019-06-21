@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="799" height="350" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <clipPath id="_ABSTRACT_RENDERER_ID_1">
+            <rect x="200" y="67" width="400" height="216">
+            </rect>
+        </clipPath>
+    </defs>
+    <rect x="0" y="0" width="799" height="350" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <rect x="613" y="67" width="173" height="51" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g>
+            <rect x="613" y="67" width="173" height="13" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="644" y="78.05" font-family="Arial" font-size="13" stroke="none" stroke-width="0" fill="#222222">Weight
+                </text>
+            </g>
+            <path d="M613,73.5L639,73.5" stroke="none" stroke-width="0" fill-opacity="1" fill="none">
+            </path>
+            <circle cx="626" cy="73.5" r="4.5" stroke="none" stroke-width="0" fill="#6f9654">
+            </circle>
+        </g>
+        <g column-id="_trendline">
+            <rect x="613" y="88" width="173" height="30" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="644" y="99.05" font-size="13" stroke="none" stroke-width="0" fill="#222222">y = 2.497e^(0.168x)
+                </text>
+                <text text-anchor="start" x="644" y="116.05" font-size="13" stroke="none" stroke-width="0" fill="#222222">r^2 = 0.921
+                </text>
+            </g>
+            <rect x="613" y="88" width="26" height="13" stroke="none" stroke-width="0" fill-opacity="0.5" fill="#6f9654">
+            </rect>
+        </g>
+    </g>
+    <g>
+        <rect x="200" y="67" width="400" height="216" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g clip-path="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_1)">
+            <g>
+                <rect x="200" y="67" width="1" height="216" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="300" y="67" width="1" height="216" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="400" y="67" width="1" height="216" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="499" y="67" width="1" height="216" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="599" y="67" width="1" height="216" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="200" y="282" width="400" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="200" y="228" width="400" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="200" y="175" width="400" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="200" y="121" width="400" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="200" y="67" width="400" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+            </g>
+            <g>
+                <rect x="200" y="67" width="1" height="216" stroke="none" stroke-width="0" fill="#333333">
+                </rect>
+                <rect x="200" y="282" width="400" height="1" stroke="none" stroke-width="0" fill="#333333">
+                </rect>
+            </g>
+            <g>
+                <path d="M200.5,255.65928820908343L204.49,254.7398763132521L208.48,253.78897053451706L212.47,252.80549206949877L216.46,251.78832516107872L220.45,250.7363158325719L224.44,249.64827057853933L228.43,248.5229550107553L232.42000000000002,247.3590924577928L236.41,246.15536251663872L240.4,244.91039955469566L244.39,243.62279116047063L248.38,242.29107654119298L252.37,240.91374486554383L256.36,239.48923354961687L260.35,238.01592648416536L264.34000000000003,236.49215220112512L268.33,234.9161819773326L272.32,233.28622787328686L276.31,231.60044070473106L280.3,229.85690794475113L280.3,229.85690794475113L284.13653846153846,228.12413644356502L287.9730769230769,226.33432997429284L291.80961538461537,224.48561120482108L295.6461538461538,222.57604100978932L299.48269230769233,220.60361643663717L303.3192307692308,218.56626860470283L307.15576923076924,216.46186053516936L310.9923076923077,214.28818490958264L314.82884615384614,212.04296175459L318.6653846153846,209.7238360504711L322.50192307692305,207.32837526095201L326.33846153846156,204.85406678171267L330.17499999999995,202.29831530491023L333.915625,199.72548426686313L337.65625,197.0701180604402L341.396875,194.32956899758176L345.1375,191.501104453683L348.87812499999995,188.58190414287077L352.61875,185.5690573058729L356.359375,182.4595598076753L360.1,179.25031114207388L364.09,175.7135572394078L368.08000000000004,172.05565403056573L372.07,168.27245162138172L376.06,164.35965796564528L380.04999999999995,160.3128339957711L384.03999999999996,156.12738858667353L388.03,151.7985733471312L392.02,147.32147723273388L396.01,142.69102097429774L400,137.90195131543118L403.99,132.94883505271045L407.98,127.82605287170654L411.97,122.52779297186788L415.96000000000004,117.04804447302851L419.95,111.380590596059L423.93999999999994,105.51900160992585L427.93,99.45662753715601L431.91999999999996,93.18659060943295L435.90999999999997,86.70177746476145L439.9,79.99483107735435L443.89,73.05814241107902L447.88,65.88384178700139L451.87,58.46378995522727L455.86,50.78956886091805L459.84999999999997,42.85247209399944L463.84,34.64349501173342L467.83,26.153324522942228L471.82,17.372328522300506L475.81,8.290544962702427L479.8,-1.1023294466875768L483.78999999999996,-10.816950929527763L487.78,-20.864340731792197L491.77,-31.255897625385103L495.76,-42.00341084005453L499.75,-53.119073438285454L503.73999999999995,-64.615496148337L507.72999999999996,-76.50572167112551L511.71999999999997,-88.80323947717892L515.71,-101.52200111045113L519.7,-114.67643601636075L523.69,-128.28146791200942L527.68,-142.3525317171489L531.6700000000001,-156.9055910651129L535.6600000000001,-171.95715641356884L539.65,-187.52430377564872L543.64,-203.62469409269715L547.6299999999999,-220.27659327062565L551.62,-237.49889290259796L555.61,-255.3111317015538L559.5999999999999,-273.73351766690087L563.5899999999999,-292.78695101050266L567.5799999999999,-312.4930478679853L571.5699999999999,-332.87416482226433L575.56,-353.9534242671019L579.55,-375.7547406394863L583.54,-398.3028475505746L587.53,-421.6233258459995L591.52,-445.74263262735826L595.51,-470.6881312678105L599.5,-496.48812245585907" stroke="#6f9654" stroke-width="2" stroke-opacity="0.5" fill-opacity="1" fill="none">
+                </path>
+            </g>
+        </g>
+        <g>
+            <circle cx="360.1" cy="153.5" r="4.5" stroke="none" stroke-width="0" fill="#6f9654">
+            </circle>
+            <circle cx="280.3" cy="223.375" r="4.5" stroke="none" stroke-width="0" fill="#6f9654">
+            </circle>
+            <circle cx="419.95" cy="132" r="4.5" stroke="none" stroke-width="0" fill="#6f9654">
+            </circle>
+            <circle cx="280.3" cy="228.75" r="4.5" stroke="none" stroke-width="0" fill="#6f9654">
+            </circle>
+            <circle cx="260.35" cy="244.875" r="4.5" stroke="none" stroke-width="0" fill="#6f9654">
+            </circle>
+            <circle cx="330.17499999999995" cy="207.25" r="4.5" stroke="none" stroke-width="0" fill="#6f9654">
+            </circle>
+        </g>
+        <g>
+            <g>
+                <text text-anchor="middle" x="200.5" y="302.05" font-size="13" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="300.25" y="302.05" font-size="13" stroke="none" stroke-width="0" fill="#444444">5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="400" y="302.05" font-size="13" stroke="none" stroke-width="0" fill="#444444">10
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="499.75" y="302.05" font-size="13" stroke="none" stroke-width="0" fill="#444444">15
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="599.5" y="302.05" font-size="13" stroke="none" stroke-width="0" fill="#444444">20
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="187" y="287.05" font-size="13" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="187" y="233.3" font-size="13" stroke="none" stroke-width="0" fill="#444444">5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="187" y="179.55" font-size="13" stroke="none" stroke-width="0" fill="#444444">10
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="187" y="125.8" font-size="13" stroke="none" stroke-width="0" fill="#444444">15
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="187" y="72.05" font-size="13" stroke="none" stroke-width="0" fill="#444444">20
+                </text>
+            </g>
+        </g>
+    </g>
+    <g>
+    </g>
+</svg>

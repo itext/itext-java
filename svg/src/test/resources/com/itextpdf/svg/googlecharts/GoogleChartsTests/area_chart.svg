@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="986" height="500" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <clipPath id="_ABSTRACT_RENDERER_ID_0">
+            <rect x="166" y="96" width="654" height="309">
+            </rect>
+        </clipPath>
+    </defs>
+    <rect x="0" y="0" width="986" height="500" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <text text-anchor="start" x="166" y="70.9" font-size="14" font-weight="bold" stroke="none" stroke-width="0" fill="#000000">Company Performance
+        </text>
+        <rect x="166" y="59" width="654" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+    </g>
+    <g>
+        <rect x="834" y="96" width="138" height="37" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g>
+            <rect x="834" y="96" width="138" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="867" y="107.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Sales
+                </text>
+            </g>
+            <rect x="834" y="103" width="28" height="7" stroke="none" stroke-width="0" fill-opacity="0.3" fill="#3366cc">
+            </rect>
+            <path d="M834,103L862,103" stroke="#3366cc" stroke-width="2" fill-opacity="1" fill="none">
+            </path>
+        </g>
+        <g>
+            <rect x="834" y="119" width="138" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="867" y="130.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Expenses
+                </text>
+            </g>
+            <rect x="834" y="126" width="28" height="7" stroke="none" stroke-width="0" fill-opacity="0.3" fill="#dc3912">
+            </rect>
+            <path d="M834,126L862,126" stroke="#dc3912" stroke-width="2" fill-opacity="1" fill="none">
+            </path>
+        </g>
+    </g>
+    <g>
+        <rect x="166" y="96" width="654" height="309" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g clip-path="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+            <g>
+                <rect x="166" y="404" width="654" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="166" y="327" width="654" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="166" y="250" width="654" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="166" y="173" width="654" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="166" y="96" width="654" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+            </g>
+            <g>
+                <g>
+                    <path d="M166.5,404.5L166.5,404.5L166.5,147.83333333333337L384.16666666666663,104.19999999999999L601.8333333333333,235.1L819.5,140.13333333333333L819.5,404.5L819.5,404.5Z" stroke="none" stroke-width="0" fill-opacity="0.3" fill="#3366cc">
+                    </path>
+                </g>
+                <g>
+                    <path d="M166.5,404.5L166.5,404.5L166.5,301.83333333333337L384.16666666666663,286.43333333333334L601.8333333333333,117.03333333333336L819.5,265.9L819.5,404.5L819.5,404.5Z" stroke="none" stroke-width="0" fill-opacity="0.3" fill="#dc3912">
+                    </path>
+                </g>
+            </g>
+            <g>
+                <rect x="166" y="404" width="654" height="1" stroke="none" stroke-width="0" fill="#333333">
+                </rect>
+            </g>
+            <g>
+                <path d="M166.5,147.83333333333337L384.16666666666663,104.19999999999999L601.8333333333333,235.1L819.5,140.13333333333333" stroke="#3366cc" stroke-width="2" fill-opacity="1" fill="none">
+                </path>
+                <path d="M166.5,301.83333333333337L384.16666666666663,286.43333333333334L601.8333333333333,117.03333333333336L819.5,265.9" stroke="#dc3912" stroke-width="2" fill-opacity="1" fill="none">
+                </path>
+            </g>
+        </g>
+        <g>
+        </g>
+        <g>
+            <g>
+                <text text-anchor="middle" x="166.5" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">2013
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="384.16666666666663" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">2014
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="601.8333333333333" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">2015
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="819.5" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">2016
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="152" y="409.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="152" y="332.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">300
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="152" y="255.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">600
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="152" y="178.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">900
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="152" y="101.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">1,200
+                </text>
+            </g>
+        </g>
+    </g>
+    <g>
+        <g>
+            <text text-anchor="middle" x="493" y="468.9" font-size="14" font-style="italic" stroke="none" stroke-width="0" fill="#333333">Year
+            </text>
+            <rect x="166" y="457" width="654" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+        </g>
+    </g>
+    <g>
+    </g>
+</svg>

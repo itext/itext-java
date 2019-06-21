@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <clipPath id="_ABSTRACT_RENDERER_ID_0">
+            <rect x="161" y="96" width="579" height="309">
+            </rect>
+        </clipPath>
+    </defs>
+    <rect x="0" y="0" width="900" height="500" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <rect x="161" y="96" width="579" height="309" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g clip-path="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+            <g>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="327" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="250" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="173" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="96" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+            </g>
+            <g>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#333333">
+                </rect>
+            </g>
+            <g>
+                <g>
+                    <rect x="218" y="266" width="2" height="76" stroke="none" stroke-width="0" fill="#3366cc">
+                    </rect>
+                    <rect x="185" y="289" width="69" height="28" stroke="#3366cc" stroke-width="2" fill="#3366cc">
+                    </rect>
+                </g>
+                <g>
+                    <rect x="334" y="202" width="2" height="107" stroke="none" stroke-width="0" fill="#3366cc">
+                    </rect>
+                    <rect x="300" y="237" width="70" height="49" stroke="#3366cc" stroke-width="2" fill="#3366cc">
+                    </rect>
+                </g>
+                <g>
+                    <rect x="449" y="159" width="2" height="91" stroke="none" stroke-width="0" fill="#3366cc">
+                    </rect>
+                    <rect x="416" y="169" width="69" height="65" stroke="#3366cc" stroke-width="2" fill="#3366cc">
+                    </rect>
+                </g>
+                <g>
+                    <rect x="565" y="168" width="2" height="82" stroke="none" stroke-width="0" fill="#3366cc">
+                    </rect>
+                    <rect x="531" y="169" width="70" height="31" stroke="#3366cc" stroke-width="2" fill="#ffffff">
+                    </rect>
+                </g>
+                <g>
+                    <rect x="680" y="196" width="2" height="162" stroke="none" stroke-width="0" fill="#3366cc">
+                    </rect>
+                    <rect x="647" y="203" width="69" height="132" stroke="#3366cc" stroke-width="2" fill="#ffffff">
+                    </rect>
+                </g>
+            </g>
+        </g>
+        <g>
+        </g>
+        <g>
+            <g>
+                <text text-anchor="middle" x="219.3" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Mon
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="334.9" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Tue
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="450.5" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Wed
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="566.0999999999999" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Thu
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="681.6999999999999" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Fri
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="409.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="332.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">25
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="255.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">50
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="178.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">75
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="101.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">100
+                </text>
+            </g>
+        </g>
+    </g>
+    <g>
+    </g>
+</svg>

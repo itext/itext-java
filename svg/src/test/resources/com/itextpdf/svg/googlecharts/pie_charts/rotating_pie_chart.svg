@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <filter id="_ABSTRACT_RENDERER_ID_0">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2">
+            </feGaussianBlur>
+            <feOffset dx="1" dy="1">
+            </feOffset>
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.1">
+                </feFuncA>
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode>
+                </feMergeNode>
+                <feMergeNode in="SourceGraphic">
+                </feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <rect x="0" y="0" width="900" height="500" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <text text-anchor="start" x="161" y="70.9"  font-size="14" font-weight="bold" stroke="none" stroke-width="0" fill="#000000">Swiss Language Use (100 degree rotation)
+        </text>
+        <rect x="161" y="59" width="579" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+    </g>
+    <g>
+        <path d="M451,251L604.0409279989013,268.16025516229575A154,154,0,0,1,602.6603939638801,277.74181936070727L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#109618">
+        </path>
+    </g>
+    <g>
+        <path d="M451,251L603.5039218927121,229.58613049116155A154,154,0,0,1,604.0409279989013,268.16025516229575L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#ff9900">
+        </path>
+        <text text-anchor="start" x="553.7301827080556" y="254.21230523249233"  font-size="14" stroke="none" stroke-width="0" fill="#ffffff">Italian
+        </text>
+    </g>
+    <g>
+        <path d="M451,251L468.193706035492,97.96282650033984A154,154,0,0,1,603.5039218927121,229.5861304911616L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#dc3912">
+        </path>
+        <text text-anchor="start" x="512.1277456596335" y="170.44375579484424"  font-size="14" stroke="none" stroke-width="0" fill="#ffffff">French
+        </text>
+    </g>
+    <g>
+        <path d="M451,251L602.6603939638801,277.74181936070727A154,154,0,1,1,468.193706035492,97.96282650033984L451,251A0,0,0,1,0,451,251" stroke="#ffffff" stroke-width="1" fill="#3366cc">
+        </path>
+        <text text-anchor="start" x="333.53020460019883" y="325.0632927907456"  font-size="14" stroke="none" stroke-width="0" fill="#ffffff">German
+        </text>
+    </g>
+    <g>
+    </g>
+</svg>

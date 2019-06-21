@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500">
+    <defs>
+        <clipPath id="rablfilter0">
+            <rect x="62.5" y="84.5" width="647" height="360">
+            </rect>
+        </clipPath>
+    </defs>
+    <g>
+        <rect x="0" y="0" width="900" height="500" fill="#ffffff" fill-opacity="1" stroke="#ffffff" stroke-opacity="0" stroke-width="0">
+        </rect>
+        <text x="0" y="15.59375" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 16px;" fill="#757575" dx="0px">Nearby galaxies
+        </text>
+        <text x="0" y="36.390625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#BDBDBD" dx="0px">distance on the left, brightness on the right
+        </text>
+        <rect x="803.796875" y="84.5" width="12" height="12" rx="2" ry="2" fill="#4285f4">
+        </rect>
+        <text x="823.796875" y="100.109375" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; " fill="#757575" dx="0px">Distance
+        </text>
+        <rect x="803.796875" y="119.6875" width="12" height="12" rx="2" ry="2" fill="#db4437">
+        </rect>
+        <text x="823.796875" y="135.296875" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; " fill="#757575" dx="0px">Brightness
+        </text>
+        <rect x="62.5" y="84.5" width="647" height="360" fill="#ffffff" fill-opacity="1" stroke="#ffffff" stroke-opacity="0" stroke-width="1">
+        </rect>
+    </g>
+    <g>
+        <line x1="62.5" x2="709.5" y1="444.5" y2="444.5" stroke="#9E9E9E" stroke-width="1">
+        </line>
+        <line x1="62.5" x2="709.5" y1="384.5" y2="384.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="62.5" x2="709.5" y1="324.5" y2="324.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="62.5" x2="709.5" y1="264.5" y2="264.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="62.5" x2="709.5" y1="204.5" y2="204.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="62.5" x2="709.5" y1="144.5" y2="144.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="62.5" x2="709.5" y1="84.5" y2="84.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="62.5" x2="709.5" y1="444.5" y2="444.5" stroke="#9E9E9E" stroke-width="1">
+        </line>
+        <line x1="62.5" x2="709.5" y1="372.5" y2="372.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="62.5" x2="709.5" y1="300.5" y2="300.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="62.5" x2="709.5" y1="228.5" y2="228.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="62.5" x2="709.5" y1="156.5" y2="156.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="62.5" x2="709.5" y1="84.5" y2="84.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+    </g>
+    <g>
+        <path d="M 115.54301075268816 397 A 2 2 0 0 1 117.54301075268816 399 L 117.54301075268816 444 A 0 0 0 0 1 117.54301075268816 444 L 75 444 A 0 0 0 0 1 75 444 L 75 399 A 2 2 0 0 1 77 397 Z" fill="#4285f4" clip-path="url(#rablfilter0)">
+        </path>
+        <path d="M 159.08602150537632 109.48000000000002 A 2 2 0 0 1 161.08602150537632 111.48000000000002 L 161.08602150537632 444 A 0 0 0 0 1 161.08602150537632 444 L 118.54301075268816 444 A 0 0 0 0 1 118.54301075268816 444 L 118.54301075268816 111.48000000000002 A 2 2 0 0 1 120.54301075268816 109.48000000000002 Z" fill="#db4437" clip-path="url(#rablfilter0)">
+        </path>
+        <path d="M 249.52150537634407 301 A 2 2 0 0 1 251.52150537634407 303 L 251.52150537634407 444 A 0 0 0 0 1 251.52150537634407 444 L 208.9784946236559 444 A 0 0 0 0 1 208.9784946236559 444 L 208.9784946236559 303 A 2 2 0 0 1 210.9784946236559 301 Z" fill="#4285f4" clip-path="url(#rablfilter0)">
+        </path>
+        <path d="M 293.0645161290322 380.2 A 2 2 0 0 1 295.0645161290322 382.2 L 295.0645161290322 444 A 0 0 0 0 1 295.0645161290322 444 L 252.52150537634407 444 A 0 0 0 0 1 252.52150537634407 444 L 252.52150537634407 382.2 A 2 2 0 0 1 254.52150537634407 380.2 Z" fill="#db4437" clip-path="url(#rablfilter0)">
+        </path>
+        <path d="M 383.5 265 A 2 2 0 0 1 385.5 267 L 385.5 444 A 0 0 0 0 1 385.5 444 L 342.95698924731175 444 A 0 0 0 0 1 342.95698924731175 444 L 342.95698924731175 267 A 2 2 0 0 1 344.95698924731175 265 Z" fill="#4285f4" clip-path="url(#rablfilter0)">
+        </path>
+        <path d="M 427.0430107526882 239.07999999999998 A 2 2 0 0 1 429.0430107526882 241.07999999999998 L 429.0430107526882 444 A 0 0 0 0 1 429.0430107526882 444 L 386.5 444 A 0 0 0 0 1 386.5 444 L 386.5 241.07999999999998 A 2 2 0 0 1 388.5 239.07999999999998 Z" fill="#db4437" clip-path="url(#rablfilter0)">
+        </path>
+        <path d="M 517.4784946236559 145 A 2 2 0 0 1 519.4784946236559 147 L 519.4784946236559 444 A 0 0 0 0 1 519.4784946236559 444 L 476.93548387096774 444 A 0 0 0 0 1 476.93548387096774 444 L 476.93548387096774 147 A 2 2 0 0 1 478.93548387096774 145 Z" fill="#4285f4" clip-path="url(#rablfilter0)">
+        </path>
+        <path d="M 561.0215053763441 432.04 A 2 2 0 0 1 563.0215053763441 434.04 L 563.0215053763441 444 A 0 0 0 0 1 563.0215053763441 444 L 520.4784946236559 444 A 0 0 0 0 1 520.4784946236559 444 L 520.4784946236559 434.04 A 2 2 0 0 1 522.4784946236559 432.04 Z" fill="#db4437" clip-path="url(#rablfilter0)">
+        </path>
+        <path d="M 651.4569892473118 85 A 2 2 0 0 1 653.4569892473118 87 L 653.4569892473118 444 A 0 0 0 0 1 653.4569892473118 444 L 610.9139784946236 444 A 0 0 0 0 1 610.9139784946236 444 L 610.9139784946236 87 A 2 2 0 0 1 612.9139784946236 85 Z" fill="#4285f4" clip-path="url(#rablfilter0)">
+        </path>
+        <path d="M 695 256.36 A 2 2 0 0 1 697 258.36 L 697 444 A 0 0 0 0 1 697 444 L 654.4569892473118 444 A 0 0 0 0 1 654.4569892473118 444 L 654.4569892473118 258.36 A 2 2 0 0 1 656.4569892473118 256.36 Z" fill="#db4437" clip-path="url(#rablfilter0)">
+        </path>
+    </g>
+    <g>
+    </g>
+    <g>
+        <text x="118.04301075268816" y="462.5" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-49.250972747802734px">Canis Major Dwarf
+        </text>
+        <text x="252.02150537634407" y="462.5" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-46.066402435302734px">Sagittarius Dwarf
+        </text>
+        <text x="386" y="462.5" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-51.249019622802734px">Ursa Major II Dwarf
+        </text>
+        <text x="519.9784946236559" y="462.5" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-55.749019622802734px">Lg. Magellanic Cloud
+        </text>
+        <text x="653.9569892473118" y="462.5" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-21.928709030151367px">Bootes I
+        </text>
+        <text x="382.99025537634407" y="496.09375" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#424242" dx="-17.8828125px">Galaxy
+        </text>
+        <text x="56.5" y="448.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">0
+        </text>
+        <text x="56.5" y="388.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-20.999998092651367px">10K
+        </text>
+        <text x="56.5" y="328.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-20.999998092651367px">20K
+        </text>
+        <text x="56.5" y="268.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-20.999998092651367px">30K
+        </text>
+        <text x="56.5" y="208.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-20.999998092651367px">40K
+        </text>
+        <text x="56.5" y="148.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-20.999998092651367px">50K
+        </text>
+        <text x="56.5" y="88.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-20.999998092651367px">60K
+        </text>
+        <text x="16.625" y="260.90625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#424242" dx="-21.166990280151367px" transform="rotate(-90 16.625 264.5)">parsecs
+        </text>
+        <text x="715.5" y="448.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">0
+        </text>
+        <text x="715.5" y="376.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">5
+        </text>
+        <text x="715.5" y="304.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">10
+        </text>
+        <text x="715.5" y="232.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">15
+        </text>
+        <text x="715.5" y="160.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">20
+        </text>
+        <text x="715.5" y="88.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">25
+        </text>
+        <text x="747.4375" y="260.90625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#424242" dx="-53.654293060302734px" transform="rotate(90 747.4375 264.5)">apparent magnitude
+        </text>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+</svg>

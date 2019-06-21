@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <clipPath id="_ABSTRACT_RENDERER_ID_0">
+            <rect x="161" y="96" width="579" height="309">
+            </rect>
+        </clipPath>
+    </defs>
+    <rect x="0" y="0" width="900" height="500" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <text text-anchor="start" x="161" y="70.9"  font-size="14" font-weight="bold" stroke="none" stroke-width="0" fill="#000000">Age vs. Weight comparison
+        </text>
+        <rect x="161" y="59" width="579" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+    </g>
+    <g>
+        <rect x="161" y="96" width="579" height="309" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g clip-path="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+            <g>
+                <rect x="161" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="306" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="450" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="595" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="739" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="327" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="250" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="173" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="96" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+            </g>
+            <g>
+                <rect x="161" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#333333">
+                </rect>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#333333">
+                </rect>
+            </g>
+        </g>
+        <g>
+            <circle cx="392.7" cy="219.7" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+            <circle cx="277.1" cy="319.8" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+            <circle cx="479.4" cy="188.9" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+            <circle cx="277.1" cy="327.5" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+            <circle cx="248.2" cy="350.6" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+            <circle cx="349.35" cy="296.7" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+        </g>
+        <g>
+            <g>
+                <text text-anchor="middle" x="161.5" y="425.9"  font-size="14" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="306" y="425.9"  font-size="14" stroke="none" stroke-width="0" fill="#444444">5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="450.5" y="425.9"  font-size="14" stroke="none" stroke-width="0" fill="#444444">10
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="595" y="425.9"  font-size="14" stroke="none" stroke-width="0" fill="#444444">15
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="739.5" y="425.9"  font-size="14" stroke="none" stroke-width="0" fill="#444444">20
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="409.4"  font-size="14" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="332.4"  font-size="14" stroke="none" stroke-width="0" fill="#444444">5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="255.4"  font-size="14" stroke="none" stroke-width="0" fill="#444444">10
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="178.4"  font-size="14" stroke="none" stroke-width="0" fill="#444444">15
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="101.4"  font-size="14" stroke="none" stroke-width="0" fill="#444444">20
+                </text>
+            </g>
+        </g>
+    </g>
+    <g>
+        <g>
+            <text text-anchor="middle" x="450.5" y="468.9"  font-size="14" font-style="italic" stroke="none" stroke-width="0" fill="#222222">Age
+            </text>
+            <rect x="161" y="457" width="579" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+        </g>
+        <g>
+            <text text-anchor="middle" x="70.4" y="250.5"  font-size="14" font-style="italic" transform="rotate(-90 70.4 250.5)" stroke="none" stroke-width="0" fill="#222222">Weight
+            </text>
+            <path d="M58.49999999999999,405L58.50000000000001,96L72.50000000000001,96L72.49999999999999,405Z" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </path>
+        </g>
+    </g>
+    <g>
+    </g>
+</svg>

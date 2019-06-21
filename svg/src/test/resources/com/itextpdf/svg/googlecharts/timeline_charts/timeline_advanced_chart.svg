@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="200" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+    </defs>
+    <g>
+        <rect x="0" y="0" width="800" height="40.992" stroke="none" stroke-width="0" fill="#ffffff">
+        </rect>
+        <path d="M130,0L130,40.992" stroke="#e6e6e6" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M150.34503115450252,0L150.34503115450252,40.992" stroke="#e6e6e6" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M441.6701889113784,0L441.6701889113784,40.992" stroke="#e6e6e6" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M732.9953466682542,0L732.9953466682542,40.992" stroke="#e6e6e6" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <rect x="0" y="40.992" width="800" height="40.992" stroke="none" stroke-width="0" fill="#e6e6e6">
+        </rect>
+        <path d="M130,40.992L130,81.984" stroke="#ffffff" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M150.34503115450252,40.992L150.34503115450252,81.984" stroke="#ffffff" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M441.6701889113784,40.992L441.6701889113784,81.984" stroke="#ffffff" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M732.9953466682542,40.992L732.9953466682542,81.984" stroke="#ffffff" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <rect x="0" y="81.984" width="800" height="40.992" stroke="none" stroke-width="0" fill="#ffffff">
+        </rect>
+        <path d="M130,81.984L130,122.976" stroke="#e6e6e6" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M150.34503115450252,81.984L150.34503115450252,122.976" stroke="#e6e6e6" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M441.6701889113784,81.984L441.6701889113784,122.976" stroke="#e6e6e6" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M732.9953466682542,81.984L732.9953466682542,122.976" stroke="#e6e6e6" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M0,40.992L800,40.992" stroke="#b7b7b7" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M0,81.984L800,81.984" stroke="#b7b7b7" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <text text-anchor="end" x="117" y="25.046"  font-size="13" stroke="none" stroke-width="0" fill="#4d4d4d">President
+        </text>
+        <text text-anchor="end" x="117" y="66.038"  font-size="13" stroke="none" stroke-width="0" fill="#4d4d4d">Vice President
+        </text>
+        <text text-anchor="end" x="117" y="107.02999999999999"  font-size="13" stroke="none" stroke-width="0" fill="#4d4d4d">Secretary of State
+        </text>
+        <rect x="0" y="0" width="800" height="122.976" stroke="#9a9a9a" stroke-width="1" fill-opacity="1" fill="none">
+        </rect>
+    </g>
+    <g>
+        <text text-anchor="middle" x="150.34503115450252" y="144.026"  font-size="13" stroke="none" stroke-width="0" fill="#000000">1790
+        </text>
+        <text text-anchor="middle" x="441.6701889113784" y="144.026"  font-size="13" stroke="none" stroke-width="0" fill="#000000">1800
+        </text>
+        <text text-anchor="middle" x="732.9953466682542" y="144.026"  font-size="13" stroke="none" stroke-width="0" fill="#000000">1810
+        </text>
+    </g>
+    <g>
+    </g>
+    <g>
+        <rect x="131" y="9" width="228.26633130928286" height="22.991999999999997" stroke="none" stroke-width="0" fill="#4285f4">
+        </rect>
+        <text text-anchor="start" x="140" y="24.695999999999998"  font-size="12" stroke="none" stroke-width="0" fill="#ffffff">George Washington
+        </text>
+        <rect x="359.26633130928286" y="9" width="116.46624598166449" height="22.991999999999997" stroke="none" stroke-width="0" fill="#db4437">
+        </rect>
+        <text text-anchor="start" x="368.26633130928286" y="24.695999999999998"  font-size="12" stroke="none" stroke-width="0" fill="#ffffff">John Adams
+        </text>
+        <rect x="475.73257729094735" y="9" width="233.09203476604353" height="22.991999999999997" stroke="none" stroke-width="0" fill="#f4b400">
+        </rect>
+        <text text-anchor="start" x="484.73257729094735" y="24.695999999999998"  font-size="12" stroke="none" stroke-width="0" fill="#202020">Thomas Jefferson
+        </text>
+        <rect x="131" y="49.992" width="228.26633130928286" height="22.991999999999997" stroke="none" stroke-width="0" fill="#db4437">
+        </rect>
+        <text text-anchor="start" x="140" y="65.688"  font-size="12" stroke="none" stroke-width="0" fill="#ffffff">John Adams
+        </text>
+        <rect x="359.26633130928286" y="49.992" width="116.46624598166449" height="22.991999999999997" stroke="none" stroke-width="0" fill="#f4b400">
+        </rect>
+        <text text-anchor="start" x="368.26633130928286" y="65.688"  font-size="12" stroke="none" stroke-width="0" fill="#202020">Thomas Jefferson
+        </text>
+        <rect x="475.73257729094735" y="49.992" width="116.54601738302176" height="22.991999999999997" stroke="none" stroke-width="0" fill="#0f9d58">
+        </rect>
+        <text text-anchor="start" x="484.73257729094735" y="65.688"  font-size="12" stroke="none" stroke-width="0" fill="#ffffff">Aaron Burr
+        </text>
+        <rect x="592.2785946739691" y="49.992" width="207.7214053260309" height="22.991999999999997" stroke="none" stroke-width="0" fill="#ab47bc">
+        </rect>
+        <text text-anchor="start" x="601.2785946739691" y="65.688"  font-size="12" stroke="none" stroke-width="0" fill="#ffffff">George Clinton
+        </text>
+        <rect x="142.5241100130968" y="90.984" width="14.202633249990072" height="22.991999999999997" stroke="none" stroke-width="0" fill="#00acc1">
+        </rect>
+        <rect x="156.7267432630869" y="90.984" width="110.08453387308012" height="22.991999999999997" stroke="none" stroke-width="0" fill="#f4b400">
+        </rect>
+        <text text-anchor="start" x="165.7267432630869" y="106.67999999999999"  font-size="12" stroke="none" stroke-width="0" fill="#202020">Thomas Jefferson
+        </text>
+        <rect x="266.9708199388816" y="90.984" width="47.46065999920626" height="22.991999999999997" stroke="none" stroke-width="0" fill="#ff7043">
+        </rect>
+        <text text-anchor="start" x="275.9708199388816" y="106.67999999999999"  font-size="12" stroke="none" stroke-width="0" fill="#202020">Ed
+        </text>
+        <rect x="314.4314799380879" y="90.984" width="137.6854387427075" height="22.991999999999997" stroke="none" stroke-width="0" fill="#9e9d24">
+        </rect>
+        <text text-anchor="start" x="323.4314799380879" y="106.67999999999999"  font-size="12" stroke="none" stroke-width="0" fill="#ffffff">Timothy Pickering
+        </text>
+        <rect x="451.61406119776166" y="90.984" width="3" height="22.991999999999997" stroke="none" stroke-width="0" fill="#5c6bc0">
+        </rect>
+        <rect x="454.6696035242291" y="90.984" width="21.062973766718244" height="22.991999999999997" stroke="none" stroke-width="0" fill="#f06292">
+        </rect>
+        <rect x="475.8123486923047" y="90.984" width="4.543646068976443" height="22.991999999999997" stroke="none" stroke-width="0" fill="#00796b">
+        </rect>
+        <rect x="480.4357661626384" y="90.984" width="228.30907449299525" height="22.991999999999997" stroke="none" stroke-width="0" fill="#c2185b">
+        </rect>
+        <text text-anchor="start" x="489.4357661626384" y="106.67999999999999"  font-size="12" stroke="none" stroke-width="0" fill="#ffffff">James Madison
+        </text>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+</svg>
