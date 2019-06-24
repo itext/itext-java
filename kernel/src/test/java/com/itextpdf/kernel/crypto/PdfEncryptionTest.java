@@ -563,6 +563,28 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         compareEncryptedPdf(filename);
     }
 
+    @Test
+    public void encryptWithPasswordAes128NoMetadataCompression() throws Exception {
+        String srcFilename = "srcEncryptWithPasswordAes128NoMetadataCompression.pdf";
+        PdfReader reader = new PdfReader(sourceFolder + srcFilename, new ReaderProperties());
+        WriterProperties props = new WriterProperties()
+                .setStandardEncryption("superuser".getBytes(), "superowner".getBytes(), EncryptionConstants.ALLOW_PRINTING,
+                        EncryptionConstants.ENCRYPTION_AES_128 | EncryptionConstants.DO_NOT_ENCRYPT_METADATA);
+        String outFilename = "encryptWithPasswordAes128NoMetadataCompression.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + outFilename, props);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        compareTool.enableEncryptionCompare();
+        compareTool.getOutReaderProperties().setPassword("superowner".getBytes());
+        compareTool.getCmpReaderProperties().setPassword("superowner".getBytes());
+        String outPdf = destinationFolder + outFilename;
+        String cmpPdf = sourceFolder + "cmp_" + outFilename;
+        Assert.assertNull(compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+
     public void encryptWithPassword2(String filename, int encryptionType, int compression) throws XMPException, IOException, InterruptedException {
         encryptWithPassword2(filename, encryptionType, compression, false);
     }
