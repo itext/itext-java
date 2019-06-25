@@ -51,6 +51,7 @@ import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -69,7 +70,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class LineSvgNodeRendererTest {
+public class LineSvgNodeRendererTest extends SvgIntegrationTest{
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -153,7 +154,7 @@ public class LineSvgNodeRendererTest {
 
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = com.itextpdf.styledxmlparser.LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED))
+    @LogMessages(messages = @LogMessage(messageTemplate = com.itextpdf.styledxmlparser.LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 2))
     public void invalidAttributeTest02() throws IOException {
         Map<String, String> lineProperties = new HashMap<>();
         lineProperties.put("x1", "100");
@@ -225,4 +226,5 @@ public class LineSvgNodeRendererTest {
 
         Assert.assertEquals(expected, actual, 0f);
     }
+
 }

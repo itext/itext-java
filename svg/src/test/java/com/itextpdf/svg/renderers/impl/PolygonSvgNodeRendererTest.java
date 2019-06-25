@@ -50,6 +50,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -68,7 +69,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class PolygonSvgNodeRendererTest {
+public class PolygonSvgNodeRendererTest extends SvgIntegrationTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PolygonSvgNoderendererTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/PolygonSvgNoderendererTest/";
 

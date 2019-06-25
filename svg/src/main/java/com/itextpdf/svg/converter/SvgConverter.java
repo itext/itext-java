@@ -946,16 +946,17 @@ public final class SvgConverter {
             for (int i = 0; i < values.length; i++) {
                 values[i] = CssUtils.parseAbsoluteLength(valueStrings.get(i));
             }
+            viewBoxPresent = true;
         }
         float width, height;
         String wString, hString;
         wString = topSvgRenderer.getAttribute(SvgConstants.Attributes.WIDTH);
         if (wString == null) {
-            //Log Warning
-            LOGGER.warn(SvgLogMessageConstant.MISSING_WIDTH);
             if (viewBoxPresent) {
                 width = values[2];
             } else {
+                //Log Warning
+                LOGGER.warn(SvgLogMessageConstant.MISSING_WIDTH);
                 //Set to browser default
                 width = CssUtils.parseAbsoluteLength("300px");
             }
@@ -964,11 +965,11 @@ public final class SvgConverter {
         }
         hString = topSvgRenderer.getAttribute(SvgConstants.Attributes.HEIGHT);
         if (hString == null) {
-            //Log Warning
-            LOGGER.warn(SvgLogMessageConstant.MISSING_HEIGHT);
             if (viewBoxPresent) {
                 height = values[3];
             } else {
+                //Log Warning
+                LOGGER.warn(SvgLogMessageConstant.MISSING_HEIGHT);
                 //Set to browser default
                 height = CssUtils.parseAbsoluteLength("150px");
             }

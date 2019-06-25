@@ -4,7 +4,7 @@
       ![CDATA[
       @font-face{
       font-family:Courier;
-      tsrc:url(#Super Sans);
+      src:url(#Super Sans);
       }]]
     </style>
     <rect x='0' y='0' width='800' height='800' stroke= 'red' fill='white' id="name_rect"/>

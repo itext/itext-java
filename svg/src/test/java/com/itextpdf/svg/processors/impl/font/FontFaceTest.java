@@ -108,7 +108,6 @@ public class FontFaceTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = SvgLogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI)})
     public void fontFaceGrammarTest() throws IOException, InterruptedException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "fontFaceGrammarTest");
     }

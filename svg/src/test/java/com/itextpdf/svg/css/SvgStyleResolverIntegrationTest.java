@@ -186,4 +186,26 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
 
         Assert.assertEquals(expected, actual);
     }
+
+    @Test
+    //TODO DEVSIX-2058
+    public void fontResolverIntegrationTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "fontssvg");
+    }
+
+    @Test
+    public void validLocalFontTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "validLocalFontTest");
+    }
+
+    @Test
+    public void fontWeightTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "fontWeightTest");
+    }
+
+    @Test
+    //TODO DEVSIX-2264: that test shall fail after the fix.
+    public void googleFontsTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "googleFontsTest");
+    }
 }
