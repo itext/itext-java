@@ -1235,4 +1235,35 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             field.setValue(text);
         }
     }
+
+    @Test
+    public void setFont3Ways() throws IOException, InterruptedException {
+        String filename = destinationFolder + "setFont3Ways.pdf";
+        String cmpFilename = sourceFolder + "cmp_setFont3Ways.pdf";
+        String testString = "Don't cry over spilt milk";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(filename));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, true);
+
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
+
+        Rectangle rect1 = new Rectangle(10, 700, 200, 25);
+        Rectangle rect2 = new Rectangle(30, 600, 200, 25);
+        Rectangle rect3 = new Rectangle(50, 500, 200, 25);
+
+        PdfButtonFormField pushButton1 = PdfFormField.createPushButton(pdfDocument, rect1, "Name1", testString, font, 12);
+        form.addField(pushButton1);
+
+        PdfButtonFormField pushButton2 = PdfFormField.createPushButton(pdfDocument, rect2, "Name2", testString);
+        pushButton2.setFontAndSize(font, 12f);
+        form.addField(pushButton2);
+
+        PdfButtonFormField pushButton3 = PdfFormField.createPushButton(pdfDocument, rect3, "Name3", testString);
+        pushButton3.setFont(font).setFontSize(12);
+        form.addField(pushButton3);
+
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
 }
