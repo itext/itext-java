@@ -1,0 +1,8 @@
+<svg viewBox="0 0 1000 900" width="1000" height="1000"
+     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <text font-size='12' x="60" y="12" fill="Fuchsia">These 2 green horizontal lines are not inherited</text>
+    <line x1="0" y1="50" x2="500" y2="50" stroke="lightblue" stroke-width="3"  />
+    <line x1="0" y1="100" x2="500" y2="100" stroke="lightblue" stroke-width="3"  />
+    <use xlink:href="externalSvgExample.svg#svgLevel"  y="100"/>
+    <use xlink:href="externalSvgExample.svg#gLevel"  y="300"/>
+</svg>

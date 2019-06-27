@@ -47,6 +47,7 @@ import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -170,5 +171,11 @@ public class UseIntegrationTest extends SvgIntegrationTest {
     @Test
     public void missingHashtagTest() throws IOException,InterruptedException {
         convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "missingHashtag", properties);
+    }
+
+    @Test
+    public void useInDifferentFilesExampleTest() throws IOException, InterruptedException {
+        //TODO: update when DEVSIX-2252 fixed
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "useInDifferentFilesExampleTest");
     }
 }

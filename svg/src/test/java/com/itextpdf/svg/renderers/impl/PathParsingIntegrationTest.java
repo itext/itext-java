@@ -43,9 +43,13 @@
 package com.itextpdf.svg.renderers.impl;
 
 
+import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -137,6 +141,24 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
     @Test
     public void precedingSpacesTest() throws IOException, InterruptedException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "precedingSpaces");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
+    })
+    //TODO: update cmp-file after DEVSIX-2255
+    public void text_path_Test() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "textpath");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
+    })
+    public void textPathExample() throws IOException, InterruptedException {
+        //TODO: update when DEVSIX-2255 implemented
+        convertAndCompareVisually(sourceFolder, destinationFolder, "textPathExample");
     }
 }
 

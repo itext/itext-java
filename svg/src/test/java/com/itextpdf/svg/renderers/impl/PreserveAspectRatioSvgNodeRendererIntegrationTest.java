@@ -50,6 +50,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -104,5 +105,12 @@ public class PreserveAspectRatioSvgNodeRendererIntegrationTest extends SvgIntegr
     @Test
     public void viewBoxScalingTestDoNotPreserveAspectMetricDimensionsAll() throws IOException, InterruptedException {
         convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"viewBoxScalingTestDoNotPreserveAspectMetricDimensionsAll");
+    }
+
+    @Test
+    public void differentAspectRatios() throws IOException, InterruptedException {
+        //TODO: update cmp_ when DEVSIX-2250 fixed
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "differentAspectRatios");
+
     }
 }

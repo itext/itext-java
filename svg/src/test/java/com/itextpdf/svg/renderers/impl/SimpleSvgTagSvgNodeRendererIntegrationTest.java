@@ -180,4 +180,14 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
     public void negativeY() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeY");
     }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 2),
+
+    })
+    public void percentInMeasurement() throws IOException, InterruptedException {
+        //TODO: update after DEVSIX-2377
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "percentInMeasurement");
+    }
 }

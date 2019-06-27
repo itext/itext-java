@@ -97,4 +97,11 @@ public class FontSizeTest extends SvgIntegrationTest {
         String name = "fontRelativeKeywords";
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,name);
     }
+
+    @Test
+    //TODO: update cmp-file after DEVSIX-2785
+    public void diff_units_of_measure() throws IOException, InterruptedException {
+        String name = "diff_units_of_measure";
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, name);
+    }
 }

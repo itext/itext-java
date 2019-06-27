@@ -135,8 +135,14 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    @Ignore("RND-876")
+    @Ignore("DEVSIX-2240")
     public void differentDimensionsTest() throws IOException, InterruptedException {
         convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "differentDimensions", properties);
+    }
+
+    @Test
+    public void imageWithTransparencyTest() throws IOException, InterruptedException {
+        //TODO: update cmp_ when DEVSIX-2250, DEVSIX-2258 fixed
+        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "imageWithTransparency", properties);
     }
 }
