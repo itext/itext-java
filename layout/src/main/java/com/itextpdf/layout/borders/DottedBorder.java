@@ -106,7 +106,7 @@ public class DottedBorder extends Border {
         float dy = y2 - y1;
         double borderLength = Math.sqrt(dx * dx + dy * dy);
 
-        float adjustedGap = getDotsGap(borderLength, initialGap + width);
+        float adjustedGap = super.getDotsGap(borderLength, initialGap + width);
         if (adjustedGap > width) {
             adjustedGap -= width;
         }
@@ -139,7 +139,7 @@ public class DottedBorder extends Border {
         float dx = x2 - x1;
         float dy = y2 - y1;
         double borderLength = Math.sqrt(dx * dx + dy * dy);
-        float adjustedGap = getDotsGap(borderLength, initialGap);
+        float adjustedGap = super.getDotsGap(borderLength, initialGap);
         if (adjustedGap > width) {
             adjustedGap -= width;
         }
@@ -168,7 +168,7 @@ public class DottedBorder extends Border {
         float dy = y2 - y1;
         double borderLength = Math.sqrt(dx * dx + dy * dy);
 
-        float adjustedGap = getDotsGap(borderLength, initialGap + width);
+        float adjustedGap = super.getDotsGap(borderLength, initialGap + width);
         if (adjustedGap > width) {
             adjustedGap -= width;
         }
@@ -192,7 +192,9 @@ public class DottedBorder extends Border {
      * @param distance   the {@link Border border} length
      * @param initialGap the initial size of the gap
      * @return the adjusted size of the gap
+     * @deprecated logic moved to super-class
      */
+    @Deprecated
     protected float getDotsGap(double distance, float initialGap) {
         return super.getDotsGap(distance, initialGap);
     }

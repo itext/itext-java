@@ -1952,4 +1952,21 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
     }
+
+    @Test
+    public void endPathNewPathTest(){
+        ByteArrayOutputStream boasEndPath = new ByteArrayOutputStream();
+        PdfDocument pdfDocEndPath = new PdfDocument(new PdfWriter(boasEndPath));
+        pdfDocEndPath.addNewPage();
+
+        PdfCanvas endPathCanvas = new PdfCanvas(pdfDocEndPath.getPage(1));
+        endPathCanvas.endPath();
+
+        ByteArrayOutputStream boasNewPath = new ByteArrayOutputStream();
+        PdfDocument pdfDocNewPath = new PdfDocument(new PdfWriter(boasNewPath));
+        pdfDocNewPath.addNewPage();
+        PdfCanvas newPathCanvas = new PdfCanvas(pdfDocNewPath.getPage(1));
+        newPathCanvas.newPath();
+        Assert.assertArrayEquals(boasNewPath.toByteArray(),boasEndPath.toByteArray());
+    }
 }

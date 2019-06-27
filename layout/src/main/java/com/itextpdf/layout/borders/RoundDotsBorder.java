@@ -105,7 +105,7 @@ public class RoundDotsBorder extends Border {
         float dx = x2 - x1;
         float dy = y2 - y1;
         double borderLength = Math.sqrt(dx * dx + dy * dy);
-        float adjustedGap = getDotsGap(borderLength, initialGap);
+        float adjustedGap = super.getDotsGap(borderLength, initialGap);
 
         float[] startingPoints = getStartingPointsForBorderSide(x1, y1, x2, y2, defaultSide);
         x1 = startingPoints[0];
@@ -133,7 +133,7 @@ public class RoundDotsBorder extends Border {
         float dx = x2 - x1;
         float dy = y2 - y1;
         double borderLength = Math.sqrt(dx * dx + dy * dy);
-        float adjustedGap = getDotsGap(borderLength, initialGap);
+        float adjustedGap = super.getDotsGap(borderLength, initialGap);
         boolean isHorizontal = false;
         if (Math.abs(y2 - y1) < 0.0005f) {
             isHorizontal = true;
@@ -163,7 +163,7 @@ public class RoundDotsBorder extends Border {
         float dx = x2 - x1;
         float dy = y2 - y1;
         double borderLength = Math.sqrt(dx * dx + dy * dy);
-        float adjustedGap = getDotsGap(borderLength, initialGap);
+        float adjustedGap = super.getDotsGap(borderLength, initialGap);
 
         canvas
                 .saveState()
@@ -187,7 +187,9 @@ public class RoundDotsBorder extends Border {
      * @param distance   the {@link Border border} length
      * @param initialGap the initial size of the gap
      * @return the adjusted size of the gap
+     * @deprecated logic moved to super-class
      */
+    @Deprecated
     protected float getDotsGap(double distance, float initialGap) {
         return super.getDotsGap(distance, initialGap);
     }
