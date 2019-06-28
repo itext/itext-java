@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"
+    >
+    <defs>
+        <style>
+            .nonzero {
+            clip-rule: nonzero;
+            }
+
+            .evenodd {
+            clip-rule: evenodd;
+            }
+        </style>
+
+        <path id="testPath"
+              d="M25,10 A20,20 0,1 0 25,50 A20,20 1,1 0 25,10 M45,10 A20,20 0,1 0 45,50 A20,20 1,1 0 45,10"/>
+
+        <clipPath id="clip-nonzero">
+            <use class="nonzero" xlink:href="#testPath"/>
+        </clipPath>
+
+        <clipPath id="clip-evenodd">
+            <use class="evenodd" xlink:href="#testPath" y="50"/>
+        </clipPath>
+    </defs>
+
+    <!-- non-zero clip-rule -->
+    <rect clip-path="url(#clip-nonzero)"
+          x="0" y="5" width="70" height="50"
+          fill="cornflowerblue"/>
+    <text x="15" y="58" font-size="5" fill="black">non-zero clip-rule</text>
+
+    <!-- equivalent non-zero fill-rule -->
+    <use fill-rule="nonzero"
+         xlink:href="#testPath" x="70" y="0"
+         stroke="cornflowerblue"/>
+    <text x="86" y="58" font-size="5" fill="black">non-zero fill-rule</text>
+
+
+    <!-- even-odd clip-rule -->
+    <rect clip-path="url(#clip-evenodd)"
+          x="0" y="55" width="70" height="50"
+          fill="goldenrod"/>
+    <text x="14" y="109" font-size="5" fill="black">even-odd clip-rule</text>
+
+    <!-- equivalent even-odd fill-rule -->
+    <use fill-rule="evenodd"
+         xlink:href="#testPath" x="70" y="50"
+         stroke="goldenrod"/>
+    <text x="85" y="109" font-size="5" fill="black">even-odd fill-rule</text>
+
+</svg>

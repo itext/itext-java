@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 1000 1000"
+     width="1500" height="1500">
+
+    <style>
+        .clipPathP {
+            /* current version (doesn't require positioning) */
+        clip-path: polygon(50% 0%, 90% 20%, 100% 60%, 75% 100%, 25% 100%, 0% 60%, 10% 20%);
+        }
+    </style>
+    <defs>
+        <clipPath id="clipPathP">
+            <polyline points="155 390, 215 390, 185,355"/>
+            <ellipse cx="300" cy="350" rx="100" ry="50" transform="rotate(45)" />
+            <text x="0" y="130" font-weight="bold" font-size="10em">CLIPPING</text>
+            <text x="0" y="300" font-weight="bold" font-size="12em">PATH</text>
+            <text x="-10" y="500" font-weight="bold" font-size="9em">Test Sample</text>
+        </clipPath>
+    </defs>
+    <image x="0" y="0" width="700" height="700"
+           xlink:href="picture.png" class="clipPathP"
+    />
+    <line x1="0" y1="100" x2="500" y2="100" stroke="black" stroke-width="2"/>
+    <line x1="0" y1="200" x2="500" y2="200" stroke="black" stroke-width="2"/>
+    <line x1="0" y1="300" x2="500" y2="300" stroke="black" stroke-width="2"/>
+    <line x1="0" y1="400" x2="500" y2="400" stroke="black" stroke-width="2"/>
+    <line x1="100" y1="0" x2="100" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="200" y1="0" x2="200" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="300" y1="0" x2="300" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="400" y1="0" x2="400" y2="500" stroke="black" stroke-width="2"/>
+
+</svg>

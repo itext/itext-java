@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="12cm" height="4cm" viewBox="0 0 2200 800" version="1.1" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+
+
+    <rect x="1" y="1" width="1100" height="799" fill="none" stroke="blue"/>
+    <text x="0" y="50" font-weight="bold" font-size="24px">Fill-rule:evenodd</text>
+    <defs>
+        <path id="Triangle" d="M 16,0 L -8,9 v-18 z" fill="black" stroke="none"/>
+    </defs>
+    <g fill="red" stroke="black" stroke-width="3">
+        <path fill-rule="evenodd" d="M 250,75 L 323,301 131,161 369,161 177,301 z"/>
+        <use href="#Triangle" transform="translate(306.21 249) rotate(72)" overflow="visible"/>
+        <use href="#Triangle" transform="translate(175.16,193.2) rotate(216)" overflow="visible"/>
+        <use href="#Triangle" transform="translate(314.26,161) rotate(0)" overflow="visible"/>
+        <use href="#Triangle" transform="translate(221.16,268.8) rotate(144)" overflow="visible"/>
+        <use href="#Triangle" transform="translate(233.21,126.98) rotate(288)" overflow="visible"/>
+    </g>
+    <text x="0" y="500" font-weight="bold" font-size="24px">Fill-rule:nonzero</text>
+    <g fill-rule="nonzero" fill="green" stroke="black" stroke-width="3">
+        <path d="M 250,575 L 323,801 131,661 369,661 177,801 z"/>
+        <use href="#Triangle" transform="translate(306.21 749) rotate(72)" overflow="visible"/>
+        <use href="#Triangle" transform="translate(175.16,693.2) rotate(216)" overflow="visible"/>
+        <use href="#Triangle" transform="translate(314.26,661) rotate(0)" overflow="visible"/>
+        <use href="#Triangle" transform="translate(221.16,768.8) rotate(144)" overflow="visible"/>
+        <use href="#Triangle" transform="translate(233.21,626.98) rotate(288)" overflow="visible"/>
+    </g>
+</svg>
