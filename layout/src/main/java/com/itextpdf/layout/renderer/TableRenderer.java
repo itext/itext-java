@@ -1710,12 +1710,12 @@ public class TableRenderer extends AbstractRenderer {
             bBox.moveDown(shift);
             try {
                 cell.move(0, -(cumulativeShift - rowspanOffset));
-            } catch (NullPointerException e) {  // TODO Remove try-catch when DEVSIX-1001 is resolved.
+                bBox.setHeight(height);
+                cell.applyVerticalAlignment();
+            } catch (NullPointerException e) {  // TODO Remove try-catch when DEVSIX-1655 is resolved.
                 Logger logger = LoggerFactory.getLogger(TableRenderer.class);
                 logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the cell's content might not end up placed correctly."));
             }
-            bBox.setHeight(height);
-            cell.applyVerticalAlignment();
         }
     }
 
