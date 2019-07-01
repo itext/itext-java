@@ -42,9 +42,12 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -185,6 +188,30 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     @Test
     public void TSpanTextAnchorFunctionalTest() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-textAnchor");
+    }
+
+    @Test
+    //TODO: update after DEVSIX-2507 and DEVSIX-3005 fix
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
+    })
+    public void tspanBasicExample() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanBasicExample");
+    }
+
+    @Test
+    //TODO: update after DEVSIX-2507 and DEVSIX-3005 fix
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
+    })
+    public void tspanNestedExample() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanNestedExample");
+    }
+
+    @Test
+    //TODO: update cmp-file after DEVSIX-2270 fixed
+    public void text_decoration_Test() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text_decoration");
     }
 
 }
