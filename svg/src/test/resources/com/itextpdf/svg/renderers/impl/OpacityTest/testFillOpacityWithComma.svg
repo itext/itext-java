@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="595pt" height="842pt" version="1.1">
+	<rect x="50" y="450" width="50" height="50" fill="teal" fill-opacity="50%"/>
+	<rect x="80" y="425" width="50" height="50" fill="teal" fill-opacity="0%"/>
+	<rect x="110" y="400" width="50" height="50" fill="teal" fill-opacity="10.5%"/>
+	<rect x="140" y="375" width="50" height="50" fill="teal" fill-opacity="-10%"/>
+	<rect x="170" y="375" width="50" height="50" fill="teal" fill-opacity=".25"/>
+	<rect x="200" y="400" width="50" height="50" fill="teal" fill-opacity="5"/>
+	<rect x="230" y="425" width="50" height="50" fill="teal" fill-opacity="0.25"/>
+	<rect x="260" y="450" width="50" height="50" fill="teal" fill-opacity="109%"/>
+</svg>
