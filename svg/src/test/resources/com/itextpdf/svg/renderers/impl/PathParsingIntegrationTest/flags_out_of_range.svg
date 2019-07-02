@@ -1,0 +1,32 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="24cm" height="11cm" viewBox="0 0 2400 1200"
+     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+    <title>Example arcs03 - arc commands with out of range parameters</title>
+
+    <g stroke-width = "3" fill = "none">
+        <path d = "M 50 200 a -100 -50 15 1 0 250.7 50.8.9999 Z" style="stroke:green"/>
+        <path d = "M 50 400 a -100 -50 15 -1 0 250.7 50.8 .9999 Z" style="stroke:green"/>
+        <path d = "M 350 200 a -100 -50 15 0 1 250.7 50  .8.9999 Z" style="stroke:green"/>
+        <path d = "M 350 400 a -100 -50 15 0 2 250.7 50.8 Z" style="stroke:green"/>
+    </g>
+
+    <text x="50" y="170" font-size="18" fill="red">Arc flags "1,0"</text>
+    <text x="50" y="380" font-size="18" fill="red">Arc flags "-1,0"</text>
+    <text x="350" y="130" font-size="18" fill="red">Arc flags "0,1"</text>
+    <text x="350" y="335" font-size="18" fill="red">Arc flags "0,2"</text>
+
+    <line x1="0" y1="100" x2="1000" y2="100" stroke="black" stroke-width="2"/>
+    <line x1="0" y1="200" x2="1000" y2="200" stroke="black" stroke-width="2"/>
+    <line x1="0" y1="300" x2="1000" y2="300" stroke="black" stroke-width="2"/>
+    <line x1="0" y1="400" x2="1000" y2="400" stroke="black" stroke-width="2"/>
+    <line x1="100" y1="0" x2="100" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="200" y1="0" x2="200" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="300" y1="0" x2="300" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="400" y1="0" x2="400" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="500" y1="0" x2="500" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="600" y1="0" x2="600" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="700" y1="0" x2="700" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="800" y1="0" x2="800" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="900" y1="0" x2="900" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="1000" y1="0" x2="1000" y2="500" stroke="black" stroke-width="2"/>
+</svg>

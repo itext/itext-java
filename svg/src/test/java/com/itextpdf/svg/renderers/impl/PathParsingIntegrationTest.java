@@ -160,5 +160,38 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
         //TODO: update when DEVSIX-2255 implemented
         convertAndCompareVisually(sourceFolder, destinationFolder, "textPathExample");
     }
+
+    @Test
+    public void pathABasic() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "pathABasic");
+    }
+
+    @Test
+    public void pathAFlags() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "pathAFlags");
+    }
+
+    @Test
+    public void pathAAxisRotation() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "pathAAxisRotation");
+    }
+
+    @Test
+    //TODO: update cmp when DEVSIX-3010 and DEVSIX-3011 fixed
+    public void pathAOutOfRange() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "pathAOutOfRange");
+    }
+
+    @Test
+    //TODO: update cmp when DEVSIX-3010 fixed
+    public void arcs_end_point() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "arcsEndPoint");
+    }
+
+    @Test
+    //TODO: update cmp when DEVSIX-3011 fixed
+    public void flags_out_of_range() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "flags_out_of_range");
+    }
 }
 
