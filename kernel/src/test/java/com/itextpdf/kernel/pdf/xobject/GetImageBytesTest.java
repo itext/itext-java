@@ -56,6 +56,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -105,11 +106,13 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testFlateCmyk() throws Exception {
+    @Ignore("Ignored during the latest release. Please unignore after DEVSIX-3021")
+	public void testFlateCmyk() throws Exception {
         testFile("img_cmyk.pdf", "Im1", "tif");
     }
 
     @Test
+	@Ignore("Ignored during the latest release. Please unignore after DEVSIX-3021")
     public void testFlateCmykIcc() throws Exception {
         testFile("img_cmyk_icc.pdf", "Im1", "tif");
     }
