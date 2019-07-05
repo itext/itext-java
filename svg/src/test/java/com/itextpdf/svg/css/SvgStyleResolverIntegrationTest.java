@@ -43,9 +43,11 @@
 package com.itextpdf.svg.css;
 
 
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
@@ -57,6 +59,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -207,5 +210,36 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     //TODO DEVSIX-2264: that test shall fail after the fix.
     public void googleFontsTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "googleFontsTest");
+    }
+
+    @Test
+    // TODO: update cmp files when DEVSIX-2286 resolved
+    public void svgWithExternalCSStoSingleDefaultPage() throws IOException,InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "externalCss");
+    }
+
+    @Test
+    // TODO: update cmp files when DEVSIX-2286 resolved
+    public void svgWithInternalCSStoSingleDefaultPage() throws IOException,InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "internalCss");
+    }
+
+    @Test
+    // TODO: update cmp files when DEVSIX-2286 resolved
+    public void svgWithExternalCSStoCustomPage() throws IOException,InterruptedException {
+        // Take a note this method differs from the one used in Default Page test
+        convertAndCompareVisually(sourceFolder, destinationFolder, "internalCss");
+    }
+
+    @Test
+    // TODO: update cmp files when DEVSIX-2286 resolved
+    public void svgWithInternalCSStoCustomPage() throws IOException,InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "internalCss_custom");
+    }
+
+    @Test
+    // TODO: update cmp files when DEVSIX-2286 resolved
+    public void multipleSVGtagsWithDiffStylesFromExternalCSS() throws IOException,InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "externalCss_palette");
     }
 }

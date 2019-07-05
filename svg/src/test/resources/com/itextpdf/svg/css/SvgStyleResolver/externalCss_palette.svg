@@ -1,0 +1,53 @@
+<?xml version="1.0" standalone="no"?>
+<?xml-stylesheet type="text/css" href="palette.css"?>
+
+<svg width="600px" height="600px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+  <g id="palette">
+  <path d="M5,90
+           C5,45 40,-5 75,10 
+           C110,25 80,95 60,95
+           C50,95 50,75 30,75
+           C20,75 17,95 12,95
+           C10,95 5,95 5,90 Z"></path>
+    <g style="fill:currentColor;">
+  <path d="M30,50 
+           c-10,0 -20,20 -5,15
+           s15,-15 5,-15z
+           "></path>
+  <path d="M45,30 
+           c-10,0 -15,15 -5,15
+           s10,-15 5,-15z
+           "></path>
+  <path d="M70,20 
+           c-10,0 -20,15 -5,15
+           s10,-15 5,-15z
+           "></path>
+  <path d="M75,45 
+           c-10,0 -20,15 -5,15
+           s15,-15 5,-15z
+           "></path>
+  <path d="M65,65 
+           c-10,0 -15,25 -5,20
+           s10,-20 5,-20z"></path>
+    </g>
+  </g>
+  </defs>
+  
+  <svg class="raw">
+    <use x="0" y="0" href="#palette"/>
+  </svg>
+  
+  <svg class="icon-style-A">
+    <use x="0" y="100" href="#palette"/>
+  </svg>
+  
+  <svg class="icon-style-B">
+    <use x="100" y="0" href="#palette"/>
+  </svg>
+  
+  <svg class="icon-style-C">
+    <use x="100" y="100" href="#palette"/>
+  </svg>
+
+</svg>
