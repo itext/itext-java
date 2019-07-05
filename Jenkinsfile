@@ -44,7 +44,7 @@ pipeline {
             }
             steps {
                 withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
-                    sh 'mvn compile test-compile'
+                    sh 'mvn compile test-compile package -Dmaven.test.skip=true -Dmaven.javadoc.failOnError=false'
                 }
             }
         }
@@ -53,12 +53,13 @@ pipeline {
                 timeout(time: 30, unit: 'MINUTES')
             }
             environment {
-                SONAR_BRANCH_TARGET= sh (returnStdout: true, script: '[ $BRANCH_NAME = master ] && echo master || echo develop').trim()
+                SONAR_BRANCH_NAME = sh(returnStdout: true, script: '[ $BRANCH_NAME = master ] && echo || [ $BRANCH_NAME = develop ] && echo -Dsonar.branch.name=develop || echo -Dsonar.branch.name=$BRANCH_NAME').trim()
+                SONAR_BRANCH_TARGET = sh(returnStdout: true, script: '[ $BRANCH_NAME = master ] && echo || [ $BRANCH_NAME = develop ] && echo -Dsonar.branch.target=master || echo -Dsonar.branch.target=develop').trim()
             }
             steps {
                 withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
                     withSonarQubeEnv('Sonar') {
-                        sh 'mvn --activate-profiles test test verify org.jacoco:jacoco-maven-plugin:prepare-agent org.jacoco:jacoco-maven-plugin:report sonar:sonar -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.test.skip=false -Dmaven.test.failure.ignore=false -Dmaven.javadoc.skip=true -Dsonar.branch.name="${BRANCH_NAME}" -Dsonar.branch.target="${SONAR_BRANCH_TARGET}"'
+                        sh 'mvn --activate-profiles test -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.test.skip=false -Dmaven.test.failure.ignore=false -Dmaven.javadoc.skip=true org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report sonar:sonar "${SONAR_BRANCH_NAME}" "${SONAR_BRANCH_TARGET}"'
                     }
                 }
             }
@@ -108,7 +109,7 @@ pipeline {
                 timeout(time: 5, unit: 'MINUTES')
             }
             steps {
-                archiveArtifacts allowEmptyArchive: true, artifacts: '**/*.jar'
+                archiveArtifacts allowEmptyArchive: true, artifacts: '**/*.jar, **/*.pom', excludes: '**/fb-contrib-*.jar, **/findsecbugs-plugin-*.jar'
             }
         }
     }
