@@ -465,4 +465,19 @@
         </Or>
         <Bug pattern="WEAK_MESSAGE_DIGEST_MD5"/>
     </Match>
+    <Match>
+        <Class name="com.itextpdf.kernel.pdf.PdfDocument"/>
+        <Method name="open"/>
+        <Bug pattern="PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS"/>
+    </Match>
+    <Match>
+        <Class name="com.itextpdf.kernel.pdf.filters.FlateDecodeFilter"/>
+        <Method name="flateDecode"/>
+        <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+    </Match>
+    <Match>
+        <Class name="com.itextpdf.kernel.pdf.filters.FlateDecodeStrictFilter"/>
+        <Method name="flateDecode"/>
+        <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+    </Match>
 </FindBugsFilter>

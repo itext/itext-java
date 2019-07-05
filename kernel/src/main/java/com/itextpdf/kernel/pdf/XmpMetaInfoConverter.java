@@ -130,7 +130,7 @@ class XmpMetaInfoConverter {
                 } else if (PdfName.Author.equals(key)) {
                     for (String v : value.split(",|;")) {
                         if (v.trim().length() > 0) {
-                            appendArrayItemIfDoesNotExist(xmpMeta, XMPConst.NS_DC, PdfConst.Creator, v.trim());
+                            appendArrayItemIfDoesNotExist(xmpMeta, XMPConst.NS_DC, PdfConst.Creator, v.trim(), PropertyOptions.ARRAY_ORDERED);
                         }
                     }
                 } else if (PdfName.Subject.equals(key)) {
@@ -138,7 +138,7 @@ class XmpMetaInfoConverter {
                 } else if (PdfName.Keywords.equals(key)) {
                     for (String v : value.split(",|;")) {
                         if (v.trim().length() > 0) {
-                            appendArrayItemIfDoesNotExist(xmpMeta, XMPConst.NS_DC, PdfConst.Subject, v.trim());
+                            appendArrayItemIfDoesNotExist(xmpMeta, XMPConst.NS_DC, PdfConst.Subject, v.trim(), PropertyOptions.ARRAY);
                         }
                     }
                     xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Keywords, value);
@@ -157,7 +157,7 @@ class XmpMetaInfoConverter {
         }
     }
 
-    private static void appendArrayItemIfDoesNotExist(XMPMeta meta, String ns, String arrayName, String value) throws XMPException {
+    private static void appendArrayItemIfDoesNotExist(XMPMeta meta, String ns, String arrayName, String value, int arrayOption) throws XMPException {
         int currentCnt = meta.countArrayItems(ns, arrayName);
         for (int i = 0; i < currentCnt; i++) {
             XMPProperty item = meta.getArrayItem(ns, arrayName, i + 1);
@@ -165,7 +165,7 @@ class XmpMetaInfoConverter {
                 return;
             }
         }
-        meta.appendArrayItem(ns, arrayName, new PropertyOptions(PropertyOptions.ARRAY_ORDERED), value, null);
+        meta.appendArrayItem(ns, arrayName, new PropertyOptions(arrayOption), value, null);
     }
 
     private static String fetchArrayIntoString(XMPMeta meta, String ns, String arrayName) throws XMPException {

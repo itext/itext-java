@@ -10,7 +10,7 @@
     <g transform="translate(10,20)">
         <text
                 dy="-10"
-                font-family="Verdana"
+
                 font-size="12"
         >
             Hello world

@@ -43,13 +43,14 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class PdfArrayTest {
+public class PdfArrayTest extends ExtendedITextTest {
 
     @Test
     public void testValuesIndirectContains() {

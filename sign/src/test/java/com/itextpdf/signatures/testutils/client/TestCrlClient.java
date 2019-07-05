@@ -43,6 +43,7 @@
 package com.itextpdf.signatures.testutils.client;
 
 import com.itextpdf.io.util.DateTimeUtil;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import java.security.PrivateKey;
@@ -73,6 +74,7 @@ public class TestCrlClient implements ICrlClient {
             byte[] crl = crlBuilder.makeCrl(caPrivateKey);
             crls = Collections.singletonList(crl);
         } catch (Exception ignore) {
+            throw new PdfException(ignore);
         }
         return crls;
     }

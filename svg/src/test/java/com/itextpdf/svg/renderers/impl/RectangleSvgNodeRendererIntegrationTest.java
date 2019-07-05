@@ -125,4 +125,9 @@ public class RectangleSvgNodeRendererIntegrationTest extends SvgIntegrationTest 
     public void complexRectangleTest() throws IOException, InterruptedException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "complexRectangle");
     }
+
+    @Test
+    public void noFillRectangleTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder,destinationFolder,"noFillRectangle");
+    }
 }

@@ -43,22 +43,28 @@
  */
 package com.itextpdf.kernel.pdf.filters;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.source.PdfTokenizer;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.MemoryLimitsAwareFilter;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 
 import java.io.ByteArrayOutputStream;
 
+
 /**
  * Handles ASCII85Decode filter
  */
-public class ASCII85DecodeFilter implements IFilterHandler {
+public class ASCII85DecodeFilter extends MemoryLimitsAwareFilter {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
-        b = ASCII85Decode(b);
+        ByteArrayOutputStream outputStream = enableMemoryLimitsAwareHandler(streamDictionary);
+        b = ASCII85Decode(b, outputStream);
         return b;
     }
 
@@ -69,7 +75,17 @@ public class ASCII85DecodeFilter implements IFilterHandler {
      * @return the decoded byte[]
      */
     public static byte[] ASCII85Decode(byte[] in) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        return ASCII85Decode(in, new ByteArrayOutputStream());
+    }
+
+    /**
+     * Decodes the input bytes according to ASCII85.
+     *
+     * @param in  the byte[] to be decoded
+     * @param out the out stream which will be used to write the bytes.
+     * @return the decoded byte[]
+     */
+    private static byte[] ASCII85Decode(byte[] in, ByteArrayOutputStream out) {
         int state = 0;
         int[] chn = new int[5];
         for (int k = 0; k < in.length; ++k) {

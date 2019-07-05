@@ -74,6 +74,36 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
     }
 
     @Test
+    public void getFieldsForFlatteningTest() throws IOException {
+        String outPdfName = destinationFolder + "flattenedFormField.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "formFieldFile.pdf"), new PdfWriter(outPdfName));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+
+        Assert.assertEquals(0, form.getFieldsForFlattening().size());
+
+        form.partialFormFlattening("radioName");
+        form.partialFormFlattening("Text1");
+
+        PdfFormField radioNameField = form.getField("radioName");
+        PdfFormField text1Field = form.getField("Text1");
+
+        Assert.assertEquals(2, form.getFieldsForFlattening().size());
+        Assert.assertTrue( form.getFieldsForFlattening().contains(radioNameField));
+        Assert.assertTrue( form.getFieldsForFlattening().contains(text1Field));
+
+        form.flattenFields();
+        pdfDoc.close();
+
+        PdfDocument outPdfDoc = new PdfDocument(new PdfReader(outPdfName));
+        PdfAcroForm outPdfForm = PdfAcroForm.getAcroForm(outPdfDoc, false);
+
+        Assert.assertEquals(2, outPdfForm.getFormFields().size());
+
+        outPdfDoc.close();
+    }
+
+    @Test
     public void formFlatteningTest01() throws IOException, InterruptedException {
         String srcFilename = "formFlatteningSource.pdf";
         String filename = "formFlatteningTest01.pdf";
@@ -101,7 +131,6 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         form.getField("Text1").setValue("Tall letters: T I J L R E F");
         form.flattenFields();
         doc.close();
-
 
         Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
     }

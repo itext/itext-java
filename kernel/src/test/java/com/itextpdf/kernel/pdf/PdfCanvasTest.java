@@ -65,7 +65,10 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
+import com.itextpdf.kernel.pdf.colorspace.PdfShading;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -83,6 +86,7 @@ import org.junit.experimental.categories.Category;
 import java.awt.Toolkit;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -112,7 +116,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void createSimpleCanvas() throws IOException {
+    public void createSimpleCanvas() throws IOException, FileNotFoundException {
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
@@ -1887,5 +1891,82 @@ public class PdfCanvasTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void setColorsSameColorSpaces() throws IOException, InterruptedException {
+        setColorTest("setColorsSameColorSpaces.pdf", false);
+    }
+
+    @Test
+    public void setColorsSameColorSpacesPattern() throws IOException, InterruptedException {
+        setColorTest("setColorsSameColorSpacesPattern.pdf", true);
+    }
+
+    private void setColorTest(String pdfName, boolean pattern) throws IOException, InterruptedException {
+        String cmpFile = sourceFolder + "cmp_" + pdfName;
+        String destFile = destinationFolder + pdfName;
+
+        PdfDocument document = new PdfDocument(new PdfWriter(destFile));
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        PdfColorSpace space = pattern ? new PdfSpecialCs.Pattern() : PdfColorSpace.makeColorSpace(PdfName.DeviceRGB);
+        float[] colorValue1 = pattern ? null : new float[]{1.0f, 0.6f, 0.7f};
+        float[] colorValue2 = pattern ? null : new float[]{0.1f, 0.9f, 0.9f};
+
+        PdfPattern pattern1 = pattern? new PdfPattern.Shading(new PdfShading.Axial(new PdfDeviceCs.Rgb(), 45, 750, ColorConstants.PINK.getColorValue(),
+                100, 760, ColorConstants.MAGENTA.getColorValue())) : null;
+        PdfPattern pattern2 = pattern ? new PdfPattern.Shading(new PdfShading.Axial(new PdfDeviceCs.Rgb(), 45, 690, ColorConstants.BLUE.getColorValue(),
+                100, 710, ColorConstants.CYAN.getColorValue())) : null;
+
+        canvas.setColor(space, colorValue1, pattern1, true);
+        canvas.saveState();
+        canvas.beginText()
+                .moveText(50, 750)
+                .setFontAndSize(PdfFontFactory.createFont(), 16)
+                .showText("pinkish")
+                .endText();
+        canvas.saveState()
+                .beginText()
+                .setColor(space, colorValue2, pattern2, true)
+                .moveText(50, 720)
+                .setFontAndSize(PdfFontFactory.createFont(), 16)
+                .showText("bluish")
+                .endText()
+                .restoreState();
+        canvas.restoreState();
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 690)
+                .setColor(space, colorValue2, pattern2, true)
+                .setFontAndSize(PdfFontFactory.createFont(), 16)
+                .showText("bluish")
+                .endText()
+                .restoreState();
+
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void endPathNewPathTest(){
+        ByteArrayOutputStream boasEndPath = new ByteArrayOutputStream();
+        PdfDocument pdfDocEndPath = new PdfDocument(new PdfWriter(boasEndPath));
+        pdfDocEndPath.addNewPage();
+
+        PdfCanvas endPathCanvas = new PdfCanvas(pdfDocEndPath.getPage(1));
+        endPathCanvas.endPath();
+
+        ByteArrayOutputStream boasNewPath = new ByteArrayOutputStream();
+        PdfDocument pdfDocNewPath = new PdfDocument(new PdfWriter(boasNewPath));
+        pdfDocNewPath.addNewPage();
+        PdfCanvas newPathCanvas = new PdfCanvas(pdfDocNewPath.getPage(1));
+        newPathCanvas.newPath();
+        Assert.assertArrayEquals(boasNewPath.toByteArray(),boasEndPath.toByteArray());
     }
 }

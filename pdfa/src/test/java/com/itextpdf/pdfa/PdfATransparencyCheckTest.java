@@ -221,6 +221,33 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
         pdfDocument.close();
     }
 
+    @Test
+    public void testTransparencyObjectsAbsence() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "transparencyObjectsAbsence.pdf";
+        String cmpPdf = cmpFolder + "cmp_transparencyObjectsAbsence.pdf";
+
+        PdfDocument pdfDocument = new PdfADocument(new PdfWriter(outPdf), PdfAConformanceLevel.PDF_A_3B, null);
+        PdfPage page = pdfDocument.addNewPage();
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "Identity-H", true);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.beginText()
+                .moveText(36, 750)
+                .setFontAndSize(font, 16)
+                .showText("Page 1")
+                .endText();
+
+        PdfDictionary groupObj = new PdfDictionary();
+        groupObj.put(PdfName.Type, PdfName.Group);
+        groupObj.put(PdfName.S, PdfName.Transparency);
+        page.getPdfObject().put(PdfName.Group, groupObj);
+
+        page.getResources().setDefaultGray(new PdfCieBasedCs.CalGray(getCalGrayArray()));
+
+        pdfDocument.close();
+        compareResult(outPdf, cmpPdf);
+    }
+
     private void compareResult(String outPdf, String cmpPdf) throws IOException, InterruptedException {
         String result = new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (result != null) {

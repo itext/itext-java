@@ -75,6 +75,7 @@ import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.XMPUtils;
+import com.itextpdf.kernel.xmp.options.ParseOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -644,7 +645,7 @@ public class CompareTool {
             outDocument = new PdfDocument(new PdfReader(this.outPdf), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
             byte[] cmpBytes = cmpDocument.getXmpMetadata(), outBytes = outDocument.getXmpMetadata();
             if (ignoreDateAndProducerProperties) {
-                XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(cmpBytes);
+                XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(cmpBytes, new ParseOptions().setOmitNormalization(true));
 
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, PdfConst.CreateDate, true, true);
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, PdfConst.ModifyDate, true, true);
@@ -653,7 +654,7 @@ public class CompareTool {
 
                 cmpBytes = XMPMetaFactory.serializeToBuffer(xmpMeta, new SerializeOptions(SerializeOptions.SORT));
 
-                xmpMeta = XMPMetaFactory.parseFromBuffer(outBytes);
+                xmpMeta = XMPMetaFactory.parseFromBuffer(outBytes, new ParseOptions().setOmitNormalization(true));
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, PdfConst.CreateDate, true, true);
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, PdfConst.ModifyDate, true, true);
                 XMPUtils.removeProperties(xmpMeta, XMPConst.NS_XMP, PdfConst.MetadataDate, true, true);
@@ -693,15 +694,17 @@ public class CompareTool {
     /**
      * Utility method that provides simple comparison of the two xml files.
      *
-     * @param xmlFilePath1 absolute path to the first xml file to compare.
-     * @param xmlFilePath2 absolute path to the second xml file to compare.
+     * @param outXmlFile absolute path to the out xml file to compare.
+     * @param cmpXmlFile absolute path to the cmp xml file to compare.
      * @return true if xml structures are identical, false otherwise.
      * @throws ParserConfigurationException
      * @throws SAXException
      * @throws IOException
      */
-    public boolean compareXmls(String xmlFilePath1, String xmlFilePath2) throws ParserConfigurationException, SAXException, IOException {
-        return XmlUtils.compareXmls(new FileInputStream(xmlFilePath1), new FileInputStream(xmlFilePath2));
+    public boolean compareXmls(String outXmlFile, String cmpXmlFile) throws ParserConfigurationException, SAXException, IOException {
+        System.out.println("Out xml: file:///" + UrlUtil.toNormalizedURI(outXmlFile).getPath());
+        System.out.println("Cmp xml: file:///" + UrlUtil.toNormalizedURI(cmpXmlFile).getPath() + "\n");
+        return XmlUtils.compareXmls(new FileInputStream(outXmlFile), new FileInputStream(cmpXmlFile));
     }
 
     /**

@@ -236,13 +236,15 @@ public class PdfSignatureAppearance {
 
     /**
      * Sets the page number of the signature field which this signature
-     * appearance is associated with.
+     * appearance is associated with. Implicitly calls {@link PdfSignatureAppearance#setPageRect}
+     * which considers page number to process the rectangle correctly.
      *
      * @param pageNumber The page number of the signature field which
      *                   this signature appearance is associated with.
      */
     public PdfSignatureAppearance setPageNumber(int pageNumber) {
         this.page = pageNumber;
+        setPageRect(pageRect);
         return this;
     }
 
@@ -616,6 +618,19 @@ public class PdfSignatureAppearance {
             n2 = new PdfFormXObject(rect);
             n2.makeIndirect(document);
 
+            canvas = new PdfCanvas(n2, document);
+            int rotation = document.getPage(page).getRotation();
+
+            if (rotation == 90) {
+                canvas.concatMatrix(0, 1, -1, 0, rect.getWidth(), 0);
+            } else if (rotation == 180) {
+                canvas.concatMatrix(-1, 0, 0, -1, rect.getWidth(), rect.getHeight());
+            } else if (rotation == 270) {
+                canvas.concatMatrix(0, -1, 1, 0, 0, rect.getHeight());
+            }
+
+            Rectangle rotatedRect = rotateRectangle(this.rect, document.getPage(page).getRotation());
+
             String text;
 
             if (layer2Text == null) {
@@ -644,18 +659,18 @@ public class PdfSignatureAppearance {
             if (image != null) {
                 if (imageScale == 0) {
                     canvas = new PdfCanvas(n2, document);
-                    canvas.addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), 0, 0);
+                    canvas.addImage(image, rotatedRect.getWidth(), 0, 0, rotatedRect.getHeight(), 0, 0);
                 } else {
                     float usableScale = imageScale;
 
                     if (imageScale < 0) {
-                        usableScale = Math.min(rect.getWidth() / image.getWidth(), rect.getHeight() / image.getHeight());
+                        usableScale = Math.min(rotatedRect.getWidth() / image.getWidth(), rotatedRect.getHeight() / image.getHeight());
                     }
 
                     float w = image.getWidth() * usableScale;
                     float h = image.getHeight() * usableScale;
-                    float x = (rect.getWidth() - w) / 2;
-                    float y = (rect.getHeight() - h) / 2;
+                    float x = (rotatedRect.getWidth() - w) / 2;
+                    float y = (rotatedRect.getHeight() - h) / 2;
 
                     canvas = new PdfCanvas(n2, document);
                     canvas.addImage(image, w, 0, 0, h, x, y);
@@ -675,29 +690,29 @@ public class PdfSignatureAppearance {
 
             if (renderingMode == RenderingMode.NAME_AND_DESCRIPTION ||
                 renderingMode == RenderingMode.GRAPHIC_AND_DESCRIPTION && this.signatureGraphic != null) {
-                if (rect.getHeight() > rect.getWidth()) {
+                if (rotatedRect.getHeight() > rotatedRect.getWidth()) {
                     signatureRect = new Rectangle(
                             MARGIN,
-                            rect.getHeight() / 2,
-                            rect.getWidth() - 2 * MARGIN,
-                            rect.getHeight() / 2);
+                            rotatedRect.getHeight() / 2,
+                            rotatedRect.getWidth() - 2 * MARGIN,
+                            rotatedRect.getHeight() / 2);
                     dataRect = new Rectangle(
                             MARGIN,
                             MARGIN,
-                            rect.getWidth() - 2 * MARGIN,
-                            rect.getHeight() / 2 - 2 * MARGIN);
+                            rotatedRect.getWidth() - 2 * MARGIN,
+                            rotatedRect.getHeight() / 2 - 2 * MARGIN);
                 } else {
                     // origin is the bottom-left
                     signatureRect = new Rectangle(
                             MARGIN,
                             MARGIN,
-                            rect.getWidth() / 2 - 2 * MARGIN,
-                            rect.getHeight() - 2 * MARGIN);
+                            rotatedRect.getWidth() / 2 - 2 * MARGIN,
+                            rotatedRect.getHeight() - 2 * MARGIN);
                     dataRect = new Rectangle(
-                            rect.getWidth() / 2 + MARGIN / 2,
+                            rotatedRect.getWidth() / 2 + MARGIN / 2,
                             MARGIN,
-                            rect.getWidth() / 2 - MARGIN,
-                            rect.getHeight() - 2 * MARGIN);
+                            rotatedRect.getWidth() / 2 - MARGIN,
+                            rotatedRect.getHeight() - 2 * MARGIN);
                 }
             } else if (renderingMode == RenderingMode.GRAPHIC) {
                 if (signatureGraphic == null) {
@@ -707,14 +722,14 @@ public class PdfSignatureAppearance {
                 signatureRect = new Rectangle(
                         MARGIN,
                         MARGIN,
-                        rect.getWidth() - 2 * MARGIN, // take all space available
-                        rect.getHeight() - 2 * MARGIN);
+                        rotatedRect.getWidth() - 2 * MARGIN, // take all space available
+                        rotatedRect.getHeight() - 2 * MARGIN);
             } else {
                 dataRect = new Rectangle(
                         MARGIN,
                         MARGIN,
-                        rect.getWidth() - 2 * MARGIN,
-                        rect.getHeight() * (1 - TOP_SECTION) - 2 * MARGIN);
+                        rotatedRect.getWidth() - 2 * MARGIN,
+                        rotatedRect.getHeight() * (1 - TOP_SECTION) - 2 * MARGIN);
             }
 
             switch (renderingMode) {
@@ -793,22 +808,11 @@ public class PdfSignatureAppearance {
             }
         }
 
-        int rotation = document.getPage(page).getRotation();
         Rectangle rotated = new Rectangle(rect);
 
         if (topLayer == null) {
             topLayer = new PdfFormXObject(rotated);
             topLayer.makeIndirect(document);
-
-            canvas = new PdfCanvas(topLayer, document);
-
-            if (rotation == 90) {
-                canvas.concatMatrix(0, 1, -1, 0, rect.getHeight(), 0);
-            } else if (rotation == 180) {
-                canvas.concatMatrix(-1, 0, 0, -1, rect.getWidth(), rect.getHeight());
-            } else if (rotation == 270) {
-                canvas.concatMatrix(0, -1, 1, 0, 0, rect.getWidth());
-            }
 
             if (reuseAppearance) {
                 PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
@@ -877,6 +881,14 @@ public class PdfSignatureAppearance {
     protected PdfSignatureAppearance setFieldName(String fieldName) {
         this.fieldName = fieldName;
         return this;
+    }
+
+    private static Rectangle rotateRectangle(Rectangle rect, int angle) {
+        if (0 == (angle / 90) % 2) {
+            return new Rectangle(rect.getWidth(), rect.getHeight());
+        } else {
+            return new Rectangle(rect.getHeight(), rect.getWidth());
+        }
     }
 
     private void createBlankN0() {

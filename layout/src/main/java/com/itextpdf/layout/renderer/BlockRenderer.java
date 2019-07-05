@@ -573,7 +573,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (overflowYHidden) {
                 clippedArea.setY(area.getY()).setHeight(area.getHeight());
             }
-            drawContext.getCanvas().rectangle(clippedArea).clip().newPath();
+            drawContext.getCanvas().rectangle(clippedArea).clip().endPath();
         }
 
         drawChildren(drawContext);

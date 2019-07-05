@@ -99,6 +99,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
         pdfDoc.addNewPage();
         addCheckBox(pdfDoc, 0, 730, 7, 7);
+        // fallback to default fontsize — 12 is expected.
         addCheckBox(pdfDoc, -1, 710, 7, 7);
 
         addCheckBox(pdfDoc, 0, 640, 20, 20);

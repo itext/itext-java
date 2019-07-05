@@ -72,6 +72,7 @@ class PdfXrefTable implements Serializable {
 
     private PdfIndirectReference[] xref;
     private int count = 0;
+    private boolean readingCompleted;
 
     /**
      * Free references linked list is stored in a form of a map, where:
@@ -118,6 +119,14 @@ class PdfXrefTable implements Serializable {
             return null;
         }
         return xref[index];
+    }
+
+    void markReadingCompleted() {
+        readingCompleted = true;
+    }
+
+    boolean isReadingCompleted() {
+        return readingCompleted;
     }
 
     void initFreeReferencesList(PdfDocument pdfDocument) {

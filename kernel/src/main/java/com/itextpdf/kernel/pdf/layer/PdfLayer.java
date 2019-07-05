@@ -88,6 +88,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
      */
     public PdfLayer(PdfDictionary layerDictionary) {
         super(layerDictionary);
+        setForbidRelease();
         ensureObjectIsAddedToDocument(layerDictionary);
     }
 

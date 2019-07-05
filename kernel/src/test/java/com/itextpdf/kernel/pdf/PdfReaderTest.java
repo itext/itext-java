@@ -45,6 +45,8 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -59,8 +61,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
+import java.io.File;
 import java.io.IOException;
-import com.itextpdf.io.util.MessageFormatUtil;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -765,7 +768,10 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR))
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR),
+            @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
+    })
     public void correctSimpleDoc4() throws IOException {
         String filename = sourceFolder + "correctSimpleDoc4.pdf";
 
@@ -1162,6 +1168,23 @@ public class PdfReaderTest extends ExtendedITextTest {
             String content = new String(page.getContentStream(0).getBytes());
             Assert.assertTrue(content.contains("(" + i + ")"));
         }
+
+        document.close();
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
+    public void fixPdfTest18() throws IOException {
+        String filename = sourceFolder + "noXrefAndTrailerWithInfo.pdf";
+
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument document = new PdfDocument(reader);
+        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
+
+        int pageCount = document.getNumberOfPages();
+        Assert.assertEquals(1, pageCount);
+
+        Assert.assertTrue(document.getDocumentInfo().getProducer().contains("iText Group NV (AGPL-version)"));
 
         document.close();
     }
@@ -1602,6 +1625,38 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument pdfDoc1 = new PdfDocument(reader);
         PdfDocument pdfDoc2 = new PdfDocument(reader);
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE))
+    public void hugeInvalidIndRefObjNumberTest() throws IOException {
+        String filename = sourceFolder + "hugeIndRefObjNum.pdf";
+
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfObject pdfObject = pdfDoc.getPdfObject(4);
+        Assert.assertTrue(pdfObject.isDictionary());
+        Assert.assertEquals(PdfNull.PDF_NULL, ((PdfDictionary)pdfObject).get(PdfName.Pg));
+
+        pdfDoc.close();
+    }
+
+    @Test
+    @Ignore("DEVSIX-2133")
+    public void testFileIsNotLockedOnException() throws IOException {
+        File nonPdfFileName = new File(sourceFolder + "text_file.txt");
+        Assert.assertTrue(nonPdfFileName.exists());
+        boolean exceptionThrown = false;
+        try {
+            PdfReader reader = new PdfReader(nonPdfFileName);
+        } catch (com.itextpdf.io.IOException e) {
+            exceptionThrown = true;
+
+            // File should be available for writing
+            OutputStream stream = FileUtil.getFileOutputStream(nonPdfFileName);
+            stream.write(new byte[] {0});
+        }
+        Assert.assertTrue(exceptionThrown);
     }
 
     private boolean objectTypeEqualTo(PdfObject object, PdfName type) {

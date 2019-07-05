@@ -149,6 +149,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             ISvgNodeRenderer startingRenderer = rendererFactory.createSvgNodeRendererForTag(rootElementNode, null);
             if (startingRenderer != null) {
                 Map<String, String> attributesAndStyles = cssResolver.resolveStyles(startingNode, cssContext);
+                rootElementNode.setStyles(attributesAndStyles);
                 startingRenderer.setAttributesAndStyles(attributesAndStyles);
                 processorState.push(startingRenderer);
                 for (INode rootChild : startingNode.childNodes()) {

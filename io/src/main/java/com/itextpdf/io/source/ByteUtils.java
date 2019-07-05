@@ -43,9 +43,12 @@
  */
 package com.itextpdf.io.source;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.DecimalFormatUtil;
 
 import java.nio.charset.StandardCharsets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ByteUtils {
 
@@ -133,6 +136,11 @@ public final class ByteUtils {
                 } else {
                     return zero;
                 }
+            }
+            if (Double.isNaN(d)) {
+                Logger logger = LoggerFactory.getLogger(ByteUtils.class);
+                logger.error(LogMessageConstant.ATTEMPT_PROCESS_NAN);
+                d = 0;
             }
             byte[] result = DecimalFormatUtil.formatNumber(d, "0.######").getBytes(StandardCharsets.ISO_8859_1);
             if (buffer != null) {
@@ -232,9 +240,15 @@ public final class ByteUtils {
             d += 0.5;
             long v;
             if (d > Long.MAX_VALUE) {
-                //by default cast logic do the same, but not in .NET
+                // by default cast logic do the same, but not in .NET
                 v = Long.MAX_VALUE;
             } else {
+                if (Double.isNaN(d)) {
+                    Logger logger = LoggerFactory.getLogger(ByteUtils.class);
+                    logger.error(LogMessageConstant.ATTEMPT_PROCESS_NAN);
+                    // in java NaN casted to long results in 0, but in .NET it results in long.MIN_VALUE
+                    d = 0;
+                }
                 v = (long) d;
             }
             int intLen = longSize(v);

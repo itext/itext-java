@@ -56,6 +56,8 @@ import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -193,5 +195,15 @@ public final class FileUtil {
      */
     public static boolean deleteFile(File file) {
         return file.delete();
+    }
+
+    /**
+     * Returns an URL of the parent directory for the resource
+     *
+     * @param url of resource
+     * @return parent directory path| the same path if a catalog`s url is passed;
+     */
+    public static String parentDirectory(URL url) throws URISyntaxException {
+            return url.toURI().resolve(".").toString();
     }
 }

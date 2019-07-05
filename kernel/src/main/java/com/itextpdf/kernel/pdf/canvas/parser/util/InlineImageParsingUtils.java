@@ -54,8 +54,8 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
-import com.itextpdf.kernel.pdf.filters.FlateDecodeFilter;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
+import com.itextpdf.kernel.pdf.filters.FlateDecodeStrictFilter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -397,7 +397,7 @@ public final class InlineImageParsingUtils {
             filters.put(PdfName.DCTDecode, stubfilter);
             filters.put(PdfName.JBIG2Decode, stubfilter);
             filters.put(PdfName.JPXDecode, stubfilter);
-            ((FlateDecodeFilter) filters.get(PdfName.FlateDecode)).setStrictDecoding(true);
+            filters.put(PdfName.FlateDecode, new FlateDecodeStrictFilter());
             PdfReader.decodeBytes(samples, imageDictionary, filters);
         } catch (Exception ex) {
             return false;

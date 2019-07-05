@@ -151,6 +151,15 @@ public abstract class ITextTest {
         }
     }
 
+    public static void printOutputPdfNameAndDir(String pdfName) {
+        printPathToConsole(pdfName, "Output PDF: ");
+        printPathToConsole(new File(pdfName).getParent(), "Output PDF folder: ");
+    }
+
+    public static void printPathToConsole(String path, String comment) {
+        System.out.println(comment + "file:///" + new File(path).toURI().normalize().getPath());
+    }
+
     protected Timeout getTestTimeout() {
         return new Timeout(5, TimeUnit.MINUTES);
     }

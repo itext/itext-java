@@ -160,7 +160,7 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
 
             currentCanvas.rectangle(context.getCurrentViewPort());
             currentCanvas.clip();
-            currentCanvas.newPath();
+            currentCanvas.endPath();
 
             if (parent.canConstructViewPort()) {
                 currentCanvas.concatMatrix(parent.calculateViewPortTranslation(context));

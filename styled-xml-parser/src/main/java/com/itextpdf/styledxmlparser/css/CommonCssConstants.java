@@ -44,7 +44,9 @@ package com.itextpdf.styledxmlparser.css;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -52,6 +54,18 @@ import java.util.Set;
  * units of measurement, and so on.
  */
 public class CommonCssConstants {
+
+    static {
+        Map<String, String> keywordValues = new HashMap<>();
+        keywordValues.put(CommonCssConstants.XX_SMALL, "9px");
+        keywordValues.put(CommonCssConstants.X_SMALL, "10px");
+        keywordValues.put(CommonCssConstants.SMALL, "13px");
+        keywordValues.put(CommonCssConstants.MEDIUM, "16px");
+        keywordValues.put(CommonCssConstants.LARGE, "18px");
+        keywordValues.put(CommonCssConstants.X_LARGE, "24px");
+        keywordValues.put(CommonCssConstants.XX_LARGE, "32px");
+        FONT_ABSOLUTE_SIZE_KEYWORDS_VALUES = Collections.unmodifiableMap(keywordValues);
+    }
 
     // properties
 
@@ -715,6 +729,9 @@ public class CommonCssConstants {
     /** The Constant BORDER_STYLE_VALUES. */
     public static final Set<String> BORDER_STYLE_VALUES = Collections.unmodifiableSet(new HashSet<>(
             Arrays.asList(new String[] {NONE, HIDDEN, DOTTED, DASHED, SOLID, DOUBLE, GROOVE, RIDGE, INSET, OUTSET})));
+
+    /** The Constant FONT_ABSOLUTE_SIZE_KEYWORDS. */
+    public static final Map<String, String> FONT_ABSOLUTE_SIZE_KEYWORDS_VALUES;
 
     // pseudo-classes
 

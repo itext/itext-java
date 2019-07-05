@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -276,7 +277,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         EncryptionProperties encryptProps = properties.encryptionProperties;
         if (properties.isStandardEncryptionUsed()) {
             crypto = new PdfEncryption(encryptProps.userPassword, encryptProps.ownerPassword, encryptProps.standardEncryptPermissions,
-                    encryptProps.encryptionAlgorithm, PdfEncryption.generateNewDocumentId(), version);
+                    encryptProps.encryptionAlgorithm, ByteUtils.getIsoBytes(this.document.getOriginalDocumentId().getValue()), version);
         } else if (properties.isPublicKeyEncryptionUsed()) {
             crypto = new PdfEncryption(encryptProps.publicCertificates,
                     encryptProps.publicKeyEncryptPermissions, encryptProps.encryptionAlgorithm, version);
@@ -346,8 +347,9 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             copiedObjectKey = new PdfDocument.IndirectRefDescription(indirectReference);
 
             PdfIndirectReference copiedIndirectReference = copiedObjects.get(copiedObjectKey);
-            if (copiedIndirectReference != null)
+            if (copiedIndirectReference != null) {
                 return copiedIndirectReference.getRefersTo();
+            }
         }
 
         SerializedObjectContent serializedContent = null;

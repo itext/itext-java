@@ -45,8 +45,11 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
+import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
@@ -77,21 +80,32 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate =  SvgLogMessageConstant.MISSING_HEIGHT),
+    })
     public void absentHeight() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentHeight");
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate =  SvgLogMessageConstant.MISSING_WIDTH),
+    })
     public void absentWidth() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidth");
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate =  SvgLogMessageConstant.MISSING_WIDTH),
+            @LogMessage(messageTemplate =  SvgLogMessageConstant.MISSING_HEIGHT),
+    })
     public void absentWidthAndHeight() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidthAndHeight");
     }
 
     @Test
+
     public void absentWHViewboxPresent() throws IOException, InterruptedException {
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWHViewboxPresent");
     }

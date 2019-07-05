@@ -232,9 +232,11 @@ public abstract class PdfObject implements Serializable {
             indirectReference = document.createNextIndirectReference();
             indirectReference.setRefersTo(this);
         } else {
+            reference.setState(MODIFIED);
             indirectReference = reference;
             indirectReference.setRefersTo(this);
         }
+        setState(FORBID_RELEASE);
         clearState(MUST_BE_INDIRECT);
         return this;
     }

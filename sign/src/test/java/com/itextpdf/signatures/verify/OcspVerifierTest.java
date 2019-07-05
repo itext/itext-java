@@ -44,7 +44,7 @@ package com.itextpdf.signatures.verify;
 
 import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.signatures.OCSPVerifier;
-import com.itextpdf.signatures.testutils.Pkcs12FileHelper;
+import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import com.itextpdf.signatures.testutils.cert.TestCertificateBuilder;

@@ -56,12 +56,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class SvgIntegrationTest {
+public class SvgIntegrationTest extends ExtendedITextTest {
 
     public void convert(InputStream svg, OutputStream pdfOutputStream) throws IOException {
         PdfDocument doc = new PdfDocument(new PdfWriter(pdfOutputStream, new WriterProperties().setCompressionLevel(0)));

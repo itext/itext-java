@@ -49,6 +49,7 @@ import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
+import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -94,20 +95,20 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
         Map<String, String> actual = new HashMap<>();
         //Traverse to ellipse
         ISvgNodeRenderer ellipse = nodeRenderer.getChildren().get(0);
-        actual.put("stroke",ellipse.getAttribute("stroke"));
-        actual.put("stroke-width",ellipse.getAttribute("stroke-width"));
-        actual.put("stroke-opacity",ellipse.getAttribute("stroke-opacity"));
+        actual.put("stroke", ellipse.getAttribute("stroke"));
+        actual.put("stroke-width", ellipse.getAttribute("stroke-width"));
+        actual.put("stroke-opacity", ellipse.getAttribute("stroke-opacity"));
 
-        Map<String,String> expected = new HashMap<>();
+        Map<String, String> expected = new HashMap<>();
         expected.put("stroke-width", "1.76388889");
-        expected.put("stroke","#da0000");
-        expected.put("stroke-opacity","1");
+        expected.put("stroke", "#da0000");
+        expected.put("stroke-opacity", "1");
 
-        Assert.assertEquals(expected,actual);
+        Assert.assertEquals(expected, actual);
     }
 
     @Test
-    public void styleTagProcessingTest(){
+    public void styleTagProcessingTest() {
         String svg = "<svg\n" +
                 "   width=\"210mm\"\n" +
                 "   height=\"297mm\"\n" +
@@ -137,15 +138,74 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
         Map<String, String> actual = new HashMap<>();
         //Traverse to ellipse
         ISvgNodeRenderer ellipse = nodeRenderer.getChildren().get(0);
-        actual.put("stroke",ellipse.getAttribute("stroke"));
-        actual.put("stroke-width",ellipse.getAttribute("stroke-width"));
-        actual.put("stroke-opacity",ellipse.getAttribute("stroke-opacity"));
+        actual.put("stroke", ellipse.getAttribute("stroke"));
+        actual.put("stroke-width", ellipse.getAttribute("stroke-width"));
+        actual.put("stroke-opacity", ellipse.getAttribute("stroke-opacity"));
 
-        Map<String,String> expected = new HashMap<>();
+        Map<String, String> expected = new HashMap<>();
         expected.put("stroke-width", "1.76388889");
-        expected.put("stroke","#da0000");
-        expected.put("stroke-opacity","1");
+        expected.put("stroke", "#da0000");
+        expected.put("stroke-opacity", "1");
 
-        Assert.assertEquals(expected,actual);
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void stylesOfSvgTagProcessingTest() {
+        String svg = "<?xml version=\"1.0\" standalone=\"no\"?>\n" +
+                "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n" +
+                "        \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n" +
+                "<svg width=\"400\" height=\"200\"\n" +
+                "     viewBox=\"0 0 400 200\" version=\"1.1\"\n" +
+                "     xmlns=\"http://www.w3.org/2000/svg\"\n" +
+                "     xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n" +
+                "     xmlns:v=\"http://schemas.microsoft.com/visio/2003/SVGExtensions/\"\n" +
+                "     class=\"st11\">\n" +
+                "    <style type=\"text/css\">\n" +
+                "        .st11 {fill:none;stroke:black;stroke-width:6}\n" +
+                "    </style>\n" +
+                "    <g >\n" +
+                "        <path d=\"M0 100 L0 50 L70 50\"/>\n" +
+                "    </g>\n" +
+                "</svg>";
+        JsoupXmlParser xmlParser = new JsoupXmlParser();
+        IDocumentNode root = xmlParser.parse(svg);
+        IBranchSvgNodeRenderer nodeRenderer = (IBranchSvgNodeRenderer) new DefaultSvgProcessor().process(root).getRootRenderer();
+
+        PathSvgNodeRenderer pathSvgNodeRenderer = (PathSvgNodeRenderer) ((IBranchSvgNodeRenderer) nodeRenderer.getChildren().get(0)).getChildren().get(0);
+
+        Map<String, String> actual = new HashMap<>();
+        actual.put("stroke", pathSvgNodeRenderer.getAttribute("stroke"));
+        actual.put("fill", pathSvgNodeRenderer.getAttribute("fill"));
+        actual.put("d", pathSvgNodeRenderer.getAttribute("d"));
+
+        Map<String, String> expected = new HashMap<>();
+        expected.put("stroke", "black");
+        expected.put("fill", "none");
+        expected.put("d", "M0 100 L0 50 L70 50");
+
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    //TODO DEVSIX-2058
+    public void fontResolverIntegrationTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "fontssvg");
+    }
+
+    @Test
+    public void validLocalFontTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "validLocalFontTest");
+    }
+
+    @Test
+    public void fontWeightTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "fontWeightTest");
+    }
+
+    @Test
+    //TODO DEVSIX-2264: that test shall fail after the fix.
+    public void googleFontsTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "googleFontsTest");
     }
 }

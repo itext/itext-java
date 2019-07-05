@@ -55,7 +55,9 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
+import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.svg.dummy.sdk.ExceptionInputStream;
+import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
@@ -65,6 +67,8 @@ import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.svg.renderers.impl.RectangleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -144,6 +148,9 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
+    })
     public void nonExistingTagIntegrationTest() {
         String contents = "<svg width='100pt' height='100pt'> <nonExistingTag/> </svg>";
         PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
@@ -154,6 +161,9 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 14),
+    })
     public void caseSensitiveTagTest() {
         String contents = "<svg width='100pt' height='100pt'>" +
                 "<altGlyph /><altglyph />" +

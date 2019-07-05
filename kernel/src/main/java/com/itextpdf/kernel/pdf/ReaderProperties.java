@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.security.IExternalDecryptionProcess;
+
 import java.io.Serializable;
 import java.security.Key;
 import java.security.cert.Certificate;
@@ -59,9 +60,12 @@ public class ReaderProperties implements Serializable {
     protected String certificateKeyProvider; //added by Aiken Sam for certificate decryption
     protected IExternalDecryptionProcess externalDecryptionProcess;
 
+    protected MemoryLimitsAwareHandler memoryLimitsAwareHandler;
+
     /**
      * Defines the password which will be used if the document is encrypted with standard encryption.
      * This could be either user or owner password.
+     *
      * @param password the password to use in order to open the document.
      */
     public ReaderProperties setPassword(byte[] password) {
@@ -101,4 +105,15 @@ public class ReaderProperties implements Serializable {
         this.certificateKeyProvider = null;
         this.externalDecryptionProcess = null;
     }
+    /**
+     * Sets the memory handler which will be used to handle decompressed pdf streams.
+     *
+     * @param memoryLimitsAwareHandler the memory handler which will be used to handle decompressed pdf streams
+     * @return this {@link ReaderProperties} instance.
+     */
+    public ReaderProperties setMemoryLimitsAwareHandler(MemoryLimitsAwareHandler memoryLimitsAwareHandler) {
+        this.memoryLimitsAwareHandler = memoryLimitsAwareHandler;
+        return this;
+    }
+
 }

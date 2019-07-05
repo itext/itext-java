@@ -65,7 +65,6 @@ import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -280,24 +279,34 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return {@link PdfResources} wrapper of the page.
      */
     public PdfResources getResources() {
+        return getResources(true);
+    }
 
-        if (this.resources == null) {
-            boolean readOnly = false;
-            PdfDictionary resources = getPdfObject().getAsDictionary(PdfName.Resources);
-            if (resources == null) {
-                resources = (PdfDictionary) getInheritedValue(PdfName.Resources, PdfObject.DICTIONARY);
-                if (resources != null) {
-                    readOnly = true;
-                }
+    PdfResources getResources(boolean initResourcesField) {
+        if (this.resources == null && initResourcesField) {
+            initResources(true);
+        }
+        return this.resources;
+    }
+
+    PdfDictionary initResources(boolean initResourcesField) {
+        boolean readOnly = false;
+        PdfDictionary resources = getPdfObject().getAsDictionary(PdfName.Resources);
+        if (resources == null) {
+            resources = (PdfDictionary) getInheritedValue(PdfName.Resources, PdfObject.DICTIONARY);
+            if (resources != null) {
+                readOnly = true;
             }
-            if (resources == null) {
-                resources = new PdfDictionary();
-                put(PdfName.Resources, resources);
-            }
+        }
+        if (resources == null) {
+            resources = new PdfDictionary();
+            getPdfObject().put(PdfName.Resources, resources); // not marking page as modified because of this change
+        }
+        if (initResourcesField) {
             this.resources = new PdfResources(resources);
             this.resources.setReadOnly(readOnly);
         }
-        return this.resources;
+        return resources;
     }
 
     /**
@@ -462,15 +471,15 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Flushes page and it's content stream.
-     * <br>
-     * <br>
+     * Flushes page dictionary, its content streams, annotations and thumb image.
+     * <p>
      * If the page belongs to the document which is tagged, page flushing also triggers flushing of the tags,
      * which are considered to belong to the page. The logic that defines if the given tag (structure element) belongs
      * to the page is the following: if all the marked content references (dictionary or number references), that are the
      * descendants of the given structure element, belong to the current page - the tag is considered
      * to belong to the page. If tag has descendants from several pages - it is flushed, if all other pages except the
      * current one are flushed.
+     * </p>
      */
     @Override
     public void flush() {
@@ -478,15 +487,22 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Flushes page and its content stream. If <code>flushResourcesContentStreams</code> is true, all content streams that are
-     * rendered on this page (like FormXObjects, annotation appearance streams, patterns) and also all images associated
-     * with this page will also be flushed.
-     * <br>
+     * Flushes page dictionary, its content streams, annotations and thumb image. If <code>flushResourcesContentStreams</code> is true,
+     * all content streams that are rendered on this page (like FormXObjects, annotation appearance streams, patterns)
+     * and also all images associated with this page will also be flushed.
+     * <p>
      * For notes about tag structure flushing see {@link PdfPage#flush() PdfPage#flush() method}.
-     * <br>
-     * <br>
+     * </p>
+     * <p>
      * If <code>PdfADocument</code> is used, flushing will be applied only if <code>flushResourcesContentStreams</code> is true.
-     *
+     * </p>
+     * <p>
+     * Be careful with handling document in which some of the pages are flushed. Keep in mind that flushed objects are
+     * finalized and are completely written to the output stream. This frees their memory but makes
+     * it impossible to modify or read data from them. Whenever there is an attempt to modify or to fetch
+     * flushed object inner contents an exception will be thrown. Flushing is only possible for objects in the writing
+     * and stamping modes, also its possible to flush modified objects in append mode.
+     * </p>
      * @param flushResourcesContentStreams if true all content streams that are rendered on this page (like form xObjects,
      *                                     annotation appearance streams, patterns) and also all images associated with this page
      *                                     will be flushed.
@@ -502,23 +518,44 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             tryFlushPageTags();
         }
 
-        getResources();
-        if (resources != null && resources.isModified() && !resources.isReadOnly()) {
-            getPdfObject().put(PdfName.Resources, resources.getPdfObject());
+        if (resources == null) {
+            // ensure that either resources are inherited or add empty resources dictionary
+            initResources(false);
+        } else if (resources.isModified() && !resources.isReadOnly()) {
+            put(PdfName.Resources, resources.getPdfObject());
         }
         if (flushResourcesContentStreams) {
             getDocument().checkIsoConformance(this, IsoKey.PAGE);
             flushResourcesContentStreams();
         }
-        int contentStreamCount = getContentStreamCount();
-        for (int i = 0; i < contentStreamCount; i++) {
-            PdfStream contentStream = getContentStream(i);
-            if (contentStream != null) {
-                contentStream.flush(false);
+
+        PdfArray annots = getAnnots(false);
+        if (annots != null && !annots.isFlushed()) {
+            for (int i = 0; i < annots.size(); ++i) {
+                PdfObject a = annots.get(i);
+                if (a != null) {
+                    a.makeIndirect(getDocument()).flush();
+                }
             }
         }
 
-        resources = null;
+        PdfStream thumb = getPdfObject().getAsStream(PdfName.Thumb);
+        if (thumb != null) {
+            thumb.flush();
+        }
+
+        PdfObject contentsObj = getPdfObject().get(PdfName.Contents);
+        // avoid trying to operate with flushed /Contents array
+        if (contentsObj != null && !contentsObj.isFlushed()) {
+            int contentStreamCount = getContentStreamCount();
+            for (int i = 0; i < contentStreamCount; i++) {
+                PdfStream contentStream = getContentStream(i);
+                if (contentStream != null) {
+                    contentStream.flush(false);
+                }
+            }
+        }
+        releaseInstanceFields();
 
         super.flush();
     }
@@ -698,11 +735,18 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public byte[] getContentBytes() {
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            MemoryLimitsAwareHandler handler = getDocument().memoryLimitsAwareHandler;
+            long usedMemory = null == handler ? -1 : handler.getAllMemoryUsedForDecompression();
+
+            MemoryLimitsAwareOutputStream baos = new MemoryLimitsAwareOutputStream();
             int streamCount = getContentStreamCount();
             byte[] streamBytes;
             for (int i = 0; i < streamCount; i++) {
                 streamBytes = getStreamBytes(i);
+                // usedMemory has changed, that means that some of currently processed pdf streams are suspicious
+                if (null != handler && usedMemory < handler.getAllMemoryUsedForDecompression()) {
+                    baos.setMaxStreamSize(handler.getMaxSizeOfSingleDecompressedPdfStream());
+                }
                 baos.write(streamBytes);
                 if (0 != streamBytes.length && !Character.isWhitespace((char) streamBytes[streamBytes.length - 1])) {
                     baos.write('\n');
@@ -788,7 +832,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 annotations.add(annotation.setPage(this));
                 if (hasBeenNotModified) {
                     annot.getIndirectReference().clearState(PdfObject.MODIFIED);
-                    annot.getIndirectReference().clearState(PdfObject.FORBID_RELEASE);
+                    annot.clearState(PdfObject.FORBID_RELEASE);
                 }
             }
         }
@@ -1172,6 +1216,22 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return afArray;
     }
 
+    void tryFlushPageTags() {
+        try {
+            if (!getDocument().isClosing) {
+                getDocument().getTagStructureContext().flushPageTags(this);
+            }
+            getDocument().getStructTreeRoot().savePageStructParentIndexIfNeeded(this);
+        } catch (Exception ex) {
+            throw new PdfException(PdfException.TagStructureFlushingFailedItMightBeCorrupted, ex);
+        }
+    }
+
+    void releaseInstanceFields() {
+        resources = null;
+        parentPages = null;
+    }
+
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;
@@ -1212,7 +1272,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         PdfArray array;
         if (contents instanceof PdfStream) {
             array = new PdfArray();
-            array.add(contents);
+            if (contents.getIndirectReference() != null) {
+                // Explicitly using object indirect reference here in order to correctly process released objects.
+                array.add(contents.getIndirectReference());
+            } else {
+                array.add(contents);
+            }
             put(PdfName.Contents, array);
         } else if (contents instanceof PdfArray) {
             array = (PdfArray) contents;
@@ -1237,22 +1302,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return contentStream;
     }
 
-    private void tryFlushPageTags() {
-        try {
-            if (!getDocument().isClosing) {
-                getDocument().getTagStructureContext().flushPageTags(this);
-            }
-            getDocument().getStructTreeRoot().savePageStructParentIndexIfNeeded(this);
-        } catch (Exception ex) {
-            throw new PdfException(PdfException.TagStructureFlushingFailedItMightBeCorrupted, ex);
-        }
-    }
-
     private void flushResourcesContentStreams() {
         flushResourcesContentStreams(getResources().getPdfObject());
 
         PdfArray annots = getAnnots(false);
-        if (annots != null) {
+        if (annots != null && !annots.isFlushed()) {
             for (int i = 0; i < annots.size(); ++i) {
                 PdfDictionary apDict = annots.getAsDictionary(i).getAsDictionary(PdfName.AP);
                 if (apDict != null) {
@@ -1263,7 +1317,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private void flushResourcesContentStreams(PdfDictionary resources) {
-        if (resources != null) {
+        if (resources != null && !resources.isFlushed()) {
             flushWithResources(resources.getAsDictionary(PdfName.XObject));
             flushWithResources(resources.getAsDictionary(PdfName.Pattern));
             flushWithResources(resources.getAsDictionary(PdfName.Shading));
@@ -1271,7 +1325,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private void flushWithResources(PdfDictionary objsCollection) {
-        if (objsCollection == null) {
+        if (objsCollection == null || objsCollection.isFlushed()) {
             return;
         }
 
@@ -1284,6 +1338,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private void flushAppearanceStreams(PdfDictionary appearanceStreamsDict) {
+        if (appearanceStreamsDict.isFlushed()) {
+            return;
+        }
         for (PdfObject val : appearanceStreamsDict.values()) {
             if (val instanceof PdfDictionary) {
                 PdfDictionary ap = (PdfDictionary) val;

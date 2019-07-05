@@ -188,20 +188,20 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.INVALID_TRANSFORM_DECLARATION);
         }
         switch (name) {
-        case MATRIX:
-            return createMatrixTransformation(getValuesFromTransformationString(transformation));
-        case TRANSLATE:
-            return createTranslateTransformation(getValuesFromTransformationString(transformation));
-        case SCALE:
-            return createScaleTransformation(getValuesFromTransformationString(transformation));
-        case ROTATE:
-            return createRotationTransformation(getValuesFromTransformationString(transformation));
-        case SKEWX:
-            return createSkewXTransformation(getValuesFromTransformationString(transformation));
-        case SKEWY:
-            return createSkewYTransformation(getValuesFromTransformationString(transformation));
-        default:
-            throw new SvgProcessingException(SvgLogMessageConstant.UNKNOWN_TRANSFORMATION_TYPE);
+            case MATRIX:
+                return createMatrixTransformation(getValuesFromTransformationString(transformation));
+            case TRANSLATE:
+                return createTranslateTransformation(getValuesFromTransformationString(transformation));
+            case SCALE:
+                return createScaleTransformation(getValuesFromTransformationString(transformation));
+            case ROTATE:
+                return createRotationTransformation(getValuesFromTransformationString(transformation));
+            case SKEWX:
+                return createSkewXTransformation(getValuesFromTransformationString(transformation));
+            case SKEWY:
+                return createSkewYTransformation(getValuesFromTransformationString(transformation));
+            default:
+                throw new SvgProcessingException(SvgLogMessageConstant.UNKNOWN_TRANSFORMATION_TYPE);
         }
     }
 
@@ -306,10 +306,10 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        float a = CssUtils.parseAbsoluteLength(values.get(0));
-        float b = CssUtils.parseAbsoluteLength(values.get(1));
-        float c = CssUtils.parseAbsoluteLength(values.get(2));
-        float d = CssUtils.parseAbsoluteLength(values.get(3));
+        float a = (float) Float.parseFloat(values.get(0));
+        float b = (float) Float.parseFloat(values.get(1));
+        float c = (float) Float.parseFloat(values.get(2));
+        float d = (float) Float.parseFloat(values.get(3));
         float e = CssUtils.parseAbsoluteLength(values.get(4));
         float f = CssUtils.parseAbsoluteLength(values.get(5));
 

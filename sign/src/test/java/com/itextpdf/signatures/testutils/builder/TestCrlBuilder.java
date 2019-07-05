@@ -85,7 +85,6 @@ public class TestCrlBuilder {
         ContentSigner signer = new JcaContentSignerBuilder(SIGN_ALG).setProvider(BouncyCastleProvider.PROVIDER_NAME).build(caPrivateKey);
         crlBuilder.setNextUpdate(nextUpdate);
         X509CRLHolder crl = crlBuilder.build(signer);
-        crlBuilder = null;
         return crl.getEncoded();
     }
 }

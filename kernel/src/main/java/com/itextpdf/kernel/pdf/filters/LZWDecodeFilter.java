@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.filters;
 
+import com.itextpdf.kernel.pdf.MemoryLimitsAwareFilter;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -52,11 +53,15 @@ import java.io.ByteArrayOutputStream;
 /**
  * Handles LZWDECODE filter
  */
-public class LZWDecodeFilter implements IFilterHandler {
+public class LZWDecodeFilter extends MemoryLimitsAwareFilter {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
-        b = LZWDecode(b);
+        ByteArrayOutputStream outputStream = enableMemoryLimitsAwareHandler(streamDictionary);
+        b = LZWDecode(b, outputStream);
         b = FlateDecodeFilter.decodePredictor(b, decodeParams);
         return b;
     }
@@ -68,7 +73,17 @@ public class LZWDecodeFilter implements IFilterHandler {
      * @return decoded byte[]
      */
     public static byte[] LZWDecode(byte[] in) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        return LZWDecode(in, new ByteArrayOutputStream());
+    }
+
+    /**
+     * Decodes a byte[] according to the LZW encoding.
+     *
+     * @param in  byte[] to be decoded
+     * @param out the out stream which will be used to write the bytes.
+     * @return decoded byte[]
+     */
+    private static byte[] LZWDecode(byte[] in, ByteArrayOutputStream out) {
         LZWDecoder lzw = new LZWDecoder();
         lzw.decode(in, out);
         return out.toByteArray();

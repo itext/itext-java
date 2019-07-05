@@ -52,6 +52,9 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.borders.DashedBorder;
+import com.itextpdf.layout.borders.DottedBorder;
+import com.itextpdf.layout.borders.RoundDotsBorder;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
@@ -2634,6 +2637,29 @@ public class TableTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableWithDifferentStylesOfCollapsedBordersTest() throws IOException, InterruptedException {
+        String testName = "tableWithDifferentStylesOfCollapsedBordersTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = createTestTable(2, 10, 2, 2, (UnitValue) null, BorderCollapsePropertyValue.COLLAPSE,
+                new Style().setBorder(new DashedBorder(ColorConstants.RED, 10)));
+        table.getHeader().setBorder(new DottedBorder(ColorConstants.ORANGE, 5f));
+        table.getFooter().setBorder(new RoundDotsBorder(ColorConstants.ORANGE, 5f));
+
+        // no caption
+        addTable(table, true, true, doc);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+
     }
 
     @Test

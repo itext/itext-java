@@ -144,6 +144,9 @@ public class PdfException extends RuntimeException {
     public static final String DocumentHasNoPdfCatalogObject = "Document has no PDF Catalog object.";
     public static final String DocumentMustBePreClosed = "Document must be preClosed.";
     public static final String DocumentForCopyToCannotBeNull = "Document for copyTo cannot be null.";
+    public static final String DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed = "During decompression multiple streams in sum occupied more memory than allowed. Please either check your pdf or increase the allowed single decompressed pdf stream maximum size value by setting the appropriate parameter of ReaderProperties's MemoryLimitsAwareHandler.";
+    public static final String DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed = "During decompression a single stream occupied more memory than allowed. Please either check your pdf or increase the allowed multiple decompressed pdf streams maximum size value by setting the appropriate parameter of ReaderProperties's MemoryLimitsAwareHandler.";
+    public static final String DuringDecompressionSingleStreamOccupiedMoreThanMaxIntegerValue = "During decompression a single stream occupied more than a maximum integer value. Please check your pdf.";
     public static final String EndOfContentStreamReachedBeforeEndOfImageData = "End of content stream reached before end of image data.";
     public static final String ErrorWhileReadingObjectStream = "Error while reading Object Stream.";
     public static final String EncryptedPayloadFileSpecDoesntHaveEncryptedPayloadDictionary = "Encrypted payload file spec shall have encrypted payload dictionary.";
@@ -164,6 +167,7 @@ public class PdfException extends RuntimeException {
     public static final String FilterCcittfaxdecodeIsOnlySupportedForImages = "Filter CCITTFaxDecode is only supported for images";
     public static final String FilterIsNotANameOrArray = "filter is not a name or array.";
     public static final String FlushedPageCannotBeAddedOrInserted = "Flushed page cannot be added or inserted.";
+    public static final String FlushingHelperFLushingModeIsNotForDocReadingMode = "Flushing writes the object to the output stream and releases it from memory. It is only possible for documents that have a PdfWriter associated with them. Use PageFlushingHelper#releaseDeep method instead.";
     public static final String FontAndSizeMustBeSetBeforeWritingAnyText = "Font and size must be set before writing any text.";
     public static final String FontEmbeddingIssue = "Font embedding issue.";
     public static final String FontProviderNotSetFontFamilyNotResolved = "FontProvider and FontSet are empty. Cannot resolve font family name (see ElementPropertyContainer#setFontFamily) without initialized FontProvider (see RootElement#setFontProvider).";

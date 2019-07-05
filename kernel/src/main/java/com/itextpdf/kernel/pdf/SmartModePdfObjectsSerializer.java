@@ -44,7 +44,6 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.kernel.PdfException;
-
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.util.HashMap;
@@ -98,8 +97,6 @@ class SmartModePdfObjectsSerializer implements Serializable {
         return new SerializedObjectContent(content);
     }
 
-    private static class SelfReferenceException extends Exception{}
-
     private void serObject(PdfObject obj, ByteBuffer bb, int level, Map<PdfIndirectReference, byte[]> serializedCache) throws SelfReferenceException {
         if (level <= 0) {
             return;
@@ -121,7 +118,7 @@ class SmartModePdfObjectsSerializer implements Serializable {
 
                 if (serializedCache.keySet().contains(reference)) {
                     //referencing itself
-                   throw new SelfReferenceException();
+                    throw new SelfReferenceException();
                 }
                 serializedCache.put(reference, null);
 
@@ -151,7 +148,7 @@ class SmartModePdfObjectsSerializer implements Serializable {
 
         if (savedBb != null) {
             serializedCache.put(reference, bb.toByteArray());
-            savedBb.append(bb.getInternalBuffer());
+            savedBb.append(bb.getInternalBuffer(), 0, bb.size());
         }
     }
 
@@ -187,5 +184,8 @@ class SmartModePdfObjectsSerializer implements Serializable {
         // ignore recursive call
         return key.equals(PdfName.P) && (dic.get(key).isIndirectReference() || dic.get(key).isDictionary())
                 || key.equals(PdfName.Parent);
+    }
+
+    private static class SelfReferenceException extends Exception {
     }
 }

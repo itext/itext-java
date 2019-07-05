@@ -43,12 +43,14 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import org.junit.Assert;
@@ -251,6 +253,37 @@ public class PdfCopyTest extends ExtendedITextTest {
         outputDoc.close();
 
         assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void copySelfContainedObject() throws IOException {
+        ByteArrayOutputStream inputBytes = new ByteArrayOutputStream();
+        PdfDocument prepInputDoc = new PdfDocument(new PdfWriter(inputBytes));
+        PdfDictionary selfContainedDict = new PdfDictionary();
+        PdfName randDictName = PdfName.Sound;
+        PdfName randEntry1 = PdfName.R;
+        PdfName randEntry2 = PdfName.S;
+        selfContainedDict.put(randEntry1, selfContainedDict);
+        selfContainedDict.put(randEntry2, selfContainedDict);
+        prepInputDoc.addNewPage().put(randDictName, selfContainedDict.makeIndirect(prepInputDoc));
+        prepInputDoc.close();
+
+
+        PdfDocument srcDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(inputBytes.toByteArray())));
+        PdfDocument destDoc = new PdfDocument(new PdfWriter(destinationFolder + "copySelfContainedObject.pdf"));
+
+        srcDoc.copyPagesTo(1, 1, destDoc);
+
+        PdfDictionary destPageObj = destDoc.getFirstPage().getPdfObject();
+        PdfDictionary destSelfContainedDict = destPageObj.getAsDictionary(randDictName);
+        PdfDictionary destSelfContainedDictR = destSelfContainedDict.getAsDictionary(randEntry1);
+        PdfDictionary destSelfContainedDictS = destSelfContainedDict.getAsDictionary(randEntry2);
+
+        Assert.assertEquals(destSelfContainedDict.getIndirectReference(), destSelfContainedDictR.getIndirectReference());
+        Assert.assertEquals(destSelfContainedDict.getIndirectReference(), destSelfContainedDictS.getIndirectReference());
+
+        destDoc.close();
+        srcDoc.close();
     }
 
 }

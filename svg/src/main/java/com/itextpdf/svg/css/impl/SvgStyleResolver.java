@@ -68,20 +68,22 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * Default CSS resolver implementation.
+ * Default implementation of SVG`s styles and attribute resolver .
  */
 public class SvgStyleResolver implements ICssResolver {
 
@@ -103,6 +105,10 @@ public class SvgStyleResolver implements ICssResolver {
      */
     private StyleResolverUtil sru = new StyleResolverUtil();
 
+    /**
+     * The resource resolver
+     */
+    private ResourceResolver resourceResolver = new ResourceResolver("");
 
     /**
      * Creates a {@link SvgStyleResolver} with a given default CSS.
@@ -136,6 +142,7 @@ public class SvgStyleResolver implements ICssResolver {
     public SvgStyleResolver(INode rootNode, SvgProcessorContext context) {
         // TODO DEVSIX-2060. Fetch default styles first.
         this.deviceDescription = context.getDeviceDescription();
+        this.resourceResolver = context.getResourceResolver();
         collectCssDeclarations(rootNode, context.getResourceResolver());
         collectFonts();
     }
@@ -144,7 +151,8 @@ public class SvgStyleResolver implements ICssResolver {
     public Map<String, String> resolveStyles(INode node, AbstractCssContext context) {
         Map<String, String> styles = new HashMap<>();
         //Load in from collected style sheets
-        List<CssDeclaration> styleSheetDeclarations = css.getCssDeclarations(node, MediaDeviceDescription.createDefault());
+        List<CssDeclaration> styleSheetDeclarations =
+                css.getCssDeclarations(node, MediaDeviceDescription.createDefault());
         for (CssDeclaration ssd : styleSheetDeclarations) {
             styles.put(ssd.getProperty(), ssd.getExpression());
         }
@@ -172,13 +180,41 @@ public class SvgStyleResolver implements ICssResolver {
                     if (parentFontSizeString == null) {
                         parentFontSizeString = "0";
                     }
-
                     sru.mergeParentStyleDeclaration(styles, entry.getKey(), entry.getValue(), parentFontSizeString);
                 }
             }
         }
-
         return styles;
+    }
+
+    /**
+     * Resolves the full path of Link href attribute,
+     * thanks to the resource resolver.
+     *
+     * @param attr          attribute to process
+     * @param attributesMap
+     */
+    private void processXLink(final IAttribute attr, final Map<String, String> attributesMap) {
+        String xlinkValue = attr.getValue();
+        if (!isStartedWithHash(xlinkValue)) {
+            try {
+                xlinkValue = this.resourceResolver.resolveAgainstBaseUri(attr.getValue()).toExternalForm();
+            } catch (MalformedURLException mue) {
+                Logger logger = LoggerFactory.getLogger(SvgStyleResolver.class);
+                logger.error(LogMessageConstant.UNABLE_TO_RESOLVE_IMAGE_URL, mue);
+            }
+        }
+        attributesMap.put(attr.getKey(), xlinkValue);
+    }
+
+    /**
+     * Checks if string starts with #.
+     *
+     * @param s test string
+     * @return
+     */
+    private boolean isStartedWithHash(String s) {
+        return s != null && s.startsWith("#");
     }
 
     private void collectCssDeclarations(INode rootNode, ResourceResolver resourceResolver) {
@@ -188,12 +224,12 @@ public class SvgStyleResolver implements ICssResolver {
             q.add(rootNode);
         }
         while (!q.isEmpty()) {
-            INode currentNode = q.getFirst();
-            q.removeFirst();
+            INode currentNode = q.pop();
             if (currentNode instanceof IElementNode) {
                 IElementNode headChildElement = (IElementNode) currentNode;
-                if (headChildElement.name().equals(SvgConstants.Attributes.STYLE)) {//XML parser will parse style tag contents as text nodes
-                    if (currentNode.childNodes().size() > 0 && (currentNode.childNodes().get(0) instanceof IDataNode || currentNode.childNodes().get(0) instanceof ITextNode)) {
+                if (SvgConstants.Tags.STYLE.equals(headChildElement.name())) {//XML parser will parse style tag contents as text nodes
+                    if (!currentNode.childNodes().isEmpty() && (currentNode.childNodes().get(0) instanceof IDataNode ||
+                            currentNode.childNodes().get(0) instanceof ITextNode)) {
                         String styleData;
                         if (currentNode.childNodes().get(0) instanceof IDataNode) {
                             // TODO (RND-865)
@@ -255,7 +291,8 @@ public class SvgStyleResolver implements ICssResolver {
     private void collectFonts(CssStatement cssStatement) {
         if (cssStatement instanceof CssFontFaceRule) {
             fonts.add((CssFontFaceRule) cssStatement);
-        } else if (cssStatement instanceof CssMediaRule && ((CssMediaRule) cssStatement).matchMediaDevice(deviceDescription)) {
+        } else if (cssStatement instanceof CssMediaRule &&
+                ((CssMediaRule) cssStatement).matchMediaDevice(deviceDescription)) {
             for (CssStatement cssSubStatement : ((CssMediaRule) cssStatement).getStatements()) {
                 collectFonts(cssSubStatement);
             }
@@ -264,13 +301,18 @@ public class SvgStyleResolver implements ICssResolver {
 
     private void processAttribute(IAttribute attr, Map<String, String> styles) {
         //Style attribute needs to be parsed further
-        if (attr.getKey().equals(SvgConstants.Attributes.STYLE)) {
-            Map<String, String> parsed = parseStylesFromStyleAttribute(attr.getValue());
-            for (Map.Entry<String, String> style : parsed.entrySet()) {
-                styles.put(style.getKey(), style.getValue());
-            }
-        } else {
-            styles.put(attr.getKey(), attr.getValue());
+        switch (attr.getKey()) {
+            case SvgConstants.Attributes.STYLE:
+                Map<String, String> parsed = parseStylesFromStyleAttribute(attr.getValue());
+                for (Map.Entry<String, String> style : parsed.entrySet()) {
+                    styles.put(style.getKey(), style.getValue());
+                }
+                break;
+            case SvgConstants.Attributes.XLINK_HREF:
+                processXLink(attr, styles);
+                break;
+            default:
+                styles.put(attr.getKey(), attr.getValue());
         }
     }
 
@@ -282,4 +324,5 @@ public class SvgStyleResolver implements ICssResolver {
         }
         return parsed;
     }
+
 }

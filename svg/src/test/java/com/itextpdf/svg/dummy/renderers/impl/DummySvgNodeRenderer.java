@@ -46,6 +46,8 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -53,6 +55,7 @@ import java.util.Map;
  */
 public class DummySvgNodeRenderer implements ISvgNodeRenderer {
 
+    Map<String, String> attributes;
     ISvgNodeRenderer parent;
     String name;
     boolean drawn = false;
@@ -62,7 +65,12 @@ public class DummySvgNodeRenderer implements ISvgNodeRenderer {
     }
 
     public DummySvgNodeRenderer(String name) {
+        this(name, new HashMap<String, String>());
+    }
+
+    public DummySvgNodeRenderer(String name, Map<String, String> attr) {
         this.name = name;
+        this.attributes = attr;
     }
 
     @Override
@@ -75,6 +83,7 @@ public class DummySvgNodeRenderer implements ISvgNodeRenderer {
         return parent;
     }
 
+
     @Override
     public void draw(SvgDrawContext context) {
         System.out.println(name + ": Drawing in dummy node");
@@ -83,20 +92,21 @@ public class DummySvgNodeRenderer implements ISvgNodeRenderer {
 
     @Override
     public void setAttributesAndStyles(Map<String, String> attributesAndStyles) {
-
+        this.attributes = attributesAndStyles;
     }
 
     @Override
     public String getAttribute(String key) {
-        if (SvgConstants.Attributes.WIDTH.equalsIgnoreCase(key) || SvgConstants.Attributes.HEIGHT.equalsIgnoreCase(key)) {
+        if (SvgConstants.Attributes.WIDTH.equalsIgnoreCase(key) ||
+            SvgConstants.Attributes.HEIGHT.equalsIgnoreCase(key)) {
             return "10";
         }
-
-        return "";
+        return this.attributes.get(key);
     }
 
     @Override
     public void setAttribute(String key, String value) {
+        this.attributes.put(key, value);
     }
 
     @Override

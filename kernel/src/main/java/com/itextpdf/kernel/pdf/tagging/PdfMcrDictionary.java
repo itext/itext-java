@@ -60,7 +60,8 @@ public class PdfMcrDictionary extends PdfMcr {
         super(new PdfDictionary(), parent);
         PdfDictionary dict = (PdfDictionary) getPdfObject();
         dict.put(PdfName.Type, PdfName.MCR);
-        dict.put(PdfName.Pg, page.getPdfObject());
+        // Explicitly using object indirect reference here in order to correctly process released objects.
+        dict.put(PdfName.Pg, page.getPdfObject().getIndirectReference());
         dict.put(PdfName.MCID, new PdfNumber(page.getNextMcid()));
     }
 

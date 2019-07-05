@@ -75,7 +75,7 @@ public class CompareToolTest extends ExtendedITextTest {
         System.out.println(result);
         Assert.assertNotNull("CompareTool must return differences found between the files", result);
         // Comparing the report to the reference one.
-        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(sourceFolder + "cmp_report01.xml", destinationFolder + "simple_pdf.report.xml"));
+        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(destinationFolder + "simple_pdf.report.xml", sourceFolder + "cmp_report01.xml"));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class CompareToolTest extends ExtendedITextTest {
         System.out.println(result);
         Assert.assertNotNull("CompareTool must return differences found between the files", result);
         // Comparing the report to the reference one.
-        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(sourceFolder + "cmp_report02.xml", destinationFolder + "tagged_pdf.report.xml"));
+        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(destinationFolder + "tagged_pdf.report.xml", sourceFolder + "cmp_report02.xml"));
     }
 
     @Test
@@ -103,7 +103,7 @@ public class CompareToolTest extends ExtendedITextTest {
         System.out.println(result);
         Assert.assertNotNull("CompareTool must return differences found between the files", result);
         // Comparing the report to the reference one.
-        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(sourceFolder + "cmp_report03.xml", destinationFolder + "screenAnnotation.report.xml"));
+        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(destinationFolder + "screenAnnotation.report.xml", sourceFolder + "cmp_report03.xml"));
     }
 
 
@@ -119,7 +119,7 @@ public class CompareToolTest extends ExtendedITextTest {
         System.out.println(result);
         Assert.assertNotNull("CompareTool must return differences found between the files", result);
         // Comparing the report to the reference one.
-        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(sourceFolder + "cmp_report01.xml", destinationFolder + "simple_pdf.report.xml"));
+        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(destinationFolder + "simple_pdf.report.xml", sourceFolder + "cmp_report01.xml"));
 
     }
 

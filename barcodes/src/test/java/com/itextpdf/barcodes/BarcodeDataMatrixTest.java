@@ -52,6 +52,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -59,22 +60,20 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
-import java.io.IOException;
-
 @Category(IntegrationTest.class)
 public class BarcodeDataMatrixTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
     public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodeDataMatrix/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-    
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeDataMatrix.pdf";
@@ -270,5 +269,20 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         byte[] str = "AbcdFFghijklmnop".getBytes();
         int result = barcodeDataMatrix.setCode(str, str.length, 0);
         Assert.assertEquals(BarcodeDataMatrix.DM_NO_ERROR, result);
+    }
+
+    @Test
+    public void barcode16Test() throws IOException, PdfException, InterruptedException {
+        String filename = "barcode16Test.pdf";
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + filename));
+
+        PdfCanvas canvas = new PdfCanvas(document.addNewPage());
+        BarcodeDataMatrix barcode = new BarcodeDataMatrix();
+        barcode.setCode("999999DILLERT XANG LIMITON 18               000");
+        canvas.concatMatrix(1, 0, 0, 1, 100, 600);
+        barcode.placeBarcode(canvas, ColorConstants.BLACK, 3);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder));
     }
 }

@@ -298,7 +298,8 @@ public class TagTreePointer {
 
         PdfObjRef kid = new PdfObjRef(annotation, getCurrentStructElem(), getDocument().getNextStructParentIndex());
         if (!ensureElementPageEqualsKidPage(getCurrentStructElem(), currentPage.getPdfObject())) {
-            ((PdfDictionary) kid.getPdfObject()).put(PdfName.Pg, currentPage.getPdfObject());
+            // Explicitly using object indirect reference here in order to correctly process released objects.
+            ((PdfDictionary) kid.getPdfObject()).put(PdfName.Pg, currentPage.getPdfObject().getIndirectReference());
         }
         addNewKid(kid);
         return this;
@@ -788,7 +789,8 @@ public class TagTreePointer {
                     mcrDict.put(PdfName.Type, PdfName.MCR);
                     mcrDict.put(PdfName.MCID, mcrKid.getPdfObject());
                 }
-                mcrDict.put(PdfName.Pg, mcrPage);
+                // Explicitly using object indirect reference here in order to correctly process released objects.
+                mcrDict.put(PdfName.Pg, mcrPage.getIndirectReference());
             }
         }
 
@@ -809,8 +811,8 @@ public class TagTreePointer {
         PdfObject pageObject = elem.getPdfObject().get(PdfName.Pg);
         if (pageObject == null) {
             pageObject = kidPage;
-            elem.getPdfObject().put(PdfName.Pg, kidPage);
-            elem.setModified();
+            // Explicitly using object indirect reference here in order to correctly process released objects.
+            elem.put(PdfName.Pg, kidPage.getIndirectReference());
         }
 
         return kidPage.equals(pageObject);

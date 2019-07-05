@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.1.6</version>
+  <version>7.1.7</version>
   <packaging>pom</packaging>
   <name>iText 7</name>
   <description>A Free Java-PDF library</description>
@@ -702,7 +702,7 @@
               <execution>
                 <id>spotbugs</id>
                 <configuration>
-                  <skip>true</skip>
+                  <skip>false</skip>
                 </configuration>
               </execution>
             </executions>

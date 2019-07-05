@@ -42,8 +42,12 @@
  */
 package com.itextpdf.svg.processors.impl.font;
 
+import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
@@ -69,11 +73,19 @@ public class FontSizeTest extends SvgIntegrationTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
+    })
     public void fontSize02Test() throws IOException, InterruptedException {
         String name = "fontSizeTest02";
         convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,name);
     }
 
+    @Test
+    public void fontSize03Test() throws IOException, InterruptedException {
+        String name = "fontSizeTest03";
+        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,name);
+    }
     @Test
     public void fontAbsoluteKeywords() throws IOException, InterruptedException {
         String name = "fontAbsoluteKeywords";

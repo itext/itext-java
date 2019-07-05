@@ -46,6 +46,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -54,7 +55,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class TextLeafSvgNodeRendererIntegrationTest {
+public class TextLeafSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -66,7 +67,7 @@ public class TextLeafSvgNodeRendererIntegrationTest {
         toTest.setAttribute(SvgConstants.Attributes.FONT_SIZE, "10");
         PdfFont font = PdfFontFactory.createFont();
         float actual = toTest.getTextContentLength(12, font);
-        float expected = 22.78f;
+        float expected = 17.085f;
         Assert.assertEquals(expected, actual, 1e-6f);
     }
 
@@ -82,13 +83,12 @@ public class TextLeafSvgNodeRendererIntegrationTest {
 
     @Test
     public void getContentLengthNaNTest() throws Exception {
-        junitExpectedException.expect(StyledXMLParserException.class);
         TextLeafSvgNodeRenderer toTest = new TextLeafSvgNodeRenderer();
         toTest.setAttribute(SvgConstants.Attributes.TEXT_CONTENT, "Hello");
         toTest.setAttribute(SvgConstants.Attributes.FONT_SIZE, "spice");
         PdfFont font = PdfFontFactory.createFont();
         float actual = toTest.getTextContentLength(12, font);
-        float expected = 27.336f;
+        float expected = 0.0f;
         Assert.assertEquals(expected, actual, 1e-6f);
     }
 

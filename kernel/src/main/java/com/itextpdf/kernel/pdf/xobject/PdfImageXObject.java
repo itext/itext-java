@@ -44,16 +44,12 @@
 package com.itextpdf.kernel.pdf.xobject;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.codec.PngWriter;
-import com.itextpdf.io.codec.TIFFConstants;
-import com.itextpdf.io.codec.TiffWriter;
 import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.image.RawImageData;
 import com.itextpdf.io.image.RawImageHelper;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -73,13 +69,12 @@ import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
-import org.slf4j.LoggerFactory;
-
-import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.imageio.ImageIO;
+import org.slf4j.LoggerFactory;
 
 /**
  * A wrapper for Image XObject. ISO 32000-1, 8.9 Images.
@@ -92,12 +87,6 @@ public class PdfImageXObject extends PdfXObject {
     private float height;
     private boolean mask;
     private boolean softMask;
-    private int pngColorType = -1;
-    private int pngBitDepth;
-    private int bpc;
-    private byte[] palette;
-    private byte[] icc;
-    private int stride;
 
     /**
      * Creates Image XObject by image.
@@ -129,6 +118,10 @@ public class PdfImageXObject extends PdfXObject {
      */
     public PdfImageXObject(PdfStream pdfStream) {
         super(pdfStream);
+        if (!pdfStream.isFlushed()) {
+            initWidthField();
+            initHeightField();
+        }
     }
 
     /**
@@ -138,11 +131,7 @@ public class PdfImageXObject extends PdfXObject {
      */
     @Override
     public float getWidth() {
-        if (!isFlushed()) {
-            return getPdfObject().getAsNumber(PdfName.Width).floatValue();
-        } else {
-            return width;
-        }
+        return width;
     }
 
     /**
@@ -152,11 +141,7 @@ public class PdfImageXObject extends PdfXObject {
      */
     @Override
     public float getHeight() {
-        if (!isFlushed()) {
-            return getPdfObject().getAsNumber(PdfName.Height).floatValue();
-        } else {
-            return height;
-        }
+        return height;
     }
 
     /**
@@ -168,11 +153,8 @@ public class PdfImageXObject extends PdfXObject {
      */
     @Override
     public void flush() {
-        if (!isFlushed()) {
-            width = getPdfObject().getAsNumber(PdfName.Width).floatValue();
-            height = getPdfObject().getAsNumber(PdfName.Height).floatValue();
-            super.flush();
-        }
+        // TODO to be removed in iText 7.2
+        super.flush();
     }
 
     /**
@@ -183,8 +165,6 @@ public class PdfImageXObject extends PdfXObject {
      */
     public PdfImageXObject copyTo(PdfDocument document) {
         PdfImageXObject image = new PdfImageXObject((PdfStream) getPdfObject().copyTo(document));
-        image.width = width;
-        image.height = height;
         image.mask = mask;
         image.softMask = softMask;
         return image;
@@ -231,7 +211,7 @@ public class PdfImageXObject extends PdfXObject {
 
             if (stubFilter.getLastFilterName() == null) {
                 try {
-                    bytes = decodeTiffAndPngBytes(bytes);
+                    bytes = new ImagePdfBytesInfo(this).decodeTiffAndPngBytes(bytes);
                 } catch (IOException e) {
                     throw new RuntimeException("IO exception in PdfImageXObject", e);
                 }
@@ -272,9 +252,8 @@ public class PdfImageXObject extends PdfXObject {
         }
 
         // None of the previous types match
-        PdfObject colorspace = getPdfObject().get(PdfName.ColorSpace);
-        prepareAndFindColorspace(colorspace);
-        if (pngColorType < 0) {
+        ImagePdfBytesInfo imageInfo = new ImagePdfBytesInfo(this);
+        if (imageInfo.getPngColorType() < 0) {
             return ImageType.TIFF;
         } else {
             return ImageType.PNG;
@@ -318,6 +297,22 @@ public class PdfImageXObject extends PdfXObject {
     public PdfImageXObject put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
         return this;
+    }
+
+    private float initWidthField() {
+        PdfNumber wNum = getPdfObject().getAsNumber(PdfName.Width);
+        if (wNum != null) {
+            width = wNum.floatValue();
+        }
+        return width;
+    }
+
+    private float initHeightField() {
+        PdfNumber hNum = getPdfObject().getAsNumber(PdfName.Height);
+        if (hNum != null) {
+            height = hNum.floatValue();
+        }
+        return height;
     }
 
     private static PdfStream createPdfStream(ImageData image, PdfImageXObject imageMask) {
@@ -513,157 +508,6 @@ public class PdfImageXObject extends PdfXObject {
             }
         }
         return array;
-    }
-
-    private void prepareAndFindColorspace(PdfObject colorspace) {
-        pngColorType = -1;
-        width = getPdfObject().getAsNumber(PdfName.Width).intValue();
-        height = getPdfObject().getAsNumber(PdfName.Height).intValue();
-        bpc = getPdfObject().getAsNumber(PdfName.BitsPerComponent).intValue();
-        pngBitDepth = bpc;
-
-        palette = null;
-        icc = null;
-        stride = 0;
-        findColorspace(colorspace, true);
-    }
-
-    private byte[] decodeTiffAndPngBytes(byte[] imageBytes) throws IOException {
-        PdfObject colorspace = getPdfObject().get(PdfName.ColorSpace);
-        prepareAndFindColorspace(colorspace);
-        java.io.ByteArrayOutputStream ms = new java.io.ByteArrayOutputStream();
-        if (pngColorType < 0) {
-            if (bpc != 8)
-                throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.ColorDepthIsNotSupported).setMessageParams(bpc);
-
-            if (colorspace instanceof PdfArray) {
-                PdfArray ca = (PdfArray) colorspace;
-                PdfObject tyca = ca.get(0);
-                if (!PdfName.ICCBased.equals(tyca))
-                    throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.ColorSpaceIsNotSupported).setMessageParams(tyca.toString());
-                PdfStream pr = (PdfStream) ca.get(1);
-                int n = pr.getAsNumber(PdfName.N).intValue();
-                if (n != 4) {
-                    throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.NValueIsNotSupported).setMessageParams(n);
-                }
-                icc = pr.getBytes();
-            } else if (!PdfName.DeviceCMYK.equals(colorspace)) {
-                throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.ColorSpaceIsNotSupported).setMessageParams(colorspace.toString());
-            }
-            stride = (int) (4 * width);
-            TiffWriter wr = new TiffWriter();
-            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_SAMPLESPERPIXEL, 4));
-            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_BITSPERSAMPLE, new int[]{8, 8, 8, 8}));
-            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_PHOTOMETRIC, TIFFConstants.PHOTOMETRIC_SEPARATED));
-            wr.addField(new TiffWriter.FieldLong(TIFFConstants.TIFFTAG_IMAGEWIDTH, (int) width));
-            wr.addField(new TiffWriter.FieldLong(TIFFConstants.TIFFTAG_IMAGELENGTH, (int) height));
-            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_COMPRESSION, TIFFConstants.COMPRESSION_LZW));
-            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_PREDICTOR, TIFFConstants.PREDICTOR_HORIZONTAL_DIFFERENCING));
-            wr.addField(new TiffWriter.FieldLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP, (int) height));
-            wr.addField(new TiffWriter.FieldRational(TIFFConstants.TIFFTAG_XRESOLUTION, new int[]{300, 1}));
-            wr.addField(new TiffWriter.FieldRational(TIFFConstants.TIFFTAG_YRESOLUTION, new int[]{300, 1}));
-            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_RESOLUTIONUNIT, TIFFConstants.RESUNIT_INCH));
-            wr.addField(new TiffWriter.FieldAscii(TIFFConstants.TIFFTAG_SOFTWARE, Version.getInstance().getVersion()));
-            java.io.ByteArrayOutputStream comp = new java.io.ByteArrayOutputStream();
-            TiffWriter.compressLZW(comp, 2, imageBytes, (int) height, 4, stride);
-            byte[] buf = comp.toByteArray();
-            wr.addField(new TiffWriter.FieldImage(buf));
-            wr.addField(new TiffWriter.FieldLong(TIFFConstants.TIFFTAG_STRIPBYTECOUNTS, buf.length));
-            if (icc != null) {
-                wr.addField(new TiffWriter.FieldUndefined(TIFFConstants.TIFFTAG_ICCPROFILE, icc));
-            }
-            wr.writeFile(ms);
-
-            imageBytes = ms.toByteArray();
-            return imageBytes;
-        } else {
-            PngWriter png = new PngWriter(ms);
-            PdfArray decode = getPdfObject().getAsArray(PdfName.Decode);
-            if (decode != null) {
-                if (pngBitDepth == 1) {
-                    // if the decode array is 1,0, then we need to invert the image
-                    if (decode.getAsNumber(0).intValue() == 1 && decode.getAsNumber(1).intValue() == 0) {
-                        int len = imageBytes.length;
-                        for (int t = 0; t < len; ++t) {
-                            imageBytes[t] ^= 0xff;
-                        }
-                    } else {
-                        // if the decode array is 0,1, do nothing.  It's possible that the array could be 0,0 or 1,1 - but that would be silly, so we'll just ignore that case
-                    }
-                } else {
-                    // todo: add decode transformation for other depths
-                }
-            }
-            png.writeHeader((int) width, (int) height, pngBitDepth, pngColorType);
-            if (icc != null) {
-                png.writeIccProfile(icc);
-            }
-            if (palette != null) {
-                png.writePalette(palette);
-            }
-            png.writeData(imageBytes, stride);
-            png.writeEnd();
-            imageBytes = ms.toByteArray();
-            return imageBytes;
-        }
-    }
-
-    /**
-     * Sets state of this object according to the color space
-     *
-     * @param colorspace   the colorspace to use
-     * @param allowIndexed whether indexed color spaces will be resolved (used for recursive call)
-     * @throws IOException if there is a problem with reading from the underlying stream
-     */
-    private void findColorspace(PdfObject colorspace, boolean allowIndexed) {
-        if (colorspace == null && bpc == 1) { // handle imagemasks
-            stride = (int) ((width * bpc + 7) / 8);
-            pngColorType = 0;
-        } else if (PdfName.DeviceGray.equals(colorspace)) {
-            stride = (int) ((width * bpc + 7) / 8);
-            pngColorType = 0;
-        } else if (PdfName.DeviceRGB.equals(colorspace)) {
-            if (bpc == 8 || bpc == 16) {
-                stride = (int) ((width * bpc * 3 + 7) / 8);
-                pngColorType = 2;
-            }
-        } else if (colorspace instanceof PdfArray) {
-            PdfArray ca = (PdfArray) colorspace;
-            PdfObject tyca = ca.get(0);
-            if (PdfName.CalGray.equals(tyca)) {
-                stride = (int) ((width * bpc + 7) / 8);
-                pngColorType = 0;
-            } else if (PdfName.CalRGB.equals(tyca)) {
-                if (bpc == 8 || bpc == 16) {
-                    stride = (int) ((width * bpc * 3 + 7) / 8);
-                    pngColorType = 2;
-                }
-            } else if (PdfName.ICCBased.equals(tyca)) {
-                PdfStream pr = (PdfStream) ca.get(1);
-                int n = pr.getAsNumber(PdfName.N).intValue();
-                if (n == 1) {
-                    stride = (int) ((width * bpc + 7) / 8);
-                    pngColorType = 0;
-                    icc = pr.getBytes();
-                } else if (n == 3) {
-                    stride = (int) ((width * bpc * 3 + 7) / 8);
-                    pngColorType = 2;
-                    icc = pr.getBytes();
-                }
-            } else if (allowIndexed && PdfName.Indexed.equals(tyca)) {
-                findColorspace(ca.get(1), false);
-                if (pngColorType == 2) {
-                    PdfObject id2 = ca.get(3);
-                    if (id2 instanceof PdfString) {
-                        palette = ((PdfString) id2).getValueBytes();
-                    } else if (id2 instanceof PdfStream) {
-                        palette = (((PdfStream) id2)).getBytes();
-                    }
-                    stride = (int) ((width * bpc + 7) / 8);
-                    pngColorType = 3;
-                }
-            }
-        }
     }
 
     private static ImageData checkImageType(ImageData image) {

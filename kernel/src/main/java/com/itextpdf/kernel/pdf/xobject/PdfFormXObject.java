@@ -324,6 +324,7 @@ public class PdfFormXObject extends PdfXObject {
      */
     public PdfFormXObject put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
         return this;
     }
 

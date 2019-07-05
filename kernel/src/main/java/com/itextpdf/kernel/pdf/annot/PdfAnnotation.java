@@ -427,7 +427,8 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfAnnotation setPage(PdfPage page) {
         this.page = page;
-        return put(PdfName.P, page.getPdfObject());
+        // Explicitly using object indirect reference here in order to correctly process released objects.
+        return put(PdfName.P, page.getPdfObject().getIndirectReference());
     }
 
     /**

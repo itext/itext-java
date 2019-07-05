@@ -42,6 +42,8 @@
  */
 package com.itextpdf.svg.css;
 
+import com.itextpdf.io.util.UrlUtil;
+import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssFontFaceRule;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.css.resolve.AbstractCssContext;
@@ -53,29 +55,25 @@ import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupTextNode;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
-import com.itextpdf.svg.renderers.SvgIntegrationTest;
-import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class SvgStyleResolverTest extends SvgIntegrationTest {
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/css/SvgStyleResolver/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/svg/css/SvgStyleResolver/";
-
-    @BeforeClass
-    public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
-    }
+public class SvgStyleResolverTest {
+    private static final String baseUri = "./src/test/resources/com/itextpdf/svg/css/SvgStyleResolver/";
 
     //Single element test
     //Inherits values from parent?
@@ -109,6 +107,68 @@ public class SvgStyleResolverTest extends SvgIntegrationTest {
 
 
         Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void svgCssResolverXlinkTest() {
+        Element jsoupImage = new Element(Tag.valueOf("image"), "");
+        Attributes imageAttributes = jsoupImage.attributes();
+        imageAttributes.put(new Attribute("xlink:href", "itis.jpg"));
+        JsoupElementNode node = new JsoupElementNode(jsoupImage);
+
+        SvgConverterProperties scp = new SvgConverterProperties();
+        scp.setBaseUri(baseUri);
+
+        SvgProcessorContext processorContext = new SvgProcessorContext(scp);
+        SvgStyleResolver sr = new SvgStyleResolver(node, processorContext);
+        Map<String, String> attr = sr.resolveStyles(node, new SvgCssContext());
+
+        String fileName = baseUri + "itis.jpg";
+        String expectedURL = UrlUtil.toNormalizedURI(fileName).toString();
+
+        Assert.assertEquals(expectedURL, attr.get("xlink:href"));
+    }
+
+    @Test
+    public void svgCssResolveHashXlinkTest() {
+        Element jsoupImage = new Element(Tag.valueOf("image"), "");
+        Attributes imageAttributes = jsoupImage.attributes();
+        imageAttributes.put(new Attribute("xlink:href", "#testid"));
+        JsoupElementNode node = new JsoupElementNode(jsoupImage);
+
+        SvgConverterProperties scp = new SvgConverterProperties();
+        scp.setBaseUri(baseUri);
+
+        SvgProcessorContext processorContext = new SvgProcessorContext(scp);
+        SvgStyleResolver sr = new SvgStyleResolver(node, processorContext);
+        Map<String, String> attr = sr.resolveStyles(node, new SvgCssContext());
+
+        Assert.assertEquals("#testid", attr.get("xlink:href"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RESOLVE_IMAGE_URL, count = 1))
+    public void svgCssResolveMalformedXlinkTest() {
+        Element jsoupImage = new Element(Tag.valueOf("image"), "");
+        Attributes imageAttributes = jsoupImage.attributes();
+
+        imageAttributes.put(new Attribute("xlink:href", "htt://are/"));
+        JsoupElementNode node = new JsoupElementNode(jsoupImage);
+
+        SvgStyleResolver sr = new SvgStyleResolver();
+        Map<String, String> attr = sr.resolveStyles(node, new SvgCssContext());
+        Assert.assertEquals("htt://are/", attr.get("xlink:href"));
+    }
+
+    @Test
+    public void overrideDefaultStyleTest() {
+        ICssResolver styleResolver = new SvgStyleResolver();
+        Element svg = new Element(Tag.valueOf("svg"), "");
+        svg.attributes().put(SvgConstants.Attributes.STROKE, "white");
+        INode svgNode = new JsoupElementNode(svg);
+        Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
+
+        Assert.assertEquals("white", resolvedStyles.get(SvgConstants.Attributes.STROKE));
     }
 
     @Test
@@ -156,29 +216,4 @@ public class SvgStyleResolverTest extends SvgIntegrationTest {
         Assert.assertEquals(1, fontFaceRuleList.size());
         Assert.assertEquals(2, fontFaceRuleList.get(0).getProperties().size());
     }
-
-    @Test
-    //TODO DEVSIX-2058
-    public void fontResolverIntegrationTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "fontssvg");
-    }
-
-    @Test
-    public void validLocalFontTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "validLocalFontTest");
-    }
-
-    @Test
-    public void fontWeightTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "fontWeightTest");
-    }
-
-    /**
-     * The following test should fail when RND-1042 is resolved
-     */
-    @Test
-    public void googleFontsTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "googleFontsTest");
-    }
-
 }

@@ -399,9 +399,6 @@ public class PdfFormCopyTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.FORM_FIELD_WAS_FLUSHED, count = 84)
-    })
     public void copyFieldsTest10() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "datasheet.pdf";
         String destFilename = destinationFolder + "copyFields10.pdf";
@@ -419,9 +416,6 @@ public class PdfFormCopyTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.FORM_FIELD_WAS_FLUSHED, count = 28)
-    })
     public void copyFieldsTest11() throws IOException, InterruptedException {
         String srcFilename1 = sourceFolder + "datasheet.pdf";
         String srcFilename2 = sourceFolder + "datasheet2.pdf";
@@ -444,9 +438,6 @@ public class PdfFormCopyTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.FORM_FIELD_WAS_FLUSHED, count = 28)
-    })
     public void copyFieldsTest12() throws IOException, InterruptedException {
         String srcFilename1 = sourceFolder + "datasheet.pdf";
         String srcFilename2 = sourceFolder + "datasheet2.pdf";

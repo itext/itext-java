@@ -614,7 +614,6 @@ public class PdfA2Checker extends PdfA1Checker {
         }
 
         if (pageDict.containsKey(PdfName.Group) && PdfName.Transparency.equals(pageDict.getAsDictionary(PdfName.Group).getAsName(PdfName.S))) {
-            transparencyObjects.add(pageDict);
             PdfObject cs = pageDict.getAsDictionary(PdfName.Group).get(PdfName.CS);
             if (cs != null) {
                 PdfDictionary currentColorSpaces = pageResources.getAsDictionary(PdfName.ColorSpace);

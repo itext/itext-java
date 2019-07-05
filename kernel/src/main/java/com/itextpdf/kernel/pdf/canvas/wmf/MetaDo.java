@@ -468,7 +468,7 @@ public class MetaDo {
                     float l = state.transformX(in.readShort());
                     cb.rectangle(l, b, r - l, t - b);
                     cb.eoClip();
-                    cb.newPath();
+                    cb.endPath();
                     break;
                 }
                 case META_EXTTEXTOUT:
@@ -578,7 +578,7 @@ public class MetaDo {
                         cb.saveState();
                         cb.rectangle(xDest, yDest, destWidth, destHeight);
                         cb.clip();
-                        cb.newPath();
+                        cb.endPath();
                         ImageData bmpImage = ImageDataFactory.createBmp(b, true, b.length);
                         PdfImageXObject imageXObject = new PdfImageXObject(bmpImage);
 

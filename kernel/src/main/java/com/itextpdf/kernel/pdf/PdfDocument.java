@@ -112,7 +112,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Currently active page.
+     * @deprecated Will be removed in iText 7.2
      */
+    @Deprecated
     protected PdfPage currentPage = null;
 
     /**
@@ -161,9 +163,14 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     protected PdfVersion pdfVersion = PdfVersion.PDF_1_7;
 
     /**
-     * The original second id when the document is read initially.
+     * The original (first) id when the document is read initially.
      */
-    private PdfString originalModifiedDocumentId;
+    private PdfString originalDocumentId;
+
+    /**
+     * The original modified (second) id when the document is read initially.
+     */
+    private PdfString modifiedDocumentId;
 
     /**
      * List of indirect objects used in the document.
@@ -211,6 +218,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Cache of already serialized objects from this document for smart mode.
      */
     Map<PdfIndirectReference, byte[]> serializedObjectsCache = new HashMap<>();
+
+    /**
+     * Handler which will be used for decompression of pdf streams.
+     */
+    MemoryLimitsAwareHandler memoryLimitsAwareHandler = null;
 
     /**
      * Open PDF document in reading mode.
@@ -473,7 +485,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         currentPage = page;
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_PAGE, page));
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.INSERT_PAGE, page));
-        return currentPage;
+        return page;
     }
 
     /**
@@ -503,7 +515,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         checkAndAddPage(index, page);
         currentPage = page;
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.INSERT_PAGE, page));
-        return currentPage;
+        return page;
     }
 
     /**
@@ -629,6 +641,29 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     public PdfDocumentInfo getDocumentInfo() {
         checkClosingStatus();
         return info;
+    }
+
+    /**
+     * Gets original document id
+     *
+     * In order to set originalDocumentId  {@link WriterProperties#setInitialDocumentId} should be used
+     *
+     * @return original dccument id
+     */
+    public PdfString getOriginalDocumentId() {
+        return originalDocumentId;
+    }
+
+
+    /**
+     * Gets modified document id
+     *
+     * In order to set modifiedDocumentId {@link WriterProperties#setModifiedDocumentId} should be used
+     *
+     * @return modified document id
+     */
+    public PdfString getModifiedDocumentId() {
+        return modifiedDocumentId;
     }
 
     /**
@@ -801,8 +836,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 }
                 checkIsoConformance();
 
-                PdfObject fileId = getFileId();
-
                 PdfObject crypto = null;
                 Set<PdfIndirectReference> forbiddenToFlush = new HashSet<>();
                 if (properties.appendMode) {
@@ -828,6 +861,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         catalog.put(PdfName.Pages, pageRoot);
                         catalog.getPdfObject().flush(false);
                     }
+
 
                     if (info.getPdfObject().isModified()) {
                         info.getPdfObject().flush(false);
@@ -915,6 +949,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 trailer.put(PdfName.Root, catalog.getPdfObject());
                 trailer.put(PdfName.Info, info.getPdfObject());
 
+
+                //By this time original and modified document ids should always be not null due to initializing in
+                // either writer properties, or in the writer init section on document open or from pdfreader. So we shouldn't worry about it being null next
+                PdfObject fileId = PdfEncryption.createInfoId(ByteUtils.getIsoBytes(originalDocumentId.getValue()),
+                        ByteUtils.getIsoBytes(modifiedDocumentId.getValue()));
                 xref.writeXrefTableAndTrailer(this, fileId, crypto);
                 writer.flush();
                 for (ICounter counter : getCounters()) {
@@ -946,44 +985,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
         }
         closed = true;
-    }
-
-    private PdfObject getFileId() {
-        boolean documentIsModified = false;
-        byte[] originalFileId = null;
-
-        if (writer.properties.initialDocumentId != null) {
-            originalFileId = ByteUtils.getIsoBytes(writer.properties.initialDocumentId.getValue());
-        }
-        if (originalFileId == null && !properties.appendMode && writer.crypto != null) { // TODO why only not in append mode when encrypted?
-            originalFileId = writer.crypto.getDocumentId();
-        }
-        if (originalFileId == null && getReader() != null) {
-            originalFileId = getReader().getOriginalFileId();
-            documentIsModified = true;
-        }
-        if (originalFileId == null) {
-            originalFileId = PdfEncryption.generateNewDocumentId();
-        }
-
-        byte[] secondId = null;
-        if (writer.properties.modifiedDocumentId != null) {
-            secondId = ByteUtils.getIsoBytes(writer.properties.modifiedDocumentId.getValue());
-        }
-        if (secondId == null && originalModifiedDocumentId != null) {
-            PdfString newModifiedId = reader.trailer.getAsArray(PdfName.ID).getAsString(1);
-
-            if (!originalModifiedDocumentId.equals(newModifiedId)) {
-                secondId = ByteUtils.getIsoBytes(newModifiedId.getValue());
-            } else {
-                secondId = PdfEncryption.generateNewDocumentId();
-            }
-        }
-        if (secondId == null) {
-            secondId = (documentIsModified) ? PdfEncryption.generateNewDocumentId() : originalFileId;
-        }
-
-        return PdfEncryption.createInfoId(originalFileId, secondId);
     }
 
     /**
@@ -1264,8 +1265,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Flush all copied objects and remove them from copied cache.
-     * Note, if you will copy objects from the same document, doublicated objects will be created.
-     *
+     * <p>
+     * Note, if you will copy objects from the same document, duplicated objects will be created.
+     * That's why usually this method is meant to be used when all copying from source document is finished.
+     * For other cases one can also consider other flushing mechanisms, e.g. pages-based flushing.
      * @param sourceDoc source document
      */
     public void flushCopiedObjects(PdfDocument sourceDoc) {
@@ -1690,7 +1693,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (defaultFont == null) {
             try {
                 defaultFont = PdfFontFactory.createFont();
-                defaultFont.makeIndirect(this);
+                if (writer != null) defaultFont.makeIndirect(this);
             } catch (IOException e) {
                 Logger logger = LoggerFactory.getLogger(PdfDocument.class);
                 logger.error(LogMessageConstant.EXCEPTION_WHILE_CREATING_DEFAULT_FONT, e);
@@ -1708,6 +1711,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public PdfFont addFont(PdfFont font) {
         font.makeIndirect(this);
+        font.setForbidRelease(); // forbid release for font dictionaries that are stored in #documentFonts collection
         documentFonts.put(font.getPdfObject().getIndirectReference(), font);
         return font;
     }
@@ -1746,6 +1750,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     PdfXrefTable getXref() {
         return xref;
+    }
+
+    boolean isDocumentFont(PdfIndirectReference indRef) {
+        return indRef != null && documentFonts.containsKey(indRef);
     }
 
     /**
@@ -1815,6 +1823,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     throw new PdfException(PdfException.PdfReaderHasBeenAlreadyUtilized);
                 }
                 reader.pdfDocument = this;
+                memoryLimitsAwareHandler = reader.properties.memoryLimitsAwareHandler;
+                if (null == memoryLimitsAwareHandler) {
+                    memoryLimitsAwareHandler = new MemoryLimitsAwareHandler(reader.tokens.getSafeFile().length());
+                }
                 reader.readPdf();
                 for (ICounter counter : getCounters()) {
                     counter.onDocumentRead(reader.getFileLength());
@@ -1825,7 +1837,15 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 PdfArray id = reader.trailer.getAsArray(PdfName.ID);
 
                 if (id != null) {
-                    originalModifiedDocumentId = id.getAsString(1);
+                   if (id.size() == 2) {
+                       originalDocumentId = id.getAsString(0);
+                       modifiedDocumentId = id.getAsString(1);
+                   }
+
+                   if (originalDocumentId == null || modifiedDocumentId == null) {
+                       Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+                       logger.error(LogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED);
+                   }
                 }
 
                 catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true));
@@ -1884,6 +1904,32 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         trailer.put(PdfName.ID, reader.trailer.get(PdfName.ID));
                     }
                 }
+
+                if (writer.properties != null) {
+                    PdfString readerModifiedId = modifiedDocumentId;
+                    if (writer.properties.initialDocumentId != null &&
+                            !(reader != null && reader.decrypt != null && (properties.appendMode || properties.preserveEncryption))) {
+                        originalDocumentId = writer.properties.initialDocumentId;
+                    }
+                    if (writer.properties.modifiedDocumentId != null) {
+                        modifiedDocumentId = writer.properties.modifiedDocumentId;
+                    }
+                    if (originalDocumentId == null && modifiedDocumentId != null) {
+                        originalDocumentId = modifiedDocumentId;
+                    }
+                    if (modifiedDocumentId == null) {
+                        if (originalDocumentId == null) {
+                            originalDocumentId = new PdfString(PdfEncryption.generateNewDocumentId());
+                        }
+                        modifiedDocumentId = originalDocumentId;
+                    }
+                    if(writer.properties.modifiedDocumentId == null && modifiedDocumentId.equals(readerModifiedId)) {
+                        modifiedDocumentId = new PdfString(PdfEncryption.generateNewDocumentId());
+                    }
+                }
+
+                assert originalDocumentId != null;
+                assert modifiedDocumentId != null;
             }
             if (properties.appendMode) {       // Due to constructor reader and writer not null.
                 assert reader != null;
