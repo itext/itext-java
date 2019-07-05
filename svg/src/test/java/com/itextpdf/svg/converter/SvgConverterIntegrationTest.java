@@ -160,6 +160,27 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         doc.close();
     }
 
+    /**
+     * Convert a SVG file defining all ignored tags currently defined in the project.
+     * @result There will be no <code>Exception</code> during the process and PDF output is generated.
+     */
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 32),
+    })
+    public void convertFileWithAllIgnoredTags() throws IOException, InterruptedException {
+        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "ignored_tags");
+    }
+
+    /**
+     * Convert a SVG file of a chart which contains some currently ignored tags.
+     * @result There will be no <code>Exception</code> during the process and PDF output is generated.
+     */
+    @Test
+    public void convertChartWithSomeIgnoredTags() throws IOException, InterruptedException {
+         convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "chart_snippet");
+    }
+
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 14),

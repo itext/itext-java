@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="10" height="10" aria-label="tags" style="overflow: hidden;">
+           
+        <!-- CHECKING ALL IGNORED TAGS SHOULD NOT THROW AN EXCEPTION -->
+        <a> </a>         
+        <altGlyph></altGlyph>       
+        <altGlyphDef></altGlyphDef>   
+        <altGlyphItem></altGlyphItem>  
+        <clipPath></clipPath>    
+        <color-profile></color-profile>
+        <cursor></cursor>      
+        <desc></desc>
+        <feBlend></feBlend>           
+        <feColorMatrix></feColorMatrix>   
+        <feComponentTransfer></feComponentTransfer>  
+        <feComposite></feComposite>                  
+        <feConvolveMatrix></feConvolveMatrix>        
+        <feDiffuseLighting></feDiffuseLighting>          
+        <feDisplacementMap></feDisplacementMap>          
+        <feDistantLight></feDistantLight>                
+        <feFlood></feFlood>                              
+        <feFuncA></feFuncA>                              
+        <feFuncB></feFuncB>                              
+        <feFuncG></feFuncG>                              
+        <feFuncR></feFuncR>                              
+        <feGaussianBlur></feGaussianBlur>                
+        <feImage></feImage>                              
+        <feMerge></feMerge>                              
+        <feMergeNode></feMergeNode>                      
+        <feMorphology></feMorphology>                    
+        <feOffset></feOffset>                            
+        <fePointLight></fePointLight>                    
+        <feSpecularLighting></feSpecularLighting>        
+        <feSpotLight></feSpotLight>                      
+        <feTile></feTile>                                
+        <feTurbulence></feTurbulence>              
+        <filter></filter>
+        <font></font>
+        <font-face></font-face>
+        <font-face-format></font-face-format>
+        <font-face-name></font-face-name>
+        <font-face-src></font-face-src>
+        <font-face-uri></font-face-uri>
+        <foreignObject></foreignObject>         
+        <glyph></glyph>                                  
+        <glyphRef></glyphRef>                      
+        <hkern></hkern>
+        <linearGradient></linearGradient>       
+        <marker></marker>
+        <mask></mask>
+        <metadata></metadata>
+        <missing-glyph></missing-glyph>
+        <pattern></pattern>
+        <radialGradient></radialGradient> 
+        <stop></stop>
+        <style></style>
+        <title></title>
+                                             
+</svg>
