@@ -63,7 +63,7 @@
                 <text text-anchor="start" x="306" y="47.35" font-size="11" stroke="none" stroke-width="0" fill="#222222">Business
                 </text>
             </g>
-            <circle cx="291" cy="43.5" r="5.5" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+            <circle cx="291" cy="43.5" r="5.5" stroke="none" stroke-width="0" fill="blue">
             </circle>
         </g>
         <g column-id="Education">
@@ -73,7 +73,7 @@
                 <text text-anchor="start" x="306" y="65.35" font-size="11" stroke="none" stroke-width="0" fill="#222222">Education
                 </text>
             </g>
-            <circle cx="291" cy="61.5" r="5.5" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_1)">
+            <circle cx="291" cy="61.5" r="5.5" stroke="none" stroke-width="0" fill="red">
             </circle>
         </g>
         <g column-id="Social Sciences &amp; History">
@@ -87,7 +87,7 @@
                 <text text-anchor="start" x="306" y="111.35" font-size="11" stroke="none" stroke-width="0" fill="#222222">History
                 </text>
             </g>
-            <circle cx="291" cy="79.5" r="5.5" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_2)">
+            <circle cx="291" cy="79.5" r="5.5" stroke="none" stroke-width="0" fill="orange">
             </circle>
         </g>
         <g column-id="Health">
@@ -97,7 +97,7 @@
                 <text text-anchor="start" x="306" y="129.35" font-size="11" stroke="none" stroke-width="0" fill="#222222">Health
                 </text>
             </g>
-            <circle cx="291" cy="125.5" r="5.5" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_3)">
+            <circle cx="291" cy="125.5" r="5.5" stroke="none" stroke-width="0" fill="green">
             </circle>
         </g>
         <g column-id="Psychology">
@@ -107,7 +107,7 @@
                 <text text-anchor="start" x="306" y="147.35" font-size="11" stroke="none" stroke-width="0" fill="#222222">Psychology
                 </text>
             </g>
-            <circle cx="291" cy="143.5" r="5.5" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_4)">
+            <circle cx="291" cy="143.5" r="5.5" stroke="none" stroke-width="0" fill="purple">
             </circle>
         </g>
     </g>
