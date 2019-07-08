@@ -84,9 +84,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Map;
 
 @Category(IntegrationTest.class)
 public class PdfFormFieldTest extends ExtendedITextTest {
@@ -173,6 +170,33 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_formFieldTest04.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void multilineformFieldTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "multilineformFieldTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        PdfTextFormField name = PdfFormField.createMultilineText(pdfDoc,
+                new Rectangle(150, 600, 277, 44),"fieldName", "", null, 0);
+        name.setScroll(false);
+        name.setBorderColor(ColorConstants.GRAY);
+        String itextLicence = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " +
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+        name.setValue(itextLicence);
+        form.addField(name);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_multilineformFieldTest.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -1351,6 +1375,117 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "outfile.pdf",
                 sourceFolder + "cmp_" + "fillUnmergedTextFormField.pdf", destinationFolder, "diff_"));
+    }
 
+    @Test
+    public void notFittingByHeightTest() throws IOException, InterruptedException {
+        String filename = "notFittingByHeightTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        for (int i = 15; i <= 50; i += 15) {
+            PdfFormField[] fields = new PdfFormField[]{
+                    PdfFormField.createMultilineText(pdfDoc, new Rectangle(100, 800 - i * 4, 150, i), "multi " + i, "MULTI"),
+                            PdfFormField.createText(pdfDoc, new Rectangle(300, 800 - i * 4, 150, i), "single " + i, "SINGLE")};
+            for (PdfFormField field : fields) {
+                field.setFontSize(40);
+                field.setBorderColor(ColorConstants.BLACK);
+                form.addField(field);
+            }
+        }
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void choiceFieldAutoSizeTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "choiceFieldAutoSizeTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        String[] options = new String[]{"First Item", "Second Item", "Third Item", "Fourth Item"};
+
+        PdfFormField[] fields = new PdfFormField[] {
+                PdfFormField.createComboBox(pdfDoc, new Rectangle(110, 750, 150, 20), "TestField", "First Item", options),
+                PdfFormField.createList(pdfDoc, new Rectangle(310, 650, 150, 90), "TestField1", "Second Item", options)};
+
+        for (PdfFormField field : fields) {
+            field.setFontSize(0);
+            field.setBorderColor(ColorConstants.BLACK);
+            form.addField(field);
+        }
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_choiceFieldAutoSizeTest.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void borderWidthIndentMultilineTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "borderWidthIndentMultilineTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        PdfTextFormField field = PdfFormField.createMultilineText(pdfDoc, new Rectangle(100, 500, 400, 300), "multi",
+                "Does this text overlap the border? Well it shouldn't!");
+        field.setFontSize(30);
+        field.setBorderColor(ColorConstants.RED);
+        field.setBorderWidth(50);
+        form.addField(field);
+
+        PdfTextFormField field2 = PdfFormField.createMultilineText(pdfDoc, new Rectangle(100, 400, 400, 50), "multiAuto",
+                "Does this autosize text overlap the border? Well it shouldn't! Does it fit accurately though?");
+        field2.setFontSize(0);
+        field2.setBorderColor(ColorConstants.RED);
+        field2.setBorderWidth(20);
+        form.addField(field2);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_borderWidthIndentMultilineTest.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void borderWidthIndentSingleLineTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "borderWidthIndentSingleLineTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        PdfTextFormField field = PdfFormField.createText(pdfDoc, new Rectangle(50, 700, 500, 120), "single",
+                "Does this text overlap the border?");
+        field.setFontSize(20);
+        field.setBorderColor(ColorConstants.RED);
+        field.setBorderWidth(50);
+        form.addField(field);
+
+        PdfTextFormField field2 = PdfFormField.createText(pdfDoc, new Rectangle(50, 600, 500, 80), "singleAuto",
+                "Does this autosize text overlap the border? Well it shouldn't! Does it fit accurately though?");
+        field2.setFontSize(0);
+        field2.setBorderColor(ColorConstants.RED);
+        field2.setBorderWidth(20);
+        form.addField(field2);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_borderWidthIndentSingleLineTest.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 }

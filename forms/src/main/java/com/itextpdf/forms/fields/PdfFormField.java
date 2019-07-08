@@ -90,11 +90,17 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Style;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.BoxSizingPropertyValue;
 import com.itextpdf.layout.property.Leading;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.VerticalAlignment;
+import com.itextpdf.layout.renderer.IRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,8 +117,7 @@ import java.util.Set;
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
  * AcroForm}.
- *
- * <br><br>
+ * <p>
  * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
  * must be indirect.
  */
@@ -375,7 +380,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Creates an empty {@link PdfTextFormField text form field}.
      *
-     * @param doc the {@link PdfDocument} to create the text field in
+     * @param doc                  the {@link PdfDocument} to create the text field in
      * @param pdfAConformanceLevel the desired {@link PdfAConformanceLevel} of the field. Must match the conformance
      *                             level of the {@link PdfDocument} this field will eventually be added into
      * @return a new {@link PdfTextFormField}
@@ -483,7 +488,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             annot.setFlag(PdfAnnotation.PRINT);
         }
 
-        ((PdfFormField)field).updateFontAndFontSize(font, fontSize);
+        ((PdfFormField) field).updateFontAndFontSize(font, fontSize);
         field.setMultiline(multiline);
         field.setValue(value);
         field.setFieldName(name);
@@ -667,7 +672,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
 
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
-        field.drawMultiLineTextAppearance(rect, field.getFont(), field.getFontSize(), value, xObject);
+        field.drawChoiceAppearance(rect, field.fontSize, value, xObject);
         annot.setNormalAppearance(xObject.getPdfObject());
 
         return (PdfChoiceFormField) field;
@@ -868,7 +873,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         field.setPushButton(true);
         field.setFieldName(name);
         field.text = caption;
-        ((PdfFormField)field).updateFontAndFontSize(font, fontSize);
+        ((PdfFormField) field).updateFontAndFontSize(font, fontSize);
         field.backgroundColor = ColorConstants.LIGHT_GRAY;
 
         PdfFormXObject xObject = field.drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), caption, font, fontSize);
@@ -2087,7 +2092,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             //Create text appearance
             if (PdfName.Tx.equals(type)) {
                 if (isMultiline()) {
-                    drawMultiLineTextAppearance(bboxRectangle, this.font, getFontSize(bBox, value), value, appearance);
+                    drawMultiLineTextAppearance(bboxRectangle, this.font, value, appearance);
                 } else {
                     drawTextAppearance(bboxRectangle, this.font, getFontSize(bBox, value), value, appearance);
                 }
@@ -2100,7 +2105,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         value = optionsArrayToString(visibleOptions);
                     }
                 }
-                drawMultiLineTextAppearance(bBox.toRectangle(), this.font, getFontSize(bBox, value), value, appearance);
+                drawChoiceAppearance(bboxRectangle, getFontSize(bBox, value), value, appearance);
                 getPdfObject().remove(PdfName.DA);
             }
             PdfDictionary ap = new PdfDictionary();
@@ -2509,8 +2514,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *                 it will be used instead.
      * @param color    color for the DA
      * @param res      resources
-     * @deprecated use {@link #updateDefaultAppearance()} instead.
      * @return generated string
+     * @deprecated use {@link #updateDefaultAppearance()} instead.
      */
     @Deprecated
     protected String generateDefaultAppearanceString(PdfFont font, float fontSize, Color color, PdfResources res) {
@@ -2653,7 +2658,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             }
             float startOffset = widthPerCharacter * (start + 0.5f);
             for (int i = 0; i < numberOfCharacters; i++) {
-                modelCanvas.showTextAligned(new Paragraph(value.substring(i, i+1)).addStyle(paragraphStyle),
+                modelCanvas.showTextAligned(new Paragraph(value.substring(i, i + 1)).addStyle(paragraphStyle),
                         startOffset + widthPerCharacter * i, rect.getHeight() / 2, TextAlignment.CENTER, VerticalAlignment.MIDDLE);
             }
         } else {
@@ -2676,11 +2681,66 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param rect       The location on the page for the list field
      * @param font       a {@link PdfFont}
-     * @param fontSize   The size of the font
+     * @param fontSize   The size of the font, will be ignored
+     * @param value      The initial value
+     * @param appearance The appearance
+     * @deprecated use {@link #drawMultiLineTextAppearance(Rectangle, PdfFont, String, PdfFormXObject)} instead.
+     */
+    @Deprecated
+    protected void drawMultiLineTextAppearance(Rectangle rect, PdfFont font, float fontSize, String value, PdfFormXObject appearance) {
+        drawMultiLineTextAppearance(rect, font, value, appearance);
+    }
+
+    protected void drawMultiLineTextAppearance(Rectangle rect, PdfFont font, String value, PdfFormXObject appearance) {
+        PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
+        PdfResources resources = appearance.getResources();
+        PdfCanvas canvas = new PdfCanvas(stream, resources, getDocument());
+
+        float width = rect.getWidth();
+        float height = rect.getHeight();
+
+        drawBorder(canvas, appearance, width, height);
+        canvas.beginVariableText();
+
+        Rectangle areaRect = new Rectangle(0, 0, width, height);
+        Canvas modelCanvas = new Canvas(canvas, getDocument(), areaRect);
+        modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
+
+        Paragraph paragraph = new Paragraph(value).setFont(font)
+                .setMargin(0)
+                .setPadding(3)
+                .setMultipliedLeading(1);
+        if (fontSize == 0) {
+            paragraph.setFontSize(approximateFontSizeToFitMultiLine(paragraph, areaRect, modelCanvas.getRenderer()));
+        } else {
+            paragraph.setFontSize(fontSize);
+        }
+        paragraph.setProperty(Property.FORCED_PLACEMENT, true);
+        paragraph.setTextAlignment(convertJustificationToTextAlignment());
+
+        if (color != null) {
+            paragraph.setFontColor(color);
+        }
+        // here we subtract an epsilon to make sure that element won't be split but overflown
+        paragraph.setHeight(height - 0.00001f);
+        paragraph.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+        paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
+        paragraph.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.HIDDEN);
+        modelCanvas.add(paragraph);
+        canvas.endVariableText();
+
+        appearance.getPdfObject().setData(stream.getBytes());
+    }
+
+
+    /**
+     * Draws the visual appearance of Choice box in a form field.
+     *
+     * @param rect       The location on the page for the list field
      * @param value      The initial value
      * @param appearance The appearance
      */
-    protected void drawMultiLineTextAppearance(Rectangle rect, PdfFont font, float fontSize, String value, PdfFormXObject appearance) {
+    private void drawChoiceAppearance(Rectangle rect, float fontSize, String value, PdfFormXObject appearance) {
         PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfResources resources = appearance.getResources();
         PdfCanvas canvas = new PdfCanvas(stream, resources, getDocument());
@@ -2938,11 +2998,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Draws PDF/A-2 compliant check appearance.
      * Actually it's just PdfA check appearance. According to corrigendum there is no difference between them
-     * @param width width of the checkbox
-     * @param height height of the checkbox
+     *
+     * @param width       width of the checkbox
+     * @param height      height of the checkbox
      * @param onStateName name that corresponds to the "On" state of the checkbox
-     * @param checkType the type that determines how the checkbox will look like. Allowed values are {@value TYPE_CHECK},
-     *                  {@value TYPE_CIRCLE}, {@value TYPE_CROSS}, {@value TYPE_DIAMOND}, {@value TYPE_SQUARE}, {@value TYPE_STAR}
+     * @param checkType   the type that determines how the checkbox will look like. Allowed values are {@value TYPE_CHECK},
+     *                    {@value TYPE_CIRCLE}, {@value TYPE_CROSS}, {@value TYPE_DIAMOND}, {@value TYPE_SQUARE}, {@value TYPE_STAR}
      */
     protected void drawPdfA2CheckAppearance(float width, float height, String onStateName, int checkType) {
         this.checkType = checkType;
@@ -2978,16 +3039,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * @deprecated use {@link #drawPdfA2CheckAppearance(float, float, String, int)} instead.
-     *
-     * @param width width of the checkbox
-     * @param height height of the checkbox
+     * @param width         width of the checkbox
+     * @param height        height of the checkbox
      * @param selectedValue the selected value of the checkbox which determines the appearance of the checkbox
-     * @param checkType the type that determines how the checkbox will look like. Allowed values are {@value TYPE_CHECK},
-     *                  {@value TYPE_CIRCLE}, {@value TYPE_CROSS}, {@value TYPE_DIAMOND}, {@value TYPE_SQUARE}, {@value TYPE_STAR}
+     * @param checkType     the type that determines how the checkbox will look like. Allowed values are {@value TYPE_CHECK},
+     *                      {@value TYPE_CIRCLE}, {@value TYPE_CROSS}, {@value TYPE_DIAMOND}, {@value TYPE_SQUARE}, {@value TYPE_STAR}
+     * @deprecated use {@link #drawPdfA2CheckAppearance(float, float, String, int)} instead.
      */
-     // TODO when removing the method: check {@link #drawCheckBox(PdfCanvas, float, float, float, boolean)} and consider
-     //  removing last redundant "on" parameter
+    // TODO when removing the method: check {@link #drawCheckBox(PdfCanvas, float, float, float, boolean)} and consider
+    //  removing last redundant "on" parameter
     @Deprecated
     protected void drawPdfA1CheckAppearance(float width, float height, String selectedValue, int checkType) {
         PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
@@ -3055,8 +3115,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param font     a {@link PdfFont}
      * @param fontName will be ignored.
      * @param fontSize the size of the font
-     * @deprecated use {@link #drawPushButtonAppearance(float, float, String, PdfFont, float)} instead.
      * @return a new {@link PdfFormXObject}
+     * @deprecated use {@link #drawPushButtonAppearance(float, float, String, PdfFont, float)} instead.
      */
     @Deprecated
     protected PdfFormXObject drawPushButtonAppearance(float width, float height, String text,
@@ -3080,8 +3140,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (color == null) {
             color = ColorConstants.BLACK;
         }
-        if(text == null){
-            text="";
+        if (text == null) {
+            text = "";
         }
 
         Paragraph paragraph = new Paragraph(text).setFont(font).setFontSize(fontSize).setMargin(0).setMultipliedLeading(1).
@@ -3111,7 +3171,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
         PdfFont ufont = getFont();
         if (fontSize <= 0) {
-            fontSize = approximateFontSizeToFitBBox(ufont, new Rectangle(width, height), text);
+            // there is no min font size for checkbox, however we can't set 0, because it means auto size.
+            fontSize = approximateFontSizeToFitSingleLine(ufont, new Rectangle(width, height), text, 0.1f);
         }
         // PdfFont gets all width in 1000 normalized units
         canvas.
@@ -3241,7 +3302,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if ("".equals(value)) {
             //let it as default value
             value = "Yes";
-            for (String state: getAppearanceStates()) {
+            for (String state : getAppearanceStates()) {
                 if (!"Off".equals(state)) {
                     value = state;
                     break;
@@ -3251,23 +3312,44 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return value;
     }
 
-    /**
-     * Adjust font in case autosize.
-     */
     private float getFontSize(PdfArray bBox, String value) {
+        assert !isMultiline();
         if (this.fontSize == 0) {
-            //We do not support autosize with multiline.
-            if (isMultiline() || bBox == null || value == null || value.isEmpty()) {
+            if (bBox == null || value == null || value.isEmpty()) {
                 return DEFAULT_FONT_SIZE;
             } else {
-                return Math.max(approximateFontSizeToFitBBox(this.font, bBox.toRectangle(), value), MIN_FONT_SIZE);
+                return approximateFontSizeToFitSingleLine(this.font, bBox.toRectangle(), value, MIN_FONT_SIZE);
             }
         }
         return this.fontSize;
     }
 
+    private float approximateFontSizeToFitMultiLine(Paragraph paragraph, Rectangle rect, IRenderer parentRenderer) {
+        IRenderer renderer = paragraph.createRendererSubTree().setParent(parentRenderer);
+        LayoutContext layoutContext = new LayoutContext(new LayoutArea(1, rect));
+        float lFontSize = MIN_FONT_SIZE, rFontSize = DEFAULT_FONT_SIZE;
+
+        paragraph.setFontSize(DEFAULT_FONT_SIZE);
+        if (renderer.layout(layoutContext).getStatus() != LayoutResult.FULL) {
+            final int numberOfIterations = 6;
+            for (int i = 0; i < numberOfIterations; i++) {
+                float mFontSize = (lFontSize + rFontSize) / 2;
+                paragraph.setFontSize(mFontSize);
+                LayoutResult result = renderer.layout(layoutContext);
+                if (result.getStatus() == LayoutResult.FULL) {
+                    lFontSize = mFontSize;
+                } else {
+                    rFontSize = mFontSize;
+                }
+            }
+        } else {
+            lFontSize = DEFAULT_FONT_SIZE;
+        }
+        return lFontSize;
+    }
+
     // For text field that value shall be min 4, for checkbox there is no min value.
-    private float approximateFontSizeToFitBBox(PdfFont localFont, Rectangle bBox, String value) {
+    private float approximateFontSizeToFitSingleLine(PdfFont localFont, Rectangle bBox, String value, float minValue) {
         float fs;
         float height = bBox.getHeight() - borderWidth * 2;
         int[] fontBbox = localFont.getFontProgram().getFontMetrics().getBbox();
@@ -3288,7 +3370,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             }
             fs = Math.min(fs, availableWidth / baseWidth);
         }
-        return fs;
+        return Math.max(fs, minValue);
     }
 
     /**
@@ -3300,7 +3382,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param relFieldRotation rotation of the field relative to the page
      * @return translation value for height
      */
-    private float calculateTranslationHeightAfterFieldRot(Rectangle bBox, double pageRotation, double relFieldRotation) {
+    private float calculateTranslationHeightAfterFieldRot(Rectangle bBox, double pageRotation,
+                                                          double relFieldRotation) {
         if (relFieldRotation == 0) {
             return 0.0f;
         }
@@ -3358,7 +3441,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param relFieldRotation rotation of the field relative to the page
      * @return translation value for width
      */
-    private float calculateTranslationWidthAfterFieldRot(Rectangle bBox, double pageRotation, double relFieldRotation) {
+    private float calculateTranslationWidthAfterFieldRot(Rectangle bBox, double pageRotation,
+                                                         double relFieldRotation) {
         if (relFieldRotation == 0) {
             return 0.0f;
         }
@@ -3435,11 +3519,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Puts object directly to AcroForm dictionary.
      * It works much faster than consequent invocation of {@link PdfAcroForm#getAcroForm(PdfDocument, boolean)}
      * and {@link PdfAcroForm#getPdfObject()}.
-     *
+     * <p>
      * Note, this method assume that Catalog already has AcroForm object.
      * {@link #addAcroFormToCatalog()} should be called explicitly.
      *
-     * @param acroFormKey the key of the object.
+     * @param acroFormKey    the key of the object.
      * @param acroFormObject the object to add.
      */
     private void putAcroFormObject(PdfName acroFormKey, PdfObject acroFormObject) {
@@ -3538,7 +3622,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     private PdfObject getValueFromAppearance(PdfObject appearanceDict, PdfName key) {
         if (appearanceDict instanceof PdfDictionary) {
-            return ((PdfDictionary)appearanceDict).get(key);
+            return ((PdfDictionary) appearanceDict).get(key);
         }
         return null;
     }

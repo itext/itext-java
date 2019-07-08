@@ -212,7 +212,11 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
             if (field instanceof PdfTextFormField) {
                 String newValue;
                 if (field.isMultiline()) {
-                    newValue = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+                    newValue = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                            "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " +
+                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                            "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+                    field.setFontSize(0);
                 } else {
                     newValue = "HELLO!";
                 }
@@ -228,7 +232,6 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
                     // blueish
                     field.setBackgroundColor(new DeviceRgb(200, 200, 255));
                 }
-
                 field.setValue(newValue);
             }
         }
