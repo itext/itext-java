@@ -1,5 +1,7 @@
 #!/usr/bin/env groovy
 
+def schedule = env.BRANCH_NAME.contains('master') ? '@monthly' : env.BRANCH_NAME == 'develop' ? '@midnight' : ''
+
 pipeline {
 
     agent any
@@ -19,7 +21,7 @@ pipeline {
     }
 
     triggers {
-        cron(env.BRANCH_NAME == 'develop' ? '@midnight' : '')
+        cron(schedule)
     }
 
     tools {
