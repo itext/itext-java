@@ -122,6 +122,7 @@ pipeline {
         }
         success {
             echo 'I succeeeded! \u263A'
+            cleanWs deleteDirs: true
         }
         unstable {
             echo 'I am unstable \uD83D\uDE2E'
