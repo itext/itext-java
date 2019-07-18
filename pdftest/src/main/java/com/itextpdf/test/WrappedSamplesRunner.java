@@ -42,7 +42,6 @@
  */
 package com.itextpdf.test;
 
-import com.itextpdf.test.annotations.WrapToTest;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -192,7 +191,7 @@ public abstract class WrappedSamplesRunner {
     private void runMain() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Method mainMethod = getMain(sampleClass);
         if (mainMethod == null) {
-            throw new IllegalArgumentException("Class marked with WrapToTest annotation must have main method.");
+            throw new IllegalArgumentException("Class must have main method.");
         }
         mainMethod.invoke(null, new Object[] {null});
     }
@@ -244,23 +243,8 @@ public abstract class WrappedSamplesRunner {
 
         RunnerParams params = new RunnerParams();
         params.className = className;
-        if (!c.isAnnotationPresent(WrapToTest.class)) {
-            if (searchConfig.isToMarkTestsWithoutAnnotationAsIgnored() && isLookLikeTest(c)) {
-                params.ignoreMessage = MessageFormat.format("Class {0} seems to be a test but it doesn't have WrapToTest annotation.", className);
-                return params;
-            }
-            return null;
-        }
 
-        WrapToTest annot = c.getAnnotation(WrapToTest.class);
-        if (!annot.ignoreWithMessage().isEmpty()) {
-            params.ignoreMessage = annot.ignoreWithMessage();
-        }
         return params;
-    }
-
-    private static boolean isLookLikeTest(Class<?> c) {
-        return getStringField(c, "DEST") != null && getMain(c) != null;
     }
 
     private static boolean isIgnoredClassOrPackage(String fullName, RunnerSearchConfig searchConfig) {
