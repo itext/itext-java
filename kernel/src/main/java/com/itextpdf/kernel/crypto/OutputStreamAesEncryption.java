@@ -51,12 +51,11 @@ public class OutputStreamAesEncryption extends OutputStreamEncryption {
     private boolean finished;
 
     /**
-     * Creates a new instance of OutputStreamCounter
-     *
-     * @param out
-     * @param key
-     * @param off
-     * @param len
+     * Creates a new instance of {@link OutputStreamAesEncryption}
+     * @param out the {@link java.io.OutputStream} instance to be used as the destination for the encrypted content
+     * @param key the byte array containing the key for encryption
+     * @param off offset of the key in the byte array
+     * @param len the length of the key in the byte array
      */
     public OutputStreamAesEncryption(java.io.OutputStream out, byte[] key, int off, int len) {
         super(out);
@@ -71,6 +70,11 @@ public class OutputStreamAesEncryption extends OutputStreamEncryption {
         }
     }
 
+    /**
+     * Creates a new instance of {@link OutputStreamAesEncryption}
+     * @param out the {@link java.io.OutputStream} instance to be used as the destination for the encrypted content
+     * @param key the byte array which is the key for encryption
+     */
     public OutputStreamAesEncryption(java.io.OutputStream out, byte[] key) {
         this(out, key, 0, key.length);
     }

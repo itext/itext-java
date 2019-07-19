@@ -59,10 +59,10 @@ public class AESCipherCBCnoPad {
     private BlockCipher cbc;
 
     /**
-     * Creates a new instance of AESCipher
-     *
-     * @param forEncryption
-     * @param key
+     * Creates a new instance of AESCipher with CBC and no padding
+     * @param forEncryption if true the cipher is initialised for
+     * encryption, if false for decryption
+     * @param key the key to be used in the cipher
      */
     public AESCipherCBCnoPad(boolean forEncryption, byte[] key) {
         BlockCipher aes = new AESFastEngine();
@@ -71,6 +71,13 @@ public class AESCipherCBCnoPad {
         cbc.init(forEncryption, kp);
     }
 
+    /**
+     * Creates a new instance of AESCipher with CBC and no padding
+     * @param forEncryption if true the cipher is initialised for
+     * encryption, if false for decryption
+     * @param key the key to be used in the cipher
+     * @param initVector initialization vector to be used in cipher
+     */
     public AESCipherCBCnoPad(boolean forEncryption, byte[] key, byte[] initVector) {
         BlockCipher aes = new AESFastEngine();
         cbc = new CBCBlockCipher(aes);

@@ -51,11 +51,10 @@ public class AesDecryptor implements IDecryptor {
     private int ivptr;
 
     /**
-     * Creates a new instance of AesDecryption
-     *
-     * @param key
-     * @param off
-     * @param len
+     * Creates a new instance of {@link AesDecryptor}
+     * @param key the byte array containing the key for decryption
+     * @param off offset of the key in the byte array
+     * @param len the length of the key in the byte array
      */
     public AesDecryptor(byte[] key, int off, int len) {
         this.key = new byte[len];
