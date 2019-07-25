@@ -111,8 +111,6 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
 
             result = (ISvgNodeRenderer) rendererMap.get(tag.name()).newInstance();
         } catch (ReflectiveOperationException ex) {
-            LoggerFactory.getLogger(DefaultSvgNodeRendererFactory.class)
-                    .error(DefaultSvgNodeRendererFactory.class.getName(), ex);
             throw new SvgProcessingException(SvgLogMessageConstant.COULDNOTINSTANTIATE, ex).setMessageParams(tag.name());
         }
 
