@@ -42,13 +42,14 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class PathOperatorSplitTest {
+public class PathOperatorSplitTest extends ExtendedITextTest {
 
     @Test
     public void testNumbersContainingExponent01() {

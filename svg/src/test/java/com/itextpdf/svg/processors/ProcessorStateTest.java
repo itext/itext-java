@@ -45,6 +45,7 @@ package com.itextpdf.svg.processors;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.svg.processors.impl.ProcessorState;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.EmptyStackException;
@@ -56,7 +57,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category( UnitTest.class )
-public class ProcessorStateTest {
+public class ProcessorStateTest extends ExtendedITextTest{
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();

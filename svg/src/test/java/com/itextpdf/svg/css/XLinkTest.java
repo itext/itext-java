@@ -40,64 +40,39 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.svg.utils;
+package com.itextpdf.svg.css;
 
-import com.itextpdf.kernel.geom.AffineTransform;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
-import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Attribute;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
+import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
+import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
-
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
+
+import java.util.Map;
 
 @Category(UnitTest.class)
-public class SkewXTransformationTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
+public class XLinkTest extends ExtendedITextTest {
 
     @Test
-    public void normalSkewXTest() {
-        AffineTransform expected = new AffineTransform(1d, 0d, Math.tan(Math.toRadians((float)CssUtils.parseFloat("143"))), 1d, 0d, 0d);
-        AffineTransform actual = TransformUtils.parseTransform("skewX(143)");
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RESOLVE_IMAGE_URL))
+    public void svgCssResolveMalformedXlinkTest() {
+        Element jsoupImage = new Element(Tag.valueOf("image"), "");
+        Attributes imageAttributes = jsoupImage.attributes();
 
-        Assert.assertEquals(expected, actual);
+        imageAttributes.put(new Attribute("xlink:href", "htt://are/"));
+        JsoupElementNode node = new JsoupElementNode(jsoupImage);
+
+        SvgStyleResolver sr = new SvgStyleResolver();
+        Map<String, String> attr = sr.resolveStyles(node, new SvgCssContext());
+        Assert.assertEquals("htt://are/", attr.get("xlink:href"));
     }
-
-    @Test
-    public void noSkewXValuesTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
-
-        TransformUtils.parseTransform("skewX()");
-    }
-
-    @Test
-    public void twoSkewXValuesTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
-
-        TransformUtils.parseTransform("skewX(1 2)");
-    }
-
-    @Test
-    public void negativeSkewXTest() {
-        AffineTransform expected = new AffineTransform(1d, 0d, Math.tan(Math.toRadians((float)CssUtils.parseFloat("-26"))), 1d, 0d, 0d);
-        AffineTransform actual = TransformUtils.parseTransform("skewX(-26)");
-
-        Assert.assertEquals(expected, actual);
-    }
-    @Test
-    public void ninetyDegreesTest() {
-        AffineTransform expected = new AffineTransform(1d, 0d, Math.tan(Math.toRadians((float)CssUtils.parseFloat("90"))), 1d, 0d, 0d);
-        AffineTransform actual = TransformUtils.parseTransform("skewX(90)");
-
-        Assert.assertEquals(expected, actual);
-    }
-
 }

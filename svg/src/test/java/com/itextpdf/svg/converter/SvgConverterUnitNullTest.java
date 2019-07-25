@@ -53,6 +53,7 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -75,7 +76,7 @@ import org.junit.rules.ExpectedException;
  * should NOT throw an exception as this is caught in the library.
  */
 @Category(UnitTest.class)
-public class SvgConverterUnitNullTest {
+public class SvgConverterUnitNullTest extends ExtendedITextTest {
 
     // we cannot easily mock the PdfDocument, so we make do with as close to unit testing as we can
     private PdfDocument doc;

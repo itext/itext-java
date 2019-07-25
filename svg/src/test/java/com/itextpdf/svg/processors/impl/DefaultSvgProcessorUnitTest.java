@@ -43,6 +43,7 @@
 package com.itextpdf.svg.processors.impl;
 
 import com.itextpdf.io.util.UrlUtil;
+import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
@@ -62,6 +63,9 @@ import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.File;
@@ -77,7 +81,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
-public class DefaultSvgProcessorUnitTest {
+public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -145,6 +149,9 @@ public class DefaultSvgProcessorUnitTest {
     /*
       Invalid input: null
      */
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ERROR_ADDING_CHILD_NODE),
+    })
     public void dummyProcessingTestNodeHasNullChild() {
         Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
         Element jsoupSVGCircle = new Element(Tag.valueOf("circle"), "");
@@ -162,6 +169,9 @@ public class DefaultSvgProcessorUnitTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ERROR_RESOLVING_PARENT_STYLES),
+                })
     public void dummyProcessingSvgTagIsNotRootOfInput() {
         Element jsoupRandomElement = new Element(Tag.valueOf("body"), "");
         Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
@@ -276,6 +286,9 @@ public class DefaultSvgProcessorUnitTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
+    })
     public void depthFirstNullRendererTest() {
         Element jsoupNonExistingElement = new Element(Tag.valueOf("nonExisting"), "");
         INode root = new JsoupElementNode(jsoupNonExistingElement);

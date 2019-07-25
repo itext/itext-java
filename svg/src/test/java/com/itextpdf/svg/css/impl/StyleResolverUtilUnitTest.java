@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.css.impl;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -51,7 +52,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Category(UnitTest.class)
-public class StyleResolverUtilUnitTest {
+public class StyleResolverUtilUnitTest extends ExtendedITextTest {
 
     @Test
     public void mergeParentDeclarationsFillTest(){

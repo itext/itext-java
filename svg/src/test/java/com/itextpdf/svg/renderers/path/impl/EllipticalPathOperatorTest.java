@@ -43,6 +43,7 @@
 package com.itextpdf.svg.renderers.path.impl;
 
 import com.itextpdf.kernel.geom.Point;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -51,7 +52,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
-public class EllipticalPathOperatorTest {
+public class EllipticalPathOperatorTest extends ExtendedITextTest {
     // tests for coordinates
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();

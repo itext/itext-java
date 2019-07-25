@@ -50,6 +50,7 @@ import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
@@ -61,7 +62,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
-public class SvgTagSvgNodeRendererUnitTest {
+public class SvgTagSvgNodeRendererUnitTest extends ExtendedITextTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();

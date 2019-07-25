@@ -51,6 +51,7 @@ import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.After;
 import org.junit.Assert;
@@ -63,7 +64,7 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 
 @Category(IntegrationTest.class)
-public class ClipPathSvgNodeRendererLowLevelIntegrationTest {
+public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTest {
 
     private PdfCanvas cv;
     private SvgDrawContext sdc;

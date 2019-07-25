@@ -47,13 +47,14 @@ import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.GroupSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.RectangleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.UseSvgNodeRenderer;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class SvgNodeRendererInheritanceResolverUnitTest {
+public class SvgNodeRendererInheritanceResolverUnitTest extends ExtendedITextTest{
 
     @Test
     public void applyInheritanceToSubTreeFillTest(){

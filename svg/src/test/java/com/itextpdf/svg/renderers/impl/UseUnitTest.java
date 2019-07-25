@@ -51,6 +51,7 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
@@ -58,7 +59,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class UseUnitTest {
+public class UseUnitTest extends ExtendedITextTest {
 
     @Test
     public void referenceNotFoundTest() {
