@@ -89,6 +89,7 @@ public class Color implements Serializable {
      * All color value components will be initialised with zeroes.
      *
      * @param colorSpace the color space to which the returned Color object relates
+     * @return the created Color object.
      */
     public static Color makeColor(PdfColorSpace colorSpace) {
         return makeColor(colorSpace, null);
@@ -100,6 +101,7 @@ public class Color implements Serializable {
      *
      * @param colorSpace the color space to which the returned Color object relates
      * @param colorValue the color value of the returned Color object
+     * @return the created Color object.
      */
     public static Color makeColor(PdfColorSpace colorSpace, float[] colorValue) {
         Color c = null;
