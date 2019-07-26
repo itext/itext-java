@@ -72,8 +72,10 @@ public abstract class WrappedSamplesRunner {
         List<Object[]> params = new ArrayList<Object[]>();
         for (String searchPath : searchConfig.getSearchPackages()) {
             File classesFolder = Paths.get("target/classes", searchPath.replace(".", "/")).toFile();
+            File testClassesFolder = Paths.get("target/test-classes", searchPath.replace(".", "/")).toFile();
             if (!searchPath.isEmpty())  searchPath += ".";
             List<RunnerParams> samplesParamsList = getClassNamesRecursively(classesFolder, searchPath, searchConfig);
+            samplesParamsList.addAll(getClassNamesRecursively(testClassesFolder, searchPath, searchConfig));
             for (RunnerParams sampleParam : samplesParamsList) {
                 params.add(new RunnerParams[] {sampleParam});
             }
