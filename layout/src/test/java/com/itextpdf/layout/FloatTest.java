@@ -2962,4 +2962,35 @@ public class FloatTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff_overflowNewContent02_"));
     }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH))
+    public void floatTableTest01() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatTableTest01.pdf";
+        String outFile = destinationFolder + "floatTableTest01.pdf";
+
+        PdfWriter writer = new PdfWriter(outFile);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Div div = new Div();
+        div.setWidth(38);
+
+        Div floatDiv = new Div();
+        floatDiv.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+        Table table = new Table(2);
+        for (int i = 0; i < 26; i++) {
+            table.addCell(new Cell().add(new Paragraph("abba a")));
+            table.addCell(new Cell().add(new Paragraph("ab ab ab")));
+        }
+
+        floatDiv.add(table);
+        div.add(floatDiv);
+
+        doc.add(div);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff03_"));
+    }
 }
