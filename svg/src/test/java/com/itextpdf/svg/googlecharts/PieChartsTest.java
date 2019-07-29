@@ -79,4 +79,9 @@ public class PieChartsTest extends SvgIntegrationTest {
   public void rotating_pie_chart() throws IOException, InterruptedException, java.io.IOException {
     convertAndCompareVisually(sourceFolder, destinationFolder, "rotating_pie_chart");
   }
+
+  @Test
+  public void pieChart() throws IOException, InterruptedException, java.io.IOException {
+    convertAndCompareVisually(sourceFolder, destinationFolder, "pieChart");
+  }
 }
