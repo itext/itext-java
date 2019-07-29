@@ -38,7 +38,7 @@ pipeline {
                 timeout(time: 5, unit: 'MINUTES')
             }
             steps {
-                withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
+                withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
                     sh 'mvn clean'
                 }
             }
@@ -48,7 +48,7 @@ pipeline {
                 timeout(time: 5, unit: 'MINUTES')
             }
             steps {
-                withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
+                withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
                     sh 'mvn compile test-compile package -Dmaven.test.skip=true -Dmaven.javadoc.failOnError=false'
                 }
             }
@@ -58,7 +58,7 @@ pipeline {
                 timeout(time: 30, unit: 'MINUTES')
             }
             steps {
-                withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
+                withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
                     withSonarQubeEnv('Sonar') {
                         sh 'mvn --activate-profiles test -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.test.skip=false -Dmaven.test.failure.ignore=false -Dmaven.javadoc.skip=true org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report sonar:sonar ' + sonarBranchName + ' ' + sonarBranchTarget
                     }
@@ -70,7 +70,7 @@ pipeline {
                 timeout(time: 30, unit: 'MINUTES')
             }
             steps {
-                withMaven(jdk: "${JDK_VERSION}", maven: 'M3') {
+                withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
                     sh 'mvn --activate-profiles qa verify -Dpmd.analysisCache=true'
                 }
             }
