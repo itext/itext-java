@@ -294,6 +294,16 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
     }
 
     /**
+     * Returns TIFF_ASCII data as an array of strings.
+     *
+     * <p> A ClassCastException will be thrown if the field is not
+     * of type TIFF_ASCII.
+     */
+    public String[] getAsStrings() {
+        return (String[]) data;
+    }
+
+    /**
      * Returns TIFF_SRATIONAL data as an array of 2-element arrays of ints.
      *
      * <p> A ClassCastException will be thrown if the field is not

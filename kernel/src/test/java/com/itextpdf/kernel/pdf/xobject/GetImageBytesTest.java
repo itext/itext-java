@@ -42,6 +42,12 @@
  */
 package com.itextpdf.kernel.pdf.xobject;
 
+import com.itextpdf.io.codec.TIFFConstants;
+import com.itextpdf.io.codec.TIFFDirectory;
+import com.itextpdf.io.codec.TIFFField;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
@@ -52,11 +58,15 @@ import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -106,13 +116,11 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Ignored during the latest release. Please unignore after DEVSIX-3021")
-	public void testFlateCmyk() throws Exception {
+    public void testFlateCmyk() throws Exception {
         testFile("img_cmyk.pdf", "Im1", "tif");
     }
 
     @Test
-	@Ignore("Ignored during the latest release. Please unignore after DEVSIX-3021")
     public void testFlateCmykIcc() throws Exception {
         testFile("img_cmyk_icc.pdf", "Im1", "tif");
     }
@@ -149,11 +157,113 @@ public class GetImageBytesTest extends ExtendedITextTest {
             PdfImageXObject img = new PdfImageXObject((PdfStream) (obj.isIndirectReference() ? ((PdfIndirectReference) obj).getRefersTo() : obj));
             Assert.assertEquals(expectedImageFormat, img.identifyImageFileExtension());
 
+
             byte[] result = img.getImageBytes(true);
             byte[] cmpBytes = Files.readAllBytes(Paths.get(sourceFolder, filename.substring(0, filename.length() - 4) + "." + expectedImageFormat));
-            Assert.assertArrayEquals(cmpBytes, result);
+
+            if (img.identifyImageFileExtension().equals("tif")) {
+                compareTiffImages(cmpBytes, result);
+            } else {
+                Assert.assertArrayEquals(cmpBytes, result);
+            }
         } finally {
             pdfDocument.close();
         }
+    }
+
+    private void compareTiffImages(byte[] cmpBytes, byte[] resultBytes) throws IOException {
+        int cmpNumDirectories = TIFFDirectory.getNumDirectories(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(cmpBytes)));
+        int resultNumDirectories = TIFFDirectory.getNumDirectories(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(resultBytes)));
+
+        Assert.assertEquals(cmpNumDirectories, resultNumDirectories);
+
+        for (int dirNum = 0; dirNum < cmpNumDirectories; ++dirNum) {
+            TIFFDirectory cmpDir = new TIFFDirectory(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(cmpBytes)), dirNum);
+            TIFFDirectory resultDir = new TIFFDirectory(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(resultBytes)), dirNum);
+
+            Assert.assertEquals(cmpDir.getNumEntries(), resultDir.getNumEntries());
+            Assert.assertEquals(cmpDir.getIFDOffset(), resultDir.getIFDOffset());
+            Assert.assertEquals(cmpDir.getNextIFDOffset(), resultDir.getNextIFDOffset());
+            Assert.assertArrayEquals(cmpDir.getTags(), resultDir.getTags());
+
+            for (int tag : cmpDir.getTags()) {
+                Assert.assertEquals(cmpDir.isTagPresent(tag), resultDir.isTagPresent(tag));
+
+                TIFFField cmpField = cmpDir.getField(tag);
+                TIFFField resultField = resultDir.getField(tag);
+
+                if (tag == TIFFConstants.TIFFTAG_SOFTWARE) {
+                    compareSoftwareVersion(cmpField, resultField);
+                } else {
+                    compareFields(cmpField, resultField);
+                }
+            }
+
+            compareImageData(cmpDir, resultDir, cmpBytes, resultBytes);
+        }
+    }
+
+    private void compareSoftwareVersion(TIFFField cmpField, TIFFField resultField) {
+        byte[] versionBytes = resultField.getAsString(0).getBytes(StandardCharsets.US_ASCII);
+        byte[] versionToCompare = subArray(versionBytes, 0, versionBytes.length - 2); //drop last always zero byte
+
+        Assert.assertArrayEquals(Version.getInstance().getVersion().getBytes(StandardCharsets.US_ASCII), versionToCompare);
+    }
+
+    private void compareFields(TIFFField cmpField, TIFFField resultField) {
+        if (cmpField.getType() == TIFFField.TIFF_LONG) {
+            Assert.assertArrayEquals(cmpField.getAsLongs(), resultField.getAsLongs());
+        } else if (cmpField.getType() == TIFFField.TIFF_BYTE) {
+            Assert.assertArrayEquals(cmpField.getAsBytes(), resultField.getAsBytes());
+        } else if (cmpField.getType() == TIFFField.TIFF_SBYTE) {
+            Assert.assertArrayEquals(cmpField.getAsBytes(), resultField.getAsBytes());
+        } else if (cmpField.getType() == TIFFField.TIFF_SHORT) {
+            Assert.assertArrayEquals(cmpField.getAsChars(), resultField.getAsChars());
+        } else if (cmpField.getType() == TIFFField.TIFF_SLONG) {
+            Assert.assertArrayEquals(cmpField.getAsInts(), resultField.getAsInts());
+        } else if (cmpField.getType() == TIFFField.TIFF_SSHORT) {
+            Assert.assertArrayEquals(cmpField.getAsChars(), resultField.getAsChars());
+        } else if (cmpField.getType() == TIFFField.TIFF_UNDEFINED) {
+            Assert.assertArrayEquals(cmpField.getAsBytes(), resultField.getAsBytes());
+        } else if (cmpField.getType() == TIFFField.TIFF_DOUBLE) {
+            Assert.assertArrayEquals(cmpField.getAsDoubles(), resultField.getAsDoubles(), 0);
+        } else if (cmpField.getType() == TIFFField.TIFF_FLOAT) {
+            Assert.assertArrayEquals(cmpField.getAsFloats(), resultField.getAsFloats(), 0);
+        } else if (cmpField.getType() == TIFFField.TIFF_RATIONAL) {
+            Assert.assertArrayEquals(cmpField.getAsRationals(), resultField.getAsRationals());
+        } else if (cmpField.getType() == TIFFField.TIFF_SRATIONAL) {
+            Assert.assertArrayEquals(cmpField.getAsSRationals(), resultField.getAsSRationals());
+        } else if (cmpField.getType() == TIFFField.TIFF_ASCII) {
+            Assert.assertArrayEquals(cmpField.getAsStrings(), resultField.getAsStrings());
+        } else {
+            Assert.assertArrayEquals(cmpField.getAsBytes(), resultField.getAsBytes());
+        }
+    }
+
+    private void compareImageData(TIFFDirectory cmpDir, TIFFDirectory resultDir, byte[] cmpBytes, byte[] resultBytes) {
+        Assert.assertTrue(cmpDir.isTagPresent(TIFFConstants.TIFFTAG_STRIPOFFSETS));
+        Assert.assertTrue(cmpDir.isTagPresent(TIFFConstants.TIFFTAG_STRIPBYTECOUNTS));
+        Assert.assertTrue(resultDir.isTagPresent(TIFFConstants.TIFFTAG_STRIPOFFSETS));
+        Assert.assertTrue(resultDir.isTagPresent(TIFFConstants.TIFFTAG_STRIPBYTECOUNTS));
+
+        long[] cmpImageOffsets = cmpDir.getField(TIFFConstants.TIFFTAG_STRIPOFFSETS).getAsLongs();
+        long[] cmpStripByteCountsArray = cmpDir.getField(TIFFConstants.TIFFTAG_STRIPOFFSETS).getAsLongs();
+        long[] resultImageOffsets = resultDir.getField(TIFFConstants.TIFFTAG_STRIPOFFSETS).getAsLongs();
+        long[] resultStripByteCountsArray = resultDir.getField(TIFFConstants.TIFFTAG_STRIPOFFSETS).getAsLongs();
+
+        Assert.assertEquals(cmpImageOffsets.length, resultImageOffsets.length);
+        Assert.assertEquals(cmpStripByteCountsArray.length, resultStripByteCountsArray.length);
+
+        for (int i = 0; i < cmpImageOffsets.length; ++i) {
+            int cmpOffset = (int) cmpImageOffsets[i], cmpCounts = (int) cmpStripByteCountsArray[i];
+            int resultOffset = (int) resultImageOffsets[i], resultCounts = (int) resultStripByteCountsArray[i];
+
+            Assert.assertArrayEquals(subArray(cmpBytes, cmpOffset, (cmpOffset + cmpCounts - 1)),
+                    subArray(resultBytes, resultOffset, (resultOffset + resultCounts - 1)));
+        }
+    }
+
+    private byte[] subArray(byte[] array, int beg, int end) {
+        return Arrays.copyOfRange(array, beg, end + 1);
     }
 }
