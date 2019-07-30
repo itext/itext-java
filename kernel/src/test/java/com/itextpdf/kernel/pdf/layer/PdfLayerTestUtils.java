@@ -42,17 +42,63 @@
  */
 package com.itextpdf.kernel.pdf.layer;
 
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ITextTest;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import org.junit.Assert;
 
 class PdfLayerTestUtils {
 
-    public static void addTextInsideLayer(IPdfOCG layer, PdfCanvas canvas, String text, float x, float y) {
+    static void addTextInsideLayer(IPdfOCG layer, PdfCanvas canvas, String text, float x, float y) {
+        if (layer != null) {
+            canvas.beginLayer(layer);
+        }
         canvas
-                .beginLayer(layer)
-                .beginText()
-                .moveText(x, y)
-                .showText(text)
-                .endText()
-                .endLayer();
+            .beginText()
+            .moveText(x, y)
+            .showText(text)
+            .endText();
+
+        if (layer != null) {
+            canvas.endLayer();
+        }
+    }
+
+    static PdfLayer prepareNewLayer() {
+        PdfDocument dummyDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        return new PdfLayer("layer1", dummyDoc);
+    }
+
+    static PdfLayer prepareLayerDesignIntent() {
+        PdfLayer pdfLayer = prepareNewLayer();
+        pdfLayer.setIntents(Collections.singletonList(PdfName.Design));
+        return pdfLayer;
+    }
+
+    static PdfLayer prepareLayerDesignAndCustomIntent(PdfName custom) {
+        PdfLayer pdfLayer = prepareNewLayer();
+        pdfLayer.setIntents(Arrays.asList(PdfName.Design, custom));
+        return pdfLayer;
+    }
+
+    static void compareLayers(String outPdf, String cmpPdf) throws IOException {
+        ITextTest.printOutCmpPdfNameAndDir(outPdf, cmpPdf);
+        System.out.println();
+        try (PdfDocument outDoc = new PdfDocument(new PdfReader(outPdf))) {
+            try (PdfDocument cmpDoc = new PdfDocument(new PdfReader(cmpPdf))) {
+                PdfDictionary outOCP = outDoc.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties);
+                PdfDictionary cmpOCP = cmpDoc.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties);
+                Assert.assertNull(new CompareTool().compareDictionariesStructure(outOCP, cmpOCP));
+            }
+        }
     }
 }

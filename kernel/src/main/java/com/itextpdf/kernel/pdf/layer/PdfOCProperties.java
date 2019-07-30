@@ -52,7 +52,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -63,37 +62,16 @@ import java.util.TreeMap;
 /**
  * This class represents /OCProperties entry if pdf catalog and manages
  * the layers of the pdf document.
- *
- * <br><br>
+ * <p>
  * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
  * must be indirect.
  */
 public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
+    static final String OC_CONFIG_NAME_PATTERN = "OCConfigName";
+
     private static final long serialVersionUID = 1137977454824741350L;
     private List<PdfLayer> layers = new ArrayList<>();
-
-    /**
-     * Gets the order of the layers in which they will be displayed in the layer view panel,
-     * including nesting.
-     */
-    private static void getOCGOrder(PdfArray order, PdfLayer layer) {
-        if (!layer.isOnPanel())
-            return;
-        if (layer.getTitle() == null)
-            order.add(layer.getPdfObject().getIndirectReference());
-        List<PdfLayer> children = layer.getChildren();
-        if (children == null)
-            return;
-        PdfArray kids = new PdfArray();
-        if (layer.getTitle() != null)
-            kids.add(new PdfString(layer.getTitle(), PdfEncodings.UNICODE_BIG));
-        for (PdfLayer child : children) {
-            getOCGOrder(kids, child);
-        }
-        if (kids.size() > 0)
-            order.add(kids);
-    }
 
     /**
      * Creates a new PdfOCProperties instance.
@@ -224,24 +202,6 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject();
     }
 
-    private String createUniqueName() {
-        int uniqueID = 0;
-        Set<String> usedNames = new HashSet<>();
-        PdfArray configs = getPdfObject().getAsArray(PdfName.Configs);
-        if (null != configs) {
-            for (int i = 0; i < configs.size(); i++) {
-                PdfDictionary alternateDictionary = configs.getAsDictionary(i);
-                if (null != alternateDictionary && alternateDictionary.containsKey(PdfName.Name)) {
-                    usedNames.add(alternateDictionary.getAsString(PdfName.Name).toUnicodeString());
-                }
-            }
-        }
-        while (usedNames.contains("OCConfigName" + uniqueID)) {
-            uniqueID++;
-        }
-        return "OCConfigName" + uniqueID;
-    }
-
     @Override
     public void flush() {
         fillDictionary();
@@ -274,6 +234,28 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
     protected PdfDocument getDocument() {
         return getPdfObject().getIndirectReference().getDocument();
+    }
+
+    /**
+     * Gets the order of the layers in which they will be displayed in the layer view panel,
+     * including nesting.
+     */
+    private static void getOCGOrder(PdfArray order, PdfLayer layer) {
+        if (!layer.isOnPanel())
+            return;
+        if (layer.getTitle() == null)
+            order.add(layer.getPdfObject().getIndirectReference());
+        List<PdfLayer> children = layer.getChildren();
+        if (children == null)
+            return;
+        PdfArray kids = new PdfArray();
+        if (layer.getTitle() != null)
+            kids.add(new PdfString(layer.getTitle(), PdfEncodings.UNICODE_BIG));
+        for (PdfLayer child : children) {
+            getOCGOrder(kids, child);
+        }
+        if (kids.size() > 0)
+            order.add(kids);
     }
 
     /**
@@ -385,5 +367,23 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
         }
+    }
+
+    private String createUniqueName() {
+        int uniqueID = 0;
+        Set<String> usedNames = new HashSet<>();
+        PdfArray configs = getPdfObject().getAsArray(PdfName.Configs);
+        if (null != configs) {
+            for (int i = 0; i < configs.size(); i++) {
+                PdfDictionary alternateDictionary = configs.getAsDictionary(i);
+                if (null != alternateDictionary && alternateDictionary.containsKey(PdfName.Name)) {
+                    usedNames.add(alternateDictionary.getAsString(PdfName.Name).toUnicodeString());
+                }
+            }
+        }
+        while (usedNames.contains(OC_CONFIG_NAME_PATTERN + uniqueID)) {
+            uniqueID++;
+        }
+        return OC_CONFIG_NAME_PATTERN + uniqueID;
     }
 }
