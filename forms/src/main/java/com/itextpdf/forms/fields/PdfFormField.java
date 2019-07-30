@@ -376,7 +376,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Creates an empty {@link PdfTextFormField text form field}.
      *
      * @param doc the {@link PdfDocument} to create the text field in
-     * @param pdfAConformanceLevel
+     * @param pdfAConformanceLevel the desired {@link PdfAConformanceLevel} of the field. Must match the conformance
+     *                             level of the {@link PdfDocument} this field will eventually be added into
      * @return a new {@link PdfTextFormField}
      */
     public static PdfTextFormField createText(PdfDocument doc, PdfAConformanceLevel pdfAConformanceLevel) {
@@ -601,7 +602,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param flags                an <code>int</code>, containing a set of binary behavioral
      *                             flags. Do binary <code>OR</code> on this <code>int</code> to set the
      *                             flags you require.
-     * @param font
+     * @param font                 the desired font to be used when displaying the text
      * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
      * @return a new {@link PdfChoiceFormField}
      */
@@ -974,7 +975,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param value                the initial value
      * @param options              a two-dimensional array of Strings which will be converted
      *                             to a PdfArray.
-     * @param font
+     * @param font                 the desired font to be used when displaying the text
      * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
      * @return a new {@link PdfChoiceFormField} as a combobox
      */
@@ -1006,7 +1007,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param name                 the name of the form field
      * @param value                the initial value
      * @param options              an array of Strings which will be converted to a PdfArray.
-     * @param font
+     * @param font                 the desired font to be used when displaying the text
      * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
      * @return a new {@link PdfChoiceFormField} as a combobox
      */
@@ -1040,7 +1041,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param value                the initial value
      * @param options              a two-dimensional array of Strings which will be converted
      *                             to a PdfArray.
-     * @param font
+     * @param font                 the desired font to be used when displaying the text
      * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
      * @return a new {@link PdfChoiceFormField} as a list field
      */
@@ -1072,7 +1073,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param name                 the name of the form field
      * @param value                the initial value
      * @param options              an array of Strings which will be converted to a PdfArray.
-     * @param font
+     * @param font                 the desired font to be used when displaying the text
      * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
      * @return a new {@link PdfChoiceFormField} as a list field
      */
@@ -3235,7 +3236,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         widget.setNormalAppearance(normalAppearance);
     }
 
-    //Actually it's just PdfA check appearance. According to corrigendum there is no difference between them
+    /**
+     * Draws PDF/A-2 compliant check appearance.
+     * Actually it's just PdfA check appearance. According to corrigendum there is no difference between them
+     * @param width width of the checkbox
+     * @param height height of the checkbox
+     * @param onStateName name that corresponds to the "On" state of the checkbox
+     * @param checkType the type that determines how the checkbox will look like. Allowed values are {@value TYPE_CHECK},
+     *                  {@value TYPE_CIRCLE}, {@value TYPE_CROSS}, {@value TYPE_DIAMOND}, {@value TYPE_SQUARE}, {@value TYPE_STAR}
+     */
     protected void drawPdfA2CheckAppearance(float width, float height, String onStateName, int checkType) {
         this.checkType = checkType;
         Rectangle rect = new Rectangle(0, 0, width, height);
@@ -3272,11 +3281,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * @deprecated use {@link #drawPdfA2CheckAppearance(float, float, String, int)} instead.
      *
-     * @param width
-     * @param height
-     * @param selectedValue
-     * @param checkType
+     * @param width width of the checkbox
+     * @param height height of the checkbox
+     * @param selectedValue the selected value of the checkbox which determines the appearance of the checkbox
+     * @param checkType the type that determines how the checkbox will look like. Allowed values are {@value TYPE_CHECK},
+     *                  {@value TYPE_CIRCLE}, {@value TYPE_CROSS}, {@value TYPE_DIAMOND}, {@value TYPE_SQUARE}, {@value TYPE_STAR}
      */
+     // TODO when removing the method: check {@link #drawCheckBox(PdfCanvas, float, float, float, boolean)} and consider
+     //  removing last redundant "on" parameter
     @Deprecated
     protected void drawPdfA1CheckAppearance(float width, float height, String selectedValue, int checkType) {
         PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
