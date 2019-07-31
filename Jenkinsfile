@@ -19,7 +19,7 @@ pipeline {
         parallelsAlwaysFailFast()
         retry(1)
         skipStagesAfterUnstable()
-        timeout(time: 60, unit: 'MINUTES')
+        timeout(time: 2, unit: 'HOURS')
         timestamps()
     }
 
@@ -45,7 +45,7 @@ pipeline {
         }
         stage('Compile') {
             options {
-                timeout(time: 5, unit: 'MINUTES')
+                timeout(time: 10, unit: 'MINUTES')
             }
             steps {
                 withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
@@ -55,7 +55,7 @@ pipeline {
         }
         stage('Run Tests') {
             options {
-                timeout(time: 30, unit: 'MINUTES')
+                timeout(time: 1, unit: 'HOURS')
             }
             steps {
                 withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
