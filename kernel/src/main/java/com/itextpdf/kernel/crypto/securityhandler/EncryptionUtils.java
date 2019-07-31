@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfEncryptor;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.security.IExternalDecryptionProcess;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.AlgorithmParameterGenerator;
@@ -64,6 +65,7 @@ import java.util.Iterator;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -147,14 +149,24 @@ final class EncryptionUtils {
             throws GeneralSecurityException, IOException {
         Cipher cipher = Cipher.getInstance(algorithmidentifier.getAlgorithm().getId());
         try {
-            cipher.init(1, x509certificate);
+            cipher.init(Cipher.ENCRYPT_MODE, x509certificate);
         } catch (InvalidKeyException e) {
-            cipher.init(1, x509certificate.getPublicKey());
+            cipher.init(Cipher.ENCRYPT_MODE, x509certificate.getPublicKey());
         }
         return cipher.doFinal(abyte0);
     }
 
     static DERForRecipientParams calculateDERForRecipientParams(byte[] in) throws IOException, GeneralSecurityException {
+        /*
+        According to ISO 32000-2 (7.6.5.3 Public-key encryption algorithms) RC-2 algorithm is outdated
+        and should be replaced with a safer one 256-bit AES-CBC:
+            The algorithms that shall be used to encrypt the enveloped data in the CMS object are:
+            • RC4 with key lengths up to 256-bits (deprecated);
+            • DES, Triple DES, RC2 with key lengths up to 128 bits (deprecated);
+            • 128-bit AES in Cipher Block Chaining (CBC) mode (deprecated);
+            • 192-bit AES in CBC mode (deprecated);
+            • 256-bit AES in CBC mode.
+         */
         String s = "1.2.840.113549.3.2";
         DERForRecipientParams parameters = new DERForRecipientParams();
 
@@ -167,7 +179,7 @@ final class EncryptionUtils {
         keygenerator.init(128);
         SecretKey secretkey = keygenerator.generateKey();
         Cipher cipher = Cipher.getInstance(s);
-        cipher.init(1, secretkey, algorithmparameters);
+        cipher.init(Cipher.ENCRYPT_MODE, secretkey, algorithmparameters);
 
         parameters.abyte0 = secretkey.getEncoded();
         parameters.abyte1 = cipher.doFinal(in);

@@ -15,11 +15,11 @@
         </Or>
         <Bug pattern="CC_CYCLOMATIC_COMPLEXITY"/>
     </Match>
+    <!-- In this case CIPHER_INTEGRITY can't be avoided as CBC mode is required by pdf spec.  -->
     <Match>
         <Class name="com.itextpdf.kernel.crypto.securityhandler.EncryptionUtils"/>
         <Or>
             <Method name="calculateDERForRecipientParams"/>
-            <Method name="fetchEnvelopedData"/>
         </Or>
         <Bug pattern="CIPHER_INTEGRITY"/>
     </Match>
