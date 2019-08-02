@@ -46,7 +46,7 @@ package com.itextpdf.kernel.geom;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class AffineTransform implements Serializable {
+public class AffineTransform implements Cloneable, Serializable {
 
     private static final long serialVersionUID = 1330973210523860834L;
 
@@ -667,9 +667,17 @@ public class AffineTransform implements Serializable {
         }
     }
 
+    /**
+     * Creates a "deep copy" of this AffineTransform, meaning the object returned by this method will be independent
+     * of the object being cloned.
+     *
+     * @return the copied AffineTransform.
+     */
     @Override
     public AffineTransform clone() throws CloneNotSupportedException {
-        return new AffineTransform(this);
+        // super.clone is safe to return since all of the AffineTransform's fields are primitive.
+        return (AffineTransform) super.clone();
+
     }
 
     @Override

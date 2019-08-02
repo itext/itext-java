@@ -98,18 +98,27 @@ public class AffineTransformTest {
     }
 
     @Test
-    public void rotateTest(){
-        AffineTransform rotateOne  = AffineTransform.getRotateInstance(Math.PI/2);
-        AffineTransform expected = new AffineTransform(0,1,-1,0,0,0);
+    public void rotateTest() {
+        AffineTransform rotateOne = AffineTransform.getRotateInstance(Math.PI / 2);
+        AffineTransform expected = new AffineTransform(0, 1, -1, 0, 0, 0);
 
-        Assert.assertEquals(rotateOne,expected);
+        Assert.assertEquals(rotateOne, expected);
     }
 
     @Test
-    public void rotateTranslateTest(){
-        AffineTransform rotateTranslate = AffineTransform.getRotateInstance(Math.PI/2, 10,5);
-        AffineTransform expected = new AffineTransform(0,1,-1,0,15,-5);
+    public void rotateTranslateTest() {
+        AffineTransform rotateTranslate = AffineTransform.getRotateInstance(Math.PI / 2, 10, 5);
+        AffineTransform expected = new AffineTransform(0, 1, -1, 0, 15, -5);
 
-        Assert.assertEquals(rotateTranslate,expected);
+        Assert.assertEquals(rotateTranslate, expected);
+    }
+
+    @Test
+    public void cloneTest() throws CloneNotSupportedException {
+        AffineTransform original = new AffineTransform();
+        AffineTransform clone = original.clone();
+
+        Assert.assertTrue(original != clone);
+        Assert.assertTrue(original.equals(clone));
     }
 }

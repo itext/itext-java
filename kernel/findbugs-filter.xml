@@ -23,13 +23,9 @@
         </Or>
         <Bug pattern="CIPHER_INTEGRITY"/>
     </Match>
+    <!-- XMPNode authorship doesn't belong to iText therefore it's been decided to keep it as is.  -->
     <Match>
-        <Or>
-            <Class name="com.itextpdf.kernel.geom.AffineTransform"/>
-            <Class name="com.itextpdf.kernel.geom.PageSize"/>
-            <Class name="com.itextpdf.kernel.geom.Rectangle"/>
-            <Class name="com.itextpdf.kernel.xmp.impl.XMPNode"/>
-        </Or>
+        <Class name="com.itextpdf.kernel.xmp.impl.XMPNode"/>
         <Method name="clone"/>
         <Bug pattern="CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE"/>
     </Match>

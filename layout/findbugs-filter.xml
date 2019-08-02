@@ -21,15 +21,6 @@
     </Match>
     <Match>
         <Or>
-            <Class name="com.itextpdf.layout.layout.LayoutArea"/>
-            <Class name="com.itextpdf.layout.layout.RootLayoutArea"/>
-            <Class name="com.itextpdf.layout.margincollapse.MarginsCollapse"/>
-        </Or>
-        <Method name="clone"/>
-        <Bug pattern="CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE"/>
-    </Match>
-    <Match>
-        <Or>
             <And>
                 <Class name="com.itextpdf.layout.font.FontProvider"/>
                 <!-- 

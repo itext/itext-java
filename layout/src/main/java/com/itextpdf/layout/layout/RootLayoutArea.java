@@ -45,7 +45,7 @@ package com.itextpdf.layout.layout;
 
 import com.itextpdf.kernel.geom.Rectangle;
 
-public class RootLayoutArea extends LayoutArea {
+public class RootLayoutArea extends LayoutArea implements Cloneable {
     /**
      * Indicates whether the area already has some placed content or not.
      */
@@ -77,11 +77,16 @@ public class RootLayoutArea extends LayoutArea {
     }
 
     /**
-     * {@inheritDoc}
+     * Creates a "deep copy" of this RootLayoutArea, meaning the object returned by this method will be independent
+     * of the object being cloned.
+     * Note that although the return type of this method is {@link LayoutArea},
+     * the actual type of the returned object is {@link RootLayoutArea}.
+     *
+     * @return the copied RootLayoutArea.
      */
     @Override
     public LayoutArea clone() {
-        RootLayoutArea area = new RootLayoutArea(pageNumber, bBox.clone());
+        RootLayoutArea area = (RootLayoutArea) super.clone();
         area.setEmptyArea(emptyArea);
         return area;
     }

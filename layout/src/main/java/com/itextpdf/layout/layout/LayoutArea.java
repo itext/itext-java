@@ -51,7 +51,7 @@ import com.itextpdf.io.util.MessageFormatUtil;
 /**
  * Represents the area for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
  */
-public class LayoutArea {
+public class LayoutArea implements Cloneable {
 
     /**
      * The number of page on which the area is located.
@@ -101,12 +101,22 @@ public class LayoutArea {
     }
 
     /**
-     * {@inheritDoc}
+     * Creates a "deep copy" of this LayoutArea, meaning the object returned by this method will be independent
+     * of the object being cloned.
+     *
+     * @return the copied LayoutArea.
      */
     @Override
     public LayoutArea clone() {
-        LayoutArea area = new LayoutArea(pageNumber, bBox.clone());
-        return area;
+        try {
+            LayoutArea clone = (LayoutArea) super.clone();
+            // super.clone performs a "shallow-copy", therefore it's needed to copy non-primitive fields manually.
+            clone.bBox = bBox.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            // should never happen since Cloneable is implemented
+            return null;
+        }
     }
 
     /**

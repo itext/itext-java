@@ -56,7 +56,7 @@ import java.util.List;
 /**
  * Class that represent rectangle object.
  */
-public class Rectangle implements Serializable {
+public class Rectangle implements Cloneable, Serializable {
 
     private static final long serialVersionUID = 8025677415569233446L;
 
@@ -524,12 +524,20 @@ public class Rectangle implements Serializable {
     }
 
     /**
-     * Gets the copy of this rectangle.
+     * Creates a "deep copy" of this rectangle, meaning the object returned by this method will be independent
+     * of the object being cloned.
      *
      * @return the copied rectangle.
      */
+    @Override
     public Rectangle clone() {
-        return new Rectangle(x, y, width, height);
+        try {
+            // super.clone is safe to return since all of the Rectangle's fields are primitive.
+            return (Rectangle) super.clone();
+        } catch (CloneNotSupportedException e) {
+            // should never happen since Cloneable is implemented
+            return null;
+        }
     }
 
     /**
