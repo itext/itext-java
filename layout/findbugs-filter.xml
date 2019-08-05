@@ -12,10 +12,6 @@
                 </Or>
                 <Method name="layout"/>
             </And>
-            <And>
-                <Class name="com.itextpdf.layout.renderer.TableWidths"/>
-                <Method name="autoLayout"/>
-            </And>
         </Or>
         <Bug pattern="CC_CYCLOMATIC_COMPLEXITY"/>
     </Match>

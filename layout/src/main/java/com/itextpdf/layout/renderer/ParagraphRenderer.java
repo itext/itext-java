@@ -256,31 +256,7 @@ public class ParagraphRenderer extends BlockRenderer {
             }
 
             TextAlignment textAlignment = (TextAlignment) this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT, TextAlignment.LEFT);
-            if (textAlignment == TextAlignment.JUSTIFIED && result.getStatus() == LayoutResult.PARTIAL && !result.isSplitForcedByNewline() && !onlyOverflowedFloatsLeft ||
-                    textAlignment == TextAlignment.JUSTIFIED_ALL) {
-                if (processedRenderer != null) {
-                    Rectangle actualLineLayoutBox = layoutBox.clone();
-                    FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, actualLineLayoutBox);
-                    processedRenderer.justify(actualLineLayoutBox.getWidth() - lineIndent);
-                }
-            } else if (textAlignment != TextAlignment.LEFT && processedRenderer != null) {
-                Rectangle actualLineLayoutBox = layoutBox.clone();
-                FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, actualLineLayoutBox);
-                float deltaX = Math.max(0, actualLineLayoutBox.getWidth() - lineIndent - processedRenderer.getOccupiedArea().getBBox().getWidth());
-                switch (textAlignment) {
-                    case RIGHT:
-                        alignStaticKids(processedRenderer, deltaX);
-                        break;
-                    case CENTER:
-                        alignStaticKids(processedRenderer, deltaX / 2);
-                        break;
-                    case JUSTIFIED:
-                        if (BaseDirection.RIGHT_TO_LEFT.equals(this.<BaseDirection>getProperty(Property.BASE_DIRECTION))) {
-                            alignStaticKids(processedRenderer, deltaX);
-                        }
-                        break;
-                }
-            }
+            applyTextAlignment(textAlignment, result, processedRenderer, layoutBox, floatRendererAreas, onlyOverflowedFloatsLeft, lineIndent);
 
             // could be false if e.g. line contains only floats
             boolean lineHasContent = processedRenderer != null && processedRenderer.getOccupiedArea().getBBox().getHeight() > 0;
@@ -680,6 +656,35 @@ public class ParagraphRenderer extends BlockRenderer {
                 continue;
             }
             childRenderer.move(dxRight, 0);
+        }
+    }
+
+    private void applyTextAlignment(TextAlignment textAlignment, LineLayoutResult result, LineRenderer processedRenderer,
+                        Rectangle layoutBox, List<Rectangle> floatRendererAreas, boolean onlyOverflowedFloatsLeft, float lineIndent) {
+        if (textAlignment == TextAlignment.JUSTIFIED && result.getStatus() == LayoutResult.PARTIAL && !result.isSplitForcedByNewline() && !onlyOverflowedFloatsLeft ||
+                textAlignment == TextAlignment.JUSTIFIED_ALL) {
+            if (processedRenderer != null) {
+                Rectangle actualLineLayoutBox = layoutBox.clone();
+                FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, actualLineLayoutBox);
+                processedRenderer.justify(actualLineLayoutBox.getWidth() - lineIndent);
+            }
+        } else if (textAlignment != TextAlignment.LEFT && processedRenderer != null) {
+            Rectangle actualLineLayoutBox = layoutBox.clone();
+            FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, actualLineLayoutBox);
+            float deltaX = Math.max(0, actualLineLayoutBox.getWidth() - lineIndent - processedRenderer.getOccupiedArea().getBBox().getWidth());
+            switch (textAlignment) {
+                case RIGHT:
+                    alignStaticKids(processedRenderer, deltaX);
+                    break;
+                case CENTER:
+                    alignStaticKids(processedRenderer, deltaX / 2);
+                    break;
+                case JUSTIFIED:
+                    if (BaseDirection.RIGHT_TO_LEFT.equals(this.<BaseDirection>getProperty(Property.BASE_DIRECTION))) {
+                        alignStaticKids(processedRenderer, deltaX);
+                    }
+                    break;
+            }
         }
     }
 }
