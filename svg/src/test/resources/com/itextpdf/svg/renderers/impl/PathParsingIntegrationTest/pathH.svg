@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="400" viewBox="0 0 1000 400">
+
+    <path d="M250 10
+             H-10
+             M250 20
+             H0
+             M250 30
+             H50.5
+             M250 40
+             H250.5
+             M250 50
+             H900"
+          style="stroke: #3333cc;"/>
+    <text x="20" y="150" font-size="12">
+        Sample path with H (purple blue)
+    </text>
+    <path d="M250 60
+             h-50
+             M250 70
+             h0
+             M250 80
+             h50.5
+             M250 90
+             h100
+             M250 90
+             h200"
+          style="stroke: #33cc33;"/>
+    <text x="20" y="170" font-size="12">
+        Sample path with h (green)
+    </text>
+</svg>

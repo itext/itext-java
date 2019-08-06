@@ -42,8 +42,6 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-
-import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
@@ -124,11 +122,13 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    //TODO update after DEVSIX-2331 - several (negative) line operators
     public void negativeAfterPositiveHandlingTest01() throws IOException, InterruptedException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "negativeAfterPositiveHandling");
     }
 
     @Test
+    //TODO update after DEVSIX-2333 (negative viewbox) fix
     public void negativeAfterPositiveHandlingTest02() throws IOException, InterruptedException {
         convertAndCompareVisually(sourceFolder, destinationFolder, "negativeAfterPositiveHandlingExtendedViewbox");
     }
@@ -159,6 +159,35 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
     public void textPathExample() throws IOException, InterruptedException {
         //TODO: update when DEVSIX-2255 implemented
         convertAndCompareVisually(sourceFolder, destinationFolder, "textPathExample");
+    }
+
+    @Test
+    public void pathH() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "pathH");
+    }
+
+    @Test
+    public void pathV() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder,  "pathV");
+    }
+
+    @Test
+    public void pathHV() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "pathHV");
+    }
+
+    @Test
+    public void pathRelativeAbsoluteCombinedTest() throws IOException, InterruptedException {
+        convertAndCompareVisually(sourceFolder, destinationFolder, "pathRelativeAbsoluteCombined");
+    }
+
+    @Test
+    public void pathHVExponential() throws IOException, InterruptedException {
+        // TODO DEVSIX-2906 This file has large numbers (2e+10) in it. At the moment we do not post-process such big numbers
+        // and simply print them to the output PDF. Not all the viewers are able to process such large numbers
+        // and hence different results in different viewers. Acrobat is not able to process the numbers
+        // and the result is garbled visual representation. GhostScript, however, renders the PDF just fine
+        convertAndCompareVisually(sourceFolder, destinationFolder, "pathHVExponential");
     }
 
     @Test
