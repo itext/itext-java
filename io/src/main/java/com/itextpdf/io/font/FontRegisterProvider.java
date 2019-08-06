@@ -319,7 +319,7 @@ class FontRegisterProvider {
      * Register all the fonts in a directory and possibly its subdirectories.
      *
      * @param dir                the directory
-     * @param scanSubdirectories recursively scan subdirectories if <code>true</true>
+     * @param scanSubdirectories recursively scan subdirectories if <code>true</code>
      * @return the number of fonts registered
      */
     int registerFontDirectory(String dir, boolean scanSubdirectories) {
