@@ -160,7 +160,7 @@ public class BarcodeMSI extends Barcode1D {
      * <p>
      * The bars and text are written in the following colors:
      * <p>
-     * <P><TABLE BORDER=1 summary="">
+     * <P><TABLE BORDER="1" summary="">
      * <TR>
      * <TH><P><CODE>barColor</CODE></TH>
      * <TH><P><CODE>textColor</CODE></TH>
