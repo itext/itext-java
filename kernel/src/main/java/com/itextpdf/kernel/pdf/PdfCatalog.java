@@ -54,9 +54,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
@@ -73,6 +76,14 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     private Map<PdfObject, List<PdfOutline>> pagesWithOutlines = new HashMap<>();
     //This flag determines if Outline tree of the document has been built via calling getOutlines method. If this flag is false all outline operations will be ignored
     private boolean outlineMode;
+
+    private static final Set<PdfName> PAGE_MODES = new HashSet<>(
+            Arrays.asList(PdfName.UseNone, PdfName.UseOutlines, PdfName.UseThumbs,
+            PdfName.FullScreen, PdfName.UseOC, PdfName.UseAttachments));
+
+    private static final Set<PdfName> PAGE_LAYOUTS = new HashSet<>(
+            Arrays.asList(PdfName.SinglePage, PdfName.OneColumn, PdfName.TwoColumnLeft,
+            PdfName.TwoColumnRight, PdfName.TwoPageLeft, PdfName.TwoPageRight));
 
     protected PdfCatalog(PdfDictionary pdfObject) {
         super(pdfObject);
@@ -161,9 +172,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @return current instance of PdfCatalog
      */
     public PdfCatalog setPageMode(PdfName pageMode) {
-        if (pageMode.equals(PdfName.UseNone) || pageMode.equals(PdfName.UseOutlines) ||
-                pageMode.equals(PdfName.UseThumbs) || pageMode.equals(PdfName.FullScreen) ||
-                pageMode.equals(PdfName.UseOC) || pageMode.equals(PdfName.UseAttachments)) {
+        if (PAGE_MODES.contains(pageMode)) {
             return put(PdfName.PageMode, pageMode);
         }
         return this;
@@ -179,9 +188,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @param pageLayout
      */
     public PdfCatalog setPageLayout(PdfName pageLayout) {
-        if (pageLayout.equals(PdfName.SinglePage) || pageLayout.equals(PdfName.OneColumn) ||
-                pageLayout.equals(PdfName.TwoColumnLeft) || pageLayout.equals(PdfName.TwoColumnRight) ||
-                pageLayout.equals(PdfName.TwoPageLeft) || pageLayout.equals(PdfName.TwoPageRight)) {
+        if (PAGE_LAYOUTS.contains(pageLayout)) {
             return put(PdfName.PageLayout, pageLayout);
         }
         return this;

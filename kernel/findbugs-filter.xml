@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FindBugsFilter>
     <Match>
-        <Class name="com.itextpdf.kernel.pdf.PdfCatalog"/>
-        <Or>
-            <Method name="setPageLayout"/>
-            <Method name="setPageMode"/>
-        </Or>
-        <Bug pattern="CBC_CONTAINS_BASED_CONDITIONAL"/>
-    </Match>
-    <Match>
         <Or>
             <And>
+                <!--This class is based on the C# open source freeware library Clipper.-->
+                <!--We want to keep it as close as possible to the original code and therefore avoid refactoring.-->
                 <Class name="com.itextpdf.kernel.pdf.canvas.parser.clipper.DefaultClipper"/>
                 <Method name="intersectEdges"/>
             </And>
