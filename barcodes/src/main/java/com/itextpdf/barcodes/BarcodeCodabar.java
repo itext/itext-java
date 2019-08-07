@@ -207,29 +207,29 @@ public class BarcodeCodabar extends Barcode1D {
      * <br>
      * <TABLE BORDER="1" SUMMARY="barcode properties">
      * <TR>
-     * <TH><P><CODE>barColor</CODE></TH>
-     * <TH><P><CODE>textColor</CODE></TH>
-     * <TH><P>Result</TH>
+     * <TH><CODE>barColor</CODE></TH>
+     * <TH><CODE>textColor</CODE></TH>
+     * <TH>Result</TH>
      * </TR>
      * <TR>
-     * <TD><P><CODE>null</CODE></TD>
-     * <TD><P><CODE>null</CODE></TD>
-     * <TD><P>bars and text painted with current fill color</TD>
+     * <TD><CODE>null</CODE></TD>
+     * <TD><CODE>null</CODE></TD>
+     * <TD>bars and text painted with current fill color</TD>
      * </TR>
      * <TR>
-     * <TD><P><CODE>barColor</CODE></TD>
-     * <TD><P><CODE>null</CODE></TD>
-     * <TD><P>bars and text painted with <CODE>barColor</CODE></TD>
+     * <TD><CODE>barColor</CODE></TD>
+     * <TD><CODE>null</CODE></TD>
+     * <TD>bars and text painted with <CODE>barColor</CODE></TD>
      * </TR>
      * <TR>
-     * <TD><P><CODE>null</CODE></TD>
-     * <TD><P><CODE>textColor</CODE></TD>
-     * <TD><P>bars painted with current color<br>text painted with <CODE>textColor</CODE></TD>
+     * <TD><CODE>null</CODE></TD>
+     * <TD><CODE>textColor</CODE></TD>
+     * <TD>bars painted with current color<br>text painted with <CODE>textColor</CODE></TD>
      * </TR>
      * <TR>
-     * <TD><P><CODE>barColor</CODE></TD>
-     * <TD><P><CODE>textColor</CODE></TD>
-     * <TD><P>bars painted with <CODE>barColor</CODE><br>text painted with <CODE>textColor</CODE></TD>
+     * <TD><CODE>barColor</CODE></TD>
+     * <TD><CODE>textColor</CODE></TD>
+     * <TD>bars painted with <CODE>barColor</CODE><br>text painted with <CODE>textColor</CODE></TD>
      * </TR>
      * </TABLE>
      *
