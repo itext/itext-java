@@ -248,19 +248,16 @@ public class ListRenderer extends BlockRenderer {
     }
 
     /**
-     * <p>
      * Corrects split and overflow renderers when {@link com.itextpdf.layout.property.Property#FORCED_PLACEMENT} is applied.
      * We assume that {@link com.itextpdf.layout.property.Property#FORCED_PLACEMENT} is applied when the first
      * {@link com.itextpdf.layout.renderer.ListItemRenderer} cannot be fully layouted.
      * This means that the problem has occurred in one of first list item renderer's child.
      * We consider the right solution to force placement of all first item renderer's childs before the one,
      * which was the cause of {@link com.itextpdf.layout.layout.LayoutResult#NOTHING}, including this child.
-     * </p>
      * <p>
      * Notice that we do not expect {@link com.itextpdf.layout.property.Property#FORCED_PLACEMENT} to be applied
      * if we can render the first item renderer and strongly recommend not to set
      * {@link com.itextpdf.layout.property.Property#FORCED_PLACEMENT} manually.
-     * </p>
      *
      * @param splitRenderer    the {@link IRenderer split renderer} before correction
      * @param overflowRenderer the {@link IRenderer overflow renderer} before correction

@@ -1119,7 +1119,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Returns the type of the <p>Parent</p> form field, or of the wrapped
+     * Returns the type of the parent form field, or of the wrapped
      * &lt;PdfDictionary&gt; object.
      *
      * @return the form type, as a {@link PdfName}

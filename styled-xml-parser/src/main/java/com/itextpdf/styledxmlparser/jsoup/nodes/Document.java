@@ -259,14 +259,14 @@ public class Document extends Element {
      * OutputSettings.charset(Charset)} but in addition it updates the
      * charset / encoding element within the document.
      * 
-     * <p>This enables
-     * {@link #updateMetaCharsetElement(boolean) meta charset update}.</p>
-     * 
-     * <p>If there's no element with charset / encoding information yet it will
-     * be created. Obsolete charset / encoding definitions are removed!</p>
-     * 
-     * <p><b>Elements used:</b></p>
-     * 
+     * <p>
+     * This enables
+     * {@link #updateMetaCharsetElement(boolean) meta charset update}.
+     * <p>
+     * If there's no element with charset / encoding information yet it will
+     * be created. Obsolete charset / encoding definitions are removed!
+     * <p>
+     * <b>Elements used:</b>
      * <ul>
      * <li><b>Html:</b> <i>&lt;meta charset="CHARSET"&gt;</i></li>
      * <li><b>Xml:</b> <i>&lt;?xml version="1.0" encoding="CHARSET"&gt;</i></li>
@@ -299,9 +299,9 @@ public class Document extends Element {
      * Sets whether the element with charset information in this document is
      * updated on changes through {@link #charset(java.nio.charset.Charset)
      * Document.charset(Charset)} or not.
-     * 
-     * <p>If set to <tt>false</tt> <i>(default)</i> there are no elements
-     * modified.</p>
+     * <p>
+     * If set to <tt>false</tt> <i>(default)</i> there are no elements
+     * modified.
      * 
      * @param update If <tt>true</tt> the element updated on charset
      * changes, <tt>false</tt> if not
@@ -342,8 +342,7 @@ public class Document extends Element {
      * <li>If there's no element yet it will be inserted</li>
      * <li>Obsolete elements are removed</li>
      * </ul>
-     * 
-     * <p><b>Elements used:</b></p>
+     * <b>Elements used:</b>
      * 
      * <ul>
      * <li><b>Html:</b> <i>&lt;meta charset="CHARSET"&gt;</i></li>

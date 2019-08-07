@@ -333,12 +333,10 @@ public abstract class PdfObject implements Serializable {
      * <p>
      * This flag is meaningful only if the {@link PdfDocument} is opened in append mode
      * (see {@link StampingProperties#useAppendMode()}).
-     * </p>
      * <p>
      * In append mode the whole document is preserved as is, and only changes to the document are
      * appended to the end of the document file. Because of this, only modified objects need to be flushed and are
      * allowed to be flushed (i.e. to be written).
-     * </p>
      *
      * @return this {@link PdfObject} instance.
      */

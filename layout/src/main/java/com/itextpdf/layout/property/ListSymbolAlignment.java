@@ -48,7 +48,7 @@ package com.itextpdf.layout.property;
  * {@link ListSymbolAlignment#LEFT} means that the items will be aligned as follows:
  * 9.  Item 9
  * 10. Item 10
- *
+ * <p>
  * Whereas {@link ListSymbolAlignment#RIGHT} means the items will be aligned as follows:
  *  9. Item 9
  * 10. Item 10

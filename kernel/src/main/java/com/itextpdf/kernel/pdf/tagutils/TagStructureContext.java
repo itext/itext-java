@@ -194,8 +194,8 @@ public class TagStructureContext {
      * <p>
      * By default, this value is defined based on the PDF document version and the existing tag structure inside
      * a document. For the new empty PDF 2.0 documents this namespace is set to {@link StandardNamespaces#PDF_2_0}.
-     * </p>
-     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * <p>
+     * This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.
      * @return a {@link PdfNamespace} which is used as a default value for the document tagging.
      */
     public PdfNamespace getDocumentDefaultNamespace() {
@@ -211,8 +211,9 @@ public class TagStructureContext {
      * tag structure from the namespaces point of view. So in order to maintain the document consistent but in the namespace
      * different from default, set this value before any modifications to the document were made and before
      * {@link #getAutoTaggingPointer()} method was called for the first time.
-     * </p>
-     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * <p>
+     * This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.
+     *
      * @param namespace a {@link PdfNamespace} which is to be used as a default value for the document tagging.
      * @return current {@link TagStructureContext} instance.
      */
@@ -231,7 +232,7 @@ public class TagStructureContext {
      * {@link PdfNamespace} constructors and set to the elements of the tag structure, then the last encountered one
      * will be returned by this method). However encountered namespaces will not be added to the document's structure tree root
      * {@link PdfName#Namespaces /Namespaces} array unless they were set to the certain element of the tag structure.
-     * </p>
+     *
      * @param namespaceName a {@link String} defining the namespace name (conventionally a uniform resource identifier, or URI).
      * @return {@link PdfNamespace} wrapper over either already existing namespace object or over the new one.
      */
@@ -457,11 +458,11 @@ public class TagStructureContext {
     }
 
     /**
-     * <p>
      * Gets {@link PdfStructElem} at which {@link TagTreePointer} points.
-     * </p>
+     * <p>
      * NOTE: Be aware that {@link PdfStructElem} is a low level class, use it carefully,
      * especially in conjunction with high level {@link TagTreePointer} and {@link TagStructureContext} classes.
+     *
      * @param pointer a {@link TagTreePointer} which points at desired {@link PdfStructElem}.
      * @return a {@link PdfStructElem} at which given {@link TagTreePointer} points.
      */

@@ -57,12 +57,13 @@ import java.util.Set;
 
 
 /**
- A list of {@link Element}s, with methods that act on every element in the list.
- <p>
- To get an {@code Elements} object, use the {@link Element#select(String)} method.
- </p>
-
- @author Jonathan Hedley, jonathan@hedley.net */
+ *
+ * A list of {@link Element}s, with methods that act on every element in the list.
+ * <p>
+ * To get an {@code Elements} object, use the {@link Element#select(String)} method.
+ *
+ * @author Jonathan Hedley, jonathan@hedley.net
+ */
 public class Elements extends ArrayList<Element> {
     public Elements() {
     }
@@ -393,11 +394,13 @@ public class Elements extends ArrayList<Element> {
      * dropping the elements but keeping their children.
      * <p>
      * This is useful for e.g removing unwanted formatting elements but keeping their contents.
-     * </p>
-     * 
-     * E.g. with HTML: <p>{@code <div><font>One</font> <font><a href="/">Two</a></font></div>}</p>
-     * <p>{@code doc.select("font").unwrap();}</p>
-     * <p>HTML = {@code <div>One <a href="/">Two</a></div>}</p>
+     * E.g. with HTML:
+     * <p>
+     * {@code <div><font>One</font> <font><a href="/">Two</a></font></div>}
+     * <p>
+     * {@code doc.select("font").unwrap();}
+     * <p>
+     * HTML = {@code <div>One <a href="/">Two</a></div>}
      *
      * @return this (for chaining)
      * @see Node#unwrap
@@ -416,6 +419,7 @@ public class Elements extends ArrayList<Element> {
      * E.g. HTML: {@code <div><p>Hello <b>there</b></p> <p>now</p></div>}<br>
      * <code>doc.select("p").empty();</code><br>
      * HTML = {@code <div><p></p> <p></p></div>}
+     *
      * @return this, for chaining
      * @see Element#empty()
      * @see #remove()
@@ -435,6 +439,7 @@ public class Elements extends ArrayList<Element> {
      * HTML = {@code <div> <img /></div>}
      * <p>
      * Note that this method should not be used to clean user-submitted HTML; rather, use {@link Cleaner} to clean HTML.
+     *
      * @return this, for chaining
      * @see Element#empty()
      * @see #empty()

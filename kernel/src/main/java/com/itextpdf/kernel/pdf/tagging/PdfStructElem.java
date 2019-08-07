@@ -319,7 +319,8 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
     /**
      * A {@link PdfName#Ref} identifies the structure element to which the item of content, contained
      * within this structure element, refers (e.g. footnotes, endnotes, sidebars, etc.).
-     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * <p>
+     * This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.
      *
      * @param ref a {@link PdfStructElem} to which the item of content, contained within this structure element, refers.
      */
@@ -350,7 +351,8 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
 
     /**
      * A namespace this element belongs to (see ISO 32000-2 14.7.4, "Namespaces").
-     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * <p>
+     * This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.
      *
      * @param namespace a {@link PdfNamespace} this element belongs to, or null if element is desired to be considered
      *                  in the default standard structure namespace.
@@ -368,7 +370,8 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
     /**
      * Attribute for a structure element that may be used as pronunciation hint. It is an exact replacement for content
      * enclosed by the structure element and its children.
-     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * <p>
+     * This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.
      *
      * @param elementPhoneme a {@link PdfString} which defines an exact replacement for content enclosed by the structure
      *                       element and its children. This value is to be interpreted based on the PhoneticAlphabet attribute in effect.
@@ -392,7 +395,8 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
     /**
      * Attribute for a structure element that indicates the phonetic alphabet used by a  {@link PdfName#Phoneme} attribute.
      * Applies to the structure element and its children, except where overridden by a child structure element.
-     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * <p>
+     * This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.
      *
      * @param phoneticAlphabet the {@link PdfName} which defines phonetic alphabet used by a {@link PdfName#Phoneme}
      *                         attribute. Possible values are:
@@ -421,17 +425,13 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
     }
 
     /**
-     * <p>
      * Adds file associated with structure element and identifies the relationship between them.
-     * </p>
      * <p>
      * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
      * The method adds file to array value of the AF key in the structure element dictionary.
      * If description is provided, it also will add file description to catalog Names tree.
-     * </p>
      * <p>
      * For associated files their associated file specification dictionaries shall include the AFRelationship key
-     * </p>
      *
      * @param description the file description
      * @param fs          file specification dictionary of associated file
@@ -455,14 +455,11 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
     /**
      * <p>
      * Adds file associated with structure element and identifies the relationship between them.
-     * </p>
      * <p>
      * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
      * The method adds file to array value of the AF key in the structure element dictionary.
-     * </p>
      * <p>
      * For associated files their associated file specification dictionaries shall include the AFRelationship key
-     * </p>
      *
      * @param fs file specification dictionary of associated file
      */

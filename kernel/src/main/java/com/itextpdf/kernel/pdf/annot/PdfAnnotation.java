@@ -1067,14 +1067,11 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * <p>
      * Adds file associated with PDF annotation and identifies the relationship between them.
-     * </p>
      * <p>
      * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
      * The method adds file to array value of the AF key in the annotation dictionary.
-     * </p>
      * <p>
      * For associated files their associated file specification dictionaries shall include the AFRelationship key
-     * </p>
      *
      * @param fs file specification dictionary of associated file
      */

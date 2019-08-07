@@ -95,7 +95,6 @@ public class ResourceResolver {
      * <p>
      * If empty string or relative URI string is passed as base URI, then it will be resolved against current working
      * directory of this application instance.
-     * </p>
      *
      * @param baseUri base URI against which all relative resource URIs will be resolved.
      */

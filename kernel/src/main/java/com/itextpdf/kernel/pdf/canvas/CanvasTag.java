@@ -52,13 +52,12 @@ import com.itextpdf.kernel.pdf.tagging.PdfMcr;
 
 /**
  * This class represents a single tag on a single piece of marked content.
- *
  * <p>
  * In Tagged PDF, a tag is the basic structure unit for marking content. The tag
  * structure and hierarchy is largely comparable to HTML. As in HTML, every tag
  * type has a name, defined here in the <code>role</code> attribute. The tagging
  * mechanism in Tagged PDF is extensible, so PDF creators can choose to create
- * custom tags.</p>
+ * custom tags.
  */
 public class CanvasTag {
 

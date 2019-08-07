@@ -45,7 +45,8 @@ package com.itextpdf.barcodes.qrcode;
 
 
 /**
- * <p>A simple, fast array of bits, represented compactly by an array of ints internally.</p>
+ * A simple, fast array of bits, represented compactly by an array of ints internally.
+ *
  * @author Sean Owen
  */
 final class BitArray {

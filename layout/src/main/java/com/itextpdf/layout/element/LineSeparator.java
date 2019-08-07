@@ -54,7 +54,7 @@ import com.itextpdf.layout.renderer.LineSeparatorRenderer;
 /**
  * This is a line separator element which is basically just a horizontal line with
  * a style specified by {@link ILineDrawer} custom drawing interface instance.
- * This might be thought of as an HTML's <hr> element alternative.
+ * This might be thought of as an HTML's &lt;hr&gt; element alternative.
  */
 public class LineSeparator extends BlockElement<LineSeparator> {
 

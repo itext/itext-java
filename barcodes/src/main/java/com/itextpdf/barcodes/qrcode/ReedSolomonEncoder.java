@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>Implements Reed-Solomon encoding, as the name implies.</p>
+ * Implements Reed-Solomon encoding, as the name implies.
  *
  * @author Sean Owen
  * @author William Rucklidge

@@ -140,7 +140,8 @@ public class CertificateInfo {
 
         /**
          * Email address (RSA PKCS#9 extension) - IA5String.
-         * <p>Note: if you're trying to be ultra orthodox, don't use this! It shouldn't be in here.</p>
+         * <p>
+         * Note: if you're trying to be ultra orthodox, don't use this! It shouldn't be in here.
          */
         public static final ASN1ObjectIdentifier EmailAddress = new ASN1ObjectIdentifier("1.2.840.113549.1.9.1");
 

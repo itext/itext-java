@@ -57,11 +57,9 @@ import java.util.IdentityHashMap;
  * <p>
  * A selector is a chain of simple selectors, separated by combinators. Selectors are case insensitive (including against
  * elements, attributes, and attribute values).
- * </p>
  * <p>
  * The universal selector (*) is implicit when no element selector is supplied (i.e. {@code *.header} and {@code .header}
  * is equivalent).
- * </p>
  * <table summary="">
  * <tr><th align="left">Pattern</th><th align="left">Matches</th><th align="left">Example</th></tr>
  * <tr><td><code>*</code></td><td>any element</td><td><code>*</code></td></tr>

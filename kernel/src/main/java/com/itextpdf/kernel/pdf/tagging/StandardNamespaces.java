@@ -50,8 +50,8 @@ import java.util.Set;
  * This class encapsulates information about the standard structure namespaces and provides some utility methods
  * connected to them. The main purpose of this class is to determine if the given role in the specified namespace
  * belongs to the standard or known domain-specific namespace.
- *
- * <p>See ISO 32000-2 14.8.6, "Standard structure namespaces"</p>
+ * <p>
+ * See ISO 32000-2 14.8.6, "Standard structure namespaces"
  */
 public final class StandardNamespaces {
     private static final Set<String> STD_STRUCT_NAMESPACE_1_7_TYPES;

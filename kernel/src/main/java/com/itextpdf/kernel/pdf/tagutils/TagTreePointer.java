@@ -103,7 +103,6 @@ public class TagTreePointer {
      * {@link DefaultAccessibilityProperties#setNamespace(PdfNamespace)}, is set to the value returned by
      * {@link TagStructureContext#getDocumentDefaultNamespace()} on {@link TagTreePointer} creation.
      * See also {@link TagTreePointer#setNamespaceForNewTags(PdfNamespace)}.
-     * </p>
      * @param document the document, at which tag structure this instance will point.
      */
     public TagTreePointer(PdfDocument document) {
@@ -200,8 +199,11 @@ public class TagTreePointer {
     /**
      * Sets a {@link PdfNamespace} which will be set to every new tag created by this {@link TagTreePointer} instance
      * if this tag doesn't explicitly define namespace by the means of {@link DefaultAccessibilityProperties#setNamespace(PdfNamespace)}.
-     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
-     * <p>It's highly recommended to acquire {@link PdfNamespace} class instances via {@link TagStructureContext#fetchNamespace(String)}.</p>
+     * <p>
+     * This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.
+     * <p>
+     * It's highly recommended to acquire {@link PdfNamespace} class instances via {@link TagStructureContext#fetchNamespace(String)}.
+     *
      * @param namespace a {@link PdfNamespace} to be set for the new tags created. If set to null - new tags will have
      *                  a namespace set only if it is defined in the corresponding {@link AccessibilityProperties}.
      * @return this {@link TagTreePointer} instance.
@@ -578,7 +580,6 @@ public class TagTreePointer {
      * If some of the descendant tags of the current tag have waiting state (see {@link WaitingTagsManager}),
      * then these tags are considered as not yet finished ones, and they won't be flushed immediately,
      * but they will be flushed, when waiting state is removed.
-     * </p>
      *
      * @return this {@link TagTreePointer} instance.
      */

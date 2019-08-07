@@ -30,10 +30,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <p>This class is the main entry point to the hyphenation package.
- * You can use only the static methods or create an instance.</p>
- *
- * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
+ * This class is the main entry point to the hyphenation package.
+ * You can use only the static methods or create an instance.
+ * <p>
+ * This work was authored by Carlos Villegas (cav@uniscope.co.jp).
  */
 public final class Hyphenator {
 

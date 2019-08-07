@@ -20,10 +20,10 @@ package com.itextpdf.layout.hyphenation;
 import java.io.Serializable;
 
 /**
- * <p>This class implements a simple byte vector with access to the
- * underlying array.</p>
- *
- * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
+ * This class implements a simple byte vector with access to the
+ * underlying array.
+ * <p>
+ * This work was authored by Carlos Villegas (cav@uniscope.co.jp).
  */
 public class ByteVector implements Serializable {
 

@@ -234,7 +234,6 @@ public class Element extends Node {
      * <p>
      * Note that an element can have both mixed Nodes and Elements as children. This method inspects
      * a filtered list of children that are elements, and the index is based on that filtered list.
-     * </p>
      *
      * @param index the index number of the element to retrieve
      * @return the child element, if it exists, otherwise throws an {@code IndexOutOfBoundsException}
@@ -248,7 +247,7 @@ public class Element extends Node {
      * Get this element's child elements.
      * <p>
      * This is effectively a filter on {@link #childNodes()} to get Element nodes.
-     * </p>
+     *
      * @return child elements. If this element has no children, returns an
      * empty list.
      * @see #childNodes()
@@ -269,7 +268,7 @@ public class Element extends Node {
      * This is effectively a filter on {@link #childNodes()} to get Text nodes.
      * @return child text nodes. If this element has no text nodes, returns an
      * empty list.
-     * </p>
+     * <p>
      * For example, with the input HTML: {@code <p>One <span>Two</span> Three <br> Four</p>} with the {@code p} element selected:
      * <ul>
      *     <li>{@code p.text()} = {@code "One Two Three Four"}</li>
@@ -292,7 +291,7 @@ public class Element extends Node {
      * Get this element's child data nodes. The list is unmodifiable but the data nodes may be manipulated.
      * <p>
      * This is effectively a filter on {@link #childNodes()} to get Data nodes.
-     * </p>
+     *
      * @return child data nodes. If this element has no data nodes, returns an
      * empty list.
      * @see #data()
@@ -312,14 +311,13 @@ public class Element extends Node {
      * <p>
      * This method is generally more powerful to use than the DOM-type {@code getElementBy*} methods, because
      * multiple filters can be combined, e.g.:
-     * </p>
+     *
      * <ul>
      * <li>{@code el.select("a[href]")} - finds links ({@code a} tags with {@code href} attributes)
      * <li>{@code el.select("a[href*=example.com]")} - finds links pointing to example.com (loosely)
      * </ul>
-     * <p>
+     *
      * See the query syntax documentation in {@link Selector}.
-     * </p>
      *
      * @param cssQuery a {@link Selector} CSS-like query
      * @return elements that match the query (empty if none match)
@@ -549,7 +547,6 @@ public class Element extends Node {
      * If the element has an ID, returns #id;
      * otherwise returns the parent (if any) CSS selector, followed by {@literal '>'},
      * followed by a unique selector for the element (tag.class.class:nth-child(n)).
-     * </p>
      *
      * @return the CSS Path that can be used to retrieve the element in a selector.
      */
@@ -597,7 +594,7 @@ public class Element extends Node {
      * the {@code nextElementSibling} of the first {@code p} is the second {@code p}.
      * <p>
      * This is similar to {@link #nextSibling()}, but specifically finds only Elements
-     * </p>
+     *
      * @return the next element, or null if there is no next element
      * @see #previousElementSibling()
      */

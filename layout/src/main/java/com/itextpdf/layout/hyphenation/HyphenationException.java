@@ -19,7 +19,8 @@ package com.itextpdf.layout.hyphenation;
 
 /**
  * A hyphenation exception.
- * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
+ * <p>
+ * This work was authored by Carlos Villegas (cav@uniscope.co.jp).
  */
 public class HyphenationException extends Exception {
 

@@ -44,8 +44,8 @@
 package com.itextpdf.barcodes.qrcode;
 
 /**
- * <p>See ISO 18004:2006, 6.4.1, Tables 2 and 3. This enum encapsulates the various modes in which
- * data can be encoded to bits in the QR code standard.</p>
+ * See ISO 18004:2006, 6.4.1, Tables 2 and 3. This enum encapsulates the various modes in which
+ * data can be encoded to bits in the QR code standard.
  *
  * @author Sean Owen
  */

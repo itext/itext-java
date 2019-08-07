@@ -119,7 +119,6 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      * <p>
      * Note: If chain of references has length of more than 32,
      * this method return 31st reference in chain.
-     * </p>
      */
     public PdfObject getRefersTo(boolean recursively) {
         if (!recursively) {
@@ -209,12 +208,10 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      * <p>
      * This method will not give any result if the corresponding indirect object or another object
      * that contains a reference to this object is already flushed.
-     * </p>
      * <p>
      * Note: in some cases, removing a link of indirect object to it's indirect reference while
      * leaving the actual object in the document structure might lead to errors, because some objects are expected
      * to always have such explicit link (e.g. Catalog object, page objects, etc).
-     * </p>
      */
     public void setFree() {
         getDocument().getXref().freeReference(this);

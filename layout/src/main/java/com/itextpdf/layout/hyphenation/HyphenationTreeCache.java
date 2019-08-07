@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * <p>This is a cache for HyphenationTree instances.</p>
+ * This is a cache for HyphenationTree instances.
  */
 public class HyphenationTreeCache {
 

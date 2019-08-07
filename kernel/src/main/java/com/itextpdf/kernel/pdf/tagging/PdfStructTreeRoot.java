@@ -210,7 +210,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     /**
      * Adds a {@link PdfNamespace} to the list of the namespaces used within the document.
-     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * <p>
+     * This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.
      *
      * @param namespace a {@link PdfNamespace} to be added.
      */
@@ -264,7 +265,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     /**
      * Adds a single  {@link PdfFileSpec} object, which specifies XML file conforming to PLS.
      * For more info see {@link #getPronunciationLexiconsList()}.
-     * <p>This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.</p>
+     * <p>
+     * This value has meaning only for the PDF documents of version <b>2.0 and higher</b>.
      *
      * @param pronunciationLexiconFileSpec a {@link PdfFileSpec} object, which specifies XML file conforming to PLS.
      */
@@ -389,17 +391,13 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }
 
     /**
-     * <p>
      * Adds file associated with structure tree root and identifies the relationship between them.
-     * </p>
      * <p>
      * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
      * The method adds file to array value of the AF key in the structure tree root dictionary.
      * If description is provided, it also will add file description to catalog Names tree.
-     * </p>
      * <p>
      * For associated files their associated file specification dictionaries shall include the AFRelationship key
-     * </p>
      *
      * @param description the file description
      * @param fs          file specification dictionary of associated file
@@ -423,14 +421,11 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     /**
      * <p>
      * Adds file associated with structure tree root and identifies the relationship between them.
-     * </p>
      * <p>
      * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
      * The method adds file to array value of the AF key in the structure tree root dictionary.
-     * </p>
      * <p>
      * For associated files their associated file specification dictionaries shall include the AFRelationship key
-     * </p>
      *
      * @param fs file specification dictionary of associated file
      */

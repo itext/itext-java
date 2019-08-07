@@ -26,8 +26,8 @@ import java.util.Enumeration;
 
 /**
  * <h2>Ternary Search Tree.</h2>
- *
- * <p>A ternary search tree is a hibrid between a binary tree and
+ * <p>
+ * A ternary search tree is a hybrid between a binary tree and
  * a digital search tree (trie). Keys are limited to strings.
  * A data value of type char is stored in each leaf node.
  * It can be used as an index (or pointer) to the data.
@@ -41,9 +41,9 @@ import java.util.Enumeration;
  * from the target, etc. The storage requirements are higher than
  * a binary tree but a lot less than a trie. Performance is
  * comparable with a hash table, sometimes it outperforms a hash
- * function (most of the time can determine a miss faster than a hash).</p>
- *
- * <p>The main purpose of this java port is to serve as a base for
+ * function (most of the time can determine a miss faster than a hash).
+ * <p>
+ * The main purpose of this java port is to serve as a base for
  * implementing TeX's hyphenation algorithm (see The TeXBook,
  * appendix H). Each language requires from 5000 to 15000 hyphenation
  * patterns which will be keys in this tree. The strings patterns
@@ -55,15 +55,15 @@ import java.util.Enumeration;
  * to be just 8 bytes (3 pointers and the data char). This gives
  * room for about 65000 nodes. In my tests the english patterns
  * took 7694 nodes and the german patterns 10055 nodes,
- * so I think we are safe.</p>
- *
- * <p>All said, this is a map with strings as keys and char as value.
+ * so I think we are safe.
+ * <p>
+ * All said, this is a map with strings as keys and char as value.
  * Pretty limited!. It can be extended to a general map by
  * using the string representation of an object and using the
  * char value as an index to an array that contains the object
- * values.</p>
- *
- * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
+ * values.
+ * <p>
+ * This work was authored by Carlos Villegas (cav@uniscope.co.jp).
  */
 
 public class TernaryTree implements Serializable {
@@ -95,13 +95,15 @@ public class TernaryTree implements Serializable {
     protected char[] eq;
 
     /**
-     * <P>The character stored in this node: splitchar.
-     * Two special values are reserved:</P>
-     * <ul><li>0x0000 as string terminator</li>
-     * <li>0xFFFF to indicate that the branch starting at
-     * this node is compressed</li></ul>
-     * <p>This shouldn't be a problem if we give the usual semantics to
-     * strings since 0xFFFF is garanteed not to be an Unicode character.</p>
+     * The character stored in this node: splitchar.
+     * Two special values are reserved:
+     * <ul>
+     *     <li>0x0000 as string terminator
+     *     <li>0xFFFF to indicate that the branch starting at
+     * this node is compressed
+     * </ul>
+     * This shouldn't be a problem if we give the usual semantics to
+     * strings since 0xFFFF is garanteed not to be an Unicode character.
      */
     protected char[] sc;
 

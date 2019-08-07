@@ -44,12 +44,12 @@
 package com.itextpdf.barcodes.qrcode;
 
 /**
- * <p>This class contains utility methods for performing mathematical operations over
- * the Galois Field GF(256). Operations use a given primitive polynomial in calculations.</p>
- *
- * <p>Throughout this package, elements of GF(256) are represented as an <code>int</code>
+ * This class contains utility methods for performing mathematical operations over
+ * the Galois Field GF(256). Operations use a given primitive polynomial in calculations.
+ * <p>
+ * Throughout this package, elements of GF(256) are represented as an <code>int</code>
  * for convenience and speed (but at the cost of memory).
- * Only the bottom 8 bits are really used.</p>
+ * Only the bottom 8 bits are really used.
  *
  * @author Sean Owen
  */

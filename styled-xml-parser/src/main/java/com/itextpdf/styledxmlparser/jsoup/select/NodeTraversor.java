@@ -48,7 +48,6 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
  * Depth-first node traversor. Use to iterate through all nodes under and including the specified root node.
  * <p>
  * This implementation does not use recursion, so a deep DOM does not risk blowing the stack.
- * </p>
  */
 public class NodeTraversor {
     private NodeVisitor visitor;

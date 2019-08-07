@@ -1472,17 +1472,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
-     * <p>
      * Adds file associated with PDF document as a whole and identifies the relationship between them.
-     * </p>
      * <p>
      * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
      * The method is very similar to {@link PdfDocument#addFileAttachment(String, PdfFileSpec)}.
      * However, besides adding file description to Names tree, it adds file to array value of the AF key in the document catalog.
-     * </p>
      * <p>
      * For associated files their associated file specification dictionaries shall include the AFRelationship key
-     * </p>
      *
      * @param description the file description
      * @param fs          file specification dictionary of associated file
