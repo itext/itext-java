@@ -62,22 +62,22 @@ public class LineChartsTest extends SvgIntegrationTest {
 
   @Test
   public void line_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "line_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "line_chart");
   }
 
   @Test
   public void line_classic_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "line_classic_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "line_classic_chart");
   }
 
   @Test
   public void line_material_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "line_material_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "line_material_chart");
   }
 
   @Test
   public void line_topX_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "line_topX_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "line_topX_chart");
   }
 
 }

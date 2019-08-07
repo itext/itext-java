@@ -65,21 +65,21 @@ public class DefsSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void defsWithNoChildrenTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "onlyDefsWithNoChildren");
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "onlyDefsWithNoChildren");
     }
 
     @Test
     public void defsWithOneChildTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "onlyDefsWithOneChild");
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "onlyDefsWithOneChild");
     }
 
     @Test
     public void defsWithMultipleChildrenTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "onlyDefsWithMultipleChildren");
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "onlyDefsWithMultipleChildren");
     }
 
     @Test
     public void defsWithOneChildAndNonDefsBeingDrawnTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "defsWithOneChildAndNonDefsBeingDrawn");
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "defsWithOneChildAndNonDefsBeingDrawn");
     }
 }

@@ -68,7 +68,7 @@ public class GeoChartsTest extends SvgIntegrationTest {
           @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
   })
   public void geo_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "geo_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "geo_chart");
   }
 
   @Test
@@ -76,7 +76,7 @@ public class GeoChartsTest extends SvgIntegrationTest {
           @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 2),
   })
   public void geo_colored_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "geo_colored_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "geo_colored_chart");
   }
 
   @Test
@@ -84,7 +84,7 @@ public class GeoChartsTest extends SvgIntegrationTest {
           @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
   })
   public void geo_marker_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "geo_marker_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "geo_marker_chart");
   }
 
   @Test
@@ -92,7 +92,7 @@ public class GeoChartsTest extends SvgIntegrationTest {
           @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
   })
   public void geo_propontional_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "geo_propontional_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "geo_propontional_chart");
   }
 
   @Test
@@ -100,7 +100,7 @@ public class GeoChartsTest extends SvgIntegrationTest {
           @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
   })
   public void geo_text_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "geo_text_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "geo_text_chart");
   }
 }
 

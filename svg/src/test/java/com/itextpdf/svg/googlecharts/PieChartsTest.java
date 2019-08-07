@@ -62,26 +62,26 @@ public class PieChartsTest extends SvgIntegrationTest {
 
   @Test
   public void pie_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "pie_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "pie_chart");
   }
 
   @Test
   public void pie3D_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "pie3D_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "pie3D_chart");
   }
 
   @Test
   public void pieHole_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "pieHole_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "pieHole_chart");
   }
 
   @Test
   public void rotating_pie_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "rotating_pie_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "rotating_pie_chart");
   }
 
   @Test
   public void pieChart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "pieChart");
+    convertAndCompare(sourceFolder, destinationFolder, "pieChart");
   }
 }

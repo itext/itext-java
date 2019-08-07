@@ -84,7 +84,7 @@ public class GoogleChartsTest extends SvgIntegrationTest {
 
   @Test
   public void barChart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "bar_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "bar_chart");
   }
 
   @Test
@@ -92,7 +92,7 @@ public class GoogleChartsTest extends SvgIntegrationTest {
           @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
   })
   public void annotation_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "annotation_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "annotation_chart");
   }
 
   @Test
@@ -131,7 +131,7 @@ public class GoogleChartsTest extends SvgIntegrationTest {
 
   @Test
   public void candlestick_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "candlestick_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "candlestick_chart");
   }
 
   @Test
@@ -149,22 +149,22 @@ public class GoogleChartsTest extends SvgIntegrationTest {
           @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 5),
   })
   public void diff_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "diff_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "diff_chart");
   }
 
   @Test
   public void donut_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "donut_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "donut_chart");
   }
 
   @Test
   public void waterfall_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "waterfall_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "waterfall_chart");
   }
 
   @Test
   public void histogram_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "histogram_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "histogram_chart");
   }
 
 }

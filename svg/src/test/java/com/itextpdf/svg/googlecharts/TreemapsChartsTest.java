@@ -68,7 +68,7 @@ public class TreemapsChartsTest extends SvgIntegrationTest {
           @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 2),
   })
   public void treemaps_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "treemaps_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "treemaps_chart");
   }
 
   @Test
@@ -76,6 +76,6 @@ public class TreemapsChartsTest extends SvgIntegrationTest {
           @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 2),
   })
   public void treemaps2_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "treemaps2_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "treemaps2_chart");
   }
 }

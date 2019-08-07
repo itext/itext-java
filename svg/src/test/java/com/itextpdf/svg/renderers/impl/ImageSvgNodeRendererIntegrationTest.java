@@ -76,73 +76,73 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void singleImageTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "singleImage", properties);
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImage", properties);
     }
 
     @Test
     public void imageWithRectangleTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "imageWithRectangle", properties);
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithRectangle", properties);
     }
 
     @Test
     public void imageWithMultipleShapesTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "imageWithMultipleShapes", properties);
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithMultipleShapes", properties);
     }
 
     @Test
     public void imageXYTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "imageXY", properties);
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageXY", properties);
     }
 
     @Test
     public void multipleImagesTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "multipleImages", properties);
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "multipleImages", properties);
     }
 
     @Test
     public void nonSquareImageTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "nonSquareImage", properties);
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "nonSquareImage", properties);
     }
 
     @Test
     public void singleImageTranslateTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "singleImageTranslate", properties);
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImageTranslate", properties);
     }
 
     @Test
     public void singleImageRotateTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "singleImageRotate", properties);
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImageRotate", properties);
     }
 
     @Test
     public void singleImageScaleUpTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "singleImageScaleUp", properties);
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImageScaleUp", properties);
     }
 
     @Test
     public void singleImageScaleDownTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "singleImageScaleDown", properties);
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImageScaleDown", properties);
     }
 
     @Test
     public void singleImageMultipleTransformationsTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "singleImageMultipleTransformations", properties);
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImageMultipleTransformations", properties);
     }
 
     @Test
     public void twoImagesWithTransformationsTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "twoImagesWithTransformations", properties);
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "twoImagesWithTransformations", properties);
     }
 
     @Test
     @Ignore("DEVSIX-2240")
     public void differentDimensionsTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "differentDimensions", properties);
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "differentDimensions", properties);
     }
 
     @Test
     public void imageWithTransparencyTest() throws IOException, InterruptedException {
         //TODO: update cmp_ when DEVSIX-2250, DEVSIX-2258 fixed
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "imageWithTransparency", properties);
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithTransparency", properties);
     }
 }

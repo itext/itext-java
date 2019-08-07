@@ -75,107 +75,107 @@ public class UseIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void singleUseTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "singleUse");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "singleUse");
     }
 
     @Test
     public void singleUseFillTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "singleUseFill");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "singleUseFill");
     }
 
     @Test
     public void doubleNestedUseFillTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "doubleNestedUseFill");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "doubleNestedUseFill");
     }
 
     @Test
     public void singleUseStrokeTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "singleUseStroke");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "singleUseStroke");
     }
 
     @Test
     public void doubleNestedUseStrokeTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "doubleNestedUseStroke");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "doubleNestedUseStroke");
     }
 
     @Test
     public void translateUseTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "translateUse");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "translateUse");
     }
 
     @Test
     public void multipleTransformationsUseTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleTransformationsUse");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleTransformationsUse");
     }
 
     @Test
     public void coordinatesUseTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "coordinatesUse");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "coordinatesUse");
     }
 
     @Test
     public void imageUseTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "imageUse", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageUse", properties);
     }
 
     @Test
     public void svgUseTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "svgUse", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgUse", properties);
     }
 
     @Test
     public void complexUseTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "complexUse", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "complexUse", properties);
     }
 
     @Test
     public void UseWithoutDefsTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "useWithoutDefs", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "useWithoutDefs", properties);
     }
 
     @Test
     public void UseWithoutDefsUsedElementAfterUseTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "useWithoutDefsUsedElementAfterUse", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "useWithoutDefsUsedElementAfterUse", properties);
     }
 
     @Test
     public void simpleRectReuseTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "simpleRectReuse", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "simpleRectReuse", properties);
     }
 
     @Test
     public void transitiveTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "transitive", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "transitive", properties);
     }
 
     @Test
     public void circularTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "circular", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "circular", properties);
     }
 
     @Test
     public void complexReferencesTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "complexReferences", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "complexReferences", properties);
     }
 
     @Test
     public void transformationsOnTransformationsTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "transformationsOnTransformations", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "transformationsOnTransformations", properties);
     }
 
     @Test
     public void reuseLinesTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "reuseLines", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "reuseLines", properties);
     }
 
     @Test
     public void missingHashtagTest() throws IOException,InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "missingHashtag", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "missingHashtag", properties);
     }
 
     @Test
     public void useInDifferentFilesExampleTest() throws IOException, InterruptedException {
         //TODO: update when DEVSIX-2252 fixed
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "useInDifferentFilesExampleTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "useInDifferentFilesExampleTest");
     }
 }

@@ -76,109 +76,112 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
 
     @Test
     public void everythingPresentAndValidTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"everythingPresentAndValid");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"everythingPresentAndValid");
     }
 
     @Test
+    //TODO: change cmp file after DEVSIX-3123 fixed
     @LogMessages(messages = {
             @LogMessage(messageTemplate =  SvgLogMessageConstant.MISSING_HEIGHT),
     })
     public void absentHeight() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentHeight");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentHeight");
     }
 
     @Test
+    //TODO: change cmp file after DEVSIX-3123 fixed
     @LogMessages(messages = {
             @LogMessage(messageTemplate =  SvgLogMessageConstant.MISSING_WIDTH),
     })
     public void absentWidth() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidth");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidth");
     }
 
     @Test
+    //TODO: change cmp file after DEVSIX-3123 fixed
     @LogMessages(messages = {
             @LogMessage(messageTemplate =  SvgLogMessageConstant.MISSING_WIDTH),
             @LogMessage(messageTemplate =  SvgLogMessageConstant.MISSING_HEIGHT),
     })
     public void absentWidthAndHeight() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidthAndHeight");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidthAndHeight");
     }
 
     @Test
 
     public void absentWHViewboxPresent() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWHViewboxPresent");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWHViewboxPresent");
     }
 
     @Test
     public void absentX() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentX");
     }
 
     @Test
     public void absentY() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"absentY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentY");
     }
 
     @Test
     public void invalidHeight() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "abc"));
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidHeight");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidHeight");
     }
 
     @Test
     public void invalidWidth() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "abc"));
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidWidth");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidWidth");
     }
 
     @Test
     public void invalidX() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidX");
     }
 
     @Test
     public void invalidY() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidY");
     }
 
     @Test
     public void negativeEverything() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeEverything");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeEverything");
     }
 
     @Test
     public void negativeHeight() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeHeight");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeHeight");
     }
 
     @Test
     public void negativeWidth() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeWidth");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeWidth");
     }
 
     @Test
     public void negativeWidthAndHeight() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeWidthAndHeight");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeWidthAndHeight");
     }
 
     @Test
     public void negativeX() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeX");
     }
 
     @Test
     public void negativeXY() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeXY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeXY");
     }
 
     @Test
     public void negativeY() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"negativeY");
     }
 
     @Test
@@ -188,6 +191,6 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
     })
     public void percentInMeasurement() throws IOException, InterruptedException {
         //TODO: update after DEVSIX-2377
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "percentInMeasurement");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "percentInMeasurement");
     }
 }

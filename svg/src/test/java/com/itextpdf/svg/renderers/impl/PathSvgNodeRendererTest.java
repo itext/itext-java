@@ -298,125 +298,125 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
     @Test
     public void pathNodeRendererCurveComplexTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "curves");
+        convertAndCompare(sourceFolder, destinationFolder, "curves");
     }
 
     @Test
     public void pathZOperatorTest01() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "pathZOperatorTest01");
+        convertAndCompare(sourceFolder, destinationFolder, "pathZOperatorTest01");
     }
 
 
     @Test
     public void pathZOperatorTest02() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "pathZOperatorTest02");
+        convertAndCompare(sourceFolder, destinationFolder, "pathZOperatorTest02");
     }
 
 
     @Test
     public void pathZOperatorTest03() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "pathZOperatorTest03");
+        convertAndCompare(sourceFolder, destinationFolder, "pathZOperatorTest03");
     }
 
 
     @Test
     public void pathZOperatorTest04() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "pathZOperatorTest04");
+        convertAndCompare(sourceFolder, destinationFolder, "pathZOperatorTest04");
     }
 
     @Test
     public void invalidZOperatorTest01() throws IOException, InterruptedException {
         junitExpectedException.expect(SvgProcessingException.class);
-        convertAndCompareVisually(sourceFolder, destinationFolder, "invalidZOperatorTest01");
+        convertAndCompare(sourceFolder, destinationFolder, "invalidZOperatorTest01");
     }
 
     @Test
     public void invalidOperatorTest01() throws IOException, InterruptedException {
         junitExpectedException.expect(SvgProcessingException.class);
-        convertAndCompareVisually(sourceFolder, destinationFolder, "invalidOperatorTest01");
+        convertAndCompare(sourceFolder, destinationFolder, "invalidOperatorTest01");
     }
 
 
     /* This test should fail when RND-1034 is resolved*/
     @Test
     public void pathLOperatorMultipleCoordinates() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "pathLOperatorMultipleCoordinates");
+        convertAndCompare(sourceFolder, destinationFolder, "pathLOperatorMultipleCoordinates");
     }
 
     @Test
     public void pathVOperatorTest01() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "pathVOperatorTest01");
+        convertAndCompare(sourceFolder, destinationFolder, "pathVOperatorTest01");
     }
 
     @Test
     public void pathZOperatorContinuePathingTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "pathZOperatorContinuePathingTest");
+        convertAndCompare(sourceFolder, destinationFolder, "pathZOperatorContinuePathingTest");
     }
 
     @Test
     public void pathVOperatorMultipleArgumentsTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "pathVOperatorMultipleArgumentsTest");
+        convertAndCompare(sourceFolder, destinationFolder, "pathVOperatorMultipleArgumentsTest");
     }
 
     @Test
     public void pathHOperatorSimpleTest01() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "pathHOperatorSimpleTest01");
+        convertAndCompare(sourceFolder, destinationFolder, "pathHOperatorSimpleTest01");
     }
 
     @Test
     public void pathHandVOperatorTest01() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "pathHandVOperatorTest01");
+        convertAndCompare(sourceFolder, destinationFolder, "pathHandVOperatorTest01");
     }
 
     @Test
     public void curveToContinuePathingTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "curveToContinuePathingTest");
+        convertAndCompare(sourceFolder, destinationFolder, "curveToContinuePathingTest");
     }
 
     @Test
     public void relativeHorizontalLineToTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "relativeHorizontalLineTo");
+        convertAndCompare(sourceFolder, destinationFolder, "relativeHorizontalLineTo");
     }
 
     @Test
     public void relativeVerticalLineToTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "relativeVerticalLineTo");
+        convertAndCompare(sourceFolder, destinationFolder, "relativeVerticalLineTo");
     }
 
     @Test
     public void combinedRelativeVerticalLineToAndRelativeHorizontalLineToTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "combinedRelativeVerticalLineToAndRelativeHorizontalLineTo");
+        convertAndCompare(sourceFolder, destinationFolder, "combinedRelativeVerticalLineToAndRelativeHorizontalLineTo");
     }
 
     @Test
     public void multipleRelativeHorizontalLineToTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "multipleRelativeHorizontalLineTo");
+        convertAndCompare(sourceFolder, destinationFolder, "multipleRelativeHorizontalLineTo");
     }
 
     @Test
     public void multipleRelativeVerticalLineToTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "multipleRelativeVerticalLineTo");
+        convertAndCompare(sourceFolder, destinationFolder, "multipleRelativeVerticalLineTo");
     }
 
     @Test
     public void moveToRelativeMultipleTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "moveToRelativeMultiple");
+        convertAndCompare(sourceFolder, destinationFolder, "moveToRelativeMultiple");
     }
 
     @Test
     public void moveToAbsoluteMultipleTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "moveToAbsoluteMultiple");
+        convertAndCompare(sourceFolder, destinationFolder, "moveToAbsoluteMultiple");
     }
 
     @Test
     public void iTextLogoTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "iTextLogo");
+        convertAndCompare(sourceFolder, destinationFolder, "iTextLogo");
     }
 
     @Test
     public void eofillUnsuportedPathTest() throws IOException, InterruptedException {
         junitExpectedException.expect(SvgProcessingException.class);
-        convertAndCompareVisually(sourceFolder, destinationFolder, "eofillUnsuportedPathTest");
+        convertAndCompare(sourceFolder, destinationFolder, "eofillUnsuportedPathTest");
     }
 
 }

@@ -65,69 +65,71 @@ public class RectangleSvgNodeRendererIntegrationTest extends SvgIntegrationTest 
 
     @Test
     public void basicRectangleTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "basicRectangle");
+        convertAndCompare(sourceFolder, destinationFolder, "basicRectangle");
     }
 
     @Test
     public void basicRectangleRxRyZeroTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "basicRectangleRxRyZero");
+        convertAndCompare(sourceFolder, destinationFolder, "basicRectangleRxRyZero");
     }
 
     @Test
     public void basicCircularRoundedRectangleRyZeroTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "basicCircularRoundedRectangleRyZero");}
+        convertAndCompare(sourceFolder, destinationFolder, "basicCircularRoundedRectangleRyZero");}
 
     @Test
     public void basicCircularRoundedRectangleRxZeroTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "basicCircularRoundedRectangleRxZero");
+        convertAndCompare(sourceFolder, destinationFolder, "basicCircularRoundedRectangleRxZero");
     }
 
     @Test
     public void basicCircularRoundedRxRectangleTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "basicCircularRoundedRxRectangle");
+        convertAndCompare(sourceFolder, destinationFolder, "basicCircularRoundedRxRectangle");
     }
 
     @Test
     public void basicCircularRoundedRyRectangleTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "basicCircularRoundedRyRectangle");
+        convertAndCompare(sourceFolder, destinationFolder, "basicCircularRoundedRyRectangle");
     }
 
     @Test
     public void basicEllipticalRoundedRectangleXTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "basicEllipticalRoundedRectangleX");
+        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalRoundedRectangleX");
     }
 
     @Test
     public void basicEllipticalRoundedRectangleYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "basicEllipticalRoundedRectangleY");
+        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalRoundedRectangleY");
     }
 
     @Test
     public void basicEllipticalWidthCappedRoundedRectangleTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "basicEllipticalWidthCappedRoundedRectangle");
+        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalWidthCappedRoundedRectangle");
     }
 
     @Test
     public void basicEllipticalHeightCappedRoundedRectangleTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "basicEllipticalHeightCappedRoundedRectangle");
+        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalHeightCappedRoundedRectangle");
     }
 
     @Test
+    //TODO change cmp-file after DEVSIX-3121 fixed
     public void basicEllipticalNegativeWidthRoundedRectangleTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "basicEllipticalNegativeWidthRoundedRectangle");
+        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalNegativeWidthRoundedRectangle");
     }
 
     @Test
+    //TODO change cmp-file after DEVSIX-3121 fixed
     public void basicEllipticalNegativeHeightRoundedRectangleTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "basicEllipticalNegativeHeightRoundedRectangle");}
+        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalNegativeHeightRoundedRectangle");}
 
     @Test
     public void complexRectangleTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "complexRectangle");
+        convertAndCompare(sourceFolder, destinationFolder, "complexRectangle");
     }
 
     @Test
     public void noFillRectangleTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder,destinationFolder,"noFillRectangle");
+        convertAndCompare(sourceFolder,destinationFolder,"noFillRectangle");
     }
 }

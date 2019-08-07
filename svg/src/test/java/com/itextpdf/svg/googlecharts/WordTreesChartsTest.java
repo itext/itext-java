@@ -65,7 +65,7 @@ public class WordTreesChartsTest extends SvgIntegrationTest {
 
   @Test
   public void wordTrees_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "wordTrees_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "wordTrees_chart");
   }
 
   @Test
@@ -73,7 +73,7 @@ public class WordTreesChartsTest extends SvgIntegrationTest {
           @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
   })
   public void wordTrees2_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "wordTrees2_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "wordTrees2_chart");
   }
 
   @Test
@@ -81,7 +81,7 @@ public class WordTreesChartsTest extends SvgIntegrationTest {
           @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
   })
   public void wordTrees3_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "wordTrees3_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "wordTrees3_chart");
   }
 
   @Test
@@ -89,7 +89,7 @@ public class WordTreesChartsTest extends SvgIntegrationTest {
           @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 2),
   })
   public void wordTrees4_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "wordTrees4_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "wordTrees4_chart");
   }
 
 }

@@ -70,26 +70,26 @@ public class NestedSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
 
     @Test
     public void singleNestedSvgTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "singleNested");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "singleNested");
     }
 
     @Test
     public void doubleNestedSvgTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"doubleNested");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"doubleNested");
     }
 
     @Test
     public void twoNestedSvgTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"twoNested");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"twoNested");
     }
 
     @Test
     public void emptySvgTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"empty");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"empty");
     }
 
     @Test
     public void translatedSvgTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER,"translated");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"translated");
     }
 }

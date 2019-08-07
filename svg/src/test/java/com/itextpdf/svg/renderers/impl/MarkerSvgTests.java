@@ -75,24 +75,24 @@ public class MarkerSvgTests extends SvgIntegrationTest {
   @Test
   public void markerTest() throws IOException, InterruptedException {
     //TODO: update when DEVSIX-2262, 2860 fixed
-    convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "marker");
+    convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "marker");
   }
 
   @Test
   public void Markers_in_different_elements() throws IOException, InterruptedException {
     //TODO: update when DEVSIX-2262, 2860 and DEVSIX-2719 fixed
-    convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "Markers_in_elements");
+    convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "Markers_in_elements");
   }
 
   @Test
   public void markerUnits() throws IOException, InterruptedException {
     //TODO: update when DEVSIX-2262, 2860 fixed
-    convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "marker_Units");
+    convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "marker_Units");
   }
 
   @Test
   public void marker_RefXY_Orient() throws IOException, InterruptedException {
     //TODO: update when DEVSIX-2262,2860 fixed
-    convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "marker_RefXY_orient");
+    convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "marker_RefXY_orient");
   }
 }

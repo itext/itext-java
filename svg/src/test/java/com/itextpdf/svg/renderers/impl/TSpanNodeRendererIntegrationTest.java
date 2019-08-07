@@ -74,120 +74,120 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     //Relative Move tests
     @Test
     public void TSpanRelativeMovePositiveXTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-positiveX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-positiveX");
     }
 
     @Test
     public void TSpanRelativeMoveNegativeXTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-negativeX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-negativeX");
     }
 
     @Test
     public void TSpanRelativeMoveZeroXTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-zeroX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-zeroX");
     }
 
     @Test
     public void TSpanRelativeMoveInvalidXTest() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-invalidX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-invalidX");
     }
 
     @Test
     public void TSpanRelativeMovePositiveYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-positiveY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-positiveY");
     }
 
     @Test
     public void TSpanRelativeMoveNegativeYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-negativeY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-negativeY");
     }
 
     @Test
     public void TSpanRelativeMoveZeroYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-zeroY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-zeroY");
     }
 
     @Test
     public void TSpanRelativeMoveInvalidYTest() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-invalidY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-invalidY");
     }
 
     @Test
     public void TSpanRelativeMoveXandYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-XandY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-XandY");
     }
     
     //Absolute Position tests
     @Test
     public void TSpanAbsolutePositionPositiveXTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-positiveX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-positiveX");
     }
 
     @Test
     public void TSpanAbsolutePositionNegativeXTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-negativeX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-negativeX");
     }
 
     @Test
     public void TSpanAbsolutePositionZeroXTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-zeroX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-zeroX");
     }
     
     @Test
     public void TSpanAbsolutePositionInvalidXTest() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-invalidX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-invalidX");
     }
 
     @Test
     public void TSpanAbsolutePositionPositiveYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-positiveY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-positiveY");
     }
 
     @Test
     public void TSpanAbsolutePositionNegativeYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-negativeY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-negativeY");
     }
 
     @Test
     public void TSpanAbsolutePositionZeroYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-zeroY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-zeroY");
     }
 
     @Test
     public void TSpanAbsolutePositionInvalidYTest() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-invalidY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-invalidY");
     }
 
     @Test
     public void TSpanAbsolutePositionXandYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-XandY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-XandY");
     }
 
     @Test
     public void TSpanAbsolutePositionNestedTSpanTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-nestedTSpan");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePosition-nestedTSpan");
     }
 
     //Whitespace
     @Test
     public void TSpanWhiteSpaceFunctionalTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-whitespace");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-whitespace");
     }
 
     //Relative move and absolute position interplay
     @Test
     public void TSpanAbsolutePositionAndRelativeMoveFunctionalTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePositionAndRelativeMove");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-absolutePositionAndRelativeMove");
     }
 
     //Text-anchor test
     @Test
     public void TSpanTextAnchorFunctionalTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-textAnchor");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-textAnchor");
     }
 
     @Test
@@ -196,7 +196,7 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
             @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
     })
     public void tspanBasicExample() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanBasicExample");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanBasicExample");
     }
 
     @Test
@@ -205,13 +205,13 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
             @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
     })
     public void tspanNestedExample() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanNestedExample");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanNestedExample");
     }
 
     @Test
     //TODO: update cmp-file after DEVSIX-2270 fixed
     public void text_decoration_Test() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text_decoration");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "text_decoration");
     }
 
 }

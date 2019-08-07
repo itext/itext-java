@@ -78,7 +78,7 @@ public class MaskTest extends SvgIntegrationTest {
   @Test
   //TODO: update after DEVSIX-2378 implementation
   public void maskBasic() throws IOException, InterruptedException {
-    convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "maskBasic", properties);
+    convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "maskBasic", properties);
   }
 
   @Test
@@ -87,6 +87,6 @@ public class MaskTest extends SvgIntegrationTest {
           @LogMessage(messageTemplate =  SvgLogMessageConstant.UNMAPPEDTAG),
   })
   public void maskWithGradient() throws IOException, InterruptedException {
-    convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "maskWithGradient", properties);
+    convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "maskWithGradient", properties);
   }
 }

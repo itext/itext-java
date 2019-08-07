@@ -66,7 +66,7 @@ public class TimelineChartsTest extends SvgIntegrationTest {
 
   @Test
   public void timeline_advanced_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "timeline_advanced_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "timeline_advanced_chart");
   }
 
   @Test
@@ -81,6 +81,6 @@ public class TimelineChartsTest extends SvgIntegrationTest {
 
   @Test
   public void timeline_labeled_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "timeline_labeled_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "timeline_labeled_chart");
   }
 }

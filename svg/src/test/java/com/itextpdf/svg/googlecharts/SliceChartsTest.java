@@ -62,11 +62,11 @@ public class SliceChartsTest extends SvgIntegrationTest {
 
   @Test
   public void exploding_slice_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "exploding_slice_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "exploding_slice_chart");
   }
 
   @Test
   public void removing_slice_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "removing_slice_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "removing_slice_chart");
   }
 }

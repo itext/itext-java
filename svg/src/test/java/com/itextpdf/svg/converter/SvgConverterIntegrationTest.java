@@ -145,7 +145,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
         new PdfCanvas(doc.getPage(1)).addXObject(form, new Rectangle(100, 100, 100, 100));
         doc.close();
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -170,7 +170,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
             @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 32),
     })
     public void convertFileWithAllIgnoredTags() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "ignored_tags");
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "ignored_tags");
     }
 
     /**
@@ -179,7 +179,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
      */
     @Test
     public void convertChartWithSomeIgnoredTags() throws IOException, InterruptedException {
-         convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "chart_snippet");
+         convertAndCompareSinglePage(sourceFolder, destinationFolder, "chart_snippet");
     }
 
     @Test
@@ -267,7 +267,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void singlePageHelloWorldTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "hello_world");
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "hello_world");
     }
 
     @Test
@@ -276,7 +276,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         FileOutputStream fos = new FileOutputStream(destinationFolder + name + ".pdf");
         SvgConverter.createPdf(fis, fos);
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + name + ".pdf", sourceFolder + "cmp_" + name + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + name + ".pdf", sourceFolder + "cmp_" + name + ".pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -288,7 +288,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -300,7 +300,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -312,7 +312,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
 
     }
 
@@ -325,7 +325,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -337,7 +337,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
 
     }
 
@@ -350,7 +350,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
 
     }
 
@@ -363,7 +363,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
 
     }
 
@@ -384,7 +384,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -404,7 +404,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -419,7 +419,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         Document doc = new Document(pdfDocument);
         doc.add(image);
         doc.close();
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + name + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + name + ".pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -436,7 +436,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         Document doc = new Document(pdfDocument);
         doc.add(image);
         doc.close();
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + name + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + name + ".pdf", destinationFolder, "diff_"));
     }
 
 
@@ -452,7 +452,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -469,7 +469,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -484,7 +484,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -501,7 +501,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -515,7 +515,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -532,7 +532,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -548,7 +548,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -562,7 +562,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
 
     }
 
@@ -579,7 +579,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -594,7 +594,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -611,7 +611,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareVisually(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + destName + ".pdf", sourceFolder + "cmp_" + destName + ".pdf", destinationFolder, "diff_"));
     }
 
     private static void drawOnSpecifiedPositionDocument(InputStream svg, String dest, int x, int y) throws IOException {

@@ -62,26 +62,26 @@ public class ScatterChartsTest extends SvgIntegrationTest {
 
   @Test
   public void scatter_charts() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "scatter_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "scatter_chart");
   }
 
   @Test
   public void scatter_dualY_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "scatter_dualY_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "scatter_dualY_chart");
   }
 
   @Test
   public void scatter_material_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "scatter_material_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "scatter_material_chart");
   }
 
   @Test
   public void scatter_stars_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "scatter_stars_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "scatter_stars_chart");
   }
 
   @Test
   public void scatter_topX_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "scatter_topX_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "scatter_topX_chart");
   }
 }

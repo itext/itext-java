@@ -42,7 +42,6 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
@@ -83,7 +82,7 @@ public class AnimationSvgTest extends SvgIntegrationTest {
   })
   public void animation() throws IOException, InterruptedException {
     //TODO: update when DEVSIX-2282 fixed
-    convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "animation");
+    convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "animation");
   }
 
 }

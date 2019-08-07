@@ -62,26 +62,26 @@ public class TrendlinesChartsTest extends SvgIntegrationTest {
 
   @Test
   public void trendlines_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "trendlines_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "trendlines_chart");
   }
 
   @Test
   public void trendlines2_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "trendlines2_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "trendlines2_chart");
   }
 
   @Test
   public void trendlines3_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "trendlines3_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "trendlines3_chart");
   }
 
   @Test
   public void trendlines4_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "trendlines4_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "trendlines4_chart");
   }
 
   @Test
   public void trendlines5_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "trendlines5_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "trendlines5_chart");
   }
 }

@@ -43,11 +43,9 @@
 package com.itextpdf.svg.css;
 
 
-import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
-import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
@@ -193,53 +191,53 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     @Test
     //TODO DEVSIX-2058
     public void fontResolverIntegrationTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "fontssvg");
+        convertAndCompare(sourceFolder, destinationFolder, "fontssvg");
     }
 
     @Test
     public void validLocalFontTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "validLocalFontTest");
+        convertAndCompare(sourceFolder, destinationFolder, "validLocalFontTest");
     }
 
     @Test
     public void fontWeightTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "fontWeightTest");
+        convertAndCompare(sourceFolder, destinationFolder, "fontWeightTest");
     }
 
     @Test
     //TODO DEVSIX-2264: that test shall fail after the fix.
     public void googleFontsTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "googleFontsTest");
+        convertAndCompare(sourceFolder, destinationFolder, "googleFontsTest");
     }
 
     @Test
     // TODO: update cmp files when DEVSIX-2286 resolved
     public void svgWithExternalCSStoSingleDefaultPage() throws IOException,InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "externalCss");
+        convertAndCompare(sourceFolder, destinationFolder, "externalCss");
     }
 
     @Test
     // TODO: update cmp files when DEVSIX-2286 resolved
     public void svgWithInternalCSStoSingleDefaultPage() throws IOException,InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "internalCss");
+        convertAndCompare(sourceFolder, destinationFolder, "internalCss");
     }
 
     @Test
     // TODO: update cmp files when DEVSIX-2286 resolved
     public void svgWithExternalCSStoCustomPage() throws IOException,InterruptedException {
         // Take a note this method differs from the one used in Default Page test
-        convertAndCompareVisually(sourceFolder, destinationFolder, "internalCss");
+        convertAndCompare(sourceFolder, destinationFolder, "internalCss");
     }
 
     @Test
     // TODO: update cmp files when DEVSIX-2286 resolved
     public void svgWithInternalCSStoCustomPage() throws IOException,InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "internalCss_custom");
+        convertAndCompare(sourceFolder, destinationFolder, "internalCss_custom");
     }
 
     @Test
     // TODO: update cmp files when DEVSIX-2286 resolved
     public void multipleSVGtagsWithDiffStylesFromExternalCSS() throws IOException,InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "externalCss_palette");
+        convertAndCompare(sourceFolder, destinationFolder, "externalCss_palette");
     }
 }

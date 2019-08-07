@@ -5,5 +5,5 @@
     <line x1='100' y1='100' x2='200' y2='100' stroke-width='5' stroke='black'/>
     <line x1='100' y1='100' x2='100' y2='200' stroke-width='5' stroke='black'/>
     <rect x='100' y='100' width='80' height='80' rx='25' ry='15'
-          tstroke='green' fill='cyan'/>
+          stroke='green' fill='cyan'/>
 </svg>

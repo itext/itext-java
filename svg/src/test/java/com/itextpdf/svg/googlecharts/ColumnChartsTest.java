@@ -63,17 +63,17 @@ import org.junit.experimental.categories.Category;
 
     @Test
   public void column_dualY_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "column_dualY_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "column_dualY_chart");
   }
 
     @Test
     public void column_material_chart() throws IOException, InterruptedException, java.io.IOException {
-      convertAndCompareVisually(sourceFolder, destinationFolder, "column_material_chart");
+      convertAndCompare(sourceFolder, destinationFolder, "column_material_chart");
     }
 
     @Test
     public void column_topX_chart() throws IOException, InterruptedException, java.io.IOException {
-      convertAndCompareVisually(sourceFolder, destinationFolder, "column_topX_chart");
+      convertAndCompare(sourceFolder, destinationFolder, "column_topX_chart");
     }
   }
 

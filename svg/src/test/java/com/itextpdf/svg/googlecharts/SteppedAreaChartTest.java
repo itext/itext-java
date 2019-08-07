@@ -62,16 +62,16 @@ public class SteppedAreaChartTest extends SvgIntegrationTest {
 
   @Test
   public void stepped_area_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "stepped_area_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "stepped_area_chart");
   }
 
   @Test
   public void stepped_area2_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "stepped_area2_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "stepped_area2_chart");
   }
 
   @Test
   public void stepped_area3_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "stepped_area3_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "stepped_area3_chart");
   }
 }

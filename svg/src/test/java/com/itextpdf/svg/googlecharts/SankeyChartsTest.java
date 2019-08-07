@@ -65,12 +65,12 @@ public class SankeyChartsTest extends SvgIntegrationTest {
 
   @Test
   public void sankey_borders_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "sankey_borders_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "sankey_borders_chart");
   }
 
   @Test
   public void sankey_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "sankey_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "sankey_chart");
   }
 
   @Test
@@ -78,23 +78,23 @@ public class SankeyChartsTest extends SvgIntegrationTest {
           @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 46),
   })
   public void sankey_colored_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "sankey_colored_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "sankey_colored_chart");
   }
 
   @Test
   // TODO DEVSIX-2905
   public void sankey_fonts_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "sankey_fonts_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "sankey_fonts_chart");
   }
 
   @Test
   public void sankey_multilevel_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "sankey_multilevel_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "sankey_multilevel_chart");
   }
 
   @Test
   public void sankey_nodes_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "sankey_nodes_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "sankey_nodes_chart");
   }
 
 }

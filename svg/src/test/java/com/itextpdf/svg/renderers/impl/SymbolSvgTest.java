@@ -82,6 +82,6 @@ public class SymbolSvgTest extends SvgIntegrationTest {
           @LogMessage(messageTemplate = LogMessageConstant.ERROR_RESOLVING_PARENT_STYLES,count = 4),
   })
   public void symbolTest() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareSinglePageVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "symbol");
+    convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "symbol");
   }
 }

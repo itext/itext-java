@@ -62,16 +62,16 @@ public class GaugeChartsTest extends SvgIntegrationTest {
 
   @Test
   public void gauge_charts() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "gauge_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "gauge_chart");
   }
 
   @Test
   public void gauge2_charts() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "gauge2_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "gauge2_chart");
   }
 
   @Test
   public void gauge3_charts() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompareVisually(sourceFolder, destinationFolder, "gauge3_chart");
+    convertAndCompare(sourceFolder, destinationFolder, "gauge3_chart");
   }
 }

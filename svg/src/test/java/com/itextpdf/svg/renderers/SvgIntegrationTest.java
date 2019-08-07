@@ -119,41 +119,25 @@ public class SvgIntegrationTest extends ExtendedITextTest {
         SvgConverter.createPdf(svg, pdfOutputStream, properties, writerprops);
     }
 
-    public void convertAndCompareVisually(String src, String dest, String fileName) throws IOException, InterruptedException {
+    public void convertAndCompare(String src, String dest, String fileName) throws IOException, InterruptedException {
         convert(src + fileName + ".svg", dest + fileName + ".pdf");
         compare(fileName, src, dest);
     }
 
-    public void convertAndCompareSinglePageStructurally(String src, String dest, String fileName) throws IOException, InterruptedException {
+    public void convertAndCompareSinglePage(String src, String dest, String fileName) throws IOException, InterruptedException {
         convertToSinglePage(new FileInputStream(src + fileName + ".svg"), new FileOutputStream(dest + fileName + ".pdf"));
         compare(fileName, src, dest);
     }
 
-    public void convertAndCompareSinglePageStructurally(String src, String dest, String fileName, ISvgConverterProperties properties) throws IOException, InterruptedException {
+    public void convertAndCompareSinglePage(String src, String dest, String fileName, ISvgConverterProperties properties) throws IOException, InterruptedException {
         convertToSinglePage(new FileInputStream(src + fileName + ".svg"), new FileOutputStream(dest + fileName + ".pdf"), properties);
-        compare(fileName, src, dest);
-    }
-
-    public void convertAndCompareSinglePageVisually(String src, String dest, String fileName) throws IOException, InterruptedException {
-        convertToSinglePage(new FileInputStream(src + fileName + ".svg"), new FileOutputStream(dest + fileName + ".pdf"));
-        compare(fileName, src, dest);
-    }
-
-    public void convertAndCompareSinglePageVisually(String src, String dest, String fileName, ISvgConverterProperties properties) throws IOException, InterruptedException {
-        convertToSinglePage(new FileInputStream(src + fileName + ".svg"), new FileOutputStream(dest + fileName + ".pdf"), properties);
-        compare(fileName, src, dest);
-    }
-
-    public void convertAndCompareStructurally(String src, String dest, String fileName) throws IOException, InterruptedException {
-        convert(new FileInputStream(src + fileName + ".svg"), new FileOutputStream(dest + fileName + ".pdf"));
         compare(fileName, src, dest);
     }
 
     protected void compare(String filename, String sourceFolder, String destinationFolder) throws IOException, InterruptedException {
-        String result = new CompareTool().compareByContent(destinationFolder + filename + ".pdf", sourceFolder + "cmp_" + filename + ".pdf", destinationFolder, "diff_");
-
-        if (result != null && !result.contains("No visual differences")) {
-            Assert.fail(result);
-        }
+        Assert.assertNull(new CompareTool()
+                .compareByContent(destinationFolder + filename + ".pdf",
+                        sourceFolder + "cmp_" + filename + ".pdf",
+                        destinationFolder, "diff_"));
     }
 }
