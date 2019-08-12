@@ -44,12 +44,14 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -305,7 +307,34 @@ public class LinkTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
-
     }
 
+    @Test
+    public void linkWithCustomRectangleTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "linkWithCustomRectangleTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_linkWithCustomRectangleTest01.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        String text = "Hello World";
+
+        PdfAction action = PdfAction.createURI("http://itextpdf.com");
+
+        PdfLinkAnnotation annotation = new PdfLinkAnnotation(new Rectangle(1, 1)).setAction(action);
+
+        Link linkByAnnotation = new Link(text, annotation);
+        doc.add(new Paragraph(linkByAnnotation));
+
+        annotation.setRectangle(new PdfArray(new Rectangle(100, 100, 20, 20)));
+        Link linkByChangedAnnotation = new Link(text, annotation);
+        doc.add(new Paragraph(linkByChangedAnnotation));
+
+        Link linkByAction = new Link(text, action);
+        doc.add(new Paragraph(linkByAction));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
 }
