@@ -75,6 +75,12 @@ public class HyphenateResultTest extends ExtendedITextTest {
     }
 
     @Test
+    public void hindiHyphResult() {
+        //लाभहानि
+        testHyphenateResult("hi", "लाभहानि", new int[]{3});
+    }
+
+    @Test
     public void spacesTest01() {
         //Annuitätendarlehen
         testHyphenateResult("de", "    Annuitätendarlehen", new int[]{5, 7, 10, 13, 15});
