@@ -251,11 +251,34 @@ public abstract class WrappedSamplesRunner {
 
     private static boolean isIgnoredClassOrPackage(String fullName, RunnerSearchConfig searchConfig) {
         for (String ignoredPath : searchConfig.getIgnoredPaths()) {
-            if (fullName.contains(ignoredPath)) {
-                return true;
+            File currentFile = getFileByLocation("target/classes", ignoredPath);
+
+            if (currentFile == null) {
+                currentFile = getFileByLocation("target/test-classes", ignoredPath);
+            }
+
+            if (currentFile != null) {
+                if ((currentFile.isDirectory() && fullName.contains(ignoredPath))
+                        || (currentFile.isFile() && fullName.equals(ignoredPath))) {
+                    return true;
+                }
             }
         }
         return false;
+    }
+
+    private static File getFileByLocation(String targetSubDirectory, String filePath) {
+        File currentFile = Paths.get(targetSubDirectory, filePath.replace(".", "/")).toFile();
+        if (currentFile.exists()) {
+            return currentFile;
+        }
+
+        currentFile = Paths.get(targetSubDirectory, (filePath.replace(".", "/")) + ".class").toFile();
+        if (currentFile.exists()) {
+            return currentFile;
+        }
+
+        return null;
     }
 
     private static class RunnerParams {
