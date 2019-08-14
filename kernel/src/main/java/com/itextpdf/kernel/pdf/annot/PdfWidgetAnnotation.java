@@ -108,11 +108,11 @@ public class PdfWidgetAnnotation extends PdfAnnotation {
     /**
      * Setter for the annotation's highlighting mode. Possible values are
      * <ul>
-     *     <li>{@link PdfAnnotation#HIGHLIGHT_NONE} - No highlighting.</li>
-     *     <li>{@link PdfAnnotation#HIGHLIGHT_INVERT} - Invert the contents of the annotation rectangle.</li>
-     *     <li>{@link PdfAnnotation#HIGHLIGHT_OUTLINE} - Invert the annotation's border.</li>
-     *     <li>{@link PdfAnnotation#HIGHLIGHT_PUSH} - Display the annotation?s down appearance, if any.</li>
-     *     <li>{@link PdfAnnotation#HIGHLIGHT_TOGGLE} - Same as P.</li>
+     *     <li>{@link PdfAnnotation#HIGHLIGHT_NONE} - No highlighting.
+     *     <li>{@link PdfAnnotation#HIGHLIGHT_INVERT} - Invert the contents of the annotation rectangle.
+     *     <li>{@link PdfAnnotation#HIGHLIGHT_OUTLINE} - Invert the annotation's border.
+     *     <li>{@link PdfAnnotation#HIGHLIGHT_PUSH} - Display the annotation?s down appearance, if any.
+     *     <li>{@link PdfAnnotation#HIGHLIGHT_TOGGLE} - Same as P.
      * </ul>
      * @param mode The new value for the annotation's highlighting mode.
      * @return The widget annotation which this method was called on.
@@ -257,11 +257,11 @@ public class PdfWidgetAnnotation extends PdfAnnotation {
     /**
      * Setter for the annotation's preset border style. Possible values are
      * <ul>
-     *     <li>{@link PdfAnnotation#STYLE_SOLID} - A solid rectangle surrounding the annotation.</li>
-     *     <li>{@link PdfAnnotation#STYLE_DASHED} - A dashed rectangle surrounding the annotation.</li>
-     *     <li>{@link PdfAnnotation#STYLE_BEVELED} - A simulated embossed rectangle that appears to be raised above the surface of the page.</li>
-     *     <li>{@link PdfAnnotation#STYLE_INSET} - A simulated engraved rectangle that appears to be recessed below the surface of the page.</li>
-     *     <li>{@link PdfAnnotation#STYLE_UNDERLINE} - A single line along the bottom of the annotation rectangle.</li>
+     *     <li>{@link PdfAnnotation#STYLE_SOLID} - A solid rectangle surrounding the annotation.
+     *     <li>{@link PdfAnnotation#STYLE_DASHED} - A dashed rectangle surrounding the annotation.
+     *     <li>{@link PdfAnnotation#STYLE_BEVELED} - A simulated embossed rectangle that appears to be raised above the surface of the page.
+     *     <li>{@link PdfAnnotation#STYLE_INSET} - A simulated engraved rectangle that appears to be recessed below the surface of the page.
+     *     <li>{@link PdfAnnotation#STYLE_UNDERLINE} - A single line along the bottom of the annotation rectangle.
      * </ul>
      * See also ISO-320001, Table 166.
      * @param style The new value for the annotation's border style.

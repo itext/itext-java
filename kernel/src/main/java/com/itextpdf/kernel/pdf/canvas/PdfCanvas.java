@@ -1545,10 +1545,10 @@ public class PdfCanvas implements Serializable {
     }
 
     /**
-     * Changes the <VAR>Flatness</VAR>.
-     * <br>
-     * <VAR>Flatness</VAR> sets the maximum permitted distance in device pixels between the
-     * mathematically correct path and an approximation constructed from straight line segments.<BR>
+     * Changes the Flatness.
+     * <p>
+     * Flatness sets the maximum permitted distance in device pixels between the
+     * mathematically correct path and an approximation constructed from straight line segments.
      *
      * @param flatnessTolerance a value
      * @return current canvas.

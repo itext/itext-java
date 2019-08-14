@@ -49,13 +49,13 @@ import java.util.SimpleTimeZone;
 
 /**
  * {@code PdfDate} is the PDF date object.
- * <P>
+ * <p>
  * PDF defines a standard date format. The PDF date format closely follows the format
  * defined by the international standard ASN.1 (Abstract Syntax Notation One, defined
  * in CCITT X.208 or ISO/IEC 8824). A date is a {@code PdfString} of the form:
- * <P><BLOCKQUOTE>
- * (D:YYYYMMDDHHmmSSOHH'mm')
- * </BLOCKQUOTE><P>
+ * <p>
+ * {@code (D:YYYYMMDDHHmmSSOHH'mm') }
+ * <p>
  * See also ISO-320001 7.9.4, "Dates".
  *
  * @see PdfString

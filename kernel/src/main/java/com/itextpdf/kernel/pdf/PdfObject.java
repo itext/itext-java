@@ -534,12 +534,12 @@ public abstract class PdfObject implements Serializable {
     /**
      * Processes two cases of object copying:
      * <ol>
-     * <li>copying to the other document</li>
-     * <li>cloning inside of the current document</li>
+     * <li>copying to the other document
+     * <li>cloning inside of the current document
      * </ol>
      * <p>
-     * This two cases are distinguished by the state of <code>document</code> parameter:
-     * the second case is processed if <code>document</code> is <code>null</code>.
+     * This two cases are distinguished by the state of {@code document} parameter:
+     * the second case is processed if {@code document} is {@code null}.
      *
      * @param documentTo       if not null: document to copy object to; otherwise indicates that object is to be cloned.
      * @param allowDuplicating indicates if to allow copy objects which already have been copied.

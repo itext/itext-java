@@ -186,14 +186,14 @@ public class AffineTransform implements Serializable {
      * translation vector is (m02, m12). Original basis vectors are (1, 0) and (0, 1).
      * Type transformations classification:
      * <ul>
-     * <li>{@link AffineTransform#TYPE_IDENTITY} - new basis equals original one and zero translation</li>
-     * <li>{@link AffineTransform#TYPE_TRANSLATION} - translation vector isn't zero</li>
-     * <li>{@link AffineTransform#TYPE_UNIFORM_SCALE} - vectors length of new basis equals</li>
-     * <li>{@link AffineTransform#TYPE_GENERAL_SCALE} - vectors length of new basis doesn't equal</li>
-     * <li>{@link AffineTransform#TYPE_FLIP} - new basis vector orientation differ from original one</li>
-     * <li>{@link AffineTransform#TYPE_QUADRANT_ROTATION} - new basis is rotated by 90, 180, 270, or 360 degrees</li>
-     * <li>{@link AffineTransform#TYPE_GENERAL_ROTATION} - new basis is rotated by arbitrary angle</li>
-     * <li>{@link AffineTransform#TYPE_GENERAL_TRANSFORM} - transformation can't be inversed</li>
+     * <li>{@link AffineTransform#TYPE_IDENTITY} - new basis equals original one and zero translation
+     * <li>{@link AffineTransform#TYPE_TRANSLATION} - translation vector isn't zero
+     * <li>{@link AffineTransform#TYPE_UNIFORM_SCALE} - vectors length of new basis equals
+     * <li>{@link AffineTransform#TYPE_GENERAL_SCALE} - vectors length of new basis doesn't equal
+     * <li>{@link AffineTransform#TYPE_FLIP} - new basis vector orientation differ from original one
+     * <li>{@link AffineTransform#TYPE_QUADRANT_ROTATION} - new basis is rotated by 90, 180, 270, or 360 degrees
+     * <li>{@link AffineTransform#TYPE_GENERAL_ROTATION} - new basis is rotated by arbitrary angle
+     * <li>{@link AffineTransform#TYPE_GENERAL_TRANSFORM} - transformation can't be inversed
      * </ul>
      *
      * @return the type of this AffineTransform
@@ -384,7 +384,7 @@ public class AffineTransform implements Serializable {
     /**
      * Set this affine transformation to represent a rotation over the passed angle,
      * using the passed point as the center of rotation
-     * 
+     *
      * @param angle angle to rotate over in radians
      * @param px x-coordinate of center of rotation
      * @param py y-coordinate of center of rotation

@@ -397,10 +397,10 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
      * @param phoneticAlphabet the {@link PdfName} which defines phonetic alphabet used by a {@link PdfName#Phoneme}
      *                         attribute. Possible values are:
      *                         <ul>
-     *                         <li>{@link PdfName#ipa} for the International Phonetic Alphabet by the International Phonetic Association;</li>
-     *                         <li>{@link PdfName#x_sampa} for Extended Speech Assessment Methods Phonetic Alphabet (X-SAMPA);</li>
-     *                         <li>{@link PdfName#zh_Latn_pinyin} for Pinyin Latin romanization (Mandarin);</li>
-     *                         <li>{@link PdfName#zh_Latn_wadegile} for Wade-Giles romanization (Mandarin).</li>
+     *                         <li>{@link PdfName#ipa} for the International Phonetic Alphabet by the International Phonetic Association;
+     *                         <li>{@link PdfName#x_sampa} for Extended Speech Assessment Methods Phonetic Alphabet (X-SAMPA);
+     *                         <li>{@link PdfName#zh_Latn_pinyin} for Pinyin Latin romanization (Mandarin);
+     *                         <li>{@link PdfName#zh_Latn_wadegile} for Wade-Giles romanization (Mandarin).
      *                         </ul>
      *                         Other values may be used.
      */

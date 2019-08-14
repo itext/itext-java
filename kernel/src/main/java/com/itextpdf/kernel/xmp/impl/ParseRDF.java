@@ -47,8 +47,8 @@ import org.w3c.dom.Node;
 
 
 /**
- * Parser for "normal" XML serialisation of RDF.  
- * 
+ * Parser for "normal" XML serialisation of RDF.
+ *
  * @since   14.07.2006
  */
 public class ParseRDF implements XMPError, XMPConst
@@ -70,11 +70,11 @@ public class ParseRDF implements XMPError, XMPConst
 	/** End of coreSyntaxTerms */
 	public static final int RDFTERM_DATATYPE = 7;
 	/** Start of additions for syntax Terms. */
-	public static final int RDFTERM_DESCRIPTION = 8; 
+	public static final int RDFTERM_DESCRIPTION = 8;
 	/** End of of additions for syntaxTerms. */
 	public static final int RDFTERM_LI = 9;
 	/** Start of oldTerms. */
-	public static final int RDFTERM_ABOUT_EACH = 10; 
+	public static final int RDFTERM_ABOUT_EACH = 10;
 	/** */
 	public static final int RDFTERM_ABOUT_EACH_PREFIX = 11;
 	/** End of oldTerms. */
@@ -94,13 +94,13 @@ public class ParseRDF implements XMPError, XMPConst
 
 	/** this prefix is used for default namespaces */
 	public static final String DEFAULT_PREFIX = "_dflt";
-	
-	
-	
+
+
+
 	/**
 	 * The main parsing method. The XML tree is walked through from the root node and and XMP tree
 	 * is created. This is a raw parse, the normalisation of the XMP tree happens outside.
-	 * 
+	 *
 	 * @param xmlRoot the XML root node
 	 * @return Returns an XMP metadata object (not normalized)
 	 * @throws XMPException Occurs if the parsing fails for any reason.
@@ -111,13 +111,13 @@ public class ParseRDF implements XMPError, XMPConst
 		rdf_RDF(xmp, xmlRoot);
 		return xmp;
 	}
-	
-	
+
+
 	/**
 	 * Each of these parsing methods is responsible for recognizing an RDF
 	 * syntax production and adding the appropriate structure to the XMP tree.
 	 * They simply return for success, failures will throw an exception.
-	 * 
+	 *
 	 * @param xmp the xmp metadata object that is generated
 	 * @param rdfRdfNode the top-level xml node
 	 * @throws XMPException thown on parsing errors
@@ -127,25 +127,25 @@ public class ParseRDF implements XMPError, XMPConst
 		if (rdfRdfNode.hasAttributes())
 		{
 			rdf_NodeElementList (xmp, xmp.getRoot(), rdfRdfNode);
-		}	
+		}
 		else
-		{	
+		{
 			throw new XMPException("Invalid attributes of rdf:RDF element", BADRDF);
 		}
 	}
-	
-	
+
+
 	/**
 	 * 7.2.10 nodeElementList<br>
 	 * ws* ( nodeElement ws* )*
-	 * 
+	 *
 	 * Note: this method is only called from the rdf:RDF-node (top level)
 	 * @param xmp the xmp metadata object that is generated
 	 * @param xmpParent the parent xmp node
 	 * @param rdfRdfNode the top-level xml node
 	 * @throws XMPException thown on parsing errors
 	 */
-	private static void rdf_NodeElementList(XMPMetaImpl xmp, XMPNode xmpParent, Node rdfRdfNode) 
+	private static void rdf_NodeElementList(XMPMetaImpl xmp, XMPNode xmpParent, Node rdfRdfNode)
 		throws XMPException
 	{
 		for (int i = 0; i < rdfRdfNode.getChildNodes().getLength(); i++)
@@ -153,10 +153,10 @@ public class ParseRDF implements XMPError, XMPConst
 			Node child = rdfRdfNode.getChildNodes().item(i);
 			// filter whitespaces (and all text nodes)
 			if (!isWhitespaceNode(child))
-			{	
+			{
 				rdf_NodeElement  (xmp, xmpParent, child, true);
-			}	
-		} 
+			}
+		}
 	}
 
 
@@ -169,10 +169,10 @@ public class ParseRDF implements XMPError, XMPConst
 	 * 		attributes == set ( ( idAttr | nodeIdAttr | aboutAttr )?, propertyAttr* ) )
 	 * 		propertyEltList
 	 * 		end-element()
-	 * 
+	 *
 	 * A node element URI is rdf:Description or anything else that is not an RDF
 	 * term.
-	 * 
+	 *
 	 * @param xmp the xmp metadata object that is generated
 	 * @param xmpParent the parent xmp node
 	 * @param xmlNode the currently processed XML node
@@ -197,12 +197,12 @@ public class ParseRDF implements XMPError, XMPConst
 			rdf_NodeElementAttrs (xmp, xmpParent, xmlNode, isTopLevel);
 			rdf_PropertyElementList (xmp, xmpParent, xmlNode, isTopLevel);
 		}
-		
+
 	}
 
 
 	/**
-	 * 
+	 *
 	 * 7.2.7 propertyAttributeURIs
 	 * 		anyURI - ( coreSyntaxTerms | rdf:Description | rdf:li | oldTerms )
 	 *
@@ -211,11 +211,11 @@ public class ParseRDF implements XMPError, XMPConst
 	 * 					attributes == set ( ( idAttr | nodeIdAttr | aboutAttr )?, propertyAttr* ) )
 	 * 					propertyEltList
 	 * 					end-element()
-	 * 
-	 * Process the attribute list for an RDF node element. A property attribute URI is 
-	 * anything other than an RDF term. The rdf:ID and rdf:nodeID attributes are simply ignored, 
+	 *
+	 * Process the attribute list for an RDF node element. A property attribute URI is
+	 * anything other than an RDF term. The rdf:ID and rdf:nodeID attributes are simply ignored,
 	 * as are rdf:about attributes on inner nodes.
-	 * 
+	 *
 	 * @param xmp the xmp metadata object that is generated
 	 * @param xmpParent the parent xmp node
 	 * @param xmlNode the currently processed XML node
@@ -226,12 +226,12 @@ public class ParseRDF implements XMPError, XMPConst
 			boolean isTopLevel) throws XMPException
 	{
 		// Used to detect attributes that are mutually exclusive.
-		int exclusiveAttrs = 0;	
-	
+		int exclusiveAttrs = 0;
+
 		for (int i = 0; i < xmlNode.getAttributes().getLength(); i++)
 		{
 			Node attribute = xmlNode.getAttributes().item(i);
-			
+
 			// quick hack, ns declarations do not appear in C++
 			// ignore "ID" without namespace
 			if ("xmlns".equals(attribute.getPrefix())  ||
@@ -239,7 +239,7 @@ public class ParseRDF implements XMPError, XMPConst
 			{
 				continue;
 			}
-			
+
 			int attrTerm = getRDFTermKind(attribute);
 
 			switch (attrTerm)
@@ -252,9 +252,9 @@ public class ParseRDF implements XMPError, XMPConst
 						throw new XMPException("Mutally exclusive about, ID, nodeID attributes",
 								BADRDF);
 					}
-					
+
 					exclusiveAttrs++;
-	
+
 					if (isTopLevel && (attrTerm == RDFTERM_ABOUT))
 					{
 						// This is the rdf:about attribute on a top level node. Set
@@ -275,23 +275,23 @@ public class ParseRDF implements XMPError, XMPConst
 						}
 					}
 					break;
-	
+
 				case RDFTERM_OTHER:
 					addChildNode(xmp, xmpParent, attribute, attribute.getNodeValue(), isTopLevel);
 					break;
-	
+
 				default:
 					throw new XMPException("Invalid nodeElement attribute", BADRDF);
 			}
 
-		}		
+		}
 	}
 
 
 	/**
 	 * 7.2.13 propertyEltList
 	 * ws* ( propertyElt ws* )*
-	 * 
+	 *
 	 * @param xmp the xmp metadata object that is generated
 	 * @param xmpParent the parent xmp node
 	 * @param xmlParent the currently processed XML node
@@ -307,24 +307,24 @@ public class ParseRDF implements XMPError, XMPConst
 			if (isWhitespaceNode(currChild))
 			{
 				continue;
-			}	
+			}
 			else if (currChild.getNodeType() != Node.ELEMENT_NODE)
 			{
 				throw new XMPException("Expected property element node not found", BADRDF);
 			}
 			else
-			{	
+			{
 				rdf_PropertyElement(xmp, xmpParent, currChild, isTopLevel);
-			}	
+			}
 		}
 	}
 
 
 	/**
 	 * 7.2.14 propertyElt
-	 * 
+	 *
 	 *		resourcePropertyElt | literalPropertyElt | parseTypeLiteralPropertyElt |
-	 *		parseTypeResourcePropertyElt | parseTypeCollectionPropertyElt | 
+	 *		parseTypeResourcePropertyElt | parseTypeCollectionPropertyElt |
 	 *		parseTypeOtherPropertyElt | emptyPropertyElt
 	 *
 	 * 7.2.15 resourcePropertyElt
@@ -366,13 +366,13 @@ public class ParseRDF implements XMPError, XMPConst
 	 *			attributes == set ( idAttr?, ( resourceAttr | nodeIdAttr )?, propertyAttr* ) )
 	 *		end-element()
 	 *
-	 * The various property element forms are not distinguished by the XML element name, 
-	 * but by their attributes for the most part. The exceptions are resourcePropertyElt and 
+	 * The various property element forms are not distinguished by the XML element name,
+	 * but by their attributes for the most part. The exceptions are resourcePropertyElt and
 	 * literalPropertyElt. They are distinguished by their XML element content.
 	 *
-	 * NOTE: The RDF syntax does not explicitly include the xml:lang attribute although it can 
-	 * appear in many of these. We have to allow for it in the attibute counts below.	 
-	 *  
+	 * NOTE: The RDF syntax does not explicitly include the xml:lang attribute although it can
+	 * appear in many of these. We have to allow for it in the attibute counts below.
+	 *
 	 * @param xmp the xmp metadata object that is generated
 	 * @param xmpParent the parent xmp node
 	 * @param xmlNode the currently processed XML node
@@ -387,7 +387,7 @@ public class ParseRDF implements XMPError, XMPConst
 		{
 			throw new XMPException("Invalid property element name", BADRDF);
 		}
-		
+
 		// remove the namespace-definitions from the list
 		NamedNodeMap attributes = xmlNode.getAttributes();
 		List nsAttrs = null;
@@ -412,19 +412,19 @@ public class ParseRDF implements XMPError, XMPConst
 				attributes.removeNamedItem(ns);
 			}
 		}
-		
-		
+
+
 		if (attributes.getLength() > 3)
 		{
 			// Only an emptyPropertyElt can have more than 3 attributes.
 			rdf_EmptyPropertyElement(xmp, xmpParent, xmlNode, isTopLevel);
-		} 
-		else 
+		}
+		else
 		{
-			// Look through the attributes for one that isn't rdf:ID or xml:lang, 
-			// it will usually tell what we should be dealing with. 
+			// Look through the attributes for one that isn't rdf:ID or xml:lang,
+			// it will usually tell what we should be dealing with.
 			// The called routines must verify their specific syntax!
-	
+
 			for (int i = 0; i < attributes.getLength(); i++)
 			{
 				Node attribute = attributes.item(i);
@@ -458,12 +458,12 @@ public class ParseRDF implements XMPError, XMPConst
 					{
 						rdf_ParseTypeOtherPropertyElement();
 					}
-		
+
 					return;
 				}
 			}
-			
-			// Only rdf:ID and xml:lang, could be a resourcePropertyElt, a literalPropertyElt, 
+
+			// Only rdf:ID and xml:lang, could be a resourcePropertyElt, a literalPropertyElt,
 			// or an emptyPropertyElt. Look at the child XML nodes to decide which.
 
 			if (xmlNode.hasChildNodes())
@@ -477,27 +477,27 @@ public class ParseRDF implements XMPError, XMPConst
 						return;
 					}
 				}
-				
+
 				rdf_LiteralPropertyElement (xmp, xmpParent, xmlNode, isTopLevel);
 			}
 			else
 			{
 				rdf_EmptyPropertyElement (xmp, xmpParent, xmlNode, isTopLevel);
 			}
-		}		
+		}
 	}
 
-	
+
 	/**
 	 * 7.2.15 resourcePropertyElt
 	 *		start-element ( URI == propertyElementURIs, attributes == set ( idAttr? ) )
 	 *		ws* nodeElement ws*
 	 *		end-element()
 	 *
-	 * This handles structs using an rdf:Description node, 
-	 * arrays using rdf:Bag/Seq/Alt, and typedNodes. It also catches and cleans up qualified 
+	 * This handles structs using an rdf:Description node,
+	 * arrays using rdf:Bag/Seq/Alt, and typedNodes. It also catches and cleans up qualified
 	 * properties written with rdf:Description and rdf:value.
-	 * 
+	 *
 	 * @param xmp the xmp metadata object that is generated
 	 * @param xmpParent the parent xmp node
 	 * @param xmlNode the currently processed XML node
@@ -512,9 +512,9 @@ public class ParseRDF implements XMPError, XMPConst
 			// Strip old "punchcard" chaff which has on the prefix "iX:".
 			return;	
 		}
-		
+
 		XMPNode newCompound = addChildNode(xmp, xmpParent, xmlNode, "", isTopLevel);
-		
+
 		// walk through the attributes
 		for (int i = 0; i < xmlNode.getAttributes().getLength(); i++)
 		{
@@ -524,13 +524,13 @@ public class ParseRDF implements XMPError, XMPConst
 			{
 				continue;
 			}
-			
+
 			String attrLocal = attribute.getLocalName();
 			String attrNS = attribute.getNamespaceURI();
 			if (XML_LANG.equals(attribute.getNodeName()))
 			{
 				addQualifierNode (newCompound, XML_LANG, attribute.getNodeValue());
-			} 
+			}
 			else if ("ID".equals(attrLocal)  &&  NS_RDF.equals(attrNS))
 			{
 				continue;	// Ignore all rdf:ID attributes.
@@ -543,7 +543,7 @@ public class ParseRDF implements XMPError, XMPConst
 		}
 
 		// walk through the children
-		
+
 		Node currChild = null;
 		boolean found = false;
 		int i;
@@ -556,7 +556,7 @@ public class ParseRDF implements XMPError, XMPConst
 				{
 					boolean isRDF = NS_RDF.equals(currChild.getNamespaceURI());
 					String childLocal = currChild.getLocalName();
-					
+
 					if (isRDF  &&  "Bag".equals(childLocal))
 					{
 						newCompound.getOptions().setArray(true);
@@ -585,18 +585,18 @@ public class ParseRDF implements XMPError, XMPConst
 							addQualifierNode (newCompound, "rdf:type", typeName);
 						}
 					}
-	
+
 					rdf_NodeElement (xmp, newCompound, currChild, false);
-					
+
 					if (newCompound.getHasValueChild())
 					{
 						fixupQualifiedNode (newCompound);
-					} 
+					}
 					else if (newCompound.getOptions().isArrayAlternate())
 					{
 						XMPNodeUtils.detectAltText(newCompound);
-					}				
-					
+					}
+
 					found = true;
 				}
 				else if (found)
@@ -612,18 +612,18 @@ public class ParseRDF implements XMPError, XMPConst
 				}
 			}
 		}
-		
+
 		if (!found)
 		{
 			// didn't found any child elements
 			throw new XMPException("Missing child of resource property element", BADRDF);
 		}
-	}	
+	}
 
-	
+
 	/**
 	 * 7.2.16 literalPropertyElt
-	 *		start-element ( URI == propertyElementURIs, 
+	 *		start-element ( URI == propertyElementURIs,
 	 *				attributes == set ( idAttr?, datatypeAttr?) )
 	 *		text()
 	 *		end-element()
@@ -634,12 +634,12 @@ public class ParseRDF implements XMPError, XMPConst
 	 * @param xmlNode the currently processed XML node
 	 * @param isTopLevel Flag if the node is a top-level node
 	 * @throws XMPException thown on parsing errors
-	 */	
+	 */
 	private static void rdf_LiteralPropertyElement(XMPMetaImpl xmp, XMPNode xmpParent,
 			Node xmlNode, boolean isTopLevel) throws XMPException
 	{
 		XMPNode newChild = addChildNode (xmp, xmpParent, xmlNode, null, isTopLevel);
-		
+
 		for (int i = 0; i < xmlNode.getAttributes().getLength(); i++)
 		{
 			Node attribute = xmlNode.getAttributes().item(i);
@@ -648,13 +648,13 @@ public class ParseRDF implements XMPError, XMPConst
 			{
 				continue;
 			}
-			
+
 			String attrNS = attribute.getNamespaceURI();
 			String attrLocal = attribute.getLocalName();
 			if (XML_LANG.equals(attribute.getNodeName()))
 			{
 				addQualifierNode(newChild, XML_LANG, attribute.getNodeValue());
-			} 
+			}
 			else if (NS_RDF.equals(attrNS)  &&
 					 ("ID".equals(attrLocal)  ||  "datatype".equals(attrLocal)))
 			{
@@ -681,15 +681,15 @@ public class ParseRDF implements XMPError, XMPConst
 		}
 		newChild.setValue(textValue);
 	}
-	
-	
+
+
 	/**
 	 * 7.2.17 parseTypeLiteralPropertyElt
 	 *		start-element ( URI == propertyElementURIs,
 	 *			attributes == set ( idAttr?, parseLiteral ) )
 	 *		literal
 	 *		end-element()
-	 * 
+	 *
 	 * @throws XMPException thown on parsing errors
 	 */
 	private static void rdf_ParseTypeLiteralPropertyElement() throws XMPException
@@ -697,17 +697,17 @@ public class ParseRDF implements XMPError, XMPConst
 		throw new XMPException("ParseTypeLiteral property element not allowed", BADXMP);
 	}
 
-	
+
 	/**
 	 * 7.2.18 parseTypeResourcePropertyElt
-	 *		start-element ( URI == propertyElementURIs, 
+	 *		start-element ( URI == propertyElementURIs,
 	 *			attributes == set ( idAttr?, parseResource ) )
 	 *		propertyEltList
 	 *		end-element()
 	 *
-	 * Add a new struct node with a qualifier for the possible rdf:ID attribute. 
+	 * Add a new struct node with a qualifier for the possible rdf:ID attribute.
 	 * Then process the XML child nodes to get the struct fields.
-	 * 
+	 *
 	 * @param xmp the xmp metadata object that is generated
 	 * @param xmpParent the parent xmp node
 	 * @param xmlNode the currently processed XML node
@@ -718,7 +718,7 @@ public class ParseRDF implements XMPError, XMPConst
 			Node xmlNode, boolean isTopLevel) throws XMPException
 	{
 		XMPNode newStruct = addChildNode (xmp, xmpParent, xmlNode, "", isTopLevel);
-		
+
 		newStruct.getOptions().setStruct(true);
 
 		for (int i = 0; i < xmlNode.getAttributes().getLength(); i++)
@@ -729,7 +729,7 @@ public class ParseRDF implements XMPError, XMPConst
 			{
 				continue;
 			}
-			
+
 			String attrLocal = attribute.getLocalName();
 			String attrNS = attribute.getNamespaceURI();
 			if (XML_LANG.equals(attribute.getNodeName()))
@@ -741,7 +741,7 @@ public class ParseRDF implements XMPError, XMPConst
 			{
 				continue;	// The caller ensured the value is "Resource".
 							// Ignore all rdf:ID attributes.
-			} 
+			}
 			else
 			{
 				throw new XMPException("Invalid attribute for ParseTypeResource property element",
@@ -757,10 +757,10 @@ public class ParseRDF implements XMPError, XMPConst
 		}
 	}
 
-	
+
 	/**
 	 * 7.2.19 parseTypeCollectionPropertyElt
-	 *		start-element ( URI == propertyElementURIs, 
+	 *		start-element ( URI == propertyElementURIs,
 	 *			attributes == set ( idAttr?, parseCollection ) )
 	 *		nodeElementList
 	 *		end-element()
@@ -778,7 +778,7 @@ public class ParseRDF implements XMPError, XMPConst
 	 *		start-element ( URI == propertyElementURIs, attributes == set ( idAttr?, parseOther ) )
 	 *		propertyEltList
 	 *		end-element()
-	 * 
+	 *
 	 * @throws XMPException thown on parsing errors
 	 */
 	private static void rdf_ParseTypeOtherPropertyElement() throws XMPException
@@ -788,43 +788,44 @@ public class ParseRDF implements XMPError, XMPConst
 
 
 	/**
+     *
 	 * 7.2.21 emptyPropertyElt
 	 *		start-element ( URI == propertyElementURIs,
 	 *						attributes == set (
 	 *							idAttr?, ( resourceAttr | nodeIdAttr )?, propertyAttr* ) )
 	 *		end-element()
-	 *
-	 *	<ns:Prop1/>  <!-- a simple property with an empty value --> 
-	 *	<ns:Prop2 rdf:resource="http: *www.adobe.com/"/> <!-- a URI value --> 
-	 *	<ns:Prop3 rdf:value="..." ns:Qual="..."/> <!-- a simple qualified property --> 
-	 *	<ns:Prop4 ns:Field1="..." ns:Field2="..."/> <!-- a struct with simple fields -->
-	 *
+	 * <p>
+	 *	&lt;ns:Prop1/&gt;  &lt;!-- a simple property with an empty value --&gt;<br>
+	 *	&lt;ns:Prop2 rdf:resource="http: *www.adobe.com/"/&gt; &lt;!-- a URI value --&gt;<br>
+	 *	&lt;ns:Prop3 rdf:value="..." ns:Qual="..."/&gt; &lt;!-- a simple qualified property --&gt;<br>
+	 *	&lt;ns:Prop4 ns:Field1="..." ns:Field2="..."/&gt; &lt;!-- a struct with simple fields --&gt;<br>
+     * <p>
 	 * An emptyPropertyElt is an element with no contained content, just a possibly empty set of
 	 * attributes. An emptyPropertyElt can represent three special cases of simple XMP properties: a
 	 * simple property with an empty value (ns:Prop1), a simple property whose value is a URI
-	 * (ns:Prop2), or a simple property with simple qualifiers (ns:Prop3). 
-	 * An emptyPropertyElt can also represent an XMP struct whose fields are all simple and 
+	 * (ns:Prop2), or a simple property with simple qualifiers (ns:Prop3).
+	 * An emptyPropertyElt can also represent an XMP struct whose fields are all simple and
 	 * unqualified (ns:Prop4).
-	 *
+     * <p>
 	 * It is an error to use both rdf:value and rdf:resource - that can lead to invalid  RDF in the
 	 * verbose form written using a literalPropertyElt.
-	 *
-	 * The XMP mapping for an emptyPropertyElt is a bit different from generic RDF, partly for 
+     * <p>
+	 * The XMP mapping for an emptyPropertyElt is a bit different from generic RDF, partly for
 	 * design reasons and partly for historical reasons. The XMP mapping rules are:
-	 * <ol> 
+	 * <ol>
 	 *		<li> If there is an rdf:value attribute then this is a simple property
 	 *				 with a text value.
 	 *		All other attributes are qualifiers.
-	 *		<li> If there is an rdf:resource attribute then this is a simple property 
-	 *			with a URI value. 
+	 *		<li> If there is an rdf:resource attribute then this is a simple property
+	 *			with a URI value.
 	 *		All other attributes are qualifiers.
 	 *		<li> If there are no attributes other than xml:lang, rdf:ID, or rdf:nodeID
-	 *				then this is a simple 
-	 *		property with an empty value. 
-	 *		<li> Otherwise this is a struct, the attributes other than xml:lang, rdf:ID, 
-	 *				or rdf:nodeID are fields. 
+	 *				then this is a simple
+	 *		property with an empty value.
+	 *		<li> Otherwise this is a struct, the attributes other than xml:lang, rdf:ID,
+	 *				or rdf:nodeID are fields.
 	 * </ol>
-	 * 
+	 *
 	 * @param xmp the xmp metadata object that is generated
 	 * @param xmpParent the parent xmp node
 	 * @param xmlNode the currently processed XML node
@@ -838,16 +839,16 @@ public class ParseRDF implements XMPError, XMPConst
 		boolean hasResourceAttr = false;
 		boolean hasNodeIDAttr = false;
 		boolean hasValueAttr = false;
-		
+
 		Node valueNode = null;	// ! Can come from rdf:value or rdf:resource.
-		
+
 		if (xmlNode.hasChildNodes())
 		{
 			throw new XMPException(
 					"Nested content not allowed with rdf:resource or property attributes",
 					BADRDF);
 		}
-		
+
 		// First figure out what XMP this maps to and remember the XML node for a simple value.
 		for (int i = 0; i < xmlNode.getAttributes().getLength(); i++)
 		{
@@ -857,7 +858,7 @@ public class ParseRDF implements XMPError, XMPConst
 			{
 				continue;
 			}
-			
+
 			int attrTerm = getRDFTermKind (attribute);
 
 			switch (attrTerm)
@@ -884,7 +885,7 @@ public class ParseRDF implements XMPError, XMPConst
 					if (!hasValueAttr) 
 					{
 						valueNode = attribute;
-					}	
+					}
 					break;
 
 				case RDFTERM_NODE_ID:
@@ -921,16 +922,16 @@ public class ParseRDF implements XMPError, XMPConst
 						BADRDF);
 			}
 		}
-		
-		// Create the right kind of child node and visit the attributes again 
+
+		// Create the right kind of child node and visit the attributes again
 		// to add the fields or qualifiers.
-		// ! Because of implementation vagaries, 
+		// ! Because of implementation vagaries,
 		//   the xmpParent is the tree root for top level properties.
 		// ! The schema is found, created if necessary, by addChildNode.
-		
+
 		XMPNode childNode = addChildNode(xmp, xmpParent, xmlNode, "", isTopLevel);
 		boolean childIsStruct = false;
-		
+
 		if (hasValueAttr || hasResourceAttr)
 		{
 			childNode.setValue(valueNode != null ? valueNode.getNodeValue() : "");
@@ -945,7 +946,7 @@ public class ParseRDF implements XMPError, XMPConst
 			childNode.getOptions().setStruct(true);
 			childIsStruct = true;
 		}
-		
+
 		for (int i = 0; i < xmlNode.getAttributes().getLength(); i++)
 		{
 			Node attribute = xmlNode.getAttributes().item(i);
@@ -955,7 +956,7 @@ public class ParseRDF implements XMPError, XMPConst
 			{
 				continue;	// Skip the rdf:value or rdf:resource attribute holding the value.
 			}
-			
+
 			int attrTerm = getRDFTermKind (attribute);
 
 			switch (attrTerm)
@@ -963,7 +964,7 @@ public class ParseRDF implements XMPError, XMPConst
 				case RDFTERM_ID :
 				case RDFTERM_NODE_ID :
 					break;	// Ignore all rdf:ID and rdf:nodeID attributes.
-					
+
 				case RDFTERM_RESOURCE :
 					addQualifierNode(childNode, "rdf:resource", attribute.getNodeValue());
 					break;
@@ -989,17 +990,17 @@ public class ParseRDF implements XMPError, XMPConst
 						BADRDF);
 			}
 
-		}		
+		}
 	}
 
 
 	/**
 	 * Adds a child node.
-	 *  
+	 *
 	 * @param xmp the xmp metadata object that is generated
 	 * @param xmpParent the parent xmp node
 	 * @param xmlNode the currently processed XML node
-	 * @param value Node value	
+	 * @param value Node value
 	 * @param isTopLevel Flag if the node is a top-level node
 	 * @return Returns the newly created child node.
 	 * @throws XMPException thown on parsing errors
@@ -1017,7 +1018,7 @@ public class ParseRDF implements XMPError, XMPConst
 				// Fix a legacy DC namespace
 				namespace = NS_DC;
 			}
-			
+
 			String prefix = registry.getNamespacePrefix(namespace);
 			if (prefix == null)
 			{
@@ -1032,7 +1033,7 @@ public class ParseRDF implements XMPError, XMPConst
 				"XML namespace required for all elements and attributes", BADRDF);
 		}
 
-		
+
 		// create schema node if not already there
 		PropertyOptions childOptions = new PropertyOptions();
 		boolean isAlias = false;
@@ -1045,8 +1046,8 @@ public class ParseRDF implements XMPError, XMPConst
 			schemaNode.setImplicit(false);	// Clear the implicit node bit.
 			// need runtime check for proper 32 bit code.
 			xmpParent = schemaNode;
-			
-			// If this is an alias set the alias flag in the node 
+
+			// If this is an alias set the alias flag in the node
 			// and the hasAliases flag in the tree.
 			if (registry.findAlias(childName) != null)
 			{
@@ -1056,7 +1057,7 @@ public class ParseRDF implements XMPError, XMPConst
 			}
 		}
 
-		
+
 		// Make sure that this is not a duplicate of a named node.
 		boolean isArrayItem  = "rdf:li".equals(childName);
 		boolean isValueNode  = "rdf:value".equals(childName);
@@ -1065,7 +1066,7 @@ public class ParseRDF implements XMPError, XMPConst
 		XMPNode newChild = new XMPNode(
 			childName, value, childOptions);
 		newChild.setAlias(isAlias);
-		
+
 		// Add the new child to the XMP parent node, a value node first.
 		if (!isValueNode)
 		{
@@ -1075,35 +1076,35 @@ public class ParseRDF implements XMPError, XMPConst
 		{
 			xmpParent.addChild(1, newChild);
 		}
-		
-		
+
+
 		if (isValueNode)
 		{
 			if (isTopLevel  ||  !xmpParent.getOptions().isStruct())
 			{
 				throw new XMPException("Misplaced rdf:value element", BADRDF);
-			}	
+			}
 			xmpParent.setHasValueChild(true);
 		}
-		
+
 		if (isArrayItem)
 		{
 			if (!xmpParent.getOptions().isArray()) 
 			{
 				throw new XMPException("Misplaced rdf:li element", BADRDF);
-			}	
+			}
 			newChild.setName(ARRAY_ITEM_NAME);
 		}
-		
+
 		return newChild;
 	}
 
-	
+
 	/**
 	 * Adds a qualifier node.
-	 * 
+	 *
 	 * @param xmpParent the parent xmp node
-	 * @param name the name of the qualifier which has to be 
+	 * @param name the name of the qualifier which has to be
 	 * 		QName including the <b>default prefix</b>
 	 * @param value the value of the qualifier
 	 * @return Returns the newly created child node.
@@ -1113,16 +1114,16 @@ public class ParseRDF implements XMPError, XMPConst
 			throws XMPException
 	{
 		boolean isLang = XML_LANG.equals(name);
-	
+
 		XMPNode newQual = null;
 
 		// normalize value of language qualifiers
 		newQual = new XMPNode(name, isLang ? Utils.normalizeLangValue(value) : value, null);
 		xmpParent.addQualifier(newQual);
-		
+
 		return newQual;
 	}
-	
+
 
 	/**
 	 * The parent is an RDF pseudo-struct containing an rdf:value field. Fix the
@@ -1130,7 +1131,7 @@ public class ParseRDF implements XMPError, XMPConst
 	 * children are qualifiers. The form, value, and children of the rdf:value
 	 * node are the real ones. The rdf:value node's qualifiers must be added to
 	 * the others.
-	 * 
+	 *
 	 * @param xmpParent the parent xmp node
 	 * @throws XMPException thown on parsing errors
 	 */
@@ -1141,10 +1142,10 @@ public class ParseRDF implements XMPError, XMPConst
 		XMPNode valueNode = xmpParent.getChild(1);
 		assert "rdf:value".equals(valueNode.getName());
 
-		// Move the qualifiers on the value node to the parent. 
+		// Move the qualifiers on the value node to the parent.
 		// Make sure an xml:lang qualifier stays at the front.
-		// Check for duplicate names between the value node's qualifiers and the parent's children. 
-		// The parent's children are about to become qualifiers. Check here, between the groups. 
+		// Check for duplicate names between the value node's qualifiers and the parent's children.
+		// The parent's children are about to become qualifiers. Check here, between the groups.
 		// Intra-group duplicates are caught by XMPNode#addChild(...).
 		if (valueNode.getOptions().getHasLanguage())
 		{
@@ -1157,32 +1158,32 @@ public class ParseRDF implements XMPError, XMPConst
 			valueNode.removeQualifier(langQual);
 			xmpParent.addQualifier(langQual);
 		}
-		
-		// Start the remaining copy after the xml:lang qualifier.		
+
+		// Start the remaining copy after the xml:lang qualifier.
 		for (int i = 1; i <= valueNode.getQualifierLength(); i++)
 		{
 			XMPNode qualifier = valueNode.getQualifier(i);
 			xmpParent.addQualifier(qualifier);
 		}
-		
-		
-		// Change the parent's other children into qualifiers. 
+
+
+		// Change the parent's other children into qualifiers.
 		// This loop starts at 1, child 0 is the rdf:value node.
 		for (int i = 2; i <= xmpParent.getChildrenLength(); i++)
 		{
 			XMPNode qualifier = xmpParent.getChild(i);
 			xmpParent.addQualifier(qualifier);
 		}
-		
-		// Move the options and value last, other checks need the parent's original options. 
+
+		// Move the options and value last, other checks need the parent's original options.
 		// Move the value node's children to be the parent's children.
 		assert xmpParent.getOptions().isStruct()  ||  xmpParent.getHasValueChild();
-		
+
 		xmpParent.setHasValueChild(false);
 		xmpParent.getOptions().setStruct(false);
 		xmpParent.getOptions().mergeWith(valueNode.getOptions());
 		xmpParent.setValue(valueNode.getValue());
-		
+
 		xmpParent.removeChildren();
 		for (Iterator it = valueNode.iterateChildren(); it.hasNext();)
 		{
@@ -1191,11 +1192,11 @@ public class ParseRDF implements XMPError, XMPConst
 		}
 	}		
 
-	
+
 	/**
 	 * Checks if the node is a white space.
 	 * @param node an XML-node
-	 * @return Returns whether the node is a whitespace node, 
+	 * @return Returns whether the node is a whitespace node,
 	 * 		i.e. a text node that contains only whitespaces.
 	 */
 	private static boolean isWhitespaceNode(Node node)
@@ -1204,7 +1205,7 @@ public class ParseRDF implements XMPError, XMPConst
 		{
 			return false;
 		}
-		
+
 		String value = node.getNodeValue();
 		for (int i = 0; i < value.length(); i++)
 		{
@@ -1213,15 +1214,15 @@ public class ParseRDF implements XMPError, XMPConst
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
-	
-	
+
+
 	/**
 	 * 7.2.6 propertyElementURIs
 	 *			anyURI - ( coreSyntaxTerms | rdf:Description | oldTerms )
-	 * 
+	 *
 	 * @param term the term id
 	 * @return Return true if the term is a property element name.
 	 */
@@ -1232,16 +1233,16 @@ public class ParseRDF implements XMPError, XMPConst
 			return false;
 		}
 		else
-		{	
+		{
 			return (!isCoreSyntaxTerm(term));
-		}	
+		}
 	}
 
-	
+
 	/**
 	 * 7.2.4 oldTerms<br>
 	 * rdf:aboutEach | rdf:aboutEachPrefix | rdf:bagID
-	 * 
+	 *
 	 * @param term the term id
 	 * @return Returns true if the term is an old term.
 	 */
@@ -1255,7 +1256,7 @@ public class ParseRDF implements XMPError, XMPConst
 	 * 7.2.2 coreSyntaxTerms<br>
 	 * rdf:RDF | rdf:ID | rdf:about | rdf:parseType | rdf:resource | rdf:nodeID |
 	 * rdf:datatype
-	 * 
+	 *
 	 * @param term the term id
 	 * @return Return true if the term is a core syntax term
 	 */
@@ -1268,17 +1269,17 @@ public class ParseRDF implements XMPError, XMPConst
 	/**
 	 * Determines the ID for a certain RDF Term.
 	 * Arranged to hopefully minimize the parse time for large XMP.
-	 * 
-	 * @param node an XML node 
+	 *
+	 * @param node an XML node
 	 * @return Returns the term ID.
 	 */
 	private static int getRDFTermKind(Node node)
 	{
 		String localName = node.getLocalName();
 		String namespace = node.getNamespaceURI();
-		
+
 		if (
-				namespace == null  && 
+				namespace == null  &&
 				("about".equals(localName) || "ID".equals(localName))  &&
 				(node instanceof Attr)  &&
 				NS_RDF.equals(((Attr) node).getOwnerElement().getNamespaceURI())
@@ -1286,7 +1287,7 @@ public class ParseRDF implements XMPError, XMPConst
 		{
 			namespace = NS_RDF; 
 		}
-		
+
 		if (NS_RDF.equals(namespace))
 		{
 			switch (localName) {
@@ -1316,7 +1317,7 @@ public class ParseRDF implements XMPError, XMPConst
 					return RDFTERM_BAG_ID;
 			}
 		}
-		
+
 		return RDFTERM_OTHER;
 	}
 }

@@ -119,13 +119,13 @@ public class PdfTextAnnotation extends PdfMarkupAnnotation {
      * The name of an icon that is used in displaying the annotation.
      * @param name a {@link PdfName} that specifies the icon for displaying annotation. Possible values are:
      *             <ul>
-     *                  <li>Comment</li>
-     *                  <li>Key</li>
-     *                  <li>Note</li>
-     *                  <li>Help</li>
-     *                  <li>NewParagraph</li>
-     *                  <li>Paragraph</li>
-     *                  <li>Insert</li>
+     *                  <li>Comment
+     *                  <li>Key
+     *                  <li>Note
+     *                  <li>Help
+     *                  <li>NewParagraph
+     *                  <li>Paragraph
+     *                  <li>Insert
      *             </ul>
      * @return this {@link PdfTextAnnotation} instance.
      */

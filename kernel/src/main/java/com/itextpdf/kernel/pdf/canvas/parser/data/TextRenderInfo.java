@@ -295,14 +295,14 @@ public class TextRenderInfo extends AbstractRenderInfo {
      * @return the text render mode that should be used for the text.  From the
      * PDF specification, this means:
      * <ul>
-     * <li>0 = Fill text</li>
-     * <li>1 = Stroke text</li>
-     * <li>2 = Fill, then stroke text</li>
-     * <li>3 = Invisible</li>
-     * <li>4 = Fill text and add to path for clipping</li>
-     * <li>5 = Stroke text and add to path for clipping</li>
-     * <li>6 = Fill, then stroke text and add to path for clipping</li>
-     * <li>7 = Add text to padd for clipping</li>
+     * <li>0 = Fill text
+     * <li>1 = Stroke text
+     * <li>2 = Fill, then stroke text
+     * <li>3 = Invisible
+     * <li>4 = Fill text and add to path for clipping
+     * <li>5 = Stroke text and add to path for clipping
+     * <li>6 = Fill, then stroke text and add to path for clipping
+     * <li>7 = Add text to padd for clipping
      * </ul>
      */
     public int getTextRenderMode() {

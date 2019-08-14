@@ -60,7 +60,7 @@ public class CharacterRenderInfo extends TextChunk {
     private Rectangle boundingBox;
 
     /**
-     * This method converts a List<CharacterRenderInfo>
+     * This method converts a {@link List} of {@link CharacterRenderInfo},
      * The data structure that gets returned contains both the plaintext,
      * as well as the mapping of indices (from the list to the string).
      * These indices can differ; if there is sufficient spacing between two CharacterRenderInfo

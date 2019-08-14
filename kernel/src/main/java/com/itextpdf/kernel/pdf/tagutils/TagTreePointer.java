@@ -76,7 +76,6 @@ import java.util.List;
  * the tree primarily using {@link #moveToKid} and {@link #moveToParent()} methods. For the current tag you can add new tags,
  * modify it's role and properties, etc. Also, using instance of this class, you can change tag position in the tag structure,
  * you can flush current tag or remove it.
- * <br><br>
  * <p>
  * There could be any number of the instances of this class, simultaneously pointing to different (or the same) parts of
  * the tag structure. Because of this, you can for example remove the tag at which another instance is currently pointing.
@@ -135,11 +134,11 @@ public class TagTreePointer {
      * Sets a page which content will be tagged with this instance of {@code TagTreePointer}.
      * To tag page content:
      * <ol>
-     * <li>Set pointer position to the tag which will be the parent of the page content item;</li>
-     * <li>Call {@link #getTagReference()} to obtain the reference to the current tag;</li>
-     * <li>Pass {@link TagReference} to the {@link PdfCanvas#openTag(TagReference)} method of the page's {@link PdfCanvas} to start marked content item;</li>
-     * <li>Draw content on {@code PdfCanvas};</li>
-     * <li>Use {@link PdfCanvas#closeTag()} to finish marked content item.</li>
+     * <li>Set pointer position to the tag which will be the parent of the page content item;
+     * <li>Call {@link #getTagReference()} to obtain the reference to the current tag;
+     * <li>Pass {@link TagReference} to the {@link PdfCanvas#openTag(TagReference)} method of the page's {@link PdfCanvas} to start marked content item;
+     * <li>Draw content on {@code PdfCanvas};
+     * <li>Use {@link PdfCanvas#closeTag()} to finish marked content item.
      * </ol>
      *
      * @param page the page which content will be tagged with this instance of {@code TagTreePointer}.
@@ -600,11 +599,11 @@ public class TagTreePointer {
      * For current tag and all of it's parents consequentially checks if the following constraints apply,
      * and flushes the tag if they do or stops if they don't:
      * <ul>
-     *     <li>tag is not already flushed;</li>
-     *     <li>tag is not in waiting state (see {@link WaitingTagsManager});</li>
-     *     <li>tag is not the root tag;</li>
+     *     <li>tag is not already flushed;
+     *     <li>tag is not in waiting state (see {@link WaitingTagsManager});
+     *     <li>tag is not the root tag;
      *     <li>tag has no kids or all of the kids are either flushed themselves or
-     *         (if they are a marked content reference) belong to the flushed page.</li>
+     *         (if they are a marked content reference) belong to the flushed page.
      * </ul>
      * It makes sense to use this method in conjunction with {@link TagStructureContext#flushPageTags(PdfPage)}
      * for the tags which have just lost their waiting state and might be not flushed only because they had one.

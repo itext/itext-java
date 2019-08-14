@@ -73,7 +73,7 @@ public class ParserGraphicsState extends CanvasGraphicsState {
     private Path clippingPath;
 
     /**
-     * Internal empty & default constructor.
+     * Internal empty and default constructor.
      */
     ParserGraphicsState() {
 

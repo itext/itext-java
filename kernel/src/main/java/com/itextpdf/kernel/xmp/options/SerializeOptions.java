@@ -36,8 +36,8 @@ import com.itextpdf.kernel.xmp.XMPMetaFactory;
 
 
 /**
- * Options for {@link XMPMetaFactory#serializeToBuffer(XMPMeta, SerializeOptions)}.
- * 
+ * Options for {@link XMPMetaFactory#serializeToBuffer}
+ *
  * @since 24.01.2006
  */
 public final class SerializeOptions extends Options
@@ -84,7 +84,7 @@ public final class SerializeOptions extends Options
 	/** UTF16LE encoding */
 	public static final int ENCODE_UTF16LE = UTF16_BIT | LITTLEENDIAN_BIT;
 	/** */
-	private static final int ENCODING_MASK = UTF16_BIT | LITTLEENDIAN_BIT;			
+	private static final int ENCODING_MASK = UTF16_BIT | LITTLEENDIAN_BIT;
 
 	/**
 	 * The amount of padding to be added if a writeable XML packet is created. If zero is passed
@@ -108,8 +108,8 @@ public final class SerializeOptions extends Options
 	private int baseIndent = 0;
 	/** Omits the Toolkit version attribute, not published, only used for Unit tests. */
 	private boolean omitVersionAttribute = false;
-	
-	
+
+
 	/**
 	 * Default constructor.
 	 */
@@ -118,7 +118,7 @@ public final class SerializeOptions extends Options
 		// reveal default constructor
 	}
 
-	
+
 	/**
 	 * Constructor using inital options
 	 * @param options the inital options
@@ -149,7 +149,7 @@ public final class SerializeOptions extends Options
 		return this;
 	}
 
-	
+
 	/**
 	 * @return Returns the option.
 	 */
@@ -168,7 +168,7 @@ public final class SerializeOptions extends Options
 		setOption(OMIT_XMPMETA_ELEMENT, value);
 		return this;
 	}
-	
+
 
 	/**
 	 * @return Returns the option.
@@ -209,7 +209,7 @@ public final class SerializeOptions extends Options
 		return this;
 	}
 
-	
+
 	/**
 	 * @return Returns the option.
 	 */
@@ -287,7 +287,7 @@ public final class SerializeOptions extends Options
 		setOption(SORT, value);
 		return this;
 	}
-	
+
 
 	/**
 	 * @return Returns the option.
@@ -415,8 +415,8 @@ public final class SerializeOptions extends Options
 		this.padding = padding;
 		return this;
 	}
-	
-	
+
+
 	/**
 	 * @return Returns whether the Toolkit version attribute shall be omitted.
 	 * <em>Note:</em> This options can only be set by unit tests.
@@ -425,10 +425,10 @@ public final class SerializeOptions extends Options
 	{
 		return omitVersionAttribute;
 	}
-	
-	
+
+
 	/**
-	 * @return Returns the encoding as Java encoding String. 
+	 * @return Returns the encoding as Java encoding String.
 	 */
 	public String getEncoding()
 	{
@@ -445,12 +445,12 @@ public final class SerializeOptions extends Options
 			return "UTF-8";
 		}
 	}
-	
-	
+
+
 	/**
-	 * 
-	 * @return Returns clone of this SerializeOptions-object with the same options set. 
-	 * @throws CloneNotSupportedException Cannot happen in this place.  
+	 *
+	 * @return Returns clone of this SerializeOptions-object with the same options set.
+	 * @throws CloneNotSupportedException Cannot happen in this place.
 	 */
 	public Object clone() throws CloneNotSupportedException
 	{
@@ -491,13 +491,13 @@ public final class SerializeOptions extends Options
 		}
 	}
 
-	
+
 	/**
 	 * @see Options#getValidOptions()
 	 */
 	protected int getValidOptions()
 	{
-		return 
+		return
 		OMIT_PACKET_WRAPPER |
 		READONLY_PACKET |
 		USE_COMPACT_FORMAT |

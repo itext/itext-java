@@ -137,8 +137,8 @@ public class PdfSoundAnnotation extends PdfMarkupAnnotation {
      * @param name a {@link PdfName} that specifies the icon for displaying annotation. Possible values are different
      *             for different annotation types:
      *             <ul>
-     *                  <li>Speaker</li>
-     *                  <li>Mic</li>
+     *                  <li>Speaker
+     *                  <li>Mic
      *             </ul>
      *              Additional names may be supported as well.
      * @return this {@link PdfSoundAnnotation} instance.

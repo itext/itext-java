@@ -44,23 +44,24 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import java.util.Collection;
 
 /**
- * <CODE>PdfTextArray</CODE> defines an array with displacements and <CODE>PdfString</CODE>-objects.
+ * {@link PdfTextArray} defines an array with displacements and {@link PdfString}-objects.
  * <P>
- * A <CODE>PdfTextArray</CODE> is used with the operator <VAR>TJ</VAR> in <CODE>PdfCanvas</CODE>.
- * The first object in this array has to be a <CODE>PdfString</CODE>;
+ * A {@link PdfTextArray} is used with the operator TJ in {@link PdfCanvas}.
+ * The first object in this array has to be a {@link PdfString};
  * see reference manual version 1.3 section 8.7.5, pages 346-347.
  *       OR
  * see reference manual version 1.6 section 5.3.2, pages 378-379.
  * To emit a more efficient array, we consolidate repeated numbers or strings into single array entries.
- * "add( 50 ); add( -50 );" will REMOVE the combined zero from the array.
+ * For example: "add( 50 ); add( -50 );" will REMOVE the combined zero from the array.
  */
 public class PdfTextArray extends PdfArray {
 
     private static final long serialVersionUID = 2555632135770071680L;
-	
+
     private float lastNumber = Float.NaN;
     private StringBuilder lastString;
 
