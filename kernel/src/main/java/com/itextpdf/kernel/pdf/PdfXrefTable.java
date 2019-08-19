@@ -264,6 +264,7 @@ class PdfXrefTable implements Serializable {
             if (crypto != null)
                 xrefStream.put(PdfName.Encrypt, crypto);
             xrefStream.put(PdfName.Size, new PdfNumber(this.size()));
+	    sections = createSections(document, false);
 
             int offsetSize = getOffsetSize(Math.max(startxref, size()));
             xrefStream.put(PdfName.W, new PdfArray(
