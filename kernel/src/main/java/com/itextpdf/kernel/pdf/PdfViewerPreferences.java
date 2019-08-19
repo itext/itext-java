@@ -331,13 +331,13 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
                 type = PdfName.ViewArea;
                 break;
             case VIEW_CLIP :
-                type = PdfName.ViewArea;
+                type = PdfName.ViewClip;
                 break;
             case PRINT_AREA :
-                type = PdfName.ViewArea;
+                type = PdfName.PrintArea;
                 break;
             case PRINT_CLIP :
-                type = PdfName.ViewArea;
+                type = PdfName.PrintClip;
                 break;
             default:
         }
