@@ -64,11 +64,7 @@ public class PatternColor extends Color {
     }
 
     public PatternColor(PdfPattern.Tiling uncoloredPattern, PdfColorSpace underlyingCS, float[] colorValue) {
-        super(new PdfSpecialCs.UncoloredTilingPattern(underlyingCS), colorValue);
-        if (underlyingCS instanceof PdfSpecialCs.Pattern)
-            throw new IllegalArgumentException("underlyingCS");
-        this.pattern = uncoloredPattern;
-        this.underlyingColor = makeColor(underlyingCS, colorValue);
+        this(uncoloredPattern, new PdfSpecialCs.UncoloredTilingPattern(ensureNotPatternCs(underlyingCS)), colorValue);
     }
 
     public PatternColor(PdfPattern.Tiling uncoloredPattern, PdfSpecialCs.UncoloredTilingPattern uncoloredTilingCS, float[] colorValue) {
@@ -81,6 +77,19 @@ public class PatternColor extends Color {
         return pattern;
     }
 
+    @Override
+    public void setColorValue(float[] value) {
+        super.setColorValue(value);
+        underlyingColor.setColorValue(value);
+    }
+
+    /**
+     * Changes pattern for {@link PatternColor}. Be sure to only set uncolored patterns for uncolored {@link PatternColor},
+     * and vice versa, only set colored patterns for colored {@link PatternColor}.
+     * @param pattern a pattern to be set for this instance.
+     * @deprecated To be removed in iText 7.2. In order to change pattern one shall create a new {@link PatternColor}.
+     */
+    @Deprecated
     public void setPattern(PdfPattern pattern) {
         this.pattern = pattern;
     }
@@ -93,5 +102,11 @@ public class PatternColor extends Color {
         PatternColor color = (PatternColor)o;
         return pattern.equals(color.pattern) &&
                 (underlyingColor != null ? underlyingColor.equals(color.underlyingColor) : color.underlyingColor == null);
+    }
+
+    private static PdfColorSpace ensureNotPatternCs(PdfColorSpace underlyingCS) {
+        if (underlyingCS instanceof PdfSpecialCs.Pattern)
+            throw new IllegalArgumentException("underlyingCS");
+        return underlyingCS;
     }
 }

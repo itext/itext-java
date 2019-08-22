@@ -1,3 +1,45 @@
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2019 iText Group NV
+    Authors: iText Software.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.kernel.pdf.canvas;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
@@ -6,10 +48,13 @@ import com.itextpdf.kernel.colors.CalRgb;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceCmyk;
+import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceN;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.colors.IccBased;
 import com.itextpdf.kernel.colors.Indexed;
 import com.itextpdf.kernel.colors.Lab;
+import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.colors.Separation;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.CompressionConstants;
@@ -36,13 +81,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfCanvasColorTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasColorTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/canvas/PdfCanvasColorTest/";
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -324,5 +374,245 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void patternColorColoredAxialPatternTest() throws Exception {
+        String name = "patternColorColoredAxialPatternTest.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + name);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        PdfShading axial = new PdfShading.Axial(
+                new PdfDeviceCs.Rgb(),
+                36, 716, new float[]{1, .784f, 0},
+                396, 788, new float[]{0, 0, 1},
+                new boolean[] {true, true}
+                );
+
+        canvas.setFillColor(new PatternColor(new PdfPattern.Shading(axial)));
+        canvas.rectangle(30, 300, 400, 400).fill();
+
+        canvas.release();
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + name, sourceFolder + "cmp_" + name, destinationFolder));
+    }
+
+    @Test
+    public void patternColorColoredRadialPatternTest() throws Exception {
+        String name = "patternColorColoredRadialPatternTest.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + name);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        PdfShading radial = new PdfShading.Radial(
+                new PdfDeviceCs.Rgb(),
+                200, 700, 50, new float[] {1, 0.968f, 0.58f},
+                300, 700, 100, new float[] {0.968f, 0.541f, 0.42f}
+                );
+
+        canvas.setFillColor(new PatternColor(new PdfPattern.Shading(radial)));
+        canvas.rectangle(30, 300, 400, 400).fill();
+
+        canvas.release();
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + name, sourceFolder + "cmp_" + name, destinationFolder));
+    }
+
+    @Test
+    public void patternColorUncoloredCircleRgbTest() throws Exception {
+        String name = "patternColorUncoloredCircleRgbTest.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + name);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        PdfPattern.Tiling circle = new PdfPattern.Tiling(15, 15, 10, 20, false);
+        new PdfPatternCanvas(circle, document).circle(7.5f, 7.5f, 2.5f).fill().release();
+
+        PdfSpecialCs.UncoloredTilingPattern uncoloredRgbCs
+                = new PdfSpecialCs.UncoloredTilingPattern(new PdfDeviceCs.Rgb());
+
+        float[] green = {0, 1, 0};
+
+        canvas.setFillColor(new PatternColor(circle, uncoloredRgbCs, green));
+        canvas.rectangle(30, 300, 400, 400).fill();
+
+        canvas.release();
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + name, sourceFolder + "cmp_" + name, destinationFolder));
+    }
+
+    @Test
+    public void patternColorUncoloredLineGrayTest() throws Exception {
+        String name = "patternColorUncoloredLineGrayTest.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + name);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        PdfPattern.Tiling line = new PdfPattern.Tiling(5, 10, false);
+        new PdfPatternCanvas(line, document).setLineWidth(1).moveTo(3, -1).lineTo(3, 11).stroke().release();
+
+        canvas.setFillColor(new PatternColor(line, new DeviceGray()));
+        canvas.rectangle(30, 300, 400, 400).fill();
+
+        canvas.release();
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + name, sourceFolder + "cmp_" + name, destinationFolder));
+    }
+
+    @Test
+    public void patternColorColoredSetTwiceTest() throws Exception {
+        String name = "patternColorColoredSetTwiceTest.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + name);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+
+        PdfPattern.Tiling square = new PdfPattern.Tiling(15, 15);
+        new PdfPatternCanvas(square, document).setFillColor(new DeviceRgb(0xFF, 0xFF, 0x00))
+                .setStrokeColor(new DeviceRgb(0xFF, 0x00, 0x00))
+                .rectangle(5, 5, 5, 5)
+                .fillStroke()
+                .release();
+
+        PdfPattern.Tiling ellipse = new PdfPattern.Tiling(15, 10, 20, 25);
+        new PdfPatternCanvas(ellipse, document)
+                .setFillColor(new DeviceRgb(0xFF, 0xFF, 0x00))
+                .setStrokeColor(new DeviceRgb(0xFF, 0x00, 0x00))
+                .ellipse(2, 2, 13, 8)
+                .fillStroke()
+                .release();
+
+
+        canvas.setFillColor(new PatternColor(square));
+        canvas.rectangle(36, 696, 126, 126).fill();
+        canvas.setFillColor(new PatternColor(square));
+        canvas.rectangle(180, 696, 126, 126).fill();
+        canvas.setFillColor(new PatternColor(ellipse));
+        canvas.rectangle(360, 696, 126, 126).fill();
+
+        byte[] pageContentStreamBytes = canvas.getContentStream().getBytes();
+
+        canvas.release();
+        document.close();
+
+        String contentStreamString = new String(pageContentStreamBytes, StandardCharsets.US_ASCII);
+        int p1Count = countSubstringOccurrences(contentStreamString, "/P1 scn");
+        int p2Count = countSubstringOccurrences(contentStreamString, "/P2 scn");
+        Assert.assertEquals(1, p1Count);
+        Assert.assertEquals(1, p2Count);
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + name, sourceFolder + "cmp_" + name, destinationFolder));
+    }
+
+    @Test
+    public void patternColorUncoloredSetTwiceTest() throws Exception {
+        String name = "patternColorUncoloredSetTwiceTest.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + name);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        PdfPattern.Tiling circle = new PdfPattern.Tiling(15, 15, 10, 20, false);
+        new PdfPatternCanvas(circle, document).circle(7.5f, 7.5f, 2.5f).fill().release();
+
+        PdfPattern.Tiling line = new PdfPattern.Tiling(5, 10, false);
+        new PdfPatternCanvas(line, document).setLineWidth(1).moveTo(3, -1).lineTo(3, 11).stroke().release();
+
+        PatternColor patternColorCircle = new PatternColor(circle, ColorConstants.RED);
+
+        float[] cyan = {1, 0, 0, 0};
+        float[] magenta = {0, 1, 0, 0};
+        PdfSpecialCs.UncoloredTilingPattern uncoloredTilingCmykCs = new PdfSpecialCs.UncoloredTilingPattern(new PdfDeviceCs.Cmyk());
+        PatternColor patternColorLine = new PatternColor(line, uncoloredTilingCmykCs, magenta);
+
+        canvas.setFillColor(patternColorCircle);
+        canvas.rectangle(36, 696, 126, 126).fill();
+        canvas.setFillColor(patternColorCircle);
+        canvas.rectangle(180, 696, 126, 126).fill();
+
+        canvas.setFillColor(patternColorLine);
+        canvas.rectangle(36, 576, 126, 126).fill();
+
+        patternColorLine.setColorValue(cyan);
+        canvas.setFillColor(patternColorLine);
+        canvas.rectangle(180, 576, 126, 126).fill();
+
+        // this case will be removed when deprecated method is removed
+        patternColorLine.setPattern(circle);
+        canvas.setFillColor(patternColorLine);
+        canvas.rectangle(360, 696, 126, 126).fill();
+
+        byte[] pageContentStreamBytes = canvas.getContentStream().getBytes();
+
+        canvas.release();
+        document.close();
+
+        String contentStreamString = new String(pageContentStreamBytes, StandardCharsets.US_ASCII);
+        int p1Count = countSubstringOccurrences(contentStreamString, "/P1 scn");
+        int p2Count = countSubstringOccurrences(contentStreamString, "/P2 scn");
+        Assert.assertEquals(3, p1Count);
+        Assert.assertEquals(2, p2Count);
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + name, sourceFolder + "cmp_" + name, destinationFolder));
+    }
+
+    @Test
+    public void patternColorUncoloredPatternCsUnitTest() {
+        junitExpectedException.expect(IllegalArgumentException.class);
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(new java.io.ByteArrayOutputStream()));
+
+        PdfPattern.Tiling circle = new PdfPattern.Tiling(15, 15, 10, 20, false);
+        new PdfPatternCanvas(circle, doc).circle(7.5f, 7.5f, 2.5f).fill().release();
+
+        new PatternColor(circle, new PdfSpecialCs.Pattern(), new float[0]);
+    }
+
+    @Test
+    public void patternColorUncoloredPatternColorUnitTest() {
+        junitExpectedException.expect(IllegalArgumentException.class);
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(new java.io.ByteArrayOutputStream()));
+
+        PdfPattern.Tiling circle = new PdfPattern.Tiling(15, 15, 10, 20, false);
+        new PdfPatternCanvas(circle, doc).circle(7.5f, 7.5f, 2.5f).fill().release();
+
+        PatternColor redCirclePattern = new PatternColor(circle, ColorConstants.RED);
+        new PatternColor(circle, redCirclePattern);
+    }
+
+    private static int countSubstringOccurrences(String str, String findStr) {
+        int lastIndex = 0;
+        int count = 0;
+
+        while(lastIndex != -1){
+            lastIndex = str.indexOf(findStr, lastIndex);
+
+            if(lastIndex != -1){
+                ++count;
+                lastIndex += findStr.length();
+            }
+        }
+        return count;
     }
 }
