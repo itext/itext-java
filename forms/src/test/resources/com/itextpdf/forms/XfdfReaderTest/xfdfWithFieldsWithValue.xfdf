@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve"
+><f href="xfdfWithFieldsWithValue.pdf"
+/><fields
+><field name="Input field"
+><value
+>ABCDEFGH</value
+></field
+></fields
+><ids original="E41BB1D6502F3B41958F83DA6BA04048" modified="B74304E2BB894843982708B019E9D5F1"
+/></xfdf
+>

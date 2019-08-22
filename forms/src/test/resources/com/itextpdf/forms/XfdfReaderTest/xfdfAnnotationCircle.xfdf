@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve"
+><annots
+><text color="#FFD100" creationdate="D:20190530143346+03'00'" flags="hidden,print,nozoom,norotate" date="D:20190530143352+03'00'" name="64f8ca28-6105-466d-ba80-6c3b9383950d" icon="Comment" page="1" rect="100.000000,82.000000,118.000000,100.000000" state="Marked" statemodel="Marked" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Marked set by Alex</p
+></body
+></contents-richtext
+><popup flags="hidden,print,nozoom,norotate" open="no" page="1" rect="595.000000,-20,775.000000,100.000000"
+/></text
+><circle color="#E52237" creationdate="D:20190531130641+03'00'" flags="print" date="D:20190531130641+03'00'" name="39a3d2cd-f335-4a76-a818-20b053b1c70c" page="1" fringe="0.500000,0.500000,0.500000,0.500000" rect="341.658000,661.754000,358.107000,678.204000" subject="Oval" title="Alex"
+><popup flags="print,nozoom,norotate" open="no" page="1" rect="595.000000,557.704000,775.000000,677.704000"
+/></circle
+></annots
+><f href="xfdfAnnotationCircle.pdf"
+/><ids original="D0151A7ADF2410CF3E72A04B9CB83452" modified="DA819391BA599E479DA0EF00C99BB4F0"
+/></xfdf
+>

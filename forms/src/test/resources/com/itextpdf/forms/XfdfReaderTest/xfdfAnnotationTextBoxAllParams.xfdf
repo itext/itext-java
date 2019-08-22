@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve"
+><annots
+><text color="#E52237" opacity="0.467255" creationdate="D:20190606155558+03'00'" flags="hidden,print,nozoom,norotate" inreplyto="4f47f41b-2ae1-4f3c-bb02-ff382d580eb5" date="D:20190606155558+03'00'" name="2abac693-a6d1-4d63-87d6-a54f5be4d70f" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="Accepted" statemodel="Review" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Accepted set by Alex</p
+></body
+></contents-richtext
+><popup flags="print,nozoom,norotate" open="no" page="0" rect="612.000000,-20.000000,792.000000,100.000000"
+/></text
+><text color="#E52237" opacity="0.467255" creationdate="D:20190606155603+03'00'" flags="hidden,print,nozoom,norotate" inreplyto="4f47f41b-2ae1-4f3c-bb02-ff382d580eb5" date="D:20190606155603+03'00'" name="4e745f16-2203-4ee6-b4dc-0778626912ad" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="Marked" statemodel="Marked" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Marked set by Alex</p
+></body
+></contents-richtext
+><popup flags="print,nozoom,norotate" open="no" page="0" rect="612.000000,-20.000000,792.000000,100.000000"
+/></text
+><freetext color="#FFFFFF" creationdate="D:20190606154037+03'00'" flags="print" date="D:20190606154415+03'00'" name="4f47f41b-2ae1-4f3c-bb02-ff382d580eb5" page="0" rect="92.558800,521.904000,307.210000,640.395000" subject="Text Box" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2" style="font-size:14.0pt;text-align:left;color:#E52136;font-weight:normal;font-style:normal;font-family:Helvetica,sans-serif;font-stretch:normal"
+><p dir="ltr"
+><span style="text-decoration:word;color:#E52138;font-family:Helvetica"
+>Just some text&#xD;</span
+></p
+><p dir="ltr"
+><span style="text-decoration:word line-through;font-size:12.0pt;color:#E52138;font-family:Helvetica"
+>Just some text&#xD;</span
+></p
+><p dir="ltr"
+><span style="font-size:12.0pt;vertical-align:+6.0pt;color:#E52138;font-family:Helvetica"
+>Just some text&#xD;</span
+></p
+><p dir="ltr"
+><span style="font-size:12.0pt;vertical-align:-6.0pt;color:#E52138;font-family:Helvetica"
+>Just some text&#xD;</span
+></p
+><p dir="ltr"
+><span style="font-size:12.0pt;text-align:right;color:#E52138;font-family:Helvetica"
+>Just some text</span
+></p
+></body
+></contents-richtext
+><defaultappearance
+>0 G 0.898 0.1333 0.2157 rg 0 Tc 0 Tw 100 Tz 0 TL 0 Ts 0 Tr /Helv 14 Tf</defaultappearance
+><defaultstyle
+>font: Helvetica,sans-serif 14.0pt; text-align:left; color:#E52237 </defaultstyle
+></freetext
+><text color="#E52237" opacity="0.467250" creationdate="D:20190603142414+03'00'" flags="hidden,print,nozoom,norotate" date="D:20190603142414+03'00'" name="c236c917-7a37-4da7-9540-cee9f8ced232" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="Accepted" statemodel="Review" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Accepted set by Alex</p
+></body
+></contents-richtext
+><popup flags="print,nozoom,norotate" open="no" page="0" rect="612.000000,-20,792.000000,100.000000"
+/></text
+><text color="#E52237" opacity="0.467250" creationdate="D:20190603142431+03'00'" flags="hidden,print,nozoom,norotate" date="D:20190603142435+03'00'" name="19e71bf1-c238-4ef1-b2fc-d33a4dbdee32" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="Marked" statemodel="Marked" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Marked set by Alex</p
+></body
+></contents-richtext
+><popup flags="hidden,print,nozoom,norotate" open="no" page="0" rect="612.000000,-20,792.000000,100.000000"
+/></text
+><text color="#E52237" opacity="0.467255" creationdate="D:20190603155452+03'00'" flags="hidden,print,nozoom,norotate" date="D:20190603155452+03'00'" name="b1bad174-210b-44d8-8cf7-47b7fc724d4a" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="Marked" statemodel="Marked" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Marked set by Alex</p
+></body
+></contents-richtext
+><popup flags="print,nozoom,norotate" open="no" page="0" rect="612.000000,-20.000000,792.000000,100.000000"
+/></text
+><text color="#E52237" opacity="0.467255" creationdate="D:20190603155452+03'00'" flags="hidden,print,nozoom,norotate" date="D:20190603155452+03'00'" name="0ca952e8-197b-4287-9c7e-5e9dd5042e02" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="Marked" statemodel="Marked" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Marked set by Alex</p
+></body
+></contents-richtext
+><popup flags="print,nozoom,norotate" open="no" page="0" rect="612.000000,-20.000000,792.000000,100.000000"
+/></text
+><text color="#E52237" opacity="0.467255" creationdate="D:20190603155501+03'00'" flags="hidden,print,nozoom,norotate" inreplyto="b1bad174-210b-44d8-8cf7-47b7fc724d4a" date="D:20190603155501+03'00'" name="b8d5d284-cabb-47f9-b0d9-d4158a34d34b" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="Accepted" statemodel="Review" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Accepted set by Alex</p
+></body
+></contents-richtext
+><popup flags="print,nozoom,norotate" open="no" page="0" rect="612.000000,-20.000000,792.000000,100.000000"
+/></text
+><text color="#E52237" opacity="0.467255" creationdate="D:20190603155501+03'00'" flags="hidden,print,nozoom,norotate" inreplyto="0ca952e8-197b-4287-9c7e-5e9dd5042e02" date="D:20190603155501+03'00'" name="6a4cde5e-7fce-4c41-a851-97c8573e9ff3" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="Accepted" statemodel="Review" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Accepted set by Alex</p
+></body
+></contents-richtext
+><popup flags="print,nozoom,norotate" open="no" page="0" rect="612.000000,-20.000000,792.000000,100.000000"
+/></text
+><text color="#E52237" opacity="0.467255" creationdate="D:20190603160502+03'00'" flags="hidden,print,nozoom,norotate" date="D:20190603160502+03'00'" name="c8f23a8d-3acd-4a1f-8a32-081d59ad7189" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="Completed" statemodel="Review" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Completed set by Alex</p
+></body
+></contents-richtext
+><popup flags="print,nozoom,norotate" open="no" page="0" rect="612.000000,-20.000000,792.000000,100.000000"
+/></text
+><text color="#E52237" opacity="0.467255" creationdate="D:20190603160502+03'00'" flags="hidden,print,nozoom,norotate" date="D:20190603160502+03'00'" name="d10358c6-50ca-476b-8db8-32198648c8a8" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="Completed" statemodel="Review" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Completed set by Alex</p
+></body
+></contents-richtext
+><popup flags="print,nozoom,norotate" open="no" page="0" rect="612.000000,-20.000000,792.000000,100.000000"
+/></text
+><text color="#E52237" opacity="0.467255" creationdate="D:20190603160514+03'00'" flags="hidden,print,nozoom,norotate" inreplyto="c8f23a8d-3acd-4a1f-8a32-081d59ad7189" date="D:20190603160514+03'00'" name="f5f4d1b7-e946-475e-b875-2f939591415e" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="Completed" statemodel="Review" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Completed set by Alex</p
+></body
+></contents-richtext
+><popup flags="print,nozoom,norotate" open="no" page="0" rect="612.000000,-20.000000,792.000000,100.000000"
+/></text
+><text color="#E52237" opacity="0.467255" creationdate="D:20190603160514+03'00'" flags="hidden,print,nozoom,norotate" inreplyto="d10358c6-50ca-476b-8db8-32198648c8a8" date="D:20190603160514+03'00'" name="1d39ae2c-733f-44ea-acb2-1f0d19620ee0" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="Completed" statemodel="Review" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Completed set by Alex</p
+></body
+></contents-richtext
+><popup flags="print,nozoom,norotate" open="no" page="0" rect="612.000000,-20.000000,792.000000,100.000000"
+/></text
+><text color="#E52237" opacity="0.467255" creationdate="D:20190603160516+03'00'" flags="hidden,print,nozoom,norotate" inreplyto="f5f4d1b7-e946-475e-b875-2f939591415e" date="D:20190603160516+03'00'" name="f6c6748a-5fbb-4199-a115-01f019e8aac7" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="None" statemodel="Review" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>None set by Alex</p
+></body
+></contents-richtext
+><popup flags="print,nozoom,norotate" open="no" page="0" rect="612.000000,-20.000000,792.000000,100.000000"
+/></text
+><text color="#E52237" opacity="0.467255" creationdate="D:20190603160516+03'00'" flags="hidden,print,nozoom,norotate" inreplyto="1d39ae2c-733f-44ea-acb2-1f0d19620ee0" date="D:20190603160516+03'00'" name="072c299d-54bf-4e2e-8f3a-910a1a9a7d6a" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="None" statemodel="Review" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>None set by Alex</p
+></body
+></contents-richtext
+><popup flags="print,nozoom,norotate" open="no" page="0" rect="612.000000,-20.000000,792.000000,100.000000"
+/></text
+><text color="#E52237" opacity="0.467255" creationdate="D:20190603160530+03'00'" flags="hidden,print,nozoom,norotate" date="D:20190603160530+03'00'" name="69fb4685-01ca-477b-9892-c5635a260c7a" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="Accepted" statemodel="Review" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Accepted set by Alex</p
+></body
+></contents-richtext
+><popup flags="print,nozoom,norotate" open="no" page="0" rect="612.000000,-20.000000,792.000000,100.000000"
+/></text
+></annots
+><f href="xfdfAnnotationTextBoxAllParams.pdf"
+/><ids original="F63D0917DD8EDE6EDE4DE28B13CAB356" modified="0E3186D81AEB414EACF056025C559E02"
+/></xfdf
+>

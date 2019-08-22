@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve"
+><annots
+><text color="#FFD100" creationdate="D:20190530143346+03'00'" flags="hidden,print,nozoom,norotate" date="D:20190530143352+03'00'" name="64f8ca28-6105-466d-ba80-6c3b9383950d" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="Marked" statemodel="Marked" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Marked set by Alex</p
+></body
+></contents-richtext
+><popup flags="hidden,print,nozoom,norotate" open="no" page="0" rect="595.000000,-20.000000,775.000000,100.000000"
+/></text
+><strikeout color="#E52237" creationdate="D:20190530171350+03'00'" flags="print" date="D:20190530171350+03'00'" name="10899e9a-360e-4a15-8feb-c4aca89018b1" page="0" coords="250.821000,680.021000,338.108000,680.021000,250.821000,663.833000,338.108000,663.833000" rect="245.994000,662.821000,342.936000,681.033000" subject="Cross-Out" title="Alex"
+><popup flags="print,nozoom,norotate" open="no" page="0" rect="595.000000,560.021000,775.000000,680.021000"
+/></strikeout
+></annots
+><f href="xfdfAnnotationStrikeout.pdf"
+/><ids original="D0151A7ADF2410CF3E72A04B9CB83452" modified="876407D250C36B4A8E48BBD2C0BEA980"
+/></xfdf
+>

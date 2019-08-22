@@ -183,5 +183,6 @@ public final class LogMessageConstant {
     public static final String WRITER_ENCRYPTION_IS_IGNORED_APPEND = "Writer encryption will be ignored, because append mode is used. Document will preserve the original encryption (or will stay unencrypted)";
     public static final String WRITER_ENCRYPTION_IS_IGNORED_PRESERVE = "Writer encryption will be ignored, because preservation of encryption is enabled. Document will preserve the original encryption (or will stay unencrypted)";
     public static final String WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS = "Wrong media box size: {0}. The arguments beyond the 4th will be ignored";
+    public static final String XFDF_OUTPUT_STREAM_CORRUPTED = "Xfdf output stream is corrupted.";
     public static final String XREF_ERROR = "Error occurred while reading cross reference table. Cross reference table will be rebuilt.";
 }

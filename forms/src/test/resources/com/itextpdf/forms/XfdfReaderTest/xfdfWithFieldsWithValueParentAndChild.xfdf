@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">
+<f href="xfdfWithFieldsWithValueParentAndChild.pdf"/>
+<fields>
+<field name="Root">
+<field name="Child">
+<field name="ChildTextElement">
+<value>Hello!</value>
+</field>
+</field>
+</field>
+</fields>
+<ids original="9F42B2D6E5A8B47E2FF2C16A548CBF48" modified="9F42B2D6E5A8B47E2FF2C16A548CBF48"/>
+</xfdf>

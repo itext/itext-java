@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve"
+><annots
+><text color="#FFD100" creationdate="D:20190530143346+03'00'" flags="hidden,print,nozoom,norotate" date="D:20190530143352+03'00'" name="64f8ca28-6105-466d-ba80-6c3b9383950d" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="Marked" statemodel="Marked" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Marked set by Alex</p
+></body
+></contents-richtext
+><popup flags="hidden,print,nozoom,norotate" open="no" page="0" rect="595.000000,-20.000000,775.000000,100.000000"
+/></text
+><text color="#FFD100" creationdate="D:20190530165847+03'00'" flags="print,nozoom,norotate" date="D:20190530165901+03'00'" name="82b0f977-07b7-4822-83d4-ff3695c5f3e2" icon="Comment" page="0" rect="276.684000,676.190000,294.684000,694.190000" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p dir="ltr"
+><span dir="ltr" style="font-size:9.9pt;text-align:left;color:#000000;font-weight:normal;font-style:normal"
+>Sticky note comment from Alex.</span
+></p
+></body
+></contents-richtext
+><popup flags="print,nozoom,norotate" open="yes" page="0" rect="595.000000,574.190000,775.000000,694.190000"
+/></text
+></annots
+><f href="xfdfAnnotationText.pdf"
+/><ids original="D0151A7ADF2410CF3E72A04B9CB83452" modified="E22F73F789AAAC4A8E1989DA3C072EAF"
+/></xfdf
+>
