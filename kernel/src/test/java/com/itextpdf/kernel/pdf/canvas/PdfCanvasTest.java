@@ -40,7 +40,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf;
+package com.itextpdf.kernel.pdf.canvas;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -51,25 +51,19 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.colors.CalGray;
-import com.itextpdf.kernel.colors.CalRgb;
-import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.colors.DeviceCmyk;
-import com.itextpdf.kernel.colors.DeviceN;
-import com.itextpdf.kernel.colors.IccBased;
-import com.itextpdf.kernel.colors.Indexed;
-import com.itextpdf.kernel.colors.Lab;
-import com.itextpdf.kernel.colors.Separation;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.CompressionConstants;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
-import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
-import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
-import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
-import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
-import com.itextpdf.kernel.pdf.colorspace.PdfShading;
-import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -77,28 +71,22 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import java.awt.Toolkit;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.awt.Toolkit;
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 @Category(IntegrationTest.class)
 public class PdfCanvasTest extends ExtendedITextTest {
-
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfCanvasTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfCanvasTest/";
 
     /**
      * Paths to images.
@@ -109,6 +97,8 @@ public class PdfCanvasTest extends ExtendedITextTest {
             "0047478.jpg",
             "itext.png"
     };
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/canvas/PdfCanvasTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasTest/";
 
     @BeforeClass
     public static void beforeClass() {
@@ -135,7 +125,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(destinationFolder + "simpleCanvas.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getDocumentInfo().getPdfObject();
+        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
         Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
         Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
         Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
@@ -212,7 +202,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(destinationFolder + fileName);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getDocumentInfo().getPdfObject();
+        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
         Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
         Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
         Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
@@ -297,7 +287,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(destinationFolder + fileName);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getDocumentInfo().getPdfObject();
+        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
         Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
         Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
         Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
@@ -328,7 +318,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(destinationFolder + "simpleCanvasWithPageFlush.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getDocumentInfo().getPdfObject();
+        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
         Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
         Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
         Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
@@ -360,7 +350,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(destinationFolder + "simpleCanvasWithFullCompression.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getDocumentInfo().getPdfObject();
+        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
         Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
         Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
         Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
@@ -392,7 +382,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(destinationFolder + "simpleCanvasWithPageFlushAndFullCompression.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getDocumentInfo().getPdfObject();
+        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
         Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
         Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
         Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
@@ -435,7 +425,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(destinationFolder + "1000PagesDocument.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getDocumentInfo().getPdfObject();
+        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
         Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
         Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
         Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
@@ -480,7 +470,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getDocumentInfo().getPdfObject();
+        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
         Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
         Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
         Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
@@ -525,7 +515,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getDocumentInfo().getPdfObject();
+        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
         Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
         Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
         Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
@@ -569,7 +559,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getDocumentInfo().getPdfObject();
+        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
         Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
         Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
         Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
@@ -616,7 +606,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getDocumentInfo().getPdfObject();
+        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
         Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
         Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
         Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
@@ -628,7 +618,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         pdfDocument.close();
     }
 
-    @Test (timeout = 0)
+    @Test(timeout = 0)
     @Ignore("Too big result file. This test is for manual testing. -Xmx6g shall be set.")
     public void hugeDocumentWithFullCompression() throws IOException {
         int pageCount = 800;
@@ -665,7 +655,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getDocumentInfo().getPdfObject();
+        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
         Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
         Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
         Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
@@ -708,7 +698,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getDocumentInfo().getPdfObject();
+        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
         Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
         Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
         Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
@@ -754,7 +744,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getDocumentInfo().getPdfObject();
+        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
         Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
         Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
         Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
@@ -800,7 +790,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getDocumentInfo().getPdfObject();
+        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
         Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
         Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
         Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
@@ -846,7 +836,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getDocumentInfo().getPdfObject();
+        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
         Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
         Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
         Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
@@ -1242,223 +1232,6 @@ public class PdfCanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void colorTest01() throws Exception {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "colorTest01.pdf"));
-        PdfPage page = document.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-
-        canvas.setFillColor(ColorConstants.RED).rectangle(50, 500, 50, 50).fill();
-        canvas.setFillColor(ColorConstants.GREEN).rectangle(150, 500, 50, 50).fill();
-        canvas.setFillColor(ColorConstants.BLUE).rectangle(250, 500, 50, 50).fill();
-        canvas.setLineWidth(5);
-        canvas.setStrokeColor(DeviceCmyk.CYAN).rectangle(50, 400, 50, 50).stroke();
-        canvas.setStrokeColor(DeviceCmyk.MAGENTA).rectangle(150, 400, 50, 50).stroke();
-        canvas.setStrokeColor(DeviceCmyk.YELLOW).rectangle(250, 400, 50, 50).stroke();
-        canvas.setStrokeColor(DeviceCmyk.BLACK).rectangle(350, 400, 50, 50).stroke();
-
-        canvas.release();
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest01.pdf", sourceFolder + "cmp_colorTest01.pdf", destinationFolder, "diff_"));
-    }
-
-    @Test
-    public void colorTest02() throws Exception {
-        PdfWriter writer = new PdfWriter(destinationFolder + "colorTest02.pdf");
-        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
-        PdfDocument document = new PdfDocument(writer);
-        PdfPage page = document.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-
-        PdfDeviceCs.Rgb rgb = new PdfDeviceCs.Rgb();
-        Color red = Color.makeColor(rgb, new float[]{1, 0, 0});
-        Color green = Color.makeColor(rgb, new float[]{0, 1, 0});
-        Color blue = Color.makeColor(rgb, new float[]{0, 0, 1});
-        PdfDeviceCs.Cmyk cmyk = new PdfDeviceCs.Cmyk();
-        Color cyan = Color.makeColor(cmyk, new float[]{1, 0, 0, 0});
-        Color magenta = Color.makeColor(cmyk, new float[]{0, 1, 0, 0});
-        Color yellow = Color.makeColor(cmyk, new float[]{0, 0, 1, 0});
-        Color black = Color.makeColor(cmyk, new float[]{0, 0, 0, 1});
-
-        canvas.setFillColor(red).rectangle(50, 500, 50, 50).fill();
-        canvas.setFillColor(green).rectangle(150, 500, 50, 50).fill();
-        canvas.setFillColor(blue).rectangle(250, 500, 50, 50).fill();
-        canvas.setLineWidth(5);
-        canvas.setStrokeColor(cyan).rectangle(50, 400, 50, 50).stroke();
-        canvas.setStrokeColor(magenta).rectangle(150, 400, 50, 50).stroke();
-        canvas.setStrokeColor(yellow).rectangle(250, 400, 50, 50).stroke();
-        canvas.setStrokeColor(black).rectangle(350, 400, 50, 50).stroke();
-
-        canvas.release();
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest02.pdf", sourceFolder + "cmp_colorTest02.pdf", destinationFolder, "diff_"));
-    }
-
-    @Test
-    public void colorTest03() throws Exception {
-        PdfWriter writer = new PdfWriter(destinationFolder + "colorTest03.pdf");
-        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
-        PdfDocument document = new PdfDocument(writer);
-        PdfPage page = document.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-
-        CalGray calGray1 = new CalGray(new float[]{0.9505f, 1.0000f, 1.0890f}, 0.5f);
-        canvas.setFillColor(calGray1).rectangle(50, 500, 50, 50).fill();
-        CalGray calGray2 = new CalGray(new float[]{0.9505f, 1.0000f, 1.0890f}, null, 2.222f, 0.5f);
-        canvas.setFillColor(calGray2).rectangle(150, 500, 50, 50).fill();
-
-        CalRgb calRgb = new CalRgb(
-                new float[]{0.9505f, 1.0000f, 1.0890f},
-                null,
-                new float[]{1.8000f, 1.8000f, 1.8000f},
-                new float[]{0.4497f, 0.2446f, 0.0252f, 0.3163f, 0.6720f, 0.1412f, 0.1845f, 0.0833f, 0.9227f},
-                new float[]{1f, 0.5f, 0f});
-        canvas.setFillColor(calRgb).rectangle(50, 400, 50, 50).fill();
-
-        Lab lab1 = new Lab(new float[]{0.9505f, 1.0000f, 1.0890f}, null, new float[]{-128, 127, -128, 127}, new float[]{1f, 0.5f, 0f});
-        canvas.setFillColor(lab1).rectangle(50, 300, 50, 50).fill();
-        Lab lab2 = new Lab((PdfCieBasedCs.Lab) lab1.getColorSpace(), new float[]{0f, 0.5f, 0f});
-        canvas.setFillColor(lab2).rectangle(150, 300, 50, 50).fill();
-
-        canvas.release();
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest03.pdf", sourceFolder + "cmp_colorTest03.pdf", destinationFolder, "diff_"));
-
-    }
-
-    @Test
-    public void colorTest04() throws Exception {
-        //Create document with 3 colored rectangles in memory.
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter writer = new PdfWriter(baos);
-        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
-        PdfDocument document = new PdfDocument(writer);
-        PdfPage page = document.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-        FileInputStream streamGray = new FileInputStream(sourceFolder + "BlackWhite.icc");
-        FileInputStream streamRgb = new FileInputStream(sourceFolder + "CIERGB.icc");
-        FileInputStream streamCmyk = new FileInputStream(sourceFolder + "USWebUncoated.icc");
-        IccBased gray = new IccBased(streamGray, new float[]{0.5f});
-        IccBased rgb = new IccBased(streamRgb, new float[]{1.0f, 0.5f, 0f});
-        IccBased cmyk = new IccBased(streamCmyk, new float[]{1.0f, 0.5f, 0f, 0f});
-        canvas.setFillColor(gray).rectangle(50, 500, 50, 50).fill();
-        canvas.setFillColor(rgb).rectangle(150, 500, 50, 50).fill();
-        canvas.setFillColor(cmyk).rectangle(250, 500, 50, 50).fill();
-        canvas.release();
-        document.close();
-
-        //Copies page from created document to new document.
-        //This is not strictly necessary for ICC-based colors paces test, but this is an additional test for copy functionality.
-        byte[] bytes = baos.toByteArray();
-        com.itextpdf.kernel.pdf.PdfReader reader = new com.itextpdf.kernel.pdf.PdfReader(new ByteArrayInputStream(bytes));
-        document = new PdfDocument(reader);
-        writer = new PdfWriter(destinationFolder + "colorTest04.pdf");
-        PdfDocument newDocument = new PdfDocument(writer);
-        newDocument.addPage(document.getPage(1).copyTo(newDocument));
-        newDocument.close();
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest04.pdf", sourceFolder + "cmp_colorTest04.pdf", destinationFolder, "diff_"));
-    }
-
-    @Test
-    public void colorTest05() throws Exception {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "colorTest05.pdf"));
-        PdfPage page = document.addNewPage();
-        FileInputStream streamGray = new FileInputStream(sourceFolder + "BlackWhite.icc");
-        FileInputStream streamRgb = new FileInputStream(sourceFolder + "CIERGB.icc");
-        FileInputStream streamCmyk = new FileInputStream(sourceFolder + "USWebUncoated.icc");
-        PdfCieBasedCs.IccBased gray = (PdfCieBasedCs.IccBased) new IccBased(streamGray).getColorSpace();
-        PdfCieBasedCs.IccBased rgb = (PdfCieBasedCs.IccBased) new IccBased(streamRgb).getColorSpace();
-        PdfCieBasedCs.IccBased cmyk = (PdfCieBasedCs.IccBased) new IccBased(streamCmyk).getColorSpace();
-        PdfResources resources = page.getResources();
-        resources.setDefaultGray(gray);
-        resources.setDefaultRgb(rgb);
-        resources.setDefaultCmyk(cmyk);
-        PdfCanvas canvas = new PdfCanvas(page);
-        canvas.setFillColorGray(0.5f).rectangle(50, 500, 50, 50).fill();
-        canvas.setFillColorRgb(1.0f, 0.5f, 0f).rectangle(150, 500, 50, 50).fill();
-        canvas.setFillColorCmyk(1.0f, 0.5f, 0f, 0f).rectangle(250, 500, 50, 50).fill();
-        canvas.release();
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest05.pdf", sourceFolder + "cmp_colorTest05.pdf", destinationFolder, "diff_"));
-    }
-
-    @Test
-    public void colorTest06() throws Exception {
-        byte[] bytes = new byte[256 * 3];
-        int k = 0;
-        for (int i = 0; i < 256; i++) {
-            bytes[k++] = (byte) i;
-            bytes[k++] = (byte) i;
-            bytes[k++] = (byte) i;
-        }
-
-        PdfWriter writer = new PdfWriter(destinationFolder + "colorTest06.pdf");
-        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
-        PdfDocument document = new PdfDocument(writer);
-        PdfPage page = document.addNewPage();
-
-        PdfSpecialCs.Indexed indexed = new PdfSpecialCs.Indexed(com.itextpdf.kernel.pdf.PdfName.DeviceRGB, 255, new PdfString(new String(bytes, "UTF-8")));
-        PdfCanvas canvas = new PdfCanvas(page);
-        canvas.setFillColor(new Indexed(indexed, 85)).rectangle(50, 500, 50, 50).fill();
-        canvas.setFillColor(new Indexed(indexed, 127)).rectangle(150, 500, 50, 50).fill();
-        canvas.setFillColor(new Indexed(indexed, 170)).rectangle(250, 500, 50, 50).fill();
-        canvas.release();
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest06.pdf", sourceFolder + "cmp_colorTest06.pdf", destinationFolder, "diff_"));
-    }
-
-
-    @Test
-    public void colorTest07() throws Exception {
-        PdfWriter writer = new PdfWriter(destinationFolder + "colorTest07.pdf");
-        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
-        PdfDocument document = new PdfDocument(writer);
-        PdfPage page = document.addNewPage();
-
-        com.itextpdf.kernel.pdf.function.PdfFunction.Type4 function = new com.itextpdf.kernel.pdf.function.PdfFunction.Type4(new PdfArray(new float[]{0, 1}), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0 0}".getBytes(StandardCharsets.ISO_8859_1));
-        PdfSpecialCs.Separation separation = new PdfSpecialCs.Separation("MyRed", new PdfDeviceCs.Rgb(), function);
-
-        PdfCanvas canvas = new PdfCanvas(page);
-        canvas.setFillColor(new Separation(separation, 0.25f)).rectangle(50, 500, 50, 50).fill();
-        canvas.setFillColor(new Separation(separation, 0.5f)).rectangle(150, 500, 50, 50).fill();
-        canvas.setFillColor(new Separation(separation, 0.75f)).rectangle(250, 500, 50, 50).fill();
-        canvas.release();
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest07.pdf", sourceFolder + "cmp_colorTest07.pdf", destinationFolder, "diff_"));
-    }
-
-    @Test
-    public void colorTest08() throws Exception {
-        PdfWriter writer = new PdfWriter(destinationFolder + "colorTest08.pdf");
-        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
-        PdfDocument document = new PdfDocument(writer);
-        PdfPage page = document.addNewPage();
-
-        com.itextpdf.kernel.pdf.function.PdfFunction.Type4 function = new com.itextpdf.kernel.pdf.function.PdfFunction.Type4(new PdfArray(new float[]{0, 1, 0, 1}), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0}".getBytes(StandardCharsets.ISO_8859_1));
-
-        ArrayList<String> tmpArray = new ArrayList<String>(2);
-        tmpArray.add("MyRed");
-        tmpArray.add("MyGreen");
-        PdfSpecialCs.DeviceN deviceN = new PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function);
-
-        PdfCanvas canvas = new PdfCanvas(page);
-        canvas.setFillColor(new DeviceN(deviceN, new float[]{0, 0})).rectangle(50, 500, 50, 50).fill();
-        canvas.setFillColor(new DeviceN(deviceN, new float[]{0, 1})).rectangle(150, 500, 50, 50).fill();
-        canvas.setFillColor(new DeviceN(deviceN, new float[]{1, 0})).rectangle(250, 500, 50, 50).fill();
-        canvas.release();
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest08.pdf", sourceFolder + "cmp_colorTest08.pdf", destinationFolder, "diff_"));
-    }
-
-    @Test
     public void wmfImageTest01() throws IOException, InterruptedException {
         PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "wmfImageTest01.pdf"));
         PdfPage page = document.addNewPage();
@@ -1514,7 +1287,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "wmfImageTest04.pdf", sourceFolder + "cmp_wmfImageTest04.pdf", destinationFolder, "diff_"));
     }
-    
+
     @Test
     public void wmfImageTest05() throws IOException, InterruptedException {
         PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "wmfImageTest05.pdf"));
@@ -1911,67 +1684,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void setColorsSameColorSpaces() throws IOException, InterruptedException {
-        setColorTest("setColorsSameColorSpaces.pdf", false);
-    }
-
-    @Test
-    public void setColorsSameColorSpacesPattern() throws IOException, InterruptedException {
-        setColorTest("setColorsSameColorSpacesPattern.pdf", true);
-    }
-
-    private void setColorTest(String pdfName, boolean pattern) throws IOException, InterruptedException {
-        String cmpFile = sourceFolder + "cmp_" + pdfName;
-        String destFile = destinationFolder + pdfName;
-
-        PdfDocument document = new PdfDocument(new PdfWriter(destFile));
-
-        PdfPage page = document.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-
-        PdfColorSpace space = pattern ? new PdfSpecialCs.Pattern() : PdfColorSpace.makeColorSpace(PdfName.DeviceRGB);
-        float[] colorValue1 = pattern ? null : new float[]{1.0f, 0.6f, 0.7f};
-        float[] colorValue2 = pattern ? null : new float[]{0.1f, 0.9f, 0.9f};
-
-        PdfPattern pattern1 = pattern? new PdfPattern.Shading(new PdfShading.Axial(new PdfDeviceCs.Rgb(), 45, 750, ColorConstants.PINK.getColorValue(),
-                100, 760, ColorConstants.MAGENTA.getColorValue())) : null;
-        PdfPattern pattern2 = pattern ? new PdfPattern.Shading(new PdfShading.Axial(new PdfDeviceCs.Rgb(), 45, 690, ColorConstants.BLUE.getColorValue(),
-                100, 710, ColorConstants.CYAN.getColorValue())) : null;
-
-        canvas.setColor(space, colorValue1, pattern1, true);
-        canvas.saveState();
-        canvas.beginText()
-                .moveText(50, 750)
-                .setFontAndSize(PdfFontFactory.createFont(), 16)
-                .showText("pinkish")
-                .endText();
-        canvas.saveState()
-                .beginText()
-                .setColor(space, colorValue2, pattern2, true)
-                .moveText(50, 720)
-                .setFontAndSize(PdfFontFactory.createFont(), 16)
-                .showText("bluish")
-                .endText()
-                .restoreState();
-        canvas.restoreState();
-        canvas.saveState()
-                .beginText()
-                .moveText(50, 690)
-                .setColor(space, colorValue2, pattern2, true)
-                .setFontAndSize(PdfFontFactory.createFont(), 16)
-                .showText("bluish")
-                .endText()
-                .restoreState();
-
-        canvas.release();
-
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
-    }
-
-    @Test
-    public void endPathNewPathTest(){
+    public void endPathNewPathTest() {
         ByteArrayOutputStream boasEndPath = new ByteArrayOutputStream();
         PdfDocument pdfDocEndPath = new PdfDocument(new PdfWriter(boasEndPath));
         pdfDocEndPath.addNewPage();
@@ -1984,6 +1697,6 @@ public class PdfCanvasTest extends ExtendedITextTest {
         pdfDocNewPath.addNewPage();
         PdfCanvas newPathCanvas = new PdfCanvas(pdfDocNewPath.getPage(1));
         newPathCanvas.newPath();
-        Assert.assertArrayEquals(boasNewPath.toByteArray(),boasEndPath.toByteArray());
+        Assert.assertArrayEquals(boasNewPath.toByteArray(), boasEndPath.toByteArray());
     }
 }
