@@ -55,19 +55,23 @@ import com.itextpdf.kernel.pdf.PdfName;
 import org.slf4j.LoggerFactory;
 import com.itextpdf.kernel.pdf.PdfObject;
 
-public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
+public abstract class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
 
     private static final long serialVersionUID = -9038993253308315792L;
 
 	/**
-     * Subtypes
+     * @deprecated , use {@link PdfName#Polygon} instead.
      */
+	@Deprecated
     public static final PdfName Polygon = PdfName.Polygon;
+    /**
+     * @deprecated , use {@link PdfName#PolyLine} instead.
+     */
+	@Deprecated
     public static final PdfName PolyLine = PdfName.PolyLine;
 
-    private PdfPolyGeomAnnotation(Rectangle rect, PdfName subtype, float[] vertices) {
+    PdfPolyGeomAnnotation(Rectangle rect, float[] vertices) {
         super(rect);
-        setSubtype(subtype);
         setVertices(vertices);
     }
 
@@ -79,16 +83,11 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
     }
 
     public static PdfPolyGeomAnnotation createPolygon(Rectangle rect, float[] vertices) {
-        return new PdfPolyGeomAnnotation(rect, Polygon, vertices);
+        return new PdfPolygonAnnotation(rect, vertices);
     }
 
     public static PdfPolyGeomAnnotation createPolyLine(Rectangle rect, float[] vertices) {
-        return new PdfPolyGeomAnnotation(rect, PolyLine, vertices);
-    }
-
-    @Override
-    public PdfName getSubtype() {
-        return getPdfObject().getAsName(PdfName.Subtype);
+        return new PdfPolylineAnnotation(rect, vertices);
     }
 
     public PdfArray getVertices() {
@@ -161,10 +160,6 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
             LoggerFactory.getLogger(getClass()).error(LogMessageConstant.IF_PATH_IS_SET_VERTICES_SHALL_NOT_BE_PRESENT);
         }
         return (PdfPolyGeomAnnotation) put(PdfName.Path, path);
-    }
-
-    private void setSubtype(PdfName subtype) {
-        put(PdfName.Subtype, subtype);
     }
 
     /**

@@ -301,8 +301,10 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
                 annotation = new PdfCircleAnnotation((PdfDictionary) pdfObject);
             } else if (PdfName.Line.equals(subtype)) {
                 annotation = new PdfLineAnnotation((PdfDictionary) pdfObject);
-            } else if (PdfName.Polygon.equals(subtype) || PdfName.PolyLine.equals(subtype)) {
-                annotation = new PdfPolyGeomAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.Polygon.equals(subtype)) {
+                annotation = new PdfPolygonAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.PolyLine.equals(subtype)) {
+                annotation = new PdfPolylineAnnotation((PdfDictionary) pdfObject);
             } else if (PdfName.Redact.equals(subtype)) {
                 annotation = new PdfRedactAnnotation((PdfDictionary) pdfObject);
             } else if (PdfName.Watermark.equals(subtype)) {
