@@ -49,8 +49,8 @@ import java.awt.image.PixelGrabber;
 
 class AwtImageDataFactory {
     /**
-     * Gets an instance of an Image from a java.awt.Image
-     * @param image the java.awt.Image to convert
+     * Gets an instance of an Image from a {@link java.awt.Image}
+     * @param image the {@link java.awt.Image} to convert
      * @param color if different from <CODE>null</CODE> the transparency pixels are replaced by this color
      * @return RawImage
      */

@@ -280,7 +280,7 @@ public class CertificateInfo {
     }
 
     /**
-     * Class for breaking up an X500 Name into it's component tokens, similar to java.util.StringTokenizer.
+     * Class for breaking up an X500 Name into it's component tokens, similar to {@link java.util.StringTokenizer}.
      * We need this class as some of the lightweight Java environments don't support classes such as StringTokenizer.
      */
     public static class X509NameTokenizer {

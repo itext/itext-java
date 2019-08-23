@@ -57,7 +57,7 @@ class RAFRandomAccessSource implements IRandomAccessSource {
 
     /**
      * The length of the underling RAF.  Note that the length is cached at construction time to avoid the possibility
-     * of java.io.IOExceptions when reading the length.
+     * of {@link java.io.IOException}s when reading the length.
      */
     private final long length;
 
