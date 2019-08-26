@@ -362,7 +362,9 @@ public class LayoutTaggingHelper {
 
     public void finishTaggingHint(IPropertyContainer hintOwner) {
         TaggingHintKey rendererKey = getHintKey(hintOwner);
-        if (rendererKey == null || rendererKey.isFinished()) { // artifact is always finished
+
+        // artifact is always finished
+        if (rendererKey == null || rendererKey.isFinished()) {
             return;
         }
 

@@ -337,7 +337,9 @@ public class LineRenderer extends AbstractRenderer {
                     setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
                 }
                 childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox), wasParentsHeightClipped));
-                if (childResult instanceof MinMaxWidthLayoutResult && null != childBlockMinMaxWidth) { // it means that we've already increased layout area by MIN_MAX_WIDTH_CORRECTION_EPS
+
+                // it means that we've already increased layout area by MIN_MAX_WIDTH_CORRECTION_EPS
+                if (childResult instanceof MinMaxWidthLayoutResult && null != childBlockMinMaxWidth) {
                     MinMaxWidth childResultMinMaxWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth();
                     childResultMinMaxWidth.setChildrenMaxWidth(childResultMinMaxWidth.getChildrenMaxWidth() + MIN_MAX_WIDTH_CORRECTION_EPS);
                     childResultMinMaxWidth.setChildrenMinWidth(childResultMinMaxWidth.getChildrenMinWidth() + MIN_MAX_WIDTH_CORRECTION_EPS);
@@ -764,7 +766,9 @@ public class LineRenderer extends AbstractRenderer {
         int numberOfSpaces = getNumberOfSpaces();
         int baseCharsCount = baseCharactersCount();
         float baseFactor = freeWidth / (ratio * numberOfSpaces + (1 - ratio) * (baseCharsCount - 1));
-        if (Float.isInfinite(baseFactor)) { //Prevent a NaN when trying to justify a single word with spacing_ratio == 1.0
+
+        //Prevent a NaN when trying to justify a single word with spacing_ratio == 1.0
+        if (Float.isInfinite(baseFactor)) {
             baseFactor = 0;
         }
         float wordSpacing = ratio * baseFactor;
@@ -986,7 +990,9 @@ public class LineRenderer extends AbstractRenderer {
         if (justPlacedFloatBox.getBottom() >= layoutBox.getTop() || justPlacedFloatBox.getTop() < layoutBox.getTop()) {
             return;
         }
-        boolean ltr = true; // TODO handle it
+
+        // TODO handle it
+        boolean ltr = true;
         float floatWidth = justPlacedFloatBox.getWidth();
         if (kidFloatPropertyVal.equals(FloatPropertyValue.LEFT)) {
             layoutBox.setWidth(layoutBox.getWidth() - floatWidth).moveRight(floatWidth);

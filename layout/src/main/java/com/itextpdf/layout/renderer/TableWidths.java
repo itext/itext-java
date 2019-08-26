@@ -224,7 +224,9 @@ final class TableWidths {
                         flexibleCols++;
                     }
                 }
-                if (remainWidth > 0) { // flexibleCols > 0 too
+
+                // flexibleCols > 0 too
+                if (remainWidth > 0) {
                     for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
                         if (widths[i].isFlexible()) {
                             widths[i].addPoints(remainWidth / flexibleCols);
@@ -483,7 +485,9 @@ final class TableWidths {
             columnWidthIfPercent[i] = -1;
         }
         float sumOfPercents = 0;
-        if (firtsRow != null && getTable().isComplete() && 0 == getTable().getLastRowBottomBorder().size()) { // only for not large tables
+
+        // only for not large tables
+        if (firtsRow != null && getTable().isComplete() && getTable().getLastRowBottomBorder().isEmpty()) {
             for (int i = 0; i < numberOfColumns; i++) {
                 if (columnWidths[i] == -1) {
                     CellRenderer cell = firtsRow[i];

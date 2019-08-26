@@ -125,7 +125,8 @@ public class DocumentRenderer extends RootRenderer {
                 return;
         }
 
-        if (!resultRenderer.isFlushed() && null != resultRenderer.getOccupiedArea()) { // TODO Remove checking occupied area to be not null when DEVSIX-1001 is resolved.
+        // TODO Remove checking occupied area to be not null when DEVSIX-1001 is resolved.
+        if (!resultRenderer.isFlushed() && null != resultRenderer.getOccupiedArea()) {
             int pageNum = resultRenderer.getOccupiedArea().getPageNumber();
 
             PdfDocument pdfDocument = document.getPdfDocument();

@@ -435,7 +435,9 @@ public class TableRenderer extends AbstractRenderer {
             } else if (null != footerRenderer) {
                 footerRenderer.bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, true);
             }
-            topBorderMaxWidth = bordersHandler.getMaxTopWidth(); // first row own top border. We will use it while header processing
+
+            // first row own top border. We will use it while header processing
+            topBorderMaxWidth = bordersHandler.getMaxTopWidth();
             LayoutResult result = headerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox), wasHeightClipped || wasParentsHeightClipped));
             if (result.getStatus() != LayoutResult.FULL) {
                 // we've changed it during header initialization. However, now we need to process borders again as they were.
@@ -831,9 +833,11 @@ public class TableRenderer extends AbstractRenderer {
                         if (columnsWithCellToBeEnlarged[col]) {
                             LayoutArea cellOccupiedArea = currentRow[col].getOccupiedArea();
                             if (1 == minRowspan) {
+
                                 // Here we use the same cell, but create a new renderer which doesn't have any children,
                                 // therefore it won't have any content.
-                                CellRenderer overflowCell = (CellRenderer) ((Cell) currentRow[col].getModelElement()).clone(true).getRenderer(); // we will change properties
+                                // we will change properties
+                                CellRenderer overflowCell = (CellRenderer) ((Cell) currentRow[col].getModelElement()).clone(true).getRenderer();
                                 overflowCell.setParent(this);
                                 overflowCell.deleteProperty(Property.HEIGHT);
                                 overflowCell.deleteProperty(Property.MIN_HEIGHT);
@@ -1021,7 +1025,7 @@ public class TableRenderer extends AbstractRenderer {
         if (tableModel.isEmpty() && null == headerRenderer) {
             occupiedArea.getBBox().moveUp((float) verticalBorderSpacing / 2);
         } else if (isAndWasComplete || 0 != rows.size()) {
-            applySingleSpacing(occupiedArea.getBBox(), verticalBorderSpacing, false, true);//
+            applySingleSpacing(occupiedArea.getBBox(), verticalBorderSpacing, false, true);
         }
 
         float bottomTableBorderWidth = bordersHandler.getMaxBottomWidth();
@@ -1584,7 +1588,9 @@ public class TableRenderer extends AbstractRenderer {
         // correct last height
         int finish = bordersHandler.getFinishRow();
         bordersHandler.setFinishRow(rowRange.getFinishRow());
-        Border currentBorder = bordersHandler.getWidestHorizontalBorder(finish + 1); // TODO Correct for collapsed borders only
+
+        // TODO Correct for collapsed borders only
+        Border currentBorder = bordersHandler.getWidestHorizontalBorder(finish + 1);
         bordersHandler.setFinishRow(finish);
         if (skip) {
             // Update bordersHandler
@@ -1701,7 +1707,9 @@ public class TableRenderer extends AbstractRenderer {
                 cell.move(0, -(cumulativeShift - rowspanOffset));
                 bBox.setHeight(height);
                 cell.applyVerticalAlignment();
-            } catch (NullPointerException e) {  // TODO Remove try-catch when DEVSIX-1655 is resolved.
+
+            // TODO Remove try-catch when DEVSIX-1655 is resolved.
+            } catch (NullPointerException e) {
                 Logger logger = LoggerFactory.getLogger(TableRenderer.class);
                 logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the cell's content might not end up placed correctly."));
             }
@@ -1746,7 +1754,9 @@ public class TableRenderer extends AbstractRenderer {
         if (taggingHelper != null) {
             taggingHelper.addKidsHint(this, Collections.<IRenderer>singletonList(renderer));
             LayoutTaggingHelper.addTreeHints(taggingHelper, renderer);
-            if (!footer && !firstHeader) { // whether footer is not the last and requires marking as artifact is defined later during table renderer layout
+
+            // whether footer is not the last and requires marking as artifact is defined later during table renderer layout
+            if (!footer && !firstHeader) {
                 taggingHelper.markArtifactHint(renderer);
             }
         }

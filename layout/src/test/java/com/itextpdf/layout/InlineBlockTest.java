@@ -137,7 +137,9 @@ public class InlineBlockTest extends ExtendedITextTest {
         }
         long start = SystemUtil.getRelativeTimeMillis();
         doc.add(p);
-        System.out.println(SystemUtil.getRelativeTimeMillis() - start); // 606 on local machine (including jvm warming up)
+
+        // 606 on local machine (including jvm warming up)
+        System.out.println(SystemUtil.getRelativeTimeMillis() - start);
 
         p = new Paragraph("hello world");
         for (int i = 0; i < n; ++i) {
@@ -147,7 +149,9 @@ public class InlineBlockTest extends ExtendedITextTest {
         }
         start = SystemUtil.getRelativeTimeMillis();
         doc.add(p);
-        System.out.println(SystemUtil.getRelativeTimeMillis() - start); // 4656 on local machine
+
+        // 4656 on local machine
+        System.out.println(SystemUtil.getRelativeTimeMillis() - start);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));

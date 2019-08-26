@@ -731,9 +731,12 @@ public class FloatTest extends ExtendedITextTest {
         divClear.add(new Paragraph("Cleared floating div."));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
         divClear.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
-        containerDiv.add(divClear); // Float with clear shall be drawn under the previous float on second page.
 
-        containerDiv.add(new Paragraph(text)); // text shall start on the first page.
+        // Float with clear shall be drawn under the previous float on second page.
+        containerDiv.add(divClear);
+
+        // text shall start on the first page.
+        containerDiv.add(new Paragraph(text));
         document.add(containerDiv);
         document.add(new Paragraph(text));
 
@@ -795,14 +798,19 @@ public class FloatTest extends ExtendedITextTest {
         divClear.add(new Paragraph("Cleared floating div."));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
         divClear.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
-        containerDiv.add(divClear); // Float with clear shall be drawn under the previous float on second page.
+
+        // Float with clear shall be drawn under the previous float on second page.
+        containerDiv.add(divClear);
 
         Div div2 = new Div().setBorder(new SolidBorder(ColorConstants.BLUE, 2));
         div2.add(new Paragraph("Last float."));
         div2.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
-        containerDiv.add(div2); // This float top shall not appear higher than floats tops added before this one.
 
-        containerDiv.add(new Paragraph(text + text)); // text shall start on the first page.
+        // This float top shall not appear higher than floats tops added before this one.
+        containerDiv.add(div2);
+
+        // text shall start on the first page.
+        containerDiv.add(new Paragraph(text + text));
         document.add(containerDiv);
 
         document.close();
@@ -823,12 +831,16 @@ public class FloatTest extends ExtendedITextTest {
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400));
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        document.add(div); // Adding float at the end of the page, it doesn't fit and is to be forced placed.
+
+        // Adding float at the end of the page, it doesn't fit and is to be forced placed.
+        document.add(div);
 
         Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
         divClear.add(new Paragraph("Cleared div."));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
-        document.add(divClear); // Adding cleared element which shall be after the previous float.
+
+        // Adding cleared element which shall be after the previous float.
+        document.add(divClear);
         document.add(new Paragraph(text));
 
         document.close();
@@ -848,12 +860,16 @@ public class FloatTest extends ExtendedITextTest {
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400).setWidth(300));
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        document.add(div); // Adding float at the end of the page, it doesn't fit vertically.
+
+        // Adding float at the end of the page, it doesn't fit vertically.
+        document.add(div);
 
         Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
         divClear.add(new Paragraph("Cleared div."));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
-        document.add(divClear); // Adding cleared element which shall be after the previous float.
+
+        // Adding cleared element which shall be after the previous float.
+        document.add(divClear);
         document.add(new Paragraph(text));
 
         document.close();
@@ -873,13 +889,17 @@ public class FloatTest extends ExtendedITextTest {
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400).setWidth(300));
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        document.add(div); // Adding float at the end of the page, it doesn't fit vertically.
+
+        // Adding float at the end of the page, it doesn't fit vertically.
+        document.add(div);
 
         Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
         divClear.add(new Paragraph("Cleared div."));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
         divClear.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
-        document.add(divClear); // Adding cleared element which shall be after the previous float.
+
+        // Adding cleared element which shall be after the previous float.
+        document.add(divClear);
         document.add(new Paragraph(text + text));
 
         document.close();
@@ -902,12 +922,16 @@ public class FloatTest extends ExtendedITextTest {
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400));
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        containerDiv.add(div); // Adding float at the end of the page, it doesn't fit and is to be forced placed.
+
+        // Adding float at the end of the page, it doesn't fit and is to be forced placed.
+        containerDiv.add(div);
 
         Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
         divClear.add(new Paragraph("Cleared div."));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
-        containerDiv.add(divClear); // Adding cleared element which shall be after the previous float.
+
+        // Adding cleared element which shall be after the previous float.
+        containerDiv.add(divClear);
         containerDiv.add(new Paragraph(text));
 
         document.add(containerDiv);
@@ -930,12 +954,16 @@ public class FloatTest extends ExtendedITextTest {
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400).setWidth(300));
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        containerDiv.add(div); // Adding float at the end of the page, it doesn't fit vertically.
+
+        // Adding float at the end of the page, it doesn't fit vertically.
+        containerDiv.add(div);
 
         Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
         divClear.add(new Paragraph("Cleared div."));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
-        containerDiv.add(divClear); // Adding cleared element which shall be after the previous float.
+
+        // Adding cleared element which shall be after the previous float.
+        containerDiv.add(divClear);
         containerDiv.add(new Paragraph(text));
 
         document.add(containerDiv);
@@ -958,13 +986,17 @@ public class FloatTest extends ExtendedITextTest {
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400).setWidth(300));
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        containerDiv.add(div); // Adding float at the end of the page, it doesn't fit vertically.
+
+        // Adding float at the end of the page, it doesn't fit vertically.
+        containerDiv.add(div);
 
         Div divClear = new Div().setBackgroundColor(ColorConstants.GREEN);
         divClear.add(new Paragraph("Cleared div."));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
         divClear.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
-        containerDiv.add(divClear); // Adding cleared element which shall be after the previous float.
+
+        // Adding cleared element which shall be after the previous float.
+        containerDiv.add(divClear);
         containerDiv.add(new Paragraph(text + text));
 
         document.add(containerDiv);
@@ -986,12 +1018,16 @@ public class FloatTest extends ExtendedITextTest {
         div.add(new Paragraph("Floating div."));
         div.setHeight(400).setWidth(100);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        document.add(div); // Adding float at the end of the page, it is split.
+
+        // Adding float at the end of the page, it is split.
+        document.add(div);
 
         Div divClear = new Div();
         divClear.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
         divClear.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
-        document.add(divClear); // Adding empty element with clearance - it shall be placed after the overflow part of the float.
+
+        // Adding empty element with clearance - it shall be placed after the overflow part of the float.
+        document.add(divClear);
         document.add(new Paragraph(text));
 
         document.add(new Paragraph(text));
@@ -1133,12 +1169,16 @@ public class FloatTest extends ExtendedITextTest {
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(280);
         div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        document.add(div); // Adding float that doesn't fit on first page.
+
+        // Adding float that doesn't fit on first page.
+        document.add(div);
 
         Div div2 = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div2.add(new Paragraph(text)).setWidth(300);
         div2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        document.add(div2); // Adding float that shall be after the previous float.
+
+        // Adding float that shall be after the previous float.
+        document.add(div2);
 
         document.close();
 
@@ -1155,13 +1195,18 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text + text));
 
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
-        div.setHeight(600); // Setting fixed height for the div, that will be split between pages.
+
+        // Setting fixed height for the div, that will be split between pages.
+        div.setHeight(600);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(280);
         img.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        div.add(img); // Adding float that will not fit on the first page.
+
+        // Adding float that will not fit on the first page.
+        div.add(img);
         div.add(new Paragraph("some small text"));
 
-        document.add(div); // div height shall be correct on the second page.
+        // div height shall be correct on the second page.
+        document.add(div);
 
         document.close();
 
@@ -1178,13 +1223,18 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text + text));
 
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
-        div.setHeight(600); // Setting fixed height for the div, that will be split between pages.
+
+        // Setting fixed height for the div, that will be split between pages.
+        div.setHeight(600);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(250);
         img.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        div.add(img); // Adding float that WILL fit on the first page.
+
+        // Adding float that WILL fit on the first page.
+        div.add(img);
         div.add(new Paragraph("some small text"));
 
-        document.add(div); // div height shall be correct on the second page.
+        // div height shall be correct on the second page.
+        document.add(div);
 
         document.close();
 
@@ -1207,10 +1257,13 @@ public class FloatTest extends ExtendedITextTest {
         div.setMinHeight(600);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
         img.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        div.add(img); // Adding float that will not fit on the first page and will have FORCED_PLACEMENT on the second.
+
+        // Adding float that will not fit on the first page and will have FORCED_PLACEMENT on the second.
+        div.add(img);
         div.add(new Paragraph("some small text"));
 
-        document.add(div); // TODO DEVSIX-1001: blocks don't extend their height to MIN_HEIGHT if forced placement is applied, why?
+        // TODO DEVSIX-1001: blocks don't extend their height to MIN_HEIGHT if forced placement is applied, why?
+        document.add(div);
 
         document.close();
 
@@ -1233,9 +1286,12 @@ public class FloatTest extends ExtendedITextTest {
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(200);
         div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        containerDiv.add(div); // Adding float that WILL fit on the first page.
 
-        containerDiv.add(img); // Adding img that shall be overflowed to the next page. containerDiv occupied area shall not have zero height on first page.
+        // Adding float that WILL fit on the first page.
+        containerDiv.add(div);
+
+        // Adding img that shall be overflowed to the next page. containerDiv occupied area shall not have zero height on first page.
+        containerDiv.add(img);
 
         document.add(containerDiv);
         document.close();
@@ -1256,11 +1312,14 @@ public class FloatTest extends ExtendedITextTest {
 
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(310).setWidth(310);
-        div.add(img); // Adding image that will not fit on first page in floating div.
+
+        // Adding image that will not fit on first page in floating div.
+        div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         containerDiv.add(div);
 
-        containerDiv.add(img); // Adding normal image that will not fit on the first page.
+        // Adding normal image that will not fit on the first page.
+        containerDiv.add(img);
 
         document.add(containerDiv);
         document.close();
@@ -1282,11 +1341,14 @@ public class FloatTest extends ExtendedITextTest {
 
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
-        div.add(img); // Adding image that will not fit on first page in floating div.
+
+        // Adding image that will not fit on first page in floating div.
+        div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         containerDiv.add(div);
 
-        containerDiv.add(img); // Adding normal image that will not fit on the first page and requires forced placement.
+        // Adding normal image that will not fit on the first page and requires forced placement.
+        containerDiv.add(img);
 
         document.add(containerDiv);
         document.close();
@@ -1312,8 +1374,11 @@ public class FloatTest extends ExtendedITextTest {
         containerDiv.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
 
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(750).setWidth(600);
-        containerDiv.add(img); // Adding normal image that will not fit on the first page and requires forced placement.
-        containerDiv.add(new Paragraph(text)); // Adding more text that is naturally expected to be correctly shown.
+
+        // Adding normal image that will not fit on the first page and requires forced placement.
+        containerDiv.add(img);
+// Adding more text that is naturally expected to be correctly shown.
+        containerDiv.add(new Paragraph(text));
 
         document.add(containerDiv);
         document.close();
@@ -1337,10 +1402,14 @@ public class FloatTest extends ExtendedITextTest {
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Paragraph(text).setWidth(250));
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        containerDiv.add(div); // Adding float that will be split.
+
+        // Adding float that will be split.
+        containerDiv.add(div);
 
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400).setWidth(250);
-        containerDiv.add(img); // Adding image that will not fit on first page. containerDiv shall return PARTIAL status
+
+        // Adding image that will not fit on first page. containerDiv shall return PARTIAL status
+        containerDiv.add(img);
 
         document.add(containerDiv);
         document.close();
@@ -1388,12 +1457,16 @@ public class FloatTest extends ExtendedITextTest {
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400);
         div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        containerDiv.add(div); // Adding float that will not fit.
+
+        // Adding float that will not fit.
+        containerDiv.add(div);
 
         Div div2 = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div2.add(new Paragraph(text)).setWidth(300);
         div2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        containerDiv.add(div2); // Adding float that shall be after the previous float. And shall overflow to the third page.
+
+        // Adding float that shall be after the previous float. And shall overflow to the third page.
+        containerDiv.add(div2);
 
         document.add(containerDiv);
         document.close();
@@ -1413,7 +1486,9 @@ public class FloatTest extends ExtendedITextTest {
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400).setWidth(100);
         img.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        div.setMinHeight(300).add(img); // Div shall have height of 300pt.
+
+        // Div shall have height of 300pt.
+        div.setMinHeight(300).add(img);
         document.add(div);
 
         document.close();
@@ -1431,7 +1506,9 @@ public class FloatTest extends ExtendedITextTest {
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400).setWidth(100);
         img.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        div.setHeight(500).add(img); // Div shall have height of 500pt.
+
+        // Div shall have height of 500pt.
+        div.setHeight(500).add(img);
         document.add(div);
 
         document.close();
@@ -1480,12 +1557,16 @@ public class FloatTest extends ExtendedITextTest {
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(280);
         div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        mainDiv.add(div); // Adding float that doesn't fit on first page.
+
+        // Adding float that doesn't fit on first page.
+        mainDiv.add(div);
 
         Div div2 = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div2.add(new Paragraph(text)).setWidth(300);
         div2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        mainDiv.add(div2); // Adding float that shall be after the previous float.
+
+        // Adding float that shall be after the previous float.
+        mainDiv.add(div2);
 
         document.add(mainDiv);
 
@@ -1508,12 +1589,16 @@ public class FloatTest extends ExtendedITextTest {
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(280);
         div.add(img);
         div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        p.add(div); // Adding float that doesn't fit on first page.
+
+        // Adding float that doesn't fit on first page.
+        p.add(div);
 
         Div div2 = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div2.add(new Paragraph(text)).setWidth(300);
         div2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        p.add(div2); // Adding float that shall be after the previous float.
+
+        // Adding float that shall be after the previous float.
+        p.add(div2);
 
         document.add(p);
 
@@ -2058,7 +2143,8 @@ public class FloatTest extends ExtendedITextTest {
                 .setWidth(350)
                 .setBorder(new SolidBorder(ColorConstants.BLUE, 3));
 
-        div.setFillAvailableAreaOnSplit(true); // specifying fill available area option
+        // specifying fill available area option
+        div.setFillAvailableAreaOnSplit(true);
 
         div.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
         div.add(new Paragraph(text).setFontColor(ColorConstants.LIGHT_GRAY));
@@ -2083,7 +2169,8 @@ public class FloatTest extends ExtendedITextTest {
                 .setWidth(350)
                 .setBorder(new SolidBorder(ColorConstants.BLUE, 3));
 
-        div.setFillAvailableAreaOnSplit(true); // specifying fill available area option
+        // specifying fill available area option
+        div.setFillAvailableAreaOnSplit(true);
 
         div.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
         div.add(new Paragraph(text).setFontColor(ColorConstants.LIGHT_GRAY));
@@ -2656,8 +2743,11 @@ public class FloatTest extends ExtendedITextTest {
         document.add(new Paragraph(text));
         document.add(mainDiv);
 
-        document.add(new AreaBreak(AreaBreakType.NEXT_PAGE)); // TODO DEVSIX-1819: floats break area-break logic if min_height doesn't overflow to the next page on first addition: SMALL TICKET
-        document.add(new AreaBreak(AreaBreakType.NEXT_PAGE)); // adding two page breaks two work around the issue
+        // TODO DEVSIX-1819: floats break area-break logic if min_height doesn't overflow to the next page on first addition: SMALL TICKET
+        document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+
+        // adding two page breaks two work around the issue
+        document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
 
         // second addition
         mainDiv.setMinHeight(50);

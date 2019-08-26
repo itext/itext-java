@@ -507,7 +507,9 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         String discSymbol = "\u2022";
         String squareSymbol = "\u25AA";
         String circleSymbol = "\u25E6";
-        List list = new List(ListNumberingType.ROMAN_UPPER); // setting numbering type for now
+
+        // setting numbering type for now
+        List list = new List(ListNumberingType.ROMAN_UPPER);
 
         list.add("item 1");
 
@@ -541,11 +543,14 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         doc.add(list);
         doc.add(new LineSeparator(new SolidLine()));
 
-        doc.add(list.setListSymbol(circleSymbol)); // setting circle symbol, not setting attributes
+        // setting circle symbol, not setting attributes
+        doc.add(list.setListSymbol(circleSymbol));
         doc.add(new LineSeparator(new SolidLine()));
 
         list.getAccessibilityProperties().addAttributes(attributesCircle);
-        doc.add(list); // circle symbol set, setting attributes
+
+        // circle symbol set, setting attributes
+        doc.add(list);
 
         doc.close();
 

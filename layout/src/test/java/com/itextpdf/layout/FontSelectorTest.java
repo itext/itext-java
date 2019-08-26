@@ -402,9 +402,15 @@ public class FontSelectorTest extends ExtendedITextTest {
 
     @Test
     public void searchFontAliasWithUnicodeChars() {
-        String cyrillicAlias = "\u0444\u043E\u043D\u04421"; // фонт1
-        String greekAlias = "\u03B3\u03C1\u03B1\u03BC\u03BC\u03B1\u03C4\u03BF\u03C3\u03B5\u03B9\u03C1\u03AC2"; // γραμματοσειρά2
-        String japaneseAlias = "\u30D5\u30A9\u30F3\u30C83"; // フォント3
+
+        // фонт1
+        String cyrillicAlias = "\u0444\u043E\u043D\u04421";
+
+        // γραμματοσειρά2
+        String greekAlias = "\u03B3\u03C1\u03B1\u03BC\u03BC\u03B1\u03C4\u03BF\u03C3\u03B5\u03B9\u03C1\u03AC2";
+
+        // フォント3
+        String japaneseAlias = "\u30D5\u30A9\u30F3\u30C83";
         Map<String, String> aliasToFontName = new LinkedHashMap<>();
         aliasToFontName.put(cyrillicAlias, "NotoSans-Regular.ttf");
         aliasToFontName.put(greekAlias, "FreeSans.ttf");
@@ -436,7 +442,8 @@ public class FontSelectorTest extends ExtendedITextTest {
         String outFileName = destinationFolder + fileName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
-        String japaneseAlias = "\u30D5\u30A9\u30F3\u30C83"; // フォント3
+        // フォント3
+        String japaneseAlias = "\u30D5\u30A9\u30F3\u30C83";
         FontProvider provider = new FontProvider();
         provider.addFont(fontsFolder + "NotoSans-Regular.ttf");
         provider.getFontSet().addFont(fontsFolder + "Puritan2.otf", PdfEncodings.IDENTITY_H, japaneseAlias);

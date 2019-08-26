@@ -188,7 +188,8 @@ public class AccessibleAttributesApplier {
                 renderer.getPropertyAsUnitValue(Property.MARGIN_LEFT),
                 renderer.getPropertyAsUnitValue(Property.MARGIN_RIGHT)};
 
-        int[] marginsOrder = {0, 1, 2, 3}; //TODO set depending on writing direction
+        //TODO set depending on writing direction
+        int[] marginsOrder = {0, 1, 2, 3};
 
         UnitValue spaceBefore = margins[marginsOrder[0]];
         if (spaceBefore != null) {
@@ -370,7 +371,9 @@ public class AccessibleAttributesApplier {
             }
         } else {
             PdfArray paddingArray = new PdfArray();
-            int[] paddingsOrder = {0, 1, 2, 3}; //TODO set depending on writing direction
+
+            //TODO set depending on writing direction
+            int[] paddingsOrder = {0, 1, 2, 3};
             for (int i : paddingsOrder) {
                 paddingArray.add(new PdfNumber(paddings[i]));
             }
@@ -431,7 +434,8 @@ public class AccessibleAttributesApplier {
                 }
             }
 
-            int[] borderOrder = {0, 1, 2, 3}; //TODO set depending on writing direction
+            //TODO set depending on writing direction
+            int[] borderOrder = {0, 1, 2, 3};
             for (int i : borderOrder) {
                 if (borders[i] != null) {
                     if (borders[i].getColor() instanceof DeviceRgb) {

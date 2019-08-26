@@ -64,7 +64,9 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
         stoplist = new HashMap<>(23);
         classmap = new TernaryTree();
         vspace = new ByteVector();
-        vspace.alloc(1);    // this reserves index 0, which we don't use
+
+        // this reserves index 0, which we don't use
+        vspace.alloc(1);
     }
 
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
@@ -92,10 +94,13 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
             if ((i & 1) == 1) {
                 va[j + offset] = (byte)(va[j + offset] | v);
             } else {
-                va[j + offset] = (byte)(v << 4);    // big endian
+                // big endian
+                va[j + offset] = (byte)(v << 4);
             }
         }
-        va[m - 1 + offset] = 0;    // terminator
+
+        // terminator
+        va[m - 1 + offset] = 0;
         return offset;
     }
 
@@ -250,7 +255,9 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
         while (p > 0 && p < sc.length) {
             if (sc[p] == 0xFFFF) {
                 if (hstrcmp(word, i, kv.getArray(), lo[p]) == 0) {
-                    values = getValues(eq[p]);    // data pointer is in eq[]
+
+                    // data pointer is in eq[]
+                    values = getValues(eq[p]);
                     int j = index;
                     for (int k = 0; k < values.length; k++) {
                         if (j < il.length && values[k] > il[j]) {
@@ -273,7 +280,9 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
                 // look for a pattern ending at this position by searching for
                 // the null char ( splitchar == 0 )
                 while (q > 0 && q < sc.length) {
-                    if (sc[q] == 0xFFFF) {        // stop at compressed branch
+
+                    // stop at compressed branch
+                    if (sc[q] == 0xFFFF) {
                         break;
                     }
                     if (sc[q] == 0) {
@@ -469,7 +478,9 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
         for (i = 1; i <= len; i++) {
             c[0] = w[offset + i - 1];
             int nc = classmap.find(c, 0);
-            if (nc < 0) {    // found a non-letter character ...
+
+            // found a non-letter character ...
+            if (nc < 0) {
                 if (i == (1 + iIgnoreAtBeginning)) {
                     // ... before any letter character
                     iIgnoreAtBeginning++;
@@ -513,11 +524,19 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
                 }
             }
         } else {
+
             // use algorithm to get hyphenation points
-            word[0] = '.';                    // word start marker
-            word[len + 1] = '.';              // word end marker
-            word[len + 2] = 0;                // null terminated
-            byte[] il = new byte[len + 3];    // initialized to zero
+            // word start marker
+            word[0] = '.';
+
+            // word end marker
+            word[len + 1] = '.';
+
+            // null terminated
+            word[len + 2] = 0;
+
+            // initialized to zero
+            byte[] il = new byte[len + 3];
             for (i = 0; i < len + 1; i++) {
                 searchPatterns(word, i, il);
             }

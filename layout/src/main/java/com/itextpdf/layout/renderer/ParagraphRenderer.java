@@ -186,7 +186,8 @@ public class ParagraphRenderer extends BlockRenderer {
         List<IRenderer> inlineFloatsOverflowedToNextPage = new ArrayList<>();
         boolean floatOverflowedToNextPageWithNothing = false;
 
-        Set<Rectangle> nonChildFloatingRendererAreas = new HashSet<>(floatRendererAreas); // rectangles are compared by instances
+        // rectangles are compared by instances
+        Set<Rectangle> nonChildFloatingRendererAreas = new HashSet<>(floatRendererAreas);
 
         if (marginsCollapsingEnabled && childRenderers.size() > 0) {
             // passing null is sufficient to notify that there is a kid, however we don't care about it and it's margins
@@ -281,7 +282,8 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
             }
 
-            boolean lineHasContent = processedRenderer != null && processedRenderer.getOccupiedArea().getBBox().getHeight() > 0; // could be false if e.g. line contains only floats
+            // could be false if e.g. line contains only floats
+            boolean lineHasContent = processedRenderer != null && processedRenderer.getOccupiedArea().getBBox().getHeight() > 0;
             boolean doesNotFit = processedRenderer == null;
             float deltaY = 0;
             if (!doesNotFit) {
@@ -422,7 +424,9 @@ public class ParagraphRenderer extends BlockRenderer {
 
                 if (!inlineFloatsOverflowedToNextPage.isEmpty() && result.getOverflowRenderer() == null) {
                     onlyOverflowedFloatsLeft = true;
-                    currentRenderer = new LineRenderer(); // dummy renderer to trick paragraph renderer to continue kids loop
+
+                    // dummy renderer to trick paragraph renderer to continue kids loop
+                    currentRenderer = new LineRenderer();
                 }
             }
         }

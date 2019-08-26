@@ -2846,7 +2846,9 @@ public class TableTest extends ExtendedITextTest {
 
         for (int rows = 0; rows < 11; rows++) {
             table.addCell(new Cell(numRows, 1).add(new Paragraph("Filled Cell: " + Integer.toString(rows) + ", 0")));
-            int numFillerCells = (numRows - 1) * numRows; //Number of cells to complete the table rows filling up to the cell of colSpan
+
+            //Number of cells to complete the table rows filling up to the cell of colSpan
+            int numFillerCells = (numRows - 1) * numRows;
             for (int cells = 0; cells < numFillerCells; cells++) {
                 table.addCell(new Cell().add(new Paragraph("Filled Cell: " + Integer.toString(rows) + ", " + Integer.toString(cells))));
             }

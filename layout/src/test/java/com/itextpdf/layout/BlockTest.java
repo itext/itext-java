@@ -326,7 +326,9 @@ public class BlockTest extends ExtendedITextTest {
         parent = new Div();
         parent.setHeight(parentHeight);
         parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
-        d.deleteOwnProperty(Property.MIN_HEIGHT);//Min-height trumps max-height, so we have to remove it when re-using the div
+
+        //Min-height trumps max-height, so we have to remove it when re-using the div
+        d.deleteOwnProperty(Property.MIN_HEIGHT);
         d.setProperty(Property.MAX_HEIGHT, UnitValue.createPercentValue(30f));
         parent.add(d);
         doc.add(parent);
@@ -424,7 +426,9 @@ public class BlockTest extends ExtendedITextTest {
         parent = new Div();
         parent.setHeight(parentHeight);
         parent.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
-        p.deleteOwnProperty(Property.MIN_HEIGHT);//Min-height trumps max, so we have to remove it when re-using the paragraph
+
+        //Min-height trumps max, so we have to remove it when re-using the paragraph
+        p.deleteOwnProperty(Property.MIN_HEIGHT);
         p.setProperty(Property.MAX_HEIGHT, UnitValue.createPercentValue(30f));
         parent.add(p);
         doc.add(parent);

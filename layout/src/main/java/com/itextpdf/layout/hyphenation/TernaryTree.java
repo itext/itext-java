@@ -163,7 +163,9 @@ public class TernaryTree implements Serializable {
     public void insert(String key, char val) {
         // make sure we have enough room in the arrays
         int len = key.length()
-                  + 1;    // maximum number of nodes that may be generated
+
+                // maximum number of nodes that may be generated
+                  + 1;
         if (freenode + len > eq.length) {
             redimNodeArrays(eq.length + BLOCK_SIZE);
         }
@@ -201,13 +203,18 @@ public class TernaryTree implements Serializable {
             // Instead of doing that, we store the key somewhere else and create
             // only one node with a pointer to the key
             p = freenode++;
-            eq[p] = val;           // holds data
+
+            // holds data
+            eq[p] = val;
             length++;
             hi[p] = 0;
             if (len > 0) {
-                sc[p] = 0xFFFF;    // indicates branch is compressed
-                lo[p] = (char)kv.alloc(len
-                                       + 1);    // use 'lo' to hold pointer to key
+
+                // indicates branch is compressed
+                sc[p] = 0xFFFF;
+
+                // use 'lo' to hold pointer to key
+                lo[p] = (char)kv.alloc(len + 1);
                 strcpy(kv.getArray(), lo[p], key, start);
             } else {
                 sc[p] = 0;
@@ -239,8 +246,12 @@ public class TernaryTree implements Serializable {
                 // this will generate garbage in the external key array
                 // but we can do some garbage collection later
                 char pp = freenode++;
-                lo[pp] = lo[p];    // previous pointer to key
-                eq[pp] = eq[p];    // previous pointer to data
+
+                // previous pointer to key
+                lo[pp] = lo[p];
+
+                // previous pointer to data
+                eq[pp] = eq[p];
                 lo[p] = 0;
                 if (len > 0) {
                     sc[p] = kv.get(lo[pp]);

@@ -143,17 +143,23 @@ public class FloatExampleTest extends ExtendedITextTest {
         document.add(new AreaBreak());
 
         document.add(new Paragraph("Bug: Non-floating text width is parent width (limited by max).\n"));
-        addContent(document, true, Property.MAX_WIDTH, new UnitValue(UnitValue.PERCENT, 80f), // 100% would require forced placement, since border box has width and is not included in 100% width
+
+        // 100% would require forced placement, since border box has width and is not included in 100% width
+        addContent(document, true, Property.MAX_WIDTH, new UnitValue(UnitValue.PERCENT, 80f),
                 Property.WIDTH, new UnitValue(UnitValue.PERCENT, 30f), ClearPropertyValue.BOTH, firstImage, lastImage);
         document.add(new AreaBreak());
 
         document.add(new Paragraph("Max width < actual width.\n"));
-        addContent(document, true, Property.MAX_WIDTH, new UnitValue(UnitValue.PERCENT, 80f), // 100% would require forced placement, since border box has width and is not included in 100% width
+
+        // 100% would require forced placement, since border box has width and is not included in 100% width
+        addContent(document, true, Property.MAX_WIDTH, new UnitValue(UnitValue.PERCENT, 80f),
                 Property.MAX_WIDTH, new UnitValue(UnitValue.PERCENT, 30f), ClearPropertyValue.BOTH, firstImage, lastImage);
         document.add(new AreaBreak());
 
         document.add(new Paragraph("Bug: Non-floating text width is parent width (limited by max).\nMax width > actual width.\n"));
-        addContent(document, true, Property.MAX_WIDTH, new UnitValue(UnitValue.PERCENT, 80f), // 100% would require forced placement, since border box has width and is not included in 100% width
+
+        // 100% would require forced placement, since border box has width and is not included in 100% width
+        addContent(document, true, Property.MAX_WIDTH, new UnitValue(UnitValue.PERCENT, 80f),
                 Property.MAX_WIDTH, new UnitValue(UnitValue.PERCENT, 60f), ClearPropertyValue.BOTH, firstImage, lastImage);
 
         document.close();

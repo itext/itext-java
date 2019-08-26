@@ -321,7 +321,8 @@ public class MarginsCollapseHandler {
         } else if (childIndex > firstNotEmptyKidIndex) {
             if (lastChildMarginAdjoinedToParent(renderer)) {
                 // restore layout box after inline element
-                float bottomIndent = collapseInfo.getCollapseAfter().getCollapsedMarginsSize() - collapseInfo.getUsedBufferSpaceOnBottom(); // used space shall be always less or equal to collapsedMarginAfter size
+                // used space shall be always less or equal to collapsedMarginAfter size
+                float bottomIndent = collapseInfo.getCollapseAfter().getCollapsedMarginsSize() - collapseInfo.getUsedBufferSpaceOnBottom();
                 collapseInfo.setBufferSpaceOnBottom(collapseInfo.getBufferSpaceOnBottom() + collapseInfo.getUsedBufferSpaceOnBottom());
                 collapseInfo.setUsedBufferSpaceOnBottom(0);
                 layoutBox.setY(layoutBox.getY() - bottomIndent);
@@ -335,7 +336,9 @@ public class MarginsCollapseHandler {
                 float topIndent = collapseInfo.getCollapseBefore().getCollapsedMarginsSize();
                 applyTopMargin(layoutBox, topIndent);
             }
-            if (lastChildMarginAdjoinedToParent(renderer)) { // if not adjoined - bottom margin have been already applied on startMarginsCollapse
+
+            // if not adjoined - bottom margin have been already applied on startMarginsCollapse
+            if (lastChildMarginAdjoinedToParent(renderer)) {
                 float bottomIndent = collapseInfo.getCollapseAfter().getCollapsedMarginsSize();
                 applyBottomMargin(layoutBox, bottomIndent);
             }
