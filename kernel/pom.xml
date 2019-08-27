@@ -9,6 +9,9 @@
   <artifactId>kernel</artifactId>
   <name>iText 7 - kernel</name>
   <url>https://itextpdf.com/</url>
+  <properties>
+    <sonar.exclusions>**/com/itextpdf/kernel/xmp/**</sonar.exclusions>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>
