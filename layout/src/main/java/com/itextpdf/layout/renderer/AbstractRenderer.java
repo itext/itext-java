@@ -529,7 +529,7 @@ public abstract class AbstractRenderer implements IRenderer {
                         backgroundXObject = backgroundImage.getForm();
                     }
                     Rectangle imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundXObject.getHeight(),
-                            backgroundXObject.getWidth(), backgroundXObject.getHeight());
+                            backgroundXObject.getWidth() * .75f, backgroundXObject.getHeight() * .75f);
                     if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
                         Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                         logger.warn(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
