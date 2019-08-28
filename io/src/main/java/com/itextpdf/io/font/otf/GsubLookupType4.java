@@ -104,7 +104,8 @@ public class GsubLookupType4 extends OpenTableLookup {
     @Override
     protected void readSubTable(int subTableLocation) throws java.io.IOException {
         openReader.rf.seek(subTableLocation);
-        openReader.rf.readShort(); //subformat - always 1
+        // subformat - always 1
+        openReader.rf.readShort();
         int coverage = openReader.rf.readUnsignedShort() + subTableLocation;
         int ligSetCount = openReader.rf.readUnsignedShort();
         int[] ligatureSet = new int[ligSetCount];

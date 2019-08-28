@@ -552,7 +552,8 @@ final class BmpImageHelper {
     }
 
     private static boolean getImage(BmpParameters bmp) throws java.io.IOException {
-        byte bdata[]; // buffer for byte data
+        // buffer for byte data
+        byte[] bdata;
         //	if (sampleModel.getDataType() == DataBuffer.TYPE_BYTE)
         //	    bdata = (byte[])((DataBufferByte)tile.getDataBuffer()).getData();
         //	else if (sampleModel.getDataType() == DataBuffer.TYPE_USHORT)

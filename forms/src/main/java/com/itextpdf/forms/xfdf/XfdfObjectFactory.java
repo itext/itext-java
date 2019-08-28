@@ -284,18 +284,20 @@ public class XfdfObjectFactory {
         for (int temp = 0; temp < children.getLength(); temp++) {
             Node node = children.item(temp);
             if (node.getNodeType() == Node.TEXT_NODE) {
-                annotObject.setContents(new PdfString(node.getNodeValue()));//getTextContent?
+                // getTextContent?
+                annotObject.setContents(new PdfString(node.getNodeValue()));
             }
         }
     }
 
     private void visitContentsRichTextSubelement(Node parentNode, AnnotObject annotObject) {
-        //no attributes, inside a text string or rich text string
+        // no attributes, inside a text string or rich text string
         NodeList children = parentNode.getChildNodes();
         for (int temp = 0; temp < children.getLength(); temp++) {
             Node node = children.item(temp);
             if (node.getNodeType() == Node.TEXT_NODE) {
-                annotObject.setContentsRichText(new PdfString(node.getNodeValue()));//getTextContent?
+                // getTextContent?
+                annotObject.setContentsRichText(new PdfString(node.getNodeValue()));
             }
         }
     }

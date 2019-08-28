@@ -219,11 +219,14 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
 
                 Integer justification = field.getJustification();
                 if (null == justification || 0 == (int) justification) {
-                    field.setBackgroundColor(new DeviceRgb(255, 200, 200)); // reddish
+                    // reddish
+                    field.setBackgroundColor(new DeviceRgb(255, 200, 200));
                 } else if (1 == (int) justification) {
-                    field.setBackgroundColor(new DeviceRgb(200, 255, 200)); // greenish
+                    // greenish
+                    field.setBackgroundColor(new DeviceRgb(200, 255, 200));
                 } else if (2 == (int) justification) {
-                    field.setBackgroundColor(new DeviceRgb(200, 200, 255)); // blueish
+                    // blueish
+                    field.setBackgroundColor(new DeviceRgb(200, 200, 255));
                 }
 
                 field.setValue(newValue);

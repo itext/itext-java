@@ -231,8 +231,10 @@ public final class FontProgramFactory {
                 int ttcSplit = baseName.toLowerCase().indexOf(".ttc,");
                 if (ttcSplit > 0) {
                     try {
-                        String ttcName = baseName.substring(0, ttcSplit + 4); // count(.ttc) = 4
-                        int ttcIndex = Integer.parseInt(baseName.substring(ttcSplit + 5)); // count(.ttc,) = 5)
+                        // count(.ttc) = 4
+                        String ttcName = baseName.substring(0, ttcSplit + 4);
+                        // count(.ttc,) = 5)
+                        int ttcIndex = Integer.parseInt(baseName.substring(ttcSplit + 5));
                         fontBuilt = new TrueTypeFont(ttcName, ttcIndex);
                     } catch (NumberFormatException nfe) {
                         throw new IOException(nfe.getMessage(), nfe);

@@ -2336,9 +2336,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private String getRadioButtonValue(String value) {
-        assert value != null; //Otherwise something wrong with getValueAsString().
+        //Otherwise something wrong with getValueAsString().
+        assert value != null;
         if ("".equals(value)) {
-            value = "Yes"; //let it as default value
+            //let it as default value
+            value = "Yes";
             for (String state: getAppearanceStates()) {
                 if (!"Off".equals(state)) {
                     value = state;
@@ -3521,7 +3523,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
         }
-        sb.deleteCharAt(sb.length() - 1); // last '\n'
+        // last '\n'
+        sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
     }
 

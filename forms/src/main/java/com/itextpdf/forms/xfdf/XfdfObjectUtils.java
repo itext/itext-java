@@ -164,7 +164,8 @@ final class XfdfObjectUtils {
 
         for(String flag : flagsList) {
             if (flagMap.containsKey(flag)) {
-                result += (int) flagMap.get(flag);//implicit cast  for autoporting
+                //implicit cast  for autoporting
+                result += (int) flagMap.get(flag);
             }
         }
         return result;

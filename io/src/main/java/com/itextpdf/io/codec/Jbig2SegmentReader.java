@@ -67,30 +67,50 @@ import java.util.TreeSet;
  */
 
 public class Jbig2SegmentReader {
+    //see 7.4.2.
+    public static final int SYMBOL_DICTIONARY = 0;
 
-    public static final int SYMBOL_DICTIONARY = 0; //see 7.4.2.
+    //see 7.4.3.
+    public static final int INTERMEDIATE_TEXT_REGION = 4;
+    //see 7.4.3.//see 7.4.3.
+    public static final int IMMEDIATE_TEXT_REGION = 6;
+    //see 7.4.3.
+    public static final int IMMEDIATE_LOSSLESS_TEXT_REGION = 7;
+    //see 7.4.4.
+    public static final int PATTERN_DICTIONARY = 16;
+    //see 7.4.5.
+    public static final int INTERMEDIATE_HALFTONE_REGION = 20;
+    //see 7.4.5.
+    public static final int IMMEDIATE_HALFTONE_REGION = 22;
+    //see 7.4.5.
+    public static final int IMMEDIATE_LOSSLESS_HALFTONE_REGION = 23;
+    //see 7.4.6.
+    public static final int INTERMEDIATE_GENERIC_REGION = 36;
+    //see 7.4.6.
+    public static final int IMMEDIATE_GENERIC_REGION = 38;
+    //see 7.4.6.
+    public static final int IMMEDIATE_LOSSLESS_GENERIC_REGION = 39;
+    //see 7.4.7.
+    public static final int INTERMEDIATE_GENERIC_REFINEMENT_REGION = 40;
+    //see 7.4.7.
+    public static final int IMMEDIATE_GENERIC_REFINEMENT_REGION = 42;
+    //see 7.4.7.
+    public static final int IMMEDIATE_LOSSLESS_GENERIC_REFINEMENT_REGION = 43;
 
-    public static final int INTERMEDIATE_TEXT_REGION = 4; //see 7.4.3.
-    public static final int IMMEDIATE_TEXT_REGION = 6; //see 7.4.3.
-    public static final int IMMEDIATE_LOSSLESS_TEXT_REGION = 7; //see 7.4.3.
-    public static final int PATTERN_DICTIONARY = 16; //see 7.4.4.
-    public static final int INTERMEDIATE_HALFTONE_REGION = 20; //see 7.4.5.
-    public static final int IMMEDIATE_HALFTONE_REGION = 22; //see 7.4.5.
-    public static final int IMMEDIATE_LOSSLESS_HALFTONE_REGION = 23; //see 7.4.5.
-    public static final int INTERMEDIATE_GENERIC_REGION = 36; //see 7.4.6.
-    public static final int IMMEDIATE_GENERIC_REGION = 38; //see 7.4.6.
-    public static final int IMMEDIATE_LOSSLESS_GENERIC_REGION = 39; //see 7.4.6.
-    public static final int INTERMEDIATE_GENERIC_REFINEMENT_REGION = 40; //see 7.4.7.
-    public static final int IMMEDIATE_GENERIC_REFINEMENT_REGION = 42; //see 7.4.7.
-    public static final int IMMEDIATE_LOSSLESS_GENERIC_REFINEMENT_REGION = 43; //see 7.4.7.
-
-    public static final int PAGE_INFORMATION = 48; //see 7.4.8.
-    public static final int END_OF_PAGE = 49; //see 7.4.9.
-    public static final int END_OF_STRIPE = 50; //see 7.4.10.
-    public static final int END_OF_FILE = 51; //see 7.4.11.
-    public static final int PROFILES = 52; //see 7.4.12.
-    public static final int TABLES = 53; //see 7.4.13.
-    public static final int EXTENSION = 62; //see 7.4.14.
+    //see 7.4.8.
+    public static final int PAGE_INFORMATION = 48;
+    //see 7.4.9.
+    public static final int END_OF_PAGE = 49;
+    //see 7.4.10.
+    public static final int END_OF_STRIPE = 50;
+    //see 7.4.11.
+    public static final int END_OF_FILE = 51;
+    //see 7.4.12.
+    public static final int PROFILES = 52;
+    //see 7.4.13.
+    public static final int TABLES = 53;
+    //see 7.4.14.
+    public static final int EXTENSION = 62;
 
     private final Map<Integer, Jbig2Segment> segments = new TreeMap<>();
     private final Map<Integer, Jbig2Page> pages = new TreeMap<>();
@@ -319,7 +339,8 @@ public class Jbig2SegmentReader {
             } else if (segment_number <= 65536) {
                 referred_to_segment_numbers[i] = ra.readUnsignedShort();
             } else {
-                referred_to_segment_numbers[i] = (int) ra.readUnsignedInt(); // TODO wtf ack
+                // TODO wtf ack
+                referred_to_segment_numbers[i] = (int) ra.readUnsignedInt();
             }
         }
         s.referredToSegmentNumbers = referred_to_segment_numbers;

@@ -93,7 +93,8 @@ class BitFile {
 
     public void writeBits(int bits, int numbits) throws IOException {
         int bitsWritten = 0;
-        int numBytes = 255;        // gif block count
+        // gif block count
+        int numBytes = 255;
         do {
             // This handles the GIF block count stuff
             if ((index == 254 && bitsLeft == 0) || index > 254) {
@@ -107,9 +108,11 @@ class BitFile {
                 bitsLeft = 8;
             }
 
-            if (numbits <= bitsLeft) // bits contents fit in current index byte
+            // bits contents fit in current index byte
+            if (numbits <= bitsLeft)
             {
-                if (blocks) // GIF
+                // GIF
+                if (blocks)
                 {
                     buffer[index] |= (byte) ((bits & ((1 << numbits) - 1)) << (8 - bitsLeft));
                     bitsWritten += numbits;
@@ -122,9 +125,11 @@ class BitFile {
                     numbits = 0;
 
                 }
-            } else // bits overflow from current byte to next.
-            {
-                if (blocks)    // GIF
+            } else {
+                // bits overflow from current byte to next.
+
+                // GIF
+                if (blocks)
                 {
                     // if bits  > space left in current byte then the lowest order bits
                     // of code are taken and put in current byte and rest put in next.
@@ -140,9 +145,11 @@ class BitFile {
                     // at highest order bit location !!
                     int topbits = (bits >>> (numbits - bitsLeft)) & ((1 << bitsLeft) - 1);
                     buffer[index] |= (byte) topbits;
-                    numbits -= bitsLeft;    // ok this many bits gone off the top
+                    // ok this many bits gone off the top
+                    numbits -= bitsLeft;
                     bitsWritten += bitsLeft;
-                    buffer[++index] = 0;    // next index
+                    // next index
+                    buffer[++index] = 0;
                     bitsLeft = 8;
                 }
             }

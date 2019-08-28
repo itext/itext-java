@@ -77,7 +77,7 @@ public class AnnotObject {
      * Content model: text string.
      * For more details see paragraph 6.5.4 in Xfdf document specification.
      */
-    private PdfString contents;//basically text string
+    private PdfString contents;
 
     /**
      * Represents contents-richtext tag in Xfdf document structure. Is a child of caret, circle, fileattachment, freetext,
@@ -116,7 +116,7 @@ public class AnnotObject {
      * Content model: Base64 encoded string.
      * For more details see paragraph 6.5.1 in Xfdf document specification.
      */
-    private String appearance;//should be Base64String
+    private String appearance;
 
     /**
      * Represents the defaultappearance element, a child of the caret and freetext elements.

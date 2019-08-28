@@ -257,7 +257,8 @@ public class PdfTokenizer implements Closeable, Serializable {
             String str = readString(arrLength);
             int idx = str.lastIndexOf("startxref");
             if (idx >= 0) return pos + idx;
-            pos = pos - arrLength + 9;                  // 9 = "startxref".length()
+            // 9 = "startxref".length()
+            pos = pos - arrLength + 9;
         }
         throw new IOException(IOException.PdfStartxrefNotFound, this);
     }

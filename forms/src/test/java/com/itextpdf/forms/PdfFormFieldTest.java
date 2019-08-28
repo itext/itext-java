@@ -178,7 +178,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         Map<String, PdfFormField> formFields = form.getFormFields();
-        String fieldName = "\u5E10\u53F71"; // 帐号1: account number 1
+        // 帐号1: account number 1
+        String fieldName = "\u5E10\u53F71";
         Assert.assertEquals(fieldName, formFields.keySet().toArray(new String[1])[0]);
     }
 
@@ -187,7 +188,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = sourceFolder + "unicodeFormFieldFile.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        String fieldName = "\u5E10\u53F71"; // 帐号1: account number 1
+        // 帐号1: account number 1
+        String fieldName = "\u5E10\u53F71";
         Assert.assertNotNull(form.getField(fieldName));
     }
 

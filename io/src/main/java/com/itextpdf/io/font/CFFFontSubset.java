@@ -1276,22 +1276,26 @@ public class CFFFontSubset extends CFFFont {
      */
     protected void BuildIndexHeader(int Count, int Offsize, int First) {
         // Add the count field
-        OutputList.addLast(new UInt16Item((char) Count)); // count
+        OutputList.addLast(new UInt16Item((char) Count));
         // Add the offsize field
-        OutputList.addLast(new UInt8Item((char) Offsize)); // offSize
+        OutputList.addLast(new UInt8Item((char) Offsize));
         // Add the first offset according to the offsize
         switch (Offsize) {
             case 1:
-                OutputList.addLast(new UInt8Item((char) First)); // first offset
+                // first offset
+                OutputList.addLast(new UInt8Item((char) First));
                 break;
             case 2:
-                OutputList.addLast(new UInt16Item((char) First)); // first offset
+                // first offset
+                OutputList.addLast(new UInt16Item((char) First));
                 break;
             case 3:
-                OutputList.addLast(new UInt24Item((char) First)); // first offset
+                // first offset
+                OutputList.addLast(new UInt24Item((char) First));
                 break;
             case 4:
-                OutputList.addLast(new UInt32Item((char) First)); // first offset
+                // first offset
+                OutputList.addLast(new UInt32Item((char) First));
                 break;
             default:
                 break;
@@ -1345,14 +1349,16 @@ public class CFFFontSubset extends CFFFont {
         else if (origStringsLen + extraStrings.length() <= 0xffffff) stringsIndexOffSize = 3;
         else stringsIndexOffSize = 4;
 
-        OutputList.addLast(new UInt16Item((char) (stringOffsets.length - 1 + 3))); // count
-        OutputList.addLast(new UInt8Item((char) stringsIndexOffSize)); // offSize
+        // count
+        OutputList.addLast(new UInt16Item((char) (stringOffsets.length - 1 + 3)));
+        // offSize
+        OutputList.addLast(new UInt8Item((char) stringsIndexOffSize));
         for (int stringOffset : stringOffsets)
             OutputList.addLast(new IndexOffsetItem(stringsIndexOffSize,
                     stringOffset - stringsBaseOffset));
         int currentStringsOffset = stringOffsets[stringOffsets.length - 1]
                 - stringsBaseOffset;
-        //l.addLast(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));
+        // l.addLast(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));
         currentStringsOffset += "Adobe".length();
         OutputList.addLast(new IndexOffsetItem(stringsIndexOffSize, currentStringsOffset));
         currentStringsOffset += "Identity".length();
@@ -1373,13 +1379,18 @@ public class CFFFontSubset extends CFFFont {
      */
     protected void CreateFDSelect(OffsetItem fdselectRef, int nglyphs) {
         OutputList.addLast(new MarkerItem(fdselectRef));
-        OutputList.addLast(new UInt8Item((char) 3)); // format identifier
-        OutputList.addLast(new UInt16Item((char) 1)); // nRanges
+        // format identifier
+        OutputList.addLast(new UInt8Item((char) 3));
+        // nRanges
+        OutputList.addLast(new UInt16Item((char) 1));
 
-        OutputList.addLast(new UInt16Item((char) 0)); // Range[0].firstGlyph
-        OutputList.addLast(new UInt8Item((char) 0)); // Range[0].fd
+        // Range[0].firstGlyph
+        OutputList.addLast(new UInt16Item((char) 0));
+        // Range[0].fd
+        OutputList.addLast(new UInt8Item((char) 0));
 
-        OutputList.addLast(new UInt16Item((char) nglyphs)); // sentinel
+        // sentinel
+        OutputList.addLast(new UInt16Item((char) nglyphs));
     }
 
     /**
@@ -1391,9 +1402,12 @@ public class CFFFontSubset extends CFFFont {
      */
     protected void CreateCharset(OffsetItem charsetRef, int nglyphs) {
         OutputList.addLast(new MarkerItem(charsetRef));
-        OutputList.addLast(new UInt8Item((char) 2)); // format identifier
-        OutputList.addLast(new UInt16Item((char) 1)); // first glyph in range (ignore .notdef)
-        OutputList.addLast(new UInt16Item((char) (nglyphs - 1))); // nLeft
+        // format identifier
+        OutputList.addLast(new UInt8Item((char) 2));
+        // first glyph in range (ignore .notdef)
+        OutputList.addLast(new UInt16Item((char) 1));
+        // nLeft
+        OutputList.addLast(new UInt16Item((char) (nglyphs - 1)));
     }
 
     /**
@@ -1426,7 +1440,8 @@ public class CFFFontSubset extends CFFFont {
             NewSize += 5 - OrgSubrsOffsetSize;
         OutputList.addLast(new DictNumberItem(NewSize));
         OutputList.addLast(privateRef);
-        OutputList.addLast(new UInt8Item((char) 18)); // Private
+        // Private
+        OutputList.addLast(new UInt8Item((char) 18));
 
         OutputList.addLast(new IndexMarkerItem(privateIndex1Ref, privateBase));
     }
@@ -1495,7 +1510,8 @@ public class CFFFontSubset extends CFFFont {
                     OutputList.addLast(new DictNumberItem(NewSize));
                     fdPrivate[k] = new DictOffsetItem();
                     OutputList.addLast(fdPrivate[k]);
-                    OutputList.addLast(new UInt8Item((char) 18)); // Private
+                    // Private
+                    OutputList.addLast(new UInt8Item((char) 18));
                     // Go back to place
                     seek(p2);
                 }
@@ -1541,7 +1557,8 @@ public class CFFFontSubset extends CFFFont {
                 if ("Subrs".equals(key)) {
                     fdSubrs[i] = new DictOffsetItem();
                     OutputList.addLast(fdSubrs[i]);
-                    OutputList.addLast(new UInt8Item((char) 19)); // Subrs
+                    // Subrs
+                    OutputList.addLast(new UInt8Item((char) 19));
                 }
                 // Else copy the entire range
                 else
@@ -1646,7 +1663,8 @@ public class CFFFontSubset extends CFFFont {
             // use marker for offset and write operator number
             if ("Subrs".equals(key)) {
                 OutputList.addLast(Subr);
-                OutputList.addLast(new UInt8Item((char) 19)); // Subrs
+                // Subrs
+                OutputList.addLast(new UInt8Item((char) 19));
             }
             // Else copy the entire range
             else

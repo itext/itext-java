@@ -212,7 +212,8 @@ public final class ByteUtils {
             }
             int fracLen = 0;
             if (v % 100 != 0) {
-                fracLen = 2;                             //fracLen include '.'
+                //fracLen include '.'
+                fracLen = 2;
                 if (v % 10 != 0) {
                     fracLen++;
                 } else {
@@ -222,7 +223,8 @@ public final class ByteUtils {
                 v /= 100;
             }
             buf = buffer != null ? buffer : new ByteBuffer(intLen + fracLen + (negative ? 1 : 0));
-            for (int i = 0; i < fracLen - 1; i++) {     //-1 because fracLen include '.'
+            //-1 because fracLen include '.'
+            for (int i = 0; i < fracLen - 1; i++) {
                 buf.prepend(bytes[v % 10]);
                 v /= 10;
             }

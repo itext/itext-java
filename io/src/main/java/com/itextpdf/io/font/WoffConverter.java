@@ -88,16 +88,24 @@ class WoffConverter {
         long totalSfntSize = bytesToUInt(woffBytes, srcPos);
         srcPos += 4;
 
-        srcPos += 2; // majorVersion
-        srcPos += 2; // minorVersion
-        srcPos += 4; // metaOffset
-        srcPos += 4; // metaLength
-        srcPos += 4; // metaOrigLength
-        srcPos += 4; // privOffset
-        srcPos += 4; // privLength
+        // majorVersion
+        srcPos += 2;
+        // minorVersion
+        srcPos += 2;
+        // metaOffset
+        srcPos += 4;
+        // metaLength
+        srcPos += 4;
+        // metaOrigLength
+        srcPos += 4;
+        // privOffset
+        srcPos += 4;
+        // privLength
+        srcPos += 4;
 
 
-        byte[] otfBytes = new byte[(int) totalSfntSize]; // assuming font won't be larger than 2GB
+        // assuming font won't be larger than 2GB
+        byte[] otfBytes = new byte[(int) totalSfntSize];
         System.arraycopy(flavor, 0, otfBytes, destPos, 4);
         destPos += 4;
         System.arraycopy(numTables, 0, otfBytes, destPos, 2);

@@ -233,7 +233,9 @@ public abstract class OpenTypeFontTableReader implements Serializable {
     final void startReadingTable() throws FontReadingException {
         try {
             rf.seek(tableLocation);
-            /*int version =*/ rf.readInt(); //version not used
+            /*int version =*/
+            // version not used
+            rf.readInt();
             int scriptListOffset = rf.readUnsignedShort();
             int featureListOffset = rf.readUnsignedShort();
             int lookupListOffset = rf.readUnsignedShort();

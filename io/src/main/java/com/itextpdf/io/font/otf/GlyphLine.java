@@ -293,7 +293,8 @@ public class GlyphLine implements Serializable {
     }
 
     public void substituteOneToMany(OpenTypeFontTableReader tableReader, int[] substGlyphIds) {
-        int substCode = substGlyphIds[0]; //sequence length shall be at least 1
+        //sequence length shall be at least 1
+        int substCode = substGlyphIds[0];
         Glyph glyph = tableReader.getGlyph(substCode);
         glyphs.set(idx, glyph);
 

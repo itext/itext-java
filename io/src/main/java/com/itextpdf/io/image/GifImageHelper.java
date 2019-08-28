@@ -55,7 +55,8 @@ import java.util.Map;
 
 public final class GifImageHelper {
 
-    static final int MAX_STACK_SIZE = 4096;   // max decoder pixel stack size
+    // max decoder pixel stack size
+    static final int MAX_STACK_SIZE = 4096;
 
     private static class GifParameters {
 
@@ -64,26 +65,40 @@ public final class GifImageHelper {
         }
 
         InputStream input;
-        boolean gctFlag;      // global color table used
+        // global color table used
+        boolean gctFlag;
 
-        int bgIndex;          // background color index
-        int bgColor;          // background color
-        int pixelAspect;      // pixel aspect ratio
+        // background color index
+        int bgIndex;
+        // background color
+        int bgColor;
+        // pixel aspect ratio
+        int pixelAspect;
 
-        boolean lctFlag;      // local color table flag
-        boolean interlace;    // interlace flag
-        int lctSize;          // local color table size
+        // local color table flag
+        boolean lctFlag;
+        // interlace flag
+        boolean interlace;
+        // local color table size
+        int lctSize;
 
-        int ix, iy, iw, ih;   // current image rectangle
+        // current image rectangle
+        int ix, iy, iw, ih;
 
-        byte[] block = new byte[256];  // current data block
-        int blockSize = 0;    // block size
+        // current data block
+        byte[] block = new byte[256];
+        // block size
+        int blockSize = 0;
 
         // last graphic control extension info
-        int dispose = 0;   // 0=no action; 1=leave in place; 2=restore to bg; 3=restore to prev
-        boolean transparency = false;   // use transparent color
-        int delay = 0;        // delay in milliseconds
-        int transIndex;       // transparent color index
+        // 0=no action; 1=leave in place; 2=restore to bg; 3=restore to prev
+        int dispose = 0;
+        // use transparent color
+        boolean transparency = false;
+        // delay in milliseconds
+        int delay = 0;
+        // transparent color index
+        int transIndex;
 
         // LZW decoder working arrays
         short[] prefix;
@@ -168,10 +183,13 @@ public final class GifImageHelper {
 
         // packed fields
         int packed = gif.input.read();
-        gif.gctFlag = (packed & 0x80) != 0;      // 1   : global color table flag
+        // 1   : global color table flag
+        gif.gctFlag = (packed & 0x80) != 0;
         gif.m_gbpc = (packed & 7) + 1;
-        gif.bgIndex = gif.input.read();        // background color index
-        gif.pixelAspect = gif.input.read();    // pixel aspect ratio
+        // background color index
+        gif.bgIndex = gif.input.read();
+        // pixel aspect ratio
+        gif.pixelAspect = gif.input.read();
     }
 
     /**
@@ -228,27 +246,30 @@ public final class GifImageHelper {
         while (!done) {
             int code = gif.input.read();
             switch (code) {
-                case 0x2C:    // image separator
+                case 0x2C:
+                    // image separator
                     readFrame(gif);
                     if (gif.currentFrame == lastFrameNumber) {
                         done = true;
                     }
                     gif.currentFrame++;
                     break;
-                case 0x21:    // extension
+                case 0x21:
+                    // extension
                     code = gif.input.read();
                     switch (code) {
-
-                        case 0xf9:    // graphics control extension
+                        case 0xf9:
+                            // graphics control extension
                             readGraphicControlExt(gif);
                             break;
-
-                        case 0xff:    // application extension
+                        case 0xff:
+                            // application extension
                             readBlock(gif);
-                            skip(gif);        // don't care
+                            // don't care
+                            skip(gif);
                             break;
-
-                        default:    // uninteresting extension
+                        default:
+                            // uninteresting extension
                             skip(gif);
                     }
                     break;
@@ -263,20 +284,25 @@ public final class GifImageHelper {
      * Reads next frame image
      */
     private static void readFrame(GifParameters gif) throws java.io.IOException {
-        gif.ix = readShort(gif);    // (sub)image position & size
+        // (sub)image position & size
+        gif.ix = readShort(gif);
         gif.iy = readShort(gif);
         gif.iw = readShort(gif);
         gif.ih = readShort(gif);
 
         int packed = gif.input.read();
-        gif.lctFlag = (packed & 0x80) != 0;     // 1 - local color table flag
-        gif.interlace = (packed & 0x40) != 0;   // 2 - interlace flag
+        // 1 - local color table flag
+        gif.lctFlag = (packed & 0x80) != 0;
+        // 2 - interlace flag
+        gif.interlace = (packed & 0x40) != 0;
         // 3 - sort flag
         // 4-5 - reserved
-        gif.lctSize = 2 << (packed & 7);        // 6-8 - local color table size
+        // 6-8 - local color table size
+        gif.lctSize = 2 << (packed & 7);
         gif.m_bpc = newBpc(gif.m_gbpc);
         if (gif.lctFlag) {
-            gif.m_curr_table = readColorTable((packed & 7) + 1, gif);   // read table
+            // read table
+            gif.m_curr_table = readColorTable((packed & 7) + 1, gif);
             gif.m_bpc = newBpc((packed & 7) + 1);
         }
         else {
@@ -284,13 +310,15 @@ public final class GifImageHelper {
         }
         if (gif.transparency && gif.transIndex >= gif.m_curr_table.length / 3)
             gif.transparency = false;
-        if (gif.transparency && gif.m_bpc == 1) { // Acrobat 5.05 doesn't like this combination
+        // Acrobat 5.05 doesn't like this combination
+        if (gif.transparency && gif.m_bpc == 1) {
             byte[] tp = new byte[12];
             System.arraycopy(gif.m_curr_table, 0, tp, 0, 6);
             gif.m_curr_table = tp;
             gif.m_bpc = 2;
         }
-        boolean skipZero = decodeImageData(gif);   // decode pixel data
+        // decode pixel data
+        boolean skipZero = decodeImageData(gif);
         if (!skipZero)
             skip(gif);
 
@@ -450,14 +478,16 @@ public final class GifImageHelper {
                                     line = 1;
                                     inc = 2;
                                     break;
-                                default: // this shouldn't happen
+                                default:
+                                    // this shouldn't happen
                                     line = gif.ih - 1;
                                     inc = 0;
                             }
                         } while (line >= gif.ih);
                     }
                     else {
-                        line = gif.ih - 1; // this shouldn't happen
+                        // this shouldn't happen
+                        line = gif.ih - 1;
                         inc = 0;
                     }
                 }
@@ -483,15 +513,23 @@ public final class GifImageHelper {
      * Reads Graphics Control Extension values
      */
     private static void readGraphicControlExt(GifParameters gif) throws java.io.IOException {
-        gif.input.read();    // block size
-        int packed = gif.input.read();   // packed fields
-        gif.dispose = (packed & 0x1c) >> 2;   // disposal method
-        if (gif.dispose == 0)
-            gif.dispose = 1;   // elect to keep old image if discretionary
+        // block size
+        gif.input.read();
+        // packed fields
+        int packed = gif.input.read();
+        // disposal method
+        gif.dispose = (packed & 0x1c) >> 2;
+        if (gif.dispose == 0){
+            // elect to keep old image if discretionary
+            gif.dispose = 1;
+        }
         gif.transparency = (packed & 1) != 0;
-        gif.delay = readShort(gif) * 10;   // delay in milliseconds
-        gif.transIndex = gif.input.read();        // transparent color index
-        gif.input.read();                     // block terminator
+        // delay in milliseconds
+        gif.delay = readShort(gif) * 10;
+        // transparent color index
+        gif.transIndex = gif.input.read();
+        // block terminator
+        gif.input.read();
     }
 
     /**

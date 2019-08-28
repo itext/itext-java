@@ -290,7 +290,8 @@ public class FontEncoding implements Serializable {
     }
 
     protected void fillNamedEncoding() {
-        PdfEncodings.convertToBytes(" ", baseEncoding); // check if the encoding exists
+        // check if the encoding exists
+        PdfEncodings.convertToBytes(" ", baseEncoding);
         boolean stdEncoding = PdfEncodings.WINANSI.equals(baseEncoding) || PdfEncodings.MACROMAN.equals(baseEncoding);
         if (!stdEncoding && differences == null) {
             differences = new String[256];

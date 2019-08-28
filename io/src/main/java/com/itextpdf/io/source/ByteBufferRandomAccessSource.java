@@ -102,7 +102,8 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource, Serializable 
             byte b = byteBuffer.get((int) position);
             return b & 0xff;
         } catch (BufferUnderflowException e) {
-            return -1; // EOF
+            // EOF
+            return -1;
         }
     }
 

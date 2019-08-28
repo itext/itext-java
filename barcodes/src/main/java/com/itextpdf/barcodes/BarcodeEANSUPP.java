@@ -70,7 +70,8 @@ public class BarcodeEANSUPP extends Barcode1D {
      */
     public BarcodeEANSUPP(Barcode1D ean, Barcode1D supp) {
         super(ean.document);
-        n = 8; // horizontal distance between the two barcodes
+        // horizontal distance between the two barcodes
+        n = 8;
         this.ean = ean;
         this.supp = supp;
     }
