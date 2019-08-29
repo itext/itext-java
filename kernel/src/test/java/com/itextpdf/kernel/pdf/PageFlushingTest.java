@@ -52,7 +52,6 @@ import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
-import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLineAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -61,8 +60,11 @@ import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -75,7 +77,7 @@ public class PageFlushingTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -340,7 +342,7 @@ public class PageFlushingTest extends ExtendedITextTest {
         PdfIndirectReference page1IndRef = page1.getPdfObject().getIndirectReference();
         PdfIndirectReference page2IndRef = page2.getPdfObject().getIndirectReference();
 
-        PdfDictionary aDict = ((PdfLinkAnnotation)page1.getAnnotations().get(0)).getAction();
+        PdfDictionary aDict = ((PdfLinkAnnotation) page1.getAnnotations().get(0)).getAction();
         new PdfAction(aDict).put(PdfName.D, PdfExplicitDestination.createXYZ(page2, 300, 400, 1).getPdfObject());
 
         PageFlushingHelper flushingHelper = new PageFlushingHelper(pdfDoc);
@@ -393,8 +395,53 @@ public class PageFlushingTest extends ExtendedITextTest {
         // exception is not thrown
     }
 
+    @Test
+    public void flushingPageResourcesMadeIndependent() throws IOException {
+        String inputFile = sourceFolder + "100pagesSharedResDict.pdf";
+        String outputFile = destinationFolder + "flushingPageResourcesMadeIndependent.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfReader(inputFile), new PdfWriter(outputFile));
+        int numOfAddedXObjectsPerPage = 10;
+        for (int i = 1; i <= pdf.getNumberOfPages(); ++i) {
+            PdfPage sourcePage = pdf.getPage(i);
+
+            PdfDictionary res = sourcePage.getPdfObject().getAsDictionary(PdfName.Resources);
+            PdfDictionary resClone = new PdfDictionary();
+            // clone dictionary manually to ensure this object is direct and is flushed together with the page
+            for (Map.Entry<PdfName, PdfObject> e : res.entrySet()) {
+                resClone.put(e.getKey(), e.getValue().clone());
+            }
+            sourcePage.getPdfObject().put(PdfName.Resources, resClone);
+
+            PdfCanvas pdfCanvas = new PdfCanvas(sourcePage);
+            pdfCanvas.saveState();
+            for (int j = 0; j < numOfAddedXObjectsPerPage; ++j) {
+                PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "simple.jpg"));
+                pdfCanvas.addXObject(xObject, new Rectangle(36, 720 - j * 150, 20, 20));
+                xObject.makeIndirect(pdf).flush();
+            }
+            pdfCanvas.restoreState();
+            pdfCanvas.release();
+
+            sourcePage.flush();
+        }
+
+        verifyFlushedObjectsNum(pdf, 1416, 1400, 0);
+        pdf.close();
+
+        printOutputPdfNameAndDir(outputFile);
+        PdfDocument result = new PdfDocument(new PdfReader(outputFile));
+        PdfObject page15Res = result.getPage(15).getPdfObject().get(PdfName.Resources, false);
+        PdfObject page34Res = result.getPage(34).getPdfObject().get(PdfName.Resources, false);
+        Assert.assertTrue(page15Res.isDictionary());
+        Assert.assertEquals(numOfAddedXObjectsPerPage, ((PdfDictionary)page15Res).getAsDictionary(PdfName.XObject).size());
+        Assert.assertTrue(page34Res.isDictionary());
+        Assert.assertNotEquals(page15Res, page34Res);
+
+        result.close();
+    }
+
     private static void test(String filename, DocMode docMode, FlushMode flushMode, PagesOp pagesOp,
-                     int total, int flushedExpected, int notReadExpected) throws IOException {
+                             int total, int flushedExpected, int notReadExpected) throws IOException {
         String input = sourceFolder + "100pages.pdf";
         String output = destinationFolder + filename;
         PdfDocument pdfDoc;
@@ -489,9 +536,9 @@ public class PageFlushingTest extends ExtendedITextTest {
 
         if (pdfDoc.getXref().size() != total || flushedActual != flushedExpected || notReadActual != notReadExpected) {
             Assert.fail(MessageFormatUtil.format("\nExpected total: {0}, flushed: {1}, not read: {2};" +
-                    "\nbut actual was: {3}, flushed: {4}, not read: {5}.",
+                            "\nbut actual was: {3}, flushed: {4}, not read: {5}.",
                     total, flushedExpected, notReadExpected, pdfDoc.getXref().size(), flushedActual, notReadActual
-                    ));
+            ));
         }
         Assert.assertEquals("wrong num of total objects", total, pdfDoc.getXref().size());
         Assert.assertEquals("wrong num of flushed objects", flushedExpected, flushedActual);
@@ -565,7 +612,7 @@ public class PageFlushingTest extends ExtendedITextTest {
                 new PdfLinkAnnotation(new Rectangle(100, 600, 100, 20))
                         .setAction(PdfAction.createURI("http://itextpdf.com"))
         ).addAnnotation(
-                new PdfLineAnnotation(lineAnnotRect, new float[] {lineAnnotRect.getX(), lineAnnotRect.getY(), lineAnnotRect.getRight(), lineAnnotRect.getTop()})
+                new PdfLineAnnotation(lineAnnotRect, new float[]{lineAnnotRect.getX(), lineAnnotRect.getY(), lineAnnotRect.getRight(), lineAnnotRect.getTop()})
                         .setColor(ColorConstants.BLACK)
         );
 
