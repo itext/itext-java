@@ -20,10 +20,10 @@ package com.itextpdf.layout.hyphenation;
 import java.util.List;
 
 /**
- * <p>This interface is used to connect the XML pattern file parser to
- * the hyphenation tree.</p>
- *
- * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
+ * This interface is used to connect the XML pattern file parser to
+ * the hyphenation tree.
+ * <p>
+ * This work was authored by Carlos Villegas (cav@uniscope.co.jp).
  */
 public interface IPatternConsumer {
 

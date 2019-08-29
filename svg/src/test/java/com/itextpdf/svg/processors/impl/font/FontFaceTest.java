@@ -79,37 +79,38 @@ public class FontFaceTest extends SvgIntegrationTest {
 
     @Test
     public void droidSerifWebFontTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "droidSerifWebFontTest");
+        convertAndCompare(sourceFolder, destinationFolder, "droidSerifWebFontTest");
     }
 
     @Test
     public void droidSerifLocalFontTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "droidSerifLocalFontTest");
+        convertAndCompare(sourceFolder, destinationFolder, "droidSerifLocalFontTest");
     }
 
     @Test
     public void droidSerifLocalLocalFontTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "droidSerifLocalLocalFontTest");
+        convertAndCompare(sourceFolder, destinationFolder, "droidSerifLocalLocalFontTest");
     }
 
     @Test
     public void droidSerifLocalWithMediaFontTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "droidSerifLocalWithMediaFontTest");
+        convertAndCompare(sourceFolder, destinationFolder, "droidSerifLocalWithMediaFontTest");
     }
 
     @Test
     public void droidSerifLocalWithMediaRuleFontTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "droidSerifLocalWithMediaRuleFontTest");
+        convertAndCompare(sourceFolder, destinationFolder, "droidSerifLocalWithMediaRuleFontTest");
     }
 
     @Test
     public void fontSelectorTest01() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "fontSelectorTest01");
+        convertAndCompare(sourceFolder, destinationFolder, "fontSelectorTest01");
     }
 
     @Test
     public void fontFaceGrammarTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder, destinationFolder, "fontFaceGrammarTest");
+        convertAndCompare
+                (sourceFolder, destinationFolder, "fontFaceGrammarTest");
     }
 
 

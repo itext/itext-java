@@ -1,0 +1,468 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="901" height="501" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <linearGradient id="_ABSTRACT_RENDERER_ID_0" x1="100%" y1="0%" x2="0%" y2="0%" gradientUnits="objectBoundingBox">
+            <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0">
+            </stop>
+            <stop offset="100%" style="stop-color:#ffffff;stop-opacity:1">
+            </stop>
+        </linearGradient>
+        <linearGradient id="_ABSTRACT_RENDERER_ID_1" x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox">
+            <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0">
+            </stop>
+            <stop offset="100%" style="stop-color:#ffffff;stop-opacity:1">
+            </stop>
+        </linearGradient>
+    </defs>
+    <g>
+        <g>
+            <rect x="0" y="5" width="388" height="486" stroke="none" stroke-width="0" fill="#ffffff">
+            </rect>
+            <path d="M368,241.32C348,241.32,348,60,328,60L328,60.9C344.978,60.9,344.978,245.51999999999998,368,245.51999999999998L368,241.32" stroke="none" stroke-width="0" fill="#a0a0a0">
+            </path>
+            <text text-anchor="start" x="273" y="66.9" font-size="24" stroke="none" stroke-width="0" fill="#000000" id="447">new
+            </text>
+            <text text-anchor="start" x="251" y="66.9" font-size="24" stroke="none" stroke-width="0" fill="#000000" id="448">a
+            </text>
+            <text text-anchor="start" x="235" y="66.9" font-size="24" stroke="none" stroke-width="0" fill="#000000" id="449">,
+            </text>
+            <text text-anchor="start" x="129" y="66.9" font-size="24" stroke="none" stroke-width="0" fill="#000000" id="450">continent
+            </text>
+            <text text-anchor="start" x="83" y="66.9" font-size="24" stroke="none" stroke-width="0" fill="#000000" id="451">this
+            </text>
+            <text text-anchor="start" x="48" y="66.9" font-size="24" stroke="none" stroke-width="0" fill="#000000" id="452">on
+            </text>
+            <text text-anchor="start" x="-8" y="66.9" font-size="24" stroke="none" stroke-width="0" fill="#000000" id="453">forth
+            </text>
+            <text text-anchor="start" x="-98" y="66.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="454">brought
+            </text>
+            <text text-anchor="start" x="-180" y="66.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="455">fathers
+            </text>
+            <text text-anchor="start" x="-223" y="66.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="456">our
+            </text>
+            <text text-anchor="start" x="-271" y="66.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="457">ago
+            </text>
+            <text text-anchor="start" x="-338" y="66.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="458">years
+            </text>
+            <text text-anchor="start" x="-410" y="66.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="459">seven
+            </text>
+            <text text-anchor="start" x="-458" y="66.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="460">and
+            </text>
+            <text text-anchor="start" x="-525" y="66.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="461">score
+            </text>
+            <text text-anchor="start" x="-583" y="66.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="462">Four
+            </text>
+            <path d="M368,241.32C348,241.32,348,150,328,150L328,150.9C346.478,150.9,346.478,245.51999999999998,368,245.51999999999998L368,241.32" stroke="none" stroke-width="0" fill="#a0a0a0">
+            </path>
+            <text text-anchor="start" x="278" y="156.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="826">any
+            </text>
+            <text text-anchor="start" x="248" y="156.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="827">or
+            </text>
+            <text text-anchor="start" x="232" y="156.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="828">,
+            </text>
+            <text text-anchor="start" x="158" y="156.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="829">nation
+            </text>
+            <text text-anchor="start" x="110" y="156.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="830">that
+            </text>
+            <text text-anchor="start" x="16" y="156.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="831">whether
+            </text>
+            <text text-anchor="start" x="-64" y="156.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="832">testing
+            </text>
+            <text text-anchor="start" x="-80" y="156.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="833">,
+            </text>
+            <text text-anchor="start" x="-128" y="156.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="834">war
+            </text>
+            <text text-anchor="start" x="-176" y="156.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="835">civil
+            </text>
+            <text text-anchor="start" x="-240" y="156.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="836">great
+            </text>
+            <text text-anchor="start" x="-262" y="156.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="837">a
+            </text>
+            <text text-anchor="start" x="-289" y="156.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="838">in
+            </text>
+            <text text-anchor="start" x="-391" y="156.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="839">engaged
+            </text>
+            <text text-anchor="start" x="-434" y="156.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="840">are
+            </text>
+            <text text-anchor="start" x="-474" y="156.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="841">we
+            </text>
+            <text text-anchor="start" x="-530" y="156.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="842">Now
+            </text>
+            <path d="M368,241.32C348,241.32,348,285,328,285L328,286.4C348.728,286.4,348.728,245.51999999999998,368,245.51999999999998L368,241.32" stroke="none" stroke-width="0" fill="#a0a0a0">
+            </path>
+            <text text-anchor="start" x="257" y="294.6"  font-size="36" stroke="none" stroke-width="0" fill="#000000" id="889">that
+            </text>
+            <path d="M247,283.32C227,283.32,227,238.5,207,238.5L207,239.4C226.253,239.4,226.253,287.52,247,287.52L247,283.32" stroke="none" stroke-width="0" fill="#a0a0a0">
+            </path>
+            <text text-anchor="start" x="111" y="245.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="890">whether
+            </text>
+            <text text-anchor="start" x="31" y="245.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="891">testing
+            </text>
+            <text text-anchor="start" x="15" y="245.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="892">,
+            </text>
+            <text text-anchor="start" x="-33" y="245.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="893">war
+            </text>
+            <text text-anchor="start" x="-81" y="245.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="894">civil
+            </text>
+            <text text-anchor="start" x="-145" y="245.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="895">great
+            </text>
+            <text text-anchor="start" x="-167" y="245.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="896">a
+            </text>
+            <text text-anchor="start" x="-194" y="245.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="897">in
+            </text>
+            <text text-anchor="start" x="-296" y="245.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="898">engaged
+            </text>
+            <text text-anchor="start" x="-339" y="245.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="899">are
+            </text>
+            <text text-anchor="start" x="-379" y="245.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="900">we
+            </text>
+            <text text-anchor="start" x="-435" y="245.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="901">Now
+            </text>
+            <path d="M247,283.32C227,283.32,227,325.5,207,325.5L207,326.4C227.703,326.4,227.703,287.52,247,287.52L247,283.32" stroke="none" stroke-width="0" fill="#a0a0a0">
+            </path>
+            <text text-anchor="start" x="157" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1129">that
+            </text>
+            <text text-anchor="start" x="101" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1130">lives
+            </text>
+            <text text-anchor="start" x="45" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1131">their
+            </text>
+            <text text-anchor="start" x="-16" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1132">gave
+            </text>
+            <text text-anchor="start" x="-72" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1133">here
+            </text>
+            <text text-anchor="start" x="-125" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1134">who
+            </text>
+            <text text-anchor="start" x="-192" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1135">those
+            </text>
+            <text text-anchor="start" x="-229" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1136">for
+            </text>
+            <text text-anchor="start" x="-295" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1137">place
+            </text>
+            <text text-anchor="start" x="-375" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1138">resting
+            </text>
+            <text text-anchor="start" x="-428" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1139">final
+            </text>
+            <text text-anchor="start" x="-450" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1140">a
+            </text>
+            <text text-anchor="start" x="-484" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1141">as
+            </text>
+            <text text-anchor="start" x="-500" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1142">,
+            </text>
+            <text text-anchor="start" x="-553" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1143">field
+            </text>
+            <text text-anchor="start" x="-601" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1144">that
+            </text>
+            <text text-anchor="start" x="-630" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1145">of
+            </text>
+            <text text-anchor="start" x="-712" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1146">portion
+            </text>
+            <text text-anchor="start" x="-734" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1147">a
+            </text>
+            <text text-anchor="start" x="-833" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1148">dedicate
+            </text>
+            <text text-anchor="start" x="-862" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1149">to
+            </text>
+            <text text-anchor="start" x="-929" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1150">come
+            </text>
+            <text text-anchor="start" x="-990" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1151">have
+            </text>
+            <text text-anchor="start" x="-1035" y="332.4"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="1152">We
+            </text>
+            <path d="M368,241.32C348,241.32,348,420,328,420L328,420.9C350.978,420.9,350.978,245.51999999999998,368,245.51999999999998L368,241.32" stroke="none" stroke-width="0" fill="#a0a0a0">
+            </path>
+            <text text-anchor="start" x="280" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5414">this
+            </text>
+            <text text-anchor="start" x="232" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5415">that
+            </text>
+            <text text-anchor="start" x="208" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5416">--
+            </text>
+            <text text-anchor="start" x="155" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5417">vain
+            </text>
+            <text text-anchor="start" x="128" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5418">in
+            </text>
+            <text text-anchor="start" x="74" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5419">died
+            </text>
+            <text text-anchor="start" x="13" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5420">have
+            </text>
+            <text text-anchor="start" x="-29" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5421">not
+            </text>
+            <text text-anchor="start" x="-87" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5422">shall
+            </text>
+            <text text-anchor="start" x="-149" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5423">dead
+            </text>
+            <text text-anchor="start" x="-216" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5424">these
+            </text>
+            <text text-anchor="start" x="-264" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5425">that
+            </text>
+            <text text-anchor="start" x="-350" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5426">resolve
+            </text>
+            <text text-anchor="start" x="-422" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5427">highly
+            </text>
+            <text text-anchor="start" x="-478" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5428">here
+            </text>
+            <text text-anchor="start" x="-518" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5429">we
+            </text>
+            <text text-anchor="start" x="-566" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5430">that
+            </text>
+            <text text-anchor="start" x="-590" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5431">--
+            </text>
+            <text text-anchor="start" x="-689" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5432">devotion
+            </text>
+            <text text-anchor="start" x="-718" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5433">of
+            </text>
+            <text text-anchor="start" x="-820" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5434">measure
+            </text>
+            <text text-anchor="start" x="-860" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5435">full
+            </text>
+            <text text-anchor="start" x="-906" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5436">last
+            </text>
+            <text text-anchor="start" x="-948" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5437">the
+            </text>
+            <text text-anchor="start" x="-1009" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5438">gave
+            </text>
+            <text text-anchor="start" x="-1063" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5439">they
+            </text>
+            <text text-anchor="start" x="-1133" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5440">which
+            </text>
+            <text text-anchor="start" x="-1170" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5441">for
+            </text>
+            <text text-anchor="start" x="-1242" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5442">cause
+            </text>
+            <text text-anchor="start" x="-1290" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5443">that
+            </text>
+            <text text-anchor="start" x="-1319" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5444">to
+            </text>
+            <text text-anchor="start" x="-1418" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5445">devotion
+            </text>
+            <text text-anchor="start" x="-1530" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5446">increased
+            </text>
+            <text text-anchor="start" x="-1584" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5447">take
+            </text>
+            <text text-anchor="start" x="-1624" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5448">we
+            </text>
+            <text text-anchor="start" x="-1686" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5449">dead
+            </text>
+            <text text-anchor="start" x="-1782" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5450">honored
+            </text>
+            <text text-anchor="start" x="-1849" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5451">these
+            </text>
+            <text text-anchor="start" x="-1905" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5452">from
+            </text>
+            <text text-anchor="start" x="-1953" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5453">that
+            </text>
+            <text text-anchor="start" x="-1977" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5454">--
+            </text>
+            <text text-anchor="start" x="-2011" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5455">us
+            </text>
+            <text text-anchor="start" x="-2088" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5456">before
+            </text>
+            <text text-anchor="start" x="-2202" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5457">remaining
+            </text>
+            <text text-anchor="start" x="-2255" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5458">task
+            </text>
+            <text text-anchor="start" x="-2319" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5459">great
+            </text>
+            <text text-anchor="start" x="-2361" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5460">the
+            </text>
+            <text text-anchor="start" x="-2390" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5461">to
+            </text>
+            <text text-anchor="start" x="-2502" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5462">dedicated
+            </text>
+            <text text-anchor="start" x="-2558" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5463">here
+            </text>
+            <text text-anchor="start" x="-2593" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5464">be
+            </text>
+            <text text-anchor="start" x="-2622" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5465">to
+            </text>
+            <text text-anchor="start" x="-2656" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5466">us
+            </text>
+            <text text-anchor="start" x="-2693" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5467">for
+            </text>
+            <text text-anchor="start" x="-2765" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5468">rather
+            </text>
+            <text text-anchor="start" x="-2791" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5469">is
+            </text>
+            <text text-anchor="start" x="-2813" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5470">It
+            </text>
+            <rect x="0" y="5" width="32.333333333333336" height="486" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+            </rect>
+        </g>
+        <g>
+            <rect x="513" y="5" width="388" height="486" stroke="none" stroke-width="0" fill="#ffffff">
+            </rect>
+            <path d="M533,241.32C553,241.32,553,150,573,150L573,151.4C554.522,151.4,554.522,245.51999999999998,533,245.51999999999998L533,241.32" stroke="none" stroke-width="0" fill="#a0a0a0">
+            </path>
+            <text text-anchor="start" x="583" y="159.6"  font-size="36" stroke="none" stroke-width="0" fill="#000000" id="7497">,
+            </text>
+            <path d="M604,148.32C624,148.32,624,59,644,59L644,59.9C625.4886666666666,59.9,625.4886666666666,152.51999999999998,604,152.51999999999998L604,148.32" stroke="none" stroke-width="0" fill="#a0a0a0">
+            </path>
+            <text text-anchor="start" x="654" y="65.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7498">conceived
+            </text>
+            <text text-anchor="start" x="771" y="65.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7499">in
+            </text>
+            <text text-anchor="start" x="798" y="65.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7500">Liberty
+            </text>
+            <text text-anchor="start" x="878" y="65.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7501">,
+            </text>
+            <text text-anchor="start" x="894" y="65.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7502">and
+            </text>
+            <text text-anchor="start" x="942" y="65.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7503">dedicated
+            </text>
+            <text text-anchor="start" x="1054" y="65.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7504">to
+            </text>
+            <text text-anchor="start" x="1083" y="65.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7505">the
+            </text>
+            <text text-anchor="start" x="1125" y="65.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7506">proposition
+            </text>
+            <text text-anchor="start" x="1251" y="65.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7507">that
+            </text>
+            <text text-anchor="start" x="1299" y="65.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7508">all
+            </text>
+            <text text-anchor="start" x="1331" y="65.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7509">men
+            </text>
+            <text text-anchor="start" x="1387" y="65.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7510">are
+            </text>
+            <text text-anchor="start" x="1430" y="65.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7511">created
+            </text>
+            <text text-anchor="start" x="1518" y="65.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7512">equal
+            </text>
+            <text text-anchor="start" x="1585" y="65.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7513">.
+            </text>
+            <path d="M604,148.32C624,148.32,624,147,644,147L644,147.9C624.022,147.9,624.022,152.51999999999998,604,152.51999999999998L604,148.32" stroke="none" stroke-width="0" fill="#a0a0a0">
+            </path>
+            <text text-anchor="start" x="654" y="153.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7945">or
+            </text>
+            <text text-anchor="start" x="684" y="153.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7946">any
+            </text>
+            <text text-anchor="start" x="732" y="153.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7947">nation
+            </text>
+            <text text-anchor="start" x="806" y="153.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7948">so
+            </text>
+            <text text-anchor="start" x="840" y="153.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7949">conceived
+            </text>
+            <text text-anchor="start" x="957" y="153.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7950">and
+            </text>
+            <text text-anchor="start" x="1005" y="153.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7951">so
+            </text>
+            <text text-anchor="start" x="1039" y="153.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7952">dedicated
+            </text>
+            <text text-anchor="start" x="1151" y="153.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7953">,
+            </text>
+            <text text-anchor="start" x="1167" y="153.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7954">can
+            </text>
+            <text text-anchor="start" x="1215" y="153.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7955">long
+            </text>
+            <text text-anchor="start" x="1269" y="153.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7956">endure
+            </text>
+            <text text-anchor="start" x="1352" y="153.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7957">.
+            </text>
+            <path d="M604,148.32C624,148.32,624,235,644,235L644,235.9C622.5553333333334,235.9,622.5553333333334,152.51999999999998,604,152.51999999999998L604,148.32" stroke="none" stroke-width="0" fill="#a0a0a0">
+            </path>
+            <text text-anchor="start" x="654" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13545">under
+            </text>
+            <text text-anchor="start" x="724" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13546">God
+            </text>
+            <text text-anchor="start" x="778" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13547">,
+            </text>
+            <text text-anchor="start" x="794" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13548">shall
+            </text>
+            <text text-anchor="start" x="852" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13549">have
+            </text>
+            <text text-anchor="start" x="913" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13550">a
+            </text>
+            <text text-anchor="start" x="935" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13551">new
+            </text>
+            <text text-anchor="start" x="988" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13552">birth
+            </text>
+            <text text-anchor="start" x="1044" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13553">of
+            </text>
+            <text text-anchor="start" x="1073" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13554">freedom
+            </text>
+            <text text-anchor="start" x="1169" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13555">--
+            </text>
+            <text text-anchor="start" x="1193" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13556">and
+            </text>
+            <text text-anchor="start" x="1241" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13557">that
+            </text>
+            <text text-anchor="start" x="1289" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13558">government
+            </text>
+            <text text-anchor="start" x="1425" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13559">of
+            </text>
+            <text text-anchor="start" x="1454" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13560">the
+            </text>
+            <text text-anchor="start" x="1496" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13561">people
+            </text>
+            <text text-anchor="start" x="1576" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13562">,
+            </text>
+            <text text-anchor="start" x="1592" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13563">by
+            </text>
+            <text text-anchor="start" x="1626" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13564">the
+            </text>
+            <text text-anchor="start" x="1668" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13565">people
+            </text>
+            <text text-anchor="start" x="1748" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13566">,
+            </text>
+            <text text-anchor="start" x="1764" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13567">for
+            </text>
+            <text text-anchor="start" x="1801" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13568">the
+            </text>
+            <text text-anchor="start" x="1843" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13569">people
+            </text>
+            <text text-anchor="start" x="1923" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13570">,
+            </text>
+            <text text-anchor="start" x="1939" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13571">shall
+            </text>
+            <text text-anchor="start" x="1997" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13572">not
+            </text>
+            <text text-anchor="start" x="2039" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13573">perish
+            </text>
+            <text text-anchor="start" x="2113" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13574">from
+            </text>
+            <text text-anchor="start" x="2169" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13575">the
+            </text>
+            <text text-anchor="start" x="2211" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13576">earth
+            </text>
+            <text text-anchor="start" x="2275" y="241.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="13577">.
+            </text>
+            <path d="M533,241.32C553,241.32,553,330,573,330L573,330.9C551.522,330.9,551.522,245.51999999999998,533,245.51999999999998L533,241.32" stroke="none" stroke-width="0" fill="#a0a0a0">
+            </path>
+            <text text-anchor="start" x="583" y="336.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7996">so
+            </text>
+            <text text-anchor="start" x="617" y="336.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7997">conceived
+            </text>
+            <text text-anchor="start" x="734" y="336.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7998">and
+            </text>
+            <text text-anchor="start" x="782" y="336.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="7999">so
+            </text>
+            <text text-anchor="start" x="816" y="336.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="8000">dedicated
+            </text>
+            <text text-anchor="start" x="928" y="336.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="8001">,
+            </text>
+            <text text-anchor="start" x="944" y="336.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="8002">can
+            </text>
+            <text text-anchor="start" x="992" y="336.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="8003">long
+            </text>
+            <text text-anchor="start" x="1046" y="336.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="8004">endure
+            </text>
+            <text text-anchor="start" x="1129" y="336.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="8005">.
+            </text>
+            <path d="M533,241.32C553,241.32,553,420,573,420L573,420.9C550.022,420.9,550.022,245.51999999999998,533,245.51999999999998L533,241.32" stroke="none" stroke-width="0" fill="#a0a0a0">
+            </path>
+            <text text-anchor="start" x="583" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="8527">might
+            </text>
+            <text text-anchor="start" x="650" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="8528">live
+            </text>
+            <text text-anchor="start" x="695" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="8529">.
+            </text>
+            <rect x="868.6666666666666" y="5" width="32.333333333333336" height="486" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_1)">
+            </rect>
+        </g>
+        <text text-anchor="start" x="390.5" y="253.5"  font-size="40" font-weight="bold" stroke="none" stroke-width="0" fill="#000000">nation
+        </text>
+        <g>
+        </g>
+    </g>
+    <g>
+        <rect x="0" y="0" width="901" height="501" stroke="none" stroke-width="0" fill-opacity="0" fill="none">
+        </rect>
+    </g>
+</svg>

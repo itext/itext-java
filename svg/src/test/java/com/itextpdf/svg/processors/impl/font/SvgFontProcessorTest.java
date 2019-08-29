@@ -52,6 +52,7 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupTextNode;
 import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import java.io.FileNotFoundException;
 import org.junit.Assert;
@@ -60,7 +61,7 @@ import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 
-public class SvgFontProcessorTest {
+public class SvgFontProcessorTest extends ExtendedITextTest {
     @Test
     public void addFontFaceFontsTest() throws FileNotFoundException {
         Element styleTag = new Element(Tag.valueOf("style"), "");

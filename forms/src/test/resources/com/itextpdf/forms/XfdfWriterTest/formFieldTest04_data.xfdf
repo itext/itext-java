@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve"
+><f href="../../../../../../../target/test/com/itextpdf/forms/PdfFormFieldTest/formFieldTest04.pdf"
+/><fields
+><field name="Check Box2"
+><value
+>Да</value
+></field
+><field name="TestField"
+><value
+>some value in courier font</value
+></field
+><field name="Text1"
+><value
+>TestField</value
+></field
+><field name="radioName"
+><value
+>aa</value
+></field
+></fields
+><ids original="8BF98DAF7F3A1E725955521A17D57A77" modified="8517E1FB7CA941A6410C5D9A3FBF436F"
+/></xfdf
+>

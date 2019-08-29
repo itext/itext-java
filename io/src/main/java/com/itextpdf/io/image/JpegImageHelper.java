@@ -389,7 +389,7 @@ class JpegImageHelper {
      * Returns a type of marker.
      *
      * @param marker an int
-     * @return a type: <VAR>VALID_MARKER</CODE>, <VAR>UNSUPPORTED_MARKER</VAR> or <VAR>NOPARAM_MARKER</VAR>
+     * @return a type: <VAR>VALID_MARKER</VAR>, <VAR>UNSUPPORTED_MARKER</VAR> or <VAR>NOPARAM_MARKER</VAR>
      */
     private static int marker(int marker) {
         for (int i = 0; i < VALID_MARKERS.length; i++) {

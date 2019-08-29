@@ -33,10 +33,10 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * <p>A SAX document handler to read and parse hyphenation patterns
- * from a XML file.</p>
- *
- * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
+ * A SAX document handler to read and parse hyphenation patterns
+ * from a XML file.
+ * <p>
+ * This work was authored by Carlos Villegas (cav@uniscope.co.jp).
  */
 public class PatternParser extends DefaultHandler {
 
@@ -119,6 +119,10 @@ public class PatternParser extends DefaultHandler {
             factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             return factory.newSAXParser().getXMLReader();
         } catch (Exception e) {
+            // Converting checked exceptions to unchecked RuntimeException (java-specific comment).
+            //
+            // Here creating of specific XMLReader is requested for processing patterns in hyphenation.
+            // If it fails, hyphenation processing cannot be recovered.
             throw new RuntimeException("Couldn't create XMLReader: " + e.getMessage());
         }
     }

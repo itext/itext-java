@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve"
+><annots
+><text color="#FFD100" creationdate="D:20190530143346+03'00'" flags="hidden,print,nozoom,norotate" date="D:20190530143352+03'00'" name="64f8ca28-6105-466d-ba80-6c3b9383950d" icon="Comment" page="0" rect="100.000000,82.000000,118.000000,100.000000" state="Marked" statemodel="Marked" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Marked set by Alex</p
+></body
+></contents-richtext
+><popup flags="hidden,print,nozoom,norotate" open="no" page="0" rect="595.000000,-20,775.000000,100.000000"
+/></text
+><squiggly color="#0000FF" opacity="1.000000" creationdate="D:20190530185355+03'00'" flags="print" date="D:20190530185355+03'00'" name="B63F8E19CFB06D886EF917CAAC953572" page="0" coords="250.820000,680.020000,338.110000,680.020000,250.820000,663.830000,338.110000,663.830000" rect="250.820000,662.830000,339.110000,680.020000" subject="Squiggly Underline Text" title="Alex"
+><contents
+>Create annotation</contents
+><popup flags="print,nozoom,norotate" open="no" page="0" rect="595.000000,560.020004,775.000000,680.020004"
+/></squiggly
+></annots
+><f href="xfdfAnnotationSquigglyText.pdf"
+/><ids original="D0151A7ADF2410CF3E72A04B9CB83452" modified="19EB5E391841174FA2D295BCC162B42E"
+/></xfdf
+>

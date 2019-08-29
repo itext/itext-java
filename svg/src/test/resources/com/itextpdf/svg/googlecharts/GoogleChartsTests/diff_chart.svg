@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="450" height="200" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <linearGradient id="_ABSTRACT_RENDERER_ID_0" x1="100%" y1="0%" x2="0%" y2="0%" gradientUnits="objectBoundingBox">
+            <stop offset="0%" style="stop-color:#3366CC;stop-opacity:0.5">
+            </stop>
+            <stop offset="49.99%" style="stop-color:#3366CC;stop-opacity:0.5">
+            </stop>
+            <stop offset="50%" style="stop-color:#3366CC;stop-opacity:1">
+            </stop>
+            <stop offset="100%" style="stop-color:#3366CC;stop-opacity:1">
+            </stop>
+        </linearGradient>
+        <linearGradient id="_ABSTRACT_RENDERER_ID_1" x1="100%" y1="0%" x2="0%" y2="0%" gradientUnits="objectBoundingBox">
+            <stop offset="0%" style="stop-color:#DC3912;stop-opacity:0.5">
+            </stop>
+            <stop offset="49.99%" style="stop-color:#DC3912;stop-opacity:0.5">
+            </stop>
+            <stop offset="50%" style="stop-color:#DC3912;stop-opacity:1">
+            </stop>
+            <stop offset="100%" style="stop-color:#DC3912;stop-opacity:1">
+            </stop>
+        </linearGradient>
+        <linearGradient id="_ABSTRACT_RENDERER_ID_2" x1="100%" y1="0%" x2="0%" y2="0%" gradientUnits="objectBoundingBox">
+            <stop offset="0%" style="stop-color:#FF9900;stop-opacity:0.5">
+            </stop>
+            <stop offset="49.99%" style="stop-color:#FF9900;stop-opacity:0.5">
+            </stop>
+            <stop offset="50%" style="stop-color:#FF9900;stop-opacity:1">
+            </stop>
+            <stop offset="100%" style="stop-color:#FF9900;stop-opacity:1">
+            </stop>
+        </linearGradient>
+        <linearGradient id="_ABSTRACT_RENDERER_ID_3" x1="100%" y1="0%" x2="0%" y2="0%" gradientUnits="objectBoundingBox">
+            <stop offset="0%" style="stop-color:#109618;stop-opacity:0.5">
+            </stop>
+            <stop offset="49.99%" style="stop-color:#109618;stop-opacity:0.5">
+            </stop>
+            <stop offset="50%" style="stop-color:#109618;stop-opacity:1">
+            </stop>
+            <stop offset="100%" style="stop-color:#109618;stop-opacity:1">
+            </stop>
+        </linearGradient>
+        <linearGradient id="_ABSTRACT_RENDERER_ID_4" x1="100%" y1="0%" x2="0%" y2="0%" gradientUnits="objectBoundingBox">
+            <stop offset="0%" style="stop-color:#990099;stop-opacity:0.5">
+            </stop>
+            <stop offset="49.99%" style="stop-color:#990099;stop-opacity:0.5">
+            </stop>
+            <stop offset="50%" style="stop-color:#990099;stop-opacity:1">
+            </stop>
+            <stop offset="100%" style="stop-color:#990099;stop-opacity:1">
+            </stop>
+        </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="450" height="200" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <rect x="280" y="38" width="100" height="111" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g column-id="Business">
+            <rect x="280" y="38" width="100" height="11" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="306" y="47.35" font-size="11" stroke="none" stroke-width="0" fill="#222222">Business
+                </text>
+            </g>
+            <circle cx="291" cy="43.5" r="5.5" stroke="none" stroke-width="0" fill="blue">
+            </circle>
+        </g>
+        <g column-id="Education">
+            <rect x="280" y="56" width="100" height="11" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="306" y="65.35" font-size="11" stroke="none" stroke-width="0" fill="#222222">Education
+                </text>
+            </g>
+            <circle cx="291" cy="61.5" r="5.5" stroke="none" stroke-width="0" fill="red">
+            </circle>
+        </g>
+        <g column-id="Social Sciences &amp; History">
+            <rect x="280" y="74" width="100" height="39" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="306" y="83.35" font-size="11" stroke="none" stroke-width="0" fill="#222222">Social
+                </text>
+                <text text-anchor="start" x="306" y="97.35" font-size="11" stroke="none" stroke-width="0" fill="#222222">Sciences &amp;
+                </text>
+                <text text-anchor="start" x="306" y="111.35" font-size="11" stroke="none" stroke-width="0" fill="#222222">History
+                </text>
+            </g>
+            <circle cx="291" cy="79.5" r="5.5" stroke="none" stroke-width="0" fill="orange">
+            </circle>
+        </g>
+        <g column-id="Health">
+            <rect x="280" y="120" width="100" height="11" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="306" y="129.35" font-size="11" stroke="none" stroke-width="0" fill="#222222">Health
+                </text>
+            </g>
+            <circle cx="291" cy="125.5" r="5.5" stroke="none" stroke-width="0" fill="green">
+            </circle>
+        </g>
+        <g column-id="Psychology">
+            <rect x="280" y="138" width="100" height="11" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="306" y="147.35" font-size="11" stroke="none" stroke-width="0" fill="#222222">Psychology
+                </text>
+            </g>
+            <circle cx="291" cy="143.5" r="5.5" stroke="none" stroke-width="0" fill="purple">
+            </circle>
+        </g>
+    </g>
+    <g>
+        <path d="M166,100L166,62.800000000000004A37.199999999999996,37.199999999999996,0,0,1,188.68540466266032,129.48240857344172L166,100A0,0,0,0,0,166,100" stroke="#ffffff" stroke-width="1" fill-opacity="0.5" fill="#3366cc">
+        </path>
+    </g>
+    <g>
+        <path d="M166,100L141.46458193492236,72.03836091406903A37.199999999999996,37.199999999999996,0,0,1,166,62.800000000000004L166,100A0,0,0,0,0,166,100" stroke="#ffffff" stroke-width="1" fill-opacity="0.5" fill="#990099">
+        </path>
+    </g>
+    <g>
+        <path d="M166,100L128.85810561596415,97.92161563585415A37.199999999999996,37.199999999999996,0,0,1,141.46458193492234,72.03836091406907L166,100A0,0,0,0,0,166,100" stroke="#ffffff" stroke-width="1" fill-opacity="0.5" fill="#109618">
+        </path>
+    </g>
+    <g>
+        <path d="M166,100L151.7577959912474,134.3656750984623A37.199999999999996,37.199999999999996,0,0,1,128.85810561596415,97.92161563585415L166,100A0,0,0,0,0,166,100" stroke="#ffffff" stroke-width="1" fill-opacity="0.5" fill="#ff9900">
+        </path>
+    </g>
+    <g>
+        <path d="M166,100L188.68540466266032,129.48240857344172A37.199999999999996,37.199999999999996,0,0,1,151.7577959912474,134.3656750984623L166,100A0,0,0,0,0,166,100" stroke="#ffffff" stroke-width="1" fill-opacity="0.5" fill="#dc3912">
+        </path>
+    </g>
+    <g>
+        <path d="M166,62.428000000000004L166,38A62,62,0,0,1,196.88291452167363,153.76100436791523L184.71504620013422,132.57916864695662A37.571999999999996,37.571999999999996,0,0,0,166,62.428000000000004" stroke="#ffffff" stroke-width="1" fill="#3366cc">
+        </path>
+    </g>
+    <g>
+        <path d="M141.48269361301394,71.52971950389929L125.54239870134313,53.01933911534537A62,62,0,0,1,166,38L166,62.428000000000004A37.571999999999996,37.571999999999996,0,0,0,141.48269361301394,71.52971950389929" stroke="#ffffff" stroke-width="1" fill="#990099">
+        </path>
+    </g>
+    <g>
+        <path d="M128.57385682953142,103.30741460714984L104.24068783751059,105.4577798797852A62,62,0,0,1,125.54239870134313,53.01933911534537L141.48269361301394,71.52971950389929A37.571999999999996,37.571999999999996,0,0,0,128.57385682953142,103.30741460714984" stroke="#ffffff" stroke-width="1" fill="#109618">
+        </path>
+    </g>
+    <g>
+        <path d="M157.8327716439222,136.67358129470966L152.52272548502012,160.5174608823592A62,62,0,0,1,104.24068783751059,105.4577798797852L128.57385682953142,103.30741460714984A37.571999999999996,37.571999999999996,0,0,0,157.8327716439222,136.67358129470966" stroke="#ffffff" stroke-width="1" fill="#ff9900">
+        </path>
+    </g>
+    <g>
+        <path d="M184.71504620013422,132.57916864695662L196.88291452167363,153.76100436791523A62,62,0,0,1,152.5227254850201,160.51746088235916L157.83277164392217,136.67358129470966A37.571999999999996,37.571999999999996,0,0,0,184.71504620013422,132.57916864695662" stroke="#ffffff" stroke-width="1" fill="#dc3912">
+        </path>
+    </g>
+    <g>
+    </g>
+</svg>

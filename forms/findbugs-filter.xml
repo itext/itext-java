@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FindBugsFilter>
     <Match>
-        <Class name="com.itextpdf.forms.fields.PdfFormField"/>
         <Or>
-            <Method name="generateDefaultAppearanceString"/>
-            <Method name="setDefaultAppearance"/>
-            <Method name="getValueAsString"/>
+            <And>
+                <Class name="com.itextpdf.forms.fields.PdfFormField"/>
+                <Or>
+                    <Method name="generateDefaultAppearanceString"/>
+                    <Method name="setDefaultAppearance"/>
+                    <Method name="getValueAsString"/>
+                </Or>
+            </And>
+            <And>
+                <Class name="com.itextpdf.forms.xfdf.XfdfObjectUtils"/>
+                <Or>
+                    <Method name="convertFloatToString"/>
+                    <Method name="floatToPaddedString"/>
+                </Or>
+            </And>
         </Or>
         <Bug pattern="DM_DEFAULT_ENCODING"/>
     </Match>

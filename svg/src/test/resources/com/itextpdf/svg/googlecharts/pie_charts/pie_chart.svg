@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="550" height="400" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <filter id="_ABSTRACT_RENDERER_ID_0">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2">
+            </feGaussianBlur>
+            <feOffset dx="1" dy="1">
+            </feOffset>
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.1">
+                </feFuncA>
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode>
+                </feMergeNode>
+                <feMergeNode in="SourceGraphic">
+                </feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <rect x="0" y="0" width="550" height="400" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <text text-anchor="start" x="105" y="56.2"  font-size="12" font-weight="bold" stroke="none" stroke-width="0" fill="#000000">My Average Day
+        </text>
+        <rect x="105" y="46" width="340" height="12" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+    </g>
+    <g>
+        <rect x="334" y="77" width="111" height="88" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g column-id="Work">
+            <rect x="334" y="77" width="111" height="12" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="351" y="87.2"  font-size="12" stroke="none" stroke-width="0" fill="#222222">Work
+                </text>
+            </g>
+            <circle cx="340" cy="83" r="6" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+        </g>
+        <g column-id="Eat">
+            <rect x="334" y="96" width="111" height="12" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="351" y="106.2"  font-size="12" stroke="none" stroke-width="0" fill="#222222">Eat
+                </text>
+            </g>
+            <circle cx="340" cy="102" r="6" stroke="none" stroke-width="0" fill="#dc3912">
+            </circle>
+        </g>
+        <g column-id="TV">
+            <rect x="334" y="115" width="111" height="12" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="351" y="125.2"  font-size="12" stroke="none" stroke-width="0" fill="#222222">TV
+                </text>
+            </g>
+            <circle cx="340" cy="121" r="6" stroke="none" stroke-width="0" fill="#ff9900">
+            </circle>
+        </g>
+        <g column-id="Gym">
+            <rect x="334" y="134" width="111" height="12" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="351" y="144.2"  font-size="12" stroke="none" stroke-width="0" fill="#222222">Gym
+                </text>
+            </g>
+            <circle cx="340" cy="140" r="6" stroke="none" stroke-width="0" fill="#109618">
+            </circle>
+        </g>
+        <g column-id="Sleep">
+            <rect x="334" y="153" width="111" height="12" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="351" y="163.2"  font-size="12" stroke="none" stroke-width="0" fill="#222222">Sleep
+                </text>
+            </g>
+            <circle cx="340" cy="159" r="6" stroke="none" stroke-width="0" fill="#990099">
+            </circle>
+        </g>
+    </g>
+    <g>
+        <path d="M210,201L210,96A105,105,0,0,1,300.93266739736606,253.5L210,201A0,0,0,0,0,210,201" stroke="#ffffff" stroke-width="1" fill="#3366cc">
+        </path>
+        <text text-anchor="start" x="258.1414476000689" y="167.59056769269827"  font-size="12" stroke="none" stroke-width="0" fill="#ffffff">33.3%
+        </text>
+    </g>
+    <g>
+        <path d="M210,201L300.93266739736606,253.5A105,105,0,0,1,262.5,291.93266739736606L210,201A0,0,0,0,0,210,201" stroke="#ffffff" stroke-width="1" fill="#dc3912">
+        </path>
+        <text text-anchor="start" x="252.40392219814441" y="261.1039221981444"  font-size="12" stroke="none" stroke-width="0" fill="#ffffff">8.3%
+        </text>
+    </g>
+    <g>
+        <path d="M210,201L119.06733260263394,253.5A105,105,0,0,1,210,96L210,201A0,0,0,0,0,210,201" stroke="#ffffff" stroke-width="1" fill="#990099">
+        </path>
+        <text text-anchor="start" x="127.85855239993109" y="167.5905676926983"  font-size="12" stroke="none" stroke-width="0" fill="#ffffff">33.3%
+        </text>
+    </g>
+    <g>
+        <path d="M210,201L157.50000000000003,291.93266739736606A105,105,0,0,1,119.06733260263391,253.49999999999994L210,201A0,0,0,0,0,210,201" stroke="#ffffff" stroke-width="1" fill="#109618">
+        </path>
+        <text text-anchor="start" x="140.59607780185559" y="261.1039221981444"  font-size="12" stroke="none" stroke-width="0" fill="#ffffff">8.3%
+        </text>
+    </g>
+    <g>
+        <path d="M210,201L262.5,291.93266739736606A105,105,0,0,1,157.50000000000003,291.93266739736606L210,201A0,0,0,0,0,210,201" stroke="#ffffff" stroke-width="1" fill="#ff9900">
+        </path>
+        <text text-anchor="start" x="193.00000000000003" y="290.63303560529965"  font-size="12" stroke="none" stroke-width="0" fill="#ffffff">16.7%
+        </text>
+    </g>
+    <g>
+    </g>
+</svg>

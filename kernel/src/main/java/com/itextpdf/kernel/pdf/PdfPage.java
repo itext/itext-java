@@ -479,7 +479,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * descendants of the given structure element, belong to the current page - the tag is considered
      * to belong to the page. If tag has descendants from several pages - it is flushed, if all other pages except the
      * current one are flushed.
-     * </p>
      */
     @Override
     public void flush() {
@@ -492,17 +491,15 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * and also all images associated with this page will also be flushed.
      * <p>
      * For notes about tag structure flushing see {@link PdfPage#flush() PdfPage#flush() method}.
-     * </p>
      * <p>
      * If <code>PdfADocument</code> is used, flushing will be applied only if <code>flushResourcesContentStreams</code> is true.
-     * </p>
      * <p>
      * Be careful with handling document in which some of the pages are flushed. Keep in mind that flushed objects are
      * finalized and are completely written to the output stream. This frees their memory but makes
      * it impossible to modify or read data from them. Whenever there is an attempt to modify or to fetch
      * flushed object inner contents an exception will be thrown. Flushing is only possible for objects in the writing
      * and stamping modes, also its possible to flush modified objects in append mode.
-     * </p>
+     *
      * @param flushResourcesContentStreams if true all content streams that are rendered on this page (like form xObjects,
      *                                     annotation appearance streams, patterns) and also all images associated with this page
      *                                     will be flushed.
@@ -1152,17 +1149,13 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * <p>
      * Adds file associated with PDF page and identifies the relationship between them.
-     * </p>
      * <p>
      * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
      * The method adds file to array value of the AF key in the page dictionary.
      * If description is provided, it also will add file description to catalog Names tree.
-     * </p>
      * <p>
      * For associated files their associated file specification dictionaries shall include the AFRelationship key
-     * </p>
      *
      * @param description the file description
      * @param fs          file specification dictionary of associated file
@@ -1186,14 +1179,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     /**
      * <p>
      * Adds file associated with PDF page and identifies the relationship between them.
-     * </p>
      * <p>
      * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
      * The method adds file to array value of the AF key in the page dictionary.
-     * </p>
      * <p>
      * For associated files their associated file specification dictionaries shall include the AFRelationship key
-     * </p>
      *
      * @param fs file specification dictionary of associated file
      */

@@ -1,0 +1,43 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="24cm" height="11cm" viewBox="0 0 2400 1200"
+     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+    <title>Example arcs02 - arc commands with flags</title>
+
+
+    <g stroke = "navy" stroke-width = "3" fill = "none">
+        <path d = "M 300 50 a 150 50 0 0 0 250 50"/>
+        <path d = "M 300 200 a 150 50 0 0 1 250 50"/>
+        <path d = "M 700 50 a 150 50 0 1 0 250 50"/>
+        <path d = "M 700 200 a 150 50 0 1 1 250 50"/>
+    </g>
+    <g text-anchor = "middle" font-size = "25" font = "sans-serif">
+        <text x = "400" y = "20">
+            large-arc-flag=0
+        </text>
+        <text x = "825" y = "20">
+            large-arc-flag=1
+        </text>
+    </g>
+    <g text-anchor = "end" font-size = "25" font = "sans-serif" rotate = "0">
+        <text x = "230" y = "70">
+            sweep-flag=0
+        </text>
+        <text x = "230" y = "220">
+            sweep-flag=1
+        </text>
+    </g>
+    <line x1="0" y1="100" x2="1000" y2="100" stroke="black" stroke-width="2"/>
+    <line x1="0" y1="200" x2="1000" y2="200" stroke="black" stroke-width="2"/>
+    <line x1="0" y1="300" x2="1000" y2="300" stroke="black" stroke-width="2"/>
+    <line x1="0" y1="400" x2="1000" y2="400" stroke="black" stroke-width="2"/>
+    <line x1="100" y1="0" x2="100" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="200" y1="0" x2="200" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="300" y1="0" x2="300" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="400" y1="0" x2="400" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="500" y1="0" x2="500" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="600" y1="0" x2="600" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="700" y1="0" x2="700" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="800" y1="0" x2="800" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="900" y1="0" x2="900" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="1000" y1="0" x2="1000" y2="500" stroke="black" stroke-width="2"/>
+</svg>

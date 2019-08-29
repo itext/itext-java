@@ -153,7 +153,6 @@ public class PdfImageXObject extends PdfXObject {
      */
     @Override
     public void flush() {
-        // TODO to be removed in iText 7.2
         super.flush();
     }
 

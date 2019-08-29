@@ -78,7 +78,7 @@ public class BackgroundColorTest extends ExtendedITextTest {
     }
 
     @Test
-    public void shouldAddBackgroundColorAttributeToAccessiblityWhenBackgroundColorIsSet() throws IOException, XMPException, InterruptedException {
+    public void shouldAddBackgroundColorAttributeToAccessiblityWhenBackgroundColorIsSet() throws IOException, InterruptedException {
         fileName = "simpleBackgroundColorTest.pdf";
         outFileName = destinationFolder + fileName;
         cmpFileName = sourceFolder + cmpPrefix + fileName;

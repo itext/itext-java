@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve"
+><annots
+><text color="#FFD100" creationdate="D:20190530143346+03'00'" flags="hidden,print,nozoom,norotate" date="D:20190530143352+03'00'" name="64f8ca28-6105-466d-ba80-6c3b9383950d" icon="Comment" page="1" rect="100.000000,82.000000,118.000000,100.000000" state="Marked" statemodel="Marked" subject="Sticky Note" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>Marked set by Alex</p
+></body
+></contents-richtext
+><popup flags="hidden,print,nozoom,norotate" open="no" page="1" rect="595.000000,-20.000000,775.000000,100.000000"
+/></text
+><highlight color="#FFFF00" creationdate="D:20190530144353+03'00'" flags="print" IT="HighlightNote" date="D:20190530144404+03'00'" name="fbaaf2f6-7b43-4b5e-9c46-313b93b7fbb5" page="1" coords="250.821000,680.021000,338.108000,680.021000,250.821000,663.833000,338.108000,663.833000" rect="246.500000,663.327000,342.430000,680.527000" subject="Comment on Text" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p dir="ltr"
+><span dir="ltr" style="font-size:9.9pt;text-align:left;color:#000000;font-weight:normal;font-style:normal"
+>Annotation 1</span
+></p
+></body
+></contents-richtext
+><popup flags="print,nozoom,norotate" open="no" page="1" rect="393.250000,573.375000,573.249000,693.811000"
+/></highlight
+></annots
+><f href="xfdfAnnotationHighlightedText.pdf"
+/><ids original="D0151A7ADF2410CF3E72A04B9CB83452" modified="F78303CDA63386458244B207675A7981"
+/></xfdf
+>

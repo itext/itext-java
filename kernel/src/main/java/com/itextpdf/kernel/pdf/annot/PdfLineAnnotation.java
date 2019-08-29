@@ -127,11 +127,11 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
     /**
      * Setter for the annotation's preset border style. Possible values are
      * <ul>
-     *     <li>{@link PdfAnnotation#STYLE_SOLID} - A solid rectangle surrounding the annotation.</li>
-     *     <li>{@link PdfAnnotation#STYLE_DASHED} - A dashed rectangle surrounding the annotation.</li>
-     *     <li>{@link PdfAnnotation#STYLE_BEVELED} - A simulated embossed rectangle that appears to be raised above the surface of the page.</li>
-     *     <li>{@link PdfAnnotation#STYLE_INSET} - A simulated engraved rectangle that appears to be recessed below the surface of the page.</li>
-     *     <li>{@link PdfAnnotation#STYLE_UNDERLINE} - A single line along the bottom of the annotation rectangle.</li>
+     *     <li>{@link PdfAnnotation#STYLE_SOLID} - A solid rectangle surrounding the annotation.
+     *     <li>{@link PdfAnnotation#STYLE_DASHED} - A dashed rectangle surrounding the annotation.
+     *     <li>{@link PdfAnnotation#STYLE_BEVELED} - A simulated embossed rectangle that appears to be raised above the surface of the page.
+     *     <li>{@link PdfAnnotation#STYLE_INSET} - A simulated engraved rectangle that appears to be recessed below the surface of the page.
+     *     <li>{@link PdfAnnotation#STYLE_UNDERLINE} - A single line along the bottom of the annotation rectangle.
      * </ul>
      * See also ISO-320001, Table 166.
      * @param style The new value for the annotation's border style.
@@ -172,17 +172,17 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
      * respectively, by the first and second pairs of coordinates, (x1, y1) and (x2, y2), in the {@link PdfName#L} array
      * (see {@link #getLine()}. Possible values for styles are:
      * <ul>
-     *     <li>{@link PdfName#Square} - A square filled with the annotation's interior color, if any; </li>
-     *     <li>{@link PdfName#Circle} - A circle filled with the annotation's interior color, if any; </li>
-     *     <li>{@link PdfName#Diamond} - A diamond shape filled with the annotation's interior color, if any; </li>
-     *     <li>{@link PdfName#OpenArrow} - Two short lines meeting in an acute angle to form an open arrowhead; </li>
+     *     <li>{@link PdfName#Square} - A square filled with the annotation's interior color, if any;
+     *     <li>{@link PdfName#Circle} - A circle filled with the annotation's interior color, if any;
+     *     <li>{@link PdfName#Diamond} - A diamond shape filled with the annotation's interior color, if any;
+     *     <li>{@link PdfName#OpenArrow} - Two short lines meeting in an acute angle to form an open arrowhead;
      *     <li>{@link PdfName#ClosedArrow} - Two short lines meeting in an acute angle as in the {@link PdfName#OpenArrow} style and
-     *     connected by a third line to form a triangular closed arrowhead filled with the annotation's interior color, if any; </li>
-     *     <li>{@link PdfName#None} - No line ending; </li>
-     *     <li>{@link PdfName#Butt} - A short line at the endpoint perpendicular to the line itself; </li>
-     *     <li>{@link PdfName#ROpenArrow} - Two short lines in the reverse direction from {@link PdfName#OpenArrow}; </li>
-     *     <li>{@link PdfName#RClosedArrow} - A triangular closed arrowhead in the reverse direction from {@link PdfName#ClosedArrow}; </li>
-     *     <li>{@link PdfName#Slash} - A short line at the endpoint approximately 30 degrees clockwise from perpendicular to the line itself; </li>
+     *     connected by a third line to form a triangular closed arrowhead filled with the annotation's interior color, if any;
+     *     <li>{@link PdfName#None} - No line ending;
+     *     <li>{@link PdfName#Butt} - A short line at the endpoint perpendicular to the line itself;
+     *     <li>{@link PdfName#ROpenArrow} - Two short lines in the reverse direction from {@link PdfName#OpenArrow};
+     *     <li>{@link PdfName#RClosedArrow} - A triangular closed arrowhead in the reverse direction from {@link PdfName#ClosedArrow};
+     *     <li>{@link PdfName#Slash} - A short line at the endpoint approximately 30 degrees clockwise from perpendicular to the line itself;
      * </ul>
      * see also ISO-320001, Table 176 "Line ending styles".
      * @param lineEndingStyles An array of two names specifying the line ending styles that is used in drawing the line.

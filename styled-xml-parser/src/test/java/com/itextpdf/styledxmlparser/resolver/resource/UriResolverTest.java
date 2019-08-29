@@ -42,9 +42,11 @@
  */
 package com.itextpdf.styledxmlparser.resolver.resource;
 
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -310,6 +312,50 @@ public class UriResolverTest extends ExtendedITextTest {
         String absoluteBaseUri = absolutePathRoot + "test/folders/index.html";
         UriResolver resolver = new UriResolver(absoluteBaseUri);
         Assert.assertFalse(resolver.isLocalBaseUri());
+    }
+
+    @Test
+    public void singleQuoteRelativePath() throws MalformedURLException {
+        String expectedUrl = "https://he.wikipedia.org/wiki/%D7%90%D7%91%D7%92'%D7%93";
+        String baseUri = "https://he.wikipedia.org/wiki/";
+        String relativePath = "%D7%90%D7%91%D7%92'%D7%93";
+        UriResolver resolver = new UriResolver(baseUri);
+
+        Assert.assertEquals(expectedUrl, resolver.resolveAgainstBaseUri(relativePath).toExternalForm());
+    }
+
+    @Test
+    @Ignore("DEVSIX-2880: single quote character isn't encoded in Java and .NET 4.0, but it's encoded in .NETCoreApp 1.0" +
+            " from single quote to %27")
+    public void quoteInPercentsRelativePath() throws MalformedURLException {
+        String expectedUrl = "https://he.wikipedia.org/wiki/%D7%90%D7%91%D7%92%27%D7%93";
+        String baseUri = "https://he.wikipedia.org/wiki/";
+        String relativePath = "%D7%90%D7%91%D7%92%27%D7%93";
+        UriResolver resolver = new UriResolver(baseUri);
+
+        Assert.assertEquals(expectedUrl, resolver.resolveAgainstBaseUri(relativePath).toExternalForm());
+    }
+
+    @Test
+    public void singleQuoteBasePath() throws MalformedURLException {
+        String expectedUrl = "https://he.wikipedia.org/wiki'/%D7%90%D7%91%D7%92%D7%93";
+        String baseUri = "https://he.wikipedia.org/wiki'/";
+        String relativePath = "%D7%90%D7%91%D7%92%D7%93";
+        UriResolver resolver = new UriResolver(baseUri);
+
+        Assert.assertEquals(expectedUrl, resolver.resolveAgainstBaseUri(relativePath).toExternalForm());
+    }
+
+    @Test
+    @Ignore("DEVSIX-2880: single quote character isn't encoded in Java and .NET 4.0, but it's encoded in .NETCoreApp 1.0" +
+            " from single quote to %27")
+    public void quoteInPercentsBasePath() throws MalformedURLException {
+        String expectedUrl = "https://he.wikipedia.org/wiki%27/%D7%90%D7%91%D7%92%D7%93";
+        String baseUri = "https://he.wikipedia.org/wiki%27/";
+        String relativePath = "%D7%90%D7%91%D7%92%D7%93";
+        UriResolver resolver = new UriResolver(baseUri);
+
+        Assert.assertEquals(expectedUrl, resolver.resolveAgainstBaseUri(relativePath).toExternalForm());
     }
 
     private void testPaths(UriResolver resolver, String path) throws MalformedURLException {

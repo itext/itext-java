@@ -50,15 +50,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * <p>
  * This class is used to manage waiting tags state.
  * Any tag in the structure tree could be marked as "waiting". This state indicates that
  * tag is not yet finished and therefore should not be flushed or removed if page tags are
  * flushed or removed or if parent tags are flushed.
- * </p>
  * <p>
  * Waiting state of tags is defined by the association with arbitrary objects instances.
- * </p>
+ * <p>
  * Waiting state could also be perceived as a temporal association of the object to some particular tag.
  */
 public class WaitingTagsManager {
@@ -129,9 +127,11 @@ public class WaitingTagsManager {
 
     /**
      * Removes waiting state of the tag which is associated with the given object.
-     * <p>NOTE: if parent of the waiting tag is already flushed, the tag and it's children
+     * <p>
+     * NOTE: if parent of the waiting tag is already flushed, the tag and it's children
      * (unless they are waiting tags on their own) will be also immediately flushed right after
-     * the waiting state removal.</p>
+     * the waiting state removal.
+     *
      * @param associatedObject an object which association with the waiting tag is to be removed.
      * @return true if object was actually associated with some tag and it's association was removed.
      */
@@ -146,9 +146,9 @@ public class WaitingTagsManager {
 
     /**
      * Removes waiting state of all waiting tags by removing association with objects.
-     *
-     * <p>NOTE: if parent of the waiting tag is already flushed, the tag and it's children
-     * will be also immediately flushed right after the waiting state removal.</p>
+     * <p>
+     * NOTE: if parent of the waiting tag is already flushed, the tag and it's children
+     * will be also immediately flushed right after the waiting state removal.
      */
     public void removeAllWaitingStates() {
         for (PdfStructElem structElem : associatedObjToWaitingTag.values()) {

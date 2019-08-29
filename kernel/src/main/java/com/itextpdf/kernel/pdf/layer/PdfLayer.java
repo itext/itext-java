@@ -55,8 +55,8 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -226,18 +226,25 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
 
     /**
      * Gets a collection of current intents specified for this layer.
-     * The default value is PdfName.View, so it will be the only element of the
-     * resultant colletion if no intents are currently specified.
+     * The default value is {@link PdfName#View}, so it will be the only element of the
+     * resultant collection if no intents are currently specified.
      * @return the collection of intents.
      */
     public Collection<PdfName> getIntents() {
         final PdfObject intent = getPdfObject().get(PdfName.Intent);
         if (intent instanceof PdfName)
-            return Arrays.asList((PdfName) intent);
+            return Collections.singletonList((PdfName) intent);
         else if (intent instanceof PdfArray) {
-            return (Collection<PdfName>) intent;
+            PdfArray intentArr = (PdfArray) intent;
+            Collection<PdfName> intentsCollection = new ArrayList<>(intentArr.size());
+            for (PdfObject i : intentArr) {
+                if (i instanceof PdfName) {
+                    intentsCollection.add((PdfName) i);
+                }
+            }
+            return intentsCollection;
         }
-        return Arrays.asList(PdfName.View);
+        return Collections.singletonList(PdfName.View);
     }
 
     /**
@@ -249,7 +256,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
             getPdfObject().remove(PdfName.Intent);
         } else if (intents.size() == 1) {
             getPdfObject().put(PdfName.Intent, intents.get(0));
-        } else if (intents.size() > 1) {
+        } else { // intents.size() > 1
             PdfArray array = new PdfArray();
             for (PdfName intent : intents) {
                 array.add(intent);

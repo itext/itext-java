@@ -57,26 +57,23 @@ import com.itextpdf.styledxmlparser.jsoup.select.NodeVisitor;
 
 
 /**
- The whitelist based HTML cleaner. Use to ensure that end-user provided HTML contains only the elements and attributes
- that you are expecting; no junk, and no cross-site scripting attacks!
- <p>
- The HTML cleaner parses the input as HTML and then runs it through a white-list, so the output HTML can only contain
- HTML that is allowed by the whitelist.
- </p>
- <p>
- It is assumed that the input HTML is a body fragment; the clean methods only pull from the source's body, and the
- canned white-lists only allow body contained tags.
- </p>
- <p>
- Rather than interacting directly with a Cleaner object, generally see the {@code clean} methods in {@link Jsoup}.
- </p>
+ * The whitelist based HTML cleaner. Use to ensure that end-user provided HTML contains only the elements and attributes
+ * that you are expecting; no junk, and no cross-site scripting attacks!
+ * <p>
+ * The HTML cleaner parses the input as HTML and then runs it through a white-list, so the output HTML can only contain
+ * HTML that is allowed by the whitelist.
+ * <p>
+ * It is assumed that the input HTML is a body fragment; the clean methods only pull from the source's body, and the
+ * canned white-lists only allow body contained tags.
+ * <p>
+ * Rather than interacting directly with a Cleaner object, generally see the {@code clean} methods in {@link Jsoup}.
  */
 public class Cleaner {
     private Whitelist whitelist;
 
     /**
-     Create a new cleaner, that sanitizes documents using the supplied whitelist.
-     @param whitelist white-list to clean with
+     * Create a new cleaner, that sanitizes documents using the supplied whitelist.
+     * @param whitelist white-list to clean with
      */
     public Cleaner(Whitelist whitelist) {
         Validate.notNull(whitelist);
@@ -84,10 +81,10 @@ public class Cleaner {
     }
 
     /**
-     Creates a new, clean document, from the original dirty document, containing only elements allowed by the whitelist.
-     The original document is not modified. Only elements from the dirt document's <code>body</code> are used.
-     @param dirtyDocument Untrusted base document to clean.
-     @return cleaned document.
+     * Creates a new, clean document, from the original dirty document, containing only elements allowed by the whitelist.
+     * The original document is not modified. Only elements from the dirt document's <code>body</code> are used.
+     * @param dirtyDocument Untrusted base document to clean.
+     * @return cleaned document.
      */
     public Document clean(Document dirtyDocument) {
         Validate.notNull(dirtyDocument);
@@ -100,15 +97,15 @@ public class Cleaner {
     }
 
     /**
-     Determines if the input document is valid, against the whitelist. It is considered valid if all the tags and attributes
-     in the input HTML are allowed by the whitelist.
-     <p>
-     This method can be used as a validator for user input forms. An invalid document will still be cleaned successfully
-     using the {@link #clean(Document)} document. If using as a validator, it is recommended to still clean the document
-     to ensure enforced attributes are set correctly, and that the output is tidied.
-     </p>
-     @param dirtyDocument document to test
-     @return true if no tags or attributes need to be removed; false if they do
+     * Determines if the input document is valid, against the whitelist. It is considered valid if all the tags and attributes
+     * in the input HTML are allowed by the whitelist.
+     * <p>
+     * This method can be used as a validator for user input forms. An invalid document will still be cleaned successfully
+     * using the {@link #clean(Document)} document. If using as a validator, it is recommended to still clean the document
+     * to ensure enforced attributes are set correctly, and that the output is tidied.
+     *
+     * @param dirtyDocument document to test
+     * @return true if no tags or attributes need to be removed; false if they do
      */
     public boolean isValid(Document dirtyDocument) {
         Validate.notNull(dirtyDocument);
@@ -119,7 +116,7 @@ public class Cleaner {
     }
 
     /**
-     Iterates the input and copies trusted nodes (tags, attributes, text) into the destination.
+     * Iterates the input and copies trusted nodes (tags, attributes, text) into the destination.
      */
     private final class CleaningVisitor implements NodeVisitor {
         int numDiscarded = 0;

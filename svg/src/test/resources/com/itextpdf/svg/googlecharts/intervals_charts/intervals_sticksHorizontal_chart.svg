@@ -1,0 +1,180 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <clipPath id="_ABSTRACT_RENDERER_ID_0">
+            <rect x="161" y="96" width="579" height="309">
+            </rect>
+        </clipPath>
+    </defs>
+    <rect x="0" y="0" width="900" height="500" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <text text-anchor="start" x="161" y="70.9" font-size="14" font-weight="bold" stroke="none" stroke-width="0" fill="#000000">Sticks, horizontal
+        </text>
+        <rect x="161" y="59" width="579" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+    </g>
+    <g>
+        <rect x="161" y="96" width="579" height="309" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g clip-path="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+            <g>
+                <rect x="161" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="306" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="450" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="595" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="739" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="327" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="250" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="173" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="96" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+            </g>
+            <g>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#333333">
+                </rect>
+            </g>
+            <g>
+                <g>
+                    <path d="M198,219.7L198,240.875" stroke="#808080" stroke-width="1" fill-opacity="0.3" fill="#808080">
+                    </path>
+                    <path d="M198,173.5L198,204.29999999999998" stroke="#808080" stroke-width="1" fill-opacity="0.3" fill="#808080">
+                    </path>
+                    <path d="M186,231.25L209,231.25" stroke="#ad5514" stroke-width="4" fill-opacity="0.3" fill="#ad5514">
+                    </path>
+                    <path d="M186,192.75L209,192.75" stroke="#ad5514" stroke-width="4" fill-opacity="0.3" fill="#ad5514">
+                    </path>
+                </g>
+                <g>
+                    <path d="M270,186.975L270,231.25" stroke="#808080" stroke-width="1" fill-opacity="0.3" fill="#808080">
+                    </path>
+                    <path d="M270,135L270,165.79999999999998" stroke="#808080" stroke-width="1" fill-opacity="0.3" fill="#808080">
+                    </path>
+                    <path d="M259,221.625L281,221.625" stroke="#ad5514" stroke-width="4" fill-opacity="0.3" fill="#ad5514">
+                    </path>
+                    <path d="M259,154.25L281,154.25" stroke="#ad5514" stroke-width="4" fill-opacity="0.3" fill="#ad5514">
+                    </path>
+                </g>
+                <g>
+                    <path d="M342,179.275L342,212" stroke="#808080" stroke-width="1" fill-opacity="0.3" fill="#808080">
+                    </path>
+                    <path d="M342,136.925L342,148.47499999999997" stroke="#808080" stroke-width="1" fill-opacity="0.3" fill="#808080">
+                    </path>
+                    <path d="M331,202.375L353,202.375" stroke="#ad5514" stroke-width="4" fill-opacity="0.3" fill="#ad5514">
+                    </path>
+                    <path d="M331,135L353,135" stroke="#ad5514" stroke-width="4" fill-opacity="0.3" fill="#ad5514">
+                    </path>
+                </g>
+                <g>
+                    <path d="M414,235.1L414,240.875" stroke="#808080" stroke-width="1" fill-opacity="0.3" fill="#808080">
+                    </path>
+                    <path d="M414,221.625L414,227.4" stroke="#808080" stroke-width="1" fill-opacity="0.3" fill="#808080">
+                    </path>
+                    <path d="M403,240.875L426,240.875" stroke="#ad5514" stroke-width="4" fill-opacity="0.3" fill="#ad5514">
+                    </path>
+                    <path d="M403,221.625L426,221.625" stroke="#ad5514" stroke-width="4" fill-opacity="0.3" fill="#ad5514">
+                    </path>
+                </g>
+                <g>
+                    <path d="M487,271.67499999999995L487,275.525" stroke="#808080" stroke-width="1" fill-opacity="0.3" fill="#808080">
+                    </path>
+                    <path d="M487,265.9L487,269.75" stroke="#808080" stroke-width="1" fill-opacity="0.3" fill="#808080">
+                    </path>
+                    <path d="M475,262.04999999999995L498,262.04999999999995" stroke="#ad5514" stroke-width="4" fill-opacity="0.3" fill="#ad5514">
+                    </path>
+                    <path d="M475,283.225L498,283.225" stroke="#ad5514" stroke-width="4" fill-opacity="0.3" fill="#ad5514">
+                    </path>
+                </g>
+                <g>
+                    <path d="M559,350.6L559,364.075" stroke="#808080" stroke-width="1" fill-opacity="0.3" fill="#808080">
+                    </path>
+                    <path d="M559,327.5L559,339.05" stroke="#808080" stroke-width="1" fill-opacity="0.3" fill="#808080">
+                    </path>
+                    <path d="M548,329.425L570,329.425" stroke="#ad5514" stroke-width="4" fill-opacity="0.3" fill="#ad5514">
+                    </path>
+                    <path d="M548,362.15L570,362.15" stroke="#ad5514" stroke-width="4" fill-opacity="0.3" fill="#ad5514">
+                    </path>
+                </g>
+                <g>
+                    <path d="M631,256.275L631,269.75" stroke="#808080" stroke-width="1" fill-opacity="0.3" fill="#808080">
+                    </path>
+                    <path d="M631,231.25L631,240.875" stroke="#808080" stroke-width="1" fill-opacity="0.3" fill="#808080">
+                    </path>
+                    <path d="M620,256.275L642,256.275" stroke="#ad5514" stroke-width="4" fill-opacity="0.3" fill="#ad5514">
+                    </path>
+                    <path d="M620,244.725L642,244.725" stroke="#ad5514" stroke-width="4" fill-opacity="0.3" fill="#ad5514">
+                    </path>
+                </g>
+                <g>
+                    <path d="M703,221.625L703,240.875" stroke="#808080" stroke-width="1" fill-opacity="0.3" fill="#808080">
+                    </path>
+                    <path d="M703,192.75L703,208.15" stroke="#808080" stroke-width="1" fill-opacity="0.3" fill="#808080">
+                    </path>
+                    <path d="M692,231.25L715,231.25" stroke="#ad5514" stroke-width="4" fill-opacity="0.3" fill="#ad5514">
+                    </path>
+                    <path d="M692,192.75L715,192.75" stroke="#ad5514" stroke-width="4" fill-opacity="0.3" fill="#ad5514">
+                    </path>
+                </g>
+            </g>
+            <g>
+                <path d="M197.625,212C197.625,212,245.79166666666669,183.125,269.875,173.5C293.95833333333337,163.875,318.04166666666663,144.625,342.125,154.25C366.20833333333337,163.875,390.29166666666663,212,414.375,231.25C438.4583333333333,250.5,462.5416666666667,250.5,486.625,269.75C510.7083333333333,289,534.7916666666667,349.9583333333333,558.875,346.75C582.9583333333333,343.5416666666667,607.0416666666667,272.95833333333337,631.125,250.5C655.2083333333333,228.04166666666666,703.375,212,703.375,212" stroke="#e7711b" stroke-width="4" fill-opacity="1" fill="none">
+                </path>
+            </g>
+        </g>
+        <g>
+        </g>
+        <g>
+            <g>
+                <text text-anchor="middle" x="161.5" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">0.5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="306" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">2.5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="450.5" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">4.5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="595" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">6.5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="739.5" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">8.5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="409.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="332.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">40
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="255.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">80
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="178.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">120
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="101.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">160
+                </text>
+            </g>
+        </g>
+    </g>
+    <g>
+    </g>
+</svg>

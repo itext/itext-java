@@ -154,7 +154,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * Gets default compression level for @see PdfStream.
-     * For more details @see {@link java.util.zip.Deflater}.
+     * For more details @see {@link com.itextpdf.io.source.DeflaterOutputStream}.
      *
      * @return compression level.
      */
@@ -164,7 +164,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * Sets default compression level for @see PdfStream.
-     * For more details @see {@link java.util.zip.Deflater}.
+     * For more details @see {@link com.itextpdf.io.source.DeflaterOutputStream}.
      *
      * @param compressionLevel compression level.
      */
@@ -406,7 +406,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * Flushes all objects which have not been flushed yet.
-     * @param forbiddenToFlush {@link Set}&lt;{@link PdfIndirectReference}&gt; of references that are forbidden to be flushed automatically.
+     * @param forbiddenToFlush a {@link Set} of {@link PdfIndirectReference references} that are forbidden to be flushed automatically.
      */
     protected void flushWaitingObjects(Set<PdfIndirectReference> forbiddenToFlush) {
         PdfXrefTable xref = document.getXref();
@@ -434,7 +434,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * Flushes all modified objects which have not been flushed yet. Used in case incremental updates.
-     * @param forbiddenToFlush {@link Set}&lt;{@link PdfIndirectReference}&gt; of references that are forbidden to be flushed automatically.
+     * @param forbiddenToFlush a {@link Set} of {@link PdfIndirectReference references} that are forbidden to be flushed automatically.
      */
     protected void flushModifiedWaitingObjects(Set<PdfIndirectReference> forbiddenToFlush) {
         PdfXrefTable xref = document.getXref();

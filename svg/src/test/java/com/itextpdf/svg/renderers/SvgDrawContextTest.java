@@ -49,6 +49,7 @@ import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.impl.GroupSvgNodeRenderer;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
@@ -65,7 +66,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
-public class SvgDrawContextTest {
+public class SvgDrawContextTest extends ExtendedITextTest {
 
     private PdfDocument tokenDoc;
     private PdfCanvas page1, page2;

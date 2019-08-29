@@ -61,7 +61,7 @@ import java.util.Set;
 
 /**
  * This class provides helpful methods for creating fonts ready to be used in a {@link PdfDocument}
- *
+ * <p>
  * Note, just created {@link PdfFont} is almost empty until it will be flushed,
  * because it is impossible to fulfill font data until flush.
  */
@@ -95,12 +95,12 @@ public final class PdfFontFactory {
 
     /**
      * Creates a {@link PdfFont} by already existing font dictionary.
-     *
+     * <p>
      * Note, the font won't be added to any document,
      * until you add it to {@link com.itextpdf.kernel.pdf.canvas.PdfCanvas}.
      * While adding to {@link com.itextpdf.kernel.pdf.canvas.PdfCanvas}, or to
      * {@link com.itextpdf.kernel.pdf.PdfResources} the font will be made indirect implicitly.
-     *
+     * <p>
      * {@link PdfDocument#getFont} method is strongly recommended if you want to get PdfFont by both
      * existing font dictionary, or just created and hasn't flushed yet.
      *
@@ -290,7 +290,7 @@ public final class PdfFontFactory {
      * Created a {@link PdfFont} instance by the bytes of the underlying font program.
      *
      * @param fontProgram the bytes of the underlying font program
-     * @param encoding
+     * @param encoding    the encoding of the font to be created. See {@link PdfEncodings}
      * @return created {@link PdfFont} instance
      * @throws IOException signals that an I/O exception has occurred.
      */
@@ -365,12 +365,12 @@ public final class PdfFontFactory {
     /**
      * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
      *
-     * @param fontName
-     * @param encoding
-     * @param embedded
-     * @param style
-     * @param cached
-     * @throws IOException
+     * @param fontName Path to font file or Standard font name
+     * @param encoding Font encoding from {@link PdfEncodings}.
+     * @param embedded if true font will be embedded. Note, standard font won't be embedded in any case.
+     * @param style    Font style from {@link FontStyles}.
+     * @param cached   If true font will be cached for another PdfDocument
+     * @throws IOException exception is thrown in case an I/O error occurs when reading the file
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)
@@ -387,11 +387,11 @@ public final class PdfFontFactory {
     /**
      * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
      *
-     * @param fontName
-     * @param encoding
-     * @param embedded
-     * @param cached
-     * @throws IOException
+     * @param fontName Path to font file or Standard font name
+     * @param encoding Font encoding from {@link PdfEncodings}.
+     * @param embedded if true font will be embedded. Note, standard font won't be embedded in any case.
+     * @param cached   If true font will be cached for another PdfDocument
+     * @throws IOException exception is thrown in case an I/O error occurs when reading the file
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)
@@ -407,10 +407,10 @@ public final class PdfFontFactory {
     /**
      * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
      *
-     * @param fontName
-     * @param encoding
-     * @param embedded
-     * @throws IOException
+     * @param fontName Path to font file or Standard font name
+     * @param encoding Font encoding from {@link PdfEncodings}.
+     * @param embedded if true font will be embedded. Note, standard font won't be embedded in any case.
+     * @throws IOException exception is thrown in case an I/O error occurs when reading the file
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)
@@ -426,11 +426,11 @@ public final class PdfFontFactory {
     /**
      * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
      *
-     * @param fontName
-     * @param encoding
-     * @param embedded
-     * @param style
-     * @throws IOException
+     * @param fontName Path to font file or Standard font name
+     * @param encoding Font encoding from {@link PdfEncodings}.
+     * @param embedded if true font will be embedded. Note, standard font won't be embedded in any case.
+     * @param style    Font style from {@link FontStyles}.
+     * @throws IOException exception is thrown in case an I/O error occurs when reading the file
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)
@@ -446,9 +446,9 @@ public final class PdfFontFactory {
     /**
      * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
      *
-     * @param fontName
-     * @param encoding
-     * @throws IOException
+     * @param fontName Path to font file or Standard font name
+     * @param encoding Font encoding from {@link PdfEncodings}.
+     * @throws IOException exception is thrown in case an I/O error occurs when reading the file
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)
@@ -464,8 +464,8 @@ public final class PdfFontFactory {
     /**
      * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
      *
-     * @param fontName
-     * @throws IOException
+     * @param fontName Path to font file or Standard font name
+     * @throws IOException exception is thrown in case an I/O error occurs when reading the file
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <filter id="_ABSTRACT_RENDERER_ID_0">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2">
+            </feGaussianBlur>
+            <feOffset dx="1" dy="1">
+            </feOffset>
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.1">
+                </feFuncA>
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode>
+                </feMergeNode>
+                <feMergeNode in="SourceGraphic">
+                </feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <rect x="0" y="0" width="900" height="500" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <path d="M451,97A154,154,0,0,1,451,405A154,154,0,0,1,451,97M451,174A77,77,0,0,0,451,328A77,77,0,0,0,451,174Z" stroke="#ffffff" stroke-width="1" fill="#3366cc">
+        </path>
+        <text text-anchor="start" x="433" y="255.9"  font-size="14" stroke="none" stroke-width="0" fill="#000000">100%
+        </text>
+    </g>
+    <g>
+    </g>
+</svg>

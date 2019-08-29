@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.utils;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
-public class SvgCssUtilsTest {
+public class SvgCssUtilsTest extends ExtendedITextTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();

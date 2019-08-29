@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink" width="500" height="500">
+    <line x1="0" y1="100" x2="500" y2="100" stroke="black" stroke-width="2"  />
+    <line x1="0" y1="200" x2="500" y2="200" stroke="black" stroke-width="2"  />
+    <line x1="0" y1="300" x2="500" y2="300" stroke="black" stroke-width="2"  />
+    <line x1="0" y1="400" x2="500" y2="400" stroke="black" stroke-width="2"  />
+    <line x1="100" y1="0" x2="100" y2="500" stroke="black" stroke-width="2"  />
+    <line x1="200" y1="0" x2="200" y2="500" stroke="black" stroke-width="2"  />
+    <line x1="300" y1="0" x2="300" y2="500" stroke="black" stroke-width="2"  />
+    <line x1="400" y1="0" x2="400" y2="500" stroke="black" stroke-width="2"  />
+    <rect x="0" y="0" width="500" height="500" fill="cyan" fill-opacity="0.4"
+          stroke="black" stroke-width="20" stroke-linecap="round" stroke-opacity="0.3"/>
+    <image x="0" y="0" width="350" height="80.98" preserveAspectRatio="none"
+           xlink:href="manualTransparency_for_png.png" />
+    <image x="0" y="100" width="350" height="80.98" preserveAspectRatio="xMinYMin"
+           xlink:href="manualTransparency_for_png.png" />
+    <image x="0" y="200" width="350" height="80.98" preserveAspectRatio="xMidYMid"
+           xlink:href="manualTransparency_for_png.png" />
+    <image x="0" y="300" width="350" height="80.98" preserveAspectRatio="xMaxYMax"
+           xlink:href="manualTransparency_for_png.png" />
+    <image x="0" y="400" width="350" height="80.98" preserveAspectRatio="xMaxYMin"
+           xlink:href="manualTransparency_for_png.png" />
+</svg>

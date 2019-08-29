@@ -333,12 +333,10 @@ public abstract class PdfObject implements Serializable {
      * <p>
      * This flag is meaningful only if the {@link PdfDocument} is opened in append mode
      * (see {@link StampingProperties#useAppendMode()}).
-     * </p>
      * <p>
      * In append mode the whole document is preserved as is, and only changes to the document are
      * appended to the end of the document file. Because of this, only modified objects need to be flushed and are
      * allowed to be flushed (i.e. to be written).
-     * </p>
      *
      * @return this {@link PdfObject} instance.
      */
@@ -534,12 +532,12 @@ public abstract class PdfObject implements Serializable {
     /**
      * Processes two cases of object copying:
      * <ol>
-     * <li>copying to the other document</li>
-     * <li>cloning inside of the current document</li>
+     * <li>copying to the other document
+     * <li>cloning inside of the current document
      * </ol>
      * <p>
-     * This two cases are distinguished by the state of <code>document</code> parameter:
-     * the second case is processed if <code>document</code> is <code>null</code>.
+     * This two cases are distinguished by the state of {@code document} parameter:
+     * the second case is processed if {@code document} is {@code null}.
      *
      * @param documentTo       if not null: document to copy object to; otherwise indicates that object is to be cloned.
      * @param allowDuplicating indicates if to allow copy objects which already have been copied.

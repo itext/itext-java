@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <clipPath id="_ABSTRACT_RENDERER_ID_0">
+            <rect x="161" y="96" width="579" height="309">
+            </rect>
+        </clipPath>
+    </defs>
+    <rect x="0" y="0" width="900" height="500" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <text text-anchor="start" x="161" y="70.9" font-size="14" font-weight="bold" stroke="none" stroke-width="0" fill="#000000">Age vs. Weight comparison
+        </text>
+        <rect x="161" y="59" width="579" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+    </g>
+    <g>
+        <rect x="161" y="96" width="579" height="309" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g clip-path="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+            <g>
+                <rect x="161" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="306" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="450" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="595" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="739" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="327" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="250" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="173" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="96" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+            </g>
+            <g>
+                <rect x="161" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#333333">
+                </rect>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#333333">
+                </rect>
+            </g>
+            <g>
+                <path d="M161.5,244.62770069359937L167.28,252.11893948409465L173.06,259.2009979699315L178.84,265.8811380218731L184.62,272.1666215106825L190.4,278.0647103071228L196.18,283.58266628195736L201.96,288.727751305949L207.74,293.5072272498612L213.52,297.92835598445686L219.3,301.9983993804992L225.07999999999998,305.7246193087513L230.86,309.1142776399764L236.64,312.1746362449376L242.42000000000002,314.9129569943979L248.2,317.33650175912067L253.98,319.45253240986887L259.76,321.26831081740573L265.54,322.7910988524944L271.32,324.02815838589794L277.1,324.9867512883795L282.88,325.67413943070227L288.65999999999997,326.09758468362935L294.44,326.26434891792394L300.22,326.1816940043491L306,325.85688181366794L312.0208333333333,325.26886276078136L318.04166666666663,324.43417383199244L324.0625,323.3610229794624L330.0833333333333,322.05761815535203L336.10416666666663,320.5321673118226L342.125,318.79287840103495L348.1458333333333,316.8479593751502L354.16666666666663,314.7056181863293L354.16666666666663,314.7056181863293L359.9007936507936,312.489258679404L365.6349206349206,310.1083666432461L371.3690476190476,307.57003241553934L377.1031746031746,304.8813463339674L382.83730158730157,302.0493987362138L388.57142857142856,299.0812799599623L394.30555555555554,295.9840803428965L400.03968253968253,292.76489022269993L405.7738095238095,289.43079993705635L411.5079365079365,285.9888998236495L417.2420634920635,282.4462802201628L422.9761904761905,278.81003146428L428.7103174603174,275.0872438936848L434.4444444444444,271.2850078460608L440.1785714285714,267.41041365909155L445.91269841269843,263.47055167046085L451.64682539682536,259.4725122178522L457.38095238095235,255.4233856389493L463.11507936507934,251.3302622714358L468.8492063492063,247.2002324529954L474.5833333333333,243.04038652131155L480.1410256410256,238.9867787982263L485.69871794871796,234.91827806998495L491.2564102564102,230.84134011325315L496.81410256410254,226.7624207046964L502.37179487179486,222.68797562098035L507.9294871794872,218.6244606387704L513.4871794871794,214.57833153473223L519.0448717948718,210.55604408553162L524.6025641025641,206.56405406783372L530.1602564102564,202.6088172583044L535.7179487179487,198.69678943360918L541.2756410256411,194.83442637041355L546.8333333333333,191.02818384538315L552.6133333333332,187.13616388462918L558.3933333333333,183.3190883367593L564.1733333333333,179.58421907253665L569.9533333333334,175.93881796272436L575.7333333333333,172.3901468780855L581.5133333333333,168.94546768938326L587.2933333333333,165.61204226738104L593.0733333333334,162.39713248284156L598.8533333333332,159.30800020652816L604.6333333333332,156.35190730920402L610.4133333333333,153.53611566163212L616.1933333333333,150.8678871345758L621.9733333333334,148.3544835987979L627.7533333333333,146.0031669250622L633.5333333333333,143.82119898413117L639.3133333333333,141.81584164676798L645.0933333333332,139.99435678373607L650.8733333333333,138.36400626579837L656.6533333333334,136.93205196371815L662.4333333333334,135.70575574825853L668.2133333333334,134.69237949018282L673.9933333333333,133.89918506025373L679.7733333333333,133.33343432923476L685.5533333333333,133.0023891678889L691.3333333333333,132.91331144697944L697.3541666666666,133.08565189297764L703.375,133.53663140137928L709.3958333333333,134.2744579243456L715.4166666666666,135.30733941403713L721.4375,136.64348382261534L727.4583333333333,138.29109910224128L733.4791666666666,140.25839320507555L739.5,142.55357408327944" stroke="#3366cc" stroke-width="2" stroke-opacity="0.5" fill-opacity="1" fill="none">
+                </path>
+            </g>
+        </g>
+        <g>
+            <circle cx="546.8333333333333" cy="173.5" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+            <circle cx="354.16666666666663" cy="298.625" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+            <circle cx="691.3333333333333" cy="135" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+            <circle cx="354.16666666666663" cy="308.25" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+            <circle cx="306" cy="337.125" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+            <circle cx="474.5833333333333" cy="269.75" r="4.5" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+        </g>
+        <g>
+            <g>
+                <text text-anchor="middle" x="161.5" y="425.9" font-family="Arial" font-size="14" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="306" y="425.9" font-family="Arial" font-size="14" stroke="none" stroke-width="0" fill="#444444">3
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="450.5" y="425.9" font-family="Arial" font-size="14" stroke="none" stroke-width="0" fill="#444444">6
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="595" y="425.9" font-family="Arial" font-size="14" stroke="none" stroke-width="0" fill="#444444">9
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="739.5" y="425.9" font-family="Arial" font-size="14" stroke="none" stroke-width="0" fill="#444444">12
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="409.4" font-family="Arial" font-size="14" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="332.4" font-family="Arial" font-size="14" stroke="none" stroke-width="0" fill="#444444">4
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="255.4" font-family="Arial" font-size="14" stroke="none" stroke-width="0" fill="#444444">8
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="178.4" font-family="Arial" font-size="14" stroke="none" stroke-width="0" fill="#444444">12
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="101.4" font-family="Arial" font-size="14" stroke="none" stroke-width="0" fill="#444444">16
+                </text>
+            </g>
+        </g>
+    </g>
+    <g>
+    </g>
+</svg>

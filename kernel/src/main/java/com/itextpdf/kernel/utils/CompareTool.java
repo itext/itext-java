@@ -547,6 +547,62 @@ public class CompareTool {
     }
 
     /**
+     * Recursively compares structures of two corresponding dictionaries from out and cmp PDF documents. You can roughly
+     * imagine it as depth-first traversal of the two trees that represent pdf objects structure of the documents.
+     * <p>
+     * Both out and cmp {@link PdfDictionary} shall have indirect references.
+     * <p>
+     * By default page dictionaries are excluded from the comparison when met and are instead compared in a special manner,
+     * simply comparing their page numbers. This behavior can be disabled by calling {@link #disableCachedPagesComparison()}.
+     * <p>
+     * For more explanations about what is outPdf and cmpPdf see last paragraph of the {@link CompareTool}
+     * class description.
+     *
+     * @param outDict an indirect {@link PdfDictionary} from the output file, which is to be compared to cmp-file dictionary.
+     * @param cmpDict an indirect {@link PdfDictionary} from the cmp-file file, which is to be compared to output file dictionary.
+     * @return {@link CompareResult} instance containing differences between the two dictionaries,
+     * or {@code null} if dictionaries are equal.
+     */
+    public CompareResult compareDictionariesStructure(PdfDictionary outDict, PdfDictionary cmpDict) {
+        return compareDictionariesStructure(outDict, cmpDict, null);
+    }
+
+    /**
+     * Recursively compares structures of two corresponding dictionaries from out and cmp PDF documents. You can roughly
+     * imagine it as depth-first traversal of the two trees that represent pdf objects structure of the documents.
+     * <p>
+     * Both out and cmp {@link PdfDictionary} shall have indirect references.
+     * <p>
+     * By default page dictionaries are excluded from the comparison when met and are instead compared in a special manner,
+     * simply comparing their page numbers. This behavior can be disabled by calling {@link #disableCachedPagesComparison()}.
+     * <p>
+     * For more explanations about what is outPdf and cmpPdf see last paragraph of the {@link CompareTool}
+     * class description.
+     *
+     * @param outDict      an indirect {@link PdfDictionary} from the output file, which is to be compared to cmp-file dictionary.
+     * @param cmpDict      an indirect {@link PdfDictionary} from the cmp-file file, which is to be compared to output file dictionary.
+     * @param excludedKeys a {@link Set} of names that designate entries from {@code outDict} and {@code cmpDict} dictionaries
+     *                     which are to be skipped during comparison.
+     * @return {@link CompareResult} instance containing differences between the two dictionaries,
+     * or {@code null} if dictionaries are equal.
+     */
+    public CompareResult compareDictionariesStructure(PdfDictionary outDict, PdfDictionary cmpDict, Set<PdfName> excludedKeys) {
+        if (outDict.getIndirectReference() == null || cmpDict.getIndirectReference() == null) {
+            throw new IllegalArgumentException("The 'outDict' and 'cmpDict' objects shall have indirect references.");
+        }
+
+        CompareResult compareResult = new CompareResult(compareByContentErrorsLimit);
+        CompareTool.ObjectPath currentPath = new ObjectPath(cmpDict.getIndirectReference(), outDict.getIndirectReference());
+        if (!compareDictionariesExtended(outDict, cmpDict, currentPath, compareResult, excludedKeys)) {
+            assert !compareResult.isOk();
+            System.out.println(compareResult.getReport());
+            return compareResult;
+        }
+        assert compareResult.isOk();
+        return null;
+    }
+
+    /**
      * Simple method that compares two given PdfStreams by content. This is "deep" comparing, which means that all
      * nested objects are also compared by content.
      *

@@ -55,11 +55,10 @@ import java.util.List;
  * <p>
  * For example:
  * <ul>
- *     <li>{@link PolyTree} to {@link com.itextpdf.kernel.geom.Path}</li>
- *     <li>{@link com.itextpdf.kernel.geom.Point} to {@link Point.LongPoint}</li>
- *     <li>{@link Point.LongPoint} to {@link com.itextpdf.kernel.geom.Point}</li>
+ *     <li>{@link PolyTree} to {@link com.itextpdf.kernel.geom.Path}
+ *     <li>{@link com.itextpdf.kernel.geom.Point} to {@link Point.LongPoint}
+ *     <li>{@link Point.LongPoint} to {@link com.itextpdf.kernel.geom.Point}
  * </ul>
- * <p>
  */
 public class ClipperBridge {
 
@@ -87,7 +86,7 @@ public class ClipperBridge {
     }
 
     /**
-     * Adds iText {@link Path} to the given {@link IClipper} object.
+     * Adds iText {@link com.itextpdf.kernel.geom.Path} to the given {@link IClipper} object.
      * @param clipper The {@link IClipper} object.
      * @param path The {@link com.itextpdf.kernel.geom.Path} object to be added to the {@link IClipper}.
      * @param polyType See {@link IClipper.PolyType}.
@@ -102,7 +101,7 @@ public class ClipperBridge {
     }
 
     /**
-     * Adds all iText {@link Subpath}s of the iText {@link Path} to the {@link ClipperOffset} object with one
+     * Adds all iText {@link Subpath}s of the iText {@link com.itextpdf.kernel.geom.Path} to the {@link ClipperOffset} object with one
      * note: it doesn't add degenerate subpaths.
      *
      * @return {@link java.util.List} consisting of all degenerate iText {@link Subpath}s of the path.
@@ -222,18 +221,18 @@ public class ClipperBridge {
     }
 
     /**
-     * Builds a {@link Path} instance based on array of {@link com.itextpdf.kernel.geom.Point} (internally converting
+     * Adds polygon path based on array of {@link com.itextpdf.kernel.geom.Point} (internally converting
      * them by {@link #convertToLongPoints}) and adds this path to {@link IClipper} instance, treating the path as
      * a closed polygon.
      * <p>
      * The return value will be false if the path is invalid for clipping. A path is invalid for clipping when:
      * <ul>
-     * <li>it has less than 3 vertices;</li>
-     * <li>the vertices are all co-linear.</li>
+     * <li>it has less than 3 vertices;
+     * <li>the vertices are all co-linear.
      * </ul>
      * @param clipper {@link IClipper} instance to which the created polygon path will be added.
      * @param polyVertices an array of {@link com.itextpdf.kernel.geom.Point} which will be internally converted
-     *                     to {@link Path} and added to the clipper instance.
+     *                     to clipper path and added to the clipper instance.
      * @param polyType either {@link IClipper.PolyType#SUBJECT} or {@link IClipper.PolyType#CLIP} denoting whether added
      *                 path is a subject of clipping or a part of the clipping polygon.
      * @return true if polygon path was successfully added, false otherwise.
@@ -243,18 +242,18 @@ public class ClipperBridge {
     }
 
     /**
-     * Builds a {@link Path} instance based on array of {@link com.itextpdf.kernel.geom.Point} (internally converting
+     * Adds polyline path based on array of {@link com.itextpdf.kernel.geom.Point} (internally converting
      * them by {@link #convertToLongPoints}) and adds this path to {@link IClipper} instance, treating the path as
      * a polyline (an open path in terms of clipper library). This path is added to the subject of future clipping.
      * Polylines cannot be part of clipping polygon.
      * <p>
      * The return value will be false if the path is invalid for clipping. A path is invalid for clipping when:
      * <ul>
-     * <li>it has less than 2 vertices;</li>
+     * <li>it has less than 2 vertices;
      * </ul>
      * @param clipper {@link IClipper} instance to which the created polyline path will be added.
      * @param lineVertices an array of {@link com.itextpdf.kernel.geom.Point} which will be internally converted
-     *                     to {@link Path} and added to the clipper instance.
+     *                     to clipper path and added to the clipper instance.
      * @return true if polyline path was successfully added, false otherwise.
      */
     public static boolean addPolylineSubjectToClipper(IClipper clipper, com.itextpdf.kernel.geom.Point[] lineVertices) {

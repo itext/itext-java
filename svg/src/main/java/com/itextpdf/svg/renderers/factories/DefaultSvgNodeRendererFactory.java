@@ -111,12 +111,10 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
 
             result = (ISvgNodeRenderer) rendererMap.get(tag.name()).newInstance();
         } catch (ReflectiveOperationException ex) {
-            LoggerFactory.getLogger(DefaultSvgNodeRendererFactory.class)
-                    .error(DefaultSvgNodeRendererFactory.class.getName(), ex);
             throw new SvgProcessingException(SvgLogMessageConstant.COULDNOTINSTANTIATE, ex).setMessageParams(tag.name());
         }
 
-        if (parent != null && !(parent instanceof NoDrawOperationSvgNodeRenderer )) {
+        if (parent != null && !(parent instanceof NoDrawOperationSvgNodeRenderer)) {
             result.setParent(parent);
         }
 
@@ -124,7 +122,7 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
     }
 
     @Override
-    public boolean isTagIgnored(IElementNode tag){
+    public boolean isTagIgnored(IElementNode tag) {
         return ignoredTags.contains(tag.name());
     }
 }

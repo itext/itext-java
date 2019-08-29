@@ -1,0 +1,13 @@
+<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg"  xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path id="MyPath"
+              d="M10,90 Q90,90 90,45 Q90,10 50,10 Q10,10 10,40 Q10,70 45,70 Q70,70 75,50" />
+    </defs>
+    <g fill="none">
+        <text stroke="Fuchsia" stroke-width="0.5">
+            <textPath xlink:href="#MyPath">
+                Text written around a spiral is too hard to read!
+            </textPath>
+        </text>
+    </g>
+</svg>

@@ -92,8 +92,8 @@ public class PdfFileAttachmentAnnotation extends PdfMarkupAnnotation {
      * @param name a {@link PdfName} that specifies the icon for displaying annotation. Possible values are different
      *             for different annotation types:
      *             <ul>
-     *                  <li>GraphPushPin</li>
-     *                  <li>PaperclipTag</li>
+     *                  <li>GraphPushPin
+     *                  <li>PaperclipTag
      *             </ul>
      *             Additional names may be supported as well.
      * @return this {@link PdfFileAttachmentAnnotation} instance.

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="595pt" height="842pt" version="1.1">
+        <circle cx="50" cy="350" r="30" fill="salmon" stroke="black" stroke-width="15" stroke-opacity="0,5"/>
+        <circle cx="130" cy="350" r="30" fill="salmon" stroke="black" stroke-width="15" stroke-opacity="0"/>
+        <circle cx="210" cy="350" r="30" fill="salmon" stroke="black" stroke-width="15" stroke-opacity=".25"/>
+        <circle cx="290" cy="450" r="30" fill="salmon" stroke="black" stroke-width="15" stroke-opacity="0,25"/>
+        <circle cx="370" cy="450" r="30" fill="salmon" stroke="black" stroke-width="15" stroke-opacity="0.5"/>
+        <circle cx="450" cy="450" r="30" fill="salmon" stroke="black" stroke-width="15" stroke-opacity="1"/>
+		<circle cx="50" cy="550" r="30" fill="salmon" stroke="black" stroke-width="15" stroke-opacity="-1"/>
+        <circle cx="130" cy="550" r="30" fill="salmon" stroke="black" stroke-width="15" stroke-opacity="100"/>
+		<circle cx="210" cy="550" r="30" fill="salmon" stroke="black" stroke-width="15" stroke-opacity="0.276"/>
+</svg>

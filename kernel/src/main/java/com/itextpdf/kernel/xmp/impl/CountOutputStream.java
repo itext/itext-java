@@ -36,7 +36,7 @@ import java.io.OutputStream;
 
 /**
  * An <code>OutputStream</code> that counts the written bytes.
- * 
+ *
  * @since   08.11.2006
  */
 public final class CountOutputStream extends OutputStream

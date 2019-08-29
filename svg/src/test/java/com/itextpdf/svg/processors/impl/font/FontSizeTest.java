@@ -69,7 +69,7 @@ public class FontSizeTest extends SvgIntegrationTest {
     @Test
     public void fontSize01Test() throws IOException, InterruptedException {
         String name = "fontSizeTest01";
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,name);
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,name);
     }
 
     @Test
@@ -78,23 +78,30 @@ public class FontSizeTest extends SvgIntegrationTest {
     })
     public void fontSize02Test() throws IOException, InterruptedException {
         String name = "fontSizeTest02";
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,name);
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,name);
     }
 
     @Test
     public void fontSize03Test() throws IOException, InterruptedException {
         String name = "fontSizeTest03";
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,name);
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,name);
     }
     @Test
     public void fontAbsoluteKeywords() throws IOException, InterruptedException {
         String name = "fontAbsoluteKeywords";
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,name);
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,name);
     }
 
     @Test
     public void fontRelativeKeywords() throws IOException, InterruptedException {
         String name = "fontRelativeKeywords";
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER,name);
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,name);
+    }
+
+    @Test
+    //TODO: update cmp-file after DEVSIX-2785
+    public void diff_units_of_measure() throws IOException, InterruptedException {
+        String name = "diff_units_of_measure";
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, name);
     }
 }

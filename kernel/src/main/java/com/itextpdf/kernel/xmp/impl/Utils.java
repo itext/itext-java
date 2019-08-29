@@ -36,7 +36,7 @@ import com.itextpdf.kernel.xmp.XMPConst;
 
 /**
  * Utility functions for the XMPToolkit implementation.
- * 
+ *
  * @since 06.06.2006
  */
 public final class Utils implements XMPConst
@@ -54,8 +54,8 @@ public final class Utils implements XMPConst
 	{
 		initCharTables();
 	}
-	
-	
+
+
 	/**
 	 * Private constructor
 	 */
@@ -64,7 +64,7 @@ public final class Utils implements XMPConst
 		// EMPTY
 	}
 
-	
+
 	/**
 	 * Normalize an xml:lang value so that comparisons are effectively case
 	 * insensitive as required by RFC 3066 (which superceeds RFC 1766). The
@@ -75,7 +75,7 @@ public final class Utils implements XMPConst
 	 * practice of ISO 3166.
 	 * <li> All other subtags are lower case.
 	 * </ul>
-	 * 
+	 *
 	 * @param value
 	 *            raw value
 	 * @return Returns the normalized value.
@@ -86,8 +86,8 @@ public final class Utils implements XMPConst
 		if (XMPConst.X_DEFAULT.equals(value))
 		{
 			return value;
-		}	
-		
+		}
+
 		int subTag = 1;
 		StringBuffer buffer = new StringBuffer();
 
@@ -122,7 +122,7 @@ public final class Utils implements XMPConst
 
 
 	/**
-	 * Split the name and value parts for field and qualifier selectors:
+	 * Split the name and value parts for field and qualifier selectors. Following selectors are taken into account:
 	 * <ul>
 	 * <li>[qualName="value"] - An element in an array of structs, chosen by a
 	 * field value.
@@ -133,7 +133,7 @@ public final class Utils implements XMPConst
 	 * any character including a doubled quoting character. The value may be
 	 * empty. <em>Note:</em> It is assumed that the expression is formal
 	 * correct
-	 * 
+	 *
 	 * @param selector
 	 *            the selector
 	 * @return Returns an array where the first entry contains the name and the
@@ -168,10 +168,10 @@ public final class Utils implements XMPConst
 		}
 		return new String[] { name, value.toString() };
 	}
-	
+
 
 	/**
-	 * 
+	 *
 	 * @param schema
 	 *            a schema namespace
 	 * @param prop
@@ -280,12 +280,12 @@ public final class Utils implements XMPConst
 	/**
 	 * Check some requirements for an UUID:
 	 * <ul>
-	 * <li>Length of the UUID is 32</li>
+	 * <li>Length of the UUID is 32
 	 * <li>The Delimiter count is 4 and all the 4 delimiter are on their right
-	 * position (8,13,18,23)</li>
+	 * position (8,13,18,23)
 	 * </ul>
-	 * 
-	 * 
+	 *
+	 *
 	 * @param uuid uuid to test
 	 * @return true - this is a well formed UUID, false - UUID has not the expected format
 	 */
@@ -300,7 +300,7 @@ public final class Utils implements XMPConst
 		{
 			return false;
 		}
-		
+
 		for (delimPos = 0; delimPos < uuid.length(); delimPos++)
 		{
 			if (uuid.charAt(delimPos) == '-')
@@ -314,13 +314,13 @@ public final class Utils implements XMPConst
 		return result && UUID_SEGMENT_COUNT == delimCnt && UUID_LENGTH == delimPos;
 	}
 
-	
+
 	/**
 	 * Simple check for valid XMLNames. Within ASCII range<br>
 	 * ":" | [A-Z] | "_" | [a-z] | [#xC0-#xD6] | [#xD8-#xF6]<br>
-	 * are accepted, above all characters (which is not entirely 
+	 * are accepted, above all characters (which is not entirely
 	 * correct according to the XML Spec.
-	 *  
+	 *
 	 * @param name an XML Name
 	 * @return Return <code>true</code> if the name is correct.
 	 */
@@ -333,18 +333,18 @@ public final class Utils implements XMPConst
 		for (int i = 1; i < name.length(); i++)
 		{
 			if (!isNameChar(name.charAt(i)))
-			{	
+			{
 				return false;
 			}
 		}
 		return true;
 	}
 
-	
+
 	/**
 	 * Checks if the value is a legal "unqualified" XML name, as
 	 * defined in the XML Namespaces proposed recommendation.
-	 * These are XML names, except that they must not contain a colon. 
+	 * These are XML names, except that they must not contain a colon.
 	 * @param name the value to check
 	 * @return Returns true if the name is a valid "unqualified" XML name.
 	 */
@@ -357,13 +357,13 @@ public final class Utils implements XMPConst
 		for (int i = 1; i < name.length(); i++)
 		{
 			if (!isNameChar(name.charAt(i))  ||  name.charAt(i) == ':')
-			{	
+			{
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
 
 	/**
 	 * @param c  a char
@@ -375,12 +375,12 @@ public final class Utils implements XMPConst
 				c != 0x09  &&  c != 0x0A  &&  c != 0x0D;
 	}
 
-	
+
 	/**
 	 * Serializes the node value in XML encoding. Its used for tag bodies and
 	 * attributes.<br>
 	 * <em>Note:</em> The attribute is always limited by quotes,
-	 * thats why <code>&amp;apos;</code> is never serialized.<br> 
+	 * thats why <code>&amp;apos;</code> is never serialized.<br>
 	 * <em>Note:</em> Control chars are written unescaped, but if the user uses others than tab, LF
 	 * and CR the resulting XML will become invalid.
 	 * @param value a string
@@ -397,14 +397,14 @@ public final class Utils implements XMPConst
             char c = value.charAt (i);
 			if (
 				 c == '<'  ||  c == '>'  ||  c == '&'  ||							    // XML chars
-				(escapeWhitespaces  &&  (c == '\t'  ||  c == '\n'  ||  c == '\r'))  || 
+				(escapeWhitespaces  &&  (c == '\t'  ||  c == '\n'  ||  c == '\r'))  ||
 				(forAttribute  &&  c == '"'))
 			{
 				needsEscaping = true;
 				break;
 			}
         }
-		
+
 		if (!needsEscaping)
 		{
 			// fast path
@@ -420,7 +420,7 @@ public final class Utils implements XMPConst
 	            if (!(escapeWhitespaces  &&  (c == '\t'  ||  c == '\n'  ||  c == '\r')))
 	            {
 	            	switch (c)
-		            {	
+		            {
 	            		// we do what "Canonical XML" expects
 	            		// AUDIT: &apos; not serialized as only outer qoutes are used
 		              	case '<':	buffer.append("&lt;"); continue;
@@ -441,12 +441,12 @@ public final class Utils implements XMPConst
 	        }
 	        return buffer.toString();
 		}
-	}	
-	
-	
+	}
+
+
 	/**
 	 * Replaces the ASCII control chars with a space.
-	 * 
+	 *
 	 * @param value
 	 *            a node value
 	 * @return Returns the cleaned up value
@@ -464,12 +464,12 @@ public final class Utils implements XMPConst
 		return buffer.toString();
 	}
 
-	
-	/** 
+
+	/**
 	 * Simple check if a character is a valid XML start name char.
 	 * All characters according to the XML Spec 1.1 are accepted:
 	 * http://www.w3.org/TR/xml11/#NT-NameStartChar
-	 *  
+	 *
 	 * @param ch a character
 	 * @return Returns true if the character is a valid first char of an XML name.
 	 */
@@ -489,12 +489,12 @@ public final class Utils implements XMPConst
 			(ch >= 0x10000  &&  ch <= 0xEFFFF);
 		}
 
-	
-	/** 
+
+	/**
 	 * Simple check if a character is a valid XML name char
 	 * (every char except the first one), according to the XML Spec 1.1:
 	 * http://www.w3.org/TR/xml11/#NT-NameChar
-	 * 
+	 *
 	 * @param ch a character
 	 * @return Returns true if the character is a valid char of an XML name.
 	 */
@@ -503,11 +503,11 @@ public final class Utils implements XMPConst
 		return 
 			(ch <= 0xFF  &&  xmlNameChars[ch])  ||
 			isNameStartChar(ch)  ||
-			(ch >= 0x300  &&  ch <= 0x36F)  || 
+			(ch >= 0x300  &&  ch <= 0x36F)  ||
 			(ch >= 0x203F  &&  ch <= 0x2040);
 	}
 
-	
+
 	/**
 	 * Initializes the char tables for the chars 0x00-0xFF for later use,
 	 * according to the XML 1.1 specification
@@ -517,7 +517,7 @@ public final class Utils implements XMPConst
 	{
 		xmlNameChars = new boolean[0x0100];
 		xmlNameStartChars = new boolean[0x0100];
-		
+
 		for (int i = 0; i < xmlNameChars.length; i++)
 		{
 			char ch = (char) i;
@@ -529,7 +529,7 @@ public final class Utils implements XMPConst
 				(0xC0 <= ch  &&  ch <= 0xD6)  ||
 				(0xD8 <= ch  &&  ch <= 0xF6)  ||
 				(0xF8 <= ch  &&  ch <= 0xFF);
-			
+
 			xmlNameChars[ch] =
 				xmlNameStartChars[ch]  ||
 				ch == '-'  ||
@@ -537,5 +537,5 @@ public final class Utils implements XMPConst
 				('0' <= ch  &&  ch <= '9')  ||
 				ch == 0xB7;
 		}
-	}	
+	}
 }

@@ -129,7 +129,7 @@ final class Version {
     }
 
     /**
-     * <p>Deduces version information purely from QR Code dimensions.</p>
+     * Deduces version information purely from QR Code dimensions.
      *
      * @param dimension dimension in modules
      * @return {@link Version} for a QR Code of that dimension
@@ -231,10 +231,10 @@ final class Version {
     }
 
     /**
-     * <p>Encapsulates a set of error-correction blocks in one symbol version. Most versions will
+     * Encapsulates a set of error-correction blocks in one symbol version. Most versions will
      * use blocks of differing sizes within one version, so, this encapsulates the parameters for
      * each set of blocks. It also holds the number of error-correction codewords per block since it
-     * will be the same across all blocks within one version.</p>
+     * will be the same across all blocks within one version.
      */
     public static final class ECBlocks {
         private final int ecCodewordsPerBlock;
@@ -278,9 +278,9 @@ final class Version {
     }
 
     /**
-     * <p>Encapsualtes the parameters for one error-correction block in one symbol version.
+     * Encapsualtes the parameters for one error-correction block in one symbol version.
      * This includes the number of data codewords, and the number of times a block with these
-     * parameters is used consecutively in the QR code version's format.</p>
+     * parameters is used consecutively in the QR code version's format.
      */
     public static final class ECB {
         private final int count;

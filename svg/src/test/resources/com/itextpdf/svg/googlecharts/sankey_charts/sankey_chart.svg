@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="300" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+    </defs>
+    <g>
+        <path d="M10,9.999999999999972C203.33333333333334,9.999999999999972,396.6666666666667,1.4210854715202004e-14,590,1.4210854715202004e-14L590,41.666666666666686C396.6666666666667,41.666666666666686,203.33333333333334,51.66666666666664,10,51.66666666666664Z" stroke="none" stroke-width="0" fill-opacity="0.6" fill="#aaaaaa">
+        </path>
+        <path d="M10,51.66666666666664C203.33333333333334,51.66666666666664,396.6666666666667,68.33333333333334,590,68.33333333333334L590,126.66666666666669C396.6666666666667,126.66666666666669,203.33333333333334,109.99999999999997,10,109.99999999999997Z" stroke="none" stroke-width="0" fill-opacity="0.6" fill="#aaaaaa">
+        </path>
+        <path d="M10,109.99999999999997C203.33333333333334,109.99999999999997,396.6666666666667,211.66666666666669,590,211.66666666666669L590,261.6666666666667C396.6666666666667,261.6666666666667,203.33333333333334,159.99999999999997,10,159.99999999999997Z" stroke="none" stroke-width="0" fill-opacity="0.6" fill="#aaaaaa">
+        </path>
+        <path d="M10,169.99999999999997C203.33333333333334,169.99999999999997,396.6666666666667,41.666666666666686,590,41.666666666666686L590,58.33333333333336C396.6666666666667,58.33333333333336,203.33333333333334,186.66666666666663,10,186.66666666666663Z" stroke="none" stroke-width="0" fill-opacity="0.6" fill="#aaaaaa">
+        </path>
+        <path d="M10,186.66666666666663C203.33333333333334,186.66666666666663,396.6666666666667,126.66666666666669,590,126.66666666666669L590,201.66666666666669C396.6666666666667,201.66666666666669,203.33333333333334,261.66666666666663,10,261.66666666666663Z" stroke="none" stroke-width="0" fill-opacity="0.6" fill="#aaaaaa">
+        </path>
+        <path d="M10,261.66666666666663C203.33333333333334,261.66666666666663,396.6666666666667,261.6666666666667,590,261.6666666666667L590,295C396.6666666666667,295,203.33333333333334,294.99999999999994,10,294.99999999999994Z" stroke="none" stroke-width="0" fill-opacity="0.6" fill="#aaaaaa">
+        </path>
+    </g>
+    <g>
+        <text text-anchor="start" x="16" y="88.49999999999997"  font-size="10" stroke="none" stroke-width="0" fill="#000000">A
+        </text>
+        <text text-anchor="end" x="584" y="32.666666666666686"  font-size="10" stroke="none" stroke-width="0" fill="#000000">X
+        </text>
+        <text text-anchor="end" x="584" y="138.5"  font-size="10" stroke="none" stroke-width="0" fill="#000000">Y
+        </text>
+        <text text-anchor="end" x="584" y="256.83333333333337"  font-size="10" stroke="none" stroke-width="0" fill="#000000">Z
+        </text>
+        <text text-anchor="start" x="16" y="235.99999999999997"  font-size="10" stroke="none" stroke-width="0" fill="#000000">B
+        </text>
+        <rect x="0" y="9.999999999999972" width="10" height="150" stroke="none" stroke-width="0" fill-opacity="0.8" fill="#4285f4">
+        </rect>
+        <rect x="590" y="1.4210854715202004e-14" width="10" height="58.333333333333336" stroke="none" stroke-width="0" fill-opacity="0.8" fill="#db4437">
+        </rect>
+        <rect x="590" y="68.33333333333334" width="10" height="133.33333333333334" stroke="none" stroke-width="0" fill-opacity="0.8" fill="#f4b400">
+        </rect>
+        <rect x="590" y="211.66666666666669" width="10" height="83.33333333333334" stroke="none" stroke-width="0" fill-opacity="0.8" fill="#0f9d58">
+        </rect>
+        <rect x="0" y="169.99999999999997" width="10" height="125.00000000000001" stroke="none" stroke-width="0" fill-opacity="0.8" fill="#ab47bc">
+        </rect>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+</svg>

@@ -157,14 +157,14 @@ public class WriterProperties implements Serializable {
      * {@link EncryptionConstants#ALLOW_FILL_IN}, {@link EncryptionConstants#ALLOW_SCREENREADERS},
      * {@link EncryptionConstants#ALLOW_ASSEMBLY} and {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
      * The permissions can be combined by ORing them.
-     * <p>
+     *
      * @param userPassword        the user password. Can be null or empty
      * @param ownerPassword       the owner password. Can be null or empty
      * @param permissions         the user permissions
      * @param encryptionAlgorithm the type of encryption. It can be one of {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
-     * {@link EncryptionConstants#STANDARD_ENCRYPTION_128}, {@link EncryptionConstants#ENCRYPTION_AES_128}
-     *                       or {@link EncryptionConstants#ENCRYPTION_AES_256}.
-     *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed to output the metadata in cleartext
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128}, {@link EncryptionConstants#ENCRYPTION_AES_128}
+     *                            or {@link EncryptionConstants#ENCRYPTION_AES_256}.
+     *                            Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed to output the metadata in cleartext
      * @return this {@code WriterProperties} instance
      */
     public WriterProperties setStandardEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionAlgorithm) {
@@ -181,13 +181,13 @@ public class WriterProperties implements Serializable {
      * {@link EncryptionConstants#ALLOW_FILL_IN}, {@link EncryptionConstants#ALLOW_SCREENREADERS},
      * {@link EncryptionConstants#ALLOW_ASSEMBLY} and {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
      * The permissions can be combined by ORing them.
-     * <p>
+     *
      * @param certs               the public certificates to be used for the encryption
      * @param permissions         the user permissions for each of the certificates
      * @param encryptionAlgorithm the type of encryption. It can be one of {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
-     * {@link EncryptionConstants#STANDARD_ENCRYPTION_128}, {@link EncryptionConstants#ENCRYPTION_AES_128}
-     *                       or {@link EncryptionConstants#ENCRYPTION_AES_256}.
-     *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed to output the metadata in cleartext
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128}, {@link EncryptionConstants#ENCRYPTION_AES_128}
+     *                            or {@link EncryptionConstants#ENCRYPTION_AES_256}.
+     *                            Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed to output the metadata in cleartext
      * @return this {@code WriterProperties} instance
      */
     public WriterProperties setPublicKeyEncryption(Certificate[] certs, int[] permissions, int encryptionAlgorithm) {

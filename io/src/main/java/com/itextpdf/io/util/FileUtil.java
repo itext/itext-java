@@ -43,6 +43,8 @@
  */
 package com.itextpdf.io.util;
 
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -73,9 +75,15 @@ public final class FileUtil {
     }
 
     public static String getFontsDir() {
-        String winDir = System.getenv("windir");
-        String fileSeparator = System.getProperty("file.separator");
-        return winDir + fileSeparator + "fonts";
+        try {
+            String winDir = System.getenv("windir");
+            String fileSeparator = System.getProperty("file.separator");
+            return winDir + fileSeparator + "fonts";
+        } catch (SecurityException e) {
+            LoggerFactory.getLogger(FileUtil.class)
+                    .warn("Can't access System.getenv(\"windir\") to load fonts. Please, add RuntimePermission for getenv.windir.");
+            return null;
+        }
     }
 
     public static boolean fileExists(String path) {

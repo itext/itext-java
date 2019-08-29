@@ -1,0 +1,51 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="24cm" height="11cm" viewBox="0 0 2400 1200"
+     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+    <title>Example arcs01 - arc commands in path data, both relative and absolute</title>
+
+
+    <path d="M300,200 h-150 a150,150 0 1,0 150,-150 z"
+          fill="red" stroke="blue" stroke-width="5"/>
+    <path d="M275,175 v-150 a150,150 0 0,0 -150,150 z"
+          fill="yellow" stroke="blue" stroke-width="5"/>
+
+    <path d="M600,350 l 50,-25
+           a25,25 -30 0,1 50,-25 l 50,-25
+           a25,50 -30 0,1 50,-25 l 50,-25
+           a25,75 -30 0,1 50,-25 l 50,-25
+           a25,100 -30 0,1 50,-25 l 50,-25"
+          fill="none" stroke="red" stroke-width="5"/>
+
+    <path d="M10 315
+           L 110 215
+           A 30 50 0 0 1 162.55 162.45
+           L 172.55 152.45
+           A 30 50 -45 0 1 215.1 109.9
+           L 315 10" stroke="black" fill="green" stroke-width="2" fill-opacity="0.5"/>
+
+    <path d="M 100 300
+            A 100 100 0 0 1 300 300
+            L 250 300
+            A 50 50 0 0 0 150 300
+            L 100 300
+            Z" stroke="purple" fill="black" stroke-width="1" fill-opacity="0.5"/>
+
+     <path d="M 0 50 L 10 50 A 3 2, 181, 0 0, 90 50 L 100 50"
+              style="stroke:black; fill:yellow" />
+
+
+    <line x1="0" y1="100" x2="1000" y2="100" stroke="black" stroke-width="2"/>
+    <line x1="0" y1="200" x2="1000" y2="200" stroke="black" stroke-width="2"/>
+    <line x1="0" y1="300" x2="1000" y2="300" stroke="black" stroke-width="2"/>
+    <line x1="0" y1="400" x2="1000" y2="400" stroke="black" stroke-width="2"/>
+    <line x1="100" y1="0" x2="100" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="200" y1="0" x2="200" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="300" y1="0" x2="300" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="400" y1="0" x2="400" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="500" y1="0" x2="500" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="600" y1="0" x2="600" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="700" y1="0" x2="700" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="800" y1="0" x2="800" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="900" y1="0" x2="900" y2="500" stroke="black" stroke-width="2"/>
+    <line x1="1000" y1="0" x2="1000" y2="500" stroke="black" stroke-width="2"/>
+</svg>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve"
+><f href="simpleFormWithOneField.pdf"
+/><fields
+><field name="fieldName"
+><value
+>中学生</value
+></field
+></fields
+><ids original="DA37006D2948B42F8A7700C456D75721" modified="DA37006D2948B42F8A7700C456D75721"
+/></xfdf
+>

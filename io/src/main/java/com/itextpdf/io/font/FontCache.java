@@ -54,7 +54,6 @@ import com.itextpdf.io.font.cmap.CMapUniCid;
 import com.itextpdf.io.font.constants.FontResources;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.util.ResourceUtil;
-
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -146,6 +145,16 @@ public class FontCache {
     public static CMapCidByte getCid2Byte(String cmap) {
         CMapCidByte cidByte = new CMapCidByte();
         return parseCmap(cmap, cidByte);
+    }
+
+    /**
+     * Clears the cache by removing fonts that were added via {@link #saveFont(FontProgram, String)}.
+     * <p>
+     * Be aware that in multithreading environment this method call will affect the result of {@link #getFont(String)}.
+     * This in its turn affects creation of fonts via factories when {@code cached} argument is set to true (which is by default).
+     */
+    public static void clearSavedFonts() {
+        fontCache.clear();
     }
 
     public static FontProgram getFont(String fontName) {

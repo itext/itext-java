@@ -55,19 +55,23 @@ import com.itextpdf.kernel.pdf.PdfName;
 import org.slf4j.LoggerFactory;
 import com.itextpdf.kernel.pdf.PdfObject;
 
-public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
+public abstract class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
 
     private static final long serialVersionUID = -9038993253308315792L;
 
 	/**
-     * Subtypes
+     * @deprecated , use {@link PdfName#Polygon} instead.
      */
+	@Deprecated
     public static final PdfName Polygon = PdfName.Polygon;
+    /**
+     * @deprecated , use {@link PdfName#PolyLine} instead.
+     */
+	@Deprecated
     public static final PdfName PolyLine = PdfName.PolyLine;
 
-    private PdfPolyGeomAnnotation(Rectangle rect, PdfName subtype, float[] vertices) {
+    PdfPolyGeomAnnotation(Rectangle rect, float[] vertices) {
         super(rect);
-        setSubtype(subtype);
         setVertices(vertices);
     }
 
@@ -79,16 +83,11 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
     }
 
     public static PdfPolyGeomAnnotation createPolygon(Rectangle rect, float[] vertices) {
-        return new PdfPolyGeomAnnotation(rect, Polygon, vertices);
+        return new PdfPolygonAnnotation(rect, vertices);
     }
 
     public static PdfPolyGeomAnnotation createPolyLine(Rectangle rect, float[] vertices) {
-        return new PdfPolyGeomAnnotation(rect, PolyLine, vertices);
-    }
-
-    @Override
-    public PdfName getSubtype() {
-        return getPdfObject().getAsName(PdfName.Subtype);
+        return new PdfPolylineAnnotation(rect, vertices);
     }
 
     public PdfArray getVertices() {
@@ -163,10 +162,6 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
         return (PdfPolyGeomAnnotation) put(PdfName.Path, path);
     }
 
-    private void setSubtype(PdfName subtype) {
-        put(PdfName.Subtype, subtype);
-    }
-
     /**
      * The dictionaries for some annotation types (such as free text and polygon annotations) can include the BS entry.
      * That entry specifies a border style dictionary that has more settings than the array specified for the Border
@@ -193,11 +188,11 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
     /**
      * Setter for the annotation's preset border style. Possible values are
      * <ul>
-     *     <li>{@link PdfAnnotation#STYLE_SOLID} - A solid rectangle surrounding the annotation.</li>
-     *     <li>{@link PdfAnnotation#STYLE_DASHED} - A dashed rectangle surrounding the annotation.</li>
-     *     <li>{@link PdfAnnotation#STYLE_BEVELED} - A simulated embossed rectangle that appears to be raised above the surface of the page.</li>
-     *     <li>{@link PdfAnnotation#STYLE_INSET} - A simulated engraved rectangle that appears to be recessed below the surface of the page.</li>
-     *     <li>{@link PdfAnnotation#STYLE_UNDERLINE} - A single line along the bottom of the annotation rectangle.</li>
+     *     <li>{@link PdfAnnotation#STYLE_SOLID} - A solid rectangle surrounding the annotation.
+     *     <li>{@link PdfAnnotation#STYLE_DASHED} - A dashed rectangle surrounding the annotation.
+     *     <li>{@link PdfAnnotation#STYLE_BEVELED} - A simulated embossed rectangle that appears to be raised above the surface of the page.
+     *     <li>{@link PdfAnnotation#STYLE_INSET} - A simulated engraved rectangle that appears to be recessed below the surface of the page.
+     *     <li>{@link PdfAnnotation#STYLE_UNDERLINE} - A single line along the bottom of the annotation rectangle.
      * </ul>
      * See also ISO-320001, Table 166.
      * @param style The new value for the annotation's border style.

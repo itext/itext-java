@@ -68,17 +68,17 @@ public class DataHandlerTest extends ExtendedITextTest {
     public void runTest() throws InterruptedException {
         TestDataHandler dataHandler = new TestDataHandler();
         dataHandler.register(new TestEvent("type1"), null);
-        Thread.sleep(100);
+        Thread.sleep(200);
         dataHandler.register(new TestEvent("type1"), null);
-        Thread.sleep(100);
+        Thread.sleep(200);
         dataHandler.register(new TestEvent("type2"), null);
-        Thread.sleep(100);
+        Thread.sleep(200);
         dataHandler.register(new TestEvent("type1"), null);
-        Thread.sleep(100);
+        Thread.sleep(200);
         dataHandler.register(new TestEvent("type1"), null);
-        Thread.sleep(100);
+        Thread.sleep(200);
         dataHandler.register(new TestEvent("type2"), null);
-        Thread.sleep(100);
+        Thread.sleep(200);
         dataHandler.tryProcessRest();
     }
 

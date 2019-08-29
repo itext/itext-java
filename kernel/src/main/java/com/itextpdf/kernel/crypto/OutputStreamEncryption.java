@@ -51,7 +51,8 @@ public abstract class OutputStreamEncryption extends java.io.OutputStream {
     private byte[] sb = new byte[1];
 
     /**
-     * Creates a new instance of OutputStreamCounter
+     * Creates a new instance of {@link OutputStreamEncryption}
+     * @param out the target {@link java.io.OutputStream} to write encrypted content to
      */
     protected OutputStreamEncryption(java.io.OutputStream out) {
         this.out = out;

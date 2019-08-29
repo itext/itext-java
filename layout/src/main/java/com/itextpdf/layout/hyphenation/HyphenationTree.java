@@ -29,11 +29,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <p>
  * This tree structure stores the hyphenation patterns in an efficient
  * way for fast lookup. It provides the provides the method to
  * hyphenate a word.
- *
  * <p>
  * This work was authored by Carlos Villegas (cav@uniscope.co.jp).
  */
@@ -216,16 +214,18 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
     }
 
     /**
-     * <p>Search for all possible partial matches of word starting
+     * Search for all possible partial matches of word starting
      * at index an update interletter values. In other words, it
-     * does something like:</p>
+     * does something like:
+     * <p>
      * <code>
      * for(i=0; i&lt;patterns.length; i++) {
      * if ( word.substring(index).startsWidth(patterns[i]) )
      * update_interletter_values(patterns[i]);
      * }
      * </code>
-     * <p>But it is done in an efficient way since the patterns are
+     * <p>
+     * But it is done in an efficient way since the patterns are
      * stored in a ternary tree. In fact, this is the whole purpose
      * of having the tree: doing this search without having to test
      * every single pattern. The number of patterns for languages
@@ -234,7 +234,7 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
      * really slow without the tree. The tradeoff is memory, but
      * using a ternary tree instead of a trie, almost halves the
      * the memory used by Lout or TeX. It's also faster than using
-     * a hash table</p>
+     * a hash table
      * @param word null terminated word to match
      * @param index start index from word
      * @param il interletter values array to update

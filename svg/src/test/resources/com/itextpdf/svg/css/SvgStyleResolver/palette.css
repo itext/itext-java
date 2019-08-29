@@ -1,0 +1,52 @@
+svg {
+  display:inline-block;
+  height:100px; 
+  width:100px;
+  margin:10px;
+  border:1px solid;
+  background:#eee;
+}
+svg.raw {
+/* Default styles for the initial SVG.
+ * Because they are defined on the <svg>,
+ * not the individual graphics elements, 
+ * they will NOT be inherited by the <use> references.
+ */
+  fill:rgba(255,250,220,0.4);
+  stroke: rgba(0,0,0,0.7);
+  stroke-width:2;
+}
+svg.icon-style-A {
+/* Set the fill, stroke, and color properties to be 
+   inherited by the <use> element:
+ */
+  fill:burlywood;
+  color:blueviolet;
+  stroke:#222; 
+  stroke-width:0.5px;
+}
+svg.icon-style-B {
+/* Set the color properties:
+ */
+  fill:blanchedalmond;
+  color:lavender;
+  stroke:white;
+  stroke-width:1px;
+/* set some icon styles on the <svg> itself: */
+  background:aliceblue;
+  border-radius:20%;
+  border:none;
+  box-shadow:royalblue 0 0 2px;
+}
+svg.icon-style-C {
+/* Set the color properties:
+ */
+  fill:beige;
+  color:green;
+  stroke:#aaa; 
+  stroke-width:1.5px;
+/* icon styles for the <svg> itself: */
+  background:#222;
+  border-radius:10%;
+  border:solid gray;
+}

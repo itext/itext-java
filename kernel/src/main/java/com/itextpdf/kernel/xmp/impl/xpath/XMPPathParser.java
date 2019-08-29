@@ -100,7 +100,7 @@ public final class XMPPathParser
 	 * @return Returns the expandet XMPPath.
 	 * @throws XMPException
 	 *             Thrown if the format is not correct somehow.
-	 * 
+	 *
 	 */
 	public static XMPPath expandXPath(String schemaNS, String path) throws XMPException
 	{
@@ -112,7 +112,7 @@ public final class XMPPathParser
 		XMPPath expandedXPath = new XMPPath();
 		PathPosition pos = new PathPosition();
 		pos.path = path;
-		
+
 		// Pull out the first component and do some special processing on it: add the schema
 		// namespace prefix and and see if it is an alias. The start must be a "qualName".
 		parseRootNode(schemaNS, pos, expandedXPath);
@@ -121,12 +121,12 @@ public final class XMPPathParser
 		while (pos.stepEnd < path.length())
 		{
 			pos.stepBegin = pos.stepEnd;
-			
+
 			skipPathDelimiter(path, pos);
 
 			pos.stepEnd = pos.stepBegin;
 
-			
+
 			XMPPathSegment segment;
 			if (path.charAt(pos.stepBegin) != '[')
 			{
@@ -138,7 +138,7 @@ public final class XMPPathParser
 				// One of the array forms.
 				segment = parseIndexSegment(pos);
 			}
-			
+
 
 			if (segment.getKind() == XMPPath.STRUCT_FIELD_STEP)
 			{
@@ -177,7 +177,7 @@ public final class XMPPathParser
 					segment.setKind(XMPPath.QUAL_SELECTOR_STEP);
 					verifyQualName(pos.path.substring(pos.nameStart, pos.nameEnd));
 				}
-			}			
+			}
 
 			expandedXPath.add(segment);
 		}
@@ -247,11 +247,11 @@ public final class XMPPathParser
 
 	/**
 	 * Parses an array index segment.
-	 * 
-	 * @param pos the xmp path 
+	 *
+	 * @param pos the xmp path
 	 * @return Returns the segment or an error
 	 * @throws XMPException thrown on xmp path errors
-	 * 
+	 *
 	 */
 	private static XMPPathSegment parseIndexSegment(PathPosition pos) throws XMPException
 	{
@@ -278,7 +278,7 @@ public final class XMPPathParser
 			{
 				pos.stepEnd++;
 			}
-			
+
 			if (pos.stepEnd >= pos.path.length())
 			{
 				throw new XMPException("Missing ']' or '=' for array index", XMPError.BADXPATH);
@@ -332,7 +332,7 @@ public final class XMPPathParser
 				segment = new XMPPathSegment(null, XMPPath.FIELD_SELECTOR_STEP);
 			}
 		}
-		
+
 
 		if (pos.stepEnd >= pos.path.length() || pos.path.charAt(pos.stepEnd) != ']')
 		{
@@ -340,14 +340,14 @@ public final class XMPPathParser
 		}
 		pos.stepEnd++;
 		segment.setName(pos.path.substring(pos.stepBegin, pos.stepEnd));
-		
+
 		return segment;
 	}
 
 
 	/**
 	 * Parses the root node of an XMP Path, checks if namespace and prefix fit together
-	 * and resolve the property to the base property if it is an alias. 
+	 * and resolve the property to the base property if it is an alias.
 	 * @param schemaNS the root namespace
 	 * @param pos the parsing position helper
 	 * @param expandedXPath  the path to contribute to
@@ -365,7 +365,7 @@ public final class XMPPathParser
 		{
 			throw new XMPException("Empty initial XMPPath step", XMPError.BADXPATH);
 		}
-		
+
 		String rootProp = verifyXPathRoot(schemaNS, pos.path.substring(pos.stepBegin, pos.stepEnd));
 		XMPAliasInfo aliasInfo = XMPMetaFactory.getSchemaRegistry().findAlias(rootProp);
 		if (aliasInfo == null)
@@ -385,7 +385,7 @@ public final class XMPPathParser
 			rootStep.setAlias(true);
 			rootStep.setAliasForm(aliasInfo.getAliasForm().getOptions());
 			expandedXPath.add(rootStep);
-			
+
 			if (aliasInfo.getAliasForm().isArrayAltText())
 			{
 				XMPPathSegment qualSelectorStep = new XMPPathSegment("[?xml:lang='x-default']",
@@ -409,7 +409,7 @@ public final class XMPPathParser
 	/**
 	 * Verifies whether the qualifier name is not XML conformant or the
 	 * namespace prefix has not been registered.
-	 * 
+	 *
 	 * @param qualName
 	 *            a qualifier name
 	 * @throws XMPException
@@ -419,10 +419,10 @@ public final class XMPPathParser
 	{
 		int colonPos = qualName.indexOf(':');
 		if (colonPos > 0)
-		{	
+		{
 			String prefix = qualName.substring(0, colonPos);		
 			if (Utils.isXMLNameNS(prefix))
-			{	
+			{
 				String regURI = XMPMetaFactory.getSchemaRegistry().getNamespaceURI(
 						prefix);
 				if (regURI != null)
@@ -434,14 +434,14 @@ public final class XMPPathParser
 						XMPError.BADXPATH);
 			}
 		}
-		
+
 		throw new XMPException("Ill-formed qualified name", XMPError.BADXPATH);
 	}
 
 
 	/**
 	 * Verify if an XML name is conformant.
-	 * 
+	 *
 	 * @param name
 	 *            an XML name
 	 * @throws XMPException
@@ -464,7 +464,7 @@ public final class XMPPathParser
 	 * exception is thrown
 	 * <P>
 	 * (Should someday check the full syntax:)
-	 * 
+	 *
 	 * @param schemaNS schema namespace
 	 * @param rootProp the root xpath segment
 	 * @return Returns root QName.
@@ -516,7 +516,7 @@ public final class XMPPathParser
 			// Verify the part before any colon
 			verifySimpleXMLName(rootProp.substring(0, colonPos));
 			verifySimpleXMLName(rootProp.substring(colonPos));
-			
+
 			prefix = rootProp.substring(0, colonPos + 1);
 
 			String regPrefix = XMPMetaFactory.getSchemaRegistry().getNamespacePrefix(schemaNS);

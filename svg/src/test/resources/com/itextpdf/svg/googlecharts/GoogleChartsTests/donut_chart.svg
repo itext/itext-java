@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <filter id="_ABSTRACT_RENDERER_ID_0">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2">
+            </feGaussianBlur>
+            <feOffset dx="1" dy="1">
+            </feOffset>
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.1">
+                </feFuncA>
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode>
+                </feMergeNode>
+                <feMergeNode in="SourceGraphic">
+                </feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <rect x="0" y="0" width="900" height="500" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <text text-anchor="start" x="161" y="70.9" font-size="14" font-weight="bold" stroke="none" stroke-width="0" fill="#000000">My Daily Activities
+        </text>
+        <rect x="161" y="59" width="579" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+    </g>
+    <g>
+        <rect x="542" y="96" width="198" height="106" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g column-id="Work">
+            <rect x="542" y="96" width="198" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="561" y="107.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Work
+                </text>
+            </g>
+            <circle cx="549" cy="103" r="7" stroke="none" stroke-width="0" fill="#3366cc">
+            </circle>
+        </g>
+        <g column-id="Eat">
+            <rect x="542" y="119" width="198" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="561" y="130.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Eat
+                </text>
+            </g>
+            <circle cx="549" cy="126" r="7" stroke="none" stroke-width="0" fill="#dc3912">
+            </circle>
+        </g>
+        <g column-id="Commute">
+            <rect x="542" y="142" width="198" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="561" y="153.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Commute
+                </text>
+            </g>
+            <circle cx="549" cy="149" r="7" stroke="none" stroke-width="0" fill="#ff9900">
+            </circle>
+        </g>
+        <g column-id="Watch TV">
+            <rect x="542" y="165" width="198" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="561" y="176.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Watch TV
+                </text>
+            </g>
+            <circle cx="549" cy="172" r="7" stroke="none" stroke-width="0" fill="#109618">
+            </circle>
+        </g>
+        <g column-id="Sleep">
+            <rect x="542" y="188" width="198" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="561" y="199.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Sleep
+                </text>
+            </g>
+            <circle cx="549" cy="195" r="7" stroke="none" stroke-width="0" fill="#990099">
+            </circle>
+        </g>
+    </g>
+    <g>
+        <path d="M340,189.4L340,97A154,154,0,0,1,379.8581329457882,399.75257724851656L355.9432531783153,310.5010308994066A61.6,61.6,0,0,0,340,189.4" stroke="#ffffff" stroke-width="1" fill="#3366cc">
+        </path>
+        <text text-anchor="start" x="438.1707648577682" y="240.34252366466197" font-size="14" stroke="none" stroke-width="0" fill="#ffffff">45.8%
+        </text>
+    </g>
+    <g>
+        <path d="M280.4989691005934,266.9432531783153L191.2474227514835,290.8581329457882A154,154,0,0,1,340,97L340,189.4A61.6,61.6,0,0,0,280.4989691005934,266.9432531783153" stroke="#ffffff" stroke-width="1" fill="#990099">
+        </path>
+        <text text-anchor="start" x="225.02377088259124" y="183.02217618173913" font-size="14" stroke="none" stroke-width="0" fill="#ffffff">29.2%
+        </text>
+    </g>
+    <g>
+        <path d="M296.4422222789087,294.5577777210913L231.1055556972717,359.89444430272835A154,154,0,0,1,191.2474227514835,290.8581329457882L280.4989691005934,266.9432531783153A61.6,61.6,0,0,0,296.4422222789087,294.5577777210913" stroke="#ffffff" stroke-width="1" fill="#109618">
+        </path>
+        <text text-anchor="start" x="217.79914743775038" y="317.21509081498266" font-size="14" stroke="none" stroke-width="0" fill="#ffffff">8.3%
+        </text>
+    </g>
+    <g>
+        <path d="M324.0567468216847,310.5010308994066L300.1418670542118,399.75257724851656A154,154,0,0,1,231.1055556972717,359.89444430272835L296.4422222789087,294.5577777210913A61.6,61.6,0,0,0,324.0567468216847,310.5010308994066" stroke="#ffffff" stroke-width="1" fill="#ff9900">
+        </path>
+        <text text-anchor="start" x="261.2228787133989" y="364.63316362130666" font-size="14" stroke="none" stroke-width="0" fill="#ffffff">8.3%
+        </text>
+    </g>
+    <g>
+        <path d="M355.9432531783153,310.5010308994066L379.8581329457882,399.75257724851656A154,154,0,0,1,300.1418670542118,399.75257724851656L324.0567468216847,310.5010308994066A61.6,61.6,0,0,0,355.9432531783153,310.5010308994066" stroke="#ffffff" stroke-width="1" fill="#dc3912">
+        </path>
+        <text text-anchor="start" x="324" y="387.9827092057096" font-size="14" stroke="none" stroke-width="0" fill="#ffffff">8.3%
+        </text>
+    </g>
+    <g>
+    </g>
+</svg>

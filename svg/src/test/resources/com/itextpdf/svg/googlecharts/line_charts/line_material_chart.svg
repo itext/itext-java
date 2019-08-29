@@ -1,0 +1,262 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500">
+    <defs>
+        <clipPath id="rablfilter0">
+            <rect x="54.5" y="63.5" width="481" height="380">
+            </rect>
+        </clipPath>
+    </defs>
+    <g>
+        <rect x="0" y="0" width="900" height="500" fill="#ffffff" fill-opacity="1" stroke="#ffffff" stroke-opacity="0" stroke-width="0">
+        </rect>
+        <text font-size="12" x="0" y="15.59375" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 16px;" fill="#757575" dx="0px">Average Temperatures and Daylight in Iceland Throughout the Year
+        </text>
+        <rect x="655.234375" y="63.5" width="12" height="12" rx="2" ry="2" fill="#4285f4">
+        </rect>
+        <text font-size="12" x="675.234375" y="79.109375" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; " fill="#757575" dx="0px">Guardians of the Galaxy
+        </text>
+        <rect x="655.234375" y="98.6875" width="12" height="12" rx="2" ry="2" fill="#db4437">
+        </rect>
+        <text font-size="12" x="675.234375" y="114.296875" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; " fill="#757575" dx="0px">The Avengers
+        </text>
+        <rect x="655.234375" y="133.875" width="12" height="12" rx="2" ry="2" fill="#f4b400">
+        </rect>
+        <text font-size="12" x="675.234375" y="149.484375" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; " fill="#757575" dx="0px">Transformers: Age of Extinction
+        </text>
+        <rect x="54.5" y="63.5" width="481" height="380" fill="#ffffff" fill-opacity="1" stroke="#ffffff" stroke-opacity="0" stroke-width="1">
+        </rect>
+    </g>
+    <g>
+        <line x1="54.5" x2="535.5" y1="443.5" y2="443.5" stroke="#9E9E9E" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="401.27777777777777" y2="401.27777777777777" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="359.05555555555554" y2="359.05555555555554" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="316.8333333333333" y2="316.8333333333333" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="274.6111111111111" y2="274.6111111111111" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="232.38888888888889" y2="232.38888888888889" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="190.16666666666666" y2="190.16666666666666" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="147.94444444444446" y2="147.94444444444446" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="105.72222222222223" y2="105.72222222222223" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="63.5" y2="63.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="443.5" y2="443.5" stroke="#9E9E9E" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="396" y2="396" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="348.5" y2="348.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="301" y2="301" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="253.5" y2="253.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="206" y2="206" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="158.5" y2="158.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="111" y2="111" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="63.5" y2="63.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="443.5" y2="443.5" stroke="#9E9E9E" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="401.27777777777777" y2="401.27777777777777" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="359.05555555555554" y2="359.05555555555554" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="316.8333333333333" y2="316.8333333333333" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="274.6111111111111" y2="274.6111111111111" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="232.38888888888889" y2="232.38888888888889" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="190.16666666666666" y2="190.16666666666666" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="147.94444444444446" y2="147.94444444444446" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="105.72222222222223" y2="105.72222222222223" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="54.5" x2="535.5" y1="63.5" y2="63.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+    </g>
+    <g>
+        <path d="M 96.96666666666667 84.40000000000003 L 127.43333333333334 149.95000000000002 L 157.9 202.20000000000002 L 188.36666666666667 332.35 L 218.83333333333331 330.45 L 249.3 359.90000000000003 L 279.76666666666665 371.29999999999995 L 310.23333333333335 326.65 L 340.7 282.95000000000005 L 371.16666666666663 321.9 L 401.6333333333333 393.15000000000003 L 432.1 380.8 L 462.56666666666666 397.90000000000003 L 493.03333333333336 403.59999999999997" fill="none" stroke="#4285f4" stroke-width="2" clip-path="url(#rablfilter0)">
+        </path>
+        <circle cx="96.96666666666667" cy="84.40000000000003" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="127.43333333333334" cy="149.95000000000002" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="157.9" cy="202.20000000000002" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="188.36666666666667" cy="332.35" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="218.83333333333331" cy="330.45" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="249.3" cy="359.90000000000003" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="279.76666666666665" cy="371.29999999999995" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="310.23333333333335" cy="326.65" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="340.7" cy="282.95000000000005" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="371.16666666666663" cy="321.9" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="401.6333333333333" cy="393.15000000000003" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="432.1" cy="380.8" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="462.56666666666666" cy="397.90000000000003" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="493.03333333333336" cy="403.59999999999997" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <path d="M 96.96666666666667 102.34444444444446 L 127.43333333333334 150.05555555555554 L 157.9 202.83333333333331 L 188.36666666666667 364.1222222222222 L 218.83333333333331 369.1888888888889 L 249.3 386.0777777777778 L 279.76666666666665 391.56666666666666 L 310.23333333333335 320.2111111111111 L 340.7 262.3666666666667 L 371.16666666666663 313.03333333333336 L 401.6333333333333 410.14444444444445 L 432.1 408.0333333333333 L 462.56666666666666 416.90000000000003 L 493.03333333333336 417.3222222222222" fill="none" stroke="#db4437" stroke-width="2" clip-path="url(#rablfilter0)">
+        </path>
+        <circle cx="96.96666666666667" cy="102.34444444444446" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="127.43333333333334" cy="150.05555555555554" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="157.9" cy="202.83333333333331" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="188.36666666666667" cy="364.1222222222222" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="218.83333333333331" cy="369.1888888888889" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="249.3" cy="386.0777777777778" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="279.76666666666665" cy="391.56666666666666" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="310.23333333333335" cy="320.2111111111111" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="340.7" cy="262.3666666666667" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="371.16666666666663" cy="313.03333333333336" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="401.6333333333333" cy="410.14444444444445" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="432.1" cy="408.0333333333333" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="462.56666666666666" cy="416.90000000000003" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="493.03333333333336" cy="417.3222222222222" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <path d="M 96.96666666666667 90.52222222222224 L 127.43333333333334 169.9 L 157.9 226.4777777777778 L 188.36666666666667 354.83333333333337 L 218.83333333333331 355.6777777777778 L 249.3 378.47777777777776 L 279.76666666666665 362.43333333333334 L 310.23333333333335 353.9888888888889 L 340.7 318.52222222222224 L 371.16666666666663 345.5444444444444 L 401.6333333333333 403.8111111111111 L 432.1 399.58888888888885 L 462.56666666666666 413.09999999999997 L 493.03333333333336 414.7888888888889" fill="none" stroke="#f4b400" stroke-width="2" clip-path="url(#rablfilter0)">
+        </path>
+        <circle cx="96.96666666666667" cy="90.52222222222224" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="127.43333333333334" cy="169.9" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="157.9" cy="226.4777777777778" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="188.36666666666667" cy="354.83333333333337" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="218.83333333333331" cy="355.6777777777778" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="249.3" cy="378.47777777777776" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="279.76666666666665" cy="362.43333333333334" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="310.23333333333335" cy="353.9888888888889" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="340.7" cy="318.52222222222224" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="371.16666666666663" cy="345.5444444444444" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="401.6333333333333" cy="403.8111111111111" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="432.1" cy="399.58888888888885" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="462.56666666666666" cy="413.09999999999997" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="493.03333333333336" cy="414.7888888888889" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+    </g>
+    <g>
+    </g>
+    <g>
+        <text font-size="12" x="66.5" y="461.5" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-3.369140386581421px">0
+        </text>
+        <text font-size="12" x="218.83333333333331" y="461.5" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-3.369140386581421px">5
+        </text>
+        <text font-size="12" x="371.16666666666663" y="461.5" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">10
+        </text>
+        <text font-size="12" x="523.5" y="461.5" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">15
+        </text>
+        <text font-size="12" x="296.6875" y="495.09375" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#424242" dx="-9.9931640625px">Day
+        </text>
+        <text font-size="12" x="541.5" y="447.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">0
+        </text>
+        <text font-size="12" x="541.5" y="405.49305555555554" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">5
+        </text>
+        <text font-size="12" x="541.5" y="363.2673611111111" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">10
+        </text>
+        <text font-size="12" x="541.5" y="321.04166666666663" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">15
+        </text>
+        <text font-size="12" x="541.5" y="278.8159722222222" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">20
+        </text>
+        <text font-size="12" x="541.5" y="236.60590277777777" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">25
+        </text>
+        <text font-size="12" x="541.5" y="194.38020833333331" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">30
+        </text>
+        <text font-size="12" x="541.5" y="152.1545138888889" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">35
+        </text>
+        <text font-size="12" x="541.5" y="109.92881944444446" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">40
+        </text>
+        <text font-size="12" x="541.5" y="67.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">45
+        </text>
+        <text font-size="12" x="48.5" y="447.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">0
+        </text>
+        <text font-size="12" x="48.5" y="400.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">5
+        </text>
+        <text font-size="12" x="48.5" y="352.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">10
+        </text>
+        <text font-size="12" x="48.5" y="305.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">15
+        </text>
+        <text font-size="12" x="48.5" y="257.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">20
+        </text>
+        <text font-size="12" x="48.5" y="210.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">25
+        </text>
+        <text font-size="12" x="48.5" y="162.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">30
+        </text>
+        <text font-size="12" x="48.5" y="115.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">35
+        </text>
+        <text font-size="12" x="48.5" y="67.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">40
+        </text>
+        <text font-size="12" x="16.5625" y="249.90625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#424242" dx="-43.300777435302734px" transform="rotate(-90 16.5625 253.5)">Temps (Celsius)
+        </text>
+        <text font-size="12" x="567.4375" y="447.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">0
+        </text>
+        <text font-size="12" x="567.4375" y="405.49305555555554" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">10
+        </text>
+        <text font-size="12" x="567.4375" y="363.2673611111111" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">20
+        </text>
+        <text font-size="12" x="567.4375" y="321.04166666666663" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">30
+        </text>
+        <text font-size="12" x="567.4375" y="278.8159722222222" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">40
+        </text>
+        <text font-size="12" x="567.4375" y="236.60590277777777" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">50
+        </text>
+        <text font-size="12" x="567.4375" y="194.38020833333331" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">60
+        </text>
+        <text font-size="12" x="567.4375" y="152.1545138888889" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">70
+        </text>
+        <text font-size="12" x="567.4375" y="109.92881944444446" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">80
+        </text>
+        <text font-size="12" x="567.4375" y="67.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="0px">90
+        </text>
+        <text font-size="12" x="599.375" y="249.90625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#424242" dx="-21.536130905151367px" transform="rotate(90 599.375 253.5)">Daylight
+        </text>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+</svg>

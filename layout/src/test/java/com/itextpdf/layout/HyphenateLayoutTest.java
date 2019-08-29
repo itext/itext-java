@@ -78,6 +78,7 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
     }
 
     @Test
+    //TODO DEVSIX-3148
     public void parenthesisTest01() throws Exception {
         String outFileName = destinationFolder + "parenthesisTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_parenthesisTest01.pdf";

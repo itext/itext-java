@@ -125,33 +125,46 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      * unsigned data type, long is used. The mapping between types is
      * as follows:
      *
-     * <table border=1 summary="TIFFField data">
+     * <table border="1" summary="TIFFField data">
      * <tr>
      * <th> TIFF type </th> <th> Java type </th>
+     * </tr>
      * <tr>
      * <td><tt>TIFF_BYTE</tt></td>      <td><tt>byte</tt></td>
+     * </tr>
      * <tr>
      * <td><tt>TIFF_ASCII</tt></td>     <td><tt>String</tt></td>
+     * </tr>
      * <tr>
      * <td><tt>TIFF_SHORT</tt></td>     <td><tt>char</tt></td>
+     * </tr>
      * <tr>
      * <td><tt>TIFF_LONG</tt></td>      <td><tt>long</tt></td>
+     * </tr>
      * <tr>
      * <td><tt>TIFF_RATIONAL</tt></td>  <td><tt>long[2]</tt></td>
+     * </tr>
      * <tr>
      * <td><tt>TIFF_SBYTE</tt></td>     <td><tt>byte</tt></td>
+     * </tr>
      * <tr>
      * <td><tt>TIFF_UNDEFINED</tt></td> <td><tt>byte</tt></td>
+     * </tr>
      * <tr>
      * <td><tt>TIFF_SSHORT</tt></td>    <td><tt>short</tt></td>
+     * </tr>
      * <tr>
      * <td><tt>TIFF_SLONG</tt></td>     <td><tt>int</tt></td>
+     * </tr>
      * <tr>
      * <td><tt>TIFF_SRATIONAL</tt></td> <td><tt>int[2]</tt></td>
+     * </tr>
      * <tr>
      * <td><tt>TIFF_FLOAT</tt></td>     <td><tt>float</tt></td>
+     * </tr>
      * <tr>
      * <td><tt>TIFF_DOUBLE</tt></td>    <td><tt>double</tt></td>
+     * </tr>
      * </table>
      *
      * @param tag The tag
@@ -278,6 +291,16 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      */
     public double[] getAsDoubles() {
         return (double[])data;
+    }
+
+    /**
+     * Returns TIFF_ASCII data as an array of strings.
+     *
+     * <p> A ClassCastException will be thrown if the field is not
+     * of type TIFF_ASCII.
+     */
+    public String[] getAsStrings() {
+        return (String[]) data;
     }
 
     /**

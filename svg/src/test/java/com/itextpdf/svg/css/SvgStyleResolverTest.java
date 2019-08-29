@@ -59,6 +59,7 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -72,7 +73,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class SvgStyleResolverTest {
+public class SvgStyleResolverTest extends ExtendedITextTest{
     private static final String baseUri = "./src/test/resources/com/itextpdf/svg/css/SvgStyleResolver/";
 
     //Single element test
@@ -144,20 +145,6 @@ public class SvgStyleResolverTest {
         Map<String, String> attr = sr.resolveStyles(node, new SvgCssContext());
 
         Assert.assertEquals("#testid", attr.get("xlink:href"));
-    }
-
-    @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RESOLVE_IMAGE_URL, count = 1))
-    public void svgCssResolveMalformedXlinkTest() {
-        Element jsoupImage = new Element(Tag.valueOf("image"), "");
-        Attributes imageAttributes = jsoupImage.attributes();
-
-        imageAttributes.put(new Attribute("xlink:href", "htt://are/"));
-        JsoupElementNode node = new JsoupElementNode(jsoupImage);
-
-        SvgStyleResolver sr = new SvgStyleResolver();
-        Map<String, String> attr = sr.resolveStyles(node, new SvgCssContext());
-        Assert.assertEquals("htt://are/", attr.get("xlink:href"));
     }
 
     @Test

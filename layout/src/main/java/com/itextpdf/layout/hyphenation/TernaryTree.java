@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 
+/*
+ * PLEASE NOTE that implementation of "insert" function was refactored to consume less stack memory
+ */
+
 package com.itextpdf.layout.hyphenation;
 
 import java.io.Serializable;
@@ -22,8 +26,8 @@ import java.util.Enumeration;
 
 /**
  * <h2>Ternary Search Tree.</h2>
- *
- * <p>A ternary search tree is a hibrid between a binary tree and
+ * <p>
+ * A ternary search tree is a hybrid between a binary tree and
  * a digital search tree (trie). Keys are limited to strings.
  * A data value of type char is stored in each leaf node.
  * It can be used as an index (or pointer) to the data.
@@ -37,9 +41,9 @@ import java.util.Enumeration;
  * from the target, etc. The storage requirements are higher than
  * a binary tree but a lot less than a trie. Performance is
  * comparable with a hash table, sometimes it outperforms a hash
- * function (most of the time can determine a miss faster than a hash).</p>
- *
- * <p>The main purpose of this java port is to serve as a base for
+ * function (most of the time can determine a miss faster than a hash).
+ * <p>
+ * The main purpose of this java port is to serve as a base for
  * implementing TeX's hyphenation algorithm (see The TeXBook,
  * appendix H). Each language requires from 5000 to 15000 hyphenation
  * patterns which will be keys in this tree. The strings patterns
@@ -51,15 +55,15 @@ import java.util.Enumeration;
  * to be just 8 bytes (3 pointers and the data char). This gives
  * room for about 65000 nodes. In my tests the english patterns
  * took 7694 nodes and the german patterns 10055 nodes,
- * so I think we are safe.</p>
- *
- * <p>All said, this is a map with strings as keys and char as value.
+ * so I think we are safe.
+ * <p>
+ * All said, this is a map with strings as keys and char as value.
  * Pretty limited!. It can be extended to a general map by
  * using the string representation of an object and using the
  * char value as an index to an array that contains the object
- * values.</p>
- *
- * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
+ * values.
+ * <p>
+ * This work was authored by Carlos Villegas (cav@uniscope.co.jp).
  */
 
 public class TernaryTree implements Serializable {
@@ -91,13 +95,15 @@ public class TernaryTree implements Serializable {
     protected char[] eq;
 
     /**
-     * <P>The character stored in this node: splitchar.
-     * Two special values are reserved:</P>
-     * <ul><li>0x0000 as string terminator</li>
-     * <li>0xFFFF to indicate that the branch starting at
-     * this node is compressed</li></ul>
-     * <p>This shouldn't be a problem if we give the usual semantics to
-     * strings since 0xFFFF is garanteed not to be an Unicode character.</p>
+     * The character stored in this node: splitchar.
+     * Two special values are reserved:
+     * <ul>
+     *     <li>0x0000 as string terminator
+     *     <li>0xFFFF to indicate that the branch starting at
+     * this node is compressed
+     * </ul>
+     * This shouldn't be a problem if we give the usual semantics to
+     * strings since 0xFFFF is garanteed not to be an Unicode character.
      */
     protected char[] sc;
 
@@ -164,7 +170,7 @@ public class TernaryTree implements Serializable {
         char[] strkey = new char[len--];
         key.getChars(0, len, strkey, 0);
         strkey[len] = 0;
-        root = insert(root, strkey, 0, val);
+        root = insert(new TreeInsertionParams(root, strkey, 0, val));
     }
 
     /**
@@ -178,13 +184,17 @@ public class TernaryTree implements Serializable {
         if (freenode + len > eq.length) {
             redimNodeArrays(eq.length + BLOCK_SIZE);
         }
-        root = insert(root, key, start, val);
+        root = insert(new TreeInsertionParams(root, key, start, val));
     }
 
-    /**
-     * The actual insertion function, recursive version.
-     */
-    private char insert(char p, char[] key, int start, char val) {
+    // PLEASE NOTE that this function is a result of refactoring "insert" method which
+    // is a modification of the original work
+    // Returns null if insertion is not needed and the id of the new node if insertion was performed
+    private Character insertNewBranchIfNeeded(TreeInsertionParams params) {
+        char p = params.p;
+        char[] key = params.key;
+        int start = params.start;
+        char val = params.val;
         int len = strlen(key, start);
         if (p == 0) {
             // this means there is no branch, this node will start a new branch.
@@ -204,54 +214,104 @@ public class TernaryTree implements Serializable {
                 lo[p] = 0;
             }
             return p;
+        } else {
+            return null;
         }
+    }
 
-        if (sc[p] == 0xFFFF) {
-            // branch is compressed: need to decompress
-            // this will generate garbage in the external key array
-            // but we can do some garbage collection later
-            char pp = freenode++;
-            lo[pp] = lo[p];    // previous pointer to key
-            eq[pp] = eq[p];    // previous pointer to data
-            lo[p] = 0;
-            if (len > 0) {
-                sc[p] = kv.get(lo[pp]);
-                eq[p] = pp;
-                lo[pp]++;
-                if (kv.get(lo[pp]) == 0) {
-                    // key completly decompressed leaving garbage in key array
-                    lo[pp] = 0;
-                    sc[pp] = 0;
-                    hi[pp] = 0;
+    // PLEASE NOTE that this function is a result of refactoring "insert" method which
+    // is a modification of the original work
+    private char insertIntoExistingBranch(TreeInsertionParams params) {
+        char initialP = params.p;
+        TreeInsertionParams paramsToInsertNext = params;
+        while (paramsToInsertNext != null) {
+            char p = paramsToInsertNext.p;
+            // We are inserting into an existing branch hence the id must be non-zero
+            assert p != 0;
+            char[] key = paramsToInsertNext.key;
+            int start = paramsToInsertNext.start;
+            char val = paramsToInsertNext.val;
+            int len = strlen(key, start);
+            paramsToInsertNext = null;
+
+            if (sc[p] == 0xFFFF) {
+                // branch is compressed: need to decompress
+                // this will generate garbage in the external key array
+                // but we can do some garbage collection later
+                char pp = freenode++;
+                lo[pp] = lo[p];    // previous pointer to key
+                eq[pp] = eq[p];    // previous pointer to data
+                lo[p] = 0;
+                if (len > 0) {
+                    sc[p] = kv.get(lo[pp]);
+                    eq[p] = pp;
+                    lo[pp]++;
+                    if (kv.get(lo[pp]) == 0) {
+                        // key completly decompressed leaving garbage in key array
+                        lo[pp] = 0;
+                        sc[pp] = 0;
+                        hi[pp] = 0;
+                    } else {
+                        // we only got first char of key, rest is still there
+                        sc[pp] = 0xFFFF;
+                    }
                 } else {
-                    // we only got first char of key, rest is still there
+                    // In this case we can save a node by swapping the new node
+                    // with the compressed node
                     sc[pp] = 0xFFFF;
+                    hi[p] = pp;
+                    sc[p] = 0;
+                    eq[p] = val;
+                    length++;
+                    break;
+                }
+            }
+            char s = key[start];
+            if (s < sc[p]) {
+                TreeInsertionParams branchParams = new TreeInsertionParams(lo[p], key, start, val);
+                Character insertNew = insertNewBranchIfNeeded(branchParams);
+                if (insertNew == null) {
+                    paramsToInsertNext = branchParams;
+                } else {
+                    lo[p] = insertNew;
+                }
+            } else if (s == sc[p]) {
+                if (s != 0) {
+                    TreeInsertionParams branchParams = new TreeInsertionParams(eq[p], key, start + 1, val);
+                    Character insertNew = insertNewBranchIfNeeded(branchParams);
+                    if (insertNew == null) {
+                        paramsToInsertNext = branchParams;
+                    } else {
+                        eq[p] = insertNew;
+                    }
+                } else {
+                    // key already in tree, overwrite data
+                    eq[p] = val;
                 }
             } else {
-                // In this case we can save a node by swapping the new node
-                // with the compressed node
-                sc[pp] = 0xFFFF;
-                hi[p] = pp;
-                sc[p] = 0;
-                eq[p] = val;
-                length++;
-                return p;
+                TreeInsertionParams branchParams = new TreeInsertionParams(hi[p], key, start, val);
+                Character insertNew = insertNewBranchIfNeeded(branchParams);
+                if (insertNew == null) {
+                    paramsToInsertNext = branchParams;
+                } else {
+                    hi[p] = insertNew;
+                }
             }
         }
-        char s = key[start];
-        if (s < sc[p]) {
-            lo[p] = insert(lo[p], key, start, val);
-        } else if (s == sc[p]) {
-            if (s != 0) {
-                eq[p] = insert(eq[p], key, start + 1, val);
-            } else {
-                // key already in tree, overwrite data
-                eq[p] = val;
-            }
+        return initialP;
+    }
+
+    /**
+     * The actual insertion function, recursive version.
+     * PLEASE NOTE that the implementation has been adapted to consume less stack memory
+     */
+    private char insert(TreeInsertionParams params) {
+        Character newBranch = insertNewBranchIfNeeded(params);
+        if (newBranch == null) {
+            return insertIntoExistingBranch(params);
         } else {
-            hi[p] = insert(hi[p], key, start, val);
+            return (char)newBranch;
         }
-        return p;
     }
 
     /**
@@ -513,6 +573,22 @@ public class TernaryTree implements Serializable {
     /** @return the keys */
     public Enumeration keys() {
         return new TernaryTreeIterator(this);
+    }
+
+    // PLEASE NOTE that this is a helper class that was added as a result of the file modification
+    // and is not a part of the original file
+    private static class TreeInsertionParams {
+        char p;
+        char[] key;
+        int start;
+        char val;
+
+        public TreeInsertionParams(char p, char[] key, int start, char val) {
+            this.p = p;
+            this.key = key;
+            this.start = start;
+            this.val = val;
+        }
     }
 }
 

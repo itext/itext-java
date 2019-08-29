@@ -1,0 +1,220 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <clipPath id="_ABSTRACT_RENDERER_ID_0">
+            <rect x="161" y="96" width="579" height="309">
+            </rect>
+        </clipPath>
+    </defs>
+    <rect x="0" y="0" width="900" height="500" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <text text-anchor="start" x="161" y="70.9" font-size="14" font-weight="bold" stroke="none" stroke-width="0" fill="#000000">Monthly Coffee Production by Country
+        </text>
+        <rect x="161" y="59" width="579" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+    </g>
+    <g>
+        <rect x="754" y="96" width="132" height="147" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g>
+            <rect x="754" y="96" width="132" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="787" y="107.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Bolivia
+                </text>
+            </g>
+            <rect x="754" y="96" width="28" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+            </rect>
+        </g>
+        <g>
+            <rect x="754" y="119" width="132" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="787" y="130.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Ecuador
+                </text>
+            </g>
+            <rect x="754" y="119" width="28" height="14" stroke="none" stroke-width="0" fill="#dc3912">
+            </rect>
+        </g>
+        <g>
+            <rect x="754" y="142" width="132" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="787" y="153.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Madagascar
+                </text>
+            </g>
+            <rect x="754" y="142" width="28" height="14" stroke="none" stroke-width="0" fill="#ff9900">
+            </rect>
+        </g>
+        <g>
+            <rect x="754" y="165" width="132" height="32" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="787" y="176.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Papua New
+                </text>
+                <text text-anchor="start" x="787" y="194.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Guinea
+                </text>
+            </g>
+            <rect x="754" y="165" width="28" height="14" stroke="none" stroke-width="0" fill="#109618">
+            </rect>
+        </g>
+        <g>
+            <rect x="754" y="206" width="132" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="787" y="217.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Rwanda
+                </text>
+            </g>
+            <rect x="754" y="206" width="28" height="14" stroke="none" stroke-width="0" fill="#990099">
+            </rect>
+        </g>
+        <g>
+            <rect x="754" y="229" width="132" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+            <g>
+                <text text-anchor="start" x="787" y="240.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">Average
+                </text>
+            </g>
+            <path d="M754,236L782,236" stroke="#0099c6" stroke-width="2" fill-opacity="1" fill="none">
+            </path>
+        </g>
+    </g>
+    <g>
+        <rect x="161" y="96" width="579" height="309" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g clip-path="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+            <g>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="327" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="250" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="173" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="96" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+            </g>
+            <g>
+                <rect x="184" y="373" width="13" height="31" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="299" y="379" width="14" height="25" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="415" y="375" width="13" height="29" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="530" y="378" width="14" height="26" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="646" y="379" width="13" height="25" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="198" y="224" width="14" height="180" stroke="none" stroke-width="0" fill="#dc3912">
+                </rect>
+                <rect x="314" y="189" width="13" height="215" stroke="none" stroke-width="0" fill="#dc3912">
+                </rect>
+                <rect x="429" y="180" width="14" height="224" stroke="none" stroke-width="0" fill="#dc3912">
+                </rect>
+                <rect x="545" y="191" width="13" height="213" stroke="none" stroke-width="0" fill="#dc3912">
+                </rect>
+                <rect x="660" y="272" width="14" height="132" stroke="none" stroke-width="0" fill="#dc3912">
+                </rect>
+                <rect x="213" y="305" width="13" height="99" stroke="none" stroke-width="0" fill="#ff9900">
+                </rect>
+                <rect x="328" y="290" width="14" height="114" stroke="none" stroke-width="0" fill="#ff9900">
+                </rect>
+                <rect x="444" y="292" width="13" height="112" stroke="none" stroke-width="0" fill="#ff9900">
+                </rect>
+                <rect x="559" y="287" width="14" height="117" stroke="none" stroke-width="0" fill="#ff9900">
+                </rect>
+                <rect x="675" y="284" width="13" height="120" stroke="none" stroke-width="0" fill="#ff9900">
+                </rect>
+                <rect x="227" y="213" width="14" height="191" stroke="none" stroke-width="0" fill="#109618">
+                </rect>
+                <rect x="343" y="161" width="13" height="243" stroke="none" stroke-width="0" fill="#109618">
+                </rect>
+                <rect x="458" y="250" width="14" height="154" stroke="none" stroke-width="0" fill="#109618">
+                </rect>
+                <rect x="574" y="219" width="13" height="185" stroke="none" stroke-width="0" fill="#109618">
+                </rect>
+                <rect x="689" y="207" width="14" height="197" stroke="none" stroke-width="0" fill="#109618">
+                </rect>
+                <rect x="242" y="318" width="13" height="86" stroke="none" stroke-width="0" fill="#990099">
+                </rect>
+                <rect x="357" y="350" width="14" height="54" stroke="none" stroke-width="0" fill="#990099">
+                </rect>
+                <rect x="473" y="329" width="13" height="75" stroke="none" stroke-width="0" fill="#990099">
+                </rect>
+                <rect x="588" y="364" width="14" height="40" stroke="none" stroke-width="0" fill="#990099">
+                </rect>
+                <rect x="704" y="335" width="13" height="69" stroke="none" stroke-width="0" fill="#990099">
+                </rect>
+            </g>
+            <g>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#333333">
+                </rect>
+            </g>
+            <g>
+                <path d="M219.3,286.1895L334.9,273.21500000000003L450.5,284.5725L566.0999999999999,287.1905L681.6999999999999,294.852" stroke="#0099c6" stroke-width="2" fill-opacity="1" fill="none">
+                </path>
+            </g>
+        </g>
+        <g>
+        </g>
+        <g>
+            <g>
+                <text text-anchor="middle" x="219.3" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">2004/05
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="334.9" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">2005/06
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="450.5" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">2006/07
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="566.0999999999999" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">2007/08
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="681.6999999999999" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#222222">2008/09
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="409.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="332.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">400
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="255.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">800
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="178.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">1,200
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="101.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">1,600
+                </text>
+            </g>
+        </g>
+    </g>
+    <g>
+        <g>
+            <text text-anchor="middle" x="450.5" y="468.9" font-size="14" font-style="italic" stroke="none" stroke-width="0" fill="#222222">Month
+            </text>
+            <rect x="161" y="457" width="579" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </rect>
+        </g>
+        <g>
+            <text text-anchor="middle" x="60.4" y="250.5" font-size="14" font-style="italic" transform="rotate(-90 60.4 250.5)" stroke="none" stroke-width="0" fill="#222222">Cups
+            </text>
+            <path d="M48.49999999999999,405L48.50000000000001,96L62.50000000000001,96L62.49999999999999,405Z" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+            </path>
+        </g>
+    </g>
+    <g>
+    </g>
+</svg>

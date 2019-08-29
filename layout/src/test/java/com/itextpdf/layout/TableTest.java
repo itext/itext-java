@@ -47,6 +47,7 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -63,6 +64,10 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.property.BorderCollapsePropertyValue;
 import com.itextpdf.layout.property.CaptionSide;
 import com.itextpdf.layout.property.HorizontalAlignment;
@@ -82,6 +87,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
@@ -2431,6 +2437,59 @@ public class TableTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)
+    })
+    public void splitTableMinMaxWidthTest01() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(2);
+        for (int i = 0; i < 26; i++) {
+            table.addCell(new Cell().add(new Paragraph("abba a")));
+            table.addCell(new Cell().add(new Paragraph("ab ab ab")));
+        }
+
+        // not enough to place even if min-width approach is used
+        float areaWidth = 20;
+
+        LayoutResult result = table.createRendererSubTree().setParent(doc.getRenderer())
+                .layout(new LayoutContext(new LayoutArea(1, new Rectangle(areaWidth, 100))));
+        TableRenderer overflowRenderer = (TableRenderer) result.getOverflowRenderer();
+
+        MinMaxWidth minMaxWidth = overflowRenderer.getMinMaxWidth();
+
+        Assert.assertEquals(result.getOccupiedArea().getBBox().getWidth(), minMaxWidth.getMaxWidth(), 0.0001);
+        Assert.assertEquals(minMaxWidth.getMaxWidth(), minMaxWidth.getMinWidth(), 0.0001);
+
+        // not enough to place using max-width approach, but more than required for min-width approach
+        areaWidth = 70;
+
+        result = table.createRendererSubTree().setParent(doc.getRenderer())
+                .layout(new LayoutContext(new LayoutArea(1, new Rectangle(areaWidth, 100))));
+        overflowRenderer = (TableRenderer) result.getOverflowRenderer();
+
+        minMaxWidth = overflowRenderer.getMinMaxWidth();
+
+        Assert.assertEquals(result.getOccupiedArea().getBBox().getWidth(), minMaxWidth.getMaxWidth(), 0.0001);
+        Assert.assertEquals(minMaxWidth.getMaxWidth(), minMaxWidth.getMinWidth(), 0.0001);
+
+
+        // enough to place using max-width approach
+        areaWidth = 400f;
+
+        result = table.createRendererSubTree().setParent(doc.getRenderer())
+                .layout(new LayoutContext(new LayoutArea(1, new Rectangle(areaWidth, 100))));
+        overflowRenderer = (TableRenderer) result.getOverflowRenderer();
+
+        minMaxWidth = overflowRenderer.getMinMaxWidth();
+
+        Assert.assertEquals(result.getOccupiedArea().getBBox().getWidth(), minMaxWidth.getMaxWidth(), 0.0001);
+        Assert.assertEquals(minMaxWidth.getMaxWidth(), minMaxWidth.getMinWidth(), 0.0001);
+    }
+
 
     @Test
     public void marginPaddingTest01() throws IOException, InterruptedException {

@@ -70,75 +70,75 @@ public class FillTest extends SvgIntegrationTest {
 
     @Test
     public void normalRectangleFillTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "normalRectangleFill");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "normalRectangleFill");
     }
 
     @Test
     public void multipleNormalRectangleFillTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleNormalRectangleFill");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleNormalRectangleFill");
     }
 
     @Test
     public void noRectangleFillColorTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "noRectangleFillColor");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "noRectangleFillColor");
     }
 
     @Test
     public void eoFillTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill");
     }
 
     /* This test should fail when RND-910 is resolved*/
     @Test
     public void eoFillTest01() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill01");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill01");
     }
 
     @Test
     public void eoFillTest02() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill02");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill02");
     }
 
     @Test
     public void eoFillTest03() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill03");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill03");
     }
 
     @Test
     public void  multipleObjectsTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleObjectsTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleObjectsTest");
     }
 
     @Test
     public void eoFillStrokeTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofillstroke");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "eofillstroke");
     }
 
     /* This test should fail when RND-1031 is resolved*/
     @Test
     public void nonZeroFillTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "nonzerofill");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "nonzerofill");
     }
 
     @Test
     public void opacityFillTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "opacityfill");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "opacityfill");
     }
 
     /* This test should fail when RND-1108 is resolved*/
     @Test
     public void eofillUnsuportedAtributeTest() throws IOException, InterruptedException {
         junitExpectedException.expect(SvgProcessingException.class);
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "eofillUnsuportedAtributeTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "eofillUnsuportedAtributeTest");
     }
 
     @Test
     public void pathVerticalLineFillTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "pathVerticalLineFillTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathVerticalLineFillTest");
     }
 
     @Test
     public void pathHorizontalLineFillTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "pathHorizontalLineFillTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathHorizontalLineFillTest");
     }
 }

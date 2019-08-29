@@ -1,0 +1,232 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500">
+    <defs>
+        <filter x="-100%" y="-100%" width="300%" height="300%" id="rablfilter4">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2">
+            </feGaussianBlur>
+            <feOffset dx="0" dy="0">
+            </feOffset>
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0">
+                </feFuncA>
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode>
+                </feMergeNode>
+                <feMergeNode in="SourceGraphic">
+                </feMergeNode>
+            </feMerge>
+        </filter>
+        <filter x="-100%" y="-100%" width="300%" height="300%" id="rablfilter3">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2">
+            </feGaussianBlur>
+            <feOffset dx="0" dy="0">
+            </feOffset>
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.4">
+                </feFuncA>
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode>
+                </feMergeNode>
+                <feMergeNode in="SourceGraphic">
+                </feMergeNode>
+            </feMerge>
+        </filter>
+        <filter x="-100%" y="-100%" width="300%" height="300%" id="rablfilter2">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2">
+            </feGaussianBlur>
+            <feOffset dx="0" dy="1">
+            </feOffset>
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.4">
+                </feFuncA>
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode>
+                </feMergeNode>
+                <feMergeNode in="SourceGraphic">
+                </feMergeNode>
+            </feMerge>
+        </filter>
+        <filter x="-100%" y="-100%" width="300%" height="300%" id="rablfilter1">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="0">
+            </feGaussianBlur>
+            <feOffset dx="0" dy="1">
+            </feOffset>
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.4">
+                </feFuncA>
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode>
+                </feMergeNode>
+                <feMergeNode in="SourceGraphic">
+                </feMergeNode>
+            </feMerge>
+        </filter>
+        <clipPath id="rablfilter0">
+            <rect x="20.5" y="132.5" width="594" height="360">
+            </rect>
+        </clipPath>
+    </defs>
+    <g>
+        <rect x="0" y="0" width="900" height="500" fill="#ffffff" fill-opacity="1" stroke="#ffffff" stroke-opacity="0" stroke-width="0">
+        </rect>
+        <text font-size="12" x="0" y="15.59375" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 16px;" fill="#757575" dx="0px">Box Office Earnings in First Two Weeks of Opening
+        </text>
+        <text font-size="12" x="0" y="36.390625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#BDBDBD" dx="0px">in millions of dollars (USD)
+        </text>
+        <rect x="655.234375" y="132.5" width="12" height="12" rx="2" ry="2" fill="#4285f4">
+        </rect>
+        <text font-size="12" x="675.234375" y="148.109375" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; " fill="#757575" dx="0px">Guardians of the Galaxy
+        </text>
+        <rect x="655.234375" y="167.6875" width="12" height="12" rx="2" ry="2" fill="#db4437">
+        </rect>
+        <text font-size="12" x="675.234375" y="183.296875" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; " fill="#757575" dx="0px">The Avengers
+        </text>
+        <rect x="655.234375" y="202.875" width="12" height="12" rx="2" ry="2" fill="#f4b400">
+        </rect>
+        <text font-size="12" x="675.234375" y="218.484375" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; " fill="#757575" dx="0px">Transformers: Age of Extinction
+        </text>
+        <rect x="20.5" y="132.5" width="594" height="360" fill="#ffffff" fill-opacity="1" stroke="#ffffff" stroke-opacity="0" stroke-width="1">
+        </rect>
+    </g>
+    <g>
+        <line x1="20.5" x2="614.5" y1="492.5" y2="492.5" stroke="#9E9E9E" stroke-width="1">
+        </line>
+        <line x1="20.5" x2="614.5" y1="420.5" y2="420.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="20.5" x2="614.5" y1="348.5" y2="348.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="20.5" x2="614.5" y1="276.5" y2="276.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="20.5" x2="614.5" y1="204.5" y2="204.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+        <line x1="20.5" x2="614.5" y1="132.5" y2="132.5" stroke="#E0E0E0" stroke-width="1">
+        </line>
+    </g>
+    <g>
+        <path d="M 70.5 356.41999999999996 L 108.5 381.26 L 146.5 401.06 L 184.5 450.38 L 222.5 449.65999999999997 L 260.5 460.82 L 298.5 465.14000000000004 L 336.5 448.22 L 374.5 431.65999999999997 L 412.5 446.42 L 450.49999999999994 473.42 L 488.5 468.74 L 526.5 475.22 L 564.5 477.38" fill="none" stroke="#4285f4" stroke-width="2" clip-path="url(#rablfilter0)">
+        </path>
+        <circle cx="70.5" cy="356.41999999999996" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="108.5" cy="381.26" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="146.5" cy="401.06" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="184.5" cy="450.38" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="222.5" cy="449.65999999999997" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="260.5" cy="460.82" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="298.5" cy="465.14000000000004" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="336.5" cy="448.22" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="374.5" cy="431.65999999999997" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="412.5" cy="446.42" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="450.49999999999994" cy="473.42" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="488.5" cy="468.74" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="526.5" cy="475.22" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="564.5" cy="477.38" r="4" fill="#4285f4" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <path d="M 70.5 201.62 L 108.5 242.3 L 146.5 287.3 L 184.5 424.82 L 222.5 429.14000000000004 L 260.5 443.54 L 298.5 448.22 L 336.5 387.38 L 374.5 338.06000000000006 L 412.5 381.26 L 450.49999999999994 464.06 L 488.5 462.26 L 526.5 469.82 L 564.5 470.18" fill="none" stroke="#db4437" stroke-width="2" clip-path="url(#rablfilter0)">
+        </path>
+        <circle cx="70.5" cy="201.62" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="108.5" cy="242.3" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="146.5" cy="287.3" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="184.5" cy="424.82" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="222.5" cy="429.14000000000004" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="260.5" cy="443.54" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="298.5" cy="448.22" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="336.5" cy="387.38" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="374.5" cy="338.06000000000006" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="412.5" cy="381.26" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="450.49999999999994" cy="464.06" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="488.5" cy="462.26" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="526.5" cy="469.82" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="564.5" cy="470.18" r="4" fill="#db4437" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <path d="M 70.5 342.02000000000004 L 108.5 375.86 L 146.5 399.98 L 184.5 454.7 L 222.5 455.05999999999995 L 260.5 464.78 L 298.5 457.94 L 336.5 454.34000000000003 L 374.5 439.21999999999997 L 412.5 450.74 L 450.49999999999994 475.58 L 488.5 473.78 L 526.5 479.54 L 564.5 480.26" fill="none" stroke="#f4b400" stroke-width="2" clip-path="url(#rablfilter0)">
+        </path>
+        <circle cx="70.5" cy="342.02000000000004" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="108.5" cy="375.86" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="146.5" cy="399.98" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="184.5" cy="454.7" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="222.5" cy="455.05999999999995" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="260.5" cy="464.78" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="298.5" cy="457.94" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="336.5" cy="454.34000000000003" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="374.5" cy="439.21999999999997" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="412.5" cy="450.74" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="450.49999999999994" cy="475.58" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="488.5" cy="473.78" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="526.5" cy="479.54" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+        <circle cx="564.5" cy="480.26" r="4" fill="#f4b400" fill-opacity="0" clip-path="url(#rablfilter0)">
+        </circle>
+    </g>
+    <g>
+    </g>
+    <g>
+        <text font-size="12" x="32.5" y="122.90625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-3.369140386581421px">0
+        </text>
+        <text font-size="12" x="222.5" y="122.90625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-3.369140386581421px">5
+        </text>
+        <text font-size="12" x="412.5" y="122.90625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">10
+        </text>
+        <text font-size="12" x="602.5" y="122.90625" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">15
+        </text>
+        <text font-size="12" x="319.1875" y="89.3125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#424242" dx="-9.9931640625px">Day
+        </text>
+        <text font-size="12" x="14.5" y="496.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-6.738280773162842px">0
+        </text>
+        <text font-size="12" x="14.5" y="424.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">20
+        </text>
+        <text font-size="12" x="14.5" y="352.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">40
+        </text>
+        <text font-size="12" x="14.5" y="280.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">60
+        </text>
+        <text font-size="12" x="14.5" y="208.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-13.476561546325684px">80
+        </text>
+        <text font-size="12" x="14.5" y="136.703125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 12px;" fill="#757575" dx="-20.214841842651367px">100
+        </text>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+</svg>

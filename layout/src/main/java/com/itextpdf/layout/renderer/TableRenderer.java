@@ -1336,18 +1336,18 @@ public class TableRenderer extends AbstractRenderer {
 
     @Override
     public MinMaxWidth getMinMaxWidth() {
-        initializeTableLayoutBorders();
+        if (isOriginalNonSplitRenderer) {
+            initializeTableLayoutBorders();
+        }
         float rightMaxBorder = bordersHandler.getRightBorderMaxWidth();
         float leftMaxBorder = bordersHandler.getLeftBorderMaxWidth();
         TableWidths tableWidths = new TableWidths(this, MinMaxWidthUtils.getInfWidth(), true, rightMaxBorder, leftMaxBorder);
-        float[] columns = tableWidths.layout();
-        float minWidth = tableWidths.getMinWidth();
-        cleanTableLayoutBorders();
-
         float maxColTotalWidth = 0;
+        float[] columns = isOriginalNonSplitRenderer ? tableWidths.layout() : countedColumnWidth;
         for (float column : columns) {
             maxColTotalWidth += column;
         }
+        float minWidth = isOriginalNonSplitRenderer ? tableWidths.getMinWidth() : maxColTotalWidth;
         UnitValue marginRightUV = this.getPropertyAsUnitValue(Property.MARGIN_RIGHT);
         if (!marginRightUV.isPointValue()) {
             Logger logger = LoggerFactory.getLogger(TableRenderer.class);
@@ -1388,17 +1388,6 @@ public class TableRenderer extends AbstractRenderer {
         initializeHeaderAndFooter(true);
         bordersHandler.updateBordersOnNewPage(isOriginalNonSplitRenderer, isFooterRenderer() || isHeaderRenderer(), this, headerRenderer, footerRenderer);
         correctRowRange();
-    }
-
-    private void cleanTableLayoutBorders() {
-        footerRenderer = null;
-        headerRenderer = null;
-        // we may have deleted empty rows and now need to update table's rowrange
-        this.rowRange = new Table.RowRange(rowRange.getStartRow(), bordersHandler.getFinishRow());
-        //TODO do we need it?
-        // delete set properties
-        deleteOwnProperty(Property.BORDER_BOTTOM);
-        deleteOwnProperty(Property.BORDER_TOP);
     }
 
     private void correctRowRange() {
@@ -1710,12 +1699,12 @@ public class TableRenderer extends AbstractRenderer {
             bBox.moveDown(shift);
             try {
                 cell.move(0, -(cumulativeShift - rowspanOffset));
-            } catch (NullPointerException e) {  // TODO Remove try-catch when DEVSIX-1001 is resolved.
+                bBox.setHeight(height);
+                cell.applyVerticalAlignment();
+            } catch (NullPointerException e) {  // TODO Remove try-catch when DEVSIX-1655 is resolved.
                 Logger logger = LoggerFactory.getLogger(TableRenderer.class);
                 logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the cell's content might not end up placed correctly."));
             }
-            bBox.setHeight(height);
-            cell.applyVerticalAlignment();
         }
     }
 

@@ -43,6 +43,7 @@
 package com.itextpdf.io;
 
 import com.itextpdf.io.util.ArrayUtil;
+import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -57,5 +58,10 @@ public class UtilitiesTest {
         byte[] test = ArrayUtil.shortenArray(src, 5);
 
         Assert.assertArrayEquals(dest, test);
+    }
+
+    @Test
+    public void invalidResource() {
+        Assert.assertNull(ResourceUtil.getResourceStream("some-random-resource.zzz"));
     }
 }

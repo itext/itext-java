@@ -46,6 +46,7 @@ import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.svg.converter.SvgConverter;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -55,7 +56,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 @Category(UnitTest.class)
-public class DefsSvgNodeRendererUnitTest {
+public class DefsSvgNodeRendererUnitTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/DefsSvgNodeRendererTest/";
 

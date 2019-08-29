@@ -189,7 +189,7 @@ public class PdfStream extends PdfDictionary {
 
     /**
      * Gets compression level of this PdfStream.
-     * For more details @see {@link java.util.zip.Deflater}.
+     * For more details @see {@link com.itextpdf.io.source.DeflaterOutputStream}.
      *
      * @return compression level.
      */
@@ -199,7 +199,7 @@ public class PdfStream extends PdfDictionary {
 
     /**
      * Sets compression level of this PdfStream.
-     * For more details @see {@link java.util.zip.Deflater}.
+     * For more details @see {@link com.itextpdf.io.source.DeflaterOutputStream}.
      *
      * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
      */

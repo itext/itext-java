@@ -47,11 +47,11 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 /**
- * <p>A hash map that uses primitive ints for the key rather than objects.</p>
- *
- * <p>Note that this class is for internal optimization purposes only, and may
+ * A hash map that uses primitive ints for the key rather than objects.
+ * <p>
+ * Note that this class is for internal optimization purposes only, and may
  * not be supported in future releases of Jakarta Commons Lang.  Utilities of
- * this sort may be included in future releases of Jakarta Commons Collections.</p>
+ * this sort may be included in future releases of Jakarta Commons Collections.
  *
  * @author Justin Couch
  * @author Alex Chaffee (alex@apache.org)
@@ -89,16 +89,16 @@ public class IntHashtable implements Cloneable, Serializable {
     private float loadFactor;
 
     /***
-     * <p>Constructs a new, empty hashtable with a default capacity and load
-     * factor, which is <code>20</code> and <code>0.75</code> respectively.</p>
+     * Constructs a new, empty hashtable with a default capacity and load
+     * factor, which is <code>20</code> and <code>0.75</code> respectively.
      */
     public IntHashtable() {
         this(150, 0.75f);
     }
 
     /***
-     * <p>Constructs a new, empty hashtable with the specified initial capacity
-     * and default load factor, which is <code>0.75</code>.</p>
+     * Constructs a new, empty hashtable with the specified initial capacity
+     * and default load factor, which is <code>0.75</code>.
      *
      * @param  initialCapacity the initial capacity of the hashtable.
      * @throws IllegalArgumentException if the initial capacity is less
@@ -109,8 +109,8 @@ public class IntHashtable implements Cloneable, Serializable {
     }
 
     /***
-     * <p>Constructs a new, empty hashtable with the specified initial
-     * capacity and the specified load factor.</p>
+     * Constructs a new, empty hashtable with the specified initial
+     * capacity and the specified load factor.
      *
      * @param initialCapacity the initial capacity of the hashtable.
      * @param loadFactor the load factor of the hashtable.
@@ -137,7 +137,7 @@ public class IntHashtable implements Cloneable, Serializable {
     }
 
     /***
-     * <p>Returns the number of keys in this hashtable.</p>
+     * Returns the number of keys in this hashtable.
      *
      * @return  the number of keys in this hashtable.
      */
@@ -146,7 +146,7 @@ public class IntHashtable implements Cloneable, Serializable {
     }
 
     /***
-     * <p>Tests if this hashtable maps no keys to values.</p>
+     * Tests if this hashtable maps no keys to values.
      *
      * @return  <code>true</code> if this hashtable maps no keys to values;
      *          <code>false</code> otherwise.
@@ -156,12 +156,12 @@ public class IntHashtable implements Cloneable, Serializable {
     }
 
     /***
-     * <p>Tests if some key maps into the specified value in this hashtable.
+     * Tests if some key maps into the specified value in this hashtable.
      * This operation is more expensive than the <code>containsKey</code>
-     * method.</p>
-     *
-     * <p>Note that this method is identical in functionality to containsValue,
-     * (which is part of the Map interface in the collections framework).</p>
+     * method.
+     * <p>
+     * Note that this method is identical in functionality to containsValue,
+     * (which is part of the Map interface in the collections framework).
      *
      * @param      value   a value to search for.
      * @return     <code>true</code> if and only if some key maps to the
@@ -187,11 +187,11 @@ public class IntHashtable implements Cloneable, Serializable {
     }
 
     /***
-     * <p>Returns <code>true</code> if this HashMap maps one or more keys
-     * to this value.</p>
-     *
-     * <p>Note that this method is identical in functionality to contains
-     * (which predates the Map interface).</p>
+     * Returns <code>true</code> if this HashMap maps one or more keys
+     * to this value.
+     * <p>
+     * Note that this method is identical in functionality to contains
+     * (which predates the Map interface).
      *
      * @param value value whose presence in this HashMap is to be tested.
      * @return boolean <code>true</code> if the value is contained
@@ -202,7 +202,7 @@ public class IntHashtable implements Cloneable, Serializable {
     }
 
     /***
-     * <p>Tests if the specified int is a key in this hashtable.</p>
+     * Tests if the specified int is a key in this hashtable.
      *
      * @param  key  possible key.
      * @return <code>true</code> if and only if the specified int is a
@@ -222,7 +222,7 @@ public class IntHashtable implements Cloneable, Serializable {
     }
 
     /***
-     * <p>Returns the value to which the specified key is mapped in this map.</p>
+     * Returns the value to which the specified key is mapped in this map.
      *
      * @param   key   a key in the hashtable.
      * @return  the value to which the key is mapped in this hashtable;
@@ -242,7 +242,7 @@ public class IntHashtable implements Cloneable, Serializable {
     }
 
     /***
-     * <p>Returns thes value to which the specified key is mapped in this map.</p>
+     * Returns thes value to which the specified key is mapped in this map.
      *
      * @param   key   a key in the hashtable.
      * @return  the values to which the key is mapped in this hashtable;
@@ -262,13 +262,13 @@ public class IntHashtable implements Cloneable, Serializable {
      */
 
     /***
-     * <p>Increases the capacity of and internally reorganizes this
+     * Increases the capacity of and internally reorganizes this
      * hashtable, in order to accommodate and access its entries more
-     * efficiently.</p>
-     *
-     * <p>This method is called automatically when the number of keys
+     * efficiently.
+     * <p>
+     * This method is called automatically when the number of keys
      * in the hashtable exceeds this hashtable's capacity and load
-     * factor.</p>
+     * factor.
      */
     protected void rehash() {
         int oldCapacity = table.length;
@@ -293,12 +293,12 @@ public class IntHashtable implements Cloneable, Serializable {
     }
 
     /***
-     * <p>Maps the specified <code>key</code> to the specified
+     * Maps the specified <code>key</code> to the specified
      * <code>value</code> in this hashtable. The key cannot be
-     * <code>null</code>. </p>
-     *
-     * <p>The value can be retrieved by calling the <code>get</code> method
-     * with a key that is equal to the original key.</p>
+     * <code>null</code>.
+     * <p>
+     * The value can be retrieved by calling the <code>get</code> method
+     * with a key that is equal to the original key.
      *
      * @param key     the hashtable key.
      * @param value   the value.
@@ -336,11 +336,11 @@ public class IntHashtable implements Cloneable, Serializable {
     }
 
     /***
-     * <p>Removes the key (and its corresponding value) from this
-     * hashtable.</p>
-     *
-     * <p>This method does nothing if the key is not present in the
-     * hashtable.</p>
+     * Removes the key (and its corresponding value) from this
+     * hashtable.
+     * <p>
+     * This method does nothing if the key is not present in the
+     * hashtable.
      *
      * @param   key   the key that needs to be removed.
      * @return  the value to which the key had been mapped in this hashtable,
@@ -368,7 +368,7 @@ public class IntHashtable implements Cloneable, Serializable {
     }
 
     /***
-     * <p>Clears this hashtable so that it contains no keys.</p>
+     * Clears this hashtable so that it contains no keys.
      */
     public void clear() {
         Entry[] tab = table;
@@ -379,8 +379,8 @@ public class IntHashtable implements Cloneable, Serializable {
     }
 
     /***
-     * <p>Innerclass that acts as a datastructure to create a new entry in the
-     * table.</p>
+     * Innerclass that acts as a datastructure to create a new entry in the
+     * table.
      */
     public static class Entry implements Serializable {
         private static final long serialVersionUID = 8057670534065316193L;
@@ -390,7 +390,7 @@ public class IntHashtable implements Cloneable, Serializable {
         Entry next;
 
         /**
-         * <p>Create a new entry with the given values.</p>
+         * Create a new entry with the given values.
          *
          * @param key The key used to enter this in the table
          * @param value The value for this key

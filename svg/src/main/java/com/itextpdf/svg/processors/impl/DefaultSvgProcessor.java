@@ -171,9 +171,9 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     /**
      * Recursive visit of the object tree, depth-first, processing the visited node and calling visit on its children.
      * Visit responsibilities for element nodes:
-     * - Assign styles(CSS & attributes) to element
+     * - Assign styles(CSS and attributes) to element
      * - Create Renderer based on element
-     * - push & pop renderer to stack
+     * - push and pop renderer to stack
      * Visit responsibilities for text nodes
      * - add text to parent object
      *

@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <filter id="_ABSTRACT_RENDERER_ID_1">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2">
+            </feGaussianBlur>
+            <feOffset dx="1" dy="1">
+            </feOffset>
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.1">
+                </feFuncA>
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode>
+                </feMergeNode>
+                <feMergeNode in="SourceGraphic">
+                </feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <rect x="0" y="0" width="900" height="500" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <text text-anchor="start" x="161" y="70.9" font-size="14" font-weight="bold" stroke="none" stroke-width="0" fill="#000000">Lengths of dinosaurs, in meters
+        </text>
+        <rect x="161" y="59" width="579" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+    </g>
+    <g>
+        <rect x="161" y="96" width="579" height="309" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g>
+            <g>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="327" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="250" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="173" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="96" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+            </g>
+            <g>
+                <rect x="162" y="390" width="115" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="162" y="374" width="115" height="15" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="162" y="359" width="115" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="162" y="343" width="115" height="15" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="162" y="328" width="115" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="162" y="313" width="115" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="162" y="297" width="115" height="15" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="162" y="282" width="115" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="162" y="266" width="115" height="15" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="162" y="251" width="115" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="162" y="236" width="115" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="162" y="220" width="115" height="15" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="162" y="205" width="115" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="162" y="189" width="115" height="15" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="162" y="174" width="115" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="162" y="159" width="115" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="278" y="390" width="114" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="278" y="374" width="114" height="15" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="278" y="359" width="114" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="278" y="343" width="114" height="15" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="393" y="390" width="115" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="393" y="374" width="115" height="15" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="393" y="359" width="115" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="509" y="390" width="114" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="509" y="374" width="114" height="15" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="509" y="359" width="114" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="509" y="343" width="114" height="15" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+                <rect x="624" y="390" width="115" height="14" stroke="none" stroke-width="0" fill="#3366cc">
+                </rect>
+            </g>
+            <g>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#333333">
+                </rect>
+            </g>
+        </g>
+        <g>
+        </g>
+        <g>
+            <g>
+                <text text-anchor="middle" x="161.5" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="277.1" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">10
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="392.70000000000005" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">20
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="508.3" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">30
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="623.9000000000001" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">40
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="739.5" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">50
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="409.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="332.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="255.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">10
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="178.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">15
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="101.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">20
+                </text>
+            </g>
+        </g>
+    </g>
+    <g>
+    </g>
+</svg>

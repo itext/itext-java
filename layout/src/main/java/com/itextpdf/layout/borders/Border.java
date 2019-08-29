@@ -177,21 +177,17 @@ public abstract class Border {
     }
 
     /**
-     * <p>
      * All borders are supposed to be drawn in such way, that inner content of the element is on the right from the
      * drawing direction. Borders are drawn in this order: top, right, bottom, left.
-     * </p>
      * <p>
      * Given points specify the line which lies on the border of the content area,
      * therefore the border itself should be drawn to the left from the drawing direction.
-     * </p>
      * <p>
      * <code>borderWidthBefore</code> and <code>borderWidthAfter</code> parameters are used to
      * define the widths of the borders that are before and after the current border, e.g. for
      * the bottom border, <code>borderWidthBefore</code> specifies width of the right border and
      * <code>borderWidthAfter</code> - width of the left border. Those width are used to handle areas
      * of border joins.
-     * </p>
      *
      * @param canvas            PdfCanvas to be written to
      * @param x1                x coordinate of the beginning point of the element side, that should be bordered
@@ -205,24 +201,19 @@ public abstract class Border {
     public abstract void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, Side defaultSide, float borderWidthBefore, float borderWidthAfter);
 
     /**
-     * <p>
      * All borders are supposed to be drawn in such way, that inner content of the element is on the right from the
      * drawing direction. Borders are drawn in this order: top, right, bottom, left.
-     * </p>
      * <p>
      * Given points specify the line which lies on the border of the content area,
      * therefore the border itself should be drawn to the left from the drawing direction.
-     * </p>
      * <p>
      * <code>borderWidthBefore</code> and <code>borderWidthAfter</code> parameters are used to
      * define the widths of the borders that are before and after the current border, e.g. for
      * the bottom border, <code>borderWidthBefore</code> specifies width of the right border and
      * <code>borderWidthAfter</code> - width of the left border. Those width are used to handle areas
      * of border joins.
-     * </p>
      * <p>
      * <code>borderRadius</code> is used to draw rounded borders.
-     * </p>
      *
      * @param canvas            PdfCanvas to be written to
      * @param x1                x coordinate of the beginning point of the element side, that should be bordered
@@ -239,25 +230,20 @@ public abstract class Border {
     }
 
     /**
-     * <p>
      * All borders are supposed to be drawn in such way, that inner content of the element is on the right from the
      * drawing direction. Borders are drawn in this order: top, right, bottom, left.
-     * </p>
      * <p>
      * Given points specify the line which lies on the border of the content area,
      * therefore the border itself should be drawn to the left from the drawing direction.
-     * </p>
      * <p>
      * <code>borderWidthBefore</code> and <code>borderWidthAfter</code> parameters are used to
      * define the widths of the borders that are before and after the current border, e.g. for
      * the bottom border, <code>borderWidthBefore</code> specifies width of the right border and
      * <code>borderWidthAfter</code> - width of the left border. Those width are used to handle areas
      * of border joins.
-     * </p>
      * <p>
      * <code>horizontalRadius1</code>, <code>verticalRadius1</code>, <code>horizontalRadius2</code>
      * and <code>verticalRadius2</code> are used to draw rounded borders.
-     * </p>
      *
      * @param canvas            PdfCanvas to be written to
      * @param x1                x coordinate of the beginning point of the element side, that should be bordered

@@ -171,23 +171,21 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
      */
     protected List<Rectangle> toRectangles(List<CharacterRenderInfo> cris) {
         List<Rectangle> retval = new ArrayList<>();
-        if (cris.isEmpty())
+        if (cris.isEmpty()) {
             return retval;
-
+        }
         int prev = 0;
         int curr = 0;
         while (curr < cris.size()) {
             while (curr < cris.size() && cris.get(curr).sameLine(cris.get(prev))) {
                 curr++;
             }
-            float x = cris.get(prev).getBoundingBox().getX();
-            float y = cris.get(prev).getBoundingBox().getY();
-            float w = cris.get(curr - 1).getBoundingBox().getX() - cris.get(prev).getBoundingBox().getX() + cris.get(curr - 1).getBoundingBox().getWidth();
-            float h = 0f;
+            Rectangle resultRectangle = null;
             for (CharacterRenderInfo cri : cris.subList(prev, curr)) {
-                h = Math.max(h, cri.getBoundingBox().getHeight());
+                // in case letters are rotated (imagine text being written with an angle of 90 degrees)
+                resultRectangle = Rectangle.getCommonRectangle(resultRectangle, cri.getBoundingBox());
             }
-            retval.add(new Rectangle(x, y, w, h));
+            retval.add(resultRectangle);
             prev = curr;
         }
 

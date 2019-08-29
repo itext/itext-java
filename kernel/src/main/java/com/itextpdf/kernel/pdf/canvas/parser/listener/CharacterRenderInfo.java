@@ -43,9 +43,11 @@
 package com.itextpdf.kernel.pdf.canvas.parser.listener;
 
 import com.itextpdf.kernel.geom.LineSegment;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +60,7 @@ public class CharacterRenderInfo extends TextChunk {
     private Rectangle boundingBox;
 
     /**
-     * This method converts a List<CharacterRenderInfo>
+     * This method converts a {@link List} of {@link CharacterRenderInfo},
      * The data structure that gets returned contains both the plaintext,
      * as well as the mapping of indices (from the list to the string).
      * These indices can differ; if there is sufficient spacing between two CharacterRenderInfo
@@ -106,11 +108,13 @@ public class CharacterRenderInfo extends TextChunk {
             throw new IllegalArgumentException("TextRenderInfo argument is not nullable.");
 
         // determine bounding box
-        float x0 = tri.getDescentLine().getStartPoint().get(0);
-        float y0 = tri.getDescentLine().getStartPoint().get(1);
-        float h = tri.getAscentLine().getStartPoint().get(1) - tri.getDescentLine().getStartPoint().get(1);
-        float w = Math.abs(tri.getBaseline().getStartPoint().get(0) - tri.getBaseline().getEndPoint().get(0));
-        this.boundingBox = new Rectangle(x0, y0, w, h);
+        List<Point> points = new ArrayList<>();
+        points.add(new Point(tri.getDescentLine().getStartPoint().get(0),tri.getDescentLine().getStartPoint().get(1)));
+        points.add(new Point(tri.getDescentLine().getEndPoint().get(0),tri.getDescentLine().getEndPoint().get(1)));
+        points.add(new Point(tri.getAscentLine().getStartPoint().get(0),tri.getAscentLine().getStartPoint().get(1)));
+        points.add(new Point(tri.getAscentLine().getEndPoint().get(0),tri.getAscentLine().getEndPoint().get(1)));
+
+        this.boundingBox = Rectangle.calculateBBox(points);
     }
 
     public Rectangle getBoundingBox() {

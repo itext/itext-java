@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="595pt" height="842pt" version="1.1">
+	<text x="20" y="20" font-size="6">font-size 6</text>
+	<text x="20" y="50" font-size="10">font-size 10</text>
+	<text x="20" y="80">No font-size</text>
+	<text x="20" y="110" font-size="12">font-size 12</text>
+	<text x="20" y="140" style="font-size:16px">css font-size 16</text>
+	<text x="20" y="170" font-size="24">font-size 24</text>
+	<text x="20" y="200" font-size="24px">font-size 24px</text>
+	<text x="20" y="230" font-size="24pt">font-size 24pt</text>
+	<text x="20" y="260" font-size="-16">font-size -16</text>
+	<text x="20" y="290" font-size="10%">font-size 10%</text>
+	<text x="20" y="320" font-size="50%">font-size 50%</text>
+	<text x="20" y="420" font-size="100%">font-size 100%</text>
+	<text x="20" y="550" font-size="150%">font-size 150%</text>
+	<text x="20" y="580" font-size="12pt">font-size 12pt</text>
+	<text x="20" y="610" font-size="12px">font-size 12px</text>
+	<text x="20" y="640" font-size="12">font-size 12<tspan font-size="2em">font-size 2em</tspan></text>
+</svg>

@@ -264,8 +264,8 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      * <ul>
      *     <li>{@link PdfName#R} - The annotation shall be considered a reply to the annotation specified by IRT.
      *     Conforming readers shall not display replies to an annotation individually but together in the form of
-     *     threaded comments.</li>
-     *     <li>{@link PdfName#Group} - The annotation shall be grouped with the annotation specified by IRT.</li>
+     *     threaded comments.
+     *     <li>{@link PdfName#Group} - The annotation shall be grouped with the annotation specified by IRT.
      * </ul>
      * @return a {@link PdfName} specifying relationship with the specified by the IRT entry; or null if reply
      * type is not specified, in this case the default value is {@link PdfName#R}.
@@ -301,7 +301,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      * <p>
      * See ISO-320001, free text annotations (Table 174), line annotations (Table 175), polygon annotations (Table 178),
      * and polyline annotations (Table 178) for the specific intent values for those types.
-     * </p>
+     *
      * @param intent a {@link PdfName} describing the intent of the markup annotation.
      * @return this {@link PdfMarkupAnnotation} instance.
      */
@@ -313,10 +313,10 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      * An external data dictionary specifying data that shall be associated with the annotation.
      * This dictionary contains the following entries:
      * <ul>
-     *     <li>{@link PdfName#Type} - (optional) If present, shall be {@link PdfName#ExData}.</li>
+     *     <li>{@link PdfName#Type} - (optional) If present, shall be {@link PdfName#ExData}.
      *     <li>{@link PdfName#Subtype} - (required) a name specifying the type of data that the markup annotation
      *     shall be associated with. The only defined value is {@link PdfName#Markup3D}. Table 298 (ISO-320001)
-     *     lists the values that correspond to a subtype of Markup3D (See also {@link Pdf3DAnnotation}).</li>
+     *     lists the values that correspond to a subtype of Markup3D (See also {@link Pdf3DAnnotation}).
      * </ul>
      * @return An external data {@link PdfDictionary}, or null if not specified.
      */
@@ -328,10 +328,10 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      * Sets an external data dictionary specifying data that shall be associated with the annotation.
      * This dictionary should contain the following entries:
      * <ul>
-     *     <li>{@link PdfName#Type} - (optional) If present, shall be {@link PdfName#ExData}.</li>
+     *     <li>{@link PdfName#Type} - (optional) If present, shall be {@link PdfName#ExData}.
      *     <li>{@link PdfName#Subtype} - (required) a name specifying the type of data that the markup annotation
      *     shall be associated with. The only defined value is {@link PdfName#Markup3D}. Table 298 (ISO-320001)
-     *     lists the values that correspond to a subtype of Markup3D (See also {@link Pdf3DAnnotation}).</li>
+     *     lists the values that correspond to a subtype of Markup3D (See also {@link Pdf3DAnnotation}).
      * </ul>
      * @return this {@link PdfMarkupAnnotation} instance.
      */

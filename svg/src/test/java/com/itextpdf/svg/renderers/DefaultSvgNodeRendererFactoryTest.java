@@ -49,10 +49,14 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.svg.dummy.factories.DummySvgNodeMapper;
 import com.itextpdf.svg.dummy.renderers.impl.DummyProcessableSvgNodeRenderer;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
+import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererMapper;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
@@ -68,7 +72,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
-public class DefaultSvgNodeRendererFactoryTest {
+public class DefaultSvgNodeRendererFactoryTest extends ExtendedITextTest {
 
     private ISvgNodeRendererFactory fact;
 
@@ -81,6 +85,9 @@ public class DefaultSvgNodeRendererFactoryTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG)
+    })
     public void nonExistingTagTest() {
         Element nonExistingElement = new Element(Tag.valueOf("notAnExistingTag"), "");
         IElementNode tag = new JsoupElementNode(nonExistingElement);

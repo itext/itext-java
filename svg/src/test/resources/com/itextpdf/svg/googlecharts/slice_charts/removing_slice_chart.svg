@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+    </defs>
+    <rect x="0" y="0" width="900" height="500" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <path d="M451,251L559.8944443027283,142.10555569727165A154,154,0,0,1,559.8944443027283,359.8944443027283L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+    </g>
+    <g>
+        <path d="M451,251L559.8944443027283,359.8944443027283A154,154,0,1,1,559.8944443027283,142.1055556972717L451,251A0,0,0,1,0,451,251" stroke="#ffffff" stroke-width="1" fill="#ffff00">
+        </path>
+    </g>
+    <g>
+    </g>
+</svg>

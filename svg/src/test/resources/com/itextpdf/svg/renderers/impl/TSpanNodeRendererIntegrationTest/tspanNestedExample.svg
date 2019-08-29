@@ -1,0 +1,57 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="24cm" height="11cm" viewBox="0 0 2400 1200"
+     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+    <title>Example for tspan</title>
+
+
+    <g font-family="Arial" font-size="18" stroke-width="1" fill="#000000">
+    <text x="10" y="200">
+        Text with <tspan style="baseline-shift: super;">superscript nested-1 tspan
+
+            <tspan dx="-17em" dy="28" font-weight="bold" fill="red" >
+                nested-2 tspan dx="-17 em" dy="28" font-weight="bold" fill="red and <tspan font-weight="normal">nested-3 tspan</tspan></tspan>
+    </tspan> inside
+    </text>
+    </g>
+    <g font-family="Verdana" font-size="24" >
+        <text x="10" y="300" fill="blue">
+            Text with
+            <tspan x="60" y="320" fill="purple" rotate="10,45,90,115,145,0,15">
+                AAAAA tspan rotate <tspan fill="pink" font-weight="bold" >nested-1 tspan <tspan fill="red">nested-2 tspan </tspan></tspan>
+            </tspan>
+        </text>
+    </g>
+    <g font-family="Arial" font-size="24" >
+        <text x="10" y="400" fill="lightgreen">
+            Text with
+            <tspan x="10" dy="20" textLength="1000">
+                --- tspan textLength="1000"- <tspan>nested</tspan>
+            </tspan>
+            <tspan x="10" dy="20" textLength="500">
+                --- tspan textLength="500"- <tspan>nested</tspan>
+            </tspan>
+            <tspan x="10" dy="20" textLength="200">
+                --- tspan textLength="200"- <tspan>nested</tspan>
+            </tspan>
+            <tspan x="10" dy="20" textLength="-200">
+                --- tspan textLength="-200"- <tspan>nested</tspan>
+            </tspan>
+        </text>
+    </g>
+    <g stroke="black" stroke-width="1">
+    <line x1="0" y1="100" x2="1000" y2="100"/>
+    <line x1="0" y1="200" x2="1000" y2="200"/>
+    <line x1="0" y1="300" x2="1000" y2="300"/>
+    <line x1="0" y1="400" x2="1000" y2="400"/>
+    <line x1="100" y1="0" x2="100" y2="500"/>
+    <line x1="200" y1="0" x2="200" y2="500"/>
+    <line x1="300" y1="0" x2="300" y2="500"/>
+    <line x1="400" y1="0" x2="400" y2="500"/>
+    <line x1="500" y1="0" x2="500" y2="500"/>
+    <line x1="600" y1="0" x2="600" y2="500"/>
+    <line x1="700" y1="0" x2="700" y2="500"/>
+    <line x1="800" y1="0" x2="800" y2="500"/>
+    <line x1="900" y1="0" x2="900" y2="500"/>
+    <line x1="1000" y1="0" x2="1000" y2="500"/>
+    </g>
+</svg>

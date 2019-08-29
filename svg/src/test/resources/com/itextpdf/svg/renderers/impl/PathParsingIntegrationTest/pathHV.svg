@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="400" viewBox="0 0 1000 400">
+
+
+    <path d="M 10 10 h 10 v 10 h 10 v 10 h 10 v 10"
+          style="stroke:black; fill:yellow" />
+    <text x="20" y="150" font-size="12">
+        Sample path with h and v stroke:black; fill:yellow
+    </text>
+    <path d="M 100 10 H 120 V 20 H 140 V 30 H 160 V 40"
+          style="stroke:red; fill:purple" />
+    <text x="20" y="170" font-size="12">
+        Sample path with H and V stroke:red; fill:purple
+    </text>
+    <path d="M 160 10  h 20 v 10 H 200 V 30 h 10 v 10"
+          style="stroke:black; fill:green" />
+    <text x="20" y="190" font-size="12">
+        Sample path with H, h, V and v stroke:black; fill:green
+    </text>
+</svg>

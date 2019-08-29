@@ -51,29 +51,85 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
 
 	public enum PdfViewerPreferencesConstants {
         /**
-         * PageMode constants. Use them for NonFullScreenPageMode.
+         * PageMode constant for {@link PdfName#NonFullScreenPageMode}.
          */
-        USE_NONE, USE_OUTLINES, USE_THUMBS, USE_OC,
+        USE_NONE,
         /**
-         * Direction constants. Use them for Direction property.
+         * PageMode constant for {@link PdfName#NonFullScreenPageMode}.
          */
-        LEFT_TO_RIGHT, RIGHT_TO_LEFT,
+        USE_OUTLINES,
         /**
-         * PageBoundary constants. Use them for ViewArea, ViewClip, PrintArea and PrintClip properties
+         * PageMode constant for {@link PdfName#NonFullScreenPageMode}.
          */
-        MEDIA_BOX, CROP_BOX, BLEED_BOX, TRIM_BOX, ART_BOX,
+        USE_THUMBS,
         /**
-         * ViewArea, ViewClip, PrintArea and PrintClip constants.
+         * PageMode constant for {@link PdfName#NonFullScreenPageMode}.
          */
-        VIEW_AREA, VIEW_CLIP, PRINT_AREA, PRINT_CLIP,
+        USE_OC,
         /**
-         * Page scaling option constants. Use them for PrintScaling property
+         * Direction constant for {@link PdfName#Direction}.
          */
-        NONE, APP_DEFAULT,
+        LEFT_TO_RIGHT,
         /**
-         * The paper handling option constants. use them for Duplex property
+         * Direction constant for {@link PdfName#Direction}.
          */
-        SIMPLEX, DUPLEX_FLIP_SHORT_EDGE, DUPLEX_FLIP_LONG_EDGE
+        RIGHT_TO_LEFT,
+        /**
+         * PageBoundary constant for {@link #VIEW_AREA}, {@link #VIEW_CLIP}, {@link #PRINT_AREA}, {@link #PRINT_CLIP}.
+         */
+        MEDIA_BOX,
+        /**
+         * PageBoundary constant for {@link #VIEW_AREA}, {@link #VIEW_CLIP}, {@link #PRINT_AREA}, {@link #PRINT_CLIP}.
+         */
+        CROP_BOX,
+        /**
+         * PageBoundary constant for {@link #VIEW_AREA}, {@link #VIEW_CLIP}, {@link #PRINT_AREA}, {@link #PRINT_CLIP}.
+         */
+        BLEED_BOX,
+        /**
+         * PageBoundary constant for {@link #VIEW_AREA}, {@link #VIEW_CLIP}, {@link #PRINT_AREA}, {@link #PRINT_CLIP}.
+         */
+        TRIM_BOX,
+        /**
+         * PageBoundary constant for {@link #VIEW_AREA}, {@link #VIEW_CLIP}, {@link #PRINT_AREA}, {@link #PRINT_CLIP}.
+         */
+        ART_BOX,
+        /**
+         * ViewArea constant.
+         */
+        VIEW_AREA,
+        /**
+         * ViewClip constant.
+         */
+        VIEW_CLIP,
+        /**
+         * PrintArea constant.
+         */
+        PRINT_AREA,
+        /**
+         * PrintClip constant.
+         */
+        PRINT_CLIP,
+        /**
+         * Page scaling option constant for {@link PdfName#PrintScaling}.
+         */
+        NONE,
+        /**
+         * Page scaling option constant for {@link PdfName#PrintScaling}.
+         */
+        APP_DEFAULT,
+        /**
+         * The paper handling option constant for {@link PdfName#Duplex}.
+         */
+        SIMPLEX,
+        /**
+         * The paper handling option constant for {@link PdfName#Duplex}.
+         */
+        DUPLEX_FLIP_SHORT_EDGE,
+        /**
+         * The paper handling option constant for {@link PdfName#Duplex}.
+         */
+        DUPLEX_FLIP_LONG_EDGE
     }
 
     public PdfViewerPreferences() {
@@ -331,13 +387,13 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
                 type = PdfName.ViewArea;
                 break;
             case VIEW_CLIP :
-                type = PdfName.ViewArea;
+                type = PdfName.ViewClip;
                 break;
             case PRINT_AREA :
-                type = PdfName.ViewArea;
+                type = PdfName.PrintArea;
                 break;
             case PRINT_CLIP :
-                type = PdfName.ViewArea;
+                type = PdfName.PrintClip;
                 break;
             default:
         }

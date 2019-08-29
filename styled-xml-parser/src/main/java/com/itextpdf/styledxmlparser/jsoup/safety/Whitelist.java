@@ -59,49 +59,40 @@ import java.util.Set;
 
 
 /**
- Whitelists define what HTML (elements and attributes) to allow through the cleaner. Everything else is removed.
- <p>
- Start with one of the defaults:
- </p>
- <ul>
- <li>{@link #none}
- <li>{@link #simpleText}
- <li>{@link #basic}
- <li>{@link #basicWithImages}
- <li>{@link #relaxed}
- </ul>
- <p>
- If you need to allow more through (please be careful!), tweak a base whitelist with:
- </p>
- <ul>
- <li>{@link #addTags}
- <li>{@link #addAttributes}
- <li>{@link #addEnforcedAttribute}
- <li>{@link #addProtocols}
- </ul>
- <p>
- You can remove any setting from an existing whitelist with:
- </p>
- <ul>
- <li>{@link #removeTags}
- <li>{@link #removeAttributes}
- <li>{@link #removeEnforcedAttribute}
- <li>{@link #removeProtocols}
- </ul>
- 
- <p>
- The cleaner and these whitelists assume that you want to clean a <code>body</code> fragment of HTML (to add user
- supplied HTML into a templated page), and not to clean a full HTML document. If the latter is the case, either wrap the
- document HTML around the cleaned body HTML, or create a whitelist that allows <code>html</code> and <code>head</code>
- elements as appropriate.
- </p>
- <p>
- If you are going to extend a whitelist, please be very careful. Make sure you understand what attributes may lead to
- XSS attack vectors. URL attributes are particularly vulnerable and require careful validation. See 
- http://ha.ckers.org/xss.html for some XSS attack examples.
- </p>
-
- @author Jonathan Hedley
+ * Whitelists define what HTML (elements and attributes) to allow through the cleaner. Everything else is removed.
+ * <p>
+ * Start with one of the defaults:
+ * <ul>
+ * <li>{@link #none}
+ * <li>{@link #simpleText}
+ * <li>{@link #basic}
+ * <li>{@link #basicWithImages}
+ * <li>{@link #relaxed}
+ * </ul>
+ * If you need to allow more through (please be careful!), tweak a base whitelist with:
+ * <ul>
+ * <li>{@link #addTags}
+ * <li>{@link #addAttributes}
+ * <li>{@link #addEnforcedAttribute}
+ * <li>{@link #addProtocols}
+ * </ul>
+ * You can remove any setting from an existing whitelist with:
+ * <ul>
+ * <li>{@link #removeTags}
+ * <li>{@link #removeAttributes}
+ * <li>{@link #removeEnforcedAttribute}
+ * <li>{@link #removeProtocols}
+ * </ul>
+ * The cleaner and these whitelists assume that you want to clean a <code>body</code> fragment of HTML (to add user
+ * supplied HTML into a templated page), and not to clean a full HTML document. If the latter is the case, either wrap the
+ * document HTML around the cleaned body HTML, or create a whitelist that allows <code>html</code> and <code>head</code>
+ * elements as appropriate.
+ * <p>
+ * If you are going to extend a whitelist, please be very careful. Make sure you understand what attributes may lead to
+ * XSS attack vectors. URL attributes are particularly vulnerable and require careful validation. See
+ * http://ha.ckers.org/xss.html for some XSS attack examples.
+ *
+ * @author Jonathan Hedley
  */
 public class Whitelist {
     private Set<TagName> tagNames; // tags allowed, lower case. e.g. [p, br, span]
@@ -111,19 +102,19 @@ public class Whitelist {
     private boolean preserveRelativeLinks; // option to preserve relative links
 
     /**
-     This whitelist allows only text nodes: all HTML will be stripped.
-
-     @return whitelist
+     * This whitelist allows only text nodes: all HTML will be stripped.
+     *
+     * @return whitelist
      */
     public static Whitelist none() {
         return new Whitelist();
     }
 
     /**
-     This whitelist allows only simple text formatting: <code>b, em, i, strong, u</code>. All other HTML (tags and
-     attributes) will be removed.
-
-     @return whitelist
+     * This whitelist allows only simple text formatting: <code>b, em, i, strong, u</code>. All other HTML (tags and
+     * attributes) will be removed.
+     *
+     * @return whitelist
      */
     public static Whitelist simpleText() {
         return new Whitelist()
@@ -132,19 +123,15 @@ public class Whitelist {
     }
 
     /**
-     <p>
-     This whitelist allows a fuller range of text nodes: <code>a, b, blockquote, br, cite, code, dd, dl, dt, em, i, li,
-     ol, p, pre, q, small, span, strike, strong, sub, sup, u, ul</code>, and appropriate attributes.
-     </p>
-     <p>
-     Links (<code>a</code> elements) can point to <code>http, https, ftp, mailto</code>, and have an enforced
-     <code>rel=nofollow</code> attribute.
-     </p>
-     <p>
-     Does not allow images.
-     </p>
-
-     @return whitelist
+     * This whitelist allows a fuller range of text nodes: <code>a, b, blockquote, br, cite, code, dd, dl, dt, em, i, li,
+     * ol, p, pre, q, small, span, strike, strong, sub, sup, u, ul</code>, and appropriate attributes.
+     * <p>
+     * Links (<code>a</code> elements) can point to <code>http, https, ftp, mailto</code>, and have an enforced
+     * <code>rel=nofollow</code> attribute.
+     * <p>
+     * Does not allow images.
+     *
+     * @return whitelist
      */
     public static Whitelist basic() {
         return new Whitelist()
@@ -167,10 +154,10 @@ public class Whitelist {
     }
 
     /**
-     This whitelist allows the same text tags as {@link #basic}, and also allows <code>img</code> tags, with appropriate
-     attributes, with <code>src</code> pointing to <code>http</code> or <code>https</code>.
-
-     @return whitelist
+     * This whitelist allows the same text tags as {@link #basic}, and also allows <code>img</code> tags, with appropriate
+     * attributes, with <code>src</code> pointing to <code>http</code> or <code>https</code>.
+     *
+     * @return whitelist
      */
     public static Whitelist basicWithImages() {
         return basic()
@@ -181,14 +168,13 @@ public class Whitelist {
     }
 
     /**
-     This whitelist allows a full range of text and structural body HTML: <code>a, b, blockquote, br, caption, cite,
-     code, col, colgroup, dd, div, dl, dt, em, h1, h2, h3, h4, h5, h6, i, img, li, ol, p, pre, q, small, span, strike, strong, sub,
-     sup, table, tbody, td, tfoot, th, thead, tr, u, ul</code>
-     <p>
-     Links do not have an enforced <code>rel=nofollow</code> attribute, but you can add that if desired.
-     </p>
-
-     @return whitelist
+     * This whitelist allows a full range of text and structural body HTML: <code>a, b, blockquote, br, caption, cite,
+     * code, col, colgroup, dd, div, dl, dt, em, h1, h2, h3, h4, h5, h6, i, img, li, ol, p, pre, q, small, span, strike, strong, sub,
+     * sup, table, tbody, td, tfoot, th, thead, tr, u, ul</code>
+     * <p>
+     * Links do not have an enforced <code>rel=nofollow</code> attribute, but you can add that if desired.
+     *
+     * @return whitelist
      */
     public static Whitelist relaxed() {
         return new Whitelist()
@@ -222,12 +208,12 @@ public class Whitelist {
     }
 
     /**
-     Create a new, empty whitelist. Generally it will be better to start with a default prepared whitelist instead.
-
-     @see #basic()
-     @see #basicWithImages()
-     @see #simpleText()
-     @see #relaxed()
+     * Create a new, empty whitelist. Generally it will be better to start with a default prepared whitelist instead.
+     *
+     * @see #basic()
+     * @see #basicWithImages()
+     * @see #simpleText()
+     * @see #relaxed()
      */
     public Whitelist() {
         tagNames = new HashSet<TagName>();
@@ -238,10 +224,10 @@ public class Whitelist {
     }
 
     /**
-     Add a list of allowed elements to a whitelist. (If a tag is not allowed, it will be removed from the HTML.)
-
-     @param tags tag names to allow
-     @return this (for chaining)
+     * Add a list of allowed elements to a whitelist. (If a tag is not allowed, it will be removed from the HTML.)
+     *
+     * @param tags tag names to allow
+     * @return this (for chaining)
      */
     public Whitelist addTags(String... tags) {
         Validate.notNull(tags);
@@ -254,10 +240,10 @@ public class Whitelist {
     }
 
     /**
-     Remove a list of allowed elements from a whitelist. (If a tag is not allowed, it will be removed from the HTML.)
-
-     @param tags tag names to disallow
-     @return this (for chaining)
+     * Remove a list of allowed elements from a whitelist. (If a tag is not allowed, it will be removed from the HTML.)
+     *
+     * @param tags tag names to disallow
+     * @return this (for chaining)
      */
     public Whitelist removeTags(String... tags) {
         Validate.notNull(tags);
@@ -276,19 +262,17 @@ public class Whitelist {
     }
 
     /**
-     Add a list of allowed attributes to a tag. (If an attribute is not allowed on an element, it will be removed.)
-     <p>
-     E.g.: <code>addAttributes("a", "href", "class")</code> allows <code>href</code> and <code>class</code> attributes
-     on <code>a</code> tags.
-     </p>
-     <p>
-     To make an attribute valid for <b>all tags</b>, use the pseudo tag <code>:all</code>, e.g.
-     <code>addAttributes(":all", "class")</code>.
-     </p>
-
-     @param tag  The tag the attributes are for. The tag will be added to the allowed tag list if necessary.
-     @param keys List of valid attributes for the tag
-     @return this (for chaining)
+     * Add a list of allowed attributes to a tag. (If an attribute is not allowed on an element, it will be removed.)
+     * <p>
+     * E.g.: <code>addAttributes("a", "href", "class")</code> allows <code>href</code> and <code>class</code> attributes
+     * on <code>a</code> tags.
+     * <p>
+     * To make an attribute valid for <b>all tags</b>, use the pseudo tag <code>:all</code>, e.g.
+     * <code>addAttributes(":all", "class")</code>.
+     *
+     * @param tag  The tag the attributes are for. The tag will be added to the allowed tag list if necessary.
+     * @param keys List of valid attributes for the tag
+     * @return this (for chaining)
      */
     public Whitelist addAttributes(String tag, String... keys) {
         Validate.notEmpty(tag);
@@ -313,19 +297,17 @@ public class Whitelist {
     }
 
     /**
-     Remove a list of allowed attributes from a tag. (If an attribute is not allowed on an element, it will be removed.)
-     <p>
-     E.g.: <code>removeAttributes("a", "href", "class")</code> disallows <code>href</code> and <code>class</code>
-     attributes on <code>a</code> tags.
-     </p>
-     <p>
-     To make an attribute invalid for <b>all tags</b>, use the pseudo tag <code>:all</code>, e.g.
-     <code>removeAttributes(":all", "class")</code>.
-     </p>
-
-     @param tag  The tag the attributes are for.
-     @param keys List of invalid attributes for the tag
-     @return this (for chaining)
+     * Remove a list of allowed attributes from a tag. (If an attribute is not allowed on an element, it will be removed.)
+     * <p>
+     * E.g.: <code>removeAttributes("a", "href", "class")</code> disallows <code>href</code> and <code>class</code>
+     * attributes on <code>a</code> tags.
+     * <p>
+     * To make an attribute invalid for <b>all tags</b>, use the pseudo tag <code>:all</code>, e.g.
+     * <code>removeAttributes(":all", "class")</code>.
+     *
+     * @param tag  The tag the attributes are for.
+     * @param keys List of invalid attributes for the tag
+     * @return this (for chaining)
      */
     public Whitelist removeAttributes(String tag, String... keys) {
         Validate.notEmpty(tag);
@@ -357,17 +339,16 @@ public class Whitelist {
     }
 
     /**
-     Add an enforced attribute to a tag. An enforced attribute will always be added to the element. If the element
-     already has the attribute set, it will be overridden.
-     <p>
-     E.g.: <code>addEnforcedAttribute("a", "rel", "nofollow")</code> will make all <code>a</code> tags output as
-     <code>&lt;a href="..." rel="nofollow"&gt;</code>
-     </p>
-
-     @param tag   The tag the enforced attribute is for. The tag will be added to the allowed tag list if necessary.
-     @param key   The attribute key
-     @param value The enforced attribute value
-     @return this (for chaining)
+     * Add an enforced attribute to a tag. An enforced attribute will always be added to the element. If the element
+     * already has the attribute set, it will be overridden.
+     * <p>
+     * E.g.: <code>addEnforcedAttribute("a", "rel", "nofollow")</code> will make all <code>a</code> tags output as
+     * <code>&lt;a href="..." rel="nofollow"&gt;</code>
+     *
+     * @param tag   The tag the enforced attribute is for. The tag will be added to the allowed tag list if necessary.
+     * @param key   The attribute key
+     * @param value The enforced attribute value
+     * @return this (for chaining)
      */
     public Whitelist addEnforcedAttribute(String tag, String key, String value) {
         Validate.notEmpty(tag);
@@ -391,11 +372,11 @@ public class Whitelist {
     }
 
     /**
-     Remove a previously configured enforced attribute from a tag.
-
-     @param tag   The tag the enforced attribute is for.
-     @param key   The attribute key
-     @return this (for chaining)
+     * Remove a previously configured enforced attribute from a tag.
+     *
+     * @param tag   The tag the enforced attribute is for.
+     * @param key   The attribute key
+     * @return this (for chaining)
      */
     public Whitelist removeEnforcedAttribute(String tag, String key) {
         Validate.notEmpty(tag);
@@ -422,7 +403,6 @@ public class Whitelist {
      * parsing, so that the link's protocol can be confirmed. Regardless of the setting of the {@code preserve relative
      * links} option, the link must be resolvable against the base URI to an allowed protocol; otherwise the attribute
      * will be removed.
-     * </p>
      *
      * @param preserve {@code true} to allow relative links, {@code false} (default) to deny
      * @return this Whitelist, for chaining.
@@ -434,20 +414,18 @@ public class Whitelist {
     }
 
     /**
-     Add allowed URL protocols for an element's URL attribute. This restricts the possible values of the attribute to
-     URLs with the defined protocol.
-     <p>
-     E.g.: <code>addProtocols("a", "href", "ftp", "http", "https")</code>
-     </p>
-     <p>
-     To allow a link to an in-page URL anchor (i.e. <code>&lt;a href="#anchor"&gt;</code>, add a <code>#</code>:<br>
-     E.g.: <code>addProtocols("a", "href", "#")</code>
-     </p>
-
-     @param tag       Tag the URL protocol is for
-     @param key       Attribute key
-     @param protocols List of valid protocols
-     @return this, for chaining
+     * Add allowed URL protocols for an element's URL attribute. This restricts the possible values of the attribute to
+     * URLs with the defined protocol.
+     * <p>
+     * E.g.: <code>addProtocols("a", "href", "ftp", "http", "https")</code>
+     * <p>
+     * To allow a link to an in-page URL anchor (i.e. <code>&lt;a href="#anchor"&gt;</code>, add a <code>#</code>:<br>
+     * E.g.: <code>addProtocols("a", "href", "#")</code>
+     *
+     * @param tag       Tag the URL protocol is for
+     * @param key       Attribute key
+     * @param protocols List of valid protocols
+     * @return this, for chaining
      */
     public Whitelist addProtocols(String tag, String key, String... protocols) {
         Validate.notEmpty(tag);
@@ -480,15 +458,14 @@ public class Whitelist {
     }
 
     /**
-     Remove allowed URL protocols for an element's URL attribute.
-     <p>
-     E.g.: <code>removeProtocols("a", "href", "ftp")</code>
-     </p>
-
-     @param tag       Tag the URL protocol is for
-     @param key       Attribute key
-     @param protocols List of invalid protocols
-     @return this, for chaining
+     * Remove allowed URL protocols for an element's URL attribute.
+     * <p>
+     * E.g.: <code>removeProtocols("a", "href", "ftp")</code>
+     *
+     * @param tag       Tag the URL protocol is for
+     * @param key       Attribute key
+     * @param protocols List of invalid protocols
+     * @return this, for chaining
      */
     public Whitelist removeProtocols(String tag, String key, String... protocols) {
         Validate.notEmpty(tag);

@@ -163,7 +163,7 @@ public class PdfExplicitDestination extends PdfDestination {
     }
 
     public static PdfExplicitDestination createFitBV(PdfPage page, float left) {
-        return create(page, PdfName.FitBH, left, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
+        return create(page, PdfName.FitBV, left, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
     /**
@@ -171,7 +171,7 @@ public class PdfExplicitDestination extends PdfDestination {
      */
     @Deprecated
     public static PdfExplicitDestination createFitBV(int pageNum, float left) {
-        return create(pageNum, PdfName.FitBH, left, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
+        return create(pageNum, PdfName.FitBV, left, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
     public static PdfExplicitDestination create(PdfPage page, PdfName type, float left, float bottom, float right, float top, float zoom) {

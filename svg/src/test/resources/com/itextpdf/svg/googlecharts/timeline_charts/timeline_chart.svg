@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="180" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+    </defs>
+    <g>
+        <rect x="0" y="0" width="800" height="40.992" stroke="none" stroke-width="0" fill="#ffffff">
+        </rect>
+        <path d="M94,0L94,40.992" stroke="#e6e6e6" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M117.96914833064066,0L117.96914833064066,40.992" stroke="#e6e6e6" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M473.7435620281839,0L473.7435620281839,40.992" stroke="#e6e6e6" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <rect x="0" y="40.992" width="800" height="40.992" stroke="none" stroke-width="0" fill="#e6e6e6">
+        </rect>
+        <path d="M94,40.992L94,81.984" stroke="#ffffff" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M117.96914833064066,40.992L117.96914833064066,81.984" stroke="#ffffff" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M473.7435620281839,40.992L473.7435620281839,81.984" stroke="#ffffff" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <rect x="0" y="81.984" width="800" height="40.992" stroke="none" stroke-width="0" fill="#ffffff">
+        </rect>
+        <path d="M94,81.984L94,122.976" stroke="#e6e6e6" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M117.96914833064066,81.984L117.96914833064066,122.976" stroke="#e6e6e6" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M473.7435620281839,81.984L473.7435620281839,122.976" stroke="#e6e6e6" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M0,40.992L800,40.992" stroke="#b7b7b7" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <path d="M0,81.984L800,81.984" stroke="#b7b7b7" stroke-width="1" fill-opacity="1" fill="none">
+        </path>
+        <text text-anchor="end" x="81" y="25.046"  font-size="13" stroke="none" stroke-width="0" fill="#4d4d4d">Washington
+        </text>
+        <text text-anchor="end" x="81" y="66.038"  font-size="13" stroke="none" stroke-width="0" fill="#4d4d4d">Adams
+        </text>
+        <text text-anchor="end" x="81" y="107.02999999999999"  font-size="13" stroke="none" stroke-width="0" fill="#4d4d4d">Jefferson
+        </text>
+        <rect x="0" y="0" width="800" height="122.976" stroke="#9a9a9a" stroke-width="1" fill-opacity="1" fill="none">
+        </rect>
+    </g>
+    <g>
+        <text text-anchor="middle" x="117.96914833064066" y="144.026"  font-size="13" stroke="none" stroke-width="0" fill="#000000">1790
+        </text>
+        <text text-anchor="middle" x="473.7435620281839" y="144.026"  font-size="13" stroke="none" stroke-width="0" fill="#000000">1800
+        </text>
+    </g>
+    <g>
+    </g>
+    <g>
+        <rect x="95" y="9" width="278.10967118766854" height="22.991999999999997" stroke="none" stroke-width="0" fill="#4285f4">
+        </rect>
+        <rect x="373.10967118766854" y="49.992" width="142.23183022957636" height="22.991999999999997" stroke="none" stroke-width="0" fill="#db4437">
+        </rect>
+        <rect x="515.3415014172449" y="90.984" width="284.6584985827551" height="22.991999999999997" stroke="none" stroke-width="0" fill="#f4b400">
+        </rect>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+</svg>

@@ -42,9 +42,12 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
@@ -71,161 +74,163 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void helloWorldTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world");
     }
 
     @Test
     public void tooLongTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "too_long");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "too_long");
     }
 
     @Test
     public void twoLinesTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "two_lines");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "two_lines");
     }
 
     @Test
     public void twoLinesNewlineTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "two_lines_newline");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "two_lines_newline");
     }
 
     @Test
     public void helloWorldScaleUpXTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleUpX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleUpX");
     }
 
     @Test
     public void helloWorldScaleUpYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleUpY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleUpY");
     }
 
     @Test
     public void helloWorldScaleDownXTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleDownX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleDownX");
     }
 
     @Test
     public void helloWorldScaleDownYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleDownY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_scaleDownY");
     }
 
     @Test
     public void helloWorldTranslateTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_translate");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_translate");
     }
 
     @Test
     public void helloWorldRotateTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_rotate");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_rotate");
     }
 
     @Test
     public void helloWorldSkewXTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_skewX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_skewX");
     }
 
     @Test
     public void helloWorldSkewYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_skewY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_skewY");
     }
 
     @Test
     public void helloWorldCombinedTransformationsTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_combinedTransformations");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_combinedTransformations");
     }
 
     @Test
     public void helloWorldFontSizeMissingTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_fontSizeMissing");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_fontSizeMissing");
     }
 
     //Absolute position
     //X
     @Test
     public void textAbsolutePositionpositiveXTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-positiveX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-positiveX");
     }
 
     @Test
     public void textAbsolutePositionnegativeXTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-negativeX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-negativeX");
     }
 
     @Test
     public void textAbsolutePositionzeroXTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-zeroX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-zeroX");
     }
 
     @Test
     public void textAbsolutePositionInvalidXTest() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-invalidX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-invalidX");
     }
 
     //Y
     @Test
     public void textAbsolutePositionPositiveYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-positiveY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-positiveY");
     }
 
     @Test
     public void textAbsolutePositionNegativeYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-negativeY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-negativeY");
     }
 
     @Test
     public void textAbsolutePositionZeroYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-zeroY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-zeroY");
     }
 
     @Test
     public void textAbsolutePositionInvalidYTest() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-invalidY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-invalidY");
     }
 
     //Relative move
     //X
     @Test
     public void textRelativeMovePositiveXTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-positiveX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-positiveX");
     }
 
     @Test
     public void textRelativeMoveNegativeXTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-negativeX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-negativeX");
     }
 
     @Test
     public void textRelativeMoveZeroXTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-zeroX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-zeroX");
     }
 
     @Test
     public void textRelativeMoveInvalidXTest() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidX");
     }
 
     //Y
     @Test
     public void textRelativeMovePositiveYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-positiveY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-positiveY");
     }
 
     @Test
     public void textRelativeMoveNegativeYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-negativeY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-negativeY");
     }
 
     @Test
     public void textRelativeMoveZeroYTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-zeroY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-zeroY");
     }
 
     @Test
     public void textRelativeMoveInvalidYTest() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompareVisually(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidY");
     }
+
+
 }

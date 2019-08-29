@@ -94,8 +94,7 @@ public final class SystemUtil {
      * @return property or variable value or null if there is no such.
      */
     public static String getPropertyOrEnvironmentVariable(String name) {
-        String s = null;
-        s = System.getProperty(name);
+        String s = System.getProperty(name);
         if (s == null) {
             s = System.getenv(name);
         }

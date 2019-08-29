@@ -151,6 +151,14 @@ public abstract class ITextTest {
         }
     }
 
+    public static void printOutCmpPdfNameAndDir(String out, String cmp) {
+        printPathToConsole(out, "Out pdf: ");
+        printPathToConsole(cmp, "Cmp pdf: ");
+        System.out.println();
+        printPathToConsole(new File(out).getParent(), "Out file folder: ");
+        printPathToConsole(new File(cmp).getParent(), "Cmp file folder: ");
+    }
+
     public static void printOutputPdfNameAndDir(String pdfName) {
         printPathToConsole(pdfName, "Output PDF: ");
         printPathToConsole(new File(pdfName).getParent(), "Output PDF folder: ");

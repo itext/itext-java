@@ -79,7 +79,7 @@ public class PdfStampAnnotation extends  PdfMarkupAnnotation {
     /**
      * The name of an icon that is used in displaying the annotation.
      * Possible values are described in {@link #setIconName(PdfName)}.
-     * 
+     *
      * @return a {@link PdfName} that specifies the icon for displaying annotation, or null if icon name is not specified.
      */
     public PdfName getIconName() {
@@ -90,20 +90,20 @@ public class PdfStampAnnotation extends  PdfMarkupAnnotation {
      * The name of an icon that is used in displaying the annotation.
      * @param name a {@link PdfName} that specifies the icon for displaying annotation. Possible values are:
      *             <ul>
-     *                  <li>Approved</li>
-     *                  <li>Experimental</li>
-     *                  <li>NotApproved</li>
-     *                  <li>AsIs</li>
-     *                  <li>Expired</li>
-     *                  <li>NotForPublicRelease</li>
-     *                  <li>Confidential</li>
-     *                  <li>Final</li>
-     *                  <li>Sold</li>
-     *                  <li>Departmental</li>
-     *                  <li>ForComment</li>
-     *                  <li>TopSecret</li>
-     *                  <li>Draft</li>
-     *                  <li>ForPublicRelease.</li>
+     *                  <li>Approved
+     *                  <li>Experimental
+     *                  <li>NotApproved
+     *                  <li>AsIs
+     *                  <li>Expired
+     *                  <li>NotForPublicRelease
+     *                  <li>Confidential
+     *                  <li>Final
+     *                  <li>Sold
+     *                  <li>Departmental
+     *                  <li>ForComment
+     *                  <li>TopSecret
+     *                  <li>Draft
+     *                  <li>ForPublicRelease.
      *             </ul>
      * @return this {@link PdfStampAnnotation} instance.
      */

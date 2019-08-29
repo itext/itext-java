@@ -61,9 +61,10 @@ public class AESCipher {
     /**
      * Creates a new instance of AESCipher
      *
-     * @param forEncryption
-     * @param key
-     * @param iv
+     * @param forEncryption if true the cipher is initialised for
+     * encryption, if false for decryption
+     * @param key the key to be used in the cipher
+     * @param iv initialization vector to be used in cipher
      */
     public AESCipher(boolean forEncryption, byte[] key, byte[] iv) {
         BlockCipher aes = new AESFastEngine();

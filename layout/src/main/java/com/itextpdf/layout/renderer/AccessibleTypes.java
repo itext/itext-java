@@ -48,21 +48,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- *
  * This class is used to identify standard structure role type based only on it's name for the sake of applying
  * standard structure attributes.
- *
  * <p>
  * These types mostly resemble structure type levels in the pdf 1.7 specification, however they are not exact.
  * In pdf 2.0 some of these types are not even present and moreover, specific roles with the same name might belong
  * to different type levels depending on context (which consists of kids, parents and their types).
- * </p>
- *
  * <p>
  * So, these types are mostly useful for the internal itext usage and are not backed by any spec. They are designed for
  * the most part to return the value the most suitable and handy for the purposes of accessibility properties applying.
- * </p>
- *
  * <p>
  * Here are the main reasons to leave these types as is for now, even after introducing of PDF 2.0:
  * <ul>
@@ -73,8 +67,6 @@ import java.util.Set;
  * </ul>
  * In general, the correct way to handle role types would be to have separate classes for every namespace that define type
  * and apply attributes. However I believe, that for now it is not feasible at the moment to implement this approach.
- * </p>
- *
  * The right time to improve and replace this class might be when new roles and attributes (specific to the different standard structure namespaces)
  * will be more widely used in the auto tagging mechanism by default, and also when may be there will be more known
  * practical examples of utilizing standard structure attributes.

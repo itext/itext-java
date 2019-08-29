@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1099" height="275">
+    <defs>
+        <filter x="-100%" y="-100%" width="300%" height="300%" id="rablfilter0">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="1">
+            </feGaussianBlur>
+            <feOffset dx="0" dy="2">
+            </feOffset>
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.2">
+                </feFuncA>
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode>
+                </feMergeNode>
+                <feMergeNode in="SourceGraphic">
+                </feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g>
+        <rect x="0" y="0" width="1099" height="275" fill="#ffffff">
+        </rect>
+    </g>
+    <g>
+        <rect x="0" y="0" width="1099" height="42" fill="#ffffff">
+        </rect>
+        <rect x="0" y="42" width="1099" height="42" fill="#f5f5f5">
+        </rect>
+        <rect x="0" y="84" width="1099" height="42" fill="#ffffff">
+        </rect>
+        <rect x="0" y="126" width="1099" height="42" fill="#f5f5f5">
+        </rect>
+        <rect x="0" y="168" width="1099" height="42" fill="#ffffff">
+        </rect>
+        <rect x="0" y="210" width="1099" height="42" fill="#f5f5f5">
+        </rect>
+        <rect x="0" y="0" width="1099" height="252" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </rect>
+        <line x1="0" x2="1099" y1="42" y2="42" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <line x1="0" x2="1099" y1="84" y2="84" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <line x1="0" x2="1099" y1="126" y2="126" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <line x1="0" x2="1099" y1="168" y2="168" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <line x1="0" x2="1099" y1="210" y2="210" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <text x="160.87639677734376" y="273.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: bold;" fill="black" dx="-16.614233016967773px">13:45
+        </text>
+        <text x="227.87834990234376" y="273.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-9.030298233032227px">:50
+        </text>
+        <text x="294.88030302734376" y="273.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-9.030298233032227px">:55
+        </text>
+        <text x="361.88225615234376" y="273.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: bold;" fill="black" dx="-16.614233016967773px">14:00
+        </text>
+        <text x="428.88420927734376" y="273.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-9.030298233032227px">:05
+        </text>
+        <text x="495.88616240234376" y="273.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-9.030298233032227px">:10
+        </text>
+        <text x="562.8881155273436" y="273.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-9.030298233032227px">:15
+        </text>
+        <text x="629.8900686523436" y="273.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-9.030298233032227px">:20
+        </text>
+        <text x="696.8920217773438" y="273.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-9.030298233032227px">:25
+        </text>
+        <text x="763.8939749023438" y="273.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-9.030298233032227px">:30
+        </text>
+        <text x="830.8959280273438" y="273.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-9.030298233032227px">:35
+        </text>
+        <text x="897.8978811523438" y="273.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-9.030298233032227px">:40
+        </text>
+        <text x="964.8998342773438" y="273.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-9.030298233032227px">:45
+        </text>
+        <text x="1031.9017874023436" y="273.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-9.030298233032227px">:50
+        </text>
+        <text x="1098.9037405273436" y="273.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-18.060596466064453px">:55
+        </text>
+    </g>
+    <g>
+    </g>
+    <g>
+        <path d="M 167.6728515625 76 L 167.6728515625 79.4990234375 A 25.5009765625 25.5009765625 0 0 0 193.173828125 105 L 193.173828125 105 M 187.51697387550763 99.34314575050762 L 194.173828125 105 L 187.51697387550763 110.65685424949238" fill="none" stroke="#db4437" stroke-width="1.4">
+        </path>
+        <path d="M 268.17578125 118 L 268.17578125 118 A 29 29 0 0 0 297.17578125 147 L 327.177734375 147 M 321.52088012550763 141.34314575050763 L 328.177734375 147 L 321.52088012550763 152.65685424949237" fill="none" stroke="#db4437" stroke-width="1.4">
+        </path>
+        <path d="M 636.6865234375 160 L 636.6865234375 160 A 29 29 0 0 0 665.6865234375 189 L 930.1953125 189 M 924.5384582505076 183.34314575050763 L 931.1953125 189 L 924.5384582505076 194.65685424949237" fill="none" stroke="#db4437" stroke-width="1.4">
+        </path>
+        <path d="M 1005.197265625 202 L 1005.197265625 202 A 29 29 0 0 0 1034.197265625 231 L 1064.19921875 231 M 1058.5423645005076 225.34314575050763 L 1065.19921875 231 L 1058.5423645005076 236.65685424949237" fill="none" stroke="#db4437" stroke-width="1.4">
+        </path>
+    </g>
+    <g>
+        <rect x="134.171875" y="51" width="67.001953125" height="26" rx="5" ry="5" fill="#424242">
+        </rect>
+        <rect x="201.173828125" y="93" width="134.00390625" height="26" rx="5" ry="5" fill="#424242">
+        </rect>
+        <rect x="335.177734375" y="135" width="603.017578125" height="26" rx="5" ry="5" fill="#424242">
+        </rect>
+        <rect x="938.1953125" y="177" width="134.00390625" height="26" rx="5" ry="5" fill="#424242">
+        </rect>
+    </g>
+    <g>
+        <rect x="134.171875" y="8" width="938.02734375" height="26" rx="5" ry="5" fill="#2a56c6" filter="url(#rablfilter0)">
+        </rect>
+        <rect x="134.171875" y="50" width="67.001953125" height="26" rx="5" ry="5" fill="#db4437">
+        </rect>
+        <rect x="201.173828125" y="92" width="134.00390625" height="26" rx="5" ry="5" fill="#f2a600">
+        </rect>
+        <rect x="335.177734375" y="134" width="603.017578125" height="26" rx="5" ry="5" fill="#0f9d58">
+        </rect>
+        <rect x="938.1953125" y="176" width="134.00390625" height="26" rx="5" ry="5" fill="#db4437">
+        </rect>
+        <rect x="1072.19921875" y="218" width="26.80078125" height="26" rx="5" ry="5" fill="#ab47bc">
+        </rect>
+    </g>
+    <g>
+        <path d="M 1067.19921875 8 A 5 5 0 0 1 1072.19921875 13 L 1072.19921875 29 A 5 5 0 0 1 1067.19921875 34 L 139.171875 34 A 5 5 0 0 1 134.171875 29 L 134.171875 13 A 5 5 0 0 1 139.171875 8 Z" fill="#204195">
+        </path>
+        <path d="M 196.173828125 50 A 5 5 0 0 1 201.173828125 55 L 201.173828125 71 A 5 5 0 0 1 196.173828125 76 L 139.171875 76 A 5 5 0 0 1 134.171875 71 L 134.171875 55 A 5 5 0 0 1 139.171875 50 Z" fill="#a52714">
+        </path>
+        <path d="M 330.177734375 92 A 5 5 0 0 1 335.177734375 97 L 335.177734375 113 A 5 5 0 0 1 330.177734375 118 L 206.173828125 118 A 5 5 0 0 1 201.173828125 113 L 201.173828125 97 A 5 5 0 0 1 206.173828125 92 Z" fill="#ee8100">
+        </path>
+        <path d="M 787.44091796875 134 A 0 0 0 0 1 787.44091796875 134 L 787.44091796875 160 A 0 0 0 0 1 787.44091796875 160 L 340.177734375 160 A 5 5 0 0 1 335.177734375 155 L 335.177734375 139 A 5 5 0 0 1 340.177734375 134 Z" fill="#0b8043">
+        </path>
+    </g>
+    <g>
+        <text x="118.171875" y="25.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#5e97f6" dx="-86.32421875px">Listen to music
+        </text>
+        <text x="118.171875" y="67.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#db4437" dx="-99.5791015625px">Walk to train stop
+        </text>
+        <text x="118.171875" y="109.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#f2a600" dx="-75.0654296875px">Wait for train
+        </text>
+        <text x="118.171875" y="151.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#0f9d58" dx="-55.0908203125px">Train ride
+        </text>
+        <text x="118.171875" y="193.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#db4437" dx="-75.8583984375px">Walk to work
+        </text>
+        <text x="118.171875" y="235.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#ab47bc" dx="-92.94140625px">Sit down at desk
+        </text>
+    </g>
+    <g>
+        <g>
+            <rect x="776.66796875" y="34" width="285.53125" height="150" rx="2" ry="2" fill="white" stroke="#c1c1c1" stroke-width="1.1" filter="url(#rablfilter0)">
+            </rect>
+            <text x="791.66796875" y="64.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px; font-weight: 500;" fill="#424242" dx="0px">Listen to music: 13:43:00.431 - 14:53:00.431
+            </text>
+            <text x="791.66796875" y="100.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#757575" dx="0px">Duration:
+            </text>
+            <text x="1047.19921875" y="100.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#757575" dx="-42.3896484375px">1h 10m
+            </text>
+            <text x="791.66796875" y="131.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#757575" dx="0px">Percent done:
+            </text>
+            <text x="1047.19921875" y="131.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#757575" dx="-36.162109375px">100 %
+            </text>
+            <text x="791.66796875" y="162.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#757575" dx="0px">Resource:
+            </text>
+            <text x="1047.19921875" y="162.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#5e97f6" dx="-33.44140625px">music
+            </text>
+        </g>
+    </g>
+</svg>

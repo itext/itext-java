@@ -78,7 +78,7 @@ public class EventCounterHandler {
     }
 
     /**
-     * Returns the singleton instance of the factory.
+     * @return the singleton instance of the factory.
      */
     public static EventCounterHandler getInstance() {
         return instance;
@@ -88,9 +88,9 @@ public class EventCounterHandler {
      * Triggers all registered {@link IEventCounterFactory} to produce {@link EventCounter} instance
      * and count the event.
      *
-     * @param event
-     * @param metaInfo
-     * @param caller
+     * @param event {@link IEvent} to be counted
+     * @param metaInfo {@link IMetaInfo} object that can holds information about instance that throws the event
+     * @param caller the class that throws the event
      */
     public void onEvent(IEvent event, IMetaInfo metaInfo, Class<?> caller) {
         IContext context = null;

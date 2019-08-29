@@ -47,14 +47,16 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.Property;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -62,10 +64,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-final class TypographyUtils {
+public final class TypographyUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(TypographyUtils.class);
 
@@ -121,6 +120,17 @@ final class TypographyUtils {
         }
         TYPOGRAPHY_MODULE_INITIALIZED = moduleFound;
         SUPPORTED_SCRIPTS = supportedScripts;
+    }
+
+    private TypographyUtils() {
+    }
+
+    /**
+     * Checks if layout module can access pdfCalligraph
+     * @return <code>true</code> if layout can access pdfCalligraph and <code>false</code> otherwise
+     */
+    public static boolean isPdfCalligraphAvailable() {
+        return TYPOGRAPHY_MODULE_INITIALIZED;
     }
 
     static void applyOtfScript(FontProgram fontProgram, GlyphLine text, Character.UnicodeScript script, Object typographyConfig) {
@@ -247,10 +257,6 @@ final class TypographyUtils {
         }
     }
 
-    static boolean isTypographyModuleInitialized() {
-        return TYPOGRAPHY_MODULE_INITIALIZED;
-    }
-
     private static Object callMethod(String className, String methodName, Class[] parameterTypes, Object... args) {
         return callMethod(className, methodName, (Object) null, parameterTypes, args);
     }
@@ -266,6 +272,15 @@ final class TypographyUtils {
         } catch (IllegalArgumentException e) {
             logger.warn(MessageFormatUtil.format("Illegal arguments passed to {0}#{1} method call: {2}", className, methodName, e.getMessage()));
         } catch (Exception e) {
+            // Converting checked exceptions to unchecked RuntimeException (java-specific comment).
+            //
+            // If typography utils throws an exception at this point, we consider it as unrecoverable situation for
+            // its callers (layouting methods). Presence of typography module in class path is checked before.
+            // It's might be more suitable to wrap checked exceptions at a bit higher level, but we do it here for
+            // the sake of convenience.
+            //
+            // The RuntimeException exception is used instead of, for example, PdfException, because failure here is
+            // unexpected and is not connected to PDF documents processing.
             throw new RuntimeException(e.toString(), e);
         }
         return null;
@@ -280,6 +295,15 @@ final class TypographyUtils {
         } catch (ClassNotFoundException e) {
             logger.warn(MessageFormatUtil.format("Cannot find class {0}", className));
         } catch (Exception exc) {
+            // Converting checked exceptions to unchecked RuntimeException (java-specific comment).
+            //
+            // If typography utils throws an exception at this point, we consider it as unrecoverable situation for
+            // its callers (layouting methods). Presence of typography module in class path is checked before.
+            // It's might be more suitable to wrap checked exceptions at a bit higher level, but we do it here for
+            // the sake of convenience.
+            //
+            // The RuntimeException exception is used instead of, for example, PdfException, because failure here is
+            // unexpected and is not connected to PDF documents processing.
             throw new RuntimeException(exc.toString(), exc);
         }
         return null;

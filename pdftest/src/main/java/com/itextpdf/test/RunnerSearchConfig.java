@@ -43,7 +43,6 @@
  */
 package com.itextpdf.test;
 
-import com.itextpdf.test.annotations.WrapToTest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,11 +51,9 @@ public class RunnerSearchConfig {
     private List<String> searchPackages = new ArrayList<>();
     private List<String> searchClasses = new ArrayList<>();
     private List<String> ignoredPaths = new ArrayList<>();
-    private boolean isToMarkTestsWithoutAnnotationAsIgnored;
 
     /**
      * Add package to search path which is checked for wrapped sample classes.
-     * Tests run only if they have {@link WrapToTest} annotation.
      * @param fullName full name of package to be checked.
      * @return this RunnerSearchConfig
      */
@@ -66,7 +63,7 @@ public class RunnerSearchConfig {
     }
 
     /**
-     * Add class to runner if it has {@link WrapToTest} annotation.
+     * Add class to runner.
      * @param fullName full name of class to be checked.
      * @return this RunnerSearchConfig
      */
@@ -86,18 +83,7 @@ public class RunnerSearchConfig {
         return this;
     }
 
-    /**
-     * If a class was found in search path, and it has DEST field and main method, but it doesn't have
-     * WrapToTest annotation, this test will be marked as ignored with corresponding message in case this option is used.
-     * @return this RunnerSearchConfig
-     */
-    public RunnerSearchConfig markTestsWithoutAnnotationAsIgnored() {
-        isToMarkTestsWithoutAnnotationAsIgnored = true;
-        return this;
-    }
-
     public List<String> getSearchPackages() { return searchPackages; }
     public List<String> getSearchClasses() { return searchClasses; }
     public List<String> getIgnoredPaths() { return ignoredPaths; }
-    public boolean isToMarkTestsWithoutAnnotationAsIgnored() { return isToMarkTestsWithoutAnnotationAsIgnored; }
 }

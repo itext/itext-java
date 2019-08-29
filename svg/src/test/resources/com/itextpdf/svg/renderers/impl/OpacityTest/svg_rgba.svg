@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="595pt" height="842pt" version="1.1">
+        <circle cx="50" cy="450" r="30" fill="rgba(128, 0, 128, 0)"/>
+        <circle cx="90" cy="450" r="30" fill="rgba(0, 0, 255, 1)"/>
+        <circle cx="130" cy="450" r="30" fill="rgba(0, 255, 0, 0.5)"/>
+        <circle cx="170" cy="450" r="30" fill="rgba(255, 255, 0, -1)"/>
+        <circle cx="210" cy="450" r="30" fill="rgba(255, 0, 0, 0,75)"/>
+        <circle cx="250" cy="450" r="30" fill="rgba(255, 165, 0, 0.25)"/>
+        <circle cx="290" cy="450" r="30" fill="rgba(255, 192, 203, 5)"/>
+        <circle cx="330" cy="450" r="30" fill="rgba(165, 42, 42, 75%)"/>
+        <circle cx="370" cy="450" r="30" fill="rgba(0, 128, 128, 150%)"/>
+        <circle cx="410" cy="450" r="30" fill="rgba(0, 128, 128, -20%)"/>
+</svg>

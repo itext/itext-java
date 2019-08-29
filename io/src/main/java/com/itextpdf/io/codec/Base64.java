@@ -1,8 +1,9 @@
 package com.itextpdf.io.codec;
 
 /**
- * <p>Encodes and decodes to and from Base64 notation.</p>
- * <p>Homepage: <a href="http://iharder.net/base64">http://iharder.net/base64</a>.</p>
+ * Encodes and decodes to and from Base64 notation.
+ * <p>
+ * Homepage: <a href="http://iharder.net/base64">http://iharder.net/base64</a>.
  * <br>
  * Change Log:
  * <br>
@@ -440,7 +441,7 @@ public class Base64 {
 
 
     /**
-     * <p>Encodes up to three bytes of the array <var>source</var>
+     * Encodes up to three bytes of the array <var>source</var>
      * and writes the resulting four Base64 bytes to <var>destination</var>.
      * The source and destination arrays can be manipulated
      * anywhere along their length by specifying
@@ -450,9 +451,10 @@ public class Base64 {
      * the <var>source</var> array or <var>destOffset</var> + 4 for
      * the <var>destination</var> array.
      * The actual number of significant bytes in your array is
-     * given by <var>numSigBytes</var>.</p>
-     * <p>This is the lowest level of the encoding methods with
-     * all possible parameters.</p>
+     * given by <var>numSigBytes</var>.
+     * <p>
+     * This is the lowest level of the encoding methods with
+     * all possible parameters.
      *
      * @param source      the array to convert
      * @param srcOffset   the index where conversion begins
@@ -796,8 +798,9 @@ public class Base64 {
      * the <var>destination</var> array.
      * This method returns the actual number of bytes that
      * were converted from the Base64 encoding.
-     * <p>This is the lowest level of the decoding methods with
-     * all possible parameters.</p>
+     * <p>
+     * This is the lowest level of the decoding methods with
+     * all possible parameters.
      *
      * @param source      the array to convert
      * @param srcOffset   the index where conversion begins

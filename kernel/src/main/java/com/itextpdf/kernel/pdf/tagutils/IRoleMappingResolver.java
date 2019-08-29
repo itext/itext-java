@@ -48,7 +48,8 @@ import java.io.Serializable;
 /**
  * A helper interface that facilitates roles mapping resolving for the tag structures that are defined for different
  * PDF document specification versions.
- * <p>Be aware, that it is explicitly allowed for the document by the specification to have circular or transitive mappings.</p>
+ * <p>
+ * Be aware, that it is explicitly allowed for the document by the specification to have circular or transitive mappings.
  */
 public interface IRoleMappingResolver extends Serializable {
 

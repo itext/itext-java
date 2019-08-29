@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="overflow: hidden; cursor: wait;" aria-label="A chart." width="350"
+     height="300">
+    <defs id="defs" style="cursor: wait;"/>
+    <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="0" y="0" width="350" height="300"/>
+    <g style="cursor: wait;">
+        <text font-family="Arial" font-size="14" font-weight="bold" style="cursor: wait;" fill="#000000" stroke="none"
+              stroke-width="0" text-anchor="start" x="77" y="15">Weather
+        </text>
+        <text font-family="Arial" font-size="12" font-weight="normal" style="cursor: wait;" fill="#000000" stroke="none"
+              stroke-width="0" text-anchor="start" x="70" y="29">(No. of regions in brackets)
+        </text>
+        <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="5" y="14"
+              width="340" height="14"/>
+    </g>
+    <g style="cursor: wait;">
+        <path style="cursor: wait;" fill="#282a82" stroke="#ffffff" stroke-width="1"
+              d="M 175 126 L 175 42 A 84 84 0 0 1 258.095 138.298 L 175 126 A 0 0 0 0 0 175 126"/>
+        <text font-family="Arial" font-size="11" font-weight="bold" style="cursor: wait;" fill="#ffffff" stroke="none"
+              stroke-width="0" text-anchor="start" x="202.9787" y="92.3324">27.3%
+        </text>
+    </g>
+    <g style="cursor: wait;">
+        <path style="cursor: wait;" fill="#5052aa" stroke="#ffffff" stroke-width="1"
+              d="M 175 126 L 258.095 138.298 A 84 84 0 0 1 220.107 196.861 L 175 126 A 0 0 0 0 0 175 126"/>
+        <text font-family="Arial" font-size="11" font-weight="bold" style="cursor: wait;" fill="#ffffff" stroke="none"
+              stroke-width="0" text-anchor="start" x="207.2392" y="160.8164">13.6%
+        </text>
+    </g>
+    <g style="cursor: wait;">
+        <path style="cursor: wait;" fill="#a0a2fa" stroke="#ffffff" stroke-width="1"
+              d="M 175 126 L 148.198 205.609 A 84 84 0 0 1 175 42 L 175 126 A 0 0 0 0 0 175 126"/>
+        <text font-family="Arial" font-size="11" font-weight="bold" style="cursor: wait;" fill="#000000" stroke="none"
+              stroke-width="0" text-anchor="start" x="103.4903" y="120.6747">44.8%
+        </text>
+    </g>
+    <g style="cursor: wait;">
+        <path style="cursor: wait;" fill="#787ad2" stroke="#ffffff" stroke-width="1"
+              d="M 175 126 L 220.107 196.861 A 84 84 0 0 1 148.198 205.609 L 175 126 A 0 0 0 0 0 175 126"/>
+        <text font-family="Arial" font-size="11" font-weight="bold" style="cursor: wait;" fill="#000000" stroke="none"
+              stroke-width="0" text-anchor="start" x="167.2492" y="193.5488">14.2%
+        </text>
+    </g>
+    <g style="cursor: wait;">
+        <g style="cursor: wait;">
+            <g style="cursor: wait;">
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none"
+                      stroke-width="0" text-anchor="end" x="345" y="79.9507">Cloudy
+                </text>
+            </g>
+            <g style="cursor: wait;">
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none"
+                      stroke-width="0" text-anchor="end" x="345" y="97.7493">(9)
+                </text>
+            </g>
+        </g>
+        <g style="cursor: wait;">
+            <path style="cursor: wait;" fill="none" fill-opacity="1" stroke="#636363" stroke-opacity="0.7"
+                  stroke-width="1" d="M 235.25 85.5 L 270.5 85.5 L 270.5 85.5 L 345.5 85.5"/>
+            <circle style="cursor: wait;" fill="#636363" fill-opacity="0.7" stroke="none" stroke-width="0" cx="223.5"
+                    cy="85.5" r="0"/>
+        </g>
+        <g style="cursor: wait;">
+            <g style="cursor: wait;">
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none"
+                      stroke-width="0" text-anchor="end" x="345" y="137.5515">Amount of
+                </text>
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none"
+                      stroke-width="0" text-anchor="end" x="345" y="151.9508">Sunny days
+                </text>
+            </g>
+            <g style="cursor: wait;">
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none"
+                      stroke-width="0" text-anchor="end" x="345" y="169.7493">(6)
+                </text>
+            </g>
+        </g>
+        <g style="cursor: wait;">
+            <path style="cursor: wait;" fill="none" fill-opacity="1" stroke="#636363" stroke-opacity="0.7"
+                  stroke-width="1" d="M 240.5 157.5 L 270.5 157.5 L 270.5 157.5 L 345.5 157.5"/>
+            <circle style="cursor: wait;" fill="#636363" fill-opacity="0.7" stroke="none" stroke-width="0" cx="230.5"
+                    cy="157.5" r="0"/>
+        </g>
+        <g style="cursor: wait;">
+            <g style="cursor: wait;">
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none"
+                      stroke-width="0" text-anchor="end" x="345" y="186.9508">Partly cloudy
+                </text>
+            </g>
+            <g style="cursor: wait;">
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none"
+                      stroke-width="0" text-anchor="end" x="345" y="204.7493">(11)
+                </text>
+            </g>
+        </g>
+        <g style="cursor: wait;">
+            <path style="cursor: wait;" fill="none" fill-opacity="1" stroke="#636363" stroke-opacity="0.7"
+                  stroke-width="1" d="M 199.25 189.5 L 270.5 189.5 L 270.5 192.5 L 345.5 192.5"/>
+            <circle style="cursor: wait;" fill="#636363" fill-opacity="0.7" stroke="none" stroke-width="0" cx="175.5"
+                    cy="189.5" r="0"/>
+        </g>
+        <g style="cursor: wait;">
+            <g style="cursor: wait;">
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none"
+                      stroke-width="0" text-anchor="start" x="5" y="110.9508">Rainfall
+                </text>
+            </g>
+            <g style="cursor: wait;">
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none"
+                      stroke-width="0" text-anchor="start" x="5" y="128.7493">(24)
+                </text>
+            </g>
+        </g>
+        <g style="cursor: wait;">
+            <path style="cursor: wait;" fill="none" fill-opacity="1" stroke="#636363" stroke-opacity="0.7"
+                  stroke-width="1" d="M 103.6 116.5 L 80.5 116.5 L 80.5 116.5 L 5.5 116.5"/>
+            <circle style="cursor: wait;" fill="#636363" fill-opacity="0.7" stroke="none" stroke-width="0" cx="113.5"
+                    cy="116.5" r="0"/>
+        </g>
+    </g>
+    <g style="cursor: wait;"/>
+</svg>

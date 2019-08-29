@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 
 /**
  * Image implementation for WMF, Windows Metafile.
@@ -90,7 +91,7 @@ public class WmfImageData extends ImageData {
      */
     public WmfImageData(byte[] bytes) {
         super(bytes, ImageType.WMF);
-        byte[] imageType = readImageType(url);
+        byte[] imageType = readImageType(bytes);
         if (!imageTypeIs(imageType, wmf)) {
             throw new PdfException(PdfException.NotAWmfImage);
         }
@@ -122,5 +123,9 @@ public class WmfImageData extends ImageData {
             }
         }
 
+    }
+    
+    private static byte[] readImageType(byte[] bytes) {
+    	return Arrays.copyOfRange(bytes, 0, 8);
     }
 }

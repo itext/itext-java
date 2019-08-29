@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="890" height="500" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <linearGradient id="_ABSTRACT_RENDERER_ID_0" x1="588.3333333333333" y1="0" x2="737.6666666666666" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" style="stop-color:#ff0000;stop-opacity:1">
+            </stop>
+            <stop offset="100%" style="stop-color:#dddddd;stop-opacity:1">
+            </stop>
+        </linearGradient>
+        <linearGradient id="_ABSTRACT_RENDERER_ID_1" x1="736.6666666666666" y1="0" x2="885" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" style="stop-color:#dddddd;stop-opacity:1">
+            </stop>
+            <stop offset="100%" style="stop-color:#00dd00;stop-opacity:1">
+            </stop>
+        </linearGradient>
+    </defs>
+    <g>
+        <rect x="588.3333333333333" y="11.345075188955022" width="296.6666666666667" height="7.060958678806189" stroke="#999999" stroke-width="2" fill-opacity="1" fill="none">
+        </rect>
+        <rect x="588.3333333333333" y="11.345075188955022" width="149.33333333333334" height="7.060958678806189" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+        </rect>
+        <rect x="736.6666666666666" y="11.345075188955022" width="148.33333333333334" height="7.060958678806189" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_1)">
+        </rect>
+    </g>
+    <g style="cursor: pointer;">
+        <rect x="533" y="37" width="352" height="256" stroke="#ffffff" stroke-width="1" fill="#d5ddd5">
+        </rect>
+        <text text-anchor="middle" x="709" y="169.2"  font-size="12" stroke="none" stroke-width="0" fill="#000000">America
+        </text>
+    </g>
+    <g style="cursor: pointer;">
+        <rect x="278" y="37" width="255" height="457" stroke="#ffffff" stroke-width="1" fill="#e3b3b3">
+        </rect>
+        <text text-anchor="middle" x="405.5" y="269.7"  font-size="12" stroke="none" stroke-width="0" fill="#000000">Europe
+        </text>
+    </g>
+    <g style="cursor: pointer;">
+        <rect x="5" y="37" width="273" height="457" stroke="#ffffff" stroke-width="1" fill="#d1ddd1">
+        </rect>
+        <text text-anchor="middle" x="141.5" y="269.7"  font-size="12" stroke="none" stroke-width="0" fill="#000000">Asia
+        </text>
+    </g>
+    <g style="cursor: pointer;">
+        <rect x="533" y="293" width="352" height="201" stroke="#ffffff" stroke-width="1" fill="#bfddbf">
+        </rect>
+        <text text-anchor="middle" x="709" y="397.7"  font-size="12" stroke="none" stroke-width="0" fill="#000000">Africa
+        </text>
+    </g>
+    <g style="cursor: pointer;">
+        <rect x="5" y="22.75110905671623" width="880" height="15" stroke="#ffffff" stroke-width="1" fill="#cccccc">
+        </rect>
+        <text text-anchor="middle" x="445" y="34.451109056716234"  font-size="12" font-weight="bold" stroke="none" stroke-width="0" fill="#000000">Global
+        </text>
+    </g>
+    <g>
+        <rect x="530.5" y="34.5" width="357" height="261" stroke="#ffffff" stroke-width="5" stroke-opacity="0.2" fill-opacity="1" fill="none">
+        </rect>
+        <rect x="531" y="35" width="356" height="260" stroke="#ffffff" stroke-width="4" stroke-opacity="0.4" fill-opacity="1" fill="none">
+        </rect>
+        <rect x="531.5" y="35.5" width="355" height="259" stroke="#ffffff" stroke-width="3" stroke-opacity="0.6" fill-opacity="1" fill="none">
+        </rect>
+    </g>
+</svg>

@@ -42,12 +42,21 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.svg.converter.SvgConverter;
+import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 
@@ -57,6 +66,11 @@ public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/ClipPathTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/ClipPathTest/";
 
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
+
+    private SvgConverterProperties properties;
+
     @BeforeClass
     public static void beforeClass() {
         ITextTest.createDestinationFolder(destinationFolder);
@@ -64,36 +78,75 @@ public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void rectClipPathComplexTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "clippath_rect_complex");
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_rect_complex");
     }
 
     @Test
     public void rectClipPathSimpleTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "clippath_rect_simple");
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_rect_simple");
     }
 
     @Test
     public void circleClipPathComplexTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "clippath_circle_complex");
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_circle_complex");
     }
 
     @Test
     public void circleClipPathSimpleTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "clippath_circle_simple");
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_circle_simple");
     }
 
     @Test
     public void multiClipPathComplexTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "clippath_multi_complex");
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_multi_complex");
     }
 
     @Test
     public void moveClipPathTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "clippath_move");
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_move");
     }
 
     @Test
     public void moveClipPathRuleMultipleTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePageVisually(sourceFolder, destinationFolder, "clippath_rule_multiple");
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_rule_multiple");
     }
+
+    @Test
+    public void clipRule() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipRule");
+    }
+
+    @Test
+    public void clipPathRuleParameterVsFillRule() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathRuleParameterVsFillRule");
+    }
+
+    @Test
+    public void clipPathRuleEvenoddNonzero() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathRuleEvenoddNonzero");
+    }
+
+    @Test
+    //TODO: update after DEVSIX-2827
+    public void clipPathCss() throws IOException, InterruptedException {
+        properties = new SvgConverterProperties().setBaseUri(sourceFolder);
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathCss", properties);
+    }
+
+    @Test
+    public void clipPathCssProperty() throws IOException, InterruptedException {
+        properties = new SvgConverterProperties().setBaseUri(sourceFolder);
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathCssProperty", properties);
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 27),
+            @LogMessage(messageTemplate = LogMessageConstant.ERROR_RESOLVING_PARENT_STYLES, count = 27),
+    })
+    //TODO: update after DEVSIX-2377
+    public void clipPathRulesCombined() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathRulesCombined");
+    }
+
 }

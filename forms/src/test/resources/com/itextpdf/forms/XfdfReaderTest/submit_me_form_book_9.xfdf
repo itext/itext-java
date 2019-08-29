@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">
+<fields>
+<field name="XFDF"/>
+<field name="personal">
+<field name="loginname">
+<value>blowagie</value>
+</field>
+<field name="name">
+<value>Bruno Lowagie</value>
+</field>
+<field name="password"/>
+<field name="reason">
+<value>I like to wathc movies!</value>
+</field>
+</field>
+</fields>
+<f href="submit_me_form_book_9.pdf"/>
+</xfdf>

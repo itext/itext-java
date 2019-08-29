@@ -122,7 +122,7 @@ public class SignatureUtil {
      * <p>
      * The returned {@link PdfPKCS7} can be used to fetch additional info about the signature
      * and also to perform integrity check of data signed by the given signature field.
-     * </p>
+     * <p>
      * In order to check that given signature covers the current PdfDocument revision please
      * use {@link #signatureCoversWholeDocument(String)} method.
      *
@@ -144,7 +144,7 @@ public class SignatureUtil {
      * <p>
      * The returned {@link PdfPKCS7} can be used to fetch additional info about the signature
      * and also to perform integrity check of data signed by the given signature field.
-     * </p>
+     * <p>
      * In order to check that given signature covers the current PdfDocument revision please
      * use {@link #signatureCoversWholeDocument(String)} method.
      *
@@ -167,7 +167,7 @@ public class SignatureUtil {
      * <p>
      * The returned {@link PdfPKCS7} can be used to fetch additional info about the signature
      * and also to perform integrity check of data signed by the given signature field.
-     * </p>
+     * <p>
      * In order to validate the signature it is required to check if it covers the entire file,
      * otherwise one cannot be sure that signature in question indeed signs the data
      * that constitutes current {@link PdfDocument} with all its contents.
@@ -189,7 +189,7 @@ public class SignatureUtil {
      * <p>
      * The returned {@link PdfPKCS7} can be used to fetch additional info about the signature
      * and also to perform integrity check of data signed by the given signature field.
-     * </p>
+     * <p>
      * Prepared {@link PdfPKCS7} instance calculates digest based on signature's /ByteRange entry.
      * In order to check that /ByteRange is properly defined and given signature indeed covers the current PDF document
      * revision please use {@link #signatureCoversWholeDocument(String)} method.
@@ -358,7 +358,7 @@ public class SignatureUtil {
      * If this method does not return {@code true} it means that signature in question does not cover the entire
      * contents of current {@link PdfDocument}. Such signatures cannot be considered as verifying the PDF document,
      * because content that is not covered by signature might have been modified since the signature creation.
-     * </p>
+     * <p>
      * @param name the signature field name
      * @return true if the signature covers the entire document, false if it doesn't
      */

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+<defs>
+      <marker id="red-chevron" viewBox="0 0 10 10" preserveAspectRatio="xMinYMin slice" refX="5" refY="5" orient="auto">
+         <path d="M 0 0 L 10 5 L 0 10" fill="none" stroke="red"/>
+      </marker>
+
+      <marker id="black-arrow" viewBox="0 0 10 10" refX="0" refY="5" orient="auto">
+         <path d="M 0 0 L 10 5 L 0 10 z"/>
+      </marker>
+
+      <marker id="red-circle" viewBox="0 0 10 10" preserveAspectRatio="xMidYMid meet"  refX="5" refY="5" orient="auto">
+         <circle fill="red" cx="5" cy="5" r="5"/>
+      </marker>
+</defs>
+  
+  <line  x1="20" y1="20" x2="100" y2="100" style="stroke-width:8; stroke:blue;
+   marker-start:url(#red-chevron); marker-end:url(#black-arrow); marker-mid:url(#red-circle);"/>
+    <text x="20" y="150"> line: marker-mid not applied</text>
+  
+  <polyline  points="220,20 300,100 400,20" style="fill:none; stroke-width:8;
+  stroke:blue; marker-start:url(#red-chevron); marker-end:url(#black-arrow); marker-mid:url(#red-circle);"/>
+    <text x="250" y="150"> polyline </text>
+   
+  <polygon  points="20,190 100,200 150,300 100,350 20,260" style="marker-start:url(#red-chevron);
+   marker-end:url(#black-arrow); marker-mid:url(#red-circle); fill:none; stroke-width:5;stroke:black;"/>
+   <text x="20" y="390"> polygon: end/start overlap </text>
+      
+  <path d="M250,350 l 25,-25 
+        a15,5 -16 0,1 10,-15 l 20,-5 
+        a15,10 -16 0,1 10,-15 l 20,-5 
+        a15,25 -16 0,1 10,-15 l 20,-5 
+        a15,35 -16 0,1 10,-15 l 20,-5"
+        style="fill:none; stroke:green; stroke-width:2; marker-start:url(#red-chevron);
+        marker-end:url(#black-arrow); marker-mid:url(#red-circle);"/>
+      <text x="250" y="390"> path with arc segments </text>
+</svg>

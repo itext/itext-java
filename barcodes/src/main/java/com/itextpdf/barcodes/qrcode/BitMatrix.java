@@ -44,16 +44,16 @@
 package com.itextpdf.barcodes.qrcode;
 
 /**
- * <p>Represents a 2D matrix of bits. In function arguments below, and throughout the common
+ * Represents a 2D matrix of bits. In function arguments below, and throughout the common
  * module, x is the column position, and y is the row position. The ordering is always x, y.
- * The origin is at the top-left.</p>
- *
- * <p>Internally the bits are represented in a 1-D array of 32-bit ints. However, each row begins
+ * The origin is at the top-left.
+ * <p>
+ * Internally the bits are represented in a 1-D array of 32-bit ints. However, each row begins
  * with a new int. This is done intentionally so that we can copy out a row into a BitArray very
- * efficiently.</p>
- *
- * <p>The ordering of bits is row-major. Within each int, the least significant bits are used first,
- * meaning they represent lower x values. This is compatible with BitArray's implementation.</p>
+ * efficiently.
+ * <p>
+ * The ordering of bits is row-major. Within each int, the least significant bits are used first,
+ * meaning they represent lower x values. This is compatible with BitArray's implementation.
  *
  * @author Sean Owen
  * @author dswitkin@google.com (Daniel Switkin)
@@ -85,7 +85,7 @@ final class BitMatrix {
     }
 
     /**
-     * <p>Gets the requested bit, where true means black.</p>
+     * Gets the requested bit, where true means black.
      *
      * @param x The horizontal component (i.e. which column)
      * @param y The vertical component (i.e. which row)
@@ -97,7 +97,7 @@ final class BitMatrix {
     }
 
     /**
-     * <p>Sets the given bit to true.</p>
+     * Sets the given bit to true.
      *
      * @param x The horizontal component (i.e. which column)
      * @param y The vertical component (i.e. which row)
@@ -108,7 +108,7 @@ final class BitMatrix {
     }
 
     /**
-     * <p>Flips the given bit.</p>
+     * Flips the given bit.
      *
      * @param x The horizontal component (i.e. which column)
      * @param y The vertical component (i.e. which row)
@@ -129,7 +129,7 @@ final class BitMatrix {
     }
 
     /**
-     * <p>Sets a square region of the bit matrix to true.</p>
+     * Sets a square region of the bit matrix to true.
      *
      * @param left The horizontal position to begin at (inclusive)
      * @param top The vertical position to begin at (inclusive)

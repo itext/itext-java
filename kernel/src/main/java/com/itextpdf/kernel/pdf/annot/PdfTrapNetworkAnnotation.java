@@ -144,10 +144,10 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
      * @param version an unordered {@link PdfArray} of all objects present in the page description at the time the trap networks
      *                were generated. If present, the array shall include the following objects:
      *                <ul>
-     *                    <li>all page content streams;</li>
-     *                    <li>all page resource objects (other than procedure sets);</li>
-     *                    <li>all resource objects (other than procedure sets) of any form XObjects on the page;</li>
-     *                    <li>all OPI dictionaries associated with XObjects on the page (see ISO-320001 14.11.7, "Open Prepress Interface (OPI)")</li>
+     *                    <li>all page content streams;
+     *                    <li>all page resource objects (other than procedure sets);
+     *                    <li>all resource objects (other than procedure sets) of any form XObjects on the page;
+     *                    <li>all OPI dictionaries associated with XObjects on the page (see ISO-320001 14.11.7, "Open Prepress Interface (OPI)")
      *                 </ul>
      * @return this {@link PdfTrapNetworkAnnotation} instance.
      */

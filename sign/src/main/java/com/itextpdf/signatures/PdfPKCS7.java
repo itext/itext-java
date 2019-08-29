@@ -1182,7 +1182,7 @@ public class PdfPKCS7 {
      * one shall also always check that signed data is not only a part of PDF contents but is actually a complete PDF file.
      * In order to check that given signature covers the current {@link com.itextpdf.kernel.pdf.PdfDocument} please
      * use {@link SignatureUtil#signatureCoversWholeDocument(String)} method.
-     * </p>
+     *
      * @return <CODE>true</CODE> if the signature checks out, <CODE>false</CODE> otherwise
      * @throws java.security.GeneralSecurityException if this signature object is not initialized properly,
      * the passed-in signature is improperly encoded or of the wrong type, if this signature algorithm is unable to

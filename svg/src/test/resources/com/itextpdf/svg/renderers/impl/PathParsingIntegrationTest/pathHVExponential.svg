@@ -1,0 +1,17 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+        "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg viewBox="0 0 800 800" width="500" height="500"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <path d="M105.1 .109
+                 V 2e10
+                 L10 10
+                 H 2e+10
+"  stroke="red"/>
+    <line x1="0" x2="500" y1="0" y2="0" stroke="#9E9E9E" stroke-width="1">
+    </line>
+    <line x1="0" x2="500" y1="50" y2="50" stroke="#9E9E9E" stroke-width="1">
+    </line>
+    <line x1="0" x2="500" y1="100" y2="100" stroke="#9E9E9E" stroke-width="1">
+    </line>
+</svg>

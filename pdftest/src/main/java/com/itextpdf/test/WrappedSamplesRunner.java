@@ -42,7 +42,6 @@
  */
 package com.itextpdf.test;
 
-import com.itextpdf.test.annotations.WrapToTest;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -73,8 +72,10 @@ public abstract class WrappedSamplesRunner {
         List<Object[]> params = new ArrayList<Object[]>();
         for (String searchPath : searchConfig.getSearchPackages()) {
             File classesFolder = Paths.get("target/classes", searchPath.replace(".", "/")).toFile();
+            File testClassesFolder = Paths.get("target/test-classes", searchPath.replace(".", "/")).toFile();
             if (!searchPath.isEmpty())  searchPath += ".";
             List<RunnerParams> samplesParamsList = getClassNamesRecursively(classesFolder, searchPath, searchConfig);
+            samplesParamsList.addAll(getClassNamesRecursively(testClassesFolder, searchPath, searchConfig));
             for (RunnerParams sampleParam : samplesParamsList) {
                 params.add(new RunnerParams[] {sampleParam});
             }
@@ -192,7 +193,7 @@ public abstract class WrappedSamplesRunner {
     private void runMain() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Method mainMethod = getMain(sampleClass);
         if (mainMethod == null) {
-            throw new IllegalArgumentException("Class marked with WrapToTest annotation must have main method.");
+            throw new IllegalArgumentException("Class must have main method.");
         }
         mainMethod.invoke(null, new Object[] {null});
     }
@@ -244,32 +245,40 @@ public abstract class WrappedSamplesRunner {
 
         RunnerParams params = new RunnerParams();
         params.className = className;
-        if (!c.isAnnotationPresent(WrapToTest.class)) {
-            if (searchConfig.isToMarkTestsWithoutAnnotationAsIgnored() && isLookLikeTest(c)) {
-                params.ignoreMessage = MessageFormat.format("Class {0} seems to be a test but it doesn't have WrapToTest annotation.", className);
-                return params;
-            }
-            return null;
-        }
 
-        WrapToTest annot = c.getAnnotation(WrapToTest.class);
-        if (!annot.ignoreWithMessage().isEmpty()) {
-            params.ignoreMessage = annot.ignoreWithMessage();
-        }
         return params;
-    }
-
-    private static boolean isLookLikeTest(Class<?> c) {
-        return getStringField(c, "DEST") != null && getMain(c) != null;
     }
 
     private static boolean isIgnoredClassOrPackage(String fullName, RunnerSearchConfig searchConfig) {
         for (String ignoredPath : searchConfig.getIgnoredPaths()) {
-            if (fullName.contains(ignoredPath)) {
-                return true;
+            File currentFile = getFileByLocation("target/classes", ignoredPath);
+
+            if (currentFile == null) {
+                currentFile = getFileByLocation("target/test-classes", ignoredPath);
+            }
+
+            if (currentFile != null) {
+                if ((currentFile.isDirectory() && fullName.contains(ignoredPath))
+                        || (currentFile.isFile() && fullName.equals(ignoredPath))) {
+                    return true;
+                }
             }
         }
         return false;
+    }
+
+    private static File getFileByLocation(String targetSubDirectory, String filePath) {
+        File currentFile = Paths.get(targetSubDirectory, filePath.replace(".", "/")).toFile();
+        if (currentFile.exists()) {
+            return currentFile;
+        }
+
+        currentFile = Paths.get(targetSubDirectory, (filePath.replace(".", "/")) + ".class").toFile();
+        if (currentFile.exists()) {
+            return currentFile;
+        }
+
+        return null;
     }
 
     private static class RunnerParams {

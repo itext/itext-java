@@ -1,0 +1,194 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1099" height="400">
+    <defs>
+        <filter x="-100%" y="-100%" width="300%" height="300%" id="rablfilter0">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="1">
+            </feGaussianBlur>
+            <feOffset dx="0" dy="2">
+            </feOffset>
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.2">
+                </feFuncA>
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode>
+                </feMergeNode>
+                <feMergeNode in="SourceGraphic">
+                </feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g>
+        <rect x="0" y="0" width="1099" height="400" fill="#ffffff">
+        </rect>
+    </g>
+    <g>
+        <rect x="0" y="0" width="1099" height="30" fill="#ffffff">
+        </rect>
+        <rect x="0" y="30" width="1099" height="30" fill="#f5f5f5">
+        </rect>
+        <rect x="0" y="60" width="1099" height="30" fill="#ffffff">
+        </rect>
+        <rect x="0" y="90" width="1099" height="30" fill="#f5f5f5">
+        </rect>
+        <rect x="0" y="120" width="1099" height="30" fill="#ffffff">
+        </rect>
+        <rect x="0" y="150" width="1099" height="30" fill="#f5f5f5">
+        </rect>
+        <rect x="0" y="180" width="1099" height="30" fill="#ffffff">
+        </rect>
+        <rect x="0" y="210" width="1099" height="30" fill="#f5f5f5">
+        </rect>
+        <rect x="0" y="240" width="1099" height="30" fill="#ffffff">
+        </rect>
+        <rect x="0" y="270" width="1099" height="30" fill="#f5f5f5">
+        </rect>
+        <rect x="0" y="300" width="1099" height="30" fill="#ffffff">
+        </rect>
+        <rect x="0" y="330" width="1099" height="30" fill="#f5f5f5">
+        </rect>
+        <rect x="0" y="0" width="1099" height="360" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </rect>
+        <line x1="0" x2="1099" y1="30" y2="30" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <line x1="0" x2="1099" y1="60" y2="60" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <line x1="0" x2="1099" y1="90" y2="90" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <line x1="0" x2="1099" y1="120" y2="120" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <line x1="0" x2="1099" y1="150" y2="150" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <line x1="0" x2="1099" y1="180" y2="180" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <line x1="0" x2="1099" y1="210" y2="210" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <line x1="0" x2="1099" y1="240" y2="240" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <line x1="0" x2="1099" y1="270" y2="270" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <line x1="0" x2="1099" y1="300" y2="300" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <line x1="0" x2="1099" y1="330" y2="330" fill="none" stroke="#e0e0e0" stroke-width="1">
+        </line>
+        <text x="269.90908069349314" y="381.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-8.303955078125px">Jul
+        </text>
+        <text x="391.1671286386986" y="381.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-10.105578422546387px">Oct
+        </text>
+        <text x="512.4800941780823" y="381.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: bold;" fill="black" dx="-11.193517684936523px">Jan
+        </text>
+        <text x="512.4800941780823" y="396.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: bold;" fill="black" dx="-14.451025009155273px"> 2015
+        </text>
+        <text x="631.0471800085616" y="381.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-10.108739852905273px">Apr
+        </text>
+        <text x="750.9872056934931" y="381.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-8.303955078125px">Jul
+        </text>
+        <text x="872.2452536386986" y="381.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: normal;" fill="black" dx="-10.105578422546387px">Oct
+        </text>
+        <text x="993.5582191780821" y="381.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: bold;" fill="black" dx="-11.193517684936523px">Jan
+        </text>
+        <text x="993.5582191780821" y="396.203125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 13px; font-weight: bold;" fill="black" dx="-14.451025009155273px"> 2016
+        </text>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+    </g>
+    <g>
+        <rect x="136.84375" y="2" width="118.56708583047947" height="26" rx="5" ry="5" fill="#5e97f6">
+        </rect>
+        <rect x="256.7288580907534" y="32" width="119.94002568493147" height="26" rx="5" ry="5" fill="#db4437">
+        </rect>
+        <rect x="355.58052761130136" y="62" width="197.75825663527405" height="26" rx="5" ry="5" fill="#f2a600">
+        </rect>
+        <rect x="377.9869060359589" y="92" width="118.67692101883563" height="26" rx="5" ry="5" fill="#0f9d58">
+        </rect>
+        <rect x="400.3932844606164" y="122" width="337.413698630137" height="26" rx="5" ry="5" fill="#f2a600">
+        </rect>
+        <rect x="426.808647260274" y="152" width="309.68031357020544" height="26" rx="5" ry="5" fill="#f2a600">
+        </rect>
+        <rect x="497.9818493150685" y="182" width="118.62200342465752" height="26" rx="5" ry="5" fill="#ab47bc">
+        </rect>
+        <rect x="617.921875" y="212" width="118.56708583047941" height="26" rx="5" ry="5" fill="#5e97f6">
+        </rect>
+        <rect x="629.7291577482877" y="242" width="267.5585188356164" height="26" rx="5" ry="5" fill="#f2a600">
+        </rect>
+        <rect x="737.8069830907534" y="272" width="119.94002568493147" height="26" rx="5" ry="5" fill="#db4437">
+        </rect>
+        <rect x="859.0650310359589" y="302" width="118.67692101883563" height="26" rx="5" ry="5" fill="#0f9d58">
+        </rect>
+        <rect x="979.0599743150685" y="332" width="119.94002568493147" height="26" rx="5" ry="5" fill="#6a1b9a" filter="url(#rablfilter0)">
+        </rect>
+    </g>
+    <g>
+        <path d="M 250.41083583047947 2 A 5 5 0 0 1 255.41083583047947 7 L 255.41083583047947 23 A 5 5 0 0 1 250.41083583047947 28 L 141.84375 28 A 5 5 0 0 1 136.84375 23 L 136.84375 7 A 5 5 0 0 1 141.84375 2 Z" fill="#2a56c6">
+        </path>
+        <path d="M 371.6688837756849 32 A 5 5 0 0 1 376.6688837756849 37 L 376.6688837756849 53 A 5 5 0 0 1 371.6688837756849 58 L 261.7288580907534 58 A 5 5 0 0 1 256.7288580907534 53 L 256.7288580907534 37 A 5 5 0 0 1 261.7288580907534 32 Z" fill="#a52714">
+        </path>
+        <path d="M 548.3387842465754 62 A 5 5 0 0 1 553.3387842465754 67 L 553.3387842465754 83 A 5 5 0 0 1 548.3387842465754 88 L 360.58052761130136 88 A 5 5 0 0 1 355.58052761130136 83 L 355.58052761130136 67 A 5 5 0 0 1 360.58052761130136 62 Z" fill="#ee8100">
+        </path>
+        <path d="M 491.6638270547945 92 A 5 5 0 0 1 496.6638270547945 97 L 496.6638270547945 113 A 5 5 0 0 1 491.6638270547945 118 L 382.9869060359589 118 A 5 5 0 0 1 377.9869060359589 113 L 377.9869060359589 97 A 5 5 0 0 1 382.9869060359589 92 Z" fill="#0b8043">
+        </path>
+        <path d="M 700.6914762414383 122 A 0 0 0 0 1 700.6914762414383 122 L 700.6914762414383 148 A 0 0 0 0 1 700.6914762414383 148 L 405.3932844606164 148 A 5 5 0 0 1 400.3932844606164 143 L 400.3932844606164 127 A 5 5 0 0 1 405.3932844606164 122 Z" fill="#ee8100">
+        </path>
+        <path d="M 693.1337169306506 152 A 0 0 0 0 1 693.1337169306506 152 L 693.1337169306506 178 A 0 0 0 0 1 693.1337169306506 178 L 431.808647260274 178 A 5 5 0 0 1 426.808647260274 173 L 426.808647260274 157 A 5 5 0 0 1 431.808647260274 152 Z" fill="#ee8100">
+        </path>
+        <path d="M 611.603852739726 182 A 5 5 0 0 1 616.603852739726 187 L 616.603852739726 203 A 5 5 0 0 1 611.603852739726 208 L 502.9818493150685 208 A 5 5 0 0 1 497.9818493150685 203 L 497.9818493150685 187 A 5 5 0 0 1 502.9818493150685 182 Z" fill="#6a1b9a">
+        </path>
+        <path d="M 677.2054179152397 212 A 0 0 0 0 1 677.2054179152397 212 L 677.2054179152397 238 A 0 0 0 0 1 677.2054179152397 238 L 622.921875 238 A 5 5 0 0 1 617.921875 233 L 617.921875 217 A 5 5 0 0 1 622.921875 212 Z" fill="#2a56c6">
+        </path>
+        <path d="M 667.1873503852739 242 A 0 0 0 0 1 667.1873503852739 242 L 667.1873503852739 268 A 0 0 0 0 1 667.1873503852739 268 L 634.7291577482877 268 A 5 5 0 0 1 629.7291577482877 263 L 629.7291577482877 247 A 5 5 0 0 1 634.7291577482877 242 Z" fill="#ee8100">
+        </path>
+    </g>
+    <g>
+        <text x="120.84375" y="19.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#5e97f6" dx="-68.837890625px">Spring 2014
+        </text>
+        <text x="120.84375" y="49.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#db4437" dx="-78.94140625px">Summer 2014
+        </text>
+        <text x="120.84375" y="79.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#f2a600" dx="-89.8310546875px">Football Season
+        </text>
+        <text x="120.84375" y="109.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#0f9d58" dx="-77.3896484375px">Autumn 2014
+        </text>
+        <text x="120.84375" y="139.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#f2a600" dx="-86.7001953125px">Hockey Season
+        </text>
+        <text x="120.84375" y="169.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#f2a600" dx="-102.2587890625px">Basketball Season
+        </text>
+        <text x="120.84375" y="199.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#ab47bc" dx="-69.80859375px">Winter 2014
+        </text>
+        <text x="120.84375" y="229.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#5e97f6" dx="-68.837890625px">Spring 2015
+        </text>
+        <text x="120.84375" y="259.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#f2a600" dx="-91.369140625px">Baseball Season
+        </text>
+        <text x="120.84375" y="289.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#db4437" dx="-78.94140625px">Summer 2015
+        </text>
+        <text x="120.84375" y="319.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#0f9d58" dx="-77.3896484375px">Autumn 2015
+        </text>
+        <text x="120.84375" y="349.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#ab47bc" dx="-69.80859375px">Winter 2015
+        </text>
+    </g>
+    <g>
+        <g>
+            <rect x="748.7474743150685" y="219" width="230.3125" height="181" rx="2" ry="2" fill="white" stroke="#c1c1c1" stroke-width="1.1" filter="url(#rablfilter0)">
+            </rect>
+            <text x="763.7474743150685" y="249.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px; font-weight: 500;" fill="#424242" dx="0px">Winter 2015: Dec 2015 - Mar 2016
+            </text>
+            <text x="763.7474743150685" y="285.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#757575" dx="0px">Duration:
+            </text>
+            <text x="964.0599743150685" y="285.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#757575" dx="-51.7275390625px">3 months
+            </text>
+            <text x="763.7474743150685" y="316.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#757575" dx="0px">Percent done:
+            </text>
+            <text x="964.0599743150685" y="316.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#757575" dx="-22.162109375px">0 %
+            </text>
+            <text x="763.7474743150685" y="347.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#757575" dx="0px">Resource:
+            </text>
+            <text x="964.0599743150685" y="347.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#ab47bc" dx="-35.765625px">winter
+            </text>
+            <text x="763.7474743150685" y="378.8125" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#757575" dx="0px">Is on critical path
+            </text>
+            <text x="964.0599743150685" y="732" style="cursor: default; user-select: none; -webkit-font-smoothing: antialiased; font-size: 14px;" fill="#757575" dx="0px">
+            </text>
+        </g>
+    </g>
+</svg>

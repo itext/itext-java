@@ -114,16 +114,11 @@ public abstract class PdfXObject extends PdfObjectWrapper<PdfStream> {
     }
 
     /**
-     * <p>
      * Adds file associated with PDF XObject and identifies the relationship between them.
-     * </p>
-     * <p>
      * Associated files may be used in Pdf/A-3 and Pdf 2.0 documents.
      * The method adds file to array value of the AF key in the XObject dictionary.
-     * </p>
      * <p>
      * For associated files their associated file specification dictionaries shall include the AFRelationship key
-     * </p>
      *
      * @param fs          file specification dictionary of associated file
      */

@@ -48,7 +48,6 @@ import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -135,7 +134,6 @@ public class HyphenateTest extends ExtendedITextTest {
     private List<String> errors = new ArrayList<>();
 
     @Test
-    @Ignore("DEVSIX-2036")
     public void runTest() {
         for (TestParams param : params) {
             tryHyphenate(param.lang, param.testWorld, param.shouldPass);

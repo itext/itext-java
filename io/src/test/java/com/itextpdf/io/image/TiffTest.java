@@ -43,7 +43,12 @@
 package com.itextpdf.io.image;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
+import com.itextpdf.io.codec.TIFFDirectory;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -100,5 +105,13 @@ public class TiffTest {
         Assert.assertEquals(2592, img.getWidth(), 0);
         Assert.assertEquals(1456, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
+    }
+
+    @Test
+    public void getStringDataFromTiff() throws IOException {
+        byte[] bytes = Files.readAllBytes(Paths.get(sourceFolder, "img_cmyk.tif"));
+        TIFFDirectory dir = new TIFFDirectory(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(bytes)), 0);
+        String[] stringArray = new String[] {"iText? 7.1.7-SNAPSHOT ?2000-2019 iText Group NV (AGPL-version)\u0000"};
+        Assert.assertArrayEquals(stringArray, dir.getField(305).getAsStrings());
     }
 }

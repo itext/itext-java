@@ -32,15 +32,34 @@
         <Or>
             <And>
                 <Class name="com.itextpdf.layout.font.FontProvider"/>
+                <!-- 
+                    FontProvider is usually used in highlevel API, which requests fonts in deep underlying logic.
+                    IOException would mean that font is chosen and it is supposed to exist, however it cannot be read.
+                    Using fallbacks in such situations would make FontProvider less intuitive.
+                                    
+                    Even though softening of checked exceptions can be handled at higher levels in order to let
+                    the caller of this method know that font creation failed, we prefer to avoid bloating highlevel API
+                    and avoid making higher level code depend on low-level code because of the exceptions handling.
+                 -->
                 <Method name="getPdfFont"  params="com.itextpdf.layout.font.FontInfo, com.itextpdf.layout.font.FontSet" returns="com.itextpdf.kernel.font.PdfFont"/>
             </And>
             <And>
+                <!-- 
+                    Here creating of specific XMLReader is requested for processing patterns in hyphenation. 
+                    If it fails, hyphenation processing cannot be recovered.
+                 -->
                 <Class name="com.itextpdf.layout.hyphenation.PatternParser"/>
                 <Method name="createParser"/>
             </And>
             <And>
                 <Class name="com.itextpdf.layout.renderer.TypographyUtils"/>
                 <Or>
+                    <!--
+                        If typography utils throws an exception at this point, we consider it as unrecoverable situation for
+                        its callers (layouting methods). Presence of typography module in class path is checked before.
+                        It's might be more suitable to wrap checked exceptions at a bit higher level, but we do it here for
+                        the sake of convenience.
+                     -->
                     <Method name="callConstructor"/>
                     <Method name="callMethod" params="java.lang.String, java.lang.String, java.lang.Object, java.lang.Class[], java.lang.Object[]" returns="java.lang.Object"/>
                 </Or>

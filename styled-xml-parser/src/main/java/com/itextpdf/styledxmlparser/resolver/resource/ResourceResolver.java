@@ -95,7 +95,6 @@ public class ResourceResolver {
      * <p>
      * If empty string or relative URI string is passed as base URI, then it will be resolved against current working
      * directory of this application instance.
-     * </p>
      *
      * @param baseUri base URI against which all relative resource URIs will be resolved.
      */
@@ -316,7 +315,7 @@ public class ResourceResolver {
     }
 
     /**
-     * Checks if source is under data URI scheme. (eg data:[<media type>][;base64],<data>)
+     * Checks if source is under data URI scheme. (eg data:[&lt;media type&gt;][;base64],&lt;data&gt;)
      *
      * @param src String to test
      * @return

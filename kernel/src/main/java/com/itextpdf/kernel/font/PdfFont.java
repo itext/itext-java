@@ -376,8 +376,8 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Indicates if all the glyphs and widths for that particular
-     * encoding should be included in the document. When set to <CODE>true</CODE>
-     * only the glyphs used will be included in the font. When set to <CODE>false</CODE
+     * encoding should be included in the document. When set to {@code true}
+     * only the glyphs used will be included in the font. When set to {@code false}
      * the full font will be included and all subset ranges will be removed.
      *
      * @param subset new value of property subset

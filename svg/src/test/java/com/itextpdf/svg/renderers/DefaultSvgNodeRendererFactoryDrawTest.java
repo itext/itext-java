@@ -50,6 +50,7 @@ import com.itextpdf.svg.dummy.factories.DummySvgNodeMapper;
 import com.itextpdf.svg.dummy.renderers.impl.DummyProcessableSvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
@@ -58,7 +59,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class DefaultSvgNodeRendererFactoryDrawTest {
+public class DefaultSvgNodeRendererFactoryDrawTest extends ExtendedITextTest {
     
     private ISvgNodeRendererFactory fact;
     

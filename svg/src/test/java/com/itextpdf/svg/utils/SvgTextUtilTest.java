@@ -45,13 +45,14 @@ package com.itextpdf.svg.utils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.impl.TextLeafSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class SvgTextUtilTest {
+public class SvgTextUtilTest extends ExtendedITextTest {
 
     public static float EPS = 0.0001f;
 

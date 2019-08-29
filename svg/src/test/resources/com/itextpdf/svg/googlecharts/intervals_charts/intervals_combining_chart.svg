@@ -1,0 +1,174 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <clipPath id="_ABSTRACT_RENDERER_ID_0">
+            <rect x="161" y="96" width="579" height="309">
+            </rect>
+        </clipPath>
+    </defs>
+    <rect x="0" y="0" width="900" height="500" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <text text-anchor="start" x="161" y="70.9" font-size="14" font-weight="bold" stroke="none" stroke-width="0" fill="#000000">Bar/area interval chart
+        </text>
+        <rect x="161" y="59" width="579" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+    </g>
+    <g>
+        <rect x="161" y="96" width="579" height="309" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+        <g clip-path="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+            <g>
+                <rect x="161" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="306" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="450" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="595" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="739" y="96" width="1" height="309" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="327" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="250" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="173" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+                <rect x="161" y="96" width="579" height="1" stroke="none" stroke-width="0" fill="#cccccc">
+                </rect>
+            </g>
+            <g>
+                <g>
+                    <path d="M198,173.5C198,173.5,246,141.09583333333333,270,135C294,128.90416666666667,318,122.48750000000001,342,136.925C366,151.3625,390,200.23025114155251,414,221.625C438,243.01974885844749,463,248.3552511415525,487,265.9C511,283.4447488584475,535,333.275,559,327.5C583,321.725,607,253.70833333333334,631,231.25C655,208.79166666666666,703,192.75,703,192.75L703,240.875C703,240.875,655,249.21666666666667,631,269.75C607,290.2833333333333,583,363.1125,559,364.075C535,365.03749999999997,511,295.9792237442922,487,275.525C463,255.07077625570776,438,251.3833904109589,414,240.875C390,230.3666095890411,366,213.60416666666666,342,212C318,210.39583333333334,294,226.4375,270,231.25C246,236.0625,198,240.875,198,240.875" stroke="none" stroke-width="0" fill-opacity="0.3" fill="#3366cc">
+                    </path>
+                </g>
+                <g>
+                    <path d="M198,204.29999999999998C198,204.29999999999998,246,175.10416666666666,270,165.79999999999998C294,156.4958333333333,318,138.2083333333333,342,148.47499999999997C366,158.74166666666665,390,207.2841894977169,414,227.4C438,247.5158105022831,463,251.23835616438356,487,269.75C511,288.26164383561644,535,343.8625,559,339.05C583,334.2375,607,262.69166666666666,631,240.875C655,219.05833333333334,703,208.15,703,208.15L703,221.625C703,221.625,655,234.77916666666664,631,256.275C607,277.7708333333333,583,348.03333333333336,559,350.6C535,353.1666666666667,511,290.84149543378993,487,271.67499999999995C463,252.50850456620998,438,250.41649543378995,414,235.1C390,219.78350456621004,366,187.29583333333335,342,179.275C318,171.25416666666666,294,180.23749999999998,270,186.975C246,193.7125,198,219.7,198,219.7" stroke="none" stroke-width="0" fill-opacity="0.3" fill="#3366cc">
+                    </path>
+                </g>
+            </g>
+            <g>
+                <rect x="161" y="404" width="579" height="1" stroke="none" stroke-width="0" fill="#333333">
+                </rect>
+            </g>
+            <g>
+                <g>
+                    <path d="M198,192.75L198,231.25" stroke="#4374e0" stroke-width="4" fill="#4374e0">
+                    </path>
+                    <circle cx="198" cy="231.25" r="5" stroke="#4374e0" stroke-width="4" fill="#4374e0">
+                    </circle>
+                    <circle cx="198" cy="192.75" r="5" stroke="#e49307" stroke-width="4" fill="#e49307">
+                    </circle>
+                </g>
+                <g>
+                    <path d="M270,154.25L270,221.625" stroke="#4374e0" stroke-width="4" fill="#4374e0">
+                    </path>
+                    <circle cx="270" cy="221.625" r="5" stroke="#4374e0" stroke-width="4" fill="#4374e0">
+                    </circle>
+                    <circle cx="270" cy="154.25" r="5" stroke="#e49307" stroke-width="4" fill="#e49307">
+                    </circle>
+                </g>
+                <g>
+                    <path d="M342,135L342,202.375" stroke="#4374e0" stroke-width="4" fill="#4374e0">
+                    </path>
+                    <circle cx="342" cy="202.375" r="5" stroke="#4374e0" stroke-width="4" fill="#4374e0">
+                    </circle>
+                    <circle cx="342" cy="135" r="5" stroke="#e49307" stroke-width="4" fill="#e49307">
+                    </circle>
+                </g>
+                <g>
+                    <path d="M414,221.625L414,240.875" stroke="#4374e0" stroke-width="4" fill="#4374e0">
+                    </path>
+                    <circle cx="414" cy="240.875" r="5" stroke="#4374e0" stroke-width="4" fill="#4374e0">
+                    </circle>
+                    <circle cx="414" cy="221.625" r="5" stroke="#e49307" stroke-width="4" fill="#e49307">
+                    </circle>
+                </g>
+                <g>
+                    <path d="M487,262.04999999999995L487,283.225" stroke="#4374e0" stroke-width="4" fill="#4374e0">
+                    </path>
+                    <circle cx="487" cy="262.04999999999995" r="5" stroke="#4374e0" stroke-width="4" fill="#4374e0">
+                    </circle>
+                    <circle cx="487" cy="283.225" r="5" stroke="#e49307" stroke-width="4" fill="#e49307">
+                    </circle>
+                </g>
+                <g>
+                    <path d="M559,329.425L559,362.15" stroke="#4374e0" stroke-width="4" fill="#4374e0">
+                    </path>
+                    <circle cx="559" cy="329.425" r="5" stroke="#4374e0" stroke-width="4" fill="#4374e0">
+                    </circle>
+                    <circle cx="559" cy="362.15" r="5" stroke="#e49307" stroke-width="4" fill="#e49307">
+                    </circle>
+                </g>
+                <g>
+                    <path d="M631,244.725L631,256.275" stroke="#4374e0" stroke-width="4" fill="#4374e0">
+                    </path>
+                    <circle cx="631" cy="256.275" r="5" stroke="#4374e0" stroke-width="4" fill="#4374e0">
+                    </circle>
+                    <circle cx="631" cy="244.725" r="5" stroke="#e49307" stroke-width="4" fill="#e49307">
+                    </circle>
+                </g>
+                <g>
+                    <path d="M703,192.75L703,231.25" stroke="#4374e0" stroke-width="4" fill="#4374e0">
+                    </path>
+                    <circle cx="703" cy="231.25" r="5" stroke="#4374e0" stroke-width="4" fill="#4374e0">
+                    </circle>
+                    <circle cx="703" cy="192.75" r="5" stroke="#e49307" stroke-width="4" fill="#e49307">
+                    </circle>
+                </g>
+            </g>
+            <g>
+                <path d="M197.625,212C197.625,212,245.79166666666669,183.125,269.875,173.5C293.95833333333337,163.875,318.04166666666663,144.625,342.125,154.25C366.20833333333337,163.875,390.29166666666663,212,414.375,231.25C438.4583333333333,250.5,462.5416666666667,250.5,486.625,269.75C510.7083333333333,289,534.7916666666667,349.9583333333333,558.875,346.75C582.9583333333333,343.5416666666667,607.0416666666667,272.95833333333337,631.125,250.5C655.2083333333333,228.04166666666666,703.375,212,703.375,212" stroke="#3366cc" stroke-width="2" fill-opacity="1" fill="none">
+                </path>
+            </g>
+        </g>
+        <g>
+        </g>
+        <g>
+            <g>
+                <text text-anchor="middle" x="161.5" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">0.5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="306" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">2.5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="450.5" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">4.5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="595" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">6.5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="middle" x="739.5" y="425.9" font-size="14" stroke="none" stroke-width="0" fill="#444444">8.5
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="409.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">0
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="332.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">40
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="255.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">80
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="178.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">120
+                </text>
+            </g>
+            <g>
+                <text text-anchor="end" x="147" y="101.4" font-size="14" stroke="none" stroke-width="0" fill="#444444">160
+                </text>
+            </g>
+        </g>
+    </g>
+    <g>
+    </g>
+</svg>

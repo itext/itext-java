@@ -105,9 +105,9 @@ public class ImageRenderInfo extends AbstractRenderInfo {
      * You can:
      * <ul>
      * <li>get image bytes with {@link PdfImageXObject#getImageBytes(boolean)}, these image bytes
-     * represent native image, i.e you can write these bytes to disk and get just an usual image;</li>
-     * <li>obtain PdfStream object which contains image dictionary with {@link PdfImageXObject#getPdfObject()} method;</li>
-     * <li>convert image to {@link java.awt.image.BufferedImage} with {@link PdfImageXObject#getBufferedImage()};</li>
+     * represent native image, i.e you can write these bytes to disk and get just an usual image;
+     * <li>obtain PdfStream object which contains image dictionary with {@link PdfImageXObject#getPdfObject()} method;
+     * <li>convert image to {@link java.awt.image.BufferedImage} with {@link PdfImageXObject#getBufferedImage()};
      * </ul>
      */
     public PdfImageXObject getImage() {

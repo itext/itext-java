@@ -47,6 +47,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.impl.AbstractSvgNodeRenderer;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
@@ -59,7 +60,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class TransformationApplicationTest {
+public class TransformationApplicationTest extends ExtendedITextTest {
 
     @Test
     public void normalDrawTest() {

@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="500" aria-label="A chart." style="overflow: hidden;">
+    <defs id="defs">
+        <filter id="_ABSTRACT_RENDERER_ID_0">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2">
+            </feGaussianBlur>
+            <feOffset dx="1" dy="1">
+            </feOffset>
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.1">
+                </feFuncA>
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode>
+                </feMergeNode>
+                <feMergeNode in="SourceGraphic">
+                </feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <rect x="0" y="0" width="900" height="500" stroke="none" stroke-width="0" fill="#ffffff">
+    </rect>
+    <g>
+        <text text-anchor="start" x="161" y="70.9"  font-size="14" font-weight="bold" stroke="none" stroke-width="0" fill="#000000">Indian Language Use
+        </text>
+        <rect x="161" y="59" width="579" height="14" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff">
+        </rect>
+    </g>
+    <g>
+        <path d="M451,251L451,97A154,154,0,0,1,465.24773798805904,97.66050097178606L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#3366cc">
+        </path>
+    </g>
+    <g>
+        <path d="M451,251L465.24773798805904,97.66050097178606A154,154,0,0,1,548.3346105936879,131.6602598436919L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#dc3912">
+        </path>
+        <text text-anchor="start" x="474.20158558198887" y="141.7730526192677"  font-size="14" stroke="none" stroke-width="0" fill="#ffffff">Bengali
+        </text>
+    </g>
+    <g>
+        <path d="M451,251L548.3346105936879,131.6602598436919A154,154,0,0,1,549.5204845486412,132.63736178886114L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#ff9900">
+        </path>
+    </g>
+    <g>
+        <path d="M451,251L549.5204845486412,132.63736178886114A154,154,0,0,1,551.4473589130924,134.26813593802078L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#109618">
+        </path>
+    </g>
+    <g>
+        <path d="M474.6299925863328,231.24491330391442L575.0773514994253,114.51304924193518A154,154,0,0,1,607.3150107009598,153.0740365791322L474.6299925863328,231.24491330391442A0,0,0,0,0,474.6299925863328,231.24491330391442" stroke="#ffffff" stroke-width="1" fill="#990099">
+        </path>
+    </g>
+    <g>
+        <path d="M451,251L450.989024505887,97.00000039110867A154,154,0,0,1,451.04451225231907,97.00000643292418L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#cccccc">
+        </path>
+    </g>
+    <g>
+        <path d="M451,251L395.21469830334655,107.4590646727793A154,154,0,0,1,450.989024505887,97.00000039110867L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#16d620">
+        </path>
+        <text text-anchor="start" x="411.6192622309971" y="128.55284709838833"  font-size="14" stroke="none" stroke-width="0" fill="#ffffff">Urdu
+        </text>
+    </g>
+    <g>
+        <path d="M451,251L330.55299590658075,155.03897038422394A154,154,0,0,1,395.21469830334655,107.4590646727793L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#b77322">
+        </path>
+        <text text-anchor="start" x="358.0898544319621" y="158.17318943782348"  font-size="14" stroke="none" stroke-width="0" fill="#ffffff">Telugu
+        </text>
+    </g>
+    <g>
+        <path d="M451,251L301.34054802331923,214.6950632277155A154,154,0,0,1,330.55299590658075,155.03897038422394L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#3b3eac">
+        </path>
+        <text text-anchor="start" x="324.7468771540431" y="202.40083495085477"  font-size="14" stroke="none" stroke-width="0" fill="#ffffff">Tamil
+        </text>
+    </g>
+    <g>
+        <path d="M451,251L300.71747879029897,217.36722106551778A154,154,0,0,1,301.3405480233191,214.6950632277157L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#5574a6">
+        </path>
+    </g>
+    <g>
+        <path d="M451,251L299.32121857526323,224.36267157714707A154,154,0,0,1,300.71747879029897,217.36722106551778L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#329262">
+        </path>
+    </g>
+    <g>
+        <path d="M374.1912932585389,245.57574256656002L220.27431447817582,250.6317927171481A154,154,0,0,1,222.51251183380214,218.93841414370706L374.1912932585389,245.57574256656002A0,0,0,0,0,374.1912932585389,245.57574256656002" stroke="#ffffff" stroke-width="1" fill="#8b0707">
+        </path>
+    </g>
+    <g>
+        <path d="M390.09568378382954,260.2316989899323L241.59419232809552,301.0153603682655A154,154,0,0,1,236.17870500346646,265.28774914052025L390.09568378382954,260.2316989899323A0,0,0,0,0,390.09568378382954,260.2316989899323" stroke="#ffffff" stroke-width="1" fill="#e67300">
+        </path>
+        <text text-anchor="start" x="252.3997286941417" y="283.42644057664677"  font-size="14" stroke="none" stroke-width="0" fill="#ffffff">Oriya
+        </text>
+    </g>
+    <g>
+        <path d="M451,251L303.3730875924708,294.8439817194984A154,154,0,0,1,302.498508544266,291.7836613783332L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#6633cc">
+        </path>
+    </g>
+    <g>
+        <path d="M411.49946002361514,274.9613718633559L304.4094893917767,385.63087168183336A154,154,0,0,1,263.87254761608597,318.8053535828543L411.49946002361514,274.9613718633559A0,0,0,0,0,411.49946002361514,274.9613718633559" stroke="#ffffff" stroke-width="1" fill="#aaaa11">
+        </path>
+        <text text-anchor="start" x="288.70114941477584" y="340.09659263056255"  font-size="14" stroke="none" stroke-width="0" fill="#ffffff">Marathi
+        </text>
+    </g>
+    <g>
+        <path d="M451,251L345.0992291942115,362.8079905138262A154,154,0,0,1,343.91002936816153,361.66949981847745L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#22aa99">
+        </path>
+    </g>
+    <g>
+        <path d="M451,251L374.0689219370427,384.4076805437797A154,154,0,0,1,345.0992291942115,362.8079905138262L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#994499">
+        </path>
+    </g>
+    <g>
+        <path d="M451,251L393.80057254075916,393.98330496367413A154,154,0,0,1,374.0689219370428,384.40768054377975L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#316395">
+        </path>
+    </g>
+    <g>
+        <path d="M451,251L398.93097750575566,395.9303863808203A154,154,0,0,1,393.8005725407591,393.98330496367413L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#b82e2e">
+        </path>
+    </g>
+    <g>
+        <path d="M451,251L404.65052896884816,397.8595469662508A154,154,0,0,1,398.93097750575566,395.9303863808203L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#66aa00">
+        </path>
+    </g>
+    <g>
+        <path d="M451,251L445.6285853378856,404.9062958573418A154,154,0,0,1,404.6505289688483,397.85954696625083L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#dd4477">
+        </path>
+    </g>
+    <g>
+        <path d="M451,251L583.685018114627,172.8291232752178A154,154,0,0,1,445.62858533788557,404.9062958573418L451,251A0,0,0,0,0,451,251" stroke="#ffffff" stroke-width="1" fill="#0099c6">
+        </path>
+        <text text-anchor="start" x="540.4122934414158" y="318.6069221906657"  font-size="14" stroke="none" stroke-width="0" fill="#ffffff">Hindi
+        </text>
+    </g>
+    <g>
+    </g>
+</svg>

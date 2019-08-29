@@ -70,7 +70,6 @@ import java.security.MessageDigest;
  * <p>
  * Created by Aiken Sam, 2006-11-15, refactored by Martin Brunecky, 07/15/2007
  * for ease of subclassing.
- * </p>
  */
 public class TSAClientBouncyCastle implements ITSAClient {
 

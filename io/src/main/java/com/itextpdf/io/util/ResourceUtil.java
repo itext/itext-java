@@ -88,8 +88,7 @@ public final class ResourceUtil {
             if (contextClassLoader != null) {
                 stream = contextClassLoader.getResourceAsStream(key);
             }
-        } catch (Throwable e) {
-            // empty body
+        } catch (SecurityException ignored) {
         }
 
         if (stream == null) {

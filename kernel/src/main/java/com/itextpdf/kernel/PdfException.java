@@ -391,6 +391,7 @@ public class PdfException extends RuntimeException {
 
     /**
      * Gets additional params for Exception message.
+     * @return array of additional params
      */
     protected Object[] getMessageParams() {
         Object[] parameters = new Object[messageParams.size()];

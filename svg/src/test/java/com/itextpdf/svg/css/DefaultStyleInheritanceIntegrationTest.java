@@ -65,22 +65,22 @@ public class DefaultStyleInheritanceIntegrationTest extends SvgIntegrationTest {
     //Css inheritance
     @Test
     public void simpleGroupInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder,destinationFolder,"simpleGroupInheritance");
+        convertAndCompare(sourceFolder,destinationFolder,"simpleGroupInheritance");
     }
     //Inheritance in use tags
     @Test
     public void useFillInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder,destinationFolder,"useFillInheritance");
+        convertAndCompare(sourceFolder,destinationFolder,"useFillInheritance");
     }
     //Inheritance and g-tags
     @Test
     public void groupInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder,destinationFolder,"groupInheritance");
+        convertAndCompare(sourceFolder,destinationFolder,"groupInheritance");
     }
 
     @Test
     public void useInheritanceNotOverridingTest() throws IOException, InterruptedException {
-        convertAndCompareVisually(sourceFolder,destinationFolder,"useInheritanceNotOverriding");
+        convertAndCompare(sourceFolder,destinationFolder,"useInheritanceNotOverriding");
     }
 
 }
