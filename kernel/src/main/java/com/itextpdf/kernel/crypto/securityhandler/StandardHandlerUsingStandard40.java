@@ -200,15 +200,18 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
     }
 
     private void checkPassword(boolean encryptMetadata, byte[] uValue, byte[] oValue, byte[] paddedPassword) {
-        byte[] userKey;// assume password - is owner password
+        // assume password - is owner password
+        byte[] userKey;
         byte[] userPad = computeOwnerKey(oValue, paddedPassword);
         computeGlobalEncryptionKey(userPad, oValue, encryptMetadata);
         userKey = computeUserKey();
-        if (isValidPassword(uValue, userKey)) { // computed user key should be equal to uValue
+        // computed user key should be equal to uValue
+        if (isValidPassword(uValue, userKey)) {
             // assume password - is user password
             computeGlobalEncryptionKey(paddedPassword, oValue, encryptMetadata);
             userKey = computeUserKey();
-            if (isValidPassword(uValue, userKey)) { // computed user key should be equal to uValue
+            // computed user key should be equal to uValue
+            if (isValidPassword(uValue, userKey)) {
                 throw new BadPasswordException(PdfException.BadUserPassword);
             }
             usedOwnerPassword = false;

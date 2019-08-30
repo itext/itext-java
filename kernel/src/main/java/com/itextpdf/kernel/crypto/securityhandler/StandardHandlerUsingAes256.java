@@ -345,7 +345,8 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
                 ++roundNum;
                 if (roundNum > 63) {
                     // e)
-                    int condVal = e[e.length - 1] & 0xFF; // interpreting last byte as unsigned integer
+                    // interpreting last byte as unsigned integer
+                    int condVal = e[e.length - 1] & 0xFF;
                     if (condVal <= roundNum - 32) {
                         break;
                     }

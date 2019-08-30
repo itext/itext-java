@@ -339,14 +339,15 @@ class PdfPagesTree implements Serializable {
         // NOTE optimization? when we already found needed index
         for (int i = 0; i < kids.size(); i++) {
             PdfDictionary page = kids.getAsDictionary(i);
-            if (page == null) {                                             // null values not allowed in pages tree.
+            // null values not allowed in pages tree.
+            if (page == null) {
                 throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum + 1);
             }
             PdfObject pageKids = page.get(PdfName.Kids);
             if (pageKids != null) {
                 if (pageKids.isArray()) {
                     findPdfPages = true;
-                } else {                                                    // kids must be of type array
+                } else { // kids must be of type array
                     throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum + 1);
                 }
             }
@@ -358,8 +359,10 @@ class PdfPagesTree implements Serializable {
             PdfPages lastPdfPages = null;
             for (int i = 0; i < kids.size() && kidsCount > 0; i++) {
                 PdfDictionary pdfPagesObject = kids.getAsDictionary(i);
-                if (pdfPagesObject.getAsArray(PdfName.Kids) == null) {      // pdfPagesObject is PdfPage
-                    if (lastPdfPages == null) {                             // possible if only first kid is PdfPage
+                if (pdfPagesObject.getAsArray(PdfName.Kids) == null) { // pdfPagesObject is PdfPage
+
+                    if (lastPdfPages == null) { // possible if only first kid is PdfPage
+
                         lastPdfPages = new PdfPages(parent.getFrom(), document, parent);
                         kids.set(i, lastPdfPages.getPdfObject());
                         newParents.add(lastPdfPages);
@@ -372,7 +375,7 @@ class PdfPagesTree implements Serializable {
                     parent.decrementCount();
                     lastPdfPages.addPage(pdfPagesObject);
                     kidsCount--;
-                } else {                                                    // pdfPagesObject is PdfPages
+                } else { // pdfPagesObject is PdfPages
                     int from = lastPdfPages == null
                             ? parent.getFrom()
                             : lastPdfPages.getFrom() + lastPdfPages.getCount();

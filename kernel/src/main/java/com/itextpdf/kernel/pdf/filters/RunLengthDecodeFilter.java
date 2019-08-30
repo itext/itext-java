@@ -71,7 +71,7 @@ public class RunLengthDecodeFilter extends MemoryLimitsAwareFilter {
                 int bytesToCopy = dupCount + 1;
                 outputStream.write(b, i + 1, bytesToCopy);
                 i += bytesToCopy;
-            } else {                // make dupcount copies of the next byte
+            } else { // make dupcount copies of the next byte
                 i++;
                 for (int j = 0; j < 257 - (dupCount & 0xff); j++) {
                     outputStream.write(b[i]);

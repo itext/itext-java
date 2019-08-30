@@ -171,7 +171,8 @@ class ImagePdfBytesInfo {
      * @throws IOException if there is a problem with reading from the underlying stream
      */
     private void findColorspace(PdfObject csObj, boolean allowIndexed) {
-        if (PdfName.DeviceGray.equals(csObj) || (csObj == null && bpc == 1)) { // handle imagemasks
+        if (PdfName.DeviceGray.equals(csObj) || (csObj == null && bpc == 1)) {
+            // handle imagemasks
             stride = (width * bpc + 7) / 8;
             pngColorType = 0;
         } else if (PdfName.DeviceRGB.equals(csObj)) {

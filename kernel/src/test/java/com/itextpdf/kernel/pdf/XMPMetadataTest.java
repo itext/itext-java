@@ -113,7 +113,8 @@ public class XMPMetadataTest extends ExtendedITextTest{
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(created));
         pdfDocument.addNewPage();
 
-        pdfDocument.getXmpMetadata(true); // create XMP metadata
+        // create XMP metadata
+        pdfDocument.getXmpMetadata(true);
         pdfDocument.close();
 
         pdfDocument = new PdfDocument(new PdfReader(created), new PdfWriter(updated), new StampingProperties().useAppendMode());
@@ -153,7 +154,8 @@ public class XMPMetadataTest extends ExtendedITextTest{
         pdfDocument.close();
 
         pdfDocument = new PdfDocument(new PdfReader(created), new PdfWriter(updated), new StampingProperties().useAppendMode());
-        pdfDocument.getXmpMetadata(true); // create XMP metadata
+        // create XMP metadata
+        pdfDocument.getXmpMetadata(true);
         pdfDocument.close();
 
         pdfDocument = new PdfDocument(new PdfReader(updated), new PdfWriter(updatedAgain), new StampingProperties().useAppendMode());

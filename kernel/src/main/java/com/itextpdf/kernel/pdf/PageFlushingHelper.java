@@ -241,7 +241,8 @@ public class PageFlushingHelper {
                 if (contentsDirectObj.isArray()) {
                     arrayFlushIfModified((PdfArray) contentsDirectObj);
                 } else {
-                    contentsDirectObj.flush(); // already checked that modified
+                    // already checked that modified
+                    contentsDirectObj.flush();
                 }
             }
         } else if (contents instanceof PdfArray){
@@ -281,7 +282,8 @@ public class PageFlushingHelper {
         PdfDictionary pageDict = page.getPdfObject();
         // Using PdfPage package internal methods in order to avoid PdfResources initialization: initializing PdfResources
         // limits processing possibilities only to cases in which resources and specific resource type dictionaries are not flushed.
-        PdfDictionary resourcesDict = page.initResources(false); // inits /Resources dict entry if not inherited and not created yet
+        // inits /Resources dict entry if not inherited and not created yet
+        PdfDictionary resourcesDict = page.initResources(false);
         PdfResources resources = page.getResources(false);
         if (resources != null && resources.isModified() && !resources.isReadOnly()) {
             resourcesDict = resources.getPdfObject();
@@ -535,8 +537,10 @@ public class PageFlushingHelper {
     }
 
     private static class DeepFlushingContext {
-        Set<PdfName> blackList; // null stands for every key to be in black list
-        Map<PdfName, DeepFlushingContext> innerContexts; // null stands for every key to be taking unconditional context
+        // null stands for every key to be in black list
+        Set<PdfName> blackList;
+        // null stands for every key to be taking unconditional context
+        Map<PdfName, DeepFlushingContext> innerContexts;
         DeepFlushingContext unconditionalInnerContext;
 
         public DeepFlushingContext(Set<PdfName> blackList, Map<PdfName, DeepFlushingContext> innerContexts) {

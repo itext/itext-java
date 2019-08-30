@@ -240,7 +240,8 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         byte three = (byte) (permission >> 16);
         byte four = (byte) (permission >> 24);
 
-        System.arraycopy(seed, 0, pkcs7input, 0, 20); // put this seed in the pkcs7 input
+        // put this seed in the pkcs7 input
+        System.arraycopy(seed, 0, pkcs7input, 0, 20);
 
         pkcs7input[20] = four;
         pkcs7input[21] = three;

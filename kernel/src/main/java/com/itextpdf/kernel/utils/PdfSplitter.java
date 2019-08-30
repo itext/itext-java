@@ -373,7 +373,8 @@ public class PdfSplitter {
     private PageRange getNextRange(int startPage, int endPage, long size) {
         PdfResourceCounter counter = new PdfResourceCounter(pdfDocument.getTrailer());
         Map<Integer, PdfObject> resources = counter.getResources();
-        long lengthWithoutXref = counter.getLength(null); // initialize with trailer length
+        // initialize with trailer length
+        long lengthWithoutXref = counter.getLength(null);
         int currentPage = startPage;
         boolean oversized = false;
 

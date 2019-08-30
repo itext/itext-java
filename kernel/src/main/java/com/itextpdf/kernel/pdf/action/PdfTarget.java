@@ -204,7 +204,8 @@ public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
         PdfObject pValue = getPdfObject().get(PdfName.P);
         PdfPage page = null;
         if (pValue instanceof PdfNumber) {
-            page = pdfDocument.getPage(((PdfNumber) pValue).intValue() + 1); // zero-based index is used
+            // zero-based index is used
+            page = pdfDocument.getPage(((PdfNumber) pValue).intValue() + 1);
         } else if (pValue instanceof PdfString) {
             PdfNameTree destsTree = pdfDocument.getCatalog().getNameTree(PdfName.Dests);
             Map<String, PdfObject> dests = destsTree.getNames();

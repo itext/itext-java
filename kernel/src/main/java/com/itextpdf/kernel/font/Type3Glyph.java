@@ -149,14 +149,16 @@ public final class Type3Glyph extends PdfCanvas {
             contentStream.getOutputStream()
                     .writeFloat(wx)
                     .writeSpace()
-                    .writeFloat(0)//wy
+                    //wy
+                    .writeFloat(0)
                     .writeSpace()
                     .writeBytes(d0);
         } else {
             contentStream.getOutputStream()
                     .writeFloat(wx)
                     .writeSpace()
-                    .writeFloat(0)//wy
+                    //wy
+                    .writeFloat(0)
                     .writeSpace()
                     .writeFloat(llx)
                     .writeSpace()

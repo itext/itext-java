@@ -184,7 +184,7 @@ public abstract class Options
 			int theBits = options;
 			while (theBits != 0)
 			{
-				int oneLessBit = theBits & (theBits - 1); // clear rightmost one bit
+				int oneLessBit = theBits & (theBits - 1);
 				int singleBit = theBits ^ oneLessBit;
 				String bitName = getOptionName(singleBit);
 				sb.append(bitName);

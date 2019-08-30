@@ -245,7 +245,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
         documentId = lastDocumentId.incrementAndGet();
         this.reader = reader;
-        this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
+        // default values of the StampingProperties doesn't affect anything
+        this.properties = new StampingProperties();
         this.properties.setEventCountingMetaInfo(properties.metaInfo);
         open(null);
     }
@@ -273,7 +274,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
         documentId = lastDocumentId.incrementAndGet();
         this.writer = writer;
-        this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
+        // default values of the StampingProperties doesn't affect anything
+        this.properties = new StampingProperties();
         this.properties.setEventCountingMetaInfo(properties.metaInfo);
         open(writer.properties.pdfVersion);
     }
@@ -872,7 +874,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     if (writer.crypto != null) {
                         assert reader.decrypt.getPdfObject() == writer.crypto.getPdfObject() : "Conflict with source encryption";
                         crypto = reader.decrypt.getPdfObject();
-                        if (crypto.getIndirectReference() != null) { // Checking just for extra safety, encryption dictionary shall never be direct.
+                        if (crypto.getIndirectReference() != null) {
+                            // Checking just for extra safety, encryption dictionary shall never be direct.
                             forbiddenToFlush.add(crypto.getIndirectReference());
                         }
                     }
@@ -1707,7 +1710,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public PdfFont addFont(PdfFont font) {
         font.makeIndirect(this);
-        font.setForbidRelease(); // forbid release for font dictionaries that are stored in #documentFonts collection
+        // forbid release for font dictionaries that are stored in #documentFonts collection
+        font.setForbidRelease();
         documentFonts.put(font.getPdfObject().getIndirectReference(), font);
         return font;
     }
@@ -1927,7 +1931,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 assert originalDocumentId != null;
                 assert modifiedDocumentId != null;
             }
-            if (properties.appendMode) {       // Due to constructor reader and writer not null.
+            if (properties.appendMode) {
+                // Due to constructor reader and writer not null.
                 assert reader != null;
                 RandomAccessFileOrArray file = reader.tokens.getSafeFile();
                 int n;

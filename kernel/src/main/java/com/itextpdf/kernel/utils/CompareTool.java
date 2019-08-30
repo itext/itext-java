@@ -957,7 +957,8 @@ public class CompareTool {
         }
         if (differenceImagePrefix == null) {
             String fileBasedPrefix = "";
-            if (outPdfName != null) { // should always be initialized by this moment
+            if (outPdfName != null) {
+                // should always be initialized by this moment
                 fileBasedPrefix = outPdfName + "_";
             }
             differenceImagePrefix = "diff_" + fileBasedPrefix;
@@ -1568,7 +1569,8 @@ public class CompareTool {
             String outBytesNeighbours = new String(outStreamBytes, lOut, rOut - lOut).replaceAll("\\r|\\n", " ");
             bytesDifference = MessageFormatUtil.format("First bytes difference is encountered at index {0}. Expected: {1} ({2}). Found: {3} ({4}). Total number of different bytes: {5}",
                     Integer.valueOf(firstDifferenceOffset).toString(), cmpByte, cmpByteNeighbours, outByte, outBytesNeighbours, numberOfDifferentBytes);
-        } else { // lengths are different
+        } else {
+            // lengths are different
             firstDifferenceOffset = minLength;
             bytesDifference = MessageFormatUtil.format("Bytes of the shorter array are the same as the first {0} bytes of the longer one.", minLength);
         }

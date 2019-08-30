@@ -258,7 +258,8 @@ public class TextRenderInfo extends AbstractRenderInfo {
      */
     public float getRise() {
         checkGraphicsState();
-        if (gs.getTextRise() == 0) return 0; // optimize the common case
+        // optimize the common case
+        if (gs.getTextRise() == 0) return 0;
 
         return convertHeightFromTextSpaceToUserSpace(gs.getTextRise());
     }

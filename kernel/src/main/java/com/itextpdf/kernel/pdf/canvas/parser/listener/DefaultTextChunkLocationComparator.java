@@ -57,7 +57,8 @@ class DefaultTextChunkLocationComparator implements Comparator<ITextChunkLocatio
 
     @Override
     public int compare(ITextChunkLocation first, ITextChunkLocation second) {
-        if (first == second) return 0; // not really needed, but just in case
+        // not really needed, but just in case
+        if (first == second) return 0;
 
         int result;
         result = Integer.compare(first.orientationMagnitude(), second.orientationMagnitude());

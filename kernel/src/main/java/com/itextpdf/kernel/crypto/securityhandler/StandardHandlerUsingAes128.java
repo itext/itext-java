@@ -79,7 +79,8 @@ public class StandardHandlerUsingAes128 extends StandardHandlerUsingStandard128 
 
     @Override
     public void setHashKeyForNextObject(int objNumber, int objGeneration) {
-        md5.reset(); // added by ujihara
+        // added by ujihara
+        md5.reset();
         extra[0] = (byte) objNumber;
         extra[1] = (byte) (objNumber >> 8);
         extra[2] = (byte) (objNumber >> 16);

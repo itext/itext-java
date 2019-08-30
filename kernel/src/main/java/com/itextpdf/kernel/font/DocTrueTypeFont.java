@@ -225,10 +225,14 @@ class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
         PdfArray bboxValue = fontDesc.getAsArray(PdfName.FontBBox);
         if (bboxValue != null) {
             int[] bbox = new int[4];
-            bbox[0] = bboxValue.getAsNumber(0).intValue(); //llx
-            bbox[1] = bboxValue.getAsNumber(1).intValue();//lly
-            bbox[2] = bboxValue.getAsNumber(2).intValue();//urx
-            bbox[3] = bboxValue.getAsNumber(3).intValue();//ury
+            //llx
+            bbox[0] = bboxValue.getAsNumber(0).intValue();
+            //lly
+            bbox[1] = bboxValue.getAsNumber(1).intValue();
+            //urx
+            bbox[2] = bboxValue.getAsNumber(2).intValue();
+            //ury
+            bbox[3] = bboxValue.getAsNumber(3).intValue();
             if (bbox[0] > bbox[2]) {
                 int t = bbox[0];
                 bbox[0] = bbox[2];

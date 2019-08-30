@@ -65,7 +65,8 @@ public class Point implements Serializable, Cloneable {
 
     @Override
     public String toString() {
-        return MessageFormatUtil.format("Point: [x={0},y={1}]", x, y); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        return MessageFormatUtil.format("Point: [x={0},y={1}]", x, y);
     }
 
     public double getX() {

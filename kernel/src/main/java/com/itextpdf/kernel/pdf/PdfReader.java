@@ -889,8 +889,9 @@ public class PdfReader implements Closeable, Serializable {
                 }
                 PdfIndirectReference reference = xref.get(num);
                 boolean refReadingState = reference != null && reference.checkState(PdfObject.READING) && reference.getGenNumber() == gen;
+                // for references that are added by xref table itself (like 0 entry)
                 boolean refFirstEncountered = reference == null
-                        || !refReadingState && reference.getDocument() == null; // for references that are added by xref table itself (like 0 entry)
+                        || !refReadingState && reference.getDocument() == null;
 
                 if (refFirstEncountered) {
                     reference = new PdfIndirectReference(pdfDocument, num, gen, pos);
@@ -1029,8 +1030,9 @@ public class PdfReader implements Closeable, Serializable {
 
                 PdfIndirectReference reference = xref.get(base);
                 boolean refReadingState = reference != null && reference.checkState(PdfObject.READING) && reference.getGenNumber() == newReference.getGenNumber();
+                // for references that are added by xref table itself (like 0 entry)
                 boolean refFirstEncountered = reference == null
-                        || !refReadingState && reference.getDocument() == null; // for references that are added by xref table itself (like 0 entry)
+                        || !refReadingState && reference.getDocument() == null;
 
                 if (refFirstEncountered) {
                     xref.add(newReference);

@@ -305,7 +305,8 @@ public final class Version {
         //Desired Format: X.Y.Z-....
         //Also catch X, X.Y-...
         String major = split[0];
-        String minor ="0"; //If no minor version is present, default to 0
+        //If no minor version is present, default to 0
+        String minor ="0";
         if(split.length > 1) {
             minor = split[1].substring(0);
         }

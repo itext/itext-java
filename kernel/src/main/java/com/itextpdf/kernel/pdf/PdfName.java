@@ -52,18 +52,30 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     private static final long serialVersionUID = 7493154668111961953L;
 
-    private static final byte[] space = ByteUtils.getIsoBytes("#20");                //  ' '
-    private static final byte[] percent = ByteUtils.getIsoBytes("#25");              //  '%'
-    private static final byte[] leftParenthesis = ByteUtils.getIsoBytes("#28");      //  '('
-    private static final byte[] rightParenthesis = ByteUtils.getIsoBytes("#29");     //  ')'
-    private static final byte[] lessThan = ByteUtils.getIsoBytes("#3c");             //  '<'
-    private static final byte[] greaterThan = ByteUtils.getIsoBytes("#3e");          //  '>'
-    private static final byte[] leftSquare = ByteUtils.getIsoBytes("#5b");           //  '['
-    private static final byte[] rightSquare = ByteUtils.getIsoBytes("#5d");          //  ']'
-    private static final byte[] leftCurlyBracket = ByteUtils.getIsoBytes("#7b");     //  '{'
-    private static final byte[] rightCurlyBracket = ByteUtils.getIsoBytes("#7d");    //  '}'
-    private static final byte[] solidus = ByteUtils.getIsoBytes("#2f");              //  '/'
-    private static final byte[] numberSign = ByteUtils.getIsoBytes("#23");           //  '#'
+    //  ' '
+    private static final byte[] space = ByteUtils.getIsoBytes("#20");
+    //  '%'
+    private static final byte[] percent = ByteUtils.getIsoBytes("#25");
+    //  '('
+    private static final byte[] leftParenthesis = ByteUtils.getIsoBytes("#28");
+    //  ')'
+    private static final byte[] rightParenthesis = ByteUtils.getIsoBytes("#29");
+    //  '<'
+    private static final byte[] lessThan = ByteUtils.getIsoBytes("#3c");
+    //  '>'
+    private static final byte[] greaterThan = ByteUtils.getIsoBytes("#3e");
+    //  '['
+    private static final byte[] leftSquare = ByteUtils.getIsoBytes("#5b");
+    //  ']'
+    private static final byte[] rightSquare = ByteUtils.getIsoBytes("#5d");
+    //  '{'
+    private static final byte[] leftCurlyBracket = ByteUtils.getIsoBytes("#7b");
+    //  '}'
+    private static final byte[] rightCurlyBracket = ByteUtils.getIsoBytes("#7d");
+    //  '/'
+    private static final byte[] solidus = ByteUtils.getIsoBytes("#2f");
+    //  '#'
+    private static final byte[] numberSign = ByteUtils.getIsoBytes("#23");
 
     public static final PdfName _3D = createDirectName("3D");
     public static final PdfName _3DA = createDirectName("3DA");

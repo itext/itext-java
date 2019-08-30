@@ -100,7 +100,7 @@ public final class InlineImageParsingUtils {
      */
     private static final Map<PdfName, PdfName> inlineImageFilterAbbreviationMap;
 
-    static { // static initializer
+    static {
         // Map between key abbreviations allowed in dictionary of inline images and their
         // equivalent image dictionary keys
         inlineImageEntryAbbreviationMap = new HashMap<>();
@@ -299,11 +299,13 @@ public final class InlineImageParsingUtils {
         byte[] bytes = new byte[bytesToRead];
         PdfTokenizer tokeniser = ps.getTokeniser();
 
-        int shouldBeWhiteSpace = tokeniser.read(); // skip next character (which better be a whitespace character - I suppose we could check for this)
+        // skip next character (which better be a whitespace character - I suppose we could check for this)
+        int shouldBeWhiteSpace = tokeniser.read();
         // from the PDF spec:  Unless the image uses ASCIIHexDecode or ASCII85Decode as one of its filters, the ID operator shall be followed by a single white-space character, and the next character shall be interpreted as the first byte of image data.
         // unfortunately, we've seen some PDFs where there is no space following the ID, so we have to capture this case and handle it
         int startIndex = 0;
-        if (!PdfTokenizer.isWhitespace(shouldBeWhiteSpace) || shouldBeWhiteSpace == 0) { // tokeniser treats 0 as whitespace, but for our purposes, we shouldn't
+        if (!PdfTokenizer.isWhitespace(shouldBeWhiteSpace) || shouldBeWhiteSpace == 0) {
+            // tokeniser treats 0 as whitespace, but for our purposes, we shouldn't
             bytes[0] = (byte) shouldBeWhiteSpace;
             startIndex++;
         }
@@ -352,10 +354,13 @@ public final class InlineImageParsingUtils {
         PdfTokenizer tokeniser = ps.getTokeniser();
         while ((ch = tokeniser.read()) != -1) {
             if (ch == 'E') {
-                baos.write(EI, 0, found); // probably some bytes were preserved so write them
-                found = 1; // just preserve 'E' and do not write it immediately
+                // probably some bytes were preserved so write them
+                baos.write(EI, 0, found);
+                // just preserve 'E' and do not write it immediately
+                found = 1;
             } else if (found == 1 && ch == 'I') {
-                found = 2; // just preserve 'EI' and do not write it immediately
+                // just preserve 'EI' and do not write it immediately
+                found = 2;
             } else {
                 if (found == 2 && PdfTokenizer.isWhitespace(ch)) {
                     byte[] tmp = baos.toByteArray();
@@ -363,7 +368,8 @@ public final class InlineImageParsingUtils {
                         return tmp;
                     }
                 }
-                baos.write(EI, 0, found); // probably some bytes were preserved so write them
+                // probably some bytes were preserved so write them
+                baos.write(EI, 0, found);
                 baos.write(ch);
                 found = 0;
             }

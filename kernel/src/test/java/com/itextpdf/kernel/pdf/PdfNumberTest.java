@@ -58,7 +58,8 @@ public class PdfNumberTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ATTEMPT_PROCESS_NAN))
     public void testNaN() {
         PdfNumber number = new PdfNumber(Double.NaN);
-        byte[] expected = {48}; // code for "0"
+        // code for "0"
+        byte[] expected = {48};
         Assert.assertArrayEquals(expected, number.getInternalContent());
     }
 }

@@ -554,7 +554,8 @@ class StructureTreeCopier {
 
                         kids.remove(i--);
                         PdfStructElem.addKidObject(lastCloned.clone, -1, kid);
-                        document.getStructTreeRoot().getParentTreeHandler().registerMcr(mcr); // re-register mcr
+                        // re-register mcr
+                        document.getStructTreeRoot().getParentTreeHandler().registerMcr(mcr);
                     }
                 }
             }

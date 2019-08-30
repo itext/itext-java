@@ -205,7 +205,8 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
     private void compareSoftwareVersion(TIFFField cmpField, TIFFField resultField) {
         byte[] versionBytes = resultField.getAsString(0).getBytes(StandardCharsets.US_ASCII);
-        byte[] versionToCompare = subArray(versionBytes, 0, versionBytes.length - 2); //drop last always zero byte
+        //drop last always zero byte
+        byte[] versionToCompare = subArray(versionBytes, 0, versionBytes.length - 2);
 
         Assert.assertArrayEquals(Version.getInstance().getVersion().getBytes(StandardCharsets.US_ASCII), versionToCompare);
     }

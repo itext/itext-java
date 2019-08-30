@@ -74,7 +74,8 @@ public class PdfString extends PdfPrimitiveObject {
 
     private int decryptInfoNum;
     private int decryptInfoGen;
-    private PdfEncryption decryption; // if it's not null: content shall contain encrypted data; value shall be null
+    // if it's not null: content shall contain encrypted data; value shall be null
+    private PdfEncryption decryption;
 
     public PdfString(String value, String encoding) {
         super();

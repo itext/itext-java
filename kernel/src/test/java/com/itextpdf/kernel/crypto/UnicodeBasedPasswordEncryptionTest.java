@@ -133,9 +133,10 @@ public class UnicodeBasedPasswordEncryptionTest extends ExtendedITextTest {
         nameToSaslPrepared.put("rfc4013Example03",
                 new SaslPreparedString("\u00AA",
                                        "a"));
+        // match rfc4013Example01
         nameToSaslPrepared.put("rfc4013Example04",
                 new SaslPreparedString("\u2168",
-                                       "IX")); // match rfc4013Example01
+                                       "IX"));
         nameToSaslPrepared.put("nonAsciiSpace01",
                 new SaslPreparedString("\u2008 \u2009 \u200A \u200B",
                                        "       "));

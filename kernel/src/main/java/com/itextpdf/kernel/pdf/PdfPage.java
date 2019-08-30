@@ -300,7 +300,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
         if (resources == null) {
             resources = new PdfDictionary();
-            getPdfObject().put(PdfName.Resources, resources); // not marking page as modified because of this change
+            // not marking page as modified because of this change
+            getPdfObject().put(PdfName.Resources, resources);
         }
         if (initResourcesField) {
             this.resources = new PdfResources(resources);

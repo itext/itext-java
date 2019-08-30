@@ -82,7 +82,8 @@ final class EncryptionUtils {
             key.init(192, new SecureRandom());
             SecretKey sk = key.generateKey();
             seedBytes = new byte[seedLength];
-            System.arraycopy(sk.getEncoded(), 0, seedBytes, 0, seedLength); // create the 20 bytes seed
+            // create the 20 bytes seed
+            System.arraycopy(sk.getEncoded(), 0, seedBytes, 0, seedLength);
         } catch (NoSuchAlgorithmException e) {
             seedBytes = SecureRandom.getSeed(seedLength);
         }

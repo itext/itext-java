@@ -290,7 +290,8 @@ public class PdfFontTest extends ExtendedITextTest {
     public void createDocumentWithType3Font() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithType3Font.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithType3Font.pdf";
-        String testString = "A A A A E E E ~ \u00E9"; // A A A A E E E ~ é
+        // A A A A E E E ~ é
+        String testString = "A A A A E E E ~ \u00E9";
 
         //writing type3 font characters
         String title = "Type3 font iText 7 Document";
@@ -357,7 +358,8 @@ public class PdfFontTest extends ExtendedITextTest {
     public void createTaggedDocumentWithType3Font() throws IOException, InterruptedException {
         String filename = destinationFolder + "createTaggedDocumentWithType3Font.pdf";
         String cmpFilename = sourceFolder + "cmp_createTaggedDocumentWithType3Font.pdf";
-        String testString = "A A A A E E E ~ \u00E9"; // A A A A E E E ~ é
+        // A A A A E E E ~ é
+        String testString = "A A A A E E E ~ \u00E9";
 
         //writing type3 font characters
         String title = "Type3 font iText 7 Document";
@@ -909,7 +911,8 @@ public class PdfFontTest extends ExtendedITextTest {
                 .beginText()
                 .setFontAndSize(pdfType3Font, 12)
                 .moveText(50, 800)
-                .showText("A A A A A A E E E E ~ \u00E9 \u00F6") // é ö
+                // A A A A A A E E E E ~ é ö
+                .showText("A A A A A A E E E E ~ \u00E9 \u00F6")
                 .endText()
                 .restoreState();
         page.flush();
@@ -953,7 +956,8 @@ public class PdfFontTest extends ExtendedITextTest {
                 .beginText()
                 .setFontAndSize(pdfType3Font, 12)
                 .moveText(50, 800)
-                .showText("AAAAAA EEEE ~ \u00E9 \u00F6") // é ö
+                // AAAAAA EEEE ~ é ö
+                .showText("AAAAAA EEEE ~ \u00E9 \u00F6")
                 .endText();
         page.flush();
         outputPdfDoc.close();

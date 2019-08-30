@@ -1326,7 +1326,8 @@ public class PdfStampingTest extends ExtendedITextTest {
         pdfDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(resultStream.toByteArray())));
         LocationTextExtractionStrategy strat = new LocationTextExtractionStrategy();
         PdfCanvasProcessor processor = new PdfCanvasProcessor(strat);
-        processor.processPageContent(pdfDoc.getPage(1)); // this fails with an NPE b/c the /F1 font isn't in the fonts dictionary
+        // this fails with an NPE b/c the /F1 font isn't in the fonts dictionary
+        processor.processPageContent(pdfDoc.getPage(1));
         Assert.assertTrue(strat.getResultantText().contains("TEXT TO STAMP"));
 
     }

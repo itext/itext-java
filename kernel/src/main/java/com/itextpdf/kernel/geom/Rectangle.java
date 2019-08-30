@@ -569,11 +569,14 @@ public class Rectangle implements Serializable {
          * AxB+BxC-AxC
          */
 
-        x2 -= x1; // A
+        // A
+        x2 -= x1;
         y2 -= y1;
-        x3 -= x1; // B
+        // B
+        x3 -= x1;
         y3 -= y1;
-        x4 -= x1; // C
+        // C
+        x4 -= x1;
         y4 -= y1;
 
         double AvB = x2 * y3 - x3 * y2;
