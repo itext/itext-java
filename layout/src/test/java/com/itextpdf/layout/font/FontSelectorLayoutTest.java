@@ -40,7 +40,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.layout;
+package com.itextpdf.layout.font;
 
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -48,6 +48,7 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.property.TextAlignment;
@@ -61,7 +62,7 @@ import org.junit.experimental.categories.Category;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class NonBreakingHyphenTest extends ExtendedITextTest {
+public class FontSelectorLayoutTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/NonBreakingHyphenTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/NonBreakingHyphenTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
@@ -72,11 +73,10 @@ public class NonBreakingHyphenTest extends ExtendedITextTest {
     }
 
     @Test
+    //TODO: update after fix of DEVSIX-2052
     public void nonBreakingHyphenDifferentFonts() throws IOException, InterruptedException {
-        //TODO: update after fix of DEVSIX-2034
         String outFileName = destinationFolder + "nonBreakingHyphenDifferentFonts.pdf";
         String cmpFileName = sourceFolder + "cmp_nonBreakingHyphenDifferentFonts.pdf";
-        String diffPrefix = "diff01_";
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
 
@@ -85,49 +85,24 @@ public class NonBreakingHyphenTest extends ExtendedITextTest {
         sel.getFontSet().addFont(StandardFonts.COURIER);
         sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", PdfEncodings.IDENTITY_H, "Puritan2");
         sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", PdfEncodings.IDENTITY_H, "NotoSans");
-        document.setFontProvider(sel);
-        document.add(new Paragraph("StandardFonts - non-breaking hyphen \\u2011")
-                .setUnderline()
-                .setTextAlignment(TextAlignment.CENTER));
-        document.add(new Paragraph("for Standard font TIMES_ROMAN: <&#8209;> non-breaking hyphen <\u2011> 2 hyphens<\u2011\u2011>here ")
-                .setFontFamily(StandardFonts.TIMES_ROMAN));
-        document.add(new Paragraph("for Standard font COURIER: <&#8209;> non-breaking hyphen<\u2011> 2hyphens <\u2011\u2011>here ")
-                .setFontFamily(StandardFonts.COURIER));
-        document.add(new Paragraph("for Standard font HELVETICA_BOLD: <&#8209;> non-breaking hyphen<\u2011> 2hyphens <\u2011\u2011>here ")
-                .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)));
-        document.add(new Paragraph("for Standard font SYMBOL: <&#8209;> non-breaking hyphen<\u2011> 2hyphens <\u2011\u2011>here ")
-                .setFont(PdfFontFactory.createFont(StandardFonts.SYMBOL)));
-
-        document.add(new Paragraph("Non-Standard fonts - non-breaking hyphen \\u2011")
-                .setUnderline()
-                .setTextAlignment(TextAlignment.CENTER));
-        document.add(new Paragraph("for NotoSans: <&#8209;> hyphen<\u2011> 2hyphens <\u2011\u2011>here")
-                .setFontFamily("NotoSans"));
-        document.add(new Paragraph("for Puritan2: <&#8209;> hyphen<\u2011> 2hyphens <\u2011\u2011>here")
-                .setFontFamily("Puritan2"));
-
-
         sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H, "FreeSans");
-        document.add(new Paragraph("AFTER adding of FreeSans font with non-breaking hyphen \\u2011 support")
-                .setUnderline()
-                .setTextAlignment(TextAlignment.CENTER));
-        document.add(new Paragraph("for Standard font TIMES_ROMAN: <&#8209;> non-breaking hyphen <\u2011> 2 hyphens<\u2011\u2011>here ")
-                .setFontFamily(StandardFonts.TIMES_ROMAN));
-        document.add(new Paragraph("for Standard font COURIER: <&#8209;> non-breaking hyphen<\u2011> 2hyphens <\u2011\u2011>here ")
-                .setFontFamily(StandardFonts.COURIER));
-        document.add(new Paragraph("for Standard font HELVETICA_BOLD: <&#8209;> non-breaking hyphen<\u2011> 2hyphens <\u2011\u2011>here ")
-                .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)));
-        document.add(new Paragraph("for Standard font SYMBOL: <&#8209;> non-breaking hyphen<\u2011> 2hyphens <\u2011\u2011>here ")
-                .setFont(PdfFontFactory.createFont(StandardFonts.SYMBOL)));
-        document.add(new Paragraph("for FreeSans: <&#8209;> hyphen<\u2011> 2hyphens <\u2011\u2011>here")
-                .setFontFamily("FreeSans"));
-        document.add(new Paragraph("for NotoSans: <&#8209;> hyphen<\u2011> 2hyphens <\u2011\u2011>here")
-                .setFontFamily("NotoSans"));
-        document.add(new Paragraph("for Puritan2: <&#8209;> hyphen<\u2011> 2hyphens <\u2011\u2011>here")
-                .setFontFamily("Puritan2"));
+        document.setFontProvider(sel);
+
+        document.add(createParagraph("For Standard font TIMES_ROMAN: ", StandardFonts.TIMES_ROMAN));
+        document.add(createParagraph("For Standard font COURIER: ", StandardFonts.COURIER));
+        document.add(createParagraph("For FreeSans: ", ("FreeSans")));
+        document.add(createParagraph("For NotoSans: ", ("NotoSans")));
+        document.add(createParagraph("For Puritan2: ", ("Puritan2")));
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, diffPrefix));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diffPrefix"));
+    }
+
+    private static Paragraph createParagraph(String textParagraph, String font) {
+        String text = "here is non-breaking hyphen: <\u2011> text after non-breaking hyphen.";
+        Paragraph p = new Paragraph(textParagraph + text).setFontFamily(font);
+
+        return p;
     }
 }
