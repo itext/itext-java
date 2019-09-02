@@ -148,7 +148,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
                 int unicode = fontEncoding.getUnicode(i);
                 PdfName glyphName = new PdfName(fontEncoding.getDifference(i));
                 if (unicode != -1
-                        && !glyphName.getValue().equals(FontEncoding.NOTDEF)
+                        && !FontEncoding.NOTDEF.equals(glyphName.getValue())
                         && charProcsDic.containsKey(glyphName)) {
                     ((Type3Font) getFontProgram()).addGlyph(i, unicode, widths[i], null, new Type3Glyph(charProcsDic.getAsStream(glyphName), getDocument()));
                 }

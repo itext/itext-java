@@ -173,7 +173,7 @@ public class PdfString extends PdfPrimitiveObject {
     public byte[] getValueBytes() {
         if (value == null)
             generateValue();
-        if (encoding != null && encoding.equals(PdfEncodings.UNICODE_BIG) && PdfEncodings.isPdfDocEncoding(value))
+        if (encoding != null && PdfEncodings.UNICODE_BIG.equals(encoding) && PdfEncodings.isPdfDocEncoding(value))
             return PdfEncodings.convertToBytes(value, PdfEncodings.PDF_DOC_ENCODING);
         else
             return PdfEncodings.convertToBytes(value, encoding);

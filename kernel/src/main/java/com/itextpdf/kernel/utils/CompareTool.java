@@ -1687,7 +1687,7 @@ public class CompareTool {
         byte[] bytes;
         String value = pdfString.getValue();
         String encoding = pdfString.getEncoding();
-        if (encoding != null && encoding.equals(PdfEncodings.UNICODE_BIG) && PdfEncodings.isPdfDocEncoding(value))
+        if (encoding != null && PdfEncodings.UNICODE_BIG.equals(encoding) && PdfEncodings.isPdfDocEncoding(value))
             bytes = PdfEncodings.convertToBytes(value, PdfEncodings.PDF_DOC_ENCODING);
         else
             bytes = PdfEncodings.convertToBytes(value, encoding);

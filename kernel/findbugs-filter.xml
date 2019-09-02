@@ -268,63 +268,6 @@
     <Match>
         <Or>
             <And>
-                <Class name="com.itextpdf.kernel.font.PdfType0Font"/>
-                <Method name="&lt;init&gt;" params="com.itextpdf.io.font.TrueTypeFont, java.lang.String" returns="void"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.kernel.font.PdfType3Font"/>
-                <Method name="&lt;init&gt;" params="com.itextpdf.kernel.pdf.PdfDictionary" returns="void"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.kernel.pdf.PdfAConformanceLevel"/>
-                <Method name="getConformanceLevel"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.kernel.pdf.PdfDocument"/>
-                <Method name="getAllOutlinesToCopy"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.kernel.pdf.PdfPage"/>
-                <Method name="removeAnnotation"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.kernel.pdf.PdfString"/>
-                <Method name="getValueBytes"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.kernel.pdf.annot.PdfSoundAnnotation"/>
-                <Method name="correctWavFile"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.kernel.pdf.canvas.parser.util.InlineImageParsingUtils"/>
-                <Method name="parseUnfilteredSamples"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.kernel.pdf.canvas.parser.util.PdfCanvasParser"/>
-                <Method name="parse"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.kernel.pdf.layer.PdfLayer"/>
-                <Method name="setUser"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.kernel.pdf.tagutils.RoleMappingResolverPdf2"/>
-                <Method name="currentRoleIsStandard"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.kernel.pdf.xobject.PdfImageXObject"/>
-                <Method name="createPdfStream"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.kernel.utils.CompareTool"/>
-                <Method name="convertPdfStringToBytes"/>
-            </And>
-        </Or>
-        <Bug pattern="LSC_LITERAL_STRING_COMPARISON"/>
-    </Match>
-    <Match>
-        <Or>
-            <And>
                 <Class name="com.itextpdf.kernel.xmp.impl.ISO8601Converter"/>
                 <Method name="render"/>
             </And>

@@ -317,11 +317,11 @@ public final class InlineImageParsingUtils {
             bytes[i] = (byte) ch;
         }
         PdfObject ei = ps.readObject();
-        if (!ei.toString().equals("EI")) {
+        if (!"EI".equals(ei.toString())) {
             // Some PDF producers seem to add another non-whitespace character after the image data.
             // Let's try to handle that case here.
             PdfObject ei2 = ps.readObject();
-            if (!ei2.toString().equals("EI"))
+            if (!"EI".equals(ei2.toString()))
                 throw new InlineImageParseException(PdfException.OperatorEINotFoundAfterEndOfImageData);
         }
         return bytes;

@@ -931,8 +931,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (getDocument().isTagged()) {
             TagTreePointer tagPointer = getDocument().getTagStructureContext().removeAnnotationTag(annotation);
             if (tagPointer != null) {
-                boolean standardAnnotTagRole = tagPointer.getRole().equals(StandardRoles.ANNOT)
-                        || tagPointer.getRole().equals(StandardRoles.FORM);
+                boolean standardAnnotTagRole = StandardRoles.ANNOT.equals(tagPointer.getRole())
+                        || StandardRoles.FORM.equals(tagPointer.getRole());
                 if (tagPointer.getKidsRoles().size() == 0 && standardAnnotTagRole) {
                     tagPointer.removeTag();
                 }

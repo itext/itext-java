@@ -108,7 +108,7 @@ public class PdfType0Font extends PdfFont {
 
     PdfType0Font(TrueTypeFont ttf, String cmap) {
         super();
-        if (!cmap.equals(PdfEncodings.IDENTITY_H) && !cmap.equals(PdfEncodings.IDENTITY_V)) {
+        if (!PdfEncodings.IDENTITY_H.equals(cmap) && !PdfEncodings.IDENTITY_V.equals(cmap)) {
             throw new PdfException(PdfException.OnlyIdentityCMapsSupportsWithTrueType);
         }
 

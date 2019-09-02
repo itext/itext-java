@@ -2258,7 +2258,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         PdfOutline parent = outline.getParent();
         //note there's no need to continue recursion if the current outline parent is root (first condition) or
         // if it is already in the Set of outlines to be copied (second condition)
-        if (parent.getTitle().equals("Outlines") || outlinesToCopy.contains(parent)) {
+        if ("Outlines".equals(parent.getTitle()) || outlinesToCopy.contains(parent)) {
             return;
         }
         outlinesToCopy.add(parent);

@@ -117,7 +117,7 @@ public class PdfSoundAnnotation extends PdfMarkupAnnotation {
             header = header + (char) bufferedIn.read();
         }
         bufferedIn.reset();
-        if (header.equals("RIFF")) {
+        if ("RIFF".equals(header)) {
             bufferedIn.read();
         }
         return bufferedIn;
