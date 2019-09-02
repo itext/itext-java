@@ -503,7 +503,7 @@ public class AffineTransform implements Serializable {
         if (Math.abs(det) < ZERO) {
             // awt.204=Determinant is zero
             //$NON-NLS-1$
-            throw new NoninvertibleTransformException("Determinant is zero. Cannot invert transformation");
+            throw new NoninvertibleTransformException(NoninvertibleTransformException.DETERMINANT_IS_ZERO_CANNOT_INVERT_TRANSFORMATION);
         }
         return new AffineTransform(
                 m11 / det,
@@ -619,7 +619,7 @@ public class AffineTransform implements Serializable {
         if (Math.abs(det) < ZERO) {
             // awt.204=Determinant is zero
             //$NON-NLS-1$
-            throw new NoninvertibleTransformException("Determinant is zero. Cannot invert transformation");
+            throw new NoninvertibleTransformException(NoninvertibleTransformException.DETERMINANT_IS_ZERO_CANNOT_INVERT_TRANSFORMATION);
         }
 
         if (dst == null) {
@@ -639,7 +639,7 @@ public class AffineTransform implements Serializable {
         if (Math.abs(det) < ZERO) {
             // awt.204=Determinant is zero
             //$NON-NLS-1$
-            throw new NoninvertibleTransformException("Determinant is zero. Cannot invert transformation");
+            throw new NoninvertibleTransformException(NoninvertibleTransformException.DETERMINANT_IS_ZERO_CANNOT_INVERT_TRANSFORMATION);
         }
 
         while (--length >= 0) {
@@ -656,7 +656,7 @@ public class AffineTransform implements Serializable {
         if (Math.abs(det) < ZERO) {
             // awt.204=Determinant is zero
             //$NON-NLS-1$
-            throw new NoninvertibleTransformException("Determinant is zero. Cannot invert transformation");
+            throw new NoninvertibleTransformException(NoninvertibleTransformException.DETERMINANT_IS_ZERO_CANNOT_INVERT_TRANSFORMATION);
         }
 
         while (--length >= 0) {

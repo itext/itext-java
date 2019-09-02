@@ -29,6 +29,8 @@ public class NoninvertibleTransformException extends java.lang.Exception {
 
     private static final long serialVersionUID = 6137225240503990466L;
 
+    public static final String DETERMINANT_IS_ZERO_CANNOT_INVERT_TRANSFORMATION = "Determinant is zero. Cannot invert transformation.";
+
     /**
      * Creates a new NoninvertibleTransformException.
      * @param message the detail message.
