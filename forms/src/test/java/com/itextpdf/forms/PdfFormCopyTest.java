@@ -509,4 +509,91 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         merged.close();
         Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_unnamedFieldsHierarchyTest.pdf", destinationFolder, "diff_"));
     }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 51)
+    })
+    public void copyAndEditTextFields() throws IOException, InterruptedException {
+        //TODO: update after DEVSIX-2354
+        String srcFileName = sourceFolder + "/checkPdfFormCopy_Source.pdf";
+        String destFilename = destinationFolder + "copyAndEditTextFields.pdf";
+        String cmpFileName = sourceFolder + "/cmp_copyAndEditTextFields.pdf";
+
+        PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFileName));
+        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
+
+        PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
+        for (int i = 0; i < 4; i++) {
+            srcDoc.copyPagesTo(1, 1, destDoc, pdfPageFormCopier);
+        }
+
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(destDoc, false);
+        acroForm.getField("text_1").setValue("text_1");
+        acroForm.getField("NumberField_text.2").setValue("-100.00");
+        acroForm.getField("NumberField_text.2_1").setValue("3.00");
+        acroForm.getField("text.3_1<!").setValue("text.3_1<!");
+        acroForm.getField("text.4___#1+1").setValue("CHANGEDtext");
+
+        destDoc.close();
+        srcDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 51)
+    })
+    public void copyAndEditCheckboxes() throws IOException, InterruptedException {
+        //TODO: update after DEVSIX-2354
+        String srcFileName = sourceFolder + "/checkPdfFormCopy_Source.pdf";
+        String destFilename = destinationFolder + "copyAndEditCheckboxes.pdf";
+        String cmpFileName = sourceFolder + "/cmp_copyAndEditCheckboxes.pdf";
+
+        PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFileName));
+        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
+
+        PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
+        for (int i = 0; i < 4; i++) {
+            srcDoc.copyPagesTo(1, 1, destDoc, pdfPageFormCopier);
+        }
+
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(destDoc, false);
+        acroForm.getField("CheckBox_1").setValue("On");
+        acroForm.getField("Check Box.2").setValue("Off");
+        acroForm.getField("CheckBox4.1#1").setValue("Off");
+
+        destDoc.close();
+        srcDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 51)
+    })
+    public void copyAndEditRadioButtons() throws IOException, InterruptedException {
+        //TODO: update after DEVSIX-2354
+        String srcFileName = sourceFolder + "/checkPdfFormCopy_Source.pdf";
+        String destFilename = destinationFolder + "copyAndEditRadioButtons.pdf";
+        String cmpFileName = sourceFolder + "/cmp_copyAndEditRadioButtons.pdf";
+
+        PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFileName));
+        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
+
+        PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
+        for (int i = 0; i < 4; i++) {
+            srcDoc.copyPagesTo(1, 1, destDoc, pdfPageFormCopier);
+        }
+
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(destDoc, false);
+        acroForm.getField("Group.4").setValue("Choice_3!<>3.3.3");
+
+        destDoc.close();
+        srcDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
+    }
 }
