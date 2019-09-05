@@ -80,6 +80,7 @@ public class CounterManager {
 
     /**
      * Returns the singleton instance of the factory.
+     * @return the {@link CounterManager} instance.
      */
     public static CounterManager getInstance() {
         return instance;
@@ -87,6 +88,8 @@ public class CounterManager {
 
     /**
      * Returns a list of registered counters for specific class.
+     * @param cls the class for which registered counters are fetched.
+     * @return list of registered {@link ICounter}.
      */
     public List<ICounter> getCounters(Class<?> cls) {
         ArrayList<ICounter> result = new ArrayList<>();

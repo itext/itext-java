@@ -71,15 +71,17 @@ public class GreekAlphabetNumbering {
      * Converts the given number to its Greek alphabet lowercase string representation.
      * E.g. 1 will be converted to "alpha", 2 to "beta", and so on.
      * @param number the number to be converted
+     * @return Greek alphabet lowercase string representation of an integer.
      */
     public static String toGreekAlphabetNumberLowerCase(int number) {
         return AlphabetNumbering.toAlphabetNumber(number, ALPHABET_LOWERCASE);
     }
 
     /**
-     * Converts the given number to its Greek alphabet lowercase string representation.
+     * Converts the given number to its Greek alphabet uppercase string representation.
      * E.g. 1 will be converted to "A", 2 to "B", and so on.
      * @param number the number to be converted
+     * @return Greek alphabet uppercase string representation of an integer.
      */
     public static String toGreekAlphabetNumberUpperCase(int number) {
         return AlphabetNumbering.toAlphabetNumber(number, ALPHABET_UPPERCASE);
@@ -91,6 +93,7 @@ public class GreekAlphabetNumbering {
      * 1 will be converted to "alpha", 2 to "beta", and so on.
      * @param number the number to be converted
      * @param upperCase whether to use uppercase or lowercase alphabet
+     * @return Greek alphabet string representation of an integer.
      */
     public static String toGreekAlphabetNumber(int number, boolean upperCase) {
         return toGreekAlphabetNumber(number, upperCase, false);
@@ -103,6 +106,7 @@ public class GreekAlphabetNumbering {
      * @param number the number to be converted
      * @param upperCase whether to use uppercase or lowercase alphabet
      * @param symbolFont if <code>true</code>, then the string representation will be returned ready to write it in Symbol font
+     * @return Greek alphabet string representation of an integer.
      */
     public static String toGreekAlphabetNumber(int number, boolean upperCase, boolean symbolFont) {
         String result = upperCase ? toGreekAlphabetNumberUpperCase(number) : toGreekAlphabetNumberLowerCase(number);

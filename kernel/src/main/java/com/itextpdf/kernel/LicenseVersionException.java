@@ -56,7 +56,7 @@ public class LicenseVersionException extends  RuntimeException{
     public static final String NO_I_TEXT7_LICENSE_IS_LOADED_BUT_AN_I_TEXT5_LICENSE_IS_LOADED ="No iText7 License is loaded but an iText5 license is loaded.";
     public static final String THE_MAJOR_VERSION_OF_THE_LICENSE_0_IS_LOWER_THAN_THE_MAJOR_VERSION_1_OF_THE_CORE_LIBRARY ="The major version of the license ({0}) is lower than the major version ({1}) of the Core library.";
     public static final String THE_MAJOR_VERSION_OF_THE_LICENSE_0_IS_HIGHER_THAN_THE_MAJOR_VERSION_1_OF_THE_CORE_LIBRARY ="The major version of the license ({0}) is higher than the major version ({1}) of the Core library.";
-    
+
     public static final String THE_MINOR_VERSION_OF_THE_LICENSE_0_IS_LOWER_THAN_THE_MINOR_VERSION_1_OF_THE_CORE_LIBRARY ="The minor version of the license ({0}) is lower than the minor version ({1}) of the Core library.";
     public static final String THE_MINOR_VERSION_OF_THE_LICENSE_0_IS_HIGHER_THAN_THE_MINOR_VERSION_1_OF_THE_CORE_LIBRARY ="The minor version of the license ({0}) is higher than the minor version ({1}) of the Core library.";
 
@@ -146,7 +146,9 @@ public class LicenseVersionException extends  RuntimeException{
     }
 
     /**
-     * Gets additional params for Exception message.
+     * Gets parameters that are to be inserted in exception message placeholders.
+     * Placeholder format is defined similar to the following: "{0}".
+     * @return params for exception message.
      */
     protected Object[] getMessageParams() {
         Object[] parameters = new Object[messageParams.size()];

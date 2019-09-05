@@ -92,9 +92,10 @@ public class GeorgianNumbering {
     }
 
     /**
-     * Returns a georgian numeral representation of an integer.
+     * Converts the given number to its georgian numeral representation.
      *
      * @param number a number greater than zero to be converted to georgian notation
+     * @return a georgian numeral representation of an integer.
      */
     public static String toGeorgian(int number) {
         StringBuilder result = new StringBuilder();

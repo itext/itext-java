@@ -109,8 +109,10 @@ public final class Version {
 
     /**
      * Gets an instance of the iText version that is currently used.
+     * <p>
      * Note that iText Group requests that you retain the iText producer line
      * in every PDF that is created or manipulated using iText.
+     * @return an instance of {@link Version}.
      */
     public static Version getInstance() {
         synchronized (staticLock) {

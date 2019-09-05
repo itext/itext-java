@@ -49,7 +49,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * Handles memory limits aware processing.
  *
- * @see {@link MemoryLimitsAwareHandler}
+ * @see MemoryLimitsAwareHandler
  */
 public abstract class MemoryLimitsAwareFilter implements IFilterHandler {
 

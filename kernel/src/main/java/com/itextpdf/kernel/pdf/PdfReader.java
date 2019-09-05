@@ -56,7 +56,6 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
-
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.FileNotFoundException;
@@ -65,8 +64,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -535,9 +532,12 @@ public class PdfReader implements Closeable, Serializable {
     /**
      * Gets original file ID, the first element in {@link PdfName#ID} key of trailer.
      * If the size of ID array does not equal 2, an empty array will be returned.
+     * <p>
+     * The returned value reflects the value that was written in opened document. If document is modified,
+     * the ultimate document id can be retrieved from {@link PdfDocument#getOriginalDocumentId()}.
      *
      * @return byte array represents original file ID.
-     * @see PdfDocument#getOriginalDocumentId(). The ultimate document id should be taken from PdfDocument
+     * @see PdfDocument#getOriginalDocumentId()
      */
     public byte[] getOriginalFileId() {
         PdfArray id = trailer.getAsArray(PdfName.ID);
@@ -551,6 +551,9 @@ public class PdfReader implements Closeable, Serializable {
     /**
      * Gets modified file ID, the second element in {@link PdfName#ID} key of trailer.
      * If the size of ID array does not equal 2, an empty array will be returned.
+     * <p>
+     * The returned value reflects the value that was written in opened document. If document is modified,
+     * the ultimate document id can be retrieved from {@link PdfDocument#getModifiedDocumentId()}.
      *
      * @return byte array represents modified file ID.
      * @see PdfDocument#getModifiedDocumentId()

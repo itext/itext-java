@@ -66,15 +66,17 @@ public class EnglishAlphabetNumbering {
      * Converts the given number to its English alphabet lowercase string representation.
      * E.g. 1 will be converted to "a", 2 to "b", ..., 27 to "aa", and so on.
      * @param number the number to be converted
+     * @return English alphabet lowercase string representation of an integer
      */
     public static String toLatinAlphabetNumberLowerCase(int number) {
         return AlphabetNumbering.toAlphabetNumber(number, ALPHABET_LOWERCASE);
     }
 
     /**
-     * Converts the given number to its English alphabet lowercase string representation.
+     * Converts the given number to its English alphabet uppercase string representation.
      * E.g. 1 will be converted to "A", 2 to "B", ..., 27 to "AA", and so on.
      * @param number the number to be converted
+     * @return English alphabet uppercase string representation of an integer
      */
     public static String toLatinAlphabetNumberUpperCase(int number) {
         return AlphabetNumbering.toAlphabetNumber(number, ALPHABET_UPPERCASE);
@@ -86,6 +88,7 @@ public class EnglishAlphabetNumbering {
      * 1 will be converted to "a", 2 to "b", ..., 27 to "aa", and so on.
      * @param number the number to be converted
      * @param upperCase whether to use uppercase or lowercase alphabet
+     * @return English alphabet string representation of an integer
      */
     public static String toLatinAlphabetNumber(int number, boolean upperCase) {
         return upperCase ? toLatinAlphabetNumberUpperCase(number) : toLatinAlphabetNumberLowerCase(number);
