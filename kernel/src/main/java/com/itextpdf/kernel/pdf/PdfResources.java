@@ -484,6 +484,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary resourceCategory = getPdfObject().getAsDictionary(resType);
         if (resourceCategory == null) {
             getPdfObject().put(resType, resourceCategory = new PdfDictionary());
+        } else {
+          resourceCategory.setModified();
         }
         resourceCategory.put(resName, resource);
         setModified();
