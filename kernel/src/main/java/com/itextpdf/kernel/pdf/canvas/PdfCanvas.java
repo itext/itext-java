@@ -393,10 +393,10 @@ public class PdfCanvas implements Serializable {
     /**
      * Concatenates the affine transformation matrix to the current matrix
      * in the content stream managed by this Canvas.
-     * See also {@link #concatMatrix(double, double, double, double, double, double)}
      *
-     * @param transform
+     * @param transform affine transformation matrix to be concatenated to the current matrix
      * @return current canvas
+     * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfCanvas concatMatrix(AffineTransform transform) {
         float[] matrix = new float[6];
@@ -1227,7 +1227,7 @@ public class PdfCanvas implements Serializable {
     /**
      * Paints a shading object and adds it to the resources of this canvas
      *
-     * @param shading
+     * @param shading a shading object to be painted
      * @return current canvas.
      */
     public PdfCanvas paintShading(PdfShading shading) {
@@ -1390,7 +1390,7 @@ public class PdfCanvas implements Serializable {
      * Sets the line cap style, the shape to be used at the ends of open subpaths
      * when they are stroked.
      *
-     * @param lineCapStyle
+     * @param lineCapStyle a line cap style to be set
      * @return current canvas.
      * @see PdfCanvasConstants.LineCapStyle for possible values.
      */
@@ -1408,7 +1408,7 @@ public class PdfCanvas implements Serializable {
      * Sets the line join style, the shape to be used at the corners of paths
      * when they are stroked.
      *
-     * @param lineJoinStyle
+     * @param lineJoinStyle a line join style to be set
      * @return current canvas.
      * @see PdfCanvasConstants.LineJoinStyle for possible values.
      */
@@ -1426,7 +1426,7 @@ public class PdfCanvas implements Serializable {
      * Sets the miter limit, a parameter specifying the maximum length a miter join
      * may extend beyond the join point, relative to the angle of the line segments.
      *
-     * @param miterLimit
+     * @param miterLimit a miter limit to be set
      * @return current canvas.
      */
     public PdfCanvas setMiterLimit(float miterLimit) {
@@ -1903,9 +1903,10 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Creates Image XObject from image and adds it to canvas.
+     * The created image will be fit inside on the specified rectangle without preserving aspect ratio.
      *
-     * @param image
-     * @param rect
+     * @param image image from which Image XObject will be created
+     * @param rect rectangle in which the created image will be fit
      * @param asInline true if to add image as in-line.
      * @return created XObject or null in case of in-line image (asInline = true).
      */
@@ -1916,9 +1917,9 @@ public class PdfCanvas implements Serializable {
     /**
      * Creates Image XObject from image and adds it to canvas.
      *
-     * @param image
-     * @param x
-     * @param y
+     * @param image image from which Image XObject will be created
+     * @param x horizontal offset of the created image position
+     * @param y vertical offset of the created image position
      * @param asInline true if to add image as in-line.
      * @return created XObject or null in case of in-line image (asInline = true).
      */
@@ -1943,10 +1944,10 @@ public class PdfCanvas implements Serializable {
     /**
      * Creates Image XObject from image and adds it to the specified position with specified width preserving aspect ratio.
      *
-     * @param image
-     * @param x
-     * @param y
-     * @param width
+     * @param image image from which Image XObject will be created
+     * @param x horizontal offset of the created image position
+     * @param y vertical offset of the created image position
+     * @param width width of the created image on the basis of which the image height will be calculated
      * @param asInline true if to add image as in-line.
      * @return created XObject or null in case of in-line image (asInline = true).
      */
@@ -1972,12 +1973,13 @@ public class PdfCanvas implements Serializable {
     /**
      * Creates Image XObject from image and adds it to the specified position with specified width preserving aspect ratio.
      *
-     * @param image
-     * @param x
-     * @param y
-     * @param height
+     * @param image image from which Image XObject will be created
+     * @param x horizontal offset of the created image position
+     * @param y vertical offset of the created image position
+     * @param height height of the created image on the basis of which the image width will be calculated
      * @param asInline true if to add image as in-line.
-     * @param dummy
+     * @param dummy flag to note that the method works with the height parameter as opposed to the method
+     *              {@link #addImage(ImageData, float, float, float, boolean)}.
      * @return created XObject or null in case of in-line image (asInline = true).
      */
     public PdfXObject addImage(ImageData image, float x, float y, float height, boolean asInline, boolean dummy) {
@@ -2009,9 +2011,9 @@ public class PdfCanvas implements Serializable {
     /**
      * Adds {@code PdfXObject} to the specified position.
      *
-     * @param xObject
-     * @param x
-     * @param y
+     * @param xObject Image XObject to be added
+     * @param x horizontal offset of the image position
+     * @param y vertical offset of the image position
      * @return current canvas.
      */
     public PdfCanvas addXObject(PdfXObject xObject, float x, float y) {
@@ -2048,10 +2050,10 @@ public class PdfCanvas implements Serializable {
     /**
      * Adds {@code PdfXObject} to the specified position with specified width preserving aspect ratio.
      *
-     * @param xObject
-     * @param x
-     * @param y
-     * @param width
+     * @param xObject Image XObject to be added
+     * @param x horizontal offset of the image position
+     * @param y vertical offset of the image position
+     * @param width width of the image on the basis of which the height will be calculated
      * @return current canvas.
      */
     public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float width) {
@@ -2067,11 +2069,12 @@ public class PdfCanvas implements Serializable {
     /**
      * Adds {@code PdfXObject} to the specified position with specified height preserving aspect ratio.
      *
-     * @param xObject
-     * @param x
-     * @param y
-     * @param height
-     * @param dummy
+     * @param xObject Image XObject to be added
+     * @param x horizontal offset of the image position
+     * @param y vertical offset of the image position
+     * @param height height of the image on the basis of which the width will be calculated
+     * @param dummy flag to note that the method works with the height parameter as opposed to the method
+     *              {@link #addXObject(PdfXObject, float, float, float)}
      * @return current canvas.
      */
     public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float height, boolean dummy) {
