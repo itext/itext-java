@@ -56,7 +56,6 @@ import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,10 +66,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @Category(IntegrationTest.class)
-public class PDFA2LayoutOcgTest extends ExtendedITextTest {
+public class PdfA2LayoutOcgTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PDFA2LayoutOcgTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA2LayoutOcgTest/";
 
     @Before
     public void configure() {
@@ -82,7 +81,7 @@ public class PDFA2LayoutOcgTest extends ExtendedITextTest {
         String fileName = "createdOcgPdfA.pdf";
         InputStream colorStream = new FileInputStream(sourceFolder + "color/sRGB_CS_profile.icm");
         String outFileName = destinationFolder + fileName;
-        String cmpFileName = sourceFolder + "cmp/PDFA2LayoutOcg/cmp_" + fileName;
+        String cmpFileName = sourceFolder + "cmp/PdfA2LayoutOcgTest/cmp_" + fileName;
         PdfDocument pdfDoc = new PdfADocument(new PdfWriter(outFileName), PdfAConformanceLevel.PDF_A_2A,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", colorStream));
         pdfDoc.setTagged();
