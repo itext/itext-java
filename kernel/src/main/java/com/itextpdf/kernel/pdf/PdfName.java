@@ -46,6 +46,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
@@ -1095,7 +1096,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     @Override
     public String toString() {
         if (content != null)
-            return "/" + new String(content);
+            return "/" + new String(content, StandardCharsets.ISO_8859_1);
         else
             return "/" + getValue();
     }

@@ -51,6 +51,8 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * The content where Type3 glyphs are written to.
  */
@@ -195,7 +197,7 @@ public final class Type3Glyph extends PdfCanvas {
     }
 
     private void fillBBFromBytes(byte[] bytes) {
-        String str = new String(bytes);
+        String str = new String(bytes, StandardCharsets.ISO_8859_1);
         int d0Pos = str.indexOf(D_0_STR);
         int d1Pos = str.indexOf(D_1_STR);
         if (d0Pos != -1) {

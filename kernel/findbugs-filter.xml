@@ -45,41 +45,12 @@
     <Match>
         <Or>
             <And>
-                <Class name="com.itextpdf.kernel.counter.DefaultEventCounter"/>
-                <Method name="onEvent"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.kernel.log.DefaultCounter"/>
-                <Method name="plusOne"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.kernel.font.Type3Glyph"/>
-                <Method name="fillBBFromBytes"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.kernel.pdf.PdfNumber"/>
-                <Method name="generateValue"/>
-            </And>
-            <And>
-                <Or>
-                    <Class name="com.itextpdf.kernel.pdf.PdfLiteral"/>
-                    <Class name="com.itextpdf.kernel.pdf.PdfName"/>
-                    <Class name="com.itextpdf.kernel.pdf.PdfNumber"/>
-                    <Class name="com.itextpdf.kernel.pdf.PdfString"/>
-                </Or>
-                <Method name="toString"/>
-            </And>
-            <And>
                 <Class name="com.itextpdf.kernel.pdf.canvas.wmf.MetaDo"/>
                 <Method name="readAll"/>
             </And>
             <And>
                 <Class name="com.itextpdf.kernel.pdf.canvas.wmf.MetaFont"/>
                 <Method name="init"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.kernel.utils.CompareTool"/>
-                <Method name="findBytesDifference"/>
             </And>
             <And>
                 <Class name="com.itextpdf.kernel.xmp.XMPUtils"/>

@@ -48,6 +48,8 @@ import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.util.StreamUtil;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * A {@code PdfString}-class is the PDF-equivalent of a
  * JAVA-{@code String}-object.
@@ -202,7 +204,7 @@ public class PdfString extends PdfPrimitiveObject {
     @Override
     public String toString() {
         if (value == null) {
-            return new String(decodeContent());
+            return new String(decodeContent(), StandardCharsets.ISO_8859_1);
         } else {
             return getValue();
         }

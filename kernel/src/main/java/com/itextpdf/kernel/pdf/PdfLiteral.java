@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.PdfEncodings;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class PdfLiteral extends PdfPrimitiveObject {
@@ -79,7 +80,7 @@ public class PdfLiteral extends PdfPrimitiveObject {
     @Override
     public String toString() {
         if (content != null) {
-            return new String(content);
+            return new String(content, StandardCharsets.ISO_8859_1);
         } else {
             return "";
         }

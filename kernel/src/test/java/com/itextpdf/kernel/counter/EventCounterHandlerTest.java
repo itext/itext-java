@@ -46,34 +46,56 @@ import com.itextpdf.kernel.counter.event.CoreEvent;
 import com.itextpdf.kernel.counter.event.IEvent;
 import com.itextpdf.kernel.counter.event.IMetaInfo;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.slf4j.LoggerFactory;
 
 @Category(UnitTest.class)
 public class EventCounterHandlerTest extends ExtendedITextTest {
 
-    private static final int COUNT = 100;
-
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = "Process event: core-process", count = COUNT)})
     public void testCoreEvent() {
+        final int EVENTS_COUNT = 100;
         IEventCounterFactory counterFactory = new SimpleEventCounterFactory(new ToLogCounter());
         EventCounterHandler.getInstance().register(counterFactory);
-        for (int i = 0; i < COUNT; ++i) {
-            EventCounterHandler.getInstance().onEvent(CoreEvent.PROCESS, null, getClass());
+        MetaInfoCounter counter = new MetaInfoCounter();
+        for (int i = 0; i < EVENTS_COUNT; ++i) {
+            EventCounterHandler.getInstance().onEvent(CoreEvent.PROCESS, counter, getClass());
         }
         EventCounterHandler.getInstance().unregister(counterFactory);
+        Assert.assertEquals(counter.events_count, EVENTS_COUNT);
     }
 
     private static class ToLogCounter extends EventCounter {
-
         @Override
         protected void onEvent(IEvent event, IMetaInfo metaInfo) {
-            LoggerFactory.getLogger(getClass()).warn("Process event: " + event.getEventType());
+            ((MetaInfoCounter)metaInfo).events_count++;
+        }
+    }
+
+    @Test
+    public void testDefaultCoreEvent() {
+        final int EVENTS_COUNT = 10001;
+        IEventCounterFactory counterFactory = new SimpleEventCounterFactory(new ToLogDefaultCounter());
+        EventCounterHandler.getInstance().register(counterFactory);
+        MetaInfoCounter counter = new MetaInfoCounter();
+        for (int i = 0; i < EVENTS_COUNT; ++i) {
+            EventCounterHandler.getInstance().onEvent(CoreEvent.PROCESS, counter, getClass());
+        }
+        EventCounterHandler.getInstance().unregister(counterFactory);
+        Assert.assertEquals(counter.events_count, EVENTS_COUNT);
+    }
+
+    private static class MetaInfoCounter implements IMetaInfo {
+        int events_count = 0;
+    }
+
+    private static class ToLogDefaultCounter extends DefaultEventCounter {
+        @Override
+        protected void onEvent(IEvent event, IMetaInfo metaInfo) {
+            super.onEvent(event, metaInfo);
+            ((MetaInfoCounter)metaInfo).events_count++;
         }
     }
 }
