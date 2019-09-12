@@ -329,7 +329,7 @@ public class ListRenderer extends BlockRenderer {
                 childRenderers.get(i).setParent(null);
                 boolean isForcedPlacement = Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT));
                 boolean listSymbolNotFit = listSymbolLayoutResult != null && listSymbolLayoutResult.getStatus() != LayoutResult.FULL;
-                // TODO DEVSIX-1001: partially not fitting list symbol not shown at all, however this might be improved
+                // TODO DEVSIX-1655: partially not fitting list symbol not shown at all, however this might be improved
                 if (listSymbolNotFit && isForcedPlacement) {
                     currentSymbolRenderer = null;
                 }

@@ -613,7 +613,7 @@ public class ListTest extends ExtendedITextTest {
         document.add(new Paragraph("After list."));
 
         document.close();
-        // TODO DEVSIX-1001: partially not fitting list symbol not shown at all, however this might be improved
+        // TODO DEVSIX-1655: partially not fitting list symbol not shown at all, however this might be improved
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
     }
 }

@@ -16,4 +16,5 @@
 	<text x="20" y="580" font-size="12pt">font-size 12pt</text>
 	<text x="20" y="610" font-size="12px">font-size 12px</text>
 	<text x="20" y="640" font-size="12">font-size 12<tspan font-size="2em">font-size 2em</tspan></text>
+	<text x="20" y="670" font-size="12">font-size 12<tspan font-size="2rem">font-size 2rem</tspan></text>
 </svg>

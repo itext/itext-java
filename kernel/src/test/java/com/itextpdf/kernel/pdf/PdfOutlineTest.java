@@ -168,11 +168,11 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE, count = 36))
-    // TODO DEVSIX-1583: destinations are not removed along with page
+    // TODO DEVSIX-1643: destinations are not removed along with page
     public void removePageWithOutlinesTest() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String filename = "removePageWithOutlinesTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "iphone_user_guide.pdf"), new PdfWriter(destinationFolder + filename));
-        // TODO this causes log message errors! it's because of destinations pointing to removed page (freed reference, replaced by PdfNull)
+        // TODO DEVSIX-1643 (this causes log message errors. It's because of destinations pointing to removed page (freed reference, replaced by PdfNull))
         pdfDoc.removePage(102);
 
         pdfDoc.close();
@@ -188,7 +188,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
     @Test
     public void readRemovedPageWithOutlinesTest() throws IOException {
-        // TODO DEVSIX-1583: src document is taken from the previous removePageWithOutlinesTest test, however it contains numerous destination objects which contain PdfNull instead of page reference
+        // TODO DEVSIX-1643: src document is taken from the previous removePageWithOutlinesTest test, however it contains numerous destination objects which contain PdfNull instead of page reference
         String filename = sourceFolder + "removePagesWithOutlinesResult.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));

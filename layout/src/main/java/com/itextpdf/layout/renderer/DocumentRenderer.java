@@ -125,7 +125,7 @@ public class DocumentRenderer extends RootRenderer {
                 return;
         }
 
-        // TODO Remove checking occupied area to be not null when DEVSIX-1001 is resolved.
+        // TODO Remove checking occupied area to be not null when DEVSIX-1655 is resolved.
         if (!resultRenderer.isFlushed() && null != resultRenderer.getOccupiedArea()) {
             int pageNum = resultRenderer.getOccupiedArea().getPageNumber();
 

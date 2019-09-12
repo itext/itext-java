@@ -1262,7 +1262,7 @@ public class FloatTest extends ExtendedITextTest {
         div.add(img);
         div.add(new Paragraph("some small text"));
 
-        // TODO DEVSIX-1001: blocks don't extend their height to MIN_HEIGHT if forced placement is applied, why?
+        // TODO DEVSIX-1655: blocks don't extend their height to MIN_HEIGHT if forced placement is applied, why?
         document.add(div);
 
         document.close();
@@ -1353,7 +1353,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(containerDiv);
         document.close();
 
-        // TODO DEVSIX-1001: currently forced placement is applied on containerDiv, which results in all it's content
+        // TODO DEVSIX-1655: currently forced placement is applied on containerDiv, which results in all it's content
         // being forced placed at once, rather than content being split more gracefully (it makes sense to put the second
         // image on the next empty area, not on current area).
 
@@ -1383,7 +1383,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(containerDiv);
         document.close();
 
-        // TODO DEVSIX-1001: text in the container div gets lost. And floating property doesn't actually affect this.
+        // TODO DEVSIX-1655: text in the container div gets lost. And floating property doesn't actually affect this.
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff28_03_"));
     }
@@ -1471,7 +1471,7 @@ public class FloatTest extends ExtendedITextTest {
         document.add(containerDiv);
         document.close();
 
-        // TODO DEVSIX-1001: Forced placement is applied to the parent element, forcing it to return FULL even though part of the child element overflowed.
+        // TODO DEVSIX-1655: Forced placement is applied to the parent element, forcing it to return FULL even though part of the child element overflowed.
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff31_"));
     }

@@ -1703,11 +1703,10 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1579")
+    // TODO DEVSIX-1653
     public void SourceHanSerifKRRegularTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "SourceHanSerifKRRegularTest.pdf";
         String cmpFilename = sourceFolder + "cmp_SourceHanSerifKRRegularTest.pdf";
-
         PdfDocument doc = new PdfDocument(new PdfWriter(filename));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
@@ -1728,7 +1727,7 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1579")
+    // TODO DEVSIX-1653
     public void SourceHanSerifKRRegularFullTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "SourceHanSerifKRRegularFullTest.pdf";
         String cmpFilename = sourceFolder + "cmp_SourceHanSerifKRRegularFullTest.pdf";

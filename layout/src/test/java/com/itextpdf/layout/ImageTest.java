@@ -507,7 +507,7 @@ public class ImageTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
-    //TODO(DEVSIX-1658)
+    //TODO(DEVSIX-1659)
     @Test
     public void imageTest19() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageTest19.pdf";
@@ -556,7 +556,7 @@ public class ImageTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
-    //TODO(DEVSIX-1658)
+    //TODO(DEVSIX-1659)
     @Test
     public void imageTest21() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageTest21.pdf";

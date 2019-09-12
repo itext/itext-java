@@ -587,7 +587,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Map<String, PdfFormField> fields = form.getFormFields();
         PdfFormField field = fields.get("Text1");
 
-        // TODO DEVSIX-2016: the font in /DR of AcroForm dict is not updated, even though /DA field is updated.
         field.setFont(PdfFontFactory.createFont(StandardFonts.COURIER));
         field.setValue("New value size must be 8, but with different font.");
 
