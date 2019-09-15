@@ -985,7 +985,7 @@ public final class SvgConverter {
     }
 
     /**
-     * Tries to extract charset from {@see ISvgConverterProperties}.
+     * Tries to extract charset from {@link ISvgConverterProperties}.
      *
      * @param props converter properties
      * @return charset  | null
@@ -995,7 +995,7 @@ public final class SvgConverter {
     }
 
     /**
-     * Tries to extract baseUri from {@see ISvgConverterProperties}.
+     * Tries to extract baseUri from {@link ISvgConverterProperties}.
      *
      * @param props converter properties
      * @return baseUrl  | null

@@ -43,8 +43,8 @@
 package com.itextpdf.layout.property;
 
 /**
- * A specialized enum containing the potential caption side values for a {@link
- * com.itextpdf.layout.element.Table}'s caption.
+ * A specialized enum containing the potential caption side values
+ * for a {@link com.itextpdf.layout.element.Table}'s caption.
  */
 public enum CaptionSide {
     BOTTOM,

@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 
 import java.io.BufferedInputStream;
@@ -73,7 +74,7 @@ public class PdfSoundAnnotation extends PdfMarkupAnnotation {
     }
 
     /**
-     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
+     * @see PdfAnnotation#makeAnnotation(PdfObject)
      */
     protected PdfSoundAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);

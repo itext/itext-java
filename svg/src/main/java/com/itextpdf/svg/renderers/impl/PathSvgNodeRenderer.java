@@ -74,7 +74,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
     private static final String SPACE_CHAR = " ";
 
     /**
-     * The regular expression to find invalid operators in the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of the &ltpath&gt element</a>
+     * The regular expression to find invalid operators in the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of the &lt;path&gt; element</a>
      * <p>
      * Find any occurrence of a letter that is not an operator
      */
@@ -82,7 +82,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
     private static Pattern invalidRegexPattern = Pattern.compile(INVALID_OPERATOR_REGEX, Pattern.CASE_INSENSITIVE);
 
     /**
-     * The regular expression to split the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of the &ltpath&gt element</a>
+     * The regular expression to split the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of the &lt;path&gt; element</a>
      * <p>
      * Since {@link PathSvgNodeRenderer#containsInvalidAttributes(String)} is called before the use of this expression in {@link PathSvgNodeRenderer#parsePathOperations()} the attribute to be split is valid.
      *
@@ -132,8 +132,8 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
      *
      * @param shape          The current shape.
      * @param previousShape  The previous shape which can affect the coordinates of the current shape.
-     * @param pathProperties The operator and all arguments as a {@link String[]}
-     * @return a {@link String[]} of coordinates that shall be passed to {@link IPathShape#setCoordinates}
+     * @param pathProperties The operator and all arguments as an array of {@link String String}s
+     * @return a {@link String} array of coordinates that shall be passed to {@link IPathShape#setCoordinates}
      */
     private String[] getShapeCoordinates(IPathShape shape, IPathShape previousShape, String[] pathProperties) {
         if (shape instanceof ClosePath) {
@@ -173,7 +173,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
      * Processes an individual pathing operator and all of its arguments, converting into one or more
      * {@link IPathShape} objects.
      *
-     * @param pathProperties The property operator and all arguments as a {@link String[]}
+     * @param pathProperties The property operator and all arguments as an array of {@link String}s
      * @param previousShape  The previous shape which can affect the positioning of the current shape. If no previous
      *                       shape exists {@code null} is passed.
      * @return a {@link List} of each {@link IPathShape} that should be drawn to represent the operator.

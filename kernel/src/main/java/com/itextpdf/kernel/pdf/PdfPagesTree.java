@@ -70,9 +70,9 @@ class PdfPagesTree implements Serializable {
     private PdfPages root;
 
     /**
-     * Create PdfPages tree.
+     * Creates a PdfPages tree.
      *
-     * @param pdfCatalog {@see PdfCatalog}
+     * @param pdfCatalog a {@link PdfCatalog} which will be used to create the tree
      */
     public PdfPagesTree(PdfCatalog pdfCatalog) {
         this.document = pdfCatalog.getDocument();
@@ -98,10 +98,10 @@ class PdfPagesTree implements Serializable {
     }
 
     /**
-     * Returns the {@see PdfPage} at the specified position in this list.
+     * Returns the {@link PdfPage} at the specified position in this list.
      *
      * @param pageNum one-based index of the element to return
-     * @return the {@see PdfPage} at the specified position in this list
+     * @return the {@link PdfPage} at the specified position in this list
      */
     public PdfPage getPage(int pageNum) {
         if (pageNum < 1 || pageNum > getNumberOfPages()) {
@@ -124,7 +124,7 @@ class PdfPagesTree implements Serializable {
     }
 
     /**
-     * Returns the {@see PdfPage} by page's PdfDictionary.
+     * Returns the {@link PdfPage} by page's PdfDictionary.
      *
      * @param pageDictionary page's PdfDictionary
      * @return the {@code PdfPage} object, that wraps {@code pageDictionary}.
@@ -177,9 +177,9 @@ class PdfPagesTree implements Serializable {
     }
 
     /**
-     * Appends the specified {@see PdfPage} to the end of this tree.
+     * Appends the specified {@link PdfPage} to the end of this tree.
      *
-     * @param pdfPage {@see PdfPage}
+     * @param pdfPage a {@link PdfPage} to be added
      */
     public void addPage(PdfPage pdfPage) {
         PdfPages pdfPages;
@@ -207,7 +207,7 @@ class PdfPagesTree implements Serializable {
     }
 
     /**
-     * Insert {@see PdfPage} into specific one-based position.
+     * Inserts {@link PdfPage} into specific one-based position.
      *
      * @param index   one-base index of the page
      * @param pdfPage {@link PdfPage} to insert.

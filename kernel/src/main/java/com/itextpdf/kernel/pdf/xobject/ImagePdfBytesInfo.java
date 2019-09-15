@@ -166,8 +166,6 @@ class ImagePdfBytesInfo {
      *
      * @param csObj   the colorspace to use
      * @param allowIndexed whether indexed color spaces will be resolved (used for recursive call)
-     * @param width
-     * @param height
      * @throws IOException if there is a problem with reading from the underlying stream
      */
     private void findColorspace(PdfObject csObj, boolean allowIndexed) {

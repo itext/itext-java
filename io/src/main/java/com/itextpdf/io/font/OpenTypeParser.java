@@ -490,8 +490,7 @@ class OpenTypeParser implements Serializable, Closeable {
     /**
      * Reads the glyphs widths. The widths are extracted from the table 'hmtx'.
      * The glyphs are normalized to 1000 units (TrueTypeFont.UNITS_NORMALIZATION).
-     * Depends from {@code hhea.numberOfHMetrics} property, {@see HorizontalHeader} and
-     * {@code head.unitsPerEm} property, {@see HeaderTable}.
+     * Depends on {@link HorizontalHeader#numberOfHMetrics} and {@link HeaderTable#unitsPerEm}.
      *
      * @throws java.io.IOException the font file could not be read.
      */
@@ -526,7 +525,7 @@ class OpenTypeParser implements Serializable, Closeable {
     /**
      * Reads the kerning information from the 'kern' table.
      *
-     * @param unitsPerEm {@code head.unitsPerEm} property, {@see HeaderTable}.
+     * @param unitsPerEm {@link HeaderTable#unitsPerEm}.
      * @throws java.io.IOException the font file could not be read
      */
     protected IntHashtable readKerning(int unitsPerEm) throws java.io.IOException {
@@ -562,9 +561,9 @@ class OpenTypeParser implements Serializable, Closeable {
     /**
      * Read the glyf bboxes from 'glyf' table.
      *
-     * @param unitsPerEm {@code head.unitsPerEm} property, {@see HeaderTable}.
-     * @throws IOException the font is invalid.
-     * @throws java.io.IOException  the font file could not be read.
+     * @param unitsPerEm {@link HeaderTable#unitsPerEm}
+     * @throws IOException the font is invalid
+     * @throws java.io.IOException  the font file could not be read
      */
     protected int[][] readBbox(int unitsPerEm) throws java.io.IOException {
         int tableLocation[];
@@ -742,7 +741,7 @@ class OpenTypeParser implements Serializable, Closeable {
 
     /**
      * Reads the windows metrics table. The metrics are extracted from the table 'OS/2'.
-     * Depends from {@code head.unitsPerEm} property, {@see HeaderTable}.
+     * Depends on {@link HeaderTable#unitsPerEm} property.
      *
      * @throws IOException the font is invalid.
      * @throws java.io.IOException  the font file could not be read.

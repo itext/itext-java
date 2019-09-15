@@ -812,7 +812,9 @@ public class Element extends Node {
     /**
      * Find elements that have attributes whose values match the supplied regular expression.
      * @param key name of the attribute
-     * @param regex regular expression to match against attribute values. You can use <a href="http://java.sun.com/docs/books/tutorial/essential/regex/pattern.html#embedded">embedded flags</a> (such as (?i) and (?m) to control regex options.
+     * @param regex regular expression to match against attribute values.
+     *              You can use <a href="http://java.sun.com/docs/books/tutorial/essential/regex/pattern.html#embedded">embedded flags</a>
+     *              (such as (?i) and (?m) to control regex options.
      * @return elements that have attributes matching this regular expression
      */
     public Elements getElementsByAttributeValueMatching(String key, String regex) {
@@ -886,7 +888,9 @@ public class Element extends Node {
 
     /**
      * Find elements whose text matches the supplied regular expression.
-     * @param regex regular expression to match text against. You can use <a href="http://java.sun.com/docs/books/tutorial/essential/regex/pattern.html#embedded">embedded flags</a> (such as (?i) and (?m) to control regex options.
+     * @param regex regular expression to match text against.
+     *              You can use <a href="http://java.sun.com/docs/books/tutorial/essential/regex/pattern.html#embedded">embedded flags</a>
+     *              (such as (?i) and (?m) to control regex options.
      * @return elements matching the supplied regular expression.
      * @see Element#text()
      */
@@ -912,7 +916,9 @@ public class Element extends Node {
 
     /**
      * Find elements whose text matches the supplied regular expression.
-     * @param regex regular expression to match text against. You can use <a href="http://java.sun.com/docs/books/tutorial/essential/regex/pattern.html#embedded">embedded flags</a> (such as (?i) and (?m) to control regex options.
+     * @param regex regular expression to match text against.
+     *              You can use <a href="http://java.sun.com/docs/books/tutorial/essential/regex/pattern.html#embedded">embedded flags</a>
+     *              (such as (?i) and (?m) to control regex options.
      * @return elements matching the supplied regular expression.
      * @see Element#ownText()
      */

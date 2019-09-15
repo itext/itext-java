@@ -403,7 +403,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     }
 
     /**
-     * Gets first empty code, that could use with {@see addSymbol()}
+     * Gets the first empty code that could be passed to {@link FontEncoding#addSymbol(int, int)}
      *
      * @return code from 1 to 255 or -1 if all slots are busy.
      */

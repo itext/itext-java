@@ -1763,7 +1763,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Puts object directly to AcroForm dictionary.
-     * It works much faster than {@link PdfAcroForm#getAcroForm(PdfDocument, boolean)#getPdfObject()}.
+     * It works much faster than consequent invocation of {@link PdfAcroForm#getAcroForm(PdfDocument, boolean)}
+     * and {@link PdfAcroForm#getPdfObject()}.
      *
      * Note, this method assume that Catalog already has AcroForm object.
      * {@link #addAcroFormToCatalog()} should be called explicitly.

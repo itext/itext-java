@@ -52,11 +52,8 @@ import com.itextpdf.layout.property.Property;
  * a new "Block formatting context" in terms of CSS. Such renderers adhere to
  * specific rules of floating elements and margins collapse handling.
  * <p>
- * See
- * <a href="https://www.w3.org/TR/CSS21/visuren.html#block-formatting">https://www.w3.org/TR/CSS21/visuren.html#block-formatting</a>
- * and
- * <a href="https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Block_formatting_context">https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Block_formatting_context</a>
- * for more info.
+ * @see <a href="https://www.w3.org/TR/CSS21/visuren.html#block-formatting">https://www.w3.org/TR/CSS21/visuren.html#block-formatting</a>
+ * @see <a href="https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Block_formatting_context">https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Block_formatting_context</a>
  */
 public class BlockFormattingContextUtil {
 
