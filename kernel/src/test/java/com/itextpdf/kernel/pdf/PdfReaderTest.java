@@ -1659,6 +1659,18 @@ public class PdfReaderTest extends ExtendedITextTest {
         Assert.assertTrue(exceptionThrown);
     }
 
+    @Ignore("DEVSIX-3048")
+    @Test
+    public void testManyAppendModeUpdates() throws Exception {
+        junitExpectedException.expect(java.lang.StackOverflowError.class);
+
+        String file = sourceFolder + "manyAppendModeUpdates.pdf";
+
+        PdfReader reader = new PdfReader(file);
+        PdfDocument document = new PdfDocument(reader);
+        document.close();
+    }
+
     private boolean objectTypeEqualTo(PdfObject object, PdfName type) {
         PdfName objectType = ((PdfDictionary) object).getAsName(PdfName.Type);
         return type.equals(objectType);
