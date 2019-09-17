@@ -113,8 +113,8 @@ public final class SvgCssUtils {
      * @return true, if the element node represents a style sheet link
      */
     public static boolean isStyleSheetLink(IElementNode headChildElement) {
-        return headChildElement.name().equals( SvgConstants.Tags.LINK )
-                && SvgConstants.Attributes.STYLESHEET.equals( headChildElement.getAttribute( SvgConstants.Attributes.REL ) );
+        return SvgConstants.Tags.LINK.equals(headChildElement.name())
+                && SvgConstants.Attributes.STYLESHEET.equals(headChildElement.getAttribute(SvgConstants.Attributes.REL));
     }
 
 }

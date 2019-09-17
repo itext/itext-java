@@ -171,7 +171,7 @@ public final class SvgTextUtil {
         trimmedText = SvgTextUtil.trimLeadingWhitespace(trimmedText);
         //Trim trailing whitespace
         trimmedText = SvgTextUtil.trimTrailingWhitespace(trimmedText);
-        return trimmedText.equals("");
+        return "".equals(trimmedText);
     }
 
     /**

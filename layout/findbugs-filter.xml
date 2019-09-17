@@ -61,14 +61,7 @@
     </Match>
     <Match>
         <Or>
-            <And>
-                <Class name="com.itextpdf.layout.font.FontCharacteristics"/>
-                <Method name="setFontStyle"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.layout.font.FontSelector$PdfFontComparator"/>
-                <Method name="compare"/>
-            </And>
+            <!-- Hyphenation is a third-party tool, so won't fix any changes in classes from this package-->
             <And>
                 <Class name="com.itextpdf.layout.hyphenation.HyphenationTreeCache"/>
                 <Method name="constructLlccKey"/>
@@ -80,10 +73,6 @@
             <And>
                 <Class name="com.itextpdf.layout.hyphenation.PatternParser"/>
                 <Method name="startElement"/>
-            </And>
-            <And>
-                <Class name="com.itextpdf.layout.renderer.AccessibleAttributesApplier"/>
-                <Method name="applyBlockLevelLayoutAttributes"/>
             </And>
         </Or>
         <Bug pattern="LSC_LITERAL_STRING_COMPARISON"/>

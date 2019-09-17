@@ -129,7 +129,7 @@ public class FontSelector {
                 FontCharacteristics fc = fontStyles.get(i);
                 String fontFamily = fontFamilies.get(i);
 
-                if (fontFamily.equalsIgnoreCase("monospace")) {
+                if ("monospace".equalsIgnoreCase(fontFamily)) {
                     fc.setMonospaceFlag(true);
                 }
                 boolean isLastFontFamilyToBeProcessed = i == fontFamilies.size() - 1;

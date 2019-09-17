@@ -260,8 +260,8 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
 
     private FontInfo resolveFontName(String fontFamily, String fontWeight, String fontStyle,
                                      FontProvider provider, FontSet tempFonts) {
-        boolean isBold = fontWeight != null && fontWeight.equalsIgnoreCase(SvgConstants.Attributes.BOLD);
-        boolean isItalic = fontStyle != null && fontStyle.equalsIgnoreCase(SvgConstants.Attributes.ITALIC);
+        boolean isBold = fontWeight != null && SvgConstants.Attributes.BOLD.equalsIgnoreCase(fontWeight);
+        boolean isItalic = fontStyle != null && SvgConstants.Attributes.ITALIC.equalsIgnoreCase(fontStyle);
 
         FontCharacteristics fontCharacteristics = new FontCharacteristics();
         List<String> stringArrayList = new ArrayList<>();
@@ -372,7 +372,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         if (this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_ANCHOR)) {
             String textAnchorValue = this.getAttribute(SvgConstants.Attributes.TEXT_ANCHOR);
             //Middle
-            if (textAnchorValue.equals(SvgConstants.Values.TEXT_ANCHOR_MIDDLE)) {
+            if (SvgConstants.Values.TEXT_ANCHOR_MIDDLE.equals(textAnchorValue)) {
                 if (xPos != null && xPos.length > 0) {
                     textAnchorXCorrection -= childContentLength / 2;
                 }
