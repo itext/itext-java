@@ -476,12 +476,13 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Adds a unique subset prefix to be added to the font name when the font is embedded and subset.
+     * Adds a unique subset prefix to be added to the font name when the font is embedded and subsetted.
      *
-     * @param fontName
-     * @param isSubset
-     * @param isEmbedded
-     * @return the font name with subset prefix if isSubset and isEmbedded are true.s
+     * @param fontName the original font name.
+     * @param isSubset denotes whether font in question is subsetted, i.e. only used symbols are kept in it.
+     * @param isEmbedded denotes whether font in question is embedded into the PDF document.
+     * @return the font name prefixed with subset if isSubset and isEmbedded are true,
+     * otherwise original font name is returned intact.
      */
     protected static String updateSubsetPrefix(String fontName, boolean isSubset, boolean isEmbedded) {
         if (isSubset && isEmbedded) {
@@ -515,6 +516,11 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Normalizes given ranges by making sure that first values in pairs are lower than second values and merges overlapping
+     * ranges in one.
+     * @param ranges a {@link List} of integer arrays, which are constituted by pairs of ints that denote
+     *               each range limits. Each integer array size shall be a multiple of two.
+     * @return single merged array consisting of pairs of integers, each of them denoting a range.
      * @deprecated The logic has been moved to {@link com.itextpdf.io.font.TrueTypeFont}.
      */
     @Deprecated

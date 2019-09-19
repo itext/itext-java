@@ -363,13 +363,15 @@ public final class PdfFontFactory {
     }
 
     /**
-     * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
+     * Creates {@link PdfFont} based on registered {@link FontProgram}'s. Required font program is expected to be
+     * previously registered by one of the register method from {@link PdfFontFactory}.
      *
      * @param fontName Path to font file or Standard font name
      * @param encoding Font encoding from {@link PdfEncodings}.
      * @param embedded if true font will be embedded. Note, standard font won't be embedded in any case.
      * @param style    Font style from {@link FontStyles}.
      * @param cached   If true font will be cached for another PdfDocument
+     * @return created font if required {@link FontProgram} was found among registered, otherwise null.
      * @throws IOException exception is thrown in case an I/O error occurs when reading the file
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)
@@ -385,12 +387,14 @@ public final class PdfFontFactory {
     }
 
     /**
-     * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
+     * Creates {@link PdfFont} based on registered {@link FontProgram}'s. Required font program is expected to be
+     * previously registered by one of the register method from {@link PdfFontFactory}.
      *
      * @param fontName Path to font file or Standard font name
      * @param encoding Font encoding from {@link PdfEncodings}.
      * @param embedded if true font will be embedded. Note, standard font won't be embedded in any case.
      * @param cached   If true font will be cached for another PdfDocument
+     * @return created font if required {@link FontProgram} was found among registered, otherwise null.
      * @throws IOException exception is thrown in case an I/O error occurs when reading the file
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)
@@ -405,11 +409,13 @@ public final class PdfFontFactory {
     }
 
     /**
-     * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
+     * Creates {@link PdfFont} based on registered {@link FontProgram}'s. Required font program is expected to be
+     * previously registered by one of the register method from {@link PdfFontFactory}.
      *
      * @param fontName Path to font file or Standard font name
      * @param encoding Font encoding from {@link PdfEncodings}.
      * @param embedded if true font will be embedded. Note, standard font won't be embedded in any case.
+     * @return created font if required {@link FontProgram} was found among registered, otherwise null.
      * @throws IOException exception is thrown in case an I/O error occurs when reading the file
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)
@@ -424,12 +430,14 @@ public final class PdfFontFactory {
     }
 
     /**
-     * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
+     * Creates {@link PdfFont} based on registered {@link FontProgram}'s. Required font program is expected to be
+     * previously registered by one of the register method from {@link PdfFontFactory}.
      *
      * @param fontName Path to font file or Standard font name
      * @param encoding Font encoding from {@link PdfEncodings}.
      * @param embedded if true font will be embedded. Note, standard font won't be embedded in any case.
      * @param style    Font style from {@link FontStyles}.
+     * @return created font if required {@link FontProgram} was found among registered, otherwise null.
      * @throws IOException exception is thrown in case an I/O error occurs when reading the file
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)
@@ -444,10 +452,12 @@ public final class PdfFontFactory {
     }
 
     /**
-     * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
+     * Creates {@link PdfFont} based on registered {@link FontProgram}'s. Required font program is expected to be
+     * previously registered by one of the register method from {@link PdfFontFactory}.
      *
      * @param fontName Path to font file or Standard font name
      * @param encoding Font encoding from {@link PdfEncodings}.
+     * @return created font if required {@link FontProgram} was found among registered, otherwise null.
      * @throws IOException exception is thrown in case an I/O error occurs when reading the file
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)
@@ -462,9 +472,11 @@ public final class PdfFontFactory {
     }
 
     /**
-     * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
+     * Creates {@link PdfFont} based on registered {@link FontProgram}'s. Required font program is expected to be
+     * previously registered by one of the register method from {@link PdfFontFactory}.
      *
      * @param fontName Path to font file or Standard font name
+     * @return created font if required {@link FontProgram} was found among registered, otherwise null.
      * @throws IOException exception is thrown in case an I/O error occurs when reading the file
      * @see PdfFontFactory#register(String)
      * @see PdfFontFactory#register(String, String)

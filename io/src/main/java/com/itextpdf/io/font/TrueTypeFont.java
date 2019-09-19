@@ -375,9 +375,10 @@ public class TrueTypeFont extends FontProgram {
 
     /**
      * The method will update usedGlyphs with additional range or with all glyphs if there is no subset.
-     * usedGlyphs can be used for width array and ToUnicode CMAP.
+     * This set of used glyphs can be used for building width array and ToUnicode CMAP.
      *
-     * @param usedGlyphs used glyphs that will be updated if needed.
+     * @param usedGlyphs a set of integers, which are glyph ids that denote used glyphs.
+     *                   This set is updated inside of the method if needed.
      * @param subset subset status
      * @param subsetRanges additional subset ranges
      */
@@ -402,6 +403,13 @@ public class TrueTypeFont extends FontProgram {
         }
     }
 
+    /**
+     * Normalizes given ranges by making sure that first values in pairs are lower than second values and merges overlapping
+     * ranges in one.
+     * @param ranges a {@link List} of integer arrays, which are constituted by pairs of ints that denote
+     *               each range limits. Each integer array size shall be a multiple of two.
+     * @return single merged array consisting of pairs of integers, each of them denoting a range.
+     */
     private static int[] toCompactRange(List<int[]> ranges) {
         List<int[]> simp = new ArrayList<>();
         for (int[] range : ranges) {

@@ -73,9 +73,6 @@ import com.itextpdf.kernel.pdf.PdfOutputStream;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +80,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfType0Font extends PdfFont {
 
@@ -640,10 +639,10 @@ public class PdfType0Font extends PdfFont {
     }
 
     /**
-     * Generates the CIDFontTyte2 dictionary.
+     * Generates the CIDFontType2 dictionary.
      *
-     * @param ttf
-     * @param fontDescriptor the indirect reference to the font descriptor
+     * @param ttf a font program of this font instance
+     * @param fontDescriptor the font descriptor dictionary
      * @param fontName       a name of the font
      * @param metrics        the horizontal width metrics
      * @return fully initialized CIDFont
@@ -654,10 +653,18 @@ public class PdfType0Font extends PdfFont {
         return getCidFont(fontDescriptor, fontName, ttf != null && !ttf.isCff());
     }
 
-    @Deprecated
     /**
+     * The method will update set of used glyphs with range used in subset or with all glyphs if there is no subset.
+     * This set of used glyphs is required for building width array and ToUnicode CMAP.
+     *
+     * @param ttf a font program of this font instance.
+     * @param longTag a set of integers, which are glyph ids that denote used glyphs.
+     *                This set is updated inside of the method if needed.
+     * @param includeMetrics used to define whether longTag map is populated with glyph metrics.
+     *                       Deprecated and is not used right now.
      * @deprecated will be removed in 7.2
      */
+    @Deprecated
     protected void addRangeUni(TrueTypeFont ttf, Map<Integer, int[]> longTag, boolean includeMetrics) {
         addRangeUni(ttf, longTag.keySet());
     }
@@ -773,9 +780,9 @@ public class PdfType0Font extends PdfFont {
     }
 
     /**
-     * Generates the CIDFontTyte2 dictionary.
+     * Generates the CIDFontType2 dictionary.
      *
-     * @param ttf {@link #fontProgram}
+     * @param ttf a font program of this font instance
      * @param fontDescriptor the indirect reference to the font descriptor
      * @param fontName       a name of the font
      * @param glyphIds       glyph ids used in from the font
@@ -789,9 +796,9 @@ public class PdfType0Font extends PdfFont {
     }
 
     /**
-     * Generates the CIDFontTyte2 dictionary.
+     * Generates the CIDFontType2 dictionary.
      *
-     * @param fontDescriptor the indirect reference to the font descriptor
+     * @param fontDescriptor the font descriptor dictionary
      * @param fontName       a name of the font
      * @param isType2        true, if the font is CIDFontType2 (TrueType glyphs),
      *                       otherwise false, i.e. CIDFontType0 (Type1/CFF glyphs)
@@ -932,6 +939,12 @@ public class PdfType0Font extends PdfFont {
     }
 
     /**
+     * The method will update set of used glyphs with range used in subset or with all glyphs if there is no subset.
+     * This set of used glyphs is required for building width array and ToUnicode CMAP.
+     *
+     * @param ttf a font program of this font instance.
+     * @param longTag a set of integers, which are glyph ids that denote used glyphs.
+     *                This set is updated inside of the method if needed.
      * @deprecated use {@link TrueTypeFont#updateUsedGlyphs(SortedSet, boolean, List)} instead.
      */
     @Deprecated
