@@ -103,7 +103,7 @@ public class TableRendererTest  extends ExtendedITextTest {
 
         TableRenderer tableRenderer = (TableRenderer) table.getRenderer();
 
-        tableRenderer.calculateColumnWidths(layoutBox);
+        tableRenderer.applyMarginsAndPaddingsAndCalculateColumnWidths(layoutBox);
 
     }
 

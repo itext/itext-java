@@ -320,7 +320,7 @@ public class TableRenderer extends AbstractRenderer {
             layoutBox.increaseHeight(verticalBorderSpacing);
         }
         if (isOriginalRenderer()) {
-            calculateColumnWidths(layoutBox);
+            applyMarginsAndPaddingsAndCalculateColumnWidths(layoutBox);
         }
         float tableWidth = getTableWidth();
 
@@ -1900,7 +1900,7 @@ public class TableRenderer extends AbstractRenderer {
         overflowRows.getCell(targetOverflowRowIndex[col] - row, col).occupiedArea = cellOccupiedArea;
     }
 
-    void calculateColumnWidths(Rectangle layoutBox) {
+    void applyMarginsAndPaddingsAndCalculateColumnWidths(Rectangle layoutBox) {
         UnitValue[] margins = getMargins();
         if (!margins[1].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(TableRenderer.class);
