@@ -154,7 +154,7 @@ class XfdfWriter {
         return childrenFields;
     }
 
-    private static void addField(FieldObject fieldObject, Element parentElement, Document document, List<FieldObject> fieldList) {
+    static void addField(FieldObject fieldObject, Element parentElement, Document document, List<FieldObject> fieldList) {
         List<FieldObject> childrenFields = findChildrenFields(fieldObject, fieldList);
 
         Element field = document.createElement("field");
@@ -166,7 +166,7 @@ class XfdfWriter {
                 addField(childField, field, document, fieldList);
             }
         } else {
-            if (fieldObject.getValue() != null) {
+            if (fieldObject.getValue() != null && !fieldObject.getValue().isEmpty()) {
                 Element value = document.createElement("value");
                 value.setTextContent(fieldObject.getValue());
                 field.appendChild(value);
@@ -194,7 +194,7 @@ class XfdfWriter {
 
         if (annotObject.getContents() != null) {
             Element contents = document.createElement("contents");
-            contents.setTextContent(annotObject.getContents().toString());
+            contents.setTextContent(annotObject.getContents().toString().replace('\r', '\n'));
             annot.appendChild(contents);
         }
 

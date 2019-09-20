@@ -284,7 +284,6 @@ public class XfdfObjectFactory {
         for (int temp = 0; temp < children.getLength(); temp++) {
             Node node = children.item(temp);
             if (node.getNodeType() == Node.TEXT_NODE) {
-                // getTextContent?
                 annotObject.setContents(new PdfString(node.getNodeValue()));
             }
         }
@@ -296,7 +295,6 @@ public class XfdfObjectFactory {
         for (int temp = 0; temp < children.getLength(); temp++) {
             Node node = children.item(temp);
             if (node.getNodeType() == Node.TEXT_NODE) {
-                // getTextContent?
                 annotObject.setContentsRichText(new PdfString(node.getNodeValue()));
             }
         }

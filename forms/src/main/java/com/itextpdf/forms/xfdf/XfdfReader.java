@@ -148,8 +148,12 @@ class XfdfReader {
                     addMarkupAnnotationAttributes(pdfTextAnnotation, annotObject);
 
                     pdfTextAnnotation.setIconName(new PdfName(annotObject.getAttributeValue(XfdfConstants.ICON)));
-                    pdfTextAnnotation.setState(new PdfString(annotObject.getAttributeValue(XfdfConstants.STATE)));
-                    pdfTextAnnotation.setStateModel(new PdfString(annotObject.getAttributeValue(XfdfConstants.STATE_MODEL)));
+                    if(annotObject.getAttributeValue(XfdfConstants.STATE) != null) {
+                        pdfTextAnnotation.setState(new PdfString(annotObject.getAttributeValue(XfdfConstants.STATE)));
+                    }
+                    if(annotObject.getAttributeValue(XfdfConstants.STATE_MODEL) != null) {
+                        pdfTextAnnotation.setStateModel(new PdfString(annotObject.getAttributeValue(XfdfConstants.STATE_MODEL)));
+                    }
 
                     pdfDocument.getPage(Integer.parseInt(annotObject.getAttributeValue(XfdfConstants.PAGE)))
                             .addAnnotation(pdfTextAnnotation);

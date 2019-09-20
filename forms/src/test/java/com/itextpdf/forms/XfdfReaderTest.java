@@ -44,9 +44,11 @@ package com.itextpdf.forms;
 
 import com.itextpdf.forms.xfdf.XfdfObject;
 import com.itextpdf.forms.xfdf.XfdfObjectFactory;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.annot.PdfSquareAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -127,8 +129,8 @@ public class XfdfReaderTest {
                 sourceFolder + "cmp_xfdfWithFieldsWithValue.pdf", destinationFolder, "diff_"));
     }
 
-    //@Test
-    //TODO Rich text functionality not implemented yet
+    @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfValueRichText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfValueRichText.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfValueRichText.pdf")));
@@ -153,53 +155,8 @@ public class XfdfReaderTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "hierarchy_fields.pdf",
                 sourceFolder + "cmp_hierarchy_fields.pdf", destinationFolder, "diff_"));
     }
-////
-//    @Test
-//    public void xfdfMultipleChoiceFieldsTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-//        //TODO add to the test radio buttons, check boxes, lists.
-//        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "multiple_choice_fields.pdf")),
-//                new PdfWriter(new FileOutputStream(destinationFolder + "multiple-choice_fields.pdf")));
-//        String xfdfFilename = sourceFolder + "multiple_choice_fields.xfdf";
-//        XfdfObjectFactory factory = new XfdfObjectFactory();
-//        XfdfObject xfdfObject = factory.createXfdfObject(new FileInputStream(xfdfFilename));
-//        XfdfReader reader = new XfdfReader();
-//        reader.mergeXfdfIntoPdf(xfdfObject, pdfDocument,sourceFolder + "multiple_choice.pdf" );
-//        pdfDocument.close();
-//        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "multiple_choice_fields.pdf",
-//                sourceFolder + "cmp_multiple_choice_fields.pdf", destinationFolder, "diff_"));
-//    }
 
-//    //TODO add Button test
-//    @Test
-//    public void xfdfWithButtonTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-//        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "pdf_with_buttons.pdf")),
-//                new PdfWriter(new FileOutputStream(destinationFolder + "pdf_with_buttons.pdf")));
-//        String xfdfFilename = sourceFolder + "xfdf_with_button.xfdf";
-//        XfdfObjectFactory factory = new XfdfObjectFactory();
-//        XfdfObject xfdfObject = factory.createXfdfObject(new FileInputStream(xfdfFilename));
-//        XfdfReader reader = new XfdfReader();
-//        reader.mergeXfdfIntoPdf(xfdfObject, pdfDocument,sourceFolder + "pdf_with_button.pdf" );
-//        pdfDocument.close();
-//        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "pdf_with_button.pdf",
-//                sourceFolder + "cmp_pdf_with_button.pdf", destinationFolder, "diff_"
-//        ));
-//    }
-
-    //@Test
-    public void book9Test() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "submit_me_form_book_9.pdf")),
-                new PdfWriter(new FileOutputStream(destinationFolder + "submit_me_form_book_9_filled.pdf")));
-        String xfdfFilename = sourceFolder + "submit_me_form_book_9.xfdf";
-        XfdfObjectFactory factory = new XfdfObjectFactory();
-        XfdfObject xfdfObject = factory.createXfdfObject(new FileInputStream(xfdfFilename));
-        xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "submit_me_form_book_9.pdf" );
-        pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "submit_me_form_book_9_filled.pdf",
-                sourceFolder + "cmp_submit_me_form_book_9.pdf", destinationFolder, "diff_"
-        ));
-    }
-
-    //@Test
+    @Test
     public void xfdfWithFieldsWithValueParentAndChild() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfWithFieldsWithValueParentAndChild.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfWithFieldsWithValueParentAndChild.pdf")));
@@ -264,7 +221,7 @@ public class XfdfReaderTest {
                 sourceFolder + "cmp_xfdfAnnotationUnderlinePopupAllFlags.pdf", destinationFolder, "diff_"));
     }
 
-    //@Test
+    @Test
     public void xfdfAnnotationText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationText.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationText.pdf")));
@@ -303,7 +260,7 @@ public class XfdfReaderTest {
                 sourceFolder + "cmp_xfdfAnnotationSquigglyText.pdf", destinationFolder, "diff_"));
     }
 
-    //@Test
+    @Test
     public void xfdfAnnotationLine() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationLine.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationLine.pdf")));
@@ -395,6 +352,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationInk() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationInk.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationInk.pdf")));
@@ -421,6 +379,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationFileAttachment() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationFileAttachment.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationFileAttachment.pdf")));
@@ -434,6 +393,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationSound() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationSound.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationSound.pdf")));
@@ -446,20 +406,21 @@ public class XfdfReaderTest {
                 sourceFolder + "cmp_xfdfAnnotationSound.pdf", destinationFolder, "diff_"));
     }
 
-//    @Test
-//    //TODO can't generate proper xfdf until link annotation export will be fixed
-//    public void xfdfAnnotationLink() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-//        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationLink.pdf")),
-//                new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationLink.pdf")));
-//        String xfdfFilename = sourceFolder + "xfdfAnnotationLink.xfdf";
-//        XfdfReader reader = new XfdfReader(xfdfFilename);
-//        reader.mergeXfdfIntoPdf(pdfDocument, sourceFolder + "xfdfAnnotationLink.pdf");
-//        pdfDocument.close();
-//        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationLink.pdf",
-//                sourceFolder + "cmp_xfdfAnnotationLink.pdf", destinationFolder, "diff_"));
-//    }
+    @Test
+    public void xfdfAnnotationLink() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationLink.pdf")),
+                new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationLink.pdf")));
+        String xfdfFilename = sourceFolder + "xfdfAnnotationLink.xfdf";
+        XfdfObjectFactory factory = new XfdfObjectFactory();
+        XfdfObject xfdfObject = factory.createXfdfObject(new FileInputStream(xfdfFilename));
+        xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationLink.pdf");
+        pdfDocument.close();
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationLink.pdf",
+                sourceFolder + "cmp_xfdfAnnotationLink.pdf", destinationFolder, "diff_"));
+    }
 
-   // @Test
+    @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationRedact() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationRedact.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationRedact.pdf")));
@@ -473,6 +434,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationProjection() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationProjection.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationProjection.pdf")));
@@ -485,20 +447,21 @@ public class XfdfReaderTest {
                 sourceFolder + "cmp_xfdfAnnotationProjection.pdf", destinationFolder, "diff_"));
     }
 
-//    @Test
-//    //TODO can't generate proper xfdf until link annotation export will be fixed
-//    public void xfdfAnnotationLinkAllParams() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-//        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationLinkAllParams.pdf")),
-//                new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationLinkAllParams.pdf")));
-//        String xfdfFilename = sourceFolder + "xfdfAnnotationLinkAllParams.xfdf";
-//        XfdfReader reader = new XfdfReader(xfdfFilename);
-//        reader.mergeXfdfIntoPdf(pdfDocument, sourceFolder + "xfdfAnnotationLinkAllParams.pdf");
-//        pdfDocument.close();
-//        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationLinkAllParams.pdf",
-//                sourceFolder + "cmp_xfdfAnnotationLinkAllParams.pdf", destinationFolder, "diff_"));
-//    }
+    @Test
+    public void xfdfAnnotationLinkAllParams() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationLinkAllParams.pdf")),
+                new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationLinkAllParams.pdf")));
+        String xfdfFilename = sourceFolder + "xfdfAnnotationLinkAllParams.xfdf";
+        XfdfObjectFactory factory = new XfdfObjectFactory();
+        XfdfObject xfdfObject = factory.createXfdfObject(new FileInputStream(xfdfFilename));
+        xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationLinkAllParams.pdf");
+        pdfDocument.close();
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationLinkAllParams.pdf",
+                sourceFolder + "cmp_xfdfAnnotationLinkAllParams.pdf", destinationFolder, "diff_"));
+    }
 
-    //@Test
+    @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationReplaceText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationReplaceText.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationReplaceText.pdf")));
@@ -524,7 +487,8 @@ public class XfdfReaderTest {
                 sourceFolder + "cmp_xfdfAnnotationArrow.pdf", destinationFolder, "diff_"));
     }
 
-    //@Test
+    @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationCallout() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationCallout.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationCallout.pdf")));
@@ -537,7 +501,8 @@ public class XfdfReaderTest {
                 sourceFolder + "cmp_xfdfAnnotationCallout.pdf", destinationFolder, "diff_"));
     }
 
-    //@Test
+    @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationCloud() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationCloud.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationCloud.pdf")));
@@ -550,7 +515,8 @@ public class XfdfReaderTest {
                 sourceFolder + "cmp_xfdfAnnotationCloud.pdf", destinationFolder, "diff_"));
     }
 
-    //@Test
+    @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationCloudNested() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationCloudNested.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationCloudNested.pdf")));
@@ -563,7 +529,8 @@ public class XfdfReaderTest {
                 sourceFolder + "cmp_xfdfAnnotationCloudNested.pdf", destinationFolder, "diff_"));
     }
 
-    //@Test
+    @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationTextBoxAllParams() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationTextBoxAllParams.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationTextBoxAllParams.pdf")));
@@ -577,6 +544,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfJavaScriptForms() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfJavaScriptForms.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfJavaScriptForms.pdf")));
@@ -602,7 +570,8 @@ public class XfdfReaderTest {
                 sourceFolder + "cmp_xfdfFormsFieldParams.pdf", destinationFolder, "diff_"));
     }
 
-    //@Test
+    @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationAttrColor() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationAttrColor.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationAttrColor.pdf")));
@@ -628,7 +597,8 @@ public class XfdfReaderTest {
                 sourceFolder + "cmp_xfdfAnnotationAttrFlagsOpacity.pdf", destinationFolder, "diff_"));
     }
 
-    //@Test
+    @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationAttrTitle() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationAttrTitle.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationAttrTitle.pdf")));
@@ -642,6 +612,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfReferenceFor3DMeasurement() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfReferenceFor3DMeasurement.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfReferenceFor3DMeasurement.pdf")));
@@ -655,6 +626,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfReferenceFor3DAngular() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfReferenceFor3DAngular.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfReferenceFor3DAngular.pdf")));
@@ -668,6 +640,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfReferenceFor3DRadial() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfReferenceFor3DRadial.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfReferenceFor3DRadial.pdf")));
@@ -680,7 +653,8 @@ public class XfdfReaderTest {
                 sourceFolder + "cmp_xfdfReferenceFor3DRadial.pdf", destinationFolder, "diff_"));
     }
 
-    //@Test
+    @Test
+    //TODO DEVSIX-3215
     public void xfdfSubelementContents() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfSubelementContents.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfSubelementContents.pdf")));
@@ -694,6 +668,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    //TODO DEVSIX-3215 Support annots
     public void xfdfSubelementOverlayAppearance() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfSubelementOverlayAppearance.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfSubelementOverlayAppearance.pdf")));
@@ -706,7 +681,8 @@ public class XfdfReaderTest {
                 sourceFolder + "cmp_xfdfSubelementOverlayAppearance.pdf", destinationFolder, "diff_"));
     }
 
-    //@Test
+    @Test
+    //TODO DEVSIX-3215
     public void xfdfButton() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfButton.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfButton.pdf")));
@@ -719,7 +695,8 @@ public class XfdfReaderTest {
                 sourceFolder + "cmp_xfdfButton.pdf", destinationFolder, "diff_"));
     }
 
-    //@Test
+    @Test
+    //TODO DEVSIX-3215
     public void xfdfCheckBox() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfCheckBox.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfCheckBox.pdf")));
@@ -732,7 +709,8 @@ public class XfdfReaderTest {
                 sourceFolder + "cmp_xfdfCheckBox.pdf", destinationFolder, "diff_"));
     }
 
-    //@Test
+    @Test
+    //TODO DEVSIX-3215
     public void xfdfList() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfList.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfList.pdf")));
@@ -745,7 +723,8 @@ public class XfdfReaderTest {
                 sourceFolder + "cmp_xfdfList.pdf", destinationFolder, "diff_"));
     }
 
-    //@Test
+    @Test
+    //TODO DEVSIX-3215 Support richtext
     public void xfdfDropDown() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfDropDown.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfDropDown.pdf")));

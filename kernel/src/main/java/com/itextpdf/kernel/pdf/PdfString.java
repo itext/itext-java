@@ -81,6 +81,7 @@ public class PdfString extends PdfPrimitiveObject {
 
     public PdfString(String value, String encoding) {
         super();
+        assert value != null;
         this.value = value;
         this.encoding = encoding;
     }
