@@ -271,7 +271,7 @@ public class AccessibleAttributesApplier {
             }
         }
 
-        if (role.equals(StandardRoles.TH) || role.equals(StandardRoles.TD)) {
+        if (StandardRoles.TH.equals(role) || StandardRoles.TD.equals(role)) {
             HorizontalAlignment horizontalAlignment = renderer.<HorizontalAlignment>getProperty(Property.HORIZONTAL_ALIGNMENT);
             if (horizontalAlignment != null) {
                 attributes.put(PdfName.BlockAlign, transformBlockAlignToName(horizontalAlignment));

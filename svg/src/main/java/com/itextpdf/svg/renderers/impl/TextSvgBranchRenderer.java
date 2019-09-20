@@ -378,7 +378,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
                 }
             }
             //End
-            if (textAnchorValue.equals(SvgConstants.Values.TEXT_ANCHOR_END)) {
+            if (SvgConstants.Values.TEXT_ANCHOR_END.equals(textAnchorValue)) {
                 if (xPos != null && xPos.length > 0) {
                     textAnchorXCorrection -= childContentLength;
                 }
