@@ -38,17 +38,5 @@
         </includes>
       </testResource>
     </testResources>
-    <plugins>
-      <plugin>
-        <groupId>com.github.spotbugs</groupId>
-        <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>${spotbugs.version}</version>
-        <configuration>
-          <threshold>High</threshold>
-          <failOnError>true</failOnError>
-          <excludeFilterFile>findbugs-filter.xml</excludeFilterFile>
-        </configuration>
-      </plugin>
-    </plugins>
   </build>
 </project>

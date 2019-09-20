@@ -197,7 +197,7 @@
         </executions>
         <configuration>
           <effort>Max</effort>
-          <threshold>Low</threshold>
+          <threshold>High</threshold>
           <xmlOutput>true</xmlOutput>
           <failOnError>false</failOnError>
           <plugins>
@@ -410,23 +410,6 @@
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
         <version>${spotbugs.version}</version>
-        <configuration>
-          <effort>Max</effort>
-          <threshold>Low</threshold>
-          <xmlOutput>true</xmlOutput>
-          <plugins>
-            <plugin>
-              <groupId>com.mebigfatguy.fb-contrib</groupId>
-              <artifactId>fb-contrib</artifactId>
-              <version>${fb-contrib.version}</version>
-            </plugin>
-            <plugin>
-              <groupId>com.h3xstream.findsecbugs</groupId>
-              <artifactId>findsecbugs-plugin</artifactId>
-              <version>${findsecbugs.version}</version>
-            </plugin>
-          </plugins>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -541,6 +524,14 @@
                   <ignoreMissingClassesByRegularExpression>com.itextpdf.kernel.pdf.tagutils.IAccessibleElement</ignoreMissingClassesByRegularExpression>
                 </ignoreMissingClassesByRegularExpressions>
               </parameter>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-maven-plugin</artifactId>
+            <version>${spotbugs.version}</version>
+            <configuration>
+              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>
@@ -688,25 +679,6 @@
       <id>test</id>
       <build>
         <plugins>
-          <plugin>
-            <groupId>com.github.spotbugs</groupId>
-            <artifactId>spotbugs-maven-plugin</artifactId>
-            <version>${spotbugs.version}</version>
-            <executions>
-              <execution>
-                <id>default</id>
-                <configuration>
-                  <skip>true</skip>
-                </configuration>
-              </execution>
-              <execution>
-                <id>spotbugs</id>
-                <configuration>
-                  <skip>false</skip>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
           <!-- Run integration tests -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>

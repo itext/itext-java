@@ -39,16 +39,6 @@
     </resources>
     <plugins>
       <plugin>
-        <groupId>com.github.spotbugs</groupId>
-        <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>${spotbugs.version}</version>
-        <configuration>
-          <threshold>High</threshold>
-          <failOnError>true</failOnError>
-          <excludeFilterFile>findbugs-filter.xml</excludeFilterFile>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
