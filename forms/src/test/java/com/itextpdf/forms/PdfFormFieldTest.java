@@ -74,9 +74,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -1089,7 +1091,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfChoiceFormField f = PdfFormField.createList(pdfDoc, new Rectangle(36, 556, 50, 100), "combo", "9", new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"});
         f.setValue("4");
         f.setTopIndex(2);
-        f.setListSelected(new String[] {"3", "5"});
+        f.setListSelected(new String[]{"3", "5"});
         form.addField(f);
         // push button
         form.addField(PdfFormField.createPushButton(pdfDoc, new Rectangle(36, 526, 80, 20), "push button", "push"));
@@ -1214,6 +1216,30 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Assert.assertEquals(field, thirdPageAnnots.get(0));
     }
 
+    @Test
+    //TODO update cmp-file after DEVSIX-3077 fixed
+    public void createFieldInAppendModeTest() throws IOException, InterruptedException {
+        String file = destinationFolder + "blank.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(file));
+        document.addNewPage();
+        PdfAcroForm.getAcroForm(document, true);
+        document.close();
+
+        PdfReader reader = new PdfReader(file);
+        PdfWriter writer1 = new PdfWriter(destinationFolder + "createFieldInAppendModeTest.pdf");
+        PdfDocument doc = new PdfDocument(reader, writer1, new StampingProperties().useAppendMode());
+        PdfFormField field = PdfFormField.createCheckBox(
+                doc,
+                new Rectangle(10, 10, 24, 24),
+                "checkboxname", "On",
+                PdfFormField.TYPE_CHECK);
+        PdfAcroForm.getAcroForm(doc, true).addField(field);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "createFieldInAppendModeTest.pdf", sourceFolder + "cmp_" + "createFieldInAppendModeTest.pdf", destinationFolder, "diff_"));
+    }
+
     private void createAcroForm(PdfDocument pdfDoc, PdfAcroForm form, PdfFont font, String text, int offSet) {
         for (int x = offSet; x < (offSet + 3); x++) {
             Rectangle rect = new Rectangle(100 + (30 * x), 100 + (100 * x), 55, 30);
@@ -1270,7 +1296,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
     @Test
     //TODO DEVSIX-2822
-    public void appendModeAppearance() throws IOException, InterruptedException{
+    public void appendModeAppearance() throws IOException, InterruptedException {
         String inputFile = "appendModeAppearance.pdf";
         String outputFile = "appendModeAppearance.pdf";
 
@@ -1286,7 +1312,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         form.setNeedAppearances(true);
 
         PdfFormField field;
-        for (Map.Entry<String, PdfFormField> entry : form.getFormFields().entrySet()){
+        for (Map.Entry<String, PdfFormField> entry : form.getFormFields().entrySet()) {
             field = entry.getValue();
             field.setValue(line1);
         }
