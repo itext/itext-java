@@ -84,6 +84,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Map;
+
 @Category(IntegrationTest.class)
 public class PdfFormFieldTest extends ExtendedITextTest {
 
@@ -193,6 +197,16 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         // 帐号1: account number 1
         String fieldName = "\u5E10\u53F71";
         Assert.assertNotNull(form.getField(fieldName));
+    }
+
+    @Test
+    public void textFieldValueInStreamTest() throws IOException {
+        String filename = sourceFolder + "textFieldValueInStream.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        String fieldValue = form.getField("fieldName").getValueAsString();
+        // Trailing newline is not trimmed which seems to match Acrobat's behavior on copy-paste
+        Assert.assertEquals("some value\n", fieldValue);
     }
 
     @Test
@@ -1153,7 +1167,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testDaInAppendMode() throws IOException, InterruptedException {
+    public void testDaInAppendMode() throws IOException {
         String testName = "testDaInAppendMode.pdf";
 
         String srcPdf = sourceFolder + testName;

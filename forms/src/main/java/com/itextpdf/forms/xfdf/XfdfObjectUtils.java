@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -106,7 +107,7 @@ final class XfdfObjectUtils {
     }
 
     static String convertFloatToString(float coord) {
-        return new String(ByteUtils.getIsoBytes(coord));
+        return new String(ByteUtils.getIsoBytes(coord), StandardCharsets.UTF_8);
     }
 
     static float [] convertQuadPointsFromCoordsString(String coordsString) {
@@ -138,7 +139,7 @@ final class XfdfObjectUtils {
     }
 
     private static String floatToPaddedString(float number) {
-        return new String(ByteUtils.getIsoBytes(number));
+        return new String(ByteUtils.getIsoBytes(number), StandardCharsets.UTF_8);
     }
 
     static int convertFlagsFromString(String flagsString) {

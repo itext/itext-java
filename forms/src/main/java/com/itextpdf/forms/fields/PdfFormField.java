@@ -1502,11 +1502,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the current value, as a {@link String}
      */
     public String getValueAsString() {
-        PdfObject value = getPdfObject().get(PdfName.V);
+        PdfObject value = getValue();
         if (value == null) {
             return "";
         } else if (value instanceof PdfStream) {
-            return new String(((PdfStream) value).getBytes());
+            return new String(((PdfStream) value).getBytes(), StandardCharsets.UTF_8);
         } else if (value instanceof PdfName) {
             return ((PdfName) value).getValue();
         } else if (value instanceof PdfString) {
@@ -1645,7 +1645,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             if (b[k] == '\n')
                 b[k] = 32;
         }
-        put(PdfName.DA, new PdfString(new String(b)));
+        put(PdfName.DA, new PdfString(new String(b, StandardCharsets.UTF_8)));
         return this;
     }
 
@@ -1683,106 +1683,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         } else {
             getPdfObject().remove(PdfName.DA);
             setModified();
-        }
-    }
-
-    private boolean hasDefaultAppearance() {
-        PdfName type = getFormType();
-        return type == PdfName.Tx
-                || type == PdfName.Ch
-                || (type == PdfName.Btn && (getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0);
-    }
-
-
-    private PdfName getUniqueFontNameForDR(PdfDictionary fontResources) {
-        int indexer = 1;
-        Set<PdfName> fontNames = fontResources.keySet();
-        PdfName uniqueName;
-        do {
-            uniqueName = new PdfName("F" + indexer++);
-        } while (fontNames.contains(uniqueName));
-        return uniqueName;
-    }
-
-    private PdfName getFontNameFromDR(PdfDictionary fontResources, PdfObject font) {
-        for (Map.Entry<PdfName, PdfObject> drFont : fontResources.entrySet()) {
-            if (drFont.getValue() == font) {
-                return drFont.getKey();
-            }
-        }
-        return null;
-    }
-
-    private static PdfString generateDefaultAppearance(PdfName font, float fontSize, Color textColor) {
-        assert font != null;
-
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        PdfOutputStream pdfStream = new PdfOutputStream(new OutputStream<>(output));
-        final byte[] g = new byte[]{(byte) 'g'};
-        final byte[] rg = new byte[]{(byte) 'r', (byte) 'g'};
-        final byte[] k = new byte[]{(byte) 'k'};
-        final byte[] Tf = new byte[]{(byte) 'T', (byte) 'f'};
-
-        pdfStream.write(font)
-                .writeSpace()
-                .writeFloat(fontSize).writeSpace()
-                .writeBytes(Tf);
-
-        if (textColor != null) {
-            if (textColor instanceof DeviceGray) {
-                pdfStream.writeSpace()
-                        .writeFloats(textColor.getColorValue())
-                        .writeSpace()
-                        .writeBytes(g);
-            } else if (textColor instanceof DeviceRgb) {
-                pdfStream.writeSpace()
-                        .writeFloats(textColor.getColorValue())
-                        .writeSpace()
-                        .writeBytes(rg);
-            } else if (textColor instanceof DeviceCmyk) {
-                pdfStream.writeSpace()
-                        .writeFloats(textColor.getColorValue())
-                        .writeSpace()
-                        .writeBytes(k);
-            } else {
-                Logger logger = LoggerFactory.getLogger(PdfFormField.class);
-                logger.error(LogMessageConstant.UNSUPPORTED_COLOR_IN_DA);
-            }
-        }
-        return new PdfString(output.toByteArray());
-    }
-
-    private PdfObject getAcroFormObject(PdfName key, int type) {
-        PdfObject acroFormObject = null;
-        PdfDictionary acroFormDictionary = getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
-        if (acroFormDictionary != null) {
-            acroFormObject = acroFormDictionary.get(key);
-        }
-        return (acroFormObject != null && acroFormObject.getType() == type) ? acroFormObject : null;
-    }
-
-    /**
-     * Puts object directly to AcroForm dictionary.
-     * It works much faster than consequent invocation of {@link PdfAcroForm#getAcroForm(PdfDocument, boolean)}
-     * and {@link PdfAcroForm#getPdfObject()}.
-     *
-     * Note, this method assume that Catalog already has AcroForm object.
-     * {@link #addAcroFormToCatalog()} should be called explicitly.
-     *
-     * @param acroFormKey the key of the object.
-     * @param acroFormObject the object to add.
-     */
-    private void putAcroFormObject(PdfName acroFormKey, PdfObject acroFormObject) {
-        getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm).put(acroFormKey, acroFormObject);
-    }
-
-    private void addAcroFormToCatalog(){
-        if (getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm) == null) {
-            PdfDictionary acroform = new PdfDictionary();
-            acroform.makeIndirect(getDocument());
-            // PdfName.Fields is the only required key.
-            acroform.put(PdfName.Fields, new PdfArray());
-            getDocument().getCatalog().put(PdfName.AcroForm, acroform);
         }
     }
 
@@ -2092,8 +1992,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         String value = getValueAsString();
 
         PdfPage page = null;
-        if (getWidgets().size() > 0) {
-            page = getWidgets().get(0).getPage();
+        List<PdfWidgetAnnotation> widgets = getWidgets();
+        if (widgets.size() > 0) {
+            page = widgets.get(0).getPage();
         }
 
         if (PdfName.Tx.equals(type) || PdfName.Ch.equals(type)) {
@@ -2112,8 +2013,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 double angle = pageRotation % 360;
                 //Get angle in radians
                 angle = degreeToRadians(angle);
+                Rectangle initialBboxRectangle = bBox.toRectangle();
                 //rotate the bounding box
-                Rectangle rect = bBox.toRectangle();
+                Rectangle rect = initialBboxRectangle.clone();
                 //Calculate origin offset
                 double translationWidth = 0;
                 double translationHeight = 0;
@@ -2128,8 +2030,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 matrix = new PdfArray(new double[]{Math.cos(angle), -Math.sin(angle), Math.sin(angle), Math.cos(angle), translationWidth, translationHeight});
                 //If the angle is a multiple of 90 and not a multiple of 180, height and width of the bounding box need to be switched
                 if (angle % (Math.PI / 2) == 0 && angle % (Math.PI) != 0) {
-                    rect.setWidth(bBox.toRectangle().getHeight());
-                    rect.setHeight(bBox.toRectangle().getWidth());
+                    rect.setWidth(initialBboxRectangle.getHeight());
+                    rect.setHeight(initialBboxRectangle.getWidth());
                 }
                 // Adapt origin
                 rect.setX(rect.getX() + (float) translationWidth);
@@ -2151,13 +2053,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 fieldRotation += pageRotation;
             }
             if (fieldRotation % 90 == 0) {
+                Rectangle initialBboxRectangle = bBox.toRectangle();
                 //Cast angle to [-360, 360]
                 double angle = fieldRotation % 360;
                 //Get angle in radians
                 angle = degreeToRadians(angle);
                 //Calculate origin offset
-                double translationWidth = calculateTranslationWidthAfterFieldRot(bBox.toRectangle(), degreeToRadians(pageRotation), angle);
-                double translationHeight = calculateTranslationHeightAfterFieldRot(bBox.toRectangle(), degreeToRadians(pageRotation), angle);
+                double translationWidth = calculateTranslationWidthAfterFieldRot(initialBboxRectangle, degreeToRadians(pageRotation), angle);
+                double translationHeight = calculateTranslationHeightAfterFieldRot(initialBboxRectangle, degreeToRadians(pageRotation), angle);
 
                 //Concatenate rotation and translation into the matrix
                 Matrix currentMatrix = new Matrix(matrix.getAsNumber(0).floatValue(), matrix.getAsNumber(1).floatValue(), matrix.getAsNumber(2).floatValue(), matrix.getAsNumber(3).floatValue(), matrix.getAsNumber(4).floatValue(), matrix.getAsNumber(5).floatValue());
@@ -2166,11 +2069,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 matrix = new PdfArray(new float[]{currentMatrix.get(0), currentMatrix.get(1), currentMatrix.get(3), currentMatrix.get(4), currentMatrix.get(6), currentMatrix.get(7)});
 
                 //Construct bounding box
-                Rectangle rect = bBox.toRectangle();
+                Rectangle rect = initialBboxRectangle.clone();
                 //If the angle is a multiple of 90 and not a multiple of 180, height and width of the bounding box need to be switched
                 if (angle % (Math.PI / 2) == 0 && angle % (Math.PI) != 0) {
-                    rect.setWidth(bBox.toRectangle().getHeight());
-                    rect.setHeight(bBox.toRectangle().getWidth());
+                    rect.setWidth(initialBboxRectangle.getHeight());
+                    rect.setHeight(initialBboxRectangle.getWidth());
                 }
                 rect.setX(rect.getX() + (float) translationWidth);
                 rect.setY(rect.getY() + (float) translationHeight);
@@ -2178,14 +2081,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 bBox = new PdfArray(rect);
             }
             //Create appearance
-            PdfFormXObject appearance = new PdfFormXObject(new Rectangle(0, 0, bBox.toRectangle().getWidth(), bBox.toRectangle().getHeight()));
+            Rectangle bboxRectangle = bBox.toRectangle();
+            PdfFormXObject appearance = new PdfFormXObject(new Rectangle(0, 0, bboxRectangle.getWidth(), bboxRectangle.getHeight()));
             appearance.put(PdfName.Matrix, matrix);
             //Create text appearance
             if (PdfName.Tx.equals(type)) {
                 if (isMultiline()) {
-                    drawMultiLineTextAppearance(bBox.toRectangle(), this.font, getFontSize(bBox, value), value, appearance);
+                    drawMultiLineTextAppearance(bboxRectangle, this.font, getFontSize(bBox, value), value, appearance);
                 } else {
-                    drawTextAppearance(bBox.toRectangle(), this.font, getFontSize(bBox, value), value, appearance);
+                    drawTextAppearance(bboxRectangle, this.font, getFontSize(bBox, value), value, appearance);
                 }
             } else {
                 if (!getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
@@ -2217,7 +2121,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 Rectangle rect = getRect(getPdfObject());
                 PdfDictionary apDic = getPdfObject().getAsDictionary(PdfName.AP);
                 if (apDic == null) {
-                    List<PdfWidgetAnnotation> widgets = getWidgets();
                     if (widgets.size() == 1) {
                         widget = widgets.get(0).getPdfObject();
                         apDic = widget.getAsDictionary(PdfName.AP);
@@ -2228,7 +2131,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     widget = getPdfObject();
                 }
                 appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value,
-                            this.font, getFontSize(getBBox(), value));
+                        this.font, getFontSize(getBBox(), value));
 
                 apDic.put(PdfName.N, appearance.getPdfObject());
 
@@ -2287,214 +2190,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
 
         return false;
-    }
-
-    private PdfArray getBBox() {
-        PdfArray bBox = getPdfObject().getAsArray(PdfName.Rect);
-        if (bBox == null) {
-            PdfArray kids = getKids();
-            if (kids == null) {
-                throw new PdfException(PdfException.WrongFormFieldAddAnnotationToTheField);
-            }
-            bBox = ((PdfDictionary) kids.get(0)).getAsArray(PdfName.Rect);
-        }
-        return bBox;
-    }
-
-    private static void createPushButtonAppearanceState(PdfDictionary widget) {
-        PdfDictionary appearances = widget.getAsDictionary(PdfName.AP);
-        PdfStream normalAppearanceStream = appearances.getAsStream(PdfName.N);
-        if (normalAppearanceStream != null) {
-            PdfName stateName = widget.getAsName(PdfName.AS);
-            if (stateName == null) {
-                stateName = new PdfName("push");
-            }
-            widget.put(PdfName.AS, stateName);
-            PdfDictionary normalAppearance = new PdfDictionary();
-            normalAppearance.put(stateName, normalAppearanceStream);
-            appearances.put(PdfName.N, normalAppearance);
-        }
-    }
-
-    // TODO DEVSIX-2536
-    // Actually this entire method is a mess,
-    // because only radio group has FF_RADIO type and there is no RadioButton at all.
-    // So the goal of that method is just to save backward compatibility until refactoring.
-    private boolean isRadioButton() {
-        if (isWidgetAnnotation(getPdfObject())) {
-            return true;
-        } else if (getPdfObject().getAsName(PdfName.V) != null) {
-            return false;
-        } else if (getKids() != null) {
-            return isWidgetAnnotation(getKids().getAsDictionary(0));
-        } else {
-            return false;
-        }
-    }
-
-    private static boolean isWidgetAnnotation(PdfDictionary pdfObject) {
-        return pdfObject != null && PdfName.Widget.equals(pdfObject.getAsName(PdfName.Subtype));
-    }
-
-    private String getRadioButtonValue(String value) {
-        //Otherwise something wrong with getValueAsString().
-        assert value != null;
-        if ("".equals(value)) {
-            //let it as default value
-            value = "Yes";
-            for (String state: getAppearanceStates()) {
-                if (!"Off".equals(state)) {
-                    value = state;
-                    break;
-                }
-            }
-        }
-        return value;
-    }
-
-    /**
-     * Adjust font in case autosize.
-     */
-    private float getFontSize(PdfArray bBox, String value) {
-        if (this.fontSize == 0) {
-            //We do not support autosize with multiline.
-            if (isMultiline() || bBox == null || value == null || value.isEmpty()) {
-                return DEFAULT_FONT_SIZE;
-            } else {
-                return Math.max(approximateFontSizeToFitBBox(this.font, bBox.toRectangle(), value), MIN_FONT_SIZE);
-            }
-        }
-        return this.fontSize;
-    }
-
-    // For text field that value shall be min 4, for checkbox there is no min value.
-    private float approximateFontSizeToFitBBox(PdfFont localFont, Rectangle bBox, String value) {
-        float fs;
-        float height = bBox.getHeight() - borderWidth * 2;
-        int[] fontBbox = localFont.getFontProgram().getFontMetrics().getBbox();
-        fs = height / (fontBbox[2] - fontBbox[1]) * FontProgram.UNITS_NORMALIZATION;
-
-        float baseWidth = localFont.getWidth(value, 1);
-        if (baseWidth != 0) {
-            float availableWidth = Math.max(bBox.getWidth() - borderWidth * 2, 0);
-            // This constant is taken based on what was the resultant padding in previous version of this algorithm in case border width was zero.
-            float absMaxPadding = 4f;
-            // relative value is quite big in order to preserve visible padding on small field sizes. This constant is taken arbitrary, based on visual similarity to Acrobat behaviour.
-            float relativePaddingForSmallSizes = 0.15f;
-            // with current constants, if availableWidth is less than ~26 points, padding will be made relative
-            if (availableWidth * relativePaddingForSmallSizes < absMaxPadding) {
-                availableWidth -= availableWidth * relativePaddingForSmallSizes * 2;
-            } else {
-                availableWidth -= absMaxPadding * 2;
-            }
-            fs = Math.min(fs, availableWidth / baseWidth);
-        }
-        return fs;
-    }
-
-    /**
-     * Calculate the necessary height offset after applying field rotation
-     * so that the origin of the bounding box is the lower left corner with respect to the field text.
-     *
-     * @param bBox             bounding box rectangle before rotation
-     * @param pageRotation     rotation of the page
-     * @param relFieldRotation rotation of the field relative to the page
-     * @return translation value for height
-     */
-    private float calculateTranslationHeightAfterFieldRot(Rectangle bBox, double pageRotation, double relFieldRotation) {
-        if (relFieldRotation == 0) {
-            return 0.0f;
-        }
-        if (pageRotation == 0) {
-            if (relFieldRotation == Math.PI / 2) {
-                return bBox.getHeight();
-            }
-            if (relFieldRotation == Math.PI) {
-                return bBox.getHeight();
-            }
-
-        }
-        if (pageRotation == -Math.PI / 2) {
-            if (relFieldRotation == -Math.PI / 2) {
-                return bBox.getWidth() - bBox.getHeight();
-            }
-            if (relFieldRotation == Math.PI / 2) {
-                return bBox.getHeight();
-            }
-            if (relFieldRotation == Math.PI) {
-                return bBox.getWidth();
-            }
-
-        }
-        if (pageRotation == -Math.PI) {
-            if (relFieldRotation == -1 * Math.PI) {
-                return bBox.getHeight();
-            }
-            if (relFieldRotation == -1 * Math.PI / 2) {
-                return bBox.getHeight() - bBox.getWidth();
-            }
-
-            if (relFieldRotation == Math.PI / 2) {
-                return bBox.getWidth();
-            }
-        }
-        if (pageRotation == -3 * Math.PI / 2) {
-            if (relFieldRotation == -3 * Math.PI / 2) {
-                return bBox.getWidth();
-            }
-            if (relFieldRotation == -Math.PI) {
-                return bBox.getWidth();
-            }
-        }
-
-        return 0.0f;
-    }
-
-    /**
-     * Calculate the necessary width offset after applying field rotation
-     * so that the origin of the bounding box is the lower left corner with respect to the field text.
-     *
-     * @param bBox             bounding box rectangle before rotation
-     * @param pageRotation     rotation of the page
-     * @param relFieldRotation rotation of the field relative to the page
-     * @return translation value for width
-     */
-    private float calculateTranslationWidthAfterFieldRot(Rectangle bBox, double pageRotation, double relFieldRotation) {
-        if (relFieldRotation == 0) {
-            return 0.0f;
-        }
-        if (pageRotation == 0 && (relFieldRotation == Math.PI || relFieldRotation == 3 * Math.PI / 2)) {
-            return bBox.getWidth();
-        }
-        if (pageRotation == -Math.PI / 2) {
-            if (relFieldRotation == -Math.PI / 2 || relFieldRotation == Math.PI) {
-                return bBox.getHeight();
-            }
-        }
-
-        if (pageRotation == -Math.PI) {
-            if (relFieldRotation == -1 * Math.PI) {
-                return bBox.getWidth();
-            }
-            if (relFieldRotation == -1 * Math.PI / 2) {
-                return bBox.getHeight();
-            }
-            if (relFieldRotation == Math.PI / 2) {
-                return -1 * (bBox.getHeight() - bBox.getWidth());
-            }
-        }
-        if (pageRotation == -3 * Math.PI / 2) {
-            if (relFieldRotation == -3 * Math.PI / 2) {
-                return -1 * (bBox.getWidth() - bBox.getHeight());
-            }
-            if (relFieldRotation == -Math.PI) {
-                return bBox.getHeight();
-            }
-            if (relFieldRotation == -Math.PI / 2) {
-                return bBox.getWidth();
-            }
-        }
-        return 0.0f;
     }
 
     /**
@@ -2645,8 +2340,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the edited field
      */
     public PdfFormField setPage(int pageNum) {
-        if (getWidgets().size() > 0) {
-            PdfAnnotation annot = getWidgets().get(0);
+        List<PdfWidgetAnnotation> widgets = getWidgets();
+        if (widgets.size() > 0) {
+            PdfAnnotation annot = widgets.get(0);
             if (annot != null) {
                 annot.setPage(getDocument().getPage(pageNum));
             }
@@ -2823,7 +2519,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         canvas.setFontAndSize(font, fontSize);
         if (color != null)
             canvas.setColor(color, true);
-        return new String(stream.getBytes());
+        return new String(stream.getBytes(), StandardCharsets.UTF_8);
     }
 
     /**
@@ -3450,6 +3146,313 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             case TYPE_STAR:
                 DrawingUtil.drawPdfAStar(canvas, width, height);
                 break;
+        }
+    }
+
+    private static PdfString generateDefaultAppearance(PdfName font, float fontSize, Color textColor) {
+        assert font != null;
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PdfOutputStream pdfStream = new PdfOutputStream(new OutputStream<>(output));
+        final byte[] g = new byte[]{(byte) 'g'};
+        final byte[] rg = new byte[]{(byte) 'r', (byte) 'g'};
+        final byte[] k = new byte[]{(byte) 'k'};
+        final byte[] Tf = new byte[]{(byte) 'T', (byte) 'f'};
+
+        pdfStream.write(font)
+                .writeSpace()
+                .writeFloat(fontSize).writeSpace()
+                .writeBytes(Tf);
+
+        if (textColor != null) {
+            if (textColor instanceof DeviceGray) {
+                pdfStream.writeSpace()
+                        .writeFloats(textColor.getColorValue())
+                        .writeSpace()
+                        .writeBytes(g);
+            } else if (textColor instanceof DeviceRgb) {
+                pdfStream.writeSpace()
+                        .writeFloats(textColor.getColorValue())
+                        .writeSpace()
+                        .writeBytes(rg);
+            } else if (textColor instanceof DeviceCmyk) {
+                pdfStream.writeSpace()
+                        .writeFloats(textColor.getColorValue())
+                        .writeSpace()
+                        .writeBytes(k);
+            } else {
+                Logger logger = LoggerFactory.getLogger(PdfFormField.class);
+                logger.error(LogMessageConstant.UNSUPPORTED_COLOR_IN_DA);
+            }
+        }
+        return new PdfString(output.toByteArray());
+    }
+
+    private static boolean isWidgetAnnotation(PdfDictionary pdfObject) {
+        return pdfObject != null && PdfName.Widget.equals(pdfObject.getAsName(PdfName.Subtype));
+    }
+
+    private static void createPushButtonAppearanceState(PdfDictionary widget) {
+        PdfDictionary appearances = widget.getAsDictionary(PdfName.AP);
+        PdfStream normalAppearanceStream = appearances.getAsStream(PdfName.N);
+        if (normalAppearanceStream != null) {
+            PdfName stateName = widget.getAsName(PdfName.AS);
+            if (stateName == null) {
+                stateName = new PdfName("push");
+            }
+            widget.put(PdfName.AS, stateName);
+            PdfDictionary normalAppearance = new PdfDictionary();
+            normalAppearance.put(stateName, normalAppearanceStream);
+            appearances.put(PdfName.N, normalAppearance);
+        }
+    }
+
+    private PdfArray getBBox() {
+        PdfArray bBox = getPdfObject().getAsArray(PdfName.Rect);
+        if (bBox == null) {
+            PdfArray kids = getKids();
+            if (kids == null) {
+                throw new PdfException(PdfException.WrongFormFieldAddAnnotationToTheField);
+            }
+            bBox = ((PdfDictionary) kids.get(0)).getAsArray(PdfName.Rect);
+        }
+        return bBox;
+    }
+
+    // TODO DEVSIX-2536
+    // Actually this entire method is a mess,
+    // because only radio group has FF_RADIO type and there is no RadioButton at all.
+    // So the goal of that method is just to save backward compatibility until refactoring.
+    private boolean isRadioButton() {
+        if (isWidgetAnnotation(getPdfObject())) {
+            return true;
+        } else if (getPdfObject().getAsName(PdfName.V) != null) {
+            return false;
+        } else if (getKids() != null) {
+            return isWidgetAnnotation(getKids().getAsDictionary(0));
+        } else {
+            return false;
+        }
+    }
+
+    private String getRadioButtonValue(String value) {
+        //Otherwise something wrong with getValueAsString().
+        assert value != null;
+        if ("".equals(value)) {
+            //let it as default value
+            value = "Yes";
+            for (String state: getAppearanceStates()) {
+                if (!"Off".equals(state)) {
+                    value = state;
+                    break;
+                }
+            }
+        }
+        return value;
+    }
+
+    /**
+     * Adjust font in case autosize.
+     */
+    private float getFontSize(PdfArray bBox, String value) {
+        if (this.fontSize == 0) {
+            //We do not support autosize with multiline.
+            if (isMultiline() || bBox == null || value == null || value.isEmpty()) {
+                return DEFAULT_FONT_SIZE;
+            } else {
+                return Math.max(approximateFontSizeToFitBBox(this.font, bBox.toRectangle(), value), MIN_FONT_SIZE);
+            }
+        }
+        return this.fontSize;
+    }
+
+    // For text field that value shall be min 4, for checkbox there is no min value.
+    private float approximateFontSizeToFitBBox(PdfFont localFont, Rectangle bBox, String value) {
+        float fs;
+        float height = bBox.getHeight() - borderWidth * 2;
+        int[] fontBbox = localFont.getFontProgram().getFontMetrics().getBbox();
+        fs = height / (fontBbox[2] - fontBbox[1]) * FontProgram.UNITS_NORMALIZATION;
+
+        float baseWidth = localFont.getWidth(value, 1);
+        if (baseWidth != 0) {
+            float availableWidth = Math.max(bBox.getWidth() - borderWidth * 2, 0);
+            // This constant is taken based on what was the resultant padding in previous version of this algorithm in case border width was zero.
+            float absMaxPadding = 4f;
+            // relative value is quite big in order to preserve visible padding on small field sizes. This constant is taken arbitrary, based on visual similarity to Acrobat behaviour.
+            float relativePaddingForSmallSizes = 0.15f;
+            // with current constants, if availableWidth is less than ~26 points, padding will be made relative
+            if (availableWidth * relativePaddingForSmallSizes < absMaxPadding) {
+                availableWidth -= availableWidth * relativePaddingForSmallSizes * 2;
+            } else {
+                availableWidth -= absMaxPadding * 2;
+            }
+            fs = Math.min(fs, availableWidth / baseWidth);
+        }
+        return fs;
+    }
+
+    /**
+     * Calculate the necessary height offset after applying field rotation
+     * so that the origin of the bounding box is the lower left corner with respect to the field text.
+     *
+     * @param bBox             bounding box rectangle before rotation
+     * @param pageRotation     rotation of the page
+     * @param relFieldRotation rotation of the field relative to the page
+     * @return translation value for height
+     */
+    private float calculateTranslationHeightAfterFieldRot(Rectangle bBox, double pageRotation, double relFieldRotation) {
+        if (relFieldRotation == 0) {
+            return 0.0f;
+        }
+        if (pageRotation == 0) {
+            if (relFieldRotation == Math.PI / 2) {
+                return bBox.getHeight();
+            }
+            if (relFieldRotation == Math.PI) {
+                return bBox.getHeight();
+            }
+
+        }
+        if (pageRotation == -Math.PI / 2) {
+            if (relFieldRotation == -Math.PI / 2) {
+                return bBox.getWidth() - bBox.getHeight();
+            }
+            if (relFieldRotation == Math.PI / 2) {
+                return bBox.getHeight();
+            }
+            if (relFieldRotation == Math.PI) {
+                return bBox.getWidth();
+            }
+
+        }
+        if (pageRotation == -Math.PI) {
+            if (relFieldRotation == -1 * Math.PI) {
+                return bBox.getHeight();
+            }
+            if (relFieldRotation == -1 * Math.PI / 2) {
+                return bBox.getHeight() - bBox.getWidth();
+            }
+
+            if (relFieldRotation == Math.PI / 2) {
+                return bBox.getWidth();
+            }
+        }
+        if (pageRotation == -3 * Math.PI / 2) {
+            if (relFieldRotation == -3 * Math.PI / 2) {
+                return bBox.getWidth();
+            }
+            if (relFieldRotation == -Math.PI) {
+                return bBox.getWidth();
+            }
+        }
+
+        return 0.0f;
+    }
+
+    /**
+     * Calculate the necessary width offset after applying field rotation
+     * so that the origin of the bounding box is the lower left corner with respect to the field text.
+     *
+     * @param bBox             bounding box rectangle before rotation
+     * @param pageRotation     rotation of the page
+     * @param relFieldRotation rotation of the field relative to the page
+     * @return translation value for width
+     */
+    private float calculateTranslationWidthAfterFieldRot(Rectangle bBox, double pageRotation, double relFieldRotation) {
+        if (relFieldRotation == 0) {
+            return 0.0f;
+        }
+        if (pageRotation == 0 && (relFieldRotation == Math.PI || relFieldRotation == 3 * Math.PI / 2)) {
+            return bBox.getWidth();
+        }
+        if (pageRotation == -Math.PI / 2) {
+            if (relFieldRotation == -Math.PI / 2 || relFieldRotation == Math.PI) {
+                return bBox.getHeight();
+            }
+        }
+
+        if (pageRotation == -Math.PI) {
+            if (relFieldRotation == -1 * Math.PI) {
+                return bBox.getWidth();
+            }
+            if (relFieldRotation == -1 * Math.PI / 2) {
+                return bBox.getHeight();
+            }
+            if (relFieldRotation == Math.PI / 2) {
+                return -1 * (bBox.getHeight() - bBox.getWidth());
+            }
+        }
+        if (pageRotation == -3 * Math.PI / 2) {
+            if (relFieldRotation == -3 * Math.PI / 2) {
+                return -1 * (bBox.getWidth() - bBox.getHeight());
+            }
+            if (relFieldRotation == -Math.PI) {
+                return bBox.getHeight();
+            }
+            if (relFieldRotation == -Math.PI / 2) {
+                return bBox.getWidth();
+            }
+        }
+        return 0.0f;
+    }
+
+    private boolean hasDefaultAppearance() {
+        PdfName type = getFormType();
+        return type == PdfName.Tx
+                || type == PdfName.Ch
+                || (type == PdfName.Btn && (getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0);
+    }
+
+    private PdfName getUniqueFontNameForDR(PdfDictionary fontResources) {
+        int indexer = 1;
+        Set<PdfName> fontNames = fontResources.keySet();
+        PdfName uniqueName;
+        do {
+            uniqueName = new PdfName("F" + indexer++);
+        } while (fontNames.contains(uniqueName));
+        return uniqueName;
+    }
+
+    private PdfName getFontNameFromDR(PdfDictionary fontResources, PdfObject font) {
+        for (Map.Entry<PdfName, PdfObject> drFont : fontResources.entrySet()) {
+            if (drFont.getValue() == font) {
+                return drFont.getKey();
+            }
+        }
+        return null;
+    }
+
+    private PdfObject getAcroFormObject(PdfName key, int type) {
+        PdfObject acroFormObject = null;
+        PdfDictionary acroFormDictionary = getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
+        if (acroFormDictionary != null) {
+            acroFormObject = acroFormDictionary.get(key);
+        }
+        return (acroFormObject != null && acroFormObject.getType() == type) ? acroFormObject : null;
+    }
+
+    /**
+     * Puts object directly to AcroForm dictionary.
+     * It works much faster than consequent invocation of {@link PdfAcroForm#getAcroForm(PdfDocument, boolean)}
+     * and {@link PdfAcroForm#getPdfObject()}.
+     *
+     * Note, this method assume that Catalog already has AcroForm object.
+     * {@link #addAcroFormToCatalog()} should be called explicitly.
+     *
+     * @param acroFormKey the key of the object.
+     * @param acroFormObject the object to add.
+     */
+    private void putAcroFormObject(PdfName acroFormKey, PdfObject acroFormObject) {
+        getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm).put(acroFormKey, acroFormObject);
+    }
+
+    private void addAcroFormToCatalog() {
+        if (getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm) == null) {
+            PdfDictionary acroform = new PdfDictionary();
+            acroform.makeIndirect(getDocument());
+            // PdfName.Fields is the only required key.
+            acroform.put(PdfName.Fields, new PdfArray());
+            getDocument().getCatalog().put(PdfName.AcroForm, acroform);
         }
     }
 
