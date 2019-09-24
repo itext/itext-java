@@ -1322,4 +1322,21 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + outputFile,
                 sourceFolder + "cmp_" + outputFile, destinationFolder, "diff_"));
     }
+
+    @Test
+    // TODO update cmp-file after DEVSIX-2622 fixed
+    public void fillUnmergedTextFormField() throws IOException, InterruptedException {
+        String file = sourceFolder + "fillUnmergedTextFormField.pdf";
+        String outfile = destinationFolder + "outfile.pdf";
+        String text = "John";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(file), new PdfWriter(outfile));
+        fillAcroForm(pdfDocument, text);
+
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "outfile.pdf",
+                sourceFolder + "cmp_" + "fillUnmergedTextFormField.pdf", destinationFolder, "diff_"));
+
+    }
 }
