@@ -1241,6 +1241,7 @@ public class TableRenderer extends AbstractRenderer {
         splitRenderer.isLastRendererForModelElement = false;
         splitRenderer.topBorderMaxWidth = topBorderMaxWidth;
         splitRenderer.captionRenderer = captionRenderer;
+        splitRenderer.isOriginalNonSplitRenderer = isOriginalNonSplitRenderer;
 
         return splitRenderer;
     }

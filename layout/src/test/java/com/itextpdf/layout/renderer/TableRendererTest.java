@@ -107,4 +107,20 @@ public class TableRendererTest  extends ExtendedITextTest {
 
     }
 
+    @Test
+    public void testIsOriginalNonSplitRenderer() {
+        Table table = new Table(1);
+        table.addCell(new Cell());
+        table.addCell(new Cell());
+        table.addCell(new Cell());
+
+        TableRenderer original = (TableRenderer) table.createRendererSubTree();
+        TableRenderer[] children = original.split(1);
+
+        TableRenderer[] grandChildren = children[1].split(1);
+
+        Assert.assertFalse(grandChildren[0].isOriginalNonSplitRenderer);
+    }
+
+
 }
