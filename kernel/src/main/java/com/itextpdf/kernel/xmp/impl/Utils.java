@@ -45,9 +45,9 @@ public final class Utils implements XMPConst
 	public static final int UUID_SEGMENT_COUNT = 4;
 	/** length of a UUID */
 	public static final int UUID_LENGTH = 32 + UUID_SEGMENT_COUNT;
-	/** table of XML name start chars (<= 0xFF) */
+	/** table of XML name start chars (&lt;= 0xFF) */
 	private  static boolean[] xmlNameStartChars;
-	/** table of XML name chars (<= 0xFF) */
+	/** table of XML name chars (&lt;= 0xFF) */
 	private static boolean[] xmlNameChars;
 	/** init char tables */
 	static

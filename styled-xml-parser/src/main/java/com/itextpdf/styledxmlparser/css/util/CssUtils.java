@@ -243,9 +243,9 @@ public class CssUtils {
 
     /**
      * Convenience method for parsing a value to pt. Possible values are: <ul>
-     * <li>a numeric value in pixels (e.g. 123, 1.23, .123),</li>
-     * <li>a value with a metric unit (px, in, cm, mm, pc or pt) attached to it,</li>
-     * <li>or a value with a relative value (%, em, ex).</li>
+     * <li>a numeric value in pixels (e.g. 123, 1.23, .123),
+     * <li>a value with a metric unit (px, in, cm, mm, pc or pt) attached to it,
+     * <li>or a value with a relative value (%, em, ex).
      * </ul>
      *
      * @param value    the value

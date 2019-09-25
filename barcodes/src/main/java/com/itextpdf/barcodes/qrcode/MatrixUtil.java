@@ -242,7 +242,7 @@ final class MatrixUtil {
 
     /**
      * Embed version information if need be.
-     * For version < 7, version info is not necessary
+     * For version &lt; 7, version info is not necessary
      * On success, the matrix is modified
      * See 8.10 of JISX0510:2004 (p.47) for how to embed version information.
      * @param version QR code version

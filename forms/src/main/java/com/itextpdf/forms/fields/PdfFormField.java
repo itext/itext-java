@@ -2404,9 +2404,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param appearanceType   the type of appearance stream to be added
      *                         <ul>
-     *                         <li> PdfName.N: normal appearance</li>
-     *                         <li> PdfName.R: rollover appearance</li>
-     *                         <li> PdfName.D: down appearance</li>
+     *                         <li> PdfName.N: normal appearance
+     *                         <li> PdfName.R: rollover appearance
+     *                         <li> PdfName.D: down appearance
      *                         </ul>
      * @param appearanceState  the state of the form field that needs to be true
      *                         for the appearance to be used. Differentiates between several streams

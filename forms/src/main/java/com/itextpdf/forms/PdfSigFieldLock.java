@@ -134,9 +134,9 @@ public class PdfSigFieldLock extends PdfObjectWrapper<PdfDictionary> {
      * Indicates the set of fields that should be locked when the
      * corresponding signature field is signed:
      * <ul>
-     *     <li>all the fields in the document,</li>
-     *     <li>all the fields specified in the /Fields array,</li>
-     *     <li>all the fields except those specified in the /Fields array.</li>
+     *     <li>all the fields in the document,
+     *     <li>all the fields specified in the /Fields array,
+     *     <li>all the fields except those specified in the /Fields array.
      * </ul>
      */
     public enum LockAction {
@@ -148,13 +148,13 @@ public class PdfSigFieldLock extends PdfObjectWrapper<PdfDictionary> {
      * the document when the corresponding signature field is signed:
      * <ul>
      *     <li>{@link #NO_CHANGES_ALLOWED} - no changes to the document are
-     *     permitted; any change to the document invalidates the signature,</li>
+     *     permitted; any change to the document invalidates the signature,
      *     <li>{@link #FORM_FILLING} - permitted changes are filling in forms,
      *     instantiating page templates, and signing; other changes invalidate
-     *     the signature,</li>
+     *     the signature,
      *     <li>{@link #FORM_FILLING_AND_ANNOTATION} - permitted changes are the
      *     same as for the previous, as well as annotation creation, deletion,
-     *     and modification; other changes invalidate the signature.</li>
+     *     and modification; other changes invalidate the signature.
      * </ul>
      */
     public enum LockPermissions {

@@ -268,8 +268,8 @@ public class Document extends Element {
      * <p>
      * <b>Elements used:</b>
      * <ul>
-     * <li><b>Html:</b> <i>&lt;meta charset="CHARSET"&gt;</i></li>
-     * <li><b>Xml:</b> <i>&lt;?xml version="1.0" encoding="CHARSET"&gt;</i></li>
+     * <li><b>Html:</b> <i>&lt;meta charset="CHARSET"&gt;</i><
+     * <li><b>Xml:</b> <i>&lt;?xml version="1.0" encoding="CHARSET"&gt;</i>
      * </ul>
      * 
      * @param charset Charset
@@ -338,15 +338,15 @@ public class Document extends Element {
      * <tt>true</tt>, otherwise this method does nothing.
      * 
      * <ul>
-     * <li>An exsiting element gets updated with the current charset</li>
-     * <li>If there's no element yet it will be inserted</li>
-     * <li>Obsolete elements are removed</li>
+     * <li>An exsiting element gets updated with the current charset
+     * <li>If there's no element yet it will be inserted
+     * <li>Obsolete elements are removed
      * </ul>
      * <b>Elements used:</b>
      * 
      * <ul>
-     * <li><b>Html:</b> <i>&lt;meta charset="CHARSET"&gt;</i></li>
-     * <li><b>Xml:</b> <i>&lt;?xml version="1.0" encoding="CHARSET"&gt;</i></li>
+     * <li><b>Html:</b> <i>&lt;meta charset="CHARSET"&gt;</i>
+     * <li><b>Xml:</b> <i>&lt;?xml version="1.0" encoding="CHARSET"&gt;</i>
      * </ul>
      */
     private void ensureMetaCharsetElement() {

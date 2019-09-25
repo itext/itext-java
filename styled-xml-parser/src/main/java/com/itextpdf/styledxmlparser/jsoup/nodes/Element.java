@@ -271,11 +271,11 @@ public class Element extends Node {
      * <p>
      * For example, with the input HTML: {@code <p>One <span>Two</span> Three <br> Four</p>} with the {@code p} element selected:
      * <ul>
-     *     <li>{@code p.text()} = {@code "One Two Three Four"}</li>
-     *     <li>{@code p.ownText()} = {@code "One Three Four"}</li>
-     *     <li>{@code p.children()} = {@code Elements[<span>, <br>]}</li>
-     *     <li>{@code p.childNodes()} = {@code List<Node>["One ", <span>, " Three ", <br>, " Four"]}</li>
-     *     <li>{@code p.textNodes()} = {@code List<TextNode>["One ", " Three ", " Four"]}</li>
+     *     <li>{@code p.text()} = {@code "One Two Three Four"}
+     *     <li>{@code p.ownText()} = {@code "One Three Four"}
+     *     <li>{@code p.children()} = {@code Elements[<span>, <br>]}
+     *     <li>{@code p.childNodes()} = {@code List<Node>["One ", <span>, " Three ", <br>, " Four"]}
+     *     <li>{@code p.textNodes()} = {@code List<TextNode>["One ", " Three ", " Four"]}
      * </ul>
      */
     public List<TextNode> textNodes() {
