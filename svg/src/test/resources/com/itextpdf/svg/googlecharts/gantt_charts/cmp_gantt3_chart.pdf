@@ -16,13 +16,13 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20190701133916+03'00')/ModDate(D:20190701133916+03'00')/Producer(iText® 7.1.7-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
-endobj
-7 0 obj
-<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+<</CreationDate(D:20191001143114+03'00')/ModDate(D:20191001143114+03'00')/Producer(iText® 7.1.8-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+7 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -39,7 +39,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 824.25 206.25]/Length 6984/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 824.25 206.25]/Length 7197/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 q
 0 0 0 rg
 q
@@ -521,7 +521,8 @@ q
 0.16471 0.33725 0.77647 rg
 % path
 422.82 6 m
-424.89 6 426.57 7.68 426.57 9.75 c
+423.81 6 424.77 6.4 425.47 7.1 c
+426.17 7.8 426.57 8.76 426.57 9.75 c
 426.57 21.75 l
 426.57 23.82 424.89 25.5 422.82 25.5 c
 112.17 25.5 l
@@ -539,7 +540,8 @@ q
 522.01 57 l
 522.01 57 l
 509.85 57 l
-507.78 57 506.1 55.32 506.1 53.25 c
+508.86 57 507.91 56.6 507.2 55.9 c
+506.5 55.2 506.1 54.24 506.1 53.25 c
 506.1 41.25 l
 506.1 39.18 507.78 37.5 509.85 37.5 c
 h
@@ -551,11 +553,13 @@ q
 502.35 69 m
 504.43 69 506.1 70.68 506.1 72.75 c
 506.1 84.75 l
-506.1 86.82 504.43 88.5 502.35 88.5 c
+506.1 85.74 505.71 86.7 505.01 87.4 c
+504.3 88.1 503.35 88.5 502.35 88.5 c
 430.32 88.5 l
 428.25 88.5 426.57 86.82 426.57 84.75 c
 426.57 72.75 l
-426.57 70.68 428.25 69 430.32 69 c
+426.57 71.76 426.96 70.8 427.67 70.1 c
+428.37 69.4 429.32 69 430.32 69 c
 h
 f
 Q
@@ -563,9 +567,12 @@ q
 0.64706 0.15294 0.07843 rg
 % path
 565.76 100.5 m
+565.76 100.5 l
+565.76 120 l
 565.76 120 l
 509.85 120 l
-507.78 120 506.1 118.32 506.1 116.25 c
+508.86 120 507.91 119.6 507.2 118.9 c
+506.5 118.2 506.1 117.24 506.1 116.25 c
 506.1 104.25 l
 506.1 102.18 507.78 100.5 509.85 100.5 c
 h
@@ -659,13 +666,13 @@ xref
 0000000271 00000 n 
 0000000089 00000 n 
 0000000015 00000 n 
-0000000527 00000 n 
 0000000437 00000 n 
+0000000526 00000 n 
 0000000667 00000 n 
 0000000859 00000 n 
 trailer
-<</ID [<d65f8fa4da2a537ed7b87febd6f998c1><d65f8fa4da2a537ed7b87febd6f998c1>]/Info 3 0 R/Root 1 0 R/Size 10>>
-%iText-7.1.7-SNAPSHOT
+<</ID [<8fc91e6b3c117131c63db08d46575468><8fc91e6b3c117131c63db08d46575468>]/Info 3 0 R/Root 1 0 R/Size 10>>
+%iText-7.1.8-SNAPSHOT for .NET
 startxref
-7983
+8196
 %%EOF

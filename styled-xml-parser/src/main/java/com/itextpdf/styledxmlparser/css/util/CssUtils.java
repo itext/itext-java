@@ -133,6 +133,23 @@ public class CssUtils {
     }
 
     /**
+     * Parses a double without throwing an exception if something goes wrong.
+     *
+     * @param str a string that might be a double value
+     * @return the double value, or null if something went wrong
+     */
+    public static Double parseDouble(String str) {
+        if (str == null) {
+            return null;
+        }
+        try {
+            return Double.valueOf(str);
+        } catch (NumberFormatException exc) {
+            return null;
+        }
+    }
+
+    /**
      * Parses an aspect ratio into an array with two integers.
      *
      * @param str a string that might contain two integer values

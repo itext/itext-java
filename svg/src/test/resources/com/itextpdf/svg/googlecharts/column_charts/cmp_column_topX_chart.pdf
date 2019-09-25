@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20190624130651+03'00')/ModDate(D:20190624130651+03'00')/Producer(iText® 7.1.7-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20191001142552+03'00')/ModDate(D:20191001142552+03'00')/Producer(iText® 7.1.8-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +36,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 600 450]/Length 4349/Resources<</ExtGState<</Gs1 9 0 R/Gs2 10 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 600 450]/Length 4344/Resources<</ExtGState<</Gs1 9 0 R/Gs2 10 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 q
 0 0 0 rg
 q
@@ -182,6 +182,7 @@ n
 126.51 107.42 m
 127.33 107.42 128.01 108.09 128.01 108.92 c
 128.01 444 l
+128.01 444 l
 24.75 444 l
 24.75 108.92 l
 24.75 108.09 25.42 107.42 26.25 107.42 c
@@ -198,8 +199,7 @@ n
 0.25882 0.52157 0.95686 rg
 % path
 242.07 207.08 m
-242.46 207.08 242.85 207.24 243.13 207.52 c
-243.41 207.8 243.57 208.19 243.57 208.58 c
+242.89 207.08 243.57 207.75 243.57 208.58 c
 243.57 444 l
 243.57 444 l
 140.31 444 l
@@ -223,6 +223,7 @@ n
 358.97 353.47 359.13 353.85 359.13 354.25 c
 359.13 444 l
 359.13 444 l
+255.87 444 l
 255.87 444 l
 255.87 354.25 l
 255.87 353.42 256.54 352.75 257.37 352.75 c
@@ -260,12 +261,13 @@ n
 0.25882 0.52157 0.95686 rg
 % path
 588.75 421.75 m
-589.15 421.75 589.53 421.91 589.81 422.19 c
-590.09 422.47 590.25 422.85 590.25 423.25 c
+589.58 421.75 590.25 422.42 590.25 423.25 c
 590.25 444 l
 486.99 444 l
+486.99 444 l
 486.99 423.25 l
-486.99 422.42 487.67 421.75 488.49 421.75 c
+486.99 422.85 487.15 422.47 487.43 422.19 c
+487.72 421.91 488.1 421.75 488.49 421.75 c
 h
 f
 Q
@@ -530,11 +532,11 @@ xref
 0000000437 00000 n 
 0000000578 00000 n 
 0000000761 00000 n 
-0000005270 00000 n 
-0000005295 00000 n 
+0000005265 00000 n 
+0000005290 00000 n 
 trailer
-<</ID [<67d8b0a918ed4effe08b752fddcb8694><67d8b0a918ed4effe08b752fddcb8694>]/Info 3 0 R/Root 1 0 R/Size 11>>
-%iText-7.1.7-SNAPSHOT
+<</ID [<dbc16f7948aca8a9fc7c3889519edb16><dbc16f7948aca8a9fc7c3889519edb16>]/Info 3 0 R/Root 1 0 R/Size 11>>
+%iText-7.1.8-SNAPSHOT for .NET
 startxref
-5321
+5316
 %%EOF

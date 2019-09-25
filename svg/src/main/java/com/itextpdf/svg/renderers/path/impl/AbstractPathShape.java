@@ -85,7 +85,7 @@ public abstract class AbstractPathShape implements IPathShape {
     }
 
     protected Point createPoint(String coordX, String coordY) {
-        return new Point((float)CssUtils.parseFloat(coordX), (float)CssUtils.parseFloat(coordY));
+        return new Point((double) CssUtils.parseDouble(coordX), (double) CssUtils.parseDouble(coordY));
     }
 
     @Override
