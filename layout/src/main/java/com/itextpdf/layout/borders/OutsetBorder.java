@@ -51,7 +51,7 @@ import com.itextpdf.kernel.colors.DeviceRgb;
 public class OutsetBorder extends Border3D {
 
     /**
-     * Creates a OutsetBorder instance with the specified width. The color is set to the default: {@link Border3D#GRAY gray}.
+     * Creates an OutsetBorder instance with the specified width. The color is set to the predefined gray.
      *
      * @param width width of the border
      */
@@ -60,7 +60,7 @@ public class OutsetBorder extends Border3D {
     }
 
     /**
-     * Creates a OutsetBorder instance with the specified width and the {@link DeviceRgb rgb color}.
+     * Creates an OutsetBorder instance with the specified width and the {@link DeviceRgb rgb color}.
      *
      * @param width width of the border
      * @param color the {@link DeviceRgb rgb color} of the border
@@ -70,7 +70,7 @@ public class OutsetBorder extends Border3D {
     }
 
     /**
-     * Creates a OutsetBorder instance with the specified width and the {@link DeviceCmyk cmyk color}.
+     * Creates an OutsetBorder instance with the specified width and the {@link DeviceCmyk cmyk color}.
      *
      * @param width width of the border
      * @param color the {@link DeviceCmyk cmyk color} of the border
@@ -80,7 +80,7 @@ public class OutsetBorder extends Border3D {
     }
 
     /**
-     * Creates a OutsetBorder instance with the specified width and the {@link DeviceGray gray color}.
+     * Creates an OutsetBorder instance with the specified width and the {@link DeviceGray gray color}.
      *
      * @param width width of the border
      * @param color the {@link DeviceGray gray color} of the border
@@ -90,7 +90,7 @@ public class OutsetBorder extends Border3D {
     }
 
     /**
-     * Creates a OutsetBorder instance with the specified width, color and opacity.
+     * Creates an OutsetBorder instance with the specified width, color and opacity.
      *
      * @param color color of the border
      * @param width width of the border
@@ -101,7 +101,7 @@ public class OutsetBorder extends Border3D {
     }
 
     /**
-     * Creates a OutsetBorder instance with the specified width, color and opacity.
+     * Creates an OutsetBorder instance with the specified width, color and opacity.
      *
      * @param color color of the border
      * @param width width of the border
@@ -112,7 +112,7 @@ public class OutsetBorder extends Border3D {
     }
 
     /**
-     * Creates a OutsetBorder instance with the specified width, color and opacity.
+     * Creates an OutsetBorder instance with the specified width, color and opacity.
      *
      * @param color color of the border
      * @param width width of the border

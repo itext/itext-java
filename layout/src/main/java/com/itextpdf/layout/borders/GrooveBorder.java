@@ -51,7 +51,7 @@ import com.itextpdf.kernel.colors.DeviceRgb;
 public class GrooveBorder extends Border3D {
 
     /**
-     * Creates a GrooveBorder instance with the specified width. The color is set to the default: {@link Border3D#GRAY gray}.
+     * Creates a GrooveBorder instance with the specified width. The color is set to the predefined gray.
      *
      * @param width width of the border
      */
