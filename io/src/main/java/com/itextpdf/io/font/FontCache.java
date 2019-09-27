@@ -57,6 +57,7 @@ import com.itextpdf.io.util.ResourceUtil;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -65,7 +66,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class FontCache {
 
-    private static final Map<String, Map<String, Object>> allCidFonts = new HashMap<>();
+    private static final Map<String, Map<String, Object>> allCidFonts = new LinkedHashMap<>();
     private static final Map<String, Set<String>> registryNames = new HashMap<>();
 
     private static final String CJK_REGISTRY_FILENAME = "cjk_registry.properties";
@@ -101,6 +102,11 @@ public class FontCache {
         return true;
     }
 
+    /**
+     * Finds a CJK font family which is compatible to the given CMap.
+     * @param cmap a name of the CMap for which compatible font is searched.
+     * @return a CJK font name if there's known compatible font for the given cmap name, or null otherwise.
+     */
     public static String getCompatibleCidFont(String cmap) {
         for (Map.Entry<String, Set<String>> e : registryNames.entrySet()) {
             if (e.getValue().contains(cmap)) {
@@ -114,8 +120,18 @@ public class FontCache {
         return null;
     }
 
+    /**
+     * Finds all CMap names that belong to the same registry to which a given
+     * font belongs.
+     * @param fontName a name of the font for which CMap's are searched.
+     * @return a set of CMap names corresponding to the given font.
+     */
     public static Set<String> getCompatibleCmaps(String fontName) {
-        String registry = (String) FontCache.getAllPredefinedCidFonts().get(fontName).get(REGISTRY_PROP);
+        Map<String, Object> cidFonts = FontCache.getAllPredefinedCidFonts().get(fontName);
+        if (cidFonts == null) {
+            return null;
+        }
+        String registry = (String) cidFonts.get(REGISTRY_PROP);
         return registryNames.get(registry);
     }
 
@@ -127,6 +143,11 @@ public class FontCache {
         return registryNames;
     }
 
+    /**
+     * Parses CMap with a given name producing it in a form of cid to unicode mapping.
+     * @param uniMap a CMap name. It is expected that CMap identified by this name defines unicode to cid mapping.
+     * @return an object for convenient mapping from cid to unicode. If no CMap was found for provided name an exception is thrown.
+     */
     public static CMapCidUni getCid2UniCmap(String uniMap) {
         CMapCidUni cidUni = new CMapCidUni();
         return parseCmap(uniMap, cidUni);

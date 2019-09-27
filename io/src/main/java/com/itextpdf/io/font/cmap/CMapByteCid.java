@@ -66,16 +66,16 @@ public class CMapByteCid extends AbstractCMap {
         }
     }
 
-    private List<char[]> planes = new ArrayList<>();
+    private List<int[]> planes = new ArrayList<>();
 
     public CMapByteCid() {
-        planes.add(new char[256]);
+        planes.add(new int[256]);
     }
 
     @Override
     void addChar(String mark, CMapObject code) {
         if (code.isNumber()) {
-            encodeSequence(decodeStringToByte(mark), (char)code.getValue());
+            encodeSequence(decodeStringToByte(mark), (int) code.getValue());
         }
     }
 
@@ -101,7 +101,7 @@ public class CMapByteCid extends AbstractCMap {
         while (cursor.offset < end) {
             int one = cidBytes[cursor.offset++] & 0xff;
             cursor.length--;
-            char[] plane = planes.get(currentPlane);
+            int[] plane = planes.get(currentPlane);
             int cid = plane[one];
             if ((cid & 0x8000) == 0) {
                 return cid;
@@ -112,25 +112,25 @@ public class CMapByteCid extends AbstractCMap {
         return -1;
     }
 
-    private void encodeSequence(byte[] seq, char cid) {
+    private void encodeSequence(byte[] seq, int cid) {
         int size = seq.length - 1;
         int nextPlane = 0;
         for (int idx = 0; idx < size; ++idx) {
-            char[] plane = planes.get(nextPlane);
+            int[] plane = planes.get(nextPlane);
             int one = seq[idx] & 0xff;
-            char c = plane[one];
+            int c = plane[one];
             if (c != 0 && (c & 0x8000) == 0)
                 throw new IOException("Inconsistent mapping.");
             if (c == 0) {
-                planes.add(new char[256]);
-                c = (char)(planes.size() - 1 | 0x8000);
+                planes.add(new int[256]);
+                c = (planes.size() - 1 | 0x8000);
                 plane[one] = c;
             }
             nextPlane = c & 0x7fff;
         }
-        char[] plane = planes.get(nextPlane);
+        int[] plane = planes.get(nextPlane);
         int one = seq[size] & 0xff;
-        char c = plane[one];
+        int c = plane[one];
         if ((c & 0x8000) != 0)
             throw new IOException("Inconsistent mapping.");
         plane[one] = cid;
