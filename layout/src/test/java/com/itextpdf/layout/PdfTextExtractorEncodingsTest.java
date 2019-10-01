@@ -46,22 +46,21 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfTextExtractorEncodingsTest extends ExtendedITextTest {
@@ -127,8 +126,7 @@ public class PdfTextExtractorEncodingsTest extends ExtendedITextTest {
         return PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", encoding, embedded);
     }
 
-    private static byte[] createPdf(PdfFont font)
-            throws Exception {
+    private static byte[] createPdf(PdfFont font) {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
         Document document = new Document(new PdfDocument(new PdfWriter(byteStream)));

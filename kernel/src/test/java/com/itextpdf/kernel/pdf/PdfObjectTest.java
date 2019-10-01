@@ -225,7 +225,7 @@ public class PdfObjectTest {
     }
 
     @Test
-    public void pdtIndirectReferenceLateInitializing3() throws IOException {
+    public void pdtIndirectReferenceLateInitializing3() {
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         document.addNewPage();
         PdfDictionary catalog = document.getCatalog().getPdfObject();

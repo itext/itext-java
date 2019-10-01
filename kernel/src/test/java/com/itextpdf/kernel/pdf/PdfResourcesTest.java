@@ -57,7 +57,7 @@ public class PdfResourcesTest {
 
 
     @Test
-    public void resourcesTest1() throws Exception {
+    public void resourcesTest1() {
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
         PdfPage page = document.addNewPage();

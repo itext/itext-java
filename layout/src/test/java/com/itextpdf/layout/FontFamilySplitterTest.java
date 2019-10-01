@@ -54,7 +54,7 @@ import java.util.List;
 @Category(UnitTest.class)
 public class FontFamilySplitterTest {
     @Test
-    public void fontFamilySplitter() throws Exception {
+    public void fontFamilySplitter() {
         String fontFamilies =
                         "'Puritan'\n" +
                         "Puritan\n" +

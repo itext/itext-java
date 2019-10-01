@@ -52,8 +52,8 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeCollection;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.Type1Font;
-import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.constants.FontStyles;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
@@ -74,7 +74,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -1357,7 +1356,7 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void createWrongAfm1() throws IOException, InterruptedException {
+    public void createWrongAfm1() throws IOException {
         String message = "";
         try {
             byte[] pfb = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
@@ -1369,7 +1368,7 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void createWrongAfm2() throws IOException, InterruptedException {
+    public void createWrongAfm2() throws IOException {
         String message = "";
         String font = fontsFolder + "cmr10.pfb";
         try {
@@ -1385,7 +1384,7 @@ public class PdfFontTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.START_MARKER_MISSING_IN_PFB_FILE)
     })
-    public void createWrongPfb() throws IOException, InterruptedException {
+    public void createWrongPfb() throws IOException {
         byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
         PdfFont font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(afm, afm, false), null);
         byte[] streamContent = ((Type1Font) ((PdfType1Font) font).getFontProgram()).getFontStreamBytes();
@@ -1393,14 +1392,14 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void autoDetect1() throws IOException, InterruptedException {
+    public void autoDetect1() throws IOException {
         byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
 
         Assert.assertTrue("Type1 font expected", FontProgramFactory.createFont(afm, false) instanceof Type1Font);
     }
 
     @Test
-    public void autoDetect2() throws IOException, InterruptedException {
+    public void autoDetect2() throws IOException {
         byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
         byte[] pfb = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
 
@@ -1408,19 +1407,19 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void autoDetect3() throws IOException, InterruptedException {
+    public void autoDetect3() throws IOException {
         byte[] otf = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "Puritan2.otf"));
         Assert.assertTrue("TrueType (OTF) font expected", FontProgramFactory.createFont(otf) instanceof TrueTypeFont);
     }
 
     @Test
-    public void autoDetect4() throws IOException, InterruptedException {
+    public void autoDetect4() throws IOException {
         byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "abserif4_5.ttf"));
         Assert.assertTrue("TrueType (TTF) expected", FontProgramFactory.createFont(ttf) instanceof TrueTypeFont);
     }
 
     @Test
-    public void autoDetect5() throws IOException, InterruptedException {
+    public void autoDetect5() throws IOException {
         byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "abserif4_5.ttf"));
         Assert.assertTrue("TrueType (TTF) expected", FontProgramFactory.createFont(ttf) instanceof TrueTypeFont);
     }
@@ -1885,7 +1884,7 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void kozminNames() throws Exception {
+    public void kozminNames() {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("KozMinPro-Regular");
         Assert.assertEquals(descriptor.getFontName(), "KozMinPro-Regular");
         Assert.assertEquals(descriptor.getFullNameLowerCase(), "KozMinPro-Regular".toLowerCase());
@@ -1893,7 +1892,7 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void helveticaNames() throws Exception {
+    public void helveticaNames() {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("Helvetica");
         Assert.assertEquals(descriptor.getFontName(), "Helvetica");
         Assert.assertEquals(descriptor.getFullNameLowerCase(), "Helvetica".toLowerCase());
@@ -1902,7 +1901,7 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void otfByStringNames() throws Exception {
+    public void otfByStringNames() {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontsFolder + "Puritan2.otf");
         Assert.assertEquals(descriptor.getFontName(), "Puritan2");
         Assert.assertEquals(descriptor.getFullNameLowerCase(), "Puritan 2.0 Regular".toLowerCase());
@@ -1923,7 +1922,7 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void ttfByStringNames() throws Exception {
+    public void ttfByStringNames() {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontsFolder + "abserif4_5.ttf");
         Assert.assertEquals(descriptor.getFontName(), "AboriginalSerif");
         Assert.assertEquals(descriptor.getFullNameLowerCase(), "Aboriginal Serif".toLowerCase());

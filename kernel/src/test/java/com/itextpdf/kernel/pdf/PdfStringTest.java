@@ -112,14 +112,14 @@ public class PdfStringTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testUnicodeString() throws IOException, InterruptedException {
+    public void testUnicodeString() {
         String unicode = "Привет!";
         PdfString string = new PdfString(unicode);
         Assert.assertNotEquals(unicode, string.toUnicodeString());
     }
 
     @Test
-    public void readUtf8ActualText() throws java.io.IOException, InterruptedException {
+    public void readUtf8ActualText() throws java.io.IOException {
         String filename = sourceFolder + "utf-8-actual-text.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
         String text = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(1), new LocationTextExtractionStrategy().setUseActualText(true));
@@ -132,7 +132,7 @@ public class PdfStringTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.EXISTING_TAG_STRUCTURE_ROOT_IS_NOT_STANDARD)
     })
-    public void readUtf8AltText() throws java.io.IOException, InterruptedException {
+    public void readUtf8AltText() throws java.io.IOException {
         String filename = sourceFolder + "utf-8-alt-text.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename), new PdfWriter(destinationFolder + "whatever"));
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
@@ -144,7 +144,7 @@ public class PdfStringTest extends ExtendedITextTest {
     }
 
     @Test
-    public void readUtf8Bookmarks() throws java.io.IOException, InterruptedException {
+    public void readUtf8Bookmarks() throws java.io.IOException {
         String filename = sourceFolder + "utf-8-bookmarks.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
         PdfOutline outline = pdfDoc.getOutlines(true);
@@ -169,7 +169,7 @@ public class PdfStringTest extends ExtendedITextTest {
     }
 
     @Test
-    public void readUtf8PageLabelPrefix() throws java.io.IOException, InterruptedException {
+    public void readUtf8PageLabelPrefix() throws java.io.IOException {
         String filename = sourceFolder + "utf-8-page-label-prefix.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
         String[] labels = pdfDoc.getPageLabels();

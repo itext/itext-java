@@ -76,7 +76,7 @@ public class Utf8FormsTest {
     }
 
     @Test
-    public void readUtf8FieldName() throws java.io.IOException, InterruptedException {
+    public void readUtf8FieldName() throws java.io.IOException {
         String filename = sourceFolder + "utf-8-field-name.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
@@ -90,7 +90,7 @@ public class Utf8FormsTest {
     }
 
     @Test
-    public void readUtf8TextAnnot() throws java.io.IOException, InterruptedException {
+    public void readUtf8TextAnnot() throws java.io.IOException {
         String filename = sourceFolder + "utf-8-text-annot.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);

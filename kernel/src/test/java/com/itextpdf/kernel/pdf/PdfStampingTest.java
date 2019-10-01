@@ -1274,7 +1274,7 @@ public class PdfStampingTest extends ExtendedITextTest {
     }
 
     @Test
-    public void stampingTestWithFullCompression02() throws IOException, InterruptedException {
+    public void stampingTestWithFullCompression02() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "fullCompressedDocument.pdf"),
                 new PdfWriter(destinationFolder + "stampingTestWithFullCompression02.pdf",
                         new WriterProperties().setFullCompressionMode(false)));

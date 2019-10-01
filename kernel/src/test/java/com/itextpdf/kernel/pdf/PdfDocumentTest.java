@@ -154,7 +154,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
     }
 
     @Test
-    public void removeUnusedObjectsInWriterModeTest() throws IOException, InterruptedException {
+    public void removeUnusedObjectsInWriterModeTest() throws IOException {
         String filename = "removeUnusedObjectsInWriter.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + filename));
@@ -179,7 +179,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
     }
 
     @Test
-    public void removeUnusedObjectsInStampingModeTest() throws IOException, InterruptedException {
+    public void removeUnusedObjectsInStampingModeTest() throws IOException {
         String filenameIn = "docWithUnusedObjects_1.pdf";
         String filenameOut = "removeUnusedObjectsInStamping.pdf";
 
@@ -209,7 +209,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
 
     @Test
-    public void addUnusedObjectsInWriterModeTest() throws IOException, InterruptedException {
+    public void addUnusedObjectsInWriterModeTest() throws IOException {
         String filename = "addUnusedObjectsInWriter.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + filename));
@@ -234,7 +234,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
     }
 
     @Test
-    public void addUnusedObjectsInStampingModeTest() throws IOException, InterruptedException {
+    public void addUnusedObjectsInStampingModeTest() throws IOException {
         String filenameIn = "docWithUnusedObjects_2.pdf";
         String filenameOut = "addUnusedObjectsInStamping.pdf";
 
@@ -261,7 +261,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
     }
 
     @Test
-    public void addUnusedStreamObjectsTest() throws IOException, InterruptedException {
+    public void addUnusedStreamObjectsTest() throws IOException {
         String filenameIn = "docWithUnusedObjects_3.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + filenameIn));

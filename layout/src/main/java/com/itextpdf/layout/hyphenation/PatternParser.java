@@ -17,13 +17,6 @@
 
 package com.itextpdf.layout.hyphenation;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import javax.xml.parsers.SAXParserFactory;
-
 import com.itextpdf.io.util.ResourceUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -31,6 +24,13 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.parsers.SAXParserFactory;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * A SAX document handler to read and parse hyphenation patterns
@@ -56,9 +56,8 @@ public class PatternParser extends DefaultHandler {
 
     /**
      * Construct a pattern parser.
-     * @throws HyphenationException if a hyphenation exception is raised
      */
-    private PatternParser() throws HyphenationException {
+    private PatternParser() {
         token = new StringBuilder();
         parser = createParser();
         parser.setContentHandler(this);

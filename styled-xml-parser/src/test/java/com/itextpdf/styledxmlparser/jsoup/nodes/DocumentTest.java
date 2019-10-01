@@ -73,8 +73,8 @@ public class DocumentTest {
     private static final String charsetUtf8 = "UTF-8";
     private static final String charsetIso8859 = "ISO-8859-1";
     
-    
-    @Test public void setTextPreservesDocumentStructure() {
+    @Test
+    public void setTextPreservesDocumentStructure() {
         Document doc = Jsoup.parse("<p>Hello</p>");
         doc.text("Replaced");
         assertEquals("Replaced", doc.text());
@@ -82,7 +82,8 @@ public class DocumentTest {
         assertEquals(1, doc.select("head").size());
     }
     
-    @Test public void testTitles() {
+    @Test
+    public void testTitles() {
         Document noTitle = Jsoup.parse("<p>Hello</p>");
         Document withTitle = Jsoup.parse("<title>First</title><title>Ignore</title><p>Hello</p>");
         
@@ -100,7 +101,8 @@ public class DocumentTest {
         assertEquals("Hello there now", normaliseTitle.title());
     }
 
-    @Test public void testOutputEncoding() {
+    @Test
+    public void testOutputEncoding() {
         Document doc = Jsoup.parse("<p title=π>π & < > </p>");
         // default is utf-8
         assertEquals("<p title=\"π\">π &amp; &lt; &gt; </p>", doc.body().html());
@@ -114,18 +116,21 @@ public class DocumentTest {
         assertEquals("<p title=\"&pi;\">&pi; &amp; &lt; &gt; </p>", doc.body().html());
     }
 
-    @Test public void testXhtmlReferences() {
+    @Test
+    public void testXhtmlReferences() {
         Document doc = Jsoup.parse("&lt; &gt; &amp; &quot; &apos; &times;");
         doc.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
         assertEquals("&lt; &gt; &amp; \" ' ×", doc.body().html());
     }
 
-    @Test public void testNormalisesStructure() {
+    @Test
+    public void testNormalisesStructure() {
         Document doc = Jsoup.parse("<html><head><script>one</script><noscript><p>two</p></noscript></head><body><p>three</p></body><p>four</p></html>");
         assertEquals("<html><head><script>one</script><noscript>&lt;p&gt;two</noscript></head><body><p>three</p><p>four</p></body></html>", TextUtil.stripNewlines(doc.html()));
     }
 
-    @Test public void testClone() {
+    @Test
+    public void testClone() {
         Document doc = Jsoup.parse("<title>Hello</title> <p>One<p>Two");
         Document clone = (Document) doc.clone();
 
@@ -136,7 +141,8 @@ public class DocumentTest {
         assertEquals("<html><head><title>Hello</title> </head><body><p>One</p><p>Two</p></body></html>", TextUtil.stripNewlines(doc.html()));
     }
 
-    @Test public void testClonesDeclarations() {
+    @Test
+    public void testClonesDeclarations() {
         Document doc = Jsoup.parse("<!DOCTYPE html><html><head><title>Doctype test");
         Document clone = (Document) doc.clone();
 
@@ -145,7 +151,8 @@ public class DocumentTest {
                 TextUtil.stripNewlines(clone.html()));
     }
     
-    @Test public void testLocation() throws IOException {
+    @Test
+    public void testLocation() throws IOException {
     	File in = new ParseTest().getFile("/htmltests/yahoo-jp.html");
         Document doc = Jsoup.parse(in, "UTF-8", "http://www.yahoo.co.jp/index.html");
         String location = doc.location();
@@ -160,7 +167,8 @@ public class DocumentTest {
         assertEquals("http://www.nytimes.com/2010/07/26/business/global/26bp.html?hp",baseUri);
     }
 
-    @Test public void testHtmlAndXmlSyntax() {
+    @Test
+    public void testHtmlAndXmlSyntax() {
         String h = "<!DOCTYPE html><body><img async checked='checked' src='&<>\"'>&lt;&gt;&amp;&quot;<foo />bar";
         Document doc = Jsoup.parse(h);
 
@@ -185,12 +193,14 @@ public class DocumentTest {
                 "</html>", doc.html());
     }
 
-    @Test public void htmlParseDefaultsToHtmlOutputSyntax() {
+    @Test
+    public void htmlParseDefaultsToHtmlOutputSyntax() {
         Document doc = Jsoup.parse("x");
         assertEquals(Syntax.html, doc.outputSettings().syntax());
     }
     
-    @Test public void testHtmlAppendable() {
+    @Test
+    public void testHtmlAppendable() {
     	String htmlContent = "<html><head><title>Hello</title></head><body><p>One</p><p>Two</p></body></html>";
     	Document document = Jsoup.parse(htmlContent);
     	OutputSettings outputSettings = new OutputSettings();
@@ -201,7 +211,8 @@ public class DocumentTest {
     }
 
     // This test can take awhile to run.
-    @Test public void testOverflowClone() {
+    @Test
+    public void testOverflowClone() {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < 100000; i++) {
             builder.insert(0, "<i>");
@@ -212,7 +223,8 @@ public class DocumentTest {
         doc.clone();
     }
 
-    @Test public void DocumentsWithSameContentAreEqual() throws Exception {
+    @Test
+    public void DocumentsWithSameContentAreEqual() {
         Document docA = Jsoup.parse("<div/>One");
         Document docB = Jsoup.parse("<div/>One");
         Document docC = Jsoup.parse("<div/>Two");
@@ -223,7 +235,8 @@ public class DocumentTest {
         assertFalse(docA.hashCode() == docC.hashCode());
     }
 
-    @Test public void DocumentsWithSameContentAreVerifialbe() throws Exception {
+    @Test
+    public void DocumentsWithSameContentAreVerifialbe() {
         Document docA = Jsoup.parse("<div/>One");
         Document docB = Jsoup.parse("<div/>One");
         Document docC = Jsoup.parse("<div/>Two");

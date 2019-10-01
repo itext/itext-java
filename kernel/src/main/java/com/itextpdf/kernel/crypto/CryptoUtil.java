@@ -56,7 +56,7 @@ import java.security.cert.CertificateFactory;
  * Be aware that it's API and functionality may be changed in future.
  */
 public class CryptoUtil {
-    public static Certificate readPublicCertificate(InputStream is) throws IOException, CertificateException {
+    public static Certificate readPublicCertificate(InputStream is) throws CertificateException {
         return CertificateFactory.getInstance("X.509").generateCertificate(is);
     }
 

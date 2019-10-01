@@ -54,7 +54,6 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -64,8 +63,6 @@ import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-
-import static com.itextpdf.test.ITextTest.createOrClearDestinationFolder;
 
 @Category(IntegrationTest.class)
 public class PdfEncryptionTest extends ExtendedITextTest {
@@ -104,7 +101,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void encryptAes256Pdf2PermissionsTest01() throws InterruptedException, IOException, XMPException {
+    public void encryptAes256Pdf2PermissionsTest01() throws InterruptedException, IOException {
         String filename = "encryptAes256Pdf2PermissionsTest01.pdf";
         int permissions = EncryptionConstants.ALLOW_FILL_IN | EncryptionConstants.ALLOW_SCREENREADERS | EncryptionConstants.ALLOW_DEGRADED_PRINTING;
         PdfDocument pdfDoc = new PdfDocument(
@@ -134,7 +131,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void encryptAes256Pdf2PermissionsTest02() throws InterruptedException, IOException, XMPException {
+    public void encryptAes256Pdf2PermissionsTest02() throws InterruptedException, IOException {
         String filename = "encryptAes256Pdf2PermissionsTest02.pdf";
         // This test differs from the previous one (encryptAes256Pdf2PermissionsTest01) only in permissions.
         // Here we do not allow to fill the form in.

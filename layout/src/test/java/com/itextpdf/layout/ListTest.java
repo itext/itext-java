@@ -552,10 +552,9 @@ public class ListTest extends ExtendedITextTest {
     }
 
     @Test
-    public void listSetSymbol() throws Exception {
+    public void listSetSymbol() {
         List list = new List();
-        //Assert.assertEquals("- ", ((Text) list.getProperty(Property.LIST_SYMBOL)).getText());
-        Assert.assertEquals(null, list.<Object>getProperty(Property.LIST_SYMBOL));
+        Assert.assertNull(list.<Object>getProperty(Property.LIST_SYMBOL));
         list.setListSymbol("* ");
         Assert.assertEquals("* ", ((Text) list.<Object>getProperty(Property.LIST_SYMBOL)).getText());
 

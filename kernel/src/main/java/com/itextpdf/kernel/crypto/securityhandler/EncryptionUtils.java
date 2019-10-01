@@ -48,7 +48,17 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfEncryptor;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.security.IExternalDecryptionProcess;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSEnvelopedData;
+import org.bouncycastle.cms.RecipientInformation;
 
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.AlgorithmParameterGenerator;
@@ -62,17 +72,6 @@ import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Iterator;
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.RecipientInformation;
 
 final class EncryptionUtils {
 
@@ -146,7 +145,7 @@ final class EncryptionUtils {
     }
 
     static byte[] cipherBytes(X509Certificate x509certificate, byte[] abyte0, AlgorithmIdentifier algorithmidentifier)
-            throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException {
         Cipher cipher = Cipher.getInstance(algorithmidentifier.getAlgorithm().getId());
         try {
             cipher.init(Cipher.ENCRYPT_MODE, x509certificate);

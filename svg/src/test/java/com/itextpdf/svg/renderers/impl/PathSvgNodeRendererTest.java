@@ -234,7 +234,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void smoothCurveTest1() throws IOException, InterruptedException {
+    public void smoothCurveTest1() throws IOException {
         String filename = "smoothCurveTest1.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
@@ -255,7 +255,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void smoothCurveTest2() throws IOException, InterruptedException {
+    public void smoothCurveTest2() throws IOException {
         String filename = "smoothCurveTest2.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
@@ -276,7 +276,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void smoothCurveTest3() throws IOException, InterruptedException {
+    public void smoothCurveTest3() throws IOException {
         String filename = "smoothCurveTest3.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();

@@ -45,10 +45,14 @@ package com.itextpdf.signatures.sign;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.PdfSigner;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.signutils.Pkcs12FileHelper;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -56,11 +60,6 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.Arrays;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.tsp.TSPException;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class TimestampSigTest extends ExtendedITextTest {
@@ -79,7 +78,7 @@ public class TimestampSigTest extends ExtendedITextTest {
     }
 
     @Test
-    public void timestampTest01() throws IOException, GeneralSecurityException, TSPException, OperatorCreationException {
+    public void timestampTest01() throws IOException, GeneralSecurityException {
         String tsaCertFileName = certsSrc + "tsCertRsa.p12";
         String srcFileName = sourceFolder + "helloWorldDoc.pdf";
         String outFileName = destinationFolder + "timestampTest01.pdf";

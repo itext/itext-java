@@ -129,7 +129,7 @@ public class ImageWidthTest extends ExtendedITextTest {
     }
 
     @Test
-    public void imageWidthTest02() throws IOException, InterruptedException {
+    public void imageWidthTest02() throws IOException {
 
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(imageFolder + "Desert.jpg"));
         Image image = new Image(xObject);

@@ -59,12 +59,11 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import static org.junit.Assert.assertNull;
 
@@ -153,7 +152,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
     }
 
     @Test
-    public void readOutlinesFromDocumentTest() throws IOException, InterruptedException {
+    public void readOutlinesFromDocumentTest() throws IOException {
         String filename = sourceFolder + "addOutlinesResult.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
@@ -268,7 +267,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
     }
 
     @Test
-    public void createDocWithOutlines() throws IOException, InterruptedException {
+    public void createDocWithOutlines() throws IOException {
         String filename = sourceFolder + "documentWithOutlines.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));

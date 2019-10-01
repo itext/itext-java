@@ -66,7 +66,7 @@ public class FlatteningWithNullKidElementTest extends ExtendedITextTest {
 
 
     @Test
-    public void formFlatteningTestWithNullKidElement() throws IOException, InterruptedException {
+    public void formFlatteningTestWithNullKidElement() throws IOException {
         String filename = "Form_NullKidElement";
 
         String src = sourceFolder + filename + ".pdf";

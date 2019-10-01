@@ -119,7 +119,7 @@ public class XMPWriterTest extends ExtendedITextTest {
     }
 
     @Test
-    public void addUAXMPMetaDataTaggedTest() throws IOException, InterruptedException {
+    public void addUAXMPMetaDataTaggedTest() throws IOException {
         String fileName = "addUAXMPMetaDataTaggedTest.pdf";
         PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + fileName, new WriterProperties().addUAXmpMetadata()));
         manipulatePdf(pdf, true);

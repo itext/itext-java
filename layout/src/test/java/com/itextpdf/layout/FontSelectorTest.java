@@ -337,7 +337,7 @@ public class FontSelectorTest extends ExtendedITextTest {
     }
 
     @Test
-    public void searchNames() throws Exception {
+    public void searchNames() {
         FontProvider sel = new FontProvider();
         Assert.assertTrue(sel.addFont(fontsFolder + "NotoSans-Regular.ttf"));
         Assert.assertTrue(sel.addFont(fontsFolder + "FreeSans.ttf"));
@@ -364,7 +364,7 @@ public class FontSelectorTest extends ExtendedITextTest {
     }
 
     @Test
-    public void searchNames2() throws Exception {
+    public void searchNames2() {
         FontProvider sel = new FontProvider();
         Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf"));
         Assert.assertTrue(sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf"));

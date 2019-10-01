@@ -234,7 +234,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED)
     })
-    public void insertFlushedPageTest() throws IOException {
+    public void insertFlushedPageTest() {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         PdfDocument pdfDoc = new PdfDocument(writer);
         PdfPage page = pdfDoc.addNewPage();
@@ -256,7 +256,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED)
     })
-    public void addFlushedPageTest() throws IOException {
+    public void addFlushedPageTest() {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         PdfDocument pdfDoc = new PdfDocument(writer);
         PdfPage page = pdfDoc.addNewPage();

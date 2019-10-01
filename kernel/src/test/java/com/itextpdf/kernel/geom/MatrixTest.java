@@ -53,7 +53,7 @@ import org.junit.experimental.categories.Category;
 public class MatrixTest extends ExtendedITextTest {
 
     @Test
-    public void testMultiply() throws Exception{
+    public void testMultiply() {
         Matrix m1 = new Matrix(2, 3, 4, 5, 6, 7);
         Matrix m2 = new Matrix(8, 9, 10, 11, 12, 13);
         Matrix shouldBe = new Matrix(46, 51, 82, 91, 130, 144);
@@ -69,7 +69,7 @@ public class MatrixTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testSubtract() throws Exception{
+    public void testSubtract() {
         Matrix m1 = new Matrix(1, 2, 3, 4, 5, 6);
         Matrix m2 = new Matrix(6, 5, 4, 3, 2, 1);
         Matrix shouldBe = new Matrix(-5, -3,0, -1, 1,0, 3, 5,0);
@@ -79,7 +79,7 @@ public class MatrixTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testAdd() throws Exception{
+    public void testAdd() {
         Matrix m1 = new Matrix(1, 2, 3, 4, 5, 6);
         Matrix m2 = new Matrix(6, 5, 4, 3, 2, 1);
         Matrix shouldBe = new Matrix(7, 7,0, 7, 7,0, 7, 7,2);

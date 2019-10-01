@@ -55,17 +55,16 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Category(IntegrationTest.class)
 public class XMPMetadataTest extends ExtendedITextTest{
@@ -188,7 +187,7 @@ public class XMPMetadataTest extends ExtendedITextTest{
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA)
     })
-    public void createEmptyDocumentWithAbcXmp() throws IOException, XMPException {
+    public void createEmptyDocumentWithAbcXmp() throws IOException {
         ByteArrayOutputStream fos = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);

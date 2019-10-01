@@ -195,49 +195,49 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void encryptWithCertificateStandard128() throws IOException, XMPException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificateStandard128() throws IOException, InterruptedException, GeneralSecurityException {
         String filename = "encryptWithCertificateStandard128.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_128;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithCertificateStandard40() throws IOException, XMPException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificateStandard40() throws IOException, InterruptedException, GeneralSecurityException {
         String filename = "encryptWithCertificateStandard40.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_40;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithCertificateStandard128NoCompression() throws IOException, XMPException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificateStandard128NoCompression() throws IOException, InterruptedException, GeneralSecurityException {
         String filename = "encryptWithCertificateStandard128NoCompression.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_128;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
     }
 
     @Test
-    public void encryptWithCertificateStandard40NoCompression() throws IOException, XMPException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificateStandard40NoCompression() throws IOException, InterruptedException, GeneralSecurityException {
         String filename = "encryptWithCertificateStandard40NoCompression.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_40;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
     }
 
     @Test
-    public void encryptWithCertificateAes128() throws IOException, XMPException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificateAes128() throws IOException, InterruptedException, GeneralSecurityException {
         String filename = "encryptWithCertificateAes128.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithCertificateAes256() throws IOException, XMPException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificateAes256() throws IOException, InterruptedException, GeneralSecurityException {
         String filename = "encryptWithCertificateAes256.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithCertificateAes128NoCompression() throws IOException, XMPException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificateAes128NoCompression() throws IOException, InterruptedException, GeneralSecurityException {
         String filename = "encryptWithCertificateAes128NoCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
@@ -245,7 +245,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
 
     @Test
-    public void encryptWithCertificateAes256NoCompression() throws IOException, XMPException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificateAes256NoCompression() throws IOException, InterruptedException, GeneralSecurityException {
         String filename = "encryptWithCertificateAes256NoCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
@@ -345,7 +345,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void metadataReadingInEncryptedDoc() throws IOException, GeneralSecurityException, XMPException {
+    public void metadataReadingInEncryptedDoc() throws IOException, XMPException {
         PdfReader reader = new PdfReader(sourceFolder + "encryptedWithPlainMetadata.pdf",
                 new ReaderProperties().setPassword(OWNER));
         PdfDocument doc = new PdfDocument(reader);
@@ -379,7 +379,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void openDocNoUserPassword() throws InterruptedException, IOException, XMPException {
+    public void openDocNoUserPassword() throws IOException {
         String fileName = "noUserPassword.pdf";
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + fileName));
         document.close();
@@ -388,7 +388,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void stampDocNoUserPassword() throws InterruptedException, IOException, XMPException {
+    public void stampDocNoUserPassword() throws IOException {
         junitExpectedException.expect(BadPasswordException.class);
         junitExpectedException.expectMessage(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);
 
@@ -398,7 +398,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void encryptWithPasswordAes128EmbeddedFilesOnly() throws IOException, GeneralSecurityException, XMPException, InterruptedException {
+    public void encryptWithPasswordAes128EmbeddedFilesOnly() throws IOException {
         String filename = "encryptWithPasswordAes128EmbeddedFilesOnly.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128 | EncryptionConstants.EMBEDDED_FILES_ONLY;
 
@@ -436,14 +436,14 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void encryptAes256Pdf2NotEncryptMetadata02() throws InterruptedException, IOException, XMPException {
+    public void encryptAes256Pdf2NotEncryptMetadata02() throws InterruptedException, IOException {
         String filename = "encryptAes256Pdf2NotEncryptMetadata02.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256 | EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
         encryptWithPassword(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION, true);
     }
 
     @Test
-    public void encryptAes256EncryptedStampingPreserve() throws InterruptedException, IOException, XMPException {
+    public void encryptAes256EncryptedStampingPreserve() throws InterruptedException, IOException {
         String filename = "encryptAes256EncryptedStampingPreserve.pdf";
         String src = sourceFolder + "encryptedWithPlainMetadata.pdf";
         String out = destinationFolder + filename;
@@ -463,7 +463,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void encryptAes256EncryptedStampingUpdate() throws InterruptedException, IOException, XMPException {
+    public void encryptAes256EncryptedStampingUpdate() throws InterruptedException, IOException {
         String filename = "encryptAes256EncryptedStampingUpdate.pdf";
         String src = sourceFolder + "encryptedWithPlainMetadata.pdf";
         String out = destinationFolder + filename;
@@ -484,14 +484,14 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void encryptAes256FullCompression() throws InterruptedException, IOException, XMPException {
+    public void encryptAes256FullCompression() throws InterruptedException, IOException {
         String filename = "encryptAes256FullCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION, true);
     }
 
     @Test
-    public void encryptWithPasswordAes256Pdf2() throws InterruptedException, IOException, XMPException {
+    public void encryptWithPasswordAes256Pdf2() throws InterruptedException, IOException {
         String filename = "encryptWithPasswordAes256Pdf2.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION, true);
@@ -499,7 +499,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS))
-    public void encryptWithPasswordAes128Pdf2() throws InterruptedException, IOException, XMPException {
+    public void encryptWithPasswordAes128Pdf2() throws InterruptedException, IOException {
         String filename = "encryptWithPasswordAes128Pdf2.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION, true);
@@ -507,7 +507,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS))
-    public void stampAndUpdateVersionPreserveStandard40() throws InterruptedException, IOException, XMPException {
+    public void stampAndUpdateVersionPreserveStandard40() throws InterruptedException, IOException {
         String filename = "stampAndUpdateVersionPreserveStandard40.pdf";
         PdfDocument doc = new PdfDocument(
                 new PdfReader(sourceFolder + "encryptedWithPasswordStandard40.pdf",
@@ -522,7 +522,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = VersionConforming.DEPRECATED_AES256_REVISION))
-    public void stampAndUpdateVersionPreserveAes256() throws InterruptedException, IOException, XMPException {
+    public void stampAndUpdateVersionPreserveAes256() throws InterruptedException, IOException {
         String filename = "stampAndUpdateVersionPreserveAes256.pdf";
         PdfDocument doc = new PdfDocument(
                 new PdfReader(sourceFolder + "encryptedWithPasswordAes256.pdf",
@@ -535,7 +535,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void stampAndUpdateVersionNewAes256() throws InterruptedException, IOException, XMPException {
+    public void stampAndUpdateVersionNewAes256() throws InterruptedException, IOException {
         String filename = "stampAndUpdateVersionNewAes256.pdf";
         PdfDocument doc = new PdfDocument(
                 new PdfReader(sourceFolder + "encryptedWithPasswordAes256.pdf",
@@ -549,7 +549,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void encryptAes256Pdf2Permissions() throws InterruptedException, IOException, XMPException {
+    public void encryptAes256Pdf2Permissions() throws InterruptedException, IOException {
         String filename = "encryptAes256Pdf2Permissions.pdf";
         int permissions = EncryptionConstants.ALLOW_FILL_IN | EncryptionConstants.ALLOW_SCREENREADERS | EncryptionConstants.ALLOW_DEGRADED_PRINTING;
         PdfDocument doc = new PdfDocument(
@@ -585,11 +585,11 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
 
-    public void encryptWithPassword2(String filename, int encryptionType, int compression) throws XMPException, IOException, InterruptedException {
+    public void encryptWithPassword2(String filename, int encryptionType, int compression) throws IOException, InterruptedException {
         encryptWithPassword2(filename, encryptionType, compression, false);
     }
 
-    public void encryptWithPassword2(String filename, int encryptionType, int compression, boolean isPdf2) throws XMPException, IOException, InterruptedException {
+    public void encryptWithPassword2(String filename, int encryptionType, int compression, boolean isPdf2) throws IOException, InterruptedException {
         int permissions = EncryptionConstants.ALLOW_SCREENREADERS;
         WriterProperties writerProperties = new WriterProperties().setStandardEncryption(USER, OWNER, permissions, encryptionType);
         if (isPdf2) {
@@ -611,11 +611,11 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         checkEncryptedWithPasswordDocumentAppending(filename, OWNER);
     }
 
-    public void encryptWithPassword(String filename, int encryptionType, int compression) throws XMPException, IOException, InterruptedException {
+    public void encryptWithPassword(String filename, int encryptionType, int compression) throws IOException, InterruptedException {
         encryptWithPassword(filename, encryptionType, compression, false);
     }
 
-    public void encryptWithPassword(String filename, int encryptionType, int compression, boolean fullCompression) throws XMPException, IOException, InterruptedException {
+    public void encryptWithPassword(String filename, int encryptionType, int compression, boolean fullCompression) throws IOException, InterruptedException {
         String outFileName = destinationFolder + filename;
         int permissions = EncryptionConstants.ALLOW_SCREENREADERS;
         PdfWriter writer = new PdfWriter(outFileName,
@@ -638,7 +638,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         checkEncryptedWithPasswordDocumentAppending(filename, OWNER);
     }
 
-    public void encryptWithCertificate(String filename, int encryptionType, int compression) throws XMPException, IOException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificate(String filename, int encryptionType, int compression) throws IOException, InterruptedException, GeneralSecurityException {
         ITextTest.removeCryptographyRestrictions();
 
         String outFileName = destinationFolder + filename;

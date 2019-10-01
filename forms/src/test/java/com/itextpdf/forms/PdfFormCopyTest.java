@@ -156,7 +156,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD)
     })
-    public void copyFieldsTest04() throws IOException, InterruptedException {
+    public void copyFieldsTest04() throws IOException {
         String srcFilename = sourceFolder + "srcFile1.pdf";
 
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFilename));

@@ -80,8 +80,8 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
-import com.itextpdf.kernel.pdf.navigation.PdfNamedDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
+import com.itextpdf.kernel.pdf.navigation.PdfNamedDestination;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -93,7 +93,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -795,7 +794,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     }
 
     @Test
-    public void soundTestAif() throws IOException, InterruptedException, UnsupportedAudioFileException {
+    public void soundTestAif() throws IOException, InterruptedException {
         String filename = destinationFolder + "soundAnnotation02.pdf";
         String audioFile = sourceFolder + "sample.aif";
 
@@ -877,7 +876,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     }
 
     @Test
-    public void soundTestSnd() throws IOException, InterruptedException, UnsupportedAudioFileException {
+    public void soundTestSnd() throws IOException, InterruptedException {
         String filename = destinationFolder + "soundAnnotation04.pdf";
         String audioFile = sourceFolder + "sample.snd";
 
@@ -902,7 +901,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     }
 
     @Test
-    public void soundTestWav() throws IOException, InterruptedException, UnsupportedAudioFileException {
+    public void soundTestWav() throws IOException, InterruptedException {
         String filename = destinationFolder + "soundAnnotation01.pdf";
         String audioFile = sourceFolder + "sample.wav";
 
@@ -926,7 +925,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     }
 
     @Test
-    public void soundTestWav01() throws IOException, InterruptedException, UnsupportedAudioFileException {
+    public void soundTestWav01() throws IOException, InterruptedException {
         String filename = destinationFolder + "soundAnnotation05.pdf";
         String audioFile = sourceFolder + "sample.wav";
 
@@ -1015,7 +1014,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     }
 
     @Test
-    public void screenTestEmbeddedWavFile01() throws IOException, InterruptedException {
+    public void screenTestEmbeddedWavFile01() throws IOException {
         String filename = destinationFolder + "screenAnnotation02.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
@@ -1053,7 +1052,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     }
 
     @Test
-    public void screenTestEmbeddedWavFile02() throws IOException, InterruptedException {
+    public void screenTestEmbeddedWavFile02() throws IOException {
         String filename = destinationFolder + "screenAnnotation03.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
@@ -1091,7 +1090,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     }
 
     @Test
-    public void screenTestEmbeddedWavFile03() throws IOException, InterruptedException {
+    public void screenTestEmbeddedWavFile03() throws IOException {
         String filename = destinationFolder + "screenAnnotation04.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));

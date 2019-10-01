@@ -174,7 +174,7 @@ public class SigningTest extends ExtendedITextTest {
     }
 
     @Test
-    public void signingTaggedDocument() throws GeneralSecurityException, IOException, InterruptedException {
+    public void signingTaggedDocument() throws GeneralSecurityException, IOException {
         String src = sourceFolder + "simpleTaggedDocument.pdf";
         String dest = destinationFolder + "signedTaggedDocument.pdf";
 
@@ -186,7 +186,7 @@ public class SigningTest extends ExtendedITextTest {
     }
 
     @Test
-    public void signingTaggedDocumentAppendMode() throws GeneralSecurityException, IOException, InterruptedException {
+    public void signingTaggedDocumentAppendMode() throws GeneralSecurityException, IOException {
         String src = sourceFolder + "simpleTaggedDocument.pdf";
         String dest = destinationFolder + "signedTaggedDocumentAppendMode.pdf";
 
@@ -246,7 +246,7 @@ public class SigningTest extends ExtendedITextTest {
     }
 
     @Test
-    public void signPdf2CertificationAfterApproval() throws GeneralSecurityException, IOException, InterruptedException {
+    public void signPdf2CertificationAfterApproval() throws GeneralSecurityException, IOException {
         junitExpectedException.expect(PdfException.class);
         junitExpectedException.expectMessage(PdfException.CertificationSignatureCreationFailedDocShallNotContainSigs);
 
@@ -294,7 +294,7 @@ public class SigningTest extends ExtendedITextTest {
     }
 
     @Test
-    public void signEncryptedDoc01() throws GeneralSecurityException, IOException, InterruptedException {
+    public void signEncryptedDoc01() throws GeneralSecurityException, IOException {
         String fileName = "encrypted.pdf";
         String src = sourceFolder + fileName;
         String dest = destinationFolder + "signed_" + fileName;
@@ -323,7 +323,7 @@ public class SigningTest extends ExtendedITextTest {
     }
 
     @Test
-    public void signEncryptedDoc02() throws GeneralSecurityException, IOException, InterruptedException {
+    public void signEncryptedDoc02() throws GeneralSecurityException, IOException {
         String fileName = "encrypted_cert.pdf";
         String src = sourceFolder + fileName;
         String dest = destinationFolder + "signed_" + fileName;
