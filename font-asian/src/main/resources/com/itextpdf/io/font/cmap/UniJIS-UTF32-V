@@ -4,11 +4,10 @@
 %%IncludeResource: ProcSet (CIDInit)
 %%IncludeResource: CMap (UniJIS-UTF32-H)
 %%BeginResource: CMap (UniJIS-UTF32-V)
-%%Title: (UniJIS-UTF32-V Adobe Japan1 6)
-%%Version: 1.004
+%%Title: (UniJIS-UTF32-V Adobe Japan1 7)
+%%Version: 1.008
 %%Copyright: -----------------------------------------------------------
-%%Copyright: Copyright 1990-2009 Adobe Systems Incorporated.
-%%Copyright: All rights reserved.
+%%Copyright: Copyright 1990-2019 Adobe. All rights reserved.
 %%Copyright:
 %%Copyright: Redistribution and use in source and binary forms, with or
 %%Copyright: without modification, are permitted provided that the
@@ -23,10 +22,9 @@
 %%Copyright: disclaimer in the documentation and/or other materials
 %%Copyright: provided with the distribution. 
 %%Copyright:
-%%Copyright: Neither the name of Adobe Systems Incorporated nor the names
-%%Copyright: of its contributors may be used to endorse or promote
-%%Copyright: products derived from this software without specific prior
-%%Copyright: written permission. 
+%%Copyright: Neither the name of Adobe nor the names of its contributors
+%%Copyright: may be used to endorse or promote products derived from
+%%Copyright: this software without specific prior written permission.
 %%Copyright:
 %%Copyright: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 %%Copyright: CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -55,11 +53,11 @@ begincmap
 /CIDSystemInfo 3 dict dup begin
   /Registry (Adobe) def
   /Ordering (Japan1) def
-  /Supplement 6 def
+  /Supplement 7 def
 end def
 
 /CMapName /UniJIS-UTF32-V def
-/CMapVersion 1.004 def
+/CMapVersion 1.008 def
 /CMapType 1 def
 
 /XUID [1 10 25610] def
@@ -169,7 +167,7 @@ end def
 <0000308e> 7927
 endcidchar
 
-78 begincidchar
+84 begincidchar
 <0000309b> 8272
 <0000309c> 8271
 <000030a0> 16331
@@ -184,6 +182,7 @@ endcidchar
 <000030e7> 7936
 <000030ee> 7937
 <000030fc> 7891
+<000032ff> 23059
 <00003300> 8350
 <00003303> 8338
 <00003304> 11960
@@ -236,9 +235,14 @@ endcidchar
 <00003353> 12038
 <00003354> 12035
 <00003357> 8344
+<0000337b> 12044
+<0000337c> 12043
+<0000337d> 12042
+<0000337e> 12041
 <0000337f> 8324
 <0000ff0c> 8268
 <0000ff0e> 8274
+<0000ff1a> 12101
 <0000ff1d> 7917
 <0000ff3b> 7903
 <0000ff3d> 7904

@@ -2,11 +2,10 @@
 %%DocumentNeededResources: ProcSet (CIDInit)
 %%IncludeResource: ProcSet (CIDInit)
 %%BeginResource: CMap (UniJIS-UTF16-H)
-%%Title: (UniJIS-UTF16-H Adobe Japan1 6)
-%%Version: 1.015
+%%Title: (UniJIS-UTF16-H Adobe Japan1 7)
+%%Version: 1.026
 %%Copyright: -----------------------------------------------------------
-%%Copyright: Copyright 1990-2010 Adobe Systems Incorporated.
-%%Copyright: All rights reserved.
+%%Copyright: Copyright 1990-2019 Adobe. All rights reserved.
 %%Copyright:
 %%Copyright: Redistribution and use in source and binary forms, with or
 %%Copyright: without modification, are permitted provided that the
@@ -21,10 +20,9 @@
 %%Copyright: disclaimer in the documentation and/or other materials
 %%Copyright: provided with the distribution. 
 %%Copyright:
-%%Copyright: Neither the name of Adobe Systems Incorporated nor the names
-%%Copyright: of its contributors may be used to endorse or promote
-%%Copyright: products derived from this software without specific prior
-%%Copyright: written permission. 
+%%Copyright: Neither the name of Adobe nor the names of its contributors
+%%Copyright: may be used to endorse or promote products derived from this
+%%Copyright: software without specific prior written permission. 
 %%Copyright:
 %%Copyright: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 %%Copyright: CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -51,11 +49,11 @@ begincmap
 /CIDSystemInfo 3 dict dup begin
   /Registry (Adobe) def
   /Ordering (Japan1) def
-  /Supplement 6 def
+  /Supplement 7 def
 end def
 
 /CMapName /UniJIS-UTF16-H def
-/CMapVersion 1.015 def
+/CMapVersion 1.026 def
 /CMapType 1 def
 
 /XUID [1 10 25611] def
@@ -330,6 +328,9 @@ endcidchar
 <02c6> 128
 <02c7> 15749
 <02c8> 15846
+<02c9> 129
+<02ca> 127
+<02cb> 65
 <02cc> 15847
 <02d0> 9443
 <02d1> 15848
@@ -347,6 +348,7 @@ endcidchar
 <030a> 133
 <030b> 135
 <030c> 137
+<030d> 15846
 <030f> 15850
 <031a> 15879
 <031c> 15861
@@ -375,18 +377,19 @@ endcidchar
 <03ab> 20434
 <03b0> 20445
 <03c2> 16222
+endcidchar
+
+100 begincidchar
 <03ca> 20440
 <03cb> 20444
 <03ce> 20446
 <03d0> 12090
-endcidchar
-
-100 begincidchar
 <03d1> 12096
 <03d5> 12094
 <03db> 12095
 <0401> 1065
 <0451> 1098
+<0fd6> 12182
 <1ebc> 9397
 <1ebd> 9409
 <1f70> 9420
@@ -423,6 +426,7 @@ endcidchar
 <205a> 7898
 <205d> 7897
 <2070> 9377
+<207f> 15908
 <20ac> 9354
 <20dd> 16328
 <20de> 11035
@@ -461,6 +465,7 @@ endcidchar
 <21e7> 8012
 <21e8> 8014
 <21e9> 8011
+<21f5> 8312
 <2200> 754
 <2202> 759
 <2203> 755
@@ -475,6 +480,9 @@ endcidchar
 <2211> 7625
 <2212> 693
 <2213> 12118
+endcidchar
+
+100 begincidchar
 <2219> 117
 <221a> 765
 <221d> 767
@@ -482,9 +490,6 @@ endcidchar
 <221f> 7629
 <2220> 756
 <2229> 748
-endcidchar
-
-100 begincidchar
 <222a> 747
 <222d> 8195
 <222e> 7624
@@ -507,6 +512,7 @@ endcidchar
 <22a0> 12185
 <22a5> 757
 <22bf> 7630
+<22c4> 12248
 <2307> 12219
 <2312> 758
 <2318> 15728
@@ -562,6 +568,8 @@ endcidchar
 <25e5> 8257
 <25e6> 12254
 <25ef> 779
+<25fb> 12236
+<25fc> 12238
 <2605> 722
 <2606> 721
 <260e> 8056
@@ -575,6 +583,9 @@ endcidchar
 <2663> 8213
 <2664> 8018
 <2665> 8212
+endcidchar
+
+100 begincidchar
 <2666> 8214
 <2667> 8016
 <266a> 775
@@ -584,11 +595,11 @@ endcidchar
 <266e> 16199
 <266f> 773
 <26a0> 12192
+<26aa> 12253
+<26ab> 12255
 <26bd> 20957
-endcidchar
-
-100 begincidchar
 <26be> 12097
+<26cb> 12233
 <2702> 12176
 <2713> 16270
 <271a> 12241
@@ -597,8 +608,19 @@ endcidchar
 <2756> 12259
 <277f> 10514
 <27a1> 8206
+<27bf> 20958
 <29bf> 16203
+<29c8> 12232
 <2b1a> 11036
+<2b25> 12249
+<2b26> 12247
+<2b29> 12250
+<2b60> 12210
+<2b61> 12212
+<2b62> 12211
+<2b95> 8206
+<2b97> 12180
+<2e40> 15516
 <2e83> 14305
 <2e85> 13856
 <2e87> 14105
@@ -664,6 +686,9 @@ endcidchar
 <2f01> 8371
 <2f02> 4095
 <2f03> 4097
+endcidchar
+
+100 begincidchar
 <2f04> 1333
 <2f05> 4102
 <2f06> 3275
@@ -688,9 +713,6 @@ endcidchar
 <2f1b> 4328
 <2f1c> 3746
 <2f1d> 1969
-endcidchar
-
-100 begincidchar
 <2f1e> 4459
 <2f1f> 3156
 <2f20> 2204
@@ -767,6 +789,9 @@ endcidchar
 <2f69> 3368
 <2f6a> 3453
 <2f6b> 2172
+endcidchar
+
+100 begincidchar
 <2f6c> 3816
 <2f6d> 3779
 <2f6e> 3836
@@ -791,9 +816,6 @@ endcidchar
 <2f81> 3281
 <2f82> 2569
 <2f83> 2263
-endcidchar
-
-100 begincidchar
 <2f84> 2232
 <2f85> 1235
 <2f86> 2697
@@ -870,12 +892,16 @@ endcidchar
 <2fcf> 2767
 <2fd0> 3475
 <2fd3> 3966
+endcidchar
+
+100 begincidchar
 <3003> 655
 <3004> 8308
 <3012> 735
 <3013> 740
 <301c> 665
 <301d> 7608
+<301e> 12170
 <301f> 7609
 <3020> 8058
 <3030> 12218
@@ -894,9 +920,6 @@ endcidchar
 <3235> 8148
 <3236> 8147
 <3237> 8204
-endcidchar
-
-100 begincidchar
 <3238> 8142
 <3239> 7620
 <323a> 8151
@@ -937,6 +960,7 @@ endcidchar
 <32ae> 8164
 <32af> 8155
 <32b0> 8152
+<32ff> 23058
 <3300> 8048
 <3303> 8042
 <3304> 11876
@@ -971,6 +995,9 @@ endcidchar
 <3336> 7592
 <3337> 11930
 <3338> 11932
+endcidchar
+
+100 begincidchar
 <3339> 8046
 <333a> 11933
 <333b> 8047
@@ -997,9 +1024,6 @@ endcidchar
 <337f> 8054
 <338d> 11864
 <3390> 8035
-endcidchar
-
-100 begincidchar
 <3396> 8037
 <3397> 8024
 <3398> 8026
@@ -1074,6 +1098,9 @@ endcidchar
 <38fa> 13852
 <3917> 17625
 <391a> 17628
+endcidchar
+
+100 begincidchar
 <396f> 17643
 <39a4> 20122
 <39b8> 20123
@@ -1100,9 +1127,6 @@ endcidchar
 <3bb6> 16910
 <3bc3> 16911
 <3bcd> 17848
-endcidchar
-
-100 begincidchar
 <3bf0> 17865
 <3bf3> 20151
 <3c0f> 16919
@@ -1177,6 +1201,9 @@ endcidchar
 <44d4> 18493
 <4508> 18524
 <450d> 18520
+endcidchar
+
+100 begincidchar
 <4525> 14206
 <4543> 18540
 <457a> 15435
@@ -1203,9 +1230,6 @@ endcidchar
 <484e> 18746
 <48b5> 18779
 <49b0> 17183
-endcidchar
-
-100 begincidchar
 <49e7> 18898
 <49fa> 18902
 <4a04> 18907
@@ -1280,6 +1304,9 @@ endcidchar
 <4e4e> 1911
 <4e4f> 3681
 <4e51> 17241
+endcidchar
+
+100 begincidchar
 <4e55> 6480
 <4e56> 4099
 <4e57> 2512
@@ -1306,9 +1333,6 @@ endcidchar
 <4e88> 3879
 <4e89> 2794
 <4e8a> 4104
-endcidchar
-
-100 begincidchar
 <4e8b> 2244
 <4e8c> 3275
 <4e8d> 14307
@@ -1383,6 +1407,9 @@ endcidchar
 <4ef5> 17253
 <4ef6> 1861
 <4ef7> 4124
+endcidchar
+
+100 begincidchar
 <4efb> 3290
 <4efc> 8373
 <4efd> 14312
@@ -1409,9 +1436,6 @@ endcidchar
 <4f19> 19146
 <4f1a> 1393
 <4f1c> 4160
-endcidchar
-
-100 begincidchar
 <4f1d> 3131
 <4f2b> 19147
 <4f2e> 19148
@@ -1486,6 +1510,9 @@ endcidchar
 <4f8b> 4011
 <4f8c> 21105
 <4f8d> 2246
+endcidchar
+
+100 begincidchar
 <4f8e> 21106
 <4f8f> 4134
 <4f90> 21107
@@ -1512,9 +1539,6 @@ endcidchar
 <4fb5> 2549
 <4fb6> 3967
 <4fb7> 19152
-endcidchar
-
-100 begincidchar
 <4fb9> 21111
 <4fbe> 14324
 <4fbf> 3624
@@ -1589,6 +1613,9 @@ endcidchar
 <501d> 21127
 <501e> 8386
 <501f> 2310
+endcidchar
+
+100 begincidchar
 <5021> 4162
 <5022> 8384
 <5023> 3647
@@ -1615,9 +1642,6 @@ endcidchar
 <5045> 21132
 <5046> 8387
 <5047> 4170
-endcidchar
-
-100 begincidchar
 <5048> 4174
 <5049> 1170
 <504a> 21133
@@ -1692,6 +1716,9 @@ endcidchar
 <50c5> 1735
 <50c7> 17287
 <50cc> 14340
+endcidchar
+
+100 begincidchar
 <50cd> 3207
 <50ce> 17290
 <50cf> 2814
@@ -1718,9 +1745,6 @@ endcidchar
 <50ed> 4191
 <50ee> 4193
 <50ef> 14343
-endcidchar
-
-100 begincidchar
 <50f0> 15409
 <50f1> 19164
 <50f2> 16786
@@ -1795,6 +1819,9 @@ endcidchar
 <5160> 17298
 <5162> 4213
 <5164> 8394
+endcidchar
+
+100 begincidchar
 <5165> 3286
 <5166> 21181
 <5167> 13966
@@ -1821,9 +1848,6 @@ endcidchar
 <5185> 3258
 <5186> 1281
 <5189> 4222
-endcidchar
-
-100 begincidchar
 <518a> 2157
 <518b> 17302
 <518c> 4221
@@ -1898,6 +1922,9 @@ endcidchar
 <51f2> 21189
 <51f3> 17309
 <51f4> 14354
+endcidchar
+
+100 begincidchar
 <51f5> 4248
 <51f6> 1695
 <51f7> 21190
@@ -1924,9 +1951,6 @@ endcidchar
 <5216> 17311
 <5217> 4027
 <5218> 21191
-endcidchar
-
-100 begincidchar
 <521d> 2419
 <5222> 21192
 <5224> 3409
@@ -2001,6 +2025,9 @@ endcidchar
 <5291> 4276
 <5292> 4273
 <5293> 14361
+endcidchar
+
+100 begincidchar
 <5294> 4272
 <5298> 17320
 <529a> 21201
@@ -2027,9 +2054,6 @@ endcidchar
 <52be> 1421
 <52c0> 8401
 <52c1> 4283
-endcidchar
-
-100 begincidchar
 <52c3> 3716
 <52c4> 21209
 <52c5> 3032
@@ -2104,6 +2128,9 @@ endcidchar
 <531d> 2779
 <531e> 21224
 <531f> 19203
+endcidchar
+
+100 begincidchar
 <5320> 2442
 <5321> 1697
 <5323> 4303
@@ -2130,9 +2157,6 @@ endcidchar
 <5342> 17330
 <5343> 2701
 <5345> 4310
-endcidchar
-
-100 begincidchar
 <5346> 4309
 <5347> 2443
 <5348> 1941
@@ -2207,6 +2231,9 @@ endcidchar
 <53b3> 1899
 <53b4> 17336
 <53b5> 21241
+endcidchar
+
+100 begincidchar
 <53b6> 4328
 <53b7> 17338
 <53b8> 21242
@@ -2233,9 +2260,6 @@ endcidchar
 <53da> 14372
 <53db> 3412
 <53dd> 8409
-endcidchar
-
-100 begincidchar
 <53de> 21247
 <53df> 4332
 <53e0> 19219
@@ -2310,6 +2334,9 @@ endcidchar
 <5442> 4042
 <5443> 17349
 <5444> 21254
+endcidchar
+
+100 begincidchar
 <5446> 3650
 <5447> 21255
 <5448> 3076
@@ -2336,9 +2363,6 @@ endcidchar
 <5471> 4354
 <5473> 3759
 <5474> 14379
-endcidchar
-
-100 begincidchar
 <5475> 4351
 <5476> 4360
 <5477> 4355
@@ -2413,6 +2437,9 @@ endcidchar
 <54e8> 2445
 <54e9> 3735
 <54ea> 19231
+endcidchar
+
+100 begincidchar
 <54ec> 17360
 <54ed> 4384
 <54ee> 4383
@@ -2439,9 +2466,6 @@ endcidchar
 <5515> 19235
 <5516> 1126
 <5527> 19236
-endcidchar
-
-100 begincidchar
 <552a> 19237
 <552b> 14389
 <552e> 4391
@@ -2516,6 +2540,9 @@ endcidchar
 <55a8> 4413
 <55a9> 4411
 <55aa> 2773
+endcidchar
+
+100 begincidchar
 <55ab> 1636
 <55ac> 1700
 <55ad> 16808
@@ -2542,9 +2569,6 @@ endcidchar
 <55db> 19249
 <55dc> 4418
 <55dd> 17385
-endcidchar
-
-100 begincidchar
 <55de> 21291
 <55df> 4416
 <55e2> 17387
@@ -2619,6 +2643,9 @@ endcidchar
 <566b> 4435
 <566c> 4438
 <566d> 17401
+endcidchar
+
+100 begincidchar
 <566f> 14406
 <5674> 3582
 <5675> 21305
@@ -2645,9 +2672,6 @@ endcidchar
 <56a0> 4443
 <56a2> 3311
 <56a5> 4446
-endcidchar
-
-100 begincidchar
 <56a6> 19266
 <56a7> 21308
 <56a8> 17406
@@ -2722,6 +2746,9 @@ endcidchar
 <5718> 4470
 <571c> 4473
 <571d> 19279
+endcidchar
+
+100 begincidchar
 <571f> 3156
 <5720> 21320
 <5721> 13952
@@ -2748,9 +2775,6 @@ endcidchar
 <574e> 4477
 <574f> 4480
 <5750> 2097
-endcidchar
-
-100 begincidchar
 <5751> 1973
 <5752> 21326
 <5759> 8416
@@ -2825,6 +2849,9 @@ endcidchar
 <57de> 17439
 <57df> 1196
 <57e0> 3528
+endcidchar
+
+100 begincidchar
 <57e1> 21347
 <57e3> 4500
 <57e4> 16818
@@ -2851,9 +2878,6 @@ endcidchar
 <5806> 2863
 <5808> 21346
 <5809> 14433
-endcidchar
-
-100 begincidchar
 <580a> 4498
 <580b> 4501
 <580c> 21348
@@ -2928,6 +2952,9 @@ endcidchar
 <5896> 21360
 <5897> 2815
 <5898> 19301
+endcidchar
+
+100 begincidchar
 <589c> 3042
 <589d> 17459
 <589e> 8423
@@ -2954,9 +2981,6 @@ endcidchar
 <58c5> 4522
 <58c7> 2947
 <58c8> 21367
-endcidchar
-
-100 begincidchar
 <58ca> 1397
 <58cc> 2517
 <58cd> 17464
@@ -3031,6 +3055,9 @@ endcidchar
 <5939> 14117
 <593d> 17474
 <593e> 4548
+endcidchar
+
+100 begincidchar
 <593f> 21381
 <5943> 21382
 <5944> 1284
@@ -3057,9 +3084,6 @@ endcidchar
 <5960> 4556
 <5961> 14447
 <5962> 4555
-endcidchar
-
-100 begincidchar
 <5963> 8429
 <5965> 1310
 <5967> 4557
@@ -3134,6 +3158,9 @@ endcidchar
 <59de> 17489
 <59df> 19310
 <59e5> 1242
+endcidchar
+
+100 begincidchar
 <59e6> 1515
 <59e7> 17490
 <59e8> 4568
@@ -3160,9 +3187,6 @@ endcidchar
 <5a0e> 21403
 <5a11> 4575
 <5a12> 21404
-endcidchar
-
-100 begincidchar
 <5a13> 16828
 <5a17> 17496
 <5a18> 3784
@@ -3237,6 +3261,9 @@ endcidchar
 <5ac4> 16832
 <5ac6> 21422
 <5ac8> 21423
+endcidchar
+
+100 begincidchar
 <5ac9> 2279
 <5acb> 4589
 <5acc> 1871
@@ -3263,9 +3290,6 @@ endcidchar
 <5b08> 17516
 <5b09> 1582
 <5b0b> 4600
-endcidchar
-
-100 begincidchar
 <5b0c> 4599
 <5b16> 4601
 <5b17> 17517
@@ -3340,6 +3364,9 @@ endcidchar
 <5b94> 21434
 <5b95> 3168
 <5b96> 17526
+endcidchar
+
+100 begincidchar
 <5b97> 2347
 <5b98> 1517
 <5b99> 2982
@@ -3366,9 +3393,6 @@ endcidchar
 <5bb8> 4625
 <5bb9> 3888
 <5bba> 21441
-endcidchar
-
-100 begincidchar
 <5bbc> 21442
 <5bbf> 2387
 <5bc0> 8433
@@ -3443,6 +3467,9 @@ endcidchar
 <5c1e> 8437
 <5c1f> 19324
 <5c20> 4645
+endcidchar
+
+100 begincidchar
 <5c22> 4646
 <5c23> 14476
 <5c24> 3820
@@ -3469,9 +3496,6 @@ endcidchar
 <5c41> 4650
 <5c45> 1673
 <5c46> 4651
-endcidchar
-
-100 begincidchar
 <5c48> 1782
 <5c4a> 3239
 <5c4b> 1328
@@ -3546,6 +3570,9 @@ endcidchar
 <5cc7> 4673
 <5cc9> 17560
 <5ccb> 14482
+endcidchar
+
+100 begincidchar
 <5cd0> 16844
 <5cd2> 14483
 <5cd7> 21466
@@ -3572,9 +3599,6 @@ endcidchar
 <5d07> 2616
 <5d0b> 4681
 <5d0d> 16846
-endcidchar
-
-100 begincidchar
 <5d0e> 2138
 <5d10> 17564
 <5d11> 4687
@@ -3649,6 +3673,9 @@ endcidchar
 <5d99> 14492
 <5d9b> 21486
 <5d9d> 4704
+endcidchar
+
+100 begincidchar
 <5d9f> 21487
 <5da0> 14493
 <5da2> 4703
@@ -3675,9 +3702,6 @@ endcidchar
 <5dd1> 17583
 <5dd2> 4714
 <5dd3> 4713
-endcidchar
-
-100 begincidchar
 <5dd6> 4715
 <5dd7> 17584
 <5dd8> 14494
@@ -3752,6 +3776,9 @@ endcidchar
 <5e54> 4732
 <5e55> 3737
 <5e56> 17595
+endcidchar
+
+100 begincidchar
 <5e57> 4731
 <5e58> 14503
 <5e5b> 19343
@@ -3778,9 +3805,6 @@ endcidchar
 <5e7e> 1586
 <5e7f> 4741
 <5e80> 19347
-endcidchar
-
-100 begincidchar
 <5e81> 3007
 <5e83> 1983
 <5e84> 2457
@@ -3855,6 +3879,9 @@ endcidchar
 <5efe> 4763
 <5eff> 3283
 <5f00> 16854
+endcidchar
+
+100 begincidchar
 <5f01> 3627
 <5f02> 16855
 <5f03> 4764
@@ -3881,9 +3908,6 @@ endcidchar
 <5f1b> 2958
 <5f1e> 17609
 <5f1f> 3083
-endcidchar
-
-100 begincidchar
 <5f21> 8449
 <5f22> 14516
 <5f23> 16856
@@ -3958,6 +3982,9 @@ endcidchar
 <5f81> 2640
 <5f82> 4788
 <5f83> 4787
+endcidchar
+
+100 begincidchar
 <5f84> 1816
 <5f85> 2868
 <5f87> 4793
@@ -3984,9 +4011,6 @@ endcidchar
 <5fa2> 17615
 <5fa4> 14527
 <5fa7> 14526
-endcidchar
-
-100 begincidchar
 <5fa8> 4798
 <5fa9> 3566
 <5faa> 2405
@@ -4061,6 +4085,9 @@ endcidchar
 <6020> 2869
 <6021> 4809
 <6022> 17626
+endcidchar
+
+100 begincidchar
 <6024> 17627
 <6025> 1656
 <6026> 4819
@@ -4087,9 +4114,6 @@ endcidchar
 <604b> 4032
 <604c> 17629
 <604d> 4829
-endcidchar
-
-100 begincidchar
 <6050> 1706
 <6051> 21546
 <6052> 1987
@@ -4164,6 +4188,9 @@ endcidchar
 <60b8> 4850
 <60bb> 19361
 <60bc> 3171
+endcidchar
+
+100 begincidchar
 <60bd> 4855
 <60be> 17634
 <60c2> 21562
@@ -4190,9 +4217,6 @@ endcidchar
 <60e2> 21567
 <60e3> 2780
 <60e5> 21568
-endcidchar
-
-100 begincidchar
 <60e7> 4839
 <60e8> 2178
 <60ee> 17637
@@ -4267,6 +4291,9 @@ endcidchar
 <6155> 3641
 <615d> 4896
 <615e> 19368
+endcidchar
+
+100 begincidchar
 <615f> 4895
 <6160> 17646
 <6162> 3755
@@ -4293,9 +4320,6 @@ endcidchar
 <617d> 19371
 <617e> 3911
 <617f> 19372
-endcidchar
-
-100 begincidchar
 <6182> 3861
 <6187> 4901
 <618a> 4905
@@ -4370,6 +4394,9 @@ endcidchar
 <6200> 4929
 <6201> 21602
 <6203> 21603
+endcidchar
+
+100 begincidchar
 <6204> 19379
 <6207> 19380
 <620a> 3642
@@ -4396,9 +4423,6 @@ endcidchar
 <6226> 2707
 <6227> 21606
 <6229> 14558
-endcidchar
-
-100 begincidchar
 <622a> 4938
 <622b> 21607
 <622e> 4939
@@ -4473,6 +4497,9 @@ endcidchar
 <6299> 17665
 <629b> 4973
 <629c> 3400
+endcidchar
+
+100 begincidchar
 <629e> 2898
 <62a6> 8466
 <62a8> 19386
@@ -4499,9 +4526,6 @@ endcidchar
 <62ce> 21623
 <62cf> 4963
 <62d0> 1405
-endcidchar
-
-100 begincidchar
 <62d1> 4961
 <62d2> 1675
 <62d3> 2899
@@ -4576,6 +4600,9 @@ endcidchar
 <634c> 2169
 <634d> 4985
 <634e> 17679
+endcidchar
+
+100 begincidchar
 <634f> 4987
 <6350> 4983
 <6352> 21632
@@ -4602,9 +4629,6 @@ endcidchar
 <6375> 19396
 <6376> 4992
 <6377> 2465
-endcidchar
-
-100 begincidchar
 <6378> 21638
 <637a> 3264
 <637b> 3303
@@ -4679,6 +4703,9 @@ endcidchar
 <63ea> 19402
 <63ed> 13340
 <63ee> 1588
+endcidchar
+
+100 begincidchar
 <63f2> 17694
 <63f3> 21649
 <63f4> 1289
@@ -4705,9 +4732,6 @@ endcidchar
 <6424> 19408
 <6425> 17696
 <6426> 5013
-endcidchar
-
-100 begincidchar
 <6428> 5017
 <6429> 17697
 <642a> 19409
@@ -4782,6 +4806,9 @@ endcidchar
 <64b3> 19420
 <64b9> 1447
 <64bb> 5034
+endcidchar
+
+100 begincidchar
 <64bc> 5029
 <64bd> 21665
 <64c1> 3892
@@ -4808,9 +4835,6 @@ endcidchar
 <64e6> 2162
 <64e7> 5038
 <64ec> 1622
-endcidchar
-
-100 begincidchar
 <64ed> 19421
 <64ef> 5044
 <64f0> 19422
@@ -4885,6 +4909,9 @@ endcidchar
 <6562> 1526
 <6563> 2180
 <6566> 3248
+endcidchar
+
+100 begincidchar
 <6567> 14597
 <656b> 17721
 <656c> 1823
@@ -4911,9 +4938,6 @@ endcidchar
 <6595> 19429
 <6597> 3143
 <6598> 21686
-endcidchar
-
-100 begincidchar
 <6599> 3977
 <659b> 5076
 <659c> 2300
@@ -4988,6 +5012,9 @@ endcidchar
 <6607> 2466
 <6608> 17735
 <6609> 8474
+endcidchar
+
+100 begincidchar
 <660a> 5092
 <660c> 2467
 <660d> 21699
@@ -5014,9 +5041,6 @@ endcidchar
 <662a> 17737
 <662b> 16884
 <662c> 14603
-endcidchar
-
-100 begincidchar
 <662d> 2468
 <662e> 8475
 <662f> 2635
@@ -5091,6 +5115,9 @@ endcidchar
 <6696> 2950
 <6697> 1161
 <6698> 5117
+endcidchar
+
+100 begincidchar
 <6699> 8483
 <669d> 5118
 <669f> 21721
@@ -5117,9 +5144,6 @@ endcidchar
 <66c4> 5124
 <66c6> 13397
 <66c7> 3254
-endcidchar
-
-100 begincidchar
 <66c8> 14611
 <66c9> 5121
 <66cc> 21725
@@ -5194,6 +5218,9 @@ endcidchar
 <6737> 5146
 <6738> 5145
 <673a> 1589
+endcidchar
+
+100 begincidchar
 <673d> 1658
 <673e> 21735
 <673f> 5142
@@ -5220,9 +5247,6 @@ endcidchar
 <675e> 5148
 <675f> 2827
 <6760> 5149
-endcidchar
-
-100 begincidchar
 <6761> 2522
 <6762> 3817
 <6765> 3922
@@ -5297,6 +5321,9 @@ endcidchar
 <67c9> 21746
 <67ca> 3476
 <67ce> 5176
+endcidchar
+
+100 begincidchar
 <67cf> 3366
 <67d0> 3693
 <67d1> 1527
@@ -5323,9 +5350,6 @@ endcidchar
 <67f0> 14625
 <67f1> 2986
 <67f2> 21750
-endcidchar
-
-100 begincidchar
 <67f3> 3844
 <67f4> 2290
 <67f5> 2148
@@ -5400,6 +5424,9 @@ endcidchar
 <685f> 2181
 <6863> 5190
 <6867> 3490
+endcidchar
+
+100 begincidchar
 <686b> 17798
 <686e> 17799
 <6872> 14630
@@ -5426,9 +5453,6 @@ endcidchar
 <6890> 17802
 <6893> 1144
 <6894> 5196
-endcidchar
-
-100 begincidchar
 <6896> 17803
 <6897> 1998
 <689b> 5198
@@ -5503,6 +5527,9 @@ endcidchar
 <68fd> 21774
 <6900> 4086
 <6901> 5209
+endcidchar
+
+100 begincidchar
 <6903> 17824
 <6904> 5223
 <6905> 1180
@@ -5529,9 +5556,6 @@ endcidchar
 <6921> 5234
 <6922> 5213
 <6923> 5233
-endcidchar
-
-100 begincidchar
 <6925> 5226
 <6926> 5214
 <6928> 5230
@@ -5606,6 +5630,9 @@ endcidchar
 <699c> 5271
 <69a0> 5270
 <69a1> 21787
+endcidchar
+
+100 begincidchar
 <69a5> 16908
 <69a6> 14652
 <69a7> 5267
@@ -5632,9 +5659,6 @@ endcidchar
 <69c7> 7475
 <69c8> 21790
 <69ca> 5263
-endcidchar
-
-100 begincidchar
 <69cb> 1999
 <69cc> 3044
 <69cd> 2790
@@ -5709,6 +5733,9 @@ endcidchar
 <6a3b> 16915
 <6a3d> 2924
 <6a3e> 14662
+endcidchar
+
+100 begincidchar
 <6a3f> 17857
 <6a44> 5294
 <6a45> 14663
@@ -5735,9 +5762,6 @@ endcidchar
 <6a6a> 21798
 <6a6b> 8503
 <6a71> 19469
-endcidchar
-
-100 begincidchar
 <6a72> 5296
 <6a73> 8505
 <6a78> 5298
@@ -5812,6 +5836,9 @@ endcidchar
 <6b1d> 1239
 <6b1e> 14677
 <6b1f> 5333
+endcidchar
+
+100 begincidchar
 <6b20> 1853
 <6b21> 2253
 <6b23> 1741
@@ -5838,9 +5865,6 @@ endcidchar
 <6b49> 5341
 <6b4a> 17889
 <6b4c> 1358
-endcidchar
-
-100 begincidchar
 <6b4d> 21820
 <6b4e> 2933
 <6b50> 5342
@@ -5915,6 +5939,9 @@ endcidchar
 <6bc5> 1597
 <6bc6> 5367
 <6bcb> 5368
+endcidchar
+
+100 begincidchar
 <6bcc> 14148
 <6bcd> 3644
 <6bce> 3734
@@ -5941,9 +5968,6 @@ endcidchar
 <6bff> 16926
 <6c02> 17906
 <6c04> 19481
-endcidchar
-
-100 begincidchar
 <6c05> 16927
 <6c08> 5376
 <6c09> 19482
@@ -6018,6 +6042,9 @@ endcidchar
 <6c85> 14694
 <6c86> 8512
 <6c87> 21851
+endcidchar
+
+100 begincidchar
 <6c88> 3036
 <6c89> 17915
 <6c8c> 3249
@@ -6044,9 +6071,6 @@ endcidchar
 <6cae> 5403
 <6cb0> 21853
 <6cb1> 5404
-endcidchar
-
-100 begincidchar
 <6cb2> 21854
 <6cb3> 1359
 <6cb4> 19490
@@ -6121,6 +6145,9 @@ endcidchar
 <6d25> 3041
 <6d28> 21865
 <6d29> 1262
+endcidchar
+
+100 begincidchar
 <6d2a> 2001
 <6d2b> 5414
 <6d2e> 14707
@@ -6147,9 +6174,6 @@ endcidchar
 <6d5a> 5425
 <6d5b> 17933
 <6d5c> 3519
-endcidchar
-
-100 begincidchar
 <6d5e> 14709
 <6d5f> 21866
 <6d60> 17934
@@ -6224,6 +6248,9 @@ endcidchar
 <6dd8> 3179
 <6dd9> 5447
 <6dda> 13395
+endcidchar
+
+100 begincidchar
 <6ddb> 16938
 <6ddd> 16939
 <6dde> 5441
@@ -6250,9 +6277,6 @@ endcidchar
 <6df6> 17954
 <6df7> 2078
 <6df8> 8521
-endcidchar
-
-100 begincidchar
 <6df9> 5432
 <6dfa> 5446
 <6dfb> 3124
@@ -6327,6 +6351,9 @@ endcidchar
 <6e76> 5462
 <6e7b> 19498
 <6e7d> 19499
+endcidchar
+
+100 begincidchar
 <6e7e> 4087
 <6e7f> 2282
 <6e80> 3756
@@ -6353,9 +6380,6 @@ endcidchar
 <6eb1> 16942
 <6eb2> 5481
 <6eb3> 21889
-endcidchar
-
-100 begincidchar
 <6eb4> 17971
 <6eb6> 3897
 <6eb7> 5476
@@ -6430,6 +6454,9 @@ endcidchar
 <6f30> 19506
 <6f31> 5496
 <6f32> 5498
+endcidchar
+
+100 begincidchar
 <6f33> 14726
 <6f35> 17973
 <6f36> 17981
@@ -6456,9 +6483,6 @@ endcidchar
 <6f5f> 1473
 <6f60> 17986
 <6f61> 16946
-endcidchar
-
-100 begincidchar
 <6f62> 14729
 <6f64> 2411
 <6f66> 5518
@@ -6533,6 +6557,9 @@ endcidchar
 <6fe0> 2044
 <6fe1> 3294
 <6fe4> 5430
+endcidchar
+
+100 begincidchar
 <6fe8> 21913
 <6fe9> 17997
 <6feb> 3934
@@ -6559,9 +6586,6 @@ endcidchar
 <700b> 5535
 <700d> 19511
 <700f> 5539
-endcidchar
-
-100 begincidchar
 <7011> 5537
 <7015> 3520
 <7017> 21915
@@ -6636,6 +6660,9 @@ endcidchar
 <70ae> 5559
 <70af> 5554
 <70b0> 19515
+endcidchar
+
+100 begincidchar
 <70b1> 18017
 <70b3> 5558
 <70b4> 21925
@@ -6662,9 +6689,6 @@ endcidchar
 <70fd> 5565
 <7103> 18022
 <7104> 8538
-endcidchar
-
-100 begincidchar
 <7105> 21927
 <7106> 18023
 <7107> 14758
@@ -6739,6 +6763,9 @@ endcidchar
 <71a0> 18035
 <71a2> 18036
 <71a8> 5580
+endcidchar
+
+100 begincidchar
 <71ac> 5581
 <71b0> 21938
 <71b1> 3300
@@ -6765,9 +6792,6 @@ endcidchar
 <71d9> 18040
 <71da> 21942
 <71dc> 18041
-endcidchar
-
-100 begincidchar
 <71df> 4430
 <71e0> 5589
 <71e5> 2793
@@ -6842,6 +6866,9 @@ endcidchar
 <7268> 19528
 <7269> 3578
 <726b> 21953
+endcidchar
+
+100 begincidchar
 <7271> 21954
 <7272> 2651
 <7274> 5611
@@ -6868,9 +6895,6 @@ endcidchar
 <72a7> 5619
 <72a8> 21959
 <72ac> 1880
-endcidchar
-
-100 begincidchar
 <72ad> 14780
 <72ae> 18056
 <72af> 3420
@@ -6945,6 +6969,9 @@ endcidchar
 <7335> 21968
 <7339> 18070
 <733d> 18073
+endcidchar
+
+100 begincidchar
 <733e> 5642
 <733f> 1296
 <7343> 14788
@@ -6971,9 +6998,6 @@ endcidchar
 <7377> 8549
 <7378> 5650
 <7379> 21975
-endcidchar
-
-100 begincidchar
 <737a> 5653
 <737b> 5652
 <737c> 14790
@@ -7048,6 +7072,9 @@ endcidchar
 <73f8> 5666
 <73f9> 18093
 <73fa> 18095
+endcidchar
+
+100 begincidchar
 <73fb> 21989
 <73fd> 14807
 <73fe> 1905
@@ -7074,9 +7101,6 @@ endcidchar
 <742b> 16975
 <742c> 14814
 <742d> 21993
-endcidchar
-
-100 begincidchar
 <742e> 8560
 <7432> 5667
 <7433> 3998
@@ -7151,6 +7175,9 @@ endcidchar
 <74a9> 16980
 <74aa> 18110
 <74ab> 14838
+endcidchar
+
+100 begincidchar
 <74ae> 22000
 <74af> 19544
 <74b0> 1536
@@ -7177,9 +7204,6 @@ endcidchar
 <74df> 19545
 <74e0> 5688
 <74e2> 3501
-endcidchar
-
-100 begincidchar
 <74e3> 5689
 <74e4> 19546
 <74e6> 1504
@@ -7254,6 +7278,9 @@ endcidchar
 <754a> 5712
 <754b> 5063
 <754c> 1412
+endcidchar
+
+100 begincidchar
 <754d> 5711
 <754e> 14844
 <754f> 1182
@@ -7280,9 +7307,6 @@ endcidchar
 <756a> 3434
 <756b> 5720
 <756c> 15419
-endcidchar
-
-100 begincidchar
 <756d> 5721
 <756f> 8565
 <7570> 1183
@@ -7357,6 +7381,9 @@ endcidchar
 <75de> 5748
 <75e1> 19560
 <75e2> 3945
+endcidchar
+
+100 begincidchar
 <75e3> 5747
 <75e4> 14851
 <75e7> 18150
@@ -7383,9 +7410,6 @@ endcidchar
 <760c> 19563
 <760d> 5758
 <760f> 18156
-endcidchar
-
-100 begincidchar
 <7612> 22029
 <7613> 18159
 <7618> 18154
@@ -7460,6 +7484,9 @@ endcidchar
 <7690> 2167
 <7693> 5792
 <7695> 18175
+endcidchar
+
+100 begincidchar
 <7696> 5791
 <769b> 8569
 <769c> 8567
@@ -7486,9 +7513,6 @@ endcidchar
 <76c6> 3725
 <76c8> 1264
 <76c9> 18182
-endcidchar
-
-100 begincidchar
 <76ca> 1273
 <76cb> 22044
 <76cc> 14871
@@ -7563,6 +7587,9 @@ endcidchar
 <7740> 2979
 <7742> 22055
 <7745> 19583
+endcidchar
+
+100 begincidchar
 <7746> 8572
 <7747> 5822
 <774a> 19584
@@ -7589,9 +7616,6 @@ endcidchar
 <7779> 5830
 <777a> 17001
 <777c> 18196
-endcidchar
-
-100 begincidchar
 <777d> 14880
 <777e> 5829
 <777f> 5828
@@ -7666,6 +7690,9 @@ endcidchar
 <780c> 5851
 <780d> 18212
 <780e> 22071
+endcidchar
+
+100 begincidchar
 <7811> 22072
 <7812> 5852
 <7814> 1882
@@ -7692,9 +7719,6 @@ endcidchar
 <7845> 5856
 <7847> 18215
 <7848> 22076
-endcidchar
-
-100 begincidchar
 <784c> 22077
 <784e> 8575
 <784f> 13342
@@ -7769,6 +7793,9 @@ endcidchar
 <78d1> 5867
 <78d2> 22090
 <78d3> 19610
+endcidchar
+
+100 begincidchar
 <78d4> 5870
 <78d5> 18224
 <78d6> 22091
@@ -7795,9 +7822,6 @@ endcidchar
 <7901> 2484
 <7906> 22098
 <7907> 5880
-endcidchar
-
-100 begincidchar
 <790c> 19611
 <790e> 2757
 <7910> 18230
@@ -7872,6 +7896,9 @@ endcidchar
 <7981> 1744
 <7984> 4067
 <7985> 2743
+endcidchar
+
+100 begincidchar
 <798a> 5895
 <798b> 14910
 <798c> 22112
@@ -7898,9 +7925,6 @@ endcidchar
 <79af> 22117
 <79b0> 3295
 <79b1> 7758
-endcidchar
-
-100 begincidchar
 <79b3> 5901
 <79b4> 18241
 <79b8> 14913
@@ -7975,6 +7999,9 @@ endcidchar
 <7a2e> 2331
 <7a2f> 22130
 <7a30> 19625
+endcidchar
+
+100 begincidchar
 <7a31> 5917
 <7a32> 1204
 <7a37> 5920
@@ -8001,9 +8028,6 @@ endcidchar
 <7a4f> 1338
 <7a50> 1136
 <7a55> 22134
-endcidchar
-
-100 begincidchar
 <7a56> 18257
 <7a57> 5922
 <7a59> 18258
@@ -8078,6 +8102,9 @@ endcidchar
 <7acd> 5946
 <7ace> 17025
 <7acf> 5947
+endcidchar
+
+100 begincidchar
 <7ad1> 8585
 <7ad2> 4549
 <7ad3> 5949
@@ -8104,9 +8131,6 @@ endcidchar
 <7af6> 1693
 <7af8> 4214
 <7af9> 2971
-endcidchar
-
-100 begincidchar
 <7afa> 2271
 <7afb> 22145
 <7afd> 17026
@@ -8181,6 +8205,9 @@ endcidchar
 <7b74> 5978
 <7b75> 5976
 <7b77> 19635
+endcidchar
+
+100 begincidchar
 <7b79> 18289
 <7b7a> 5970
 <7b7f> 18285
@@ -8207,9 +8234,6 @@ endcidchar
 <7b9d> 5984
 <7b9e> 8589
 <7b9f> 5986
-endcidchar
-
-100 begincidchar
 <7ba0> 19636
 <7ba1> 1541
 <7ba5> 22158
@@ -8284,6 +8308,9 @@ endcidchar
 <7c1b> 22176
 <7c1e> 7739
 <7c1f> 6019
+endcidchar
+
+100 begincidchar
 <7c20> 14951
 <7c21> 1542
 <7c23> 6016
@@ -8310,9 +8337,6 @@ endcidchar
 <7c45> 18311
 <7c46> 22182
 <7c4a> 18312
-endcidchar
-
-100 begincidchar
 <7c4c> 6023
 <7c4d> 2678
 <7c4f> 6026
@@ -8387,6 +8411,9 @@ endcidchar
 <7cbd> 6049
 <7cbe> 2654
 <7cbf> 14961
+endcidchar
+
+100 begincidchar
 <7cc0> 6050
 <7cc2> 6052
 <7cc4> 18326
@@ -8413,9 +8440,6 @@ endcidchar
 <7ce2> 6056
 <7ce6> 18331
 <7ce7> 3984
-endcidchar
-
-100 begincidchar
 <7ce9> 22193
 <7ceb> 14967
 <7cef> 6058
@@ -8490,6 +8514,9 @@ endcidchar
 <7d51> 22200
 <7d53> 14975
 <7d55> 13882
+endcidchar
+
+100 begincidchar
 <7d56> 6076
 <7d57> 22201
 <7d59> 14976
@@ -8516,9 +8543,6 @@ endcidchar
 <7d78> 22204
 <7d79> 1884
 <7d7a> 14978
-endcidchar
-
-100 begincidchar
 <7d7b> 22205
 <7d7d> 6087
 <7d7f> 18351
@@ -8593,6 +8617,9 @@ endcidchar
 <7de3> 13322
 <7de4> 6105
 <7de5> 19671
+endcidchar
+
+100 begincidchar
 <7de6> 18363
 <7de8> 3620
 <7de9> 1543
@@ -8619,9 +8646,6 @@ endcidchar
 <7e11> 14987
 <7e12> 6114
 <7e15> 14988
-endcidchar
-
-100 begincidchar
 <7e17> 18368
 <7e1b> 3377
 <7e1c> 22219
@@ -8696,6 +8720,9 @@ endcidchar
 <7e81> 19679
 <7e82> 2186
 <7e83> 6140
+endcidchar
+
+100 begincidchar
 <7e8a> 8359
 <7e8c> 6147
 <7e8d> 14994
@@ -8722,9 +8749,6 @@ endcidchar
 <7f47> 8597
 <7f4f> 14998
 <7f54> 6165
-endcidchar
-
-100 begincidchar
 <7f55> 6164
 <7f58> 6166
 <7f5b> 19681
@@ -8799,6 +8823,9 @@ endcidchar
 <7fdb> 17047
 <7fdf> 15005
 <7fe0> 2607
+endcidchar
+
+100 begincidchar
 <7fe1> 6196
 <7fe3> 18401
 <7fe5> 15006
@@ -8825,9 +8852,6 @@ endcidchar
 <8008> 18404
 <800a> 18403
 <800b> 6204
-endcidchar
-
-100 begincidchar
 <800c> 2261
 <800d> 19693
 <800e> 15011
@@ -8902,6 +8926,9 @@ endcidchar
 <8088> 19696
 <8089> 3281
 <808b> 4068
+endcidchar
+
+100 begincidchar
 <808c> 3389
 <808e> 19697
 <8093> 6232
@@ -8928,9 +8955,6 @@ endcidchar
 <80b1> 2017
 <80b2> 1197
 <80b4> 2136
-endcidchar
-
-100 begincidchar
 <80b8> 18415
 <80b9> 22257
 <80ba> 3343
@@ -9005,6 +9029,9 @@ endcidchar
 <8131> 2916
 <8133> 3316
 <8135> 18424
+endcidchar
+
+100 begincidchar
 <8139> 3021
 <813a> 15028
 <813c> 22268
@@ -9031,9 +9058,6 @@ endcidchar
 <8169> 18433
 <816b> 2332
 <816d> 17056
-endcidchar
-
-100 begincidchar
 <816e> 6259
 <816f> 19709
 <8170> 2058
@@ -9108,6 +9132,9 @@ endcidchar
 <81da> 6289
 <81db> 18443
 <81e1> 19719
+endcidchar
+
+100 begincidchar
 <81e3> 2569
 <81e4> 18445
 <81e5> 1385
@@ -9134,9 +9161,6 @@ endcidchar
 <8205> 6298
 <8207> 6299
 <8208> 1717
-endcidchar
-
-100 begincidchar
 <8209> 5039
 <820a> 6300
 <820b> 19723
@@ -9211,6 +9235,9 @@ endcidchar
 <827b> 22296
 <827d> 18468
 <827e> 6323
+endcidchar
+
+100 begincidchar
 <827f> 18469
 <8283> 18470
 <8284> 19730
@@ -9237,9 +9264,6 @@ endcidchar
 <82aa> 19733
 <82ab> 6326
 <82ac> 6329
-endcidchar
-
-100 begincidchar
 <82ad> 3332
 <82ae> 15044
 <82af> 2570
@@ -9314,6 +9338,9 @@ endcidchar
 <8323> 6365
 <8328> 1205
 <832b> 6356
+endcidchar
+
+100 begincidchar
 <832c> 22315
 <832d> 17073
 <832e> 22316
@@ -9340,9 +9367,6 @@ endcidchar
 <8347> 17075
 <8349> 2802
 <834a> 1835
-endcidchar
-
-100 begincidchar
 <834f> 1251
 <8350> 6353
 <8351> 15050
@@ -9417,6 +9441,9 @@ endcidchar
 <83dc> 2122
 <83dd> 18502
 <83df> 3147
+endcidchar
+
+100 begincidchar
 <83e0> 6387
 <83e1> 17080
 <83e5> 18503
@@ -9443,9 +9470,6 @@ endcidchar
 <8407> 6386
 <840a> 7807
 <840b> 6383
-endcidchar
-
-100 begincidchar
 <840c> 3670
 <840d> 6389
 <840e> 1188
@@ -9520,6 +9544,9 @@ endcidchar
 <8494> 2264
 <8495> 22349
 <8497> 18521
+endcidchar
+
+100 begincidchar
 <8499> 3812
 <849c> 3513
 <849e> 17087
@@ -9546,9 +9573,6 @@ endcidchar
 <84c4> 2973
 <84c6> 6423
 <84c9> 3904
-endcidchar
-
-100 begincidchar
 <84ca> 6412
 <84cb> 1430
 <84cc> 22354
@@ -9623,6 +9647,9 @@ endcidchar
 <8552> 22370
 <8553> 8607
 <8555> 6443
+endcidchar
+
+100 begincidchar
 <8556> 19749
 <8557> 3563
 <8558> 6438
@@ -9649,9 +9676,6 @@ endcidchar
 <8580> 6444
 <8581> 18548
 <8584> 3372
-endcidchar
-
-100 begincidchar
 <8585> 19751
 <8586> 18549
 <8587> 6454
@@ -9726,6 +9750,9 @@ endcidchar
 <85fa> 6473
 <85fb> 2806
 <85fc> 22392
+endcidchar
+
+100 begincidchar
 <85fe> 6472
 <85ff> 17099
 <8600> 18565
@@ -9752,9 +9779,6 @@ endcidchar
 <8629> 15078
 <862d> 3936
 <862f> 5809
-endcidchar
-
-100 begincidchar
 <8630> 6477
 <8636> 22397
 <8638> 17105
@@ -9829,6 +9853,9 @@ endcidchar
 <86c3> 18586
 <86c4> 6493
 <86c5> 22418
+endcidchar
+
+100 begincidchar
 <86c6> 6494
 <86c7> 2308
 <86c9> 6496
@@ -9855,9 +9882,6 @@ endcidchar
 <86e9> 6501
 <86ec> 6502
 <86ed> 3514
-endcidchar
-
-100 begincidchar
 <86ee> 3438
 <86ef> 6505
 <86f8> 2909
@@ -9932,6 +9956,9 @@ endcidchar
 <8768> 6531
 <876a> 6536
 <876e> 6532
+endcidchar
+
+100 begincidchar
 <876f> 22435
 <8771> 15097
 <8772> 18608
@@ -9958,9 +9985,6 @@ endcidchar
 <87a0> 18616
 <87a2> 6538
 <87a3> 19767
-endcidchar
-
-100 begincidchar
 <87a7> 18612
 <87ab> 6547
 <87ae> 19768
@@ -10035,6 +10059,9 @@ endcidchar
 <881c> 15111
 <881e> 22460
 <881f> 7813
+endcidchar
+
+100 begincidchar
 <8821> 6567
 <8822> 6566
 <8823> 6497
@@ -10061,9 +10088,6 @@ endcidchar
 <884a> 18635
 <884b> 19777
 <884c> 2022
-endcidchar
-
-100 begincidchar
 <884d> 5412
 <884e> 19778
 <8851> 22468
@@ -10138,6 +10162,9 @@ endcidchar
 <88ce> 17116
 <88cf> 3946
 <88d1> 18646
+endcidchar
+
+100 begincidchar
 <88d2> 15120
 <88d3> 18647
 <88d4> 6600
@@ -10164,9 +10191,6 @@ endcidchar
 <88fe> 2628
 <8901> 18649
 <8902> 6605
-endcidchar
-
-100 begincidchar
 <8904> 6610
 <8906> 15124
 <8907> 3571
@@ -10241,6 +10265,9 @@ endcidchar
 <8981> 3905
 <8983> 6636
 <8986> 3572
+endcidchar
+
+100 begincidchar
 <8987> 3324
 <8988> 6637
 <8989> 18658
@@ -10267,9 +10294,6 @@ endcidchar
 <89ac> 6644
 <89af> 6645
 <89b0> 18661
-endcidchar
-
-100 begincidchar
 <89b2> 6646
 <89b3> 1549
 <89b4> 22507
@@ -10344,6 +10368,9 @@ endcidchar
 <8a3b> 2990
 <8a3c> 2498
 <8a3d> 22522
+endcidchar
+
+100 begincidchar
 <8a3e> 18675
 <8a40> 22523
 <8a41> 6665
@@ -10370,9 +10397,6 @@ endcidchar
 <8a5e> 2234
 <8a60> 1269
 <8a61> 17125
-endcidchar
-
-100 begincidchar
 <8a62> 6673
 <8a63> 1838
 <8a65> 22528
@@ -10447,6 +10471,9 @@ endcidchar
 <8ac9> 19808
 <8aca> 22548
 <8acb> 2661
+endcidchar
+
+100 begincidchar
 <8acc> 1550
 <8acd> 6685
 <8acf> 2593
@@ -10473,9 +10500,6 @@ endcidchar
 <8aee> 2238
 <8af0> 22552
 <8af1> 6692
-endcidchar
-
-100 begincidchar
 <8af3> 6689
 <8af4> 15142
 <8af5> 19812
@@ -10550,6 +10574,9 @@ endcidchar
 <8b66> 1839
 <8b69> 17130
 <8b6b> 6721
+endcidchar
+
+100 begincidchar
 <8b6c> 6723
 <8b6d> 19818
 <8b6f> 6724
@@ -10576,9 +10603,6 @@ endcidchar
 <8b8d> 22564
 <8b8e> 6729
 <8b8f> 22565
-endcidchar
-
-100 begincidchar
 <8b90> 2364
 <8b96> 6732
 <8b9c> 15148
@@ -10653,6 +10677,9 @@ endcidchar
 <8ca4> 15153
 <8ca7> 3521
 <8ca8> 1375
+endcidchar
+
+100 begincidchar
 <8ca9> 3426
 <8caa> 6758
 <8cab> 1551
@@ -10679,9 +10706,6 @@ endcidchar
 <8cc5> 19828
 <8cc6> 22586
 <8cc7> 2239
-endcidchar
-
-100 begincidchar
 <8cc8> 6764
 <8cc9> 19829
 <8cca> 2833
@@ -10756,6 +10780,9 @@ endcidchar
 <8d76> 8629
 <8d77> 1609
 <8d7f> 22595
+endcidchar
+
+100 begincidchar
 <8d81> 6788
 <8d82> 22596
 <8d84> 15161
@@ -10782,9 +10809,6 @@ endcidchar
 <8db7> 22603
 <8db9> 22604
 <8dba> 6792
-endcidchar
-
-100 begincidchar
 <8dbb> 22605
 <8dbc> 22613
 <8dbe> 6791
@@ -10859,6 +10883,9 @@ endcidchar
 <8e4d> 19854
 <8e4e> 22620
 <8e4f> 19855
+endcidchar
+
+100 begincidchar
 <8e50> 6819
 <8e54> 18737
 <8e55> 6826
@@ -10885,9 +10912,6 @@ endcidchar
 <8e79> 22624
 <8e7a> 15173
 <8e7b> 17139
-endcidchar
-
-100 begincidchar
 <8e7c> 6829
 <8e81> 6830
 <8e84> 6833
@@ -10962,6 +10986,9 @@ endcidchar
 <8efe> 6855
 <8f00> 18748
 <8f02> 22640
+endcidchar
+
+100 begincidchar
 <8f03> 1457
 <8f05> 6857
 <8f07> 19871
@@ -10988,9 +11015,6 @@ endcidchar
 <8f27> 19874
 <8f28> 22647
 <8f29> 3344
-endcidchar
-
-100 begincidchar
 <8f2a> 4000
 <8f2b> 18750
 <8f2c> 19875
@@ -11065,6 +11089,9 @@ endcidchar
 <8fc8> 14233
 <8fca> 18761
 <8fcb> 22662
+endcidchar
+
+100 begincidchar
 <8fcd> 18762
 <8fce> 1844
 <8fd0> 22663
@@ -11091,9 +11118,6 @@ endcidchar
 <8ff1> 18765
 <8ff4> 6894
 <8ff5> 18766
-endcidchar
-
-100 begincidchar
 <8ff6> 15188
 <8ff7> 3790
 <8ff8> 6909
@@ -11168,6 +11192,9 @@ endcidchar
 <905c> 2845
 <905d> 18772
 <905e> 6919
+endcidchar
+
+100 begincidchar
 <9060> 1301
 <9061> 2766
 <9062> 22674
@@ -11194,9 +11221,6 @@ endcidchar
 <907d> 6926
 <907f> 3462
 <9080> 6928
-endcidchar
-
-100 begincidchar
 <9081> 6927
 <9082> 6925
 <9083> 5943
@@ -11271,6 +11295,9 @@ endcidchar
 <9102> 6940
 <9104> 18794
 <9105> 19901
+endcidchar
+
+100 begincidchar
 <9106> 18795
 <9108> 22685
 <910d> 22686
@@ -11297,9 +11324,6 @@ endcidchar
 <9132> 6943
 <9134> 17163
 <9136> 22692
-endcidchar
-
-100 begincidchar
 <9137> 18798
 <9139> 18799
 <913a> 15204
@@ -11374,6 +11398,9 @@ endcidchar
 <91b1> 7777
 <91b2> 15215
 <91b3> 18807
+endcidchar
+
+100 begincidchar
 <91b4> 6961
 <91b5> 6960
 <91b6> 18808
@@ -11400,9 +11427,6 @@ endcidchar
 <91d7> 8640
 <91d8> 3101
 <91d9> 22709
-endcidchar
-
-100 begincidchar
 <91da> 8639
 <91db> 6971
 <91dc> 1494
@@ -11477,6 +11501,9 @@ endcidchar
 <9260> 15227
 <9261> 18821
 <9262> 3393
+endcidchar
+
+100 begincidchar
 <9264> 6985
 <9265> 18822
 <9266> 2504
@@ -11503,9 +11530,6 @@ endcidchar
 <9293> 6993
 <9295> 6987
 <9296> 6992
-endcidchar
-
-100 begincidchar
 <9297> 18830
 <9298> 3791
 <9299> 18831
@@ -11580,6 +11604,9 @@ endcidchar
 <9315> 15233
 <9318> 2612
 <9319> 7004
+endcidchar
+
+100 begincidchar
 <931a> 7006
 <931c> 22767
 <931d> 8674
@@ -11606,9 +11633,6 @@ endcidchar
 <9335> 7009
 <9336> 19928
 <9337> 22771
-endcidchar
-
-100 begincidchar
 <933a> 7008
 <933b> 7010
 <9344> 7002
@@ -11683,6 +11707,9 @@ endcidchar
 <93c3> 7026
 <93c6> 8679
 <93c7> 18865
+endcidchar
+
+100 begincidchar
 <93c8> 7029
 <93c9> 22797
 <93ca> 15245
@@ -11709,9 +11736,6 @@ endcidchar
 <93f5> 18861
 <93f7> 22802
 <93f8> 8681
-endcidchar
-
-100 begincidchar
 <93f9> 19936
 <93fa> 15247
 <93fb> 18871
@@ -11786,6 +11810,9 @@ endcidchar
 <9481> 7058
 <9483> 22817
 <9484> 22816
+endcidchar
+
+100 begincidchar
 <9577> 3029
 <9578> 15255
 <9579> 18878
@@ -11812,9 +11839,6 @@ endcidchar
 <95a1> 19943
 <95a2> 1556
 <95a3> 1459
-endcidchar
-
-100 begincidchar
 <95a4> 2032
 <95a5> 3402
 <95a6> 15256
@@ -11889,6 +11913,9 @@ endcidchar
 <964d> 2033
 <964f> 7093
 <9650> 1910
+endcidchar
+
+100 begincidchar
 <9652> 22833
 <9654> 19956
 <9658> 15264
@@ -11915,9 +11942,6 @@ endcidchar
 <9677> 7095
 <9678> 3950
 <967a> 1893
-endcidchar
-
-100 begincidchar
 <967b> 19958
 <967c> 22837
 <967d> 3909
@@ -11992,6 +12016,9 @@ endcidchar
 <96dd> 18906
 <96de> 15270
 <96df> 22844
+endcidchar
+
+100 begincidchar
 <96e2> 3949
 <96e3> 3273
 <96e8> 1229
@@ -12018,9 +12045,6 @@ endcidchar
 <9709> 15274
 <970a> 4022
 <970d> 7122
-endcidchar
-
-100 begincidchar
 <970e> 7129
 <970f> 7131
 <9711> 7130
@@ -12095,6 +12119,9 @@ endcidchar
 <9780> 22855
 <9781> 7156
 <9784> 1489
+endcidchar
+
+100 begincidchar
 <9785> 7154
 <9786> 7158
 <9789> 22856
@@ -12121,9 +12148,6 @@ endcidchar
 <97b8> 22858
 <97b9> 19978
 <97ba> 17190
-endcidchar
-
-100 begincidchar
 <97bc> 22859
 <97be> 18923
 <97bf> 22860
@@ -12198,6 +12222,9 @@ endcidchar
 <982b> 15290
 <982c> 3705
 <982d> 3204
+endcidchar
+
+100 begincidchar
 <982e> 19984
 <982f> 22876
 <9830> 7795
@@ -12224,9 +12251,6 @@ endcidchar
 <9857> 8697
 <9858> 1574
 <9859> 15294
-endcidchar
-
-100 begincidchar
 <985a> 7752
 <985b> 3129
 <985e> 4008
@@ -12301,6 +12325,9 @@ endcidchar
 <9918> 7208
 <991f> 22887
 <9920> 7213
+endcidchar
+
+100 begincidchar
 <9921> 7209
 <9922> 22888
 <9924> 7212
@@ -12327,9 +12354,6 @@ endcidchar
 <994d> 15304
 <994e> 18973
 <9950> 7221
-endcidchar
-
-100 begincidchar
 <9954> 19994
 <9955> 7226
 <9957> 1722
@@ -12404,6 +12428,9 @@ endcidchar
 <9a10> 19998
 <9a11> 18988
 <9a12> 2813
+endcidchar
+
+100 begincidchar
 <9a13> 1895
 <9a16> 15312
 <9a19> 7248
@@ -12430,9 +12457,6 @@ endcidchar
 <9a43> 7254
 <9a44> 18992
 <9a45> 7251
-endcidchar
-
-100 begincidchar
 <9a47> 22919
 <9a4a> 15319
 <9a4b> 22921
@@ -12507,6 +12531,9 @@ endcidchar
 <9af7> 7285
 <9af9> 15323
 <9afa> 22940
+endcidchar
+
+100 begincidchar
 <9afb> 7286
 <9afd> 22941
 <9aff> 22942
@@ -12533,9 +12560,6 @@ endcidchar
 <9b25> 7293
 <9b26> 22947
 <9b2b> 19014
-endcidchar
-
-100 begincidchar
 <9b2c> 20298
 <9b2d> 17205
 <9b31> 5332
@@ -12610,6 +12634,9 @@ endcidchar
 <9bb4> 7317
 <9bb7> 22970
 <9bb8> 19028
+endcidchar
+
+100 begincidchar
 <9bb9> 7320
 <9bbb> 8711
 <9bbc> 22971
@@ -12636,9 +12663,6 @@ endcidchar
 <9be2> 7326
 <9be3> 7325
 <9be4> 7327
-endcidchar
-
-100 begincidchar
 <9be5> 17212
 <9be7> 15334
 <9be8> 1845
@@ -12713,6 +12737,9 @@ endcidchar
 <9c4e> 22981
 <9c52> 3742
 <9c53> 15344
+endcidchar
+
+100 begincidchar
 <9c54> 19055
 <9c56> 20026
 <9c57> 4002
@@ -12739,9 +12766,6 @@ endcidchar
 <9c7b> 22983
 <9ce5> 3031
 <9ce6> 19068
-endcidchar
-
-100 begincidchar
 <9ce7> 7359
 <9ce9> 3403
 <9ceb> 7364
@@ -12816,6 +12840,9 @@ endcidchar
 <9d7c> 15353
 <9d7e> 15354
 <9d83> 22996
+endcidchar
+
+100 begincidchar
 <9d84> 19088
 <9d86> 22997
 <9d87> 7388
@@ -12842,9 +12869,6 @@ endcidchar
 <9db5> 19092
 <9db8> 7399
 <9db9> 19093
-endcidchar
-
-100 begincidchar
 <9dba> 7400
 <9dbb> 7398
 <9dbc> 17226
@@ -12919,6 +12943,9 @@ endcidchar
 <9e98> 23023
 <9e9b> 19108
 <9e9d> 7424
+endcidchar
+
+100 begincidchar
 <9e9e> 17230
 <9e9f> 4003
 <9ea4> 15365
@@ -12945,9 +12972,6 @@ endcidchar
 <9ebf> 3753
 <9ec3> 13323
 <9ec4> 1323
-endcidchar
-
-100 begincidchar
 <9ec6> 23026
 <9ec8> 23027
 <9ecb> 23028
@@ -13022,6 +13046,9 @@ endcidchar
 <9f52> 7458
 <9f53> 19120
 <9f54> 7459
+endcidchar
+
+100 begincidchar
 <9f55> 19121
 <9f56> 23046
 <9f57> 15379
@@ -13048,9 +13075,6 @@ endcidchar
 <9f7a> 23050
 <9f7d> 23051
 <9f8d> 3966
-endcidchar
-
-100 begincidchar
 <9f8f> 23052
 <9f90> 15383
 <9f94> 15384
@@ -13071,9 +13095,13 @@ endcidchar
 <9fbe> 15434
 <9fc4> 14089
 <9fc6> 14168
+<9fcc> 20156
+<a7b5> 15909
+<ab53> 15911
 <d83cdd00> 8061
 <d83cde02> 10985
 <d83cde37> 11024
+<d83ddf9c> 12244
 <d840dc0b> 13839
 <d840dc89> 17233
 <d840dc8a> 14108
@@ -13121,6 +13149,9 @@ endcidchar
 <d844de3d> 13953
 <d844de55> 17415
 <d844de74> 17421
+endcidchar
+
+100 begincidchar
 <d844de7b> 17417
 <d844ded7> 17429
 <d844dee4> 17428
@@ -13151,9 +13182,6 @@ endcidchar
 <d847dde0> 17561
 <d847de33> 17562
 <d847de34> 16845
-endcidchar
-
-100 begincidchar
 <d847df1e> 17575
 <d847df76> 17582
 <d847dffa> 17585
@@ -13224,6 +13252,9 @@ endcidchar
 <d850dc4b> 20168
 <d850dc96> 17998
 <d850dd03> 18003
+endcidchar
+
+100 begincidchar
 <d850ddc6> 18015
 <d850ddfe> 18018
 <d850deee> 14282
@@ -13254,9 +13285,6 @@ endcidchar
 <d854de4c> 18197
 <d855dc2e> 18209
 <d855dc8e> 17005
-endcidchar
-
-100 begincidchar
 <d855dcd9> 18217
 <d855dd0e> 17009
 <d855dda7> 18229
@@ -13327,6 +13355,9 @@ endcidchar
 <d85cdfdb> 18610
 <d85cdffe> 18617
 <d85ddc10> 18620
+endcidchar
+
+100 begincidchar
 <d85ddc49> 18624
 <d85dde14> 18638
 <d85dde15> 18637
@@ -13357,9 +13388,6 @@ endcidchar
 <d861dc0c> 18754
 <d861dc55> 18757
 <d861dd6b> 18770
-endcidchar
-
-100 begincidchar
 <d861ded7> 18784
 <d861defa> 18787
 <d862dd46> 18812
@@ -13430,6 +13458,9 @@ endcidchar
 <d86ddf5c> 20097
 <d86ddf65> 20247
 <d86ddf76> 20114
+endcidchar
+
+100 begincidchar
 <d86ddf77> 13782
 <d86ddf7c> 20125
 <d86ddf82> 20141
@@ -13448,6 +13479,10 @@ endcidchar
 <d86edc0d> 20256
 <d86edc17> 20260
 <d86edc1a> 14278
+<d875dd44> 13834
+<d878de78> 14187
+<d879dd69> 13863
+<d879deea> 14226
 <d87edc04> 15388
 <d87edc0f> 7814
 <d87edc15> 20061
@@ -13460,9 +13495,6 @@ endcidchar
 <d87edc3f> 13815
 <d87edc46> 20062
 <d87edc52> 13841
-endcidchar
-
-100 begincidchar
 <d87edc62> 13998
 <d87edc6d> 14121
 <d87edc73> 13832
@@ -13529,6 +13561,9 @@ endcidchar
 <fa1c> 8587
 <fa1d> 8590
 <fa1e> 8599
+endcidchar
+
+100 begincidchar
 <fa1f> 8610
 <fa22> 8622
 <fa23> 8630
@@ -13563,9 +13598,6 @@ endcidchar
 <fa44> 13375
 <fa45> 13327
 <fa46> 7700
-endcidchar
-
-75 begincidchar
 <fa47> 13332
 <fa48> 13347
 <fa49> 15398
@@ -13632,6 +13664,9 @@ endcidchar
 <ff3e> 648
 <ff3f> 650
 <ff40> 646
+endcidchar
+
+9 begincidchar
 <ff5b> 680
 <ff5c> 667
 <ff5d> 681
@@ -13712,6 +13747,7 @@ endcidchar
 <228a> <228b> 15474
 <22da> <22db> 15725
 <2305> <2306> 15478
+<2329> <232a> 682
 <239d> <239e> 12144
 <23a3> <23a4> 12152
 <23a7> <23a9> 8178
@@ -13743,10 +13779,12 @@ endcidchar
 <2934> <2935> 16201
 <29fa> <29fb> 16207
 <2b05> <2b07> 8207
-<2e8c> <2e8d> 13833
 endcidrange
 
 100 begincidrange
+<2b63> <2b65> 12213
+<2b82> <2b83> 12208
+<2e8c> <2e8d> 13833
 <2ea1> <2ea2> 14689
 <2ebe> <2ec0> 14197
 <2f14> <2f15> 4301
@@ -13844,12 +13882,12 @@ endcidrange
 <5295> <5297> 21198
 <52ac> <52ad> 4279
 <52b6> <52b8> 21205
-<52ba> <52bb> 17323
-<52f8> <52f9> 4293
-<530a> <530b> 14364
 endcidrange
 
 100 begincidrange
+<52ba> <52bb> 17323
+<52f8> <52f9> 4293
+<530a> <530b> 14364
 <5327> <5329> 21226
 <532b> <532c> 21229
 <5387> <5388> 21237
@@ -13947,12 +13985,12 @@ endcidrange
 <6192> <6193> 17648
 <61c0> <61c1> 21591
 <61ce> <61cf> 21593
-<61ec> <61ed> 21599
-<6208> <6209> 4930
-<6232> <6233> 4941
 endcidrange
 
 100 begincidrange
+<61ec> <61ed> 21599
+<6208> <6209> 4930
+<6232> <6233> 4941
 <628d> <628f> 21614
 <6292> <6293> 4954
 <62b6> <62b7> 21618
@@ -14050,12 +14088,12 @@ endcidrange
 <72d5> <72d6> 21960
 <72e0> <72e1> 5628
 <7304> <7305> 14784
-<7318> <7319> 18067
-<7336> <7337> 3867
-<733a> <733b> 19538
 endcidrange
 
 100 begincidrange
+<7318> <7319> 18067
+<7336> <7337> 3867
+<733a> <733b> 19538
 <734e> <734f> 5643
 <735d> <7360> 21970
 <736e> <736f> 18078
@@ -14153,12 +14191,12 @@ endcidrange
 <80d7> <80d8> 15024
 <8165> <8166> 6260
 <8167> <8168> 17054
-<81dd> <81de> 19717
-<81df> <81e0> 6290
-<81f0> <81f2> 22282
 endcidrange
 
 100 begincidrange
+<81dd> <81de> 19717
+<81df> <81e0> 6290
+<81f0> <81f2> 22282
 <81fa> <81fb> 6293
 <8201> <8202> 6296
 <8213> <8214> 19724
@@ -14256,12 +14294,12 @@ endcidrange
 <9028> <902a> 22668
 <9033> <9034> 22671
 <904f> <9052> 6910
-<90c4> <90c5> 17154
-<90d8> <90d9> 22681
-<90fe> <90ff> 18792
 endcidrange
 
 100 begincidrange
+<90c4> <90c5> 17154
+<90d8> <90d9> 22681
+<90fe> <90ff> 18792
 <9122> <9123> 17160
 <9146> <9147> 18800
 <9193> <9194> 22701
@@ -14359,12 +14397,12 @@ endcidrange
 <9b6d> <9b6e> 22958
 <9b76> <9b77> 19022
 <9b96> <9b97> 7312
+endcidrange
+
+69 begincidrange
 <9b9f> <9ba0> 7314
 <9bd1> <9bd2> 7323
 <9c18> <9c1a> 19040
-endcidrange
-
-65 begincidrange
 <9c49> <9c4a> 19052
 <9c4f> <9c50> 17215
 <9c69> <9c6b> 19060
@@ -14412,6 +14450,7 @@ endcidrange
 <fb01> <fb02> 112
 <fb03> <fb04> 9359
 <fe11> <fe12> 7887
+<fe17> <fe18> 16329
 <fe31> <fe32> 7892
 <fe35> <fe36> 7899
 <fe37> <fe38> 7905
