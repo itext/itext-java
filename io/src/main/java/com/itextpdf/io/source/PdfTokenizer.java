@@ -813,6 +813,10 @@ public class PdfTokenizer implements Closeable, Serializable {
         return null;
     }
 
+    /**
+     * @deprecated Will be removed in 7.2. This inner class is not used anywhere
+     */
+    @Deprecated
     protected static class ReusableRandomAccessSource implements IRandomAccessSource {
         private ByteBuffer buffer;
 
