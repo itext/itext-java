@@ -41,6 +41,7 @@
     address: sales@itextpdf.com
  */
 package com.itextpdf.svg.googlecharts;
+
 import com.itextpdf.io.IOException;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
@@ -55,52 +56,51 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class GeoChartsTest extends SvgIntegrationTest {
 
-  public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/geo_charts/";
-  public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/geo_charts/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/GeoChartsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/GeoChartsTest/";
 
-  @BeforeClass
-  public static void beforeClass() {
-    ITextTest.createDestinationFolder(destinationFolder);
-  }
+    @BeforeClass
+    public static void beforeClass() {
+        ITextTest.createDestinationFolder(destinationFolder);
+    }
 
-  @Test
-  @LogMessages(messages = {
-          @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
-  })
-  public void geo_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "geo_chart");
-  }
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
+    })
+    public void geoChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "geoChart");
+    }
 
-  @Test
-  @LogMessages(messages = {
-          @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 2),
-  })
-  public void geo_colored_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "geo_colored_chart");
-  }
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 2),
+    })
+    public void geoColoredChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "geoColoredChart");
+    }
 
-  @Test
-  @LogMessages(messages = {
-          @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
-  })
-  public void geo_marker_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "geo_marker_chart");
-  }
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
+    })
+    public void geoMarkerChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "geoMarkerChart");
+    }
 
-  @Test
-  @LogMessages(messages = {
-          @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
-  })
-  public void geo_propontional_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "geo_propontional_chart");
-  }
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
+    })
+    public void geoPropontionalChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "geoPropontionalChart");
+    }
 
-  @Test
-  @LogMessages(messages = {
-          @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
-  })
-  public void geo_text_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "geo_text_chart");
-  }
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
+    })
+    public void geoTextChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "geoTextChart");
+    }
 }
-

@@ -41,6 +41,7 @@
     address: sales@itextpdf.com
  */
 package com.itextpdf.svg.googlecharts;
+
 import com.itextpdf.io.IOException;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -56,31 +57,31 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class TimelineChartsTest extends SvgIntegrationTest {
 
-  public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/timeline_charts/";
-  public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/timeline_charts/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/TimelineChartsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/TimelineChartsTest/";
 
-  @BeforeClass
-  public static void beforeClass() {
-    ITextTest.createDestinationFolder(destinationFolder);
-  }
+    @BeforeClass
+    public static void beforeClass() {
+        ITextTest.createDestinationFolder(destinationFolder);
+    }
 
-  @Test
-  public void timeline_advanced_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "timeline_advanced_chart");
-  }
+    @Test
+    public void timelineAdvancedChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "timelineAdvancedChart");
+    }
 
-  @Test
-  public void timeline_chart() throws IOException, InterruptedException, java.io.IOException {
-    PageSize pageSize = PageSize.A4;
-    TestUtils.convertSVGtoPDF(destinationFolder + "timeline_chart.pdf",
-            sourceFolder + "timeline_chart.svg", 1, pageSize);
+    @Test
+    public void timelineChart() throws IOException, InterruptedException, java.io.IOException {
+        PageSize pageSize = PageSize.A4;
+        TestUtils.convertSVGtoPDF(destinationFolder + "timelineChart.pdf",
+                sourceFolder + "timelineChart.svg", 1, pageSize);
 
-    Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "timeline_chart.pdf",
-            sourceFolder + "cmp_timeline_chart.pdf", destinationFolder, "diff_"));
-  }
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "timelineChart.pdf",
+                sourceFolder + "cmp_timelineChart.pdf", destinationFolder, "diff_"));
+    }
 
-  @Test
-  public void timeline_labeled_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "timeline_labeled_chart");
-  }
+    @Test
+    public void timelineLabeledChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "timelineLabeledChart");
+    }
 }
