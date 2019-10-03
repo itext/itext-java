@@ -176,33 +176,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    public void multilineformFieldTest() throws IOException, InterruptedException {
-        String filename = destinationFolder + "multilineformFieldTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
-
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-
-        PdfTextFormField name = PdfFormField.createMultilineText(pdfDoc,
-                new Rectangle(150, 600, 277, 44),"fieldName", "", null, 0);
-        name.setScroll(false);
-        name.setBorderColor(ColorConstants.GRAY);
-        String itextLicence = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
-                "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " +
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
-                "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
-        name.setValue(itextLicence);
-        form.addField(name);
-
-        pdfDoc.close();
-
-        CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_multilineformFieldTest.pdf", destinationFolder, "diff_");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
-    }
-
-    @Test
     public void unicodeFormFieldTest() throws IOException {
         String filename = sourceFolder + "unicodeFormFieldFile.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
@@ -567,29 +540,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    public void multilineTextFieldWithAlignmentTest() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "multilineTextFieldWithAlignment.pdf";
-        String cmpPdf = sourceFolder + "cmp_multilineTextFieldWithAlignment.pdf";
-
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
-
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-
-        Rectangle rect = new Rectangle(210, 600, 150, 100);
-        PdfTextFormField field = PdfFormField.createMultilineText(pdfDoc, rect, "fieldName", "some value\nsecond line\nthird");
-        field.setJustification(PdfTextFormField.ALIGN_RIGHT);
-        form.addField(field);
-
-        pdfDoc.close();
-
-        CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
-    }
-
-    @Test
     public void flushedPagesTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "flushedPagesTest.pdf";
 
@@ -792,55 +742,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         pdfDocument.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
-    }
-
-    @Test
-    public void multilineFormFieldNewLineTest() throws IOException, InterruptedException {
-        String testName = "multilineFormFieldNewLineTest";
-        String outPdf = destinationFolder + testName + ".pdf";
-        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
-        String srcPdf = sourceFolder + testName + ".pdf";
-
-        PdfWriter writer = new PdfWriter(outPdf);
-        PdfReader reader = new PdfReader(srcPdf);
-        PdfDocument pdfDoc = new PdfDocument(reader, writer);
-
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-
-        Map<String, PdfFormField> fields = form.getFormFields();
-        fields.get("BEMERKUNGEN").setValue("First line\n\n\nFourth line");
-
-        pdfDoc.close();
-
-        CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
-    }
-
-    @Test
-    public void multilineFormFieldNewLineFontType3Test() throws IOException, InterruptedException {
-        String testName = "multilineFormFieldNewLineFontType3Test";
-
-        String outPdf = destinationFolder + testName + ".pdf";
-        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
-        String srcPdf = sourceFolder + testName + ".pdf";
-
-        PdfWriter writer = new PdfWriter(outPdf);
-        PdfReader reader = new PdfReader(srcPdf);
-        PdfDocument pdfDoc = new PdfDocument(reader, writer);
-
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        PdfTextFormField info = (PdfTextFormField) form.getField("info");
-        info.setValue("A\n\nE");
-
-        pdfDoc.close();
-        CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
     }
 
     @Test
@@ -1378,39 +1279,14 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    public void notFittingByHeightTest() throws IOException, InterruptedException {
-        String filename = "notFittingByHeightTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-
-        for (int i = 15; i <= 50; i += 15) {
-            PdfFormField[] fields = new PdfFormField[]{
-                    PdfFormField.createMultilineText(pdfDoc, new Rectangle(100, 800 - i * 4, 150, i), "multi " + i, "MULTI"),
-                            PdfFormField.createText(pdfDoc, new Rectangle(300, 800 - i * 4, 150, i), "single " + i, "SINGLE")};
-            for (PdfFormField field : fields) {
-                field.setFontSize(40);
-                field.setBorderColor(ColorConstants.BLACK);
-                form.addField(field);
-            }
-        }
-        pdfDoc.close();
-
-        CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
-    }
-
-    @Test
-    public void choiceFieldAutoSizeTest() throws IOException, InterruptedException {
-        String filename = destinationFolder + "choiceFieldAutoSizeTest.pdf";
+    public void choiceFieldAutoSize01Test() throws IOException, InterruptedException {
+        String filename = destinationFolder + "choiceFieldAutoSize01Test.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         String[] options = new String[]{"First Item", "Second Item", "Third Item", "Fourth Item"};
 
-        PdfFormField[] fields = new PdfFormField[] {
+        PdfFormField[] fields = new PdfFormField[]{
                 PdfFormField.createComboBox(pdfDoc, new Rectangle(110, 750, 150, 20), "TestField", "First Item", options),
                 PdfFormField.createList(pdfDoc, new Rectangle(310, 650, 150, 90), "TestField1", "Second Item", options)};
 
@@ -1423,37 +1299,32 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_choiceFieldAutoSizeTest.pdf", destinationFolder, "diff_");
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_choiceFieldAutoSize01Test.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
     }
 
     @Test
-    public void borderWidthIndentMultilineTest() throws IOException, InterruptedException {
-        String filename = destinationFolder + "borderWidthIndentMultilineTest.pdf";
+    public void choiceFieldAutoSize02Test() throws IOException, InterruptedException {
+        String filename = destinationFolder + "choiceFieldAutoSize02Test.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfArray options = new PdfArray();
+        options.add(new PdfString("First Item", PdfEncodings.UNICODE_BIG));
+        options.add(new PdfString("Second Item", PdfEncodings.UNICODE_BIG));
+        options.add(new PdfString("Third Item", PdfEncodings.UNICODE_BIG));
 
-        PdfTextFormField field = PdfFormField.createMultilineText(pdfDoc, new Rectangle(100, 500, 400, 300), "multi",
-                "Does this text overlap the border? Well it shouldn't!");
-        field.setFontSize(30);
-        field.setBorderColor(ColorConstants.RED);
-        field.setBorderWidth(50);
-        form.addField(field);
-
-        PdfTextFormField field2 = PdfFormField.createMultilineText(pdfDoc, new Rectangle(100, 400, 400, 50), "multiAuto",
-                "Does this autosize text overlap the border? Well it shouldn't! Does it fit accurately though?");
-        field2.setFontSize(0);
-        field2.setBorderColor(ColorConstants.RED);
-        field2.setBorderWidth(20);
-        form.addField(field2);
+        form.addField(PdfFormField.createChoice(pdfDoc, new Rectangle(110, 750, 150, 20),
+                "TestField", "First Item", null, 0, options, PdfChoiceFormField.FF_COMBO, null));
+        form.addField(PdfFormField.createChoice(pdfDoc, new Rectangle(310, 650, 150, 90),
+                "TestField1", "Second Item", null, 0, options, 0, null));
 
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_borderWidthIndentMultilineTest.pdf", destinationFolder, "diff_");
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_choiceFieldAutoSize02Test.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
