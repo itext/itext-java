@@ -24,6 +24,11 @@
       <version>1.14.2</version>
     </dependency>
     <dependency>
+      <groupId>org.verapdf</groupId>
+      <artifactId>core</artifactId>
+      <version>1.14.100</version>
+    </dependency>
+    <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>${logback.version}</version>
