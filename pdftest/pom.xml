@@ -16,7 +16,7 @@
     <dependency>
       <groupId>org.verapdf</groupId>
       <artifactId>validation-model</artifactId>
-      <version>1.14.100</version>
+      <version>1.14.104</version>
     </dependency>
     <dependency>
       <groupId>org.verapdf.apps</groupId>
