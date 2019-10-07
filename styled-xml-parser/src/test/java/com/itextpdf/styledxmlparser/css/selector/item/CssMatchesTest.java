@@ -88,6 +88,21 @@ public class CssMatchesTest extends ExtendedITextTest {
     }
 
     @Test
+    public void matchesEmptySelectorItemSpaceTest() {
+        CssPseudoClassEmptySelectorItem item = CssPseudoClassEmptySelectorItem.getInstance();
+        IXmlParser htmlParser = new JsoupHtmlParser();
+        IDocumentNode documentNode = htmlParser.parse("<div> </div>");
+
+        INode bodyNode = documentNode
+                .childNodes().get(0)
+                    .childNodes().get(1);
+        INode divNode = bodyNode
+                .childNodes().get(0);
+
+        Assert.assertFalse(item.matches(divNode));
+    }
+
+    @Test
     public void matchesFirstOfTypeSelectorItemTest() {
         CssPseudoClassFirstOfTypeSelectorItem item = CssPseudoClassFirstOfTypeSelectorItem.getInstance();
         IXmlParser htmlParser = new JsoupHtmlParser();
