@@ -64,10 +64,10 @@ public class CssMatchesTest extends ExtendedITextTest {
 
       INode bodyNode = documentNode
               .childNodes().get(0)
-              .childNodes().get(1);
+                    .childNodes().get(1);
       INode divNode = bodyNode
               .childNodes().get(0)
-              .childNodes().get(0);
+                  .childNodes().get(0);
 
       Assert.assertTrue(item.matches(divNode));
     }
@@ -80,7 +80,7 @@ public class CssMatchesTest extends ExtendedITextTest {
 
         INode bodyNode = documentNode
                 .childNodes().get(0)
-                .childNodes().get(1);
+                    .childNodes().get(1);
         INode divNode = bodyNode
                 .childNodes().get(0);
 
@@ -95,10 +95,10 @@ public class CssMatchesTest extends ExtendedITextTest {
 
         INode bodyNode = documentNode
                 .childNodes().get(0)
-                .childNodes().get(1);
+                    .childNodes().get(1);
         INode divNode = bodyNode
                 .childNodes().get(0)
-                .childNodes().get(0);
+                    .childNodes().get(0);
 
         Assert.assertTrue(item.matches(divNode));
     }
@@ -111,7 +111,7 @@ public class CssMatchesTest extends ExtendedITextTest {
 
         INode bodyNode = documentNode
                 .childNodes().get(0)
-                .childNodes().get(1);
+                    .childNodes().get(1);
         INode divNode = bodyNode
                 .childNodes().get(0);
 
@@ -126,10 +126,10 @@ public class CssMatchesTest extends ExtendedITextTest {
 
         INode bodyNode = documentNode
                 .childNodes().get(0)
-                .childNodes().get(1);
+                    .childNodes().get(1);
         INode divNode = bodyNode
                 .childNodes().get(0)
-                .childNodes().get(1);
+                    .childNodes().get(1);
 
         Assert.assertTrue(item.matches(divNode));
     }
@@ -142,7 +142,7 @@ public class CssMatchesTest extends ExtendedITextTest {
 
         INode bodyNode = documentNode
                 .childNodes().get(0)
-                .childNodes().get(1);
+                    .childNodes().get(1);
         INode divNode = bodyNode
                 .childNodes().get(0);
 
@@ -157,10 +157,10 @@ public class CssMatchesTest extends ExtendedITextTest {
 
         INode bodyNode = documentNode
                 .childNodes().get(0)
-                .childNodes().get(1);
+                    .childNodes().get(1);
         INode divNode = bodyNode
                 .childNodes().get(0)
-                .childNodes().get(1);
+                    .childNodes().get(1);
 
         Assert.assertTrue(item.matches(divNode));
     }
@@ -173,7 +173,7 @@ public class CssMatchesTest extends ExtendedITextTest {
 
         INode bodyNode = documentNode
                 .childNodes().get(0)
-                .childNodes().get(1);
+                    .childNodes().get(1);
         INode divNode = bodyNode
                 .childNodes().get(0);
 
@@ -188,10 +188,10 @@ public class CssMatchesTest extends ExtendedITextTest {
 
         INode bodyNode = documentNode
                 .childNodes().get(0)
-                .childNodes().get(1);
+                    .childNodes().get(1);
         INode divNode = bodyNode
                 .childNodes().get(0)
-                .childNodes().get(0);
+                    .childNodes().get(0);
 
         Assert.assertTrue(item.matches(divNode));
     }
@@ -204,7 +204,7 @@ public class CssMatchesTest extends ExtendedITextTest {
 
         INode bodyNode = documentNode
                 .childNodes().get(0)
-                .childNodes().get(1);
+                    .childNodes().get(1);
         INode divNode = bodyNode
                 .childNodes().get(0);
 
@@ -247,7 +247,7 @@ public class CssMatchesTest extends ExtendedITextTest {
 
         INode bodyNode = documentNode
                 .childNodes().get(0)
-                .childNodes().get(1);
+                    .childNodes().get(1);
         INode divNode = bodyNode
                 .childNodes().get(0);
 
