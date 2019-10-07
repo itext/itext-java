@@ -58,6 +58,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
@@ -66,6 +67,7 @@ import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.IBlockElement;
@@ -79,6 +81,7 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.Property;
@@ -104,6 +107,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/LayoutTaggingTest/";
     public static final String imageName = "Desert.jpg";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/LayoutTaggingTest/";
+    public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeClass
     public static void beforeClass() {
@@ -981,6 +985,31 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         document.close();
 
         compareResult("floatListItemTest.pdf", "cmp_floatListItemTest.pdf");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT)
+    })
+    //TODO update cmp-file after DEVSIX-3335 fixed
+    public void notAsciiCharTest() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
+        PdfWriter writer = new PdfWriter(destinationFolder + "notAsciiCharTest.pdf");
+        PdfDocument pdf = new PdfDocument(writer);
+
+        Document document = new Document(pdf);
+        pdf.setTagged();
+
+        FontProvider sel = new FontProvider();
+        sel.addFont(fontsFolder + "NotoSans-Regular.ttf");
+        sel.addFont(StandardFonts.TIMES_ROMAN);
+
+        document.setFontProvider(sel);
+        Paragraph p = new Paragraph("\u0422\u043E be or not.");
+        p.setFontFamily("times");
+        document.add(p);
+        document.close();
+
+        compareResult("notAsciiCharTest.pdf", "cmp_notAsciiCharTest.pdf");
     }
 
     @Test
