@@ -161,7 +161,8 @@ class GroupedRandomAccessSource implements IRandomAccessSource, Serializable {
     public int get(long position) throws java.io.IOException {
         SourceEntry entry = getSourceEntryForOffset(position);
 
-        if (entry == null) // we have run out of data to read from
+        // if true, we have run out of data to read from
+        if (entry == null)
             return -1;
 
         return entry.source.get(entry.offsetN(position));
@@ -173,7 +174,8 @@ class GroupedRandomAccessSource implements IRandomAccessSource, Serializable {
     public int get(long position, byte[] bytes, int off, int len) throws java.io.IOException {
         SourceEntry entry = getSourceEntryForOffset(position);
 
-        if (entry == null) // we have run out of data to read from
+        // if true, we have run out of data to read from
+        if (entry == null)
             return -1;
 
         long offN = entry.offsetN(position);
@@ -181,7 +183,9 @@ class GroupedRandomAccessSource implements IRandomAccessSource, Serializable {
         int remaining = len;
 
         while(remaining > 0){
-            if (entry == null) // we have run out of data to read from
+
+            // if true, we have run out of data to read from
+            if (entry == null)
                 break;
             if (offN > entry.source.length())
                 break;

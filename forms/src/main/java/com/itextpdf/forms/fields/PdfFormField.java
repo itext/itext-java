@@ -2158,7 +2158,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         PdfFormField field = new PdfFormField((PdfDictionary) kid);
                         PdfWidgetAnnotation widget = field.getWidgets().get(0);
                         PdfDictionary apStream = field.getPdfObject().getAsDictionary(PdfName.AP);
-                        if (apStream == null) { //widget annotation was not merged
+                        if (apStream == null) {
+                            //widget annotation was not merged
+
                             apStream = widget.getPdfObject().getAsDictionary(PdfName.AP);
                         }
                         PdfName state;

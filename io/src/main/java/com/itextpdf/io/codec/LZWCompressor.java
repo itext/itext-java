@@ -104,7 +104,9 @@ public class LZWCompressor {
      * @throws IOException if underlying output stream error
      **/
     public LZWCompressor(OutputStream outputStream, int codeSize, boolean TIFF) throws IOException {
-        bf_ = new BitFile(outputStream, !TIFF);    // set flag for GIF as NOT tiff
+
+        // set flag for GIF as NOT tiff
+        bf_ = new BitFile(outputStream, !TIFF);
         codeSize_ = codeSize;
         tiffFudge_ = TIFF;
         clearCode_ = 1 << codeSize_;

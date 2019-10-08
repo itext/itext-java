@@ -312,7 +312,9 @@ public class PageFlushingHelper {
             if (!pdfDoc.isAppendMode() || page.getPdfObject().isModified()) {
                 page.releaseInstanceFields();
                 page.getPdfObject().flush();
-            } else { // it's append mode
+            } else {
+                // it's append mode
+
                 pdfDoc.getCatalog().getPageTree().releasePage(pageNum);
                 page.unsetForbidRelease();
                 page.getPdfObject().release();

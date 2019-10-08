@@ -737,16 +737,19 @@ public class CFFFont {
         OffsetItem fdselectRef    = new DictOffsetItem();
 
         if ( !fonts[j].isCID ) {
+
             // create a ROS key
             l.addLast(new DictNumberItem(nstrings));
             l.addLast(new DictNumberItem(nstrings+1));
             l.addLast(new DictNumberItem(0));
             l.addLast(new UInt8Item((char)12));
             l.addLast(new UInt8Item((char)30));
+
             // create a CIDCount key
             l.addLast(new DictNumberItem(nglyphs));
             l.addLast(new UInt8Item((char)12));
             l.addLast(new UInt8Item((char)34));
+
             // What about UIDBase (12,35)? Don't know what is it.
             // I don't think we need FontName; the font I looked at didn't have it.
         }
@@ -755,13 +758,16 @@ public class CFFFont {
         l.addLast(fdarrayRef);
         l.addLast(new UInt8Item((char)12));
         l.addLast(new UInt8Item((char)36));
+
         // create an FDSelect key
         l.addLast(fdselectRef);
         l.addLast(new UInt8Item((char)12));
         l.addLast(new UInt8Item((char)37));
+
         // create an charset key
         l.addLast(charsetRef);
         l.addLast(new UInt8Item((char)15));
+
         // create a CharStrings key
         l.addLast(charstringsRef);
         l.addLast(new UInt8Item((char)17));
@@ -778,7 +784,8 @@ public class CFFFont {
                     || "charset".equals(key)
                     || "CharStrings".equals(key)
                     ) {
-                // just drop them
+
+            // just drop them
             } else {
                 l.addLast(new RangeItem(buf,p1,p2-p1));
             }

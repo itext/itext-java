@@ -248,10 +248,17 @@ public class Rectangle implements Cloneable, Serializable {
      */
     public boolean overlaps(Rectangle rect) {
         // Two rectangles do not overlap if any of the following holds
-        return !(this.getX() + this.getWidth() < rect.getX()        //1. the lower left corner of the second rectangle is to the right of the upper-right corner of the first.
-                || this.getY() + this.getHeight() < rect.getY()     //2. the lower left corner of the second rectangle is above the upper right corner of the first.
-                || this.getX() > rect.getX() + rect.getWidth()      //3. the upper right corner of the second rectangle is to the left of the lower-left corner of the first.
-                || this.getY() > rect.getY() + rect.getHeight()     //4. the upper right corner of the second rectangle is below the lower left corner of the first.
+        // 1. the lower left corner of the second rectangle is to the right of the upper-right corner of the first.
+        return !(this.getX() + this.getWidth() < rect.getX()
+
+                // 2. the lower left corner of the second rectangle is above the upper right corner of the first.
+                || this.getY() + this.getHeight() < rect.getY()
+
+                // 3. the upper right corner of the second rectangle is to the left of the lower-left corner of the first.
+                || this.getX() > rect.getX() + rect.getWidth()
+
+                // 4. the upper right corner of the second rectangle is below the lower left corner of the first.
+                || this.getY() > rect.getY() + rect.getHeight()
         );
 
     }
@@ -638,6 +645,7 @@ public class Rectangle implements Cloneable, Serializable {
      * @throws PdfException if the passed array's size is not a multiple of 8.
      */
     public static Rectangle createBoundingRectangleFromQuadPoint(PdfArray quadPoints) throws PdfException {
+
         //Check if array length is a multiple of 8
         if (quadPoints.size() % 8 != 0) {
             throw new PdfException(PdfException.QuadPointArrayLengthIsNotAMultipleOfEight);
@@ -646,6 +654,8 @@ public class Rectangle implements Cloneable, Serializable {
         float lly = Float.MAX_VALUE;
         float urx = -Float.MAX_VALUE;
         float ury = -Float.MAX_VALUE;
+
+        // QuadPoints in redact annotations have "Z" order, in spec they're specified
         for (int j = 0; j < 8; j += 2) {
             float x = quadPoints.getAsNumber(j).floatValue();
             float y = quadPoints.getAsNumber(j + 1).floatValue();
@@ -654,7 +664,7 @@ public class Rectangle implements Cloneable, Serializable {
             if (x > urx) urx = x;
             if (y < lly) lly = y;
             if (y > ury) ury = y;
-        }// QuadPoints in redact annotations have "Z" order, in spec they're specified
+        }
         return (new Rectangle(llx,
                 lly,
                 urx - llx,

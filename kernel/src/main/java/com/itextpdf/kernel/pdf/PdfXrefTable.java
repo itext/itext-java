@@ -250,7 +250,9 @@ class PdfXrefTable implements Serializable {
         }
 
         List<Integer> sections = createSections(document, false);
-        if (document.properties.appendMode && sections.size() == 0) { // no modifications.
+        if (document.properties.appendMode && sections.size() == 0) {
+            // no modifications.
+
             xref = null;
             return;
         }

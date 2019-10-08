@@ -55,8 +55,11 @@ package com.itextpdf.barcodes.qrcode;
  */
 final class GF256 {
 
-    public static final GF256 QR_CODE_FIELD = new GF256(0x011D); // x^8 + x^4 + x^3 + x^2 + 1
-    public static final GF256 DATA_MATRIX_FIELD = new GF256(0x012D); // x^8 + x^5 + x^3 + x^2 + 1
+    // x^8 + x^4 + x^3 + x^2 + 1
+    public static final GF256 QR_CODE_FIELD = new GF256(0x011D);
+
+    // x^8 + x^5 + x^3 + x^2 + 1
+    public static final GF256 DATA_MATRIX_FIELD = new GF256(0x012D);
 
     private final int[] expTable;
     private final int[] logTable;
@@ -76,7 +79,9 @@ final class GF256 {
         int x = 1;
         for (int i = 0; i < 256; i++) {
             expTable[i] = x;
-            x <<= 1; // x = x * 2; we're assuming the generator alpha is 2
+
+            // x = x * 2; we're assuming the generator alpha is 2
+            x <<= 1;
             if (x >= 0x100) {
                 x ^= primitive;
             }
@@ -84,6 +89,7 @@ final class GF256 {
         for (int i = 0; i < 255; i++) {
             logTable[expTable[i]] = i;
         }
+
         // logTable[0] == 0 but this should never be used
         zero = new GF256Poly(this, new int[]{0});
         one = new GF256Poly(this, new int[]{1});

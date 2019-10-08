@@ -521,7 +521,7 @@ public class TagTreePointer {
     }
 
     /**
-     * Moves this {@link TagTreePointer} instance to the first descendant of the current tag which has the given role.
+     * Moves this {@link TagTreePointer} instance to the nth descendant of the current tag which has the given role.
      * If there are no direct kids of the tag with such role, further descendants are checked in BFS order.
      *
      * @param n    if there are several descendants with the given role, pointer will be moved to the descendant
@@ -530,7 +530,9 @@ public class TagTreePointer {
      * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer moveToKid(int n, String role) {
-        if (MCR_MARKER.equals(role)) { // MCR literal could be returned in a list of kid names (see #getKidsRoles())
+
+        // MCR literal could be returned in a list of kid names (see #getKidsRoles())
+        if (MCR_MARKER.equals(role)) {
             throw new PdfException(PdfException.CannotMoveToMarkedContentReference);
         }
         List<IStructureNode> descendants = new ArrayList<>(getCurrentStructElem().getKids());
@@ -588,7 +590,9 @@ public class TagTreePointer {
             throw new PdfException(PdfException.CannotFlushDocumentRootTagBeforeDocumentIsClosed);
         }
         IStructureNode parent = tagStructureContext.getWaitingTagsManager().flushTag(getCurrentStructElem());
-        if (parent != null) { // parent is not flushed
+        if (parent != null) {
+            // parent is not flushed
+
             setCurrentStructElem((PdfStructElem) parent);
         } else {
             setCurrentStructElem(tagStructureContext.getRootTag());
@@ -723,7 +727,9 @@ public class TagTreePointer {
         }
 
         PdfIndirectReference indRef = currentStructElem.getPdfObject().getIndirectReference();
-        if (indRef != null && indRef.isFree()) { // is removed
+        if (indRef != null && indRef.isFree()) {
+            // is removed
+
             throw new PdfException(PdfException.TagTreePointerIsInInvalidStateItPointsAtRemovedElementUseMoveToRoot);
         }
 

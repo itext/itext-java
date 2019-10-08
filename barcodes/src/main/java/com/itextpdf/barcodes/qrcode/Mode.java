@@ -51,12 +51,17 @@ package com.itextpdf.barcodes.qrcode;
  */
 final class Mode {
 
-    public static final Mode TERMINATOR = new Mode(new int[]{0, 0, 0}, 0x00, "TERMINATOR"); // Not really a mode...
+    // Not really a mode...
+    public static final Mode TERMINATOR = new Mode(new int[]{0, 0, 0}, 0x00, "TERMINATOR");
     public static final Mode NUMERIC = new Mode(new int[]{10, 12, 14}, 0x01, "NUMERIC");
     public static final Mode ALPHANUMERIC = new Mode(new int[]{9, 11, 13}, 0x02, "ALPHANUMERIC");
-    public static final Mode STRUCTURED_APPEND = new Mode(new int[]{0, 0, 0}, 0x03, "STRUCTURED_APPEND"); // Not supported
+
+    // Not supported
+    public static final Mode STRUCTURED_APPEND = new Mode(new int[]{0, 0, 0}, 0x03, "STRUCTURED_APPEND");
     public static final Mode BYTE = new Mode(new int[]{8, 16, 16}, 0x04, "BYTE");
-    public static final Mode ECI = new Mode(null, 0x07, "ECI"); // character counts don't apply
+
+    // character counts don't apply
+    public static final Mode ECI = new Mode(null, 0x07, "ECI");
     public static final Mode KANJI = new Mode(new int[]{8, 10, 12}, 0x08, "KANJI");
     public static final Mode FNC1_FIRST_POSITION = new Mode(null, 0x05, "FNC1_FIRST_POSITION");
     public static final Mode FNC1_SECOND_POSITION = new Mode(null, 0x09, "FNC1_SECOND_POSITION");

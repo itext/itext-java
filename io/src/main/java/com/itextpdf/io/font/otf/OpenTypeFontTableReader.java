@@ -257,7 +257,9 @@ public abstract class OpenTypeFontTableReader implements Serializable {
         int[] lookupTableLocations = readUShortArray(lookupCount, lookupListTableLocation);
         // read LookUp tables
         for (int lookupLocation : lookupTableLocations) {
-            if (lookupLocation == 0) { // be tolerant to NULL offset in LookupList table
+
+            // be tolerant to NULL offset in LookupList table
+            if (lookupLocation == 0) {
                 continue;
             }
             readLookupTable(lookupLocation);

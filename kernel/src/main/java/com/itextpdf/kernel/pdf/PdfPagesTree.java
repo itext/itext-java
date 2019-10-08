@@ -183,7 +183,9 @@ class PdfPagesTree implements Serializable {
      */
     public void addPage(PdfPage pdfPage) {
         PdfPages pdfPages;
-        if (root != null) { // in this case we save tree structure
+        if (root != null) {
+            // in this case we save tree structure
+
             if (pageRefs.size() == 0) {
                 pdfPages = root;
             } else {
@@ -325,6 +327,7 @@ class PdfPagesTree implements Serializable {
         PdfIndirectReference targetPage = pageRefs.get(pageNum);
         if (targetPage != null)
             return;
+
         //if we go here, we have to split PdfPages that contains pageNum
         int parentIndex = findPageParent(pageNum);
         PdfPages parent = parents.get(parentIndex);
@@ -333,12 +336,15 @@ class PdfPagesTree implements Serializable {
             throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum + 1);
         }
         int kidsCount = parent.getCount();
+
         // we should handle separated pages, it means every PdfArray kids must contain either PdfPage or PdfPages,
         // mix of PdfPage and PdfPages not allowed.
         boolean findPdfPages = false;
+
         // NOTE optimization? when we already found needed index
         for (int i = 0; i < kids.size(); i++) {
             PdfDictionary page = kids.getAsDictionary(i);
+
             // null values not allowed in pages tree.
             if (page == null) {
                 throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum + 1);
@@ -347,35 +353,44 @@ class PdfPagesTree implements Serializable {
             if (pageKids != null) {
                 if (pageKids.isArray()) {
                     findPdfPages = true;
-                } else { // kids must be of type array
+                } else {
+                    // kids must be of type array
+
                     throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum + 1);
                 }
             }
         }
         if (findPdfPages) {
+
             // handle mix of PdfPage and PdfPages.
             // handle count property!
             List<PdfPages> newParents = new ArrayList<>(kids.size());
             PdfPages lastPdfPages = null;
             for (int i = 0; i < kids.size() && kidsCount > 0; i++) {
                 PdfDictionary pdfPagesObject = kids.getAsDictionary(i);
-                if (pdfPagesObject.getAsArray(PdfName.Kids) == null) { // pdfPagesObject is PdfPage
+                if (pdfPagesObject.getAsArray(PdfName.Kids) == null) {
+                    // pdfPagesObject is PdfPage
 
-                    if (lastPdfPages == null) { // possible if only first kid is PdfPage
+                    // possible if only first kid is PdfPage
+                    if (lastPdfPages == null) {
 
                         lastPdfPages = new PdfPages(parent.getFrom(), document, parent);
                         kids.set(i, lastPdfPages.getPdfObject());
                         newParents.add(lastPdfPages);
                     } else {
+
                         // Only remove from kids if we did not replace the entry with new PdfPages
                         kids.remove(i);
                         i--;
                     }
+
                     // decrement count first so that page is not counted twice when moved to lastPdfPages
                     parent.decrementCount();
                     lastPdfPages.addPage(pdfPagesObject);
                     kidsCount--;
-                } else { // pdfPagesObject is PdfPages
+                } else {
+                    // pdfPagesObject is PdfPages
+
                     int from = lastPdfPages == null
                             ? parent.getFrom()
                             : lastPdfPages.getFrom() + lastPdfPages.getCount();
@@ -388,17 +403,21 @@ class PdfPagesTree implements Serializable {
             for (int i = newParents.size() - 1; i >= 0; i--) {
                 parents.add(parentIndex, newParents.get(i));
             }
+
             // recursive call, to load needed pageRef.
             // NOTE optimization? add to loadPage startParentIndex.
             loadPage(pageNum);
         } else {
             int from = parent.getFrom();
+
             // Possible exception in case kids.getSize() < parent.getCount().
             // In any case parent.getCount() has higher priority.
             // NOTE optimization? when we already found needed index
             for (int i = 0; i < parent.getCount(); i++) {
                 PdfDictionary kid = kids.getAsDictionary(i);
-                if (kid != null) { // make sure it's a dictionary
+
+                // make sure it's a dictionary
+                if (kid != null) {
                     pageRefs.set(from + i, kid.getIndirectReference());
                 }
             }

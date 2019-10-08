@@ -130,7 +130,9 @@ public class PdfTokenizerTest {
         checkTokenValues(
                 "123",
                 new byte[]{49, 50, 51},
-                new byte[]{} //EndOfFile buffer
+
+                //EndOfFile buffer
+                new byte[]{}
         );
     }
 

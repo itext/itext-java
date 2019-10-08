@@ -127,9 +127,13 @@ final class BitArray {
             throw new IllegalArgumentException();
         }
         if (end == start) {
-            return true; // empty range matches
+
+            // empty range matches
+            return true;
         }
-        end--; // will be easier to treat this as the last actually set bit -- inclusive
+
+        // will be easier to treat this as the last actually set bit -- inclusive
+        end--;
         int firstInt = start >> 5;
         int lastInt = end >> 5;
         for (int i = firstInt; i <= lastInt; i++) {

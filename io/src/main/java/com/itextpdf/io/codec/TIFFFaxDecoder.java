@@ -77,27 +77,63 @@ public class TIFFFaxDecoder {
     private boolean recoverFromImageError;
 
     static int[] table1 = {
-            0x00, // 0 bits are left in first byte - SHOULD NOT HAPPEN
-            0x01, // 1 bits are left in first byte
-            0x03, // 2 bits are left in first byte
-            0x07, // 3 bits are left in first byte
-            0x0f, // 4 bits are left in first byte
-            0x1f, // 5 bits are left in first byte
-            0x3f, // 6 bits are left in first byte
-            0x7f, // 7 bits are left in first byte
-            0xff  // 8 bits are left in first byte
+
+            // 0 bits are left in first byte - SHOULD NOT HAPPEN
+            0x00,
+
+            // 1 bits are left in first byte
+            0x01,
+
+            // 2 bits are left in first byte
+            0x03,
+
+            // 3 bits are left in first byte
+            0x07,
+
+            // 4 bits are left in first byte
+            0x0f,
+
+            // 5 bits are left in first byte
+            0x1f,
+
+            // 6 bits are left in first byte
+            0x3f,
+
+            // 7 bits are left in first byte
+            0x7f,
+
+            // 8 bits are left in first byte
+            0xff
     };
 
     static int[] table2 = {
-            0x00, // 0
-            0x80, // 1
-            0xc0, // 2
-            0xe0, // 3
-            0xf0, // 4
-            0xf8, // 5
-            0xfc, // 6
-            0xfe, // 7
-            0xff  // 8
+
+            // 0
+            0x00,
+
+            // 1
+            0x80,
+
+            // 2
+            0xc0,
+
+            // 3
+            0xe0,
+
+            // 4
+            0xf0,
+
+            // 5
+            0xf8,
+
+            // 6
+            0xfc,
+
+            // 7
+            0xfe,
+
+            // 8
+            0xff
     };
 
     // Table to be used when fillOrder = 2, for flipping bytes.
@@ -419,8 +455,8 @@ public class TIFFFaxDecoder {
             100, 100, 100, 100, 68, 68, 68, 68
     };
 
-    //
-    static short[] twoBitBlack = {292, 260, 226, 226};   // 0 - 3
+    // 0 - 3
+    static short[] twoBitBlack = {292, 260, 226, 226};
 
     // Main black run table, using the last 9 bits of possible 13 bit code
     static short[] black = {
@@ -650,22 +686,36 @@ public class TIFFFaxDecoder {
                 isT = entry & 0x0001;
                 bits = (entry >>> 1) & 0x0f;
 
-                if (bits == 12) {          // Additional Make up code
+                // Additional Make up code
+                if (bits == 12) {
+
                     // Get the next 2 bits
                     twoBits = nextLesserThan8Bits(2);
+
                     // Consolidate the 2 new bits and last 2 bits into 4 bits
                     current = ((current << 2) & 0x000c) | twoBits;
                     entry = additionalMakeup[current];
-                    bits = (entry >>> 1) & 0x07;     // 3 bits 0000 0111
-                    code = (entry >>> 4) & 0x0fff;  // 12 bits
-                    bitOffset += code; // Skip white run
+
+                    // 3 bits 0000 0111
+                    bits = (entry >>> 1) & 0x07;
+
+                    // 12 bits
+                    code = (entry >>> 4) & 0x0fff;
+
+                    // Skip white run
+                    bitOffset += code;
 
                     updatePointer(4 - bits);
-                } else if (bits == 0) {     // ERROR
+
+                // ERROR
+                } else if (bits == 0) {
                     throw new IOException(IOException.InvalidCodeEncountered);
-                } else if (bits == 15) {    // EOL
+
+                // EOL
+                } else if (bits == 15) {
                     throw new IOException(IOException.EolCodeWordEncounteredInWhiteRun);
                 } else {
+
                     // 11 bits - 0000 0111 1111 1111 = 0x07ff
                     code = (entry >>> 5) & 0x07ff;
                     bitOffset += code;
@@ -710,14 +760,19 @@ public class TIFFFaxDecoder {
                         updatePointer(5);
                         current = nextLesserThan8Bits(4);
                         entry = additionalMakeup[current];
-                        bits = (entry >>> 1) & 0x07;     // 3 bits 0000 0111
-                        code = (entry >>> 4) & 0x0fff;  // 12 bits
+
+                        // 3 bits 0000 0111
+                        bits = (entry >>> 1) & 0x07;
+
+                        // 12 bits
+                        code = (entry >>> 4) & 0x0fff;
 
                         setToBlack(buffer, lineOffset, bitOffset, code);
                         bitOffset += code;
 
                         updatePointer(4 - bits);
                     } else if (bits == 15) {
+
                         // EOL code
                         throw new IOException(IOException.EolCodeWordEncounteredInWhiteRun);
                     } else {
@@ -731,6 +786,7 @@ public class TIFFFaxDecoder {
                         }
                     }
                 } else if (code == 200) {
+
                     // Is a Terminating code
                     current = nextLesserThan8Bits(2);
                     entry = twoBitBlack[current];
@@ -744,6 +800,7 @@ public class TIFFFaxDecoder {
                     isWhite = true;
                     currChangingElems[changingElemSize++] = bitOffset;
                 } else {
+
                     // Is a Terminating code
                     setToBlack(buffer, lineOffset, bitOffset, code);
                     bitOffset += code;
@@ -989,6 +1046,7 @@ public class TIFFFaxDecoder {
             // Till one whole scanline is decoded
             escape:
             while (bitOffset < w && bytePointer < data.length - 1) {
+
                 // Get the next changing element
                 getNextChangingElement(a0, isWhite, b);
                 b1 = b[0];
@@ -996,14 +1054,16 @@ public class TIFFFaxDecoder {
 
                 // Get the next seven bits
                 entry = nextLesserThan8Bits(7);
+
                 // Run these through the 2DCodes table
                 entry = twoDCodes[entry] & 0xff;
 
                 // Get the code and the number of bits used up
                 code = (entry & 0x78) >>> 3;
                 bits = entry & 0x07;
+                if (code == 0) {
+                    // Pass
 
-                if (code == 0) { // Pass
                     // We always assume WhiteIsZero format for fax.
                     if (!isWhite) {
                         setToBlack(buffer, lineOffset, bitOffset,
@@ -1013,13 +1073,17 @@ public class TIFFFaxDecoder {
 
                     // Set pointer to only consume the correct number of bits.
                     updatePointer(7 - bits);
-                } else if (code == 1) { // Horizontal
+
+                // Horizontal
+                } else if (code == 1) {
+
                     // Set pointer to only consume the correct number of bits.
                     updatePointer(7 - bits);
 
                     // identify the next 2 alternating color codes.
                     int number;
                     if (isWhite) {
+
                         // Following are white and black runs
                         number = decodeWhiteCodeWord();
                         bitOffset += number;
@@ -1030,6 +1094,7 @@ public class TIFFFaxDecoder {
                         bitOffset += number;
                         cce[currIndex++] = bitOffset;
                     } else {
+
                         // First a black run and then a white run follows
                         number = decodeBlackCodeWord();
                         setToBlack(buffer, lineOffset, bitOffset, number);
@@ -1042,7 +1107,9 @@ public class TIFFFaxDecoder {
                     }
 
                     a0 = bitOffset;
-                } else if (code <= 8) { // Vertical
+
+                // Vertical
+                } else if (code <= 8) {
                     a1 = b1 + (code - 5);
                     cce[currIndex++] = a1;
 
@@ -1124,6 +1191,7 @@ public class TIFFFaxDecoder {
 
                     }
                 } else {
+
                     //micah_tessler@yahoo.com
                     //Microsoft TIFF renderers seem to treat unknown codes as line-breaks
                     //That is, they give up on the current line and move on to the next one
@@ -1131,7 +1199,9 @@ public class TIFFFaxDecoder {
                     bitOffset = w;
                     updatePointer(7 - bits);
                 }
-            } // end loop
+
+                // end loop
+            }
 
             // Add the changing element beyond the current scanline for the
             // other color too
@@ -1200,25 +1270,37 @@ public class TIFFFaxDecoder {
             isT = entry & 0x0001;
             bits = (entry >>> 1) & 0x0f;
 
-            if (bits == 12) {           // Additional Make up code
+            // Additional Make up code
+            if (bits == 12) {
+
                 // Get the next 2 bits
                 twoBits = nextLesserThan8Bits(2);
+
                 // Consolidate the 2 new bits and last 2 bits into 4 bits
                 current = ((current << 2) & 0x000c) | twoBits;
                 entry = additionalMakeup[current];
-                bits = (entry >>> 1) & 0x07;     // 3 bits 0000 0111
-                code = (entry >>> 4) & 0x0fff;   // 12 bits
+
+                // 3 bits 0000 0111
+                bits = (entry >>> 1) & 0x07;
+
+                // 12 bits
+                code = (entry >>> 4) & 0x0fff;
                 runLength += code;
                 updatePointer(4 - bits);
-            } else if (bits == 0) {     // ERROR
+
+            // ERROR
+            } else if (bits == 0) {
                 throw new IOException(IOException.InvalidCodeEncountered);
-            } else if (bits == 15) {    // EOL
+
+            // EOL
+            } else if (bits == 15) {
                 if (runLength == 0) {
                     isWhite = false;
                 } else {
                     throw new IOException(IOException.EolCodeWordEncounteredInWhiteRun);
                 }
             } else {
+
                 // 11 bits - 0000 0111 1111 1111 = 0x07ff
                 code = (entry >>> 5) & 0x07ff;
                 runLength += code;
@@ -1257,16 +1339,22 @@ public class TIFFFaxDecoder {
                 code = (entry >>> 5) & 0x07ff;
 
                 if (bits == 12) {
+
                     // Additional makeup codes
                     updatePointer(5);
                     current = nextLesserThan8Bits(4);
                     entry = additionalMakeup[current];
-                    bits = (entry >>> 1) & 0x07;     // 3 bits 0000 0111
-                    code = (entry >>> 4) & 0x0fff;  // 12 bits
+
+                    // 3 bits 0000 0111
+                    bits = (entry >>> 1) & 0x07;
+
+                    // 12 bits
+                    code = (entry >>> 4) & 0x0fff;
                     runLength += code;
 
                     updatePointer(4 - bits);
                 } else if (bits == 15) {
+
                     // EOL code
                     throw new IOException(IOException.EolCodeWordEncounteredInBlackRun);
                 } else {
@@ -1277,6 +1365,7 @@ public class TIFFFaxDecoder {
                     }
                 }
             } else if (code == 200) {
+
                 // Is a Terminating code
                 current = nextLesserThan8Bits(2);
                 entry = twoBitBlack[current];
@@ -1286,6 +1375,7 @@ public class TIFFFaxDecoder {
                 updatePointer(2 - bits);
                 isWhite = true;
             } else {
+
                 // Is a Terminating code
                 runLength += code;
                 updatePointer(4 - bits);
@@ -1371,9 +1461,13 @@ public class TIFFFaxDecoder {
         // int start = lastChangingElement & ~0x1;
         int start = lastChangingElement > 0 ? lastChangingElement - 1 : 0;
         if (isWhite) {
-            start &= ~0x1; // Search even numbered elements
+
+            // Search even numbered elements
+            start &= ~0x1;
         } else {
-            start |= 0x1; // Search odd numbered elements
+
+            // Search odd numbered elements
+            start |= 0x1;
         }
 
         int i = start;

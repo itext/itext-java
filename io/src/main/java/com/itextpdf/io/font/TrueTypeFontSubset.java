@@ -347,7 +347,9 @@ class TrueTypeFontSubset {
 
     private void checkGlyphComposite(int glyph) throws java.io.IOException {
         int start = locaTable[glyph];
-        if (start == locaTable[glyph + 1]) {// no contour
+
+        // no contour
+        if (start == locaTable[glyph + 1]) {
             return;
         }
         rf.seek(tableGlyphOffset + start);

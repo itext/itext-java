@@ -1661,8 +1661,10 @@ public class PdfFontTest extends ExtendedITextTest {
 
         PdfDocument doc = new PdfDocument(new PdfWriter(filename));
         PdfPage page = doc.addNewPage();
+
         // Identity-H must be embedded
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSansCJKjp-Bold.otf", "Identity-H");
+
         // font.setSubset(false);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
@@ -1670,7 +1672,9 @@ public class PdfFontTest extends ExtendedITextTest {
                 .beginText()
                 .moveText(36, 680)
                 .setFontAndSize(font, 12)
-                .showText("\u0BA4") // there is no such glyph in provided cff
+
+                // there is no such glyph in provided cff
+                .showText("\u0BA4")
                 .endText()
                 .restoreState();
 
@@ -1685,6 +1689,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         PdfDocument doc = new PdfDocument(new PdfWriter(filename));
         PdfPage page = doc.addNewPage();
+
         // Identity-H must be embedded
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "SourceHanSansHW-Regular.otf", "Identity-H");
         PdfCanvas canvas = new PdfCanvas(page);

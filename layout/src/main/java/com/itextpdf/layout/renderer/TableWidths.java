@@ -138,12 +138,14 @@ final class TableWidths {
     }
 
     void processCell(CellInfo cell) {
+
         // For automatic layout algorithm percents have higher priority
         // value must be > 0, while for fixed layout >= 0
         UnitValue cellWidth = getCellWidth(cell.getCell(), false);
         if (cellWidth != null) {
             assert cellWidth.getValue() > 0;
             if (cellWidth.isPercentValue()) {
+
                 //cellWidth has percent value
                 if (cell.getColspan() == 1) {
                     widths[cell.getCol()].setPercents(cellWidth.getValue());
@@ -160,11 +162,13 @@ final class TableWidths {
                     float percentAddition = cellWidth.getValue() - percentSum;
                     if (percentAddition > 0) {
                         if (pointColumns == 0) {
+
                             //ok, add percents to each column
                             for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
                                 widths[i].addPercents(percentAddition / cell.getColspan());
                             }
                         } else {
+
                             // set percent only to cells without one
                             for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
                                 if (!widths[i].isPercent) {
@@ -175,6 +179,7 @@ final class TableWidths {
                     }
                 }
             } else {
+
                 //cellWidth has point value
                 if (cell.getColspan() == 1) {
                     if (!widths[cell.getCol()].isPercent) {
@@ -189,6 +194,7 @@ final class TableWidths {
                 }
             }
         } else if (widths[cell.getCol()].isFlexible()) {
+
             //if there is no information, try to set max width
             int flexibleCols = 0;
             float remainWidth = 0;
@@ -198,7 +204,9 @@ final class TableWidths {
                     flexibleCols++;
                 }
             }
-            if (remainWidth > 0) { // flexibleCols > 0 too
+            if (remainWidth > 0) {
+                // flexibleCols > 0 too
+                
                 for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
                     if (widths[i].isFlexible()) {
                         widths[i].addPoints(remainWidth / flexibleCols);
@@ -209,6 +217,7 @@ final class TableWidths {
     }
 
     void processColumns() {
+
         //TODO add colgroup information.
         for (int i = 0; i < numberOfColumns; i++) {
             UnitValue colWidth = getTable().getColumnWidth(i);

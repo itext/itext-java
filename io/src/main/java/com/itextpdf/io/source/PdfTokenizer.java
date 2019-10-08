@@ -324,10 +324,13 @@ public class PdfTokenizer implements Closeable, Serializable {
             }
         }
 
-        if (level == 1) { // if the level 1 check returns EOF, then we are still looking at a number - set the type back to Number
+        // if the level 1 check returns EOF,
+        // then we are still looking at a number - set the type back to Number
+        if (level == 1) {
             type = TokenType.Number;
             outBuf.reset().append(n1);
         }
+
         // if we hit here, the file is either corrupt (stream ended unexpectedly),
         // or the last token ended exactly at the end of a stream.  This last
         // case can occur inside an Object Stream.
@@ -539,7 +542,9 @@ public class PdfTokenizer implements Closeable, Serializable {
      */
     protected static byte[] decodeStringContent(byte[] content, int from, int to, boolean hexWriting) {
         ByteBuffer buffer = new ByteBuffer(to - from + 1);
-        if (hexWriting) {       // <6954657874ae...>
+
+        // <6954657874ae...>
+        if (hexWriting) {
             for (int i = from; i <= to; ) {
                 int v1 = ByteBuffer.getHex(content[i++]);
                 if (i > to) {
@@ -550,7 +555,9 @@ public class PdfTokenizer implements Closeable, Serializable {
                 v2 = ByteBuffer.getHex(v2);
                 buffer.append((v1 << 4) + v2);
             }
-        } else {                // ((iText\( some version)...)
+        } else {
+            // ((iText\( some version)...)
+
             for (int i = from; i <= to; ) {
                 int ch = content[i++];
                 if (ch == '\\') {

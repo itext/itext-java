@@ -797,40 +797,53 @@ public class CFFFontSubset extends CFFFont {
     protected void ReadCommand() {
         key = null;
         boolean gotKey = false;
+
         // Until a key is found
         while (!gotKey) {
+
             // Read the first Char
             char b0 = getCard8();
+
             // decode according to the type1/type2 format
-            if (b0 == 28) // the two next bytes represent a short int;
+            if (b0 == 28)
             {
+                // the two next bytes represent a short int;
+
                 int first = getCard8();
                 int second = getCard8();
                 args[arg_count] = first << 8 | second;
                 arg_count++;
                 continue;
             }
-            if (b0 >= 32 && b0 <= 246) // The byte read is the byte;
+
+            // The byte read is the byte;
+            if (b0 >= 32 && b0 <= 246)
             {
                 args[arg_count] = b0 - 139;
                 arg_count++;
                 continue;
             }
-            if (b0 >= 247 && b0 <= 250) // The byte read and the next byte constitute a short int
+
+            // The byte read and the next byte constitute a short int
+            if (b0 >= 247 && b0 <= 250)
             {
                 int w = getCard8();
                 args[arg_count] = (b0 - 247) * 256 + w + 108;
                 arg_count++;
                 continue;
             }
-            if (b0 >= 251 && b0 <= 254)// Same as above except negative
+
+            // Same as above except negative
+            if (b0 >= 251 && b0 <= 254)
             {
                 int w = getCard8();
                 args[arg_count] = -(b0 - 251) * 256 - w - 108;
                 arg_count++;
                 continue;
             }
-            if (b0 == 255)// The next for bytes represent a double.
+
+            // The next for bytes represent a double.
+            if (b0 == 255)
             {
                 int first = getCard8();
                 int second = getCard8();
@@ -840,9 +853,12 @@ public class CFFFontSubset extends CFFFont {
                 arg_count++;
                 continue;
             }
-            if (b0 <= 31 && b0 != 28) // An operator was found.. Set Key.
+
+            // An operator was found.. Set Key.
+            if (b0 <= 31 && b0 != 28)
             {
                 gotKey = true;
+
                 // 12 is an escape command therefore the next byte is a part
                 // of this command
                 if (b0 == 12) {

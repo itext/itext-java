@@ -400,7 +400,9 @@ public class PdfReader implements Closeable, Serializable {
                     break;
                 }
             }
-            if (index == filters.size()) { // The stream isn't suspicious. We shouldn't process it.
+            if (index == filters.size()) {
+                // The stream isn't suspicious. We shouldn't process it.
+
                 memoryLimitsAwareHandler = null;
             }
         }
@@ -1071,7 +1073,9 @@ public class PdfReader implements Closeable, Serializable {
         for (; ; ) {
             long pos = tokens.getPosition();
             buffer.reset();
-            if (!tokens.readLineSegment(buffer, true)) // added boolean because of mailing list issue (17 Feb. 2014)
+
+            // added boolean because of mailing list issue (17 Feb. 2014)
+            if (!tokens.readLineSegment(buffer, true))
                 break;
             if (buffer.get(0) >= '0' && buffer.get(0) <= '9') {
                 int[] obj = PdfTokenizer.checkObjectStart(lineTokeniser);
@@ -1100,7 +1104,9 @@ public class PdfReader implements Closeable, Serializable {
         for (; ; ) {
             long pos = tokens.getPosition();
             buffer.reset();
-            if (!tokens.readLineSegment(buffer, true)) // added boolean because of mailing list issue (17 Feb. 2014)
+
+            // added boolean because of mailing list issue (17 Feb. 2014)
+            if (!tokens.readLineSegment(buffer, true))
                 break;
             if (buffer.get(0) == 't') {
                 if (!PdfTokenizer.checkTrailer(buffer))
@@ -1244,7 +1250,9 @@ public class PdfReader implements Closeable, Serializable {
             while (true) {
                 pos = tokens.getPosition();
                 line.reset();
-                if (!tokens.readLineSegment(line, false)) // added boolean because of mailing list issue (17 Feb. 2014)
+
+                // added boolean because of mailing list issue (17 Feb. 2014)
+                if (!tokens.readLineSegment(line, false))
                     break;
                 if (line.startsWith(endstream)) {
                     streamLength = (int) (pos - start);

@@ -71,10 +71,17 @@ public class LZWStringTable {
     private static final short HASHSIZE = 9973;
     private static final short HASHSTEP = 2039;
 
-    byte[] strChr_;        // after predecessor character
-    short[] strNxt_;        // predecessor string
-    short[] strHsh_;        // hash table to find  predecessor + char pairs
-    short numStrings_;        // next code if adding new prestring + char
+    // after predecessor character
+    byte[] strChr_;
+
+    // predecessor string
+    short[] strNxt_;
+
+    // hash table to find  predecessor + char pairs
+    short[] strHsh_;
+
+    // next code if adding new prestring + char
+    short numStrings_;
 
     /**
      * each entry corresponds to a code and contains the length of data
@@ -102,7 +109,8 @@ public class LZWStringTable {
     public int AddCharString(short index, byte b) {
         int hshidx;
 
-        if (numStrings_ >= MAXSTR)    // if used up all codes
+        // if used up all codes
+        if (numStrings_ >= MAXSTR)
         {
             return 0xFFFF;
         }
@@ -121,7 +129,8 @@ public class LZWStringTable {
             strLen_[numStrings_] = strLen_[index] + 1;
         }
 
-        return numStrings_++;    // return the code and inc for next code
+        // return the code and inc for next code
+        return numStrings_++;
     }
 
     /**
@@ -134,10 +143,14 @@ public class LZWStringTable {
         int hshidx, nxtidx;
 
         if (index == HASH_FREE)
-            return (short) (b & 0xFF);    // Rob fixed used to sign extend
+
+            // Rob fixed used to sign extend
+            return (short) (b & 0xFF);
 
         hshidx = Hash(index, b);
-        while ((nxtidx = strHsh_[hshidx]) != HASH_FREE)    // search
+
+        // search
+        while ((nxtidx = strHsh_[hshidx]) != HASH_FREE)
         {
             if (strNxt_[nxtidx] == index && strChr_[nxtidx] == b)
                 return (short) nxtidx;
@@ -160,8 +173,9 @@ public class LZWStringTable {
 
         int w = (1 << codesize) + RES_CODES;
         for (int q = 0; q < w; q++) {
-            //AddCharString((short) 0xFFFF, (byte) q);    // init with no prefix
-            AddCharString((short)-1, (byte) q);    // init with no prefix
+
+            // init with no prefix
+            AddCharString((short)-1, (byte) q);
         }
     }
 
@@ -193,37 +207,60 @@ public class LZWStringTable {
         if (offset == -2) {
             if (skipHead == 1) skipHead = 0;
         }
+
+        // code == -1 is checked just in case.
         //-1 ~ 0xFFFF
-        if (code == -1 ||                // just in case
-                skipHead == strLen_[code])                // DONE no more unpacked
+        if (code == -1 ||
+
+                // DONE no more unpacked
+                skipHead == strLen_[code])
             return 0;
 
-        int expandLen;                            // how much data we are actually expanding
-        int codeLen = strLen_[code] - skipHead;    // length of expanded code left
-        int bufSpace = buf.length - offset;        // how much space left
-        if (bufSpace > codeLen)
-            expandLen = codeLen;                // only got this many to unpack
-        else
+        // how much data we are actually expanding
+        int expandLen;
+
+        // length of expanded code left
+        int codeLen = strLen_[code] - skipHead;
+
+        // how much space left
+        int bufSpace = buf.length - offset;
+        if (bufSpace > codeLen) {
+
+            // only got this many to unpack
+            expandLen = codeLen;
+        } else {
             expandLen = bufSpace;
+        }
 
-        int skipTail = codeLen - expandLen;        // only > 0 if codeLen > bufSpace [left overs]
+        // only > 0 if codeLen > bufSpace [left overs]
+        int skipTail = codeLen - expandLen;
 
-        int idx = offset + expandLen;            // initialise to exclusive end address of buffer area
+        // initialise to exclusive end address of buffer area
+        int idx = offset + expandLen;
 
         // NOTE: data unpacks in reverse direction and we are placing the
         // unpacked data directly into the array in the correct location.
         while ((idx > offset) && (code != -1)) {
-            if (--skipTail < 0)                    // skip required of expanded data
+
+            // skip required of expanded data
+            if (--skipTail < 0)
             {
                 buf[--idx] = strChr_[code];
             }
-            code = strNxt_[code];                // to predecessor code
+
+            // to predecessor code
+            code = strNxt_[code];
         }
 
-        if (codeLen > expandLen)
-            return -expandLen;                    // indicate what part of codeLen used
-        else
-            return expandLen;                    // indicate length of dat unpacked
+        if (codeLen > expandLen) {
+
+            // indicate what part of codeLen used
+            return -expandLen;
+        } else {
+
+            // indicate length of dat unpacked
+            return expandLen;
+        }
     }
 
     public void dump(PrintStream output) {

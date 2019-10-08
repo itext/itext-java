@@ -1879,10 +1879,11 @@ public class TableRenderer extends AbstractRenderer {
                              int[] targetOverflowRowIndex, TableRenderer[] splitResult) {
         LayoutArea cellOccupiedArea = currentRow[col].getOccupiedArea();
         if (1 == minRowspan) {
+
             // Here we use the same cell, but create a new renderer which doesn't have any children,
             // therefore it won't have any content.
             // we will change properties
-            CellRenderer overflowCell = (CellRenderer) ((Cell) currentRow[col].getModelElement()).clone(true).getRenderer(); // we will change properties
+            CellRenderer overflowCell = (CellRenderer) ((Cell) currentRow[col].getModelElement()).clone(true).getRenderer();
             overflowCell.setParent(this);
             overflowCell.deleteProperty(Property.HEIGHT);
             overflowCell.deleteProperty(Property.MIN_HEIGHT);

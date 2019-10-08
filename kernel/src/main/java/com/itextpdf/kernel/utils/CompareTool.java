@@ -1677,7 +1677,9 @@ public class CompareTool {
             String outBytesNeighbours = outString.substring(lOut, rOut).replaceAll(NEW_LINES, " ");
             stringDifference = MessageFormatUtil.format("First characters difference is encountered at index {0}.\nExpected: {1} ({2}).\nFound: {3} ({4}).\nTotal number of different characters: {5}",
                     Integer.valueOf(firstDifferenceOffset).toString(), cmpByte, cmpByteNeighbours, outByte, outBytesNeighbours, numberOfDifferentChars);
-        } else { // lengths are different
+        } else {
+            // lengths are different
+
             firstDifferenceOffset = minLength;
             stringDifference = MessageFormatUtil.format("All characters of the shorter string are the same as the first {0} characters of the longer one.", minLength);
         }
