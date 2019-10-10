@@ -1950,4 +1950,30 @@ public class PdfFontTest extends ExtendedITextTest {
             Assert.assertNull(pdfDoc.getDefaultFont().getPdfObject().getIndirectReference());
         }
     }
+
+    @Test
+    //TODO DEVSIX-3348
+    public void mSungLightFontRanges() throws IOException, InterruptedException {
+        String filename = destinationFolder + "mSungLightFontRanges.pdf";
+        String cmpFilename = sourceFolder + "cmp_mSungLightFontRanges.pdf";
+
+        PdfWriter writer = new PdfWriter(filename);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        PdfFont mSungFont = PdfFontFactory.createFont("MSung-Light", "UniCNS-UCS2-H");
+
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(mSungFont, 40)
+                .showText("\u98db \u6708 \u9577")
+                .endText()
+                .restoreState();
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder));
+    }
 }
