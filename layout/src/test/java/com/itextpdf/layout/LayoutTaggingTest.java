@@ -58,16 +58,19 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.IBlockElement;
@@ -1010,6 +1013,32 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         document.close();
 
         compareResult("notAsciiCharTest.pdf", "cmp_notAsciiCharTest.pdf");
+    }
+
+    @Test
+    //TODO update cmp-file after DEVSIX-3351 fixed
+    public void checkParentTreeIfFormXObjectTaggedTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "checkParentTreeIfFormXObjectTaggedTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_checkParentTreeIfFormXObjectTaggedTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        pdfDoc.setTagged();
+
+        PdfPage page1 = pdfDoc.addNewPage();
+
+        Text txt = new Text("Text from XObject");
+
+        PdfFormXObject template = new PdfFormXObject(new Rectangle(150, 150));
+        Canvas canvas = new Canvas(template, pdfDoc);
+        canvas.enableAutoTagging(page1);
+        canvas.add(new Paragraph(txt));
+
+        PdfCanvas canvas1 = new PdfCanvas(page1);
+        canvas1.addXObject(template, 10, 10);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpPdf, destinationFolder, "diff"));
     }
 
     @Test
