@@ -43,6 +43,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
@@ -51,17 +52,23 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.PdfMcrDictionary;
 import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.CompareTool.CompareResult;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
 public class ParentTreeTest extends ExtendedITextTest {
@@ -104,6 +111,19 @@ public class ParentTreeTest extends ExtendedITextTest {
         assertTrue(checkParentTree(outFile, cmpFile));
     }
 
+    @Ignore("works in non-deterministic way because of the bug in iText code, DEVSIX-3322")
+    @Test
+    //TODO update cmp-file after DEVSIX-3322 fixed
+    public void stampingFormXobjectInnerContentTaggedTest() throws IOException, InterruptedException {
+        String pdf = sourceFolder + "alreadyTaggedFormXObjectInnerContent.pdf";
+        String outPdf = destinationFolder + "stampingFormXobjectInnerContentTaggedTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_stampingFormXobjectInnerContentTaggedTest.pdf";
+
+        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
+        taggedPdf.setTagged();
+        taggedPdf.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+    }
 
     @Test
     public void test02() throws IOException {
@@ -149,21 +169,21 @@ public class ParentTreeTest extends ExtendedITextTest {
         PdfPage firstPage = document.addNewPage();
 
         for (int i = 0; i < 51; i++) {
-        	PdfPage anotherPage = document.addNewPage();
-        	PdfCanvas canvas = new PdfCanvas(anotherPage);
-        	canvas.beginText();
-        	canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
-        	canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
-        	PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
-        	PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, anotherPage));
-        	canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(anotherPage, span1))));
-        	canvas.showText("Hello ");
-        	canvas.closeTag();
-        	canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrDictionary(anotherPage, span1))));
-        	canvas.showText("World");
-        	canvas.closeTag();
-        	canvas.endText();
-        	canvas.release();
+            PdfPage anotherPage = document.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(anotherPage);
+            canvas.beginText();
+            canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
+            canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+            PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
+            PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, anotherPage));
+            canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(anotherPage, span1))));
+            canvas.showText("Hello ");
+            canvas.closeTag();
+            canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrDictionary(anotherPage, span1))));
+            canvas.showText("World");
+            canvas.closeTag();
+            canvas.endText();
+            canvas.release();
         }
         document.close();
 
@@ -180,21 +200,21 @@ public class ParentTreeTest extends ExtendedITextTest {
         PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
 
         for (int i = 0; i < 51; i++) {
-        	PdfPage anotherPage = document.addNewPage();
-        	PdfCanvas canvas = new PdfCanvas(anotherPage);
-        	canvas.beginText();
-        	canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
-        	canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
-        	PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
-        	PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, anotherPage));
-        	canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(anotherPage, span1))));
-        	canvas.showText("Hello ");
-        	canvas.closeTag();
-        	canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrDictionary(anotherPage, span1))));
-        	canvas.showText("World");
-        	canvas.closeTag();
-        	canvas.endText();
-        	canvas.release();
+            PdfPage anotherPage = document.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(anotherPage);
+            canvas.beginText();
+            canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
+            canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+            PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
+            PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, anotherPage));
+            canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(anotherPage, span1))));
+            canvas.showText("Hello ");
+            canvas.closeTag();
+            canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrDictionary(anotherPage, span1))));
+            canvas.showText("World");
+            canvas.closeTag();
+            canvas.endText();
+            canvas.release();
         }
         document.close();
 
@@ -210,43 +230,43 @@ public class ParentTreeTest extends ExtendedITextTest {
 
         PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
 
-    	PdfPage page1 = document.addNewPage();
-    	PdfCanvas canvas = new PdfCanvas(page1);
-    	canvas.beginText();
-    	canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
-    	canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
-    	PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
-    	PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page1));
+        PdfPage page1 = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1);
+        canvas.beginText();
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 24);
+        canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+        PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
+        PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page1));
 
-    	canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(page1, span1))));
-    	canvas.showText("Hello ");
-    	canvas.closeTag();
-    	canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrDictionary(page1, span1))));
-    	canvas.showText("World");
-    	canvas.closeTag();
-    	canvas.endText();
-    	canvas.release();
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(page1, span1))));
+        canvas.showText("Hello ");
+        canvas.closeTag();
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrDictionary(page1, span1))));
+        canvas.showText("World");
+        canvas.closeTag();
+        canvas.endText();
+        canvas.release();
 
-    	PdfPage page2 = document.addNewPage();
-    	canvas = new PdfCanvas(page2);
-    	canvas.beginText();
-    	canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 24);
-    	canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
-    	paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
-    	span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page2));
-    	canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(page2, span1))));
-    	canvas.showText("Hello ");
-    	canvas.closeTag();
-    	PdfStructElem span2 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page2));
-    	canvas.openTag(new CanvasTag(span2.addKid(new PdfMcrNumber(page2, span2))));
-    	canvas.showText("World");
-    	canvas.closeTag();
-    	canvas.endText();
-    	canvas.release();
+        PdfPage page2 = document.addNewPage();
+        canvas = new PdfCanvas(page2);
+        canvas.beginText();
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 24);
+        canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+        paragraph = doc.addKid(new PdfStructElem(document, PdfName.P));
+        span1 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page2));
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(page2, span1))));
+        canvas.showText("Hello ");
+        canvas.closeTag();
+        PdfStructElem span2 = paragraph.addKid(new PdfStructElem(document, PdfName.Span, page2));
+        canvas.openTag(new CanvasTag(span2.addKid(new PdfMcrNumber(page2, span2))));
+        canvas.showText("World");
+        canvas.closeTag();
+        canvas.endText();
+        canvas.release();
 
-    	document.close();
+        document.close();
 
-    	assertTrue(checkParentTree(outFile, cmpFile));
+        assertTrue(checkParentTree(outFile, cmpFile));
     }
 
     @Test
@@ -283,14 +303,14 @@ public class ParentTreeTest extends ExtendedITextTest {
     }
 
     private boolean checkParentTree(String outFileName, String cmpFileName) throws IOException {
-    	PdfReader outReader = new PdfReader(outFileName);
-    	PdfDocument outDocument = new PdfDocument(outReader);
-    	PdfReader cmpReader = new PdfReader(cmpFileName);
-    	PdfDocument cmpDocument = new PdfDocument(cmpReader);
-    	CompareResult result = new CompareTool().compareByCatalog(outDocument, cmpDocument);
-    	if (!result.isOk()) {
+        PdfReader outReader = new PdfReader(outFileName);
+        PdfDocument outDocument = new PdfDocument(outReader);
+        PdfReader cmpReader = new PdfReader(cmpFileName);
+        PdfDocument cmpDocument = new PdfDocument(cmpReader);
+        CompareResult result = new CompareTool().compareByCatalog(outDocument, cmpDocument);
+        if (!result.isOk()) {
             System.out.println(result.getReport());
         }
-    	return result.isOk();
+        return result.isOk();
     }
 }
