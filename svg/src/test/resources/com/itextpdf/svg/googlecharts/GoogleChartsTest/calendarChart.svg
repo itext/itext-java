@@ -80,9 +80,9 @@
         </text>
         <text text-anchor="middle" x="55" y="304.5" font-size="10" stroke="none" stroke-width="0" fill="#888888">S
         </text>
-        <path d="M80,53L64,53L64,165L896,165L896,85L912,85L912,53L80,53Z" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+        <path d="M80,53L64,53L64,165L896,165L896,85L912,85L912,53L80,53Z" stroke="none" stroke-width="0" fill="url(#_ABSTRACT_RENDERER_ID_0)">
         </path>
-        <path d="M80,229L64,229L64,309L896,309L896,245L912,245L912,197L80,197Z" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+        <path d="M80,229L64,229L64,309L896,309L896,245L912,245L912,197L80,197Z" stroke="none" stroke-width="0" fill="url(#_ABSTRACT_RENDERER_ID_0)">
         </path>
     </g>
     <g>
@@ -1550,7 +1550,7 @@
         </rect>
     </g>
     <g>
-        <path d="M762,16L912,16L912,31L762,31Z" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_1)">
+        <path d="M762,16L912,16L912,31L762,31Z" stroke="none" stroke-width="0" fill="url(#_ABSTRACT_RENDERER_ID_1)">
         </path>
         <path d="M762,16L912,16L912,31L762,31Z" stroke="#eeeeee" stroke-width="1" fill-opacity="1" fill="none">
         </path>
