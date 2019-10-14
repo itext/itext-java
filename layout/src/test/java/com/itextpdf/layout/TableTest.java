@@ -82,6 +82,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -2881,6 +2882,36 @@ public class TableTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @Ignore("Ignored because the test enters an infinite loop when closing a document. Remove ignore after fixing DEVSIX-3356")
+    // TODO remove ignore after fixing DEVSIX-3356
+    public void infiniteLoopOnUnfitCellAndBigRowspanTest() throws IOException {
+        String testName = "infiniteLoopOnUnfitCellAndBigRowspanTest.pdf";
+        String outFileName = destinationFolder + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A4.rotate());
+
+        Table table = new Table(38);
+        table.useAllAvailableWidth();
+        table.setFixedLayout();
+
+        Cell cellNum1 = new Cell(1, 1);
+        table.addCell(cellNum1);
+
+        Cell cellNum2 = new Cell(2, 2);
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itext.png"));
+        cellNum2.add(img);
+        table.addCell(cellNum2);
+
+        Cell cellNum3 = new Cell(2, 36);
+        cellNum3.add(new Paragraph("text"));
+        table.addCell(cellNum3);
+
+        doc.add(table);
+        doc.close();
     }
 
     private static class RotatedDocumentRenderer extends DocumentRenderer {
