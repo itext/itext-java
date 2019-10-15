@@ -14,7 +14,7 @@ public class CssFontFaceRuleTest extends ExtendedITextTest {
 
     @Test
     public void verifyThatToStringProducesValidCss() {
-        CssFontFaceRule fontFaceRule = new CssFontFaceRule("");
+        CssFontFaceRule fontFaceRule = new CssFontFaceRule();
         List<CssDeclaration> declarations = new ArrayList<>();
         declarations.add(new CssDeclaration(CommonCssConstants.FONT_FAMILY, "test-font-family"));
         declarations.add(new CssDeclaration(CommonCssConstants.FONT_WEIGHT, CommonCssConstants.BOLD));
