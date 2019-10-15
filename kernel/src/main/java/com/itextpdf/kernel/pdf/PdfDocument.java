@@ -1466,12 +1466,12 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Adds file attachment at document level.
      *
-     * @param description the file description
-     * @param fs          {@link PdfFileSpec} object.
+     * @param key name of the destination.
+     * @param fs  {@link PdfFileSpec} object.
      */
-    public void addFileAttachment(String description, PdfFileSpec fs) {
+    public void addFileAttachment(String key, PdfFileSpec fs) {
         checkClosingStatus();
-        catalog.addNameToNameTree(description, fs.getPdfObject(), PdfName.EmbeddedFiles);
+        catalog.addNameToNameTree(key, fs.getPdfObject(), PdfName.EmbeddedFiles);
     }
 
     /**
