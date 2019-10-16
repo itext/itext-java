@@ -948,115 +948,118 @@ public class PdfReader implements Closeable, Serializable {
     }
 
     protected boolean readXrefStream(long ptr) throws IOException {
-        tokens.seek(ptr);
-        if (!tokens.nextToken()) {
-            return false;
-        }
-        if (tokens.getTokenType() != PdfTokenizer.TokenType.Number) {
-            return false;
-        }
-        if (!tokens.nextToken() || tokens.getTokenType() != PdfTokenizer.TokenType.Number) {
-            return false;
-        }
-        if (!tokens.nextToken() || !tokens.tokenValueEqualsTo(PdfTokenizer.Obj)) {
-            return false;
-        }
-        PdfXrefTable xref = pdfDocument.getXref();
-        PdfObject object = readObject(false);
-        PdfStream xrefStream;
-        if (object.getType() == PdfObject.STREAM) {
-            xrefStream = (PdfStream) object;
-            if (!PdfName.XRef.equals(xrefStream.get(PdfName.Type))) {
+        while (ptr != -1) {
+            tokens.seek(ptr);
+            if (!tokens.nextToken()) {
                 return false;
             }
-        } else {
-            return false;
-        }
-        if (trailer == null) {
-            trailer = new PdfDictionary();
-            trailer.putAll(xrefStream);
-            trailer.remove(PdfName.DecodeParms);
-            trailer.remove(PdfName.Filter);
-            trailer.remove(PdfName.Prev);
-            trailer.remove(PdfName.Length);
-        }
-
-        int size = ((PdfNumber) xrefStream.get(PdfName.Size)).intValue();
-        PdfArray index;
-        PdfObject obj = xrefStream.get(PdfName.Index);
-        if (obj == null) {
-            index = new PdfArray();
-            index.add(new PdfNumber(0));
-            index.add(new PdfNumber(size));
-        } else {
-            index = (PdfArray) obj;
-        }
-        PdfArray w = xrefStream.getAsArray(PdfName.W);
-        long prev = -1;
-        obj = xrefStream.get(PdfName.Prev);
-        if (obj != null)
-            prev = ((PdfNumber) obj).longValue();
-        xref.setCapacity(size);
-        byte[] b = readStreamBytes(xrefStream, true);
-        int bptr = 0;
-        int[] wc = new int[3];
-        for (int k = 0; k < 3; ++k) {
-            wc[k] = w.getAsNumber(k).intValue();
-        }
-        for (int idx = 0; idx < index.size(); idx += 2) {
-            int start = index.getAsNumber(idx).intValue();
-            int length = index.getAsNumber(idx + 1).intValue();
-            xref.setCapacity(start + length);
-            while (length-- > 0) {
-                int type = 1;
-                if (wc[0] > 0) {
-                    type = 0;
-                    for (int k = 0; k < wc[0]; ++k) {
-                        type = (type << 8) + (b[bptr++] & 0xff);
-                    }
-                }
-                long field2 = 0;
-                for (int k = 0; k < wc[1]; ++k) {
-                    field2 = (field2 << 8) + (b[bptr++] & 0xff);
-                }
-                int field3 = 0;
-                for (int k = 0; k < wc[2]; ++k) {
-                    field3 = (field3 << 8) + (b[bptr++] & 0xff);
-                }
-                int base = start;
-                PdfIndirectReference newReference;
-                switch (type) {
-                    case 0:
-                        newReference = (PdfIndirectReference) new PdfIndirectReference(pdfDocument, base, field3, field2).setState(PdfObject.FREE);
-                        break;
-                    case 1:
-                        newReference = new PdfIndirectReference(pdfDocument, base, field3, field2);
-                        break;
-                    case 2:
-                        newReference = new PdfIndirectReference(pdfDocument, base, 0, field3);
-                        newReference.setObjStreamNumber((int) field2);
-                        break;
-                    default:
-                        throw new PdfException(PdfException.InvalidXrefStream);
-                }
-
-                PdfIndirectReference reference = xref.get(base);
-                boolean refReadingState = reference != null && reference.checkState(PdfObject.READING) && reference.getGenNumber() == newReference.getGenNumber();
-                // for references that are added by xref table itself (like 0 entry)
-                boolean refFirstEncountered = reference == null
-                        || !refReadingState && reference.getDocument() == null;
-
-                if (refFirstEncountered) {
-                    xref.add(newReference);
-                } else if (refReadingState) {
-                    reference.setOffset(newReference.getOffset());
-                    reference.setObjStreamNumber(newReference.getObjStreamNumber());
-                    reference.clearState(PdfObject.READING);
-                }
-                ++start;
+            if (tokens.getTokenType() != PdfTokenizer.TokenType.Number) {
+                return false;
             }
+            if (!tokens.nextToken() || tokens.getTokenType() != PdfTokenizer.TokenType.Number) {
+                return false;
+            }
+            if (!tokens.nextToken() || !tokens.tokenValueEqualsTo(PdfTokenizer.Obj)) {
+                return false;
+            }
+            PdfXrefTable xref = pdfDocument.getXref();
+            PdfObject object = readObject(false);
+            PdfStream xrefStream;
+            if (object.getType() == PdfObject.STREAM) {
+                xrefStream = (PdfStream) object;
+                if (!PdfName.XRef.equals(xrefStream.get(PdfName.Type))) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+            if (trailer == null) {
+                trailer = new PdfDictionary();
+                trailer.putAll(xrefStream);
+                trailer.remove(PdfName.DecodeParms);
+                trailer.remove(PdfName.Filter);
+                trailer.remove(PdfName.Prev);
+                trailer.remove(PdfName.Length);
+            }
+
+            int size = ((PdfNumber) xrefStream.get(PdfName.Size)).intValue();
+            PdfArray index;
+            PdfObject obj = xrefStream.get(PdfName.Index);
+            if (obj == null) {
+                index = new PdfArray();
+                index.add(new PdfNumber(0));
+                index.add(new PdfNumber(size));
+            } else {
+                index = (PdfArray) obj;
+            }
+            PdfArray w = xrefStream.getAsArray(PdfName.W);
+            long prev = -1;
+            obj = xrefStream.get(PdfName.Prev);
+            if (obj != null)
+                prev = ((PdfNumber) obj).longValue();
+            xref.setCapacity(size);
+            byte[] b = readStreamBytes(xrefStream, true);
+            int bptr = 0;
+            int[] wc = new int[3];
+            for (int k = 0; k < 3; ++k) {
+                wc[k] = w.getAsNumber(k).intValue();
+            }
+            for (int idx = 0; idx < index.size(); idx += 2) {
+                int start = index.getAsNumber(idx).intValue();
+                int length = index.getAsNumber(idx + 1).intValue();
+                xref.setCapacity(start + length);
+                while (length-- > 0) {
+                    int type = 1;
+                    if (wc[0] > 0) {
+                        type = 0;
+                        for (int k = 0; k < wc[0]; ++k) {
+                            type = (type << 8) + (b[bptr++] & 0xff);
+                        }
+                    }
+                    long field2 = 0;
+                    for (int k = 0; k < wc[1]; ++k) {
+                        field2 = (field2 << 8) + (b[bptr++] & 0xff);
+                    }
+                    int field3 = 0;
+                    for (int k = 0; k < wc[2]; ++k) {
+                        field3 = (field3 << 8) + (b[bptr++] & 0xff);
+                    }
+                    int base = start;
+                    PdfIndirectReference newReference;
+                    switch (type) {
+                        case 0:
+                            newReference = (PdfIndirectReference) new PdfIndirectReference(pdfDocument, base, field3, field2).setState(PdfObject.FREE);
+                            break;
+                        case 1:
+                            newReference = new PdfIndirectReference(pdfDocument, base, field3, field2);
+                            break;
+                        case 2:
+                            newReference = new PdfIndirectReference(pdfDocument, base, 0, field3);
+                            newReference.setObjStreamNumber((int) field2);
+                            break;
+                        default:
+                            throw new PdfException(PdfException.InvalidXrefStream);
+                    }
+
+                    PdfIndirectReference reference = xref.get(base);
+                    boolean refReadingState = reference != null && reference.checkState(PdfObject.READING) && reference.getGenNumber() == newReference.getGenNumber();
+                    // for references that are added by xref table itself (like 0 entry)
+                    boolean refFirstEncountered = reference == null
+                            || !refReadingState && reference.getDocument() == null;
+
+                    if (refFirstEncountered) {
+                        xref.add(newReference);
+                    } else if (refReadingState) {
+                        reference.setOffset(newReference.getOffset());
+                        reference.setObjStreamNumber(newReference.getObjStreamNumber());
+                        reference.clearState(PdfObject.READING);
+                    }
+                    ++start;
+                }
+            }
+            ptr = prev;
         }
-        return prev == -1 || readXrefStream(prev);
+        return true;
     }
 
     protected void fixXref() throws IOException {
