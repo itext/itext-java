@@ -43,6 +43,7 @@
 package com.itextpdf.styledxmlparser.jsoup.select;
 
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import com.itextpdf.io.util.MessageFormatUtil;
@@ -57,7 +58,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class CssTest {
+public class CssTest extends ExtendedITextTest {
 
 	private Document html = null;
 	private static String htmlString;

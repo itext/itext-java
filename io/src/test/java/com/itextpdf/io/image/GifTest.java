@@ -43,6 +43,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,7 +53,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 @Category(UnitTest.class)
-public class GifTest {
+public class GifTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/io/image/";
 
     @Test

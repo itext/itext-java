@@ -13,6 +13,8 @@ import static org.junit.Assert.fail;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.TreeSet;
+
+import com.itextpdf.test.ExtendedITextTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -21,7 +23,7 @@ import org.junit.runners.JUnit4;
  * Tests for Enum-like classes.
  */
 @RunWith(JUnit4.class)
-public class EnumTest {
+public class EnumTest extends ExtendedITextTest {
 
   private void checkEnumClass(Class<?> clazz) {
     TreeSet<Integer> values = new TreeSet<Integer>();

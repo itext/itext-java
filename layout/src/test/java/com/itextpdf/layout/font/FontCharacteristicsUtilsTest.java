@@ -42,10 +42,11 @@
  */
 package com.itextpdf.layout.font;
 
+import com.itextpdf.test.ExtendedITextTest;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class FontCharacteristicsUtilsTest {
+public class FontCharacteristicsUtilsTest extends ExtendedITextTest {
     @Test
     public void testNormalizingThinFontWeight() {
         Assert.assertEquals(100, FontCharacteristicsUtils.normalizeFontWeight((short) -10000));

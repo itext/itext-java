@@ -42,6 +42,7 @@
  */
 package com.itextpdf.io.font.otf;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -50,7 +51,7 @@ import org.junit.experimental.categories.Category;
 import java.util.Arrays;
 
 @Category(UnitTest.class)
-public class ActualTextIteratorTest {
+public class ActualTextIteratorTest extends ExtendedITextTest {
 
     @Test
     public void testActualTestParts() {

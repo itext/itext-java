@@ -42,6 +42,7 @@
  */
 package com.itextpdf.kernel.geom;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
@@ -49,7 +50,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class AffineTransformTest {
+public class AffineTransformTest extends ExtendedITextTest {
 
     @Test
     public void selfTest() {

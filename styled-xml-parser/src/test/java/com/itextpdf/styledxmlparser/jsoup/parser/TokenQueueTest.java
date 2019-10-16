@@ -42,6 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.parser;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Test;
@@ -53,7 +54,7 @@ import static org.junit.Assert.*;
  * Token queue tests.
  */
 @Category(UnitTest.class)
-public class TokenQueueTest {
+public class TokenQueueTest extends ExtendedITextTest {
     @Test public void chompBalanced() {
         TokenQueue tq = new TokenQueue(":contains(one (two) three) four");
         String pre = tq.consumeTo("(");

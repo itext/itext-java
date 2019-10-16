@@ -43,6 +43,7 @@
 package com.itextpdf.forms.xfdf;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -340,7 +341,7 @@ public class XfdfObjectFactory {
                 case XfdfConstants.FRINGE:
                     annotObject.addAttribute(new AttributeObject(attributeName, attributeNode.getNodeValue()));
                     break;
-                default: logger.warn(XfdfConstants.UNSUPPORTED_ANNOTATION_ATTRIBUTE);
+                default: logger.warn(LogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE);
                     break;
             }
         }

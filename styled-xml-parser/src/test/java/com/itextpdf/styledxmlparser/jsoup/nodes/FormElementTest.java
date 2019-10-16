@@ -43,6 +43,7 @@
 package com.itextpdf.styledxmlparser.jsoup.nodes;
 
 import com.itextpdf.styledxmlparser.jsoup.helper.KeyVal;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
@@ -60,7 +61,7 @@ import static org.junit.Assert.*;
  * @author Jonathan Hedley
  */
 @Category(UnitTest.class)
-public class FormElementTest {
+public class FormElementTest extends ExtendedITextTest {
     @Test public void hasAssociatedControls() {
         //"button", "fieldset", "input", "keygen", "object", "output", "select", "textarea"
         String html = "<form id=1><button id=1><fieldset id=2 /><input id=3><keygen id=4><object id=5><output id=6>" +

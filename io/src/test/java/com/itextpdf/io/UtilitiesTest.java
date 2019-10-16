@@ -44,13 +44,14 @@ package com.itextpdf.io;
 
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.ResourceUtil;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class UtilitiesTest {
+public class UtilitiesTest extends ExtendedITextTest {
     @Test
     public void testShortener() {
         byte[] src = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};

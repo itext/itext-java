@@ -101,7 +101,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
-            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR)
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
     })
     public void defaultMemoryHandlerTest() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "timing.pdf"), new PdfWriter(new ByteArrayOutputStream()));
@@ -127,7 +127,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
-            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR)
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
     })
     public void customMemoryHandlerSingleTest() throws IOException {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
@@ -166,7 +166,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
-            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR)
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
     })
     public void oneFilterCustomMemoryHandlerSingleTest() throws IOException {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
@@ -210,7 +210,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
-            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR)
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
     })
     public void customMemoryHandlerSumTest() throws IOException {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
@@ -237,7 +237,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
-            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR)
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
     })
     public void pageSumTest() throws IOException {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
@@ -262,7 +262,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
-            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR)
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
     })
     public void pageAsSingleStreamTest() throws IOException {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();

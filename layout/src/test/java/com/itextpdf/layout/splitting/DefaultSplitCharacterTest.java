@@ -44,6 +44,7 @@ package com.itextpdf.layout.splitting;
 
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +54,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class DefaultSplitCharacterTest {
+public class DefaultSplitCharacterTest extends ExtendedITextTest {
     static List<Glyph> glyphs = new ArrayList<>();
 
     @BeforeClass

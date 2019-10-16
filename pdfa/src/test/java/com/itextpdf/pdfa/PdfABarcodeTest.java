@@ -59,6 +59,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.BeforeClass;
@@ -72,7 +73,7 @@ import java.io.InputStream;
 import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
-public class PdfABarcodeTest extends ITextTest {
+public class PdfABarcodeTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = sourceFolder + "cmp/PdfABarcodeTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfABarcodeTest/";

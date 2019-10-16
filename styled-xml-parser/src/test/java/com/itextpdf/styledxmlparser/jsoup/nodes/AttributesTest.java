@@ -42,6 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.nodes;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import static org.junit.Assert.*;
@@ -55,7 +56,7 @@ import org.junit.experimental.categories.Category;
  * @author Jonathan Hedley
  */
 @Category(UnitTest.class)
-public class AttributesTest {
+public class AttributesTest extends ExtendedITextTest {
     @Test public void html() {
         Attributes a = new Attributes();
         a.put("Tot", "a&p");

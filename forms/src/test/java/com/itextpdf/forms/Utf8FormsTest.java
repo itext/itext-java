@@ -53,6 +53,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Before;
@@ -64,7 +65,7 @@ import java.util.Map;
 import static com.itextpdf.test.ITextTest.createDestinationFolder;
 
 @Category(UnitTest.class)
-public class Utf8FormsTest {
+public class Utf8FormsTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/Utf8FormsTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/Utf8FormsTest/";

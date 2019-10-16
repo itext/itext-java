@@ -42,6 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.nodes;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Test;
@@ -53,7 +54,7 @@ import org.junit.experimental.categories.Category;
  * @author Jonathan Hedley, http://jonathanhedley.com/
  */
 @Category(UnitTest.class)
-public class DocumentTypeExceptionTest {
+public class DocumentTypeExceptionTest extends ExtendedITextTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void constructorValidationThrowsExceptionOnNulls() {

@@ -42,6 +42,10 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -53,7 +57,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 @Category(IntegrationTest.class)
-public class PdfObjectTest {
+public class PdfObjectTest extends ExtendedITextTest {
 
     @Test
     public void indirectsChain1() {
@@ -195,7 +199,12 @@ public class PdfObjectTest {
     }
 
     @Test
-    public void pdtIndirectReferenceLateInitializing2() throws IOException {
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT),
+            @LogMessage(messageTemplate = LogMessageConstant.INDIRECT_REFERENCE_USED_IN_FLUSHED_OBJECT_MADE_FREE),
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
+    })
+        public void pdtIndirectReferenceLateInitializing2() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         PdfDocument document = new PdfDocument(new PdfWriter(baos));
@@ -225,6 +234,10 @@ public class PdfObjectTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT),
+            @LogMessage(messageTemplate = LogMessageConstant.INDIRECT_REFERENCE_USED_IN_FLUSHED_OBJECT_MADE_FREE)
+    })
     public void pdtIndirectReferenceLateInitializing3() {
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         document.addNewPage();

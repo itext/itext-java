@@ -44,13 +44,14 @@ package com.itextpdf.kernel.pdf;
 
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class MemoryLimitsAwareHandlerTest {
+public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
 
     @Test
     public void defaultMemoryHandler() {

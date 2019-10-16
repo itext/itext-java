@@ -42,10 +42,11 @@
  */
 package com.itextpdf.layout.font;
 
+import com.itextpdf.test.ExtendedITextTest;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class FontCharacteristicsTest {
+public class FontCharacteristicsTest extends ExtendedITextTest {
     @Test
     public void testDefaultFontCharacteristics() {
         FontCharacteristics fontCharacteristics = new FontCharacteristics();

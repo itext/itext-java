@@ -9,6 +9,8 @@ package com.itextpdf.io.codec.brotli.dec;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
+
+import com.itextpdf.test.ExtendedITextTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -17,7 +19,7 @@ import org.junit.runners.JUnit4;
  * Tests for {@link Dictionary}.
  */
 @RunWith(JUnit4.class)
-public class DictionaryTest {
+public class DictionaryTest extends ExtendedITextTest {
 
   private static long crc64(ByteBuffer data) {
     long crc = -1;

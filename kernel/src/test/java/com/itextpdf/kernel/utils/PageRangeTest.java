@@ -42,6 +42,7 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Arrays;
@@ -52,7 +53,7 @@ import org.junit.experimental.categories.Category;
 import junit.framework.Assert;
 
 @Category(UnitTest.class)
-public class PageRangeTest {
+public class PageRangeTest extends ExtendedITextTest {
 
     @Test
     public void addSingle() {

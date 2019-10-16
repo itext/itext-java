@@ -50,6 +50,7 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
 import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
 import com.itextpdf.styledxmlparser.jsoup.nodes.XmlDeclaration;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -70,7 +71,7 @@ import static org.junit.Assert.assertEquals;
  * @author Jonathan Hedley
  */
 @Category(UnitTest.class)
-public class XmlTreeBuilderTest {
+public class XmlTreeBuilderTest extends ExtendedITextTest {
     @Test
     public void testSimpleXmlParse() {
         String xml = "<doc id=2 href='/bar'>Foo <br /><link>One</link><link>Two</link></doc>";

@@ -774,7 +774,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, count = 1))
     public void correctSimpleDoc1() throws IOException {
         String filename = sourceFolder + "correctSimpleDoc1.pdf";
 
@@ -809,7 +809,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, count = 1))
     public void correctSimpleDoc3() throws IOException {
         String filename = sourceFolder + "correctSimpleDoc3.pdf";
 
@@ -828,7 +828,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR),
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT),
             @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
     })
     public void correctSimpleDoc4() throws IOException {
@@ -847,7 +847,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
     public void fixPdfTest01() throws IOException {
         String filename = sourceFolder + "OnlyTrailer.pdf";
 
@@ -927,7 +927,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
     public void fixPdfTest05() throws IOException {
         String filename = sourceFolder + "CompressionWrongShift.pdf";
 
@@ -981,7 +981,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
     public void fixPdfTest08() throws IOException {
         String filename = sourceFolder + "XRefSectionWithFreeReferences2.pdf";
 
@@ -1006,7 +1006,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
     public void fixPdfTest09() throws IOException {
         String filename = sourceFolder + "XRefSectionWithFreeReferences3.pdf";
 
@@ -1058,7 +1058,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
     public void fixPdfTest11() throws IOException {
         String filename = sourceFolder + "XRefSectionWithoutSize.pdf";
 
@@ -1079,7 +1079,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
     public void fixPdfTest12() throws IOException {
         String filename = sourceFolder + "XRefWithBreaks.pdf";
 
@@ -1168,7 +1168,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
     public void fixPdfTest15() throws IOException {
         String filename = sourceFolder + "XRefWithInvalidGenerations3.pdf";
 
@@ -1211,7 +1211,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
     public void fixPdfTest17() throws IOException {
         String filename = sourceFolder + "XrefWithNullOffsets.pdf";
 
@@ -1232,7 +1232,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
     public void fixPdfTest18() throws IOException {
         String filename = sourceFolder + "noXrefAndTrailerWithInfo.pdf";
 
@@ -1345,7 +1345,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
     public void appendModeWith10PagesFix1() throws IOException {
         String filename = sourceFolder + "10PagesDocumentAppendedFix1.pdf";
 
@@ -1371,7 +1371,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
     public void appendModeWith10PagesFix2() throws IOException {
         String filename = sourceFolder + "10PagesDocumentAppendedFix2.pdf";
 
@@ -1649,7 +1649,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE, count =1),
-            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR),
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT),
             @LogMessage(messageTemplate = LogMessageConstant.ENCOUNTERED_INVALID_MCR)})
     public void wrongTagStructureFlushingTest() throws IOException {
         //wrong /Pg number
@@ -1664,7 +1664,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     @Test
     @Ignore("DEVSIX-2649")
     @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE, count =1),
-            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR)})
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)})
     public void wrongStructureFlushingTest() throws IOException {
         //TODO: update after DEVSIX-2649 fix
         //wrong /key number

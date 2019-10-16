@@ -44,12 +44,14 @@ package com.itextpdf.forms;
 
 import com.itextpdf.forms.xfdf.XfdfObject;
 import com.itextpdf.forms.xfdf.XfdfObjectFactory;
-import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.annot.PdfSquareAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -63,10 +65,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 
-import static com.itextpdf.test.ITextTest.createDestinationFolder;
-
 @Category(IntegrationTest.class)
-public class XfdfReaderTest {
+public class XfdfReaderTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/XfdfReaderTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/XfdfReaderTest/";
@@ -78,6 +78,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfNoFields() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfNoFields.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfNoFields.pdf")));
@@ -91,6 +92,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_NO_F_OBJECT_TO_COMPARE))
     public void xfdfNoFieldsNoFAttributes() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfNoFieldsNoFAttributes.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfNoFieldsNoFAttributes.pdf")));
@@ -104,6 +106,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfNoFieldsNoIdsAttributes() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfNoFieldsNoIdsAttributes.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfNoFieldsNoIdsAttributes.pdf")));
@@ -117,6 +120,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfWithFieldsWithValue() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfWithFieldsWithValue.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfWithFieldsWithValue.pdf")));
@@ -130,6 +134,10 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT),
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_NO_SUCH_FIELD_IN_PDF_DOCUMENT)
+    })
     //TODO DEVSIX-3215 Support annots
     public void xfdfValueRichText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfValueRichText.pdf")),
@@ -144,19 +152,27 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT),
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_NO_SUCH_FIELD_IN_PDF_DOCUMENT, count = 3)
+    })
     public void xfdfHierarchyFieldsTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "hierarchy_fields.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "hierarchy_fields.pdf")));
         String xfdfFilename = sourceFolder + "hierarchy_fields.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(new FileInputStream(xfdfFilename));
-        xfdfObject.mergeToPdf(pdfDocument,sourceFolder + "hierarchy_fields.pdf" );
+        xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "hierarchy_fields.pdf");
         pdfDocument.close();
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "hierarchy_fields.pdf",
                 sourceFolder + "cmp_hierarchy_fields.pdf", destinationFolder, "diff_"));
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT),
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_NO_SUCH_FIELD_IN_PDF_DOCUMENT, count = 3)
+    })
     public void xfdfWithFieldsWithValueParentAndChild() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfWithFieldsWithValueParentAndChild.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfWithFieldsWithValueParentAndChild.pdf")));
@@ -170,6 +186,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE)})
     public void xfdfAnnotationHighlightedText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationHighlightedText.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationHighlightedText.pdf")));
@@ -183,6 +200,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationUnderlineText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationUnderlineText.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationUnderlineText.pdf")));
@@ -196,6 +214,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationUnderlineTextRectWithTwoCoords() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationUnderlineTextRectWithTwoCoords.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationUnderlineTextRectWithTwoCoords.pdf")));
@@ -209,6 +228,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationUnderlinePopupAllFlags() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationUnderlinePopupAllFlags.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationUnderlinePopupAllFlags.pdf")));
@@ -222,6 +242,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationText.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationText.pdf")));
@@ -235,6 +256,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationStrikeout() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationStrikeout.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationStrikeout.pdf")));
@@ -248,6 +270,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationSquigglyText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationSquigglyText.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationSquigglyText.pdf")));
@@ -261,6 +284,11 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT),
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE, count = 2),
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_ANNOTATION_IS_NOT_SUPPORTED)
+    })
     public void xfdfAnnotationLine() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationLine.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationLine.pdf")));
@@ -274,6 +302,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationCircle() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationCircle.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationCircle.pdf")));
@@ -287,6 +316,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationSquare() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationSquare.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationSquare.pdf")));
@@ -300,6 +330,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationCaret() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationCaret.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationCaret.pdf")));
@@ -313,19 +344,21 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationPolygon() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationPolygon.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationPolygon.pdf")));
         String xfdfFilename = sourceFolder + "xfdfAnnotationPolygon.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(new FileInputStream(xfdfFilename));
-        xfdfObject.mergeToPdf(pdfDocument,sourceFolder + "xfdfAnnotationPolygon.pdf");
+        xfdfObject.mergeToPdf(pdfDocument, sourceFolder + "xfdfAnnotationPolygon.pdf");
         pdfDocument.close();
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationPolygon.pdf",
                 sourceFolder + "cmp_xfdfAnnotationPolygon.pdf", destinationFolder, "diff_"));
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationPolyline() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationPolyline.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationPolyline.pdf")));
@@ -339,6 +372,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationStamp() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationStamp.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationStamp.pdf")));
@@ -352,6 +386,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationInk() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationInk.pdf")),
@@ -366,6 +401,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationFreeText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationFreeText.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationFreeText.pdf")));
@@ -379,6 +415,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationFileAttachment() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationFileAttachment.pdf")),
@@ -393,6 +430,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationSound() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationSound.pdf")),
@@ -407,6 +445,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationLink() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationLink.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationLink.pdf")));
@@ -420,6 +459,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationRedact() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationRedact.pdf")),
@@ -434,6 +474,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationProjection() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationProjection.pdf")),
@@ -448,6 +489,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationLinkAllParams() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationLinkAllParams.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationLinkAllParams.pdf")));
@@ -461,6 +503,10 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT),
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE)
+    })
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationReplaceText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationReplaceText.pdf")),
@@ -475,6 +521,11 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT),
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE, count = 5),
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_ANNOTATION_IS_NOT_SUPPORTED)
+    })
     public void xfdfAnnotationArrow() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationArrow.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationArrow.pdf")));
@@ -488,6 +539,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationCallout() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationCallout.pdf")),
@@ -502,6 +554,10 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT),
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE, count = 3)
+    })
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationCloud() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationCloud.pdf")),
@@ -516,6 +572,10 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT),
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE, count = 3)
+    })
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationCloudNested() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationCloudNested.pdf")),
@@ -530,6 +590,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationTextBoxAllParams() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationTextBoxAllParams.pdf")),
@@ -544,6 +605,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215 Support annots
     public void xfdfJavaScriptForms() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfJavaScriptForms.pdf")),
@@ -558,6 +620,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfFormsFieldParams() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfFormsFieldParams.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfFormsFieldParams.pdf")));
@@ -571,6 +634,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationAttrColor() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationAttrColor.pdf")),
@@ -585,6 +649,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationAttrFlagsOpacity() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationAttrFlagsOpacity.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationAttrFlagsOpacity.pdf")));
@@ -598,6 +663,10 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT),
+            @LogMessage(messageTemplate = LogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE, count = 4)
+    })
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationAttrTitle() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationAttrTitle.pdf")),
@@ -612,6 +681,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215 Support annots
     public void xfdfReferenceFor3DMeasurement() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfReferenceFor3DMeasurement.pdf")),
@@ -626,6 +696,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215 Support annots
     public void xfdfReferenceFor3DAngular() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfReferenceFor3DAngular.pdf")),
@@ -640,6 +711,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215 Support annots
     public void xfdfReferenceFor3DRadial() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfReferenceFor3DRadial.pdf")),
@@ -654,6 +726,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215
     public void xfdfSubelementContents() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfSubelementContents.pdf")),
@@ -668,6 +741,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215 Support annots
     public void xfdfSubelementOverlayAppearance() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfSubelementOverlayAppearance.pdf")),
@@ -682,6 +756,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215
     public void xfdfButton() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfButton.pdf")),
@@ -696,6 +771,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215
     public void xfdfCheckBox() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfCheckBox.pdf")),
@@ -710,6 +786,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215
     public void xfdfList() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfList.pdf")),
@@ -724,6 +801,7 @@ public class XfdfReaderTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     //TODO DEVSIX-3215 Support richtext
     public void xfdfDropDown() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfDropDown.pdf")),
@@ -737,6 +815,3 @@ public class XfdfReaderTest {
                 sourceFolder + "cmp_xfdfDropDown.pdf", destinationFolder, "diff_"));
     }
 }
-
-
-

@@ -43,13 +43,14 @@
 package com.itextpdf.kernel.pdf.numbering;
 
 import com.itextpdf.kernel.numbering.GreekAlphabetNumbering;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class GreekAlphabetNumberingTest {
+public class GreekAlphabetNumberingTest extends ExtendedITextTest {
 
     @Test
     public void testUpperCase() {

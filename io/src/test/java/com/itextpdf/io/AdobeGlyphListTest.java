@@ -43,13 +43,14 @@
 package com.itextpdf.io;
 
 import com.itextpdf.io.font.AdobeGlyphList;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class AdobeGlyphListTest {
+public class AdobeGlyphListTest extends ExtendedITextTest {
 
     @Test
     public void testGlyphListCount() {

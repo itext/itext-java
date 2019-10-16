@@ -42,6 +42,7 @@
  */
 package com.itextpdf.layout.font;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -52,7 +53,7 @@ import org.junit.rules.ExpectedException;
 import java.util.Random;
 
 @Category(UnitTest.class)
-public class RangeTest {
+public class RangeTest extends ExtendedITextTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();

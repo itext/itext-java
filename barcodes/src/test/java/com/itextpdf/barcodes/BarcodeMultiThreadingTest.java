@@ -42,13 +42,14 @@
  */
 package com.itextpdf.barcodes;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class BarcodeMultiThreadingTest {
+public class BarcodeMultiThreadingTest extends ExtendedITextTest {
 
     private static class DataMatrixThread extends Thread {
         @Override

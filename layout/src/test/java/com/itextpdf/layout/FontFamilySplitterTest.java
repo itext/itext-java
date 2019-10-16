@@ -44,6 +44,7 @@ package com.itextpdf.layout;
 
 
 import com.itextpdf.layout.font.FontFamilySplitter;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,7 +53,7 @@ import org.junit.experimental.categories.Category;
 import java.util.List;
 
 @Category(UnitTest.class)
-public class FontFamilySplitterTest {
+public class FontFamilySplitterTest extends ExtendedITextTest {
     @Test
     public void fontFamilySplitter() {
         String fontFamilies =

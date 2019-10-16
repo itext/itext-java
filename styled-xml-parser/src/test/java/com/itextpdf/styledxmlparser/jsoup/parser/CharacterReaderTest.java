@@ -42,6 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.parser;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Test;
@@ -55,7 +56,7 @@ import static org.junit.Assert.*;
  * @author Jonathan Hedley, jonathan@hedley.net
  */
 @Category(UnitTest.class)
-public class CharacterReaderTest {
+public class CharacterReaderTest extends ExtendedITextTest {
 
     @Test public void consume() {
         CharacterReader r = new CharacterReader("one");

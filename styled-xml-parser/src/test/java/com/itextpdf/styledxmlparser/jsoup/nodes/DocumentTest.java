@@ -44,6 +44,7 @@ package com.itextpdf.styledxmlparser.jsoup.nodes;
 
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.integration.ParseTest;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import com.itextpdf.styledxmlparser.jsoup.TextUtil;
@@ -69,7 +70,7 @@ import static org.junit.Assert.assertTrue;
 
  @author Jonathan Hedley, jonathan@hedley.net */
 @Category(UnitTest.class)
-public class DocumentTest {
+public class DocumentTest extends ExtendedITextTest {
     private static final String charsetUtf8 = "UTF-8";
     private static final String charsetIso8859 = "ISO-8859-1";
     

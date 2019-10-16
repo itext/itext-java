@@ -47,6 +47,7 @@ import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.select.Elements;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
@@ -70,7 +71,7 @@ import static org.junit.Assert.assertTrue;
  * @author Jonathan Hedley, jonathan@hedley.net
  */
 @Category(IntegrationTest.class)
-public class ParseTest {
+public class ParseTest extends ExtendedITextTest {
 
     @Test
     public void testSmhBizArticle() throws IOException {

@@ -46,6 +46,7 @@ import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.TextUtil;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.jsoup.select.Elements;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -66,7 +67,7 @@ import static org.junit.Assert.*;
  * @author Jonathan Hedley
  */
 @Category(UnitTest.class)
-public class ElementTest {
+public class ElementTest extends ExtendedITextTest {
     private String reference = "<div id=div1><p>Hello</p><p>Another <b>element</b></p><div id=div2><img src=foo.png></div></div>";
 
     @Test public void getElementsByTagName() {
