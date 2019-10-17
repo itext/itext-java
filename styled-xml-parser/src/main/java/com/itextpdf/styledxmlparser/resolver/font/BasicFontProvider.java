@@ -66,7 +66,18 @@ public class BasicFontProvider extends FontProvider {
      * @param registerSystemFonts      use true if you want to register the system fonts (can require quite some resources)
      */
     public BasicFontProvider(boolean registerStandardPdfFonts, boolean registerSystemFonts) {
-        super(DEFAULT_FONT_FAMILY);
+        this(registerStandardPdfFonts, registerSystemFonts, DEFAULT_FONT_FAMILY);
+    }
+
+    /**
+     * Creates a new {@link BasicFontProvider} instance.
+     *
+     * @param registerStandardPdfFonts use true if you want to register the standard Type 1 fonts (can't be embedded)
+     * @param registerSystemFonts      use true if you want to register the system fonts (can require quite some resources)
+     * @param defaultFontFamily        default font family
+     */
+    public BasicFontProvider(boolean registerStandardPdfFonts, boolean registerSystemFonts, String defaultFontFamily) {
+        super(defaultFontFamily);
         if (registerStandardPdfFonts) {
             addStandardPdfFonts();
         }
