@@ -45,18 +45,36 @@ package com.itextpdf.forms.xfdf;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represent annots tag in xfdf document structure.
+ * Content model: ( text | caret | freetext | fileattachment | highlight | ink | line | link
+ * | circle | square | polygon | polyline | sound | squiggly | stamp |
+ * strikeout | underline )*.
+ * Attributes: none.
+ * For more details see paragraph 6.4.1 in Xfdf specification.
+ */
 public class AnnotsObject {
 
+    /**
+     * Represents a list of children annotations.
+     */
     private List<AnnotObject> annotsList;
 
     public AnnotsObject() {
         annotsList = new ArrayList<>();
     }
 
+    /**
+     * Gets a list of children annotations.
+     */
     public List<AnnotObject> getAnnotsList() {
         return annotsList;
     }
 
+    /**
+     * Adds a new {@link AnnotObject} to the list of children annotations.
+     * @param annot {@link AnnotObject} containing info about pdf document annotation.
+     */
     public AnnotsObject addAnnot(AnnotObject annot) {
         this.annotsList.add(annot);
         return this;

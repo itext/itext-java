@@ -42,6 +42,9 @@
  */
 package com.itextpdf.forms.xfdf;
 
+/**
+ * Represents encoding attribute of data or resource elements (children of fileattachment and sound elements).
+ */
 public enum ElementContentEncodingFormat {
     ASCII, HEX
 }

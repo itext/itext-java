@@ -60,8 +60,11 @@ import java.util.List;
 public class AnnotObject {
 
     /**
-     * Represents the type of annotation. Possible values: caret, circle, fileattachment, freetext,
-     * highlight, ink, line, polygon, polyline, sound, square, squiggly, stamp, strikeout, text, underline.
+     * Represents the type of annotation. Possible values: {@link XfdfConstants#CARET}, {@link XfdfConstants#CIRCLE},
+     * {@link XfdfConstants#FILEATTACHMENT}, {@link XfdfConstants#FREETEXT}, {@link XfdfConstants#HIGHLIGHT},
+     * {@link XfdfConstants#INK}, {@link XfdfConstants#LINE}, {@link XfdfConstants#POLYGON}, {@link XfdfConstants#POLYLINE},
+     * {@link XfdfConstants#SOUND}, {@link XfdfConstants#SQUARE}, {@link XfdfConstants#SQUIGGLY},
+     * {@link XfdfConstants#STAMP}, {@link XfdfConstants#STRIKEOUT}, {@link XfdfConstants#TEXT}, {@link XfdfConstants#UNDERLINE}.
      */
     private String name;
 
@@ -71,10 +74,11 @@ public class AnnotObject {
     private List<AttributeObject> attributes;
 
     /**
-     * Represents contents-richtext tag in Xfdf document structure. Is a child of caret, circle, fileattachment, freetext,
+     * Represents contents tag in Xfdf document structure. Is a child of caret, circle, fileattachment, freetext,
      * highlight, ink, line, polygon, polyline, sound, square, squiggly, stamp, strikeout, text, and
-     * underline elements. corresponds to RC key in annotation dictionary.
-     * Content model: text string.
+     * underline elements.
+     * Corresponds to Contents key in annotation dictionary.
+     * Content model: a string or a rich text string.
      * For more details see paragraph 6.5.4 in Xfdf document specification.
      */
     private PdfString contents;
@@ -82,8 +86,9 @@ public class AnnotObject {
     /**
      * Represents contents-richtext tag in Xfdf document structure. Is a child of caret, circle, fileattachment, freetext,
      * highlight, ink, line, polygon, polyline, sound, square, squiggly, stamp, strikeout, text, and
-     * underline elements. corresponds to Contents key in annotation dictionary.
-     * Content model: a string or a rich text string.
+     * underline elements.
+     * Corresponds to RC key in annotation dictionary.
+     * Content model: text string.
      * For more details see paragraph 6.5.5 in Xfdf document specification.
      */
     private PdfString contentsRichText;
@@ -157,21 +162,38 @@ public class AnnotObject {
         this.attributes = new ArrayList<>();
     }
 
+    /**
+     * Gets the string value of the type of annotation. Possible values: {@link XfdfConstants#CARET}, {@link XfdfConstants#CIRCLE},
+     * {@link XfdfConstants#FILEATTACHMENT}, {@link XfdfConstants#FREETEXT}, {@link XfdfConstants#HIGHLIGHT},
+     * {@link XfdfConstants#INK}, {@link XfdfConstants#LINE}, {@link XfdfConstants#POLYGON}, {@link XfdfConstants#POLYLINE},
+     * {@link XfdfConstants#SOUND}, {@link XfdfConstants#SQUARE}, {@link XfdfConstants#SQUIGGLY},
+     * {@link XfdfConstants#STAMP}, {@link XfdfConstants#STRIKEOUT}, {@link XfdfConstants#TEXT}, {@link XfdfConstants#UNDERLINE}.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the string value of the type of annotation. Possible values: {@link XfdfConstants#CARET}, {@link XfdfConstants#CIRCLE},
+     * {@link XfdfConstants#FILEATTACHMENT}, {@link XfdfConstants#FREETEXT}, {@link XfdfConstants#HIGHLIGHT},
+     * {@link XfdfConstants#INK}, {@link XfdfConstants#LINE}, {@link XfdfConstants#POLYGON}, {@link XfdfConstants#POLYLINE},
+     * {@link XfdfConstants#SOUND}, {@link XfdfConstants#SQUARE}, {@link XfdfConstants#SQUIGGLY},
+     * {@link XfdfConstants#STAMP}, {@link XfdfConstants#STRIKEOUT}, {@link XfdfConstants#TEXT}, {@link XfdfConstants#UNDERLINE}.
+     */
     public AnnotObject setName(String name) {
         this.name = name;
         return this;
     }
 
+    /**
+     * Gets a list of all attributes of the annotation.
+     */
     public List<AttributeObject> getAttributes() {
         return attributes;
     }
 
     /**
-     * The method finds the attribute by name in attributes list.
+     * Finds the attribute by name in attributes list.
      * @param name The name of the attribute to look for.
      * @return {@link AttributeObject} with the given name, or null, if no object with this name was found.
      */
@@ -185,7 +207,7 @@ public class AnnotObject {
     }
 
     /**
-     * The method finds the attribute by name in attributes list and return its strign value.
+     * Finds the attribute by name in attributes list and return its string value.
      * @param name The name of the attribute to look for.
      * @return the value of the {@link AttributeObject} with the given name, or null, if no object with this name was found.
      */
@@ -198,55 +220,104 @@ public class AnnotObject {
         return null;
     }
 
+    /**
+     * Gets the popup annotation, an inner element of the annotation element.
+     */
     public AnnotObject getPopup() {
         return popup;
     }
 
+    /**
+     * Sets the popup annotation, an inner element of the annotation element.
+     */
     public AnnotObject setPopup(AnnotObject popup) {
         this.popup = popup;
         return this;
     }
 
+    /**
+     * Gets the boolean, indicating if annotation has inner popup element.
+     */
     public boolean isHasPopup() {
         return hasPopup;
     }
 
+    /**
+     * Sets the boolean, indicating if annotation has inner popup element.
+     */
     public AnnotObject setHasPopup(boolean hasPopup) {
         this.hasPopup = hasPopup;
         return this;
     }
 
+    /**
+     * Gets the string value of contents tag in Xfdf document structure. Contents is a child of caret, circle,
+     * fileattachment, freetext, highlight, ink, line, polygon, polyline, sound, square, squiggly, stamp, strikeout,
+     * text, and underline elements.
+     * Corresponds to Contents key in annotation dictionary.
+     * Content model: a string or a rich text string.
+     * For more details see paragraph 6.5.4 in Xfdf document specification.
+     */
     public PdfString getContents() {
         return contents;
     }
 
+    /**
+     * Sets the string value of contents tag in Xfdf document structure.
+     */
     public AnnotObject setContents(PdfString contents) {
         this.contents = contents;
         return this;
     }
 
+    /**
+     * Gets the string value of contents-richtext tag in Xfdf document structure. It is a child of caret, circle, fileattachment,
+     * freetext, highlight, ink, line, polygon, polyline, sound, square, squiggly, stamp, strikeout, text, and
+     * underline elements.
+     * Corresponds to RC key in annotation dictionary.
+     * Content model: text string.
+     * For more details see paragraph 6.5.5 in Xfdf document specification.
+     */
     public PdfString getContentsRichText() {
         return contentsRichText;
     }
 
+    /**
+     * Gets the string value of contents-richtext tag in xfdf document structure.
+     */
     public AnnotObject setContentsRichText(PdfString contentsRichRext) {
         this.contentsRichText = contentsRichRext;
         return this;
     }
 
+    /**
+     * Gets Action element, a child of OnActivation element of the link annotation.
+     * Corresponds to the A key in the link annotation dictionary.
+     */
     public ActionObject getAction() {
         return action;
     }
 
+    /**
+     * Sets Action element, a child of OnActivation element of the link annotation.
+     * Corresponds to the A key in the link annotation dictionary.
+     */
     public AnnotObject setAction(ActionObject action) {
         this.action = action;
         return this;
     }
 
+    /**
+     * Adds new {@link AttributeObject} to the list of annotation attributes.
+     * @param attr attribute to be added.
+     */
     public void addAttribute(AttributeObject attr) {
         attributes.add(attr);
     }
 
+    /**
+     * Adds new attribute with given name and boolean value converted to string.
+     */
     void addAttribute(String name, boolean value) {
         String valueString = value ? "yes" : "no";
         attributes.add(new AttributeObject(name, valueString));
@@ -261,6 +332,12 @@ public class AnnotObject {
         attributes.add(new AttributeObject(name, stringValue));
     }
 
+    /**
+     * Adds new attribute by given name and value. If required attribute is present, value of the attribute can't be null.
+     * @param name
+     * @param valueObject
+     * @param required
+     */
     void addAttribute(String name, PdfObject valueObject, boolean required) {
         if (valueObject == null) {
             if (required) {
@@ -286,68 +363,136 @@ public class AnnotObject {
         addAttribute(name, valueObject, false);
     }
 
+    /**
+     * Adds page, required attribute of every annotation.
+     */
     void addFdfAttributes(int pageNumber) {
         this.addAttribute(new AttributeObject(XfdfConstants.PAGE, String.valueOf(pageNumber)));
     }
 
+    /**
+     * Gets Dest element, a child element of link, GoTo, GoToR elements.
+     * Corresponds to the Dest key in link annotation dictionary.
+     */
     public DestObject getDestination() {
         return destination;
     }
 
+    /**
+     * Sets Dest element, a child element of link, GoTo, GoToR elements.
+     * Corresponds to the Dest key in link annotation dictionary.
+     */
     public AnnotObject setDestination(DestObject destination) {
         this.destination = destination;
         return this;
     }
 
+    /**
+     * Gets the string value of the appearance element, a child element of stamp element.
+     * Corresponds to the AP key in the annotation dictionary.
+     * Content model: Base64 encoded string.
+     * For more details see paragraph 6.5.1 in Xfdf document specification.
+     */
     public String getAppearance() {
         return appearance;
     }
 
+    /**
+     * Gets the string value of the appearance element,  a child element of stamp element.
+     * Corresponds to the AP key in the annotation dictionary.
+     * Content model: Base64 encoded string.
+     */
     public AnnotObject setAppearance(String appearance) {
         this.appearance = appearance;
         return this;
     }
 
+    /**
+     * Gets the string value of the defaultappearance element, a child of the caret and freetext elements.
+     * Corresponds to the DA key in the free text annotation dictionary.
+     * Content model: text string.
+     * For more details see paragraph 6.5.7 in Xfdf document specification.
+     */
     public String getDefaultAppearance() {
         return defaultAppearance;
     }
 
+    /**
+     * Sets the string value of the defaultappearance element, a child of the caret and freetext elements.
+     * Corresponds to the DA key in the free text annotation dictionary.
+     * Content model: text string.
+     */
     public AnnotObject setDefaultAppearance(String defaultAppearance) {
         this.defaultAppearance = defaultAppearance;
         return this;
     }
 
+    /**
+     * Gets the string value of the defaultstyle element, a child of the freetext element.
+     * Corresponds to the DS key in the free text annotation dictionary.
+     * Content model : a text string.
+     * For more details see paragraph 6.5.9 in Xfdf document specification.
+     */
     public String getDefaultStyle() {
         return defaultStyle;
     }
 
+    /**
+     * Sets the string value of the defaultstyle element, a child of the freetext element.
+     * Corresponds to the DS key in the free text annotation dictionary.
+     * Content model : a text string.
+     */
     public AnnotObject setDefaultStyle(String defaultStyle) {
         this.defaultStyle = defaultStyle;
         return this;
     }
 
+    /**
+     * Gets the BorderStyleAlt element, a child of the link element.
+     * Corresponds to the Border key in the common annotation dictionary.
+     * For more details see paragraph 6.5.3 in Xfdf document specification.
+     */
     public BorderStyleAltObject getBorderStyleAlt() {
         return borderStyleAlt;
     }
 
+    /**
+     * Sets the BorderStyleAlt element, a child of the link element.
+     * Corresponds to the Border key in the common annotation dictionary.
+     */
     public AnnotObject setBorderStyleAlt(BorderStyleAltObject borderStyleAlt) {
         this.borderStyleAlt = borderStyleAlt;
         return this;
     }
 
+    /**
+     * Gets the string, containing vertices element, a child of the polygon and polyline elements.
+     * Corresponds to the Vertices key in the polygon or polyline annotation dictionary.
+     * For more details see paragraph 6.5.31 in Xfdf document specification.
+     */
     public String getVertices() {
         return vertices;
     }
 
+    /**
+     * Sets the string, containing vertices element, a child of the polygon and polyline elements.
+     * Corresponds to the Vertices key in the polygon or polyline annotation dictionary.
+     */
     public AnnotObject setVertices(String vertices) {
         this.vertices = vertices;
         return this;
     }
 
+    /**
+     * Gets the reference to the source {@link PdfAnnotation}. Used for attaching popups in case of reading data from pdf file.
+     */
     public PdfIndirectReference getRef() {
         return ref;
     }
 
+    /**
+     * Sets the reference to the source {@link PdfAnnotation}. Used for attaching popups in case of reading data from pdf file.
+     */
     public AnnotObject setRef(PdfIndirectReference ref) {
         this.ref = ref;
         return this;

@@ -70,9 +70,9 @@ class XfdfReader {
     private static Logger logger = LoggerFactory.getLogger(XfdfReader.class);
 
     /**
-     * The method merges existing XfdfObject into pdf document associated with it.
+     * Merges existing XfdfObject into pdf document associated with it.
      *
-     * @param xfdfObject      The object ot be merged.
+     * @param xfdfObject      The object to be merged.
      * @param pdfDocument     The associated pdf document.
      * @param pdfDocumentName The name of the associated pdf document.
      */
@@ -96,7 +96,12 @@ class XfdfReader {
 
     }
 
-
+    /**
+     * Merges existing FieldsObject and children FieldObject entities into the form of the pdf document
+     * associated with it.
+     * @param fieldsObject object containing acroform fields data to be merged.
+     * @param form acroform to be filled with xfdf data.
+     */
     private void mergeFields(FieldsObject fieldsObject, PdfAcroForm form) {
         if (fieldsObject != null && fieldsObject.getFieldList() != null && !fieldsObject.getFieldList().isEmpty()) {
 
@@ -113,6 +118,12 @@ class XfdfReader {
         }
     }
 
+    /**
+     * Merges existing XfdfObject into pdf document associated with it.
+     *
+     * @param annotsObject    The AnnotsObject with children AnnotObject entities to be mapped into PdfAnnotations.
+     * @param pdfDocument     The associated pdf document.
+     */
     private void mergeAnnotations(AnnotsObject annotsObject, PdfDocument pdfDocument) {
         List<AnnotObject> annotList = null;
         if (annotsObject != null) {

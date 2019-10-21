@@ -85,7 +85,7 @@ public class XfdfObjectFactory {
 
 
     /**
-     * The method extracts data from pdf document acroform and annotations into XfdfObject.
+     * Extracts data from pdf document acroform and annotations into XfdfObject.
      * *
      * @param document   Pdf document for data extraction.
      * @param filename The name od pdf document for data extraction.
@@ -135,6 +135,12 @@ public class XfdfObjectFactory {
         return resultXfdf;
     }
 
+    /**
+     * Extracts data from input stream into XfdfObject. Typically input stream is based on .xfdf file
+     *
+     * @param xfdfInputStream   The input stream containing xml-styled xfdf data.
+     * @return XfdfObject containing original xfdf data.
+     */
      public XfdfObject createXfdfObject(InputStream xfdfInputStream) throws ParserConfigurationException, IOException, SAXException {
         XfdfObject xfdfObject = new XfdfObject();
 

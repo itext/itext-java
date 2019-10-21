@@ -66,6 +66,10 @@ final class XfdfFileUtils {
     private XfdfFileUtils() {
     }
 
+    /**
+     * Creates a new xml-styled document for writing xfdf info.
+     * @throws ParserConfigurationException in case of failure to create a new document.
+     */
     static Document createNewXfdfDocument() throws ParserConfigurationException {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
@@ -73,6 +77,10 @@ final class XfdfFileUtils {
         return documentBuilder.newDocument();
     }
 
+    /**
+     * Creates a new xfdf document based on given input stream.
+     * @param inputStream containing xfdf info.
+     */
     static Document createXfdfDocumentFromStream(InputStream inputStream) throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
@@ -80,6 +88,11 @@ final class XfdfFileUtils {
         return documentBuilder.parse(inputStream);
     }
 
+    /**
+     * Saves the info from output stream to xml-styled document.
+     * @param document to save info to.
+     * @param outputStream the stream containing xfdf info.
+     */
     static void saveXfdfDocumentToFile(Document document, OutputStream outputStream) throws TransformerException {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);

@@ -52,7 +52,7 @@ package com.itextpdf.forms.xfdf;
 public class DestObject {
 
     /**
-     * Respresents Name attribute of Named element, a child of Dest element.
+     * Represents Name attribute of Named element, a child of Dest element.
      * Allows a destination to be referred to indirectly by means of a name object or a byte string.
      * For more details see paragraph 6.5.25 in Xfdf document specification.
      */
@@ -126,82 +126,179 @@ public class DestObject {
         //create empty DestObject
     }
 
+    /**
+     * Gets string value of the Name attribute of Named element, a child of Dest element.
+     * Allows a destination to be referred to indirectly by means of a name object or a byte string.
+     * For more details see paragraph 6.5.25 in Xfdf document specification.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets string value of the Name attribute of Named element, a child of Dest element.
+     * Allows a destination to be referred to indirectly by means of a name object or a byte string.
+     */
     public DestObject setName(String name) {
         this.name = name;
         return this;
     }
 
+    /**
+     * Gets the XYZ element, a child of the Dest element.
+     * Corresponds to the XYZ key in the destination syntax.
+     * Required attributes: Page, Left, Bottom, Right, Top.
+     * For more details see paragraph 6.5.32 in Xfdf document specification.
+     */
     public FitObject getXyz() {
         return xyz;
     }
 
+    /**
+     * Sets the XYZ element, a child of the Dest element.
+     * Corresponds to the XYZ key in the destination syntax.
+     * Required attributes: Page, Left, Bottom, Right, Top.
+     */
     public DestObject setXyz(FitObject xyz) {
         this.xyz = xyz;
         return this;
     }
 
+    /**
+     * Gets the Fit element, a child of the Dest element.
+     * Corresponds to the Fit key in the destination syntax.
+     * Required attributes: Page.
+     * For more details see paragraph 6.5.13 in Xfdf document specification.
+     */
     public FitObject getFit() {
         return fit;
     }
 
+    /**
+     * Sets the Fit element, a child of the Dest element.
+     * Corresponds to the Fit key in the destination syntax.
+     * Required attributes: Page.
+     */
     public DestObject setFit(FitObject fit) {
         this.fit = fit;
         return this;
     }
 
+    /**
+     * Gets the FitH element, a child of the Dest element.
+     * Corresponds to the FitH key in the destination syntax.
+     * Required attributes: Page, Top.
+     * For more details see paragraph 6.5.17 in Xfdf document specification.
+     */
     public FitObject getFitH() {
         return fitH;
     }
 
+    /**
+     * Sets the FitH element, a child of the Dest element.
+     * Corresponds to the FitH key in the destination syntax.
+     * Required attributes: Page, Top.
+     */
     public DestObject setFitH(FitObject fitH) {
         this.fitH = fitH;
         return this;
     }
 
+    /**
+     * Gets the FitV element, a child of the Dest element.
+     * Corresponds to the FitV key in the destination syntax.
+     * Required attributes: Page, Left.
+     * For more details see paragraph 6.5.19 in Xfdf document specification.
+     */
     public FitObject getFitV() {
         return fitV;
     }
 
+    /**
+     * Sets the FitV element, a child of the Dest element.
+     * Corresponds to the FitV key in the destination syntax.
+     * Required attributes: Page, Left.
+     */
     public DestObject setFitV(FitObject fitV) {
         this.fitV = fitV;
         return this;
     }
 
+    /**
+     * Gets the FitR element, a child of the Dest element.
+     * Corresponds to the FitR key in the destination syntax.
+     * Required attributes: Page, Left, Bottom, Right, Top.
+     * For more details see paragraph 6.5.18 in Xfdf document specification.
+     */
     public FitObject getFitR() {
         return fitR;
     }
 
+    /**
+     * Sets the FitR element, a child of the Dest element.
+     * Corresponds to the FitR key in the destination syntax.
+     * Required attributes: Page, Left, Bottom, Right, Top.
+     */
     public DestObject setFitR(FitObject fitR) {
         this.fitR = fitR;
         return this;
     }
 
+    /**
+     * Sets the FitB element, a child of the Dest element.
+     * Corresponds to the FitB key in the destination syntax.
+     * Required attributes: Page.
+     * For more details see paragraph 6.5.14 in Xfdf document specification.
+     */
     public FitObject getFitB() {
         return fitB;
     }
 
+    /**
+     * Gets the FitB element, a child of the Dest element.
+     * Corresponds to the FitB key in the destination syntax.
+     * Required attributes: Page.
+     */
     public DestObject setFitB(FitObject fitB) {
         this.fitB = fitB;
         return this;
     }
 
+    /**
+     * Sets the FitBH element, a child of the Dest element.
+     * Corresponds to the FitBH key in the destination syntax.
+     * Required attributes: Page, Top.
+     * For more details see paragraph 6.5.15 in Xfdf document specification.
+     */
     public FitObject getFitBH() {
         return fitBH;
     }
 
+    /**
+     * Gets the FitBH element, a child of the Dest element.
+     * Corresponds to the FitBH key in the destination syntax.
+     * Required attributes: Page, Top.
+     */
     public DestObject setFitBH(FitObject fitBH) {
         this.fitBH = fitBH;
         return this;
     }
 
+    /**
+     * Sets the FitBV element, a child of the Dest element.
+     * Corresponds to the FitBV key in the destination syntax.
+     * Required attributes: Page, Left.
+     * For more details see paragraph 6.5.16 in Xfdf document specification.
+     */
     public FitObject getFitBV() {
         return fitBV;
     }
 
+    /**
+     * Sets the FitBV element, a child of the Dest element.
+     * Corresponds to the FitBV key in the destination syntax.
+     * Required attributes: Page, Left.
+     */
     public DestObject setFitBV(FitObject fitBV) {
         this.fitBV = fitBV;
         return this;

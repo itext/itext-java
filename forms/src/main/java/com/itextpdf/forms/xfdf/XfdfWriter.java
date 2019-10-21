@@ -70,8 +70,8 @@ class XfdfWriter {
     }
 
     /**
-     * The method writes data from XfdfObject into a xfdf data file.
-     *
+     * Writes data from {@link XfdfObject} into a xfdf data file.
+     * @param xfdfObject {@link XfdfObject} containing the data.
      */
     void write(XfdfObject xfdfObject) throws TransformerException, ParserConfigurationException {
         this.writeDom(xfdfObject);
@@ -154,7 +154,7 @@ class XfdfWriter {
         return childrenFields;
     }
 
-    static void addField(FieldObject fieldObject, Element parentElement, Document document, List<FieldObject> fieldList) {
+    private static void addField(FieldObject fieldObject, Element parentElement, Document document, List<FieldObject> fieldList) {
         List<FieldObject> childrenFields = findChildrenFields(fieldObject, fieldList);
 
         Element field = document.createElement("field");

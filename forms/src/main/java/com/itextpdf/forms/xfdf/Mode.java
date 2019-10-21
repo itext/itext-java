@@ -42,6 +42,10 @@
  */
 package com.itextpdf.forms.xfdf;
 
+/**
+ * Represents the mode attribute of data and resource elements.
+ * Does not correspond to a PDF key.
+ */
 public enum Mode {
     FILTERED, RAW
 }

@@ -44,13 +44,44 @@ package com.itextpdf.forms.xfdf;
 
 import com.itextpdf.kernel.pdf.PdfObject;
 
+/**
+ * Represent Fit, a child of the Dest element.
+ * Content model: none.
+ * Attributes: depends of type of Fit (FitH, FitB, FitV etc.).
+ * For more details see paragraphs 6.5.13-6.5.19, 6.6.23 in Xfdf specification.
+ */
 public class FitObject {
 
+    /**
+     * Represents the page displayed by current Fit element.
+     * Attribute of Fit, FitB, FitBH, FitBV, FitH, FitR, FitV, XYZ elements.
+     */
     private PdfObject page;
+
+    /**
+     * Vertical coordinate positioned at the top edge of the window.
+     */
     private float top;
+
+    /**
+     * Vertical coordinate positioned at the bottom edge of the window.
+     */
     private float bottom;
+
+    /**
+     * Horizontal coordinate positioned at the left edge of the window.
+     */
     private float left;
+
+    /**
+     * Horizontal coordinate positioned at the right edge of the window.
+     */
     private float right;
+
+    /**
+     * Corresponds to the zoom object in the destination syntax.
+     * Attribute of XYZ object.
+     */
     private float zoom;
 
     public FitObject(PdfObject page) {
@@ -60,50 +91,86 @@ public class FitObject {
         this.page = page;
     }
 
+    /**
+     * Gets the PdfObject representing the page displayed by current Fit element.
+     * Attribute of Fit, FitB, FitBH, FitBV, FitH, FitR, FitV, XYZ elements.
+     */
     public PdfObject getPage() {
         return page;
     }
 
+    /**
+     * Gets a float vertical coordinate positioned at the top edge of the window.
+     */
     public float getTop() {
         return top;
     }
 
+    /**
+     * Sets a float vertical coordinate positioned at the top edge of the window.
+     */
     public FitObject setTop(float top) {
         this.top = top;
         return this;
     }
 
+    /**
+     * Gets a float horizontal coordinate positioned at the left edge of the window.
+     */
     public float getLeft() {
         return left;
     }
 
+    /**
+     * Sets a float horizontal coordinate positioned at the left edge of the window.
+     */
     public FitObject setLeft(float left) {
         this.left = left;
         return this;
     }
 
+    /**
+     * Gets a float vertical coordinate positioned at the bottom edge of the window.
+     */
     public float getBottom() {
         return bottom;
     }
 
+    /**
+     * Sets a float vertical coordinate positioned at the bottom edge of the window.
+     */
     public FitObject setBottom(float bottom) {
         this.bottom = bottom;
         return this;
     }
 
+    /**
+     * Gets a float horizontal coordinate positioned at the right edge of the window.
+     */
     public float getRight() {
         return right;
     }
 
+    /**
+     * Sets a float horizontal coordinate positioned at the right edge of the window.
+     */
     public FitObject setRight(float right) {
         this.right = right;
         return this;
     }
 
+    /**
+     * Gets a float representing the zoom ratio.
+     * Attribute of XYZ object.
+     */
     public float getZoom() {
         return zoom;
     }
 
+    /**
+     * Sets a float representing the zoom ratio.
+     * Attribute of XYZ object.
+     */
     public FitObject setZoom(float zoom) {
         this.zoom = zoom;
         return this;

@@ -55,22 +55,23 @@ public class ActionObject {
 
 
     /**
-     * Type of inner action element. Possible values: URI, Launch, GoTo, GoToR, Named.
+     * Type of inner action element. Possible values: {@link PdfName#URI}, {@link PdfName#Launch}, {@link PdfName#GoTo},
+     * {@link PdfName#GoToR}, {@link PdfName#Named}.
      */
     private PdfName type;
 
     /**
-     * Represents Name required attribute of URI element. For more details see paragraph 6.5.30 in Xfdf specification.
+     * Represents Name, required attribute of URI element. For more details see paragraph 6.5.30 in Xfdf specification.
      */
     private PdfString uri;
 
     /**
-     * Represents IsMap optional attribute of URI element. For more details see paragraph 6.5.30 in Xfdf specification.
+     * Represents IsMap, optional attribute of URI element. For more details see paragraph 6.5.30 in Xfdf specification.
      */
     private boolean isMap;
 
     /**
-     * Represents Name required attribute of Named element. For more details see paragraph 6.5.24 in Xfdf specification.
+     * Represents Name, required attribute of Named element. For more details see paragraph 6.5.24 in Xfdf specification.
      */
     private PdfName nameAction;
 
@@ -82,12 +83,12 @@ public class ActionObject {
     private String fileOriginalName;
 
     /**
-     * Represents NewWindows optional attribute of Launch element. For more details see paragraph 6.5.23 in Xfdf specification.
+     * Represents NewWindow, optional attribute of Launch element. For more details see paragraph 6.5.23 in Xfdf specification.
      */
     private boolean isNewWindow;
 
     /**
-     * Represents Dest inner element of link, GoTo, and GoToR elements.
+     * Represents Dest, inner element of link, GoTo, and GoToR elements.
      * Corresponds to Dest key in link annotation dictionary.
      * For more details see paragraph 6.5.10 in Xfdf specification.
      */
@@ -97,64 +98,119 @@ public class ActionObject {
         this.type = type;
     }
 
+
+    /**
+     * Returns the type of inner action element. Possible values: {@link PdfName#URI}, {@link PdfName#Launch},
+     * {@link PdfName#GoTo}, {@link PdfName#GoToR}, {@link PdfName#Named}.
+     */
     public PdfName getType() {
         return type;
     }
 
+    /**
+     * Sets the type of inner action element. Possible values: {@link PdfName#URI}, {@link PdfName#Launch},
+     * {@link PdfName#GoTo}, {@link PdfName#GoToR}, {@link PdfName#Named}.
+     */
     public ActionObject setType(PdfName type) {
         this.type = type;
         return this;
     }
 
+    /**
+     * Gets the string value of URI elements. Corresponds to Name, required attribute of URI element.
+     * For more details see paragraph 6.5.30 in Xfdf specification.
+     */
     public PdfString getUri() {
         return uri;
     }
 
+    /**
+     * Sets the string value of URI elements. Corresponds to Name, required attribute of URI element.
+     * For more details see paragraph 6.5.30 in Xfdf specification.
+     */
     public ActionObject setUri(PdfString uri) {
         this.uri = uri;
         return this;
     }
 
+    /**
+     * Gets IsMap, optional attribute of URI element. For more details see paragraph 6.5.30 in Xfdf specification.
+     */
     public boolean isMap() {
         return isMap;
     }
 
+    /**
+     * Sets IsMap, optional attribute of URI element. For more details see paragraph 6.5.30 in Xfdf specification.
+     */
     public ActionObject setMap(boolean map) {
         isMap = map;
         return this;
     }
 
+    /**
+     * Gets the value of Name, required attribute of Named element. For more details see paragraph 6.5.24 in Xfdf specification.
+     */
     public PdfName getNameAction() {
         return nameAction;
     }
 
+    /**
+     * Sets the value of Name, required attribute of Named element. For more details see paragraph 6.5.24 in Xfdf specification.
+     */
     public ActionObject setNameAction(PdfName nameAction) {
         this.nameAction = nameAction;
         return this;
     }
 
+    /**
+     * Gets the string value of OriginalName, required attribute of File inner element of GoToR or Launch element.
+     * Corresponds to F key in go-to action or launch dictionaries.
+     * For more details see paragraphs 6.5.11, 6.5.23 in Xfdf specification.
+     */
     public String getFileOriginalName() {
         return fileOriginalName;
     }
 
+    /**
+     * Sets the string value of OriginalName, required attribute of File inner element of GoToR or Launch element.
+     * Corresponds to F key in go-to action or launch dictionaries.
+     * For more details see paragraphs 6.5.11, 6.5.23 in Xfdf specification.
+     */
     public ActionObject setFileOriginalName(String fileOriginalName) {
         this.fileOriginalName = fileOriginalName;
         return this;
     }
 
+    /**
+     * Sets the boolean value of NewWindow, optional attribute of Launch element. For more details see paragraph 6.5.23 in Xfdf specification.
+     */
     public boolean isNewWindow() {
         return isNewWindow;
     }
 
+    /**
+     * Gets the boolean value of NewWindow, optional attribute of Launch element. For more details see paragraph 6.5.23 in Xfdf specification.
+     */
     public ActionObject setNewWindow(boolean newWindow) {
         isNewWindow = newWindow;
         return this;
     }
 
+    /**
+     * Gets Dest, inner element of link, GoTo, and GoToR elements.
+     * Corresponds to Dest key in link annotation dictionary.
+     * For more details see paragraph 6.5.10 in Xfdf specification.
+     */
     public DestObject getDestination() {
         return destination;
     }
 
+    /**
+     * Sets Dest, inner element of link, GoTo, and GoToR elements.
+     * Corresponds to Dest key in link annotation dictionary.
+     * For more details see paragraph 6.5.10 in Xfdf specification.
+     */
     public ActionObject setDestination(DestObject destination) {
         this.destination = destination;
         return this;

@@ -74,7 +74,7 @@ public class BorderStyleAltObject {
     private float width;
 
     /**
-     * Comma-separated list of numbers specifying the pattern of dashes and gaps of the border.
+     * An array of numbers specifying the pattern of dashes and gaps of the border.
      * Corresponds to array index 3 in the Border key in the common annotation dictionary.
      */
     private float[] dashPattern;
@@ -90,31 +90,57 @@ public class BorderStyleAltObject {
         this.width = width;
     }
 
+    /**
+     * Gets a float value specifying the horizontal corner radius of the rectangular border.
+     * Corresponds to array index 0 in the Border key in the common annotation dictionary.
+     */
     public float getHCornerRadius() {
         return hCornerRadius;
     }
 
+    /**
+     * Gets a float value specifying the vertical corner radius of the rectangular border.
+     * Corresponds to array index 1 in the Border key in the common annotation dictionary.
+     */
     public float getVCornerRadius() {
         return vCornerRadius;
     }
 
+    /**
+     * Gets a float value specifying the width of the rectangular border.
+     * Corresponds to array index 2 in the Border key in the common annotation dictionary.
+     */
     public float getWidth() {
         return width;
     }
 
+    /**
+     * Gets a array of numbers specifying the pattern of dashes and gaps of the border.
+     * Corresponds to array index 3 in the Border key in the common annotation dictionary.
+     */
     public float[] getDashPattern() {
         return dashPattern;
     }
 
+    /**
+     * Sets a array of numbers specifying the pattern of dashes and gaps of the border.
+     * Corresponds to array index 3 in the Border key in the common annotation dictionary.
+     */
     public BorderStyleAltObject setDashPattern(float[] dashPattern) {
         this.dashPattern = dashPattern;
         return this;
     }
 
+    /**
+     * Gets an encoded border style string.
+     */
     public String getContent() {
         return content;
     }
 
+    /**
+     * Sets an encoded border style string.
+     */
     public BorderStyleAltObject setContent(String content) {
         this.content = content;
         return this;
