@@ -196,7 +196,11 @@ public class FontSelector {
 
             if (!fontFamilySetByCharacteristics) {
                 // if alias is set, fontInfo's descriptor should not be checked
-                if (!"".equals(fontFamily) && (null == fontInfo.getAlias() && fontInfo.getDescriptor().getFamilyNameLowerCase().equals(fontFamily) || (null != fontInfo.getAlias() && fontInfo.getAlias().toLowerCase().equals(fontFamily)))) {
+                if (!"".equals(fontFamily)
+                        && (null == fontInfo.getAlias()
+                                && null != fontInfo.getDescriptor().getFamilyNameLowerCase()
+                                && fontInfo.getDescriptor().getFamilyNameLowerCase().equals(fontFamily)
+                            || (null != fontInfo.getAlias() && fontInfo.getAlias().toLowerCase().equals(fontFamily)))) {
                     score += FONT_FAMILY_EQUALS_AWARD;
                 } else {
                     if (!isLastFontFamilyToBeProcessed) {
