@@ -667,7 +667,9 @@ public final class SvgConverter {
     //Private converter for unification
     private static PdfFormXObject convertToXObject(ISvgProcessorResult processorResult, PdfDocument document, ISvgConverterProperties props) {
         String baseUri = "";
-        if (props != null) baseUri = props.getBaseUri();
+        if (props != null) {
+            baseUri = props.getBaseUri();
+        }
         SvgDrawContext drawContext = new SvgDrawContext(new ResourceResolver(baseUri), processorResult.getFontProvider());
         drawContext.setTempFonts(processorResult.getTempFonts());
         drawContext.addNamedObjects(processorResult.getNamedObjects());

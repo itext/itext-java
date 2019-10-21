@@ -1,0 +1,169 @@
+<svg version="1.1" baseProfile="full" width="400" height="400" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <g id="grid" fill="none">
+            <circle r="10" stroke-width="0.5" stroke="red"/>
+
+            <line x1="0" y1="-100" x2="0" y2="100" stroke="red" stroke-width="1"/>
+            <line y1="0" x1="-100" y2="0" x2="100" stroke="red" stroke-width="1"/>
+
+            <line x1="10" y1="-100" x2="10" y2="100" stroke="black" stroke-width="0.25"/>
+            <line x1="20" y1="-100" x2="20" y2="100" stroke="black" stroke-width="0.25"/>
+            <line x1="30" y1="-100" x2="30" y2="100" stroke="black" stroke-width="0.25"/>
+            <line x1="40" y1="-100" x2="40" y2="100" stroke="black" stroke-width="0.25"/>
+
+            <line x1="50" y1="-100" x2="50" y2="100" stroke="black" stroke-width="0.75"/>
+
+            <line x1="60" y1="-100" x2="60" y2="100" stroke="black" stroke-width="0.25"/>
+            <line x1="70" y1="-100" x2="70" y2="100" stroke="black" stroke-width="0.25"/>
+            <line x1="80" y1="-100" x2="80" y2="100" stroke="black" stroke-width="0.25"/>
+            <line x1="90" y1="-100" x2="90" y2="100" stroke="black" stroke-width="0.25"/>
+            <line x1="100" y1="-100" x2="100" y2="100" stroke="black" stroke-width="0.25"/>
+
+            <line y1="10" x1="-100" y2="10" x2="100" stroke="black" stroke-width="0.25"/>
+            <line y1="20" x1="-100" y2="20" x2="100" stroke="black" stroke-width="0.25"/>
+            <line y1="30" x1="-100" y2="30" x2="100" stroke="black" stroke-width="0.25"/>
+            <line y1="40" x1="-100" y2="40" x2="100" stroke="black" stroke-width="0.25"/>
+
+            <line y1="50" x1="-100" y2="50" x2="100" stroke="black" stroke-width="0.75"/>
+
+            <line y1="60" x1="-100" y2="60" x2="100" stroke="black" stroke-width="0.25"/>
+            <line y1="70" x1="-100" y2="70" x2="100" stroke="black" stroke-width="0.25"/>
+            <line y1="80" x1="-100" y2="80" x2="100" stroke="black" stroke-width="0.25"/>
+            <line y1="90" x1="-100" y2="90" x2="100" stroke="black" stroke-width="0.25"/>
+            <line y1="100" x1="-100" y2="100" x2="100" stroke="black" stroke-width="0.25"/>
+        </g>
+        <g id="innerGrid" fill="none" stroke="blue">
+            <circle r="10" stroke-width="1"/>
+            <line y1="-50" y2="50" stroke-width="1"/>
+            <line x1="-50" x2="50" stroke-width="1"/>
+
+            <line x1="10" x2="10" y1="-50" y2="50" stroke-width="0.25"/>
+            <line x1="20" x2="20" y1="-50" y2="50" stroke-width="0.25"/>
+            <line x1="30" x2="30" y1="-50" y2="50" stroke-width="0.25"/>
+            <line x1="40" x2="40" y1="-50" y2="50" stroke-width="0.25"/>
+            <line x1="50" x2="50" y1="-50" y2="50" stroke-width="0.25"/>
+
+            <line y1="10" y2="10" x1="-50" x2="50" stroke-width="0.25"/>
+            <line y1="10" y2="10" x1="-50" x2="50" stroke-width="0.25"/>
+            <line y1="10" y2="10" x1="-50" x2="50" stroke-width="0.25"/>
+            <line y1="10" y2="10" x1="-50" x2="50" stroke-width="0.25"/>
+            <line y1="10" y2="10" x1="-50" x2="50" stroke-width="0.25"/>
+        </g>
+        <g id="svgContents">
+
+            <rect width="10" height="10" fill="green" stroke="red"/>
+            <rect x="10" y="10" width="20" height="10" fill="green" stroke="red"/>
+            <rect y="20" width="10" height="20" fill="green" stroke="red"/>
+            <use xlink:href="#innerGrid"/>
+        </g>
+    </defs>
+    <g>
+        <use xlink:href="#grid"/>
+        <svg width="100" height="100" viewBox="10 10 50 50" preserveAspectRatio="xMinYMax meet">
+            <use xlink:href="#svgContents" transform="translate(50,50)"/>
+        </svg>
+        <g transform="translate(50,50)" stroke="black" fill="none">
+            <circle r="10" stroke-width="0.5"/>
+            <line x2="30" y2="30" stroke-width="0.5"/>
+            <circle cx="30" cy="30" r="5" stroke-width="0.5"/>
+        </g>
+    </g>
+
+    <g transform="translate(0,100)">
+        <use xlink:href="#grid"/>
+        <svg width="100" height="100" viewBox="10 10 50 100" preserveAspectRatio="xMinYMax meet">
+            <use xlink:href="#svgContents" transform="translate(50,50)"/>
+        </svg>
+        <g transform="translate(50,50)" stroke="black" fill="none">
+            <circle r="10" stroke-width="0.5"/>
+            <line x2="-10" y2="-10" stroke-width="0.5"/>
+            <circle cx="-10" cy="-10" r="5" stroke-width="0.5"/>
+        </g>
+    </g>
+
+    <g transform="translate(0,200)">
+        <use xlink:href="#grid"/>
+        <svg width="100" height="100" viewBox="10 10 50 200" preserveAspectRatio="xMinYMax meet">
+            <use xlink:href="#svgContents" transform="translate(50,50)"/>
+        </svg>
+        <g transform="translate(50,50)" stroke="black" fill="none">
+            <circle r="10" stroke-width="0.5"/>
+            <line x2="-30" y2="-30" stroke-width="0.5"/>
+            <circle cx="-30" cy="-30" r="5" stroke-width="0.5"/>
+        </g>
+    </g>
+
+    <g transform="translate(100,0)">
+        <use xlink:href="#grid"/>
+        <svg width="100" height="100" viewBox="10 10 100 50" preserveAspectRatio="xMinYMax meet">
+            <use xlink:href="#svgContents" transform="translate(50,50)"/>
+        </svg>
+        <g transform="translate(50,50)" stroke="black" fill="none">
+            <circle r="10" stroke-width="0.5"/>
+            <line x2="-10" y2="-10" stroke-width="0.5"/>
+            <circle cx="-10" cy="-10" r="5" stroke-width="0.5"/>
+        </g>
+    </g>
+
+    <g transform="translate(100,100)">
+        <use xlink:href="#grid"/>
+        <svg width="100" height="100" viewBox="10 10 100 100" preserveAspectRatio="xMinYMax meet">
+            <use xlink:href="#svgContents" transform="translate(50,50)"/>
+        </svg>
+        <g transform="translate(50,50)" stroke="black" fill="none">
+            <circle r="10" stroke-width="0.5"/>
+            <line x2="-10" y2="-10" stroke-width="0.5"/>
+            <circle cx="-10" cy="-10" r="5" stroke-width="0.5"/>
+        </g>
+    </g>
+
+    <g transform="translate(100,200)">
+        <use xlink:href="#grid"/>
+        <svg width="100" height="100" viewBox="10 10 100 200" preserveAspectRatio="xMinYMax meet">
+            <use xlink:href="#svgContents" transform="translate(50,50)"/>
+        </svg>
+        <g transform="translate(50,50)" stroke="black" fill="none">
+            <circle r="10" stroke-width="0.5"/>
+            <line x2="-30" y2="-30" stroke-width="0.5"/>
+            <circle cx="-30" cy="-30" r="5" stroke-width="0.5"/>
+        </g>
+    </g>
+
+    <g transform="translate(200,0)">
+        <use xlink:href="#grid"/>
+        <svg width="100" height="100" viewBox="10 10 200 50" preserveAspectRatio="xMinYMax meet">
+            <use xlink:href="#svgContents" transform="translate(50,50)"/>
+        </svg>
+        <g transform="translate(50,50)" stroke="black" fill="none">
+            <circle r="10" stroke-width="0.5"/>
+            <line x2="-30" y2="-30" stroke-width="0.5"/>
+            <circle cx="-30" cy="-30" r="5" stroke-width="0.5"/>
+        </g>
+    </g>
+
+    <g transform="translate(200,100)">
+        <use xlink:href="#grid"/>
+        <svg width="100" height="100" viewBox="10 10 200 100" preserveAspectRatio="xMinYMax meet">
+            <use xlink:href="#svgContents" transform="translate(50,50)"/>
+        </svg>
+        <g transform="translate(50,50)" stroke="black" fill="none">
+            <circle r="10" stroke-width="0.5"/>
+            <line x2="-30" y2="-30" stroke-width="0.5"/>
+            <circle cx="-30" cy="-30" r="5" stroke-width="0.5"/>
+        </g>
+    </g>
+
+    <g transform="translate(200,200)">
+        <use xlink:href="#grid"/>
+        <svg width="100" height="100" viewBox="10 10 200 200" preserveAspectRatio="xMinYMax meet">
+            <use xlink:href="#svgContents" transform="translate(50,50)"/>
+        </svg>
+        <g transform="translate(50,50)" stroke="black" fill="none">
+            <circle r="10" stroke-width="0.5"/>
+            <line x2="-30" y2="-30" stroke-width="0.5"/>
+            <circle cx="-30" cy="-30" r="5" stroke-width="0.5"/>
+        </g>
+    </g>
+
+</svg>

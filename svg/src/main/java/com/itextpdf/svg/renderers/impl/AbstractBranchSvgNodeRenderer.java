@@ -91,7 +91,8 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
             stream.put(PdfName.BBox, new PdfArray(context.getCurrentViewPort()));
 
             context.pushCanvas(newCanvas);
-            applyViewport(context);
+            applyViewportClip(context);
+            applyViewportTranslationCorrection(context);
 
             for (ISvgNodeRenderer child : getChildren()) {
                 newCanvas.saveState();
@@ -110,42 +111,78 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
      *
      * @param context current svg draw context
      */
-    private void applyViewBox(SvgDrawContext context) {
-        if (this.attributesAndStyles != null) {
-            if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.VIEWBOX)) {
-                //Parse aspect ratio related stuff
-                String viewBoxValues = attributesAndStyles.get(SvgConstants.Attributes.VIEWBOX);
-                List<String> valueStrings = SvgCssUtils.splitValueList(viewBoxValues);
-                float[] values = new float[valueStrings.size()];
+    void applyViewBox(SvgDrawContext context) {
+        if (this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgConstants.Attributes.VIEWBOX)) {
+            //Parse aspect ratio related stuff
+            String viewBoxValues = attributesAndStyles.get(SvgConstants.Attributes.VIEWBOX);
+            List<String> valueStrings = SvgCssUtils.splitValueList(viewBoxValues);
+            float[] values = new float[valueStrings.size()];
 
-                for (int i = 0; i < values.length; i++) {
-                    values[i] = CssUtils.parseAbsoluteLength(valueStrings.get(i));
+            for (int i = 0; i < values.length; i++) {
+                values[i] = CssUtils.parseAbsoluteLength(valueStrings.get(i));
+            }
+
+            Rectangle currentViewPort = context.getCurrentViewPort();
+
+            String[] alignAndMeet = retrieveAlignAndMeet();
+            String align = alignAndMeet[0];
+            String meetOrSlice = alignAndMeet[1];
+
+            float scaleWidth = currentViewPort.getWidth() / values[2];
+            float scaleHeight = currentViewPort.getHeight() / values[3];
+
+            boolean forceUniformScaling = !(SvgConstants.Values.NONE.equals(align));
+            if (forceUniformScaling) {
+                //Scaling should preserve aspect ratio
+                if (SvgConstants.Values.MEET.equals(meetOrSlice)) {
+                    scaleWidth = Math.min(scaleWidth, scaleHeight);
+                } else {
+                    scaleWidth = Math.max(scaleWidth, scaleHeight);
                 }
+                scaleHeight = scaleWidth;
+            }
 
-                Rectangle currentViewPort = context.getCurrentViewPort();
+            AffineTransform scale = AffineTransform.getScaleInstance(scaleWidth, scaleHeight);
 
-                float scaleWidth = currentViewPort.getWidth() / values[2];
-                float scaleHeight = currentViewPort.getHeight() / values[3];
+            float[] scaledViewBoxValues = scaleViewBoxValues(values, scaleWidth, scaleHeight);
 
-                AffineTransform scale = AffineTransform.getScaleInstance(scaleWidth, scaleHeight);
-                if (!scale.isIdentity()) {
-                    context.getCurrentCanvas().concatMatrix(scale);
+            AffineTransform transform = processAspectRatioPosition(context, scaledViewBoxValues, align, scaleWidth, scaleHeight);
+            if (!scale.isIdentity()) {
+                context.getCurrentCanvas().concatMatrix(scale);
+                //Inverse scaling needs to be applied to viewport dimensions
+                context.getCurrentViewPort()
+                        .setWidth(currentViewPort.getWidth() / scaleWidth)
+                        .setX(currentViewPort.getX() / scaleWidth)
+                        .setHeight(currentViewPort.getHeight() / scaleHeight)
+                        .setY(currentViewPort.getY() / scaleHeight);
+            }
 
-                    //Inverse scaling needs to be applied to viewport dimensions
-                    context.getCurrentViewPort().setWidth(currentViewPort.getWidth() / scaleWidth);
-                    context.getCurrentViewPort().setX(currentViewPort.getX() / scaleWidth);
-                    context.getCurrentViewPort().setHeight(currentViewPort.getHeight() / scaleHeight);
-                    context.getCurrentViewPort().setY(currentViewPort.getY() / scaleHeight);
-                }
+            if (!transform.isIdentity()) {
+                context.getCurrentCanvas()
+                        .concatMatrix(transform);
 
-                AffineTransform transform = processAspectRatio(context, values);
-                if (!transform.isIdentity()) {
-                    //TODO (RND-876)
-                    context.getCurrentCanvas().writeLiteral("% applying viewbox aspect ratio correction (not correct) \n");
-                    //context.getCurrentCanvas().concatMatrix(transform);
-                }
+                //Apply inverse translation to viewport to make it line up nicely
+                context.getCurrentViewPort()
+                        .setX(currentViewPort.getX() + -1 * (float) transform.getTranslateX())
+                        .setY(currentViewPort.getY() + -1 * (float) transform.getTranslateY());
             }
         }
+    }
+
+    String[] retrieveAlignAndMeet() {
+        String meetOrSlice = SvgConstants.Values.MEET;
+        String align = SvgConstants.Values.DEFAULT_ASPECT_RATIO;
+
+        if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO)) {
+            String preserveAspectRatioValue = this.attributesAndStyles.get(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO);
+            List<String> aspectRatioValuesSplitValues = SvgCssUtils.splitValueList(preserveAspectRatioValue);
+
+            align = aspectRatioValuesSplitValues.get(0).toLowerCase();
+            if (aspectRatioValuesSplitValues.size() > 1) {
+                meetOrSlice = aspectRatioValuesSplitValues.get(1).toLowerCase();
+            }
+        }
+        return new String[]{align, meetOrSlice};
     }
 
     /**
@@ -153,99 +190,105 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
      *
      * @param context the svg draw context
      */
-    private void applyViewport(SvgDrawContext context) {
-        if (getParent() != null && getParent() instanceof AbstractSvgNodeRenderer) {
-            AbstractSvgNodeRenderer parent = (AbstractSvgNodeRenderer) getParent();
-            PdfCanvas currentCanvas = context.getCurrentCanvas();
+    private void applyViewportClip(SvgDrawContext context) {
+        PdfCanvas currentCanvas = context.getCurrentCanvas();
+        currentCanvas.rectangle(context.getCurrentViewPort());
+        currentCanvas.clip();
+        currentCanvas.endPath();
+    }
 
-            currentCanvas.rectangle(context.getCurrentViewPort());
-            currentCanvas.clip();
-            currentCanvas.endPath();
-
-            if (parent.canConstructViewPort()) {
-                currentCanvas.concatMatrix(parent.calculateViewPortTranslation(context));
-            }
+    private void applyViewportTranslationCorrection(SvgDrawContext context) {
+        PdfCanvas currentCanvas = context.getCurrentCanvas();
+        AffineTransform tf = this.calculateViewPortTranslation(context);
+        if (!tf.isIdentity() && SvgConstants.Values.NONE.equals(this.getAttribute(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO))) {
+            currentCanvas.concatMatrix(tf);
         }
     }
 
     /**
-     * If present, process the preserveAspectRatio.
+     * If present, process the preserveAspectRatio position.
      *
      * @param context       the svg draw context
      * @param viewBoxValues the four values depicting the viewbox [min-x min-y width height]
+     * @param align         alignment method to use
+     * @param scaleWidth    the multiplier for scaling width
+     * @param scaleHeight   the multiplier for scaling height
      * @return the transformation based on the preserveAspectRatio value
      */
-    private AffineTransform processAspectRatio(SvgDrawContext context, float[] viewBoxValues) {
+    AffineTransform processAspectRatioPosition(SvgDrawContext context, float[] viewBoxValues, String align, float scaleWidth, float scaleHeight) {
         AffineTransform transform = new AffineTransform();
+        Rectangle currentViewPort = context.getCurrentViewPort();
 
-        if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO)) {
-            Rectangle currentViewPort = context.getCurrentViewPort();
-            String preserveAspectRatioValue = this.attributesAndStyles.get(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO);
-            List<String> values = SvgCssUtils.splitValueList(preserveAspectRatioValue);
+        float midXBox = viewBoxValues[0] + (viewBoxValues[2] / 2);
+        float midYBox = viewBoxValues[1] + (viewBoxValues[3] / 2);
 
-            if (SvgConstants.Values.DEFER.equalsIgnoreCase(values.get(0))) {
-                values.remove(0);
-            }
+        float midXPort = currentViewPort.getX() + (currentViewPort.getWidth() / 2);
+        float midYPort = currentViewPort.getY() + (currentViewPort.getHeight() / 2);
 
-            String align = values.get(0);
+        float x = 0f;
+        float y = 0f;
 
-            float x = 0f;
-            float y = 0f;
+        // if x attribute of svg is present, then x value of current viewport should be set according to it
+        if (attributesAndStyles.containsKey(SvgConstants.Attributes.X)) {
+            x = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.X));
+        }
 
-            float midXBox = viewBoxValues[0] + (viewBoxValues[2] / 2);
-            float midYBox = viewBoxValues[1] + (viewBoxValues[3] / 2);
+        // if y attribute of svg is present, then y value of current viewport should be set according to it
+        if (attributesAndStyles.containsKey(SvgConstants.Attributes.Y)) {
+            y = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.Y));
+        }
 
-            float midXPort = currentViewPort.getX() + (currentViewPort.getWidth() / 2);
-            float midYPort = currentViewPort.getY() + (currentViewPort.getHeight() / 2);
+        // need to consider previous (parent) translation before applying the current one
+        x -= currentViewPort.getX();
+        y -= currentViewPort.getY();
 
-            switch (align.toLowerCase()) {
+        switch (align.toLowerCase()) {
             case SvgConstants.Values.NONE:
                 break;
-
             case SvgConstants.Values.XMIN_YMIN:
-                x = -viewBoxValues[0];
-                y = -viewBoxValues[1];
+                x -= viewBoxValues[0];
+                y -= viewBoxValues[1];
                 break;
             case SvgConstants.Values.XMIN_YMID:
-                x = -viewBoxValues[0];
-                y = midYPort - midYBox;
+                x -= viewBoxValues[0];
+                y += (midYPort - midYBox);
                 break;
             case SvgConstants.Values.XMIN_YMAX:
-                x = -viewBoxValues[0];
-                y = currentViewPort.getHeight() - viewBoxValues[3];
+                x -= viewBoxValues[0];
+                y += (currentViewPort.getHeight() - viewBoxValues[3]);
                 break;
-
             case SvgConstants.Values.XMID_YMIN:
-                x = midXPort - midXBox;
-                y = -viewBoxValues[1];
+                x += (midXPort - midXBox);
+                y -= viewBoxValues[1];
                 break;
             case SvgConstants.Values.XMID_YMAX:
-                x = midXPort - midXBox;
-                y = currentViewPort.getHeight() - viewBoxValues[3];
+                x += (midXPort - midXBox);
+                y += (currentViewPort.getHeight() - viewBoxValues[3]);
                 break;
-
             case SvgConstants.Values.XMAX_YMIN:
-                x = currentViewPort.getWidth() - viewBoxValues[2];
-                y = -viewBoxValues[1];
+                x += (currentViewPort.getWidth() - viewBoxValues[2]);
+                y -= viewBoxValues[1];
                 break;
             case SvgConstants.Values.XMAX_YMID:
-                x = currentViewPort.getWidth() - viewBoxValues[2];
-                y = midYPort - midYBox;
+                x += (currentViewPort.getWidth() - viewBoxValues[2]);
+                y += (midYPort - midYBox);
                 break;
             case SvgConstants.Values.XMAX_YMAX:
-                x = currentViewPort.getWidth() - viewBoxValues[2];
-                y = currentViewPort.getHeight() - viewBoxValues[3];
+                x += (currentViewPort.getWidth() - viewBoxValues[2]);
+                y += (currentViewPort.getHeight() - viewBoxValues[3]);
                 break;
-
             case SvgConstants.Values.DEFAULT_ASPECT_RATIO:
             default:
-                x = midXPort - midXBox;
-                y = midYPort - midYBox;
+                x += (midXPort - midXBox);
+                y += (midYPort - midYBox);
                 break;
-            }
-
-            transform.translate(x, y);
         }
+
+        //Rescale x and y
+        x /= scaleWidth;
+        y /= scaleHeight;
+
+        transform.translate(x, y);
 
         return transform;
     }
@@ -279,17 +322,20 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
 
     /**
      * Create a deep copy of every child renderer and add them to the passed {@link AbstractBranchSvgNodeRenderer}
+     *
      * @param deepCopy renderer to add copies of children to
      */
     protected final void deepCopyChildren(AbstractBranchSvgNodeRenderer deepCopy) {
-        for (ISvgNodeRenderer child:children) {
+        for (ISvgNodeRenderer child : children) {
             ISvgNodeRenderer newChild = child.createDeepCopy();
             child.setParent(deepCopy);
             deepCopy.addChild(newChild);
         }
     }
 
-    @Override void postDraw(SvgDrawContext context) {}
+    @Override
+    void postDraw(SvgDrawContext context) {
+    }
 
     @Override
     public abstract ISvgNodeRenderer createDeepCopy();
@@ -302,5 +348,14 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
                 ((AbstractSvgNodeRenderer) child).setPartOfClipPath(isPart);
             }
         }
+    }
+
+    private static float[] scaleViewBoxValues(float[] values, float scaleWidth, float scaleHeight) {
+        float[] scaledViewBoxValues = new float[values.length];
+        scaledViewBoxValues[0] = values[0] * scaleWidth;
+        scaledViewBoxValues[1] = values[1] * scaleHeight;
+        scaledViewBoxValues[2] = values[2] * scaleWidth;
+        scaledViewBoxValues[3] = values[3] * scaleHeight;
+        return scaledViewBoxValues;
     }
 }

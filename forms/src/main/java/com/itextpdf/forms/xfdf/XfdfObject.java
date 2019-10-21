@@ -83,7 +83,6 @@ public class XfdfObject {
         this.fields = fields;
     }
 
-
     public AnnotsObject getAnnots() {
         return annots;
     }

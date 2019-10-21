@@ -68,24 +68,53 @@ public class ViewBoxSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationT
         ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
+
+    //Uniform viewboxes
     @Test
-    public void viewBox50() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_50");
+    public void viewBox100x100() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_100x100");
     }
 
     @Test
-    public void viewBox100() throws IOException, InterruptedException {
-
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_100");
+    public void viewBox200x200() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_200x200");
     }
 
     @Test
-    public void viewBox200() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_200");
+    public void viewBox400x400() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_400x400");
+    }
+
+    //Non-uniform viewboxes
+    @Test
+    public void viewBox100x200() throws IOException, InterruptedException {
+
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_100x200");
     }
 
     @Test
-    public void viewBox400() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_400");
+    public void viewBox100x400() throws IOException, InterruptedException {
+
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_100x400");
+    }
+
+    @Test
+    public void viewBox200x100() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_200x100");
+    }
+
+    @Test
+    public void viewBox200x400() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_200x400");
+    }
+
+    @Test
+    public void viewBox400x100() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_400x100");
+    }
+
+    @Test
+    public void viewBox400x200() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_400x200");
     }
 }

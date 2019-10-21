@@ -849,17 +849,12 @@ public final class SvgConstants {
         /**
          * Value representing the default aspect ratio: xmidymid.
          */
-        public static final String DEFAULT_ASPECT_RATIO = "xmidymid";
+        public static final String DEFAULT_ASPECT_RATIO = Values.XMID_YMID;
 
         /**
          * Value representing how to preserve the aspect ratio when dealing with images.
          */
         public static final String DEFER = "defer";
-
-        /**
-         * Value representing the text-alignment end for text objects
-         */
-        public static final String TEXT_ANCHOR_END = "end";
 
         /**
          * Value representing the fill rule "even odd".
@@ -872,9 +867,9 @@ public final class SvgConstants {
         public static final String FILL_RULE_NONZERO = "nonzero";
 
         /**
-         * Value representing the text-alignment middle for text objects
+         * Value representing the meet for preserve aspect ratio calculations.
          */
-        public static final String TEXT_ANCHOR_MIDDLE = "middle";
+        public static final String MEET = "meet";
 
         /**
          * Value representing the "none" value".
@@ -882,14 +877,30 @@ public final class SvgConstants {
         public static final String NONE = "none";
 
         /**
+         * The value representing slice for the preserve aspect ratio calculations;
+         */
+        public static final String SLICE = "slice";
+
+        /**
+         * The value corresponding with the namespace url for SVG. Will be removed since version 7.2.
+         */
+        @Deprecated
+        public static final String SVGNAMESPACEURL = "http://www.w3.org/2000/svg";
+
+        /**
+         * Value representing the text-alignment end for text objects
+         */
+        public static final String TEXT_ANCHOR_END = "end";
+
+        /**
+         * Value representing the text-alignment middle for text objects
+         */
+        public static final String TEXT_ANCHOR_MIDDLE = "middle";
+
+        /**
          * Value representing the text-alignment start for text objects
          */
         public static final String TEXT_ANCHOR_START = "start";
-
-        /**
-         * The value corresponding with the namespace url for SVG
-         */
-        public static final String SVGNAMESPACEURL = "http://www.w3.org/2000/svg";
 
         /**
          * Value representing how to align when scaling.
@@ -905,6 +916,11 @@ public final class SvgConstants {
          * Value representing how to align when scaling.
          */
         public static final String XMIN_YMAX = "xminymax";
+
+        /**
+         * Value representing how to align when scaling.
+         */
+        public static final String XMID_YMID = "xmidymid";
 
         /**
          * Value representing how to align when scaling.
