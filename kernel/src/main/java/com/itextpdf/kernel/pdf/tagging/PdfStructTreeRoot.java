@@ -304,8 +304,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * actual page tags.
      */
     public Collection<PdfMcr> getPageMarkedContentReferences(PdfPage page) {
-        Map<Integer, PdfMcr> pageMcrs = getParentTreeHandler().getPageMarkedContentReferences(page);
-        return pageMcrs != null ? Collections.unmodifiableCollection(pageMcrs.values()) : null;
+        ParentTreeHandler.PageMcrsContainer pageMcrs = getParentTreeHandler().getPageMarkedContentReferences(page);
+        return pageMcrs != null ? Collections.unmodifiableCollection(pageMcrs.getAllMcrsAsCollection()) : null;
     }
 
     public PdfMcr findMcrByMcid(PdfDictionary pageDict, int mcid) {

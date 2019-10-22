@@ -1,0 +1,187 @@
+%PDF-1.7
+%‚„œ”
+1 0 obj 
+<<
+/MarkInfo 
+<<
+/Marked true
+>>
+/Pages 2 0 R
+/StructTreeRoot 3 0 R
+/Type /Catalog
+>>
+endobj 
+2 0 obj 
+<<
+/Kids [4 0 R]
+/Count 1
+/Type /Pages
+>>
+endobj 
+3 0 obj 
+<<
+/ParentTree 5 0 R
+/RoleMap 
+<<
+>>
+/K [6 0 R]
+/ParentTreeNextKey 1
+/Type /StructTreeRoot
+>>
+endobj 
+4 0 obj 
+<<
+/Parent 2 0 R
+/Resources 
+<<
+/Font 
+<<
+/F1 7 0 R
+>>
+/XObject 
+<<
+/Fm1 8 0 R
+>>
+>>
+/MediaBox [0 0 595 842]
+/TrimBox [0 0 595 842]
+/pdftk_PageNum 1
+/Tabs /S
+/Type /Page
+/Contents 9 0 R
+>>
+endobj 
+5 0 obj 
+<<
+/Nums [0 10 0 R]
+>>
+endobj 
+6 0 obj 
+<<
+/P 3 0 R
+/K [11 0 R]
+/Type /StructElem
+/S /Document
+>>
+endobj 
+8 0 obj 
+<<
+/Subtype /Form
+/StructParents 0
+/Length 80
+/Resources 
+<<
+/Font 
+<<
+/F1 12 0 R
+>>
+>>
+/BBox [0 0 150 150]
+/Type /XObject
+>>
+stream
+/Span <</MCID 0>> BDC
+q
+BT
+/F1 12 Tf
+0 133.33 Td
+(Text from XObject)Tj
+ET
+Q
+EMC
+
+endstream 
+endobj 
+7 0 obj 
+<<
+/BaseFont /Helvetica
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/Type /Font
+>>
+endobj 
+9 0 obj 
+<<
+/Length 29
+>>
+stream
+q
+1 0 0 1 10 10 cm
+/Fm1 Do
+Q
+
+endstream 
+endobj 
+11 0 obj 
+<<
+/P 6 0 R
+/A 
+<<
+/SpaceBefore 4
+/O /Layout
+/BBox [0 124.02 150 150]
+/SpaceAfter 4
+>>
+/K 13 0 R
+/Type /StructElem
+/S /P
+>>
+endobj 
+13 0 obj 
+<<
+/P 11 0 R
+/K 
+<<
+/Pg 4 0 R
+/Stm 8 0 R
+/MCID 0
+/Type /MCR
+>>
+/Type /StructElem
+/S /Span
+>>
+endobj 
+12 0 obj 
+<<
+/BaseFont /Helvetica
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/Type /Font
+>>
+endobj 
+10 0 obj [13 0 R]
+endobj 
+14 0 obj 
+<<
+/Producer (iTextÆ 7.1.9-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))
+/ModDate (D:20191010152725+03'00')
+/CreationDate (D:20191010152725+03'00')
+>>
+endobj xref
+0 15
+0000000000 65535 f 
+0000000015 00000 n 
+0000000118 00000 n 
+0000000177 00000 n 
+0000000288 00000 n 
+0000000494 00000 n 
+0000000534 00000 n 
+0000000851 00000 n 
+0000000609 00000 n 
+0000000950 00000 n 
+0000001385 00000 n 
+0000001032 00000 n 
+0000001285 00000 n 
+0000001174 00000 n 
+0000001411 00000 n 
+trailer
+
+<<
+/Info 14 0 R
+/Root 1 0 R
+/Size 15
+/ID [<b58543f96a24efa554416e201f9fe3a6> <b58543f96a24efa554416e201f9fe3a6>]
+>>
+startxref
+1586
+%%EOF

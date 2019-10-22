@@ -189,6 +189,7 @@ public final class LogMessageConstant {
     public static final String XFDF_NO_F_OBJECT_TO_COMPARE = "Xfdf no f object to compare.";
     public static final String XFDF_OUTPUT_STREAM_CORRUPTED = "Xfdf output stream is corrupted.";
     public static final String XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE = "Xfdf unsupported attribute type";
+    public static final String XOBJECT_HAS_NO_STRUCT_PARENTS = "XObject has no StructParents entry in its stream, no entry in ParentTree will be created for the corresponding structure elements";
     /**
      * @deprecated Use {@link LogMessageConstant#XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT} instead.
      * The constant will be removed in 7.2.

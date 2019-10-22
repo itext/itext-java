@@ -57,6 +57,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.CompareTool.CompareResult;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -111,9 +112,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         assertTrue(checkParentTree(outFile, cmpFile));
     }
 
-    @Ignore("works in non-deterministic way because of the bug in iText code, DEVSIX-3322")
     @Test
-    //TODO update cmp-file after DEVSIX-3322 fixed
     public void stampingFormXobjectInnerContentTaggedTest() throws IOException, InterruptedException {
         String pdf = sourceFolder + "alreadyTaggedFormXObjectInnerContent.pdf";
         String outPdf = destinationFolder + "stampingFormXobjectInnerContentTaggedTest.pdf";
@@ -126,6 +125,31 @@ public class ParentTreeTest extends ExtendedITextTest {
     }
 
     @Test
+    public void severalXObjectsOnOnePageTest() throws IOException, InterruptedException {
+        String pdf = sourceFolder + "severalXObjectsOnOnePageTest.pdf";
+        String outPdf = destinationFolder + "severalXObjectsOnOnePageTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_severalXObjectsOnOnePageTest.pdf";
+
+        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
+        taggedPdf.setTagged();
+        taggedPdf.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void earlyFlushXObjectTaggedTest() throws IOException, InterruptedException {
+        String pdf = sourceFolder + "earlyFlushXObjectTaggedTest.pdf";
+        String outPdf = destinationFolder + "earlyFlushXObjectTaggedTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_earlyFlushXObjectTaggedTest.pdf";
+
+        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
+        PdfDictionary resource = taggedPdf.getFirstPage().getResources().getResource(PdfName.XObject);
+        resource.get(new PdfName("Fm1")).flush();
+
+        taggedPdf.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+    }
+    
     public void test02() throws IOException {
         String outFile = destinationFolder + "parentTreeTest02.pdf";
         String cmpFile = sourceFolder + "cmp_parentTreeTest02.pdf";

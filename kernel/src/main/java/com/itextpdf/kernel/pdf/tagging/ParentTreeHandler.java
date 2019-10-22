@@ -55,15 +55,22 @@ import com.itextpdf.kernel.pdf.PdfNumTree;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfStream;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.Set;
+import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+
 
 /**
  * Internal helper class which is used to effectively build parent tree and also find marked content references:
@@ -80,22 +87,11 @@ class ParentTreeHandler implements Serializable {
      */
     private PdfNumTree parentTree;
 
-    /**
-     * Contains marked content references for every page.
-     * If new mcrs are added to the tag structure, these new mcrs are also added to this map. So for each adding or
-     * removing mcr, register/unregister calls must be made (this is done automatically if addKid or removeKid methods
-     * of PdfStructElement are used).
-     *
-     * Keys in this map are page references, values - a map which contains all mcrs that belong to the given page.
-     * This inner map of mcrs is of following structure:
-     *      * for McrDictionary and McrNumber values the keys are their MCIDs;
-     *      * for ObjRef values the keys are struct parent indexes, but with one trick. Struct parent indexes and MCIDs have the
-     *        same value domains: the increasing numbers starting from zero. So, in order to store them in one map, for
-     *        struct parent indexes simple transformation is applied via {@link #structParentIndexIntoKey}
-     *        and {@code #keyIntoStructParentIndex}. With this we simply store struct parent indexes as negative numbers.
-     */
-    private Map<PdfIndirectReference, TreeMap<Integer, PdfMcr>> pageToPageMcrs;
+    private Map<PdfIndirectReference, PageMcrsContainer> pageToPageMcrs;
+
     private Map<PdfIndirectReference, Integer> pageToStructParentsInd;
+
+    private Map<PdfIndirectReference, Integer> xObjectToStructParentsInd;
 
     /**
      * Init ParentTreeHandler. On init the parent tree is read and stored in this instance.
@@ -103,37 +99,35 @@ class ParentTreeHandler implements Serializable {
     ParentTreeHandler(PdfStructTreeRoot structTreeRoot) {
         this.structTreeRoot = structTreeRoot;
         parentTree = new PdfNumTree(structTreeRoot.getDocument().getCatalog(), PdfName.ParentTree);
+        xObjectToStructParentsInd = new HashMap<>();
         registerAllMcrs();
         pageToStructParentsInd = new HashMap<>();
     }
 
     /**
-     * Gets a list of marked content references on page.
+     * Gets a list of all marked content references on the page.
      */
-    public Map<Integer, PdfMcr> getPageMarkedContentReferences(PdfPage page) {
+    public PageMcrsContainer getPageMarkedContentReferences(PdfPage page) {
         return pageToPageMcrs.get(page.getPdfObject().getIndirectReference());
     }
 
+    // Mind that this method searches among items contained in page's content stream  only
     public PdfMcr findMcrByMcid(PdfDictionary pageDict, int mcid) {
-        Map<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(pageDict.getIndirectReference());
-        return pageMcrs != null ? pageMcrs.get(mcid) : null;
+        PageMcrsContainer pageMcrs = pageToPageMcrs.get(pageDict.getIndirectReference());
+        return pageMcrs != null ? pageMcrs.getPageContentStreamsMcrs().get(mcid) : null;
     }
 
     public PdfObjRef findObjRefByStructParentIndex(PdfDictionary pageDict, int structParentIndex) {
-        Map<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(pageDict.getIndirectReference());
-        return pageMcrs != null ? (PdfObjRef) pageMcrs.get(structParentIndexIntoKey(structParentIndex)) : null;
+        PageMcrsContainer pageMcrs = pageToPageMcrs.get(pageDict.getIndirectReference());
+        return pageMcrs != null ? (PdfObjRef) pageMcrs.getObjRefs().get(structParentIndex) : null;
     }
 
     public int getNextMcidForPage(PdfPage page) {
-        TreeMap<Integer, PdfMcr> pageMcrs = (TreeMap<Integer, PdfMcr>) getPageMarkedContentReferences(page);
-        if (pageMcrs == null || pageMcrs.size() == 0) {
+        PageMcrsContainer pageMcrs = getPageMarkedContentReferences(page);
+        if (pageMcrs == null || pageMcrs.getPageContentStreamsMcrs().size() == 0) {
             return 0;
         } else {
-            int lastKey = (int) pageMcrs.lastEntry().getKey();
-            if (lastKey < 0) {
-                return 0;
-            }
-            return lastKey + 1;
+            return (int) pageMcrs.getPageContentStreamsMcrs().lastEntry().getKey() + 1;
         }
     }
 
@@ -141,10 +135,11 @@ class ParentTreeHandler implements Serializable {
      * Creates and flushes parent tree entry for the page.
      * Effectively this means that new content mustn't be added to the page.
      *
-     * @param page {@link PdfPage} for which to create parent tree entry. Typically this page is flushed after this call.
+     * @param page {@link PdfPage} for which to create parent tree entry. Typically this page is flushed after this
+     *             call.
      */
     public void createParentTreeEntryForPage(PdfPage page) {
-        Map<Integer, PdfMcr> mcrs = getPageMarkedContentReferences(page);
+        PageMcrsContainer mcrs = getPageMarkedContentReferences(page);
         if (mcrs == null) {
             return;
         }
@@ -160,21 +155,17 @@ class ParentTreeHandler implements Serializable {
         if (page.isFlushed() || pageToPageMcrs.get(indRef) == null) {
             return;
         }
-        boolean hasNonObjRefMcr = false;
-        for (Integer key : pageToPageMcrs.get(indRef).keySet()) {
-            if (key < 0) {
-                continue;
-            }
-            hasNonObjRefMcr = true;
-            break;
-        }
+        // TODO checking for XObject-related mcrs is here to keep up the same behaviour that should be fixed in the scope of DEVSIX-3351
+        boolean hasNonObjRefMcr = pageToPageMcrs.get(indRef).getPageContentStreamsMcrs().size() > 0 ||
+                pageToPageMcrs.get(indRef).getPageResourceXObjects().size() > 0;
+
         if (hasNonObjRefMcr) {
             pageToStructParentsInd.put(indRef, (Integer) getOrCreatePageStructParentIndex(page));
         }
     }
 
     public PdfDictionary buildParentTree() {
-        return (PdfDictionary)parentTree.buildTree().makeIndirect(structTreeRoot.getDocument());
+        return (PdfDictionary) parentTree.buildTree().makeIndirect(structTreeRoot.getDocument());
     }
 
     public void registerMcr(PdfMcr mcr) {
@@ -188,24 +179,53 @@ class ParentTreeHandler implements Serializable {
             logger.error(LogMessageConstant.ENCOUNTERED_INVALID_MCR);
             return;
         }
-        TreeMap<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(mcrPageObject.getIndirectReference());
+        PageMcrsContainer pageMcrs = pageToPageMcrs.get(mcrPageObject.getIndirectReference());
         if (pageMcrs == null) {
-            pageMcrs = new TreeMap<>();
+            pageMcrs = new PageMcrsContainer();
             pageToPageMcrs.put(mcrPageObject.getIndirectReference(), pageMcrs);
         }
-        if (mcr instanceof PdfObjRef) {
+
+        PdfObject stm;
+        if ((stm = getStm(mcr)) != null) {
+            PdfIndirectReference stmIndRef;
+            PdfStream xObjectStream;
+            if (stm instanceof PdfIndirectReference) {
+                stmIndRef = (PdfIndirectReference) stm;
+                xObjectStream = (PdfStream) stmIndRef.getRefersTo();
+            } else {
+                if (stm.getIndirectReference() == null) {
+                    stm.makeIndirect(structTreeRoot.getDocument());
+                }
+                stmIndRef = stm.getIndirectReference();
+                xObjectStream = (PdfStream) stm;
+            }
+
+            Integer structParent = xObjectStream.getAsInt(PdfName.StructParents);
+            if (structParent != null) {
+                xObjectToStructParentsInd.put(stmIndRef, structParent);
+            } else {
+                // TODO DEVSIX-3351 an error is thrown here because right now no /StructParents will be created.
+                Logger logger = LoggerFactory.getLogger(ParentTreeHandler.class);
+                logger.error(LogMessageConstant.XOBJECT_HAS_NO_STRUCT_PARENTS);
+            }
+            pageMcrs.putXObjectMcr(stmIndRef, mcr);
+            if (registeringOnInit) {
+                xObjectStream.release();
+            }
+        } else if (mcr instanceof PdfObjRef) {
             PdfDictionary obj = ((PdfDictionary) mcr.getPdfObject()).getAsDictionary(PdfName.Obj);
             if (obj == null || obj.isFlushed()) {
-                throw new PdfException(PdfException.WhenAddingObjectReferenceToTheTagTreeItMustBeConnectedToNotFlushedObject);
+                throw new PdfException(
+                        PdfException.WhenAddingObjectReferenceToTheTagTreeItMustBeConnectedToNotFlushedObject);
             }
             PdfNumber n = obj.getAsNumber(PdfName.StructParent);
             if (n != null) {
-                pageMcrs.put(structParentIndexIntoKey(n.intValue()), mcr);
+                pageMcrs.putObjectReferenceMcr(n.intValue(), mcr);
             } else {
                 throw new PdfException(PdfException.StructParentIndexNotFoundInTaggedObject);
             }
         } else {
-            pageMcrs.put(mcr.getMcid(), mcr);
+            pageMcrs.putPageContentStreamMcr(mcr.getMcid(), mcr);
         }
 
         if (!registeringOnInit) {
@@ -223,47 +243,48 @@ class ParentTreeHandler implements Serializable {
         if (pageDict.isFlushed()) {
             throw new PdfException(PdfException.CannotRemoveMarkedContentReferenceBecauseItsPageWasAlreadyFlushed);
         }
-        Map<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(pageDict.getIndirectReference());
+        PageMcrsContainer pageMcrs = pageToPageMcrs.get(pageDict.getIndirectReference());
         if (pageMcrs != null) {
-            if (mcrToUnregister instanceof PdfObjRef) {
-
+            PdfObject stm;
+            if ((stm = getStm(mcrToUnregister)) != null) {
+                PdfIndirectReference xObjectReference =
+                        stm instanceof PdfIndirectReference ? (PdfIndirectReference) stm : stm.getIndirectReference();
+                pageMcrs.getPageResourceXObjects().get(xObjectReference).remove(mcrToUnregister.getMcid());
+                if (pageMcrs.getPageResourceXObjects().get(xObjectReference).isEmpty()) {
+                    pageMcrs.getPageResourceXObjects().remove(xObjectReference);
+                    xObjectToStructParentsInd.remove(xObjectReference);
+                }
+                structTreeRoot.setModified();
+            } else if (mcrToUnregister instanceof PdfObjRef) {
                 PdfDictionary obj = ((PdfDictionary) mcrToUnregister.getPdfObject()).getAsDictionary(PdfName.Obj);
                 if (obj != null && !obj.isFlushed()) {
                     PdfNumber n = obj.getAsNumber(PdfName.StructParent);
                     if (n != null) {
-                        pageMcrs.remove(structParentIndexIntoKey(n.intValue()));
+                        pageMcrs.getObjRefs().remove(n.intValue());
                         structTreeRoot.setModified();
                         return;
                     }
                 }
-
-                for (Map.Entry<Integer, PdfMcr> entry : pageMcrs.entrySet()) {
+                for (Map.Entry<Integer, PdfMcr> entry : pageMcrs.getObjRefs().entrySet()) {
                     if (entry.getValue().getPdfObject() == mcrToUnregister.getPdfObject()) {
-                        pageMcrs.remove(entry.getKey());
+                        pageMcrs.getObjRefs().remove(entry.getKey());
                         structTreeRoot.setModified();
                         break;
                     }
                 }
             } else {
-                pageMcrs.remove(mcrToUnregister.getMcid());
+                pageMcrs.getPageContentStreamsMcrs().remove(mcrToUnregister.getMcid());
                 structTreeRoot.setModified();
             }
         }
     }
 
-    private static int structParentIndexIntoKey(int structParentIndex) {
-        return -structParentIndex - 1;
-    }
-
-    private static int keyIntoStructParentIndex(int key) {
-        return -key - 1;
-    }
-
     private void registerAllMcrs() {
         pageToPageMcrs = new HashMap<>();
         // we create new number tree and not using parentTree, because we want parentTree to be empty
-        Map<Integer, PdfObject> parentTreeEntries = new PdfNumTree(structTreeRoot.getDocument().getCatalog(), PdfName.ParentTree).getNumbers();
-        Set<PdfStructElem> mcrParents = new HashSet<>();
+        Map<Integer, PdfObject> parentTreeEntries = new PdfNumTree(structTreeRoot.getDocument().getCatalog(),
+                PdfName.ParentTree).getNumbers();
+        Set<PdfDictionary> mcrParents = new LinkedHashSet<>();
         int maxStructParentIndex = -1;
         for (Map.Entry<Integer, PdfObject> entry : parentTreeEntries.entrySet()) {
             if (entry.getKey() > maxStructParentIndex) {
@@ -272,21 +293,22 @@ class ParentTreeHandler implements Serializable {
 
             PdfObject entryValue = entry.getValue();
             if (entryValue.isDictionary()) {
-                mcrParents.add(new PdfStructElem((PdfDictionary) entryValue));
+                mcrParents.add((PdfDictionary) entryValue);
             } else if (entryValue.isArray()) {
                 PdfArray parentsArray = (PdfArray) entryValue;
                 for (int i = 0; i < parentsArray.size(); ++i) {
                     PdfDictionary parent = parentsArray.getAsDictionary(i);
                     if (parent != null) {
-                        mcrParents.add(new PdfStructElem(parent));
+                        mcrParents.add(parent);
                     }
                 }
             }
         }
         structTreeRoot.getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber(maxStructParentIndex + 1));
 
-        for (PdfStructElem mcrParent : mcrParents) {
-            for (IStructureNode kid : mcrParent.getKids()) {
+        for (PdfObject mcrParent : mcrParents) {
+            PdfStructElem mcrParentStructElem = new PdfStructElem((PdfDictionary) mcrParent);
+            for (IStructureNode kid : mcrParentStructElem.getKids()) {
                 if (kid instanceof PdfMcr) {
                     registerMcr((PdfMcr) kid, true);
                 }
@@ -294,50 +316,75 @@ class ParentTreeHandler implements Serializable {
         }
     }
 
-    private boolean updateStructParentTreeEntries(PdfPage page, Map<Integer, PdfMcr> mcrs) {
+    private boolean updateStructParentTreeEntries(PdfPage page, PageMcrsContainer mcrs) {
         boolean res = false;
-        // element indexes in parentsOfPageMcrs shall be the same as mcid of one of their kids.
-        // See "Finding Structure Elements from Content Items" in pdf spec.
-        PdfArray parentsOfPageMcrs = new PdfArray();
-        int currentMcid = 0;
-        for (Map.Entry<Integer, PdfMcr> entry : mcrs.entrySet()) {
+
+        for (Map.Entry<Integer, PdfMcr> entry : mcrs.getObjRefs().entrySet()) {
             PdfMcr mcr = entry.getValue();
             PdfDictionary parentObj = ((PdfStructElem) mcr.getParent()).getPdfObject();
             if (!parentObj.isIndirect()) {
                 continue;
             }
-            if (mcr instanceof PdfObjRef) {
-                int structParent = keyIntoStructParentIndex((int) entry.getKey());
-                parentTree.addEntry(structParent, parentObj);
-                res = true;
-            } else {
-                // if for some reason some mcr where not registered or don't exist, we ensure that the rest
-                // of the parent objects were placed at correct index
-                while (currentMcid++ < mcr.getMcid()) {
-                    parentsOfPageMcrs.add(PdfNull.PDF_NULL);
-                }
-                parentsOfPageMcrs.add(parentObj);
-            }
+            int structParent = entry.getKey();
+            parentTree.addEntry(structParent, parentObj);
+            res = true;
         }
 
-        if (!parentsOfPageMcrs.isEmpty()) {
-            int pageStructParentIndex;
-            if (page.isFlushed()) {
-                PdfIndirectReference pageRef = page.getPdfObject().getIndirectReference();
-                if (!pageToStructParentsInd.containsKey(pageRef)) {
-                    return res;
+        int pageStructParentIndex;
+        for (Map.Entry<PdfIndirectReference, TreeMap<Integer, PdfMcr>> entry : mcrs.getPageResourceXObjects()
+                .entrySet()) {
+            PdfIndirectReference xObjectRef = entry.getKey();
+            if (xObjectToStructParentsInd.containsKey(xObjectRef)) {
+                pageStructParentIndex = (int) xObjectToStructParentsInd.remove(xObjectRef);
+                if (updateStructParentTreeForContentStreamEntries(entry.getValue(), pageStructParentIndex)) {
+                    res = true;
                 }
-                pageStructParentIndex = (int)pageToStructParentsInd.remove(pageRef);
-            } else {
-                pageStructParentIndex = getOrCreatePageStructParentIndex(page);
             }
-            parentsOfPageMcrs.makeIndirect(structTreeRoot.getDocument());
-            parentTree.addEntry(pageStructParentIndex, parentsOfPageMcrs);
-            res = true;
-            structTreeRoot.getDocument().checkIsoConformance(parentsOfPageMcrs, IsoKey.TAG_STRUCTURE_ELEMENT);
-            parentsOfPageMcrs.flush();
         }
+        if (page.isFlushed()) {
+            PdfIndirectReference pageRef = page.getPdfObject().getIndirectReference();
+            if (!pageToStructParentsInd.containsKey(pageRef)) {
+                return res;
+            }
+            pageStructParentIndex = (int) pageToStructParentsInd.remove(pageRef);
+        } else {
+            pageStructParentIndex = getOrCreatePageStructParentIndex(page);
+        }
+        if (updateStructParentTreeForContentStreamEntries(mcrs.getPageContentStreamsMcrs(), pageStructParentIndex)) {
+            res = true;
+        }
+
         return res;
+    }
+
+    private boolean updateStructParentTreeForContentStreamEntries(Map<Integer, PdfMcr> mcrsOfContentStream,
+            int pageStructParentIndex) {
+        // element indices in parentsOfMcrs shall be the same as mcid of one of their kids.
+        // See "Finding Structure Elements from Content Items" in pdf spec.
+        PdfArray parentsOfMcrs = new PdfArray();
+        int currentMcid = 0;
+        for (Map.Entry<Integer, PdfMcr> entry : mcrsOfContentStream.entrySet()) {
+            PdfMcr mcr = entry.getValue();
+            PdfDictionary parentObj = ((PdfStructElem) mcr.getParent()).getPdfObject();
+            if (!parentObj.isIndirect()) {
+                continue;
+            }
+            // if for some reason some mcrs were not registered or don't exist, we ensure that the rest
+            // of the parent objects were placed at correct index
+            while (currentMcid++ < mcr.getMcid()) {
+                parentsOfMcrs.add(PdfNull.PDF_NULL);
+            }
+            parentsOfMcrs.add(parentObj);
+        }
+
+        if (!parentsOfMcrs.isEmpty()) {
+            parentsOfMcrs.makeIndirect(structTreeRoot.getDocument());
+            parentTree.addEntry(pageStructParentIndex, parentsOfMcrs);
+            structTreeRoot.getDocument().checkIsoConformance(parentsOfMcrs, IsoKey.TAG_STRUCTURE_ELEMENT);
+            parentsOfMcrs.flush();
+            return true;
+        }
+        return false;
     }
 
     private int getOrCreatePageStructParentIndex(PdfPage page) {
@@ -348,4 +395,74 @@ class ParentTreeHandler implements Serializable {
         }
         return structParentIndex;
     }
+
+    private static PdfObject getStm(PdfMcr mcr) {
+        /*
+         * Presence of Stm guarantees that the mcr belongs to XObject, absence of Stm guarantees that the mcr belongs to page content stream.
+         * See 14.7.4.2 Marked-Content Sequences as Content Items, Table 324 – Entries in a marked-content reference dictionary.
+         */
+        if (mcr instanceof PdfMcrDictionary) {
+            return ((PdfDictionary) mcr.getPdfObject()).get(PdfName.Stm, false);
+        }
+        return null;
+    }
+
+    static class PageMcrsContainer implements Serializable {
+
+        private static final long serialVersionUID = 8739394375814645643L;
+
+        Map<Integer, PdfMcr> objRefs;
+        NavigableMap<Integer, PdfMcr> pageContentStreams;
+        /*
+         * Keys of this map are indirect references to XObjects contained in page's resources,
+         * values are the mcrs contained in the corresponding XObject streams, stored as mappings "MCID-number to PdfMcr".
+         */
+        Map<PdfIndirectReference, TreeMap<Integer, PdfMcr>> pageResourceXObjects;
+
+        PageMcrsContainer() {
+            objRefs = new LinkedHashMap<Integer, PdfMcr>();
+            pageContentStreams = new TreeMap<Integer, PdfMcr>();
+            pageResourceXObjects = new LinkedHashMap<PdfIndirectReference, TreeMap<Integer, PdfMcr>>();
+        }
+
+        void putObjectReferenceMcr(int structParentIndex, PdfMcr mcr) {
+            objRefs.put(structParentIndex, mcr);
+        }
+
+        void putPageContentStreamMcr(int mcid, PdfMcr mcr) {
+            pageContentStreams.put(mcid, mcr);
+        }
+
+        void putXObjectMcr(PdfIndirectReference xObjectIndRef, PdfMcr mcr) {
+            TreeMap<Integer, PdfMcr> xObjectMcrs = pageResourceXObjects.get(xObjectIndRef);
+            if (xObjectMcrs == null) {
+                xObjectMcrs = new TreeMap<Integer, PdfMcr>();
+                pageResourceXObjects.put(xObjectIndRef, xObjectMcrs);
+            }
+            pageResourceXObjects.get(xObjectIndRef).put(mcr.getMcid(), mcr);
+        }
+
+        NavigableMap<Integer, PdfMcr> getPageContentStreamsMcrs() {
+            return pageContentStreams;
+        }
+
+        Map<Integer, PdfMcr> getObjRefs() {
+            return objRefs;
+        }
+
+        Map<PdfIndirectReference, TreeMap<Integer, PdfMcr>> getPageResourceXObjects() {
+            return pageResourceXObjects;
+        }
+
+        Collection<PdfMcr> getAllMcrsAsCollection() {
+            Collection<PdfMcr> collection = new ArrayList<PdfMcr>();
+            collection.addAll(objRefs.values());
+            collection.addAll(pageContentStreams.values());
+            for (Map.Entry<PdfIndirectReference, TreeMap<Integer, PdfMcr>> entry : pageResourceXObjects.entrySet()) {
+                collection.addAll(entry.getValue().values());
+            }
+            return collection;
+        }
+    }
+
 }

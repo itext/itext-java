@@ -768,7 +768,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Calculates and returns next available MCID reference.
+     * Calculates and returns the next available for this page's content stream MCID reference.
      *
      * @return calculated MCID reference.
      * @throws PdfException in case of not tagged document.
