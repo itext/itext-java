@@ -113,10 +113,10 @@ public class ParentTreeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void stampingFormXobjectInnerContentTaggedTest() throws IOException, InterruptedException {
+    public void stampingFormXObjectInnerContentTaggedTest() throws IOException, InterruptedException {
         String pdf = sourceFolder + "alreadyTaggedFormXObjectInnerContent.pdf";
-        String outPdf = destinationFolder + "stampingFormXobjectInnerContentTaggedTest.pdf";
-        String cmpPdf = sourceFolder + "cmp_stampingFormXobjectInnerContentTaggedTest.pdf";
+        String outPdf = destinationFolder + "stampingFormXObjectInnerContentTaggedTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_stampingFormXObjectInnerContentTaggedTest.pdf";
 
         PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
         taggedPdf.setTagged();
@@ -149,7 +149,51 @@ public class ParentTreeTest extends ExtendedITextTest {
         taggedPdf.close();
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
-    
+
+    @Test
+    public void identicalMcidIdInOneStreamTest() throws IOException, InterruptedException {
+        String pdf = sourceFolder + "identicalMcidIdInOneStreamTest.pdf";
+        String outPdf = destinationFolder + "identicalMcidIdInOneStreamTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_identicalMcidIdInOneStreamTest.pdf";
+
+        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
+        taggedPdf.setTagged();
+        taggedPdf.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void copyPageWithFormXObjectTaggedTest() throws IOException, InterruptedException {
+        String cmpPdf = sourceFolder + "cmp_copyPageWithFormXobjectTaggedTest.pdf";
+        String outDoc = destinationFolder + "copyPageWithFormXobjectTaggedTest.pdf";
+        PdfDocument srcPdf = new PdfDocument(new PdfReader(sourceFolder + "copyFromFile.pdf"));
+        PdfDocument outPdf = new PdfDocument(new PdfReader(sourceFolder + "copyToFile.pdf"), new PdfWriter(outDoc));
+
+        outPdf.setTagged();
+        srcPdf.copyPagesTo(1, 1, outPdf);
+
+        srcPdf.close();
+        outPdf.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outDoc, cmpPdf, destinationFolder));
+    }
+
+    @Test
+    public void removePageWithFormXObjectTaggedTest() throws IOException, InterruptedException {
+        String cmpPdf = sourceFolder + "cmp_removePageWithFormXobjectTaggedTest.pdf";
+        String outDoc = destinationFolder + "removePageWithFormXobjectTaggedTest.pdf";
+
+        PdfDocument outPdf = new PdfDocument(new PdfReader(sourceFolder + "forRemovePage.pdf"), new PdfWriter(outDoc));
+
+        outPdf.setTagged();
+        outPdf.removePage(1);
+
+        outPdf.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outDoc, cmpPdf, destinationFolder));
+    }
+
+    @Test
     public void test02() throws IOException {
         String outFile = destinationFolder + "parentTreeTest02.pdf";
         String cmpFile = sourceFolder + "cmp_parentTreeTest02.pdf";

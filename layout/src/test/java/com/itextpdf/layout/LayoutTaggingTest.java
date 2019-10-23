@@ -96,6 +96,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -427,7 +428,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         pdf.setTagged();
         Document doc = new Document(pdf);
 
-        Table table = new Table(new float[] {1,2,3}).setFixedLayout().setWidth(400);
+        Table table = new Table(new float[]{1, 2, 3}).setFixedLayout().setWidth(400);
 
         table.addCell("1x");
         table.addCell("2x");
@@ -461,7 +462,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         table.setSkipLastFooter(true);
 
         for (int i = 0; i < 350; i++) {
-            table.addCell(new Cell().add(new Paragraph(String.valueOf(i+1))));
+            table.addCell(new Cell().add(new Paragraph(String.valueOf(i + 1))));
             table.flush();
         }
 
