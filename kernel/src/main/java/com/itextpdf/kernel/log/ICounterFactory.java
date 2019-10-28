@@ -47,7 +47,7 @@ package com.itextpdf.kernel.log;
  * Factory that can be registered in {@link CounterManager} and creates a counter for every reader or writer class.
  * <p>
  * You can implement your own counter factory and register it like this:
- * <code>CounterManager.getInstance().registerCounter(new SystemOutCounterFactory());</code>
+ * <code>CounterManager.getInstance().register(new SystemOutCounterFactory());</code>
  * <p>
  * {@link SystemOutCounterFactory} is just an example of {@link ICounterFactory} implementation.
  * It creates {@link SystemOutCounter} that writes info about files being read and written to the {@link System#out}
