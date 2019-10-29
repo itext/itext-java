@@ -24,14 +24,19 @@ package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.Document;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -59,7 +64,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
         PdfTextFormField name = PdfFormField.createMultilineText(pdfDoc,
-                new Rectangle(150, 600, 277, 44),"fieldName", "", null, 0);
+                new Rectangle(150, 600, 277, 44), "fieldName", "", null, 0);
         name.setScroll(false);
         name.setBorderColor(ColorConstants.GRAY);
         String itextLicence = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
@@ -72,7 +77,9 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_multilineFormFieldTest.pdf", destinationFolder, "diff_");
+        String errorMessage = compareTool
+                .compareByContent(filename, sourceFolder + "cmp_multilineFormFieldTest.pdf", destinationFolder,
+                        "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -88,7 +95,8 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
         Rectangle rect = new Rectangle(210, 600, 150, 100);
-        PdfTextFormField field = PdfFormField.createMultilineText(pdfDoc, rect, "fieldName", "some value\nsecond line\nthird");
+        PdfTextFormField field = PdfFormField
+                .createMultilineText(pdfDoc, rect, "fieldName", "some value\nsecond line\nthird");
         field.setJustification(PdfTextFormField.ALIGN_RIGHT);
         form.addField(field);
 
@@ -157,8 +165,9 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
         for (int i = 15; i <= 50; i += 15) {
-            PdfFormField[] fields = new PdfFormField[]{
-                    PdfFormField.createMultilineText(pdfDoc, new Rectangle(100, 800 - i * 4, 150, i), "multi " + i, "MULTI"),
+            PdfFormField[] fields = new PdfFormField[] {
+                    PdfFormField.createMultilineText(pdfDoc, new Rectangle(100, 800 - i * 4, 150, i), "multi " + i,
+                            "MULTI"),
                     PdfFormField.createText(pdfDoc, new Rectangle(300, 800 - i * 4, 150, i), "single " + i, "SINGLE")};
             for (PdfFormField field : fields) {
                 field.setFontSize(40);
@@ -169,7 +178,9 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
+        String errorMessage = compareTool
+                .compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder,
+                        "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -189,8 +200,9 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         field.setBorderWidth(50);
         form.addField(field);
 
-        PdfTextFormField field2 = PdfFormField.createMultilineText(pdfDoc, new Rectangle(100, 400, 400, 50), "multiAuto",
-                "Does this autosize text overlap the border? Well it shouldn't! Does it fit accurately though?");
+        PdfTextFormField field2 = PdfFormField
+                .createMultilineText(pdfDoc, new Rectangle(100, 400, 400, 50), "multiAuto",
+                        "Does this autosize text overlap the border? Well it shouldn't! Does it fit accurately though?");
         field2.setFontSize(0);
         field2.setBorderColor(ColorConstants.RED);
         field2.setBorderWidth(20);
@@ -199,10 +211,36 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_borderWidthIndentMultilineTest.pdf", destinationFolder, "diff_");
+        String errorMessage = compareTool
+                .compareByContent(filename, sourceFolder + "cmp_borderWidthIndentMultilineTest.pdf", destinationFolder,
+                        "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
     }
-}
 
+    @Test
+    public void formFieldFilledWithStringTest() throws IOException, InterruptedException {
+        String value = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "formFieldWithStringTest.pdf"));
+
+        PdfFont font = PdfFontFactory
+                .createFont(sourceFolder + "NotoSansCJKtc-Light.otf", PdfEncodings.IDENTITY_H, true);
+
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        PdfFormField form = PdfTextFormField.createMultilineText(pdfDoc,
+                new Rectangle(59, 715, 127, 69), "field", "", font, 10f);
+        form
+                .setBorderWidth(2)
+                .setBorderColor(ColorConstants.BLACK)
+                .setValue(value);
+
+        acroForm.addField(form);
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "formFieldWithStringTest.pdf",
+                sourceFolder + "cmp_formFieldWithStringTest.pdf", destinationFolder, "diff_"));
+    }
+}

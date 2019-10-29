@@ -69,11 +69,11 @@ public class FlatteningTest extends ExtendedITextTest {
     }
 
     @Test
-    public void formFlatteningTestWithAPWithoutSubtype() throws IOException, InterruptedException {
-        String filename = "job_application_filled";
-        String src = sourceFolder + filename + ".pdf";
-        String dest = destinationFolder + filename + "_flattened.pdf";
-        String cmp = sourceFolder + "cmp_" + filename + "_flattened.pdf";
+    public void flatteningFormFieldNoSubtypeInAPTest() throws IOException, InterruptedException {
+        String src = sourceFolder + "formFieldNoSubtypeInAPTest.pdf";
+        String dest = destinationFolder + "flatteningFormFieldNoSubtypeInAPTest.pdf";
+        String cmp = sourceFolder + "cmp_flatteningFormFieldNoSubtypeInAPTest.pdf";
+
         PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
 
         PdfAcroForm.getAcroForm(doc, false).flattenFields();
