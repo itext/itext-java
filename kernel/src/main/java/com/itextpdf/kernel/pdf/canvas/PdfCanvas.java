@@ -1856,6 +1856,8 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Creates Image XObject from image and adds it to canvas (as Image XObject).
+     * <p>
+     * The float arguments will be used in concatenating the transformation matrix as operands.
      *
      * @param image the {@code PdfImageXObject} object
      * @param a     an element of the transformation matrix
@@ -1865,6 +1867,7 @@ public class PdfCanvas implements Serializable {
      * @param e     an element of the transformation matrix
      * @param f     an element of the transformation matrix
      * @return created Image XObject.
+     * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfXObject addImage(ImageData image, float a, float b, float c, float d, float e, float f) {
         return addImage(image, a, b, c, d, e, f, false);
@@ -1872,6 +1875,8 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Creates Image XObject from image and adds it to canvas.
+     * <p>
+     * The float arguments will be used in concatenating the transformation matrix as operands.
      *
      * @param image    the {@code PdfImageXObject} object
      * @param a        an element of the transformation matrix
@@ -1882,6 +1887,7 @@ public class PdfCanvas implements Serializable {
      * @param f        an element of the transformation matrix
      * @param asInline true if to add image as in-line.
      * @return created Image XObject or null in case of in-line image (asInline = true).
+     * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfXObject addImage(ImageData image, float a, float b, float c, float d, float e, float f, boolean asInline) {
         if (image.getOriginalType() == ImageType.WMF) {
@@ -1904,11 +1910,15 @@ public class PdfCanvas implements Serializable {
     /**
      * Creates Image XObject from image and adds it to canvas.
      * The created image will be fit inside on the specified rectangle without preserving aspect ratio.
+     * <p>
+     * The x, y, width and height parameters of the rectangle will be used in concatenating
+     * the transformation matrix as operands.
      *
      * @param image image from which Image XObject will be created
      * @param rect rectangle in which the created image will be fit
      * @param asInline true if to add image as in-line.
      * @return created XObject or null in case of in-line image (asInline = true).
+     * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfXObject addImage(ImageData image, Rectangle rect, boolean asInline) {
         return addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY(), asInline);
@@ -1943,6 +1953,8 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Creates Image XObject from image and adds it to the specified position with specified width preserving aspect ratio.
+     * <p>
+     * The float arguments will be used in concatenating the transformation matrix as operand.
      *
      * @param image image from which Image XObject will be created
      * @param x horizontal offset of the created image position
@@ -1950,6 +1962,7 @@ public class PdfCanvas implements Serializable {
      * @param width width of the created image on the basis of which the image height will be calculated
      * @param asInline true if to add image as in-line.
      * @return created XObject or null in case of in-line image (asInline = true).
+     * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfXObject addImage(ImageData image, float x, float y, float width, boolean asInline) {
         if (image.getOriginalType() == ImageType.WMF) {
@@ -1972,6 +1985,8 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Creates Image XObject from image and adds it to the specified position with specified width preserving aspect ratio.
+     * <p>
+     * The float arguments will be used in concatenating the transformation matrix as operand.
      *
      * @param image image from which Image XObject will be created
      * @param x horizontal offset of the created image position
@@ -1981,6 +1996,7 @@ public class PdfCanvas implements Serializable {
      * @param dummy flag to note that the method works with the height parameter as opposed to the method
      *              {@link #addImage(ImageData, float, float, float, boolean)}.
      * @return created XObject or null in case of in-line image (asInline = true).
+     * @see #concatMatrix(double, double, double, double, double, double) 
      */
     public PdfXObject addImage(ImageData image, float x, float y, float height, boolean asInline, boolean dummy) {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y, asInline);
@@ -1988,6 +2004,8 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Adds {@code PdfXObject} to canvas.
+     * <p>
+     * The float arguments will be used in concatenating the transformation matrix as operands.
      *
      * @param xObject the {@code PdfImageXObject} object
      * @param a       an element of the transformation matrix
@@ -1997,6 +2015,7 @@ public class PdfCanvas implements Serializable {
      * @param e       an element of the transformation matrix
      * @param f       an element of the transformation matrix
      * @return current canvas.
+     * @see #concatMatrix(double, double, double, double, double, double) 
      */
     public PdfCanvas addXObject(PdfXObject xObject, float a, float b, float c, float d, float e, float f) {
         if (xObject instanceof PdfFormXObject) {
@@ -2049,12 +2068,15 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Adds {@code PdfXObject} to the specified position with specified width preserving aspect ratio.
+     * <p>
+     * The float arguments will be used in concatenating the transformation matrix as operand.
      *
      * @param xObject Image XObject to be added
      * @param x horizontal offset of the image position
      * @param y vertical offset of the image position
      * @param width width of the image on the basis of which the height will be calculated
      * @return current canvas.
+     * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float width) {
         if (xObject instanceof PdfFormXObject) {
@@ -2068,6 +2090,8 @@ public class PdfCanvas implements Serializable {
 
     /**
      * Adds {@code PdfXObject} to the specified position with specified height preserving aspect ratio.
+     * <p>
+     * The float arguments will be used in concatenating the transformation matrix as operand.
      *
      * @param xObject Image XObject to be added
      * @param x horizontal offset of the image position
@@ -2076,6 +2100,7 @@ public class PdfCanvas implements Serializable {
      * @param dummy flag to note that the method works with the height parameter as opposed to the method
      *              {@link #addXObject(PdfXObject, float, float, float)}
      * @return current canvas.
+     * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float height, boolean dummy) {
         if (xObject instanceof PdfFormXObject) {
