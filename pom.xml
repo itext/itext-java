@@ -314,7 +314,6 @@
           <links>
             <link>${javadoc-link}</link>
           </links>
-          <subpackages>com.itextpdf.barcodes:com.itextpdf.forms:com.itextpdf.io:com.itextpdf.kernel:com.itextpdf.layout:com.itextpdf.pdfa:com.itextpdf.signatures:com.itextpdf.styledxmlparser:com.itextpdf.svg:com.itextpdf.test</subpackages>
           <groups>
             <group>
               <title>Barcodes</title>
