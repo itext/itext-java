@@ -314,6 +314,44 @@
           <links>
             <link>${javadoc-link}</link>
           </links>
+          <sourceFileExcludes>
+            <!-- com.itextpdf.io.util -->
+            <sourceFileExclude>com/itextpdf/io/util/ArrayUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/DateTimeUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/DecimalFormatUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/EncodingUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/EnumUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/ExceptionUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/FileUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/FilterUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/GenericArray.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/HashCode.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/IdelOutputStream.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/IntHashtable.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/MessageFormatUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/NumberUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/ResourceUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/StreamUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/SystemUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/TextUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/UrlUtil.java</sourceFileExclude>
+
+            <!-- com.itextpdf.io.codec.brotli -->
+            <sourceFileExclude>com/itextpdf/io/codec/brotli/dec/*.java</sourceFileExclude>
+
+            <!-- styled-xml-parser -->
+            <sourceFileExclude>com/itextpdf/styledxmlparser/PortUtil.java</sourceFileExclude>
+
+            <!-- com.itextpdf.styledxmlparser.jsoup -->
+            <sourceFileExclude>com/itextpdf/styledxmlparser/jsoup/**/*.java</sourceFileExclude>
+
+            <!-- kernel -->
+            <sourceFileExclude>com/itextpdf/kernel/crypto/CryptoUtil.java</sourceFileExclude>
+
+            <!-- svg -->
+            <sourceFileExclude>com/itextpdf/svg/utils/SvgCoordinateUtils.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/svg/utils/SvgRegexUtils.java</sourceFileExclude>
+          </sourceFileExcludes>
           <groups>
             <group>
               <title>Barcodes</title>
