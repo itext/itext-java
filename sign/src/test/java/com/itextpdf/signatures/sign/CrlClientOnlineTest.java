@@ -43,6 +43,7 @@
 package com.itextpdf.signatures.sign;
 
 import com.itextpdf.signatures.CrlClientOnline;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,7 +53,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 @Category(UnitTest.class)
-public class CrlClientOnlineTest {
+public class CrlClientOnlineTest extends ExtendedITextTest {
 
     private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/";
 
