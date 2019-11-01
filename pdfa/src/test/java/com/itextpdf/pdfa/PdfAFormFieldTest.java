@@ -140,7 +140,8 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         doc.add(p);
         doc.add(p2);
-        group.setValue("v1");
+        //set generateAppearance param to false to retain custom appearance
+        group.setValue("v1", false);
         PdfAcroForm.getAcroForm(pdf, true).addField(group);
 
         pdf.close();

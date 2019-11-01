@@ -250,7 +250,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
         }
 
         mergedField.addKid(existingField).addKid(newField);
-        PdfObject value = existingField.getValue();
+        PdfObject value = existingField.getPdfObject().get(PdfName.V);
         if (value != null) {
             mergedField.put(PdfName.V, existingField.getPdfObject().get(PdfName.V));
         }

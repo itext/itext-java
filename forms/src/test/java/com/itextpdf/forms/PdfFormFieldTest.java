@@ -831,7 +831,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT, count = 2)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT)})
     public void noMaxLenWithSetCombFlagTest() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "noMaxLenWithSetCombFlagTest.pdf";
         String cmpPdf = sourceFolder + "cmp_noMaxLenWithSetCombFlagTest.pdf";
@@ -1266,7 +1266,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     // TODO update cmp-file after DEVSIX-2622 fixed
     public void fillUnmergedTextFormField() throws IOException, InterruptedException {
         String file = sourceFolder + "fillUnmergedTextFormField.pdf";
-        String outfile = destinationFolder + "outfile.pdf";
+        String outfile = destinationFolder + "fillUnmergedTextFormField.pdf";
         String text = "John";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(file), new PdfWriter(outfile));
@@ -1274,7 +1274,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "outfile.pdf",
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "fillUnmergedTextFormField.pdf",
                 sourceFolder + "cmp_" + "fillUnmergedTextFormField.pdf", destinationFolder, "diff_"));
     }
 

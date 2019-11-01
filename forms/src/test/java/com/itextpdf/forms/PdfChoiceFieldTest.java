@@ -42,8 +42,8 @@ import static com.itextpdf.test.ITextTest.createOrClearDestinationFolder;
 @Category(IntegrationTest.class)
 public class PdfChoiceFieldTest {
 
-    public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfCheckBoxFieldTest/";
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfCheckBoxFieldTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfChoiceFieldTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfChoiceFieldTest/";
 
     @BeforeClass
     public static void beforeClass() {
