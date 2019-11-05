@@ -61,7 +61,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @see FontProvider#getPdfFont(FontInfo)
  * @see FontProvider#getPdfFont(FontInfo, FontSet)
  *
- * Note, {@link #getAlias()} and {@link #getDescriptor()} do not taken into account in {@link #equals},
+ * Note, {@link #getAlias()} and {@link #getDescriptor()} are not taken into account in {@link #equals},
  * the same font with different aliases will have equal FontInfo's,
  * and therefore the same {@link PdfFont} in the end document.
  */
@@ -146,6 +146,8 @@ public final class FontInfo {
 
     /**
      * Gets font data, if {@link FontInfo} was created with {@code byte[]}.
+     *
+     * @return font data
      */
     public byte[] getFontData() {
         return fontData;

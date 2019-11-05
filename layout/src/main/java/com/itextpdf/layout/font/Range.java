@@ -69,7 +69,8 @@ public class Range {
     /**
      * Binary search over ordered segments.
      *
-     * @param n
+     * @param n numeric character reference based on the character's Unicode code point
+     * @return true if this Range contains the specified code point, otherwise false
      */
     public boolean contains(int n) {
         int low = 0;
