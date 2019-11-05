@@ -47,7 +47,6 @@ import com.itextpdf.forms.xfdf.AnnotsObject;
 import com.itextpdf.forms.xfdf.AttributeObject;
 import com.itextpdf.forms.xfdf.FieldObject;
 import com.itextpdf.forms.xfdf.FieldsObject;
-import com.itextpdf.forms.xfdf.XfdfConstants;
 import com.itextpdf.forms.xfdf.XfdfException;
 import com.itextpdf.forms.xfdf.XfdfObject;
 import com.itextpdf.forms.xfdf.XfdfObjectFactory;
@@ -986,7 +985,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     public void xfdfEmptyAttributeTest() {
 
         junitExpectedException.expect(XfdfException.class);
-        junitExpectedException.expectMessage(XfdfConstants.ATTRIBUTE_NAME_OR_VALUE_MISSING);
+        junitExpectedException.expectMessage(XfdfException.ATTRIBUTE_NAME_OR_VALUE_MISSING);
 
         XfdfObject xfdfObject = new XfdfObject();
 

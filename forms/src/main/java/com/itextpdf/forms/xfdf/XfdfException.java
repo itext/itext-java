@@ -47,5 +47,11 @@ public class XfdfException extends RuntimeException {
     public XfdfException(String message) {
         super(message);
     }
+
+    /** Message in case one tries to add attribute with null name or value */
+    public static final String ATTRIBUTE_NAME_OR_VALUE_MISSING = "Attribute name or value are missing";
+
+    /** Message in case one tries to add annotation without indicating the page it belongs to*/
+    public static final String PAGE_IS_MISSING = "Required Page attribute is missing.";
 }
 
