@@ -74,4 +74,67 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
             Assert.fail(errorMessage);
         }
     }
+
+    @Test
+    public void autosizeInheritedDAFormFieldsTest() throws IOException, InterruptedException {
+        String inPdf = destinationFolder + "autosizeInheritedDAFormFields.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "autosizeInheritedDAFormFields.pdf"),
+                new PdfWriter(inPdf));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        Map<String, PdfFormField> fields = form.getFormFields();
+
+        fields.get("field_1").setValue("1111 2222 3333 4444");
+        fields.get("field_2").setValue("1111 2222 3333 4444");
+        fields.get("field_3").setValue("surname surname surname surname surname surname");
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(inPdf,
+                sourceFolder + "cmp_autosizeInheritedDAFormFields.pdf", inPdf, "diff_"));
+    }
+
+    @Test
+    public void autosizeInheritedDAFormFieldsWithKidsTest() throws IOException, InterruptedException {
+        String inPdf = destinationFolder + "autosizeInheritedDAFormFieldsWithKids.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "autosizeInheritedDAFormFieldsWithKids.pdf"),
+                new PdfWriter(inPdf));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        Map<String, PdfFormField> fields = form.getFormFields();
+
+        fields.get("root.child.text1").setValue("surname surname surname surname surname");
+        fields.get("root.child.text2").setValue("surname surname surname surname surname");
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(inPdf,
+                sourceFolder + "cmp_autosizeInheritedDAFormFieldsWithKids.pdf", inPdf));
+    }
+
+    @Test
+    public void alignmentInheritanceInFieldsTest() throws IOException, InterruptedException {
+        String name = "alignmentInheritanceInFields";
+        String fileName = destinationFolder + name + ".pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + name + ".pdf"),
+                new PdfWriter(fileName));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        form.setGenerateAppearance(false);
+
+        Map<String, PdfFormField> fields = form.getFormFields();
+        fields.get("root").setValue("Deutschland");
+
+        form.flattenFields();
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(fileName, sourceFolder + "cmp_" + name + ".pdf",
+                destinationFolder + name, "diff_"));
+    }
 }
