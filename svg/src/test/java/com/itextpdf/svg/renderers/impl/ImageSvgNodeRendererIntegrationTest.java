@@ -135,7 +135,6 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    @Ignore("DEVSIX-2240")
     public void differentDimensionsTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "differentDimensions", properties);
     }
