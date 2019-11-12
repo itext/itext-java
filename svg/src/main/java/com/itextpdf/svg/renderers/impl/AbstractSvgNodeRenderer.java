@@ -325,7 +325,8 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
                             String strokeWidthRawValue = getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
 
-                            float strokeWidth = 1f;
+                            // 1 px = 0,75 pt
+                            float strokeWidth = 0.75f;
 
                             if (strokeWidthRawValue != null) {
                                 strokeWidth = CssUtils.parseAbsoluteLength(strokeWidthRawValue);
