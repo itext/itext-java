@@ -42,13 +42,14 @@
  */
 package com.itextpdf.styledxmlparser.css.util;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class CssPropertyNormalizerTest {
+public class CssPropertyNormalizerTest extends ExtendedITextTest {
 
     @Test
     public void testUrlNormalizationSimple() {

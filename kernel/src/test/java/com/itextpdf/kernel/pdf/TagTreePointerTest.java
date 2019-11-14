@@ -737,7 +737,8 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         TagTreePointer pointer = new TagTreePointer(document);
 
-        AccessibilityProperties properties = pointer.moveToKid(0).getProperties(); // 2 attributes
+        // 2 attributes
+        AccessibilityProperties properties = pointer.moveToKid(0).getProperties();
 
         PdfStructureAttributes testAttr = new PdfStructureAttributes("test");
         testAttr.addIntAttribute("N", 4);
@@ -777,15 +778,19 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         PdfStructureAttributes testAttrDict = new PdfStructureAttributes("test");
 
-        pointer.moveToKid(1).getProperties().addAttributes(testAttrDict); // 1 attribute array
+        // 1 attribute array
+        pointer.moveToKid(1).getProperties().addAttributes(testAttrDict);
 
         pointer.moveToRoot();
-        pointer.moveToKid(2).getProperties().addAttributes(testAttrDict); // 3 attributes
+        // 3 attributes
+        pointer.moveToKid(2).getProperties().addAttributes(testAttrDict);
 
         pointer.moveToRoot();
-        pointer.moveToKid(0).moveToKid(StandardRoles.LI).moveToKid(StandardRoles.LBODY).getProperties().addAttributes(testAttrDict); // 1 attribute dictionary
+        // 1 attribute dictionary
+        pointer.moveToKid(0).moveToKid(StandardRoles.LI).moveToKid(StandardRoles.LBODY).getProperties().addAttributes(testAttrDict);
 
-        pointer.moveToKid(StandardRoles.P).moveToKid(StandardRoles.SPAN).getProperties().addAttributes(testAttrDict); // no attributes
+        // no attributes
+        pointer.moveToKid(StandardRoles.P).moveToKid(StandardRoles.SPAN).getProperties().addAttributes(testAttrDict);
 
         document.close();
 
@@ -802,15 +807,19 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         PdfDictionary testAttrDict = new PdfDictionary();
 
-        pointer.moveToKid(1).getProperties().addAttributes(0, new PdfStructureAttributes(testAttrDict)); // 1 attribute array
+        // 1 attribute array
+        pointer.moveToKid(1).getProperties().addAttributes(0, new PdfStructureAttributes(testAttrDict));
 
         pointer.moveToRoot();
-        pointer.moveToKid(2).getProperties().addAttributes(0, new PdfStructureAttributes(testAttrDict)); // 3 attributes
+        // 3 attributes
+        pointer.moveToKid(2).getProperties().addAttributes(0, new PdfStructureAttributes(testAttrDict));
 
         pointer.moveToRoot();
-        pointer.moveToKid(0).moveToKid(StandardRoles.LI).moveToKid(StandardRoles.LBODY).getProperties().addAttributes(0, new PdfStructureAttributes(testAttrDict)); // 1 attribute dictionary
+        // 1 attribute dictionary
+        pointer.moveToKid(0).moveToKid(StandardRoles.LI).moveToKid(StandardRoles.LBODY).getProperties().addAttributes(0, new PdfStructureAttributes(testAttrDict));
 
-        pointer.moveToKid(StandardRoles.P).moveToKid(StandardRoles.SPAN).getProperties().addAttributes(0, new PdfStructureAttributes(testAttrDict)); // no attributes
+        // no attributes
+        pointer.moveToKid(StandardRoles.P).moveToKid(StandardRoles.SPAN).getProperties().addAttributes(0, new PdfStructureAttributes(testAttrDict));
 
         document.close();
 
@@ -827,13 +836,16 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         PdfDictionary testAttrDict = new PdfDictionary();
 
-        pointer.moveToKid(1).getProperties().addAttributes(1, new PdfStructureAttributes(testAttrDict)); // 1 attribute array
+        // 1 attribute array
+        pointer.moveToKid(1).getProperties().addAttributes(1, new PdfStructureAttributes(testAttrDict));
 
         pointer.moveToRoot();
-        pointer.moveToKid(2).getProperties().addAttributes(3, new PdfStructureAttributes(testAttrDict)); // 3 attributes
+        // 3 attributes
+        pointer.moveToKid(2).getProperties().addAttributes(3, new PdfStructureAttributes(testAttrDict));
 
         pointer.moveToRoot();
-        pointer.moveToKid(0).moveToKid(StandardRoles.LI).moveToKid(StandardRoles.LBODY).getProperties().addAttributes(1, new PdfStructureAttributes(testAttrDict)); // 1 attribute dictionary
+        // 1 attribute dictionary
+        pointer.moveToKid(0).moveToKid(StandardRoles.LI).moveToKid(StandardRoles.LBODY).getProperties().addAttributes(1, new PdfStructureAttributes(testAttrDict));
 
         document.close();
 
@@ -851,7 +863,8 @@ public class TagTreePointerTest extends ExtendedITextTest {
         PdfDictionary testAttrDict = new PdfDictionary();
 
         try {
-            pointer.moveToKid(1).getProperties().addAttributes(5, new PdfStructureAttributes(testAttrDict)); // 1 attribute array
+            // 1 attribute array
+            pointer.moveToKid(1).getProperties().addAttributes(5, new PdfStructureAttributes(testAttrDict));
             Assert.fail();
         } catch (Exception e) {
             Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
@@ -859,7 +872,8 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         pointer.moveToRoot();
         try {
-            pointer.moveToKid(2).getProperties().addAttributes(5, new PdfStructureAttributes(testAttrDict)); // 3 attributes
+            // 3 attributes
+            pointer.moveToKid(2).getProperties().addAttributes(5, new PdfStructureAttributes(testAttrDict));
             Assert.fail();
         } catch (Exception e) {
             Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
@@ -867,14 +881,16 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         pointer.moveToRoot();
         try {
-            pointer.moveToKid(0).moveToKid(StandardRoles.LI).moveToKid(StandardRoles.LBODY).getProperties().addAttributes(5, new PdfStructureAttributes(testAttrDict)); // 1 attribute dictionary
+            // 1 attribute dictionary
+            pointer.moveToKid(0).moveToKid(StandardRoles.LI).moveToKid(StandardRoles.LBODY).getProperties().addAttributes(5, new PdfStructureAttributes(testAttrDict));
             Assert.fail();
         } catch (Exception e) {
             Assert.assertTrue(ExceptionUtil.isOutOfRange(e));
         }
 
         try {
-            pointer.moveToKid(StandardRoles.P).moveToKid(StandardRoles.SPAN).getProperties().addAttributes(5, new PdfStructureAttributes(testAttrDict)); // no attributes
+            // no attributes
+            pointer.moveToKid(StandardRoles.P).moveToKid(StandardRoles.SPAN).getProperties().addAttributes(5, new PdfStructureAttributes(testAttrDict));
             Assert.fail();
         } catch (Exception e) {
             Assert.assertTrue(ExceptionUtil.isOutOfRange(e));

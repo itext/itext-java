@@ -132,7 +132,8 @@ class PdfXrefTable implements Serializable {
     void initFreeReferencesList(PdfDocument pdfDocument) {
         freeReferencesLinkedList.clear();
 
-        xref[0].setState(PdfObject.FREE); // ensure zero object is free
+        // ensure zero object is free
+        xref[0].setState(PdfObject.FREE);
         TreeSet<Integer> freeReferences = new TreeSet<>();
         for (int i = 1; i < size(); ++i) {
             PdfIndirectReference ref = xref[i];
@@ -249,7 +250,9 @@ class PdfXrefTable implements Serializable {
         }
 
         List<Integer> sections = createSections(document, false);
-        if (document.properties.appendMode && sections.size() == 0) { // no modifications.
+        if (document.properties.appendMode && sections.size() == 0) {
+            // no modifications.
+
             xref = null;
             return;
         }

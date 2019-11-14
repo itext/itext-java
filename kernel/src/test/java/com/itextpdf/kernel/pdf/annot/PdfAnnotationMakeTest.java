@@ -47,6 +47,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -55,7 +56,7 @@ import org.junit.experimental.categories.Category;
 import java.io.ByteArrayOutputStream;
 
 @Category(UnitTest.class)
-public class PdfAnnotationMakeTest {
+public class PdfAnnotationMakeTest extends ExtendedITextTest {
 
     @Test
     public void makePdfAnnotationTest() {

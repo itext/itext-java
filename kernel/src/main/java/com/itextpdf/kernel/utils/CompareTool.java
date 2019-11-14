@@ -85,6 +85,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -138,6 +139,8 @@ public class CompareTool {
     private static final String versionReplacement = "iText\u00ae <version>";
     private static final String copyrightRegexp = "\u00a9\\d+-\\d+ iText Group NV";
     private static final String copyrightReplacement = "\u00a9<copyright years> iText Group NV";
+
+    private static final String NEW_LINES = "\\r|\\n";
 
     private String gsExec;
     private String compareExec;
@@ -957,7 +960,8 @@ public class CompareTool {
         }
         if (differenceImagePrefix == null) {
             String fileBasedPrefix = "";
-            if (outPdfName != null) { // should always be initialized by this moment
+            if (outPdfName != null) {
+                // should always be initialized by this moment
                 fileBasedPrefix = outPdfName + "_";
             }
             differenceImagePrefix = "diff_" + fileBasedPrefix;
@@ -1562,13 +1566,14 @@ public class CompareTool {
             int rOut = Math.min(outStreamBytes.length, firstDifferenceOffset + diffBytesAreaR);
 
 
-            String cmpByte = new String(new byte[]{cmpStreamBytes[firstDifferenceOffset]});
-            String cmpByteNeighbours = new String(cmpStreamBytes, lCmp, rCmp - lCmp).replaceAll("\\r|\\n", " ");
-            String outByte = new String(new byte[]{outStreamBytes[firstDifferenceOffset]});
-            String outBytesNeighbours = new String(outStreamBytes, lOut, rOut - lOut).replaceAll("\\r|\\n", " ");
+            String cmpByte = new String(new byte[]{cmpStreamBytes[firstDifferenceOffset]}, StandardCharsets.ISO_8859_1);
+            String cmpByteNeighbours = new String(cmpStreamBytes, lCmp, rCmp - lCmp, StandardCharsets.ISO_8859_1).replaceAll(NEW_LINES, " ");
+            String outByte = new String(new byte[]{outStreamBytes[firstDifferenceOffset]}, StandardCharsets.ISO_8859_1);
+            String outBytesNeighbours = new String(outStreamBytes, lOut, rOut - lOut, StandardCharsets.ISO_8859_1).replaceAll(NEW_LINES, " ");
             bytesDifference = MessageFormatUtil.format("First bytes difference is encountered at index {0}. Expected: {1} ({2}). Found: {3} ({4}). Total number of different bytes: {5}",
                     Integer.valueOf(firstDifferenceOffset).toString(), cmpByte, cmpByteNeighbours, outByte, outBytesNeighbours, numberOfDifferentBytes);
-        } else { // lengths are different
+        } else {
+            // lengths are different
             firstDifferenceOffset = minLength;
             bytesDifference = MessageFormatUtil.format("Bytes of the shorter array are the same as the first {0} bytes of the longer one.", minLength);
         }
@@ -1667,12 +1672,14 @@ public class CompareTool {
 
 
             String cmpByte = String.valueOf(cmpString.charAt(firstDifferenceOffset));
-            String cmpByteNeighbours = cmpString.substring(lCmp, rCmp).replaceAll("\\r|\\n", " ");
+            String cmpByteNeighbours = cmpString.substring(lCmp, rCmp).replaceAll(NEW_LINES, " ");
             String outByte = String.valueOf(outString.charAt(firstDifferenceOffset));
-            String outBytesNeighbours = outString.substring(lOut, rOut).replaceAll("\\r|\\n", " ");
+            String outBytesNeighbours = outString.substring(lOut, rOut).replaceAll(NEW_LINES, " ");
             stringDifference = MessageFormatUtil.format("First characters difference is encountered at index {0}.\nExpected: {1} ({2}).\nFound: {3} ({4}).\nTotal number of different characters: {5}",
                     Integer.valueOf(firstDifferenceOffset).toString(), cmpByte, cmpByteNeighbours, outByte, outBytesNeighbours, numberOfDifferentChars);
-        } else { // lengths are different
+        } else {
+            // lengths are different
+
             firstDifferenceOffset = minLength;
             stringDifference = MessageFormatUtil.format("All characters of the shorter string are the same as the first {0} characters of the longer one.", minLength);
         }
@@ -1685,7 +1692,7 @@ public class CompareTool {
         byte[] bytes;
         String value = pdfString.getValue();
         String encoding = pdfString.getEncoding();
-        if (encoding != null && encoding.equals(PdfEncodings.UNICODE_BIG) && PdfEncodings.isPdfDocEncoding(value))
+        if (encoding != null && PdfEncodings.UNICODE_BIG.equals(encoding) && PdfEncodings.isPdfDocEncoding(value))
             bytes = PdfEncodings.convertToBytes(value, PdfEncodings.PDF_DOC_ENCODING);
         else
             bytes = PdfEncodings.convertToBytes(value, encoding);

@@ -256,7 +256,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary kidDict = (PdfDictionary) kids.get(0);
         PdfName type = kidDict.getAsName(PdfName.Subtype);
         if (type != null && type.equals(PdfName.Widget)) {
-            if (!kidDict.containsKey(PdfName.FT)) { // kid is not a merged field with widget
+            if (!kidDict.containsKey(PdfName.FT)) {
+                // kid is not a merged field with widget
+
                 mergeWidgetWithParentField(fieldDict, kidDict);
             }
             defineWidgetPageAndAddToIt(page, fieldDict, false);
@@ -898,7 +900,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             PdfDictionary kidDict = (PdfDictionary) kids.get(0);
             PdfName type = kidDict.getAsName(PdfName.Subtype);
             if (type != null && type.equals(PdfName.Widget)) {
-                if (!kidDict.containsKey(PdfName.FT)) { // kid is not merged field with widget
+                if (!kidDict.containsKey(PdfName.FT)) {
+                    // kid is not merged field with widget
+
                     mergeWidgetWithParentField(parent, kidDict);
                     defineWidgetPageAndAddToIt(page, parent, true);
                 } else {

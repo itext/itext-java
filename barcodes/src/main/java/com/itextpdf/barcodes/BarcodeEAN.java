@@ -100,16 +100,35 @@ public class BarcodeEAN extends Barcode1D {
      */
     private static final byte[][] BARS =
             {
-                    {3, 2, 1, 1}, // 0
-                    {2, 2, 2, 1}, // 1
-                    {2, 1, 2, 2}, // 2
-                    {1, 4, 1, 1}, // 3
-                    {1, 1, 3, 2}, // 4
-                    {1, 2, 3, 1}, // 5
-                    {1, 1, 1, 4}, // 6
-                    {1, 3, 1, 2}, // 7
-                    {1, 2, 1, 3}, // 8
-                    {3, 1, 1, 2}  // 9
+                    // 0
+                    {3, 2, 1, 1},
+
+                    // 1
+                    {2, 2, 2, 1},
+
+                    // 2
+                    {2, 1, 2, 2},
+
+                    // 3
+                    {1, 4, 1, 1},
+
+                    // 4
+                    {1, 1, 3, 2},
+
+                    // 5
+                    {1, 2, 3, 1},
+
+                    // 6
+                    {1, 1, 1, 4},
+
+                    // 7
+                    {1, 3, 1, 2},
+
+                    // 8
+                    {1, 2, 1, 3},
+
+                    // 9
+                    {3, 1, 1, 2}
             };
 
     /**
@@ -146,16 +165,36 @@ public class BarcodeEAN extends Barcode1D {
      */
     private static final byte[][] PARITY13 =
             {
-                    {ODD, ODD, ODD, ODD, ODD, ODD},  // 0
-                    {ODD, ODD, EVEN, ODD, EVEN, EVEN}, // 1
-                    {ODD, ODD, EVEN, EVEN, ODD, EVEN}, // 2
-                    {ODD, ODD, EVEN, EVEN, EVEN, ODD},  // 3
-                    {ODD, EVEN, ODD, ODD, EVEN, EVEN}, // 4
-                    {ODD, EVEN, EVEN, ODD, ODD, EVEN}, // 5
-                    {ODD, EVEN, EVEN, EVEN, ODD, ODD},  // 6
-                    {ODD, EVEN, ODD, EVEN, ODD, EVEN}, // 7
-                    {ODD, EVEN, ODD, EVEN, EVEN, ODD},  // 8
-                    {ODD, EVEN, EVEN, ODD, EVEN, ODD}   // 9
+
+                    // 0
+                    {ODD, ODD, ODD, ODD, ODD, ODD},
+
+                    // 1
+                    {ODD, ODD, EVEN, ODD, EVEN, EVEN},
+
+                    // 2
+                    {ODD, ODD, EVEN, EVEN, ODD, EVEN},
+
+                    // 3
+                    {ODD, ODD, EVEN, EVEN, EVEN, ODD},
+
+                    // 4
+                    {ODD, EVEN, ODD, ODD, EVEN, EVEN},
+
+                    // 5
+                    {ODD, EVEN, EVEN, ODD, ODD, EVEN},
+
+                    // 6
+                    {ODD, EVEN, EVEN, EVEN, ODD, ODD},
+
+                    // 7
+                    {ODD, EVEN, ODD, EVEN, ODD, EVEN},
+
+                    // 8
+                    {ODD, EVEN, ODD, EVEN, EVEN, ODD},
+
+                    // 9
+                    {ODD, EVEN, EVEN, ODD, EVEN, ODD}
             };
 
     /**
@@ -163,10 +202,18 @@ public class BarcodeEAN extends Barcode1D {
      */
     private static final byte[][] PARITY2 =
             {
-                    {ODD, ODD},   // 0
-                    {ODD, EVEN},  // 1
-                    {EVEN, ODD},   // 2
-                    {EVEN, EVEN}   // 3
+
+                    // 0
+                    {ODD, ODD},
+
+                    // 1
+                    {ODD, EVEN},
+
+                    // 2
+                    {EVEN, ODD},
+
+                    // 3
+                    {EVEN, EVEN}
             };
 
     /**
@@ -174,16 +221,36 @@ public class BarcodeEAN extends Barcode1D {
      */
     private static final byte[][] PARITY5 =
             {
-                    {EVEN, EVEN, ODD, ODD, ODD},  // 0
-                    {EVEN, ODD, EVEN, ODD, ODD},  // 1
-                    {EVEN, ODD, ODD, EVEN, ODD},  // 2
-                    {EVEN, ODD, ODD, ODD, EVEN}, // 3
-                    {ODD, EVEN, EVEN, ODD, ODD},  // 4
-                    {ODD, ODD, EVEN, EVEN, ODD},  // 5
-                    {ODD, ODD, ODD, EVEN, EVEN}, // 6
-                    {ODD, EVEN, ODD, EVEN, ODD},  // 7
-                    {ODD, EVEN, ODD, ODD, EVEN}, // 8
-                    {ODD, ODD, EVEN, ODD, EVEN}  // 9
+
+                    // 0
+                    {EVEN, EVEN, ODD, ODD, ODD},
+
+                    // 1
+                    {EVEN, ODD, EVEN, ODD, ODD},
+
+                    // 2
+                    {EVEN, ODD, ODD, EVEN, ODD},
+
+                    // 3
+                    {EVEN, ODD, ODD, ODD, EVEN},
+
+                    // 4
+                    {ODD, EVEN, EVEN, ODD, ODD},
+
+                    // 5
+                    {ODD, ODD, EVEN, EVEN, ODD},
+
+                    // 6
+                    {ODD, ODD, ODD, EVEN, EVEN},
+
+                    // 7
+                    {ODD, EVEN, ODD, EVEN, ODD},
+
+                    // 8
+                    {ODD, EVEN, ODD, ODD, EVEN},
+
+                    // 9
+                    {ODD, ODD, EVEN, ODD, EVEN}
             };
 
     /**
@@ -191,16 +258,36 @@ public class BarcodeEAN extends Barcode1D {
      */
     private static final byte[][] PARITYE =
             {
-                    {EVEN, EVEN, EVEN, ODD, ODD, ODD},  // 0
-                    {EVEN, EVEN, ODD, EVEN, ODD, ODD},  // 1
-                    {EVEN, EVEN, ODD, ODD, EVEN, ODD},  // 2
-                    {EVEN, EVEN, ODD, ODD, ODD, EVEN}, // 3
-                    {EVEN, ODD, EVEN, EVEN, ODD, ODD},  // 4
-                    {EVEN, ODD, ODD, EVEN, EVEN, ODD},  // 5
-                    {EVEN, ODD, ODD, ODD, EVEN, EVEN}, // 6
-                    {EVEN, ODD, EVEN, ODD, EVEN, ODD},  // 7
-                    {EVEN, ODD, EVEN, ODD, ODD, EVEN}, // 8
-                    {EVEN, ODD, ODD, EVEN, ODD, EVEN}  // 9
+
+                    // 0
+                    {EVEN, EVEN, EVEN, ODD, ODD, ODD},
+
+                    // 1
+                    {EVEN, EVEN, ODD, EVEN, ODD, ODD},
+
+                    // 2
+                    {EVEN, EVEN, ODD, ODD, EVEN, ODD},
+
+                    // 3
+                    {EVEN, EVEN, ODD, ODD, ODD, EVEN},
+
+                    // 4
+                    {EVEN, ODD, EVEN, EVEN, ODD, ODD},
+
+                    // 5
+                    {EVEN, ODD, ODD, EVEN, EVEN, ODD},
+
+                    // 6
+                    {EVEN, ODD, ODD, ODD, EVEN, EVEN},
+
+                    // 7
+                    {EVEN, ODD, EVEN, ODD, EVEN, ODD},
+
+                    // 8
+                    {EVEN, ODD, EVEN, ODD, ODD, EVEN},
+
+                    // 9
+                    {EVEN, ODD, ODD, EVEN, ODD, EVEN}
             };
 
     /**

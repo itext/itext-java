@@ -212,20 +212,26 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
             if (field instanceof PdfTextFormField) {
                 String newValue;
                 if (field.isMultiline()) {
-                    newValue = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+                    newValue = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                            "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " +
+                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                            "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+                    field.setFontSize(0);
                 } else {
                     newValue = "HELLO!";
                 }
 
                 Integer justification = field.getJustification();
                 if (null == justification || 0 == (int) justification) {
-                    field.setBackgroundColor(new DeviceRgb(255, 200, 200)); // reddish
+                    // reddish
+                    field.setBackgroundColor(new DeviceRgb(255, 200, 200));
                 } else if (1 == (int) justification) {
-                    field.setBackgroundColor(new DeviceRgb(200, 255, 200)); // greenish
+                    // greenish
+                    field.setBackgroundColor(new DeviceRgb(200, 255, 200));
                 } else if (2 == (int) justification) {
-                    field.setBackgroundColor(new DeviceRgb(200, 200, 255)); // blueish
+                    // blueish
+                    field.setBackgroundColor(new DeviceRgb(200, 200, 255));
                 }
-
                 field.setValue(newValue);
             }
         }

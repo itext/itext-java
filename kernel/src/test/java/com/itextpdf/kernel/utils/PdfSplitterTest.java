@@ -50,17 +50,16 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfSplitterTest extends ExtendedITextTest{
@@ -213,7 +212,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY ,count = 2)
     })
-    public void splitDocumentByOutlineTest() throws IOException, InterruptedException {
+    public void splitDocumentByOutlineTest() throws IOException {
 
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));

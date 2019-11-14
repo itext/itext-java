@@ -256,7 +256,9 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
             getPdfObject().remove(PdfName.Intent);
         } else if (intents.size() == 1) {
             getPdfObject().put(PdfName.Intent, intents.get(0));
-        } else { // intents.size() > 1
+        } else {
+            // intents.size() > 1
+
             PdfArray array = new PdfArray();
             for (PdfName intent : intents) {
                 array.add(intent);
@@ -377,7 +379,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
      * the name(s) of the individual, position or organization
      */
     public void setUser(String type, String... names) {
-        if (type == null || !type.equals("Ind") && !type.equals("Ttl") && !type.equals("Org"))
+        if (type == null || !"Ind".equals(type) && !"Ttl".equals(type) && !"Org".equals(type))
             throw new IllegalArgumentException("Illegal type argument");
         if (names == null || names.length == 0)
             throw new IllegalArgumentException("Illegal names argument");

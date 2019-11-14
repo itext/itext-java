@@ -41,6 +41,7 @@
     address: sales@itextpdf.com
  */
 package com.itextpdf.svg.googlecharts;
+
 import com.itextpdf.io.IOException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
@@ -52,26 +53,26 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class SteppedAreaChartTest extends SvgIntegrationTest {
 
-  public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/stepped_area_charts/";
-  public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/stepped_area_charts/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/SteppedAreaChartsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/SteppedAreaChartsTest/";
 
-  @BeforeClass
-  public static void beforeClass() {
-    ITextTest.createDestinationFolder(destinationFolder);
-  }
+    @BeforeClass
+    public static void beforeClass() {
+        ITextTest.createDestinationFolder(destinationFolder);
+    }
 
-  @Test
-  public void stepped_area_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "stepped_area_chart");
-  }
+    @Test
+    public void steppedAreaChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "steppedAreaChart");
+    }
 
-  @Test
-  public void stepped_area2_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "stepped_area2_chart");
-  }
+    @Test
+    public void steppedArea2Chart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "steppedArea2Chart");
+    }
 
-  @Test
-  public void stepped_area3_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "stepped_area3_chart");
-  }
+    @Test
+    public void steppedArea3Chart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "steppedArea3Chart");
+    }
 }

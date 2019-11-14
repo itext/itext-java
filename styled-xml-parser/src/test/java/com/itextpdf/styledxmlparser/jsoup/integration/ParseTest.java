@@ -42,10 +42,12 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.integration;
 
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.select.Elements;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
@@ -55,6 +57,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -68,7 +71,7 @@ import static org.junit.Assert.assertTrue;
  * @author Jonathan Hedley, jonathan@hedley.net
  */
 @Category(IntegrationTest.class)
-public class ParseTest {
+public class ParseTest extends ExtendedITextTest {
 
     @Test
     public void testSmhBizArticle() throws IOException {
@@ -220,6 +223,46 @@ public class ParseTest {
         Document doc = Jsoup.parse(in, "UTF-8", "http://news.yahoo.com/s/nm/20100831/bs_nm/us_gm_china");
         Element p = doc.select("p:contains(Volt will be sold in the United States").first();
         assertEquals("In July, GM said its electric Chevrolet Volt will be sold in the United States at $41,000 -- $8,000 more than its nearest competitor, the Nissan Leaf.", p.text());
+    }
+
+    @Test
+    public void parseDoubleIntegerValueTest(){
+        Double expectedString = 5.0;
+        Double actualString = CssUtils.parseDouble("5");
+
+        Assert.assertEquals(expectedString, actualString);
+    }
+
+    @Test
+    public void parseDoubleManyCharsAfterDotTest(){
+        Double expectedString = 5.123456789;
+        Double actualString = CssUtils.parseDouble("5.123456789");
+
+        Assert.assertEquals(expectedString, actualString);
+    }
+
+    @Test
+    public void parseDoubleManyCharsAfterDotNegativeTest(){
+        Double expectedString = -5.123456789;
+        Double actualString = CssUtils.parseDouble("-5.123456789");
+
+        Assert.assertEquals(expectedString, actualString);
+    }
+
+    @Test
+    public void parseDoubleNullValueTest(){
+        Double expectedString = null;
+        Double actualString = CssUtils.parseDouble(null);
+
+        Assert.assertEquals(expectedString, actualString);
+    }
+
+    @Test
+    public void parseDoubleNegativeTextTest(){
+        Double expectedString = null;
+        Double actualString = CssUtils.parseDouble("text");
+
+        Assert.assertEquals(expectedString, actualString);
     }
 
     public static File getFile(String resourceName) {

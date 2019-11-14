@@ -124,7 +124,8 @@ public class GposLookupType4 extends OpenTableLookup {
     protected void readSubTable(int subTableLocation) throws java.io.IOException {
         openReader.rf.seek(subTableLocation);
 
-        openReader.rf.readUnsignedShort(); //skip format, always 1
+        // skip format, always 1
+        openReader.rf.readUnsignedShort();
         int markCoverageLocation = openReader.rf.readUnsignedShort() + subTableLocation;
         int baseCoverageLocation = openReader.rf.readUnsignedShort() + subTableLocation;
         int classCount = openReader.rf.readUnsignedShort();

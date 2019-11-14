@@ -46,10 +46,10 @@ package com.itextpdf.layout.property;
 import com.itextpdf.layout.IPropertyContainer;
 
 /**
- * A specialized enum holding the possible values for a list {@link
- * com.itextpdf.layout.element.List}'s entry prefix. This class is meant to
- * be used as the value for the {@link Property#LIST_SYMBOL} key in an
- * {@link IPropertyContainer}.
+ * A specialized enum holding the possible values
+ * for a list {@link com.itextpdf.layout.element.List}'s entry prefix.
+ * This class is meant to be used as the value for the {@link Property#LIST_SYMBOL} key
+ * in an {@link IPropertyContainer}.
  */
 public enum ListNumberingType {
     DECIMAL,

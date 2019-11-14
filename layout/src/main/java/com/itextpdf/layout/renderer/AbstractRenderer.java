@@ -1771,7 +1771,8 @@ public abstract class AbstractRenderer implements IRenderer {
         }
 
         // Update height related properties on split or overflow
-        Float parentResolvedHeightPropertyValue = retrieveResolvedParentDeclaredHeight(); // For relative heights, we need the parent's resolved height declaration
+        // For relative heights, we need the parent's resolved height declaration
+        Float parentResolvedHeightPropertyValue = retrieveResolvedParentDeclaredHeight();
         UnitValue maxHeightUV = getPropertyAsUnitValue(this, Property.MAX_HEIGHT);
         if (maxHeightUV != null) {
             if (maxHeightUV.isPointValue()) {

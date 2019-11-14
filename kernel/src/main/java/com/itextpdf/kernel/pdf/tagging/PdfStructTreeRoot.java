@@ -91,7 +91,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
         setForbidRelease();
         parentTreeHandler = new ParentTreeHandler(this);
-        getRoleMap(); // TODO may be remove?
+        // TODO may be remove?
+        getRoleMap();
     }
 
     public static PdfName convertRoleToPdfName(String role) {

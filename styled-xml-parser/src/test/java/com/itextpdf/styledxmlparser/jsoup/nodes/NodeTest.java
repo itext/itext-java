@@ -43,6 +43,7 @@
 package com.itextpdf.styledxmlparser.jsoup.nodes;
 
 import com.itextpdf.styledxmlparser.jsoup.TextUtil;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
@@ -60,7 +61,7 @@ import static org.junit.Assert.*;
 
  @author Jonathan Hedley, jonathan@hedley.net */
 @Category(UnitTest.class)
-public class NodeTest {
+public class NodeTest extends ExtendedITextTest {
     @Test public void handlesBaseUri() {
         Tag tag = Tag.valueOf("a");
         Attributes attribs = new Attributes();

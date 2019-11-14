@@ -188,7 +188,8 @@ public class AccessibleAttributesApplier {
                 renderer.getPropertyAsUnitValue(Property.MARGIN_LEFT),
                 renderer.getPropertyAsUnitValue(Property.MARGIN_RIGHT)};
 
-        int[] marginsOrder = {0, 1, 2, 3}; //TODO set depending on writing direction
+        //TODO set depending on writing direction
+        int[] marginsOrder = {0, 1, 2, 3};
 
         UnitValue spaceBefore = margins[marginsOrder[0]];
         if (spaceBefore != null) {
@@ -243,7 +244,7 @@ public class AccessibleAttributesApplier {
         TextAlignment textAlignment = renderer.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT);
         if (textAlignment != null &&
                 //for table cells there is an InlineAlign attribute (see below)
-                (!role.equals(StandardRoles.TH) && !role.equals(StandardRoles.TD))) {
+                (!StandardRoles.TH.equals(role) && !StandardRoles.TD.equals(role))) {
             attributes.put(PdfName.TextAlign, transformTextAlignmentValueToName(textAlignment));
         }
 
@@ -253,7 +254,7 @@ public class AccessibleAttributesApplier {
             attributes.put(PdfName.BBox, new PdfArray(bbox));
         }
 
-        if (role.equals(StandardRoles.TH) || role.equals(StandardRoles.TD) || role.equals(StandardRoles.TABLE)) {
+        if (StandardRoles.TH.equals(role) || StandardRoles.TD.equals(role) || StandardRoles.TABLE.equals(role)) {
             // For large tables the width can be changed from flush to flush so the Width attribute shouldn't be applied.
             // There are also technical issues with large tables widths being explicitly set as property on element during layouting
             // (even if user didn't explcitly specfied it). This is required due to specificity of large elements implementation,
@@ -270,7 +271,7 @@ public class AccessibleAttributesApplier {
             }
         }
 
-        if (role.equals(StandardRoles.TH) || role.equals(StandardRoles.TD)) {
+        if (StandardRoles.TH.equals(role) || StandardRoles.TD.equals(role)) {
             HorizontalAlignment horizontalAlignment = renderer.<HorizontalAlignment>getProperty(Property.HORIZONTAL_ALIGNMENT);
             if (horizontalAlignment != null) {
                 attributes.put(PdfName.BlockAlign, transformBlockAlignToName(horizontalAlignment));
@@ -370,7 +371,9 @@ public class AccessibleAttributesApplier {
             }
         } else {
             PdfArray paddingArray = new PdfArray();
-            int[] paddingsOrder = {0, 1, 2, 3}; //TODO set depending on writing direction
+
+            //TODO set depending on writing direction
+            int[] paddingsOrder = {0, 1, 2, 3};
             for (int i : paddingsOrder) {
                 paddingArray.add(new PdfNumber(paddings[i]));
             }
@@ -431,7 +434,8 @@ public class AccessibleAttributesApplier {
                 }
             }
 
-            int[] borderOrder = {0, 1, 2, 3}; //TODO set depending on writing direction
+            //TODO set depending on writing direction
+            int[] borderOrder = {0, 1, 2, 3};
             for (int i : borderOrder) {
                 if (borders[i] != null) {
                     if (borders[i].getColor() instanceof DeviceRgb) {

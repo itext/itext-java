@@ -55,6 +55,7 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.FormElement;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
 import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
 import com.itextpdf.styledxmlparser.jsoup.select.Elements;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.File;
@@ -72,7 +73,7 @@ import static org.junit.Assert.assertTrue;
 
  @author Jonathan Hedley, jonathan@hedley.net */
 @Category(UnitTest.class)
-public class HtmlParserTest {
+public class HtmlParserTest extends ExtendedITextTest {
 
     @Test public void parsesSimpleDocument() {
         String html = "<html><head><title>First!</title></head><body><p>First post! <img src=\"foo.png\" /></p></body></html>";

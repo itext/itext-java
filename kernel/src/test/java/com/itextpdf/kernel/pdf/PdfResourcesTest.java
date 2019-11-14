@@ -43,6 +43,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -53,11 +54,11 @@ import java.io.ByteArrayOutputStream;
 import java.util.Set;
 
 @Category(IntegrationTest.class)
-public class PdfResourcesTest {
+public class PdfResourcesTest extends ExtendedITextTest {
 
 
     @Test
-    public void resourcesTest1() throws Exception {
+    public void resourcesTest1() {
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
         PdfPage page = document.addNewPage();

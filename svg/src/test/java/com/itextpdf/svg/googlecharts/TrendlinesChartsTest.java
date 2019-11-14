@@ -41,6 +41,7 @@
     address: sales@itextpdf.com
  */
 package com.itextpdf.svg.googlecharts;
+
 import com.itextpdf.io.IOException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
@@ -52,36 +53,36 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class TrendlinesChartsTest extends SvgIntegrationTest {
 
-  public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/trendlines_charts/";
-  public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/trendlines_charts/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/TrendlinesChartsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/TrendlinesChartsTest/";
 
-  @BeforeClass
-  public static void beforeClass() {
-    ITextTest.createDestinationFolder(destinationFolder);
-  }
+    @BeforeClass
+    public static void beforeClass() {
+        ITextTest.createDestinationFolder(destinationFolder);
+    }
 
-  @Test
-  public void trendlines_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "trendlines_chart");
-  }
+    @Test
+    public void trendlinesChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "trendlinesChart");
+    }
 
-  @Test
-  public void trendlines2_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "trendlines2_chart");
-  }
+    @Test
+    public void trendlines2Chart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "trendlines2Chart");
+    }
 
-  @Test
-  public void trendlines3_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "trendlines3_chart");
-  }
+    @Test
+    public void trendlines3Chart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "trendlines3Chart");
+    }
 
-  @Test
-  public void trendlines4_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "trendlines4_chart");
-  }
+    @Test
+    public void trendlines4Chart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "trendlines4Chart");
+    }
 
-  @Test
-  public void trendlines5_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "trendlines5_chart");
-  }
+    @Test
+    public void trendlines5Chart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "trendlines5Chart");
+    }
 }

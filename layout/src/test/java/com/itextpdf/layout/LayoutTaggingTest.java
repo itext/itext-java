@@ -58,14 +58,19 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.IBlockElement;
@@ -79,6 +84,7 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.Property;
@@ -104,6 +110,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/LayoutTaggingTest/";
     public static final String imageName = "Desert.jpg";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/LayoutTaggingTest/";
+    public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeClass
     public static void beforeClass() {
@@ -507,7 +514,9 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         String discSymbol = "\u2022";
         String squareSymbol = "\u25AA";
         String circleSymbol = "\u25E6";
-        List list = new List(ListNumberingType.ROMAN_UPPER); // setting numbering type for now
+
+        // setting numbering type for now
+        List list = new List(ListNumberingType.ROMAN_UPPER);
 
         list.add("item 1");
 
@@ -541,11 +550,14 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         doc.add(list);
         doc.add(new LineSeparator(new SolidLine()));
 
-        doc.add(list.setListSymbol(circleSymbol)); // setting circle symbol, not setting attributes
+        // setting circle symbol, not setting attributes
+        doc.add(list.setListSymbol(circleSymbol));
         doc.add(new LineSeparator(new SolidLine()));
 
         list.getAccessibilityProperties().addAttributes(attributesCircle);
-        doc.add(list); // circle symbol set, setting attributes
+
+        // circle symbol set, setting attributes
+        doc.add(list);
 
         doc.close();
 
@@ -976,6 +988,57 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         document.close();
 
         compareResult("floatListItemTest.pdf", "cmp_floatListItemTest.pdf");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT)
+    })
+    //TODO update cmp-file after DEVSIX-3335 fixed
+    public void notAsciiCharTest() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
+        PdfWriter writer = new PdfWriter(destinationFolder + "notAsciiCharTest.pdf");
+        PdfDocument pdf = new PdfDocument(writer);
+
+        Document document = new Document(pdf);
+        pdf.setTagged();
+
+        FontProvider sel = new FontProvider();
+        sel.addFont(fontsFolder + "NotoSans-Regular.ttf");
+        sel.addFont(StandardFonts.TIMES_ROMAN);
+
+        document.setFontProvider(sel);
+        Paragraph p = new Paragraph("\u0422\u043E be or not.");
+        p.setFontFamily("times");
+        document.add(p);
+        document.close();
+
+        compareResult("notAsciiCharTest.pdf", "cmp_notAsciiCharTest.pdf");
+    }
+
+    @Test
+    //TODO update cmp-file after DEVSIX-3351 fixed
+    public void checkParentTreeIfFormXObjectTaggedTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "checkParentTreeIfFormXObjectTaggedTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_checkParentTreeIfFormXObjectTaggedTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        pdfDoc.setTagged();
+
+        PdfPage page1 = pdfDoc.addNewPage();
+
+        Text txt = new Text("Text from XObject");
+
+        PdfFormXObject template = new PdfFormXObject(new Rectangle(150, 150));
+        Canvas canvas = new Canvas(template, pdfDoc);
+        canvas.enableAutoTagging(page1);
+        canvas.add(new Paragraph(txt));
+
+        PdfCanvas canvas1 = new PdfCanvas(page1);
+        canvas1.addXObject(template, 10, 10);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpPdf, destinationFolder, "diff"));
     }
 
     @Test

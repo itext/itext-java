@@ -85,9 +85,9 @@ class RoleMappingResolverPdf2 implements IRoleMappingResolver {
 
     public boolean currentRoleIsStandard() {
         String roleStrVal = currRole.getValue();
-        boolean stdRole17 = currNamespace.getNamespaceName().equals(StandardNamespaces.PDF_1_7)
+        boolean stdRole17 = StandardNamespaces.PDF_1_7.equals(currNamespace.getNamespaceName())
                 && StandardNamespaces.roleBelongsToStandardNamespace(roleStrVal, StandardNamespaces.PDF_1_7);
-        boolean stdRole20 = currNamespace.getNamespaceName().equals(StandardNamespaces.PDF_2_0)
+        boolean stdRole20 = StandardNamespaces.PDF_2_0.equals(currNamespace.getNamespaceName())
                 && StandardNamespaces.roleBelongsToStandardNamespace(roleStrVal, StandardNamespaces.PDF_2_0);
         return stdRole17 || stdRole20;
     }

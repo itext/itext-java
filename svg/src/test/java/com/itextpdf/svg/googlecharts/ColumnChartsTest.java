@@ -50,31 +50,29 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-  @Category(IntegrationTest.class)
-  public class ColumnChartsTest extends SvgIntegrationTest {
+@Category(IntegrationTest.class)
+public class ColumnChartsTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/column_charts/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/column_charts/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/ColumnChartsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/ColumnChartsTest/";
 
     @BeforeClass
     public static void beforeClass() {
-      ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(destinationFolder);
     }
 
     @Test
-  public void column_dualY_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "column_dualY_chart");
-  }
-
-    @Test
-    public void column_material_chart() throws IOException, InterruptedException, java.io.IOException {
-      convertAndCompare(sourceFolder, destinationFolder, "column_material_chart");
+    public void columnDualYChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "columnDualYChart");
     }
 
     @Test
-    public void column_topX_chart() throws IOException, InterruptedException, java.io.IOException {
-      convertAndCompare(sourceFolder, destinationFolder, "column_topX_chart");
+    public void columnMaterialChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "columnMaterialChart");
     }
-  }
 
-
+    @Test
+    public void columnTopXChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "columnTopXChart");
+    }
+}

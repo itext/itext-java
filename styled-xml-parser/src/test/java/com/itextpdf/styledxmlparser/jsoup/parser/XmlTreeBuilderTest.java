@@ -42,17 +42,16 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.parser;
 
-import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
-import com.itextpdf.styledxmlparser.jsoup.nodes.XmlDeclaration;
-import com.itextpdf.test.annotations.type.UnitTest;
-
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.TextUtil;
 import com.itextpdf.styledxmlparser.jsoup.helper.StringUtil;
 import com.itextpdf.styledxmlparser.jsoup.integration.ParseTest;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
 import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
-
+import com.itextpdf.styledxmlparser.jsoup.nodes.XmlDeclaration;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -60,7 +59,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -73,7 +71,7 @@ import static org.junit.Assert.assertEquals;
  * @author Jonathan Hedley
  */
 @Category(UnitTest.class)
-public class XmlTreeBuilderTest {
+public class XmlTreeBuilderTest extends ExtendedITextTest {
     @Test
     public void testSimpleXmlParse() {
         String xml = "<doc id=2 href='/bar'>Foo <br /><link>One</link><link>Two</link></doc>";
@@ -112,7 +110,7 @@ public class XmlTreeBuilderTest {
     }
 
     @Test
-    public void testSupplyParserToDataStream() throws IOException, URISyntaxException {
+    public void testSupplyParserToDataStream() throws IOException {
         File xmlFile = ParseTest.getFile("/htmltests/xml-test.xml");
         InputStream inStream = new FileInputStream(xmlFile.getAbsolutePath());
         Document doc = Jsoup.parse(inStream, null, "http://foo.com", Parser.xmlParser());
@@ -162,7 +160,7 @@ public class XmlTreeBuilderTest {
     }
 
     @Test
-    public void testDetectCharsetEncodingDeclaration() throws IOException, URISyntaxException {
+    public void testDetectCharsetEncodingDeclaration() throws IOException {
         File xmlFile = ParseTest.getFile("/htmltests/xml-charset.xml");
         InputStream inStream = new FileInputStream(xmlFile.getAbsolutePath());
         Document doc = Jsoup.parse(inStream, null, "http://example.com/", Parser.xmlParser());

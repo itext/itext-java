@@ -110,8 +110,9 @@ public class Type3Font extends FontProgram {
      * If full name is null, it will be set as well.
      * @param fontName the PostScript name of the font, shall not be null or empty.
      */
-    @Override   //This dummy override allows PdfType3Font to set font name because of different modules.
+    @Override
     protected void setFontName(String fontName) {
+        //This dummy override allows PdfType3Font to set font name because of different modules.
         super.setFontName(fontName);
     }
 
@@ -120,8 +121,9 @@ public class Type3Font extends FontProgram {
      *
      * @param fontFamily a preferred font family name.
      */
-    @Override   //This dummy override allows PdfType3Font to set font family because of different modules.
+    @Override
     protected void setFontFamily(String fontFamily) {
+        //This dummy override allows PdfType3Font to set font name because of different modules.
         super.setFontFamily(fontFamily);
     }
 
@@ -130,8 +132,9 @@ public class Type3Font extends FontProgram {
      *
      * @param fontWeight integer form 100 to 900. See {@link FontWeights}.
      */
-    @Override   //This dummy override allows PdfType3Font to set font weight because of different modules.
+    @Override
     protected void setFontWeight(int fontWeight) {
+        //This dummy override allows PdfType3Font to set font name because of different modules.
         super.setFontWeight(fontWeight);
     }
 
@@ -140,8 +143,9 @@ public class Type3Font extends FontProgram {
      *
      * @param fontWidth {@link FontStretches}.
      */
-    @Override   //This dummy override allows PdfType3Font to set font stretch because of different modules.
+    @Override
     protected void setFontStretch(String fontWidth) {
+        //This dummy override allows PdfType3Font to set font name because of different modules.
         super.setFontStretch(fontWidth);
     }
 
@@ -154,6 +158,7 @@ public class Type3Font extends FontProgram {
      */
     @Override   //This dummy override allows PdfType3Font to set the PostScript italicAngel because of different modules.
     protected void setItalicAngle(int italicAngle) {
+        //This dummy override allows PdfType3Font to set font name because of different modules.
         super.setItalicAngle(italicAngle);
     }
 

@@ -194,7 +194,8 @@ class TernaryTreeIterator implements Enumeration {
                     res = tt.hi[i.parent];
                     ns.push(new Item(i));
                     if (ks.length() > 0) {
-                        ks.setLength(ks.length() - 1);    // pop
+                        // pop
+                        ks.setLength(ks.length() - 1);
                     }
                     climb = false;
                     break;

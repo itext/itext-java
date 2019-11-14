@@ -190,8 +190,9 @@ final class QRCode {
                         // ByteMatrix stuff.
                         matrix != null &&
                         matrixWidth == matrix.getWidth() &&
+                        // Must be square.
                         // See 7.3.1 of JISX0510:2004 (p.5).
-                        matrix.getWidth() == matrix.getHeight(); // Must be square.
+                        matrix.getWidth() == matrix.getHeight();
     }
 
     /**

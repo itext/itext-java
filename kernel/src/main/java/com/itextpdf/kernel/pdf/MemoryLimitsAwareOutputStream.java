@@ -114,7 +114,8 @@ class MemoryLimitsAwareOutputStream extends ByteArrayOutputStream {
         }
 
         int minCapacity = count + len;
-        if (minCapacity < 0) { // overflow
+        if (minCapacity < 0) {
+            // overflow
             throw new MemoryLimitsAwareException(PdfException.DuringDecompressionSingleStreamOccupiedMoreThanMaxIntegerValue);
         }
         if (minCapacity > maxStreamSize) {
@@ -124,7 +125,8 @@ class MemoryLimitsAwareOutputStream extends ByteArrayOutputStream {
         // calculate new capacity
         int oldCapacity = buf.length;
         int newCapacity = oldCapacity << 1;
-        if (newCapacity < 0 || newCapacity - minCapacity < 0) { // overflow
+        if (newCapacity < 0 || newCapacity - minCapacity < 0) {
+            // overflow
             newCapacity = minCapacity;
         }
 

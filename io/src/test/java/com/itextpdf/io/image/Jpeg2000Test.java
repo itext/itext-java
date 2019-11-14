@@ -44,13 +44,14 @@ package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class Jpeg2000Test {
+public class Jpeg2000Test extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/io/image/";
 

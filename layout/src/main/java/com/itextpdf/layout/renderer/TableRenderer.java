@@ -320,27 +320,7 @@ public class TableRenderer extends AbstractRenderer {
             layoutBox.increaseHeight(verticalBorderSpacing);
         }
         if (isOriginalRenderer()) {
-            UnitValue[] margins = getMargins();
-            if (!margins[1].isPointValue()) {
-                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
-            }
-            if (!margins[3].isPointValue()) {
-                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
-            }
-            UnitValue[] paddings = getPaddings();
-            if (!paddings[1].isPointValue()) {
-                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_RIGHT));
-            }
-            if (!paddings[3].isPointValue()) {
-                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_LEFT));
-            }
-            calculateColumnWidths(layoutBox.getWidth()
-                    - margins[1].getValue() - margins[3].getValue()
-                    - paddings[1].getValue() - paddings[3].getValue());
+            applyMarginsAndPaddingsAndCalculateColumnWidths(layoutBox);
         }
         float tableWidth = getTableWidth();
 
@@ -435,7 +415,9 @@ public class TableRenderer extends AbstractRenderer {
             } else if (null != footerRenderer) {
                 footerRenderer.bordersHandler.collapseTableWithHeader(headerRenderer.bordersHandler, true);
             }
-            topBorderMaxWidth = bordersHandler.getMaxTopWidth(); // first row own top border. We will use it while header processing
+
+            // first row own top border. We will use it while header processing
+            topBorderMaxWidth = bordersHandler.getMaxTopWidth();
             LayoutResult result = headerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox), wasHeightClipped || wasParentsHeightClipped));
             if (result.getStatus() != LayoutResult.FULL) {
                 // we've changed it during header initialization. However, now we need to process borders again as they were.
@@ -829,47 +811,7 @@ public class TableRenderer extends AbstractRenderer {
 
                     for (col = 0; col < numberOfColumns; col++) {
                         if (columnsWithCellToBeEnlarged[col]) {
-                            LayoutArea cellOccupiedArea = currentRow[col].getOccupiedArea();
-                            if (1 == minRowspan) {
-                                // Here we use the same cell, but create a new renderer which doesn't have any children,
-                                // therefore it won't have any content.
-                                CellRenderer overflowCell = (CellRenderer) ((Cell) currentRow[col].getModelElement()).clone(true).getRenderer(); // we will change properties
-                                overflowCell.setParent(this);
-                                overflowCell.deleteProperty(Property.HEIGHT);
-                                overflowCell.deleteProperty(Property.MIN_HEIGHT);
-                                overflowCell.deleteProperty(Property.MAX_HEIGHT);
-                                overflowRows.setCell(0, col, null);
-                                overflowRows.setCell(targetOverflowRowIndex[col] - row, col, overflowCell);
-                                childRenderers.add(currentRow[col]);
-                                CellRenderer originalCell = currentRow[col];
-                                currentRow[col] = null;
-                                rows.get(targetOverflowRowIndex[col])[col] = originalCell;
-                                originalCell.isLastRendererForModelElement = false;
-                                overflowCell.setProperty(Property.TAGGING_HINT_KEY, originalCell.<Object>getProperty(Property.TAGGING_HINT_KEY));
-                            } else {
-                                childRenderers.add(currentRow[col]);
-                                // shift all cells in the column up
-                                int i = row;
-                                for (; i < row + minRowspan && i + 1 < rows.size() && splitResult[1].rows.get(i + 1 - row)[col] != null; i++) {
-                                    overflowRows.setCell(i - row, col, splitResult[1].rows.get(i + 1 - row)[col]);
-                                    overflowRows.setCell(i + 1 - row, col, null);
-                                    rows.get(i)[col] = rows.get(i + 1)[col];
-                                    rows.get(i + 1)[col] = null;
-                                }
-                                // the number of cells behind is less then minRowspan-1
-                                // so we should process the last cell in the column as in the case 1 == minRowspan
-                                if (i != row + minRowspan - 1 && null != rows.get(i)[col]) {
-                                    CellRenderer overflowCell = (CellRenderer) ((Cell) rows.get(i)[col].getModelElement()).getRenderer().setParent(this);
-                                    overflowRows.setCell(i - row, col, null);
-                                    overflowRows.setCell(targetOverflowRowIndex[col] - row, col, overflowCell);
-                                    CellRenderer originalCell = rows.get(i)[col];
-                                    rows.get(i)[col] = null;
-                                    rows.get(targetOverflowRowIndex[col])[col] = originalCell;
-                                    originalCell.isLastRendererForModelElement = false;
-                                    overflowCell.setProperty(Property.TAGGING_HINT_KEY, originalCell.<Object>getProperty(Property.TAGGING_HINT_KEY));
-                                }
-                            }
-                            overflowRows.getCell(targetOverflowRowIndex[col] - row, col).occupiedArea = cellOccupiedArea;
+                            enlargeCell(col, row, minRowspan,currentRow, overflowRows, targetOverflowRowIndex, splitResult);
                         }
                     }
                 }
@@ -1021,7 +963,7 @@ public class TableRenderer extends AbstractRenderer {
         if (tableModel.isEmpty() && null == headerRenderer) {
             occupiedArea.getBBox().moveUp((float) verticalBorderSpacing / 2);
         } else if (isAndWasComplete || 0 != rows.size()) {
-            applySingleSpacing(occupiedArea.getBBox(), verticalBorderSpacing, false, true);//
+            applySingleSpacing(occupiedArea.getBBox(), verticalBorderSpacing, false, true);
         }
 
         float bottomTableBorderWidth = bordersHandler.getMaxBottomWidth();
@@ -1299,6 +1241,7 @@ public class TableRenderer extends AbstractRenderer {
         splitRenderer.isLastRendererForModelElement = false;
         splitRenderer.topBorderMaxWidth = topBorderMaxWidth;
         splitRenderer.captionRenderer = captionRenderer;
+        splitRenderer.isOriginalNonSplitRenderer = isOriginalNonSplitRenderer;
 
         return splitRenderer;
     }
@@ -1584,7 +1527,9 @@ public class TableRenderer extends AbstractRenderer {
         // correct last height
         int finish = bordersHandler.getFinishRow();
         bordersHandler.setFinishRow(rowRange.getFinishRow());
-        Border currentBorder = bordersHandler.getWidestHorizontalBorder(finish + 1); // TODO Correct for collapsed borders only
+
+        // TODO Correct for collapsed borders only
+        Border currentBorder = bordersHandler.getWidestHorizontalBorder(finish + 1);
         bordersHandler.setFinishRow(finish);
         if (skip) {
             // Update bordersHandler
@@ -1701,7 +1646,9 @@ public class TableRenderer extends AbstractRenderer {
                 cell.move(0, -(cumulativeShift - rowspanOffset));
                 bBox.setHeight(height);
                 cell.applyVerticalAlignment();
-            } catch (NullPointerException e) {  // TODO Remove try-catch when DEVSIX-1655 is resolved.
+
+            // TODO Remove try-catch when DEVSIX-1655 is resolved.
+            } catch (NullPointerException e) {
                 Logger logger = LoggerFactory.getLogger(TableRenderer.class);
                 logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the cell's content might not end up placed correctly."));
             }
@@ -1746,7 +1693,9 @@ public class TableRenderer extends AbstractRenderer {
         if (taggingHelper != null) {
             taggingHelper.addKidsHint(this, Collections.<IRenderer>singletonList(renderer));
             LayoutTaggingHelper.addTreeHints(taggingHelper, renderer);
-            if (!footer && !firstHeader) { // whether footer is not the last and requires marking as artifact is defined later during table renderer layout
+
+            // whether footer is not the last and requires marking as artifact is defined later during table renderer layout
+            if (!footer && !firstHeader) {
                 taggingHelper.markArtifactHint(renderer);
             }
         }
@@ -1898,5 +1847,82 @@ public class TableRenderer extends AbstractRenderer {
             }
             return overflowRenderer.rows.get(row)[col] = newCell;
         }
+    }
+
+
+    private void enlargeCellWithBigRowspan(CellRenderer[] currentRow, OverflowRowsWrapper overflowRows, int row, int col,
+                        int minRowspan, TableRenderer[] splitResult, int[] targetOverflowRowIndex) {
+        childRenderers.add(currentRow[col]);
+        // shift all cells in the column up
+        int i = row;
+        for (; i < row + minRowspan && i + 1 < rows.size() && splitResult[1].rows.get(i + 1 - row)[col] != null; i++) {
+            overflowRows.setCell(i - row, col, splitResult[1].rows.get(i + 1 - row)[col]);
+            overflowRows.setCell(i + 1 - row, col, null);
+            rows.get(i)[col] = rows.get(i + 1)[col];
+            rows.get(i + 1)[col] = null;
+        }
+        // the number of cells behind is less then minRowspan-1
+        // so we should process the last cell in the column as in the case 1 == minRowspan
+        if (i != row + minRowspan - 1 && null != rows.get(i)[col]) {
+            CellRenderer overflowCell = (CellRenderer) ((Cell) rows.get(i)[col].getModelElement()).getRenderer().setParent(this);
+            overflowRows.setCell(i - row, col, null);
+            overflowRows.setCell(targetOverflowRowIndex[col] - row, col, overflowCell);
+            CellRenderer originalCell = rows.get(i)[col];
+            rows.get(i)[col] = null;
+            rows.get(targetOverflowRowIndex[col])[col] = originalCell;
+            originalCell.isLastRendererForModelElement = false;
+            overflowCell.setProperty(Property.TAGGING_HINT_KEY, originalCell.<Object>getProperty(Property.TAGGING_HINT_KEY));
+        }
+    }
+
+    private void enlargeCell(int col, int row, int minRowspan, CellRenderer[] currentRow, OverflowRowsWrapper overflowRows,
+                             int[] targetOverflowRowIndex, TableRenderer[] splitResult) {
+        LayoutArea cellOccupiedArea = currentRow[col].getOccupiedArea();
+        if (1 == minRowspan) {
+
+            // Here we use the same cell, but create a new renderer which doesn't have any children,
+            // therefore it won't have any content.
+            // we will change properties
+            CellRenderer overflowCell = (CellRenderer) ((Cell) currentRow[col].getModelElement()).clone(true).getRenderer();
+            overflowCell.setParent(this);
+            overflowCell.deleteProperty(Property.HEIGHT);
+            overflowCell.deleteProperty(Property.MIN_HEIGHT);
+            overflowCell.deleteProperty(Property.MAX_HEIGHT);
+            overflowRows.setCell(0, col, null);
+            overflowRows.setCell(targetOverflowRowIndex[col] - row, col, overflowCell);
+            childRenderers.add(currentRow[col]);
+            CellRenderer originalCell = currentRow[col];
+            currentRow[col] = null;
+            rows.get(targetOverflowRowIndex[col])[col] = originalCell;
+            originalCell.isLastRendererForModelElement = false;
+            overflowCell.setProperty(Property.TAGGING_HINT_KEY, originalCell.<Object>getProperty(Property.TAGGING_HINT_KEY));
+        } else {
+            enlargeCellWithBigRowspan(currentRow,overflowRows, row, col, minRowspan, splitResult, targetOverflowRowIndex);
+        }
+        overflowRows.getCell(targetOverflowRowIndex[col] - row, col).occupiedArea = cellOccupiedArea;
+    }
+
+    void applyMarginsAndPaddingsAndCalculateColumnWidths(Rectangle layoutBox) {
+        UnitValue[] margins = getMargins();
+        if (!margins[1].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
+        }
+        if (!margins[3].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+        }
+        UnitValue[] paddings = getPaddings();
+        if (!paddings[1].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_RIGHT));
+        }
+        if (!paddings[3].isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_LEFT));
+        }
+        calculateColumnWidths(layoutBox.getWidth()
+                - margins[1].getValue() - margins[3].getValue()
+                - paddings[1].getValue() - paddings[3].getValue());
     }
 }

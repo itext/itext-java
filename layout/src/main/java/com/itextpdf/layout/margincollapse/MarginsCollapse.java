@@ -44,7 +44,7 @@ package com.itextpdf.layout.margincollapse;
 
 import java.io.Serializable;
 
-class MarginsCollapse implements Serializable {
+class MarginsCollapse implements Cloneable, Serializable {
     private float maxPositiveMargin = 0;
     private float minNegativeMargin = 0;
 
@@ -65,11 +65,20 @@ class MarginsCollapse implements Serializable {
         return maxPositiveMargin + minNegativeMargin;
     }
 
+    /**
+     * Creates a "deep copy" of this MarginsCollapse, meaning the object returned by this method will be independent
+     * of the object being cloned.
+     *
+     * @return the copied MarginsCollapse.
+     */
     @Override
     public MarginsCollapse clone() {
-        MarginsCollapse collapse = new MarginsCollapse();
-        collapse.maxPositiveMargin = this.maxPositiveMargin;
-        collapse.minNegativeMargin = this.minNegativeMargin;
-        return collapse;
+        try {
+            // super.clone is safe to return since all of the MarginsCollapse's fields are primitive.
+            return (MarginsCollapse) super.clone();
+        } catch (CloneNotSupportedException e) {
+            // should never happen since Cloneable is implemented
+            return null;
+        }
     }
 }

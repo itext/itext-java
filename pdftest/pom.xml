@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.1.8</version>
+    <version>7.1.9</version>
   </parent>
   <artifactId>pdftest</artifactId>
   <name>iText 7 - pdftest</name>
@@ -13,6 +13,21 @@
     <sonar.skip>true</sonar.skip>
   </properties>
   <dependencies>
+    <dependency>
+      <groupId>org.verapdf</groupId>
+      <artifactId>validation-model</artifactId>
+      <version>1.14.104</version>
+    </dependency>
+    <dependency>
+      <groupId>org.verapdf.apps</groupId>
+      <artifactId>gui</artifactId>
+      <version>1.14.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.verapdf</groupId>
+      <artifactId>core</artifactId>
+      <version>1.14.100</version>
+    </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
@@ -26,16 +41,6 @@
   </dependencies>
   <build>
     <plugins>
-      <plugin>
-        <groupId>com.github.spotbugs</groupId>
-        <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>${spotbugs.version}</version>
-        <configuration>
-          <threshold>High</threshold>
-          <failOnError>true</failOnError>
-          <excludeFilterFile>findbugs-filter.xml</excludeFilterFile>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>

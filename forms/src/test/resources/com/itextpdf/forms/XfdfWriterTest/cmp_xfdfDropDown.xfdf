@@ -1,12 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve"
-><f href="xfdfDropDown.pdf"
-/><fields
-><field name="Dropdown1"
-><value
->1</value
-></field
-></fields
-><ids original="94E9EB9BAE5D52499D419EF5B5EFBC21" modified="9FA5C6A7AF4D434B9602214F9DD0A264"
-/></xfdf
->
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><xfdf><fields><field name="Dropdown1"><value>1</value></field></fields><annots/><f href="xfdfDropDown.pdf"/><ids modified="9FA5C6A7AF4D434B962214F9DD0A264" original="94E9EB9BAE5D52499D419EF5B5EFBC21"/></xfdf>

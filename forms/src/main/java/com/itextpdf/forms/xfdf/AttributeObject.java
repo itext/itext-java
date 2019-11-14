@@ -59,10 +59,16 @@ public class AttributeObject {
         this.value = value;
     }
 
+    /**
+     * Returns a string containing attribute name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns a string representation of attribute value.
+     */
     public String getValue() {
         return value;
     }

@@ -341,7 +341,8 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 assert pdfStream.getOutputStream() != null : "PdfStream lost OutputStream";
                 ByteArrayOutputStream byteArrayStream;
                 try {
-                    if (toCompress && !containsFlateFilter(pdfStream) && (allowCompression || userDefinedCompression)) { // compress
+                    if (toCompress && !containsFlateFilter(pdfStream) && (allowCompression || userDefinedCompression)) {
+                        // compress
                         updateCompressionFilter(pdfStream);
                         byteArrayStream = new ByteArrayOutputStream();
                         DeflaterOutputStream zip = new DeflaterOutputStream(byteArrayStream, pdfStream.getCompressionLevel());

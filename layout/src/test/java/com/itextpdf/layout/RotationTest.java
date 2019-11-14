@@ -77,7 +77,7 @@ import org.junit.experimental.categories.Category;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class RotationTest extends ExtendedITextTest{
+public class RotationTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/RotationTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/RotationTest/";
     public static final String cmpPrefix = "cmp_";
@@ -386,7 +386,7 @@ public class RotationTest extends ExtendedITextTest{
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     @Test
-    public void tableRotationTest03() throws IOException,InterruptedException {
+    public void tableRotationTest03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "tableRotationTest03.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "tableRotationTest03.pdf";
 
@@ -419,9 +419,9 @@ public class RotationTest extends ExtendedITextTest{
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         table.setWidth(50);
         table.addCell(new Cell()
-                        .add(new Paragraph("Hello"))
-                        .setRotationAngle(Math.PI * 70 / 180.0)
-                        .setBackgroundColor(ColorConstants.GREEN));
+                .add(new Paragraph("Hello"))
+                .setRotationAngle(Math.PI * 70 / 180.0)
+                .setBackgroundColor(ColorConstants.GREEN));
         doc.add(table);
 
         doc.close();
@@ -437,7 +437,7 @@ public class RotationTest extends ExtendedITextTest{
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(UnitValue.createPercentArray(new float[] {5, 95}));
+        Table table = new Table(UnitValue.createPercentArray(new float[]{5, 95}));
         table.addCell(new Cell()
                 .add(new Paragraph("Hello world").setRotationAngle(Math.PI / 2)));
         table.addCell(new Cell()
@@ -457,7 +457,7 @@ public class RotationTest extends ExtendedITextTest{
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(UnitValue.createPointArray(new float[] {-1, -1}));
+        Table table = new Table(UnitValue.createPointArray(new float[]{-1, -1}));
         table.addCell(new Cell()
                 .add(new Paragraph("Hello world").setRotationAngle(Math.PI / 2)));
         table.addCell(new Cell()
@@ -467,6 +467,41 @@ public class RotationTest extends ExtendedITextTest{
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void cellRotationDependsOnNeighbourCell() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "cellRotationDependsOnNeighbourCell.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "cellRotationDependsOnNeighbourCell.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(300, 180));
+
+        doc.add(createTable(60));
+        doc.add(new AreaBreak());
+
+        doc.add(createTable(80));
+        doc.add(new AreaBreak());
+
+        doc.add(createTable(100));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    private Table createTable(float height) {
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
+
+        Cell rotatedCell = new Cell();
+        rotatedCell.add(new Paragraph("ROTATED"));
+        rotatedCell.setRotationAngle(Math.toRadians(90));
+        table.addCell(rotatedCell);
+
+        Cell cell = new Cell().add(new Paragraph("USUAL"));
+        cell.setHeight(height);
+        table.addCell(cell);
+
+        return table;
     }
 
     @Test
@@ -660,7 +695,7 @@ public class RotationTest extends ExtendedITextTest{
                 .setPadding(5);
         Paragraph p = new Paragraph(text)
                 .setWidth(600)
-                .setRotationAngle(Math.PI/2)
+                .setRotationAngle(Math.PI / 2)
                 .setBorder(new SolidBorder(ColorConstants.BLUE, 5));
         doc.add(d.add(p));
         doc.close();
@@ -832,6 +867,6 @@ public class RotationTest extends ExtendedITextTest{
     }
 
     private void drawLine(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
-        canvas.saveState().setLineWidth(0.5f).setLineDash(3).moveTo(x1, y1).lineTo(x2,y2).stroke().restoreState();
+        canvas.saveState().setLineWidth(0.5f).setLineDash(3).moveTo(x1, y1).lineTo(x2, y2).stroke().restoreState();
     }
 }

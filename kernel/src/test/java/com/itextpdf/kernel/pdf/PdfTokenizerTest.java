@@ -42,10 +42,14 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -55,7 +59,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @Category(IntegrationTest.class)
-public class PdfTokenizerTest {
+public class PdfTokenizerTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfTokeniserTest/";
 
     private void checkTokenTypes(String data, PdfTokenizer.TokenType... expectedTypes) throws Exception {
@@ -130,7 +134,9 @@ public class PdfTokenizerTest {
         checkTokenValues(
                 "123",
                 new byte[]{49, 50, 51},
-                new byte[]{} //EndOfFile buffer
+
+                //EndOfFile buffer
+                new byte[]{}
         );
     }
 
@@ -191,6 +197,7 @@ public class PdfTokenizerTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)})
     public void readPdfStringTest() throws IOException {
         final String author = "This string9078 contains \u00A5two octal characters\u00C7";
         final String creator = "iText\r 6\n";

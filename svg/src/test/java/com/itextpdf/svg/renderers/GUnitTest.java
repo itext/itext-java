@@ -44,15 +44,14 @@ package com.itextpdf.svg.renderers;
 
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Category(IntegrationTest.class)
 public class GUnitTest extends SvgIntegrationTest {
@@ -66,7 +65,7 @@ public class GUnitTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void meetTheTeam() throws IOException, InterruptedException {
+    public void meetTheTeam() {
         List<Exception> assertionErrorsThrown = new ArrayList<>();
         for ( int i = 1; i < 6; i++) {
             try {

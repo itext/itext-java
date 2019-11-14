@@ -43,6 +43,7 @@
 package com.itextpdf.forms.xfdf;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -84,7 +85,7 @@ public class XfdfObjectFactory {
 
 
     /**
-     * The method extracts data from pdf document acroform and annotations into XfdfObject.
+     * Extracts data from pdf document acroform and annotations into XfdfObject.
      * *
      * @param document   Pdf document for data extraction.
      * @param filename The name od pdf document for data extraction.
@@ -134,6 +135,12 @@ public class XfdfObjectFactory {
         return resultXfdf;
     }
 
+    /**
+     * Extracts data from input stream into XfdfObject. Typically input stream is based on .xfdf file
+     *
+     * @param xfdfInputStream   The input stream containing xml-styled xfdf data.
+     * @return XfdfObject containing original xfdf data.
+     */
      public XfdfObject createXfdfObject(InputStream xfdfInputStream) throws ParserConfigurationException, IOException, SAXException {
         XfdfObject xfdfObject = new XfdfObject();
 
@@ -284,18 +291,18 @@ public class XfdfObjectFactory {
         for (int temp = 0; temp < children.getLength(); temp++) {
             Node node = children.item(temp);
             if (node.getNodeType() == Node.TEXT_NODE) {
-                annotObject.setContents(new PdfString(node.getNodeValue()));//getTextContent?
+                annotObject.setContents(new PdfString(node.getNodeValue()));
             }
         }
     }
 
     private void visitContentsRichTextSubelement(Node parentNode, AnnotObject annotObject) {
-        //no attributes, inside a text string or rich text string
+        // no attributes, inside a text string or rich text string
         NodeList children = parentNode.getChildNodes();
         for (int temp = 0; temp < children.getLength(); temp++) {
             Node node = children.item(temp);
             if (node.getNodeType() == Node.TEXT_NODE) {
-                annotObject.setContentsRichText(new PdfString(node.getNodeValue()));//getTextContent?
+                annotObject.setContentsRichText(new PdfString(node.getNodeValue()));
             }
         }
     }
@@ -340,7 +347,7 @@ public class XfdfObjectFactory {
                 case XfdfConstants.FRINGE:
                     annotObject.addAttribute(new AttributeObject(attributeName, attributeNode.getNodeValue()));
                     break;
-                default: logger.warn(XfdfConstants.UNSUPPORTED_ANNOTATION_ATTRIBUTE);
+                default: logger.warn(LogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE);
                     break;
             }
         }

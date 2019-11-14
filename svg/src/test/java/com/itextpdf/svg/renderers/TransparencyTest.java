@@ -55,6 +55,7 @@ import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.impl.AbstractSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
+import com.itextpdf.test.ExtendedITextTest;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -62,7 +63,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 
-public class TransparencyTest {
+public class TransparencyTest extends ExtendedITextTest {
 
     private static final PdfName DEFAULT_RESOURCE_NAME = new PdfName("Gs1");
     private static final PdfName FILL_OPAC = new PdfName("ca");

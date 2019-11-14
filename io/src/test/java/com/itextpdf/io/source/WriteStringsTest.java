@@ -42,6 +42,7 @@
  */
 package com.itextpdf.io.source;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -50,7 +51,7 @@ import org.junit.experimental.categories.Category;
 import java.nio.charset.StandardCharsets;
 
 @Category(UnitTest.class)
-public class WriteStringsTest {
+public class WriteStringsTest extends ExtendedITextTest {
 
     @Test
     public void writeStringTest() {

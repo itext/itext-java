@@ -44,6 +44,7 @@ package com.itextpdf.styledxmlparser.jsoup.select;
 
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import com.itextpdf.styledxmlparser.jsoup.TextUtil;
@@ -62,7 +63,7 @@ import static org.junit.Assert.*;
 
  @author Jonathan Hedley, jonathan@hedley.net */
 @Category(UnitTest.class)
-public class ElementsTest {
+public class ElementsTest extends ExtendedITextTest {
     @Test public void filter() {
         String h = "<p>Excl</p><div class=headline><p>Hello</p><p>There</p></div><div class=headline><h1>Headline</h1></div>";
         Document doc = Jsoup.parse(h);

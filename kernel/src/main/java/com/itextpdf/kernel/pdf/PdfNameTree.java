@@ -154,6 +154,13 @@ public class PdfNameTree implements Serializable {
     }
 
     /**
+     * Sets the modified flag to true. It means that the object has been modified.
+     */
+    public void setModified() {
+        modified = true;
+    }
+
+    /**
      * Build a PdfDictionary containing the name tree
      *
      * @return PdfDictionary containing the name tree

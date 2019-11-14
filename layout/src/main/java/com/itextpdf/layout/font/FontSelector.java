@@ -84,7 +84,9 @@ public class FontSelector {
      * @return the best matched font
      */
     public final FontInfo bestMatch() {
-        return fonts.get(0); // fonts is sorted best to worst, get(0) returns the best matched FontInfo
+
+        // fonts is sorted best to worst, get(0) returns the best matched FontInfo
+        return fonts.get(0);
     }
 
     /**
@@ -127,7 +129,7 @@ public class FontSelector {
                 FontCharacteristics fc = fontStyles.get(i);
                 String fontFamily = fontFamilies.get(i);
 
-                if (fontFamily.equalsIgnoreCase("monospace")) {
+                if ("monospace".equalsIgnoreCase(fontFamily)) {
                     fc.setMonospaceFlag(true);
                 }
                 boolean isLastFontFamilyToBeProcessed = i == fontFamilies.size() - 1;
@@ -194,7 +196,11 @@ public class FontSelector {
 
             if (!fontFamilySetByCharacteristics) {
                 // if alias is set, fontInfo's descriptor should not be checked
-                if (!"".equals(fontFamily) && (null == fontInfo.getAlias() && fontInfo.getDescriptor().getFamilyNameLowerCase().equals(fontFamily) || (null != fontInfo.getAlias() && fontInfo.getAlias().toLowerCase().equals(fontFamily)))) {
+                if (!"".equals(fontFamily)
+                        && (null == fontInfo.getAlias()
+                                && null != fontInfo.getDescriptor().getFamilyNameLowerCase()
+                                && fontInfo.getDescriptor().getFamilyNameLowerCase().equals(fontFamily)
+                            || (null != fontInfo.getAlias() && fontInfo.getAlias().toLowerCase().equals(fontFamily)))) {
                     score += FONT_FAMILY_EQUALS_AWARD;
                 } else {
                     if (!isLastFontFamilyToBeProcessed) {

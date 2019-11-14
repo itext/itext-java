@@ -103,31 +103,37 @@ public class PdfDate extends PdfObjectWrapper<PdfString> {
         StringBuilder sb = new StringBuilder();
         if (d.length() < 4)
             return "0000";
-        sb.append(d.substring(0, 4)); //year
+        //year
+        sb.append(d.substring(0, 4));
         d = d.substring(4);
         if (d.length() < 2)
             return sb.toString();
-        sb.append('-').append(d.substring(0, 2)); //month
+        //month
+        sb.append('-').append(d.substring(0, 2));
         d = d.substring(2);
         if (d.length() < 2)
             return sb.toString();
-        sb.append('-').append(d.substring(0, 2)); //day
+        //day
+        sb.append('-').append(d.substring(0, 2));
         d = d.substring(2);
         if (d.length() < 2)
             return sb.toString();
-        sb.append('T').append(d.substring(0, 2)); //hour
+        //hour
+        sb.append('T').append(d.substring(0, 2));
         d = d.substring(2);
         if (d.length() < 2) {
             sb.append(":00Z");
             return sb.toString();
         }
-        sb.append(':').append(d.substring(0, 2)); //minute
+        //minute
+        sb.append(':').append(d.substring(0, 2));
         d = d.substring(2);
         if (d.length() < 2) {
             sb.append('Z');
             return sb.toString();
         }
-        sb.append(':').append(d.substring(0, 2)); //second
+        //second
+        sb.append(':').append(d.substring(0, 2));
         d = d.substring(2);
         if (d.startsWith("-") || d.startsWith("+")) {
             String sign = d.substring(0, 1);
@@ -238,7 +244,8 @@ public class PdfDate extends PdfObjectWrapper<PdfString> {
      * @param length the length of the resulting {@code String}
      * @return the resulting {@code String}
      */
-    private static String setLength(int i, int length) { // 1.3-1.4 problem fixed by Finn Bock
+    private static String setLength(int i, int length) {
+        // 1.3-1.4 problem fixed by Finn Bock
         StringBuilder tmp = new StringBuilder();
         tmp.append(i);
         while (tmp.length() < length) {

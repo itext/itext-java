@@ -42,6 +42,11 @@
  */
 package com.itextpdf.forms.xfdf;
 
+/**
+ * To be removed in 7.2
+ * @deprecated use {@link ElementContentEncodingFormat} instead
+ */
+@Deprecated
 public enum Encoding {
     ASCII, HEX
 }

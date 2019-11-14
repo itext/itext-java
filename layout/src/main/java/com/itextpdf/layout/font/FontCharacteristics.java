@@ -106,9 +106,9 @@ public final class FontCharacteristics {
     public FontCharacteristics setFontStyle(String fs) {
         if (fs != null && fs.length() > 0) {
             fs = fs.trim().toLowerCase();
-            if (fs.equals("normal")) {
+            if ("normal".equals(fs)) {
                 isItalic = false;
-            } else if (fs.equals("italic") || fs.equals("oblique")) {
+            } else if ("italic".equals(fs) || "oblique".equals(fs)) {
                 isItalic = true;
             }
         }

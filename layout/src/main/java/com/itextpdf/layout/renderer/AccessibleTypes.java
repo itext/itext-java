@@ -62,8 +62,7 @@ import java.util.Set;
  * <ul>
  *     <li>Standard structure types for pdf 1.7 and 2.0 are very alike. There are some differences, like new/removed roles
  *     and attributes, however they are not used in current layout auto tagging mechanism.
- *     </li>
- *     <li>Differentiating  possible types for the same role based on the context is not supported at the moment.</li>
+ *     <li>Differentiating  possible types for the same role based on the context is not supported at the moment.
  * </ul>
  * In general, the correct way to handle role types would be to have separate classes for every namespace that define type
  * and apply attributes. However I believe, that for now it is not feasible at the moment to implement this approach.
@@ -157,11 +156,11 @@ class AccessibleTypes {
     /**
      * Identifies standard structure role type based only on it's name. The return types might be one of the constants:
      * <ul>
-     *     <li>{@link #Unknown}</li>
-     *     <li>{@link #Grouping}</li>
-     *     <li>{@link #BlockLevel}</li>
-     *     <li>{@link #InlineLevel}</li>
-     *     <li>{@link #Illustration}</li>
+     *     <li>{@link #Unknown}
+     *     <li>{@link #Grouping}
+     *     <li>{@link #BlockLevel}
+     *     <li>{@link #InlineLevel}
+     *     <li>{@link #Illustration}
      * </ul>
      * See also remarks in the {@link AccessibleTypes} class documentation.
      */

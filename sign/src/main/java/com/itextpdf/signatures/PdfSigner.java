@@ -336,11 +336,11 @@ public class PdfSigner {
      * <ul>
      * <li>If you create new signature field (either use {@link #setFieldName} with
      * the name that doesn't exist in the document or don't specify it at all) then
-     * the signature is invisible by default.</li>
+     * the signature is invisible by default.
      * <li>If you sign already existing field, then the signature appearance object
      * is modified to have all the properties (page num., rect etc.) consistent with
      * the state of the field (<strong>if you customized the appearance object
-     * before the {@link #setFieldName} call you'll have to do it again</strong>)</li>
+     * before the {@link #setFieldName} call you'll have to do it again</strong>)
      * </ul>
      * <p>
      *
@@ -365,10 +365,10 @@ public class PdfSigner {
      *
      * @param certificationLevel a new certification level for a document.
      *                           Possible values are: <ul>
-     *                           <li>{@link #NOT_CERTIFIED}</li>
-     *                           <li>{@link #CERTIFIED_NO_CHANGES_ALLOWED}</li>
-     *                           <li>{@link #CERTIFIED_FORM_FILLING}</li>
-     *                           <li>{@link #CERTIFIED_FORM_FILLING_AND_ANNOTATIONS}</li>
+     *                           <li>{@link #NOT_CERTIFIED}
+     *                           <li>{@link #CERTIFIED_NO_CHANGES_ALLOWED}
+     *                           <li>{@link #CERTIFIED_FORM_FILLING}
+     *                           <li>{@link #CERTIFIED_FORM_FILLING_AND_ANNOTATIONS}
      *                           </ul>
      */
     public void setCertificationLevel(int certificationLevel) {

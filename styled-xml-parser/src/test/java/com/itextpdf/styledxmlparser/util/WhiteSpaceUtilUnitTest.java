@@ -42,13 +42,14 @@
  */
 package com.itextpdf.styledxmlparser.util;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class WhiteSpaceUtilUnitTest {
+public class WhiteSpaceUtilUnitTest extends ExtendedITextTest {
 
     @Test
     public void collapseConsecutiveWhiteSpacesTest() {

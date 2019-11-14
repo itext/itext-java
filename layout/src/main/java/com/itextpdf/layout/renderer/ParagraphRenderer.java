@@ -186,7 +186,8 @@ public class ParagraphRenderer extends BlockRenderer {
         List<IRenderer> inlineFloatsOverflowedToNextPage = new ArrayList<>();
         boolean floatOverflowedToNextPageWithNothing = false;
 
-        Set<Rectangle> nonChildFloatingRendererAreas = new HashSet<>(floatRendererAreas); // rectangles are compared by instances
+        // rectangles are compared by instances
+        Set<Rectangle> nonChildFloatingRendererAreas = new HashSet<>(floatRendererAreas);
 
         if (marginsCollapsingEnabled && childRenderers.size() > 0) {
             // passing null is sufficient to notify that there is a kid, however we don't care about it and it's margins
@@ -255,33 +256,10 @@ public class ParagraphRenderer extends BlockRenderer {
             }
 
             TextAlignment textAlignment = (TextAlignment) this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT, TextAlignment.LEFT);
-            if (textAlignment == TextAlignment.JUSTIFIED && result.getStatus() == LayoutResult.PARTIAL && !result.isSplitForcedByNewline() && !onlyOverflowedFloatsLeft ||
-                    textAlignment == TextAlignment.JUSTIFIED_ALL) {
-                if (processedRenderer != null) {
-                    Rectangle actualLineLayoutBox = layoutBox.clone();
-                    FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, actualLineLayoutBox);
-                    processedRenderer.justify(actualLineLayoutBox.getWidth() - lineIndent);
-                }
-            } else if (textAlignment != TextAlignment.LEFT && processedRenderer != null) {
-                Rectangle actualLineLayoutBox = layoutBox.clone();
-                FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, actualLineLayoutBox);
-                float deltaX = Math.max(0, actualLineLayoutBox.getWidth() - lineIndent - processedRenderer.getOccupiedArea().getBBox().getWidth());
-                switch (textAlignment) {
-                    case RIGHT:
-                        alignStaticKids(processedRenderer, deltaX);
-                        break;
-                    case CENTER:
-                        alignStaticKids(processedRenderer, deltaX / 2);
-                        break;
-                    case JUSTIFIED:
-                        if (BaseDirection.RIGHT_TO_LEFT.equals(this.<BaseDirection>getProperty(Property.BASE_DIRECTION))) {
-                            alignStaticKids(processedRenderer, deltaX);
-                        }
-                        break;
-                }
-            }
+            applyTextAlignment(textAlignment, result, processedRenderer, layoutBox, floatRendererAreas, onlyOverflowedFloatsLeft, lineIndent);
 
-            boolean lineHasContent = processedRenderer != null && processedRenderer.getOccupiedArea().getBBox().getHeight() > 0; // could be false if e.g. line contains only floats
+            // could be false if e.g. line contains only floats
+            boolean lineHasContent = processedRenderer != null && processedRenderer.getOccupiedArea().getBBox().getHeight() > 0;
             boolean doesNotFit = processedRenderer == null;
             float deltaY = 0;
             if (!doesNotFit) {
@@ -422,7 +400,9 @@ public class ParagraphRenderer extends BlockRenderer {
 
                 if (!inlineFloatsOverflowedToNextPage.isEmpty() && result.getOverflowRenderer() == null) {
                     onlyOverflowedFloatsLeft = true;
-                    currentRenderer = new LineRenderer(); // dummy renderer to trick paragraph renderer to continue kids loop
+
+                    // dummy renderer to trick paragraph renderer to continue kids loop
+                    currentRenderer = new LineRenderer();
                 }
             }
         }
@@ -676,6 +656,35 @@ public class ParagraphRenderer extends BlockRenderer {
                 continue;
             }
             childRenderer.move(dxRight, 0);
+        }
+    }
+
+    private void applyTextAlignment(TextAlignment textAlignment, LineLayoutResult result, LineRenderer processedRenderer,
+                        Rectangle layoutBox, List<Rectangle> floatRendererAreas, boolean onlyOverflowedFloatsLeft, float lineIndent) {
+        if (textAlignment == TextAlignment.JUSTIFIED && result.getStatus() == LayoutResult.PARTIAL && !result.isSplitForcedByNewline() && !onlyOverflowedFloatsLeft ||
+                textAlignment == TextAlignment.JUSTIFIED_ALL) {
+            if (processedRenderer != null) {
+                Rectangle actualLineLayoutBox = layoutBox.clone();
+                FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, actualLineLayoutBox);
+                processedRenderer.justify(actualLineLayoutBox.getWidth() - lineIndent);
+            }
+        } else if (textAlignment != TextAlignment.LEFT && processedRenderer != null) {
+            Rectangle actualLineLayoutBox = layoutBox.clone();
+            FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, actualLineLayoutBox);
+            float deltaX = Math.max(0, actualLineLayoutBox.getWidth() - lineIndent - processedRenderer.getOccupiedArea().getBBox().getWidth());
+            switch (textAlignment) {
+                case RIGHT:
+                    alignStaticKids(processedRenderer, deltaX);
+                    break;
+                case CENTER:
+                    alignStaticKids(processedRenderer, deltaX / 2);
+                    break;
+                case JUSTIFIED:
+                    if (BaseDirection.RIGHT_TO_LEFT.equals(this.<BaseDirection>getProperty(Property.BASE_DIRECTION))) {
+                        alignStaticKids(processedRenderer, deltaX);
+                    }
+                    break;
+            }
         }
     }
 }

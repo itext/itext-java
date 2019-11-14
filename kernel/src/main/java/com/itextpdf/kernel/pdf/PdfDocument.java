@@ -245,7 +245,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
         documentId = lastDocumentId.incrementAndGet();
         this.reader = reader;
-        this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
+        // default values of the StampingProperties doesn't affect anything
+        this.properties = new StampingProperties();
         this.properties.setEventCountingMetaInfo(properties.metaInfo);
         open(null);
     }
@@ -273,7 +274,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
         documentId = lastDocumentId.incrementAndGet();
         this.writer = writer;
-        this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
+        // default values of the StampingProperties doesn't affect anything
+        this.properties = new StampingProperties();
         this.properties.setEventCountingMetaInfo(properties.metaInfo);
         open(writer.properties.pdfVersion);
     }
@@ -872,7 +874,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     if (writer.crypto != null) {
                         assert reader.decrypt.getPdfObject() == writer.crypto.getPdfObject() : "Conflict with source encryption";
                         crypto = reader.decrypt.getPdfObject();
-                        if (crypto.getIndirectReference() != null) { // Checking just for extra safety, encryption dictionary shall never be direct.
+                        if (crypto.getIndirectReference() != null) {
+                            // Checking just for extra safety, encryption dictionary shall never be direct.
                             forbiddenToFlush.add(crypto.getIndirectReference());
                         }
                     }
@@ -1463,12 +1466,12 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Adds file attachment at document level.
      *
-     * @param description the file description
-     * @param fs          {@link PdfFileSpec} object.
+     * @param key name of the destination.
+     * @param fs  {@link PdfFileSpec} object.
      */
-    public void addFileAttachment(String description, PdfFileSpec fs) {
+    public void addFileAttachment(String key, PdfFileSpec fs) {
         checkClosingStatus();
-        catalog.addNameToNameTree(description, fs.getPdfObject(), PdfName.EmbeddedFiles);
+        catalog.addNameToNameTree(key, fs.getPdfObject(), PdfName.EmbeddedFiles);
     }
 
     /**
@@ -1707,7 +1710,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public PdfFont addFont(PdfFont font) {
         font.makeIndirect(this);
-        font.setForbidRelease(); // forbid release for font dictionaries that are stored in #documentFonts collection
+        // forbid release for font dictionaries that are stored in #documentFonts collection
+        font.setForbidRelease();
         documentFonts.put(font.getPdfObject().getIndirectReference(), font);
         return font;
     }
@@ -1927,7 +1931,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 assert originalDocumentId != null;
                 assert modifiedDocumentId != null;
             }
-            if (properties.appendMode) {       // Due to constructor reader and writer not null.
+            if (properties.appendMode) {
+                // Due to constructor reader and writer not null.
                 assert reader != null;
                 RandomAccessFileOrArray file = reader.tokens.getSafeFile();
                 int n;
@@ -2253,7 +2258,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         PdfOutline parent = outline.getParent();
         //note there's no need to continue recursion if the current outline parent is root (first condition) or
         // if it is already in the Set of outlines to be copied (second condition)
-        if (parent.getTitle().equals("Outlines") || outlinesToCopy.contains(parent)) {
+        if ("Outlines".equals(parent.getTitle()) || outlinesToCopy.contains(parent)) {
             return;
         }
         outlinesToCopy.add(parent);

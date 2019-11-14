@@ -159,7 +159,9 @@ class TiffImageHelper {
                 rowsStrip = h;
             long[] offset = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);
             long[] size = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPBYTECOUNTS);
-            if ((size == null || (size.length == 1 && (size[0] == 0 || size[0] + offset[0] > s.length()))) && h == rowsStrip) { // some TIFF producers are really lousy, so...
+
+            // some TIFF producers are really lousy, so...
+            if ((size == null || (size.length == 1 && (size[0] == 0 || size[0] + offset[0] > s.length()))) && h == rowsStrip) {
                 size = new long[]{s.length() - (int) offset[0]};
             }
             boolean reverse = false;
@@ -199,7 +201,9 @@ class TiffImageHelper {
                         tiffT6Options = t6OptionsField.getAsLong(0);
                     break;
             }
-            if (direct && rowsStrip == h) { //single strip, direct
+
+            //single strip, direct
+            if (direct && rowsStrip == h) {
                 byte[] im = new byte[(int) size[0]];
                 s.seek(offset[0]);
                 s.readFully(im);
@@ -335,7 +339,9 @@ class TiffImageHelper {
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_EXTRASAMPLES))
                 extraSamples = 1;
             int samplePerPixel = 1;
-            if (dir.isTagPresent(TIFFConstants.TIFFTAG_SAMPLESPERPIXEL)) // 1,3,4
+
+            // 1,3,4
+            if (dir.isTagPresent(TIFFConstants.TIFFTAG_SAMPLESPERPIXEL))
                 samplePerPixel = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_SAMPLESPERPIXEL);
             int bitsPerSample = 1;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_BITSPERSAMPLE))
@@ -364,13 +370,17 @@ class TiffImageHelper {
                 fillOrder = fillOrderField.getAsInt(0);
             boolean reverse = (fillOrder == TIFFConstants.FILLORDER_LSB2MSB);
             int rowsStrip = h;
-            if (dir.isTagPresent(TIFFConstants.TIFFTAG_ROWSPERSTRIP)) //another hack for broken tiffs
+
+            // another hack for broken tiffs
+            if (dir.isTagPresent(TIFFConstants.TIFFTAG_ROWSPERSTRIP))
                 rowsStrip = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP);
             if (rowsStrip <= 0 || rowsStrip > h)
                 rowsStrip = h;
             long[] offset = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);
             long[] size = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPBYTECOUNTS);
-            if ((size == null || (size.length == 1 && (size[0] == 0 || size[0] + offset[0] > s.length()))) && h == rowsStrip) { // some TIFF producers are really lousy, so...
+
+            // some TIFF producers are really lousy, so...
+            if ((size == null || (size.length == 1 && (size[0] == 0 || size[0] + offset[0] > s.length()))) && h == rowsStrip) {
                 size = new long[]{s.length() - (int) offset[0]};
             }
             if (compression == TIFFConstants.COMPRESSION_LZW || compression == TIFFConstants.COMPRESSION_DEFLATE || compression == TIFFConstants.COMPRESSION_ADOBE_DEFLATE) {
@@ -627,7 +637,9 @@ class TiffImageHelper {
         long offset[];
         if (field.getType() == TIFFField.TIFF_LONG)
             offset = field.getAsLongs();
-        else { // must be short
+        else {
+            // must be short
+
             char[] temp = field.getAsChars();
             offset = new long[temp.length];
             for (int k = 0; k < temp.length; ++k)

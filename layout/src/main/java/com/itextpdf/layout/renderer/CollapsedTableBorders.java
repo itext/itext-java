@@ -168,7 +168,9 @@ class CollapsedTableBorders extends TableBorders {
                 int col = 0;
                 int row = index - 1;
                 while (col < numberOfColumns) {
-                    if (null != rows.get(row - largeTableIndexOffset)[col]) { // TODO
+
+                    // TODO
+                    if (null != rows.get(row - largeTableIndexOffset)[col]) {
                         CellRenderer cell = rows.get(row - largeTableIndexOffset)[col];
                         Border cellModelBottomBorder = TableBorderUtil.getCellSideBorder(((Cell) cell.getModelElement()), Property.BORDER_BOTTOM);
                         int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
@@ -491,7 +493,8 @@ class CollapsedTableBorders extends TableBorders {
     protected TableBorders applyTopTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse) {
         if (!isEmpty) {
             return applyTopTableBorder(occupiedBox, layoutBox, reverse);
-        } else if (force) { // process empty table
+        } else if (force) {
+            // process empty table
             applyTopTableBorder(occupiedBox, layoutBox, reverse);
             return applyTopTableBorder(occupiedBox, layoutBox, reverse);
         }
@@ -501,7 +504,8 @@ class CollapsedTableBorders extends TableBorders {
     protected TableBorders applyBottomTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse) {
         if (!isEmpty) {
             return applyBottomTableBorder(occupiedBox, layoutBox, reverse);
-        } else if (force) { // process empty table
+        } else if (force) {
+            // process empty table
             applyBottomTableBorder(occupiedBox, layoutBox, reverse);
             return applyBottomTableBorder(occupiedBox, layoutBox, reverse);
         }

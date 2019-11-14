@@ -79,7 +79,8 @@ public class PdfXrefTableTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(created));
         pdfDocument.addNewPage();
 
-        pdfDocument.getXmpMetadata(true); // create XMP metadata
+        // create XMP metadata
+        pdfDocument.getXmpMetadata(true);
         pdfDocument.close();
 
 
@@ -120,7 +121,8 @@ public class PdfXrefTableTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(created));
         pdfDocument.addNewPage();
 
-        pdfDocument.getXmpMetadata(true); // create XMP metadata
+        // create XMP metadata
+        pdfDocument.getXmpMetadata(true);
         pdfDocument.close();
 
 

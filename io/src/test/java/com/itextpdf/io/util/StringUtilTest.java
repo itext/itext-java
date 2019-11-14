@@ -42,6 +42,7 @@
  */
 package com.itextpdf.io.util;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -53,7 +54,7 @@ import java.util.regex.Pattern;
  * At the moment there is no StringUtil class in Java, but there is one in C# and we are testing
  */
 @Category(UnitTest.class)
-public class StringUtilTest {
+public class StringUtilTest extends ExtendedITextTest {
 
     @Test
     public void patternSplitTest01() {

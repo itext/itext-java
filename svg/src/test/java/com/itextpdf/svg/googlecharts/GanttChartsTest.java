@@ -57,53 +57,51 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class GanttChartsTest extends SvgIntegrationTest {
 
-  public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/gantt_charts/";
-  public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/gantt_charts/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/GanttChartsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/GanttChartsTest/";
 
-  @BeforeClass
-  public static void beforeClass() {
-    ITextTest.createDestinationFolder(destinationFolder);
-  }
+    @BeforeClass
+    public static void beforeClass() {
+        ITextTest.createDestinationFolder(destinationFolder);
+    }
 
-  @Test
-  public void gantt_chart() throws IOException, InterruptedException, java.io.IOException {
-    PageSize pageSize = PageSize.A4;
-    TestUtils.convertSVGtoPDF(destinationFolder + "gantt_chart.pdf",
-            sourceFolder + "gantt_chart.svg", 1, pageSize);
+    @Test
+    public void ganttChart() throws IOException, InterruptedException, java.io.IOException {
+        PageSize pageSize = PageSize.A4;
+        TestUtils.convertSVGtoPDF(destinationFolder + "ganttChart.pdf",
+                sourceFolder + "ganttChart.svg", 1, pageSize);
 
-    Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gantt_chart.pdf",
-            sourceFolder + "cmp_gantt_chart.pdf", destinationFolder, "diff_"));
-  }
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "ganttChart.pdf",
+                sourceFolder + "cmp_ganttChart.pdf", destinationFolder, "diff_"));
+    }
 
-  @Test
-  public void gantt2_chart() throws IOException, InterruptedException, java.io.IOException {
-    PageSize pageSize = PageSize.A4;
-    TestUtils.convertSVGtoPDF(destinationFolder + "gantt2_chart.pdf",
-            sourceFolder + "gantt2_chart.svg", 1, pageSize);
+    @Test
+    public void gantt2Chart() throws IOException, InterruptedException, java.io.IOException {
+        PageSize pageSize = PageSize.A4;
+        TestUtils.convertSVGtoPDF(destinationFolder + "gantt2Chart.pdf",
+                sourceFolder + "gantt2Chart.svg", 1, pageSize);
 
-    Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gantt2_chart.pdf",
-            sourceFolder + "cmp_gantt2_chart.pdf", destinationFolder, "diff_"));
-  }
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gantt2Chart.pdf",
+                sourceFolder + "cmp_gantt2Chart.pdf", destinationFolder, "diff_"));
+    }
 
-  @Test
-  public void gantt3_chart() throws IOException, InterruptedException, java.io.IOException {
-    PageSize pageSize = PageSize.A4;
-    TestUtils.convertSVGtoPDF(destinationFolder + "gantt3_chart.pdf",
-            sourceFolder + "gantt3_chart.svg", 1, pageSize);
+    @Test
+    public void gantt3Chart() throws IOException, InterruptedException, java.io.IOException {
+        PageSize pageSize = PageSize.A4;
+        TestUtils.convertSVGtoPDF(destinationFolder + "gantt3Chart.pdf",
+                sourceFolder + "gantt3Chart.svg", 1, pageSize);
 
-    Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gantt3_chart.pdf",
-            sourceFolder + "cmp_gantt3_chart.pdf", destinationFolder, "diff_"));
-  }
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gantt3Chart.pdf",
+                sourceFolder + "cmp_gantt3Chart.pdf", destinationFolder, "diff_"));
+    }
 
-  @Test
-  public void gantt4_chart() throws IOException, InterruptedException, java.io.IOException {
-    PageSize pageSize = PageSize.A4;
-    TestUtils.convertSVGtoPDF(destinationFolder + "gantt4_chart.pdf",
-            sourceFolder + "gantt4_chart.svg", 1, pageSize);
+    @Test
+    public void gantt4Chart() throws IOException, InterruptedException, java.io.IOException {
+        PageSize pageSize = PageSize.A4;
+        TestUtils.convertSVGtoPDF(destinationFolder + "gantt4Chart.pdf",
+                sourceFolder + "gantt4Chart.svg", 1, pageSize);
 
-    Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gantt4_chart.pdf",
-            sourceFolder + "cmp_gantt4_chart.pdf", destinationFolder, "diff_"));
-  }
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gantt4Chart.pdf",
+                sourceFolder + "cmp_gantt4Chart.pdf", destinationFolder, "diff_"));
+    }
 }
-
-

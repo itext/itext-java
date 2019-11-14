@@ -321,7 +321,7 @@ public class PdfImageXObject extends PdfXObject {
         }
         stream = new PdfStream(image.getData());
         String filter = image.getFilter();
-        if (filter != null && filter.equals("JPXDecode") && image.getColorSpace() <= 0) {
+        if (filter != null && "JPXDecode".equals(filter) && image.getColorSpace() <= 0) {
             stream.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
             image.setBpc(0);
         }

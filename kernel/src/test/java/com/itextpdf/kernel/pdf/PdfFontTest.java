@@ -52,8 +52,8 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeCollection;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.Type1Font;
-import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.constants.FontStyles;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
@@ -74,7 +74,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -290,7 +289,8 @@ public class PdfFontTest extends ExtendedITextTest {
     public void createDocumentWithType3Font() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithType3Font.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithType3Font.pdf";
-        String testString = "A A A A E E E ~ \u00E9"; // A A A A E E E ~ é
+        // A A A A E E E ~ é
+        String testString = "A A A A E E E ~ \u00E9";
 
         //writing type3 font characters
         String title = "Type3 font iText 7 Document";
@@ -357,7 +357,8 @@ public class PdfFontTest extends ExtendedITextTest {
     public void createTaggedDocumentWithType3Font() throws IOException, InterruptedException {
         String filename = destinationFolder + "createTaggedDocumentWithType3Font.pdf";
         String cmpFilename = sourceFolder + "cmp_createTaggedDocumentWithType3Font.pdf";
-        String testString = "A A A A E E E ~ \u00E9"; // A A A A E E E ~ é
+        // A A A A E E E ~ é
+        String testString = "A A A A E E E ~ \u00E9";
 
         //writing type3 font characters
         String title = "Type3 font iText 7 Document";
@@ -909,7 +910,8 @@ public class PdfFontTest extends ExtendedITextTest {
                 .beginText()
                 .setFontAndSize(pdfType3Font, 12)
                 .moveText(50, 800)
-                .showText("A A A A A A E E E E ~ \u00E9 \u00F6") // é ö
+                // A A A A A A E E E E ~ é ö
+                .showText("A A A A A A E E E E ~ \u00E9 \u00F6")
                 .endText()
                 .restoreState();
         page.flush();
@@ -953,7 +955,8 @@ public class PdfFontTest extends ExtendedITextTest {
                 .beginText()
                 .setFontAndSize(pdfType3Font, 12)
                 .moveText(50, 800)
-                .showText("AAAAAA EEEE ~ \u00E9 \u00F6") // é ö
+                // AAAAAA EEEE ~ é ö
+                .showText("AAAAAA EEEE ~ \u00E9 \u00F6")
                 .endText();
         page.flush();
         outputPdfDoc.close();
@@ -1353,7 +1356,7 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void createWrongAfm1() throws IOException, InterruptedException {
+    public void createWrongAfm1() throws IOException {
         String message = "";
         try {
             byte[] pfb = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
@@ -1365,7 +1368,7 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void createWrongAfm2() throws IOException, InterruptedException {
+    public void createWrongAfm2() throws IOException {
         String message = "";
         String font = fontsFolder + "cmr10.pfb";
         try {
@@ -1381,7 +1384,7 @@ public class PdfFontTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.START_MARKER_MISSING_IN_PFB_FILE)
     })
-    public void createWrongPfb() throws IOException, InterruptedException {
+    public void createWrongPfb() throws IOException {
         byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
         PdfFont font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(afm, afm, false), null);
         byte[] streamContent = ((Type1Font) ((PdfType1Font) font).getFontProgram()).getFontStreamBytes();
@@ -1389,14 +1392,14 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void autoDetect1() throws IOException, InterruptedException {
+    public void autoDetect1() throws IOException {
         byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
 
         Assert.assertTrue("Type1 font expected", FontProgramFactory.createFont(afm, false) instanceof Type1Font);
     }
 
     @Test
-    public void autoDetect2() throws IOException, InterruptedException {
+    public void autoDetect2() throws IOException {
         byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
         byte[] pfb = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
 
@@ -1404,19 +1407,19 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void autoDetect3() throws IOException, InterruptedException {
+    public void autoDetect3() throws IOException {
         byte[] otf = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "Puritan2.otf"));
         Assert.assertTrue("TrueType (OTF) font expected", FontProgramFactory.createFont(otf) instanceof TrueTypeFont);
     }
 
     @Test
-    public void autoDetect4() throws IOException, InterruptedException {
+    public void autoDetect4() throws IOException {
         byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "abserif4_5.ttf"));
         Assert.assertTrue("TrueType (TTF) expected", FontProgramFactory.createFont(ttf) instanceof TrueTypeFont);
     }
 
     @Test
-    public void autoDetect5() throws IOException, InterruptedException {
+    public void autoDetect5() throws IOException {
         byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "abserif4_5.ttf"));
         Assert.assertTrue("TrueType (TTF) expected", FontProgramFactory.createFont(ttf) instanceof TrueTypeFont);
     }
@@ -1658,8 +1661,10 @@ public class PdfFontTest extends ExtendedITextTest {
 
         PdfDocument doc = new PdfDocument(new PdfWriter(filename));
         PdfPage page = doc.addNewPage();
+
         // Identity-H must be embedded
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSansCJKjp-Bold.otf", "Identity-H");
+
         // font.setSubset(false);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
@@ -1667,7 +1672,9 @@ public class PdfFontTest extends ExtendedITextTest {
                 .beginText()
                 .moveText(36, 680)
                 .setFontAndSize(font, 12)
-                .showText("\u0BA4") // there is no such glyph in provided cff
+
+                // there is no such glyph in provided cff
+                .showText("\u0BA4")
                 .endText()
                 .restoreState();
 
@@ -1682,6 +1689,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         PdfDocument doc = new PdfDocument(new PdfWriter(filename));
         PdfPage page = doc.addNewPage();
+
         // Identity-H must be embedded
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "SourceHanSansHW-Regular.otf", "Identity-H");
         PdfCanvas canvas = new PdfCanvas(page);
@@ -1699,11 +1707,10 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1579")
+    // TODO DEVSIX-1653
     public void SourceHanSerifKRRegularTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "SourceHanSerifKRRegularTest.pdf";
         String cmpFilename = sourceFolder + "cmp_SourceHanSerifKRRegularTest.pdf";
-
         PdfDocument doc = new PdfDocument(new PdfWriter(filename));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
@@ -1724,7 +1731,7 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1579")
+    // TODO DEVSIX-1653
     public void SourceHanSerifKRRegularFullTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "SourceHanSerifKRRegularFullTest.pdf";
         String cmpFilename = sourceFolder + "cmp_SourceHanSerifKRRegularFullTest.pdf";
@@ -1882,7 +1889,7 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void kozminNames() throws Exception {
+    public void kozminNames() {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("KozMinPro-Regular");
         Assert.assertEquals(descriptor.getFontName(), "KozMinPro-Regular");
         Assert.assertEquals(descriptor.getFullNameLowerCase(), "KozMinPro-Regular".toLowerCase());
@@ -1890,7 +1897,7 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void helveticaNames() throws Exception {
+    public void helveticaNames() {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("Helvetica");
         Assert.assertEquals(descriptor.getFontName(), "Helvetica");
         Assert.assertEquals(descriptor.getFullNameLowerCase(), "Helvetica".toLowerCase());
@@ -1899,7 +1906,7 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void otfByStringNames() throws Exception {
+    public void otfByStringNames() {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontsFolder + "Puritan2.otf");
         Assert.assertEquals(descriptor.getFontName(), "Puritan2");
         Assert.assertEquals(descriptor.getFullNameLowerCase(), "Puritan 2.0 Regular".toLowerCase());
@@ -1920,7 +1927,7 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void ttfByStringNames() throws Exception {
+    public void ttfByStringNames() {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontsFolder + "abserif4_5.ttf");
         Assert.assertEquals(descriptor.getFontName(), "AboriginalSerif");
         Assert.assertEquals(descriptor.getFullNameLowerCase(), "Aboriginal Serif".toLowerCase());
@@ -1947,5 +1954,31 @@ public class PdfFontTest extends ExtendedITextTest {
             Assert.assertNotNull(pdfDoc.getDefaultFont());
             Assert.assertNull(pdfDoc.getDefaultFont().getPdfObject().getIndirectReference());
         }
+    }
+
+    @Test
+    //TODO DEVSIX-3348
+    public void mSungLightFontRanges() throws IOException, InterruptedException {
+        String filename = destinationFolder + "mSungLightFontRanges.pdf";
+        String cmpFilename = sourceFolder + "cmp_mSungLightFontRanges.pdf";
+
+        PdfWriter writer = new PdfWriter(filename);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        PdfFont mSungFont = PdfFontFactory.createFont("MSung-Light", "UniCNS-UCS2-H");
+
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(mSungFont, 40)
+                .showText("\u98db \u6708 \u9577")
+                .endText()
+                .restoreState();
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder));
     }
 }

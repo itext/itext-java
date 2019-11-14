@@ -200,7 +200,8 @@ public class Latin1Converter
 			{
 				if (c == 0x81  ||  c == 0x8D  ||  c == 0x8F  ||  c == 0x90  ||  c == 0x9D)
 				{
-					return new byte[] { 0x20 }; // space for undefined 
+					// space for undefined
+					return new byte[] { 0x20 };
 				}
 				
 				// interpret byte as Windows Cp1252 char

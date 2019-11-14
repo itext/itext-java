@@ -42,20 +42,14 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.Arrays;
-
-import static org.junit.Assert.assertTrue;
 
 @Category(IntegrationTest.class)
 public class PdfDictionaryTokenizerTest extends ExtendedITextTest {
@@ -69,7 +63,7 @@ public class PdfDictionaryTokenizerTest extends ExtendedITextTest {
     }
 
     @Test
-    public void readerTurnsCorrectlyNotWellFormattedValueInDictionary_01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+    public void readerTurnsCorrectlyNotWellFormattedValueInDictionary_01() throws IOException {
 
         String inPath = sourceFolder + "documentWithMalformedNumberOnDictionary.pdf";
         String EXPECTED="-12.";
@@ -98,8 +92,7 @@ public class PdfDictionaryTokenizerTest extends ExtendedITextTest {
     }
 
     @Test
-    public void readerTurnsCorrectlyNotWellFormattedValueInDictionary_02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-
+    public void readerTurnsCorrectlyNotWellFormattedValueInDictionary_02() throws IOException {
         String inPath = sourceFolder + "documentWithMalformedNumberOnDictionary2.pdf";
         String EXPECTED="-12.";
 

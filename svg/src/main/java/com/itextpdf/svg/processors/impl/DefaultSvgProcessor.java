@@ -252,7 +252,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
         if (parentRenderer instanceof TextSvgBranchRenderer) {
             String wholeText = textNode.wholeText();
-            if (!wholeText.equals("") && !SvgTextUtil.isOnlyWhiteSpace(wholeText)) {
+            if (!"".equals(wholeText) && !SvgTextUtil.isOnlyWhiteSpace(wholeText)) {
                 TextLeafSvgNodeRenderer textLeaf = new TextLeafSvgNodeRenderer();
                 textLeaf.setParent(parentRenderer);
                 textLeaf.setAttribute(SvgConstants.Attributes.TEXT_CONTENT, wholeText);

@@ -80,7 +80,8 @@ public class CanvasGraphicsState implements Serializable {
     // text state
     private float charSpacing = 0f;
     private float wordSpacing = 0f;
-    private float scale = 100f; // horizontal scaling
+    // horizontal scaling
+    private float scale = 100f;
     private float leading = 0f;
     private PdfFont font;
     private float fontSize;

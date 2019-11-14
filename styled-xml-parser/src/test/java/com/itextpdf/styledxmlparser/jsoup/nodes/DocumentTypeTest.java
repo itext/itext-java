@@ -42,6 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.nodes;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Test;
@@ -55,7 +56,7 @@ import static org.junit.Assert.*;
  * @author Jonathan Hedley, http://jonathanhedley.com/
  */
 @Category(UnitTest.class)
-public class DocumentTypeTest {
+public class DocumentTypeTest extends ExtendedITextTest {
     @Test
     public void constructorValidationOkWithBlankName() {
         DocumentType fail = new DocumentType("","", "", "");

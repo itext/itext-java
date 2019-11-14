@@ -329,7 +329,8 @@ public class PdfLayerTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont();
         PdfLayer layer = new PdfLayer("CreatorAndLanguageInfo", pdfDoc);
         layer.setCreatorInfo("iText", "Technical");
-        layer.setLanguage("en-AU", true); // australian english
+        // australian english
+        layer.setLanguage("en-AU", true);
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 

@@ -42,6 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.safety;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
@@ -58,7 +59,7 @@ import static org.junit.Assert.*;
 
  @author Jonathan Hedley, jonathan@hedley.net */
 @Category(UnitTest.class)
-public class CleanerTest {
+public class CleanerTest extends ExtendedITextTest {
     @Test public void simpleBehaviourTest() {
         String h = "<div><p class=foo><a href='http://evil.com'>Hello <b id=bar>there</b>!</a></div>";
         String cleanHtml = Jsoup.clean(h, Whitelist.simpleText());

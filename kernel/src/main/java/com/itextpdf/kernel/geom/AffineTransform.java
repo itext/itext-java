@@ -46,7 +46,7 @@ package com.itextpdf.kernel.geom;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class AffineTransform implements Serializable {
+public class AffineTransform implements Cloneable, Serializable {
 
     private static final long serialVersionUID = 1330973210523860834L;
 
@@ -482,12 +482,12 @@ public class AffineTransform implements Serializable {
      */
     AffineTransform multiply(AffineTransform t1, AffineTransform t2) {
         return new AffineTransform(
-                t1.m00 * t2.m00 + t1.m10 * t2.m01,          // m00
-                t1.m00 * t2.m10 + t1.m10 * t2.m11,          // m01
-                t1.m01 * t2.m00 + t1.m11 * t2.m01,          // m10
-                t1.m01 * t2.m10 + t1.m11 * t2.m11,          // m11
-                t1.m02 * t2.m00 + t1.m12 * t2.m01 + t2.m02, // m02
-                t1.m02 * t2.m10 + t1.m12 * t2.m11 + t2.m12);// m12
+                t1.m00 * t2.m00 + t1.m10 * t2.m01,
+                t1.m00 * t2.m10 + t1.m10 * t2.m11,
+                t1.m01 * t2.m00 + t1.m11 * t2.m01,
+                t1.m01 * t2.m10 + t1.m11 * t2.m11,
+                t1.m02 * t2.m00 + t1.m12 * t2.m01 + t2.m02,
+                t1.m02 * t2.m10 + t1.m12 * t2.m11 + t2.m12);
     }
 
     public void concatenate(AffineTransform t) {
@@ -502,15 +502,16 @@ public class AffineTransform implements Serializable {
         double det = getDeterminant();
         if (Math.abs(det) < ZERO) {
             // awt.204=Determinant is zero
-            throw new NoninvertibleTransformException("Determinant is zero. Cannot invert transformation"); //$NON-NLS-1$
+            //$NON-NLS-1$
+            throw new NoninvertibleTransformException(NoninvertibleTransformException.DETERMINANT_IS_ZERO_CANNOT_INVERT_TRANSFORMATION);
         }
         return new AffineTransform(
-                m11 / det, // m00
-                -m10 / det, // m10
-                -m01 / det, // m01
-                m00 / det, // m11
-                (m01 * m12 - m11 * m02) / det, // m02
-                (m10 * m02 - m00 * m12) / det  // m12
+                m11 / det,
+                -m10 / det,
+                -m01 / det,
+                m00 / det,
+                (m01 * m12 - m11 * m02) / det,
+                (m10 * m02 - m00 * m12) / det
         );
     }
 
@@ -617,7 +618,8 @@ public class AffineTransform implements Serializable {
         double det = getDeterminant();
         if (Math.abs(det) < ZERO) {
             // awt.204=Determinant is zero
-            throw new NoninvertibleTransformException("Determinant is zero. Cannot invert transformation"); //$NON-NLS-1$
+            //$NON-NLS-1$
+            throw new NoninvertibleTransformException(NoninvertibleTransformException.DETERMINANT_IS_ZERO_CANNOT_INVERT_TRANSFORMATION);
         }
 
         if (dst == null) {
@@ -636,7 +638,8 @@ public class AffineTransform implements Serializable {
         double det = getDeterminant();
         if (Math.abs(det) < ZERO) {
             // awt.204=Determinant is zero
-            throw new NoninvertibleTransformException("Determinant is zero. Cannot invert transformation"); //$NON-NLS-1$
+            //$NON-NLS-1$
+            throw new NoninvertibleTransformException(NoninvertibleTransformException.DETERMINANT_IS_ZERO_CANNOT_INVERT_TRANSFORMATION);
         }
 
         while (--length >= 0) {
@@ -652,7 +655,8 @@ public class AffineTransform implements Serializable {
         float det = (float) getDeterminant();
         if (Math.abs(det) < ZERO) {
             // awt.204=Determinant is zero
-            throw new NoninvertibleTransformException("Determinant is zero. Cannot invert transformation"); //$NON-NLS-1$
+            //$NON-NLS-1$
+            throw new NoninvertibleTransformException(NoninvertibleTransformException.DETERMINANT_IS_ZERO_CANNOT_INVERT_TRANSFORMATION);
         }
 
         while (--length >= 0) {
@@ -663,9 +667,17 @@ public class AffineTransform implements Serializable {
         }
     }
 
+    /**
+     * Creates a "deep copy" of this AffineTransform, meaning the object returned by this method will be independent
+     * of the object being cloned.
+     *
+     * @return the copied AffineTransform.
+     */
     @Override
     public AffineTransform clone() throws CloneNotSupportedException {
-        return new AffineTransform(this);
+        // super.clone is safe to return since all of the AffineTransform's fields are primitive.
+        return (AffineTransform) super.clone();
+
     }
 
     @Override

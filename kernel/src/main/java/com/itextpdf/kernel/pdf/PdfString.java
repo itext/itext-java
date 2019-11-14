@@ -48,6 +48,8 @@ import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.util.StreamUtil;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * A {@code PdfString}-class is the PDF-equivalent of a
  * JAVA-{@code String}-object.
@@ -74,10 +76,12 @@ public class PdfString extends PdfPrimitiveObject {
 
     private int decryptInfoNum;
     private int decryptInfoGen;
-    private PdfEncryption decryption; // if it's not null: content shall contain encrypted data; value shall be null
+    // if it's not null: content shall contain encrypted data; value shall be null
+    private PdfEncryption decryption;
 
     public PdfString(String value, String encoding) {
         super();
+        assert value != null;
         this.value = value;
         this.encoding = encoding;
     }
@@ -172,7 +176,7 @@ public class PdfString extends PdfPrimitiveObject {
     public byte[] getValueBytes() {
         if (value == null)
             generateValue();
-        if (encoding != null && encoding.equals(PdfEncodings.UNICODE_BIG) && PdfEncodings.isPdfDocEncoding(value))
+        if (encoding != null && PdfEncodings.UNICODE_BIG.equals(encoding) && PdfEncodings.isPdfDocEncoding(value))
             return PdfEncodings.convertToBytes(value, PdfEncodings.PDF_DOC_ENCODING);
         else
             return PdfEncodings.convertToBytes(value, encoding);
@@ -201,7 +205,7 @@ public class PdfString extends PdfPrimitiveObject {
     @Override
     public String toString() {
         if (value == null) {
-            return new String(decodeContent());
+            return new String(decodeContent(), StandardCharsets.ISO_8859_1);
         } else {
             return getValue();
         }

@@ -259,9 +259,8 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * Gets the current object stream.
      *
      * @return object stream.
-     * @throws IOException
      */
-    PdfObjectStream getObjectStream() throws IOException {
+    PdfObjectStream getObjectStream() {
         if (!isFullCompression())
             return null;
         if (objectStream == null) {

@@ -74,10 +74,8 @@ class Type1Parser implements Serializable {
      * @param afm the AFM file if the input is made with a <CODE>byte</CODE> array
      * @param pfb the PFB file if the input is made with a <CODE>byte</CODE> array
      * @param metricsPath the name of one of the 14 built-in fonts or the location of an AFM file. The file must end in '.afm'
-     * @the AFM file is invalid
-     * @throws java.io.IOException the AFM file could not be read
      */
-    public Type1Parser(String metricsPath, String binaryPath, byte[] afm, byte[] pfb) throws java.io.IOException {
+    public Type1Parser(String metricsPath, String binaryPath, byte[] afm, byte[] pfb) {
         this.afmData = afm;
         this.pfbData = pfb;
         this.afmPath = metricsPath;

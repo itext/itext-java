@@ -90,9 +90,9 @@ public final class CssNestedAtRuleFactory {
             case CssRuleName.BOTTOM_CENTER:
             case CssRuleName.BOTTOM_RIGHT:
             case CssRuleName.BOTTOM_RIGHT_CORNER:
-                return new CssMarginRule(ruleName, ruleParameters);
+                return new CssMarginRule(ruleName);
             case CssRuleName.FONT_FACE:
-                return new CssFontFaceRule(ruleParameters);
+                return new CssFontFaceRule();
             default:
                 return new CssNestedAtRule(ruleName, ruleParameters);
         }

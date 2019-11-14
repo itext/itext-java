@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +61,10 @@ final class XfdfObjectUtils {
     private XfdfObjectUtils() {
     }
 
+    /**
+     * Converts a string containing 2 or 4 float values into a {@link Rectangle}.
+     * If only two coordinates are present, they should represent {@link Rectangle} width and height.
+     */
     static Rectangle convertRectFromString(String rectString) {
         String delims = ",";
         StringTokenizer st = new StringTokenizer(rectString, delims);
@@ -79,6 +84,10 @@ final class XfdfObjectUtils {
         return null;
     }
 
+    /**
+     * Converts a string containing 4 float values into a PdfArray, representing rectangle fringe.
+     * If the number of floats in the string is not equal to 4, returns and PdfArray with empty values.
+     */
     static PdfArray convertFringeFromString(String fringeString) {
         String delims = ",";
         StringTokenizer st = new StringTokenizer(fringeString, delims);
@@ -98,6 +107,9 @@ final class XfdfObjectUtils {
         return new PdfArray(fringe);
     }
 
+    /**
+     * Converts a Rectangle to a string containing 4 float values.
+     */
     static String convertRectToString(Rectangle rect) {
         return convertFloatToString(rect.getX()) + ", "  +
                 convertFloatToString(rect.getY()) + ", " +
@@ -105,10 +117,17 @@ final class XfdfObjectUtils {
                 convertFloatToString((rect.getY() + rect.getHeight()));
     }
 
+    /**
+     * Converts float value to string with UTF-8 encoding.
+     */
     static String convertFloatToString(float coord) {
-        return new String(ByteUtils.getIsoBytes(coord));
+        return new String(ByteUtils.getIsoBytes(coord), StandardCharsets.UTF_8);
     }
 
+    /**
+     * Converts a string containing 4 float values into a float array, representing quadPoints.
+     * If the number of floats in the string is not equal to 8, returns an empty float array.
+     */
     static float [] convertQuadPointsFromCoordsString(String coordsString) {
         String delims = ",";
         StringTokenizer st = new StringTokenizer(coordsString, delims);
@@ -128,6 +147,9 @@ final class XfdfObjectUtils {
         return new float[0];
     }
 
+    /**
+     * Converts a float array, representing quadPoints into a string containing 8 float values.
+     */
     static String convertQuadPointsToCoordsString(float [] quadPoints) {
         StringBuilder stb = new StringBuilder(floatToPaddedString(quadPoints[0]));
 
@@ -138,9 +160,13 @@ final class XfdfObjectUtils {
     }
 
     private static String floatToPaddedString(float number) {
-        return new String(ByteUtils.getIsoBytes(number));
+        return new String(ByteUtils.getIsoBytes(number), StandardCharsets.UTF_8);
     }
 
+    /**
+     * Converts a string containing a comma separated list of names of the flags into an integer representation
+     * of the flags.
+     */
     static int convertFlagsFromString(String flagsString) {
         int result = 0;
 
@@ -164,12 +190,16 @@ final class XfdfObjectUtils {
 
         for(String flag : flagsList) {
             if (flagMap.containsKey(flag)) {
-                result += (int) flagMap.get(flag);//implicit cast  for autoporting
+                //implicit cast  for autoporting
+                result += (int) flagMap.get(flag);
             }
         }
         return result;
     }
 
+    /**
+     * Converts an integer representation of the flags into a string with a comma separated list of names of the flags.
+     */
     static String convertFlagsToString(PdfAnnotation pdfAnnotation) {
         List<String> flagsList = new ArrayList<>();
         StringBuilder stb = new StringBuilder();
@@ -210,6 +240,9 @@ final class XfdfObjectUtils {
         return result.length() > 0 ? result.substring(0, result.length() - 1) : null;
     }
 
+    /**
+     * Converts an array of 3 floats into a hex string representing the rgb color.
+     */
     static String convertColorToString(float[] colors) {
         if (colors.length == 3) {
             return "#" + convertColorFloatToHex(colors[0]) + convertColorFloatToHex(colors[1]) + convertColorFloatToHex(colors[2]);
@@ -217,6 +250,9 @@ final class XfdfObjectUtils {
         return null;
     }
 
+    /**
+     * Converts a Color object into a hex string representing the rgb color.
+     */
     static String convertColorToString(Color color) {
         float[] colors = color.getColorValue();
         if (colors != null &&colors.length == 3) {
@@ -225,24 +261,36 @@ final class XfdfObjectUtils {
         return null;
     }
 
+    /**
+     * Converts float representation of the rgb color into a hex string representing the rgb color.
+     */
     private static String convertColorFloatToHex(float colorFloat) {
         String result = "0" + Integer.toHexString(((int)(colorFloat*255 + 0.5))).toUpperCase();
         return result.substring(result.length() - 2);
     }
 
-    static String convertIdToHexString(String stringId) {
+    /**
+     * Converts string containing id from decimal to hexadecimal format.
+     */
+    static String convertIdToHexString(String idString) {
         StringBuilder stb=  new StringBuilder();
-        char[] stringSymbols = stringId.toCharArray();
+        char[] stringSymbols = idString.toCharArray();
         for(char ch : stringSymbols) {
             stb.append(Integer.toHexString((int)ch).toUpperCase());
         }
         return stb.toString();
     }
 
+    /**
+     * Converts string containing hex color code to Color object.
+     */
     static Color convertColorFromString(String hexColor) {
         return Color.makeColor(new PdfDeviceCs.Rgb(), convertColorFloatsFromString(hexColor));
     }
 
+    /**
+     * Converts string containing hex color code into an array of 3 integer values representing rgb color.
+     */
     static float[] convertColorFloatsFromString(String colorHexString){
         float[] result = new float[3];
         String colorString = colorHexString.substring(colorHexString.indexOf('#') + 1);
@@ -254,46 +302,9 @@ final class XfdfObjectUtils {
         return result;
     }
 
-//    public static Map<Stream, Stream>  preprocessXfdf(String destFolder, String outPdf, String cmpFolder, String cmpPdf, String outTag, String cmpTag) throws ParserConfigurationException, IOException, SAXException, TransformerException {
-//
-//        InputStream outXfdfStream = new FileInputStream(destFolder + outPdf);
-//        Document outDoc = XfdfFileUtils.createXfdfDocumentFromStream(outXfdfStream);
-//
-//        InputStream cmpXfdfStream = new FileInputStream(cmpFolder + cmpPdf);
-//        Document cmpDoc = XfdfFileUtils.createXfdfDocumentFromStream(cmpXfdfStream);
-//
-//        NodeList excludedNodes = cmpDoc.getElementsByTagName(cmpTag);
-//        int length = excludedNodes.getLength();
-//        List<Node> parentNodes = new ArrayList<>();
-//
-//        for (int i = length - 1; i >= 0; i--) {
-//            Node parentNode = excludedNodes.item(i).getParentNode();
-//            parentNodes.add(parentNode);
-//            parentNode.removeChild(excludedNodes.item(i));
-//        }
-//
-//        //can just implement contents-richtext and forget about this piece of code
-//        NodeList nodesToRemove = outDoc.getElementsByTagName(outTag);
-//
-//        for (int i = nodesToRemove.getLength() - 1; i >= 0; i--) {
-//            Node parentNode = nodesToRemove.item(i).getParentNode();
-//            for (Node node : parentNodes) {
-//                if (node.getNodeName().equalsIgnoreCase(parentNode.getNodeName())) {
-//                    parentNode.removeChild(nodesToRemove.item(i));
-//                    break;
-//                }
-//            }
-//        }
-//
-//        //write xmls
-//        Map<OutputStream, OutputStream> cmpMap = new HashMap<>();
-//        cmpMap.put(new FileOutputStream(destFolder + outPdf.substring(0, outPdf.indexOf('.')) + "_preprocessed.xfdf"),
-//                new FileOutputStream(cmpFolder + cmpPdf.substring(0, cmpPdf.indexOf('.')) + "_preprocessed.xfdf"));
-//        XfdfFileUtils.saveXfdfDocumentToFile(outDoc, );
-//        XfdfFileUtils.saveXfdfDocumentToFile(cmpDoc, );
-//        return cmpMap;
-//    }
-
+    /**
+     * Converts an array of float vertices to string.
+     */
     static String convertVerticesToString(float[] vertices) {
         if (vertices.length <= 0) {
             return null;
@@ -306,6 +317,10 @@ final class XfdfObjectUtils {
         return stb.toString();
     }
 
+    /**
+     * Converts to string an array of floats representing the fringe.
+     * If the number of floats doesn't equal 4, an empty string is returned.
+     */
     static String convertFringeToString(float[] fringeArray) {
         if (fringeArray.length != 4) {
             return null;
@@ -318,6 +333,9 @@ final class XfdfObjectUtils {
         return stb.toString();
     }
 
+    /**
+     * Converts a string into an array of floats representing vertices.
+     */
     static float[] convertVerticesFromString(String verticesString) {
         String delims = ",;";
         StringTokenizer st = new StringTokenizer(verticesString, delims);
@@ -333,6 +351,11 @@ final class XfdfObjectUtils {
         return vertices;
     }
 
+    /**
+     * Returns a string representation of the start point of the line (x_1, y_1) based on given line array.
+     * If the line array doesn't contain 4 floats, returns an empty string.
+     * @param line an array of 4 floats representing the line (x_1, y_1, x_2, y_2)
+     */
     static String convertLineStartToString(float [] line) {
         if (line.length == 4) {
             return line[0] + "," + line[1];
@@ -340,36 +363,15 @@ final class XfdfObjectUtils {
         return null;
     }
 
+    /**
+     * Returns a string representation of the end point of the line (x_2, y_2) based on given line array.
+     * If the line array doesn't contain 4 floats, returns an empty string.
+     * @param line an array of 4 floats representing the line (x_1, y_1, x_2, y_2)
+     */
     static String convertLineEndToString(float [] line) {
         if (line.length == 4) {
             return line[2] + "," + line[3];
         }
         return null;
     }
-
-//    static float [] convertLineFromStrings(String start, String end) {
-//        if (start == null || end == null) {
-//           return new float[0];
-//        }
-//        float [] resultLine = new float [4];
-//        String delims = ",";
-//        List<String> verticesList = new ArrayList<>();
-//        StringTokenizer stStart = new StringTokenizer(start, delims);
-//        StringTokenizer stEnd = new StringTokenizer(end, delims);
-//
-//        while (stStart.hasMoreTokens()) {
-//            verticesList.add(stStart.nextToken());
-//        }
-//        while (stEnd.hasMoreTokens()) {
-//            verticesList.add(stEnd.nextToken());
-//        }
-//        if (verticesList.size() != 4) {
-//            return new float[0];
-//        } else {
-//            for(int i = 0; i < 4; i++) {
-//                resultLine[i] = Float.parseFloat(verticesList.get(i));
-//            }
-//            return resultLine;
-//        }
-//    }
 }

@@ -43,13 +43,14 @@
 package com.itextpdf.styledxmlparser.css.resolve;
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class CssInheritanceUnitTest {
+public class CssInheritanceUnitTest extends ExtendedITextTest {
 
     @Test
     public void isInheritablePositiveTest(){

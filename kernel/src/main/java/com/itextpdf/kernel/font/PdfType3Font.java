@@ -148,7 +148,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
                 int unicode = fontEncoding.getUnicode(i);
                 PdfName glyphName = new PdfName(fontEncoding.getDifference(i));
                 if (unicode != -1
-                        && !glyphName.getValue().equals(FontEncoding.NOTDEF)
+                        && !FontEncoding.NOTDEF.equals(glyphName.getValue())
                         && charProcsDic.containsKey(glyphName)) {
                     ((Type3Font) getFontProgram()).addGlyph(i, unicode, widths[i], null, new Type3Glyph(charProcsDic.getAsStream(glyphName), getDocument()));
                 }
@@ -378,8 +378,10 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
             }
 
             int flags = fontProgram.getPdfFontFlags();
-            flags &= ~(FontDescriptorFlags.Symbolic | FontDescriptorFlags.Nonsymbolic); // reset both flags
-            flags |= fontEncoding.isFontSpecific() ? // set based on font encoding
+            // reset both flags
+            flags &= ~(FontDescriptorFlags.Symbolic | FontDescriptorFlags.Nonsymbolic);
+            // set fontSpecific based on font encoding
+            flags |= fontEncoding.isFontSpecific() ?
                     FontDescriptorFlags.Symbolic : FontDescriptorFlags.Nonsymbolic;
 
             fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
@@ -401,7 +403,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     }
 
     /**
-     * Gets first empty code, that could use with {@see addSymbol()}
+     * Gets the first empty code that could be passed to {@link FontEncoding#addSymbol(int, int)}
      *
      * @return code from 1 to 255 or -1 if all slots are busy.
      */

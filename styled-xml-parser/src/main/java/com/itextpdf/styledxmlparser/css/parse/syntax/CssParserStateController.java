@@ -75,7 +75,6 @@ public final class CssParserStateController {
     private IParserState currentState;
 
     /** Indicates if the current rule is supported. */
-    //Hashed value
     private boolean isCurrentRuleSupported = true;
 
     /** The previous active state (excluding comments). */

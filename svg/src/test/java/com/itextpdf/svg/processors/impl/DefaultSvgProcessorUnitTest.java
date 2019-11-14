@@ -67,12 +67,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.Path;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -300,7 +294,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    public void xLinkAttributeBaseDirDoesNotExistTest() throws IOException {
+    public void xLinkAttributeBaseDirDoesNotExistTest() {
         INode root = createSvgContainingImage();
         String resolvedBaseUrl = "/i7j/itextcore";
         String baseUrl = resolvedBaseUrl + "/wrongDirName";
@@ -316,7 +310,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    public void xLinkAttributeResolveNonEmptyBaseUrlTest() throws IOException {
+    public void xLinkAttributeResolveNonEmptyBaseUrlTest() {
         INode root = createSvgContainingImage();
         String baseUrl = "./src/test/resources/com/itextpdf/svg/processors/impl/DefaultSvgProcessorIntegrationTest";
         ISvgConverterProperties props = new SvgConverterProperties().setBaseUri(baseUrl);

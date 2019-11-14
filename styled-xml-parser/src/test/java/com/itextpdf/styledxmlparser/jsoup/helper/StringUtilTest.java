@@ -43,6 +43,7 @@
 package com.itextpdf.styledxmlparser.jsoup.helper;
 
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
@@ -56,7 +57,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @Category(UnitTest.class)
-public class StringUtilTest {
+public class StringUtilTest extends ExtendedITextTest {
 
     @Test public void join() {
         assertEquals("", StringUtil.join(Arrays.asList(""), " "));

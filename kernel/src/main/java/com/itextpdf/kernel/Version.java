@@ -78,7 +78,7 @@ public final class Version {
      * This String contains the version number of this iText release.
      * For debugging purposes, we request you NOT to change this constant.
      */
-    private static final String release = "7.1.8";
+    private static final String release = "7.1.9";
     /**
      * This String contains the iText version as shown in the producer line.
      * iText is a product developed by iText Group NV.
@@ -109,8 +109,10 @@ public final class Version {
 
     /**
      * Gets an instance of the iText version that is currently used.
+     * <p>
      * Note that iText Group requests that you retain the iText producer line
      * in every PDF that is created or manipulated using iText.
+     * @return an instance of {@link Version}.
      */
     public static Version getInstance() {
         synchronized (staticLock) {
@@ -305,7 +307,8 @@ public final class Version {
         //Desired Format: X.Y.Z-....
         //Also catch X, X.Y-...
         String major = split[0];
-        String minor ="0"; //If no minor version is present, default to 0
+        //If no minor version is present, default to 0
+        String minor ="0";
         if(split.length > 1) {
             minor = split[1].substring(0);
         }

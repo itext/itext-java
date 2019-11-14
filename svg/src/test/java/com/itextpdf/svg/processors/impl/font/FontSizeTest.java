@@ -99,8 +99,8 @@ public class FontSizeTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: update cmp-file after DEVSIX-2785
-    public void diff_units_of_measure() throws IOException, InterruptedException {
+    //TODO: update cmp-file after DEVSIX-2785 and DEVSIX-2884
+    public void diffUnitsOfMeasure() throws IOException, InterruptedException {
         String name = "diff_units_of_measure";
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, name);
     }

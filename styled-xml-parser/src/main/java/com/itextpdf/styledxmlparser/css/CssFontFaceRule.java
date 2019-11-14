@@ -42,8 +42,6 @@
  */
 package com.itextpdf.styledxmlparser.css;
 
-import com.itextpdf.io.util.MessageFormatUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,9 +57,18 @@ public class CssFontFaceRule extends CssNestedAtRule {
 
     /**
      * Instantiates a new CSS font face rule.
+     */
+    public CssFontFaceRule() {
+        this("");
+    }
+
+    /**
+     * Instantiates a new CSS font face rule.
      *
      * @param ruleParameters the rule parameters
+     * @deprecated Will be removed in 7.2. Use {@link #CssFontFaceRule()} instead
      */
+    @Deprecated
     public CssFontFaceRule(String ruleParameters) {
         super(CssRuleName.FONT_FACE, ruleParameters);
     }
@@ -89,13 +96,11 @@ public class CssFontFaceRule extends CssNestedAtRule {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(MessageFormatUtil.format("@{0} ", ruleName));
-        sb.append("{");
-        sb.append("\n");
+        sb.append("@").append(getRuleName()).append(" {").append("\n");
         for (CssDeclaration declaration : properties) {
             sb.append("    ");
             sb.append(declaration);
-            sb.append("\n");
+            sb.append(";\n");
         }
         sb.append("}");
         return sb.toString();

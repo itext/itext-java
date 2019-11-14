@@ -764,9 +764,11 @@ public class MetaDo {
         writeWord(os, 1);
         writeWord(os, 9);
         writeWord(os, 0x0300);
-        writeDWord(os, 9 + 4 + 5 + 5 + 13 + sizeBmpWords + 3); // total metafile size
+        // total metafile size
+        writeDWord(os, 9 + 4 + 5 + 5 + 13 + sizeBmpWords + 3);
         writeWord(os, 1);
-        writeDWord(os, 14 + sizeBmpWords); // max record size
+        // max record size
+        writeDWord(os, 14 + sizeBmpWords);
         writeWord(os, 0);
         // write records
         writeDWord(os, 4);

@@ -41,6 +41,7 @@
     address: sales@itextpdf.com
  */
 package com.itextpdf.svg.googlecharts;
+
 import com.itextpdf.io.IOException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
@@ -52,36 +53,36 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class ScatterChartsTest extends SvgIntegrationTest {
 
-  public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/scatter_charts/";
-  public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/scatter_charts/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/ScatterChartsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/ScatterChartsTest/";
 
-  @BeforeClass
-  public static void beforeClass() {
-    ITextTest.createDestinationFolder(destinationFolder);
-  }
+    @BeforeClass
+    public static void beforeClass() {
+        ITextTest.createDestinationFolder(destinationFolder);
+    }
 
-  @Test
-  public void scatter_charts() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "scatter_chart");
-  }
+    @Test
+    public void scatterCharts() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "scatterCharts");
+    }
 
-  @Test
-  public void scatter_dualY_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "scatter_dualY_chart");
-  }
+    @Test
+    public void scatterDualYChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "scatterDualYChart");
+    }
 
-  @Test
-  public void scatter_material_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "scatter_material_chart");
-  }
+    @Test
+    public void scatterMaterialChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "scatterMaterialChart");
+    }
 
-  @Test
-  public void scatter_stars_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "scatter_stars_chart");
-  }
+    @Test
+    public void scatterStarsChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "scatterStarsChart");
+    }
 
-  @Test
-  public void scatter_topX_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "scatter_topX_chart");
-  }
+    @Test
+    public void scatterTopXChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "scatterTopXChart");
+    }
 }

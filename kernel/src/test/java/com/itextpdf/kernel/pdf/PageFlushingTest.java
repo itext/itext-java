@@ -52,7 +52,6 @@ import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
-import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLineAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -61,8 +60,11 @@ import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -75,12 +77,13 @@ public class PageFlushingTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
     public void baseWriting01() throws IOException {
-        int total = 414; // not all objects are made indirect before closing
+        // not all objects are made indirect before closing
+        int total = 414;
         int flushedExpected = 0;
         int notReadExpected = 0;
 
@@ -101,7 +104,8 @@ public class PageFlushingTest extends ExtendedITextTest {
     @Test
     public void unsafeDeepFlushWriting01() throws IOException {
         int total = 816;
-        int flushedExpected = 702; // 100 still hanging: new font dictionaries on every page shall not be flushed before closing
+        // 100 still hanging: new font dictionaries on every page shall not be flushed before closing
+        int flushedExpected = 702;
         int notReadExpected = 0;
 
         test("unsafeDeepFlushWriting01.pdf", DocMode.WRITING, FlushMode.UNSAFE_DEEP, PagesOp.MODIFY,
@@ -122,7 +126,8 @@ public class PageFlushingTest extends ExtendedITextTest {
     public void baseReading01() throws IOException {
         int total = 817;
         int flushedExpected = 0;
-        int notReadExpected = 401; // link annots, line annots, actions and images: one hundred of each
+        // link annots, line annots, actions and images: one hundred of each
+        int notReadExpected = 401;
 
         test("baseReading01.pdf", DocMode.READING, FlushMode.NONE, PagesOp.READ,
                 total, flushedExpected, notReadExpected);
@@ -140,7 +145,8 @@ public class PageFlushingTest extends ExtendedITextTest {
 
     @Test
     public void baseStamping01() throws IOException {
-        int total = 1618; // not all objects are made indirect before closing
+        // not all objects are made indirect before closing
+        int total = 1618;
         int flushedExpected = 0;
         int notReadExpected = 603;
 
@@ -161,7 +167,8 @@ public class PageFlushingTest extends ExtendedITextTest {
     @Test
     public void unsafeDeepFlushStamping01() throws IOException {
         int total = 2420;
-        int flushedExpected = 1602; // 200 still hanging: new font dictionaries on every page shall not be flushed before closing
+        // 200 still hanging: new font dictionaries on every page shall not be flushed before closing
+        int flushedExpected = 1602;
         int notReadExpected = 603;
 
         test("unsafeDeepFlushStamping01.pdf", DocMode.STAMPING, FlushMode.UNSAFE_DEEP, PagesOp.MODIFY,
@@ -171,7 +178,8 @@ public class PageFlushingTest extends ExtendedITextTest {
     @Test
     public void appendModeFlushStamping01() throws IOException {
         int total = 2219;
-        int flushedExpected = 900; // 300 less than with page#flush, because of not modified released objects
+        // 300 less than with page#flush, because of not modified released objects
+        int flushedExpected = 900;
         int notReadExpected = 703;
 
         test("appendModeFlushStamping01.pdf", DocMode.STAMPING, FlushMode.APPEND_MODE, PagesOp.MODIFY,
@@ -182,7 +190,8 @@ public class PageFlushingTest extends ExtendedITextTest {
     public void releaseDeepStamping01() throws IOException {
         int total = 1618;
         int flushedExpected = 0;
-        int notReadExpected = 703; // new objects cannot be released
+        // new objects cannot be released
+        int notReadExpected = 703;
 
         test("releaseDeepStamping01.pdf", DocMode.STAMPING, FlushMode.RELEASE_DEEP, PagesOp.MODIFY,
                 total, flushedExpected, notReadExpected);
@@ -211,7 +220,8 @@ public class PageFlushingTest extends ExtendedITextTest {
     @Test
     public void unsafeDeepFlushAppendMode01() throws IOException {
         int total = 2420;
-        int flushedExpected = 1502; // 200 still hanging: new font dictionaries on every page shall not be flushed before closing
+        // 200 still hanging: new font dictionaries on every page shall not be flushed before closing
+        int flushedExpected = 1502;
         int notReadExpected = 703;
 
         test("unsafeDeepFlushAppendMode01.pdf", DocMode.APPEND, FlushMode.UNSAFE_DEEP, PagesOp.MODIFY,
@@ -221,7 +231,8 @@ public class PageFlushingTest extends ExtendedITextTest {
     @Test
     public void appendModeFlushAppendMode01() throws IOException {
         int total = 2219;
-        int flushedExpected = 900; // 600 still hanging: every new page contains image, font and action
+        // 600 still hanging: every new page contains image, font and action
+        int flushedExpected = 900;
         int notReadExpected = 703;
 
         test("appendModeFlushAppendMode01.pdf", DocMode.APPEND, FlushMode.APPEND_MODE, PagesOp.MODIFY,
@@ -232,7 +243,8 @@ public class PageFlushingTest extends ExtendedITextTest {
     public void releaseDeepAppendMode01() throws IOException {
         int total = 1618;
         int flushedExpected = 0;
-        int notReadExpected = 703; // new objects cannot be released
+        // new objects cannot be released
+        int notReadExpected = 703;
 
         test("releaseDeepAppendMode01.pdf", DocMode.APPEND, FlushMode.RELEASE_DEEP, PagesOp.MODIFY,
                 total, flushedExpected, notReadExpected);
@@ -252,7 +264,8 @@ public class PageFlushingTest extends ExtendedITextTest {
     public void pageFlushLightAppendMode01() throws IOException {
         int total = 1318;
         int flushedExpected = 500;
-        int notReadExpected = 403; // in default PdfPage#flush annotations are always read and attempted to be flushed.
+        // in default PdfPage#flush annotations are always read and attempted to be flushed.
+        int notReadExpected = 403;
 
         test("pageFlushLightAppendMode01.pdf", DocMode.APPEND, FlushMode.PAGE_FLUSH, PagesOp.MODIFY_LIGHTLY,
                 total, flushedExpected, notReadExpected);
@@ -271,7 +284,8 @@ public class PageFlushingTest extends ExtendedITextTest {
     @Test
     public void appendModeFlushLightAppendMode01() throws IOException {
         int total = 1318;
-        int flushedExpected = 500; // resources are not flushed, here it's font dictionaries for every page which in any case shall not be flushed before closing.
+        // resources are not flushed, here it's font dictionaries for every page which in any case shall not be flushed before closing.
+        int flushedExpected = 500;
         int notReadExpected = 703;
 
         test("appendModeFlushLightAppendMode01.pdf", DocMode.APPEND, FlushMode.APPEND_MODE, PagesOp.MODIFY_LIGHTLY,
@@ -304,9 +318,12 @@ public class PageFlushingTest extends ExtendedITextTest {
         PageFlushingHelper flushingHelper = new PageFlushingHelper(pdfDoc);
         flushingHelper.appendModeFlush(1);
 
-        Assert.assertTrue(annotObj.isFlushed()); // annotation is flushed
-        Assert.assertFalse(pageIndRef.checkState(PdfObject.FLUSHED)); // page is not flushed
-        Assert.assertNull(pageIndRef.refersTo); // page is released
+        // annotation is flushed
+        Assert.assertTrue(annotObj.isFlushed());
+        // page is not flushed
+        Assert.assertFalse(pageIndRef.checkState(PdfObject.FLUSHED));
+        // page is released
+        Assert.assertNull(pageIndRef.refersTo);
 
         // exception is not thrown
 
@@ -325,7 +342,7 @@ public class PageFlushingTest extends ExtendedITextTest {
         PdfIndirectReference page1IndRef = page1.getPdfObject().getIndirectReference();
         PdfIndirectReference page2IndRef = page2.getPdfObject().getIndirectReference();
 
-        PdfDictionary aDict = ((PdfLinkAnnotation)page1.getAnnotations().get(0)).getAction();
+        PdfDictionary aDict = ((PdfLinkAnnotation) page1.getAnnotations().get(0)).getAction();
         new PdfAction(aDict).put(PdfName.D, PdfExplicitDestination.createXYZ(page2, 300, 400, 1).getPdfObject());
 
         PageFlushingHelper flushingHelper = new PageFlushingHelper(pdfDoc);
@@ -333,11 +350,16 @@ public class PageFlushingTest extends ExtendedITextTest {
         flushingHelper.appendModeFlush(2);
         flushingHelper.unsafeFlushDeep(1);
 
-        Assert.assertTrue(aDict.isFlushed()); // annotation is flushed
-        Assert.assertFalse(page1IndRef.checkState(PdfObject.FLUSHED)); // page is not flushed
-        Assert.assertNull(page1IndRef.refersTo); // page is released
-        Assert.assertFalse(page2IndRef.checkState(PdfObject.FLUSHED)); // page is not flushed
-        Assert.assertNull(page2IndRef.refersTo); // page is released
+        // annotation is flushed
+        Assert.assertTrue(aDict.isFlushed());
+        // page is not flushed
+        Assert.assertFalse(page1IndRef.checkState(PdfObject.FLUSHED));
+        // page is released
+        Assert.assertNull(page1IndRef.refersTo);
+        // page is not flushed
+        Assert.assertFalse(page2IndRef.checkState(PdfObject.FLUSHED));
+        // page is released
+        Assert.assertNull(page2IndRef.refersTo);
 
         // exception is not thrown
 
@@ -373,8 +395,53 @@ public class PageFlushingTest extends ExtendedITextTest {
         // exception is not thrown
     }
 
+    @Test
+    public void flushingPageResourcesMadeIndependent() throws IOException {
+        String inputFile = sourceFolder + "100pagesSharedResDict.pdf";
+        String outputFile = destinationFolder + "flushingPageResourcesMadeIndependent.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfReader(inputFile), new PdfWriter(outputFile));
+        int numOfAddedXObjectsPerPage = 10;
+        for (int i = 1; i <= pdf.getNumberOfPages(); ++i) {
+            PdfPage sourcePage = pdf.getPage(i);
+
+            PdfDictionary res = sourcePage.getPdfObject().getAsDictionary(PdfName.Resources);
+            PdfDictionary resClone = new PdfDictionary();
+            // clone dictionary manually to ensure this object is direct and is flushed together with the page
+            for (Map.Entry<PdfName, PdfObject> e : res.entrySet()) {
+                resClone.put(e.getKey(), e.getValue().clone());
+            }
+            sourcePage.getPdfObject().put(PdfName.Resources, resClone);
+
+            PdfCanvas pdfCanvas = new PdfCanvas(sourcePage);
+            pdfCanvas.saveState();
+            for (int j = 0; j < numOfAddedXObjectsPerPage; ++j) {
+                PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "simple.jpg"));
+                pdfCanvas.addXObject(xObject, new Rectangle(36, 720 - j * 150, 20, 20));
+                xObject.makeIndirect(pdf).flush();
+            }
+            pdfCanvas.restoreState();
+            pdfCanvas.release();
+
+            sourcePage.flush();
+        }
+
+        verifyFlushedObjectsNum(pdf, 1416, 1400, 0);
+        pdf.close();
+
+        printOutputPdfNameAndDir(outputFile);
+        PdfDocument result = new PdfDocument(new PdfReader(outputFile));
+        PdfObject page15Res = result.getPage(15).getPdfObject().get(PdfName.Resources, false);
+        PdfObject page34Res = result.getPage(34).getPdfObject().get(PdfName.Resources, false);
+        Assert.assertTrue(page15Res.isDictionary());
+        Assert.assertEquals(numOfAddedXObjectsPerPage, ((PdfDictionary)page15Res).getAsDictionary(PdfName.XObject).size());
+        Assert.assertTrue(page34Res.isDictionary());
+        Assert.assertNotEquals(page15Res, page34Res);
+
+        result.close();
+    }
+
     private static void test(String filename, DocMode docMode, FlushMode flushMode, PagesOp pagesOp,
-                     int total, int flushedExpected, int notReadExpected) throws IOException {
+                             int total, int flushedExpected, int notReadExpected) throws IOException {
         String input = sourceFolder + "100pages.pdf";
         String output = destinationFolder + filename;
         PdfDocument pdfDoc;
@@ -469,9 +536,9 @@ public class PageFlushingTest extends ExtendedITextTest {
 
         if (pdfDoc.getXref().size() != total || flushedActual != flushedExpected || notReadActual != notReadExpected) {
             Assert.fail(MessageFormatUtil.format("\nExpected total: {0}, flushed: {1}, not read: {2};" +
-                    "\nbut actual was: {3}, flushed: {4}, not read: {5}.",
+                            "\nbut actual was: {3}, flushed: {4}, not read: {5}.",
                     total, flushedExpected, notReadExpected, pdfDoc.getXref().size(), flushedActual, notReadActual
-                    ));
+            ));
         }
         Assert.assertEquals("wrong num of total objects", total, pdfDoc.getXref().size());
         Assert.assertEquals("wrong num of flushed objects", flushedExpected, flushedActual);
@@ -545,7 +612,7 @@ public class PageFlushingTest extends ExtendedITextTest {
                 new PdfLinkAnnotation(new Rectangle(100, 600, 100, 20))
                         .setAction(PdfAction.createURI("http://itextpdf.com"))
         ).addAnnotation(
-                new PdfLineAnnotation(lineAnnotRect, new float[] {lineAnnotRect.getX(), lineAnnotRect.getY(), lineAnnotRect.getRight(), lineAnnotRect.getTop()})
+                new PdfLineAnnotation(lineAnnotRect, new float[]{lineAnnotRect.getX(), lineAnnotRect.getY(), lineAnnotRect.getRight(), lineAnnotRect.getTop()})
                         .setColor(ColorConstants.BLACK)
         );
 

@@ -141,8 +141,10 @@ public final class FontProgramDescriptorFactory {
             String ttcName;
             int ttcIndex;
             try {
-                ttcName = baseName.substring(0, ttcSplit + 4); // count(.ttc) = 4
-                ttcIndex = Integer.parseInt(baseName.substring(ttcSplit + 5)); // count(.ttc,) = 5)
+                // count(.ttc) = 4
+                ttcName = baseName.substring(0, ttcSplit + 4);
+                // count(.ttc,) = 5)
+                ttcIndex = Integer.parseInt(baseName.substring(ttcSplit + 5));
             } catch (NumberFormatException nfe) {
                 throw new IOException(nfe.getMessage(), nfe);
             }

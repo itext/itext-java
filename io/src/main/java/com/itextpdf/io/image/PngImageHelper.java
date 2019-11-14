@@ -91,7 +91,8 @@ class PngImageHelper {
         int transGreen = -1;
         int transBlue = -1;
         int inputBands;
-        int bytesPerPixel; // number of bytes per input pixel
+        // number of bytes per input pixel
+        int bytesPerPixel;
         byte[] colorTable;
         float gamma = 1f;
         boolean hasCHRM = false;
@@ -329,7 +330,7 @@ class PngImageHelper {
                     float XC = YC * png.xB / png.yB;
                     float ZC = YC * ((1 - png.xB) / png.yB - 1);
                     float XW = XA + XB + XC;
-                    float YW = 1;//YA+YB+YC;
+                    float YW = 1;
                     float ZW = ZA + ZB + ZC;
                     float[] wpa = new float[3];
                     wpa[0] = XW;
@@ -679,10 +680,12 @@ class PngImageHelper {
                 dstX = xOffset;
                 for (srcX = 0; srcX < width; srcX++) {
                     int idx = outPixel[srcX];
-                    if (idx < png.trans.length)
+                    if (idx < png.trans.length) {
                         v[0] = png.trans[idx];
-                    else
-                        v[0] = 255; // Patrick Valsecchi
+                    } else {
+                        // Patrick Valsecchi
+                        v[0] = 255;
+                    }
                     setPixel(png.smask, v, 0, 1, dstX, y, 8, yStride);
                     dstX += step;
                 }

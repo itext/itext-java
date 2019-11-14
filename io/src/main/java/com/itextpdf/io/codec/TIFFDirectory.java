@@ -222,19 +222,45 @@ public class TIFFDirectory implements Serializable {
     }
 
     private static final int[] sizeOfType = {
-            0, //  0 = n/a
-            1, //  1 = byte
-            1, //  2 = ascii
-            2, //  3 = short
-            4, //  4 = long
-            8, //  5 = rational
-            1, //  6 = sbyte
-            1, //  7 = undefined
-            2, //  8 = sshort
-            4, //  9 = slong
-            8, // 10 = srational
-            4, // 11 = float
-            8  // 12 = double
+
+            //  0 = n/a
+            0,
+
+            //  1 = byte
+            1,
+
+            //  2 = ascii
+            1,
+
+            //  3 = short
+            2,
+
+            //  4 = long
+            4,
+
+            //  5 = rational
+            8,
+
+            //  6 = sbyte
+            1,
+
+            //  7 = undefined
+            1,
+
+            //  8 = sshort
+            2,
+
+            //  9 = slong
+            4,
+
+            // 10 = srational
+            8,
+
+            // 11 = float
+            4,
+
+            // 12 = double
+            8
     };
 
     private void initialize(RandomAccessFileOrArray stream) throws java.io.IOException {
@@ -667,7 +693,9 @@ public class TIFFDirectory implements Serializable {
      */
     public static int getNumDirectories(RandomAccessFileOrArray stream)
             throws java.io.IOException {
-        long pointer = stream.getPosition(); // Save stream pointer
+
+        // Save stream pointer
+        long pointer = stream.getPosition();
 
         stream.seek(0L);
         int endian = stream.readUnsignedShort();
@@ -699,7 +727,8 @@ public class TIFFDirectory implements Serializable {
             }
         }
 
-        stream.seek(pointer); // Reset stream pointer
+        // Reset stream pointer
+        stream.seek(pointer);
         return numDirectories;
     }
 

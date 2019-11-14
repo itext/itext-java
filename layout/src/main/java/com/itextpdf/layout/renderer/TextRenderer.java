@@ -1364,7 +1364,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     private boolean isGlyphPartOfWordForHyphenation(Glyph g) {
         return Character.isLetter((char) g.getUnicode())
-                || '\u00ad' == g.getUnicode(); // soft hyphen
+
+                // soft hyphen
+                || '\u00ad' == g.getUnicode();
     }
 
     private void updateFontAndText() {
@@ -1387,7 +1389,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     private void saveWordBreakIfNotYetSaved(Glyph wordBreak) {
         if (savedWordBreakAtLineEnding == null) {
             if (TextUtil.isNewLine(wordBreak)) {
-                wordBreak = font.getGlyph('\u0020'); // we don't want to print '\n' in content stream
+
+                // we don't want to print '\n' in content stream
+                wordBreak = font.getGlyph('\u0020');
             }
             // it's word-break character at the end of the line, which we want to save after trimming
             savedWordBreakAtLineEnding = new GlyphLine(Collections.<Glyph>singletonList(wordBreak));
@@ -1417,11 +1421,17 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             return null;
         }
         switch (glyph.getUnicode()) {
-            case '\u2002': // ensp
+
+            // ensp
+            case '\u2002':
                 return isMonospaceFont ? 0 : 500 - spaceGlyph.getWidth();
-            case '\u2003': // emsp
+
+            // emsp
+            case '\u2003':
                 return isMonospaceFont ? 0 : 1000 - spaceGlyph.getWidth();
-            case '\u2009': // thinsp
+
+            // thinsp
+            case '\u2009':
                 return isMonospaceFont ? 0 : 200 - spaceGlyph.getWidth();
             case '\t':
                 return 3 * spaceGlyph.getWidth();

@@ -51,7 +51,7 @@ import com.itextpdf.kernel.colors.DeviceRgb;
 public class RidgeBorder extends Border3D {
 
     /**
-     * Creates a RidgeBorder instance with the specified width. The color is set to the default: {@link Border3D#GRAY gray}.
+     * Creates a RidgeBorder instance with the specified width. The color is set to the predefined gray.
      *
      * @param width width of the border
      */

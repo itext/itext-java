@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.1.8</version>
+  <version>7.1.9</version>
   <packaging>pom</packaging>
   <name>iText 7</name>
   <description>A Free Java-PDF library</description>
@@ -197,7 +197,7 @@
         </executions>
         <configuration>
           <effort>Max</effort>
-          <threshold>Low</threshold>
+          <threshold>High</threshold>
           <xmlOutput>true</xmlOutput>
           <failOnError>false</failOnError>
           <plugins>
@@ -314,7 +314,44 @@
           <links>
             <link>${javadoc-link}</link>
           </links>
-          <subpackages>com.itextpdf.barcodes:com.itextpdf.forms:com.itextpdf.io:com.itextpdf.kernel:com.itextpdf.layout:com.itextpdf.pdfa:com.itextpdf.signatures:com.itextpdf.styledxmlparser:com.itextpdf.svg:com.itextpdf.test</subpackages>
+          <sourceFileExcludes>
+            <!-- com.itextpdf.io.util -->
+            <sourceFileExclude>com/itextpdf/io/util/ArrayUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/DateTimeUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/DecimalFormatUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/EncodingUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/EnumUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/ExceptionUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/FileUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/FilterUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/GenericArray.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/HashCode.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/IdelOutputStream.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/IntHashtable.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/MessageFormatUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/NumberUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/ResourceUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/StreamUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/SystemUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/TextUtil.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/io/util/UrlUtil.java</sourceFileExclude>
+
+            <!-- com.itextpdf.io.codec.brotli -->
+            <sourceFileExclude>com/itextpdf/io/codec/brotli/dec/*.java</sourceFileExclude>
+
+            <!-- styled-xml-parser -->
+            <sourceFileExclude>com/itextpdf/styledxmlparser/PortUtil.java</sourceFileExclude>
+
+            <!-- com.itextpdf.styledxmlparser.jsoup -->
+            <sourceFileExclude>com/itextpdf/styledxmlparser/jsoup/**/*.java</sourceFileExclude>
+
+            <!-- kernel -->
+            <sourceFileExclude>com/itextpdf/kernel/crypto/CryptoUtil.java</sourceFileExclude>
+
+            <!-- svg -->
+            <sourceFileExclude>com/itextpdf/svg/utils/SvgCoordinateUtils.java</sourceFileExclude>
+            <sourceFileExclude>com/itextpdf/svg/utils/SvgRegexUtils.java</sourceFileExclude>
+          </sourceFileExcludes>
           <groups>
             <group>
               <title>Barcodes</title>
@@ -410,23 +447,6 @@
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
         <version>${spotbugs.version}</version>
-        <configuration>
-          <effort>Max</effort>
-          <threshold>Low</threshold>
-          <xmlOutput>true</xmlOutput>
-          <plugins>
-            <plugin>
-              <groupId>com.mebigfatguy.fb-contrib</groupId>
-              <artifactId>fb-contrib</artifactId>
-              <version>${fb-contrib.version}</version>
-            </plugin>
-            <plugin>
-              <groupId>com.h3xstream.findsecbugs</groupId>
-              <artifactId>findsecbugs-plugin</artifactId>
-              <version>${findsecbugs.version}</version>
-            </plugin>
-          </plugins>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -541,6 +561,14 @@
                   <ignoreMissingClassesByRegularExpression>com.itextpdf.kernel.pdf.tagutils.IAccessibleElement</ignoreMissingClassesByRegularExpression>
                 </ignoreMissingClassesByRegularExpressions>
               </parameter>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-maven-plugin</artifactId>
+            <version>${spotbugs.version}</version>
+            <configuration>
+              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>
@@ -688,25 +716,6 @@
       <id>test</id>
       <build>
         <plugins>
-          <plugin>
-            <groupId>com.github.spotbugs</groupId>
-            <artifactId>spotbugs-maven-plugin</artifactId>
-            <version>${spotbugs.version}</version>
-            <executions>
-              <execution>
-                <id>default</id>
-                <configuration>
-                  <skip>true</skip>
-                </configuration>
-              </execution>
-              <execution>
-                <id>spotbugs</id>
-                <configuration>
-                  <skip>false</skip>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
           <!-- Run integration tests -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>

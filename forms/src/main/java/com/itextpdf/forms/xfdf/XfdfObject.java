@@ -51,66 +51,146 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+/**
+ * Represents xfdf element, the top level element in an xfdf document.
+ * For more details see paragraph 6.2.1 in Xfdf document specification.
+ * Content model: ( f? & ids? & fields? & annots? )
+ * Attributes: xml:space, xmlns.
+ */
 public class XfdfObject {
 
+    /**
+     * Represents f element, child of the xfdf element.
+     * Corresponds to the F key in the file dictionary.
+     */
     private FObject f;
+
+    /**
+     * Represents ids element, a child of the xfdf element.
+     * Corresponds to the ID key in the file dictionary.
+     */
     private IdsObject ids;
+
+    /**
+     * Represents the fields element, a child of the xfdf element and is the container for form field elements.
+     */
     private FieldsObject fields;
+
+    /**
+     * Represent annots element, a child of the xfdf element and is the container for annot elements.
+     */
     private AnnotsObject annots;
+
+    /**
+     * A list of attributes of xfdf object.
+     */
     private List<AttributeObject> attributes;
 
+    /**
+     * Gets the f element, child of the xfdf element.
+     * Corresponds to the F key in the file dictionary.
+     */
     public FObject getF() {
         return f;
     }
 
+    /**
+     * Sets the f element, child of the xfdf element.
+     * Corresponds to the F key in the file dictionary.
+     */
     public void setF(FObject f) {
         this.f = f;
     }
 
+    /**
+     * Gets the ids element, child of the xfdf element.
+     * Corresponds to the ID key in the file dictionary.
+     */
     public IdsObject getIds() {
         return ids;
     }
 
+    /**
+     * Sets the ids element, child of the xfdf element.
+     * Corresponds to the ID key in the file dictionary.
+     */
     public void setIds(IdsObject ids) {
         this.ids = ids;
     }
 
+    /**
+     * Gets the fields element, a child of the xfdf element and is the container for form field elements.
+     */
     public FieldsObject getFields() {
         return fields;
     }
 
+    /**
+     * Sets the fields element, a child of the xfdf element and is the container for form field elements.
+     */
     public void setFields(FieldsObject fields) {
         this.fields = fields;
     }
 
-
+    /**
+     * Gets the annots element, a child of the xfdf element and is the container for annot elements.
+     */
     public AnnotsObject getAnnots() {
         return annots;
     }
 
+    /**
+     * Sets the annots element, a child of the xfdf element and is the container for annot elements.
+     */
     public void setAnnots(AnnotsObject annots) {
         this.annots = annots;
     }
 
+    /**
+     * Gets the list of attributes of xfdf object.
+     */
     public List<AttributeObject> getAttributes() {
         return attributes;
     }
 
+    /**
+     * Sets the list of attributes of xfdf object.
+     */
     public void setAttributes(List<AttributeObject> attributes) {
         this.attributes = attributes;
     }
 
+    /**
+     * Merges info from XfdfObject to pdf document.
+     * @param pdfDocument the target document for merge.
+     * @param pdfDocumentName the name of the target document. Will be checked in the merge process to determined
+     *                        if it is the same as href attribute of f element of merged XfdfObject. If the names are
+     *                        different, a warning will be thrown.
+     */
     public void mergeToPdf(PdfDocument pdfDocument, String pdfDocumentName) {
         XfdfReader reader = new XfdfReader();
         reader.mergeXfdfIntoPdf(this, pdfDocument, pdfDocumentName);
     }
 
+    /**
+     * Writes info from XfdfObject to .xfdf file.
+     * @param filename name of the target file.
+     * @throws IOException if a problem occured during opening the target file.
+     * @throws TransformerException if there is an error while creating xml structure.
+     * @throws ParserConfigurationException if there is an error while writing info into xnl format.
+     */
     public void writeToFile(String filename) throws IOException, TransformerException, ParserConfigurationException {
         try (OutputStream os = new FileOutputStream(filename)) {
             writeToFile(os);
         }
     }
 
+    /**
+     * Writes info from XfdfObject to .xfdf file.
+     * @param os target output stream.
+     * @throws TransformerException if there is an error while creating xml structure.
+     * @throws ParserConfigurationException if there is an error while writing info into xml format.
+     */
     public void writeToFile(OutputStream os) throws TransformerException, ParserConfigurationException {
         XfdfWriter writer = new XfdfWriter(os);
         writer.write(this);

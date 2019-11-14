@@ -44,6 +44,8 @@ package com.itextpdf.forms.xfdf;
 
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -68,9 +70,9 @@ class XfdfReader {
     private static Logger logger = LoggerFactory.getLogger(XfdfReader.class);
 
     /**
-     * The method merges existing XfdfObject into pdf document associated with it.
+     * Merges existing XfdfObject into pdf document associated with it.
      *
-     * @param xfdfObject      The object ot be merged.
+     * @param xfdfObject      The object to be merged.
      * @param pdfDocument     The associated pdf document.
      * @param pdfDocumentName The name of the associated pdf document.
      */
@@ -79,10 +81,10 @@ class XfdfReader {
             if (pdfDocumentName.equalsIgnoreCase(xfdfObject.getF().getHref())) {
                 logger.info("Xfdf href and pdf name are equal. Continue merge");
             } else {
-                logger.warn("Xfdf href attribute and pdfDocument name are different!");
+                logger.warn(LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT);
             }
         } else {
-            logger.warn("No f object to compare.");
+            logger.warn(LogMessageConstant.XFDF_NO_F_OBJECT_TO_COMPARE);
         }
         //TODO check for ids original/modified compatability with those in pdf document
 
@@ -94,7 +96,12 @@ class XfdfReader {
 
     }
 
-
+    /**
+     * Merges existing FieldsObject and children FieldObject entities into the form of the pdf document
+     * associated with it.
+     * @param fieldsObject object containing acroform fields data to be merged.
+     * @param form acroform to be filled with xfdf data.
+     */
     private void mergeFields(FieldsObject fieldsObject, PdfAcroForm form) {
         if (fieldsObject != null && fieldsObject.getFieldList() != null && !fieldsObject.getFieldList().isEmpty()) {
 
@@ -105,12 +112,18 @@ class XfdfReader {
                 if (formFields.get(name) != null && xfdfField.getValue() != null) {
                     formFields.get(name).setValue(xfdfField.getValue());
                 } else {
-                    logger.error("No such field in pdf document!");
+                    logger.error(LogMessageConstant.XFDF_NO_SUCH_FIELD_IN_PDF_DOCUMENT);
                 }
             }
         }
     }
 
+    /**
+     * Merges existing XfdfObject into pdf document associated with it.
+     *
+     * @param annotsObject    The AnnotsObject with children AnnotObject entities to be mapped into PdfAnnotations.
+     * @param pdfDocument     The associated pdf document.
+     */
     private void mergeAnnotations(AnnotsObject annotsObject, PdfDocument pdfDocument) {
         List<AnnotObject> annotList = null;
         if (annotsObject != null) {
@@ -148,8 +161,12 @@ class XfdfReader {
                     addMarkupAnnotationAttributes(pdfTextAnnotation, annotObject);
 
                     pdfTextAnnotation.setIconName(new PdfName(annotObject.getAttributeValue(XfdfConstants.ICON)));
-                    pdfTextAnnotation.setState(new PdfString(annotObject.getAttributeValue(XfdfConstants.STATE)));
-                    pdfTextAnnotation.setStateModel(new PdfString(annotObject.getAttributeValue(XfdfConstants.STATE_MODEL)));
+                    if(annotObject.getAttributeValue(XfdfConstants.STATE) != null) {
+                        pdfTextAnnotation.setState(new PdfString(annotObject.getAttributeValue(XfdfConstants.STATE)));
+                    }
+                    if(annotObject.getAttributeValue(XfdfConstants.STATE_MODEL) != null) {
+                        pdfTextAnnotation.setStateModel(new PdfString(annotObject.getAttributeValue(XfdfConstants.STATE_MODEL)));
+                    }
 
                     pdfDocument.getPage(Integer.parseInt(annotObject.getAttributeValue(XfdfConstants.PAGE)))
                             .addAnnotation(pdfTextAnnotation);
@@ -258,7 +275,7 @@ class XfdfReader {
                 //XfdfConstants.LINK
                 //XfdfConstants.REDACT
                 //XfdfConstants.PROJECTION
-                default: logger.warn("Annotation " + annotName + " is not supported.");
+                default: logger.warn(MessageFormatUtil.format(LogMessageConstant.XFDF_ANNOTATION_IS_NOT_SUPPORTED, annotName));
                     break;
             }
 

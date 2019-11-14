@@ -300,7 +300,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
         if (resources == null) {
             resources = new PdfDictionary();
-            getPdfObject().put(PdfName.Resources, resources); // not marking page as modified because of this change
+            // not marking page as modified because of this change
+            getPdfObject().put(PdfName.Resources, resources);
         }
         if (initResourcesField) {
             this.resources = new PdfResources(resources);
@@ -930,8 +931,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (getDocument().isTagged()) {
             TagTreePointer tagPointer = getDocument().getTagStructureContext().removeAnnotationTag(annotation);
             if (tagPointer != null) {
-                boolean standardAnnotTagRole = tagPointer.getRole().equals(StandardRoles.ANNOT)
-                        || tagPointer.getRole().equals(StandardRoles.FORM);
+                boolean standardAnnotTagRole = StandardRoles.ANNOT.equals(tagPointer.getRole())
+                        || StandardRoles.FORM.equals(tagPointer.getRole());
                 if (tagPointer.getKidsRoles().size() == 0 && standardAnnotTagRole) {
                     tagPointer.removeTag();
                 }

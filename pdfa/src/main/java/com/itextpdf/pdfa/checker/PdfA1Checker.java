@@ -260,7 +260,7 @@ public class PdfA1Checker extends PdfAChecker {
     protected void checkNonSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
         String encoding = trueTypeFont.getFontEncoding().getBaseEncoding();
         // non-symbolic true type font will always has an encoding entry in font dictionary in itext7
-        if (!PdfEncodings.WINANSI.equals(encoding) && !encoding.equals(PdfEncodings.MACROMAN) || trueTypeFont.getFontEncoding().hasDifferences()) {
+        if (!PdfEncodings.WINANSI.equals(encoding) && !PdfEncodings.MACROMAN.equals(encoding) || trueTypeFont.getFontEncoding().hasDifferences()) {
             throw new PdfAConformanceException(PdfAConformanceException.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING_AS_THE_ENCODING_ENTRY, trueTypeFont);
         }
     }

@@ -134,7 +134,7 @@ final class BitVector {
      * - appendBits(0x00, 4) adds 0000.
      * - appendBits(0xff, 8) adds 11111111.
      * @param value int interpreted as bitvector
-     * @param numBits 0<= numBits <= 32.
+     * @param numBits 0 &lt;= numBits &lt;= 32.
      */
     public void appendBits(int value, int numBits) {
         if (numBits < 0 || numBits > 32) {

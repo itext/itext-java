@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.ILocationExtractionStrategy;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IPdfTextLocation;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.RegexBasedLocationExtractionStrategy;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -68,7 +69,7 @@ import java.util.Set;
  * "Alice in Wonderland" by Lewis Caroll on page 1.
  */
 @Category(IntegrationTest.class)
-public class LocationExtractTest {
+public class LocationExtractTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/LocationExtractionTest/";
 

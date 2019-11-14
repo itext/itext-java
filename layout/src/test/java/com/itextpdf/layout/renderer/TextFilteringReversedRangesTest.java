@@ -42,6 +42,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -50,7 +51,7 @@ import org.junit.experimental.categories.Category;
 import java.util.ArrayList;
 
 @Category(UnitTest.class)
-public class TextFilteringReversedRangesTest {
+public class TextFilteringReversedRangesTest extends ExtendedITextTest {
 
     @Test
     public void test01() {

@@ -215,7 +215,9 @@ class ParentTreeHandler implements Serializable {
 
     public void unregisterMcr(PdfMcr mcrToUnregister) {
         PdfDictionary pageDict = mcrToUnregister.getPageObject();
-        if (pageDict == null) { // invalid mcr, ignore
+        if (pageDict == null) {
+            // invalid mcr, ignore
+
             return;
         }
         if (pageDict.isFlushed()) {

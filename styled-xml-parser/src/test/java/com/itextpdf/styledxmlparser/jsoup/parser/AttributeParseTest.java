@@ -42,6 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.parser;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
@@ -62,7 +63,7 @@ import static org.junit.Assert.*;
 
  @author Jonathan Hedley, jonathan@hedley.net */
 @Category(UnitTest.class)
-public class AttributeParseTest {
+public class AttributeParseTest extends ExtendedITextTest {
 
     @Test public void parsesRoughAttributeString() {
         String html = "<a id=\"123\" class=\"baz = 'bar'\" style = 'border: 2px'qux zim foo = 12 mux=18 />";

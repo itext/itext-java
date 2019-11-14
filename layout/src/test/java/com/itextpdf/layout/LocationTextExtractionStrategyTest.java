@@ -60,8 +60,8 @@ import com.itextpdf.kernel.pdf.PdfTextArray;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Image;
@@ -69,15 +69,14 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStrategyTest {
@@ -297,7 +296,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         return baos.toByteArray();
     }
 
-    private byte[] createSimplePdf(Rectangle pageSize, String... text) throws Exception {
+    private byte[] createSimplePdf(Rectangle pageSize, String... text) {
         final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
         final Document document = new Document(new PdfDocument(new PdfWriter(byteStream)), new PageSize(pageSize));
@@ -311,7 +310,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         return byteStream.toByteArray();
     }
 
-    protected byte[] createPdfWithOverlappingTextHorizontal(String[] text1, String[] text2) throws Exception {
+    protected byte[] createPdfWithOverlappingTextHorizontal(String[] text1, String[] text2) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document doc = new Document(new PdfDocument(new PdfWriter(baos).setCompressionLevel(0)));
 
@@ -361,7 +360,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         return new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())));
     }
 
-    private byte[] createPdfWithSupescript(String regularText, String superscriptText) throws Exception {
+    private byte[] createPdfWithSupescript(String regularText, String superscriptText) {
         final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
         final Document document = new Document(new PdfDocument(new PdfWriter(byteStream)));

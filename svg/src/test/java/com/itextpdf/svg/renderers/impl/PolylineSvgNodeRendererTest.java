@@ -181,4 +181,10 @@ public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
         }
 
     }
+
+    @Test
+    // TODO update cmp-file after DEVSIX-2240 fixed
+    public void elementDimensionExceedsViewboxBoundaryTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "elementDimensionExceedsViewboxBoundary");
+    }
 }

@@ -45,6 +45,7 @@ package com.itextpdf.styledxmlparser.jsoup.helper;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.integration.ParseTest;
 import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.File;
@@ -62,7 +63,7 @@ import java.nio.charset.Charset;
 import static org.junit.Assert.*;
 
 @Category(UnitTest.class)
-public class DataUtilTest {
+public class DataUtilTest extends ExtendedITextTest {
     @Test
     public void testCharset() {
         assertEquals("utf-8", DataUtil.getCharsetFromContentType("text/html;charset=utf-8 "));

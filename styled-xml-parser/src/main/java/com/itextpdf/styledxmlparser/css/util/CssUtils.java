@@ -133,6 +133,23 @@ public class CssUtils {
     }
 
     /**
+     * Parses a double without throwing an exception if something goes wrong.
+     *
+     * @param str a string that might be a double value
+     * @return the double value, or null if something went wrong
+     */
+    public static Double parseDouble(String str) {
+        if (str == null) {
+            return null;
+        }
+        try {
+            return Double.valueOf(str);
+        } catch (NumberFormatException exc) {
+            return null;
+        }
+    }
+
+    /**
      * Parses an aspect ratio into an array with two integers.
      *
      * @param str a string that might contain two integer values
@@ -243,9 +260,9 @@ public class CssUtils {
 
     /**
      * Convenience method for parsing a value to pt. Possible values are: <ul>
-     * <li>a numeric value in pixels (e.g. 123, 1.23, .123),</li>
-     * <li>a value with a metric unit (px, in, cm, mm, pc or pt) attached to it,</li>
-     * <li>or a value with a relative value (%, em, ex).</li>
+     * <li>a numeric value in pixels (e.g. 123, 1.23, .123),
+     * <li>a value with a metric unit (px, in, cm, mm, pc or pt) attached to it,
+     * <li>or a value with a relative value (%, em, ex).
      * </ul>
      *
      * @param value    the value

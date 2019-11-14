@@ -253,7 +253,6 @@ public final class StreamUtil {
      * @param b the buffer into which the data is read.
      * @param off an int specifying the offset into the data.
      * @param len an int specifying the number of bytes to read.
-     * @exception EOFException  if this stream reaches the end before reading all the bytes.
      * @exception IOException   if an I/O error occurs.
      */
     public static void readFully(InputStream input, byte[] b, int off, int len) throws IOException {

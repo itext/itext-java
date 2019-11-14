@@ -44,6 +44,7 @@ package com.itextpdf.io.util;
 
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Arrays;
@@ -54,7 +55,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class TextUtilTest {
+public class TextUtilTest extends ExtendedITextTest {
 
     private Glyph carriageReturn;
     private Glyph lineFeed;

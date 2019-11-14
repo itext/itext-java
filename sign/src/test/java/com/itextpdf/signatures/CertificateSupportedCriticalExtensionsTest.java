@@ -43,6 +43,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.signatures.testutils.X509MockCertificate;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.security.Security;
@@ -56,7 +57,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
-public class CertificateSupportedCriticalExtensionsTest {
+public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void beforeClass() {

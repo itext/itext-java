@@ -43,6 +43,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -57,7 +58,7 @@ import java.util.Map;
 import com.itextpdf.io.util.MessageFormatUtil;
 
 @Category(UnitTest.class)
-public class FontProgramTest {
+public class FontProgramTest extends ExtendedITextTest {
     private static final String notExistingFont = "some-font.ttf";
 
     @Rule

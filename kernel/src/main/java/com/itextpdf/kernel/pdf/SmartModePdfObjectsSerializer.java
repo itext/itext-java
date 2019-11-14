@@ -139,11 +139,13 @@ class SmartModePdfObjectsSerializer implements Serializable {
         } else if (obj.isArray()) {
             serArray((PdfArray) obj, bb, level - 1, serializedCache);
         } else if (obj.isString()) {
-            bb.append("$S").append(obj.toString()); // TODO specify length for strings, streams, may be names?
+            // TODO specify length for strings, streams, may be names?
+            bb.append("$S").append(obj.toString());
         } else if (obj.isName()) {
             bb.append("$N").append(obj.toString());
         } else {
-            bb.append("$L").append(obj.toString()); // PdfNull case is also here
+            // PdfNull case is also here
+            bb.append("$L").append(obj.toString());
         }
 
         if (savedBb != null) {

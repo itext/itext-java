@@ -192,10 +192,14 @@ public final class RandomAccessSourceFactory implements Serializable {
         }
 
         try{
-            if (raf.length() <= 0) // files with zero length can't be mapped and will throw an IllegalArgumentException.  Just open using a simple RAF source.
+
+            // files with zero length can't be mapped and will throw an IllegalArgumentException.
+            // Just open using a simple RAF source.
+            if (raf.length() <= 0)
                 return new RAFRandomAccessSource(raf);
 
             try {
+
                 // ownership of the RAF passes to whatever source is created by createBestSource.
                 return createBestSource(raf.getChannel());
             } catch (java.io.IOException e){
@@ -204,7 +208,9 @@ public final class RandomAccessSourceFactory implements Serializable {
                 }
                 throw e;
             }
-        } catch (Exception e) { // If RAFRandomAccessSource constructor or createBestSource throws, then we must close the RAF we created.
+        } catch (Exception e) {
+            // If RAFRandomAccessSource constructor or createBestSource throws, then we must close the RAF we created.
+
             try {
                 raf.close();
             } catch (java.io.IOException ignore){}
@@ -221,7 +227,10 @@ public final class RandomAccessSourceFactory implements Serializable {
      * @return the newly created {@link IRandomAccessSource}
      */
     public IRandomAccessSource createBestSource(FileChannel channel) throws java.io.IOException {
-        if (channel.size() <= PagedChannelRandomAccessSource.DEFAULT_TOTAL_BUFSIZE){ // if less than the fully mapped usage of PagedFileChannelRandomAccessSource, just map the whole thing and be done with it
+
+        // if less than the fully mapped usage of PagedFileChannelRandomAccessSource,
+        // just map the whole thing and be done with it
+        if (channel.size() <= PagedChannelRandomAccessSource.DEFAULT_TOTAL_BUFSIZE){
             return new GetBufferedRandomAccessSource(new FileChannelRandomAccessSource(channel));
         } else {
             return new GetBufferedRandomAccessSource(new PagedChannelRandomAccessSource(channel));

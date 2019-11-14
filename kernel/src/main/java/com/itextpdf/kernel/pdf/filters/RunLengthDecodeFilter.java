@@ -64,14 +64,18 @@ public class RunLengthDecodeFilter extends MemoryLimitsAwareFilter {
         byte dupCount;
         for (int i = 0; i < b.length; i++) {
             dupCount = b[i];
-            if (dupCount == (byte) 0x80) { // this is implicit end of data
+            if (dupCount == (byte) 0x80) {
+                // this is implicit end of data
+
                 break;
             }
             if ((dupCount & 0x80) == 0) {
                 int bytesToCopy = dupCount + 1;
                 outputStream.write(b, i + 1, bytesToCopy);
                 i += bytesToCopy;
-            } else {                // make dupcount copies of the next byte
+            } else {
+                // make dupcount copies of the next byte
+
                 i++;
                 for (int j = 0; j < 257 - (dupCount & 0xff); j++) {
                     outputStream.write(b[i]);

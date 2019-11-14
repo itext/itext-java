@@ -128,7 +128,7 @@ public final class SystemUtil {
         bre.close();
     }
 
-    public static StringBuilder runProcessAndCollectErrors(String execPath, String params) throws IOException, InterruptedException {
+    public static StringBuilder runProcessAndCollectErrors(String execPath, String params) throws IOException {
         List<String> cmdArray = new ArrayList<String>();
         cmdArray.add(execPath);
         Matcher m = Pattern.compile("((?:[^'\\s]|'.+?')+)\\s*").matcher(params);

@@ -82,6 +82,9 @@ public class LineRenderer extends AbstractRenderer {
 
     // AbstractRenderer.EPS is not enough here
     private static final float MIN_MAX_WIDTH_CORRECTION_EPS = 0.001f;
+
+    private static final Logger logger = LoggerFactory.getLogger(LineRenderer.class);
+
     protected float maxAscent;
     protected float maxDescent;
     // bidi levels
@@ -321,7 +324,9 @@ public class LineRenderer extends AbstractRenderer {
                         bbox.setWidth(inlineBlockWidth);
 
                         if (childBlockMinMaxWidth.getMinWidth() > bbox.getWidth()) {
-                            LoggerFactory.getLogger(LineRenderer.class).warn(LogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
+                            if (logger.isWarnEnabled()) {
+                                logger.warn(LogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
+                            }
                             childRenderer.setProperty(Property.FORCED_PLACEMENT, true);
                         }
                     }
@@ -337,7 +342,9 @@ public class LineRenderer extends AbstractRenderer {
                     setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
                 }
                 childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox), wasParentsHeightClipped));
-                if (childResult instanceof MinMaxWidthLayoutResult && null != childBlockMinMaxWidth) { // it means that we've already increased layout area by MIN_MAX_WIDTH_CORRECTION_EPS
+
+                // it means that we've already increased layout area by MIN_MAX_WIDTH_CORRECTION_EPS
+                if (childResult instanceof MinMaxWidthLayoutResult && null != childBlockMinMaxWidth) {
                     MinMaxWidth childResultMinMaxWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth();
                     childResultMinMaxWidth.setChildrenMaxWidth(childResultMinMaxWidth.getChildrenMaxWidth() + MIN_MAX_WIDTH_CORRECTION_EPS);
                     childResultMinMaxWidth.setChildrenMinWidth(childResultMinMaxWidth.getChildrenMinWidth() + MIN_MAX_WIDTH_CORRECTION_EPS);
@@ -477,7 +484,9 @@ public class LineRenderer extends AbstractRenderer {
                         } else {
                             if (isInlineBlockChild && childResult.getOverflowRenderer().getChildRenderers().size() == 0
                                     && childResult.getStatus() == LayoutResult.PARTIAL) {
-                                LoggerFactory.getLogger(LineRenderer.class).warn(LogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
+                                if (logger.isWarnEnabled()) {
+                                    logger.warn(LogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
+                                }
                             } else {
                                 split[1].childRenderers.add(childResult.getOverflowRenderer());
                             }
@@ -648,41 +657,7 @@ public class LineRenderer extends AbstractRenderer {
                         newRenderer.line.setGlyphs(replacementGlyphs);
                     }
 
-                    float currentXPos = occupiedArea.getBBox().getLeft();
-                    for (IRenderer child : children) {
-                        float currentWidth;
-                        if (child instanceof TextRenderer) {
-                            currentWidth = ((TextRenderer) child).calculateLineWidth();
-                            UnitValue[] margins = ((TextRenderer) child).getMargins();
-                            if (!margins[1].isPointValue()) {
-                                Logger logger = LoggerFactory.getLogger(LineRenderer.class);
-                                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
-                            }
-                            if (!margins[3].isPointValue()) {
-                                Logger logger = LoggerFactory.getLogger(LineRenderer.class);
-                                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
-                            }
-                            UnitValue[] paddings = ((TextRenderer) child).getPaddings();
-                            if (!paddings[1].isPointValue()) {
-                                Logger logger = LoggerFactory.getLogger(LineRenderer.class);
-                                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_RIGHT));
-                            }
-                            if (!paddings[3].isPointValue()) {
-                                Logger logger = LoggerFactory.getLogger(LineRenderer.class);
-                                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_LEFT));
-                            }
-                            currentWidth += margins[1].getValue() + margins[3].getValue() + paddings[1].getValue() + paddings[3].getValue();
-                            ((TextRenderer) child).occupiedArea.getBBox().setX(currentXPos).setWidth(currentWidth);
-                        } else {
-                            currentWidth = child.getOccupiedArea().getBBox().getWidth();
-                            if (child instanceof AbstractRenderer) {
-                                child.move(currentXPos - child.getOccupiedArea().getBBox().getX(), 0);
-                            } else {
-                                child.getOccupiedArea().getBBox().setX(currentXPos);
-                            }
-                        }
-                        currentXPos += currentWidth;
-                    }
+                    adjustChildPositionsAfterReordering(children, occupiedArea.getBBox().getLeft());
                 }
 
                 if (result.getStatus() == LayoutResult.PARTIAL) {
@@ -764,7 +739,9 @@ public class LineRenderer extends AbstractRenderer {
         int numberOfSpaces = getNumberOfSpaces();
         int baseCharsCount = baseCharactersCount();
         float baseFactor = freeWidth / (ratio * numberOfSpaces + (1 - ratio) * (baseCharsCount - 1));
-        if (Float.isInfinite(baseFactor)) { //Prevent a NaN when trying to justify a single word with spacing_ratio == 1.0
+
+        //Prevent a NaN when trying to justify a single word with spacing_ratio == 1.0
+        if (Float.isInfinite(baseFactor)) {
             baseFactor = 0;
         }
         float wordSpacing = ratio * baseFactor;
@@ -935,7 +912,6 @@ public class LineRenderer extends AbstractRenderer {
             case Leading.MULTIPLIED:
                 UnitValue fontSize = this.<UnitValue>getProperty(Property.FONT_SIZE, UnitValue.createPointValue(0f));
                 if (!fontSize.isPointValue()) {
-                    Logger logger = LoggerFactory.getLogger(LineRenderer.class);
                     logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.FONT_SIZE));
                 }
                 // In HTML, depending on whether <!DOCTYPE html> is present or not, and if present then depending on the version,
@@ -957,7 +933,6 @@ public class LineRenderer extends AbstractRenderer {
             case Leading.MULTIPLIED:
                 UnitValue fontSize = this.<UnitValue>getProperty(Property.FONT_SIZE, UnitValue.createPointValue(0f));
                 if (!fontSize.isPointValue()) {
-                    Logger logger = LoggerFactory.getLogger(LineRenderer.class);
                     logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.FONT_SIZE));
                 }
                 // In HTML, depending on whether <!DOCTYPE html> is present or not, and if present then depending on the version,
@@ -969,6 +944,38 @@ public class LineRenderer extends AbstractRenderer {
                 return Math.max(-textDescent + ((textAscent - textDescent) * (leading.getValue() - 1)) / 2, -maxBlockDescent) + maxDescent;
             default:
                 throw new IllegalStateException();
+        }
+    }
+
+    static void adjustChildPositionsAfterReordering(List<IRenderer> children, float initialXPos) {
+        float currentXPos = initialXPos;
+        for (IRenderer child : children) {
+            if (!FloatingHelper.isRendererFloating(child)) {
+                float currentWidth;
+                if (child instanceof TextRenderer) {
+                    currentWidth = ((TextRenderer) child).calculateLineWidth();
+                    UnitValue[] margins = ((TextRenderer) child).getMargins();
+                    if (!margins[1].isPointValue() && logger.isErrorEnabled()) {
+                        logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "right margin"));
+                    }
+                    if (!margins[3].isPointValue() && logger.isErrorEnabled()) {
+                        logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "left margin"));
+                    }
+                    UnitValue[] paddings = ((TextRenderer) child).getPaddings();
+                    if (!paddings[1].isPointValue() && logger.isErrorEnabled()) {
+                        logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "right padding"));
+                    }
+                    if (!paddings[3].isPointValue() && logger.isErrorEnabled()) {
+                        logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "left padding"));
+                    }
+                    currentWidth += margins[1].getValue() + margins[3].getValue() + paddings[1].getValue() + paddings[3].getValue();
+                    ((TextRenderer) child).occupiedArea.getBBox().setX(currentXPos).setWidth(currentWidth);
+                } else {
+                    currentWidth = child.getOccupiedArea().getBBox().getWidth();
+                    child.move(currentXPos - child.getOccupiedArea().getBBox().getX(), 0);
+                }
+                currentXPos += currentWidth;
+            }
         }
     }
 
@@ -986,7 +993,9 @@ public class LineRenderer extends AbstractRenderer {
         if (justPlacedFloatBox.getBottom() >= layoutBox.getTop() || justPlacedFloatBox.getTop() < layoutBox.getTop()) {
             return;
         }
-        boolean ltr = true; // TODO handle it
+
+        // TODO handle it
+        boolean ltr = true;
         float floatWidth = justPlacedFloatBox.getWidth();
         if (kidFloatPropertyVal.equals(FloatPropertyValue.LEFT)) {
             layoutBox.setWidth(layoutBox.getWidth() - floatWidth).moveRight(floatWidth);

@@ -41,6 +41,7 @@
     address: sales@itextpdf.com
  */
 package com.itextpdf.svg.googlecharts;
+
 import com.itextpdf.io.IOException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
@@ -52,32 +53,31 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class LineChartsTest extends SvgIntegrationTest {
 
-  public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/line_charts/";
-  public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/line_charts/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/LineChartsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/LineChartsTest/";
 
-  @BeforeClass
-  public static void beforeClass() {
-    ITextTest.createDestinationFolder(destinationFolder);
-  }
+    @BeforeClass
+    public static void beforeClass() {
+        ITextTest.createDestinationFolder(destinationFolder);
+    }
 
-  @Test
-  public void line_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "line_chart");
-  }
+    @Test
+    public void lineChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "lineChart");
+    }
 
-  @Test
-  public void line_classic_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "line_classic_chart");
-  }
+    @Test
+    public void lineClassicChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "lineClassicChart");
+    }
 
-  @Test
-  public void line_material_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "line_material_chart");
-  }
+    @Test
+    public void lineMaterialChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "lineMaterialChart");
+    }
 
-  @Test
-  public void line_topX_chart() throws IOException, InterruptedException, java.io.IOException {
-    convertAndCompare(sourceFolder, destinationFolder, "line_topX_chart");
-  }
-
+    @Test
+    public void lineTopXChart() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "lineTopXChart");
+    }
 }

@@ -74,13 +74,16 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
 
 @Category(IntegrationTest.class)
 public class PdfFormFieldTest extends ExtendedITextTest {
@@ -178,7 +181,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         Map<String, PdfFormField> formFields = form.getFormFields();
-        String fieldName = "\u5E10\u53F71"; // 帐号1: account number 1
+        // 帐号1: account number 1
+        String fieldName = "\u5E10\u53F71";
         Assert.assertEquals(fieldName, formFields.keySet().toArray(new String[1])[0]);
     }
 
@@ -187,8 +191,19 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = sourceFolder + "unicodeFormFieldFile.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        String fieldName = "\u5E10\u53F71"; // 帐号1: account number 1
+        // 帐号1: account number 1
+        String fieldName = "\u5E10\u53F71";
         Assert.assertNotNull(form.getField(fieldName));
+    }
+
+    @Test
+    public void textFieldValueInStreamTest() throws IOException {
+        String filename = sourceFolder + "textFieldValueInStream.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        String fieldValue = form.getField("fieldName").getValueAsString();
+        // Trailing newline is not trimmed which seems to match Acrobat's behavior on copy-paste
+        Assert.assertEquals("some value\n", fieldValue);
     }
 
     @Test
@@ -525,29 +540,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    public void multilineTextFieldWithAlignmentTest() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "multilineTextFieldWithAlignment.pdf";
-        String cmpPdf = sourceFolder + "cmp_multilineTextFieldWithAlignment.pdf";
-
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
-
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-
-        Rectangle rect = new Rectangle(210, 600, 150, 100);
-        PdfTextFormField field = PdfFormField.createMultilineText(pdfDoc, rect, "fieldName", "some value\nsecond line\nthird");
-        field.setJustification(PdfTextFormField.ALIGN_RIGHT);
-        form.addField(field);
-
-        pdfDoc.close();
-
-        CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
-    }
-
-    @Test
     public void flushedPagesTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "flushedPagesTest.pdf";
 
@@ -585,7 +577,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Map<String, PdfFormField> fields = form.getFormFields();
         PdfFormField field = fields.get("Text1");
 
-        // TODO DEVSIX-2016: the font in /DR of AcroForm dict is not updated, even though /DA field is updated.
         field.setFont(PdfFontFactory.createFont(StandardFonts.COURIER));
         field.setValue("New value size must be 8, but with different font.");
 
@@ -751,55 +742,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         pdfDocument.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
-    }
-
-    @Test
-    public void multilineFormFieldNewLineTest() throws IOException, InterruptedException {
-        String testName = "multilineFormFieldNewLineTest";
-        String outPdf = destinationFolder + testName + ".pdf";
-        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
-        String srcPdf = sourceFolder + testName + ".pdf";
-
-        PdfWriter writer = new PdfWriter(outPdf);
-        PdfReader reader = new PdfReader(srcPdf);
-        PdfDocument pdfDoc = new PdfDocument(reader, writer);
-
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-
-        Map<String, PdfFormField> fields = form.getFormFields();
-        fields.get("BEMERKUNGEN").setValue("First line\n\n\nFourth line");
-
-        pdfDoc.close();
-
-        CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
-    }
-
-    @Test
-    public void multilineFormFieldNewLineFontType3Test() throws IOException, InterruptedException {
-        String testName = "multilineFormFieldNewLineFontType3Test";
-
-        String outPdf = destinationFolder + testName + ".pdf";
-        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
-        String srcPdf = sourceFolder + testName + ".pdf";
-
-        PdfWriter writer = new PdfWriter(outPdf);
-        PdfReader reader = new PdfReader(srcPdf);
-        PdfDocument pdfDoc = new PdfDocument(reader, writer);
-
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        PdfTextFormField info = (PdfTextFormField) form.getField("info");
-        info.setValue("A\n\nE");
-
-        pdfDoc.close();
-        CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
     }
 
     @Test
@@ -1088,7 +1030,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfChoiceFormField f = PdfFormField.createList(pdfDoc, new Rectangle(36, 556, 50, 100), "combo", "9", new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"});
         f.setValue("4");
         f.setTopIndex(2);
-        f.setListSelected(new String[] {"3", "5"});
+        f.setListSelected(new String[]{"3", "5"});
         form.addField(f);
         // push button
         form.addField(PdfFormField.createPushButton(pdfDoc, new Rectangle(36, 526, 80, 20), "push button", "push"));
@@ -1150,7 +1092,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testDaInAppendMode() throws IOException, InterruptedException {
+    public void testDaInAppendMode() throws IOException {
         String testName = "testDaInAppendMode.pdf";
 
         String srcPdf = sourceFolder + testName;
@@ -1213,6 +1155,30 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Assert.assertEquals(field, thirdPageAnnots.get(0));
     }
 
+    @Test
+    //TODO update cmp-file after DEVSIX-3077 fixed
+    public void createFieldInAppendModeTest() throws IOException, InterruptedException {
+        String file = destinationFolder + "blank.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(file));
+        document.addNewPage();
+        PdfAcroForm.getAcroForm(document, true);
+        document.close();
+
+        PdfReader reader = new PdfReader(file);
+        PdfWriter writer1 = new PdfWriter(destinationFolder + "createFieldInAppendModeTest.pdf");
+        PdfDocument doc = new PdfDocument(reader, writer1, new StampingProperties().useAppendMode());
+        PdfFormField field = PdfFormField.createCheckBox(
+                doc,
+                new Rectangle(10, 10, 24, 24),
+                "checkboxname", "On",
+                PdfFormField.TYPE_CHECK);
+        PdfAcroForm.getAcroForm(doc, true).addField(field);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "createFieldInAppendModeTest.pdf", sourceFolder + "cmp_" + "createFieldInAppendModeTest.pdf", destinationFolder, "diff_"));
+    }
+
     private void createAcroForm(PdfDocument pdfDoc, PdfAcroForm form, PdfFont font, String text, int offSet) {
         for (int x = offSet; x < (offSet + 3); x++) {
             Rectangle rect = new Rectangle(100 + (30 * x), 100 + (100 * x), 55, 30);
@@ -1265,5 +1231,132 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         pdfDocument.close();
 
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    //TODO DEVSIX-2822
+    public void appendModeAppearance() throws IOException, InterruptedException {
+        String inputFile = "appendModeAppearance.pdf";
+        String outputFile = "appendModeAppearance.pdf";
+
+        String line1 = "ABC";
+
+        // borders in with or without append mode are different
+        //PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + inputFile),
+        //          new PdfWriter(destinationFolder + outputFile));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + inputFile),
+                new PdfWriter(destinationFolder + outputFile),
+                new StampingProperties().useAppendMode());
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
+        form.setNeedAppearances(true);
+
+        PdfFormField field;
+        for (Map.Entry<String, PdfFormField> entry : form.getFormFields().entrySet()) {
+            field = entry.getValue();
+            field.setValue(line1);
+        }
+
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + outputFile,
+                sourceFolder + "cmp_" + outputFile, destinationFolder, "diff_"));
+    }
+
+    @Test
+    // TODO update cmp-file after DEVSIX-2622 fixed
+    public void fillUnmergedTextFormField() throws IOException, InterruptedException {
+        String file = sourceFolder + "fillUnmergedTextFormField.pdf";
+        String outfile = destinationFolder + "outfile.pdf";
+        String text = "John";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(file), new PdfWriter(outfile));
+        fillAcroForm(pdfDocument, text);
+
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "outfile.pdf",
+                sourceFolder + "cmp_" + "fillUnmergedTextFormField.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void choiceFieldAutoSize01Test() throws IOException, InterruptedException {
+        String filename = destinationFolder + "choiceFieldAutoSize01Test.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        String[] options = new String[]{"First Item", "Second Item", "Third Item", "Fourth Item"};
+
+        PdfFormField[] fields = new PdfFormField[]{
+                PdfFormField.createComboBox(pdfDoc, new Rectangle(110, 750, 150, 20), "TestField", "First Item", options),
+                PdfFormField.createList(pdfDoc, new Rectangle(310, 650, 150, 90), "TestField1", "Second Item", options)};
+
+        for (PdfFormField field : fields) {
+            field.setFontSize(0);
+            field.setBorderColor(ColorConstants.BLACK);
+            form.addField(field);
+        }
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_choiceFieldAutoSize01Test.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void choiceFieldAutoSize02Test() throws IOException, InterruptedException {
+        String filename = destinationFolder + "choiceFieldAutoSize02Test.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfArray options = new PdfArray();
+        options.add(new PdfString("First Item", PdfEncodings.UNICODE_BIG));
+        options.add(new PdfString("Second Item", PdfEncodings.UNICODE_BIG));
+        options.add(new PdfString("Third Item", PdfEncodings.UNICODE_BIG));
+
+        form.addField(PdfFormField.createChoice(pdfDoc, new Rectangle(110, 750, 150, 20),
+                "TestField", "First Item", null, 0, options, PdfChoiceFormField.FF_COMBO, null));
+        form.addField(PdfFormField.createChoice(pdfDoc, new Rectangle(310, 650, 150, 90),
+                "TestField1", "Second Item", null, 0, options, 0, null));
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_choiceFieldAutoSize02Test.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void borderWidthIndentSingleLineTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "borderWidthIndentSingleLineTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        PdfTextFormField field = PdfFormField.createText(pdfDoc, new Rectangle(50, 700, 500, 120), "single",
+                "Does this text overlap the border?");
+        field.setFontSize(20);
+        field.setBorderColor(ColorConstants.RED);
+        field.setBorderWidth(50);
+        form.addField(field);
+
+        PdfTextFormField field2 = PdfFormField.createText(pdfDoc, new Rectangle(50, 600, 500, 80), "singleAuto",
+                "Does this autosize text overlap the border? Well it shouldn't! Does it fit accurately though?");
+        field2.setFontSize(0);
+        field2.setBorderColor(ColorConstants.RED);
+        field2.setBorderWidth(20);
+        form.addField(field2);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_borderWidthIndentSingleLineTest.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 }

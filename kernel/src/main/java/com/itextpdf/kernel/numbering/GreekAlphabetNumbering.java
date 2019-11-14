@@ -69,17 +69,25 @@ public class GreekAlphabetNumbering {
 
     /**
      * Converts the given number to its Greek alphabet lowercase string representation.
-     * E.g. 1 will be converted to "alpha", 2 to "beta", and so on.
-     * @param number the number to be converted
+     * E.g. 1 will be converted to a string consisting of a unicode character for greek small letter alpha,
+     * 2 - a string consisting of a unicode character for greek small letter beta,
+     * 25 - a string consisting of two unicode characters for greek small letter alpha, and so on.
+     *
+     * @param number the number greater than zero to be converted
+     * @return Greek alphabet lowercase string representation of an integer.
      */
     public static String toGreekAlphabetNumberLowerCase(int number) {
         return AlphabetNumbering.toAlphabetNumber(number, ALPHABET_LOWERCASE);
     }
 
     /**
-     * Converts the given number to its Greek alphabet lowercase string representation.
-     * E.g. 1 will be converted to "A", 2 to "B", and so on.
-     * @param number the number to be converted
+     * Converts the given number to its Greek alphabet uppercase string representation.
+     * E.g. 1 will be converted to a string consisting of a unicode character for greek capital letter alpha,
+     * 2 - a string consisting of a unicode character for greek capital letter beta,
+     * 25 - a string consisting of two unicode characters for greek capital letter alpha, and so on.
+     *
+     * @param number the number greater than zero to be converted
+     * @return Greek alphabet uppercase string representation of an integer.
      */
     public static String toGreekAlphabetNumberUpperCase(int number) {
         return AlphabetNumbering.toAlphabetNumber(number, ALPHABET_UPPERCASE);
@@ -88,9 +96,13 @@ public class GreekAlphabetNumbering {
     /**
      * Converts the given number to its Greek alphabet string representation.
      * E.g. for <code>upperCase</code> set to false,
-     * 1 will be converted to "alpha", 2 to "beta", and so on.
-     * @param number the number to be converted
+     * 1 will be converted to a string consisting of a unicode character for greek small letter alpha,
+     * 2 - a string consisting of a unicode character for greek small letter beta,
+     * 25 - a string consisting of two unicode characters for greek small letter alpha, and so on.
+     *
+     * @param number    the number greater than zero to be converted
      * @param upperCase whether to use uppercase or lowercase alphabet
+     * @return Greek alphabet string representation of an integer.
      */
     public static String toGreekAlphabetNumber(int number, boolean upperCase) {
         return toGreekAlphabetNumber(number, upperCase, false);
@@ -99,10 +111,18 @@ public class GreekAlphabetNumbering {
     /**
      * Converts the given number to its Greek alphabet string representation.
      * E.g. for <code>upperCase</code> set to false,
-     * 1 will be converted to "alpha", 2 to "beta", and so on.
-     * @param number the number to be converted
-     * @param upperCase whether to use uppercase or lowercase alphabet
+     * 1 will be converted to a string consisting of a unicode character for greek small letter alpha
+     * if <code>symbolFont</code> is set to false,
+     * otherwise - a string consisting of the corresponding symbol code in Symbol standard font;
+     * 26 will be converted to a string consisting of two unicode characters:
+     * greek small letter alpha followed by greek small letter beta
+     * if <code>symbolFont</code> is set to false,
+     * otherwise - a string consisting of the corresponding sequence of symbol codes in Symbol standard font.
+     *
+     * @param number     the number greater than zero to be converted
+     * @param upperCase  whether to use uppercase or lowercase alphabet
      * @param symbolFont if <code>true</code>, then the string representation will be returned ready to write it in Symbol font
+     * @return Greek alphabet string representation of an integer.
      */
     public static String toGreekAlphabetNumber(int number, boolean upperCase, boolean symbolFont) {
         String result = upperCase ? toGreekAlphabetNumberUpperCase(number) : toGreekAlphabetNumberLowerCase(number);
@@ -119,109 +139,159 @@ public class GreekAlphabetNumbering {
 
     /**
      * Converts a given greek unicode character code into the code of the corresponding char Symbol font.
+     *
      * @param unicodeChar original unicode char
      * @return the corresponding symbol code in Symbol standard font
      */
     private static char getSymbolFontChar(char unicodeChar) {
         switch (unicodeChar) {
             case (char) 913:
-                return 'A'; // ALFA
+                // ALFA
+                return 'A';
             case (char) 914:
-                return 'B'; // BETA
+                // BETA
+                return 'B';
             case (char) 915:
-                return 'G'; // GAMMA
+                // GAMMA
+                return 'G';
             case (char) 916:
-                return 'D'; // DELTA
+                // DELTA
+                return 'D';
             case (char) 917:
-                return 'E'; // EPSILON
+                // EPSILON
+                return 'E';
             case (char) 918:
-                return 'Z'; // ZETA
+                // ZETA
+                return 'Z';
             case (char) 919:
-                return 'H'; // ETA
+                // ETA
+                return 'H';
             case (char) 920:
-                return 'Q'; // THETA
+                // THETA
+                return 'Q';
             case (char) 921:
-                return 'I'; // IOTA
+                // IOTA
+                return 'I';
             case (char) 922:
-                return 'K'; // KAPPA
+                // KAPPA
+                return 'K';
             case (char) 923:
-                return 'L'; // LAMBDA
+                // LAMBDA
+                return 'L';
             case (char) 924:
-                return 'M'; // MU
+                // MU
+                return 'M';
             case (char) 925:
-                return 'N'; // NU
+                // NU
+                return 'N';
             case (char) 926:
-                return 'X'; // XI
+                // XI
+                return 'X';
             case (char) 927:
-                return 'O'; // OMICRON
+                // OMICRON
+                return 'O';
             case (char) 928:
-                return 'P'; // PI
+                // PI
+                return 'P';
             case (char) 929:
-                return 'R'; // RHO
+                // RHO
+                return 'R';
             case (char) 931:
-                return 'S'; // SIGMA
+                // SIGMA
+                return 'S';
             case (char) 932:
-                return 'T'; // TAU
+                // TAU
+                return 'T';
             case (char) 933:
-                return 'U'; // UPSILON
+                // UPSILON
+                return 'U';
             case (char) 934:
-                return 'F'; // PHI
+                // PHI
+                return 'F';
             case (char) 935:
-                return 'C'; // CHI
+                // CHI
+                return 'C';
             case (char) 936:
-                return 'Y'; // PSI
+                // PSI
+                return 'Y';
             case (char) 937:
-                return 'W'; // OMEGA
+                // OMEGA
+                return 'W';
             case (char) 945:
-                return 'a'; // alfa
+                // alfa
+                return 'a';
             case (char) 946:
-                return 'b'; // beta
+                // beta
+                return 'b';
             case (char) 947:
-                return 'g'; // gamma
+                // gamma
+                return 'g';
             case (char) 948:
-                return 'd'; // delta
+                // delta
+                return 'd';
             case (char) 949:
-                return 'e'; // epsilon
+                // epsilon
+                return 'e';
             case (char) 950:
-                return 'z'; // zeta
+                // zeta
+                return 'z';
             case (char) 951:
-                return 'h'; // eta
+                // eta
+                return 'h';
             case (char) 952:
-                return 'q'; // theta
+                // theta
+                return 'q';
             case (char) 953:
-                return 'i'; // iota
+                // iota
+                return 'i';
             case (char) 954:
-                return 'k'; // kappa
+                // kappa
+                return 'k';
             case (char) 955:
-                return 'l'; // lambda
+                // lambda
+                return 'l';
             case (char) 956:
-                return 'm'; // mu
+                // mu
+                return 'm';
             case (char) 957:
-                return 'n'; // nu
+                // nu
+                return 'n';
             case (char) 958:
-                return 'x'; // xi
+                // xi
+                return 'x';
             case (char) 959:
-                return 'o'; // omicron
+                // omicron
+                return 'o';
             case (char) 960:
-                return 'p'; // pi
+                // pi
+                return 'p';
             case (char) 961:
-                return 'r'; // rho
+                // rho
+                return 'r';
             case (char) 962:
-                return 'V'; // sigma
+                // sigma
+                return 'V';
             case (char) 963:
-                return 's'; // sigma
+                // sigma
+                return 's';
             case (char) 964:
-                return 't'; // tau
+                // tau
+                return 't';
             case (char) 965:
-                return 'u'; // upsilon
+                // upsilon
+                return 'u';
             case (char) 966:
-                return 'f'; // phi
+                // phi
+                return 'f';
             case (char) 967:
-                return 'c'; // chi
+                // chi
+                return 'c';
             case (char) 968:
-                return 'y'; // psi
+                // psi
+                return 'y';
             case (char) 969:
-                return 'w'; // omega
+                // omega
+                return 'w';
             default:
                 return ' ';
         }

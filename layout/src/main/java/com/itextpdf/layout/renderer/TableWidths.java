@@ -115,128 +115,109 @@ final class TableWidths {
         calculateMinMaxWidths();
 
         float minSum = 0;
-        for (ColumnWidthData width : widths) minSum += width.min;
-
-        //region Process cells
+        for (ColumnWidthData width : widths) {
+            minSum += width.min;
+        }
 
         for (CellInfo cell : cells) {
-            // For automatic layout algorithm percents have higher priority
-            // value must be > 0, while for fixed layout >= 0
-            UnitValue cellWidth = getCellWidth(cell.getCell(), false);
-            if (cellWidth != null) {
-                assert cellWidth.getValue() > 0;
-                if (cellWidth.isPercentValue()) {
-                    //cellWidth has percent value
-                    if (cell.getColspan() == 1) {
-                        widths[cell.getCol()].setPercents(cellWidth.getValue());
-                    } else {
-                        int pointColumns = 0;
-                        float percentSum = 0;
-                        for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
-                            if (!widths[i].isPercent) {
-                                pointColumns++;
-                            } else {
-                                percentSum += widths[i].width;
+            processCell(cell);
+        }
+
+        processColumns();
+
+        recalculate(minSum);
+
+        return extractWidths();
+    }
+
+   List<CellInfo> autoLayoutCustom() {
+        assert tableRenderer.getTable().isComplete();
+        fillAndSortCells();
+        calculateMinMaxWidths();
+        return cells;
+    }
+
+    void processCell(CellInfo cell) {
+
+        // For automatic layout algorithm percents have higher priority
+        // value must be > 0, while for fixed layout >= 0
+        UnitValue cellWidth = getCellWidth(cell.getCell(), false);
+        if (cellWidth != null) {
+            assert cellWidth.getValue() > 0;
+            if (cellWidth.isPercentValue()) {
+
+                //cellWidth has percent value
+                if (cell.getColspan() == 1) {
+                    widths[cell.getCol()].setPercents(cellWidth.getValue());
+                } else {
+                    int pointColumns = 0;
+                    float percentSum = 0;
+                    for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
+                        if (!widths[i].isPercent) {
+                            pointColumns++;
+                        } else {
+                            percentSum += widths[i].width;
+                        }
+                    }
+                    float percentAddition = cellWidth.getValue() - percentSum;
+                    if (percentAddition > 0) {
+                        if (pointColumns == 0) {
+
+                            //ok, add percents to each column
+                            for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
+                                widths[i].addPercents(percentAddition / cell.getColspan());
+                            }
+                        } else {
+
+                            // set percent only to cells without one
+                            for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
+                                if (!widths[i].isPercent) {
+                                    widths[i].setPercents(percentAddition / pointColumns);
+                                }
                             }
                         }
-                        float percentAddition = cellWidth.getValue() - percentSum;
-                        if (percentAddition > 0) {
-                            if (pointColumns == 0) {
-                                //ok, add percents to each column
-                                for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
-                                    widths[i].addPercents(percentAddition / cell.getColspan());
-                                }
-                            } else {
-                                // set percent only to cells without one
-                                for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
-                                    if (!widths[i].isPercent) {
-                                        widths[i].setPercents(percentAddition / pointColumns);
-                                    }
-                                }
-                            }
+                    }
+                }
+            } else {
+
+                //cellWidth has point value
+                if (cell.getColspan() == 1) {
+                    if (!widths[cell.getCol()].isPercent) {
+                        if (widths[cell.getCol()].min <= cellWidth.getValue()) {
+                            widths[cell.getCol()].setPoints(cellWidth.getValue()).setFixed(true);
+                        } else {
+                            widths[cell.getCol()].setPoints(widths[cell.getCol()].min);
                         }
                     }
                 } else {
-                    //cellWidth has point value
-                    if (cell.getColspan() == 1) {
-                        if (!widths[cell.getCol()].isPercent) {
-                            if (widths[cell.getCol()].min <= cellWidth.getValue()) {
-                                widths[cell.getCol()].setPoints(cellWidth.getValue()).setFixed(true);
-                            } else {
-                                widths[cell.getCol()].setPoints(widths[cell.getCol()].min);
-                            }
-                        }
-                    } else {
-                        int flexibleCols = 0;
-                        float remainWidth = cellWidth.getValue();
-                        for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
-                            if (!widths[i].isPercent) {
-                                remainWidth -= widths[i].width;
-                                if (!widths[i].isFixed) {
-                                    flexibleCols++;
-                                }
-                            } else {
-                                // if any col has percent value, we cannot predict remaining width.
-                                remainWidth = 0;
-                                break;
-                            }
-                        }
-                        if (remainWidth > 0) {
-                            int[] flexibleColIndexes = ArrayUtil.fillWithValue(new int[cell.getColspan()], -1);
-                            if (flexibleCols > 0) {
-                                // check min width in columns
-                                for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
-                                    if (!widths[i].isFlexible())
-                                        continue;
-                                    if (widths[i].min > widths[i].width + remainWidth / flexibleCols) {
-                                        widths[i].resetPoints(widths[i].min);
-                                        remainWidth -= widths[i].min - widths[i].width;
-                                        flexibleCols--;
-                                        if (flexibleCols == 0 || remainWidth <= 0) {
-                                            break;
-                                        }
-                                    } else {
-                                        flexibleColIndexes[i - cell.getCol()] = i;
-                                    }
-                                }
-                                if (flexibleCols > 0 && remainWidth > 0) {
-                                    for (int i = 0; i < flexibleColIndexes.length; i++) {
-                                        if (flexibleColIndexes[i] >= 0) {
-                                            widths[flexibleColIndexes[i]].addPoints(remainWidth / flexibleCols).setFixed(true);
-                                        }
-                                    }
-                                }
-                            } else {
-                                for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
-                                    widths[i].addPoints(remainWidth / cell.getColspan());
-                                }
-                            }
-                        }
-                    }
+                    processCellsRemainWidth(cell,cellWidth);
                 }
-            } else if (widths[cell.getCol()].isFlexible()) {
-                //if there is no information, try to set max width
-                int flexibleCols = 0;
-                float remainWidth = 0;
+            }
+        } else if (widths[cell.getCol()].isFlexible()) {
+
+            //if there is no information, try to set max width
+            int flexibleCols = 0;
+            float remainWidth = 0;
+            for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
+                if (widths[i].isFlexible()) {
+                    remainWidth += widths[i].max - widths[i].width;
+                    flexibleCols++;
+                }
+            }
+            if (remainWidth > 0) {
+                // flexibleCols > 0 too
+                
                 for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
                     if (widths[i].isFlexible()) {
-                        remainWidth += widths[i].max - widths[i].width;
-                        flexibleCols++;
-                    }
-                }
-                if (remainWidth > 0) { // flexibleCols > 0 too
-                    for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
-                        if (widths[i].isFlexible()) {
-                            widths[i].addPoints(remainWidth / flexibleCols);
-                        }
+                        widths[i].addPoints(remainWidth / flexibleCols);
                     }
                 }
             }
         }
+    }
 
-        //endregion
+    void processColumns() {
 
-        //region Process columns
         //TODO add colgroup information.
         for (int i = 0; i < numberOfColumns; i++) {
             UnitValue colWidth = getTable().getColumnWidth(i);
@@ -257,9 +238,9 @@ final class TableWidths {
                 }
             }
         }
-        //endregion
+    }
 
-        // region recalculate
+    void recalculate(float minSum) {
         if (tableWidth - minSum < 0) {
             for (int i = 0; i < numberOfColumns; i++) {
                 widths[i].finalWidth = widths[i].min;
@@ -447,9 +428,54 @@ final class TableWidths {
                 }
             }
         }
-        //endregion
+    }
 
-        return extractWidths();
+    void processCellsRemainWidth(CellInfo cell, UnitValue cellWidth) {
+        int flexibleCols = 0;
+        float remainWidth = cellWidth.getValue();
+        for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
+            if (!widths[i].isPercent) {
+                remainWidth -= widths[i].width;
+                if (!widths[i].isFixed) {
+                    flexibleCols++;
+                }
+            } else {
+                // if any col has percent value, we cannot predict remaining width.
+                remainWidth = 0;
+                break;
+            }
+        }
+        if (remainWidth > 0) {
+            int[] flexibleColIndexes = ArrayUtil.fillWithValue(new int[cell.getColspan()], -1);
+            if (flexibleCols > 0) {
+                // check min width in columns
+                for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
+                    if (!widths[i].isFlexible())
+                        continue;
+                    if (widths[i].min > widths[i].width + remainWidth / flexibleCols) {
+                        widths[i].resetPoints(widths[i].min);
+                        remainWidth -= widths[i].min - widths[i].width;
+                        flexibleCols--;
+                        if (flexibleCols == 0 || remainWidth <= 0) {
+                            break;
+                        }
+                    } else {
+                        flexibleColIndexes[i - cell.getCol()] = i;
+                    }
+                }
+                if (flexibleCols > 0 && remainWidth > 0) {
+                    for (int i = 0; i < flexibleColIndexes.length; i++) {
+                        if (flexibleColIndexes[i] >= 0) {
+                            widths[flexibleColIndexes[i]].addPoints(remainWidth / flexibleCols).setFixed(true);
+                        }
+                    }
+                }
+            } else {
+                for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
+                    widths[i].addPoints(remainWidth / cell.getColspan());
+                }
+            }
+        }
     }
 
     float[] fixedLayout() {
@@ -483,7 +509,9 @@ final class TableWidths {
             columnWidthIfPercent[i] = -1;
         }
         float sumOfPercents = 0;
-        if (firtsRow != null && getTable().isComplete() && 0 == getTable().getLastRowBottomBorder().size()) { // only for not large tables
+
+        // only for not large tables
+        if (firtsRow != null && getTable().isComplete() && getTable().getLastRowBottomBorder().isEmpty()) {
             for (int i = 0; i < numberOfColumns; i++) {
                 if (columnWidths[i] == -1) {
                     CellRenderer cell = firtsRow[i];
@@ -867,7 +895,7 @@ final class TableWidths {
         return widthValue;
     }
 
-    private static class CellInfo implements Comparable<CellInfo> {
+    static class CellInfo implements Comparable<CellInfo> {
         static final byte HEADER = 1;
         static final byte BODY = 2;
         static final byte FOOTER = 3;

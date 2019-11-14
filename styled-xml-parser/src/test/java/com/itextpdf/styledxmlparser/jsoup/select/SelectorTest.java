@@ -44,6 +44,7 @@ package com.itextpdf.styledxmlparser.jsoup.select;
 
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
@@ -59,7 +60,7 @@ import static org.junit.Assert.*;
  * @author Jonathan Hedley, jonathan@hedley.net
  */
 @Category(UnitTest.class)
-public class SelectorTest {
+public class SelectorTest extends ExtendedITextTest {
     @Test public void testByTag() {
         Elements els = Jsoup.parse("<div id=1><div id=2><p>Hello</p></div></div><div id=3>").select("div");
         assertEquals(3, els.size());

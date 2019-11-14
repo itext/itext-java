@@ -70,7 +70,7 @@ public class FilteredTextEventListenerTest extends ExtendedITextTest {
         Assert.assertFalse(textIsInRectangle(doc, "Upper Right", upperLeft));
     }
 
-    private boolean textIsInRectangle(PdfDocument doc, String text, Rectangle rect) throws Exception {
+    private boolean textIsInRectangle(PdfDocument doc, String text, Rectangle rect) {
         FilteredTextEventListener filterListener = new FilteredTextEventListener(new LocationTextExtractionStrategy(), new TextRegionEventFilter(rect));
         String extractedText = PdfTextExtractor.getTextFromPage(doc.getPage(1), filterListener);
         return extractedText.equals(text);

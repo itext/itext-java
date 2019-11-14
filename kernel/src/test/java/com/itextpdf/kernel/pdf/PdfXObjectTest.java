@@ -64,6 +64,9 @@ import org.junit.experimental.categories.Category;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Category(IntegrationTest.class)
 public class PdfXObjectTest extends ExtendedITextTest{
@@ -182,4 +185,83 @@ public class PdfXObjectTest extends ExtendedITextTest{
 
     }
 
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY))
+    public void xObjectIterativeReference() throws IOException {
+
+        // The input file contains circular references chain, see: 8 0 R -> 10 0 R -> 4 0 R -> 8 0 R.
+        // Copying of such file even with smart mode is expected to be handled correctly.
+        String src = sourceFolder + "checkboxes_XObject_iterative_reference.pdf";
+        String dest = destinationFolder + "checkboxes_XObject_iterative_reference_out.pdf";
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(dest).setSmartMode(true));
+        PdfReader pdfReader = new PdfReader(src);
+        PdfDocument sourceDocumentPdf = new PdfDocument(pdfReader);
+        sourceDocumentPdf.copyPagesTo(1, sourceDocumentPdf.getNumberOfPages(), pdf);
+
+        //map <object pdf, count>
+        HashMap<String, Integer> mapIn = new HashMap<>();
+        HashMap<String, Integer> mapOut = new HashMap<>();
+
+        //map <object pdf, list of object id referenceing that podf object>
+        HashMap<String, List<Integer>> mapOutId = new HashMap<>();
+
+        PdfObject obj;
+
+        //create helpful data structures from pdf output
+        for (int i = 1; i < pdf.getNumberOfPdfObjects(); i++) {
+            obj = pdf.getPdfObject(i);
+            String objString = obj.toString();
+            Integer count = mapOut.get(objString);
+            List<Integer> list;
+
+            if (count == null) {
+                count = 1;
+                list = new ArrayList<Integer>();
+                list.add(i);
+            } else {
+                count++;
+                list = mapOutId.get(objString);
+            }
+
+            mapOut.put(objString, count);
+            mapOutId.put(objString, list);
+        }
+
+        //create helpful data structures from pdf input
+        for (int i = 1; i < sourceDocumentPdf.getNumberOfPdfObjects(); i++) {
+            obj = sourceDocumentPdf.getPdfObject(i);
+            String objString = obj.toString();
+            Integer count = mapIn.get(objString);
+
+            if (count == null) {
+                count = 1;
+            } else {
+                count++;
+            }
+            mapIn.put(objString, count);
+        }
+
+        pdf.close();
+
+        //the following object is copied and reused. it appears 6 times in the original pdf file. just once in the output file
+        String case1 = "<</BBox [0 0 20 20 ] /Filter /FlateDecode /FormType 1 /Length 12 /Matrix [1 0 0 1 0 0 ] /Resources <<>> /Subtype /Form /Type /XObject >>";
+        Integer countOut1 = mapOut.get(case1);
+        Integer countIn1 = mapIn.get(case1);
+        Assert.assertTrue(countOut1.equals(1) && countIn1.equals(6));
+
+        //the following object appears 1 time in the original pdf file and just once in the output file
+        String case2 = "<</BaseFont /ZapfDingbats /Subtype /Type1 /Type /Font >>";
+        Integer countOut2 = mapOut.get(case2);
+        Integer countIn2 = mapIn.get(case2);
+        Assert.assertTrue(countOut2.equals(countIn2) && countOut2.equals(1));
+
+        //from the original pdf the object "<</BBox [0 0 20 20 ] /Filter /FlateDecode /FormType 1 /Length 70 /Matrix [1 0 0 1 0 0 ] /Resources <</Font <</ZaDb 2 0 R >> >> /Subtype /Form /Type /XObject >>";
+        //is going to be found changed in the output pdf referencing the referenced object with another id which is retrieved through the hashmap
+        String case3 = "<</BaseFont /ZapfDingbats /Subtype /Type1 /Type /Font >>";
+        Integer countIdIn = mapOutId.get(case3).get(0);
+        //EXPECTED to be as the original but with different referenced object and marked as modified
+        String expected = "<</BBox [0 0 20 20 ] /Filter /FlateDecode /FormType 1 /Length 70 /Matrix [1 0 0 1 0 0 ] /Resources <</Font <</ZaDb " + countIdIn + " 0 R Modified; >> >> /Subtype /Form /Type /XObject >>";
+        Assert.assertTrue(mapOut.get(expected).equals(1));
+    }
 }

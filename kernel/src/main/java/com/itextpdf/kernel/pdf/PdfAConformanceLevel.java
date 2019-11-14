@@ -83,9 +83,9 @@ public class PdfAConformanceLevel implements Serializable {
 
     public static PdfAConformanceLevel getConformanceLevel(String part, String conformance) {
         String lowLetter = conformance.toUpperCase();
-        boolean aLevel = lowLetter.equals("A");
-        boolean bLevel = lowLetter.equals("B");
-        boolean uLevel = lowLetter.equals("U");
+        boolean aLevel = "A".equals(lowLetter);
+        boolean bLevel = "B".equals(lowLetter);
+        boolean uLevel = "U".equals(lowLetter);
 
         switch (part) {
             case "1":

@@ -142,6 +142,11 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     }
 
     /**
+     * The method will update set of used glyphs with range used in subset or with all glyphs if there is no subset.
+     * This set of used glyphs is required for building width array and ToUnicode CMAP.
+     *
+     * @param longTag a set of integers, which are glyph ids that denote used glyphs.
+     *                This set is updated inside of the method if needed.
      * @deprecated use {@link TrueTypeFont#updateUsedGlyphs(SortedSet, boolean, List)}
      */
     @Deprecated

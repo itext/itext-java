@@ -44,6 +44,8 @@
 package com.itextpdf.io.source;
 
 import com.itextpdf.io.LogMessageConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.NotSerializableException;
@@ -52,8 +54,6 @@ import java.io.ObjectOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.LinkedList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A RandomAccessSource that is based on an underlying {@link java.nio.channels.FileChannel}.  The channel is mapped into memory using a paging scheme to allow for efficient reads of very large files.
@@ -180,7 +180,7 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
         throw new NotSerializableException(getClass().toString());
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException {
         throw new NotSerializableException(getClass().toString());
     }
 

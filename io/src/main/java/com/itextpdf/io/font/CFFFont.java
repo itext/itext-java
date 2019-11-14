@@ -232,7 +232,8 @@ public class CFFFont {
 
         if (count==0) {
             offsets[0] = -1;
-            nextIndexOffset += 2; // TODO death store to local var .. should this be this.nextIndexOffset ?
+            // TODO death store to local var .. should this be this.nextIndexOffset ?
+            nextIndexOffset += 2;
             return offsets;
         }
 
@@ -698,18 +699,23 @@ public class CFFFont {
 
         // create a name index
 
-        l.addLast(new UInt16Item((char)1)); // count
-        l.addLast(new UInt8Item((char)1)); // offSize
-        l.addLast(new UInt8Item((char)1)); // first offset
+        // count
+        l.addLast(new UInt16Item((char)1));
+        // offSize
+        l.addLast(new UInt8Item((char)1));
+        // first offset
+        l.addLast(new UInt8Item((char)1));
         l.addLast(new UInt8Item((char)( 1+fonts[j].name.length() )));
         l.addLast(new StringItem(fonts[j].name));
 
         // create the topdict Index
 
-
-        l.addLast(new UInt16Item((char)1)); // count
-        l.addLast(new UInt8Item((char)2)); // offSize
-        l.addLast(new UInt16Item((char)1)); // first offset
+        // count
+        l.addLast(new UInt16Item((char)1));
+        // offSize
+        l.addLast(new UInt8Item((char)2));
+        // first offset
+        l.addLast(new UInt16Item((char)1));
         OffsetItem topdictIndex1Ref = new IndexOffsetItem(2);
         l.addLast(topdictIndex1Ref);
         IndexBaseItem topdictBase = new IndexBaseItem();
@@ -731,16 +737,19 @@ public class CFFFont {
         OffsetItem fdselectRef    = new DictOffsetItem();
 
         if ( !fonts[j].isCID ) {
+
             // create a ROS key
             l.addLast(new DictNumberItem(nstrings));
             l.addLast(new DictNumberItem(nstrings+1));
             l.addLast(new DictNumberItem(0));
             l.addLast(new UInt8Item((char)12));
             l.addLast(new UInt8Item((char)30));
+
             // create a CIDCount key
             l.addLast(new DictNumberItem(nglyphs));
             l.addLast(new UInt8Item((char)12));
             l.addLast(new UInt8Item((char)34));
+
             // What about UIDBase (12,35)? Don't know what is it.
             // I don't think we need FontName; the font I looked at didn't have it.
         }
@@ -749,13 +758,16 @@ public class CFFFont {
         l.addLast(fdarrayRef);
         l.addLast(new UInt8Item((char)12));
         l.addLast(new UInt8Item((char)36));
+
         // create an FDSelect key
         l.addLast(fdselectRef);
         l.addLast(new UInt8Item((char)12));
         l.addLast(new UInt8Item((char)37));
+
         // create an charset key
         l.addLast(charsetRef);
         l.addLast(new UInt8Item((char)15));
+
         // create a CharStrings key
         l.addLast(charstringsRef);
         l.addLast(new UInt8Item((char)17));
@@ -772,7 +784,8 @@ public class CFFFont {
                     || "charset".equals(key)
                     || "CharStrings".equals(key)
                     ) {
-                // just drop them
+
+            // just drop them
             } else {
                 l.addLast(new RangeItem(buf,p1,p2-p1));
             }
@@ -802,14 +815,16 @@ public class CFFFont {
             else if (origStringsLen+extraStrings.length() <= 0xffffff) stringsIndexOffSize = 3;
             else stringsIndexOffSize = 4;
 
-            l.addLast(new UInt16Item((char)(stringOffsets.length-1+3))); // count
-            l.addLast(new UInt8Item((char)stringsIndexOffSize)); // offSize
+            // count
+            l.addLast(new UInt16Item((char)(stringOffsets.length-1+3)));
+            // offSize
+            l.addLast(new UInt8Item((char)stringsIndexOffSize));
             for (int stringOffset : stringOffsets)
                 l.addLast(new IndexOffsetItem(stringsIndexOffSize,
                         stringOffset-stringsBaseOffset));
             int currentStringsOffset = stringOffsets[stringOffsets.length-1]
                     - stringsBaseOffset;
-            //l.addLast(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));
+            // l.addLast(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));
             currentStringsOffset += "Adobe".length();
             l.addLast(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));
             currentStringsOffset += "Identity".length();
@@ -832,30 +847,40 @@ public class CFFFont {
         } else {
             // create FDSelect
             l.addLast(new MarkerItem(fdselectRef));
-            l.addLast(new UInt8Item((char)3)); // format identifier
-            l.addLast(new UInt16Item((char)1)); // nRanges
+            // format identifier
+            l.addLast(new UInt8Item((char)3));
+            // nRanges
+            l.addLast(new UInt16Item((char)1));
 
-            l.addLast(new UInt16Item((char)0)); // Range[0].firstGlyph
-            l.addLast(new UInt8Item((char)0)); // Range[0].fd
+            // Range[0].firstGlyph
+            l.addLast(new UInt16Item((char)0));
+            // Range[0].fd
+            l.addLast(new UInt8Item((char)0));
 
-            l.addLast(new UInt16Item((char)nglyphs)); // sentinel
+            // sentinel
+            l.addLast(new UInt16Item((char)nglyphs));
 
             // recreate a new charset
             // This format is suitable only for fonts without subsetting
 
             l.addLast(new MarkerItem(charsetRef));
-            l.addLast(new UInt8Item((char)2)); // format identifier
+            // format identifier
+            l.addLast(new UInt8Item((char)2));
 
-            l.addLast(new UInt16Item((char)1)); // first glyph in range (ignore .notdef)
-            l.addLast(new UInt16Item((char)(nglyphs-1))); // nLeft
+            // first glyph in range (ignore .notdef)
+            l.addLast(new UInt16Item((char)1));
+            // nLeft
+            l.addLast(new UInt16Item((char)(nglyphs-1)));
+
             // now all are covered, the data structure is complete.
-
             // create a font dict index (fdarray)
 
             l.addLast(new MarkerItem(fdarrayRef));
             l.addLast(new UInt16Item((char)1));
-            l.addLast(new UInt8Item((char)1)); // offSize
-            l.addLast(new UInt8Item((char)1)); // first offset
+            // offSize
+            l.addLast(new UInt8Item((char)1));
+            // first offset
+            l.addLast(new UInt8Item((char)1));
 
             OffsetItem privateIndex1Ref = new IndexOffsetItem(1);
             l.addLast(privateIndex1Ref);
@@ -872,7 +897,8 @@ public class CFFFont {
             l.addLast(new DictNumberItem(fonts[j].privateLength));
             OffsetItem privateRef = new DictOffsetItem();
             l.addLast(privateRef);
-            l.addLast(new UInt8Item((char)18)); // Private
+            // Private
+            l.addLast(new UInt8Item((char)18));
 
             l.addLast(new IndexMarkerItem(privateIndex1Ref,privateBase));
 
@@ -958,14 +984,18 @@ public class CFFFont {
         public String    name;
         public String    fullName;
         public boolean   isCID = false;
-        public int       privateOffset     = -1; // only if not CID
-        public int       privateLength     = -1; // only if not CID
+        // only if not CID
+        public int       privateOffset     = -1;
+        // only if not CID
+        public int       privateLength     = -1;
         public int       privateSubrs      = -1;
         public int       charstringsOffset = -1;
         public int       encodingOffset    = -1;
         public int       charsetOffset     = -1;
-        public int       fdarrayOffset     = -1; // only if CID
-        public int       fdselectOffset    = -1; // only if CID
+        // only if CID
+        public int       fdarrayOffset     = -1;
+        // only if CID
+        public int       fdselectOffset    = -1;
         public int[]     fdprivateOffsets;
         public int[]     fdprivateLengths;
         public int[]     fdprivateSubrs;

@@ -431,8 +431,8 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
         PdfPage secondPage = document.addNewPage();
 
-
-        firstPage.flush(); // on flushing, the Document tag is not added
+        // on flushing, the Document tag is not added
+        firstPage.flush();
         secondPage.flush();
 
         document.close();

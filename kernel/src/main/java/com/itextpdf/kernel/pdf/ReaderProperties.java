@@ -53,11 +53,15 @@ public class ReaderProperties implements Serializable {
 
     private static final long serialVersionUID = 5569118801793215916L;
 
-    protected byte[] password; //added by ujihara for decryption
+    //added by ujihara for decryption
+    protected byte[] password;
 
-    protected Key certificateKey; //added by Aiken Sam for certificate decryption
-    protected Certificate certificate; //added by Aiken Sam for certificate decryption
-    protected String certificateKeyProvider; //added by Aiken Sam for certificate decryption
+    //added by Aiken Sam for certificate decryption
+    protected Key certificateKey;
+    //added by Aiken Sam for certificate decryption
+    protected Certificate certificate;
+    //added by Aiken Sam for certificate decryption
+    protected String certificateKeyProvider;
     protected IExternalDecryptionProcess externalDecryptionProcess;
 
     protected MemoryLimitsAwareHandler memoryLimitsAwareHandler;

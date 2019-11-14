@@ -595,10 +595,8 @@ public class PdfSignatureAppearance {
 
     /**
      * Constructs appearance (top-level) for a signature.
-     * <p>
-     * Consult <A HREF="http://partners.adobe.com/asn/developer/pdfs/tn/PPKAppearances.pdf">PPKAppearances.pdf</A>
-     * for further details.
      *
+     * @see <a href="http://partners.adobe.com/asn/developer/pdfs/tn/PPKAppearances.pdf">PPKAppearances.pdf</a> for further details
      * @return a top-level signature appearance
      * @throws IOException
      */

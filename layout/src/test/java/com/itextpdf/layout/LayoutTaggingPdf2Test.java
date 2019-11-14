@@ -71,10 +71,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.text.MessageFormat;
-import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -82,6 +78,11 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.text.MessageFormat;
 
 @Category(IntegrationTest.class)
 public class LayoutTaggingPdf2Test extends ExtendedITextTest {
@@ -325,7 +326,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
-    public void docWithInvalidMapping01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+    public void docWithInvalidMapping01() throws IOException {
         junitExpectedException.expect(PdfException.class);
         junitExpectedException.expectMessage(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole, "p", "http://iso.org/pdf/ssn"));
 
@@ -351,7 +352,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
-    public void docWithInvalidMapping02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+    public void docWithInvalidMapping02() throws IOException {
         junitExpectedException.expect(PdfException.class);
         junitExpectedException.expectMessage(MessageFormat.format(PdfException.RoleIsNotMappedToAnyStandardRole, "p"));
 
@@ -376,7 +377,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
-    public void docWithInvalidMapping03() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+    public void docWithInvalidMapping03() throws IOException {
         junitExpectedException.expect(PdfException.class);
         junitExpectedException.expectMessage(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole, "p", "http://iso.org/pdf2/ssn"));
 
@@ -420,7 +421,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
-    public void docWithInvalidMapping05() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+    public void docWithInvalidMapping05() throws IOException {
         junitExpectedException.expect(PdfException.class);
         junitExpectedException.expectMessage(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole, "p", "http://iso.org/pdf2/ssn"));
 
@@ -486,7 +487,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS, count = 1))
-    public void docWithInvalidMapping07() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+    public void docWithInvalidMapping07() throws IOException {
         junitExpectedException.expect(PdfException.class);
         junitExpectedException.expectMessage(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole, "span", "http://iso.org/pdf2/ssn"));
 
@@ -518,7 +519,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
-    public void docWithInvalidMapping08() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+    public void docWithInvalidMapping08() throws IOException {
         junitExpectedException.expect(PdfException.class);
         junitExpectedException.expectMessage(MessageFormat.format(PdfException.RoleIsNotMappedToAnyStandardRole, "H9"));
 

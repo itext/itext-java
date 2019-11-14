@@ -259,11 +259,15 @@ final class MaskUtil {
                         penalty += 1;
                     }
                 } else {
-                    numSameBitCells = 1;  // Include the cell itself.
+
+                    // Include the cell itself.
+                    numSameBitCells = 1;
                     prevBit = bit;
                 }
             }
-            numSameBitCells = 0;  // Clear at each row/column.
+
+            // Clear at each row/column.
+            numSameBitCells = 0;
         }
         return penalty;
     }

@@ -42,7 +42,10 @@
  */
 package com.itextpdf.svg.renderers;
 
+import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
@@ -84,7 +87,15 @@ public class StrokeTest extends SvgIntegrationTest {
 
     @Test
     //TODO: update cmp-file after DEVSIX-2258
-    public void advanced_stroke_Test() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke_advanced");
+    public void advancedStrokeTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeAdvanced");
+    }
+
+    @Test
+    //TODO: update cmp-file after DEVSIX-3432
+    @LogMessages(messages = @LogMessage
+            (messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 12))
+    public void strokeWidthMeasureUnitsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeWidthMeasureUnitsTest");
     }
 }

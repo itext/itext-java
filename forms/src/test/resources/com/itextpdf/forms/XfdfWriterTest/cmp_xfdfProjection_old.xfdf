@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve"
+><annots
+><projection color="#E52237" creationdate="D:20190610122025+03'00'" flags="print" date="D:20190610122025+03'00'" name="8dc59a17-e956-410f-ab20-3ca46cb9fc83" page="0" rect="0.000000,0.000000,0.000000,0.000000" title="Alex"
+><contents-richtext
+><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
+><p
+>This is a comment #1</p
+></body
+></contents-richtext
+><ex_data subtype="3DM"
+>
+   <exdata3d
+>
+      <anno3dname
+>3D1</anno3dname
+>
+      <view3d
+>
+         <externalname
+>3DCommentView1</externalname
+>
+         <internalname
+>7d64c2a8-9642-4d6f-9588-b4cca7482662</internalname
+>
+         <cameraxform
+>
+            0.1634320021 0.9752659798 0.1488160044 
+            0.1722069979 -0.1767289937 0.9690780044 
+            0.9714090228 -0.1327510029 -0.1968310028 
+            -1.0899699926 0.3964940012 0.3088749945 
+         </cameraxform
+>
+         <targetdistance
+>1.2341799736</targetdistance
+>
+         <projection projtype="perspective"
+>
+            <fieldofview
+>30.0000000000</fieldofview
+>
+            <scaletype
+>min</scaletype
+>
+         </projection
+>
+         <background
+>
+            0.3764648438 0.3764648438 0.3764648438
+         </background
+>
+         <renderinginfo mode="solid"
+/>
+         <lighting scheme="headlamp"
+/>
+         <shouldresetnodes
+/>
+         <measure
+>
+            <measurename
+>3DComment1</measurename
+>
+            <comment3dmarkup
+>
+               <anchor
+>
+                  -0.0869885981 0.0999901965 0.0961647034
+               </anchor
+>
+               <anchorpartname
+>face_9C67831E</anchorpartname
+>
+               <textboxx
+>20</textboxx
+>
+               <textboxy
+>1</textboxy
+>
+               <textposition
+>
+                  -0.0578861982 -0.0308445003 -0.1770160049
+               </textposition
+>
+               <textsize
+>20.0000000000</textsize
+>
+               <markupcolor
+>
+                  0.0000000000 0.9960784314 0.0000000000
+               </markupcolor
+>
+               <usertext
+>
+                  This is a comment #1
+               </usertext
+>
+            </comment3dmarkup
+>
+         </measure
+>
+      </view3d
+>
+      <measurementcomment
+>3DComment1</measurementcomment
+>
+   </exdata3d
+>
+
+</ex_data
+><popup flags="print,nozoom,norotate" open="no" page="0" rect="612.000000,-120.000000,792.000000,0.000000"
+/></projection
+></annots
+><f href="xfdfAnnotationProjection.pdf"
+/><ids original="309189D34BCECB4EBDAD2E64FDC64D1D" modified="DCD0A17E266B6B40B735D095D1D7E6C7"
+/></xfdf
+>

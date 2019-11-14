@@ -44,6 +44,10 @@ package com.itextpdf.forms.xfdf;
 
 public class AttributeNotFoundException extends RuntimeException {
 
+    /**
+     * The exception thrown when the attribute with given name is not found in the object attributes list.
+     * @param attribute the name of missing attribute.
+     */
     public AttributeNotFoundException(String attribute) {
         super("Required attribute " + attribute + " is not found");
     }

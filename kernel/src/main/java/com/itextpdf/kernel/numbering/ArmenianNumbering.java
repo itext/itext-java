@@ -91,9 +91,10 @@ public class ArmenianNumbering {
     }
 
     /**
-     * Returns an armenian numeral representation of an integer.
+     * Converts an integer to armenian numeral representation.
      *
      * @param number a number greater than zero to be converted to armenian notation
+     * @return an armenian numeral representation of an integer.
      */
     public static String toArmenian(int number) {
         StringBuilder result = new StringBuilder();

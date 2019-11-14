@@ -47,6 +47,11 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 
+/**
+ * @deprecated Remove this class in 7.2. The deprecation relates to the fact that the prototype
+ * hasn't been implemented in a full yet and we do not expect the situation to change.
+ */
+@Deprecated
 public class PdfRichMediaAnnotation extends PdfAnnotation {
 
     private static final long serialVersionUID = 5368329326723025646L;

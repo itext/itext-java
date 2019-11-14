@@ -157,7 +157,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         Rectangle layoutBox = areas.get(0).clone();
 
-        Set<Rectangle> nonChildFloatingRendererAreas = new HashSet<>(floatRendererAreas); // rectangles are compared by instances
+        // rectangles are compared by instances
+        Set<Rectangle> nonChildFloatingRendererAreas = new HashSet<>(floatRendererAreas);
 
         // the first renderer (one of childRenderers or their children) to produce LayoutResult.NOTHING
         IRenderer causeOfNothing = null;
@@ -359,11 +360,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
             anythingPlaced = anythingPlaced || result.getStatus() != LayoutResult.NOTHING;
 
-            if (result.getOccupiedArea() != null) {
-                if (!FloatingHelper.isRendererFloating(childRenderer) || includeFloatsInOccupiedArea) { // this check is needed only if margins collapsing is enabled
-                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
-                    fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
-                }
+            // The second condition check (after &&) is needed only if margins collapsing is enabled
+            if (result.getOccupiedArea() != null && (!FloatingHelper.isRendererFloating(childRenderer) || includeFloatsInOccupiedArea)) {
+                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+                fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
             }
             if (marginsCollapsingEnabled) {
                 marginsCollapseHandler.endChildMarginsHandling(layoutBox);
@@ -412,7 +412,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
             return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
         }
 
-        if (overflowRenderer != null || processOverflowedFloats) { // in this case layout result need to be changed
+        // in this case layout result need to be changed
+        if (overflowRenderer != null || processOverflowedFloats) {
             layoutResult = !anythingPlaced && !waitingOverflowFloatRenderers.isEmpty()
                     // nothing was placed and there are some overflowed floats
                     ? LayoutResult.NOTHING
@@ -689,9 +690,14 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
 
             // transforms apply from bottom to top
-            rotationTransform.translate((float) rotationPointX, (float) rotationPointY); // move point back at place
-            rotationTransform.rotate(angle); // rotate
-            rotationTransform.translate((float) -rotationPointX, (float) -rotationPointY); // move rotation point to origin
+            // move point back at place
+            rotationTransform.translate((float) rotationPointX, (float) rotationPointY);
+
+            // rotate
+            rotationTransform.rotate(angle);
+
+            // move rotation point to origin
+            rotationTransform.translate((float) -rotationPointX, (float) -rotationPointY);
 
             List<Point> rotatedPoints = transformPoints(rectangleToPointsList(occupiedArea.getBBox()), rotationTransform);
             Rectangle newBBox = calculateBBox(rotatedPoints);

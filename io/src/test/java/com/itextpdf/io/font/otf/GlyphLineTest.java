@@ -44,6 +44,7 @@ package com.itextpdf.io.font.otf;
 
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -56,7 +57,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Category(UnitTest.class)
-public class GlyphLineTest {
+public class GlyphLineTest extends ExtendedITextTest {
 
     private static List<Glyph> constructGlyphListFromString(String text, TrueTypeFont font) {
         List<Glyph> glyphList = new ArrayList<>();

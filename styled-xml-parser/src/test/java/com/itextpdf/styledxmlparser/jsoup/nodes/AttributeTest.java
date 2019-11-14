@@ -42,6 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.nodes;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Test;
@@ -50,7 +51,7 @@ import org.junit.experimental.categories.Category;
 import static org.junit.Assert.assertEquals;
 
 @Category(UnitTest.class)
-public class AttributeTest {
+public class AttributeTest extends ExtendedITextTest {
     @Test public void html() {
         Attribute attr = new Attribute("key", "value &");
         assertEquals("key=\"value &amp;\"", attr.html());

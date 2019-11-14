@@ -53,15 +53,9 @@ import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.SignatureUtil;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.PrivateKey;
-import java.security.Security;
-import java.security.cert.Certificate;
+import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
@@ -70,13 +64,18 @@ import org.bouncycastle.asn1.esf.SignaturePolicyId;
 import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.tsp.TSPException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.cert.Certificate;
 
 @Category(IntegrationTest.class)
 public class PadesSigTest extends ExtendedITextTest {
@@ -93,14 +92,14 @@ public class PadesSigTest extends ExtendedITextTest {
     }
 
     @Test
-    public void padesRsaSigTest01() throws IOException, GeneralSecurityException, TSPException, OperatorCreationException {
+    public void padesRsaSigTest01() throws IOException, GeneralSecurityException {
         signApproval(certsSrc + "signCertRsa01.p12", destinationFolder + "padesRsaSigTest01.pdf");
 
         basicCheckSignedDoc(destinationFolder + "padesRsaSigTest01.pdf", "Signature1");
     }
 
     @Test
-    public void padesRsaSigTestWithChain01() throws IOException, GeneralSecurityException, TSPException, OperatorCreationException {
+    public void padesRsaSigTestWithChain01() throws IOException, GeneralSecurityException {
         signApproval(certsSrc + "signCertRsaWithChain.p12", destinationFolder + "padesRsaSigTestWithChain01.pdf");
 
         basicCheckSignedDoc(destinationFolder + "padesRsaSigTestWithChain01.pdf", "Signature1");
@@ -108,12 +107,12 @@ public class PadesSigTest extends ExtendedITextTest {
 
     @Test
     @Ignore("DEVSIX-1620: For some reason signatures created with the given cert (either by iText or acrobat) are considered invalid")
-    public void padesDsaSigTest01() throws IOException, GeneralSecurityException, TSPException, OperatorCreationException {
+    public void padesDsaSigTest01() throws IOException, GeneralSecurityException {
         signApproval(certsSrc + "signCertDsa01.p12", destinationFolder + "padesDsaSigTest01.pdf");
     }
 
     @Test
-    public void padesEccSigTest01() throws IOException, GeneralSecurityException, TSPException, OperatorCreationException {
+    public void padesEccSigTest01() throws IOException, GeneralSecurityException {
         signApproval(certsSrc + "signCertEcc01.p12", destinationFolder + "padesEccSigTest01.pdf");
 
         // TODO ECDSA encryption algorithms verification is not supported

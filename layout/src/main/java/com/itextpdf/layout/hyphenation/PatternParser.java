@@ -17,13 +17,6 @@
 
 package com.itextpdf.layout.hyphenation;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import javax.xml.parsers.SAXParserFactory;
-
 import com.itextpdf.io.util.ResourceUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -31,6 +24,13 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.parsers.SAXParserFactory;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * A SAX document handler to read and parse hyphenation patterns
@@ -56,14 +56,15 @@ public class PatternParser extends DefaultHandler {
 
     /**
      * Construct a pattern parser.
-     * @throws HyphenationException if a hyphenation exception is raised
      */
-    private PatternParser() throws HyphenationException {
+    private PatternParser() {
         token = new StringBuilder();
         parser = createParser();
         parser.setContentHandler(this);
         parser.setErrorHandler(this);
-        hyphenChar = '-';    // default
+
+        // default
+        hyphenChar = '-';
     }
 
     /**
@@ -231,7 +232,9 @@ public class PatternParser extends DefaultHandler {
 
     private static String getInterletterValues(String pat) {
         StringBuilder il = new StringBuilder();
-        String word = pat + "a";    // add dummy letter to serve as sentinel
+
+        // add dummy letter to serve as sentinel
+        String word = pat + "a";
         int len = word.length();
         for (int i = 0; i < len; i++) {
             char c = word.charAt(i);
@@ -423,9 +426,9 @@ public class PatternParser extends DefaultHandler {
         str.append(':');
         str.append(ex.getColumnNumber());
 
+        // getLocationString(SAXParseException):String
         return str.toString();
-
-    }    // getLocationString(SAXParseException):String
+    }
 
 
 }

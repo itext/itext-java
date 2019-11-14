@@ -552,10 +552,9 @@ public class ListTest extends ExtendedITextTest {
     }
 
     @Test
-    public void listSetSymbol() throws Exception {
+    public void listSetSymbol() {
         List list = new List();
-        //Assert.assertEquals("- ", ((Text) list.getProperty(Property.LIST_SYMBOL)).getText());
-        Assert.assertEquals(null, list.<Object>getProperty(Property.LIST_SYMBOL));
+        Assert.assertNull(list.<Object>getProperty(Property.LIST_SYMBOL));
         list.setListSymbol("* ");
         Assert.assertEquals("* ", ((Text) list.<Object>getProperty(Property.LIST_SYMBOL)).getText());
 
@@ -613,7 +612,7 @@ public class ListTest extends ExtendedITextTest {
         document.add(new Paragraph("After list."));
 
         document.close();
-        // TODO DEVSIX-1001: partially not fitting list symbol not shown at all, however this might be improved
+        // TODO DEVSIX-1655: partially not fitting list symbol not shown at all, however this might be improved
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
     }
 }

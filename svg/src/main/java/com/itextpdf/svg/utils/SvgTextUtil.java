@@ -171,7 +171,7 @@ public final class SvgTextUtil {
         trimmedText = SvgTextUtil.trimLeadingWhitespace(trimmedText);
         //Trim trailing whitespace
         trimmedText = SvgTextUtil.trimTrailingWhitespace(trimmedText);
-        return trimmedText.equals("");
+        return "".equals(trimmedText);
     }
 
     /**
@@ -187,7 +187,6 @@ public final class SvgTextUtil {
         String elementFontSize = renderer.getAttribute(SvgConstants.Attributes.FONT_SIZE);
         if (null != elementFontSize && !elementFontSize.isEmpty()) {
             if (CssUtils.isRelativeValue(elementFontSize) || CommonCssConstants.LARGER.equals(elementFontSize) || CommonCssConstants.SMALLER.equals(elementFontSize)) {
-                // TODO DEVSIX-2866 Support rem value for svgs
                 fontSize = CssUtils.parseRelativeFontSize(elementFontSize, parentFontSize);
             } else {
                 fontSize = CssUtils.parseAbsoluteFontSize(elementFontSize, CommonCssConstants.PX);

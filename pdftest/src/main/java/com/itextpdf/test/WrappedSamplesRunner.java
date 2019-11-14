@@ -42,6 +42,11 @@
  */
 package com.itextpdf.test;
 
+import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -51,10 +56,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public abstract class WrappedSamplesRunner {
@@ -190,7 +191,7 @@ public abstract class WrappedSamplesRunner {
         }
     }
 
-    private void runMain() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private void runMain() throws IllegalAccessException, InvocationTargetException {
         Method mainMethod = getMain(sampleClass);
         if (mainMethod == null) {
             throw new IllegalArgumentException("Class must have main method.");

@@ -70,8 +70,8 @@ class XfdfWriter {
     }
 
     /**
-     * The method writes data from XfdfObject into a xfdf data file.
-     *
+     * Writes data from {@link XfdfObject} into a xfdf data file.
+     * @param xfdfObject {@link XfdfObject} containing the data.
      */
     void write(XfdfObject xfdfObject) throws TransformerException, ParserConfigurationException {
         this.writeDom(xfdfObject);
@@ -166,7 +166,7 @@ class XfdfWriter {
                 addField(childField, field, document, fieldList);
             }
         } else {
-            if (fieldObject.getValue() != null) {
+            if (fieldObject.getValue() != null && !fieldObject.getValue().isEmpty()) {
                 Element value = document.createElement("value");
                 value.setTextContent(fieldObject.getValue());
                 field.appendChild(value);
@@ -194,7 +194,7 @@ class XfdfWriter {
 
         if (annotObject.getContents() != null) {
             Element contents = document.createElement("contents");
-            contents.setTextContent(annotObject.getContents().toString());
+            contents.setTextContent(annotObject.getContents().toString().replace('\r', '\n'));
             annot.appendChild(contents);
         }
 
