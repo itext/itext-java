@@ -52,7 +52,7 @@ public class PdfMcrDictionary extends PdfMcr {
 
     private static final long serialVersionUID = 3562443854685749324L;
 
-	public PdfMcrDictionary(PdfDictionary pdfObject, PdfStructElem parent) {
+    public PdfMcrDictionary(PdfDictionary pdfObject, PdfStructElem parent) {
         super(pdfObject, parent);
     }
 
@@ -73,9 +73,6 @@ public class PdfMcrDictionary extends PdfMcr {
 
     @Override
     public PdfDictionary getPageObject() {
-        PdfDictionary page = ((PdfDictionary)getPdfObject()).getAsDictionary(PdfName.Pg);
-        if (page == null)
-            page = parent.getPdfObject().getAsDictionary(PdfName.Pg);
-        return page;
+        return super.getPageObject();
     }
 }

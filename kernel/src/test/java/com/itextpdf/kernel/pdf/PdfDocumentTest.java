@@ -358,7 +358,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.close();
         Assert.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + "datasheet_mode.pdf", sourceFolder + "cmp_datasheet_mode.pdf",
-                        "d:/", "diff_"));
+                        destinationFolder, "diff_"));
     }
 
     @Test
@@ -403,7 +403,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         pdfDocument.close();
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "add_associated_files01.pdf",
-                sourceFolder + "cmp_add_associated_files01.pdf", "d:/", "diff_"));
+                sourceFolder + "cmp_add_associated_files01.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -435,7 +435,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         pdfDocument.close();
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "add_associated_files02.pdf",
-                sourceFolder + "cmp_add_associated_files02.pdf", "d:/", "diff_"));
+                sourceFolder + "cmp_add_associated_files02.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -444,8 +444,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
         PdfDocument doNotIgnoreTagStructureDocument = new PdfDocument(new PdfReader(srcFile));
         IgnoreTagStructurePdfDocument ignoreTagStructureDocument = new IgnoreTagStructurePdfDocument(
                 new PdfReader(srcFile));
-        Assert.assertNotNull(doNotIgnoreTagStructureDocument.getStructTreeRoot());
-        Assert.assertNull(ignoreTagStructureDocument.getStructTreeRoot());
+        Assert.assertTrue(doNotIgnoreTagStructureDocument.isTagged());
+        Assert.assertFalse(ignoreTagStructureDocument.isTagged());
+
+        doNotIgnoreTagStructureDocument.close();
+        ignoreTagStructureDocument.close();
     }
 
     private class IgnoreTagStructurePdfDocument extends PdfDocument {

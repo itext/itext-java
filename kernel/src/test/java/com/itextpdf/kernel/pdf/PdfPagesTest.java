@@ -564,4 +564,31 @@ public class PdfPagesTest extends ExtendedITextTest {
 
         Assert.fail("Exception was not thrown");
     }
+
+    @Test
+    public void verifyPagesAreNotReadOnOpenTest() throws IOException {
+        String srcFile = sourceFolder + "taggedOnePage.pdf";
+        CustomPdfReader reader = new CustomPdfReader(srcFile);
+        PdfDocument document = new PdfDocument(reader);
+        document.close();
+        Assert.assertFalse(reader.undesiredPageHasBeenRead);
+    }
+
+    private class CustomPdfReader extends PdfReader {
+
+        public boolean undesiredPageHasBeenRead = false;
+
+        public CustomPdfReader(String filename) throws IOException {
+            super(filename);
+        }
+
+        @Override
+        protected PdfObject readObject(PdfIndirectReference reference) {
+            PdfObject toReturn = super.readObject(reference);
+            if (reference.getObjNumber() == 6) {
+                undesiredPageHasBeenRead = true;
+            }
+            return toReturn;
+        }
+    }
 }

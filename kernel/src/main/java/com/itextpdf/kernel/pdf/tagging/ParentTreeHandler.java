@@ -173,16 +173,16 @@ class ParentTreeHandler implements Serializable {
     }
 
     private void registerMcr(PdfMcr mcr, boolean registeringOnInit) {
-        PdfDictionary mcrPageObject = mcr.getPageObject();
-        if (mcrPageObject == null || (!(mcr instanceof PdfObjRef) && mcr.getMcid() < 0)) {
+        PdfIndirectReference mcrPageIndRef = mcr.getPageIndirectReference();
+        if (mcrPageIndRef == null || (!(mcr instanceof PdfObjRef) && mcr.getMcid() < 0)) {
             Logger logger = LoggerFactory.getLogger(ParentTreeHandler.class);
             logger.error(LogMessageConstant.ENCOUNTERED_INVALID_MCR);
             return;
         }
-        PageMcrsContainer pageMcrs = pageToPageMcrs.get(mcrPageObject.getIndirectReference());
+        PageMcrsContainer pageMcrs = pageToPageMcrs.get(mcrPageIndRef);
         if (pageMcrs == null) {
             pageMcrs = new PageMcrsContainer();
-            pageToPageMcrs.put(mcrPageObject.getIndirectReference(), pageMcrs);
+            pageToPageMcrs.put(mcrPageIndRef, pageMcrs);
         }
 
         PdfObject stm;
