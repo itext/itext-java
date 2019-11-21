@@ -54,6 +54,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -159,6 +160,30 @@ public class PdfNameTreeTest extends ExtendedITextTest {
     @Test
     public void setModifiedFlagAppendModeTest() throws IOException {
         testSetModified(true);
+    }
+
+    @Test
+    public void checkNamesOrder() throws IOException {
+        PdfDocument doc = new PdfDocument(new PdfReader(sourceFolder + "namedDestinations.pdf"));
+        final List<String> expectedNames = new ArrayList<>();
+        expectedNames.add("Destination_1");
+        expectedNames.add("Destination_2");
+        expectedNames.add("Destination_3");
+        expectedNames.add("Destination_4");
+        expectedNames.add("Destination_5");
+
+        System.out.println("Expected names: " + expectedNames);
+
+        for (int i = 0; i < 10; i++) {
+            Map<String, PdfObject> names = doc.getCatalog().getNameTree(PdfName.Dests).getNames();
+            List<String> actualNames = new ArrayList<>(names.keySet());
+
+            System.out.println("Actual names:   " + actualNames);
+
+            Assert.assertEquals(expectedNames, actualNames);
+        }
+
+       doc.close();
     }
 
     private static void testSetModified(boolean isAppendMode) throws IOException {

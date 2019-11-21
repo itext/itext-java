@@ -45,6 +45,8 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.MessageFormatUtil;
+
+import java.util.LinkedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +63,7 @@ public class PdfNameTree implements Serializable {
     private static final long serialVersionUID = 8153711383828989907L;
 
     private PdfCatalog catalog;
-    private Map<String, PdfObject> items = new HashMap<>();
+    private Map<String, PdfObject> items = new LinkedHashMap<>();
     private PdfName treeType;
     private boolean modified;
 
@@ -230,7 +232,7 @@ public class PdfNameTree implements Serializable {
     }
 
     private Map<String, PdfObject> readTree(PdfDictionary dictionary) {
-        Map<String, PdfObject> items = new HashMap<String, PdfObject>();
+        Map<String, PdfObject> items = new LinkedHashMap<>();
         if (dictionary != null) {
             iterateItems(dictionary, items, null);
         }
