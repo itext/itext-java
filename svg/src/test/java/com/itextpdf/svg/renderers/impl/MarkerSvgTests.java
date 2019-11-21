@@ -42,15 +42,16 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import org.junit.Test;
-import java.io.IOException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.IOException;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 
@@ -81,7 +82,7 @@ public class MarkerSvgTests extends SvgIntegrationTest {
   @Test
   public void Markers_in_different_elements() throws IOException, InterruptedException {
     //TODO: update when DEVSIX-2262, 2860 and DEVSIX-2719 fixed
-    convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "Markers_in_elements");
+    convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markers_in_elements");
   }
 
   @Test

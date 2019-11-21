@@ -732,7 +732,7 @@
             <configuration>
               <skipTests>false</skipTests>
               <includes>
-                <include>**/*Test.java</include>
+                <include>**/*.java</include>
               </includes>
               <groups>${slowtests}</groups>
               <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
@@ -755,9 +755,6 @@
             </dependencies>
             <configuration>
               <skipTests>false</skipTests>
-              <includes>
-                <include>**/*Test.java</include>
-              </includes>
               <groups>${unittests}</groups>
               <argLine>@{jacoco.agent.argLine}</argLine>
             </configuration>

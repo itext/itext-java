@@ -54,7 +54,7 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
           <includes>
-            <include>**/*Test.java</include>
+            <include>**/*.java</include>
           </includes>
           <groups>${integrationtests}</groups>
         </configuration>
