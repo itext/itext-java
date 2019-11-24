@@ -68,7 +68,7 @@ public class VeraPdfValidator {
         String errorMessage = null;
 
         try {
-            File xmlReport = new File(filePath.replace(".pdf", ".xml"));
+            File xmlReport = new File(filePath.substring(0, filePath.length() - ".pdf".length()) + ".xml");
             VeraGreenfieldFoundryProvider.initialise();
 
             // Initializes default VeraPDF configurations
