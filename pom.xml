@@ -70,7 +70,7 @@
   </ciManagement>
   <properties>
     <argLine>-Xmx1024m</argLine>
-    <bouncycastle.version>1.49</bouncycastle.version>
+    <bouncycastle.version>1.64</bouncycastle.version>
     <checkstyle.version>2.15</checkstyle.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
     <fb-contrib.version>7.4.3</fb-contrib.version>
