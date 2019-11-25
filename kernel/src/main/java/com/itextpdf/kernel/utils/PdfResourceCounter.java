@@ -43,7 +43,6 @@
  */
 package com.itextpdf.kernel.utils;
 
-import com.itextpdf.io.util.IdelOutputStream;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
@@ -151,7 +150,7 @@ public class PdfResourceCounter {
                 continue;
             }
 
-            PdfOutputStream os = new PdfOutputStream(new IdelOutputStream());
+            PdfOutputStream os = new PdfOutputStream(new IdleOutputStream());
 
             os.write(resources.get(ref).clone());
             length += os.getCurrentPos();

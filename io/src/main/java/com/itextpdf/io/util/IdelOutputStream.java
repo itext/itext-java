@@ -46,6 +46,10 @@ package com.itextpdf.io.util;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * @deprecated This output stream implementation will be removed in iText 7.2
+ */
+@Deprecated
 public class IdelOutputStream extends OutputStream {
     @Override
     public void write(int b) throws IOException {
