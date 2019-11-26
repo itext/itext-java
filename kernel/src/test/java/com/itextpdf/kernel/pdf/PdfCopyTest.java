@@ -170,8 +170,8 @@ public class PdfCopyTest extends ExtendedITextTest {
         pdfDoc.close();
 
         PdfReader reader = new PdfReader(destinationFolder + "copying3_1.pdf");
-        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         pdfDoc = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
 
         PdfDictionary dic0 = pdfDoc.getPage(1).getPdfObject().getAsDictionary(new PdfName("HelloWorld"));
         assertEquals(4, dic0.getIndirectReference().getObjNumber());
