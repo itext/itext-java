@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -85,5 +86,4 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpfile, destinationFolder));
     }
-
 }
