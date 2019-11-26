@@ -43,6 +43,13 @@
  */
 package com.itextpdf.test;
 
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Appender;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.runner.Description;
 
@@ -50,10 +57,11 @@ import java.lang.annotation.Annotation;
 import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.slf4j.LoggerFactory;
 
-class LogListenerHelper {
+public class LoggerHelper {
 
-    public static <T extends Annotation> T getTestAnnotation(Description description, Class<T> annotationClass) {
+    static <T extends Annotation> T getTestAnnotation(Description description, Class<T> annotationClass) {
         T annotation = description.getAnnotation(annotationClass);
         if (annotation == null) {
             annotation = description.getTestClass().getAnnotation(annotationClass);
@@ -61,12 +69,12 @@ class LogListenerHelper {
         return annotation;
     }
 
-    public static void failWrongMessageCount(int expected, int actual, String messageTemplate, Description description) {
+    static void failWrongMessageCount(int expected, int actual, String messageTemplate, Description description) {
         Assert.fail(MessageFormat.format("{0}:{1} Expected to find {2}, but found {3} messages with the following content: \"{4}\"",
                 description.getClassName(), description.getMethodName(), expected, actual, messageTemplate));
     }
 
-    public static void failWrongTotalCount(int expected, int actual, Description description) {
+    static void failWrongTotalCount(int expected, int actual, Description description) {
         Assert.fail(MessageFormat.format("{0}.{1}: The test does not check the message logging - {2} messages",
                 description.getClassName(),
                 description.getMethodName(),
@@ -77,7 +85,7 @@ class LogListenerHelper {
     * compare  parametrized message with  base template, for example:
     *  "Hello fox1 , World  fox2 !" with "Hello {0} , World {1} !"
     * */
-    public static boolean equalsMessageByTemplate(String message, String template) {
+    static boolean equalsMessageByTemplate(String message, String template) {
         if (template.contains("{") && template.contains("}")) {
             String templateWithoutParameters = template.replace("''", "'").replaceAll("\\{[0-9]+?\\}", "(.)*?");
             Pattern p = Pattern.compile(templateWithoutParameters, Pattern.DOTALL);
@@ -86,5 +94,32 @@ class LogListenerHelper {
         } else {
             return message.contains(template);
         }
+    }
+
+    public static void restoreAppenders(Map<Logger, Map<String, Appender<ILoggingEvent>>> appenders) {
+        for (Logger logger : appenders.keySet()) {
+            Map<String, Appender<ILoggingEvent>> appenderMap = appenders.get(logger);
+            Logger currentLogger = (Logger) LoggerFactory.getLogger(logger.getName());
+            for (String appenderName : appenderMap.keySet()) {
+                currentLogger.addAppender(appenderMap.get(appenderName));
+            }
+        }
+    }
+
+    public static Map<Logger, Map<String, Appender<ILoggingEvent>>> getAllAppendersMap(LoggerContext loggerContext) {
+        Map<Logger, Map<String, Appender<ILoggingEvent>>> resultMap = new HashMap<>();
+        for (Logger logger : loggerContext.getLoggerList()) {
+            Map<String, Appender<ILoggingEvent>> appendersMap = new HashMap<>();
+
+            Iterator<Appender<ILoggingEvent>> appenderIterator = logger.iteratorForAppenders();
+            while (appenderIterator.hasNext()) {
+                Appender<ILoggingEvent> appender = appenderIterator.next();
+                appendersMap.put(appender.getName(), appender);
+            }
+
+            resultMap.put(logger, appendersMap);
+        }
+
+        return resultMap;
     }
 }
