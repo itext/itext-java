@@ -56,13 +56,17 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.impl.AbstractSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import org.junit.experimental.categories.Category;
 
+@Category(IntegrationTest.class)
 public class TransparencyTest extends ExtendedITextTest {
 
     private static final PdfName DEFAULT_RESOURCE_NAME = new PdfName("Gs1");
