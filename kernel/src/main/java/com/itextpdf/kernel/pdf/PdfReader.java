@@ -85,6 +85,8 @@ public class PdfReader implements Closeable, Serializable {
 
     private boolean unethicalReading;
 
+    private boolean memorySavingMode;
+
     //indicate nearest first Indirect reference object which includes current reading the object, using for PdfString decrypt
     private PdfIndirectReference currentIndirectReference;
 
@@ -198,6 +200,11 @@ public class PdfReader implements Closeable, Serializable {
      */
     public PdfReader setUnethicalReading(boolean unethicalReading) {
         this.unethicalReading = unethicalReading;
+        return this;
+    }
+
+    public PdfReader setMemorySavingMode(boolean memorySavingMode) {
+        this.memorySavingMode = memorySavingMode;
         return this;
     }
 
@@ -1209,6 +1216,10 @@ public class PdfReader implements Closeable, Serializable {
         }
         if (trailer == null)
             throw new PdfException(PdfException.TrailerNotFound);
+    }
+
+    boolean isMemorySavingMode() {
+        return memorySavingMode;
     }
 
     private void readDecryptObj() {
