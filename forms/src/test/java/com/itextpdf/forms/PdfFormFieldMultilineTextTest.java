@@ -30,20 +30,19 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.Document;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.IOException;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.IOException;
-import java.util.Map;
 
 @Category(IntegrationTest.class)
 public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
@@ -242,5 +241,55 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "formFieldWithStringTest.pdf",
                 sourceFolder + "cmp_formFieldWithStringTest.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void multilineTextFieldLeadingSpacesAreNotTrimmedTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "multilineTextFieldLeadingSpacesAreNotTrimmed.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        pdfDoc.addNewPage();
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        PdfPage page = pdfDoc.getFirstPage();
+        Rectangle rect = new Rectangle(210, 490, 300, 200);
+
+        PdfTextFormField field = PdfFormField.createMultilineText(pdfDoc, rect,
+                "TestField", "        value\n      with\n    leading\n    space");
+
+        form.addField(field, page);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_multilineTextFieldLeadingSpacesAreNotTrimmed.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void multilineTextFieldRedundantSpacesAreTrimmedTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "multilineTextFieldRedundantSpacesAreTrimmedTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        pdfDoc.addNewPage();
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        PdfPage page = pdfDoc.getFirstPage();
+        Rectangle rect = new Rectangle(210, 490, 90, 200);
+
+        PdfTextFormField field = PdfFormField.createMultilineText(pdfDoc, rect,
+                "TestField", "before spaces           after spaces");
+
+        form.addField(field, page);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_multilineTextFieldRedundantSpacesAreTrimmedTest.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 }

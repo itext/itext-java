@@ -176,6 +176,30 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    public void textFieldLeadingSpacesAreNotTrimmedTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "textFieldLeadingSpacesAreNotTrimmed.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        pdfDoc.addNewPage();
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        PdfPage page = pdfDoc.getFirstPage();
+        Rectangle rect = new Rectangle(210, 490, 300, 22);
+
+        PdfTextFormField field = PdfFormField.createText(pdfDoc, rect, "TestField", "        value with leading space");
+
+        form.addField(field, page);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_textFieldLeadingSpacesAreNotTrimmed.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
     public void unicodeFormFieldTest() throws IOException {
         String filename = sourceFolder + "unicodeFormFieldFile.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));

@@ -90,6 +90,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Style;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -101,8 +102,6 @@ import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.renderer.IRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -113,6 +112,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
@@ -2668,7 +2669,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 Logger logger = LoggerFactory.getLogger(PdfFormField.class);
                 logger.error(MessageFormatUtil.format(LogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT));
             }
-            modelCanvas.showTextAligned(new Paragraph(value).addStyle(paragraphStyle).setPaddings(0, X_OFFSET, 0, X_OFFSET),
+            modelCanvas.showTextAligned(createParagraphForTextFieldValue(value).addStyle(paragraphStyle).setPaddings(0, X_OFFSET, 0, X_OFFSET),
                     x, rect.getHeight() / 2, textAlignment, VerticalAlignment.MIDDLE);
         }
         canvas.
@@ -2708,7 +2709,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         Canvas modelCanvas = new Canvas(canvas, getDocument(), areaRect);
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
 
-        Paragraph paragraph = new Paragraph(value).setFont(font)
+        Paragraph paragraph = createParagraphForTextFieldValue(value).setFont(font)
                 .setMargin(0)
                 .setPadding(3)
                 .setMultipliedLeading(1);
@@ -3686,5 +3687,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             }
         }
         return null;
+    }
+
+    private static Paragraph createParagraphForTextFieldValue(String value) {
+        Text text = new Text(value);
+        text.setNextRenderer(new FormFieldValueNonTrimmingTextRenderer(text));
+        return new Paragraph(text);
     }
 }
