@@ -236,6 +236,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             PdfAnnotation annot = PdfAnnotation.makeAnnotation(fieldDic);
             addWidgetAnnotationToPage(page, annot);
         }
+        
+        setModified();
     }
 
     /**
@@ -313,10 +315,11 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     public PdfAcroForm setNeedAppearances(boolean needAppearances) {
         if (VersionConforming.validatePdfVersionForDeprecatedFeatureLogError(document, PdfVersion.PDF_2_0, VersionConforming.DEPRECATED_NEED_APPEARANCES_IN_ACROFORM)) {
             getPdfObject().remove(PdfName.NeedAppearances);
-            return this;
+            setModified();
         } else {
-            return put(PdfName.NeedAppearances, PdfBoolean.valueOf(needAppearances));
+            put(PdfName.NeedAppearances, PdfBoolean.valueOf(needAppearances));
         }
+        return this;
     }
 
     /**
@@ -598,6 +601,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     public void setGenerateAppearance(boolean generateAppearance) {
         if (generateAppearance) {
             getPdfObject().remove(PdfName.NeedAppearances);
+            setModified();
         }
         this.generateAppearance = generateAppearance;
     }
@@ -768,6 +772,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         if (parent != null) {
             parent.getAsArray(PdfName.Kids).remove(fieldObject);
             fields.remove(fieldName);
+            parent.setModified();
             return true;
         }
 
@@ -775,6 +780,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         if (fieldsPdfArray.contains(fieldObject)) {
             fieldsPdfArray.remove(fieldObject);
             this.fields.remove(fieldName);
+            setModified();
             return true;
         }
         return false;
@@ -1000,6 +1006,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfAcroForm put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
         return this;
     }
 

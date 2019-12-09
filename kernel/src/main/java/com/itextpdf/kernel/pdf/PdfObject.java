@@ -330,10 +330,9 @@ public abstract class PdfObject implements Serializable {
 
     /**
      * Sets the 'modified' flag to the indirect object, the flag denotes that the object was modified since the document opening.
+     * It is recommended to set this flag after changing any PDF object.
      * <p>
-     * This flag is meaningful only if the {@link PdfDocument} is opened in append mode
-     * (see {@link StampingProperties#useAppendMode()}).
-     * <p>
+     * For example flag is used in the append mode (see {@link StampingProperties#useAppendMode()}).
      * In append mode the whole document is preserved as is, and only changes to the document are
      * appended to the end of the document file. Because of this, only modified objects need to be flushed and are
      * allowed to be flushed (i.e. to be written).

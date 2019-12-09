@@ -1179,30 +1179,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Assert.assertEquals(field, thirdPageAnnots.get(0));
     }
 
-    @Test
-    //TODO update cmp-file after DEVSIX-3077 fixed
-    public void createFieldInAppendModeTest() throws IOException, InterruptedException {
-        String file = destinationFolder + "blank.pdf";
-
-        PdfDocument document = new PdfDocument(new PdfWriter(file));
-        document.addNewPage();
-        PdfAcroForm.getAcroForm(document, true);
-        document.close();
-
-        PdfReader reader = new PdfReader(file);
-        PdfWriter writer1 = new PdfWriter(destinationFolder + "createFieldInAppendModeTest.pdf");
-        PdfDocument doc = new PdfDocument(reader, writer1, new StampingProperties().useAppendMode());
-        PdfFormField field = PdfFormField.createCheckBox(
-                doc,
-                new Rectangle(10, 10, 24, 24),
-                "checkboxname", "On",
-                PdfFormField.TYPE_CHECK);
-        PdfAcroForm.getAcroForm(doc, true).addField(field);
-        doc.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "createFieldInAppendModeTest.pdf", sourceFolder + "cmp_" + "createFieldInAppendModeTest.pdf", destinationFolder, "diff_"));
-    }
-
     private void createAcroForm(PdfDocument pdfDoc, PdfAcroForm form, PdfFont font, String text, int offSet) {
         for (int x = offSet; x < (offSet + 3); x++) {
             Rectangle rect = new Rectangle(100 + (30 * x), 100 + (100 * x), 55, 30);
