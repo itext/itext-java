@@ -879,6 +879,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 continue;
             }
             PdfFormField formField = PdfFormField.makeFormField(field, document);
+            if (formField == null) {
+                logger.warn("Field {} was null", field);
+                continue;
+            }
             PdfString fieldName = formField.getFieldName();
             String name;
             if (fieldName == null) {
