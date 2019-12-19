@@ -42,6 +42,8 @@
  */
 package com.itextpdf.kernel.pdf.canvas;
 
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.colors.CalGray;
 import com.itextpdf.kernel.colors.CalRgb;
@@ -57,6 +59,7 @@ import com.itextpdf.kernel.colors.Lab;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.colors.Separation;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -184,6 +187,21 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest03.pdf", sourceFolder + "cmp_colorTest03.pdf", destinationFolder, "diff_"));
 
+    }
+
+    @Test
+    //TODO update expected value of Bpc in assert
+    public void rgb16BitDepthImageTest() throws IOException, InterruptedException {
+        String out = destinationFolder + "rgb8Bit.pdf";
+        String cmp = sourceFolder + "cmp_rgb8Bit.pdf";
+        ImageData img = ImageDataFactory.create(sourceFolder + "rgb16Bit.png");
+        PdfDocument pdfdoc = new PdfDocument(new PdfWriter(out));
+        PdfPage page = pdfdoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.addImage(img, new Rectangle(30, 500, 100, 100), false);
+        pdfdoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(out, cmp, destinationFolder));
     }
 
     @Test
