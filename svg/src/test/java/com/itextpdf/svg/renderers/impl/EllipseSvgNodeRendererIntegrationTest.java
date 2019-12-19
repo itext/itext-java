@@ -43,19 +43,26 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.nio.charset.StandardCharsets;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class EllipseNodeRendererIntegrationTest extends SvgIntegrationTest {
+public class EllipseSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/EllipseSvgNodeRendererTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/EllipseSvgNodeRendererTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/EllipseSvgNodeRendererIntegrationTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/EllipseSvgNodeRendererIntegrationTest/";
 
     @BeforeClass
     public static void beforeClass() {
@@ -146,5 +153,38 @@ public class EllipseNodeRendererIntegrationTest extends SvgIntegrationTest {
     @Test
     public void ellipseSkewYTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "ellipseSkewY");
+    }
+
+    @Test
+    public void parseParametersAndCalculateCoordinatesWithBetterPrecisionEllipseTest() throws java.io.IOException, InterruptedException {
+        String filename = "parseParametersAndCalculateCoordinatesWithBetterPrecisionEllipseTest.pdf";
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        doc.addNewPage();
+
+        EllipseSvgNodeRenderer ellipseRenderer = new EllipseSvgNodeRenderer();
+        ellipseRenderer.setAttribute(SvgConstants.Attributes.CX, "170.3");
+        ellipseRenderer.setAttribute(SvgConstants.Attributes.CY, "339.5");
+        ellipseRenderer.setAttribute(SvgConstants.Attributes.RX, "6");
+        ellipseRenderer.setAttribute(SvgConstants.Attributes.RY, "6");
+
+        // Parse parameters with better precision (in double type) in the method CssUtils#parseAbsoluteLength
+        ellipseRenderer.setParameters();
+
+        SvgDrawContext context = new SvgDrawContext(null, null);
+        PdfCanvas cv = new PdfCanvas(doc, 1);
+        context.pushCanvas(cv);
+
+        // Calculate coordinates with better precision (in double type) in the method EllipseSvgNodeRenderer#doDraw
+        ellipseRenderer.draw(context);
+
+        String pageContentBytes = new String(doc.getPage(1).getContentBytes(), StandardCharsets.UTF_8);
+        doc.close();
+
+        String expectedResult = "132.22 254.63 m\n"
+                + "132.22 257.11 130.21 259.13 127.72 259.13 c\n"
+                + "125.24 259.13 123.22 257.11 123.22 254.63 c\n"
+                + "123.22 252.14 125.24 250.13 127.72 250.13 c\n"
+                + "130.21 250.13 132.22 252.14 132.22 254.63 c";
+        Assert.assertTrue(pageContentBytes.contains(expectedResult));
     }
 }

@@ -60,7 +60,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 @Category(UnitTest.class)
-public class CssUtilTest extends ExtendedITextTest {
+public class CssUtilsTest extends ExtendedITextTest {
 
     public static float EPS = 0.0001f;
 
@@ -248,5 +248,22 @@ public class CssUtilTest extends ExtendedITextTest {
         } catch (Exception e){
             Assert.fail();
         }
+    }
+
+    @Test
+    public void parseAbsoluteLength12cmTest() {
+        // Calculations in CssUtils#parseAbsoluteLength were changed to work
+        // with double values instead of float to improve precision and eliminate
+        // the difference between java and .net. So the test verifies this fix.
+        assertEquals(340.15747f, CssUtils.parseAbsoluteLength("12cm"), 0f);
+    }
+
+
+    @Test
+    public void parseAbsoluteLength12qTest() {
+        // Calculations in CssUtils#parseAbsoluteLength were changed to work
+        // with double values instead of float to improve precision and eliminate
+        // the difference between java and .net. So the test verifies this fix
+        assertEquals(8.503937f, CssUtils.parseAbsoluteLength("12q"), 0f);
     }
 }

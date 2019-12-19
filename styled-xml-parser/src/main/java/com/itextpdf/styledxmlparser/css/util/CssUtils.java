@@ -187,41 +187,42 @@ public class CssUtils {
             throw new StyledXMLParserException(MessageFormatUtil.format(LogMessageConstant.NAN, length));
         }
 
-        float f = Float.parseFloat(length.substring(0, pos));
+        // Use double type locally to have better precision of the result after applying arithmetic operations
+        double f = Double.parseDouble(length.substring(0, pos));
         String unit = length.substring(pos);
 
         //points
         if (unit.startsWith(CommonCssConstants.PT) || unit.equals("") && defaultMetric.equals(CommonCssConstants.PT)) {
-            return f;
+            return (float) f;
         }
         // inches
         if (unit.startsWith(CommonCssConstants.IN) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.IN))) {
-            return f * 72f;
+            return (float) (f * 72);
         }
         // centimeters
         else if (unit.startsWith(CommonCssConstants.CM) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.CM))) {
-            return (f / 2.54f) * 72f;
+            return (float) ((f / 2.54) * 72);
         }
         // quarter of a millimeter (1/40th of a centimeter).
         else if (unit.startsWith(CommonCssConstants.Q) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.Q))) {
-            return (f / 2.54f) * 72f / 40;
+            return (float) ((f / 2.54) * 72 / 40);
         }
         // millimeters
         else if (unit.startsWith(CommonCssConstants.MM) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.MM))) {
-            return (f / 25.4f) * 72f;
+            return (float) ((f / 25.4) * 72);
         }
         // picas
         else if (unit.startsWith(CommonCssConstants.PC) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.PC))) {
-            return f * 12f;
+            return (float) (f * 12);
         }
         // pixels (1px = 0.75pt).
         else if (unit.startsWith(CommonCssConstants.PX) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.PX))) {
-            return f * 0.75f;
+            return (float) (f * 0.75);
         }
 
         Logger logger = LoggerFactory.getLogger(CssUtils.class);
         logger.error(MessageFormatUtil.format(LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, unit.equals("") ? defaultMetric : unit));
-        return f;
+        return (float) f;
     }
 
     /**
@@ -246,6 +247,7 @@ public class CssUtils {
         int pos = determinePositionBetweenValueAndUnit(relativeValue);
         if (pos == 0)
             return 0f;
+        // Use double type locally to have better precision of the result after applying arithmetic operations
         double f = Double.parseDouble(relativeValue.substring(0, pos));
         String unit = relativeValue.substring(pos);
         if (unit.startsWith(CommonCssConstants.PERCENTAGE)) {
@@ -367,14 +369,14 @@ public class CssUtils {
         int pos = determinePositionBetweenValueAndUnit(resolutionStr);
         if (pos == 0)
             return 0f;
-        float f = Float.parseFloat(resolutionStr.substring(0, pos));
+        double f = Double.parseDouble(resolutionStr.substring(0, pos));
         String unit = resolutionStr.substring(pos);
         if (unit.startsWith(CommonCssConstants.DPCM)) {
-            f *= 2.54f;
+            f *= 2.54;
         } else if (unit.startsWith(CommonCssConstants.DPPX)) {
             f *= 96;
         }
-        return f;
+        return (float) f;
     }
 
     /**
