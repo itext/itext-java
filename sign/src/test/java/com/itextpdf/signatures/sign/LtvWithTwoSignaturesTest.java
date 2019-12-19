@@ -67,7 +67,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category( IntegrationTest.class)
-public class LtvWithTwoSignatures extends ExtendedITextTest {
+public class LtvWithTwoSignaturesTest extends ExtendedITextTest {
 
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/LtvWithTwoSignaturesTest/";
