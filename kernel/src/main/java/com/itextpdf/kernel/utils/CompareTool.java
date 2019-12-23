@@ -601,6 +601,30 @@ public class CompareTool {
     }
 
     /**
+     * Compares structures of two corresponding streams from out and cmp PDF documents. You can roughly
+     * imagine it as depth-first traversal of the two trees that represent pdf objects structure of the documents.
+     * <p>
+     * For more explanations about what outPdf and cmpPdf are see last paragraph of the {@link CompareTool}
+     * class description.
+     *
+     * @param outStream      a {@link PdfStream} from the output file, which is to be compared to cmp-file stream.
+     * @param cmpStream     a {@link PdfStream} from the cmp-file file, which is to be compared to output file stream.
+     * @return {@link CompareResult} instance containing differences between the two streams,
+     * or {@code null} if streams are equal.
+     */
+    public CompareResult compareStreamsStructure(PdfStream outStream, PdfStream cmpStream) {
+        CompareResult compareResult = new CompareResult(compareByContentErrorsLimit);
+        CompareTool.ObjectPath currentPath = new ObjectPath(cmpStream.getIndirectReference(), outStream.getIndirectReference());
+        if (!compareStreamsExtended(outStream, cmpStream, currentPath, compareResult)) {
+            assert !compareResult.isOk();
+            System.out.println(compareResult.getReport());
+            return compareResult;
+        }
+        assert compareResult.isOk();
+        return null;
+    }
+
+    /**
      * Simple method that compares two given PdfStreams by content. This is "deep" comparing, which means that all
      * nested objects are also compared by content.
      *

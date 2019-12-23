@@ -140,7 +140,6 @@ public class CreateImageStreamTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO update cmp-file after DEVSIX-2865 will be fixed
     public void addPngImageIndexedColorspaceTest() throws IOException, InterruptedException {
         testSingleImage("pngImageIndexedColorspace.png");
     }

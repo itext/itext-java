@@ -79,6 +79,7 @@ public abstract class ImageData {
 
     protected int bpc = 1;
 
+    /** is the number of components used to encode colorspace, not actual colorspace. */
     protected int colorSpace = -1;
 
     protected float[] decode;
@@ -200,6 +201,10 @@ public abstract class ImageData {
         return originalType;
     }
 
+    /***
+     * Gets the number of components used to encode colorspace, not actual colorspace.
+     * @return the number of components used to encode colorspace
+     */
     public int getColorSpace() {
         return colorSpace;
     }

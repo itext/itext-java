@@ -48,13 +48,13 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.FilterUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.colors.IccProfile;
-import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteBuffer;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import com.itextpdf.io.util.MessageFormatUtil;
+
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
@@ -73,7 +73,6 @@ class PngImageHelper {
         int width;
         int height;
         int bitDepth;
-        int colorType;
         int compressionMethod;
         int filterMethod;
         int interlaceMethod;
@@ -93,10 +92,6 @@ class PngImageHelper {
         int inputBands;
         // number of bytes per input pixel
         int bytesPerPixel;
-        byte[] colorTable;
-        float gamma = 1f;
-        boolean hasCHRM = false;
-        float xW, yW, xR, yR, xG, yG, xB, yB;
         String intent;
         IccProfile iccProfile;
     }
@@ -162,8 +157,9 @@ class PngImageHelper {
     private static final int PNG_FILTER_UP = 2;
     private static final int PNG_FILTER_AVERAGE = 3;
     private static final int PNG_FILTER_PAETH = 4;
-    private static final String[] intents = {"/Perceptual",
-            "/RelativeColorimetric", "/Saturation", "/AbsoluteColorimetric"};
+    private static final String[] intents = {PngImageHelperConstants.PERCEPTUAL,
+            PngImageHelperConstants.RELATIVE_COLORIMETRIC, PngImageHelperConstants.SATURATION,
+            PngImageHelperConstants.ABSOLUTE_COLORMETRIC};
 
     public static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.PNG)
@@ -193,6 +189,7 @@ class PngImageHelper {
 
     private static void processPng(InputStream pngStream, PngParameters png) throws java.io.IOException {
         readPng(pngStream, png);
+        int colorType = png.image.getColorType();
         if (png.iccProfile != null && png.iccProfile.getNumComponents() != getExpectedNumberOfColorComponents(png)) {
             LoggerFactory.getLogger(PngImageHelper.class).warn(LogMessageConstant.PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS);
         }
@@ -213,14 +210,14 @@ class PngImageHelper {
                     }
                 }
             }
-            if ((png.colorType & 4) != 0)
+            if ((colorType & 4) != 0)
                 png.palShades = true;
             png.genBWMask = (!png.palShades && (pal0 > 1 || png.transRedGray >= 0));
             if (!png.palShades && !png.genBWMask && pal0 == 1) {
-                png.additional.put("Mask", new int[]{palIdx,palIdx});
+                png.additional.put(PngImageHelperConstants.MASK, new int[]{palIdx,palIdx});
             }
-            boolean needDecode = (png.interlaceMethod == 1) || (png.bitDepth == 16) || ((png.colorType & 4) != 0) || png.palShades || png.genBWMask;
-            switch (png.colorType) {
+            boolean needDecode = (png.interlaceMethod == 1) || (png.bitDepth == 16) || ((colorType & 4) != 0) || png.palShades || png.genBWMask;
+            switch (colorType) {
                 case 0:
                     png.inputBands = 1;
                     break;
@@ -240,13 +237,13 @@ class PngImageHelper {
             if (needDecode)
                 decodeIdat(png);
             int components = png.inputBands;
-            if ((png.colorType & 4) != 0)
+            if ((colorType & 4) != 0)
                 --components;
             int bpc = png.bitDepth;
             if (bpc == 16)
                 bpc = 8;
             if (png.imageData != null) {
-                if (png.colorType == 3) {
+                if (png.image.isIndexed()) {
                     RawImageHelper.updateRawImageParameters(png.image, png.width, png.height, components, bpc, png.imageData);
                 } else {
                     RawImageHelper.updateRawImageParameters(png.image, png.width, png.height, components, bpc, png.imageData, null);
@@ -255,16 +252,14 @@ class PngImageHelper {
                 RawImageHelper.updateRawImageParameters(png.image, png.width, png.height, components, bpc, png.idat.toByteArray());
                 png.image.setDeflated(true);
                 Map<String, Object> decodeparms = new HashMap<>();
-                decodeparms.put("BitsPerComponent", png.bitDepth);
-                decodeparms.put("Predictor", 15);
-                decodeparms.put("Columns", png.width);
-                decodeparms.put("Colors", (png.colorType == 3 || (png.colorType & 2) == 0) ? 1 : 3);
+                decodeparms.put(PngImageHelperConstants.BITS_PER_COMPONENT, png.bitDepth);
+                decodeparms.put(PngImageHelperConstants.PREDICTOR, 15);
+                decodeparms.put(PngImageHelperConstants.COLUMNS, png.width);
+                decodeparms.put(PngImageHelperConstants.COLORS, (png.image.isIndexed() || png.image.isGrayscaleImage()) ? 1 : 3);
                 png.image.decodeParms = decodeparms;
             }
-            if (png.additional.get("ColorSpace") == null)
-                png.additional.put("ColorSpace", getColorspace(png));
             if (png.intent != null)
-                png.additional.put("Intent", png.intent);
+                png.additional.put(PngImageHelperConstants.INTENT, png.intent);
             if (png.iccProfile != null)
                 png.image.setProfile(png.iccProfile);
             if (png.palShades) {
@@ -286,78 +281,8 @@ class PngImageHelper {
         }
     }
 
-    private static Object getColorspace(PngParameters png) {
-        if (png.iccProfile != null) {
-            if ((png.colorType & 2) == 0)
-                return "/DeviceGray";
-            else
-                return "/DeviceRGB";
-        }
-        if (png.gamma == 1f && !png.hasCHRM) {
-            if ((png.colorType & 2) == 0)
-                return "/DeviceGray";
-            else
-                return "/DeviceRGB";
-        } else {
-            Object[] array = new Object[2];
-            Map<String, Object> map = new HashMap<>();
-            if ((png.colorType & 2) == 0) {
-                if (png.gamma == 1f)
-                    return "/DeviceGray";
-                array[0] = "/CalGray";
-                map.put("Gamma", png.gamma);
-                map.put("WhitePoint", new int[]{1, 1, 1});
-                array[1] = map;
-            } else {
-                float[] wp = new float[]{1, 1, 1};
-                array[0] = "/CalRGB";
-                if (png.gamma != 1f) {
-                    float[] gm = new float[3];
-                    gm[0] = png.gamma;
-                    gm[1] = png.gamma;
-                    gm[2] = png.gamma;
-                    map.put("Gamma", gm);
-                }
-                if (png.hasCHRM) {
-                    float z = png.yW * ((png.xG - png.xB) * png.yR - (png.xR - png.xB) * png.yG + (png.xR - png.xG) * png.yB);
-                    float YA = png.yR * ((png.xG - png.xB) * png.yW - (png.xW - png.xB) * png.yG + (png.xW - png.xG) * png.yB) / z;
-                    float XA = YA * png.xR / png.yR;
-                    float ZA = YA * ((1 - png.xR) / png.yR - 1);
-                    float YB = -png.yG * ((png.xR - png.xB) * png.yW - (png.xW - png.xB) * png.yR + (png.xW - png.xR) * png.yB) / z;
-                    float XB = YB * png.xG / png.yG;
-                    float ZB = YB * ((1 - png.xG) / png.yG - 1);
-                    float YC = png.yB * ((png.xR - png.xG) * png.yW - (png.xW - png.xG) * png.yW + (png.xW - png.xR) * png.yG) / z;
-                    float XC = YC * png.xB / png.yB;
-                    float ZC = YC * ((1 - png.xB) / png.yB - 1);
-                    float XW = XA + XB + XC;
-                    float YW = 1;
-                    float ZW = ZA + ZB + ZC;
-                    float[] wpa = new float[3];
-                    wpa[0] = XW;
-                    wpa[1] = YW;
-                    wpa[2] = ZW;
-                    wp = wpa;
-                    float[] matrix = new float[9];
-                    matrix[0] = XA;
-                    matrix[1] = YA;
-                    matrix[2] = ZA;
-                    matrix[3] = XB;
-                    matrix[4] = YB;
-                    matrix[5] = ZB;
-                    matrix[6] = XC;
-                    matrix[7] = YC;
-                    matrix[8] = ZC;
-                    map.put("Matrix", matrix);
-                }
-                map.put("WhitePoint", wp);
-                array[1] = map;
-            }
-            return array;
-        }
-    }
-
     private static int getExpectedNumberOfColorComponents(PngParameters png) {
-        return (png.colorType & 2) == 0 ? 1 : 3;
+        return png.image.isGrayscaleImage() ? 1 : 3;
     }
 
     private static void readPng(InputStream pngStream, PngParameters png) throws java.io.IOException {
@@ -382,7 +307,7 @@ class PngImageHelper {
                     len -= size;
                 }
             } else if (tRNS.equals(marker)) {
-                switch (png.colorType) {
+                switch (png.image.getColorType()) {
                     case 0:
                         if (len >= 2) {
                             len -= 2;
@@ -390,7 +315,8 @@ class PngImageHelper {
                             if (png.bitDepth == 16)
                                 png.transRedGray = gray;
                             else
-                                png.additional.put("Mask", MessageFormatUtil.format("[{0} {1}]", gray, gray));
+                                png.additional.put(
+                                        PngImageHelperConstants.MASK, MessageFormatUtil.format("[{0} {1}]", gray, gray));
                         }
                         break;
                     case 2:
@@ -404,7 +330,7 @@ class PngImageHelper {
                                 png.transGreen = green;
                                 png.transBlue = blue;
                             } else
-                                png.additional.put("Mask", MessageFormatUtil.format("[{0} {1} {2} {3} {4} {5}]", red, red, green, green, blue, blue));
+                                png.additional.put(PngImageHelperConstants.MASK, MessageFormatUtil.format("[{0} {1} {2} {3} {4} {5}]", red, red, green, green, blue, blue));
                         }
                         break;
                     case 3:
@@ -422,23 +348,17 @@ class PngImageHelper {
                 png.height = getInt(pngStream);
 
                 png.bitDepth = pngStream.read();
-                png.colorType = pngStream.read();
+                png.image.setColorType(pngStream.read());
                 png.compressionMethod = pngStream.read();
                 png.filterMethod = pngStream.read();
                 png.interlaceMethod = pngStream.read();
             } else if (PLTE.equals(marker)) {
-                if (png.colorType == 3) {
-                    Object[] colorspace = new Object[4];
-                    colorspace[0] = "/Indexed";
-                    colorspace[1] = getColorspace(png);
-                    colorspace[2] = len / 3 - 1;
+                if (png.image.isIndexed()) {
                     ByteBuffer colorTableBuf = new ByteBuffer();
                     while ((len--) > 0) {
                         colorTableBuf.append(pngStream.read());
                     }
-                    png.colorTable = colorTableBuf.toByteArray();
-                    colorspace[3] = PdfEncodings.convertToString(png.colorTable, null);
-                    png.additional.put("ColorSpace", colorspace);
+                    png.image.setColorPalette(colorTableBuf.toByteArray());
                 } else {
                     StreamUtil.skip(pngStream, len);
                 }
@@ -454,42 +374,30 @@ class PngImageHelper {
                         png.XYRatio = (float) dx / (float) dy;
                 }
             } else if (cHRM.equals(marker)) {
-                png.xW = getInt(pngStream) / 100000f;
-                png.yW = getInt(pngStream) / 100000f;
-                png.xR = getInt(pngStream) / 100000f;
-                png.yR = getInt(pngStream) / 100000f;
-                png.xG = getInt(pngStream) / 100000f;
-                png.yG = getInt(pngStream) / 100000f;
-                png.xB = getInt(pngStream) / 100000f;
-                png.yB = getInt(pngStream) / 100000f;
-                png.hasCHRM = !(Math.abs(png.xW) < 0.0001f || Math.abs(png.yW) < 0.0001f || Math.abs(png.xR) < 0.0001f || Math.abs(png.yR) < 0.0001f || Math.abs(png.xG) < 0.0001f || Math.abs(png.yG) < 0.0001f || Math.abs(png.xB) < 0.0001f || Math.abs(png.yB) < 0.0001f);
+                PngChromaticities pngChromaticities = new PngChromaticities(getInt(pngStream) / 100000f, getInt(pngStream) / 100000f,
+                        getInt(pngStream) / 100000f, getInt(pngStream) / 100000f, getInt(pngStream) / 100000f,
+                        getInt(pngStream) / 100000f, getInt(pngStream) / 100000f, getInt(pngStream) / 100000f);
+                if(!(Math.abs(pngChromaticities.getXW()) < 0.0001f || Math.abs(pngChromaticities.getYW()) < 0.0001f
+                        || Math.abs(pngChromaticities.getXR()) < 0.0001f || Math.abs(pngChromaticities.getYR()) < 0.0001f
+                        || Math.abs(pngChromaticities.getXG()) < 0.0001f || Math.abs(pngChromaticities.getYG()) < 0.0001f
+                        || Math.abs(pngChromaticities.getXB()) < 0.0001f || Math.abs(pngChromaticities.getYB()) < 0.0001f)) {
+                    png.image.setPngChromaticities(pngChromaticities);
+                }
             } else if (sRGB.equals(marker)) {
                 int ri = pngStream.read();
                 png.intent = intents[ri];
-                png.gamma = 2.2f;
-                png.xW = 0.3127f;
-                png.yW = 0.329f;
-                png.xR = 0.64f;
-                png.yR = 0.33f;
-                png.xG = 0.3f;
-                png.yG = 0.6f;
-                png.xB = 0.15f;
-                png.yB = 0.06f;
-                png.hasCHRM = true;
+                png.image.setGamma(2.2f);
+                PngChromaticities pngChromaticities= new PngChromaticities(0.3127f, 0.329f, 0.64f,
+                        0.33f, 0.3f, 0.6f, 0.15f, 0.06f);
+                png.image.setPngChromaticities(pngChromaticities);
             } else if (gAMA.equals(marker)) {
                 int gm = getInt(pngStream);
                 if (gm != 0) {
-                    png.gamma = 100000f / gm;
-                    if (!png.hasCHRM) {
-                        png.xW = 0.3127f;
-                        png.yW = 0.329f;
-                        png.xR = 0.64f;
-                        png.yR = 0.33f;
-                        png.xG = 0.3f;
-                        png.yG = 0.6f;
-                        png.xB = 0.15f;
-                        png.yB = 0.06f;
-                        png.hasCHRM = true;
+                    png.image.setGamma(100000f / gm);
+                    if (!png.image.isHasCHRM()) {
+                        PngChromaticities pngChromaticities = new PngChromaticities(0.3127f, 0.329f,
+                                0.64f,  0.33f,  0.3f, 0.6f, 0.15f, 0.06f);
+                        png.image.setPngChromaticities(pngChromaticities);
                     }
                 }
             } else if (iCCP.equals(marker)) {
@@ -540,7 +448,7 @@ class PngImageHelper {
             nbitDepth = 8;
         int size = -1;
         png.bytesPerPixel = (png.bitDepth == 16) ? 2 : 1;
-        switch (png.colorType) {
+        switch (png.image.getColorType()) {
             case 0:
                 size = (nbitDepth * png.width + 7) / 8 * png.height;
                 break;
@@ -640,10 +548,11 @@ class PngImageHelper {
 
     private static void processPixels(byte[] curr, int xOffset, int step, int y, int width, PngParameters png) {
         int srcX, dstX;
+        int colorType = png.image.getColorType();
 
         int[] outPixel = getPixel(curr, png);
         int sizes = 0;
-        switch (png.colorType) {
+        switch (colorType) {
             case 0:
             case 3:
             case 4:
@@ -663,7 +572,7 @@ class PngImageHelper {
             }
         }
         if (png.palShades) {
-            if ((png.colorType & 4) != 0) {
+            if ((colorType & 4) != 0) {
                 if (png.bitDepth == 16) {
                     for (int k = 0; k < width; ++k)
                         outPixel[k * png.inputBands + sizes] >>>= 8;
@@ -691,7 +600,7 @@ class PngImageHelper {
                 }
             }
         } else if (png.genBWMask) {
-            switch (png.colorType) {
+            switch (colorType) {
                 case 3: {
                     int yStride = (png.width + 7) / 8;
                     int[] v = new int[1];
