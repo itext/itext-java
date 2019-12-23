@@ -68,6 +68,7 @@
     <system>jenkins-ci</system>
     <url>https://jenkins.itextsupport.com/</url>
   </ciManagement>
+
   <properties>
     <argLine>-Xmx1024m</argLine>
     <bouncycastle.version>1.64</bouncycastle.version>
@@ -80,7 +81,7 @@
     <itext.legacy.version>5.5.13.1</itext.legacy.version>
     <jacoco.version>0.8.4</jacoco.version>
     <java.version>1.7</java.version>
-    <javadoc-additionalOptions/>
+    <javadoc-additionalOptions />
     <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
     <javadoc.version>3.0.1</javadoc.version>
     <jfreechart.version>1.0.19</jfreechart.version>
@@ -101,10 +102,13 @@
     <slf4j.version>1.7.13</slf4j.version>
     <slowtests>com.itextpdf.test.annotations.type.SlowTest</slowtests>
     <sonar.clirr.reportPath>${project.build.directory}/clirr-report.txt</sonar.clirr.reportPath>
+    <sonar.dependencyCheck.htmlReportPath>target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
+    <sonar.dependencyCheck.reportPath>target/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
     <spotbugs.version>3.1.11</spotbugs.version>
     <surefire.version>3.0.0-M3</surefire.version>
     <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
   </properties>
+
   <repositories>
     <repository>
       <releases>
@@ -154,6 +158,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <build>
     <finalName>itext7-${project.artifactId}-${project.version}</finalName>
     <plugins>
@@ -439,8 +444,26 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>5.2.4</version>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>aggregate</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <format>XML</format>
+          <prettyPrint>true</prettyPrint>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
+
   <reporting>
     <plugins>
       <plugin>
