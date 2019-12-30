@@ -59,6 +59,9 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Queue;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -100,29 +103,6 @@ public class PdfPagesTest extends ExtendedITextTest {
         pdfDoc.close();
         verifyPagesOrder(destinationFolder + filename, pageCount);
     }
-
-//    @Test
-//    public void simpleClonePagesTest() throws IOException {
-//        String filename = "simpleClonePagesTest.pdf";
-//        int pageCount = 111;
-//
-//        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
-//        PdfWriter writer = new PdfWriter(fos);
-//        PdfDocument pdfDoc = new PdfDocument(writer);
-//
-//        for (int i = 0; i < pageCount; i++) {
-//            PdfPage page = pdfDoc.addNewPage();
-//            page.getPdfObject().put(PageNum, new PdfNumber(i + 1));
-//        }
-//        for (int i = 0; i < pageCount; i++) {
-//            PdfPage page = pdfDoc.addPage((PdfPage)pdfDoc.getPage(i + 1).clone());
-//            page.getPdfObject().put(PageNum, new PdfNumber(pageCount + i + 1));
-//            pdfDoc.getPage(i + 1).flush();
-//            page.flush();
-//        }
-//        pdfDoc.close();
-//        verifyPagesOrder(destinationFolder + filename, pageCount);
-//    }
 
     @Test
     public void reversePagesTest() throws IOException {
@@ -348,15 +328,33 @@ public class PdfPagesTest extends ExtendedITextTest {
         Assert.assertEquals(10, gState.getLineWidth().intValue());
     }
 
-    //    @Test(expected = PdfException.class)
-//    public void testCircularReferencesInResources() throws IOException {
-//        String inputFileName1 = sourceFolder + "circularReferencesInResources.pdf";
-//        PdfReader reader1 = new PdfReader(inputFileName1);
-//        PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
-//        PdfPage page = inputPdfDoc1.getPage(1);
-//        List<PdfFont> list = page.getResources().getFonts(true);
-//    }
-//
+    @Test
+    public void readFormXObjectsWithCircularReferencesInResources() throws IOException {
+
+        // given input file contains circular reference in resources of form xobjects
+        // (form xobjects are nested inside each other)
+        String input = sourceFolder + "circularReferencesInResources.pdf";
+
+        PdfReader reader1 = new PdfReader(input);
+        PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
+        PdfPage page = inputPdfDoc1.getPage(1);
+        PdfResources resources = page.getResources();
+        List<PdfFormXObject> formXObjects = new ArrayList<>();
+
+        // We just try to work with resources in arbitrary way and make sure that circular reference
+        // doesn't block it. However it is expected that PdfResources doesn't try to "look in deep"
+        // and recursively resolves resources, so this test should never meet any issues.
+        for (PdfName xObjName : resources.getResourceNames(PdfName.XObject)) {
+            PdfFormXObject form = resources.getForm(xObjName);
+            if (form != null) {
+                formXObjects.add(form);
+            }
+        }
+
+        // ensure resources XObject entry is read correctly
+        Assert.assertEquals(2, formXObjects.size());
+    }
+
     @Test
     public void testInheritedResourcesUpdate() throws IOException, InterruptedException {
         PdfDocument pdfDoc = new PdfDocument(

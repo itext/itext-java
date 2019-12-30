@@ -116,4 +116,16 @@ public class PdfResourcesTest extends ExtendedITextTest {
         document.close();
     }
 
+    @Test
+    public void getNonExistentResourcesCategory() {
+        PdfResources resources = new PdfResources();
+        Set<PdfName> unknownResCategory = resources.getResourceNames(new PdfName("UnknownResCategory"));
+
+        // assert returned value is properly functioning
+        PdfName randomResName = new PdfName("NonExistentResourceName");
+        Assert.assertFalse(unknownResCategory.contains(randomResName));
+        Assert.assertFalse(unknownResCategory.remove(randomResName));
+        Assert.assertTrue(unknownResCategory.isEmpty());
+    }
+
 }

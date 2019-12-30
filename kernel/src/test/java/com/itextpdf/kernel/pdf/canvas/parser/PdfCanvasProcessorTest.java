@@ -44,6 +44,7 @@ package com.itextpdf.kernel.pdf.canvas.parser;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -59,86 +60,48 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 import java.util.Set;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfCanvasProcessorTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/PdfCanvasProcessorTest/";
 
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
+
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
     public void contentStreamProcessorTest() throws IOException {
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "tableWithImageAndText.pdf"), new PdfWriter(new ByteArrayOutputStream()));
 
-        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "yaxiststar.pdf"), new PdfWriter(new ByteArrayOutputStream()));
-
+        StringBuilder pageEventsLog = new StringBuilder();
         for (int i = 1; i <= document.getNumberOfPages(); ++i) {
             PdfPage page = document.getPage(i);
 
-            PdfCanvasProcessor processor = new PdfCanvasProcessor(new IEventListener() {
-                public void eventOccurred(IEventData data, EventType type) {
-                    switch (type) {
-                        case BEGIN_TEXT:
-                            System.out.println("-------- BEGIN TEXT CALLED ---------");
-                            System.out.println("------------------------------------");
-                            break;
-
-                        case RENDER_TEXT:
-                            System.out.println("-------- RENDER TEXT CALLED --------");
-
-                            TextRenderInfo renderInfo = (TextRenderInfo) data;
-                            System.out.println("String: " + renderInfo.getPdfString());
-
-                            System.out.println("------------------------------------");
-                            break;
-
-                        case END_TEXT:
-                            System.out.println("-------- END TEXT CALLED -----------");
-                            System.out.println("------------------------------------");
-                            break;
-
-                        case RENDER_IMAGE:
-                            System.out.println("-------- RENDER IMAGE CALLED---------");
-
-                            ImageRenderInfo renderInfo1 = (ImageRenderInfo) data;
-                            System.out.println("Image: " + renderInfo1.getImage().getPdfObject());
-
-                            System.out.println("------------------------------------");
-                            break;
-
-                        case RENDER_PATH:
-                            System.out.println("-------- RENDER PATH CALLED --------");
-
-                            PathRenderInfo renderinfo2 = (PathRenderInfo) data;
-                            System.out.println("Path: " + renderinfo2.getPath());
-
-                            System.out.println("------------------------------------");
-                            break;
-
-                        case CLIP_PATH_CHANGED:
-                            System.out.println("-------- CLIPPING PATH CALLED-------");
-
-                            ClippingPathInfo renderinfo3 = (ClippingPathInfo) data;
-                            System.out.println("Clipping path: " + renderinfo3.getClippingPath());
-
-                            System.out.println("------------------------------------");
-                            break;
-                    }
-                }
-
-                public Set<EventType> getSupportedEvents() {
-                    return null;
-                }
-            });
+            PdfCanvasProcessor processor = new PdfCanvasProcessor(new RecordEveryHighLevelEventListener(pageEventsLog));
 
             processor.processPageContent(page);
 
         }
+
+        byte[] logBytes = Files.readAllBytes(Paths.get(sourceFolder + "contentStreamProcessorTest_events_log.dat"));
+        String expectedPageEventsLog = new String(logBytes, StandardCharsets.UTF_8);
+
+        Assert.assertEquals(expectedPageEventsLog, pageEventsLog.toString());
     }
 
     @Test
@@ -167,6 +130,22 @@ public class PdfCanvasProcessorTest extends ExtendedITextTest {
         Assert.assertEquals("Hello World!\nHello World!\nHello World!\nHello World! Hello World! Hello World!", resultantText);
     }
 
+    @Test
+    @Ignore("DEVSIX-3608: this test currently throws StackOverflowError, which cannot be caught in .NET")
+    public void parseCircularReferencesInResourcesTest() throws IOException {
+        junitExpectedException.expect(StackOverflowError.class);
+
+        String fileName = "circularReferencesInResources.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + fileName));
+
+        PdfCanvasProcessor processor = new PdfCanvasProcessor(new NoOpEventListener());
+        PdfPage page = pdfDocument.getFirstPage();
+
+        processor.processPageContent(page);
+
+        pdfDocument.close();
+    }
+
     private static class NoOpEventListener implements IEventListener {
         @Override
         public void eventOccurred(IEventData data, EventType type) {
@@ -178,4 +157,68 @@ public class PdfCanvasProcessorTest extends ExtendedITextTest {
         }
     }
 
+    private static class RecordEveryHighLevelEventListener implements IEventListener {
+        private static final String END_EVENT_OCCURRENCE = "------------------------------------";
+        private StringBuilder sb;
+
+        RecordEveryHighLevelEventListener(StringBuilder outStream) {
+            this.sb = outStream;
+        }
+
+        public void eventOccurred(IEventData data, EventType type) {
+            switch (type) {
+                case BEGIN_TEXT:
+                    sb.append("-------- BEGIN TEXT ---------").append("\n");
+                    sb.append(END_EVENT_OCCURRENCE).append("\n");
+                    break;
+
+                case RENDER_TEXT:
+                    sb.append("-------- RENDER TEXT --------").append("\n");
+
+                    TextRenderInfo renderInfo = (TextRenderInfo) data;
+                    sb.append("String: ").append(renderInfo.getPdfString().toUnicodeString()).append("\n");
+
+                    sb.append(END_EVENT_OCCURRENCE).append("\n");
+                    break;
+
+                case END_TEXT:
+                    sb.append("-------- END TEXT -----------").append("\n");
+                    sb.append(END_EVENT_OCCURRENCE).append("\n");
+                    break;
+
+                case RENDER_IMAGE:
+                    sb.append("-------- RENDER IMAGE ---------").append("\n");
+
+                    ImageRenderInfo imageRenderInfo = (ImageRenderInfo) data;
+                    sb.append("Image: ").append(imageRenderInfo.getImageResourceName()).append("\n");
+
+                    sb.append(END_EVENT_OCCURRENCE).append("\n");
+                    break;
+
+                case RENDER_PATH:
+                    sb.append("-------- RENDER PATH --------").append("\n");
+
+                    PathRenderInfo pathRenderInfo = (PathRenderInfo) data;
+                    sb.append("Operation type: ").append(pathRenderInfo.getOperation()).append("\n");
+                    sb.append("Num of subpaths: ").append(pathRenderInfo.getPath().getSubpaths().size()).append("\n");
+
+                    sb.append(END_EVENT_OCCURRENCE).append("\n");
+                    break;
+
+                case CLIP_PATH_CHANGED:
+                    sb.append("-------- CLIPPING PATH ------").append("\n");
+
+                    ClippingPathInfo clippingPathRenderInfo = (ClippingPathInfo) data;
+                    sb.append("Num of subpaths: ").append(clippingPathRenderInfo.getClippingPath().getSubpaths().size())
+                            .append("\n");
+
+                    sb.append(END_EVENT_OCCURRENCE).append("\n");
+                    break;
+            }
+        }
+
+        public Set<EventType> getSupportedEvents() {
+            return null;
+        }
+    }
 }
