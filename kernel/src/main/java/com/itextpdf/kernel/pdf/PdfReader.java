@@ -203,6 +203,16 @@ public class PdfReader implements Closeable, Serializable {
         return this;
     }
 
+    /**
+     * Defines if memory saving mode is enabled.
+     * <p>
+     * By default memory saving mode is disabled for the sake of time–memory trade-off.
+     * <p>
+     * If memory saving mode is enabled, document processing might slow down, but reading will be less memory demanding.
+     *
+     * @param memorySavingMode true to enable memory saving mode, false to disable it.
+     * @return this {@link PdfReader} instance.
+     */
     public PdfReader setMemorySavingMode(boolean memorySavingMode) {
         this.memorySavingMode = memorySavingMode;
         return this;
