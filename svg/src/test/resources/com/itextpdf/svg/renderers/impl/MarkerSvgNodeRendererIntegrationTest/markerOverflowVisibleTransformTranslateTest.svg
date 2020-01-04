@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="200" height="200"
+     viewBox="0 0 200 200">
+
+    <defs id="Markers">
+        <marker id="mrkr" orient="auto"
+                markerUnits="strokeWidth" overflow="visible">
+            <path d="M0 1 L3 1 L3 -1 L0 -1 L0 1" fill="blue" style="stroke:red; stroke-width:0.2"/>
+        </marker>
+    </defs>
+
+        <path d="M40 60 L10 60"
+              style="marker-end:url(#mrkr);
+                      stroke:#000000;
+                      stroke-width:4"
+              transform="translate(80,-10)"/>
+</svg>

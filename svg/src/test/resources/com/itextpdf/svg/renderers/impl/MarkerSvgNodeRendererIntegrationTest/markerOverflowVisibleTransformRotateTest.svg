@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1000" height="1000"
+     viewBox="0 0 6000 6000"
+>
+    <defs id="Markers">
+        <marker id="mrkr13-29"
+                markerUnits="userSpaceOnUse" overflow="visible">
+            <use xlink:href="#pathInMarker" transform="rotate(-80)"/>
+        </marker>
+        <path id="pathInMarker" d="M 0 0 L 0 4000 L 4000 2000 L0 0 " style="stroke:none" fill="red"/>
+    </defs>
+    <path id="path" d="M0 0 L1500 4000"
+          style="marker-end:url(#mrkr13-29);
+                      stroke:#000000;
+                      stroke-width:16"/>
+</svg>

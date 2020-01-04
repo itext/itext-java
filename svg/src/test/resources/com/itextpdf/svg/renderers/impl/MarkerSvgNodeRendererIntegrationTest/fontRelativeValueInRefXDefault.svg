@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 150 200">
+    <defs>
+        <path id="pathInMarker" d="M2,2 L2,11 L10,6 L2,2" style="fill: #000000;"/>
+    </defs>
+    <defs id="Markers">
+        <marker id="markerArrowEm" markerWidth="13" markerHeight="13" refX="2em" refY="6"
+                orient="auto">
+            <use href="#pathInMarker"/>
+        </marker>
+        <marker id="markerArrowEx" markerWidth="13" markerHeight="13" refX="2ex" refY="6"
+                orient="auto">
+            <use href="#pathInMarker"/>
+        </marker>
+        <marker id="markerArrowRem" markerWidth="13" markerHeight="13" refX="2rem" refY="6"
+                orient="auto">
+            <use href="#pathInMarker"/>
+        </marker>
+    </defs>
+
+    <path d="M10,10 L10,150"
+          style="stroke: #6666ff; stroke-width: 1px; fill: none;
+                   marker-end: url(#markerArrowEm);"/>
+    <path d="M50,10 L50,150"
+          style="stroke: #6666ff; stroke-width: 1px; fill: none;
+                   marker-end: url(#markerArrowEx);"/>
+    <path  d="M90,10 90,150"
+          style="stroke: #6666ff; stroke-width: 1px; fill: none;
+                   marker-end: url(#markerArrowRem);"/>
+</svg>

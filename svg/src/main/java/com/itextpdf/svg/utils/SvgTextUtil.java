@@ -197,4 +197,14 @@ public final class SvgTextUtil {
         }
         return fontSize;
     }
+
+    /**
+     * The reference value may contain a hashtag character or 'url' designation and this method will filter them.
+     *
+     * @param name value to be filtered
+     * @return filtered value
+     */
+    public static String filterReferenceValue(String name) {
+        return name.replace("#", "").replace("url(", "").replace(")", "").trim();
+    }
 }

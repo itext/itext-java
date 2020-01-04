@@ -60,31 +60,31 @@ public class OverflowAttributeTest extends ExtendedITextTest {
 
     @Test
     public void overflowVisibleInMarkerElementTest() throws IOException, InterruptedException {
-        //TODO: update when DEVSIX-3482, DEVSIX-2860 fixed
+        //TODO: update when DEVSIX-3482 fixed
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "overflowVisibleInMarkerElement");
     }
 
     @Test
     public void overflowHiddenInMarkerElementTest() throws IOException, InterruptedException {
-        //TODO: update when DEVSIX-3482, DEVSIX-2860 fixed
+        //TODO: update when DEVSIX-3482 fixed
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "overflowHiddenInMarkerElement");
     }
 
     @Test
     public void overflowAutoInMarkerElementTest() throws IOException, InterruptedException {
-        //TODO: update when DEVSIX-3482, DEVSIX-2860 fixed
+        //TODO: update when DEVSIX-3482 fixed
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "overflowAutoInMarkerElement");
     }
 
     @Test
     public void overflowScrollInMarkerElementTest() throws IOException, InterruptedException {
-        //TODO: update when DEVSIX-3482, DEVSIX-2860 fixed
+        //TODO: update when DEVSIX-3482 fixed
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "overflowScrollInMarkerElement");
     }
 
     @Test
     public void overflowInitialInMarkerElementTest() throws IOException, InterruptedException {
-        //TODO: update when DEVSIX-3482, DEVSIX-2860 fixed
+        //TODO: update when DEVSIX-3482 fixed
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "overflowInitialInMarkerElement");
     }
 

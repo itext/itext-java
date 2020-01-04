@@ -583,24 +583,44 @@ public final class SvgConstants {
         public static final String ID = "id";
 
         /**
-         * Attribute defining the radius of a circle.
+         * Attribute defining the marker to use at the end of a path, line, polygon or polyline
          */
-        public static final String R = "r";
+        public static final String MARKER_END = "marker-end";
 
         /**
-         * Attribute defining the x-axis of an ellipse or the x-axis radius of rounded rectangles.
+         * Attribute defining the height of the viewport in which the marker is to be fitted
          */
-        public static final String RX = "rx";
+        public static final String MARKER_HEIGHT = "markerheight";
 
         /**
-         * Attribute defining the y-axis of an ellipse or the y-axis radius of rounded rectangles.
+         * Attribute defining the marker drawn at every other vertex but the start and end of a path, line, polygon or polyline
          */
-        public static final String RY = "ry";
+        public static final String MARKER_MID = "marker-mid";
+
+        /**
+         * Attribute defining the marker to use at the start of a path, line, polygon or polyline
+         */
+        public static final String MARKER_START = "marker-start";
+
+        /**
+         * Attribute defining the width of the viewport in which the marker is to be fitted
+         */
+        public static final String MARKER_WIDTH = "markerwidth";
+
+        /**
+         * Attribute defining the coordinate system for attributes ‘markerWidth’, ‘markerHeight’ and the contents of the ‘marker’.
+         */
+        public static final String MARKER_UNITS = "markerunits";
 
         /**
          * Attribute defining the opacity of a group or graphic element.
          */
         public static final String OPACITY = "opacity";
+
+        /**
+         * Attribute defining the orientation of a marker
+         */
+        public static final String ORIENT = "orient";
 
         /**
          * Close Path Operator.
@@ -726,6 +746,31 @@ public final class SvgConstants {
         public static final String PRESERVE_ASPECT_RATIO = "preserveaspectratio";
 
         /**
+         * Attribute defining the radius of a circle.
+         */
+        public static final String R = "r";
+
+        /**
+         * Attribute defining the x-axis coordinate of the reference point which is to be aligned exactly at the marker position.
+         */
+        public static final String REFX = "refx";
+
+        /**
+         * Attribute defining the y-axis coordinate of the reference point which is to be aligned exactly at the marker position.
+         */
+        public static final String REFY = "refy";
+
+        /**
+         * Attribute defining the x-axis of an ellipse or the x-axis radius of rounded rectangles.
+         */
+        public static final String RX = "rx";
+
+        /**
+         * Attribute defining the y-axis of an ellipse or the y-axis radius of rounded rectangles.
+         */
+        public static final String RY = "ry";
+
+        /**
          * Attribute defining the stroke color.
          */
         public static final String STROKE = "stroke";
@@ -842,6 +887,16 @@ public final class SvgConstants {
     public static final class Values {
 
         /**
+         * Value representing automatic orientation for the marker attribute orient.
+         */
+        public static final String AUTO = "auto";
+
+        /**
+         * Value representing reverse automatic orientation for the start marker.
+         */
+        public static final String AUTO_START_REVERSE = "auto-start-reverse";
+
+        /**
          * Value representing the default value for the stroke linecap.
          */
         public static final String BUTT = "butt";
@@ -901,6 +956,11 @@ public final class SvgConstants {
          * Value representing the text-alignment start for text objects
          */
         public static final String TEXT_ANCHOR_START = "start";
+
+        /**
+         * The value for markerUnits that represent values in a coordinate system which has a single unit equal the size in user units of the current stroke width.
+         */
+        public static final String STROKEWIDTH = "strokeWidth";
 
         /**
          * Value representing how to align when scaling.

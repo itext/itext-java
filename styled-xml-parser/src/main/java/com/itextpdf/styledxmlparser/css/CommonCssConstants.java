@@ -489,6 +489,11 @@ public class CommonCssConstants {
     public static final String OVERFLOW_WRAP = "overflow-wrap";
 
     /**
+     * The Constant OVERFLOW.
+     */
+    public static final String OVERFLOW = "overflow";
+
+    /**
      * The Constant PADDING.
      */
     public static final String PADDING = "padding";
@@ -741,8 +746,11 @@ public class CommonCssConstants {
     public static final String DECIMAL_LEADING_ZERO = "decimal-leading-zero";
 
     /**
-     * The Constant DISC.
+     * The Constant DEG.
      */
+    public static final String DEG = "deg";
+
+    /** The Constant DISC. */
     public static final String DISC = "disc";
 
     /**
@@ -765,9 +773,10 @@ public class CommonCssConstants {
      */
     public static final String GEORGIAN = "georgian";
 
-    /**
-     * The Constant GROOVE.
-     */
+    /** The Constant GRAD. */
+    public static final String GRAD = "grad";
+
+    /** The Constant GROOVE. */
     public static final String GROOVE = "groove";
 
     /**
@@ -939,6 +948,11 @@ public class CommonCssConstants {
      * The Constant PADDING_BOX.
      */
     public static final String PADDING_BOX = "padding-box";
+
+    /**
+     * The Constant RAD.
+     */
+    public static final String RAD = "rad";
 
     /**
      * The Constant REPEAT.
@@ -1174,6 +1188,12 @@ public class CommonCssConstants {
      * The Constant FONT_ABSOLUTE_SIZE_KEYWORDS.
      */
     public static final Map<String, String> FONT_ABSOLUTE_SIZE_KEYWORDS_VALUES;
+
+    /**
+     * The Constant METRIC_MEASUREMENTS.
+     */
+    public static final String[] METRIC_MEASUREMENTS_VALUES = new String[] {CommonCssConstants.PX, CommonCssConstants.IN,
+            CommonCssConstants.CM, CommonCssConstants.MM, CommonCssConstants.PC, CommonCssConstants.PT, CommonCssConstants.Q};
 
     // pseudo-classes
 

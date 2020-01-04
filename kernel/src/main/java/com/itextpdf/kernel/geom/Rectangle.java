@@ -186,6 +186,16 @@ public class Rectangle implements Cloneable, Serializable {
     }
 
     /**
+     * Convert rectangle to an array of points
+     *
+     * @return array of four extreme points of rectangle
+     */
+    public Point[] toPointsArray() {
+        return new Point[] {new Point(x, y), new Point(x + width, y),
+                new Point(x + width, y + height), new Point(x, y + height)};
+    }
+
+    /**
      * Get the rectangle representation of the intersection between this rectangle and the passed rectangle
      *
      * @param rect the rectangle to find the intersection with

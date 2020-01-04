@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000px" height="1000px">
+
+ <defs>
+    <marker id="endMarker"
+      viewBox="0 0 10 10" refX="0" refY="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" />
+    </marker>
+	 <marker id="startMarker" viewBox="0 0 10 10" 
+	 preserveAspectRatio="xMinYMin slice" refX="5" refY="5" orient="auto">
+         <path d="M 0 0 L 10 5 L 0 10" fill="none" stroke="red"/>
+     </marker>
+ </defs>
+ 
+    <polyline  points="20,220 100,300 130,270" fill="none" stroke-width="5" stroke="blue" marker-start="url(#startMarker)" marker-end="url(#endMarker)" />  
+    <polyline  points="220,220 300,100 250,40" fill="none" stroke-width="5" stroke="blue" marker-start="url(#startMarker)" marker-end="url(#endMarker)" />    
+    <polyline  points="420,220 300,300 380,380" fill="none" stroke-width="5" stroke="blue" marker-start="url(#startMarker)" marker-end="url(#endMarker)" />
+    
+</svg>

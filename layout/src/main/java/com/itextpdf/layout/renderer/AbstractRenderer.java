@@ -2002,24 +2002,11 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return array of float values which denote left, bottom, right, top lines of bbox in this specific order
      */
     protected Rectangle calculateBBox(List<Point> points) {
-        double minX = Double.MAX_VALUE;
-        double minY = Double.MAX_VALUE;
-        double maxX = -Double.MAX_VALUE;
-        double maxY = -Double.MAX_VALUE;
-        for (Point p : points) {
-            minX = Math.min(p.getX(), minX);
-            minY = Math.min(p.getY(), minY);
-            maxX = Math.max(p.getX(), maxX);
-            maxY = Math.max(p.getY(), maxY);
-        }
-        return new Rectangle((float) minX, (float) minY, (float) (maxX - minX), (float) (maxY - minY));
+        return Rectangle.calculateBBox(points);
     }
 
     protected List<Point> rectangleToPointsList(Rectangle rect) {
-        List<Point> points = new ArrayList<>();
-        points.addAll(Arrays.asList(new Point(rect.getLeft(), rect.getBottom()), new Point(rect.getRight(), rect.getBottom()),
-                new Point(rect.getRight(), rect.getTop()), new Point(rect.getLeft(), rect.getTop())));
-        return points;
+        return Arrays.asList(rect.toPointsArray());
     }
 
     protected List<Point> transformPoints(List<Point> points, AffineTransform transform) {

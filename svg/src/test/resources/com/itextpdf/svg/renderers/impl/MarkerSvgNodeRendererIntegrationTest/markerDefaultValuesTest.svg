@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 150 100">
+    <marker id="markerArrow">
+        <path d="M0,0 L0,2 L3,1 L0,0" style="fill: black;" />
+    </marker>
+
+    <line x1="10" y1="10" x2="20" y2="20" stroke="black"
+          style="stroke: blue; marker-end: url(#markerArrow);"/>
+</svg>

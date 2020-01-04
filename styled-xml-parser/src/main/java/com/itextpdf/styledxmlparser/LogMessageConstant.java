@@ -57,6 +57,7 @@ public final class LogMessageConstant {
     public static final String ERROR_PARSING_CSS_SELECTOR = "Error while parsing css selector: {0}";
     /** The Constant UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED. */
     public static final String UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED = "Unknown absolute metric length parsed \"{0}\".";
+    public static final String UNKNOWN_METRIC_ANGLE_PARSED = "Unknown metric angle parsed: \"{0}\".";
     public static final String URL_IS_EMPTY_IN_CSS_EXPRESSION = "url function is empty in expression:{0}";
     public static final String URL_IS_NOT_CLOSED_IN_CSS_EXPRESSION = "url function is not properly closed in expression:{0}";
     /** The Constant QUOTES_PROPERTY_INVALID. */

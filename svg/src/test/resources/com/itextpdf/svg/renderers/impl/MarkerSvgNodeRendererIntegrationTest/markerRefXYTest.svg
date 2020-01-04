@@ -1,66 +1,83 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800px" height="600px">
+<svg xmlns="http://www.w3.org/2000/svg" width="1000px" height="600px">
 <defs>
-      <marker id="marker1"
-      viewBox="0 0 10 10" refX="0" refY="5" orient="auto" >
+    <marker id="marker1"
+      viewBox="0 0 10 10" refX="0" refY="5" >
       <path d="M 0 0 L 10 5 L 0 10 z" />
-                                     </marker>
-      <marker id="marker2"
-      viewBox="0 0 10 10" refX="0" refY="5" orient="0" >
-      <path d="M 0 0 L 10 5 L 0 10 z" />
-                                     </marker>
-      <marker id="marker3"
-      viewBox="0 0 10 10" refX="0" refY="5" orient="-15" >
-      <path d="M 0 0 L 10 5 L 0 10 z" />
-                                     </marker>
-      <marker id="marker4"
-      viewBox="0 0 10 10" refX="0" refY="5" orient="180" >
-      <path d="M 0 0 L 10 5 L 0 10 z" />
-      </marker>
-      <marker id="marker5"
-              viewBox="0 0 10 10" refX="0em" refY="2em" orient="auto" >
+    </marker>
+
+    <marker id="marker2"
+            viewBox="0 0 10 10" refX="-5" refY="-5" >
         <path d="M 0 0 L 10 5 L 0 10 z" />
-      </marker>
-      <marker id="marker6"
-            viewBox="0 0 10 10" refX="0px" refY="5px" orient="auto" >
+    </marker>
+
+    <marker id="marker3"
+            viewBox="0 0 10 10" refX="-5" refY="0" >
         <path d="M 0 0 L 10 5 L 0 10 z" />
-      </marker>
-      <marker id="marker7"
-            viewBox="0 0 10 10" refX="0pt" refY="5pt" orient="auto" >
+    </marker>
+
+    <marker id="marker4"
+            viewBox="0 0 10 10" refX="0" refY="-5" >
         <path d="M 0 0 L 10 5 L 0 10 z" />
-      </marker>
+    </marker>
+
+    <marker id="marker5"
+              viewBox="0 0 10 10" refX="0em" refY="2em">
+        <path d="M 0 0 L 10 5 L 0 10 z" />
+    </marker>
+
+    <marker id="marker6"
+            viewBox="0 0 10 10" refX="0px" refY="5px">
+        <path d="M 0 0 L 10 5 L 0 10 z" />
+    </marker>
+
+    <marker id="marker7"
+            viewBox="0 0 10 10" refX="0pt" refY="5pt">
+        <path d="M 0 0 L 10 5 L 0 10 z" />
+    </marker>
+
     <marker id="marker8"
-            viewBox="0 0 10 10" refX="0mm" refY="5mm" orient="auto" >
+            viewBox="0 0 10 10" refX="0mm" refY="5mm">
         <path d="M 0 0 L 10 5 L 0 10 z" />
     </marker>
+
     <marker id="marker9"
-            viewBox="0 0 10 10" refX="0cm" refY="0.5cm" orient="auto" >
+            viewBox="0 0 10 10" refX="0cm" refY="0.5cm">
         <path d="M 0 0 L 10 5 L 0 10 z" />
     </marker>
+
     <marker id="marker10"
-            viewBox="0 0 10 10" refX="0pc" refY="2pc" orient="auto" >
+            viewBox="0 0 10 10" refX="0pc" refY="2pc">
         <path d="M 0 0 L 10 5 L 0 10 z" />
     </marker>
+
     <marker id="marker11"
-            viewBox="0 0 10 10" refX="0%" refY="5%" orient="auto" >
+            viewBox="0 0 10 10" refX="0%" refY="5%">
         <path d="M 0 0 L 10 5 L 0 10 z" />
     </marker>
+
     <marker id="marker12"
-            viewBox="0 0 10 10" refX="0in" refY="0.1in" orient="auto" >
+            viewBox="0 0 10 10" refX="0in" refY="0.1in" orient="auto">
         <path d="M 0 0 L 10 5 L 0 10 z" />
     </marker>
+
+    <marker id="marker13"
+            viewBox="0 0 10 10" refX="0ex" refY="5ex" orient="auto">
+        <path d="M 0 0 L 10 5 L 0 10 z" />
+    </marker>
+
   </defs>
   
     <line  x1="20" y1="20" x2="100" y2="100" stroke-width="8" stroke="blue" marker-end="url(#marker1)" />
-    <text x="20" y="150"> refX,Y  (0,5) orient (auto) </text>
+    <text x="20" y="150"> refX,Y  (0,5) </text>
   
     <line  x1="220" y1="20" x2="300" y2="100" stroke-width="8" stroke="blue" marker-end="url(#marker2)" />
-    <text x="220" y="150"> refX,Y  (0,5) orient (0) </text>
+    <text x="220" y="150"> refX,Y  (-5,-5) </text>
 
     <line  x1="420" y1="20" x2="500" y2="100" stroke-width="8" stroke="blue" marker-end="url(#marker3)" />
-    <text x="420" y="150"> refX,Y  (0,5) orient (-15) </text>
+    <text x="420" y="150"> refX,Y  (-5,0) </text>
 
     <line  x1="620" y1="20" x2="700" y2="100" stroke-width="8" stroke="blue" marker-end="url(#marker4)" />
-    <text x="620" y="150"> refX,Y  (0,5) orient (180) </text>
+    <text x="620" y="150"> refX,Y  (0,-5) </text>
   
     <line  x1="20" y1="220" x2="100" y2="300" stroke-width="8" stroke="blue" marker-end="url(#marker5)" />
     <text x="20" y="390" style="font-size: 20"> refX,Y  (0em,2em)  </text>
@@ -74,6 +91,9 @@
     <line  x1="620" y1="220" x2="700" y2="300" stroke-width="8" stroke="blue" marker-end="url(#marker8)" />
     <text x="620" y="390" style="font-size: 20"> refX,Y  (0mm,5mm)  </text>
 
+    <line  x1="820" y1="220" x2="900" y2="300" stroke-width="8" stroke="blue" marker-end="url(#marker13)" />
+    <text x="820" y="390" style="font-size: 20"> refX,Y  (0ex,5ex)  </text>
+
     <line  x1="20" y1="420" x2="100" y2="500" stroke-width="8" stroke="blue" marker-end="url(#marker9)" />
     <text x="20" y="580" style="font-size: 20"> refX,Y  (0cm,0.5cm)  </text>
 
@@ -85,4 +105,5 @@
 
     <line  x1="620" y1="420" x2="700" y2="500" stroke-width="8" stroke="blue" marker-end="url(#marker12)" />
     <text x="620" y="580" style="font-size: 20"> refX,Y  (0in,0.1in) </text>
+
 </svg>

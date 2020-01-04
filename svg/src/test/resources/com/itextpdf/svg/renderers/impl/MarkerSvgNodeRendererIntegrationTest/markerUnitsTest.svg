@@ -18,7 +18,7 @@
                                      </marker>
   </defs>
   
-  <line  x1="20" y1="20" x2="100" y2="100" stroke-width="8" stroke="blue" marker-end="url(#marker1)" />     
+  <line  x1="20" y1="20" x2="100" y2="100" stroke-width="8" stroke="blue" style="marker-end:url(#marker1)" />
     <text x="20" y="150"> markerUnits = strokeWidth </text>
     <text x="20" y="170"> markerWidth|Height = 1 </text>
   
@@ -30,7 +30,7 @@
       <text x="20" y="390"> markerUnits = userSpaceOnUse </text>
       <text x="20" y="410"> markerWidth|Height = 15 </text>
   
-  <line  x1="220" y1="220" x2="300" y2="300" stroke-width="8" stroke="blue" marker-end="url(#marker4)" />      
+  <line  x1="220" y1="220" x2="300" y2="300" stroke-width="8" stroke="blue" style="marker-end:url(#marker4)" />
       <text x="250" y="390"> markerUnits = userSpaceOnUse </text>
       <text x="250" y="410"> markerWidth|Height = 30 </text>
 </svg>

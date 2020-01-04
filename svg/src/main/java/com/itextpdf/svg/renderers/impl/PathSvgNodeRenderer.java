@@ -43,20 +43,25 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.Point;
+import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.path.IPathShape;
 import com.itextpdf.svg.renderers.path.SvgPathShapeFactory;
+import com.itextpdf.svg.renderers.path.impl.AbstractPathShape;
 import com.itextpdf.svg.renderers.path.impl.ClosePath;
 import com.itextpdf.svg.renderers.path.impl.IControlPointCurve;
 import com.itextpdf.svg.renderers.path.impl.MoveTo;
 import com.itextpdf.svg.renderers.path.impl.QuadraticSmoothCurveTo;
 import com.itextpdf.svg.renderers.path.impl.SmoothSCurveTo;
+import com.itextpdf.svg.utils.SvgCoordinateUtils;
 import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.utils.SvgRegexUtils;
 
@@ -69,12 +74,13 @@ import java.util.regex.Pattern;
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;path&gt; tag.
  */
-public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
+public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMarkerCapable {
 
     private static final String SPACE_CHAR = " ";
 
     /**
-     * The regular expression to find invalid operators in the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of the &lt;path&gt; element</a>
+     * The regular expression to find invalid operators in the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData
+     * attribute of the &lt;path&gt; element</a>
      * <p>
      * Find any occurrence of a letter that is not an operator
      */
@@ -82,12 +88,14 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
     private static Pattern invalidRegexPattern = Pattern.compile(INVALID_OPERATOR_REGEX, Pattern.CASE_INSENSITIVE);
 
     /**
-     * The regular expression to split the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of the &lt;path&gt; element</a>
+     * The regular expression to split the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of
+     * the &lt;path&gt; element</a>
      * <p>
-     * Since {@link PathSvgNodeRenderer#containsInvalidAttributes(String)} is called before the use of this expression in {@link PathSvgNodeRenderer#parsePathOperations()} the attribute to be split is valid.
-     *
+     * Since {@link PathSvgNodeRenderer#containsInvalidAttributes(String)} is called before the use of this expression
+     * in {@link PathSvgNodeRenderer#parsePathOperations()} the attribute to be split is valid.
+     * <p>
      * SVG defines 6 types of path commands, for a total of 20 commands:
-     *
+     * <p>
      * MoveTo: M, m
      * LineTo: L, l, H, h, V, v
      * Cubic Bezier Curve: C, c, S, s
@@ -144,7 +152,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
             String[] startingControlPoint = new String[2];
             if (previousShape != null) {
                 Point previousEndPoint = previousShape.getEndingPoint();
-                //if the previous command was a Bezier curve, use its last control point
+                // If the previous command was a Bezier curve, use its last control point
                 if (previousShape instanceof IControlPointCurve) {
                     Point lastControlPoint = ((IControlPointCurve) previousShape).getLastControlPoint();
                     float reflectedX = (float) (2 * previousEndPoint.getX() - lastControlPoint.getX());
@@ -180,7 +188,8 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
      */
     private List<IPathShape> processPathOperator(String[] pathProperties, IPathShape previousShape) {
         List<IPathShape> shapes = new ArrayList<>();
-        if (pathProperties.length == 0 || pathProperties[0].isEmpty() || SvgPathShapeFactory.getArgumentCount(pathProperties[0]) < 0) {
+        if (pathProperties.length == 0 || pathProperties[0].isEmpty()
+                || SvgPathShapeFactory.getArgumentCount(pathProperties[0]) < 0) {
             return shapes;
         }
 
@@ -203,7 +212,8 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
                 return shapes;
             }
 
-            String[] shapeCoordinates = getShapeCoordinates(pathShape, previousShape, Arrays.copyOfRange(pathProperties, index, index+argumentCount));
+            String[] shapeCoordinates = getShapeCoordinates(pathShape, previousShape,
+                    Arrays.copyOfRange(pathProperties, index, index + argumentCount));
             if (pathShape != null) {
                 if (shapeCoordinates != null) {
                     pathShape.setCoordinates(shapeCoordinates, currentPoint);
@@ -231,8 +241,10 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
                 if (index + 2 > pathProperties.length) {
                     break;
                 }
-                pathShape = pathShape.isRelative() ? SvgPathShapeFactory.createPathShape("l") : SvgPathShapeFactory.createPathShape("L");
-                shapeCoordinates = getShapeCoordinates(pathShape, previousShape, Arrays.copyOfRange(pathProperties, index, index + 2));
+                pathShape = pathShape.isRelative() ? SvgPathShapeFactory.createPathShape("l")
+                        : SvgPathShapeFactory.createPathShape("L");
+                shapeCoordinates = getShapeCoordinates(pathShape, previousShape,
+                        Arrays.copyOfRange(pathProperties, index, index + 2));
                 pathShape.setCoordinates(shapeCoordinates, previousShape.getEndingPoint());
                 shapes.add(pathShape);
                 previousShape = pathShape;
@@ -245,7 +257,8 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
      * Processes the {@link SvgConstants.Attributes#D} {@link PathSvgNodeRenderer#attributesAndStyles} and converts them
      * into one or more {@link IPathShape} objects to be drawn on the canvas.
      * <p>
-     * Each individual operator is passed to {@link PathSvgNodeRenderer#processPathOperator(String[], IPathShape)} to be processed individually.
+     * Each individual operator is passed to {@link PathSvgNodeRenderer#processPathOperator(String[], IPathShape)} to be
+     * processed individually.
      *
      * @return a {@link Collection} of each {@link IPathShape} that should be drawn to represent the path.
      */
@@ -271,7 +284,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
 
     boolean containsInvalidAttributes(String attributes) {
-        return SvgRegexUtils.containsAtLeastOneMatch(invalidRegexPattern,attributes);
+        return SvgRegexUtils.containsAtLeastOneMatch(invalidRegexPattern, attributes);
     }
 
     Collection<String> parsePathOperations() {
@@ -281,7 +294,8 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
             throw new SvgProcessingException(SvgExceptionMessageConstant.PATH_OBJECT_MUST_HAVE_D_ATTRIBUTE);
         }
         if (containsInvalidAttributes(attributes)) {
-            throw new SvgProcessingException(SvgLogMessageConstant.INVALID_PATH_D_ATTRIBUTE_OPERATORS).setMessageParams(attributes);
+            throw new SvgProcessingException(SvgLogMessageConstant.INVALID_PATH_D_ATTRIBUTE_OPERATORS)
+                    .setMessageParams(attributes);
         }
 
         String[] operators = splitPathStringIntoOperators(attributes);
@@ -291,7 +305,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
             if (!instTrim.isEmpty()) {
                 char instruction = instTrim.charAt(0);
                 String temp = instruction + SPACE_CHAR + instTrim.substring(1).replace(",", SPACE_CHAR).trim();
-                //Do a run-through for decimal point separation
+                // Do a run-through for decimal point separation
                 temp = separateDecimalPoints(temp);
                 result.add(temp);
             }
@@ -304,8 +318,8 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
      * Iterate over the input string and separate numbers from each other with space chars
      */
     String separateDecimalPoints(String input) {
-        //If a space or minus sign is found reset
-        //If a another point is found, add an extra space on before the point
+        // If a space or minus sign is found reset
+        // If a another point is found, add an extra space on before the point
         StringBuilder res = new StringBuilder();
         // We are now among the digits to the right of the decimal point
         boolean fractionalPartAfterDecimalPoint = false;
@@ -339,7 +353,8 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
     }
 
     /**
-     * Gets an array of strings representing operators with their arguments, e.g. {"M 100 100", "L 300 100", "L200, 300", "z"}
+     * Gets an array of strings representing operators with their arguments, e.g. {"M 100 100", "L 300 100", "L200,
+     * 300", "z"}
      */
     static String[] splitPathStringIntoOperators(String path) {
         return SPLIT_PATTERN.split(path);
@@ -347,5 +362,51 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     private static boolean endsWithNonWhitespace(StringBuilder sb) {
         return sb.length() > 0 && !Character.isWhitespace(sb.charAt(sb.length() - 1));
+    }
+
+    @Override
+    public void drawMarker(SvgDrawContext context, final MarkerVertexType markerVertexType) {
+        Object[] allShapesOrdered = getShapes().toArray();
+        Point point = null;
+        if (MarkerVertexType.MARKER_START.equals(markerVertexType)) {
+            point = ((AbstractPathShape) allShapesOrdered[0]).getEndingPoint();
+        } else if (MarkerVertexType.MARKER_END.equals(markerVertexType)) {
+            point = ((AbstractPathShape) allShapesOrdered[allShapesOrdered.length - 1])
+                    .getEndingPoint();
+        }
+        if (point != null) {
+            String moveX = SvgCssUtils.convertDoubleToString(point.x);
+            String moveY = SvgCssUtils.convertDoubleToString(point.y);
+            MarkerSvgNodeRenderer.drawMarker(context, moveX, moveY, markerVertexType, this);
+        }
+    }
+
+    @Override
+    public double getAutoOrientAngle(MarkerSvgNodeRenderer marker, boolean reverse) {
+        Object[] pathShapes = getShapes().toArray();
+        if (pathShapes.length > 1) {
+            Vector v = new Vector(0, 0, 0);
+            if (SvgConstants.Attributes.MARKER_END.equals(marker.attributesAndStyles.get(SvgConstants.Tags.MARKER))) {
+                // Create vector from the last two shapes
+                IPathShape lastShape = (IPathShape) pathShapes[pathShapes.length - 1];
+                IPathShape secondToLastShape = (IPathShape) pathShapes[pathShapes.length - 2];
+                v = new Vector((float) (lastShape.getEndingPoint().getX() - secondToLastShape.getEndingPoint().getX()),
+                        (float) (lastShape.getEndingPoint().getY() - secondToLastShape.getEndingPoint().getY()),
+                        0f);
+            } else if (SvgConstants.Attributes.MARKER_START
+                    .equals(marker.attributesAndStyles.get(SvgConstants.Tags.MARKER))) {
+                // Create vector from the first two shapes
+                IPathShape firstShape = (IPathShape) pathShapes[0];
+                IPathShape secondShape = (IPathShape) pathShapes[1];
+                v = new Vector((float) (secondShape.getEndingPoint().getX() - firstShape.getEndingPoint().getX()),
+                        (float) (secondShape.getEndingPoint().getY() - firstShape.getEndingPoint().getY()),
+                        0f);
+            }
+            // Get angle from this vector and the horizontal axis
+            Vector xAxis = new Vector(1, 0, 0);
+            double rotAngle = SvgCoordinateUtils.calculateAngleBetweenTwoVectors(xAxis, v);
+            return v.get(1) >= 0 && !reverse ? rotAngle : rotAngle * -1f;
+        }
+        return 0;
     }
 }

@@ -350,4 +350,45 @@ public class SvgTextUtilTest extends ExtendedITextTest {
 
         Assert.assertEquals(expected, actual, EPS);
     }
+
+    @Test
+    public void testFilterReferenceValueMarkerReference() {
+        Assert.assertEquals("MarkerCircle", SvgTextUtil.filterReferenceValue("url(#MarkerCircle)"));
+    }
+
+    @Test
+    public void testFilterReferenceValueMarkerFullEntry() {
+        Assert.assertEquals("marker-end: MarkerArrow;",
+                SvgTextUtil.filterReferenceValue("marker-end: url(#MarkerArrow);"));
+    }
+
+    @Test
+    public void testFilterReferenceValueSimpleReference() {
+        Assert.assertEquals("figure11",
+                SvgTextUtil.filterReferenceValue("#figure11"));
+    }
+
+    @Test
+    public void testFilterReferenceValueNoFilter() {
+        Assert.assertEquals("circle",
+                SvgTextUtil.filterReferenceValue("circle"));
+    }
+
+    @Test
+    public void testFilterReferenceValueEmptyString() {
+        Assert.assertEquals("",
+                SvgTextUtil.filterReferenceValue(""));
+    }
+
+    @Test
+    public void testFilterReferenceValueNumberString() {
+        Assert.assertEquals("16554245",
+                SvgTextUtil.filterReferenceValue("16554245"));
+    }
+
+    @Test
+    public void testFilterReferenceValueFilteredValues() {
+        Assert.assertEquals("",
+                SvgTextUtil.filterReferenceValue("))url(####)"));
+    }
 }

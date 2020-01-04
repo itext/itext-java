@@ -1,0 +1,181 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="1600" height="800"
+     version="1.1"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <g id="grid" stroke="green">
+            <circle fill="none" r="5" stroke-width="0.2"/>
+            <line fill="none" stroke-width="1" x1="-50" x2="50"/>
+            <line fill="none" stroke-width="1" y1="-50" y2="50"/>
+
+            <line fill="none" stroke-width="0.1" x1="-50" y1="-5" x2="50" y2="-5" stroke="dark-green"/>
+            <line fill="none" stroke-width="0.2" x1="-50" y1="-10" x2="50" y2="-10"/>
+            <line fill="none" stroke-width="0.1" x1="-50" y1="-15" x2="50" y2="-15" stroke="dark-green"/>
+            <line fill="none" stroke-width="0.2" x1="-50" y1="-20" x2="50" y2="-20"/>
+            <line fill="none" stroke-width="0.1" x1="-50" y1="-25" x2="50" y2="-25" stroke="dark-green"/>
+            <line fill="none" stroke-width="0.2" x1="-50" y1="-30" x2="50" y2="-30"/>
+            <line fill="none" stroke-width="0.1" x1="-50" y1="-35" x2="50" y2="-35" stroke="dark-green"/>
+            <line fill="none" stroke-width="0.2" x1="-50" y1="-40" x2="50" y2="-40"/>
+            <line fill="none" stroke-width="0.1" x1="-50" y1="-45" x2="50" y2="-45" stroke="dark-green"/>
+
+            <line fill="none" stroke-width="0.1" x1="-50" y1="5" x2="50" y2="5" stroke="dark-green"/>
+            <line fill="none" stroke-width="0.2" x1="-50" y1="10" x2="50" y2="10"/>
+            <line fill="none" stroke-width="0.1" x1="-50" y1="15" x2="50" y2="15" stroke="dark-green"/>
+            <line fill="none" stroke-width="0.2" x1="-50" y1="20" x2="50" y2="20"/>
+            <line fill="none" stroke-width="0.1" x1="-50" y1="25" x2="50" y2="25" stroke="dark-green"/>
+            <line fill="none" stroke-width="0.2" x1="-50" y1="30" x2="50" y2="30"/>
+            <line fill="none" stroke-width="0.1" x1="-50" y1="35" x2="50" y2="35" stroke="dark-green"/>
+            <line fill="none" stroke-width="0.2" x1="-50" y1="40" x2="50" y2="40"/>
+            <line fill="none" stroke-width="0.1" x1="-50" y1="45" x2="50" y2="45" stroke="dark-green"/>
+
+            <line fill="none" stroke-width="0.1" y1="-50" x1="-5" y2="50" x2="-5" stroke="dark-green"/>
+            <line fill="none" stroke-width="0.2" y1="-50" x1="-10" y2="50" x2="-10"/>
+            <line fill="none" stroke-width="0.1" y1="-50" x1="-15" y2="50" x2="-15" stroke="dark-green"/>
+            <line fill="none" stroke-width="0.2" y1="-50" x1="-20" y2="50" x2="-20"/>
+            <line fill="none" stroke-width="0.1" y1="-50" x1="-25" y2="50" x2="-25" stroke="dark-green"/>
+            <line fill="none" stroke-width="0.2" y1="-50" x1="-30" y2="50" x2="-30"/>
+            <line fill="none" stroke-width="0.1" y1="-50" x1="-35" y2="50" x2="-35" stroke="dark-green"/>
+            <line fill="none" stroke-width="0.2" y1="-50" x1="-40" y2="50" x2="-40"/>
+            <line fill="none" stroke-width="0.1" y1="-50" x1="-45" y2="50" x2="-45" stroke="dark-green"/>
+
+            <line fill="none" stroke-width="0.1" y1="-50" x1="5" y2="50" x2="5" stroke="dark-green"/>
+            <line fill="none" stroke-width="0.2" y1="-50" x1="10" y2="50" x2="10"/>
+            <line fill="none" stroke-width="0.1" y1="-50" x1="15" y2="50" x2="15" stroke="dark-green"/>
+            <line fill="none" stroke-width="0.2" y1="-50" x1="20" y2="50" x2="20"/>
+            <line fill="none" stroke-width="0.1" y1="-50" x1="25" y2="50" x2="25" stroke="dark-green"/>
+            <line fill="none" stroke-width="0.2" y1="-50" x1="30" y2="50" x2="30"/>
+            <line fill="none" stroke-width="0.1" y1="-50" x1="35" y2="50" x2="35" stroke="dark-green"/>
+            <line fill="none" stroke-width="0.2" y1="-50" x1="40" y2="50" x2="40"/>
+            <line fill="none" stroke-width="0.1" y1="-50" x1="45" y2="50" x2="45" stroke="dark-green"/>
+        </g>
+        <g id="markerContents" fill="none">
+            <circle r="5" stroke="black"/>
+            <circle r="10" stroke="black"/>
+            <g id="marker-grid" stroke="red">
+                <circle r="2.5" fill="none" stroke-width="0.2"/>
+                <line fill="none" stroke-width="0.5" x2="20"/>
+                <line fill="none" stroke-width="0.5" y2="20"/>
+
+                <line fill="none" stroke-width="0.2" y1="5" x2="20" y2="5"/>
+                <line fill="none" stroke-width="0.2" y1="10" x2="20" y2="10"/>
+                <line fill="none" stroke-width="0.2" y1="15" x2="20" y2="15"/>
+
+                <line fill="none" stroke-width="0.2" x1="5" y2="20" x2="5"/>
+                <line fill="none" stroke-width="0.2" x1="10" y2="20" x2="10"/>
+                <line fill="none" stroke-width="0.2" x1="15" y2="20" x2="15"/>
+                <rect height="20" width="15" stroke="blue"/>
+            </g>
+            <path stroke="blue" d="M 0 0 L 10 5 L 0 10 z"/>
+        </g>
+        <marker id="refX0refY0"
+                viewBox="0 0 10 10"
+                markerUnits="strokeWidth"
+                markerWidth="4" markerHeight="3"
+                orient="auto"
+                preserveAspectRatio="none"
+        >
+            <use xlink:href="#markerContents"/>
+        </marker>
+        <marker id="refX10refY-5"
+                viewBox="0 0 10 10" refX="10" refY="-5"
+                markerUnits="strokeWidth"
+                markerWidth="4" markerHeight="3"
+                orient="auto"
+                preserveAspectRatio="none"
+        >
+            <use xlink:href="#markerContents"/>
+        </marker>
+        <marker id="refX-10refY-5"
+                viewBox="0 0 10 10" refX="-10" refY="-5"
+                markerUnits="strokeWidth"
+                markerWidth="4" markerHeight="3"
+                orient="auto"
+                preserveAspectRatio="none">
+            <use xlink:href="#markerContents"/>
+        </marker>
+        <marker id="refX-10refY5"
+                viewBox="0 0 10 10" refX="-10" refY="5"
+                markerUnits="strokeWidth"
+                markerWidth="4" markerHeight="3"
+                orient="auto"
+                preserveAspectRatio="none">
+            <use xlink:href="#markerContents"/>
+        </marker>
+
+        <marker id="refX10refY5"
+                viewBox="0 0 10 10" refX="10" refY="5"
+                markerUnits="strokeWidth"
+                markerWidth="4" markerHeight="3"
+                orient="auto"
+                preserveAspectRatio="none">
+            <use xlink:href="#markerContents"/>
+        </marker>
+    </defs>
+    <g>
+        <rect width="300" height="200"
+              fill="none" stroke="blue" stroke-width="1"/>
+        <use xlink:href="#grid" transform="translate(150,75)"/>
+        <path d="M 50 150 L 150 150 L 150 75"
+              fill="none" stroke="black" stroke-width="5"
+              marker-end="url(#refX0refY0)"/>
+        <circle r="2" stroke-width="0.1" fill="none" stroke="red" cx="150" cy="75"/>
+        <path d="M200 25 l0 0" stroke="red" stroke-width="0.5"/>
+        <circle r="3" stroke-width="0.5" fill="none" stroke="red" cx="150" cy="75"/>
+    </g>
+    <g transform="translate(300,0)">
+        <rect width="300" height="200"
+              fill="none" stroke="blue" stroke-width="1"/>
+        <use xlink:href="#grid" transform="translate(150,75)"/>
+        <path d="M 50 150 L 150 150 L 150 75"
+              fill="none" stroke="black" stroke-width="5"
+              marker-end="url(#refX10refY-5)"/>
+        <circle r="2" stroke-width="0.1" fill="none" stroke="red" cx="150" cy="75"/>
+        <path d="M150 75 l8 20" stroke="red" stroke-width="0.5"/>
+        <circle r="3" stroke-width="0.5" fill="none" stroke="red" cx="158" cy="95"/>
+    </g>
+    <g transform="translate(300,200)">
+        <rect width="300" height="200"
+              fill="none" stroke="blue" stroke-width="1"/>
+        <use xlink:href="#grid" transform="translate(150,75)"/>
+        <path d="M 50 150 L 150 150 L 150 75"
+              fill="none" stroke="black" stroke-width="5"
+              marker-end="url(#refX-10refY-5)"/>
+        <circle r="2" stroke-width="0.1" fill="none" stroke="red" cx="150" cy="75"/>
+        <path d="M150 75 l8 -20" stroke="red" stroke-width="0.5"/>
+        <circle r="3" stroke-width="0.5" fill="none" stroke="red" cx="158" cy="55"/>
+    </g>
+    <g transform="translate(0,200)">
+        <rect width="300" height="200"
+              fill="none" stroke="blue" stroke-width="1"/>
+        <use xlink:href="#grid" transform="translate(150,75)"/>
+        <path d="M 50 150 L 150 150 L 150 75"
+              fill="none" stroke="black" stroke-width="5"
+              marker-end="url(#refX-10refY5)"/>
+        <circle r="2" stroke-width="0.1" fill="none" stroke="red" cx="150" cy="75"/>
+        <path d="M150 75 l-8 -20" stroke="red" stroke-width="0.5"/>
+        <circle r="3" stroke-width="0.5" fill="none" stroke="red" cx="142" cy="55"/>
+    </g>
+    <g transform="translate(0,400)">
+        <rect width="300" height="200"
+              fill="none" stroke="blue" stroke-width="1"/>
+        <use xlink:href="#grid" transform="translate(150,75)"/>
+        <path d="M 50 150 L 150 150 L 150 75"
+              fill="none" stroke="black" stroke-width="5"
+              marker-end="url(#refX10refY5)"/>
+        <circle r="2" stroke-width="0.1" fill="none" stroke="red" cx="150" cy="75"/>
+        <path d="M150 75 l-8 20" stroke="red" stroke-width="0.5"/>
+        <circle r="3" stroke-width="0.5" fill="none" stroke="red" cx="142" cy="95"/>
+    </g>
+    <g transform="translate(300,400)">
+        <rect width="300" height="200"
+              fill="none" stroke="blue" stroke-width="1"/>
+        <use xlink:href="#grid" transform="translate(150,75)"/>
+        <path d="M 50 150 L 100 150 L 150 75"
+              fill="none" stroke="black" stroke-width="5"
+              marker-end="url(#refX10refY5)"/>
+        <circle r="2" stroke-width="0.1" fill="none" stroke="red" cx="150" cy="75"/>
+        <path d="M150 75 l-17 12.5" stroke="red" stroke-width="0.5"/>
+        <circle r="3" stroke-width="0.5" fill="none" stroke="red" cx="133" cy="87.5"/>
+    </g>
+</svg>

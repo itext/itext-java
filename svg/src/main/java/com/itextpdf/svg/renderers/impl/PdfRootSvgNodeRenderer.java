@@ -89,7 +89,6 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
         PdfCanvas currentCanvas = context.getCurrentCanvas();
         currentCanvas.concatMatrix(this.calculateTransformation(context));
         currentCanvas.writeLiteral("% svg root\n");
-
         subTreeRoot.draw(context);
     }
 

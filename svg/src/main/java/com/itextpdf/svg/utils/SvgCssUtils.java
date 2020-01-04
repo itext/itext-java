@@ -99,11 +99,23 @@ public final class SvgCssUtils {
     }
 
     /**
-     * @param pts value to be converted to pixels
-     * @return float converted value pts*0.75f
+     * Convert given point value to a pixel value. 1 px is 0.75 pts.
+     *
+     * @param pts float value to be converted to pixels
+     * @return float converted value pts/0.75f
      */
     public static float convertPtsToPx(float pts) {
-        return pts * 0.75f;
+        return pts / 0.75f;
+    }
+
+    /**
+     * Convert given point value to a pixel value. 1 px is 0.75 pts.
+     *
+     * @param pts double value to be converted to pixels
+     * @return double converted value pts/0.75
+     */
+    public static double convertPtsToPx(double pts) {
+        return pts / 0.75;
     }
 
     /**

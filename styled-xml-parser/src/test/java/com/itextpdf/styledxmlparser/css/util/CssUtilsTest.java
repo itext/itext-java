@@ -56,9 +56,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 @Category(UnitTest.class)
 public class CssUtilsTest extends ExtendedITextTest {
 
@@ -151,100 +148,100 @@ public class CssUtilsTest extends ExtendedITextTest {
 
     @Test
     public void validateMetricValue() {
-        assertEquals(true, CssUtils.isMetricValue("1px"));
-        assertEquals(true, CssUtils.isMetricValue("1in"));
-        assertEquals(true, CssUtils.isMetricValue("1cm"));
-        assertEquals(true, CssUtils.isMetricValue("1mm"));
-        assertEquals(true, CssUtils.isMetricValue("1pc"));
-        assertEquals(false, CssUtils.isMetricValue("1em"));
-        assertEquals(false, CssUtils.isMetricValue("1rem"));
-        assertEquals(false, CssUtils.isMetricValue("1ex"));
-        assertEquals(true, CssUtils.isMetricValue("1pt"));
-        assertEquals(false, CssUtils.isMetricValue("1inch"));
-        assertEquals(false, CssUtils.isMetricValue("+1m"));
+        Assert.assertTrue(CssUtils.isMetricValue("1px"));
+        Assert.assertTrue(CssUtils.isMetricValue("1in"));
+        Assert.assertTrue(CssUtils.isMetricValue("1cm"));
+        Assert.assertTrue(CssUtils.isMetricValue("1mm"));
+        Assert.assertTrue(CssUtils.isMetricValue("1pc"));
+        Assert.assertFalse(CssUtils.isMetricValue("1em"));
+        Assert.assertFalse(CssUtils.isMetricValue("1rem"));
+        Assert.assertFalse(CssUtils.isMetricValue("1ex"));
+        Assert.assertTrue(CssUtils.isMetricValue("1pt"));
+        Assert.assertFalse(CssUtils.isMetricValue("1inch"));
+        Assert.assertFalse(CssUtils.isMetricValue("+1m"));
     }
 
     @Test
     public void validateNumericValue() {
-        assertEquals(true, CssUtils.isNumericValue("1"));
-        assertEquals(true, CssUtils.isNumericValue("12"));
-        assertEquals(true, CssUtils.isNumericValue("1.2"));
-        assertEquals(true, CssUtils.isNumericValue(".12"));
-        assertEquals(false, CssUtils.isNumericValue("12f"));
-        assertEquals(false, CssUtils.isNumericValue("f1.2"));
-        assertEquals(false, CssUtils.isNumericValue(".12f"));
+        Assert.assertTrue(CssUtils.isNumericValue("1"));
+        Assert.assertTrue(CssUtils.isNumericValue("12"));
+        Assert.assertTrue(CssUtils.isNumericValue("1.2"));
+        Assert.assertTrue(CssUtils.isNumericValue(".12"));
+        Assert.assertFalse(CssUtils.isNumericValue("12f"));
+        Assert.assertFalse(CssUtils.isNumericValue("f1.2"));
+        Assert.assertFalse(CssUtils.isNumericValue(".12f"));
     }
 
     @Test
     public void parseLength() {
-        assertEquals(9, CssUtils.parseAbsoluteLength("12"), 0);
-        assertEquals(576, CssUtils.parseAbsoluteLength("8inch"), 0);
-        assertEquals(576, CssUtils.parseAbsoluteLength("8", CommonCssConstants.IN), 0);
+        Assert.assertEquals(9, CssUtils.parseAbsoluteLength("12"), 0);
+        Assert.assertEquals(576, CssUtils.parseAbsoluteLength("8inch"), 0);
+        Assert.assertEquals(576, CssUtils.parseAbsoluteLength("8", CommonCssConstants.IN), 0);
     }
 
     @Test
     public void normalizeProperty() {
-        assertEquals("part1 part2", CssUtils.normalizeCssProperty("   part1   part2  "));
-        assertEquals("\" the next quote is ESCAPED \\\\\\\" still  IN string \"", CssUtils.normalizeCssProperty("\" the next quote is ESCAPED \\\\\\\" still  IN string \""));
-        assertEquals("\" the next quote is NOT ESCAPED \\\\\" not in the string", CssUtils.normalizeCssProperty("\" the next quote is NOT ESCAPED \\\\\" NOT in   THE string"));
-        assertEquals("\" You CAN put 'Single  Quotes' in double quotes WITHOUT escaping\"", CssUtils.normalizeCssProperty("\" You CAN put 'Single  Quotes' in double quotes WITHOUT escaping\""));
-        assertEquals("' You CAN put \"DOUBLE  Quotes\" in double quotes WITHOUT escaping'", CssUtils.normalizeCssProperty("' You CAN put \"DOUBLE  Quotes\" in double quotes WITHOUT escaping'"));
-        assertEquals("\" ( BLA \" attr(href)\" BLA )  \"", CssUtils.normalizeCssProperty("\" ( BLA \"      AttR( Href  )\" BLA )  \""));
-        assertEquals("\" (  \"attr(href) \"  )  \"", CssUtils.normalizeCssProperty("\" (  \"aTTr( hREf  )   \"  )  \""));
-        assertEquals("rgba(255,255,255,0.2)", CssUtils.normalizeCssProperty("rgba(  255,  255 ,  255 ,0.2   )"));
+        Assert.assertEquals("part1 part2", CssUtils.normalizeCssProperty("   part1   part2  "));
+        Assert.assertEquals("\" the next quote is ESCAPED \\\\\\\" still  IN string \"", CssUtils.normalizeCssProperty("\" the next quote is ESCAPED \\\\\\\" still  IN string \""));
+        Assert.assertEquals("\" the next quote is NOT ESCAPED \\\\\" not in the string", CssUtils.normalizeCssProperty("\" the next quote is NOT ESCAPED \\\\\" NOT in   THE string"));
+        Assert.assertEquals("\" You CAN put 'Single  Quotes' in double quotes WITHOUT escaping\"", CssUtils.normalizeCssProperty("\" You CAN put 'Single  Quotes' in double quotes WITHOUT escaping\""));
+        Assert.assertEquals("' You CAN put \"DOUBLE  Quotes\" in double quotes WITHOUT escaping'", CssUtils.normalizeCssProperty("' You CAN put \"DOUBLE  Quotes\" in double quotes WITHOUT escaping'"));
+        Assert.assertEquals("\" ( BLA \" attr(href)\" BLA )  \"", CssUtils.normalizeCssProperty("\" ( BLA \"      AttR( Href  )\" BLA )  \""));
+        Assert.assertEquals("\" (  \"attr(href) \"  )  \"", CssUtils.normalizeCssProperty("\" (  \"aTTr( hREf  )   \"  )  \""));
+        Assert.assertEquals("rgba(255,255,255,0.2)", CssUtils.normalizeCssProperty("rgba(  255,  255 ,  255 ,0.2   )"));
     }
 
     @Test
     public void normalizeUrlTest() {
-        assertEquals("url(data:application/font-woff;base64,2CBPCRXmgywtV1t4oWwjBju0kqkvfhPs0cYdMgFtDSY5uL7MIGT5wiGs078HrvBHekp0Yf=)",
+        Assert.assertEquals("url(data:application/font-woff;base64,2CBPCRXmgywtV1t4oWwjBju0kqkvfhPs0cYdMgFtDSY5uL7MIGT5wiGs078HrvBHekp0Yf=)",
                 CssUtils.normalizeCssProperty("url(data:application/font-woff;base64,2CBPCRXmgywtV1t4oWwjBju0kqkvfhPs0cYdMgFtDSY5uL7MIGT5wiGs078HrvBHekp0Yf=)"));
-        assertEquals("url(\"quoted  Url\")", CssUtils.normalizeCssProperty("  url(  \"quoted  Url\")"));
-        assertEquals("url('quoted  Url')", CssUtils.normalizeCssProperty("  url(  'quoted  Url')"));
-        assertEquals("url(haveEscapedEndBracket\\))", CssUtils.normalizeCssProperty("url(  haveEscapedEndBracket\\) )"));
+        Assert.assertEquals("url(\"quoted  Url\")", CssUtils.normalizeCssProperty("  url(  \"quoted  Url\")"));
+        Assert.assertEquals("url('quoted  Url')", CssUtils.normalizeCssProperty("  url(  'quoted  Url')"));
+        Assert.assertEquals("url(haveEscapedEndBracket\\))", CssUtils.normalizeCssProperty("url(  haveEscapedEndBracket\\) )"));
     }
 
     @Test
     public void parseUnicodeRangeTest() {
-        assertEquals("[(0; 1048575)]", CssUtils.parseUnicodeRange("U+?????").toString());
-        assertEquals("[(38; 38)]", CssUtils.parseUnicodeRange("U+26").toString());
-        assertEquals("[(0; 127)]", CssUtils.parseUnicodeRange(" U+0-7F").toString());
-        assertEquals("[(37; 255)]", CssUtils.parseUnicodeRange("U+0025-00FF").toString());
-        assertEquals("[(1024; 1279)]", CssUtils.parseUnicodeRange("U+4??").toString());
-        assertEquals("[(262224; 327519)]", CssUtils.parseUnicodeRange("U+4??5?").toString());
-        assertEquals("[(37; 255), (1024; 1279)]", CssUtils.parseUnicodeRange("U+0025-00FF, U+4??").toString());
+        Assert.assertEquals("[(0; 1048575)]", CssUtils.parseUnicodeRange("U+?????").toString());
+        Assert.assertEquals("[(38; 38)]", CssUtils.parseUnicodeRange("U+26").toString());
+        Assert.assertEquals("[(0; 127)]", CssUtils.parseUnicodeRange(" U+0-7F").toString());
+        Assert.assertEquals("[(37; 255)]", CssUtils.parseUnicodeRange("U+0025-00FF").toString());
+        Assert.assertEquals("[(1024; 1279)]", CssUtils.parseUnicodeRange("U+4??").toString());
+        Assert.assertEquals("[(262224; 327519)]", CssUtils.parseUnicodeRange("U+4??5?").toString());
+        Assert.assertEquals("[(37; 255), (1024; 1279)]", CssUtils.parseUnicodeRange("U+0025-00FF, U+4??").toString());
 
-        assertNull(CssUtils.parseUnicodeRange("U+??????")); // more than 5 question marks are not allowed
-        assertNull(CssUtils.parseUnicodeRange("UU+7-10")); // wrong syntax
-        assertNull(CssUtils.parseUnicodeRange("U+7?-9?")); // wrong syntax
-        assertNull(CssUtils.parseUnicodeRange("U+7-")); // wrong syntax
+        Assert.assertNull(CssUtils.parseUnicodeRange("U+??????")); // more than 5 question marks are not allowed
+        Assert.assertNull(CssUtils.parseUnicodeRange("UU+7-10")); // wrong syntax
+        Assert.assertNull(CssUtils.parseUnicodeRange("U+7?-9?")); // wrong syntax
+        Assert.assertNull(CssUtils.parseUnicodeRange("U+7-")); // wrong syntax
     }
 
     @Test
     public void parseAbsoluteFontSizeTest() {
-        assertEquals(75, CssUtils.parseAbsoluteFontSize("100", CommonCssConstants.PX), EPS);
-        assertEquals(75, CssUtils.parseAbsoluteFontSize("100px"), EPS);
-        assertEquals(12, CssUtils.parseAbsoluteFontSize(CommonCssConstants.MEDIUM), EPS);
-        assertEquals(0, CssUtils.parseAbsoluteFontSize("", ""), EPS);
+        Assert.assertEquals(75, CssUtils.parseAbsoluteFontSize("100", CommonCssConstants.PX), EPS);
+        Assert.assertEquals(75, CssUtils.parseAbsoluteFontSize("100px"), EPS);
+        Assert.assertEquals(12, CssUtils.parseAbsoluteFontSize(CommonCssConstants.MEDIUM), EPS);
+        Assert.assertEquals(0, CssUtils.parseAbsoluteFontSize("", ""), EPS);
     }
 
     @Test
     public void parseRelativeFontSizeTest() {
-        assertEquals(120, CssUtils.parseRelativeFontSize("10em", 12), EPS);
-        assertEquals(12.5f, CssUtils.parseRelativeFontSize(CommonCssConstants.SMALLER, 15), EPS);
+        Assert.assertEquals(120, CssUtils.parseRelativeFontSize("10em", 12), EPS);
+        Assert.assertEquals(12.5f, CssUtils.parseRelativeFontSize(CommonCssConstants.SMALLER, 15), EPS);
     }
 
 
     @Test
     public void parseAbsoluteLengthTest() {
-        assertEquals(75, CssUtils.parseAbsoluteLength("100", CommonCssConstants.PX), EPS);
-        assertEquals(75, CssUtils.parseAbsoluteLength("100px"), EPS);
+        Assert.assertEquals(75, CssUtils.parseAbsoluteLength("100", CommonCssConstants.PX), EPS);
+        Assert.assertEquals(75, CssUtils.parseAbsoluteLength("100px"), EPS);
     }
 
     @Test
     public void parseInvalidFloat() {
         String value = "invalidFloat";
         try {
-            assertNull(CssUtils.parseFloat(value));
+            Assert.assertNull(CssUtils.parseFloat(value));
         } catch (Exception e){
             Assert.fail();
         }
@@ -255,7 +252,7 @@ public class CssUtilsTest extends ExtendedITextTest {
         // Calculations in CssUtils#parseAbsoluteLength were changed to work
         // with double values instead of float to improve precision and eliminate
         // the difference between java and .net. So the test verifies this fix.
-        assertEquals(340.15747f, CssUtils.parseAbsoluteLength("12cm"), 0f);
+        Assert.assertEquals(340.15747f, CssUtils.parseAbsoluteLength("12cm"), 0f);
     }
 
 
@@ -264,6 +261,28 @@ public class CssUtilsTest extends ExtendedITextTest {
         // Calculations in CssUtils#parseAbsoluteLength were changed to work
         // with double values instead of float to improve precision and eliminate
         // the difference between java and .net. So the test verifies this fix
-        assertEquals(8.503937f, CssUtils.parseAbsoluteLength("12q"), 0f);
+        Assert.assertEquals(8.503937f, CssUtils.parseAbsoluteLength("12q"), 0f);
+    }
+
+    @Test
+    public void testIsAngleCorrectValues() {
+       Assert.assertTrue(CssUtils.isAngleValue("10deg"));
+       Assert.assertTrue(CssUtils.isAngleValue("-20grad"));
+       Assert.assertTrue(CssUtils.isAngleValue("30.5rad"));
+       Assert.assertTrue(CssUtils.isAngleValue("0rad"));
+    }
+
+    @Test
+    public void testIsAngleNullValue() {
+        Assert.assertFalse(CssUtils.isAngleValue(null));
+    }
+
+    @Test
+    public void testIsAngleIncorrectValues() {
+        Assert.assertFalse(CssUtils.isAngleValue("deg"));
+        Assert.assertFalse(CssUtils.isAngleValue("-20,6grad"));
+        Assert.assertFalse(CssUtils.isAngleValue("0"));
+        Assert.assertFalse(CssUtils.isAngleValue("10in"));
+        Assert.assertFalse(CssUtils.isAngleValue("10px"));
     }
 }

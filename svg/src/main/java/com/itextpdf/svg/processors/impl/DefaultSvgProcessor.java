@@ -186,9 +186,17 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             if (!rendererFactory.isTagIgnored(element)) {
                 ISvgNodeRenderer renderer = createRenderer(element, processorState.top());
                 if (renderer != null) {
-                    Map<String, String> styles = cssResolver.resolveStyles(node, cssContext);
-                    element.setStyles(styles); //For inheritance
-                    renderer.setAttributesAndStyles(styles);//For drawing operations
+                    Map<String, String> styles;
+                    if (cssResolver instanceof SvgStyleResolver
+                            && onlyNativeStylesShouldBeResolved(element)) {
+                        styles = ((SvgStyleResolver) cssResolver).resolveNativeStyles(node, cssContext);
+                    } else {
+                        styles = cssResolver.resolveStyles(node, cssContext);
+                    }
+                    // For inheritance
+                    element.setStyles(styles);
+                    // For drawing operations
+                    renderer.setAttributesAndStyles(styles);
 
                     String attribute = renderer.getAttribute(SvgConstants.Attributes.ID);
                     if (attribute != null) {
@@ -219,6 +227,26 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         } else if (processAsText(node)) {
             processText((ITextNode) node);
         }
+    }
+
+    private static boolean onlyNativeStylesShouldBeResolved(IElementNode element) {
+        return !SvgConstants.Tags.MARKER.equals(element.name())
+                && isElementNested(element, SvgConstants.Tags.DEFS)
+                && !isElementNested(element, SvgConstants.Tags.MARKER);
+    }
+
+    private static boolean isElementNested(IElementNode element, String parentElementNameForSearch) {
+        if (!(element.parentNode() instanceof IElementNode)) {
+            return false;
+        }
+        IElementNode parentElement = (IElementNode) element.parentNode();
+        if (parentElement.name().equals(parentElementNameForSearch)) {
+            return true;
+        }
+        if (element.parentNode() != null) {
+            return isElementNested(parentElement, parentElementNameForSearch);
+        }
+        return false;
     }
 
     /**

@@ -1,0 +1,163 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="1600" height="800"
+     version="1.1"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <g id="grid" stroke="green">
+            <circle r="5" stroke-width="0.2"/>
+            <line fill="none" stroke-width="1" x1="-50" x2="50"/>
+            <line fill="none" stroke-width="1" y1="-50" y2="50"/>
+
+            <line fill="none" stroke-width="0.1" x1="-50" y1="-5" x2="50" y2="-5" stroke="black"/>
+            <line fill="none" stroke-width="0.2" x1="-50" y1="-10" x2="50" y2="-10"/>
+            <line fill="none" stroke-width="0.1" x1="-50" y1="-15" x2="50" y2="-15" stroke="black"/>
+            <line fill="none" stroke-width="0.2" x1="-50" y1="-20" x2="50" y2="-20"/>
+            <line fill="none" stroke-width="0.1" x1="-50" y1="-25" x2="50" y2="-25" stroke="black"/>
+            <line fill="none" stroke-width="0.2" x1="-50" y1="-30" x2="50" y2="-30"/>
+            <line fill="none" stroke-width="0.1" x1="-50" y1="-35" x2="50" y2="-35" stroke="black"/>
+            <line fill="none" stroke-width="0.2" x1="-50" y1="-40" x2="50" y2="-40"/>
+            <line fill="none" stroke-width="0.1" x1="-50" y1="-45" x2="50" y2="-45" stroke="black"/>
+
+            <line fill="none" stroke-width="0.1" x1="-50" y1="5" x2="50" y2="5" stroke="black"/>
+            <line fill="none" stroke-width="0.2" x1="-50" y1="10" x2="50" y2="10"/>
+            <line fill="none" stroke-width="0.1" x1="-50" y1="15" x2="50" y2="15" stroke="black"/>
+            <line fill="none" stroke-width="0.2" x1="-50" y1="20" x2="50" y2="20"/>
+            <line fill="none" stroke-width="0.1" x1="-50" y1="25" x2="50" y2="25" stroke="black"/>
+            <line fill="none" stroke-width="0.2" x1="-50" y1="30" x2="50" y2="30"/>
+            <line fill="none" stroke-width="0.1" x1="-50" y1="35" x2="50" y2="35" stroke="black"/>
+            <line fill="none" stroke-width="0.2" x1="-50" y1="40" x2="50" y2="40"/>
+            <line fill="none" stroke-width="0.1" x1="-50" y1="45" x2="50" y2="45" stroke="black"/>
+
+            <line fill="none" stroke-width="0.1" y1="-50" x1="-5" y2="50" x2="-5" stroke="black"/>
+            <line fill="none" stroke-width="0.2" y1="-50" x1="-10" y2="50" x2="-10"/>
+            <line fill="none" stroke-width="0.1" y1="-50" x1="-15" y2="50" x2="-15" stroke="black"/>
+            <line fill="none" stroke-width="0.2" y1="-50" x1="-20" y2="50" x2="-20"/>
+            <line fill="none" stroke-width="0.1" y1="-50" x1="-25" y2="50" x2="-25" stroke="black"/>
+            <line fill="none" stroke-width="0.2" y1="-50" x1="-30" y2="50" x2="-30"/>
+            <line fill="none" stroke-width="0.1" y1="-50" x1="-35" y2="50" x2="-35" stroke="black"/>
+            <line fill="none" stroke-width="0.2" y1="-50" x1="-40" y2="50" x2="-40"/>
+            <line fill="none" stroke-width="0.1" y1="-50" x1="-45" y2="50" x2="-45" stroke="black"/>
+
+            <line fill="none" stroke-width="0.1" y1="-50" x1="5" y2="50" x2="5" stroke="black"/>
+            <line fill="none" stroke-width="0.2" y1="-50" x1="10" y2="50" x2="10"/>
+            <line fill="none" stroke-width="0.1" y1="-50" x1="15" y2="50" x2="15" stroke="black"/>
+            <line fill="none" stroke-width="0.2" y1="-50" x1="20" y2="50" x2="20"/>
+            <line fill="none" stroke-width="0.1" y1="-50" x1="25" y2="50" x2="25" stroke="black"/>
+            <line fill="none" stroke-width="0.2" y1="-50" x1="30" y2="50" x2="30"/>
+            <line fill="none" stroke-width="0.1" y1="-50" x1="35" y2="50" x2="35" stroke="black"/>
+            <line fill="none" stroke-width="0.2" y1="-50" x1="40" y2="50" x2="40"/>
+            <line fill="none" stroke-width="0.1" y1="-50" x1="45" y2="50" x2="45" stroke="black"/>
+        </g>
+        <g id="markerContents" fill="none">
+            <circle r="5"/>
+            <circle r="10"/>
+            <g id="marker-grid" stroke="red">
+                <circle r="2.5" fill="none" stroke-width="0.2"/>
+                <line fill="none" stroke-width="0.5" x2="20" stroke="orange"/>
+                <line fill="none" stroke-width="0.5" y2="20"/>
+
+                <line fill="none" stroke-width="0.2" y1="5" x2="20" y2="5" stroke="orange"/>
+                <line fill="none" stroke-width="0.2" y1="10" x2="20" y2="10" stroke="orange"/>
+                <line fill="none" stroke-width="0.2" y1="15" x2="20" y2="15" stroke="orange"/>
+
+                <line fill="none" stroke-width="0.2" x1="5" y2="20" x2="5"/>
+                <line fill="none" stroke-width="0.2" x1="10" y2="20" x2="10"/>
+                <line fill="none" stroke-width="0.2" x1="15" y2="20" x2="15"/>
+                <rect width="20" height="15" stroke="blue"/>
+            </g>
+            <path stroke="blue" d="M 0 0 L 10 5 L 0 10 z"/>
+        </g>
+        <marker id="viewbox20x15"
+                viewBox="0 0 20 15"
+                markerUnits="strokeWidth"
+                markerWidth="4" markerHeight="3"
+                orient="auto"
+        >
+            <use xlink:href="#markerContents"/>
+        </marker>
+        <marker id="viewbox20x10"
+                viewBox="0 0 20 10"
+                markerUnits="strokeWidth"
+                markerWidth="4" markerHeight="3"
+                orient="auto"
+        >
+            <use xlink:href="#markerContents"/>
+        </marker>
+        <marker id="viewbox10x15"
+                viewBox="0 0 10 15"
+                markerUnits="strokeWidth"
+                markerWidth="4" markerHeight="3"
+                orient="auto"
+        >
+            <use xlink:href="#markerContents"/>
+        </marker>
+        <marker id="viewbox10x10"
+                viewBox="0 0 10 10"
+                markerUnits="strokeWidth"
+                markerWidth="4" markerHeight="3"
+                orient="auto"
+        >
+            <use xlink:href="#markerContents"/>
+        </marker>
+    </defs>
+    <g fill="none" transform="scale(1,1)">
+        <g>
+            <text x="20" y="30" font-size="8" fill="black">Original Viewport: 5 * (4,3) = 20x15</text>
+            <text x="20" y="40" font-size="8" fill="black">Viewbox: 20x15, no scaling</text>
+            <rect width="300" height="200"
+                  fill="none" stroke="blue" stroke-width="1"/>
+            <g transform="translate(150,100) rotate(180)">
+                <use xlink:href="#grid"/>
+                <rect width="20" height="15" stroke="black"/>
+            </g>
+
+            <path d="M 50 100 L 200 100 L 150 100"
+                  fill="none" stroke="black" stroke-width="5"
+                  marker-end="url(#viewbox20x15)"/>
+        </g>
+
+        <g transform="translate(0,200)">
+            <text x="20" y="30" font-size="8" fill="black">Original Viewport: 5 * (4,3) = 20x15</text>
+            <text x="20" y="40" font-size="8" fill="black">Viewbox: 20x10</text>
+            <rect width="300" height="200"
+                  fill="none" stroke="blue" stroke-width="1"/>
+            <g transform="translate(150,100) rotate(180)">
+                <use xlink:href="#grid"/>
+                <rect width="20" height="15" stroke="black"/>
+            </g>
+            <path d="M 50 100 L 200 100 L 150 100"
+                  fill="none" stroke="black" stroke-width="5"
+                  marker-end="url(#viewbox20x10)"/>
+        </g>
+
+        <g transform="translate(300,200)">
+            <text x="20" y="30" font-size="8" fill="black">Original Viewport: 5 * (4,3) = 20x15</text>
+            <text x="20" y="40" font-size="8" fill="black">Viewbox: 10x10</text>
+            <rect width="300" height="200"
+                  fill="none" stroke="blue" stroke-width="1"/>
+            <g transform="translate(150,100) rotate(180)">
+                <use xlink:href="#grid"/>
+                <rect width="20" height="15" stroke="black"/>
+            </g>
+            <path d="M 50 100 L 200 100 L 150 100"
+                  fill="none" stroke="black" stroke-width="5"
+                  marker-end="url(#viewbox10x10)"/>
+        </g>
+
+        <g transform="translate(300,0)">
+            <text x="20" y="30" font-size="8" fill="black">Original Viewport: 5 * (4,3) = 20x15</text>
+            <text x="20" y="40" font-size="8" fill="black">Viewbox: 10x15</text>
+            <rect width="300" height="200"
+                  fill="none" stroke="blue" stroke-width="1"/>
+            <g transform="translate(150,100) rotate(180)">
+                <use xlink:href="#grid"/>
+                <rect width="20" height="15" stroke="black"/>
+            </g>
+            <path d="M 50 100 L 200 100 L 150 100"
+                  fill="none" stroke="black" stroke-width="5"
+                  marker-end="url(#viewbox10x15)"/>
+        </g>
+
+    </g>
+</svg>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000px" height="1000px">
+
+ <defs>
+    <marker id="endMarker"
+      viewBox="0 0 10 10" refX="0" refY="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" />
+    </marker>
+	
+	 <marker id="startMarker" viewBox="0 0 10 10" 
+	 preserveAspectRatio="xMinYMin slice" refX="5" refY="5" orient="auto">
+         <path d="M 0 0 L 10 5 L 0 10" fill="none" stroke="red"/>
+     </marker>
+ </defs>
+ 
+	<polygon  points="20,120 100,200 130,180" fill="none" stroke-width="5" stroke="blue" marker-start="url(#startMarker)" marker-end="url(#endMarker)" />
+
+    <polygon  points="220,220 100,300 330,280" fill="none" stroke-width="5" stroke="blue" marker-start="url(#startMarker)" marker-end="url(#endMarker)" />
+    
+    <polygon  points="420,420 500,350 450,520" fill="none" stroke-width="5" stroke="blue" marker-start="url(#startMarker)" marker-end="url(#endMarker)" />
+   
+</svg>
