@@ -42,37 +42,34 @@
  */
 package com.itextpdf.pdfa;
 
-import com.itextpdf.kernel.events.Event;
-import com.itextpdf.kernel.events.IEventHandler;
-import com.itextpdf.kernel.events.PdfDocumentEvent;
-import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
-import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.AreaBreak;
-import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.pdfa.VeraPdfValidator;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.FileInputStream;
-import java.io.IOException;
+import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
-public class PdfAPageEndEventTest extends ExtendedITextTest {
+public class PdfAAppendModeTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String cmpFolder = sourceFolder + "cmp/PdfAPageEndEventTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfAPageEndEventTest/";
+    public static final String testDirName = "PdfAAppendModeTest/";
+    public static final String cmpFolder = sourceFolder + "cmp/" + testDirName;
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/" + testDirName;
 
     @BeforeClass
     public static void beforeClass() {
@@ -80,49 +77,44 @@ public class PdfAPageEndEventTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-2645
-    public void checkPageEndEvent() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "checkPageEndEvent.pdf";
-        String cmpPdf = sourceFolder + "cmp_checkPageEndEvent.pdf";
-        PdfWriter writer = new PdfWriter(outPdf);
+    public void addPageInAppendModeTest() throws IOException, InterruptedException {
+        String inputFile = destinationFolder + "in_addPageInAppendModeTest.pdf";
+        String outputFile = destinationFolder + "out_addPageInAppendModeTest.pdf";
+        String cmpFile = cmpFolder + "cmp_addPageInAppendModeTest.pdf";
+        createInputPdfADocument(inputFile);
+        PdfDocument pdfADocument = new PdfADocument(new PdfReader(inputFile), new PdfWriter(outputFile),
+                new StampingProperties().useAppendMode());
+        PdfCanvas canvas = new PdfCanvas(pdfADocument.addNewPage());
+        canvas.saveState()
+                .beginText()
+                .moveText(36, 750)
+                .setFontAndSize(PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true), 16)
+                .showText("This page 2")
+                .endText()
+                .restoreState();
+        canvas.release();
+        pdfADocument.close();
+        Assert.assertNull(new VeraPdfValidator().validate(inputFile));
+        Assert.assertNull(new VeraPdfValidator().validate(outputFile));
+        Assert.assertNull(new CompareTool().compareByContent(outputFile, cmpFile, destinationFolder, "diff_"));
+    }
+
+    private static void createInputPdfADocument(String docName) throws IOException {
+        PdfWriter writer = new PdfWriter(docName);
         PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
                         new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm")));
         pdfDoc.setTagged();
         pdfDoc.getCatalog().setLang(new PdfString("en-US"));
-
-
-        PdfFont freesans = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true);
-        pdfDoc.addEventHandler(PdfDocumentEvent.END_PAGE, new HeaderEventHandler(freesans));
-
-        Document document = new Document(pdfDoc, PageSize.A4);
-        // TODO fix header duplication on the first page
-        document.add(new Paragraph("Hello World on page 1").setFont(freesans));
-        document.add(new AreaBreak());
-        document.add(new Paragraph("Hello World on page 2").setFont(freesans));
-        document.add(new AreaBreak());
-
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
-    }
-
-    static class HeaderEventHandler implements IEventHandler {
-        PdfFont font;
-        static int counter = 1;
-        public HeaderEventHandler(PdfFont font) {
-            this.font = font;
-        }
-
-        @Override
-        public void handleEvent(Event event) {
-            PdfDocumentEvent pdfEvent = (PdfDocumentEvent) event;
-            PdfPage page = pdfEvent.getPage();
-            new PdfCanvas(page).beginText()
-                    .moveText(10, page.getPageSize().getHeight() - 20)
-                    .setFontAndSize(font, 12.0f)
-                    .showText("Footer " + counter++)
-                    .endText();
-        }
+        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+        canvas.saveState()
+                .beginText()
+                .moveText(36, 750)
+                .setFontAndSize(PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true), 16)
+                .showText("This page 1")
+                .endText()
+                .restoreState();
+        canvas.release();
+        pdfDoc.close();
     }
 }

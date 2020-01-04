@@ -399,7 +399,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfPage copyTo(PdfDocument toDocument, IPdfPageExtraCopier copier) {
         PdfDictionary dictionary = getPdfObject().copyTo(toDocument, PAGE_EXCLUDED_KEYS, true);
-        PdfPage page = new PdfPage(dictionary);
+        PdfPage page = getDocument().getPageFactory().createPdfPage(dictionary);
         copyInheritedProperties(page, toDocument);
         for (PdfAnnotation annot : getAnnotations()) {
             if (annot.getSubtype().equals(PdfName.Link)) {
@@ -506,7 +506,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      *                                     will be flushed.
      */
     public void flush(boolean flushResourcesContentStreams) {
-        // TODO log warning in case of failed flush in pdfa document case
         if (isFlushed()) {
             return;
         }

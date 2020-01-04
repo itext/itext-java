@@ -117,7 +117,7 @@ class PdfPagesTree implements Serializable {
                 int parentIndex = findPageParent(pageNum);
                 PdfObject pageObject = pageRefs.get(pageNum).getRefersTo();
                 if (pageObject instanceof PdfDictionary) {
-                    pdfPage = new PdfPage((PdfDictionary) pageObject);
+                    pdfPage = document.getPageFactory().createPdfPage((PdfDictionary) pageObject);
                     pdfPage.parentPages = parents.get(parentIndex);
                 } else {
                     LOGGER.error(MessageFormatUtil.format(LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, pageNum + 1));
