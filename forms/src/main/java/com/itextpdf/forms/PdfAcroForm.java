@@ -226,7 +226,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             processKids(kids, fieldDic, page);
         }
 
-        getFields().add(fieldDic);
+        PdfArray fieldsArray = getFields();
+        fieldsArray.add(fieldDic);
+        fieldsArray.setModified();
+
         fields.put(field.getFieldName().toUnicodeString(), field);
         if (field.getKids() != null) {
             iterateFields(field.getKids(), fields);
@@ -770,8 +773,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
         PdfDictionary parent = field.getParent();
         if (parent != null) {
-            parent.getAsArray(PdfName.Kids).remove(fieldObject);
+            PdfArray kids = parent.getAsArray(PdfName.Kids);
+            kids.remove(fieldObject);
             fields.remove(fieldName);
+            kids.setModified();
             parent.setModified();
             return true;
         }
@@ -780,6 +785,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         if (fieldsPdfArray.contains(fieldObject)) {
             fieldsPdfArray.remove(fieldObject);
             this.fields.remove(fieldName);
+            fieldsPdfArray.setModified();
             setModified();
             return true;
         }
