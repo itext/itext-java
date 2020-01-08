@@ -102,6 +102,7 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    // TODO (DEVSIX-3621) fix cmp after fixing
     public void markerPathViewboxRightOrientNoAspectRatioPreservationTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,
                 "markerPathViewboxRightOrientNoAspectRatioPreservationTest");
@@ -129,6 +130,7 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    // TODO (DEVSIX-3621) fix cmp after fixing
     public void markerPathPreserveAspectRatioTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathPreserveAspectRatioTest");
     }
@@ -302,5 +304,11 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     })
     public void markerEspecialMarkerWidthHeightValuesTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerEspecialMarkerWidthHeightValuesTest");
+    }
+
+    @Test
+    // TODO (DEVSIX-3621) change cmp after fixing
+    public void deformationWhenRotationAndPreserveAspectRationNone() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "deformationWhenRotationAndPreserveAspectRationNone");
     }
 }
