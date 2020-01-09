@@ -53,6 +53,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -85,10 +86,12 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
 
         Matcher mat = pattern.matcher(txt.text);
         while (mat.find()) {
-            int startIndex = txt.indexMap.get(mat.start());
-            int endIndex = txt.indexMap.get(mat.end() - 1);
-            for (Rectangle r : toRectangles(parseResult.subList(startIndex, endIndex + 1))) {
-                retval.add(new DefaultPdfTextLocation(0, r, mat.group(0)));
+            Integer startIndex = getStartIndex(txt.indexMap, mat.start(), txt.text);
+            Integer endIndex = getEndIndex(txt.indexMap, mat.end() - 1);
+            if (startIndex != null && endIndex != null && startIndex <= endIndex) {
+                for (Rectangle r : toRectangles(parseResult.subList(startIndex, endIndex + 1))) {
+                    retval.add(new DefaultPdfTextLocation(0, r, mat.group(0)));
+                }
             }
         }
 
@@ -193,4 +196,18 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
         return retval;
     }
 
+    private static Integer getStartIndex(Map<Integer, Integer> indexMap, int index,
+            String txt) {
+        while (!indexMap.containsKey(index) && index < txt.length()) {
+            index++;
+        }
+        return indexMap.get(index);
+    }
+
+    private static Integer getEndIndex(Map<Integer, Integer> indexMap, int index) {
+        while (!indexMap.containsKey(index) && index >= 0) {
+            index--;
+        }
+        return indexMap.get(index);
+    }
 }

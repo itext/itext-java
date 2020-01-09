@@ -233,4 +233,104 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
 
         pdfDocument.close();
     }
+
+    @Test
+    public void regexStartedWithWhiteSpaceTest() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "regexStartedWithWhiteSpaceTest.pdf"));
+        RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("\\sstart");
+        new PdfCanvasProcessor(extractionStrategy).processPageContent(pdfDocument.getPage(1));
+        List<IPdfTextLocation> locations = new ArrayList<>(extractionStrategy.getResultantLocations());
+        pdfDocument.close();
+
+        Assert.assertEquals(1, locations.size());
+        Assert.assertEquals(" start", locations.get(0).getText());
+        Assert.assertTrue(
+                new Rectangle(92.3f, 743.3970f, 20.6159f, 13.2839f).equalsWithEpsilon(locations.get(0).getRectangle()));
+    }
+
+    @Test
+    public void regexStartedWithNewLineTest() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "regexStartedWithNewLineTest.pdf"));
+        RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("\\nstart");
+        new PdfCanvasProcessor(extractionStrategy).processPageContent(pdfDocument.getPage(1));
+        List<IPdfTextLocation> locations = new ArrayList<>(extractionStrategy.getResultantLocations());
+        pdfDocument.close();
+
+        Assert.assertEquals(1, locations.size());
+        Assert.assertEquals("\nstart", locations.get(0).getText());
+        Assert.assertTrue(
+                new Rectangle(56.8f, 729.5970f, 20.6159f, 13.2839f).equalsWithEpsilon(locations.get(0).getRectangle()));
+    }
+
+    @Test
+    public void regexWithWhiteSpacesTest() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "regexWithWhiteSpacesTest.pdf"));
+        RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy(
+                "\\sstart\\s");
+        new PdfCanvasProcessor(extractionStrategy).processPageContent(pdfDocument.getPage(1));
+        List<IPdfTextLocation> locations = new ArrayList<>(extractionStrategy.getResultantLocations());
+        pdfDocument.close();
+
+        Assert.assertEquals(1, locations.size());
+        Assert.assertEquals(" start ", locations.get(0).getText());
+        Assert.assertTrue(
+                new Rectangle(92.3f, 743.3970f, 20.6159f, 13.2839f).equalsWithEpsilon(locations.get(0).getRectangle()));
+    }
+
+    @Test
+    public void regexWithNewLinesTest() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "regexWithNewLinesTest.pdf"));
+        RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy(
+                "\\nstart\\n");
+        new PdfCanvasProcessor(extractionStrategy).processPageContent(pdfDocument.getPage(1));
+        List<IPdfTextLocation> locations = new ArrayList<>(extractionStrategy.getResultantLocations());
+        pdfDocument.close();
+
+        Assert.assertEquals(1, locations.size());
+        Assert.assertEquals("\nstart\n", locations.get(0).getText());
+        Assert.assertTrue(
+                new Rectangle(56.8f, 729.5970f, 20.6159f, 13.2839f).equalsWithEpsilon(locations.get(0).getRectangle()));
+    }
+
+
+    @Test
+    public void regexWithNewLineBetweenWordsTest() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "regexWithNewLineBetweenWordsTest.pdf"));
+        RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy(
+                "hello\\nworld");
+        new PdfCanvasProcessor(extractionStrategy).processPageContent(pdfDocument.getPage(1));
+        List<IPdfTextLocation> locations = new ArrayList<>(extractionStrategy.getResultantLocations());
+        pdfDocument.close();
+
+        Assert.assertEquals(2, locations.size());
+        Assert.assertEquals("hello\nworld", locations.get(0).getText());
+        Assert.assertEquals("hello\nworld", locations.get(1).getText());
+        Assert.assertTrue(
+                new Rectangle(56.8f, 729.5970f, 27.8999f, 13.2839f).equalsWithEpsilon(locations.get(0).getRectangle()));
+        Assert.assertTrue(
+                new Rectangle(56.8f, 743.3970f, 23.9039f, 13.2839f).equalsWithEpsilon(locations.get(1).getRectangle()));
+    }
+
+
+    @Test
+    public void regexWithOnlyNewLine() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "regexWithNewLinesTest.pdf"));
+        RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("\\n");
+        new PdfCanvasProcessor(extractionStrategy).processPageContent(pdfDocument.getPage(1));
+        List<IPdfTextLocation> locations = new ArrayList<>(extractionStrategy.getResultantLocations());
+        pdfDocument.close();
+
+        Assert.assertEquals(0, locations.size());
+    }
+
+    @Test
+    public void regexWithOnlyWhiteSpace() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "regexWithWhiteSpacesTest.pdf"));
+        RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy(" ");
+        new PdfCanvasProcessor(extractionStrategy).processPageContent(pdfDocument.getPage(1));
+        List<IPdfTextLocation> locations = new ArrayList<>(extractionStrategy.getResultantLocations());
+        pdfDocument.close();
+
+        Assert.assertEquals(0, locations.size());
+    }
 }
