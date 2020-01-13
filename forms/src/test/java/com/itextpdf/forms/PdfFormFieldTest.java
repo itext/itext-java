@@ -1263,7 +1263,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO update cmp-file after DEVSIX-2622 fixed
     public void fillUnmergedTextFormField() throws IOException, InterruptedException {
         String file = sourceFolder + "fillUnmergedTextFormField.pdf";
         String outfile = destinationFolder + "fillUnmergedTextFormField.pdf";
