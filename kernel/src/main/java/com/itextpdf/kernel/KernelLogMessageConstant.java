@@ -43,16 +43,27 @@
 
 package com.itextpdf.kernel;
 
+import com.itextpdf.kernel.utils.CompareTool;
+
 /**
  * Class that bundles all the error message templates as constants.
  */
 public final class KernelLogMessageConstant {
 
     private KernelLogMessageConstant() {
-
         //Private constructor will prevent the instantiation of this class directly
     }
 
     /** The Constant UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE */
     public static final String UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE = "Unable to parse color {0} within {1} color space";
+
+    public static final String COMPARE_COMMAND_IS_NOT_SPECIFIED =
+            "ImageMagick comparison command is not specified. Set the "
+                    + CompareTool.MAGICK_COMPARE_ENVIRONMENT_VARIABLE
+                    + " environment variable with the CLI command which can run the ImageMagic comparison. See BUILDING.MD in the root of the repository for more details.";
+
+    public static final String COMPARE_COMMAND_SPECIFIED_INCORRECTLY =
+            "ImageMagick comparison command specified incorrectly. Set the "
+                    + CompareTool.MAGICK_COMPARE_ENVIRONMENT_VARIABLE
+                    + " environment variable with the CLI command which can run the ImageMagic comparison. See BUILDING.MD in the root of the repository for more details.";
 }

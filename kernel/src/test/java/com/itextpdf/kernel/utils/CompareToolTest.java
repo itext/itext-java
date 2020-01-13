@@ -42,12 +42,21 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.io.util.SystemUtil;
+import com.itextpdf.kernel.KernelLogMessageConstant;
+import com.itextpdf.kernel.utils.CompareTool.CompareToolExecutionException;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.File;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -59,67 +68,102 @@ public class CompareToolTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/CompareToolTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/CompareToolTest/";
 
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
+
     @BeforeClass
     public static void setUp() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
-    public void compareToolErrorReportTest01() throws InterruptedException, IOException, ParserConfigurationException, SAXException {
+    public void ghostScriptIsSpecifiedInSystem() {
+        String gsExec = SystemUtil.getPropertyOrEnvironmentVariable(CompareTool.GHOSTSCRIPT_ENVIRONMENT_VARIABLE);
+        if (gsExec == null) {
+            gsExec = SystemUtil.getPropertyOrEnvironmentVariable(CompareTool.GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY);
+        }
+        Assert.assertTrue(CompareTool.isVersionCommandExecutable(gsExec, CompareTool.GHOSTSCRIPT_KEYWORD));
+    }
+
+    @Test
+    public void magickCompareIsSpecifiedInSystem() {
+        String compareExec = SystemUtil
+                .getPropertyOrEnvironmentVariable(CompareTool.MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
+        if (compareExec == null) {
+            compareExec = SystemUtil
+                    .getPropertyOrEnvironmentVariable(CompareTool.MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY);
+        }
+        Assert.assertTrue(CompareTool.isVersionCommandExecutable(compareExec, CompareTool.MAGICK_COMPARE_KEYWORD));
+    }
+
+    @Test
+    public void compareToolErrorReportTest01()
+            throws InterruptedException, IOException, ParserConfigurationException, SAXException {
         CompareTool compareTool = new CompareTool();
         compareTool.setCompareByContentErrorsLimit(10);
         compareTool.setGenerateCompareByContentXmlReport(true);
         String outPdf = sourceFolder + "simple_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
         String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder);
-        System.out.println(result);
+        System.out.println("\nRESULT:\n" + result);
         Assert.assertNotNull("CompareTool must return differences found between the files", result);
+        Assert.assertTrue(result.contains("differs on page [1, 2]."));
         // Comparing the report to the reference one.
-        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(destinationFolder + "simple_pdf.report.xml", sourceFolder + "cmp_report01.xml"));
+        Assert.assertTrue("CompareTool report differs from the reference one", compareTool
+                .compareXmls(destinationFolder + "simple_pdf.report.xml", sourceFolder + "cmp_report01.xml"));
     }
 
     @Test
-    public void compareToolErrorReportTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+    public void compareToolErrorReportTest02()
+            throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         CompareTool compareTool = new CompareTool();
         compareTool.setCompareByContentErrorsLimit(10);
         compareTool.setGenerateCompareByContentXmlReport(true);
         String outPdf = sourceFolder + "tagged_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_tagged_pdf.pdf";
         String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder);
-        System.out.println(result);
+        System.out.println("\nRESULT:\n" + result);
         Assert.assertNotNull("CompareTool must return differences found between the files", result);
+        Assert.assertTrue(result.contains("Compare by content fails. No visual differences"));
         // Comparing the report to the reference one.
-        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(destinationFolder + "tagged_pdf.report.xml", sourceFolder + "cmp_report02.xml"));
+        Assert.assertTrue("CompareTool report differs from the reference one", compareTool
+                .compareXmls(destinationFolder + "tagged_pdf.report.xml", sourceFolder + "cmp_report02.xml"));
     }
 
     @Test
-    public void compareToolErrorReportTest03() throws InterruptedException, IOException, ParserConfigurationException, SAXException {
+    public void compareToolErrorReportTest03()
+            throws InterruptedException, IOException, ParserConfigurationException, SAXException {
         CompareTool compareTool = new CompareTool();
         compareTool.setCompareByContentErrorsLimit(10);
         compareTool.setGenerateCompareByContentXmlReport(true);
         String outPdf = sourceFolder + "screenAnnotation.pdf";
         String cmpPdf = sourceFolder + "cmp_screenAnnotation.pdf";
         String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder);
-        System.out.println(result);
+        System.out.println("\nRESULT:\n" + result);
         Assert.assertNotNull("CompareTool must return differences found between the files", result);
+        Assert.assertTrue(result.contains("Compare by content fails. No visual differences"));
         // Comparing the report to the reference one.
-        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(destinationFolder + "screenAnnotation.report.xml", sourceFolder + "cmp_report03.xml"));
+        Assert.assertTrue("CompareTool report differs from the reference one", compareTool
+                .compareXmls(destinationFolder + "screenAnnotation.report.xml", sourceFolder + "cmp_report03.xml"));
     }
 
 
     @Test
     // Test space in name
-    public void compareToolErrorReportTest04() throws InterruptedException, IOException, ParserConfigurationException, SAXException {
+    public void compareToolErrorReportTest04()
+            throws InterruptedException, IOException, ParserConfigurationException, SAXException {
         CompareTool compareTool = new CompareTool();
         compareTool.setCompareByContentErrorsLimit(10);
         compareTool.setGenerateCompareByContentXmlReport(true);
         String outPdf = sourceFolder + "simple_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_simple_pdf_with_space .pdf";
         String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder);
-        System.out.println(result);
+        System.out.println("\nRESULT:\n" + result);
         Assert.assertNotNull("CompareTool must return differences found between the files", result);
+        Assert.assertTrue(result.contains("differs on page [1, 2]."));
         // Comparing the report to the reference one.
-        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(destinationFolder + "simple_pdf.report.xml", sourceFolder + "cmp_report01.xml"));
+        Assert.assertTrue("CompareTool report differs from the reference one", compareTool
+                .compareXmls(destinationFolder + "simple_pdf.report.xml", sourceFolder + "cmp_report01.xml"));
 
     }
 
@@ -138,4 +182,52 @@ public class CompareToolTest extends ExtendedITextTest {
         Assert.assertEquals(replacedExpected, new CompareTool().convertProducerLine(initial));
     }
 
+    @Test
+    public void gsEnvironmentVariableIsNotSpecifiedExceptionTest() throws IOException, InterruptedException {
+        junitExpectedException.expect(CompareToolExecutionException.class);
+        junitExpectedException.expectMessage(CompareToolExecutionException.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED);
+        String outPdf = sourceFolder + "simple_pdf.pdf";
+        String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
+        new CompareTool("unspecified", "unspecified").compareVisually(outPdf, cmpPdf, destinationFolder, "diff_");
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.COMPARE_COMMAND_IS_NOT_SPECIFIED)})
+    public void compareCommandIsNotSpecifiedTest() throws IOException, InterruptedException {
+        String outPdf = sourceFolder + "simple_pdf.pdf";
+        String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
+        String gsExec = SystemUtil.getPropertyOrEnvironmentVariable(CompareTool.GHOSTSCRIPT_ENVIRONMENT_VARIABLE);
+        if (gsExec == null) {
+            gsExec = SystemUtil.getPropertyOrEnvironmentVariable(CompareTool.GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY);
+        }
+        String result = new CompareTool(gsExec, null)
+                .compareVisually(outPdf, cmpPdf, destinationFolder, "diff_");
+        Assert.assertTrue(result.contains(CompareTool.UNABLE_TO_CREATE_DIFF_FILES_ERROR_MESSAGE));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.COMPARE_COMMAND_SPECIFIED_INCORRECTLY)})
+    public void compareCommandSpecifiedIncorrectlyTest() throws IOException, InterruptedException {
+        String outPdf = sourceFolder + "simple_pdf.pdf";
+        String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
+        String gsExec = SystemUtil.getPropertyOrEnvironmentVariable(CompareTool.GHOSTSCRIPT_ENVIRONMENT_VARIABLE);
+        if (gsExec == null) {
+            gsExec = SystemUtil.getPropertyOrEnvironmentVariable(CompareTool.GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY);
+        }
+        String result = new CompareTool(gsExec, "unspecified")
+                .compareVisually(outPdf, cmpPdf, destinationFolder, "diff_");
+        Assert.assertTrue(result.contains(CompareTool.UNABLE_TO_CREATE_DIFF_FILES_ERROR_MESSAGE));
+    }
+
+    @Test
+    public void compareVisuallyDiffTestTest() throws IOException, InterruptedException {
+        String outPdf = sourceFolder + "compareVisuallyDiffTestTest1.pdf";
+        String cmpPdf = sourceFolder + "compareVisuallyDiffTestTest2.pdf";
+        String result = new CompareTool().compareVisually(outPdf, cmpPdf, destinationFolder, "diff_");
+        System.out.println("\nRESULT:\n" + result);
+        Assert.assertTrue(result.contains("differs on page [1, 2]."));
+        Assert.assertTrue(new File(destinationFolder + "diff_1.png").exists());
+        Assert.assertTrue(new File(destinationFolder + "diff_2.png").exists());
+    }
 }
