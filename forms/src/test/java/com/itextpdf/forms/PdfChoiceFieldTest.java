@@ -22,14 +22,20 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
@@ -37,10 +43,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import static com.itextpdf.test.ITextTest.createOrClearDestinationFolder;
 
 @Category(IntegrationTest.class)
-public class PdfChoiceFieldTest {
+public class PdfChoiceFieldTest extends ExtendedITextTest{
 
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfChoiceFieldTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfChoiceFieldTest/";
@@ -82,5 +87,49 @@ public class PdfChoiceFieldTest {
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
+    }
+
+    @Test
+    public void choiceFieldsSetValueTest() throws IOException, InterruptedException {
+        String srcPdf = sourceFolder + "choiceFieldsWithUnnecessaryIEntries.pdf";
+        String outPdf = destinationFolder + "choiceFieldsSetValueTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_choiceFieldsSetValueTest.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
+        form.getField("First").setValue("First");
+        form.getField("Second").setValue("Second");
+        pdfDocument.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff01_"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY, count = 2)})
+    public void multiSelectByValueTest() throws IOException, InterruptedException {
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "multiSelectByValueTest.pdf"));
+        document.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(document, true);
+        PdfFormField choice = PdfFormField.createList(document, new Rectangle(336, 666, 50, 80), "choice", "two",
+                new String[] {"one", "two", "three", "four"}, null, null).setBorderColor(ColorConstants.BLACK);
+        ((PdfChoiceFormField) choice).setMultiSelect(true);
+
+        ((PdfChoiceFormField) choice).setListSelected(new String[] {"one", "three", "eins", "drei", null});
+
+        form.addField(choice);
+        document.close();
+        Assert.assertNull(new CompareTool()
+                .compareByContent(destinationFolder + "multiSelectByValueTest.pdf", sourceFolder + "cmp_multiSelectByValueTest.pdf",
+                        destinationFolder, "diff01_"));
+    }
+
+    @Test
+    public void multiSelectByIndexOutOfBoundsTest() throws IOException, InterruptedException {
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "multiSelectTest.pdf"), new PdfWriter(destinationFolder + "multiSelectByIndexOutOfBoundsTest.pdf"));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(document, false);
+        PdfChoiceFormField field = (PdfChoiceFormField) form.getField("choice");
+        field.setListSelected(new int[] {5});
+        document.close();
+        Assert.assertNull(new CompareTool()
+                .compareByContent(destinationFolder + "multiSelectByIndexOutOfBoundsTest.pdf", sourceFolder + "cmp_multiSelectByIndexOutOfBoundsTest.pdf",
+                        destinationFolder, "diff01_"));
     }
 }

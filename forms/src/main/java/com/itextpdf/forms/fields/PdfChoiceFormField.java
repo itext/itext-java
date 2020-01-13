@@ -43,6 +43,9 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -51,6 +54,13 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 /**
  * An AcroForm field type representing any type of choice field. Choice fields
@@ -117,8 +127,13 @@ public class PdfChoiceFormField extends PdfFormField {
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setIndices(PdfArray indices) {
-        return (PdfChoiceFormField) put(PdfName.I, indices);
+        if (isIEntryRequired(indices.size())) {
+            return (PdfChoiceFormField) put(PdfName.I, indices);
+        } else {
+            return (PdfChoiceFormField) remove(PdfName.I);
+        }
     }
+
     /**
      * Highlights the options. If this method is used for Combo box, the first value in input array
      * will be the field value
@@ -126,43 +141,63 @@ public class PdfChoiceFormField extends PdfFormField {
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setListSelected(String[] optionValues) {
+        return setListSelected(optionValues, true);
+    }
+
+    /**
+     * Highlights the options and generates field appearance if needed.. If this method is used for Combo box, the first value in input array
+     * will be the field value
+     * @param optionValues Array of options to be highlighted
+     * @param generateAppearance if false, appearance won't be regenerated
+     * @return current {@link PdfChoiceFormField}
+     */
+    public PdfChoiceFormField setListSelected(String[] optionValues, boolean generateAppearance) {
+        if (optionValues.length > 1 && !isMultiSelect()) {
+            Logger logger = LoggerFactory.getLogger(this.getClass());
+            logger.warn(LogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD);
+        }
         PdfArray options = getOptions();
         PdfArray indices = new PdfArray();
         PdfArray values = new PdfArray();
+        List<String> optionsToUnicodeNames = optionsToUnicodeNames();
         for (String element : optionValues) {
-            for (int index = 0; index < options.size(); index++) {
-                PdfObject option = options.get(index);
-                PdfString value = null;
-                if (option.isString()) {
-                    value = (PdfString) option;
-                } else if (option.isArray()) {
-                    value = (PdfString) ((PdfArray)option).get(1);
-                }
-                if (value != null && value.toUnicodeString().equals(element)) {
-                    indices.add(new PdfNumber(index));
-                    values.add(value);
-                }
+            if (optionsToUnicodeNames.contains(element)) {
+                int index = optionsToUnicodeNames.indexOf(element);
+                indices.add(new PdfNumber(index));
+                PdfObject optByIndex = options.get(index);
+                values.add(optByIndex.isString() ? (PdfString) optByIndex : (PdfString) ((PdfArray) optByIndex).get(1));
+            } else if (element != null) {
+                Logger logger = LoggerFactory.getLogger(this.getClass());
+                logger.warn(MessageFormatUtil.format(LogMessageConstant.FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY, element, this.getFieldName()));
+                values.add(new PdfString(element, PdfEncodings.UNICODE_BIG));
             }
         }
         if (indices.size() > 0) {
             setIndices(indices);
-            if (values.size() == 1) {
-                put(PdfName.V, values.get(0));
-            } else {
-                put(PdfName.V, values);
-            }
         }
-        regenerateField();
+        if (values.size() == 1) {
+            put(PdfName.V, values.get(0));
+        } else {
+            put(PdfName.V, values);
+        }
+
+        if (generateAppearance) {
+            regenerateField();
+        }
         return this;
     }
 
     /**
-     * Highlights the options. Is this method is used for Combo box, the first value in input array
+     * Highlights the options. If this method is used for Combo box, the first value in input array
      * will be the field value
      * @param optionNumbers The option numbers
      * @return              The edited {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setListSelected(int[] optionNumbers) {
+        if (optionNumbers.length > 1 && !isMultiSelect()) {
+            Logger logger = LoggerFactory.getLogger(this.getClass());
+            logger.warn(LogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD);
+        }
         PdfArray indices = new PdfArray();
         PdfArray values = new PdfArray();
         PdfArray options = getOptions();
@@ -184,6 +219,8 @@ public class PdfChoiceFormField extends PdfFormField {
             } else {
                 put(PdfName.V, values);
             }
+        } else {
+            remove(PdfName.V);
         }
         regenerateField();
         return this;
@@ -306,5 +343,48 @@ public class PdfChoiceFormField extends PdfFormField {
      */
     public boolean isCommitOnSelChange() {
         return getFieldFlag(FF_COMMIT_ON_SEL_CHANGE);
+    }
+
+    private boolean isIEntryRequired(int valueSize) {
+        if (!isMultiSelect()) {
+            return false;
+        } else if (valueSize > 1) {
+            return true;
+        } else {
+            PdfArray options = getOptions();
+            LinkedHashMap<PdfString, LinkedHashSet<PdfString>> optionsExportedValues = new LinkedHashMap<>(options.size());
+            for (PdfObject option : options) {
+                if (option instanceof PdfArray) {
+                    PdfString exportedValue = ((PdfArray) option).getAsString(0);
+                    PdfString name = ((PdfArray) option).getAsString(1);
+                    LinkedHashSet<PdfString> namesOfExportedValue = optionsExportedValues.get(exportedValue);
+                    if (namesOfExportedValue == null) {
+                        namesOfExportedValue = new LinkedHashSet<PdfString>();
+                        namesOfExportedValue.add(name);
+                        optionsExportedValues.put(exportedValue, namesOfExportedValue);
+                    } else if (namesOfExportedValue.add(name)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private List<String> optionsToUnicodeNames() {
+        PdfArray options = getOptions();
+        List<String> optionsToUnicodeNames = new ArrayList<String>(options.size());
+        for (int index = 0; index < options.size(); index++) {
+            PdfObject option = options.get(index);
+            PdfString value = null;
+            if (option.isString()) {
+                value = (PdfString) option;
+            } else if (option.isArray()) {
+                value = (PdfString) ((PdfArray) option).get(1);
+            }
+            optionsToUnicodeNames.add(value != null ? value.toUnicodeString() : null);
+
+        }
+        return optionsToUnicodeNames;
     }
 }

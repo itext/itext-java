@@ -1036,6 +1036,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD)})
     public void pdfWithDifferentFieldsTest() throws IOException, InterruptedException {
         String fileName = destinationFolder + "pdfWithDifferentFieldsTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileName));

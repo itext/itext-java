@@ -671,7 +671,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         field.put(PdfName.Opt, options);
         field.setFieldFlags(flags);
         field.setFieldName(name);
-        field.put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
+        ((PdfChoiceFormField) field).setListSelected(new String[] {value}, false);
         if ((flags & PdfChoiceFormField.FF_COMBO) == 0) {
             value = optionsArrayToString(options);
         }
@@ -1155,10 +1155,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Sets a value to the field and generating field appearance if needed.
+     * Sets a value to the field and generates field appearance if needed.
      *
      * @param value              of the field
-     * @param generateAppearance set this flat to false if you want to keep the appearance of the field generated before
+     * @param generateAppearance if false, appearance won't be regenerated
      * @return the field
      */
     public PdfFormField setValue(String value, boolean generateAppearance) {
@@ -1178,7 +1178,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     }
                 }
             }
-            put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
+            if (PdfName.Ch.equals(formType)) {
+                ((PdfChoiceFormField) this).setListSelected(new String[] {value}, generateAppearance);
+            } else {
+                put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
+            }
         } else if (PdfName.Btn.equals(formType)) {
             if (getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
                 try {
@@ -1247,9 +1251,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
         setValue(display, true);
         PdfName formType = getFormType();
-        if (PdfName.Tx.equals(formType) || PdfName.Ch.equals(formType)) {
-            put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
-        } else if (PdfName.Btn.equals(formType)) {
+        if (PdfName.Btn.equals(formType)) {
             if ((getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
                 text = value;
             } else {
@@ -2271,8 +2273,29 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    /**
+     * Inserts the value into the {@link PdfDictionary} of this field and associates it with the specified key.
+     * If the key is already present in this field dictionary,
+     * this method will override the old value with the specified one.
+     *
+     * @param key  key to insert or to override
+     * @param value the value to associate with the specified key
+     * @return this {@link PdfFormField} instance
+     */
     public PdfFormField put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
+        return this;
+    }
+
+    /**
+     * Removes the specified key from the {@link PdfDictionary} of this field.
+     *
+     * @param key key to be removed
+     * @return this {@link PdfFormField} instance
+     */
+    public PdfFormField remove(PdfName key) {
+        getPdfObject().remove(key);
         setModified();
         return this;
     }

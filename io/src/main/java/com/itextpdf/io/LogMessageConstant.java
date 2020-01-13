@@ -97,6 +97,7 @@ public final class LogMessageConstant {
      */
     @Deprecated
     public static final String FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX = "Failed to process a transformation matrix which is noninvertible. Some content may be placed not as expected.";
+    public static final String FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY = "Value \"{0}\" is not contained in /Opt array of field \"{1}\".";
     public static final String FILE_CHANNEL_CLOSING_FAILED = "Closing of the file channel this source is based on failed.";
     public static final String FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE = "Flushed object contains indirect reference which is free. Null object will be written instead.";
     public static final String FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT = "Flushed object contains indirect reference which doesn't refer to any other object. Null object will be written instead.";
@@ -137,6 +138,7 @@ public final class LogMessageConstant {
     public static final String MAPPING_IN_NAMESPACE_OVERWRITTEN = "Existing mapping for {0} in {1} namespace was overwritten.";
     public static final String MAPPING_IN_STRUCT_ROOT_OVERWRITTEN = "Existing mapping for {0} in structure tree root role map was {1} and it was overwritten with {2}.";
     public static final String METHOD_IS_NOT_IMPLEMENTED_BY_DEFAULT_OTHER_METHOD_WILL_BE_USED = "Method {0} is not implemented by default: please, override and implement it. {1} will be used instead.";
+    public static final String MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD = "Multiple values were set to a field that does not have MultiSelect flag set.";
     public static final String NAME_ALREADY_EXISTS_IN_THE_NAME_TREE = "Name \"{0}\" already exists in the name tree; old value will be replaced by the new one.";
     public static final String NOT_TAGGED_PAGES_IN_TAGGED_DOCUMENT = "Not tagged pages are copied to the tagged document. Destination document now may contain not tagged content.";
     public static final String NO_FIELDS_IN_ACROFORM = "Required AcroForm entry /Fields does not exist in the document. Empty array /Fields will be created.";
