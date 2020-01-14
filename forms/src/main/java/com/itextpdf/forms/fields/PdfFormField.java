@@ -116,8 +116,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
@@ -1179,7 +1177,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
             if (PdfName.Ch.equals(formType)) {
-                ((PdfChoiceFormField) this).setListSelected(new String[] {value}, generateAppearance);
+                if (this instanceof PdfChoiceFormField) {
+                    ((PdfChoiceFormField) this).setListSelected(new String[] {value}, false);
+                } else {
+                    PdfChoiceFormField choice = new PdfChoiceFormField(this.getPdfObject());
+                    choice.setListSelected(new String[] {value}, false);
+                }
             } else {
                 put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
             }
@@ -2617,17 +2620,19 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             if (color != null) {
                 paragraph.setFontColor(color);
             }
-            PdfArray indices = getPdfObject().getAsArray(PdfName.I);
-            if (indices == null && this.getKids() == null && this.getParent() != null) {
-                indices = this.getParent().getAsArray(PdfName.I);
-            }
-            if (indices != null && indices.size() > 0) {
-                for (PdfObject ind : indices) {
-                    if (!ind.isNumber())
-                        continue;
-                    if (((PdfNumber) ind).getValue() == index) {
-                        paragraph.setBackgroundColor(new DeviceRgb(10, 36, 106));
-                        paragraph.setFontColor(ColorConstants.LIGHT_GRAY);
+            if (!this.getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
+                PdfArray indices = getPdfObject().getAsArray(PdfName.I);
+                if (indices == null && this.getKids() == null && this.getParent() != null) {
+                    indices = this.getParent().getAsArray(PdfName.I);
+                }
+                if (indices != null && indices.size() > 0) {
+                    for (PdfObject ind : indices) {
+                        if (!ind.isNumber())
+                            continue;
+                        if (((PdfNumber) ind).getValue() == index) {
+                            paragraph.setBackgroundColor(new DeviceRgb(10, 36, 106));
+                            paragraph.setFontColor(ColorConstants.LIGHT_GRAY);
+                        }
                     }
                 }
             }
@@ -3651,6 +3656,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 if (element.isString()) {
                     sb.append(((PdfString) element).toUnicodeString()).append('\n');
                 }
+            } else {
+                sb.append('\n');
             }
         }
         // last '\n'

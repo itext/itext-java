@@ -56,8 +56,6 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -127,11 +125,7 @@ public class PdfChoiceFormField extends PdfFormField {
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setIndices(PdfArray indices) {
-        if (isIEntryRequired(indices.size())) {
-            return (PdfChoiceFormField) put(PdfName.I, indices);
-        } else {
-            return (PdfChoiceFormField) remove(PdfName.I);
-        }
+        return (PdfChoiceFormField) put(PdfName.I, indices);
     }
 
     /**
@@ -161,19 +155,28 @@ public class PdfChoiceFormField extends PdfFormField {
         PdfArray values = new PdfArray();
         List<String> optionsToUnicodeNames = optionsToUnicodeNames();
         for (String element : optionValues) {
+            if (element == null) {
+                continue;
+            }
             if (optionsToUnicodeNames.contains(element)) {
                 int index = optionsToUnicodeNames.indexOf(element);
                 indices.add(new PdfNumber(index));
                 PdfObject optByIndex = options.get(index);
                 values.add(optByIndex.isString() ? (PdfString) optByIndex : (PdfString) ((PdfArray) optByIndex).get(1));
-            } else if (element != null) {
-                Logger logger = LoggerFactory.getLogger(this.getClass());
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY, element, this.getFieldName()));
+            } else {
+                if (!(this.isCombo() && this.isEdit())) {
+                    Logger logger = LoggerFactory.getLogger(this.getClass());
+                    logger.warn(MessageFormatUtil
+                            .format(LogMessageConstant.FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY, element,
+                                    this.getFieldName()));
+                }
                 values.add(new PdfString(element, PdfEncodings.UNICODE_BIG));
             }
         }
         if (indices.size() > 0) {
             setIndices(indices);
+        } else {
+            remove(PdfName.I);
         }
         if (values.size() == 1) {
             put(PdfName.V, values.get(0));
@@ -220,6 +223,7 @@ public class PdfChoiceFormField extends PdfFormField {
                 put(PdfName.V, values);
             }
         } else {
+            remove(PdfName.I);
             remove(PdfName.V);
         }
         regenerateField();
@@ -345,32 +349,6 @@ public class PdfChoiceFormField extends PdfFormField {
         return getFieldFlag(FF_COMMIT_ON_SEL_CHANGE);
     }
 
-    private boolean isIEntryRequired(int valueSize) {
-        if (!isMultiSelect()) {
-            return false;
-        } else if (valueSize > 1) {
-            return true;
-        } else {
-            PdfArray options = getOptions();
-            LinkedHashMap<PdfString, LinkedHashSet<PdfString>> optionsExportedValues = new LinkedHashMap<>(options.size());
-            for (PdfObject option : options) {
-                if (option instanceof PdfArray) {
-                    PdfString exportedValue = ((PdfArray) option).getAsString(0);
-                    PdfString name = ((PdfArray) option).getAsString(1);
-                    LinkedHashSet<PdfString> namesOfExportedValue = optionsExportedValues.get(exportedValue);
-                    if (namesOfExportedValue == null) {
-                        namesOfExportedValue = new LinkedHashSet<PdfString>();
-                        namesOfExportedValue.add(name);
-                        optionsExportedValues.put(exportedValue, namesOfExportedValue);
-                    } else if (namesOfExportedValue.add(name)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     private List<String> optionsToUnicodeNames() {
         PdfArray options = getOptions();
         List<String> optionsToUnicodeNames = new ArrayList<String>(options.size());
@@ -383,7 +361,6 @@ public class PdfChoiceFormField extends PdfFormField {
                 value = (PdfString) ((PdfArray) option).get(1);
             }
             optionsToUnicodeNames.add(value != null ? value.toUnicodeString() : null);
-
         }
         return optionsToUnicodeNames;
     }
