@@ -251,6 +251,20 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
 
         document.close();
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+    }
 
+    @Test
+    public void topIndexTest() throws IOException, InterruptedException {
+        String srcPdf = sourceFolder + "choiceFieldNotFittingTest.pdf";
+        String outPdf = destinationFolder + "topIndexTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_topIndexTest.pdf";
+        PdfDocument document = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(document, false);
+        PdfChoiceFormField field = (PdfChoiceFormField) form.getField("choice");
+        field.setListSelected(new String[] {"seven"});
+        int topIndex = field.getIndices().getAsNumber(0).intValue();
+        field.setTopIndex(topIndex);
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
     }
 }

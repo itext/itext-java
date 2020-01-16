@@ -675,7 +675,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
 
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
-        field.drawChoiceAppearance(rect, field.fontSize, value, xObject);
+        field.drawChoiceAppearance(rect, field.fontSize, value, xObject, 0);
         annot.setNormalAppearance(xObject.getPdfObject());
 
         return (PdfChoiceFormField) field;
@@ -2586,7 +2586,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param value      The initial value
      * @param appearance The appearance
      */
-    private void drawChoiceAppearance(Rectangle rect, float fontSize, String value, PdfFormXObject appearance) {
+    private void drawChoiceAppearance(Rectangle rect, float fontSize, String value, PdfFormXObject appearance, int topIndex) {
         PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfResources resources = appearance.getResources();
         PdfCanvas canvas = new PdfCanvas(stream, resources, getDocument());
@@ -2629,7 +2629,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     for (PdfObject ind : indices) {
                         if (!ind.isNumber())
                             continue;
-                        if (((PdfNumber) ind).getValue() == index) {
+                        if (((PdfNumber) ind).getValue() == index + topIndex) {
                             paragraph.setBackgroundColor(new DeviceRgb(10, 36, 106));
                             paragraph.setFontColor(ColorConstants.LIGHT_GRAY);
                         }
@@ -3567,21 +3567,24 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 drawTextAppearance(bboxRectangle, this.font, getFontSize(bBox, value), value, appearance);
             }
         } else {
+            int topIndex = 0;
             if (!getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
-                PdfNumber topIndex = this.getPdfObject().getAsNumber(PdfName.TI);
-                if (topIndex == null && this.getParent() != null) {
-                    topIndex = this.getParent().getAsNumber(PdfName.TI);
+                PdfNumber topIndexNum = this.getPdfObject().getAsNumber(PdfName.TI);
+                if (topIndexNum == null && this.getParent() != null) {
+                    topIndexNum = this.getParent().getAsNumber(PdfName.TI);
                 }
                 PdfArray options = getOptions();
                 if (null == options && this.getParent() != null) {
                     options = this.getParent().getAsArray(PdfName.Opt);
                 }
                 if (null != options) {
-                    PdfArray visibleOptions = null != topIndex ? new PdfArray(options.subList(topIndex.intValue(), options.size() - 1)) : (PdfArray) options.clone();
+                    topIndex = null != topIndexNum ? topIndexNum.intValue() : 0;
+                    PdfArray visibleOptions = topIndex > 0
+                            ? new PdfArray(options.subList(topIndex, options.size())) : (PdfArray) options.clone();
                     value = optionsArrayToString(visibleOptions);
                 }
             }
-            drawChoiceAppearance(bboxRectangle, getFontSize(bBox, value), value, appearance);
+            drawChoiceAppearance(bboxRectangle, getFontSize(bBox, value), value, appearance, topIndex);
         }
         PdfDictionary ap = new PdfDictionary();
         ap.put(PdfName.N, appearance.getPdfObject());
