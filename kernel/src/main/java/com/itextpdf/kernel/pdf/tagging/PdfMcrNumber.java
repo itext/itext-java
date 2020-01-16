@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -44,7 +44,6 @@
 package com.itextpdf.kernel.pdf.tagging;
 
 import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
 
@@ -52,7 +51,7 @@ public class PdfMcrNumber extends PdfMcr {
 
     private static final long serialVersionUID = -9039654592261202430L;
 
-	public PdfMcrNumber(PdfNumber pdfObject, PdfStructElem parent) {
+    public PdfMcrNumber(PdfNumber pdfObject, PdfStructElem parent) {
         super(pdfObject, parent);
     }
 
@@ -67,6 +66,6 @@ public class PdfMcrNumber extends PdfMcr {
 
     @Override
     public PdfDictionary getPageObject() {
-        return parent.getPdfObject().getAsDictionary(PdfName.Pg);
+        return super.getPageObject();
     }
 }

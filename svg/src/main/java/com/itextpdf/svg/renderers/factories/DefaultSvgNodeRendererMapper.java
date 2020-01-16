@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -50,6 +50,7 @@ import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.EllipseSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.ImageSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.LineSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.MarkerSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.NoDrawOperationSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PolygonSvgNodeRenderer;
@@ -84,6 +85,7 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
         result.put(SvgConstants.Tags.G, GroupSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.IMAGE, ImageSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.LINE, LineSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.MARKER, MarkerSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.PATH, PathSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.POLYGON, PolygonSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.POLYLINE, PolylineSvgNodeRenderer.class);
@@ -150,7 +152,6 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
 
         ignored.add(SvgConstants.Tags.LINEAR_GRADIENT);
 
-        ignored.add(SvgConstants.Tags.MARKER);
         ignored.add(SvgConstants.Tags.MASK);
         ignored.add(SvgConstants.Tags.METADATA);
         ignored.add(SvgConstants.Tags.MISSING_GLYPH);

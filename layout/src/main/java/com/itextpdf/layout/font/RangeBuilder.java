@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -57,7 +57,7 @@ public class RangeBuilder {
     /**
      * Default Range instance.
      *
-     * @return Range that contains any integer.
+     * @return Range that contains any integer
      */
     static Range getFullRange() {
         return fullRangeSingleton;
@@ -73,8 +73,8 @@ public class RangeBuilder {
     /**
      * Constructor with a single range.
      *
-     * @param low  low boundary of the range.
-     * @param high high boundary of the range.
+     * @param low  low boundary of the range
+     * @param high high boundary of the range
      */
     public RangeBuilder(int low, int high) {
         this.addRange(low, high);
@@ -83,7 +83,7 @@ public class RangeBuilder {
     /**
      * Constructor with a single number.
      *
-     * @param n a single number.
+     * @param n a single number
      */
     public RangeBuilder(int n) {
         this(n, n);
@@ -92,8 +92,8 @@ public class RangeBuilder {
     /**
      * Constructor with a single range.
      *
-     * @param low  low boundary of the range.
-     * @param high high boundary of the range.
+     * @param low  low boundary of the range
+     * @param high high boundary of the range
      */
     public RangeBuilder(char low, char high) {
         this((int) low, (int) high);
@@ -102,7 +102,7 @@ public class RangeBuilder {
     /**
      * Constructor with a single char.
      *
-     * @param ch a single char.
+     * @param ch a single char
      */
     public RangeBuilder(char ch) {
         this((int) ch);
@@ -111,8 +111,9 @@ public class RangeBuilder {
     /**
      * Add one more range.
      *
-     * @param low  low boundary of the range.
-     * @param high high boundary of the range.
+     * @param low  low boundary of the range
+     * @param high high boundary of the range
+     * @return this RangeBuilder
      */
     public RangeBuilder addRange(int low, int high) {
         if (high < low) {
@@ -125,8 +126,9 @@ public class RangeBuilder {
     /**
      * Add one more range.
      *
-     * @param low  low boundary of the range.
-     * @param high high boundary of the range.
+     * @param low  low boundary of the range
+     * @param high high boundary of the range
+     * @return this RangeBuilder
      */
     public RangeBuilder addRange(char low, char high) {
         return addRange((int) low, (int) high);
@@ -135,7 +137,8 @@ public class RangeBuilder {
     /**
      * Add range with a single number.
      *
-     * @param n a single number.
+     * @param n a single number
+     * @return this RangeBuilder
      */
     public RangeBuilder addRange(int n) {
         return addRange(n, n);
@@ -144,7 +147,8 @@ public class RangeBuilder {
     /**
      * Add range with a single char.
      *
-     * @param ch a single char.
+     * @param ch a single char
+     * @return this RangeBuilder
      */
     public RangeBuilder addRange(char ch) {
         return addRange((int) ch);

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -399,7 +399,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfPage copyTo(PdfDocument toDocument, IPdfPageExtraCopier copier) {
         PdfDictionary dictionary = getPdfObject().copyTo(toDocument, PAGE_EXCLUDED_KEYS, true);
-        PdfPage page = new PdfPage(dictionary);
+        PdfPage page = getDocument().getPageFactory().createPdfPage(dictionary);
         copyInheritedProperties(page, toDocument);
         for (PdfAnnotation annot : getAnnotations()) {
             if (annot.getSubtype().equals(PdfName.Link)) {
@@ -506,7 +506,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      *                                     will be flushed.
      */
     public void flush(boolean flushResourcesContentStreams) {
-        // TODO log warning in case of failed flush in pdfa document case
         if (isFlushed()) {
             return;
         }
@@ -768,7 +767,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Calculates and returns next available MCID reference.
+     * Calculates and returns the next available for this page's content stream MCID reference.
      *
      * @return calculated MCID reference.
      * @throws PdfException in case of not tagged document.

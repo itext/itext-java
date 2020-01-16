@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -219,10 +219,10 @@ public class TextRenderInfo extends AbstractRenderInfo {
     }
 
     /**
-     * Gets the ascentline for the text (i.e. the line that represents the topmost extent that a string of the current font could have)
-     * This value includes the Rise of the draw operation - see {@link #getRise()} for the amount added by Rise
+     * Gets the ascent line for the text (i.e. the line that represents the topmost extent that a string of the current font could have).
+     * This value includes the Rise of the draw operation - see {@link #getRise()} for the amount added by Rise.
      *
-     * @return the ascentline line segment
+     * @return a LineSegment instance
      */
     public LineSegment getAscentLine() {
         checkGraphicsState();
@@ -230,10 +230,10 @@ public class TextRenderInfo extends AbstractRenderInfo {
     }
 
     /**
-     * Gets the descentline for the text (i.e. the line that represents the bottom most extent that a string of the current font could have).
-     * This value includes the Rise of the draw operation - see {@link #getRise()} for the amount added by Rise
+     * Gets the descent line for the text (i.e. the line that represents the bottom most extent that a string of the current font could have).
+     * This value includes the Rise of the draw operation - see {@link #getRise()} for the amount added by Rise.
      *
-     * @return the descentline line segment
+     * @return a LineSegment instance
      */
     public LineSegment getDescentLine() {
         checkGraphicsState();

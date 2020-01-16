@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -86,7 +86,7 @@ public class FitObject {
 
     public FitObject(PdfObject page) {
         if(page == null) {
-            throw new XfdfException(XfdfConstants.PAGE_IS_MISSING);
+            throw new XfdfException(XfdfException.PAGE_IS_MISSING);
         }
         this.page = page;
     }

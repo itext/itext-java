@@ -39,7 +39,7 @@ pipeline {
             }
             steps {
                 withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
-                    sh 'mvn clean'
+                    sh 'mvn --threads 2C clean'
                     sh 'mvn dependency:purge-local-repository -Dinclude=com.itextpdf -DresolutionFuzziness=groupId -DreResolve=false'
                 }
             }
@@ -50,7 +50,7 @@ pipeline {
             }
             steps {
                 withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
-                    sh 'mvn compile test-compile package -Dmaven.test.skip=true -Dmaven.javadoc.failOnError=false'
+                    sh 'mvn --threads 2C compile test-compile package -Dmaven.test.skip=true -Dmaven.javadoc.failOnError=false'
                 }
             }
         }
@@ -99,8 +99,45 @@ pipeline {
                     def rtMaven = Artifactory.newMavenBuild()
                     rtMaven.deployer server: server, releaseRepo: 'releases', snapshotRepo: 'snapshot'
                     rtMaven.tool = 'M3'
-                    def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'install -Dmaven.test.skip=true -Dspotbugs.skip=true -Dmaven.javadoc.failOnError=false'
+                    def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'package --threads 2C --offline -Dmaven.main.skip=true -Dmaven.test.skip=true -Dmaven.javadoc.failOnError=false'
                     server.publishBuildInfo buildInfo
+                }
+            }
+        }
+        stage('Branch Artifactory Deploy') {
+            options {
+                timeout(time: 5, unit: 'MINUTES')
+            }
+            when {
+                not {
+                    anyOf {
+                        branch "master"
+                        branch "develop"
+                    }
+                }
+            }
+            steps {
+                script {
+                    getAndConfigureJFrogCLI()
+                    if (env.GIT_URL) {
+                        repoName = ("${env.GIT_URL}" =~ /(.*\/)(.*)(\.git)/)[ 0 ][ 2 ]
+                        findFiles(glob: 'target/*.jar').each { item ->
+                            if (!(item ==~ /.*\/fb-contrib-.*?.jar/) && !(item ==~ /.*\/findsecbugs-plugin-.*?.jar/) && !(item ==~ /.*-sources.jar/) && !(item ==~ /.*-javadoc.jar/)) {
+                                sh "./jfrog rt u \"${item.path}\" branch-artifacts/${env.BRANCH_NAME}/${repoName}/java/ --recursive=false --build-name ${env.BRANCH_NAME} --build-number ${env.BUILD_NUMBER} --props \"vcs.revision=${env.GIT_COMMIT};repo.name=${repoName}\""
+                            }
+                        }
+                        findFiles(glob: '**/pom.xml').each { item ->
+                            def pomPath = item.path.replace('\\','/')
+                            if (!(pomPath ==~ /.*target.*/)) {
+                                def resPomName = "main.pom"
+                                def subDirMatcher = (pomPath =~ /^.*(?<=\/|^)(.*)\/pom\.xml/)
+                                if (subDirMatcher.matches()) {
+                                    resPomName = "${subDirMatcher[ 0 ][ 1 ]}.pom"
+                                }
+                                sh "./jfrog rt u \"${item.path}\" branch-artifacts/${env.BRANCH_NAME}/${repoName}/java/${resPomName} --recursive=false --build-name ${env.BRANCH_NAME} --build-number ${env.BUILD_NUMBER} --props \"vcs.revision=${env.GIT_COMMIT};repo.name=${repoName}\""
+                            }
+                        }
+                    }
                 }
             }
         }

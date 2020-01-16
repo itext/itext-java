@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -60,9 +60,9 @@ public class CharacterRenderInfo extends TextChunk {
     private Rectangle boundingBox;
 
     /**
-     * This method converts a {@link List} of {@link CharacterRenderInfo},
-     * The data structure that gets returned contains both the plaintext,
-     * as well as the mapping of indices (from the list to the string).
+     * This method converts a {@link List} of {@link CharacterRenderInfo}.
+     * The returned data structure contains both the plaintext
+     * and the mapping of indices (from the list to the string).
      * These indices can differ; if there is sufficient spacing between two CharacterRenderInfo
      * objects, this algorithm will decide to insert space. The inserted space will cause
      * the indices to differ by at least 1.

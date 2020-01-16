@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -349,5 +349,46 @@ public class SvgTextUtilTest extends ExtendedITextTest {
         float actual = SvgTextUtil.resolveFontSize(root, 10);
 
         Assert.assertEquals(expected, actual, EPS);
+    }
+
+    @Test
+    public void testFilterReferenceValueMarkerReference() {
+        Assert.assertEquals("MarkerCircle", SvgTextUtil.filterReferenceValue("url(#MarkerCircle)"));
+    }
+
+    @Test
+    public void testFilterReferenceValueMarkerFullEntry() {
+        Assert.assertEquals("marker-end: MarkerArrow;",
+                SvgTextUtil.filterReferenceValue("marker-end: url(#MarkerArrow);"));
+    }
+
+    @Test
+    public void testFilterReferenceValueSimpleReference() {
+        Assert.assertEquals("figure11",
+                SvgTextUtil.filterReferenceValue("#figure11"));
+    }
+
+    @Test
+    public void testFilterReferenceValueNoFilter() {
+        Assert.assertEquals("circle",
+                SvgTextUtil.filterReferenceValue("circle"));
+    }
+
+    @Test
+    public void testFilterReferenceValueEmptyString() {
+        Assert.assertEquals("",
+                SvgTextUtil.filterReferenceValue(""));
+    }
+
+    @Test
+    public void testFilterReferenceValueNumberString() {
+        Assert.assertEquals("16554245",
+                SvgTextUtil.filterReferenceValue("16554245"));
+    }
+
+    @Test
+    public void testFilterReferenceValueFilteredValues() {
+        Assert.assertEquals("",
+                SvgTextUtil.filterReferenceValue("))url(####)"));
     }
 }

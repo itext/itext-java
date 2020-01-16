@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -57,6 +57,9 @@ public class DrawUtils {
      * Draw an arc on the passed canvas,
      * enclosed by the rectangle for which two opposite corners are specified.
      * The arc starts at the passed starting angle and extends to the starting angle + extent
+     * @deprecated In {@link PdfCanvas} most of the path drawing methods accept {@code double}.
+     * So it is preferable to use {@link DrawUtils#arc(double, double, double, double, double, double, PdfCanvas)}.
+     * This method will be removed in iText 7.2
      * @param x1 corner-coordinate of the enclosing rectangle, first corner
      * @param y1 corner-coordinate of the enclosing rectangle, first corner
      * @param x2 corner-coordinate of the enclosing rectangle, second corner
@@ -65,12 +68,27 @@ public class DrawUtils {
      * @param extent extent of the arc
      * @param cv canvas to paint on
      */
+    @Deprecated
     public static void arc(final float x1, final float y1, final float x2, final float y2, final float startAng, final float extent, PdfCanvas cv) {
+        arc((double) x1, (double) y1, (double) x2, (double) y2, (double) startAng, (double) extent, cv);
+    }
+
+    /**
+     * Draw an arc on the passed canvas,
+     * enclosed by the rectangle for which two opposite corners are specified.
+     * The arc starts at the passed starting angle and extends to the starting angle + extent
+     * @param x1 corner-coordinate of the enclosing rectangle, first corner
+     * @param y1 corner-coordinate of the enclosing rectangle, first corner
+     * @param x2 corner-coordinate of the enclosing rectangle, second corner
+     * @param y2 corner-coordinate of the enclosing rectangle, second corner
+     * @param startAng starting angle in degrees
+     * @param extent extent of the arc
+     * @param cv canvas to paint on
+     */
+    public static void arc(final double x1, final double y1, final double x2, final double y2, final double startAng, final double extent, PdfCanvas cv) {
         List<double[]> ar = PdfCanvas.bezierArc(x1, y1, x2, y2, startAng, extent);
         if (!ar.isEmpty()) {
-            double pt[];
-            for (int k = 0; k < ar.size(); ++k) {
-                pt = ar.get(k);
+            for (double[] pt : ar) {
                 cv.curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
             }
         }

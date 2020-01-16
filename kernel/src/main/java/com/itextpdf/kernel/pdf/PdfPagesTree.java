@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -69,6 +69,8 @@ class PdfPagesTree implements Serializable {
     private boolean generated = false;
     private PdfPages root;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfPagesTree.class);
+
     /**
      * Creates a PdfPages tree.
      *
@@ -113,10 +115,15 @@ class PdfPagesTree implements Serializable {
             loadPage(pageNum);
             if (pageRefs.get(pageNum) != null) {
                 int parentIndex = findPageParent(pageNum);
-                pdfPage = new PdfPage((PdfDictionary) pageRefs.get(pageNum).getRefersTo());
-                pdfPage.parentPages = parents.get(parentIndex);
+                PdfObject pageObject = pageRefs.get(pageNum).getRefersTo();
+                if (pageObject instanceof PdfDictionary) {
+                    pdfPage = document.getPageFactory().createPdfPage((PdfDictionary) pageObject);
+                    pdfPage.parentPages = parents.get(parentIndex);
+                } else {
+                    LOGGER.error(MessageFormatUtil.format(LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, pageNum + 1));
+                }
             } else {
-                LoggerFactory.getLogger(getClass()).error(MessageFormatUtil.format(LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, pageNum + 1));
+                LOGGER.error(MessageFormatUtil.format(LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, pageNum + 1));
             }
             pages.set(pageNum, pdfPage);
         }
@@ -244,8 +251,7 @@ class PdfPagesTree implements Serializable {
     public PdfPage removePage(int pageNum) {
         PdfPage pdfPage = getPage(pageNum);
         if (pdfPage.isFlushed()) {
-            Logger logger = LoggerFactory.getLogger(PdfPage.class);
-            logger.warn(LogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED);
+            LOGGER.warn(LogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED);
         }
         if (internalRemovePage(--pageNum)) {
             return pdfPage;
@@ -355,9 +361,11 @@ class PdfPagesTree implements Serializable {
                     findPdfPages = true;
                 } else {
                     // kids must be of type array
-
                     throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum + 1);
                 }
+            }
+            if (document.getReader().isMemorySavingMode() && !findPdfPages && parent.getFrom() + i != pageNum) {
+                page.release();
             }
         }
         if (findPdfPages) {
@@ -367,6 +375,13 @@ class PdfPagesTree implements Serializable {
             List<PdfPages> newParents = new ArrayList<>(kids.size());
             PdfPages lastPdfPages = null;
             for (int i = 0; i < kids.size() && kidsCount > 0; i++) {
+                /*
+                 * We don't release pdfPagesObject in the end of each loop because we enter this for-cycle only when parent has PdfPages kids.
+                 * If all of the kids are PdfPages, then there's nothing to release, because we don't release PdfPages at this point.
+                 * If there are kids that are instances of PdfPage, then there's no sense in releasing them:
+                 * in this case ParentTreeStructure is being rebuilt by inserting an intermediate PdfPages between the parent and a PdfPage,
+                 * thus modifying the page object by resetting its parent, thus making it impossible to release the object.
+                */
                 PdfDictionary pdfPagesObject = kids.getAsDictionary(i);
                 if (pdfPagesObject.getAsArray(PdfName.Kids) == null) {
                     // pdfPagesObject is PdfPage
@@ -414,12 +429,13 @@ class PdfPagesTree implements Serializable {
             // In any case parent.getCount() has higher priority.
             // NOTE optimization? when we already found needed index
             for (int i = 0; i < parent.getCount(); i++) {
-                PdfDictionary kid = kids.getAsDictionary(i);
-
-                // make sure it's a dictionary
-                if (kid != null) {
+                PdfObject kid = kids.get(i, false);
+                if (kid instanceof PdfIndirectReference) {
+                    pageRefs.set(from + i, (PdfIndirectReference) kid);
+                } else {
                     pageRefs.set(from + i, kid.getIndirectReference());
                 }
+
             }
         }
     }

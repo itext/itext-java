@@ -10,13 +10,13 @@ Q
 endstream
 endobj
 4 0 obj
-<</Contents 5 0 R/MediaBox[0 0 680.32 311.81]/Parent 2 0 R/Resources<</XObject<</Fm1 7 0 R>>>>/TrimBox[0 0 680.32 311.81]/Type/Page>>
+<</Contents 5 0 R/MediaBox[0 0 680.31 311.81]/Parent 2 0 R/Resources<</XObject<</Fm1 7 0 R>>>>/TrimBox[0 0 680.31 311.81]/Type/Page>>
 endobj
 1 0 obj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191021101120+03'00')/ModDate(D:20191021101120+03'00')/Producer(iText® 7.1.9-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20191219150316+03'00')/ModDate(D:20191219150316+03'00')/Producer(iText® 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -25,7 +25,7 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 680.32 311.81]/Length 105/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 680.31 311.81]/Length 105/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 311.81 cm
 % svg root
 0.34646 0 0 0.34646 0 0 cm
@@ -38,47 +38,49 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[-81.82 0 1881.82 900]/Length 1685/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[-81.82 0 1881.82 900]/Length 1626/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 -81.82 0 1963.64 900 re
 W
 n
 q
 q
 0 0.50196 0 RG
+0.75 w
 % path
 37.5 150 m
-37.17 167.62 54.78 187.53 83.7 202.23 c
-112.62 216.93 148.46 224.19 177.71 221.28 c
-206.97 218.36 225.19 205.72 225.53 188.1 c
+36.99 177.23 78.66 207.84 130.58 218.36 c
+182.5 228.88 225.01 215.33 225.52 188.1 c
 h
 S
 Q
 q
 0 0.50196 0 RG
+0.75 w
 % path
 37.5 300 m
-37.17 317.62 54.78 337.53 83.7 352.23 c
-112.62 366.93 148.46 374.19 177.71 371.28 c
-206.97 368.36 225.19 355.72 225.53 338.1 c
+36.99 327.23 78.66 357.84 130.58 368.36 c
+182.5 378.88 225.01 365.33 225.52 338.1 c
 h
 S
 Q
 q
 0 0.50196 0 RG
+0.75 w
 % path
 262.5 150 m
-262.63 132.34 280.67 119.6 309.82 116.57 c
-338.97 113.55 374.81 120.7 403.83 135.32 c
-432.85 149.95 450.65 169.84 450.53 187.5 c
+262.7 122.71 304.95 108.97 356.87 119.33 c
+408.8 129.68 450.72 160.21 450.52 187.5 c
 h
 S
 Q
 q
 0 0.50196 0 RG
+0.75 w
 % path
 262.5 300 m
-263.01 272.77 305.52 259.22 357.44 269.74 c
-409.37 280.26 451.04 310.87 450.53 338.1 c
+262.83 282.38 281.06 269.74 310.31 266.82 c
+339.57 263.91 375.4 271.17 404.33 285.87 c
+433.25 300.57 450.86 320.48 450.52 338.1 c
 h
 S
 Q
@@ -258,16 +260,16 @@ xref
 0 9
 0000000000 65535 f 
 0000000238 00000 n 
-0000000539 00000 n 
+0000000540 00000 n 
 0000000283 00000 n 
 0000000089 00000 n 
 0000000015 00000 n 
-0000000449 00000 n 
-0000000590 00000 n 
-0000000829 00000 n 
+0000000450 00000 n 
+0000000591 00000 n 
+0000000830 00000 n 
 trailer
-<</ID [<ca24b64ebb9b3dc189bcb3b862a79a1a><ca24b64ebb9b3dc189bcb3b862a79a1a>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-7.1.9-SNAPSHOT
+<</ID [<1354ecbf04872f59b462bb6dc2f0f652><1354ecbf04872f59b462bb6dc2f0f652>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-7.1.10-SNAPSHOT
 startxref
-2648
+2590
 %%EOF

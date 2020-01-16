@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -65,6 +65,7 @@ import com.itextpdf.styledxmlparser.node.IStylesContainer;
 import com.itextpdf.styledxmlparser.node.ITextNode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.css.SvgCssContext;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
@@ -149,21 +150,7 @@ public class SvgStyleResolver implements ICssResolver {
 
     @Override
     public Map<String, String> resolveStyles(INode node, AbstractCssContext context) {
-        Map<String, String> styles = new HashMap<>();
-        //Load in from collected style sheets
-        List<CssDeclaration> styleSheetDeclarations =
-                css.getCssDeclarations(node, MediaDeviceDescription.createDefault());
-        for (CssDeclaration ssd : styleSheetDeclarations) {
-            styles.put(ssd.getProperty(), ssd.getExpression());
-        }
-
-        //Load in attributes declarations
-        if (node instanceof IElementNode) {
-            IElementNode eNode = (IElementNode) node;
-            for (IAttribute attr : eNode.getAttributes()) {
-                processAttribute(attr, styles);
-            }
-        }
+        Map<String, String> styles = resolveNativeStyles(node, context);
 
         //Load in and merge inherited declarations from parent
         if (node.parentNode() instanceof IStylesContainer) {
@@ -182,6 +169,32 @@ public class SvgStyleResolver implements ICssResolver {
                     }
                     sru.mergeParentStyleDeclaration(styles, entry.getKey(), entry.getValue(), parentFontSizeString);
                 }
+            }
+        }
+        return styles;
+    }
+
+    /**
+     * Resolves node styles without inheritance of parent element styles.
+     *
+     * @param node the node
+     * @param cssContext the CSS context (RootFontSize, etc.)
+     * @return the map containing the resolved styles that are defined in the body of the element
+     */
+    public Map<String, String> resolveNativeStyles(INode node, AbstractCssContext cssContext) {
+        Map<String, String> styles = new HashMap<>();
+        // Load in from collected style sheets
+        List<CssDeclaration> styleSheetDeclarations =
+                css.getCssDeclarations(node, MediaDeviceDescription.createDefault());
+        for (CssDeclaration ssd : styleSheetDeclarations) {
+            styles.put(ssd.getProperty(), ssd.getExpression());
+        }
+
+        // Load in attributes declarations
+        if (node instanceof IElementNode) {
+            IElementNode eNode = (IElementNode) node;
+            for (IAttribute attr : eNode.getAttributes()) {
+                processAttribute(attr, styles);
             }
         }
         return styles;

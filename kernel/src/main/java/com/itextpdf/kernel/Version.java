@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -78,14 +78,14 @@ public final class Version {
      * This String contains the version number of this iText release.
      * For debugging purposes, we request you NOT to change this constant.
      */
-    private static final String release = "7.1.9";
+    private static final String release = "7.1.10";
     /**
      * This String contains the iText version as shown in the producer line.
      * iText is a product developed by iText Group NV.
      * iText Group requests that you retain the iText producer line
      * in every PDF that is created or manipulated using iText.
      */
-    private static final String producerLine = iTextProductName + " " + release + " \u00a92000-2019 iText Group NV";
+    private static final String producerLine = iTextProductName + " " + release + " \u00a92000-2020 iText Group NV";
 
     /**
      * The version info;
@@ -117,6 +117,15 @@ public final class Version {
     public static Version getInstance() {
         synchronized (staticLock) {
             if (version != null) {
+                try {
+                    licenseScheduledCheck();
+                } catch (Exception e) {
+                    // If any exception occurs during scheduled check of core license,
+                    // then it means that license is not valid yet, so roll back to AGPL.
+                    // The key value is null as it is similar to case
+                    // when an exception has been thrown during initial license loading
+                    atomicSetVersion(initAGPLVersion(e, null));
+                }
                 return version;
             }
         }
@@ -183,7 +192,7 @@ public final class Version {
      * @return returns true if the AGPL version is used.
      */
     public static boolean isAGPLVersion() {
-        return getInstance().getVersion().indexOf(AGPL) > 0;
+        return getInstance().isAGPL();
     }
 
     /**
@@ -246,6 +255,14 @@ public final class Version {
         return info;
     }
 
+    /**
+     * Checks if the current object has been initialized with AGPL license.
+     * @return returns true if the current object has been initialized with AGPL license.
+     */
+    private boolean isAGPL() {
+        return getVersion().indexOf(AGPL) > 0;
+    }
+
     private static Version initDefaultLicensedVersion(String ownerName, String key) {
         String producer = producerLine + " (" + ownerName;
         if (! key.toLowerCase().startsWith("trial")) {
@@ -270,7 +287,11 @@ public final class Version {
 
     private static Class<?> getLicenseKeyClass() throws ClassNotFoundException {
         String licenseKeyClassFullName = "com.itextpdf.licensekey.LicenseKey";
-        return Class.forName(licenseKeyClassFullName);
+        return getClassFromLicenseKey(licenseKeyClassFullName);
+    }
+
+    private static Class<?> getClassFromLicenseKey(String classFullName) throws ClassNotFoundException {
+        return Class.forName(classFullName);
     }
 
     private static void checkLicenseVersion(String coreVersionString, String licenseVersionString){
@@ -358,6 +379,25 @@ public final class Version {
         synchronized (staticLock) {
             version = newVersion;
             return version;
+        }
+    }
+
+    private static void licenseScheduledCheck() {
+        if (version.isAGPL()) {
+            return;
+        }
+
+        String licenseKeyProductFullName = "com.itextpdf.licensekey.LicenseKeyProduct";
+        String checkLicenseKeyMethodName = "scheduledCheck";
+        try {
+            Class<?> licenseKeyClass = getLicenseKeyClass();
+            Class<?> licenseKeyProductClass = getClassFromLicenseKey(licenseKeyProductFullName);
+
+            Class[] cArg = {licenseKeyProductClass};
+            Method method = licenseKeyClass.getMethod(checkLicenseKeyMethodName, cArg);
+            method.invoke(null, new Object[]{null});
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

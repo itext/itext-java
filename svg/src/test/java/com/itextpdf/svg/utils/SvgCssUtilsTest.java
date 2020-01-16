@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -165,7 +165,7 @@ public class SvgCssUtilsTest extends ExtendedITextTest {
     @Test
     public void normalConvertPtsToPxTest() {
         float[] input = new float[] { -1f, 0f, 1f };
-        float[] expected = new float[] {-0.75f, 0f, 0.75f};
+        float[] expected = new float[] {-1.3333334f, 0f, 1.3333334f};
 
         for (int i = 0; i < input.length; i++) {
             float actual = SvgCssUtils.convertPtsToPx(input[i]);
@@ -175,7 +175,7 @@ public class SvgCssUtilsTest extends ExtendedITextTest {
 
     @Test
     public void convertFloatMaximumToPdfTest() {
-        float expected = 2.5521175E38f;
+        float expected = Float.POSITIVE_INFINITY;
         float actual = SvgCssUtils.convertPtsToPx(Float.MAX_VALUE);
 
         Assert.assertEquals(expected, actual, 0f);

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,11 +43,11 @@
  */
 package com.itextpdf.pdfa;
 
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.log.CounterManager;
 import com.itextpdf.kernel.log.ICounter;
 import com.itextpdf.kernel.pdf.DocumentProperties;
+import com.itextpdf.kernel.pdf.IPdfPageFactory;
 import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -94,7 +94,14 @@ import java.util.List;
 public class PdfADocument extends PdfDocument {
 
     private static final long serialVersionUID = -5908390625367471894L;
+
+    private static IPdfPageFactory pdfAPageFactory = new PdfAPageFactory();
+
     protected PdfAChecker checker;
+
+    private boolean alreadyLoggedThatObjectFlushingWasNotPerformed = false;
+
+    private boolean alreadyLoggedThatPageFlushingWasNotPerformed = false;
 
     /**
      * Constructs a new PdfADocument for writing purposes, i.e. from scratch. A
@@ -228,6 +235,14 @@ public class PdfADocument extends PdfDocument {
         return checker.getConformanceLevel();
     }
 
+    void logThatPdfAPageFlushingWasNotPerformed() {
+        if (!alreadyLoggedThatPageFlushingWasNotPerformed) {
+            alreadyLoggedThatPageFlushingWasNotPerformed = true;
+            // This log message will be printed once for one instance of the document.
+            LoggerFactory.getLogger(PdfADocument.class).warn(PdfALogMessageConstant.PDFA_PAGE_FLUSHING_WAS_NOT_PERFORMED);
+        }
+    }
+
     @Override
     protected void addCustomMetadataExtensions(XMPMeta xmpMeta) {
         if (this.isTagged()) {
@@ -238,7 +253,7 @@ public class PdfADocument extends PdfDocument {
                 }
             } catch (XMPException exc) {
                 Logger logger = LoggerFactory.getLogger(PdfADocument.class);
-                logger.error(LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, exc);
+                logger.error(com.itextpdf.io.LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, exc);
             }
         }
     }
@@ -253,7 +268,7 @@ public class PdfADocument extends PdfDocument {
             setXmpMetadata(xmpMeta);
         } catch (XMPException e) {
             Logger logger = LoggerFactory.getLogger(PdfADocument.class);
-            logger.error(LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
+            logger.error(com.itextpdf.io.LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
         }
     }
 
@@ -267,9 +282,10 @@ public class PdfADocument extends PdfDocument {
         markObjectAsMustBeFlushed(pdfObject);
         if (isClosing || checker.objectIsChecked(pdfObject)) {
             super.flushObject(pdfObject, canBeInObjStm);
-        } else {
-            //suppress the call
-            //TODO log unsuccessful call
+        } else if (!alreadyLoggedThatObjectFlushingWasNotPerformed) {
+            alreadyLoggedThatObjectFlushingWasNotPerformed = true;
+            // This log message will be printed once for one instance of the document.
+            LoggerFactory.getLogger(PdfADocument.class).warn(PdfALogMessageConstant.PDFA_OBJECT_FLUSHING_WAS_NOT_PERFORMED);
         }
     }
 
@@ -303,6 +319,15 @@ public class PdfADocument extends PdfDocument {
     @Override
     protected List<ICounter> getCounters() {
         return CounterManager.getInstance().getCounters(PdfADocument.class);
+    }
+
+    @Override
+    protected IPdfPageFactory getPageFactory() {
+        return pdfAPageFactory;
+    }
+
+    boolean isClosing() {
+        return isClosing;
     }
 
     private static PdfVersion getPdfVersionForPdfA(PdfAConformanceLevel conformanceLevel) {

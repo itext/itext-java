@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -167,7 +167,19 @@ public final class XfdfConstants {
     public static final String NAME_CAPITAL = "Name";
     public static final String DEFAULT_APPEARANCE = "defaultappearance";
     public static final String DEFAULT_STYLE = "defaultstyle";
+
+    /**
+     * @deprecated Use {@link XfdfException#ATTRIBUTE_NAME_OR_VALUE_MISSING} instead.
+     * The constant will be removed in 7.2.
+     */
+    @Deprecated
     public static final String ATTRIBUTE_NAME_OR_VALUE_MISSING = "Attribute name or value are missing";
+
+    /**
+     * @deprecated Use {@link XfdfException#PAGE_IS_MISSING} instead.
+     * The constant will be removed in 7.2.
+     */
+    @Deprecated
     public static final String PAGE_IS_MISSING = "Required Page attribute is missing.";
     /**
      * @deprecated Use {@link LogMessageConstant#UNSUPPORTED_ANNOTATION_ATTRIBUTE} instead.

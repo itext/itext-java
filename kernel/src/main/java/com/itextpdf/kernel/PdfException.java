@@ -1,7 +1,7 @@
 /*
 
   This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
   Authors: Bruno Lowagie, Paulo Soares, et al.
 
   This program is free software; you can redistribute it and/or modify
@@ -142,6 +142,7 @@ public class PdfException extends RuntimeException {
     public static final String DocumentDoesntContainStructTreeRoot = "Document doesn't contain StructTreeRoot.";
     public static final String DocumentHasNoPages = "Document has no pages.";
     public static final String DocumentHasNoPdfCatalogObject = "Document has no PDF Catalog object.";
+    public static final String DocumentHasNotBeenReadYet = "The PDF document has not been read yet. Document reading occurs in PdfDocument class constructor";
     public static final String DocumentMustBePreClosed = "Document must be preClosed.";
     public static final String DocumentForCopyToCannotBeNull = "Document for copyTo cannot be null.";
     public static final String DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed = "During decompression multiple streams in sum occupied more memory than allowed. Please either check your pdf or increase the allowed single decompressed pdf stream maximum size value by setting the appropriate parameter of ReaderProperties's MemoryLimitsAwareHandler.";

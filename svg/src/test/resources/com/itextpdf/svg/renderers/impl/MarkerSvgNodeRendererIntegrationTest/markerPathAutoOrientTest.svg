@@ -1,0 +1,96 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+        "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="800" height="800"
+     viewBox="0 0 800 800" version="1.1"
+     xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <marker id="Triangle"
+                viewBox="0 0 10 10" refX="0" refY="5"
+                markerUnits="strokeWidth"
+                markerWidth="4" markerHeight="3"
+                orient="auto"
+                fill="none"
+                stroke="blue">
+            <path d="M 0 0 L 10 5 L 0 10 z"/>
+        </marker>
+    </defs>
+    <g>
+        <rect width="400" height="200"
+              fill="none" stroke="blue" stroke-width="1"/>
+        <desc>Placing an arrowhead at the end of a path.
+        </desc>
+        <path d="M 100 75 L 200 75 L 250 125"
+              fill="none" stroke="black" stroke-width="10"
+              marker-end="url(#Triangle)"/>
+    </g>
+    <g transform="translate(0,200)">
+        <rect width="400" height="200"
+              fill="none" stroke="blue" stroke-width="1"/>
+        <desc>Placing an arrowhead at the end of a path.
+        </desc>
+        <path d="M 100 75 L 200 75 L 250 25"
+              fill="none" stroke="black" stroke-width="10"
+              marker-end="url(#Triangle)"/>
+    </g>
+
+    <g transform="translate(0,400)">
+        <rect width="400" height="200"
+              fill="none" stroke="blue" stroke-width="1"/>
+        <desc>Placing an arrowhead at the end of a path.
+        </desc>
+        <path d="M 100 75 L 200 75 L 150 25"
+              fill="none" stroke="black" stroke-width="10"
+              marker-end="url(#Triangle)"/>
+    </g>
+
+    <g transform="translate(0,600)">
+        <rect width="400" height="200"
+              fill="none" stroke="blue" stroke-width="1"/>
+        <desc>Placing an arrowhead at the end of a path.
+        </desc>
+        <path d="M 100 75 L 200 75 L 150 125"
+              fill="none" stroke="black" stroke-width="10"
+              marker-end="url(#Triangle)"/>
+    </g>
+
+    <g transform="translate(400,0)">
+        <rect width="400" height="200"
+              fill="none" stroke="blue" stroke-width="1"/>
+        <desc>Placing an arrowhead at the end of a path.
+        </desc>
+        <path d="M 100 75 L 200 75 L 250 125"
+              fill="none" stroke="black" stroke-width="10"
+              marker-start="url(#Triangle)"/>
+    </g>
+
+    <g transform="translate(400,200)">
+        <rect width="400" height="200"
+              fill="none" stroke="blue" stroke-width="1"/>
+        <desc>Placing an arrowhead at the end of a path.
+        </desc>
+        <path d="M 100 25 L 200 75 L 250 125"
+              fill="none" stroke="black" stroke-width="10"
+              marker-start="url(#Triangle)"/>
+    </g>
+
+    <g transform="translate(400,400)">
+        <rect width="400" height="200"
+              fill="none" stroke="blue" stroke-width="1"/>
+        <desc>Placing an arrowhead at the end of a path.
+        </desc>
+        <path d="M 250 25 L 200 75 L 250 125"
+              fill="none" stroke="black" stroke-width="10"
+              marker-start="url(#Triangle)"/>
+    </g>
+
+    <g transform="translate(400,600)">
+        <rect width="400" height="200"
+              fill="none" stroke="blue" stroke-width="1"/>
+        <desc>Placing an arrowhead at the end of a path.
+        </desc>
+        <path d="M 200 125 L 200 75 L 250 125"
+              fill="none" stroke="black" stroke-width="10"
+              marker-start="url(#Triangle)"/>
+    </g>
+</svg>

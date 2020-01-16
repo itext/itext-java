@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,6 @@
  */
 package com.itextpdf.kernel.utils;
 
-import com.itextpdf.io.util.IdelOutputStream;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
@@ -151,7 +150,7 @@ public class PdfResourceCounter {
                 continue;
             }
 
-            PdfOutputStream os = new PdfOutputStream(new IdelOutputStream());
+            PdfOutputStream os = new PdfOutputStream(new IdleOutputStream());
 
             os.write(resources.get(ref).clone());
             length += os.getCurrentPos();

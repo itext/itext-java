@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -53,10 +53,10 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
-import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.NoSuchElementException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -90,14 +90,14 @@ public class SvgDrawContextTest extends ExtendedITextTest {
     }
 
     @Test
-    public void drawContextEmptyStackPeekTest() {
-        junitExpectedException.expect(EmptyStackException.class);
+    public void drawContextEmptyDequeGetFirstTest() {
+        junitExpectedException.expect(NoSuchElementException.class);
         context.getCurrentCanvas();
     }
 
     @Test
-    public void drawContextEmptyStackPopTest() {
-        junitExpectedException.expect(EmptyStackException.class);
+    public void drawContextEmptyDequePopTest() {
+        junitExpectedException.expect(NoSuchElementException.class);
         context.popCanvas();
     }
     

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -110,6 +110,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     private static final long serialVersionUID = -7041578979319799646L;
 
+    private static IPdfPageFactory pdfPageFactory = new PdfPageFactory();
+
     /**
      * Currently active page.
      * @deprecated Will be removed in iText 7.2
@@ -190,7 +192,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     protected boolean isClosing = false;
 
     protected boolean closed = false;
-
 
     /**
      * flag determines whether to write unused objects to result document
@@ -454,7 +455,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public PdfPage addNewPage(PageSize pageSize) {
         checkClosingStatus();
-        PdfPage page = new PdfPage(this, pageSize);
+        PdfPage page = getPageFactory().createPdfPage(this, pageSize);
         checkAndAddPage(page);
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_PAGE, page));
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.INSERT_PAGE, page));
@@ -482,7 +483,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public PdfPage addNewPage(int index, PageSize pageSize) {
         checkClosingStatus();
-        PdfPage page = new PdfPage(this, pageSize);
+        PdfPage page = getPageFactory().createPdfPage(this, pageSize);
         checkAndAddPage(index, page);
         currentPage = page;
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_PAGE, page));
@@ -2099,6 +2100,15 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
+     * Returns the factory for creating page instances.
+     *
+     * @return implementation of {@link IPdfPageFactory} for current document
+     */
+    protected IPdfPageFactory getPageFactory() {
+        return pdfPageFactory;
+    }
+
+    /**
      * Gets iText version info.
      *
      * @return iText version info.
@@ -2120,7 +2130,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
     }
 
-    private void tryInitTagStructure(PdfDictionary str) {
+    protected void tryInitTagStructure(PdfDictionary str) {
         try {
             structTreeRoot = new PdfStructTreeRoot(str, this);
             structParentIndex = getStructTreeRoot().getParentTreeNextKey();

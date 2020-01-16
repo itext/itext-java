@@ -4,29 +4,20 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.1.9</version>
+    <version>7.1.10</version>
   </parent>
   <artifactId>pdftest</artifactId>
   <name>iText 7 - pdftest</name>
   <url>https://itextpdf.com/</url>
   <properties>
     <sonar.skip>true</sonar.skip>
+    <verapdf.version>1.14.105</verapdf.version>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.verapdf</groupId>
       <artifactId>validation-model</artifactId>
-      <version>1.14.104</version>
-    </dependency>
-    <dependency>
-      <groupId>org.verapdf.apps</groupId>
-      <artifactId>gui</artifactId>
-      <version>1.14.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.verapdf</groupId>
-      <artifactId>core</artifactId>
-      <version>1.14.100</version>
+      <version>${verapdf.version}</version>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
@@ -46,7 +37,7 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
           <includes>
-            <include>**/*Test.java</include>
+            <include>**/*.java</include>
           </includes>
           <groups>${integrationtests}</groups>
         </configuration>

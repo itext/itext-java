@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -47,39 +47,60 @@ import java.io.Serializable;
 import java.security.SecureRandom;
 import java.security.cert.Certificate;
 
+/**
+ * Allows configuration of output PDF encryption.
+ */
 public class EncryptionProperties implements Serializable {
 
     private static final long serialVersionUID = 3926570647944137843L;
 
     protected int encryptionAlgorithm;
-    /**
-     * StandardEncryption properties
-     */
+
+    // StandardEncryption properties
     protected byte[] userPassword;
     protected byte[] ownerPassword;
     protected int standardEncryptPermissions;
-    /** PublicKeyEncryption properties */
+
+    // PublicKeyEncryption properties
     protected Certificate[] publicCertificates;
     protected int[] publicKeyEncryptPermissions;
 
     /**
-     * Sets the encryption options for the document. The userPassword and the
-     * ownerPassword can be null or have zero length. In this case the ownerPassword
-     * is replaced by a random string. The open permissions for the document can be
-     * ALLOW_PRINTING, ALLOW_MODIFY_CONTENTS, ALLOW_COPY, ALLOW_MODIFY_ANNOTATIONS,
-     * ALLOW_FILL_IN, ALLOW_SCREENREADERS, ALLOW_ASSEMBLY and ALLOW_DEGRADED_PRINTING.
-     * The permissions can be combined by ORing them.
+     * Sets the encryption options for the document.
      *
-     * See {@link EncryptionConstants}.
+     * @param userPassword        the user password. Can be null or of zero length, which is equal to
+     *                            omitting the user password
+     * @param ownerPassword       the owner password. If it's null or empty, iText will generate
+     *                            a random string to be used as the owner password
+     * @param permissions         the user permissions. The open permissions for the document can be
+     *                            {@link EncryptionConstants#ALLOW_PRINTING},
+     *                            {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
+     *                            {@link EncryptionConstants#ALLOW_COPY},
+     *                            {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
+     *                            {@link EncryptionConstants#ALLOW_FILL_IN},
+     *                            {@link EncryptionConstants#ALLOW_SCREENREADERS},
+     *                            {@link EncryptionConstants#ALLOW_ASSEMBLY} and
+     *                            {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
+     *                            The permissions can be combined by ORing them
+     * @param encryptionAlgorithm the type of encryption. It can be one of
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128},
+     *                            {@link EncryptionConstants#ENCRYPTION_AES128} or
+     *                            {@link EncryptionConstants#ENCRYPTION_AES256}.
+     *                            Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be OEed
+     *                            to output the metadata in cleartext.
+     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} can be ORed as well.
+     *                            Please be aware that the passed encryption types may override permissions:
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_40} implicitly sets
+     *                            {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} and
+     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
+     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
      *
-     * @param userPassword        the user password. Can be null or empty
-     * @param ownerPassword       the owner password. Can be null or empty
-     * @param permissions         the user permissions
-     * @param encryptionAlgorithm the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128,
-     *                            ENCRYPTION_AES128 or ENCRYPTION_AES256
-     *                            Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
+     * @return this {@link EncryptionProperties}
      */
-    public EncryptionProperties setStandardEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionAlgorithm) {
+    public EncryptionProperties setStandardEncryption(byte[] userPassword, byte[] ownerPassword, int permissions,
+            int encryptionAlgorithm) {
         clearEncryption();
         this.userPassword = userPassword;
         if (ownerPassword != null) {
@@ -95,22 +116,41 @@ public class EncryptionProperties implements Serializable {
     }
 
     /**
-     * Sets the certificate encryption options for the document. An array of one or more public certificates
-     * must be provided together with an array of the same size for the permissions for each certificate.
-     * The open permissions for the document can be
-     * AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
-     * AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
-     * The permissions can be combined by ORing them.
-     * Optionally DO_NOT_ENCRYPT_METADATA can be ORed to output the metadata in cleartext
-     *
-     * See {@link EncryptionConstants}.
+     * Sets the certificate encryption options for the document.
+     * <p>
+     * An array of one or more public certificates must be provided together with an array of the same size
+     * for the permissions for each certificate.
      *
      * @param certs               the public certificates to be used for the encryption
      * @param permissions         the user permissions for each of the certificates
-     * @param encryptionAlgorithm the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128,
-     *                            ENCRYPTION_AES128 or ENCRYPTION_AES256.
+     *                            The open permissions for the document can be
+     *                            {@link EncryptionConstants#ALLOW_PRINTING},
+     *                            {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
+     *                            {@link EncryptionConstants#ALLOW_COPY},
+     *                            {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
+     *                            {@link EncryptionConstants#ALLOW_FILL_IN},
+     *                            {@link EncryptionConstants#ALLOW_SCREENREADERS},
+     *                            {@link EncryptionConstants#ALLOW_ASSEMBLY} and
+     *                            {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
+     *                            The permissions can be combined by ORing them
+     * @param encryptionAlgorithm the type of encryption. It can be one of
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128},
+     *                            {@link EncryptionConstants#ENCRYPTION_AES128} or
+     *                            {@link EncryptionConstants#ENCRYPTION_AES256}.
+     *                            Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA}
+     *                            can be ORed to output the metadata in cleartext.
+     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} can be ORed as well.
+     *                            Please be aware that the passed encryption types may override permissions:
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_40} implicitly sets
+     *                            {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} and
+     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
+     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     * @return this {@link EncryptionProperties}
      */
-    public EncryptionProperties setPublicKeyEncryption(Certificate[] certs, int[] permissions, int encryptionAlgorithm) {
+    public EncryptionProperties setPublicKeyEncryption(Certificate[] certs, int[] permissions,
+            int encryptionAlgorithm) {
         clearEncryption();
         this.publicCertificates = certs;
         this.publicKeyEncryptPermissions = permissions;

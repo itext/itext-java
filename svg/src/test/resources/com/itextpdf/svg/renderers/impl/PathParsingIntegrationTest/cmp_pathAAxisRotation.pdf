@@ -10,19 +10,19 @@ Q
 endstream
 endobj
 4 0 obj
-<</Contents 5 0 R/MediaBox[0 0 680.32 311.81]/Parent 2 0 R/Resources<</XObject<</Fm1 6 0 R>>>>/TrimBox[0 0 680.32 311.81]/Type/Page>>
+<</Contents 5 0 R/MediaBox[0 0 680.31 311.81]/Parent 2 0 R/Resources<</XObject<</Fm1 6 0 R>>>>/TrimBox[0 0 680.31 311.81]/Type/Page>>
 endobj
 1 0 obj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191021101128+03'00')/ModDate(D:20191021101128+03'00')/Producer(iText® 7.1.9-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20191219144127+03'00')/ModDate(D:20191219144127+03'00')/Producer(iText® 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 6 0 obj
-<</BBox[0 0 680.32 311.81]/Length 105/Resources<</XObject<</Fm1 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 680.31 311.81]/Length 105/Resources<</XObject<</Fm1 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 311.81 cm
 % svg root
 0.34646 0 0 0.34646 0 0 cm
@@ -35,13 +35,14 @@ Q
 endstream
 endobj
 7 0 obj
-<</BBox[-81.82 0 1881.82 900]/Length 2489/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[-81.82 0 1881.82 900]/Length 2587/Resources<<>>/Subtype/Form/Type/XObject>>stream
 -81.82 0 1963.64 900 re
 W
 n
 q
 q
 1 0 0 RG
+0.75 w
 % path
 37.5 225 m
 58.21 199.11 116.97 186.52 168.75 196.88 c
@@ -50,6 +51,7 @@ S
 Q
 q
 1 0.64706 0 RG
+0.75 w
 % path
 37.5 225 m
 20.7 186.42 49.05 163.54 100.83 173.9 c
@@ -58,6 +60,7 @@ S
 Q
 q
 1 1 0 RG
+0.75 w
 % path
 37.5 225 m
 20.75 188.16 23.15 157.69 43.78 145.07 c
@@ -67,6 +70,7 @@ S
 Q
 q
 0 0.50196 0 RG
+0.75 w
 % path
 37.5 225 m
 42.68 121.45 88.85 45.89 140.63 56.25 c
@@ -75,6 +79,7 @@ S
 Q
 q
 0.67843 0.84706 0.90196 RG
+0.75 w
 % path
 37.5 225 m
 89.28 152.51 173.22 102.14 225 112.5 c
@@ -83,6 +88,7 @@ S
 Q
 q
 0 0 1 RG
+0.75 w
 % path
 37.5 225 m
 63.55 197.65 126.65 183.87 178.42 194.23 c
@@ -91,6 +97,7 @@ S
 Q
 q
 0.50196 0 0.50196 RG
+0.75 w
 % path
 37.5 225 m
 54.08 158.87 87.27 101.33 124.57 74.06 c
@@ -102,6 +109,7 @@ Q
 q
 q
 1 0 0 RG
+0.75 w
 % path
 337.5 75 m
 316.79 100.89 341.97 130.27 393.75 140.63 c
@@ -110,6 +118,7 @@ S
 Q
 q
 1 0.64706 0 RG
+0.75 w
 % path
 337.5 75 m
 348.37 99.96 376.28 126.59 410.72 144.87 c
@@ -119,6 +128,7 @@ S
 Q
 q
 1 1 0 RG
+0.75 w
 % path
 337.5 75 m
 363.39 131.95 426.35 186.52 478.12 196.87 c
@@ -127,6 +137,7 @@ S
 Q
 q
 0 0.50196 0 RG
+0.75 w
 % path
 337.5 75 m
 332.32 178.55 370.1 270.89 421.88 281.25 c
@@ -135,6 +146,7 @@ S
 Q
 q
 0.67843 0.84706 0.90196 RG
+0.75 w
 % path
 337.5 75 m
 285.72 147.49 285.72 214.64 337.5 225 c
@@ -143,6 +155,7 @@ S
 Q
 q
 0 0 1 RG
+0.75 w
 % path
 337.5 75 m
 311.45 102.35 332.3 132.92 384.08 143.27 c
@@ -151,6 +164,7 @@ S
 Q
 q
 0.50196 0 0.50196 RG
+0.75 w
 % path
 337.5 75 m
 311.87 177.23 333.06 268.51 384.83 278.86 c
@@ -277,15 +291,15 @@ xref
 0 8
 0000000000 65535 f 
 0000000238 00000 n 
-0000000449 00000 n 
+0000000450 00000 n 
 0000000283 00000 n 
 0000000089 00000 n 
 0000000015 00000 n 
-0000000500 00000 n 
-0000000739 00000 n 
+0000000501 00000 n 
+0000000740 00000 n 
 trailer
-<</ID [<44d73466a55516767d16314cb715c312><44d73466a55516767d16314cb715c312>]/Info 3 0 R/Root 1 0 R/Size 8>>
-%iText-7.1.9-SNAPSHOT
+<</ID [<a19ca20ef12bdf06c46bfa3782523db1><a19ca20ef12bdf06c46bfa3782523db1>]/Info 3 0 R/Root 1 0 R/Size 8>>
+%iText-7.1.10-SNAPSHOT
 startxref
-3344
+3443
 %%EOF

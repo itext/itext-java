@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -1260,29 +1260,23 @@ public class PdfStampingTest extends ExtendedITextTest {
 
     @Test
     public void stampingTestWithFullCompression01() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "stampingTestWithFullCompression01.pdf";
-        String cmpPdf = sourceFolder + "cmp_stampingTestWithFullCompression01.pdf";
+        String compressedOutPdf = destinationFolder + "stampingTestWithFullCompression01Compressed.pdf";
+        String decompressedOutPdf = destinationFolder + "stampingTestWithFullCompression01Decompressed.pdf";
+        
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "fullCompressedDocument.pdf"),
-                new PdfWriter(outPdf));
+                new PdfWriter(compressedOutPdf));
         pdfDoc.close();
-        float result = new File(outPdf).length();
-        float expected = new File(cmpPdf).length();
-        float coef = Math.abs((expected - result) / expected);
-        String compareRes = new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder);
-        assertTrue(coef < 0.01);
-        assertNull(compareRes);
-    }
+        float compressedLength = new File(compressedOutPdf).length();
 
-    @Test
-    public void stampingTestWithFullCompression02() throws IOException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "fullCompressedDocument.pdf"),
-                new PdfWriter(destinationFolder + "stampingTestWithFullCompression02.pdf",
-                        new WriterProperties().setFullCompressionMode(false)));
+        pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "fullCompressedDocument.pdf"),
+                new PdfWriter(decompressedOutPdf, new WriterProperties().setFullCompressionMode(false)));
         pdfDoc.close();
-        float result = new File(destinationFolder + "stampingTestWithFullCompression02.pdf").length();
-        float expected = new File(sourceFolder + "cmp_stampingTestWithFullCompression02.pdf").length();
-        float coef = Math.abs((expected - result) / expected);
-        assertTrue(coef < 0.01);
+        float decompressedLength = new File(decompressedOutPdf).length();
+
+        float coef = compressedLength / decompressedLength;
+        String compareRes = new CompareTool().compareByContent(compressedOutPdf, decompressedOutPdf, destinationFolder);
+        assertTrue(coef < 0.7);
+        assertNull(compareRes);
     }
 
     @Test

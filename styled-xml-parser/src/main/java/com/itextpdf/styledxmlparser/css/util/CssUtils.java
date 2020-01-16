@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -50,6 +50,7 @@ import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,10 +58,23 @@ import org.slf4j.LoggerFactory;
  * Utilities class for CSS operations.
  */
 public class CssUtils {
+    // TODO (DEVSIX-3595) The list of the angle measurements is not full. Required to
+    //  add 'turn' units to array and move this array to the CommonCssConstants
+    private static final String[] ANGLE_MEASUREMENTS_VALUES = new String[] {CommonCssConstants.DEG, CommonCssConstants.GRAD,
+            CommonCssConstants.RAD};
 
-    private static final String[] METRIC_MEASUREMENTS = new String[]{CommonCssConstants.PX, CommonCssConstants.IN, CommonCssConstants.CM, CommonCssConstants.MM, CommonCssConstants.PC, CommonCssConstants.PT};
-    private static final String[] RELATIVE_MEASUREMENTS = new String[]{CommonCssConstants.PERCENTAGE, CommonCssConstants.EM, CommonCssConstants.EX, CommonCssConstants.REM};
+    // TODO (DEVSIX-3596) The list of the relative measurements is not full.
+    //  Add new relative units to array and move this array to the CommonCssConstants
+    private static final String[] RELATIVE_MEASUREMENTS_VALUES = new String[] {CommonCssConstants.PERCENTAGE,
+            CommonCssConstants.EM, CommonCssConstants.EX, CommonCssConstants.REM};
+
+    // TODO (DEVSIX-3596) The list of the font-relative measurements is not full.
+    //  Add 'ch' units to array and move this array to the CommonCssConstants
+    private static final String[] FONT_RELATIVE_MEASUREMENTS_VALUES = new String[] {CommonCssConstants.EM, CommonCssConstants.EX, CommonCssConstants.REM};
+
     private static final float EPSILON = 1e-6f;
+
+    private static final  Logger logger = LoggerFactory.getLogger(CssUtils.class);
 
     /**
      * Creates a new {@link CssUtils} instance.
@@ -150,6 +164,59 @@ public class CssUtils {
     }
 
     /**
+     * Parses an angle with an allowed metric unit (deg, grad, rad) or numeric value (e.g. 123, 1.23,
+     * .123) to rad.
+     *
+     * @param angle         String containing the angle to parse
+     * @param defaultMetric default metric to use in case the input string does not specify a metric
+     * @return the angle in radians
+     */
+    public static float parseAngle(String angle, String defaultMetric) {
+        int pos = determinePositionBetweenValueAndUnit(angle);
+
+        if (pos == 0) {
+            if (angle == null) {
+                angle = "null";
+            }
+            throw new StyledXMLParserException(MessageFormatUtil.format(LogMessageConstant.NAN, angle));
+        }
+
+        float floatValue  = Float.parseFloat(angle.substring(0, pos));
+        String unit = angle.substring(pos);
+
+        // Degrees
+        if (unit.startsWith(CommonCssConstants.DEG) || unit.equals("") && CommonCssConstants.DEG
+                .equals(defaultMetric)) {
+            return (float) Math.PI * floatValue / 180f;
+        }
+        // Grads
+        if (unit.startsWith(CommonCssConstants.GRAD) || unit.equals("") && CommonCssConstants.GRAD
+                .equals(defaultMetric)) {
+            return (float) Math.PI * floatValue / 200f;
+        }
+        // Radians
+        if (unit.startsWith(CommonCssConstants.RAD) || unit.equals("") && CommonCssConstants.RAD
+                .equals(defaultMetric)) {
+            return floatValue;
+        }
+
+        logger.error(MessageFormatUtil
+                .format(LogMessageConstant.UNKNOWN_METRIC_ANGLE_PARSED, unit.equals("") ? defaultMetric : unit));
+        return floatValue ;
+    }
+
+    /**
+     * Parses a angle with an allowed metric unit (deg, grad, rad) or numeric value (e.g. 123, 1.23,
+     * .123) to rad. Default metric is degrees
+     *
+     * @param angle String containing the angle to parse
+     * @return the angle in radians
+     */
+    public static float parseAngle(String angle) {
+        return parseAngle(angle, CommonCssConstants.DEG);
+    }
+
+    /**
      * Parses an aspect ratio into an array with two integers.
      *
      * @param str a string that might contain two integer values
@@ -187,41 +254,48 @@ public class CssUtils {
             throw new StyledXMLParserException(MessageFormatUtil.format(LogMessageConstant.NAN, length));
         }
 
-        float f = Float.parseFloat(length.substring(0, pos));
+        // Use double type locally to have better precision of the result after applying arithmetic operations
+        double f = Double.parseDouble(length.substring(0, pos));
         String unit = length.substring(pos);
 
         //points
         if (unit.startsWith(CommonCssConstants.PT) || unit.equals("") && defaultMetric.equals(CommonCssConstants.PT)) {
-            return f;
+            return (float) f;
         }
         // inches
-        if (unit.startsWith(CommonCssConstants.IN) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.IN))) {
-            return f * 72f;
+        if (unit.startsWith(CommonCssConstants.IN) || (unit.equals("") && defaultMetric
+                .equals(CommonCssConstants.IN))) {
+            return (float) (f * 72);
         }
         // centimeters
-        else if (unit.startsWith(CommonCssConstants.CM) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.CM))) {
-            return (f / 2.54f) * 72f;
+        else if (unit.startsWith(CommonCssConstants.CM) || (unit.equals("") && defaultMetric
+                .equals(CommonCssConstants.CM))) {
+            return (float) ((f / 2.54) * 72);
         }
         // quarter of a millimeter (1/40th of a centimeter).
-        else if (unit.startsWith(CommonCssConstants.Q) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.Q))) {
-            return (f / 2.54f) * 72f / 40;
+        else if (unit.startsWith(CommonCssConstants.Q) || (unit.equals("") && defaultMetric
+                .equals(CommonCssConstants.Q))) {
+            return (float) ((f / 2.54) * 72 / 40);
         }
         // millimeters
-        else if (unit.startsWith(CommonCssConstants.MM) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.MM))) {
-            return (f / 25.4f) * 72f;
+        else if (unit.startsWith(CommonCssConstants.MM) || (unit.equals("") && defaultMetric
+                .equals(CommonCssConstants.MM))) {
+            return (float) ((f / 25.4) * 72);
         }
         // picas
-        else if (unit.startsWith(CommonCssConstants.PC) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.PC))) {
-            return f * 12f;
+        else if (unit.startsWith(CommonCssConstants.PC) || (unit.equals("") && defaultMetric
+                .equals(CommonCssConstants.PC))) {
+            return (float) (f * 12);
         }
         // pixels (1px = 0.75pt).
-        else if (unit.startsWith(CommonCssConstants.PX) || (unit.equals("") && defaultMetric.equals(CommonCssConstants.PX))) {
-            return f * 0.75f;
+        else if (unit.startsWith(CommonCssConstants.PX) || (unit.equals("") && defaultMetric
+                .equals(CommonCssConstants.PX))) {
+            return (float) (f * 0.75);
         }
 
-        Logger logger = LoggerFactory.getLogger(CssUtils.class);
-        logger.error(MessageFormatUtil.format(LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, unit.equals("") ? defaultMetric : unit));
-        return f;
+        logger.error(MessageFormatUtil.format(LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED,
+                unit.equals("") ? defaultMetric : unit));
+        return (float) f;
     }
 
     /**
@@ -244,8 +318,10 @@ public class CssUtils {
      */
     public static float parseRelativeValue(final String relativeValue, final float baseValue) {
         int pos = determinePositionBetweenValueAndUnit(relativeValue);
-        if (pos == 0)
+        if (pos == 0) {
             return 0f;
+		}
+        // Use double type locally to have better precision of the result after applying arithmetic operations
         double f = Double.parseDouble(relativeValue.substring(0, pos));
         String unit = relativeValue.substring(pos);
         if (unit.startsWith(CommonCssConstants.PERCENTAGE)) {
@@ -365,29 +441,34 @@ public class CssUtils {
     // TODO change default units? If so, change MediaDeviceDescription#resolutoin as well
     public static float parseResolution(String resolutionStr) {
         int pos = determinePositionBetweenValueAndUnit(resolutionStr);
-        if (pos == 0)
+        if (pos == 0) {
             return 0f;
-        float f = Float.parseFloat(resolutionStr.substring(0, pos));
+        }
+		double f = Double.parseDouble(resolutionStr.substring(0, pos));
         String unit = resolutionStr.substring(pos);
         if (unit.startsWith(CommonCssConstants.DPCM)) {
-            f *= 2.54f;
+            f *= 2.54;
         } else if (unit.startsWith(CommonCssConstants.DPPX)) {
             f *= 96;
         }
-        return f;
+        return (float) f;
     }
 
     /**
-     * Method used in preparation of splitting a string containing a numeric value with a metric unit (e.g. 18px, 9pt, 6cm, etc).<br><br>
-     * Determines the position between digits and affiliated characters ('+','-','0-9' and '.') and all other characters.<br>
+     * Method used in preparation of splitting a string containing a numeric value with a metric unit (e.g. 18px, 9pt,
+     * 6cm, etc).<br><br>
+     * Determines the position between digits and affiliated characters ('+','-','0-9' and '.') and all other
+     * characters.<br>
      * e.g. string "16px" will return 2, string "0.5em" will return 3 and string '-8.5mm' will return 4.
      *
      * @param string containing a numeric value with a metric unit
-     * @return int position between the numeric value and unit or 0 if string is null or string started with a non-numeric value.
+     * @return int position between the numeric value and unit or 0 if string is null or string started with a
+     * non-numeric value.
      */
     private static int determinePositionBetweenValueAndUnit(String string) {
-        if (string == null)
+        if (string == null) {
             return 0;
+        }
         int pos = 0;
         while (pos < string.length()) {
             if (string.charAt(pos) == '+' ||
@@ -404,8 +485,7 @@ public class CssUtils {
     }
 
     /**
-     * /**
-     * Checks whether a string contains an allowed metric unit in HTML/CSS; px, in, cm, mm, pc or pt.
+     * Checks whether a string contains an allowed metric unit in HTML/CSS; px, in, cm, mm, pc, Q or pt.
      *
      * @param value the string that needs to be checked.
      * @return boolean true if value contains an allowed metric value.
@@ -414,8 +494,28 @@ public class CssUtils {
         if (value == null) {
             return false;
         }
-        for (String metricPostfix : METRIC_MEASUREMENTS) {
-            if (value.endsWith(metricPostfix) && isNumericValue(value.substring(0, value.length() - metricPostfix.length()).trim())) {
+        for (String metricPostfix : CommonCssConstants.METRIC_MEASUREMENTS_VALUES) {
+            if (value.endsWith(metricPostfix) && isNumericValue(
+                    value.substring(0, value.length() - metricPostfix.length()).trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether a string contains an allowed metric unit in HTML/CSS; rad, deg and grad.
+     *
+     * @param value the string that needs to be checked.
+     * @return boolean true if value contains an allowed angle value.
+     */
+    public static boolean isAngleValue(final String value) {
+        if (value == null) {
+            return false;
+        }
+        for (String metricPostfix : ANGLE_MEASUREMENTS_VALUES) {
+            if (value.endsWith(metricPostfix) && isNumericValue(
+                    value.substring(0, value.length() - metricPostfix.length()).trim())) {
                 return true;
             }
         }
@@ -432,8 +532,9 @@ public class CssUtils {
         if (value == null) {
             return false;
         }
-        for (String relativePostfix : RELATIVE_MEASUREMENTS) {
-            if (value.endsWith(relativePostfix) && isNumericValue(value.substring(0, value.length() - relativePostfix.length()).trim())) {
+        for (String relativePostfix : RELATIVE_MEASUREMENTS_VALUES) {
+            if (value.endsWith(relativePostfix) && isNumericValue(
+                    value.substring(0, value.length() - relativePostfix.length()).trim())) {
                 return true;
             }
         }
@@ -441,23 +542,79 @@ public class CssUtils {
     }
 
     /**
-     * Checks whether a string contains an allowed value relative to previously set root value.
+     * Checks whether a string contains an allowed value relative to font.
      *
      * @param value the string that needs to be checked.
-     * @return boolean true if value contains an allowed metric value.
+     * @return boolean true if value contains an allowed font relative value.
      */
-    public static boolean isRemValue(final String value) {
-        return value != null && value.endsWith(CommonCssConstants.REM) && isNumericValue(value.substring(0, value.length() - CommonCssConstants.REM.length()).trim());
+    public static boolean isFontRelativeValue(final String value) {
+        if (value == null) {
+            return false;
+        }
+        for (String relativePostfix : FONT_RELATIVE_MEASUREMENTS_VALUES) {
+            if (value.endsWith(relativePostfix) && isNumericValue(
+                    value.substring(0, value.length() - relativePostfix.length()).trim())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
-     * Checks whether a string matches a numeric value (e.g. 123, 1.23, .123). All these metric values are allowed in HTML/CSS.
+     * Checks whether a string contains a percentage value
+     *
+     * @param value the string that needs to be checked
+     * @return boolean true if value contains an allowed percentage value
+     */
+    public static boolean isPercentageValue(final String value) {
+        return value != null && value.endsWith(CommonCssConstants.PERCENTAGE) && isNumericValue(
+                value.substring(0, value.length() - CommonCssConstants.PERCENTAGE.length()).trim());
+    }
+
+    /**
+     * Checks whether a string contains an allowed value relative to previously set root value.
+     *
+     * @param value the string that needs to be checked.
+     * @return boolean true if value contains a rem value.
+     */
+    public static boolean isRemValue(final String value) {
+        return value != null && value.endsWith(CommonCssConstants.REM) && isNumericValue(
+                value.substring(0, value.length() - CommonCssConstants.REM.length()).trim());
+    }
+
+    /**
+     * Checks whether a string contains an allowed value relative to parent value.
+     *
+     * @param value the string that needs to be checked.
+     * @return boolean true if value contains a em value.
+     */
+    public static boolean isEmValue(final String value) {
+        return value != null && value.endsWith(CommonCssConstants.EM) && isNumericValue(
+                value.substring(0, value.length() - CommonCssConstants.EM.length()).trim());
+    }
+
+    /**
+     * Checks whether a string contains an allowed value relative to element font height.
+     *
+     * @param value the string that needs to be checked.
+     * @return boolean true if value contains a ex value.
+     */
+    public static boolean isExValue(final String value) {
+        return value != null && value.endsWith(CommonCssConstants.EX) && isNumericValue(
+                value.substring(0, value.length() - CommonCssConstants.EX.length()).trim());
+    }
+
+    /**
+     * Checks whether a string matches a numeric value (e.g. 123, 1.23, .123). All these metric values are allowed in
+     * HTML/CSS.
      *
      * @param value the string that needs to be checked.
      * @return boolean true if value contains an allowed metric value.
      */
     public static boolean isNumericValue(final String value) {
-        return value != null && (value.matches("^[-+]?\\d\\d*\\.\\d*$") || value.matches("^[-+]?\\d\\d*$") || value.matches("^[-+]?\\.\\d\\d*$"));
+        return value != null && (value.matches("^[-+]?\\d\\d*\\.\\d*$")
+                || value.matches("^[-+]?\\d\\d*$")
+                || value.matches("^[-+]?\\.\\d\\d*$"));
     }
 
     /**
@@ -556,9 +713,8 @@ public class CssUtils {
     public static float[] parseRgbaColor(String colorValue) {
         float[] rgbaColor = WebColors.getRGBAColor(colorValue);
         if (rgbaColor == null) {
-            Logger logger = LoggerFactory.getLogger(CssUtils.class);
             logger.error(MessageFormatUtil.format(com.itextpdf.io.LogMessageConstant.COLOR_NOT_PARSED, colorValue));
-            rgbaColor = new float[]{0, 0, 0, 1};
+            rgbaColor = new float[] {0, 0, 0, 1};
         }
         return rgbaColor;
     }

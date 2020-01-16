@@ -1,0 +1,301 @@
+%PDF-1.7
+%‚„œ”
+1 0 obj 
+<<
+/MarkInfo 
+<<
+/Marked true
+>>
+/Pages 2 0 R
+/StructTreeRoot 3 0 R
+/Type /Catalog
+>>
+endobj 
+2 0 obj 
+<<
+/Kids [4 0 R]
+/Type /Pages
+/Count 1
+>>
+endobj 
+3 0 obj 
+<<
+/ParentTree 5 0 R
+/RoleMap 
+<<
+>>
+/ParentTreeNextKey 2
+/K [6 0 R]
+/Type /StructTreeRoot
+>>
+endobj 
+4 0 obj 
+<<
+/pdftk_PageNum 1
+/TrimBox [0 0 595 842]
+/MediaBox [0 0 595 842]
+/Resources 
+<<
+/XObject 
+<<
+/Fm1 7 0 R
+>>
+/Font 
+<<
+/F1 8 0 R
+>>
+>>
+/Parent 2 0 R
+/Contents 9 0 R
+/StructParents 0
+/Type /Page
+/Tabs /S
+>>
+endobj 
+6 0 obj 
+<<
+/P 3 0 R
+/K [10 0 R 11 0 R 12 0 R 13 0 R]
+/Type /StructElem
+/S /Document
+>>
+endobj 
+7 0 obj 
+<<
+/Subtype /Form
+/StructParents 1
+/Length 168
+/Resources 
+<<
+/Font 
+<<
+/F1 14 0 R
+>>
+>>
+/BBox [0 0 150 150]
+/Type /XObject
+>>
+stream
+/Span <</MCID 0>> BDC
+q
+BT
+/F1 12 Tf
+0 133.33 Td
+(Text from XObject)Tj
+ET
+Q
+EMC
+/Span <</MCID 0>> BDC
+q
+BT
+/F1 12 Tf
+0 107.35 Td
+(The 2nd text from XObject)Tj
+ET
+Q
+EMC
+
+endstream 
+endobj 
+8 0 obj 
+<<
+/BaseFont /Helvetica
+/Subtype /Type1
+/Type /Font
+/Encoding /WinAnsiEncoding
+>>
+endobj 
+9 0 obj 
+<<
+/Length 193
+>>
+stream
+/Span <</MCID 0>> BDC
+q
+BT
+/F1 12 Tf
+36 789.33 Td
+(Text from Page)Tj
+ET
+Q
+EMC
+/Span <</MCID 0>> BDC
+q
+BT
+/F1 12 Tf
+36 763.35 Td
+(The 2nd Text from Page)Tj
+ET
+Q
+EMC
+q
+1 0 0 1 10 10 cm
+/Fm1 Do
+Q
+
+endstream 
+endobj 
+10 0 obj 
+<<
+/P 6 0 R
+/A 
+<<
+/SpaceBefore 4
+/O /Layout
+/SpaceAfter 4
+/BBox [36 780.02 559 806]
+>>
+/K 15 0 R
+/Type /StructElem
+/S /P
+>>
+endobj 
+11 0 obj 
+<<
+/P 6 0 R
+/A 
+<<
+/SpaceBefore 4
+/O /Layout
+/SpaceAfter 4
+/BBox [36 754.04 559 780.02]
+>>
+/K 16 0 R
+/Type /StructElem
+/S /P
+>>
+endobj 
+12 0 obj 
+<<
+/P 6 0 R
+/A 
+<<
+/SpaceBefore 4
+/O /Layout
+/SpaceAfter 4
+/BBox [0 124.02 150 150]
+>>
+/K 17 0 R
+/Type /StructElem
+/S /P
+>>
+endobj 
+13 0 obj 
+<<
+/P 6 0 R
+/A 
+<<
+/SpaceBefore 4
+/O /Layout
+/SpaceAfter 4
+/BBox [0 98.04 150 124.02]
+>>
+/K 18 0 R
+/Type /StructElem
+/S /P
+>>
+endobj 
+15 0 obj 
+<<
+/Pg 4 0 R
+/P 10 0 R
+/K 0
+/Type /StructElem
+/S /Span
+>>
+endobj 
+16 0 obj 
+<<
+/Pg 4 0 R
+/P 11 0 R
+/K 0
+/Type /StructElem
+/S /Span
+>>
+endobj 
+17 0 obj 
+<<
+/P 12 0 R
+/K 
+<<
+/Pg 4 0 R
+/Stm 7 0 R
+/MCID 0
+/Type /MCR
+>>
+/Type /StructElem
+/S /Span
+>>
+endobj 
+14 0 obj 
+<<
+/BaseFont /Helvetica
+/Subtype /Type1
+/Type /Font
+/Encoding /WinAnsiEncoding
+>>
+endobj 
+18 0 obj 
+<<
+/P 13 0 R
+/K 
+<<
+/Pg 4 0 R
+/Stm 7 0 R
+/MCID 0
+/Type /MCR
+>>
+/Type /StructElem
+/S /Span
+>>
+endobj 
+19 0 obj [15 0 R 16 0 R]
+endobj 
+5 0 obj 
+<<
+/Nums [0 19 0 R 1 20 0 R]
+>>
+endobj 
+20 0 obj [17 0 R 18 0 R]
+endobj 
+21 0 obj 
+<<
+/Producer (iTextÆ 7.1.9-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\); modified using iTextÆ 7.1.5-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))
+/ModDate (D:20191114095938+03'00')
+/CreationDate (D:20191024102752+03'00')
+>>
+endobj xref
+0 22
+0000000000 65535 f 
+0000000015 00000 n 
+0000000118 00000 n 
+0000000177 00000 n 
+0000000288 00000 n 
+0000002366 00000 n 
+0000000511 00000 n 
+0000000607 00000 n 
+0000000938 00000 n 
+0000001037 00000 n 
+0000001284 00000 n 
+0000001427 00000 n 
+0000001573 00000 n 
+0000001715 00000 n 
+0000002122 00000 n 
+0000001859 00000 n 
+0000001935 00000 n 
+0000002011 00000 n 
+0000002222 00000 n 
+0000002333 00000 n 
+0000002415 00000 n 
+0000002448 00000 n 
+trailer
+
+<<
+/Info 21 0 R
+/Root 1 0 R
+/Size 22
+/ID [<476fcba93a7b434559295329a47b60db> <510b0ab84f7071ecca2e4414fc484198>]
+>>
+startxref
+2704
+%%EOF

@@ -1,0 +1,80 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+        "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="500" height="300" version="1.1"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+>
+    <defs>
+        <g id="grid" stroke="green">
+            <line fill="none" stroke-width="0.5" x1="-40" y1="-30" x2="40" y2="-30" stroke="red"/>
+            <line fill="none" stroke-width="0.5" x1="-40" y1="-20" x2="40" y2="-20" stroke="red"/>
+            <line fill="none" stroke-width="0.5" x1="-40" y1="-10" x2="40" y2="-10" stroke="red"/>
+            <line fill="none" stroke-width="1" x1="-40" x2="40" stroke="red"/>
+            <circle r="2" stroke-width="1" cx="40" stroke="red"/>
+            <line fill="none" stroke-width="0.5" x1="-40" y1="10" x2="40" y2="10" stroke="red"/>
+            <line fill="none" stroke-width="0.5" x1="-40" y1="20" x2="40" y2="20" stroke="red"/>
+            <line fill="none" stroke-width="0.5" x1="-40" y1="30" x2="40" y2="30" stroke="red"/>
+
+            <line fill="none" stroke-width="0.5" y1="-30" x1="-40" y2="30" x2="-40"/>
+            <line fill="none" stroke-width="0.5" y1="-30" x1="-30" y2="30" x2="-30"/>
+            <line fill="none" stroke-width="0.5" y1="-30" x1="-20" y2="30" x2="-20"/>
+            <line fill="none" stroke-width="0.5" y1="-30" x1="-10" y2="30" x2="-10"/>
+            <line fill="none" stroke-width="1" y1="-30" y2="30"/>
+            <circle r="2" stroke-width="1" cy="30"/>
+            <line fill="none" stroke-width="0.5" y1="-30" x1="10" y2="30" x2="10"/>
+            <line fill="none" stroke-width="0.5" y1="-30" x1="20" y2="30" x2="20"/>
+            <line fill="none" stroke-width="0.5" y1="-30" x1="30" y2="30" x2="30"/>
+            <line fill="none" stroke-width="0.5" y1="-30" x1="40" y2="30" x2="40"/>
+        </g>
+        <g id="markerContents">
+            <g id="marker-grid" stroke="yellow" fill="none">
+                <circle r="1" fill="blue" />
+
+                <line stroke-width="0.5" x1="-20" y1="-10" x2="20" y2="-10"/>
+                <line stroke-width="0.5" x1="-20" y1="-5" x2="20" y2="-5"/>
+                <line stroke-width="1" x1="-20" x2="20"/>
+                <circle r="1" cx="20" />
+                <line stroke-width="0.5" x1="-20" y1="5" x2="20" y2="5"/>
+                <line stroke-width="0.5" x1="-20" y1="10" x2="20" y2="10"/>
+
+                <line stroke-width="0.5" x1="-10" y1="-20" y2="20" x2="-10"/>
+                <line stroke-width="0.5" x1="-5" y1="-20" y2="20" x2="-5"/>
+                <line stroke-width="1" y1="-20" y2="20"/>
+                <circle r="1" cy="20" />
+                <line stroke-width="0.5" x1="5" y1="-20" y2="20" x2="5"/>
+                <line stroke-width="0.5" x1="10" y1="-20" y2="20" x2="10"/>
+            </g>
+            <path stroke="blue" stroke-width="1" fill="none" d="M 0 0 L 10 5 L 0 10 z"/>
+        </g>
+        <g id="viewPortBackground">
+            <rect width="40" height="30" fill="lightgray" stroke="black"/>
+        </g>
+        <g id="viewPortLines">
+            <line y1="15" y2="15" x2="40" stroke="black" />
+            <line x1="20" x2="20" y2="30" stroke="black" />
+        </g>
+        <marker id="TrianglePANone"
+                viewBox="0 0 10 10" refX="0" refY="0"
+                markerUnits="strokeWidth"
+                markerWidth="4" markerHeight="3"
+                orient="-45"
+                preserveAspectRatio="none"
+        >
+            <use xlink:href="#markerContents"/>
+        </marker>
+    </defs>
+    <g>
+        <rect width="400" height="200"
+              fill="none" stroke="blue" stroke-width="2"/>
+        <desc>Placing an arrowhead at the end of a path.
+        </desc>
+        <use xlink:href="#viewPortBackground" transform="translate(250,100) rotate(-45) translate(0,0)"/>
+        <path d="M 50 150 L 200 150 L 250 100"
+              fill="none" stroke="black" stroke-width="10"
+              marker-end="url(#TrianglePANone)"
+        />
+        <use xlink:href="#viewPortLines" transform="translate(250,100) rotate(-45) translate(0,0)"/>
+        <use xlink:href="#grid" transform="translate(250,100) rotate(-45) translate(0,0)"/>
+    </g>
+</svg>

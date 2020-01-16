@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.utils;
 
+import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 
 public class SvgCoordinateUtils {
@@ -55,9 +56,11 @@ public class SvgCoordinateUtils {
      * @param currentCoordinates  an array representing the point relative to which the relativeCoordinates are defined
      * @return a String array of absolute coordinates, with the same length as the input array
      */
-    public static String[] makeRelativeOperatorCoordinatesAbsolute(String[] relativeCoordinates, double[] currentCoordinates) {
+    public static String[] makeRelativeOperatorCoordinatesAbsolute(String[] relativeCoordinates,
+            double[] currentCoordinates) {
         if (relativeCoordinates.length % currentCoordinates.length != 0) {
-            throw new IllegalArgumentException(SvgExceptionMessageConstant.COORDINATE_ARRAY_LENGTH_MUST_BY_DIVISIBLE_BY_CURRENT_COORDINATES_ARRAY_LENGTH);
+            throw new IllegalArgumentException(
+                    SvgExceptionMessageConstant.COORDINATE_ARRAY_LENGTH_MUST_BY_DIVISIBLE_BY_CURRENT_COORDINATES_ARRAY_LENGTH);
         }
         String[] absoluteOperators = new String[relativeCoordinates.length];
 
@@ -70,6 +73,17 @@ public class SvgCoordinateUtils {
         }
 
         return absoluteOperators;
+    }
+
+    /**
+     * Calculate the angle between two vectors
+     *
+     * @param vectorA first vector
+     * @param vectorB second vector
+     * @return angle between vectors in radians units
+     */
+    public static double calculateAngleBetweenTwoVectors(Vector vectorA, Vector vectorB) {
+        return Math.acos((double) vectorA.dot(vectorB) / ((double) vectorA.length() * (double) vectorB.length()));
     }
 
 }

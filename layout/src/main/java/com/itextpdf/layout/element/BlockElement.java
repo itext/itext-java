@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -320,6 +320,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      *              be compensated by character spacing.
      *              If <strong>ratio</strong> is 1, additional character spacing will not be applied.
      *              If <strong>ratio</strong> is 0, additional word spacing will not be applied.
+     * @return this element
      */
     public T setSpacingRatio(float ratio) {
         setProperty(Property.SPACING_RATIO, ratio);
@@ -493,6 +494,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
 
     /**
      * Sets the min-height of a block element as point-unit value.
+     *
      * @param minHeight a floating point value for the new min-height
      * @return the block element itself
      */
@@ -515,6 +517,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
 
     /**
      * Sets the max-width of a block element as point-unit value.
+     *
      * @param maxWidth a floating point value for the new max-width
      * @return the block element itself
      */
@@ -536,6 +539,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
 
     /**
      * Sets the min-width of a block element as point-unit value.
+     *
      * @param minWidth a floating point value for the new min-width
      * @return the block element itself
      */

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,8 +43,10 @@
 package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -55,6 +57,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -144,11 +147,16 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
         pdfDoc.addNewPage();
-        addCheckBox(pdfDoc, 0, 730, 10, PdfFormField.createCheckBox(pdfDoc, new Rectangle(50, 730, 10, 10), "cb_1", "YES", PdfFormField.TYPE_CIRCLE));
-        addCheckBox(pdfDoc, 0, 700, 10, PdfFormField.createCheckBox(pdfDoc, new Rectangle(50, 700, 10, 10), "cb_2", "YES", PdfFormField.TYPE_CROSS));
-        addCheckBox(pdfDoc, 0, 670, 10, PdfFormField.createCheckBox(pdfDoc, new Rectangle(50, 670, 10, 10), "cb_3", "YES", PdfFormField.TYPE_DIAMOND));
-        addCheckBox(pdfDoc, 0, 640, 10, PdfFormField.createCheckBox(pdfDoc, new Rectangle(50, 640, 10, 10), "cb_4", "YES", PdfFormField.TYPE_SQUARE));
-        addCheckBox(pdfDoc, 0, 610, 10, PdfFormField.createCheckBox(pdfDoc, new Rectangle(50, 610, 10, 10), "cb_5", "YES", PdfFormField.TYPE_STAR));
+        addCheckBox(pdfDoc, 0, 730, 10, PdfFormField
+                .createCheckBox(pdfDoc, new Rectangle(50, 730, 10, 10), "cb_1", "YES", PdfFormField.TYPE_CIRCLE));
+        addCheckBox(pdfDoc, 0, 700, 10, PdfFormField
+                .createCheckBox(pdfDoc, new Rectangle(50, 700, 10, 10), "cb_2", "YES", PdfFormField.TYPE_CROSS));
+        addCheckBox(pdfDoc, 0, 670, 10, PdfFormField
+                .createCheckBox(pdfDoc, new Rectangle(50, 670, 10, 10), "cb_3", "YES", PdfFormField.TYPE_DIAMOND));
+        addCheckBox(pdfDoc, 0, 640, 10, PdfFormField
+                .createCheckBox(pdfDoc, new Rectangle(50, 640, 10, 10), "cb_4", "YES", PdfFormField.TYPE_SQUARE));
+        addCheckBox(pdfDoc, 0, 610, 10, PdfFormField
+                .createCheckBox(pdfDoc, new Rectangle(50, 610, 10, 10), "cb_5", "YES", PdfFormField.TYPE_STAR));
 
         pdfDoc.close();
 
@@ -218,12 +226,16 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         }
     }
 
-    private void addCheckBox(PdfDocument pdfDoc, float fontSize, float yPos, float checkBoxW, float checkBoxH) throws IOException {
+    private void addCheckBox(PdfDocument pdfDoc, float fontSize, float yPos, float checkBoxW, float checkBoxH)
+            throws IOException {
         Rectangle rect = new Rectangle(50, yPos, checkBoxW, checkBoxH);
-        addCheckBox(pdfDoc, fontSize, yPos, checkBoxW, PdfFormField.createCheckBox(pdfDoc, rect, MessageFormatUtil.format("cb_fs_{0}_{1}_{2}", fontSize, checkBoxW, checkBoxH), "YES", PdfFormField.TYPE_CHECK));
+        addCheckBox(pdfDoc, fontSize, yPos, checkBoxW, PdfFormField.createCheckBox(pdfDoc, rect,
+                MessageFormatUtil.format("cb_fs_{0}_{1}_{2}", fontSize, checkBoxW, checkBoxH), "YES",
+                PdfFormField.TYPE_CHECK));
     }
 
-    private void addCheckBox(PdfDocument pdfDoc, float fontSize, float yPos, float checkBoxW, PdfFormField checkBox) throws IOException {
+    private void addCheckBox(PdfDocument pdfDoc, float fontSize, float yPos, float checkBoxW, PdfFormField checkBox)
+            throws IOException {
         PdfPage page = pdfDoc.getFirstPage();
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         if (fontSize >= 0) {

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -84,6 +84,8 @@ public class PdfReader implements Closeable, Serializable {
     protected static boolean correctStreamLength = true;
 
     private boolean unethicalReading;
+
+    private boolean memorySavingMode;
 
     //indicate nearest first Indirect reference object which includes current reading the object, using for PdfString decrypt
     private PdfIndirectReference currentIndirectReference;
@@ -202,6 +204,21 @@ public class PdfReader implements Closeable, Serializable {
     }
 
     /**
+     * Defines if memory saving mode is enabled.
+     * <p>
+     * By default memory saving mode is disabled for the sake of time–memory trade-off.
+     * <p>
+     * If memory saving mode is enabled, document processing might slow down, but reading will be less memory demanding.
+     *
+     * @param memorySavingMode true to enable memory saving mode, false to disable it.
+     * @return this {@link PdfReader} instance.
+     */
+    public PdfReader setMemorySavingMode(boolean memorySavingMode) {
+        this.memorySavingMode = memorySavingMode;
+        return this;
+    }
+
+    /**
      * Gets whether {@link #close()} method shall close input stream.
      *
      * @return true, if {@link #close()} method will close input stream,
@@ -225,8 +242,13 @@ public class PdfReader implements Closeable, Serializable {
      * If any exception generated while reading XRef section, PdfReader will try to rebuild it.
      *
      * @return true, if PdfReader rebuilt Cross-Reference section.
+     * @throws PdfException, if the method has been invoked before the PDF document was read.
      */
     public boolean hasRebuiltXref() {
+        if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
+            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+        }
+
         return rebuiltXref;
     }
 
@@ -235,8 +257,13 @@ public class PdfReader implements Closeable, Serializable {
      * That Do Not Support Compressed Reference Streams" in PDF 32000-1:2008 spec.
      *
      * @return true, if the document has hybrid Cross-Reference section.
+     * @throws PdfException, if the method has been invoked before the PDF document was read.
      */
     public boolean hasHybridXref() {
+        if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
+            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+        }
+
         return hybridXref;
     }
 
@@ -244,17 +271,29 @@ public class PdfReader implements Closeable, Serializable {
      * Indicates whether the document has Cross-Reference Streams.
      *
      * @return true, if the document has Cross-Reference Streams.
+     * @throws PdfException, if the method has been invoked before the PDF document was read.
      */
     public boolean hasXrefStm() {
+        if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
+            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+        }
+
         return xrefStm;
     }
 
     /**
      * If any exception generated while reading PdfObject, PdfReader will try to fix offsets of all objects.
-     *
+     * <p>
+     * This method's returned value might change over time, because PdfObjects reading
+     * can be postponed even up to document closing.
      * @return true, if PdfReader fixed offsets of PdfObjects.
+     * @throws PdfException, if the method has been invoked before the PDF document was read.
      */
     public boolean hasFixedXref() {
+        if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
+            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+        }
+
         return fixedXref;
     }
 
@@ -262,8 +301,13 @@ public class PdfReader implements Closeable, Serializable {
      * Gets position of the last Cross-Reference table.
      *
      * @return -1 if Cross-Reference table has rebuilt, otherwise position of the last Cross-Reference table.
+     * @throws PdfException, if the method has been invoked before the PDF document was read.
      */
     public long getLastXref() {
+        if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
+            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+        }
+
         return lastXref;
     }
 
@@ -478,8 +522,13 @@ public class PdfReader implements Closeable, Serializable {
      *
      * @return {@code true} if the document was opened with the owner password or if it's not encrypted,
      * {@code false} if the document was opened with the user password.
+     * @throws PdfException, if the method has been invoked before the PDF document was read.
      */
     public boolean isOpenedWithFullPermission() {
+        if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
+            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+        }
+
         return !encrypted || decrypt.isOpenedWithFullPermission() || unethicalReading;
     }
 
@@ -489,8 +538,19 @@ public class PdfReader implements Closeable, Serializable {
      * See ISO 32000-1, Table 22 for more details.
      *
      * @return the encryption permissions, an unsigned 32-bit quantity.
+     * @throws PdfException, if the method has been invoked before the PDF document was read.
      */
     public long getPermissions() {
+
+        /* !pdfDocument.getXref().isReadingCompleted() can be used for encryption properties as well,
+         * because decrypt object is initialized in private readDecryptObj method which is called in our code
+         * in the next line after the setting isReadingCompleted line. This means that there's no way for users
+         * when this method would work incorrectly right now.
+         */
+        if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
+            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+        }
+
         long perm = 0;
         if (encrypted && decrypt.getPermissions() != null) {
             perm = (long) decrypt.getPermissions();
@@ -502,8 +562,13 @@ public class PdfReader implements Closeable, Serializable {
      * Gets encryption algorithm and access permissions.
      *
      * @see EncryptionConstants
+     * @throws PdfException, if the method has been invoked before the PDF document was read.
      */
     public int getCryptoMode() {
+        if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
+            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+        }
+
         if (decrypt == null)
             return -1;
         else
@@ -525,9 +590,17 @@ public class PdfReader implements Closeable, Serializable {
      * Computes user password if standard encryption handler is used with Standard40, Standard128 or AES128 encryption algorithm.
      *
      * @return user password, or null if not a standard encryption handler was used or if ownerPasswordUsed wasn't use to open the document.
+     * @throws PdfException, if the method has been invoked before the PDF document was read.
      */
     public byte[] computeUserPassword() {
-        if (!encrypted || !decrypt.isOpenedWithFullPermission()) return null;
+        if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
+            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+        }
+
+        if (!encrypted || !decrypt.isOpenedWithFullPermission()) {
+            return null;
+        }
+
         return decrypt.computeUserPassword(properties.password);
     }
 
@@ -540,8 +613,13 @@ public class PdfReader implements Closeable, Serializable {
      *
      * @return byte array represents original file ID.
      * @see PdfDocument#getOriginalDocumentId()
+     * @throws PdfException, if the method has been invoked before the PDF document was read.
      */
     public byte[] getOriginalFileId() {
+        if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
+            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+        }
+
         PdfArray id = trailer.getAsArray(PdfName.ID);
         if (id != null && id.size() == 2) {
             return ByteUtils.getIsoBytes(id.getAsString(0).getValue());
@@ -559,8 +637,13 @@ public class PdfReader implements Closeable, Serializable {
      *
      * @return byte array represents modified file ID.
      * @see PdfDocument#getModifiedDocumentId()
+     * @throws PdfException, if the method has been invoked before the PDF document was read.
      */
     public byte[] getModifiedFileId() {
+        if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
+            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+        }
+
         PdfArray id = trailer.getAsArray(PdfName.ID);
         if (id != null && id.size() == 2) {
             return ByteUtils.getIsoBytes(id.getAsString(1).getValue());
@@ -569,7 +652,14 @@ public class PdfReader implements Closeable, Serializable {
         }
     }
 
+    /**
+     * @throws PdfException, if the method has been invoked before the PDF document was read.
+     */
     public boolean isEncrypted() {
+        if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
+            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+        }
+
         return encrypted;
     }
 
@@ -737,7 +827,7 @@ public class PdfReader implements Closeable, Serializable {
                 return new PdfNumber(tokens.getByteContent());
             case String: {
                 PdfString pdfString = new PdfString(tokens.getByteContent(), tokens.isHexString());
-                if (isEncrypted() && !decrypt.isEmbeddedFilesOnly() && !objStm) {
+                if (encrypted && !decrypt.isEmbeddedFilesOnly() && !objStm) {
                     pdfString.setDecryption(currentIndirectReference.getObjNumber(), currentIndirectReference.getGenNumber(), decrypt);
                 }
                 return pdfString;
@@ -1136,6 +1226,10 @@ public class PdfReader implements Closeable, Serializable {
         }
         if (trailer == null)
             throw new PdfException(PdfException.TrailerNotFound);
+    }
+
+    boolean isMemorySavingMode() {
+        return memorySavingMode;
     }
 
     private void readDecryptObj() {

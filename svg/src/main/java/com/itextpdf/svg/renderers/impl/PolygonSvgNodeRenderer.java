@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,12 +43,13 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.Point;
+import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;polygon&gt; tag.
  */
-public class PolygonSvgNodeRenderer extends PolylineSvgNodeRenderer {
+public class PolygonSvgNodeRenderer extends PolylineSvgNodeRenderer implements IMarkerCapable {
 
     /**
      * Calls setPoints(String) to set {@link PolylineSvgNodeRenderer#points}
@@ -70,7 +71,7 @@ public class PolygonSvgNodeRenderer extends PolylineSvgNodeRenderer {
 
         Point start = points.get(0);
         Point end = points.get(points.size() - 1);
-        if (Double.compare(start.x, end.x) != 0 && Double.compare(start.y, end.y) != 0) {
+        if (Double.compare(start.x, end.x) != 0 || Double.compare(start.y, end.y) != 0) {
             points.add(new Point(start.x, start.y));
         }
     }

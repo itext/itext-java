@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -93,22 +93,38 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     private SecurityHandler securityHandler;
 
     /**
-     * Creates the encryption. The userPassword and the
-     * ownerPassword can be null or have zero length. In this case the ownerPassword
-     * is replaced by a random string. The open permissions for the document can be
-     * {@link EncryptionConstants#ALLOW_PRINTING}, {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
-     * {@link EncryptionConstants#ALLOW_COPY}, {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
-     * {@link EncryptionConstants#ALLOW_FILL_IN}, {@link EncryptionConstants#ALLOW_SCREENREADERS},
-     * {@link EncryptionConstants#ALLOW_ASSEMBLY} and {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
-     * The permissions can be combined by ORing them.
+     * Creates the encryption.
      *
-     * @param userPassword   the user password. Can be null or empty
-     * @param ownerPassword  the owner password. Can be null or empty
+     * @param userPassword   the user password. Can be null or of zero length, which is equal to
+     *                       omitting the user password
+     * @param ownerPassword  the owner password. If it's null or empty, iText will generate
+     *                       a random string to be used as the owner password
      * @param permissions    the user permissions
-     * @param encryptionType the type of encryption. It can be one of {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
-     * {@link EncryptionConstants#STANDARD_ENCRYPTION_128}, {@link EncryptionConstants#ENCRYPTION_AES_128}
+     *                       The open permissions for the document can be
+     *                       {@link EncryptionConstants#ALLOW_PRINTING},
+     *                       {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
+     *                       {@link EncryptionConstants#ALLOW_COPY},
+     *                       {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
+     *                       {@link EncryptionConstants#ALLOW_FILL_IN},
+     *                       {@link EncryptionConstants#ALLOW_SCREENREADERS},
+     *                       {@link EncryptionConstants#ALLOW_ASSEMBLY} and
+     *                       {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
+     *                       The permissions can be combined by ORing them
+     * @param encryptionType the type of encryption. It can be one of
+     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
+     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_128},
+     *                       {@link EncryptionConstants#ENCRYPTION_AES_128}
      *                       or {@link EncryptionConstants#ENCRYPTION_AES_256}.
-     *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed to output the metadata in cleartext
+     *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be
+     *                       ORed to output the metadata in cleartext.
+     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} can be ORed as well.
+     *                       Please be aware that the passed encryption types may override permissions:
+     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_40} implicitly sets
+     *                       {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} and
+     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
+     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     * @param documentId     document id which will be used for encryption
      * @param version        the {@link PdfVersion} of the target document for encryption
      */
     public PdfEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionType, byte[] documentId, PdfVersion version) {
@@ -147,21 +163,39 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Creates the certificate encryption. An array of one or more public certificates
-     * must be provided together with an array of the same size for the permissions for each certificate.
-     * The open permissions for the document can be
-     * {@link EncryptionConstants#ALLOW_PRINTING}, {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
-     * {@link EncryptionConstants#ALLOW_COPY}, {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
-     * {@link EncryptionConstants#ALLOW_FILL_IN}, {@link EncryptionConstants#ALLOW_SCREENREADERS},
-     * {@link EncryptionConstants#ALLOW_ASSEMBLY} and {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
-     * The permissions can be combined by ORing them.
+     * Creates the certificate encryption.
+     * <p>
+     * An array of one or more public certificates must be provided together with
+     * an array of the same size for the permissions for each certificate.
      *
      * @param certs          the public certificates to be used for the encryption
      * @param permissions    the user permissions for each of the certificates
-     * @param encryptionType the type of encryption. It can be one of {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
-     * {@link EncryptionConstants#STANDARD_ENCRYPTION_128}, {@link EncryptionConstants#ENCRYPTION_AES_128}
+     *                       The open permissions for the document can be
+     *                       {@link EncryptionConstants#ALLOW_PRINTING},
+     *                       {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
+     *                       {@link EncryptionConstants#ALLOW_COPY},
+     *                       {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
+     *                       {@link EncryptionConstants#ALLOW_FILL_IN},
+     *                       {@link EncryptionConstants#ALLOW_SCREENREADERS},
+     *                       {@link EncryptionConstants#ALLOW_ASSEMBLY} and
+     *                       {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
+     *                       The permissions can be combined by ORing them
+     * @param encryptionType the type of encryption. It can be one of
+     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
+     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_128},
+     *                       {@link EncryptionConstants#ENCRYPTION_AES_128}
      *                       or {@link EncryptionConstants#ENCRYPTION_AES_256}.
-     *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed to output the metadata in cleartext
+     *                       Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed
+     *                       to output the metadata in cleartext.
+     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} can be ORed as well.
+     *                       Please be aware that the passed encryption types may override permissions:
+     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_40} implicitly sets
+     *                       {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} and
+     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     *                       {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
+     *                       {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     *
+     * @param version        the {@link PdfVersion} of the target document for encryption
      */
     public PdfEncryption(Certificate[] certs, int[] permissions, int encryptionType, PdfVersion version) {
         super(new PdfDictionary());

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -59,7 +59,6 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
@@ -69,7 +68,6 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -95,8 +93,10 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -428,7 +428,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         pdf.setTagged();
         Document doc = new Document(pdf);
 
-        Table table = new Table(new float[] {1,2,3}).setFixedLayout().setWidth(400);
+        Table table = new Table(new float[]{1, 2, 3}).setFixedLayout().setWidth(400);
 
         table.addCell("1x");
         table.addCell("2x");
@@ -462,7 +462,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         table.setSkipLastFooter(true);
 
         for (int i = 0; i < 350; i++) {
-            table.addCell(new Cell().add(new Paragraph(String.valueOf(i+1))));
+            table.addCell(new Cell().add(new Paragraph(String.valueOf(i + 1))));
             table.flush();
         }
 
@@ -1017,6 +1017,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     //TODO update cmp-file after DEVSIX-3351 fixed
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.XOBJECT_HAS_NO_STRUCT_PARENTS)})
     public void checkParentTreeIfFormXObjectTaggedTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "checkParentTreeIfFormXObjectTaggedTest.pdf";
         String cmpPdf = sourceFolder + "cmp_checkParentTreeIfFormXObjectTaggedTest.pdf";

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -99,11 +99,23 @@ public final class SvgCssUtils {
     }
 
     /**
-     * @param pts value to be converted to pixels
-     * @return float converted value pts*0.75f
+     * Convert given point value to a pixel value. 1 px is 0.75 pts.
+     *
+     * @param pts float value to be converted to pixels
+     * @return float converted value pts/0.75f
      */
     public static float convertPtsToPx(float pts) {
-        return pts * 0.75f;
+        return pts / 0.75f;
+    }
+
+    /**
+     * Convert given point value to a pixel value. 1 px is 0.75 pts.
+     *
+     * @param pts double value to be converted to pixels
+     * @return double converted value pts/0.75
+     */
+    public static double convertPtsToPx(double pts) {
+        return pts / 0.75;
     }
 
     /**

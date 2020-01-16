@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="255" height="240"
+     viewBox="0 0 200 200"
+>
+    <defs id="Markers" fill="red">
+        <g fill="green">
+            <g id="lend13">
+                <path d="M2,2 L2,11 L10,6 L2,2"/>
+            </g>
+        </g>
+        <marker id="markerArrow" markerWidth="13" markerHeight="13" refX="2" refY="6"
+                orient="auto">
+            <use xlink:href="#lend13"/>
+        </marker>
+        <marker id="markerArrow2" markerWidth="13" markerHeight="13" refX="2" refY="6"
+                orient="auto">
+            <path d="M2,2 L2,11 L10,6 L2,2"/>
+        </marker>
+    </defs>
+    <path d="M100,10 L150,10 L150,60"
+          style="stroke:black; stroke-width: 1px; fill: none;
+                   marker-end: url(#markerArrow);
+                    marker-start: url(#markerArrow2);"/>
+    <use xlink:href="#lend13" x="20" y="20"/>
+</svg>

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -67,9 +67,9 @@ public class FontSelector {
     /**
      * Create new FontSelector instance.
      *
-     * @param allFonts     Unsorted set of all available fonts.
-     * @param fontFamilies Sorted list of preferred font families.
-     * @param fc
+     * @param allFonts     unsorted set of all available fonts.
+     * @param fontFamilies sorted list of preferred font families.
+     * @param fc           instance of {@link FontCharacteristics}.
      */
     public FontSelector(Collection<FontInfo> allFonts, List<String> fontFamilies, FontCharacteristics fc) {
         this.fonts = new ArrayList<>(allFonts);
@@ -157,18 +157,17 @@ public class FontSelector {
          * This method is used to compare two fonts (the required one which is described by fontInfo and
          * the one to be examined which is described by fc and fontFamily) and measure their similarity.
          * The more the fonts are similar the higher the score is.
-         *
+         * <p>
          * Firstly we check if the font-family described by fontInfo equals to the required one.
          * If it's not true the examination fails, it continues otherwise.
          * If the required font-family is monospace, serif or sans serif we check whether
          * the font under examination is monospace, serif or sans serif resp. Its font-family is not
          * taking into considerations.
-         *
+         * <p>
          * If font-family is respected, we consider the next font-style characteristics to select the required font
          * of the respected font-family:
          * a) bold
          * b) italic
-         *
          */
         // TODO DEVSIX-2120 Update javadoc if necessary
         private static int characteristicsSimilarity(String fontFamily, FontCharacteristics fc, FontInfo fontInfo, boolean isLastFontFamilyToBeProcessed) {

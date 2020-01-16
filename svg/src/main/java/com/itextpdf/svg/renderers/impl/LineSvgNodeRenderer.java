@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -42,18 +42,22 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.utils.SvgCoordinateUtils;
 
 import java.util.Map;
 
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;line&gt; tag.
  */
-public class LineSvgNodeRenderer extends AbstractSvgNodeRenderer {
+public class LineSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMarkerCapable {
     @Override
     public void doDraw(SvgDrawContext context) {
         PdfCanvas canvas = context.getCurrentCanvas();
@@ -103,5 +107,32 @@ public class LineSvgNodeRenderer extends AbstractSvgNodeRenderer {
         LineSvgNodeRenderer copy = new LineSvgNodeRenderer();
         deepCopyAttributesAndStyles(copy);
         return copy;
+    }
+
+    @Override
+    public void drawMarker(SvgDrawContext context, final MarkerVertexType markerVertexType) {
+        String moveX = null;
+        String moveY = null;
+        if (MarkerVertexType.MARKER_START.equals(markerVertexType)) {
+            moveX = this.attributesAndStyles.get(SvgConstants.Attributes.X1);
+            moveY = this.attributesAndStyles.get(SvgConstants.Attributes.Y1);
+        } else if (MarkerVertexType.MARKER_END.equals(markerVertexType)) {
+            moveX = this.attributesAndStyles.get(SvgConstants.Attributes.X2);
+            moveY = this.attributesAndStyles.get(SvgConstants.Attributes.Y2);
+        }
+        if (moveX != null && moveY != null) {
+            MarkerSvgNodeRenderer.drawMarker(context, moveX, moveY, markerVertexType, this);
+        }
+    }
+
+    @Override
+    public double getAutoOrientAngle(MarkerSvgNodeRenderer marker, boolean reverse) {
+        Vector v = new Vector(getAttribute(this.attributesAndStyles, SvgConstants.Attributes.X2) - getAttribute(
+                this.attributesAndStyles, SvgConstants.Attributes.X1),
+                getAttribute(this.attributesAndStyles, SvgConstants.Attributes.Y2) - getAttribute(
+                        this.attributesAndStyles, SvgConstants.Attributes.Y1), 0f);
+        Vector xAxis = new Vector(1, 0, 0);
+        double rotAngle = SvgCoordinateUtils.calculateAngleBetweenTwoVectors(xAxis, v);
+        return v.get(1) >= 0 && !reverse ? rotAngle : rotAngle * -1f;
     }
 }

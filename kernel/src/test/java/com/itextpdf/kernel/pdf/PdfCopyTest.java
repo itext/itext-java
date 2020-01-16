@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -170,8 +170,8 @@ public class PdfCopyTest extends ExtendedITextTest {
         pdfDoc.close();
 
         PdfReader reader = new PdfReader(destinationFolder + "copying3_1.pdf");
-        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         pdfDoc = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
 
         PdfDictionary dic0 = pdfDoc.getPage(1).getPdfObject().getAsDictionary(new PdfName("HelloWorld"));
         assertEquals(4, dic0.getIndirectReference().getObjNumber());

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -93,6 +93,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         kids.add(page);
         incrementCount();
         page.put(PdfName.Parent, getPdfObject());
+        page.setModified();
     }
 
     public boolean addPage(int index, PdfPage pdfPage) {
@@ -100,8 +101,8 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
             return false;
         kids.add(index - from, pdfPage.getPdfObject());
         pdfPage.getPdfObject().put(PdfName.Parent, getPdfObject());
+        pdfPage.setModified();
         incrementCount();
-        setModified();
         return true;
     }
 
@@ -117,6 +118,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         kids.add(pdfPages.getPdfObject());
         count.setValue(count.intValue() + pdfPages.getCount());
         pdfPages.getPdfObject().put(PdfName.Parent, getPdfObject());
+        pdfPages.setModified();
         setModified();
     }
 

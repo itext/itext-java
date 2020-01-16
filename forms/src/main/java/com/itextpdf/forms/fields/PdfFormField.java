@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -90,6 +90,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Style;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -101,6 +102,8 @@ import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.renderer.IRenderer;
+
+import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,6 +116,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
@@ -490,8 +495,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         ((PdfFormField) field).updateFontAndFontSize(font, fontSize);
         field.setMultiline(multiline);
-        field.setValue(value);
         field.setFieldName(name);
+        field.setValue(value);
 
         return field;
     }
@@ -1130,7 +1135,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the form type, as a {@link PdfName}
      */
     public PdfName getFormType() {
-        return getTypeFromParent(getPdfObject());
+        PdfName formType = getPdfObject().getAsName(PdfName.FT);
+        if (formType == null) {
+            return getTypeFromParent(getPdfObject());
+        }
+        return formType;
     }
 
     /**
@@ -1140,24 +1149,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the field
      */
     public PdfFormField setValue(String value) {
-        PdfName ft = getFormType();
-        if (ft == null || !ft.equals(PdfName.Btn)) {
-            PdfArray kids = getKids();
-            if (kids != null) {
-                for (int i = 0; i < kids.size(); i++) {
-                    PdfObject kid = kids.get(i);
-                    PdfFormField field = new PdfFormField((PdfDictionary) kid);
-                    if (field.getDefaultAppearance() == null) {
-                        field.font = this.font;
-                        field.fontSize = this.fontSize;
-                        field.color = this.color;
-                    }
-                    field.setValue(value);
-                }
-            }
-        }
-
-        return setValue(value, true);
+        PdfName formType = getFormType();
+        boolean autoGenerateAppearance = !(PdfName.Btn.equals(formType) && getFieldFlag(PdfButtonFormField.FF_RADIO));
+        return setValue(value, autoGenerateAppearance);
     }
 
     /**
@@ -1169,10 +1163,24 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfFormField setValue(String value, boolean generateAppearance) {
         PdfName formType = getFormType();
-        if (PdfName.Tx.equals(formType) || PdfName.Ch.equals(formType)) {
+        if (formType == null || !PdfName.Btn.equals(formType)) {
+            PdfArray kids = getKids();
+            if (kids != null) {
+                for (PdfObject kid: kids) {
+                    if (kid.isDictionary() && ((PdfDictionary) kid).getAsString(PdfName.T) != null) {
+                        PdfFormField field = new PdfFormField((PdfDictionary) kid);
+                        field.setValue(value);
+                        if (field.getDefaultAppearance() == null) {
+                            field.font = this.font;
+                            field.fontSize = this.fontSize;
+                            field.color = this.color;
+                        }
+                    }
+                }
+            }
             put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
         } else if (PdfName.Btn.equals(formType)) {
-            if ((getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
+            if (getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
                 try {
                     img = ImageDataFactory.create(Base64.decode(value));
                 } catch (Exception e) {
@@ -1180,15 +1188,16 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
             } else {
                 put(PdfName.V, new PdfName(value));
-                for (String as : getAppearanceStates()) {
-                    if (as.equals(value)) {
-                        put(PdfName.AS, new PdfName(value));
-                        break;
+                for (PdfWidgetAnnotation widget : getWidgets()) {
+                    List<String> states = Arrays
+                            .asList(new PdfFormField(widget.getPdfObject()).getAppearanceStates());
+                    if (states.contains(value)) {
+                        widget.setAppearanceState(new PdfName(value));
+                    } else {
+                        widget.setAppearanceState(new PdfName("Off"));
                     }
                 }
             }
-        } else {
-            put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
         }
 
         if (generateAppearance) {
@@ -1498,6 +1507,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the current value, as a {@link PdfObject}
      */
     public PdfObject getValue() {
+        if(getPdfObject().get(PdfName.T) == null && getParent() != null) {
+            return getParent().get(PdfName.V);
+        }
         return getPdfObject().get(PdfName.V);
     }
 
@@ -1993,211 +2005,17 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return whether or not the regeneration was successful.
      */
     public boolean regenerateField() {
-        PdfName type = getFormType();
-        String value = getValueAsString();
-
-        PdfPage page = null;
-        List<PdfWidgetAnnotation> widgets = getWidgets();
-        if (widgets.size() > 0) {
-            page = widgets.get(0).getPage();
+        boolean result = true;
+        updateDefaultAppearance();
+        for (PdfWidgetAnnotation widget: getWidgets()) {
+            PdfFormField field = new PdfFormField(widget.getPdfObject());
+            copyParamsToKids(field);
+            result &= field.regenerateWidget(this.getValueAsString());
         }
-
-        if (PdfName.Tx.equals(type) || PdfName.Ch.equals(type)) {
-            PdfArray bBox = getBBox();
-
-            //Apply Page rotation
-            int pageRotation = 0;
-            if (page != null) {
-                pageRotation = page.getRotation();
-                //Clockwise, so negative
-                pageRotation *= -1;
-            }
-            PdfArray matrix;
-            if (pageRotation % 90 == 0) {
-                //Cast angle to [-360, 360]
-                double angle = pageRotation % 360;
-                //Get angle in radians
-                angle = degreeToRadians(angle);
-                Rectangle initialBboxRectangle = bBox.toRectangle();
-                //rotate the bounding box
-                Rectangle rect = initialBboxRectangle.clone();
-                //Calculate origin offset
-                double translationWidth = 0;
-                double translationHeight = 0;
-                if (angle >= -1 * Math.PI && angle <= -1 * Math.PI / 2) {
-                    translationWidth = rect.getWidth();
-                }
-                if (angle <= -1 * Math.PI) {
-                    translationHeight = rect.getHeight();
-                }
-
-                //Store rotation and translation in the matrix
-                matrix = new PdfArray(new double[]{Math.cos(angle), -Math.sin(angle), Math.sin(angle), Math.cos(angle), translationWidth, translationHeight});
-                //If the angle is a multiple of 90 and not a multiple of 180, height and width of the bounding box need to be switched
-                if (angle % (Math.PI / 2) == 0 && angle % (Math.PI) != 0) {
-                    rect.setWidth(initialBboxRectangle.getHeight());
-                    rect.setHeight(initialBboxRectangle.getWidth());
-                }
-                // Adapt origin
-                rect.setX(rect.getX() + (float) translationWidth);
-                rect.setY(rect.getY() + (float) translationHeight);
-                //Copy Bounding box
-                bBox = new PdfArray(rect);
-            } else {
-                //Avoid NPE when handling corrupt pdfs
-                Logger logger = LoggerFactory.getLogger(PdfFormField.class);
-                logger.error(LogMessageConstant.INCORRECT_PAGEROTATION);
-                matrix = new PdfArray(new double[]{1, 0, 0, 1, 0, 0});
-            }
-            //Apply field rotation
-            float fieldRotation = 0;
-            if (this.getPdfObject().getAsDictionary(PdfName.MK) != null
-                    && this.getPdfObject().getAsDictionary(PdfName.MK).get(PdfName.R) != null) {
-                fieldRotation = (float) this.getPdfObject().getAsDictionary(PdfName.MK).getAsFloat(PdfName.R);
-                //Get relative field rotation
-                fieldRotation += pageRotation;
-            }
-            if (fieldRotation % 90 == 0) {
-                Rectangle initialBboxRectangle = bBox.toRectangle();
-                //Cast angle to [-360, 360]
-                double angle = fieldRotation % 360;
-                //Get angle in radians
-                angle = degreeToRadians(angle);
-                //Calculate origin offset
-                double translationWidth = calculateTranslationWidthAfterFieldRot(initialBboxRectangle, degreeToRadians(pageRotation), angle);
-                double translationHeight = calculateTranslationHeightAfterFieldRot(initialBboxRectangle, degreeToRadians(pageRotation), angle);
-
-                //Concatenate rotation and translation into the matrix
-                Matrix currentMatrix = new Matrix(matrix.getAsNumber(0).floatValue(), matrix.getAsNumber(1).floatValue(), matrix.getAsNumber(2).floatValue(), matrix.getAsNumber(3).floatValue(), matrix.getAsNumber(4).floatValue(), matrix.getAsNumber(5).floatValue());
-                Matrix toConcatenate = new Matrix((float) Math.cos(angle), (float) (-Math.sin(angle)), (float) (Math.sin(angle)), (float) (Math.cos(angle)), (float) translationWidth, (float) translationHeight);
-                currentMatrix = currentMatrix.multiply(toConcatenate);
-                matrix = new PdfArray(new float[]{currentMatrix.get(0), currentMatrix.get(1), currentMatrix.get(3), currentMatrix.get(4), currentMatrix.get(6), currentMatrix.get(7)});
-
-                //Construct bounding box
-                Rectangle rect = initialBboxRectangle.clone();
-                //If the angle is a multiple of 90 and not a multiple of 180, height and width of the bounding box need to be switched
-                if (angle % (Math.PI / 2) == 0 && angle % (Math.PI) != 0) {
-                    rect.setWidth(initialBboxRectangle.getHeight());
-                    rect.setHeight(initialBboxRectangle.getWidth());
-                }
-                rect.setX(rect.getX() + (float) translationWidth);
-                rect.setY(rect.getY() + (float) translationHeight);
-                //Copy Bounding box
-                bBox = new PdfArray(rect);
-            }
-            //Create appearance
-            Rectangle bboxRectangle = bBox.toRectangle();
-            PdfFormXObject appearance = new PdfFormXObject(new Rectangle(0, 0, bboxRectangle.getWidth(), bboxRectangle.getHeight()));
-            appearance.put(PdfName.Matrix, matrix);
-            //Create text appearance
-            if (PdfName.Tx.equals(type)) {
-                if (isMultiline()) {
-                    drawMultiLineTextAppearance(bboxRectangle, this.font, value, appearance);
-                } else {
-                    drawTextAppearance(bboxRectangle, this.font, getFontSize(bBox, value), value, appearance);
-                }
-            } else {
-                if (!getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
-                    PdfNumber topIndex = this.getPdfObject().getAsNumber(PdfName.TI);
-                    PdfArray options = getOptions();
-                    if (null != options) {
-                        PdfArray visibleOptions = null != topIndex ? new PdfArray(options.subList(topIndex.intValue(), options.size() - 1)) : (PdfArray) options.clone();
-                        value = optionsArrayToString(visibleOptions);
-                    }
-                }
-                drawChoiceAppearance(bboxRectangle, getFontSize(bBox, value), value, appearance);
-                getPdfObject().remove(PdfName.DA);
-            }
-            PdfDictionary ap = new PdfDictionary();
-            ap.put(PdfName.N, appearance.getPdfObject());
-            ap.setModified();
-            put(PdfName.AP, ap);
-
-            updateDefaultAppearance();
-            return true;
-
-        } else if (PdfName.Btn.equals(type)) {
-
-            int ff = getFieldFlags();
-            if ((ff & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
-                value = text;
-                PdfDictionary widget = getPdfObject();
-                PdfFormXObject appearance;
-                Rectangle rect = getRect(getPdfObject());
-                PdfDictionary apDic = getPdfObject().getAsDictionary(PdfName.AP);
-                if (apDic == null) {
-                    if (widgets.size() == 1) {
-                        widget = widgets.get(0).getPdfObject();
-                        apDic = widget.getAsDictionary(PdfName.AP);
-                    }
-                }
-                if (apDic == null) {
-                    put(PdfName.AP, apDic = new PdfDictionary());
-                    widget = getPdfObject();
-                }
-                appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value,
-                        this.font, getFontSize(getBBox(), value));
-
-                apDic.put(PdfName.N, appearance.getPdfObject());
-
-                if (pdfAConformanceLevel != null) {
-                    createPushButtonAppearanceState(widget);
-                }
-            } else if ((ff & PdfButtonFormField.FF_RADIO) != 0) {
-                if (isRadioButton()) {
-                    // TODO DEVSIX-2536
-                    // Actually only radio group has FF_RADIO type.
-                    // This means that only radio group shall have regeneration functionality.
-                    Rectangle rect = getRect(getPdfObject());
-                    value = getRadioButtonValue(value);
-                    if (rect != null && !"".equals(value)) {
-                        drawRadioAppearance(rect.getWidth(), rect.getHeight(), value);
-                    }
-                } else if (getKids() != null) {
-                    for (PdfObject kid : getKids()) {
-                        PdfFormField field = new PdfFormField((PdfDictionary) kid);
-                        PdfWidgetAnnotation widget = field.getWidgets().get(0);
-                        PdfDictionary apStream = field.getPdfObject().getAsDictionary(PdfName.AP);
-                        if (apStream == null) {
-                            //widget annotation was not merged
-
-                            apStream = widget.getPdfObject().getAsDictionary(PdfName.AP);
-                        }
-                        PdfName state;
-                        if (null != apStream && null != getValueFromAppearance(apStream.get(PdfName.N), new PdfName(value))) {
-                            state = new PdfName(value);
-                        } else {
-                            state = new PdfName("Off");
-                        }
-                        widget.setAppearanceState(state);
-                    }
-                }
-            } else {
-                Rectangle rect = getRect(getPdfObject());
-                setCheckType(checkType);
-
-                PdfWidgetAnnotation widget = getWidgets().get(0);
-
-                if (pdfAConformanceLevel != null) {
-                    drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), "Off".equals(value) ? "Yes" : value, checkType);
-                    widget.setFlag(PdfAnnotation.PRINT);
-                } else {
-                    drawCheckAppearance(rect.getWidth(), rect.getHeight(), "Off".equals(value) ? "Yes" : value);
-                }
-
-                if (widget.getNormalAppearanceObject() != null && widget.getNormalAppearanceObject().containsKey(new PdfName(value))) {
-                    widget.setAppearanceState(new PdfName(value));
-                } else {
-                    widget.setAppearanceState(new PdfName("Off"));
-                }
-            }
-
-            updateDefaultAppearance();
-            return true;
-        }
-
-        return false;
+        return result;
     }
+
+
 
     /**
      * Gets the border width for the field.
@@ -2668,7 +2486,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 Logger logger = LoggerFactory.getLogger(PdfFormField.class);
                 logger.error(MessageFormatUtil.format(LogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT));
             }
-            modelCanvas.showTextAligned(new Paragraph(value).addStyle(paragraphStyle).setPaddings(0, X_OFFSET, 0, X_OFFSET),
+            modelCanvas.showTextAligned(createParagraphForTextFieldValue(value).addStyle(paragraphStyle).setPaddings(0, X_OFFSET, 0, X_OFFSET),
                     x, rect.getHeight() / 2, textAlignment, VerticalAlignment.MIDDLE);
         }
         canvas.
@@ -2708,7 +2526,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         Canvas modelCanvas = new Canvas(canvas, getDocument(), areaRect);
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
 
-        Paragraph paragraph = new Paragraph(value).setFont(font)
+        Paragraph paragraph = createParagraphForTextFieldValue(value).setFont(font)
                 .setMargin(0)
                 .setPadding(3)
                 .setMultipliedLeading(1);
@@ -2777,6 +2595,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 paragraph.setFontColor(color);
             }
             PdfArray indices = getPdfObject().getAsArray(PdfName.I);
+            if (indices == null && this.getKids() == null && this.getParent() != null) {
+                indices = this.getParent().getAsArray(PdfName.I);
+            }
             if (indices != null && indices.size() > 0) {
                 for (PdfObject ind : indices) {
                     if (!ind.isNumber())
@@ -2886,15 +2707,17 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         widget.setNormalAppearance(new PdfDictionary());
 
         //On state
-        PdfStream streamOn = (PdfStream) new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
         PdfFormXObject xObjectOn = new PdfFormXObject(rect);
+        if (value != null) {
+            PdfStream streamOn = (PdfStream) new PdfStream().makeIndirect(getDocument());
+            PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
 
-        drawRadioBorder(canvasOn, xObjectOn, width, height);
-        drawRadioField(canvasOn, width, height, true);
+            drawRadioBorder(canvasOn, xObjectOn, width, height);
+            drawRadioField(canvasOn, width, height, true);
 
-        xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
-        widget.getNormalAppearanceObject().put(new PdfName(value), xObjectOn.getPdfObject());
+            xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
+            widget.getNormalAppearanceObject().put(new PdfName(value), xObjectOn.getPdfObject());
+        }
 
         //Off state
         PdfStream streamOff = (PdfStream) new PdfStream().makeIndirect(getDocument());
@@ -2907,7 +2730,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         widget.getNormalAppearanceObject().put(new PdfName("Off"), xObjectOff.getPdfObject());
 
         if (pdfAConformanceLevel != null
-                && (pdfAConformanceLevel.getPart().equals("2") || pdfAConformanceLevel.getPart().equals("3"))) {
+                && ("2".equals(pdfAConformanceLevel.getPart()) || "3".equals(pdfAConformanceLevel.getPart()))) {
             xObjectOn.getResources();
             xObjectOff.getResources();
         }
@@ -2927,7 +2750,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
         Rectangle rect = new Rectangle(0, 0, width, height);
         PdfFormXObject xObject = new PdfFormXObject(rect);
-
 
         drawBorder(canvas, xObject, width, height);
         drawRadioField(canvas, rect.getWidth(), rect.getHeight(), !"Off".equals(value));
@@ -3212,106 +3034,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private static PdfString generateDefaultAppearance(PdfName font, float fontSize, Color textColor) {
-        assert font != null;
-
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        PdfOutputStream pdfStream = new PdfOutputStream(new OutputStream<>(output));
-        final byte[] g = new byte[]{(byte) 'g'};
-        final byte[] rg = new byte[]{(byte) 'r', (byte) 'g'};
-        final byte[] k = new byte[]{(byte) 'k'};
-        final byte[] Tf = new byte[]{(byte) 'T', (byte) 'f'};
-
-        pdfStream.write(font)
-                .writeSpace()
-                .writeFloat(fontSize).writeSpace()
-                .writeBytes(Tf);
-
-        if (textColor != null) {
-            if (textColor instanceof DeviceGray) {
-                pdfStream.writeSpace()
-                        .writeFloats(textColor.getColorValue())
-                        .writeSpace()
-                        .writeBytes(g);
-            } else if (textColor instanceof DeviceRgb) {
-                pdfStream.writeSpace()
-                        .writeFloats(textColor.getColorValue())
-                        .writeSpace()
-                        .writeBytes(rg);
-            } else if (textColor instanceof DeviceCmyk) {
-                pdfStream.writeSpace()
-                        .writeFloats(textColor.getColorValue())
-                        .writeSpace()
-                        .writeBytes(k);
-            } else {
-                Logger logger = LoggerFactory.getLogger(PdfFormField.class);
-                logger.error(LogMessageConstant.UNSUPPORTED_COLOR_IN_DA);
+    private String getRadioButtonValue() {
+        for (String state : getAppearanceStates()) {
+            if (!"Off".equals(state)) {
+                return state;
             }
         }
-        return new PdfString(output.toByteArray());
-    }
-
-    private static boolean isWidgetAnnotation(PdfDictionary pdfObject) {
-        return pdfObject != null && PdfName.Widget.equals(pdfObject.getAsName(PdfName.Subtype));
-    }
-
-    private static void createPushButtonAppearanceState(PdfDictionary widget) {
-        PdfDictionary appearances = widget.getAsDictionary(PdfName.AP);
-        PdfStream normalAppearanceStream = appearances.getAsStream(PdfName.N);
-        if (normalAppearanceStream != null) {
-            PdfName stateName = widget.getAsName(PdfName.AS);
-            if (stateName == null) {
-                stateName = new PdfName("push");
-            }
-            widget.put(PdfName.AS, stateName);
-            PdfDictionary normalAppearance = new PdfDictionary();
-            normalAppearance.put(stateName, normalAppearanceStream);
-            appearances.put(PdfName.N, normalAppearance);
-        }
-    }
-
-    private PdfArray getBBox() {
-        PdfArray bBox = getPdfObject().getAsArray(PdfName.Rect);
-        if (bBox == null) {
-            PdfArray kids = getKids();
-            if (kids == null) {
-                throw new PdfException(PdfException.WrongFormFieldAddAnnotationToTheField);
-            }
-            bBox = ((PdfDictionary) kids.get(0)).getAsArray(PdfName.Rect);
-        }
-        return bBox;
-    }
-
-    // TODO DEVSIX-2536
-    // Actually this entire method is a mess,
-    // because only radio group has FF_RADIO type and there is no RadioButton at all.
-    // So the goal of that method is just to save backward compatibility until refactoring.
-    private boolean isRadioButton() {
-        if (isWidgetAnnotation(getPdfObject())) {
-            return true;
-        } else if (getPdfObject().getAsName(PdfName.V) != null) {
-            return false;
-        } else if (getKids() != null) {
-            return isWidgetAnnotation(getKids().getAsDictionary(0));
-        } else {
-            return false;
-        }
-    }
-
-    private String getRadioButtonValue(String value) {
-        //Otherwise something wrong with getValueAsString().
-        assert value != null;
-        if ("".equals(value)) {
-            //let it as default value
-            value = "Yes";
-            for (String state : getAppearanceStates()) {
-                if (!"Off".equals(state)) {
-                    value = state;
-                    break;
-                }
-            }
-        }
-        return value;
+        return null;
     }
 
     private float getFontSize(PdfArray bBox, String value) {
@@ -3601,27 +3330,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private static String optionsArrayToString(PdfArray options) {
-        StringBuilder sb = new StringBuilder();
-        for (PdfObject obj : options) {
-            if (obj.isString()) {
-                sb.append(((PdfString) obj).toUnicodeString()).append('\n');
-            } else if (obj.isArray()) {
-                PdfObject element = ((PdfArray) obj).get(1);
-                if (element.isString()) {
-                    sb.append(((PdfString) element).toUnicodeString()).append('\n');
-                }
-            }
-        }
-        // last '\n'
-        sb.deleteCharAt(sb.length() - 1);
-        return sb.toString();
-    }
-
-    private static double degreeToRadians(double angle) {
-        return Math.PI * angle / 180.0;
-    }
-
     private PdfObject getValueFromAppearance(PdfObject appearanceDict, PdfName key) {
         if (appearanceDict instanceof PdfDictionary) {
             return ((PdfDictionary) appearanceDict).get(key);
@@ -3686,5 +3394,312 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             }
         }
         return null;
+    }
+
+    private void regeneratePushButtonField() {
+        PdfDictionary widget = getPdfObject();
+        PdfFormXObject appearance;
+        Rectangle rect = getRect(widget);
+        PdfDictionary apDic = widget.getAsDictionary(PdfName.AP);
+
+        if (apDic == null) {
+            put(PdfName.AP, apDic = new PdfDictionary());
+        }
+        appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), this.text,
+                this.font, getFontSize(widget.getAsArray(PdfName.Rect), this.text));
+
+        apDic.put(PdfName.N, appearance.getPdfObject());
+
+        if (pdfAConformanceLevel != null) {
+            createPushButtonAppearanceState(widget);
+        }
+    }
+
+    private void regenerateRadioButtonField() {
+        Rectangle rect = getRect(getPdfObject());
+        String value = getRadioButtonValue();
+        if (rect != null && !"".equals(value)) {
+            drawRadioAppearance(rect.getWidth(), rect.getHeight(), value);
+        }
+    }
+
+    private void regenerateCheckboxField(String value) {
+        Rectangle rect = getRect(getPdfObject());
+        setCheckType(checkType);
+
+        PdfWidgetAnnotation widget = (PdfWidgetAnnotation) PdfAnnotation.makeAnnotation(getPdfObject());
+
+        if (pdfAConformanceLevel != null) {
+            drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), "Off".equals(value) ? "Yes" : value, checkType);
+            widget.setFlag(PdfAnnotation.PRINT);
+        } else {
+            drawCheckAppearance(rect.getWidth(), rect.getHeight(), "Off".equals(value) ? "Yes" : value);
+        }
+
+        if (widget.getNormalAppearanceObject() != null && widget.getNormalAppearanceObject().containsKey(new PdfName(value))) {
+            widget.setAppearanceState(new PdfName(value));
+        } else {
+            widget.setAppearanceState(new PdfName("Off"));
+        }
+    }
+
+    private boolean regenerateTextAndChoiceField(String value, PdfName type) {
+        PdfPage page = PdfWidgetAnnotation.makeAnnotation(getPdfObject()).getPage();
+        PdfArray bBox = getPdfObject().getAsArray(PdfName.Rect);
+
+        //Apply Page rotation
+        int pageRotation = 0;
+        if (page != null) {
+            pageRotation = page.getRotation();
+            //Clockwise, so negative
+            pageRotation *= -1;
+        }
+        PdfArray matrix;
+        if (pageRotation % 90 == 0) {
+            //Cast angle to [-360, 360]
+            double angle = pageRotation % 360;
+            //Get angle in radians
+            angle = degreeToRadians(angle);
+            Rectangle initialBboxRectangle = bBox.toRectangle();
+            //rotate the bounding box
+            Rectangle rect = initialBboxRectangle.clone();
+            //Calculate origin offset
+            double translationWidth = 0;
+            double translationHeight = 0;
+            if (angle >= -1 * Math.PI && angle <= -1 * Math.PI / 2) {
+                translationWidth = rect.getWidth();
+            }
+            if (angle <= -1 * Math.PI) {
+                translationHeight = rect.getHeight();
+            }
+
+            //Store rotation and translation in the matrix
+            matrix = new PdfArray(new double[]{Math.cos(angle), -Math.sin(angle), Math.sin(angle), Math.cos(angle), translationWidth, translationHeight});
+            //If the angle is a multiple of 90 and not a multiple of 180, height and width of the bounding box need to be switched
+            if (angle % (Math.PI / 2) == 0 && angle % (Math.PI) != 0) {
+                rect.setWidth(initialBboxRectangle.getHeight());
+                rect.setHeight(initialBboxRectangle.getWidth());
+            }
+            // Adapt origin
+            rect.setX(rect.getX() + (float) translationWidth);
+            rect.setY(rect.getY() + (float) translationHeight);
+            //Copy Bounding box
+            bBox = new PdfArray(rect);
+        } else {
+            //Avoid NPE when handling corrupt pdfs
+            Logger logger = LoggerFactory.getLogger(PdfFormField.class);
+            logger.error(LogMessageConstant.INCORRECT_PAGEROTATION);
+            matrix = new PdfArray(new double[]{1, 0, 0, 1, 0, 0});
+        }
+        //Apply field rotation
+        float fieldRotation = 0;
+        if (this.getPdfObject().getAsDictionary(PdfName.MK) != null
+                && this.getPdfObject().getAsDictionary(PdfName.MK).get(PdfName.R) != null) {
+            fieldRotation = (float) this.getPdfObject().getAsDictionary(PdfName.MK).getAsFloat(PdfName.R);
+            //Get relative field rotation
+            fieldRotation += pageRotation;
+        }
+        if (fieldRotation % 90 == 0) {
+            Rectangle initialBboxRectangle = bBox.toRectangle();
+            //Cast angle to [-360, 360]
+            double angle = fieldRotation % 360;
+            //Get angle in radians
+            angle = degreeToRadians(angle);
+            //Calculate origin offset
+            double translationWidth = calculateTranslationWidthAfterFieldRot(initialBboxRectangle, degreeToRadians(pageRotation), angle);
+            double translationHeight = calculateTranslationHeightAfterFieldRot(initialBboxRectangle, degreeToRadians(pageRotation), angle);
+
+            //Concatenate rotation and translation into the matrix
+            Matrix currentMatrix = new Matrix(matrix.getAsNumber(0).floatValue(), matrix.getAsNumber(1).floatValue(), matrix.getAsNumber(2).floatValue(), matrix.getAsNumber(3).floatValue(), matrix.getAsNumber(4).floatValue(), matrix.getAsNumber(5).floatValue());
+            Matrix toConcatenate = new Matrix((float) Math.cos(angle), (float) (-Math.sin(angle)), (float) (Math.sin(angle)), (float) (Math.cos(angle)), (float) translationWidth, (float) translationHeight);
+            currentMatrix = currentMatrix.multiply(toConcatenate);
+            matrix = new PdfArray(new float[]{currentMatrix.get(0), currentMatrix.get(1), currentMatrix.get(3), currentMatrix.get(4), currentMatrix.get(6), currentMatrix.get(7)});
+
+            //Construct bounding box
+            Rectangle rect = initialBboxRectangle.clone();
+            //If the angle is a multiple of 90 and not a multiple of 180, height and width of the bounding box need to be switched
+            if (angle % (Math.PI / 2) == 0 && angle % (Math.PI) != 0) {
+                rect.setWidth(initialBboxRectangle.getHeight());
+                rect.setHeight(initialBboxRectangle.getWidth());
+            }
+            rect.setX(rect.getX() + (float) translationWidth);
+            rect.setY(rect.getY() + (float) translationHeight);
+            //Copy Bounding box
+            bBox =  new PdfArray(rect);
+        }
+        //Create appearance
+        Rectangle bboxRectangle = bBox.toRectangle();
+        PdfFormXObject appearance = new PdfFormXObject(new Rectangle(0, 0, bboxRectangle.getWidth(), bboxRectangle.getHeight()));
+        appearance.put(PdfName.Matrix, matrix);
+        //Create text appearance
+        if (PdfName.Tx.equals(type)) {
+            if (isMultiline()) {
+                drawMultiLineTextAppearance(bboxRectangle, this.font, value, appearance);
+            } else {
+                drawTextAppearance(bboxRectangle, this.font, getFontSize(bBox, value), value, appearance);
+            }
+        } else {
+            if (!getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
+                PdfNumber topIndex = this.getPdfObject().getAsNumber(PdfName.TI);
+                if (topIndex == null && this.getParent() != null) {
+                    topIndex = this.getParent().getAsNumber(PdfName.TI);
+                }
+                PdfArray options = getOptions();
+                if (null == options && this.getParent() != null) {
+                    options = this.getParent().getAsArray(PdfName.Opt);
+                }
+                if (null != options) {
+                    PdfArray visibleOptions = null != topIndex ? new PdfArray(options.subList(topIndex.intValue(), options.size() - 1)) : (PdfArray) options.clone();
+                    value = optionsArrayToString(visibleOptions);
+                }
+            }
+            drawChoiceAppearance(bboxRectangle, getFontSize(bBox, value), value, appearance);
+        }
+        PdfDictionary ap = new PdfDictionary();
+        ap.put(PdfName.N, appearance.getPdfObject());
+        ap.setModified();
+        put(PdfName.AP, ap);
+
+        return true;
+    }
+
+    private void copyParamsToKids(PdfFormField child) {
+        if (child.checkType <= 0 || child.checkType > 5) {
+            child.checkType = this.checkType;
+        }
+        if (child.getDefaultAppearance() == null) {
+            child.font = this.font;
+            child.fontSize = this.fontSize;
+        }
+        if (child.color == null) {
+            child.color = this.color;
+        }
+        if (child.text == null) {
+            child.text = this.text;
+        }
+        if (child.img == null) {
+            child.img = this.img;
+        }
+        if (child.borderWidth == 1) {
+            child.borderWidth = this.borderWidth;
+        }
+        if (child.backgroundColor == null) {
+            child.backgroundColor = this.backgroundColor;
+        }
+        if (child.borderColor == null) {
+            child.borderColor = this.borderColor;
+        }
+        if (child.rotation == 0) {
+            child.rotation = this.rotation;
+        }
+        if (child.pdfAConformanceLevel == null) {
+            child.pdfAConformanceLevel = this.pdfAConformanceLevel;
+        }
+        if (child.form == null) {
+            child.form = this.form;
+        }
+    }
+
+    private boolean regenerateWidget(String value) {
+        PdfName type = getFormType();
+
+        if (PdfName.Tx.equals(type) || PdfName.Ch.equals(type)) {
+            return regenerateTextAndChoiceField(value, type);
+        } else if (PdfName.Btn.equals(type)) {
+            if (getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
+                regeneratePushButtonField();
+            } else if (getFieldFlag(PdfButtonFormField.FF_RADIO)) {
+                regenerateRadioButtonField();
+            } else {
+                regenerateCheckboxField(value);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static String optionsArrayToString(PdfArray options) {
+        StringBuilder sb = new StringBuilder();
+        for (PdfObject obj : options) {
+            if (obj.isString()) {
+                sb.append(((PdfString) obj).toUnicodeString()).append('\n');
+            } else if (obj.isArray()) {
+                PdfObject element = ((PdfArray) obj).get(1);
+                if (element.isString()) {
+                    sb.append(((PdfString) element).toUnicodeString()).append('\n');
+                }
+            }
+        }
+        // last '\n'
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
+    }
+
+    private static double degreeToRadians(double angle) {
+        return Math.PI * angle / 180.0;
+    }
+
+    private static PdfString generateDefaultAppearance(PdfName font, float fontSize, Color textColor) {
+        assert font != null;
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PdfOutputStream pdfStream = new PdfOutputStream(new OutputStream<>(output));
+        final byte[] g = new byte[]{(byte) 'g'};
+        final byte[] rg = new byte[]{(byte) 'r', (byte) 'g'};
+        final byte[] k = new byte[]{(byte) 'k'};
+        final byte[] Tf = new byte[]{(byte) 'T', (byte) 'f'};
+
+        pdfStream.write(font)
+                .writeSpace()
+                .writeFloat(fontSize).writeSpace()
+                .writeBytes(Tf);
+
+        if (textColor != null) {
+            if (textColor instanceof DeviceGray) {
+                pdfStream.writeSpace()
+                        .writeFloats(textColor.getColorValue())
+                        .writeSpace()
+                        .writeBytes(g);
+            } else if (textColor instanceof DeviceRgb) {
+                pdfStream.writeSpace()
+                        .writeFloats(textColor.getColorValue())
+                        .writeSpace()
+                        .writeBytes(rg);
+            } else if (textColor instanceof DeviceCmyk) {
+                pdfStream.writeSpace()
+                        .writeFloats(textColor.getColorValue())
+                        .writeSpace()
+                        .writeBytes(k);
+            } else {
+                Logger logger = LoggerFactory.getLogger(PdfFormField.class);
+                logger.error(LogMessageConstant.UNSUPPORTED_COLOR_IN_DA);
+            }
+        }
+        return new PdfString(output.toByteArray());
+    }
+
+    private static boolean isWidgetAnnotation(PdfDictionary pdfObject) {
+        return pdfObject != null && PdfName.Widget.equals(pdfObject.getAsName(PdfName.Subtype));
+    }
+
+    private static void createPushButtonAppearanceState(PdfDictionary widget) {
+        PdfDictionary appearances = widget.getAsDictionary(PdfName.AP);
+        PdfStream normalAppearanceStream = appearances.getAsStream(PdfName.N);
+        if (normalAppearanceStream != null) {
+            PdfName stateName = widget.getAsName(PdfName.AS);
+            if (stateName == null) {
+                stateName = new PdfName("push");
+            }
+            widget.put(PdfName.AS, stateName);
+            PdfDictionary normalAppearance = new PdfDictionary();
+            normalAppearance.put(stateName, normalAppearanceStream);
+            appearances.put(PdfName.N, normalAppearance);
+        }
+    }
+
+    private static Paragraph createParagraphForTextFieldValue(String value) {
+        Text text = new Text(value);
+        text.setNextRenderer(new FormFieldValueNonTrimmingTextRenderer(text));
+        return new Paragraph(text);
     }
 }

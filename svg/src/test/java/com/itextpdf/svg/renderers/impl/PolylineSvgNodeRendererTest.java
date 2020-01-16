@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -183,7 +183,6 @@ public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO update cmp-file after DEVSIX-2240 fixed
     public void elementDimensionExceedsViewboxBoundaryTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "elementDimensionExceedsViewboxBoundary");
     }

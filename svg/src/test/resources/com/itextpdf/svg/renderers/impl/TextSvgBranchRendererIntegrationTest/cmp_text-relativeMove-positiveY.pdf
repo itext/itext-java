@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191008180152+03'00')/ModDate(D:20191008180152+03'00')/Producer(iText® 7.1.9-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20191112172023+03'00')/ModDate(D:20191112172023+03'00')/Producer(iText® 7.1.9-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,12 +36,13 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 225 75]/Length 402/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 225 75]/Length 423/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 225 75 re
 W
 n
 q
 0 0 0 RG
+0.75 w
 % rect
 0 0 225 75 re
 S
@@ -51,6 +52,7 @@ q
 0 0 0 rg
 q
 0 0 0 RG
+0.75 w
 % line
 0 0 m
 0 37.5 l
@@ -58,6 +60,7 @@ S
 Q
 q
 0 0 0 RG
+0.75 w
 % ellipse
 3.75 37.5 m
 3.75 39.57 2.07 41.25 0 41.25 c
@@ -99,8 +102,8 @@ xref
 0000000578 00000 n 
 0000000759 00000 n 
 trailer
-<</ID [<e84f36fce4ef97c821efbc4948405410><e84f36fce4ef97c821efbc4948405410>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<a30db93947467839d705920cd443fca7><a30db93947467839d705920cd443fca7>]/Info 3 0 R/Root 1 0 R/Size 9>>
 %iText-7.1.9-SNAPSHOT
 startxref
-1284
+1305
 %%EOF

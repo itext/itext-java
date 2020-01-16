@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -170,6 +170,30 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_formFieldTest04.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void textFieldLeadingSpacesAreNotTrimmedTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "textFieldLeadingSpacesAreNotTrimmed.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        pdfDoc.addNewPage();
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        PdfPage page = pdfDoc.getFirstPage();
+        Rectangle rect = new Rectangle(210, 490, 300, 22);
+
+        PdfTextFormField field = PdfFormField.createText(pdfDoc, rect, "TestField", "        value with leading space");
+
+        form.addField(field, page);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_textFieldLeadingSpacesAreNotTrimmed.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
@@ -807,7 +831,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT, count = 2)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT)})
     public void noMaxLenWithSetCombFlagTest() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "noMaxLenWithSetCombFlagTest.pdf";
         String cmpPdf = sourceFolder + "cmp_noMaxLenWithSetCombFlagTest.pdf";
@@ -1155,30 +1179,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Assert.assertEquals(field, thirdPageAnnots.get(0));
     }
 
-    @Test
-    //TODO update cmp-file after DEVSIX-3077 fixed
-    public void createFieldInAppendModeTest() throws IOException, InterruptedException {
-        String file = destinationFolder + "blank.pdf";
-
-        PdfDocument document = new PdfDocument(new PdfWriter(file));
-        document.addNewPage();
-        PdfAcroForm.getAcroForm(document, true);
-        document.close();
-
-        PdfReader reader = new PdfReader(file);
-        PdfWriter writer1 = new PdfWriter(destinationFolder + "createFieldInAppendModeTest.pdf");
-        PdfDocument doc = new PdfDocument(reader, writer1, new StampingProperties().useAppendMode());
-        PdfFormField field = PdfFormField.createCheckBox(
-                doc,
-                new Rectangle(10, 10, 24, 24),
-                "checkboxname", "On",
-                PdfFormField.TYPE_CHECK);
-        PdfAcroForm.getAcroForm(doc, true).addField(field);
-        doc.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "createFieldInAppendModeTest.pdf", sourceFolder + "cmp_" + "createFieldInAppendModeTest.pdf", destinationFolder, "diff_"));
-    }
-
     private void createAcroForm(PdfDocument pdfDoc, PdfAcroForm form, PdfFont font, String text, int offSet) {
         for (int x = offSet; x < (offSet + 3); x++) {
             Rectangle rect = new Rectangle(100 + (30 * x), 100 + (100 * x), 55, 30);
@@ -1263,10 +1263,9 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO update cmp-file after DEVSIX-2622 fixed
     public void fillUnmergedTextFormField() throws IOException, InterruptedException {
         String file = sourceFolder + "fillUnmergedTextFormField.pdf";
-        String outfile = destinationFolder + "outfile.pdf";
+        String outfile = destinationFolder + "fillUnmergedTextFormField.pdf";
         String text = "John";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(file), new PdfWriter(outfile));
@@ -1274,7 +1273,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "outfile.pdf",
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "fillUnmergedTextFormField.pdf",
                 sourceFolder + "cmp_" + "fillUnmergedTextFormField.pdf", destinationFolder, "diff_"));
     }
 

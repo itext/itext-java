@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -412,6 +412,8 @@ public final class FontSet {
      * Gets available fonts.
      * <p>
      * Note, the collection is unmodifiable.
+     *
+     * @return set of all available fonts
      */
     public Collection<FontInfo> getFonts() {
         return getFonts(null);
@@ -422,7 +424,8 @@ public final class FontSet {
      * <p>
      * Note, the collection is unmodifiable.
      *
-     * @param tempFonts
+     * @param tempFonts set of temporary fonts
+     * @return set of all available and temporary fonts
      */
     public Collection<FontInfo> getFonts(FontSet tempFonts) {
         return new FontSetCollection(fonts, tempFonts != null ? tempFonts.fonts : null);

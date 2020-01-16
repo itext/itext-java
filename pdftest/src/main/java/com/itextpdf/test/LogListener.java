@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -50,9 +50,12 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
+import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.read.ListAppender;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
+
+import java.util.Map;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.slf4j.ILoggerFactory;
@@ -70,6 +73,8 @@ public class LogListener extends TestWatcher {
 
     private final ILoggerFactory lc = LoggerFactory.getILoggerFactory();
 
+    private Map<Logger, Map<String, Appender<ILoggingEvent>>> appenders;
+
     @Override
     protected void starting(Description description) {
         before();
@@ -85,7 +90,7 @@ public class LogListener extends TestWatcher {
         List<ILoggingEvent> list = listAppender.list;
         int index = 0;
         for (ILoggingEvent event : list) {
-            if (LogListenerHelper.equalsMessageByTemplate(event.getFormattedMessage(), loggingStatement)) {
+            if (LoggerHelper.equalsMessageByTemplate(event.getFormattedMessage(), loggingStatement)) {
                 index++;
             }
         }
@@ -98,6 +103,10 @@ public class LogListener extends TestWatcher {
 
     private void before() {
         listAppender.list.clear();
+
+        // LoggerContext#reset method resets more parameters than appenders,
+        // like turbofilters, listeners, etc. But currently it is important to save only appenders.
+        appenders = LoggerHelper.getAllAppendersMap((LoggerContext) lc);
         resetLoggingContext();
         addAppenderToPackage();
         listAppender.start();
@@ -106,6 +115,7 @@ public class LogListener extends TestWatcher {
     private void after() {
         listAppender.stop();
         resetLoggingContext();
+        LoggerHelper.restoreAppenders(appenders);
     }
 
     private void addAppenderToPackage() {
@@ -124,21 +134,21 @@ public class LogListener extends TestWatcher {
     }
 
     private void checkLogMessages(Description description) {
-        LogMessages logMessages = LogListenerHelper.getTestAnnotation(description, LogMessages.class);
+        LogMessages logMessages = LoggerHelper.getTestAnnotation(description, LogMessages.class);
         int checkedMessages = 0;
         if (logMessages != null) {
             LogMessage[] messages = logMessages.messages();
             for (LogMessage logMessage : messages) {
                 int foundCount = contains(logMessage.messageTemplate());
                 if (foundCount != logMessage.count() && !logMessages.ignore()) {
-                    LogListenerHelper.failWrongMessageCount(logMessage.count(), foundCount, logMessage.messageTemplate(), description);
+                    LoggerHelper.failWrongMessageCount(logMessage.count(), foundCount, logMessage.messageTemplate(), description);
                 } else {
                     checkedMessages += foundCount;
                 }
             }
         }
         if (getSize() > checkedMessages) {
-            LogListenerHelper.failWrongTotalCount(getSize(), checkedMessages, description);
+            LoggerHelper.failWrongTotalCount(getSize(), checkedMessages, description);
         }
     }
 

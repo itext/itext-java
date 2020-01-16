@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -226,7 +226,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             processKids(kids, fieldDic, page);
         }
 
-        getFields().add(fieldDic);
+        PdfArray fieldsArray = getFields();
+        fieldsArray.add(fieldDic);
+        fieldsArray.setModified();
+
         fields.put(field.getFieldName().toUnicodeString(), field);
         if (field.getKids() != null) {
             iterateFields(field.getKids(), fields);
@@ -236,6 +239,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             PdfAnnotation annot = PdfAnnotation.makeAnnotation(fieldDic);
             addWidgetAnnotationToPage(page, annot);
         }
+        
+        setModified();
     }
 
     /**
@@ -313,10 +318,11 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     public PdfAcroForm setNeedAppearances(boolean needAppearances) {
         if (VersionConforming.validatePdfVersionForDeprecatedFeatureLogError(document, PdfVersion.PDF_2_0, VersionConforming.DEPRECATED_NEED_APPEARANCES_IN_ACROFORM)) {
             getPdfObject().remove(PdfName.NeedAppearances);
-            return this;
+            setModified();
         } else {
-            return put(PdfName.NeedAppearances, PdfBoolean.valueOf(needAppearances));
+            put(PdfName.NeedAppearances, PdfBoolean.valueOf(needAppearances));
         }
+        return this;
     }
 
     /**
@@ -598,6 +604,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     public void setGenerateAppearance(boolean generateAppearance) {
         if (generateAppearance) {
             getPdfObject().remove(PdfName.NeedAppearances);
+            setModified();
         }
         this.generateAppearance = generateAppearance;
     }
@@ -766,8 +773,11 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
         PdfDictionary parent = field.getParent();
         if (parent != null) {
-            parent.getAsArray(PdfName.Kids).remove(fieldObject);
+            PdfArray kids = parent.getAsArray(PdfName.Kids);
+            kids.remove(fieldObject);
             fields.remove(fieldName);
+            kids.setModified();
+            parent.setModified();
             return true;
         }
 
@@ -775,6 +785,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         if (fieldsPdfArray.contains(fieldObject)) {
             fieldsPdfArray.remove(fieldObject);
             this.fields.remove(fieldName);
+            fieldsPdfArray.setModified();
+            setModified();
             return true;
         }
         return false;
@@ -1000,6 +1012,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfAcroForm put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
         return this;
     }
 

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -304,8 +304,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * actual page tags.
      */
     public Collection<PdfMcr> getPageMarkedContentReferences(PdfPage page) {
-        Map<Integer, PdfMcr> pageMcrs = getParentTreeHandler().getPageMarkedContentReferences(page);
-        return pageMcrs != null ? Collections.unmodifiableCollection(pageMcrs.values()) : null;
+        ParentTreeHandler.PageMcrsContainer pageMcrs = getParentTreeHandler().getPageMarkedContentReferences(page);
+        return pageMcrs != null ? Collections.unmodifiableCollection(pageMcrs.getAllMcrsAsCollection()) : null;
     }
 
     public PdfMcr findMcrByMcid(PdfDictionary pageDict, int mcid) {

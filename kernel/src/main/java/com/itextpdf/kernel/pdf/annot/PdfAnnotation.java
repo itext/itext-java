@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -63,6 +63,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.layer.IPdfOCG;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -916,7 +917,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * title bar of the annotation’s pop-up window when open and active. For movie annotation Movie actions
      * (ISO-320001 12.6.4.9, "Movie Actions") may use this title to reference the movie annotation.
      *
-     * @return {@link PdfString} which value is an annotation title or null if it isn't specifed.
+     * @return {@link PdfString} which value is an annotation title or null if it isn't specified.
      */
     public PdfString getTitle() {
         return getPdfObject().getAsString(PdfName.T);

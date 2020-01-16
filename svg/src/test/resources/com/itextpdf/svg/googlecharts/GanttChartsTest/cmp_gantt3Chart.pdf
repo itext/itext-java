@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191021101016+03'00')/ModDate(D:20191021101016+03'00')/Producer(iText® 7.1.9-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20191219144547+03'00')/ModDate(D:20191219144547+03'00')/Producer(iText® 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
 endobj
 7 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -39,7 +39,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 824.25 206.25]/Length 7222/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 824.25 206.25]/Length 7101/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 824.25 206.25 re
 W
 n
@@ -288,8 +288,7 @@ q
 % path
 267.49 25.5 m
 267.49 25.5 l
-267.49 31.27 269.79 36.8 273.87 40.88 c
-277.94 44.96 283.48 47.25 289.24 47.25 c
+267.49 37.51 277.23 47.25 289.24 47.25 c
 500.1 47.25 l
 495.86 43.01 m
 500.85 47.25 l
@@ -318,8 +317,7 @@ q
 % path
 267.49 25.5 m
 267.49 87.75 l
-267.49 93.72 269.87 99.44 274.08 103.66 c
-278.3 107.88 284.03 110.25 289.99 110.25 c
+267.49 100.18 277.57 110.25 289.99 110.25 c
 500.1 110.25 l
 495.86 106.01 m
 500.85 110.25 l
@@ -332,8 +330,7 @@ q
 % path
 267.49 25.5 m
 267.49 56.25 l
-267.49 62.22 269.87 67.94 274.08 72.16 c
-278.3 76.38 284.03 78.75 289.99 78.75 c
+267.49 68.68 277.57 78.75 289.99 78.75 c
 420.57 78.75 l
 416.33 74.51 m
 421.32 78.75 l
@@ -665,17 +662,17 @@ xref
 0 10
 0000000000 65535 f 
 0000000226 00000 n 
-0000000616 00000 n 
+0000000617 00000 n 
 0000000271 00000 n 
 0000000089 00000 n 
 0000000015 00000 n 
-0000000527 00000 n 
-0000000437 00000 n 
-0000000667 00000 n 
-0000000859 00000 n 
+0000000528 00000 n 
+0000000438 00000 n 
+0000000668 00000 n 
+0000000860 00000 n 
 trailer
-<</ID [<57c2dfb0f3c6cf4974a034d2217ce293><57c2dfb0f3c6cf4974a034d2217ce293>]/Info 3 0 R/Root 1 0 R/Size 10>>
-%iText-7.1.9-SNAPSHOT
+<</ID [<63bce69de3d82b5f9502f928afc40c84><63bce69de3d82b5f9502f928afc40c84>]/Info 3 0 R/Root 1 0 R/Size 10>>
+%iText-7.1.10-SNAPSHOT
 startxref
-8221
+8101
 %%EOF

@@ -59,3 +59,4 @@ port-hash text eol=lf
 *.wmf binary
 *.woff binary
 *.woff2 binary
+*.dat binary

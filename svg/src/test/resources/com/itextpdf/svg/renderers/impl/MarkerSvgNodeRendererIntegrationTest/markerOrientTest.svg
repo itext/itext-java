@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="255" height="240" viewBox="0 0 200 200" >
+<defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
+            markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="red" />
+    </marker>
+	<marker id="arrow1" viewBox="0 0 10 10" refX="5" refY="5"
+            markerWidth="6" markerHeight="6"
+            orient="auto">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="orange" />
+    </marker>
+	<marker id="arrow2" viewBox="0 0 10 10" refX="5" refY="5"
+            markerWidth="6" markerHeight="6"
+            orient="0">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="yellow" />
+    </marker>
+	<marker id="arrow3" viewBox="0 0 10 10" refX="5" refY="5"
+            markerWidth="6" markerHeight="6"
+            orient="10in">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="green" />
+    </marker>
+	<marker id="arrow4" viewBox="0 0 10 10" refX="5" refY="5"
+            markerWidth="6" markerHeight="6"
+            orient="10">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="blue" />
+    </marker>
+	<marker id="arrow5" viewBox="0 0 10 10" refX="5" refY="5"
+            markerWidth="6" markerHeight="6"
+            orient="10em">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="darkblue" />
+    </marker>
+	<marker id="arrow6" viewBox="0 0 10 10" refX="5" refY="5"
+            markerWidth="6" markerHeight="6"
+            orient="10%">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="purple" />
+    </marker>
+	<marker id="arrow7" viewBox="0 0 10 10" refX="5" refY="5"
+            markerWidth="6" markerHeight="6"
+            orient="210deg">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="red" />
+    </marker>
+	<marker id="arrow8" viewBox="0 0 10 10" refX="5" refY="5"
+            markerWidth="6" markerHeight="6"
+            orient="-30">
+			<path d="M 0 0 L 10 5 L 0 10 z" fill="orange" />
+    </marker>
+	<marker id="arrow9" viewBox="0 0 10 10" refX="5" refY="5"
+            markerWidth="6" markerHeight="6"
+            orient="10pt">
+			<path d="M 0 0 L 10 5 L 0 10 z" fill="yellow" />
+    </marker>
+</defs>
+
+    <polyline points="10,10 10,90 80,80" fill="none" stroke="black"
+          marker-start="url(#arrow)" marker-end="url(#arrow1)" />
+		 <text x="12" y="12" font-size="5">orient="auto-start-reverse"</text>
+		 <text x="83" y="82" font-size="5">orient="auto"</text>
+	<polyline points="10,90 20,20" fill="none" stroke="black"
+           marker-end="url(#arrow2)"  />
+		   <text x="23" y="22" font-size="5">orient="0"</text>
+	<polyline points="10,90 30,30" fill="none" stroke="black"
+           marker-end="url(#arrow3)"  />
+		   <text x="32" y="32" font-size="5">orient="10in"</text>
+	<polyline points="10,90 40,40" fill="none" stroke="black"
+           marker-end="url(#arrow4)"  />
+		   <text x="43" y="42" font-size="5">orient="10"</text>
+	<polyline points="10,90 50,50" fill="none" stroke="black"
+           marker-end="url(#arrow5)"  />
+		   <text x="53" y="52" font-size="5">orient="10em"</text>
+	<polyline points="10,90 60,60" fill="none" stroke="black"
+           marker-end="url(#arrow6)"  />
+		   <text x="63" y="62" font-size="5">orient="10%"</text>
+	<polyline points="10,90 70,70" fill="none" stroke="black"
+           marker-end="url(#arrow7)"  />
+		   <text x="74" y="72" font-size="5">orient="210deg"</text>
+    <polyline points="10,90 85,90" fill="none" stroke="black"
+           marker-end="url(#arrow8)"  />
+		   <text x="94" y="92" font-size="5">orient="-30"</text>
+    <polyline points="10,90 80,100" fill="none" stroke="black"
+           marker-end="url(#arrow9)"  />
+		   <text x="84" y="102" font-size="5">orient="10pt"</text>
+</svg>

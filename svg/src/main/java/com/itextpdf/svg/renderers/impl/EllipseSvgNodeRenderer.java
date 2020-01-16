@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -60,37 +60,43 @@ public class EllipseSvgNodeRenderer extends AbstractSvgNodeRenderer {
     protected void doDraw(SvgDrawContext context) {
         PdfCanvas cv = context.getCurrentCanvas();
         cv.writeLiteral("% ellipse\n");
-        if(setParameters()) {
-            cv.moveTo(cx + rx, cy);
-            DrawUtils.arc(cx - rx, cy - ry, cx + rx, cy + ry, 0, 360, cv);
+        if (setParameters()) {
+            // Use double type locally to have better precision of the result after applying arithmetic operations
+            cv.moveTo((double) cx + (double) rx, cy);
+            DrawUtils.arc((double) cx - (double) rx, (double) cy - (double) ry, (double) cx + (double) rx,
+                    (double) cy + (double) ry, 0, 360, cv);
         }
     }
 
     /**
      * Fetches a map of String values by calling getAttribute(Strng s) method
      * and maps it's values to arc parmateter cx, cy , rx, ry respectively
+     *
      * @return boolean values to indicate whether all values exit or not
      */
-    protected boolean setParameters(){
-        cx=0; cy=0;
-        if(getAttribute(SvgConstants.Attributes.CX) != null){
+    protected boolean setParameters() {
+        cx = 0;
+        cy = 0;
+        if (getAttribute(SvgConstants.Attributes.CX) != null) {
             cx = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.CX));
         }
-        if(getAttribute(SvgConstants.Attributes.CY) != null){
+        if (getAttribute(SvgConstants.Attributes.CY) != null) {
             cy = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.CY));
         }
 
-        if(getAttribute(SvgConstants.Attributes.RX) != null
-                && CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RX)) >0){
+        if (getAttribute(SvgConstants.Attributes.RX) != null
+                && CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RX)) > 0) {
             rx = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RX));
-        }else{
-            return false; //No drawing if rx is absent
+        } else {
+            //No drawing if rx is absent
+            return false;
         }
-        if(getAttribute(SvgConstants.Attributes.RY) != null
-                &&CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RY)) >0){
+        if (getAttribute(SvgConstants.Attributes.RY) != null
+                && CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RY)) > 0) {
             ry = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RY));
-        }else{
-            return false; //No drawing if ry is absent
+        } else {
+            //No drawing if ry is absent
+            return false;
         }
         return true;
     }
@@ -101,7 +107,5 @@ public class EllipseSvgNodeRenderer extends AbstractSvgNodeRenderer {
         deepCopyAttributesAndStyles(copy);
         return copy;
     }
-
-
 
 }

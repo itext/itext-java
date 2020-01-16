@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.1.9</version>
+  <version>7.1.10</version>
   <packaging>pom</packaging>
   <name>iText 7</name>
   <description>A Free Java-PDF library</description>
@@ -68,9 +68,10 @@
     <system>jenkins-ci</system>
     <url>https://jenkins.itextsupport.com/</url>
   </ciManagement>
+
   <properties>
     <argLine>-Xmx1024m</argLine>
-    <bouncycastle.version>1.49</bouncycastle.version>
+    <bouncycastle.version>1.64</bouncycastle.version>
     <checkstyle.version>2.15</checkstyle.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
     <fb-contrib.version>7.4.3</fb-contrib.version>
@@ -86,7 +87,7 @@
     <jfreechart.version>1.0.19</jfreechart.version>
     <junit.version>4.12</junit.version>
     <junitparams.version>1.0.4</junitparams.version>
-    <logback.version>1.1.3</logback.version>
+    <logback.version>1.2.3</logback.version>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
     <maven.jar.version>3.1.0</maven.jar.version>
@@ -101,10 +102,13 @@
     <slf4j.version>1.7.13</slf4j.version>
     <slowtests>com.itextpdf.test.annotations.type.SlowTest</slowtests>
     <sonar.clirr.reportPath>${project.build.directory}/clirr-report.txt</sonar.clirr.reportPath>
+    <sonar.dependencyCheck.htmlReportPath>target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
+    <sonar.dependencyCheck.reportPath>target/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
     <spotbugs.version>3.1.11</spotbugs.version>
     <surefire.version>3.0.0-M3</surefire.version>
     <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
   </properties>
+
   <repositories>
     <repository>
       <releases>
@@ -154,6 +158,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <build>
     <finalName>itext7-${project.artifactId}-${project.version}</finalName>
     <plugins>
@@ -439,8 +444,26 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>5.2.4</version>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>aggregate</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <format>XML</format>
+          <prettyPrint>true</prettyPrint>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
+
   <reporting>
     <plugins>
       <plugin>
@@ -686,6 +709,13 @@
             </configuration>
           </plugin>
           <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+          <plugin>
             <groupId>org.revapi</groupId>
             <artifactId>revapi-maven-plugin</artifactId>
             <version>0.11.0</version>
@@ -732,7 +762,7 @@
             <configuration>
               <skipTests>false</skipTests>
               <includes>
-                <include>**/*Test.java</include>
+                <include>**/*.java</include>
               </includes>
               <groups>${slowtests}</groups>
               <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
@@ -755,9 +785,6 @@
             </dependencies>
             <configuration>
               <skipTests>false</skipTests>
-              <includes>
-                <include>**/*Test.java</include>
-              </includes>
               <groups>${unittests}</groups>
               <argLine>@{jacoco.agent.argLine}</argLine>
             </configuration>

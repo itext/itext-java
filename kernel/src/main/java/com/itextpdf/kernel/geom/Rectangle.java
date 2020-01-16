@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -183,6 +183,16 @@ public class Rectangle implements Cloneable, Serializable {
         double top = Collections.max(ys);
 
         return new Rectangle((float) left, (float) bottom, (float) (right - left), (float) (top - bottom));
+    }
+
+    /**
+     * Convert rectangle to an array of points
+     *
+     * @return array of four extreme points of rectangle
+     */
+    public Point[] toPointsArray() {
+        return new Point[] {new Point(x, y), new Point(x + width, y),
+                new Point(x + width, y + height), new Point(x, y + height)};
     }
 
     /**

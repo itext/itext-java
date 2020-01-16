@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -116,5 +116,23 @@ public class ViewBoxSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationT
     @Test
     public void viewBox400x200() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"viewbox_400x200");
+    }
+
+    @Test
+    //TODO (DEVSIX-3493) change cmp files after fix
+    public void viewBoxXYValuesPreserveAspectRatioNoneValues() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"viewBoxXYValuesPreserveAspectRatioNoneValues");
+    }
+
+    @Test
+    //TODO (DEVSIX-3493) change cmp files after fix
+    public void viewBoxXYValuesPreserveAspectRatioXMaxYMaxMeetValues() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"viewBoxXYValuesPreserveAspectRatioXMaxYMaxMeetValues");
+    }
+
+    @Test
+    //TODO (DEVSIX-3493) change cmp files after fix
+    public void viewBoxXYValuesPreserveAspectRatioXMaxYMaxSliceValues() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"viewBoxXYValuesPreserveAspectRatioXMaxYMaxSliceValues");
     }
 }

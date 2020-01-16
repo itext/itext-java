@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,15 +43,18 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.Point;
+import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.utils.SvgCoordinateUtils;
 import com.itextpdf.svg.utils.SvgCssUtils;
-
 
 
 import java.util.ArrayList;
@@ -60,7 +63,7 @@ import java.util.List;
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;polyline&gt; tag.
  */
-public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer {
+public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMarkerCapable {
 
     /**
      * A List of {@link Point} objects representing the path to be drawn by the polyline tag
@@ -72,7 +75,8 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer {
     }
 
     /**
-     * Parses a string of space separated x,y pairs into individual {@link Point} objects and appends them to{@link PolylineSvgNodeRenderer#points}.
+     * Parses a string of space separated x,y pairs into individual {@link Point} objects and appends them to{@link
+     * PolylineSvgNodeRenderer#points}.
      * Throws an {@link SvgProcessingException} if pointsAttribute does not have a valid list of numerical x,y pairs.
      *
      * @param pointsAttribute A string of space separated x,y value pairs
@@ -84,7 +88,8 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
         List<String> points = SvgCssUtils.splitValueList(pointsAttribute);
         if (points.size() % 2 != 0) {
-            throw new SvgProcessingException(SvgLogMessageConstant.POINTS_ATTRIBUTE_INVALID_LIST).setMessageParams(pointsAttribute);
+            throw new SvgProcessingException(SvgLogMessageConstant.POINTS_ATTRIBUTE_INVALID_LIST)
+                    .setMessageParams(pointsAttribute);
         }
 
         float x, y;
@@ -92,18 +97,18 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer {
             x = CssUtils.parseAbsoluteLength(points.get(i));
             y = CssUtils.parseAbsoluteLength(points.get(i + 1));
             this.points.add(new Point(x, y));
-
         }
-
     }
 
     /**
      * Draws this element to a canvas-like object maintained in the context.
+     *
      * @param context the object that knows the place to draw this element and maintains its state
      */
     @Override
     protected void doDraw(SvgDrawContext context) {
-        String pointsAttribute = attributesAndStyles.containsKey(SvgConstants.Attributes.POINTS) ? attributesAndStyles.get(SvgConstants.Attributes.POINTS) : null;
+        String pointsAttribute = attributesAndStyles.containsKey(SvgConstants.Attributes.POINTS) ? attributesAndStyles
+                .get(SvgConstants.Attributes.POINTS) : null;
         setPoints(pointsAttribute);
 
         PdfCanvas canvas = context.getCurrentCanvas();
@@ -116,8 +121,6 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer {
                 canvas.lineTo(currentPoint.getX(), currentPoint.getY());
             }
         }
-
-
     }
 
     @Override
@@ -125,5 +128,43 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer {
         PolylineSvgNodeRenderer copy = new PolylineSvgNodeRenderer();
         deepCopyAttributesAndStyles(copy);
         return copy;
+    }
+
+    @Override
+    public void drawMarker(SvgDrawContext context, final MarkerVertexType markerVertexType) {
+        Point point = null;
+        if (MarkerVertexType.MARKER_START.equals(markerVertexType)) {
+            point = points.get(0);
+        } else if (MarkerVertexType.MARKER_END.equals(markerVertexType)) {
+            point = points.get(points.size() - 1);
+        }
+        if (point != null) {
+            String moveX = SvgCssUtils.convertDoubleToString(SvgCssUtils.convertPtsToPx(point.x));
+            String moveY = SvgCssUtils.convertDoubleToString(SvgCssUtils.convertPtsToPx(point.y));
+            MarkerSvgNodeRenderer.drawMarker(context, moveX, moveY, markerVertexType, this);
+        }
+    }
+
+    @Override
+    public double getAutoOrientAngle(MarkerSvgNodeRenderer marker, boolean reverse) {
+        if (points.size() > 1) {
+            Vector v = new Vector(0, 0, 0);
+            if (SvgConstants.Attributes.MARKER_END.equals(marker.attributesAndStyles.get(SvgConstants.Tags.MARKER))) {
+                Point lastPoint = points.get(points.size() - 1);
+                Point secondToLastPoint = points.get(points.size() - 2);
+                v = new Vector((float) (lastPoint.getX() - secondToLastPoint.getX()),
+                        (float) (lastPoint.getY() - secondToLastPoint.getY()), 0f);
+            } else if (SvgConstants.Attributes.MARKER_START
+                    .equals(marker.attributesAndStyles.get(SvgConstants.Tags.MARKER))) {
+                Point firstPoint = points.get(0);
+                Point secondPoint = points.get(1);
+                v = new Vector((float) (secondPoint.getX() - firstPoint.getX()),
+                        (float) (secondPoint.getY() - firstPoint.getY()), 0f);
+            }
+            Vector xAxis = new Vector(1, 0, 0);
+            double rotAngle = SvgCoordinateUtils.calculateAngleBetweenTwoVectors(xAxis, v);
+            return v.get(1) >= 0 && !reverse ? rotAngle : rotAngle * -1f;
+        }
+        return 0;
     }
 }

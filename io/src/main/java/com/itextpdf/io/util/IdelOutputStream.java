@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -46,6 +46,10 @@ package com.itextpdf.io.util;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * @deprecated This output stream implementation will be removed in iText 7.2
+ */
+@Deprecated
 public class IdelOutputStream extends OutputStream {
     @Override
     public void write(int b) throws IOException {

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -160,5 +160,41 @@ public class PreserveAspectRatioSvgNodeRendererIntegrationTest extends SvgIntegr
     @Test
     public void viewBoxTranslationTestMultipleViewBoxes() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxTranslationTestMultipleViewBoxes");
+    }
+
+    @Test
+    //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed 
+    public void svgTranslationYMinMeetTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationYMinMeetTest");
+    }
+
+    @Test
+    //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed
+    public void svgTranslationYMidMeetTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationYMidMeetTest");
+    }
+
+    @Test
+    //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed
+    public void svgTranslationYMaxMeetTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationYMaxMeetTest");
+    }
+
+    @Test
+    //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed
+    public void svgTranslationXMinMeetTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationXMinMeetTest");
+    }
+
+    @Test
+    //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed
+    public void svgTranslationXMidMeetTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationXMidMeetTest");
+    }
+
+    @Test
+    //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed
+    public void svgTranslationXMaxMeetTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationXMaxMeetTest");
     }
 }

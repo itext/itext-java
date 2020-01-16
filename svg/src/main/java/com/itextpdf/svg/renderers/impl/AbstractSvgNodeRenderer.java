@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,9 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.TransformUtils;
@@ -62,6 +64,10 @@ import java.util.Map;
  * {@link ISvgNodeRenderer} abstract implementation.
  */
 public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
+
+    // TODO (DEVSIX-3397) Add MarkerVertexType.MARKER_MID after ticket will be finished.
+    private static final MarkerVertexType[] MARKER_VERTEX_TYPES = new MarkerVertexType[] {MarkerVertexType.MARKER_START,
+            MarkerVertexType.MARKER_END};
 
     /**
      * Map that contains attributes and styles used for drawing operations
@@ -256,7 +262,17 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                 }
 
             }
-
+            // Marker drawing
+            if (this instanceof IMarkerCapable) {
+                // TODO (DEVSIX-3397) add processing of 'marker' property (shorthand for a joint using of all other properties)
+                for (MarkerVertexType markerVertexType : MARKER_VERTEX_TYPES) {
+                    if (attributesAndStyles.containsKey(markerVertexType.toString())) {
+                        currentCanvas.saveState();
+                        ((IMarkerCapable) this).drawMarker(context, markerVertexType);
+                        currentCanvas.restoreState();
+                    }
+                }
+            }
         }
     }
 
@@ -325,7 +341,8 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
                             String strokeWidthRawValue = getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
 
-                            float strokeWidth = 1f;
+                            // 1 px = 0,75 pt
+                            float strokeWidth = 0.75f;
 
                             if (strokeWidthRawValue != null) {
                                 strokeWidth = CssUtils.parseAbsoluteLength(strokeWidthRawValue);

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,11 +45,18 @@ package com.itextpdf.forms;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfDocumentInfo;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.Document;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -57,6 +64,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -76,7 +84,8 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
     @Test
     public void getFieldsForFlatteningTest() throws IOException {
         String outPdfName = destinationFolder + "flattenedFormField.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "formFieldFile.pdf"), new PdfWriter(outPdfName));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "formFieldFile.pdf"),
+                new PdfWriter(outPdfName));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
 
@@ -89,8 +98,8 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         PdfFormField text1Field = form.getField("Text1");
 
         Assert.assertEquals(2, form.getFieldsForFlattening().size());
-        Assert.assertTrue( form.getFieldsForFlattening().contains(radioNameField));
-        Assert.assertTrue( form.getFieldsForFlattening().contains(text1Field));
+        Assert.assertTrue(form.getFieldsForFlattening().contains(radioNameField));
+        Assert.assertTrue(form.getFieldsForFlattening().contains(text1Field));
 
         form.flattenFields();
         pdfDoc.close();
@@ -175,7 +184,8 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         flattenFieldsAndCompare(srcFilename, filename);
     }
 
-    private static void flattenFieldsAndCompare(String srcFile, String outFile) throws IOException, InterruptedException {
+    private static void flattenFieldsAndCompare(String srcFile, String outFile)
+            throws IOException, InterruptedException {
         PdfReader reader = new PdfReader(sourceFolder + srcFile);
         PdfWriter writer = new PdfWriter(destinationFolder + outFile);
         PdfDocument document = new PdfDocument(reader, writer);
@@ -184,7 +194,9 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         document.close();
 
         CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(destinationFolder + outFile, sourceFolder + "cmp_" + outFile, destinationFolder, "diff_");
+        String errorMessage = compareTool
+                .compareByContent(destinationFolder + outFile, sourceFolder + "cmp_" + outFile, destinationFolder,
+                        "diff_");
 
         if (errorMessage != null) {
             Assert.fail(errorMessage);
@@ -238,7 +250,6 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         form.flattenFields();
         doc.close();
 
-
         Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
     }
 
@@ -246,7 +257,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
     @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 3)})
     //Logging is expected since there are duplicate field names
     //isReadOnly should be true after DEVSIX-2156
-    public void flattenReadOnly() throws IOException{
+    public void flattenReadOnly() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         PdfDocument pdfDoc = new PdfDocument(writer);
         PdfReader reader = new PdfReader(sourceFolder + "readOnlyForm.pdf");
@@ -259,7 +270,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         pdfInnerDoc.close();
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
         boolean isReadOnly = true;
-        for (PdfFormField field : form.getFormFields().values()){
+        for (PdfFormField field : form.getFormFields().values()) {
             isReadOnly = (isReadOnly && field.isReadOnly());
         }
         pdfDoc.close();
@@ -270,5 +281,4 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
     public void fieldsRegeneratePushButtonWithoutCaption() throws IOException, InterruptedException {
         fillTextFieldsThenFlattenThenCompare("pushbutton_without_caption");
     }
-
 }

@@ -1140,7 +1140,8 @@ class Woff2Dec {
         byte[] output = new byte[(int) firstTableOffset];
 
         // Re-order tables in output (OTSpec) order
-        List<Woff2Common.Table> sorted_tables = Arrays.asList(hdr.tables);
+        List<Woff2Common.Table> sorted_tables = new ArrayList<>(Arrays.asList(hdr.tables));
+
         if (hdr.header_version != 0) {
             // collection font; we have to sort the table offset vector in each font
             for (TtcFont ttc_font : hdr.ttc_fonts) {

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,7 @@ import com.itextpdf.svg.css.impl.SvgNodeRendererInheritanceResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.utils.SvgTextUtil;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -68,7 +69,7 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
             }
 
             if (elementToReUse != null && !elementToReUse.isEmpty() && isValidHref(elementToReUse)) {
-                String normalizedName = normalizeName(elementToReUse);
+                String normalizedName = SvgTextUtil.filterReferenceValue(elementToReUse);
                 if (!context.isIdUsedByUseTagBefore(normalizedName)) {
                     ISvgNodeRenderer template = context.getNamedObject(normalizedName);
                     //Clone template
@@ -122,16 +123,6 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
     }
 
     @Override void postDraw(SvgDrawContext context) {}
-
-    /**
-     * The reference value will contain a hashtag character. This method will filter that value.
-     *
-     * @param name value to be filtered
-     * @return filtered value
-     */
-    private String normalizeName(String name) {
-        return name.replace("#", "").trim();
-    }
 
     private boolean isValidHref(String name) {
         return name.startsWith("#");

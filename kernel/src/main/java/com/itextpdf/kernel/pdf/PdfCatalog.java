@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -50,6 +50,8 @@ import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
+
+import java.util.LinkedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +68,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     private static final long serialVersionUID = -1354567597112193418L;
 
     final private PdfPagesTree pageTree;
-    protected Map<PdfName, PdfNameTree> nameTrees = new HashMap<>();
+    protected Map<PdfName, PdfNameTree> nameTrees = new LinkedHashMap<>();
     protected PdfNumTree pageLabels;
     protected PdfOCProperties ocProperties;
 

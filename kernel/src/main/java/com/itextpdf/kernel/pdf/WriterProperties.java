@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -90,7 +90,7 @@ public class WriterProperties implements Serializable {
      * Defines pdf version for the created document. Default value is PDF_1_7.
      *
      * @param version version for the document.
-     * @return this {@code WriterProperties} instance
+     * @return this {@link WriterProperties} instance
      */
     public WriterProperties setPdfVersion(PdfVersion version) {
         this.pdfVersion = version;
@@ -106,7 +106,7 @@ public class WriterProperties implements Serializable {
      * This requires more memory, but reduces the file size
      * of the resulting PDF document.
      *
-     * @return this {@code WriterProperties} instance
+     * @return this {@link WriterProperties} instance
      */
     public WriterProperties useSmartMode() {
         this.smartMode = true;
@@ -117,7 +117,7 @@ public class WriterProperties implements Serializable {
      * If true, default XMPMetadata based on {@link PdfDocumentInfo} will be added.
      * For PDF 2.0 documents, metadata will be added in any case.
      *
-     * @return this {@code WriterProperties} instance
+     * @return this {@link WriterProperties} instance
      */
     public WriterProperties addXmpMetadata() {
         this.addXmpMetadata = true;
@@ -129,7 +129,7 @@ public class WriterProperties implements Serializable {
      * See {@link CompressionConstants}
      *
      * @param compressionLevel {@link CompressionConstants} value.
-     * @return this {@code WriterProperties} instance
+     * @return this {@link WriterProperties} instance
      */
     public WriterProperties setCompressionLevel(int compressionLevel) {
         this.compressionLevel = compressionLevel;
@@ -141,7 +141,7 @@ public class WriterProperties implements Serializable {
      * compressed, but also the pdf document inner structure.
      *
      * @param fullCompressionMode true - to enable full compression mode, false to disable it
-     * @return this {@code WriterProperties} instance
+     * @return this {@link WriterProperties} instance
      */
     public WriterProperties setFullCompressionMode(boolean fullCompressionMode) {
         this.isFullCompression = fullCompressionMode;
@@ -149,23 +149,38 @@ public class WriterProperties implements Serializable {
     }
 
     /**
-     * Sets the encryption options for the document. The userPassword and the
-     * ownerPassword can be null or have zero length. In this case the ownerPassword
-     * is replaced by a random string. The open permissions for the document can be
-     * {@link EncryptionConstants#ALLOW_PRINTING}, {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
-     * {@link EncryptionConstants#ALLOW_COPY}, {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
-     * {@link EncryptionConstants#ALLOW_FILL_IN}, {@link EncryptionConstants#ALLOW_SCREENREADERS},
-     * {@link EncryptionConstants#ALLOW_ASSEMBLY} and {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
-     * The permissions can be combined by ORing them.
+     * Sets the encryption options for the document.
      *
-     * @param userPassword        the user password. Can be null or empty
-     * @param ownerPassword       the owner password. Can be null or empty
+     * @param userPassword        the user password. Can be null or of zero length, which is equal to
+     *                            omitting the user password
+     * @param ownerPassword       the owner password. If it's null or empty, iText will generate
+     *                            a random string to be used as the owner password
      * @param permissions         the user permissions
-     * @param encryptionAlgorithm the type of encryption. It can be one of {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
-     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128}, {@link EncryptionConstants#ENCRYPTION_AES_128}
+     *                            The open permissions for the document can be
+     *                            {@link EncryptionConstants#ALLOW_PRINTING},
+     *                            {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
+     *                            {@link EncryptionConstants#ALLOW_COPY},
+     *                            {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
+     *                            {@link EncryptionConstants#ALLOW_FILL_IN},
+     *                            {@link EncryptionConstants#ALLOW_SCREENREADERS},
+     *                            {@link EncryptionConstants#ALLOW_ASSEMBLY} and
+     *                            {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
+     *                            The permissions can be combined by ORing them
+     * @param encryptionAlgorithm the type of encryption. It can be one of
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128},
+     *                            {@link EncryptionConstants#ENCRYPTION_AES_128}
      *                            or {@link EncryptionConstants#ENCRYPTION_AES_256}.
-     *                            Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed to output the metadata in cleartext
-     * @return this {@code WriterProperties} instance
+     *                            Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed
+     *                            to output the metadata in cleartext.
+     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} can be ORed as well.
+     *                            Please be aware that the passed encryption types may override permissions:
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_40} implicitly sets
+     *                            {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} and
+     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
+     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     * @return this {@link WriterProperties} instance
      */
     public WriterProperties setStandardEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionAlgorithm) {
         encryptionProperties.setStandardEncryption(userPassword, ownerPassword, permissions, encryptionAlgorithm);
@@ -175,20 +190,34 @@ public class WriterProperties implements Serializable {
     /**
      * Sets the certificate encryption options for the document. An array of one or more public certificates
      * must be provided together with an array of the same size for the permissions for each certificate.
-     * The open permissions for the document can be
-     * {@link EncryptionConstants#ALLOW_PRINTING}, {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
-     * {@link EncryptionConstants#ALLOW_COPY}, {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
-     * {@link EncryptionConstants#ALLOW_FILL_IN}, {@link EncryptionConstants#ALLOW_SCREENREADERS},
-     * {@link EncryptionConstants#ALLOW_ASSEMBLY} and {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
-     * The permissions can be combined by ORing them.
      *
      * @param certs               the public certificates to be used for the encryption
      * @param permissions         the user permissions for each of the certificates
-     * @param encryptionAlgorithm the type of encryption. It can be one of {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
-     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128}, {@link EncryptionConstants#ENCRYPTION_AES_128}
+     *                            The open permissions for the document can be
+     *                            {@link EncryptionConstants#ALLOW_PRINTING},
+     *                            {@link EncryptionConstants#ALLOW_MODIFY_CONTENTS},
+     *                            {@link EncryptionConstants#ALLOW_COPY},
+     *                            {@link EncryptionConstants#ALLOW_MODIFY_ANNOTATIONS},
+     *                            {@link EncryptionConstants#ALLOW_FILL_IN},
+     *                            {@link EncryptionConstants#ALLOW_SCREENREADERS},
+     *                            {@link EncryptionConstants#ALLOW_ASSEMBLY} and
+     *                            {@link EncryptionConstants#ALLOW_DEGRADED_PRINTING}.
+     *                            The permissions can be combined by ORing them
+     * @param encryptionAlgorithm the type of encryption. It can be one of
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128},
+     *                            {@link EncryptionConstants#ENCRYPTION_AES_128}
      *                            or {@link EncryptionConstants#ENCRYPTION_AES_256}.
-     *                            Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed to output the metadata in cleartext
-     * @return this {@code WriterProperties} instance
+     *                            Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed
+     *                            to output the metadata in cleartext.
+     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} can be ORed as well.
+     *                            Please be aware that the passed encryption types may override permissions:
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_40} implicitly sets
+     *                            {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} and
+     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
+     *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
+     * @return this {@link WriterProperties} instance
      */
     public WriterProperties setPublicKeyEncryption(Certificate[] certs, int[] permissions, int encryptionAlgorithm) {
         encryptionProperties.setPublicKeyEncryption(certs, permissions, encryptionAlgorithm);
@@ -204,7 +233,7 @@ public class WriterProperties implements Serializable {
      * iText will by default keep the existing initial id. But if you'd like you can set this id yourself using this setter.
      *
      * @param initialDocumentId the new initial document id
-     * @return this {@code WriterProperties} instance
+     * @return this {@link WriterProperties} instance
      */
     public WriterProperties setInitialDocumentId(PdfString initialDocumentId) {
         this.initialDocumentId = initialDocumentId;
@@ -217,7 +246,7 @@ public class WriterProperties implements Serializable {
      * a modified id. But if you'd like you can set this id yourself using this setter.
      *
      * @param modifiedDocumentId the new modified document id
-     * @return this {@code WriterProperties} instance
+     * @return this {@link WriterProperties} instance
      */
     public WriterProperties setModifiedDocumentId(PdfString modifiedDocumentId) {
         this.modifiedDocumentId = modifiedDocumentId;
@@ -228,7 +257,7 @@ public class WriterProperties implements Serializable {
      * It causes additional overhead of duplicating document bytes into memory, so use it careful.
      * NEVER use it in production or in any other cases except pdfDebug.
      *
-     * @return this {@code WriterProperties} instance
+     * @return this {@link WriterProperties} instance
      */
     public WriterProperties useDebugMode() {
         this.debugMode = true;
@@ -241,7 +270,7 @@ public class WriterProperties implements Serializable {
      * NOTE: iText does not validate PDF/UA, which means we don't check if created PDF meets all PDF/UA requirements.
      * Don't use this method if you are not familiar with PDF/UA specification in order to avoid creation of non-conformant PDF/UA file.
      *
-     * @return this {@code WriterProperties} instance
+     * @return this {@link WriterProperties} instance
      */
     public WriterProperties addUAXmpMetadata() {
         this.addUAXmpMetadata = true;

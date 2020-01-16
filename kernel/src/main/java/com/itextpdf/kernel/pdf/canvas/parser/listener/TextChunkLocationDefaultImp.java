@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -50,36 +50,36 @@ class TextChunkLocationDefaultImp implements ITextChunkLocation {
     private static final float DIACRITICAL_MARKS_ALLOWED_VERTICAL_DEVIATION = 2;
 
     /**
-     * the starting location of the chunk
+     * The starting location of the chunk.
      */
     private final Vector startLocation;
     /**
-     * the ending location of the chunk
+     * The ending location of the chunk.
      */
     private final Vector endLocation;
     /**
-     * unit vector in the orientation of the chunk
+     * Unit vector in the orientation of the chunk.
      */
     private final Vector orientationVector;
     /**
-     * the orientation as a scalar for quick sorting
+     * The orientation as a scalar for quick sorting.
      */
     private final int orientationMagnitude;
     /**
-     * perpendicular distance to the orientation unit vector (i.e. the Y position in an unrotated coordinate system)
-     * we round to the nearest integer to handle the fuzziness of comparing floats
+     * Perpendicular distance to the orientation unit vector (i.e. the Y position in an unrotated coordinate system).
+     * We round to the nearest integer to handle the fuzziness of comparing floats.
      */
     private final int distPerpendicular;
     /**
-     * distance of the start of the chunk parallel to the orientation unit vector (i.e. the X position in an unrotated coordinate system)
+     * Distance of the start of the chunk parallel to the orientation unit vector (i.e. the X position in an unrotated coordinate system).
      */
     private final float distParallelStart;
     /**
-     * distance of the end of the chunk parallel to the orientation unit vector (i.e. the X position in an unrotated coordinate system)
+     * Distance of the end of the chunk parallel to the orientation unit vector (i.e. the X position in an unrotated coordinate system).
      */
     private final float distParallelEnd;
     /**
-     * the width of a single space character in the font of the chunk
+     * The width of a single space character in the font of the chunk.
      */
     private final float charSpaceWidth;
 

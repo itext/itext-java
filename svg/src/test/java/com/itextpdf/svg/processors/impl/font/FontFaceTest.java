@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -61,6 +61,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -155,11 +156,15 @@ public class FontFaceTest extends SvgIntegrationTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1612")
-    //TODO: In w3c test suite this font is labeled as invalid though and its loading failed in browser, though iText parses its as correct one and LOADS!
-    //See DirectoryTableOrder002Test in io for decompression details
     public void w3cProblemTest02() throws IOException, InterruptedException {
-        runTest("w3cProblemTest02");
+        try {
+            runTest("w3cProblemTest02");
+        } catch (NegativeArraySizeException e) {
+            return;
+        }
+
+        Assert.fail("In w3c test suite this font is labeled as invalid, "
+                + "so the invalid negative value is expected while creating a glyph.");
     }
 
     @Test
@@ -193,11 +198,15 @@ public class FontFaceTest extends SvgIntegrationTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1612")
-    //TODO: In w3c test suite this font is labeled as invalid though and its loading failed in browser, though iText parses its as correct one and LOADS!
-    //See ValidationOff012Test in io for decompression details
     public void w3cProblemTest07() throws IOException, InterruptedException {
-        runTest("w3cProblemTest07");
+        try {
+            runTest("w3cProblemTest07");
+        } catch (NegativeArraySizeException e) {
+            return;
+        }
+
+        Assert.fail("In w3c test suite this font is labeled as invalid, "
+                + "so the invalid negative value is expected while creating a glyph.");
     }
 
     @Test

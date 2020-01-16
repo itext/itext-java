@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -90,11 +91,12 @@ public class CreateImageStreamTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
         canvas.beginText().moveText(40, 730).setFontAndSize(PdfFontFactory.createFont(), 12)
                 .showText("The images below are in row and expected to form four continuous lines of constant colors.")
-            .endText();
+                .endText();
         for (int i = 0; i < imgFiles.length; i++) {
             String imgFile = imgFiles[i];
-            PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "compare_colorspaces/" + imgFile));
-            canvas.addXObject(imageXObject, 50 + i*40, 550, 40);
+            PdfImageXObject imageXObject = new PdfImageXObject(
+                    ImageDataFactory.create(sourceFolder + "compare_colorspaces/" + imgFile));
+            canvas.addXObject(imageXObject, 50 + i * 40, 550, 40);
         }
 
         pdfDocument.close();
@@ -135,6 +137,12 @@ public class CreateImageStreamTest extends ExtendedITextTest {
     @Test
     public void imgRgbIcc() throws IOException, InterruptedException {
         testSingleImage("img_rgb_icc.png");
+    }
+
+    @Test
+    //TODO update cmp-file after DEVSIX-2865 will be fixed
+    public void addPngImageIndexedColorspaceTest() throws IOException, InterruptedException {
+        testSingleImage("pngImageIndexedColorspace.png");
     }
 
     private void testSingleImage(String imgName) throws IOException, InterruptedException {

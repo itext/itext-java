@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -69,11 +69,11 @@ public class FlatteningTest extends ExtendedITextTest {
     }
 
     @Test
-    public void formFlatteningTestWithAPWithoutSubtype() throws IOException, InterruptedException {
-        String filename = "job_application_filled";
-        String src = sourceFolder + filename + ".pdf";
-        String dest = destinationFolder + filename + "_flattened.pdf";
-        String cmp = sourceFolder + "cmp_" + filename + "_flattened.pdf";
+    public void flatteningFormFieldNoSubtypeInAPTest() throws IOException, InterruptedException {
+        String src = sourceFolder + "formFieldNoSubtypeInAPTest.pdf";
+        String dest = destinationFolder + "flatteningFormFieldNoSubtypeInAPTest.pdf";
+        String cmp = sourceFolder + "cmp_flatteningFormFieldNoSubtypeInAPTest.pdf";
+
         PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
 
         PdfAcroForm.getAcroForm(doc, false).flattenFields();

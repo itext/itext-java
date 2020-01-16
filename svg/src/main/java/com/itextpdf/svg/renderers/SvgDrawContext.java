@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,9 @@ import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Stack;
 
@@ -63,8 +65,8 @@ import java.util.Stack;
 public class SvgDrawContext {
 
     private final Map<String, ISvgNodeRenderer> namedObjects = new HashMap<>();
-    private final Stack<PdfCanvas> canvases = new Stack<>();
-    private final Stack<Rectangle> viewports = new Stack<>();
+    private final Deque<PdfCanvas> canvases = new LinkedList<>();
+    private final Deque<Rectangle> viewports = new LinkedList<>();
     private final Stack<String> useIds = new Stack<>();
     private ResourceResolver resourceResolver;
     private FontProvider fontProvider;
@@ -86,7 +88,7 @@ public class SvgDrawContext {
      * @return the current canvas that can be used for drawing operations.
      */
     public PdfCanvas getCurrentCanvas() {
-        return canvases.peek();
+        return canvases.getFirst();
     }
 
     /**
@@ -96,8 +98,11 @@ public class SvgDrawContext {
      * @return the current canvas that can be used for drawing operations.
      */
     public PdfCanvas popCanvas() {
-        return canvases.pop();
+        PdfCanvas canvas = canvases.getFirst();
+        canvases.removeFirst();
+        return canvas;
     }
+
 
     /**
      * Adds a {@link PdfCanvas} to the stack (by definition its top), for use in
@@ -106,7 +111,7 @@ public class SvgDrawContext {
      * @param canvas the new top of the stack
      */
     public void pushCanvas(PdfCanvas canvas) {
-        canvases.push(canvas);
+        canvases.addFirst(canvas);
     }
 
     /**
@@ -125,7 +130,7 @@ public class SvgDrawContext {
      * @param viewPort rectangle representing the current viewbox
      */
     public void addViewPort(Rectangle viewPort) {
-        this.viewports.push(viewPort);
+        viewports.addFirst(viewPort);
     }
 
     /**
@@ -134,7 +139,16 @@ public class SvgDrawContext {
      * @return the viewbox as it is currently set
      */
     public Rectangle getCurrentViewPort() {
-        return this.viewports.peek();
+        return viewports.getFirst();
+    }
+
+    /**
+     * Get the viewbox which is the root viewport for the current document.
+     *
+     * @return root viewbox.
+     */
+    public Rectangle getRootViewPort() {
+        return viewports.getLast();
     }
 
     /**
@@ -142,7 +156,7 @@ public class SvgDrawContext {
      */
     public void removeCurrentViewPort() {
         if (this.viewports.size() > 0) {
-            this.viewports.pop();
+            viewports.removeFirst();
         }
     }
 
@@ -292,5 +306,4 @@ public class SvgDrawContext {
         textMove[0] += additionalMoveX;
         textMove[1] += additionalMoveY;
     }
-
 }

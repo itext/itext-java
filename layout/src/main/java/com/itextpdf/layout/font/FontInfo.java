@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -61,7 +61,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @see FontProvider#getPdfFont(FontInfo)
  * @see FontProvider#getPdfFont(FontInfo, FontSet)
  *
- * Note, {@link #getAlias()} and {@link #getDescriptor()} do not taken into account in {@link #equals},
+ * Note, {@link #getAlias()} and {@link #getDescriptor()} are not taken into account in {@link #equals},
  * the same font with different aliases will have equal FontInfo's,
  * and therefore the same {@link PdfFont} in the end document.
  */
@@ -146,6 +146,8 @@ public final class FontInfo {
 
     /**
      * Gets font data, if {@link FontInfo} was created with {@code byte[]}.
+     *
+     * @return font data
      */
     public byte[] getFontData() {
         return fontData;

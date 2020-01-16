@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,6 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
@@ -52,23 +51,19 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.PdfMcrDictionary;
 import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
-import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.CompareTool.CompareResult;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
 public class ParentTreeTest extends ExtendedITextTest {
@@ -111,18 +106,85 @@ public class ParentTreeTest extends ExtendedITextTest {
         assertTrue(checkParentTree(outFile, cmpFile));
     }
 
-    @Ignore("works in non-deterministic way because of the bug in iText code, DEVSIX-3322")
     @Test
-    //TODO update cmp-file after DEVSIX-3322 fixed
-    public void stampingFormXobjectInnerContentTaggedTest() throws IOException, InterruptedException {
+    public void stampingFormXObjectInnerContentTaggedTest() throws IOException, InterruptedException {
         String pdf = sourceFolder + "alreadyTaggedFormXObjectInnerContent.pdf";
-        String outPdf = destinationFolder + "stampingFormXobjectInnerContentTaggedTest.pdf";
-        String cmpPdf = sourceFolder + "cmp_stampingFormXobjectInnerContentTaggedTest.pdf";
+        String outPdf = destinationFolder + "stampingFormXObjectInnerContentTaggedTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_stampingFormXObjectInnerContentTaggedTest.pdf";
 
         PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
         taggedPdf.setTagged();
         taggedPdf.close();
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void severalXObjectsOnOnePageTest() throws IOException, InterruptedException {
+        String pdf = sourceFolder + "severalXObjectsOnOnePageTest.pdf";
+        String outPdf = destinationFolder + "severalXObjectsOnOnePageTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_severalXObjectsOnOnePageTest.pdf";
+
+        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
+        taggedPdf.setTagged();
+        taggedPdf.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void earlyFlushXObjectTaggedTest() throws IOException, InterruptedException {
+        String pdf = sourceFolder + "earlyFlushXObjectTaggedTest.pdf";
+        String outPdf = destinationFolder + "earlyFlushXObjectTaggedTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_earlyFlushXObjectTaggedTest.pdf";
+
+        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
+        PdfDictionary resource = taggedPdf.getFirstPage().getResources().getResource(PdfName.XObject);
+        resource.get(new PdfName("Fm1")).flush();
+
+        taggedPdf.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void identicalMcidIdInOneStreamTest() throws IOException, InterruptedException {
+        String pdf = sourceFolder + "identicalMcidIdInOneStreamTest.pdf";
+        String outPdf = destinationFolder + "identicalMcidIdInOneStreamTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_identicalMcidIdInOneStreamTest.pdf";
+
+        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
+        taggedPdf.setTagged();
+        taggedPdf.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void copyPageWithFormXObjectTaggedTest() throws IOException, InterruptedException {
+        String cmpPdf = sourceFolder + "cmp_copyPageWithFormXobjectTaggedTest.pdf";
+        String outDoc = destinationFolder + "copyPageWithFormXobjectTaggedTest.pdf";
+        PdfDocument srcPdf = new PdfDocument(new PdfReader(sourceFolder + "copyFromFile.pdf"));
+        PdfDocument outPdf = new PdfDocument(new PdfReader(sourceFolder + "copyToFile.pdf"), new PdfWriter(outDoc));
+
+        outPdf.setTagged();
+        srcPdf.copyPagesTo(1, 1, outPdf);
+
+        srcPdf.close();
+        outPdf.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outDoc, cmpPdf, destinationFolder));
+    }
+
+    @Test
+    public void removePageWithFormXObjectTaggedTest() throws IOException, InterruptedException {
+        String cmpPdf = sourceFolder + "cmp_removePageWithFormXobjectTaggedTest.pdf";
+        String outDoc = destinationFolder + "removePageWithFormXobjectTaggedTest.pdf";
+
+        PdfDocument outPdf = new PdfDocument(new PdfReader(sourceFolder + "forRemovePage.pdf"), new PdfWriter(outDoc));
+
+        outPdf.setTagged();
+        outPdf.removePage(1);
+
+        outPdf.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outDoc, cmpPdf, destinationFolder));
     }
 
     @Test
