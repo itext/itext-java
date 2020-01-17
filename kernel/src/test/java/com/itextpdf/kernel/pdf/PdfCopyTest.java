@@ -256,6 +256,24 @@ public class PdfCopyTest extends ExtendedITextTest {
     }
 
     @Test
+    //TODO: update cmp-files when DEVSIX-3635 will be fixed
+    public void copyPageNoRotationToDocWithRotationInPagesDictTest() throws IOException, InterruptedException {
+        String src = sourceFolder + "indirectPageProps.pdf";
+        String dest = destinationFolder + "copyPageNoRotationToDocWithRotationInPagesDict.pdf";
+        String cmp = sourceFolder + "cmp_copyPageNoRotationToDocWithRotationInPagesDict.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+        PdfDocument sourceDoc = new PdfDocument(new PdfReader(sourceFolder + "noRotationProp.pdf"));
+        sourceDoc.copyPagesTo(1, sourceDoc.getNumberOfPages(), pdfDoc);
+
+        sourceDoc.close();
+
+        pdfDoc.close();
+
+        assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder));
+    }
+
+    @Test
     public void copySelfContainedObject() throws IOException {
         ByteArrayOutputStream inputBytes = new ByteArrayOutputStream();
         PdfDocument prepInputDoc = new PdfDocument(new PdfWriter(inputBytes));
