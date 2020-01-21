@@ -57,17 +57,19 @@ public class PdfDocumentEvent extends Event {
     public static final String START_PAGE = "StartPdfPage";
 
     /**
-     * Dispatched after page is inserted/added into document.
+     * Dispatched after page is inserted/added into a document.
      */
     public static final String INSERT_PAGE = "InsertPdfPage";
 
     /**
-     * Dispatched after page is removed from document.
+     * Dispatched after page is removed from a document.
      */
     public static final String REMOVE_PAGE = "RemovePdfPage";
 
     /**
-     * Dispatched before page is closed and written.
+     * Dispatched before page is flushed to a document.
+     * This event isn't necessarily dispatched when a successive page has been created.
+     * Keep it in mind when using with highlevel iText API.
      */
     public static final String END_PAGE = "EndPdfPage";
 
