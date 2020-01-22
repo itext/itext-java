@@ -71,7 +71,6 @@ public abstract class RootRenderer extends AbstractRenderer {
     protected RootLayoutArea currentArea;
     protected int currentPageNumber;
     protected List<IRenderer> waitingDrawingElements = new ArrayList<>();
-    RootRendererAreaStateHandler rootRendererStateHandler;
     List<Rectangle> floatRendererAreas;
     private IRenderer keepWithNextHangingRenderer;
     private LayoutResult keepWithNextHangingRendererLayoutResult;
@@ -112,9 +111,7 @@ public abstract class RootRenderer extends AbstractRenderer {
 
         // Static layout
         for (int i = 0; currentArea != null && i < addedRenderers.size(); i++) {
-            if (null == rootRendererStateHandler) {
-                rootRendererStateHandler = new RootRendererAreaStateHandler();
-            }
+            RootRendererAreaStateHandler rootRendererStateHandler = new RootRendererAreaStateHandler();
 
             renderer = addedRenderers.get(i);
             boolean rendererIsFloat = FloatingHelper.isRendererFloating(renderer);
@@ -192,6 +189,9 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 theDeepestKeptTogether.getModelElement().setProperty(Property.KEEP_TOGETHER, false);
                                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
                                 logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "KeepTogether property of inner element will be ignored."));
+                                if (!rendererIsFloat) {
+                                    rootRendererStateHandler.attemptGoBackToStoredPreviousStateAndStoreNextState(this);
+                                }
                             } else if (!Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
                                 result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
                                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);

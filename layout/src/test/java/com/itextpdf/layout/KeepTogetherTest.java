@@ -84,7 +84,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -262,16 +262,6 @@ public class KeepTogetherTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
     }
 
-    private static class KeepTogetherDiv extends Div {
-        @Override
-        public <T1> T1 getDefaultProperty(int property) {
-            if (property == Property.KEEP_TOGETHER) {
-                return (T1) (Object) true;
-            }
-            return super.<T1>getDefaultProperty(property);
-        }
-    }
-
     @Test
     @Ignore("DEVSIX-1837: NPE")
     public void keepTogetherInlineDiv01() throws IOException, InterruptedException {
@@ -434,30 +424,6 @@ public class KeepTogetherTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
-    private static class SpecialOddPagesDocumentRenderer extends DocumentRenderer {
-        private PageSize firstPageSize;
-
-        public SpecialOddPagesDocumentRenderer(Document document, PageSize firstPageSize) {
-            super(document);
-            this.firstPageSize = new PageSize(firstPageSize);
-        }
-
-        @Override
-        protected PageSize addNewPage(PageSize customPageSize) {
-            PageSize newPageSize = null;
-            switch (currentPageNumber % 2) {
-                case 1:
-                    newPageSize = firstPageSize;
-                    break;
-                case 0:
-                default:
-                    newPageSize = PageSize.A4;
-                    break;
-            }
-            return super.addNewPage(newPageSize);
-        }
-    }
-
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
@@ -613,6 +579,71 @@ public class KeepTogetherTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void keepTogetherNotEmptyPageTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_keepTogetherNotEmptyPageTest.pdf";
+        String outFile = destinationFolder + "keepTogetherNotEmptyPageTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        Document doc = new Document(pdfDoc);
+
+        doc.setProperty(Property.COLLAPSING_MARGINS, true);
+
+        // Make page not empty to trigger KEEP_TOGETHER actual processing
+        doc.add(new Paragraph("Just some content to make this page not empty."));
+
+        // Specifying height definitely bigger than page height
+        float innerDivHeight = pdfDoc.getDefaultPageSize().getHeight() + 200;
+
+        Div innerDiv = new Div();
+        innerDiv.setBackgroundColor(ColorConstants.RED);
+        innerDiv.setHeight(innerDivHeight);
+
+        // Set KEEP_TOGETHER on inner div
+        innerDiv.setKeepTogether(true);
+
+        doc.add(innerDiv);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void keepTogetherOnFirstInnerElementNotEmptyPageTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_keepTogetherOnFirstInnerElementNotEmptyPageTest.pdf";
+        String outFile = destinationFolder + "keepTogetherOnFirstInnerElementNotEmptyPageTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        Document doc = new Document(pdfDoc);
+
+        // Make page not empty to trigger KEEP_TOGETHER actual processing
+        doc.add(new Paragraph("Just some content to make this page not empty."));
+
+        // Specifying height definitely bigger than page height
+        float innerDivHeight = pdfDoc.getDefaultPageSize().getHeight() + 200;
+
+        Div innerDiv = new Div();
+        innerDiv.setBackgroundColor(ColorConstants.RED);
+        innerDiv.setHeight(innerDivHeight);
+
+        // Set KEEP_TOGETHER on inner div
+        innerDiv.setKeepTogether(true);
+
+        Div outerDiv = new Div();
+        outerDiv.add(innerDiv);
+
+        outerDiv.add(new Div().setHeight(200).setBackgroundColor(ColorConstants.BLUE));
+
+        doc.add(outerDiv);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
     public void marginCollapseKeptTogetherGoesOnNextAreaTest01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_marginCollapseKeptTogetherGoesOnNextAreaTest01.pdf";
         String outFile = destinationFolder + "marginCollapseKeptTogetherGoesOnNextAreaTest01.pdf";
@@ -642,7 +673,6 @@ public class KeepTogetherTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO
     public void marginCollapseKeptTogetherGoesOnNextAreaTest02() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_marginCollapseKeptTogetherGoesOnNextAreaTest02.pdf";
         String outFile = destinationFolder + "marginCollapseKeptTogetherGoesOnNextAreaTest02.pdf";
@@ -675,6 +705,41 @@ public class KeepTogetherTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
+    // TODO DEVSIX-4023 cmp should be updated
+    public void keepTogetherOnSecondInnerElementNotEmptyPageTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_keepTogetherOnSecondInnerElementNotEmptyPageTest.pdf";
+        String outFile = destinationFolder + "keepTogetherOnSecondInnerElementNotEmptyPageTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        Document doc = new Document(pdfDoc);
+
+        // Make page not empty to trigger KEEP_TOGETHER actual processing
+        doc.add(new Paragraph("Just some content to make this page not empty."));
+
+        // Specifying height definitely bigger than page height
+        float innerDivHeight = pdfDoc.getDefaultPageSize().getHeight() + 200;
+
+        Div innerDiv = new Div();
+        innerDiv.setBackgroundColor(ColorConstants.RED);
+        innerDiv.setHeight(innerDivHeight);
+
+        // Set KEEP_TOGETHER on inner div
+        innerDiv.setKeepTogether(true);
+
+        Div outerDiv = new Div();
+        outerDiv.add(new Div().setHeight(200).setBackgroundColor(ColorConstants.BLUE));
+
+        outerDiv.add(innerDiv);
+
+        doc.add(outerDiv);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
     public void smallFloatInsideKeptTogetherDivTest01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_smallFloatInsideKeptTogetherDivTest01.pdf";
         String outFile = destinationFolder + "smallFloatInsideKeptTogetherDivTest01.pdf";
@@ -689,7 +754,6 @@ public class KeepTogetherTest extends ExtendedITextTest {
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
     }
-
 
     @Test
     @LogMessages(messages = {
@@ -732,7 +796,6 @@ public class KeepTogetherTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
     }
 
-
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
@@ -750,6 +813,87 @@ public class KeepTogetherTest extends ExtendedITextTest {
         // specifying height definitely bigger than page height
         int paragraphHeight = 1000;
         doc.add(createKeptTogetherParagraphWithSmallFloat(paragraphHeight));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    // TODO DEVSIX-4023 cmp should be updated
+    public void keepTogetherOnInnerElementTestEmptyPageTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_keepTogetherOnInnerElementTestEmptyPageTest.pdf";
+        String outFile = destinationFolder + "keepTogetherOnInnerElementTestEmptyPageTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        Document doc = new Document(pdfDoc);
+        doc.setProperty(Property.COLLAPSING_MARGINS, true);
+
+        boolean first = false;
+
+        addDivs(doc, 200, new Style(), new Style(), first);
+
+        // Specifying height definitely bigger than page height
+        float innerDivHeight = pdfDoc.getDefaultPageSize().getHeight() + 200;
+
+        addDivs(doc, innerDivHeight, new Style(), new Style(), first);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    // TODO DEVSIX-4023 cmp should be updated
+    public void keepTogetherOnInnerElementMargin01EmptyPageTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_keepTogetherOnInnerElementMargin01EmptyPageTest.pdf";
+        String outFile = destinationFolder + "keepTogetherOnInnerElementMargin01EmptyPageTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        Document doc = new Document(pdfDoc);
+        doc.setProperty(Property.COLLAPSING_MARGINS, true);
+
+        boolean first = false;
+        Style inner = new Style().setMargin(40);
+        Style predefined = new Style().setMargin(20);
+
+        addDivs(doc, 200, inner, predefined, first);
+
+        // Specifying height definitely bigger than page height
+        float innerDivHeight = pdfDoc.getDefaultPageSize().getHeight() + 200;
+
+        addDivs(doc, innerDivHeight, inner, predefined, first);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    // TODO DEVSIX-4023 cmp should be updated
+    public void keepTogetherOnInnerElementMargin02EmptyPageTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_keepTogetherOnInnerElementMargin02EmptyPageTest.pdf";
+        String outFile = destinationFolder + "keepTogetherOnInnerElementMargin02EmptyPageTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        Document doc = new Document(pdfDoc);
+        doc.setProperty(Property.COLLAPSING_MARGINS, true);
+
+        boolean first = false;
+        Style inner = new Style().setMargin(20);
+        Style predefined = new Style().setMargin(40);
+
+        addDivs(doc, 200, inner, predefined, first);
+
+        // Specifying height definitely bigger than page height
+        float innerDivHeight = pdfDoc.getDefaultPageSize().getHeight() + 200;
+
+        addDivs(doc, innerDivHeight, inner, predefined, first);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
@@ -854,5 +998,72 @@ public class KeepTogetherTest extends ExtendedITextTest {
         }
 
         return table;
+    }
+
+    private static void addDivs(Document doc, float innerDivHeight, Style inner, Style predefined, boolean first) {
+        // Make page not empty to trigger KEEP_TOGETHER actual processing
+        doc.add(new Paragraph("Just some content to make this page not empty."));
+
+        Div innerDiv = new Div();
+        innerDiv.setBackgroundColor(ColorConstants.RED);
+        innerDiv.setHeight(innerDivHeight);
+
+        // Set KEEP_TOGETHER on inner div
+        innerDiv.setKeepTogether(true);
+
+        innerDiv.setHeight(innerDivHeight);
+
+        innerDiv.addStyle(inner);
+
+        Div outerDiv = new Div();
+        outerDiv.setBorder(new SolidBorder(50));
+
+        if (first) {
+            outerDiv.add(innerDiv);
+        }
+
+        outerDiv.add(new Div().setHeight(200).setBackgroundColor(ColorConstants.BLUE).addStyle(predefined));
+
+        if (!first) {
+            outerDiv.add(innerDiv);
+        }
+
+        doc.add(outerDiv);
+
+        doc.add(new AreaBreak());
+    }
+
+    private static class KeepTogetherDiv extends Div {
+        @Override
+        public <T1> T1 getDefaultProperty(int property) {
+            if (property == Property.KEEP_TOGETHER) {
+                return (T1) (Object) true;
+            }
+            return super.<T1>getDefaultProperty(property);
+        }
+    }
+
+    private static class SpecialOddPagesDocumentRenderer extends DocumentRenderer {
+        private PageSize firstPageSize;
+
+        public SpecialOddPagesDocumentRenderer(Document document, PageSize firstPageSize) {
+            super(document);
+            this.firstPageSize = new PageSize(firstPageSize);
+        }
+
+        @Override
+        protected PageSize addNewPage(PageSize customPageSize) {
+            PageSize newPageSize = null;
+            switch (currentPageNumber % 2) {
+                case 1:
+                    newPageSize = firstPageSize;
+                    break;
+                case 0:
+                default:
+                    newPageSize = PageSize.A4;
+                    break;
+            }
+            return super.addNewPage(newPageSize);
+        }
     }
 }
