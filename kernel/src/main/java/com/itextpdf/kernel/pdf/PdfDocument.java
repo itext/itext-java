@@ -1072,6 +1072,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Copies a range of pages from current document to {@code toDocument}.
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
+     * <p>
+     * If outlines destination names are the same in different documents, all
+     * such outlines will lead to a single location in the resultant document.
+     * In this case iText will log a warning. This can be avoided by renaming
+     * destinations names in the source document.
      *
      * @param pageFrom         start of the range of pages to be copied.
      * @param pageTo           end of the range of pages to be copied.
@@ -1088,6 +1093,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * and {@code pageTo} are included in list of copied pages.
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
+     * <p>
+     * If outlines destination names are the same in different documents, all
+     * such outlines will lead to a single location in the resultant document.
+     * In this case iText will log a warning. This can be avoided by renaming
+     * destinations names in the source document.
      *
      * @param pageFrom         1-based start of the range of pages to be copied.
      * @param pageTo           1-based end (inclusive) of the range of pages to be copied. This page is included in list of copied pages.
@@ -1111,6 +1121,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * is inclusive, both {@code page} and {@code pageTo} are included in list of copied pages.
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
+     * <p>
+     * If outlines destination names are the same in different documents, all
+     * such outlines will lead to a single location in the resultant document.
+     * In this case iText will log a warning. This can be avoided by renaming
+     * destinations names in the source document.
      *
      * @param pageFrom   1-based start of the range of pages to be copied.
      * @param pageTo     1-based end (inclusive) of the range of pages to be copied. This page is included in list of copied pages.
@@ -1126,6 +1141,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * is inclusive, both {@code page} and {@code pageTo} are included in list of copied pages.
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
+     * <p>
+     * If outlines destination names are the same in different documents, all
+     * such outlines will lead to a single location in the resultant document.
+     * In this case iText will log a warning. This can be avoided by renaming
+     * destinations names in the source document.
      *
      * @param pageFrom   1-based start of the range of pages to be copied.
      * @param pageTo     1-based end (inclusive) of the range of pages to be copied. This page is included in list of copied pages.
@@ -1143,6 +1163,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Copies a range of pages from current document to {@code toDocument}.
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
+     * <p>
+     * If outlines destination names are the same in different documents, all
+     * such outlines will lead to a single location in the resultant document.
+     * In this case iText will log a warning. This can be avoided by renaming
+     * destinations names in the source document.
      *
      * @param pagesToCopy      list of pages to be copied.
      * @param toDocument       a document to copy pages to.
@@ -1157,6 +1182,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Copies a range of pages from current document to {@code toDocument}.
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
+     * <p>
+     * If outlines destination names are the same in different documents, all
+     * such outlines will lead to a single location in the resultant document.
+     * In this case iText will log a warning. This can be avoided by renaming
+     * destinations names in the source document.
      *
      * @param pagesToCopy      list of pages to be copied.
      * @param toDocument       a document to copy pages to.
@@ -1242,6 +1272,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Copies a range of pages from current document to {@code toDocument} appending copied pages to the end.
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
+     * <p>
+     * If outlines destination names are the same in different documents, all
+     * such outlines will lead to a single location in the resultant document.
+     * In this case iText will log a warning. This can be avoided by renaming
+     * destinations names in the source document.
      *
      * @param pagesToCopy list of pages to be copied.
      * @param toDocument  a document to copy pages to.
@@ -1255,6 +1290,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Copies a range of pages from current document to {@code toDocument} appending copied pages to the end.
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
+     * <p>
+     * If outlines destination names are the same in different documents, all
+     * such outlines will lead to a single location in the resultant document.
+     * In this case iText will log a warning. This can be avoided by renaming
+     * destinations names in the source document.
      *
      * @param pagesToCopy list of pages to be copied.
      * @param toDocument  a document to copy pages to.
