@@ -32,13 +32,12 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ImageRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
-import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs.Indexed;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -104,6 +103,21 @@ public class InlineImageExtractionTest extends ExtendedITextTest {
         expectedDict.put(PdfName.ColorSpace, expectedIndexedCs.getPdfObject());
 
         Assert.assertTrue(new CompareTool().compareDictionaries(inlineImages.get(0), expectedDict));
+    }
+
+    @Test
+    public void parseInlineImageTest() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "docWithInlineImage.pdf"));
+
+        InlineImageEventListener listener = new InlineImageEventListener();
+        new PdfCanvasProcessor(listener).processPageContent(pdfDocument.getFirstPage());
+        List <PdfStream> inlineImages = listener.getInlineImages();
+
+        byte[] data = new PdfImageXObject(inlineImages.get(0)).getImageBytes();
+
+        byte[] cmpImgBytes = Files.readAllBytes(Paths.get(sourceFolder, "docWithInlineImageBytes.dat"));
+
+        Assert.assertArrayEquals(cmpImgBytes, data);
     }
 
     private static class InlineImageEventListener implements IEventListener {
