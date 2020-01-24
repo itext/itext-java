@@ -538,10 +538,11 @@ public class PdfPKCS7 {
      */
     public Calendar getSignDate() {
         Calendar dt = getTimeStampDate();
-        if (dt == SignUtils.UNDEFINED_TIMESTAMP_DATE)
+        if (dt == TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {
             return this.signDate;
-        else
+        } else {
             return dt;
+        }
     }
 
     /**
@@ -1470,13 +1471,17 @@ public class PdfPKCS7 {
     }
 
     /**
-     * Gets the timestamp date
+     * Gets the timestamp date.
      *
-     * @return a date
+     * In case the signed document doesn't contain timestamp,
+     * {@link TimestampConstants#UNDEFINED_TIMESTAMP_DATE} will be returned.
+     *
+     * @return the timestamp date
      */
     public Calendar getTimeStampDate() {
-        if (timeStampToken == null)
-            return (Calendar) SignUtils.UNDEFINED_TIMESTAMP_DATE;
+        if (timeStampToken == null) {
+            return (Calendar) TimestampConstants.UNDEFINED_TIMESTAMP_DATE;
+        }
         return SignUtils.getTimeStampDate(timeStampToken);
     }
 

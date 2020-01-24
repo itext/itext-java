@@ -127,8 +127,9 @@ public class CRLVerifier extends RootStoreVerifier {
      * @throws GeneralSecurityException
      */
     public boolean verify(X509CRL crl, X509Certificate signCert, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException {
-        if (crl == null || signDate == SignUtils.UNDEFINED_TIMESTAMP_DATE)
+        if (crl == null || signDate == TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {
             return false;
+        }
         // We only check CRLs valid on the signing date for which the issuer matches
         if (crl.getIssuerX500Principal().equals(signCert.getIssuerX500Principal()) && signDate.before(crl.getNextUpdate())) {
             // the signing certificate may not be revoked
