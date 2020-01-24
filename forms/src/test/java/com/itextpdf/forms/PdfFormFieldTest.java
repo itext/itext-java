@@ -97,6 +97,16 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    // The first message for the case when the FormField is null,
+    // the second message when the FormField is a indirect reference to null.
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CANNOT_CREATE_FORMFIELD, count = 2)})
+    public void nullFormFieldTest() throws IOException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "nullFormField.pdf"));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        pdfDoc.close();
+    }
+
+    @Test
     public void formFieldTest01() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "formFieldFile.pdf"));
 
