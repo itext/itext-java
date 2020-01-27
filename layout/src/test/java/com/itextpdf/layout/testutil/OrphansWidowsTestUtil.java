@@ -49,6 +49,7 @@ import com.itextpdf.layout.property.ParagraphOrphansControl;
 import com.itextpdf.layout.property.ParagraphWidowsControl;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
 import java.io.FileNotFoundException;
@@ -508,6 +509,114 @@ public class OrphansWidowsTestUtil {
         document.add(smallParagraph);
 
         document.close();
+    }
+
+    public static void produceOrphansOrWidowsTestCase(String outPdf, int linesLeft, boolean orphans,
+            Paragraph testPara) throws FileNotFoundException {
+        Document doc = new Document(new PdfDocument(new PdfWriter(outPdf)));
+
+        PageSize pageSize = new PageSize(PageSize.A4.getWidth(), PageSize.A5.getHeight());
+        doc.getPdfDocument().setDefaultPageSize(pageSize);
+
+        testPara.setMargin(0).setBackgroundColor(new DeviceRgb(232, 232, 232));
+        testPara.add(PARA_TEXT);
+
+        String orphansOrWidows = orphans ? "orphans" : "widows";
+        String description = "Test " + orphansOrWidows + ".\n" + " This block height is adjusted in"
+                + " such way as to leave " + (String.valueOf(linesLeft)) + " line(s) on area break.\n"
+                + " Configuration is identified by the file name.\n Reference example"
+                + " without " + orphansOrWidows + " control can be found on the next page.";
+
+        float effectiveWidth;
+        float effectiveHeight;
+
+        doc.setRenderer(new DocumentRenderer(doc));
+
+        Rectangle effectiveArea = doc.getPageEffectiveArea(pageSize);
+        effectiveWidth = effectiveArea.getWidth();
+        effectiveHeight = effectiveArea.getHeight();
+
+        float linesHeight = calculateHeightForLinesNum(doc, testPara, effectiveWidth, linesLeft, orphans);
+        float adjustmentHeight = effectiveHeight - linesHeight - LINES_SPACE_EPS;
+
+        doc.add(new Paragraph()
+                .add(new Text(description))
+                .setMargin(0)
+                .setBorder(new SolidBorder(1))
+                .setHeight(adjustmentHeight));
+
+        doc.add(testPara);
+        doc.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+
+        doc.add(new Paragraph("Reference example without orphans/widows control.")
+                .setMargin(0)
+                .setBorder(new SolidBorder(1))
+                .setHeight(adjustmentHeight));
+
+        doc.add(new Paragraph(PARA_TEXT).setMargin(0).setBackgroundColor(new DeviceRgb(232, 232, 232)));
+
+        doc.close();
+    }
+
+    public static void produceOrphansAndWidowsTestCase(String outPdf, Paragraph testPara) throws FileNotFoundException {
+        Document doc = new Document(new PdfDocument(new PdfWriter(outPdf)));
+
+        PageSize pageSize = new PageSize(PageSize.A4.getWidth(), PageSize.A5.getHeight());
+        doc.getPdfDocument().setDefaultPageSize(pageSize);
+
+        Rectangle[] columns = initUniformColumns(pageSize, 2);
+        doc.setRenderer(new ColumnDocumentRenderer(doc, columns));
+
+        String paraText = "A one line string\n";
+
+        testPara.setMargin(0).setBackgroundColor(new DeviceRgb(232, 232, 232));
+        testPara.add(paraText);
+
+        float linesHeight = calculateHeightForLinesNum(doc, testPara, columns[1].getWidth(), 1, true);
+        float adjustmentHeight = columns[0].getHeight() - linesHeight - LINES_SPACE_EPS;
+
+        String description = "Test orphans and widows case at once. This block height"
+                + " is adjusted in such way that both orphans and widows cases occur.\n "
+                + "The following paragraph contains as many fitting in one line text strings as needed"
+                + " to reproduce the case with both orphans and widows\n"
+                + "Reference example without orphans and widows"
+                + " control can be found on the next page";
+
+        doc.add(new Paragraph(description)
+                .setMargin(0)
+                .setBorder(new SolidBorder(1))
+                .setHeight(adjustmentHeight));
+
+        Paragraph tempPara = new Paragraph().setMargin(0);
+        for (int i = 0; i < 50; i++) {
+            tempPara.add(paraText);
+        }
+
+        ParagraphRenderer renderer = (ParagraphRenderer) tempPara.createRendererSubTree().setParent(doc.getRenderer());
+        LayoutResult layoutRes = renderer.layout(new LayoutContext(new LayoutArea
+                (1, new Rectangle( columns[1].getWidth(), columns[1].getHeight()))));
+        int numberOfLines = ((ParagraphRenderer) layoutRes.getSplitRenderer()).getLines().size();
+        for (int i = 0; i <= numberOfLines; i++) {
+            testPara.add(paraText);
+        }
+        doc.add(testPara);
+        doc.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+
+        doc.add(new Paragraph("Reference example without orphans and widows control.")
+                .setMargin(0)
+                .setBorder(new SolidBorder(1))
+                .setHeight(adjustmentHeight));
+
+        Paragraph paragraph = new Paragraph();
+        for (int i = 0; i <= numberOfLines + 1; i++) {
+            paragraph.add(paraText);
+        }
+        paragraph.setMargin(0).setBackgroundColor(new DeviceRgb(232, 232, 232));
+        doc.add(paragraph);
+
+        doc.add(new Paragraph(paraText).setMargin(0).setBackgroundColor(new DeviceRgb(232, 232, 232)));
+
+        doc.close();
     }
 
     public static float calculateHeightForLinesNum(Document doc, Paragraph p, float width, float linesNum,

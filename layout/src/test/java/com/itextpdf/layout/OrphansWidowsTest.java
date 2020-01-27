@@ -23,16 +23,11 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.colors.DeviceGray;
-import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -49,7 +44,6 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -361,6 +355,32 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         runOrphansWidowsBiggerThanLinesCount("twoLinesParagraphMin3Widows", false, false);
     }
 
+    @Test
+    public void orphansAndWidowsTest() throws IOException, InterruptedException {
+        runOrphansAndWidows("orphansAndWidowsTest");
+    }
+
+    @Test
+    public void widowsControlOnPagesTest() throws IOException, InterruptedException {
+        String testName = "widowsControlOnPagesTest";
+
+        Paragraph testPara = new Paragraph();
+        testPara.setWidowsControl(new ParagraphWidowsControl
+                (3,1, true));
+
+        runTestOnPage(testName, testPara, false);
+    }
+
+    @Test
+    public void orphansControlOnPagesTest() throws IOException, InterruptedException {
+        String testName = "orphansControlOnPagesTest";
+
+        Paragraph testPara = new Paragraph();
+        testPara.setOrphansControl(new ParagraphOrphansControl(3));
+
+        runTestOnPage(testName, testPara, true);
+    }
+
     private static void runMaxHeightLimit(String fileName, boolean orphans) throws IOException, InterruptedException {
         String outPdf = destinationFolder + fileName + ".pdf";
         String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
@@ -489,6 +509,34 @@ public class OrphansWidowsTest extends ExtendedITextTest {
             testPara.setProperty(Property.FORCED_PLACEMENT, Boolean.TRUE);
         }
         runTest(testName, linesLeft, false, testPara);
+    }
+
+    private static void runOrphansAndWidows(String testName)
+            throws InterruptedException, IOException {
+        String outPdf = destinationFolder + testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
+
+        Paragraph testPara = new Paragraph();
+        testPara
+                .setOrphansControl(new ParagraphOrphansControl(3))
+                .setWidowsControl(new ParagraphWidowsControl
+                        (3, 1, true));
+
+        OrphansWidowsTestUtil.produceOrphansAndWidowsTestCase(outPdf, testPara);
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    private static void runTestOnPage(String testName, Paragraph testPara, boolean orphans)
+            throws InterruptedException, IOException {
+        String outPdf = destinationFolder + testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
+
+        int linesLeft = 1;
+
+        OrphansWidowsTestUtil.produceOrphansOrWidowsTestCase(outPdf, linesLeft, orphans, testPara);
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private static void runTest(String testName, int linesLeft, boolean orphans, Paragraph testPara)
