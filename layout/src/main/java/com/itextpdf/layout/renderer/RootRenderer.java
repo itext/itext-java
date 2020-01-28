@@ -57,11 +57,13 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.property.ClearPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class RootRenderer extends AbstractRenderer {
 
@@ -123,8 +125,8 @@ public abstract class RootRenderer extends AbstractRenderer {
             List<IRenderer> resultRenderers = new ArrayList<>();
             LayoutResult result = null;
 
-            RootLayoutArea storedArea = null;
-            RootLayoutArea nextStoredArea = null;
+            RootRendererStoredState storedState = new RootRendererStoredState();
+
             MarginsCollapseInfo childMarginsInfo = null;
             if (marginsCollapsingEnabled && currentArea != null && renderer != null) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
@@ -143,11 +145,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                         break;
                     } else {
                         processRenderer(result.getSplitRenderer(), resultRenderers);
-                        if (nextStoredArea != null) {
-                            currentArea = nextStoredArea;
-                            currentPageNumber = nextStoredArea.getPageNumber();
-                            nextStoredArea = null;
-                        } else {
+                        if (!storedState.restoreNextState()) {
                             currentAreaNeedsToBeUpdated = true;
                         }
                     }
@@ -174,12 +172,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 result.getOverflowRenderer().getModelElement().setProperty(Property.KEEP_TOGETHER, false);
                                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
                                 logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "KeepTogether property will be ignored."));
-                                if (storedArea != null) {
-                                    nextStoredArea = currentArea;
-                                    currentArea = storedArea;
-                                    currentPageNumber = storedArea.getPageNumber();
-                                }
-                                storedArea = currentArea;
+                                storedState.restoreState();
                             } else if (null != result.getCauseOfNothing() && Boolean.TRUE.equals(result.getCauseOfNothing().<Boolean>getProperty(Property.KEEP_TOGETHER))) {
                                 // set KEEP_TOGETHER false on the deepest parent (maybe the element itself) to have KEEP_TOGETHER == true
                                 IRenderer theDeepestKeptTogether = result.getCauseOfNothing();
@@ -208,12 +201,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 break;
                             }
                         } else {
-                            storedArea = currentArea;
-                            if (nextStoredArea != null) {
-                                currentArea = nextStoredArea;
-                                currentPageNumber = nextStoredArea.getPageNumber();
-                                nextStoredArea = null;
-                            } else {
+                                if (!storedState.storeState()) {
                                 if (rendererIsFloat) {
                                     waitingNextPageRenderers.add(result.getOverflowRenderer());
                                     floatOverflowedCompletely = true;
@@ -325,7 +313,7 @@ public abstract class RootRenderer extends AbstractRenderer {
         if (!immediateFlush) {
             flush();
         }
-        flushWaitingDrawingElements();
+        flushWaitingDrawingElements(true);
         LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
         if (taggingHelper != null) {
             taggingHelper.releaseAllHints();
@@ -352,11 +340,21 @@ public abstract class RootRenderer extends AbstractRenderer {
     protected abstract LayoutArea updateCurrentArea(LayoutResult overflowResult);
 
     protected void flushWaitingDrawingElements() {
-        for (int i = 0; i < waitingDrawingElements.size(); ++i) {
+        flushWaitingDrawingElements(true);
+    }
+
+    protected void flushWaitingDrawingElements(boolean force) {
+        Set<IRenderer> flushedElements = new HashSet<>();
+        for (int i = 0; i < waitingDrawingElements.size(); ++i)
+        {
             IRenderer waitingDrawingElement = waitingDrawingElements.get(i);
-            flushSingleRenderer(waitingDrawingElement);
+            // TODO Remove checking occupied area to be not null when DEVSIX-1655 is resolved.
+            if (force || (null != waitingDrawingElement.getOccupiedArea() && waitingDrawingElement.getOccupiedArea().getPageNumber() < currentArea.getPageNumber())) {
+                flushSingleRenderer(waitingDrawingElement);
+                flushedElements.add(waitingDrawingElement);
+            }
         }
-        waitingDrawingElements.clear();
+        waitingDrawingElements.removeAll(flushedElements);
     }
 
     protected void shrinkCurrentAreaAndProcessRenderer(IRenderer renderer, List<IRenderer> resultRenderers, LayoutResult result) {
@@ -482,6 +480,60 @@ public abstract class RootRenderer extends AbstractRenderer {
         waitingNextPageRenderers.clear();
         for (IRenderer renderer : waitingFloatRenderers) {
             addChild(renderer);
+        }
+    }
+
+
+    private class RootRendererStoredState {
+        private RootLayoutArea storedArea;
+        private RootLayoutArea nextStoredArea;
+
+        private List<Rectangle> storedFloatRendererAreas = null;
+        private List<Rectangle> nextStoredFloatRendererAreas = null;
+
+        public boolean restoreState() {
+            boolean result = false;
+            if (storedArea != null) {
+                currentArea = storedArea;
+                currentPageNumber = storedArea.getPageNumber();
+                floatRendererAreas = storedFloatRendererAreas;
+
+                nextStoredArea = currentArea;
+                nextStoredFloatRendererAreas = floatRendererAreas;
+
+                result = true;
+            }
+            storedArea = currentArea;
+            return result;
+        }
+
+        public boolean restoreNextState() {
+            if (nextStoredArea != null) {
+                currentArea = nextStoredArea;
+                currentPageNumber = nextStoredArea.getPageNumber();
+                floatRendererAreas = nextStoredFloatRendererAreas;
+
+                nextStoredArea = null;
+                nextStoredFloatRendererAreas = null;
+
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        public boolean storeState() {
+            storedArea = currentArea;
+            storedFloatRendererAreas = floatRendererAreas;
+
+            if (nextStoredArea != null) {
+                currentArea = nextStoredArea;
+                currentPageNumber = nextStoredArea.getPageNumber();
+
+                nextStoredArea = null;
+                return true;
+            }
+            return false;
         }
     }
 }

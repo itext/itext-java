@@ -93,7 +93,7 @@ public class DocumentRenderer extends RootRenderer {
     }
 
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
-        flushWaitingDrawingElements();
+        flushWaitingDrawingElements(false);
         LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
         if (taggingHelper != null) {
             taggingHelper.releaseFinishedHints();

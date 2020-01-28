@@ -57,6 +57,7 @@ import com.itextpdf.layout.element.ILargeElement;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.AreaBreakRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -69,7 +70,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LayoutTaggingHelper {
+public class    LayoutTaggingHelper {
     private TagStructureContext context;
     private PdfDocument document;
     private boolean immediateFlush;
@@ -290,9 +291,28 @@ public class LayoutTaggingHelper {
             finishDummyKids(getKidsHint(hint));
         }
 
+        List<TaggingHintKey> hintsToBeHeld = new ArrayList<>();
+        for (TaggingHintKey hint : allHints) {
+            if (!isNonAccessibleHint(hint)) {
+                List<TaggingHintKey> siblingsHints = getAccessibleKidsHint(hint);
+                if (null != siblingsHints) {
+                    boolean holdTheFirstFinishedToBeFound = false;
+                    for (TaggingHintKey sibling : siblingsHints) {
+                        if (!sibling.isFinished()) {
+                            holdTheFirstFinishedToBeFound = true;
+                        } else if (holdTheFirstFinishedToBeFound) {
+                            // here true == sibling.isFinished
+                            hintsToBeHeld.add(sibling);
+                            holdTheFirstFinishedToBeFound = false;
+                        }
+                    }
+                }
+            }
+        }
+
         for (TaggingHintKey hint : allHints) {
             if (hint.isFinished()) {
-                releaseHint(hint, true);
+                releaseHint(hint, hintsToBeHeld, true);
             }
         }
     }
@@ -321,7 +341,7 @@ public class LayoutTaggingHelper {
 //                Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
 //                logger.warn(LogMessageConstant.TAGGING_HINT_NOT_FINISHED_BEFORE_CLOSE);
 //            }
-            releaseHint(hint, false);
+            releaseHint(hint, null, false);
         }
 
         assert parentHints.isEmpty();
@@ -688,7 +708,7 @@ public class LayoutTaggingHelper {
         return context.getWaitingTagsManager().isObjectAssociatedWithWaitingTag(tagHint);
     }
 
-    private void releaseHint(TaggingHintKey hint, boolean checkContextIsFinished) {
+    private void releaseHint(TaggingHintKey hint, List<TaggingHintKey> hintsToBeHeld, boolean checkContextIsFinished) {
         TaggingHintKey parentHint = parentHints.get(hint);
         List<TaggingHintKey> kidsHint = kidsHints.get(hint);
         if (checkContextIsFinished && parentHint != null) {
@@ -698,6 +718,12 @@ public class LayoutTaggingHelper {
         }
         if (checkContextIsFinished && kidsHint != null) {
             if (isSomeKidNotFinished(hint)) {
+                return;
+            }
+        }
+
+        if (checkContextIsFinished && hintsToBeHeld != null) {
+            if (hintsToBeHeld.contains(hint)) {
                 return;
             }
         }
