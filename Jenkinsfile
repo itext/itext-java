@@ -1,9 +1,24 @@
 #!/usr/bin/env groovy
 @Library('pipeline-library')_
 
-def schedule = env.BRANCH_NAME.contains('master') ? '@monthly' : env.BRANCH_NAME == 'develop' ? '@midnight' : ''
-def sonarBranchName = env.BRANCH_NAME.contains('master') ? '-Dsonar.branch.name=master' : '-Dsonar.branch.name=' + env.BRANCH_NAME
-def sonarBranchTarget = env.BRANCH_NAME.contains('master') ? '' : env.BRANCH_NAME == 'develop' ? '-Dsonar.branch.target=master' : '-Dsonar.branch.target=develop'
+def schedule, sonarBranchName, sonarBranchTarget
+switch (env.BRANCH_NAME) {
+    case ~/.*master.*/:
+        schedule = '@monthly'
+        sonarBranchName = '-Dsonar.branch.name=master'
+        sonarBranchTarget = ''
+        break
+    case ~/.*develop.*/:
+        schedule = '@midnight'
+        sonarBranchName = '-Dsonar.branch.name=develop'
+        sonarBranchTarget = '-Dsonar.branch.target=master'
+        break
+    default:
+        schedule = ''
+        sonarBranchName = '-Dsonar.branch.name=' + env.BRANCH_NAME
+        sonarBranchTarget = '-Dsonar.branch.target=develop'
+        break
+}
 
 pipeline {
 
@@ -32,23 +47,38 @@ pipeline {
     }
 
     stages {
-        stage('Clean workspace') {
+        stage('Build') {
             options {
-                timeout(time: 5, unit: 'MINUTES')
+                retry(2)
             }
-            steps {
-                withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
-                    sh 'mvn --threads 2C --no-transfer-progress clean dependency:purge-local-repository -Dinclude=com.itextpdf -DresolutionFuzziness=groupId -DreResolve=false'
+            stages {
+                stage('Clean workspace') {
+                    options {
+                        timeout(time: 5, unit: 'MINUTES')
+                    }
+                    steps {
+                        withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
+                            sh 'mvn --threads 2C --no-transfer-progress clean dependency:purge-local-repository -Dinclude=com.itextpdf -DresolutionFuzziness=groupId -DreResolve=false'
+                        }
+                    }
+                }
+                stage('Compile') {
+                    options {
+                        timeout(time: 10, unit: 'MINUTES')
+                    }
+                    steps {
+                        withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
+                            sh 'mvn --threads 2C --no-transfer-progress package -Dmaven.test.skip=true'
+                        }
+                    }
                 }
             }
-        }
-        stage('Compile') {
-            options {
-                timeout(time: 10, unit: 'MINUTES')
-            }
-            steps {
-                withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
-                    sh 'mvn --threads 2C --no-transfer-progress package -Dmaven.test.skip=true'
+            post {
+                failure {
+                    sleep time: 2, unit: 'MINUTES'
+                }
+                success {
+                    script { currentBuild.result = 'SUCCESS' }
                 }
             }
         }
