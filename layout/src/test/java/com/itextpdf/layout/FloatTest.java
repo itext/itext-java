@@ -3084,4 +3084,138 @@ public class FloatTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff03_"));
     }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void keepTogetherEnoughSpaceOnNewPageWithFloatTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_keepTogetherEnoughSpaceOnNewPageWithFloatTest.pdf";
+        String outFile = destinationFolder + "keepTogetherEnoughSpaceOnNewPageWithFloatTest.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        fillWithKeptTogetherElement(document, 2, false);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void keepTogetherNotEnoughSpaceOnNewPageWithFloatEnoughOnEmptyTest()
+            throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_keepTogetherNotEnoughSpaceOnNewPageWithFloatEnoughOnEmptyTest.pdf";
+        String outFile = destinationFolder + "keepTogetherNotEnoughSpaceOnNewPageWithFloatEnoughOnEmptyTest.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        fillWithKeptTogetherElement(document, 3, false);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2))
+    public void keepTogetherNotEnoughSpaceOnNewEmptyPageTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_keepTogetherNotEnoughSpaceOnNewEmptyPageTest.pdf";
+        String outFile = destinationFolder + "keepTogetherNotEnoughSpaceOnNewEmptyPageTest.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        fillWithKeptTogetherElement(document, 4, false);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void innerKeepTogetherEnoughSpaceOnNewPageWithFloatTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_innerKeepTogetherEnoughSpaceOnNewPageWithFloatTest.pdf";
+        String outFile = destinationFolder + "innerKeepTogetherEnoughSpaceOnNewPageWithFloatTest.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        fillWithKeptTogetherElement(document, 2, true);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void innerKeepTogetherNotEnoughSpaceOnNewPageWithFloatEnoughOnEmptyTest()
+            throws IOException, InterruptedException {
+        String cmpFileName =
+                sourceFolder + "cmp_innerKeepTogetherNotEnoughSpaceOnNewPageWithFloatEnoughOnEmptyTest.pdf";
+        String outFile = destinationFolder + "innerKeepTogetherNotEnoughSpaceOnNewPageWithFloatEnoughOnEmptyTest.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        fillWithKeptTogetherElement(document, 3, true);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2))
+    public void innerKeepTogetherNotEnoughSpaceOnNewEmptyPageTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_innerKeepTogetherNotEnoughSpaceOnNewEmptyPageTest.pdf";
+        String outFile = destinationFolder + "innerKeepTogetherNotEnoughSpaceOnNewEmptyPageTest.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        fillWithKeptTogetherElement(document, 4, true);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
+    }
+
+
+    private static void fillWithKeptTogetherElement(Document doc, int textTimes, boolean isInner) {
+
+        Div floatedDiv = new Div()
+                .setWidth(150)
+                .setBorder(new SolidBorder(ColorConstants.BLUE, 3))
+                .setKeepTogether(true);
+        floatedDiv.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        floatedDiv.add(new Paragraph(text).setFontColor(ColorConstants.LIGHT_GRAY));
+
+        Paragraph keptTogetherParagraph = new Paragraph().setKeepTogether(true);
+        for (int i = 0; i < textTimes; i++) {
+            keptTogetherParagraph.add(text);
+        }
+
+        if (isInner) {
+            Div container = new Div();
+
+            container.add(floatedDiv);
+
+            container.add(new Paragraph("Hello"));
+            container.add(new Paragraph("Hello"));
+            container.add(new Paragraph("Hello"));
+            container.add(new Paragraph("Hello"));
+
+            container.add(keptTogetherParagraph);
+
+            doc.add(container);
+        } else {
+            doc.add(floatedDiv);
+
+            doc.add(new Paragraph("Hello"));
+            doc.add(new Paragraph("Hello"));
+            doc.add(new Paragraph("Hello"));
+            doc.add(new Paragraph("Hello"));
+
+            doc.add(keptTogetherParagraph);
+        }
+    }
+
 }
