@@ -165,7 +165,7 @@ public abstract class ITextTest {
     }
 
     public static void printPathToConsole(String path, String comment) {
-        System.out.println(comment + "file:///" + new File(path).toURI().normalize().getPath());
+        System.out.println(comment + "file://" + new File(path).toURI().normalize().getPath());
     }
 
     protected Timeout getTestTimeout() {
