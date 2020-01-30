@@ -43,16 +43,23 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.RenderingMode;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -80,7 +87,8 @@ public class LineRendererUnitTest extends AbstractRendererUnitTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, count = 4)})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, count = 4)})
     public void adjustChildPositionsAfterReorderingTestWithPercentMargins01() {
         Document dummyDocument = createDocument();
         IRenderer dummy1 = createLayoutedTextRenderer("Hello", dummyDocument);
@@ -129,4 +137,48 @@ public class LineRendererUnitTest extends AbstractRendererUnitTest {
         Assert.assertEquals(true, inlineBlockRenderer.getPropertyAsBoolean(Property.FORCED_PLACEMENT));
     }
 
+    @Test
+    public void adjustChildrenYLineTextChildHtmlModeTest() {
+        Document document = createDocument();
+
+        LineRenderer lineRenderer = new LineRenderer();
+        lineRenderer.setParent(document.getRenderer());
+        lineRenderer.occupiedArea = new LayoutArea(1, new Rectangle(100, 100, 200, 200));
+        lineRenderer.maxAscent = 100;
+
+        TextRenderer childTextRenderer = new TextRenderer(new Text("Hello"));
+        childTextRenderer.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        childTextRenderer.occupiedArea = new LayoutArea(1, new Rectangle(100, 50, 200, 200));
+        childTextRenderer.yLineOffset = 100;
+        childTextRenderer.setProperty(Property.TEXT_RISE, 0f);
+
+        lineRenderer.addChild(childTextRenderer);
+        lineRenderer.adjustChildrenYLine();
+
+        Assert.assertEquals(100f, lineRenderer.getOccupiedAreaBBox().getBottom(), EPS);
+        Assert.assertEquals(100f, childTextRenderer.getOccupiedAreaBBox().getBottom(), EPS);
+    }
+
+    @Test
+    public void adjustChildrenYLineImageChildHtmlModeTest() {
+        Document document = createDocument();
+
+        LineRenderer lineRenderer = new LineRenderer();
+        lineRenderer.setParent(document.getRenderer());
+        lineRenderer.occupiedArea = new LayoutArea(1, new Rectangle(50, 50, 200, 200));
+        lineRenderer.maxAscent = 100;
+
+        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(200, 200));
+        Image img = new Image(xObject);
+        ImageRenderer childImageRenderer = new ImageRenderer(img);
+        childImageRenderer.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        childImageRenderer.occupiedArea = new LayoutArea(1, new Rectangle(50, 50, 200, 200));
+
+        lineRenderer.addChild(childImageRenderer);
+
+        lineRenderer.adjustChildrenYLine();
+
+        Assert.assertEquals(50f, lineRenderer.getOccupiedAreaBBox().getBottom(), EPS);
+        Assert.assertEquals(150.0, childImageRenderer.getOccupiedAreaBBox().getBottom(), EPS);
+    }
 }

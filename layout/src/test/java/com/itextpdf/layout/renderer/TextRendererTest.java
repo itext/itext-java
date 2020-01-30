@@ -55,7 +55,8 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
-import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.layout.property.RenderingMode;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -66,7 +67,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class TextRendererTest extends ExtendedITextTest {
+public class TextRendererTest extends AbstractRendererUnitTest {
+
+    private static final double EPS = 1e-5;
 
     @Test
     public void nextRendererTest() {
@@ -129,5 +132,38 @@ public class TextRendererTest extends ExtendedITextTest {
         txt.setFontFamily("Helvetica");
         doc.add(new Paragraph().add(txt));
         doc.close();
+    }
+
+    @Test
+    public void getDescentTest() {
+        Document doc = createDocument();
+        TextRenderer textRenderer = createLayoutedTextRenderer("hello", doc);
+        textRenderer.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(20f));
+        textRenderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(20f));
+        Assert.assertEquals(-2.980799674987793f, textRenderer.getDescent(), EPS);
+    }
+
+    @Test
+    public void getOccupiedAreaBBoxTest() {
+        Document doc = createDocument();
+        TextRenderer textRenderer = createLayoutedTextRenderer("hello", doc);
+        textRenderer.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(20f));
+        textRenderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(20f));
+        textRenderer.setProperty(Property.PADDING_RIGHT, UnitValue.createPointValue(20f));
+        textRenderer.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        Assert.assertTrue(
+                new Rectangle(0, 986.68f, 25.343998f, 13.32f).equalsWithEpsilon(textRenderer.getOccupiedAreaBBox()));
+    }
+
+    @Test
+    public void getInnerAreaBBoxTest() {
+        Document doc = createDocument();
+        TextRenderer textRenderer = createLayoutedTextRenderer("hello", doc);
+        textRenderer.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(20f));
+        textRenderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(20f));
+        textRenderer.setProperty(Property.PADDING_RIGHT, UnitValue.createPointValue(20f));
+        textRenderer.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        Assert.assertTrue(new Rectangle(0, 986.68f, 5.343998f, -26.68f)
+                .equalsWithEpsilon(textRenderer.getInnerAreaBBox()));
     }
 }

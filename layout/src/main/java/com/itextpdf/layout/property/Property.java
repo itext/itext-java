@@ -136,6 +136,7 @@ public final class Property {
     public static final int LEADING = 33;
     public static final int LEFT = 34;
     public static final int LINE_DRAWER = 35;
+    public static final int LINE_HEIGHT = 124;
     public static final int LINK_ANNOTATION = 88;
     public static final int LIST_START = 36;
     public static final int LIST_SYMBOL = 37;
@@ -174,6 +175,7 @@ public final class Property {
     public static final int PADDING_TOP = 50;
     public static final int PAGE_NUMBER = 51;
     public static final int POSITION = 52;
+    public static final int RENDERING_MODE = 123;
     public static final int RIGHT = 54;
     public static final int ROTATION_ANGLE = 55;
     public static final int ROTATION_INITIAL_HEIGHT = 56;
@@ -219,7 +221,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 122;
+    private static final int MAX_INHERITED_PROPERTY_ID = 124;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -259,6 +261,8 @@ public final class Property {
         INHERITED_PROPERTIES[Property.WORD_SPACING] = true;
         INHERITED_PROPERTIES[Property.TAGGING_HELPER] = true;
         INHERITED_PROPERTIES[Property.TYPOGRAPHY_CONFIG] = true;
+        INHERITED_PROPERTIES[Property.RENDERING_MODE] = true;
+        INHERITED_PROPERTIES[Property.LINE_HEIGHT] = true;
     }
 
     /**

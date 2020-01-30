@@ -82,13 +82,12 @@ import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.FontKerning;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.RenderingMode;
 import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,6 +95,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
@@ -216,9 +217,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         line = new GlyphLine(text);
         line.start = line.end = -1;
 
-        float[] ascenderDescender = calculateAscenderDescender(font);
-        float ascender = ascenderDescender[0];
-        float descender = ascenderDescender[1];
+        float ascender = 0;
+        float descender = 0;
 
         float currentLineAscender = 0;
         float currentLineDescender = 0;
@@ -226,6 +226,19 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         int initialLineTextPos = currentTextPos;
         float currentLineWidth = 0;
         int previousCharPos = -1;
+
+        if(RenderingMode.HTML_MODE.equals(this.<RenderingMode>getProperty(Property.RENDERING_MODE))) {
+            float[] ascenderDescender = LineHeightHelper.calculateFontAscenderDescenderFromFontMetrics(font);
+            ascender = ascenderDescender[0];
+            descender = ascenderDescender[1];
+            currentLineAscender = ascenderDescender[0];
+            currentLineDescender = ascenderDescender[1];
+            currentLineHeight = (currentLineAscender - currentLineDescender) * fontSize.getValue() / TEXT_SPACE_COEFF + textRise;
+        } else {
+            float[] ascenderDescender = calculateAscenderDescender(font);
+            ascender = ascenderDescender[0];
+            descender = ascenderDescender[1];
+        }
 
         savedWordBreakAtLineEnding = null;
         Glyph wordBreakGlyphAtLineEnding = null;
@@ -522,9 +535,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         layoutBox.setHeight(area.getBBox().getHeight() - currentLineHeight);
 
         occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() + italicSkewAddition + boldSimulationAddition);
+
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         applyMargins(occupiedArea.getBBox(), margins, true);
+
+        increaseYLineOffset(paddings, borders, margins);
 
         if (result == null) {
             result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null, isPlacingForcedWhileNothing ? this : null);
@@ -563,6 +579,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         result.setMinMaxWidth(countedMinMaxWidth);
         return result;
+    }
+
+    private void increaseYLineOffset(UnitValue[] paddings, Border[] borders, UnitValue[] margins) {
+        yLineOffset += paddings[0] != null ? paddings[0].getValue() : 0;
+        yLineOffset += borders[0] != null ?borders[0].getWidth() : 0;
+        yLineOffset +=  margins[0] != null ? margins[0].getValue() : 0;
     }
 
     public void applyOtf() {
@@ -674,16 +696,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         super.draw(drawContext);
 
-        applyMargins(occupiedArea.getBBox(), getMargins(), false);
-        applyBorderBox(occupiedArea.getBBox(), false);
-        applyPaddings(occupiedArea.getBBox(), getPaddings(), false);
-
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
             applyRelativePositioningTranslation(false);
         }
 
-        float leftBBoxX = occupiedArea.getBBox().getX();
+        float leftBBoxX = getInnerAreaBBox().getX();
 
         if (line.end > line.start || savedWordBreakAtLineEnding != null) {
             UnitValue fontSize = this.getPropertyAsUnitValue(Property.FONT_SIZE);
@@ -837,10 +855,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             applyRelativePositioningTranslation(false);
         }
 
-        applyPaddings(occupiedArea.getBBox(), true);
-        applyBorderBox(occupiedArea.getBBox(), true);
-        applyMargins(occupiedArea.getBBox(), getMargins(), true);
-
         if (isTagged && !isArtifact) {
             if (isLastRendererForModelElement) {
                 taggingHelper.finishTaggingHint(this);
@@ -949,7 +963,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      */
     @Override
     public float getDescent() {
-        return -(occupiedArea.getBBox().getHeight() - yLineOffset - (float) this.getPropertyAsFloat(Property.TEXT_RISE));
+        return -(getOccupiedAreaBBox().getHeight() - yLineOffset - (float) this.getPropertyAsFloat(Property.TEXT_RISE));
     }
 
     /**
@@ -1180,8 +1194,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             float yLine = getYLine();
             float underlineYPosition = underline.getYPosition(fontSize) + yLine;
             float italicWidthSubstraction = .5f * fontSize * italicAngleTan;
-            canvas.moveTo(occupiedArea.getBBox().getX(), underlineYPosition).
-                    lineTo(occupiedArea.getBBox().getX() + occupiedArea.getBBox().getWidth() - italicWidthSubstraction, underlineYPosition).
+            Rectangle innerAreaBbox = getInnerAreaBBox();
+            canvas.moveTo(innerAreaBbox.getX(), underlineYPosition).
+                    lineTo(innerAreaBbox.getX() + innerAreaBbox.getWidth() - italicWidthSubstraction, underlineYPosition).
                     stroke();
         }
 

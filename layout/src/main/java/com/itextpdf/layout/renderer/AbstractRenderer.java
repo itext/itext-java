@@ -72,6 +72,7 @@ import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
@@ -89,8 +90,6 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.Transform;
 import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.UnitValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -98,6 +97,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Defines the most common properties and behavior that are shared by most
@@ -2168,8 +2169,12 @@ public abstract class AbstractRenderer implements IRenderer {
             if (provider == null) {
                 throw new IllegalStateException(PdfException.FontProviderNotSetFontFamilyNotResolved);
             }
+            FontSet fontSet = this.<FontSet>getProperty(Property.FONT_SET);
+            if (provider.getFontSet().isEmpty() && (fontSet == null || fontSet.isEmpty())) {
+                throw new IllegalStateException(PdfException.FontProviderNotSetFontFamilyNotResolved);
+            }
             FontCharacteristics fc = createFontCharacteristics();
-            return resolveFirstPdfFont((String[]) font, provider, fc);
+            return provider.getPdfFont(provider.getFontSelector(Arrays.asList((String[]) font), fc, fontSet).bestMatch(), fontSet);
         } else {
             throw new IllegalStateException("String[] or PdfFont expected as value of FONT property");
         }
