@@ -86,6 +86,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -782,7 +783,10 @@ public class CompareTool {
     public boolean compareXmls(String outXmlFile, String cmpXmlFile) throws ParserConfigurationException, SAXException, IOException {
         System.out.println("Out xml: file:///" + UrlUtil.toNormalizedURI(outXmlFile).getPath());
         System.out.println("Cmp xml: file:///" + UrlUtil.toNormalizedURI(cmpXmlFile).getPath() + "\n");
-        return XmlUtils.compareXmls(new FileInputStream(outXmlFile), new FileInputStream(cmpXmlFile));
+        try (InputStream outXmlStream = FileUtil.getInputStreamForFile(outXmlFile);
+                InputStream cmpXmlStream = FileUtil.getInputStreamForFile(cmpXmlFile)) {
+            return XmlUtils.compareXmls(outXmlStream, cmpXmlStream);
+        }
     }
 
     /**
