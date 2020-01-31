@@ -70,17 +70,29 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class LinkTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/LinkTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/LinkTest/";
+
+    private static final String LONG_TEXT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam nec condimentum odio. Duis sed ipsum semper, imperdiet risus sit amet, pellentesque leo. Proin eget libero quis orci sagittis efficitur et a justo. Phasellus ac ipsum id lacus fermentum malesuada. Morbi vulputate ultricies ligula a pretium. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam eget leo maximus velit placerat condimentum. Nulla in fermentum ex, in fermentum risus. Phasellus gravida ante sit amet magna porta fermentum. Nunc nec urna quis enim facilisis scelerisque. Praesent risus est, efficitur eget quam nec, dignissim mollis nunc. Mauris in sodales nulla.\n"
+            + "Sed sodales pharetra sapien, eget tristique magna fringilla at. Quisque ligula eros, auctor sit amet varius a, tincidunt non mauris. Sed diam mi, dignissim id magna accumsan, viverra scelerisque risus. Etiam blandit condimentum quam non bibendum. Sed vehicula justo quis lectus consequat, sit amet tempor sem mollis. Sed turpis nibh, luctus in arcu mattis, consequat laoreet est. Integer tempor, ante a gravida efficitur, velit libero dapibus nibh, et scelerisque diam nulla a orci. Vestibulum eleifend rutrum elit, sed pellentesque arcu lacinia nec. Nam semper, velit eget rhoncus efficitur, odio libero molestie mi, ut eleifend libero purus ut ex. Quisque hendrerit vehicula hendrerit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam quis elit eu dolor pellentesque viverra non eget purus. Nam nisi erat, efficitur sed malesuada ut, ornare sit amet risus. Nunc eu vestibulum turpis.\n"
+            + "Duis ultricies et dui nec pharetra. Cras sagittis felis risus, vel vulputate diam blandit non. Vestibulum sed neque quis massa rutrum luctus. Nulla vitae leo ornare, elementum dolor sit amet, fringilla enim. Vestibulum efficitur, diam in molestie tincidunt, tellus purus ultricies nisl, ut bibendum purus augue et mi. Mauris eget leo aliquam metus egestas dapibus eget sit amet risus. Cras eget felis porttitor, ornare est congue, venenatis ipsum. Suspendisse accumsan eget elit efficitur malesuada. Quisque porttitor efficitur lorem in placerat. Nunc sit amet mattis ante. Vestibulum eget quam et ex tempus iaculis. Duis pharetra posuere erat, vitae imperdiet ipsum lacinia in. Aenean nunc quam, consectetur vel nibh sit amet, sollicitudin porta purus.\n"
+            + "Curabitur non nunc in libero pretium dictum rutrum at lorem. Suspendisse nec magna id libero bibendum porta. Nullam urna tellus, ornare nec massa quis, fringilla fermentum leo. Vestibulum ac velit pulvinar ex feugiat varius vel eu nunc. Mauris vitae purus porttitor, sagittis elit eu, volutpat quam. Nunc mattis pretium arcu, vitae pellentesque mauris tincidunt vitae. Proin congue sem eget commodo pulvinar. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eu augue tortor. Vestibulum porta enim eget neque semper scelerisque. Nulla et enim ac nulla luctus viverra sed nec risus. Aliquam blandit, lorem non consectetur auctor, ex ipsum blandit ipsum, ut faucibus orci sem non odio. Nulla ut condimentum ante. Proin dignissim risus vitae arcu tristique, ac ultricies lacus lobortis. Aliquam sodales orci justo, vitae imperdiet elit volutpat id. Nullam vitae interdum erat.\n"
+            + "Donec fringilla sapien sed neque finibus, non luctus justo lobortis. Praesent commodo pellentesque ligula, vel fringilla odio commodo id. Nam ultrices justo a dignissim congue. Nullam imperdiet sem eget placerat aliquam. Suspendisse non faucibus libero. Aenean purus arcu, auctor vitae tincidunt in, tincidunt at ante. Pellentesque euismod, velit vel vulputate faucibus, dolor erat consectetur sapien, ut elementum dui turpis nec lacus. In hac habitasse platea dictumst. Aenean vel elit ultrices, varius mi quis, congue erat."
+            + "Curabitur sit amet nunc porttitor, congue elit vestibulum, vestibulum sapien. Fusce ut arcu consequat, scelerisque sapien vitae, dignissim ligula. Duis gravida mollis volutpat. Maecenas condimentum pulvinar urna in cursus. Nulla ornare est non tellus elementum auctor. Mauris ornare, elit non ornare lobortis, risus augue consectetur orci, ac efficitur ex nunc nec leo. Aenean dictum mattis magna vitae bibendum.";
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -332,6 +344,31 @@ public class LinkTest extends ExtendedITextTest {
 
         Link linkByAction = new Link(text, action);
         doc.add(new Paragraph(linkByAction));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void splitLinkTest01() throws IOException, InterruptedException {
+        junitExpectedException.expect(NullPointerException.class);
+
+        String outFileName = destinationFolder + "splitLinkTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_splitLinkTest01.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        PdfAction action = PdfAction.createURI("http://itextpdf.com");
+        PdfLinkAnnotation annotation = new PdfLinkAnnotation(new Rectangle(1, 1)).setAction(action);
+        Link linkByAnnotation = new Link(LONG_TEXT, annotation);
+
+
+        doc.add(new Div().setHeight(700).setBackgroundColor(ColorConstants.RED));
+
+        // This paragraph is so long that it will be present on the first, second and third pages
+        doc.add(new Paragraph(linkByAnnotation));
 
         doc.close();
 
