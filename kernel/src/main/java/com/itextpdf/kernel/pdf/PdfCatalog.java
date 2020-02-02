@@ -658,46 +658,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    /**
-     * Get the next outline of the current node in the outline tree by looking for a child or sibling node.
-     * If there is no child or sibling of the current node {@link PdfCatalog#getParentNextOutline(PdfDictionary)} is called to get a hierarchical parent's next node. {@code null} is returned if one does not exist.
-     *
-     * @return the {@link PdfDictionary} object of the next outline if one exists, {@code null} otherwise.
-     */
-    private PdfDictionary getNextOutline(PdfDictionary first, PdfDictionary next, PdfDictionary parent) {
-        if (first != null) {
-            return first;
-        } else if (next != null) {
-            return next;
-        } else {
-            return getParentNextOutline(parent);
-        }
-
-    }
-
-    /**
-     * Gets the parent's next outline of the current node.
-     * If the parent does not have a next we look at the grand parent, great-grand parent, etc until we find a next node or reach the root at which point {@code null} is returned to signify there is no next node present.
-     *
-     * @return the {@link PdfDictionary} object of the next outline if one exists, {@code null} otherwise.
-     */
-    private PdfDictionary getParentNextOutline(PdfDictionary parent) {
-        if (parent == null) {
-            return null;
-        }
-        PdfDictionary current = null;
-        while (current == null) {
-            current = parent.getAsDictionary(PdfName.Next);
-            if (current == null) {
-                parent = parent.getAsDictionary(PdfName.Parent);
-                if (parent == null) {
-                    return null;
-                }
-            }
-        }
-        return current;
-    }
-
     private void addOutlineToPage(PdfOutline outline, PdfDictionary item, Map<String, PdfObject> names) {
         PdfObject dest = item.get(PdfName.Dest);
         if (dest != null) {
@@ -731,17 +691,15 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         if (outlineRoot == null) {
             return;
         }
-        PdfDictionary first = outlineRoot.getAsDictionary(PdfName.First);
-        PdfDictionary current = first;
-        HashMap<PdfDictionary, PdfOutline> parentOutlineMap = new HashMap<>();
+        PdfDictionary current = outlineRoot.getAsDictionary(PdfName.First);
 
         outlines = new PdfOutline(OutlineRoot, outlineRoot, getDocument());
         PdfOutline parentOutline = outlines;
-        parentOutlineMap.put(outlineRoot, parentOutline);
+
+        // map `PdfOutline` to the next sibling to process in the hierarchy
+        HashMap<PdfOutline, PdfDictionary> positionMap = new HashMap<>();
 
         while (current != null) {
-            first = current.getAsDictionary(PdfName.First);
-            PdfDictionary next = current.getAsDictionary(PdfName.Next);
             PdfDictionary parent = current.getAsDictionary(PdfName.Parent);
             if (null == parent) {
                 throw new PdfException(
@@ -756,15 +714,30 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                                 KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_TITLE_ENTRY,
                                 current.indirectReference));
             }
-            parentOutline = parentOutlineMap.get(parent);
             PdfOutline currentOutline = new PdfOutline(title.toUnicodeString(), current, parentOutline);
             addOutlineToPage(currentOutline, current, names);
             parentOutline.getAllChildren().add(currentOutline);
 
+            PdfDictionary first = current.getAsDictionary(PdfName.First);
+            PdfDictionary next = current.getAsDictionary(PdfName.Next);
             if (first != null) {
-                parentOutlineMap.put(current, currentOutline);
+                // Down in hierarchy; when returning up, process `next`
+                positionMap.put(parentOutline, next);
+                parentOutline = currentOutline;
+                current = first;
+            } else if (next != null) {
+                // Next sibling in hierarchy
+                current = next;
+            } else {
+                // Up in hierarchy using `positionMap`
+                current = null;
+                while (current == null && parentOutline != null) {
+                    parentOutline = parentOutline.getParent();
+                    if (parentOutline != null) {
+                        current = positionMap.get(parentOutline);
+                    }
+                }
             }
-            current = getNextOutline(first, next, parent);
         }
     }
 }
