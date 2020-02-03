@@ -221,7 +221,9 @@ class XfdfReader {
                     addCommonAnnotationAttributes(pdfCircleAnnotation, annotObject);
                     addMarkupAnnotationAttributes(pdfCircleAnnotation, annotObject);
 
-                    pdfCircleAnnotation.setRectangleDifferences(XfdfObjectUtils.convertFringeFromString(annotObject.getAttributeValue(XfdfConstants.FRINGE)));
+                    if (annotObject.getAttributeValue(XfdfConstants.FRINGE) != null) {
+                        pdfCircleAnnotation.setRectangleDifferences(XfdfObjectUtils.convertFringeFromString(annotObject.getAttributeValue(XfdfConstants.FRINGE)));
+                    }
 
                     pdfDocument.getPage(Integer.parseInt(annotObject.getAttribute(XfdfConstants.PAGE).getValue()))
                             .addAnnotation(pdfCircleAnnotation);
@@ -232,7 +234,9 @@ class XfdfReader {
                     addCommonAnnotationAttributes(pdfSquareAnnotation, annotObject);
                     addMarkupAnnotationAttributes(pdfSquareAnnotation, annotObject);
 
-                    pdfSquareAnnotation.setRectangleDifferences(XfdfObjectUtils.convertFringeFromString(annotObject.getAttributeValue(XfdfConstants.FRINGE)));
+                    if (annotObject.getAttributeValue(XfdfConstants.FRINGE) != null) {
+                        pdfSquareAnnotation.setRectangleDifferences(XfdfObjectUtils.convertFringeFromString(annotObject.getAttributeValue(XfdfConstants.FRINGE)));
+                    }
 
                     pdfDocument.getPage(Integer.parseInt(annotObject.getAttribute(XfdfConstants.PAGE).getValue()))
                             .addAnnotation(pdfSquareAnnotation);

@@ -53,6 +53,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -814,4 +815,5 @@ public class XfdfReaderTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfDropDown.pdf",
                 sourceFolder + "cmp_xfdfDropDown.pdf", destinationFolder, "diff_"));
     }
+
 }
