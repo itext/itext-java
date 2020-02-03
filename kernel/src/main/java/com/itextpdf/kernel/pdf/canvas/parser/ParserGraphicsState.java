@@ -43,25 +43,16 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.geom.AffineTransform;
-import com.itextpdf.kernel.geom.BezierCurve;
-import com.itextpdf.kernel.geom.IShape;
-import com.itextpdf.kernel.geom.Line;
+
 import com.itextpdf.kernel.geom.Matrix;
-import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Path;
-import com.itextpdf.kernel.geom.Point;
-import com.itextpdf.kernel.geom.Subpath;
+import com.itextpdf.kernel.geom.ShapeTransformUtil;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.FillingRule;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.ClipperBridge;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.DefaultClipper;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.IClipper;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.PolyTree;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Internal class which is essentially a {@link CanvasGraphicsState} which supports tracking of
@@ -156,58 +147,6 @@ public class ParserGraphicsState extends CanvasGraphicsState {
     }
 
     private void transformClippingPath(Matrix newCtm) {
-        Path path = new Path();
-
-        for (Subpath subpath : clippingPath.getSubpaths()) {
-            Subpath transformedSubpath = transformSubpath(subpath, newCtm);
-            path.addSubpath(transformedSubpath);
-        }
-
-        clippingPath = path;
-    }
-
-    private Subpath transformSubpath(Subpath subpath, Matrix newCtm) {
-        Subpath newSubpath = new Subpath();
-        newSubpath.setClosed(subpath.isClosed());
-
-        for (IShape segment : subpath.getSegments()) {
-            IShape transformedSegment = transformSegment(segment, newCtm);
-            newSubpath.addSegment(transformedSegment);
-        }
-
-        return newSubpath;
-    }
-
-    private IShape transformSegment(IShape segment, Matrix newCtm) {
-        IShape newSegment;
-        List<Point> segBasePts = segment.getBasePoints();
-        Point[] transformedPoints = transformPoints(newCtm, segBasePts.toArray(new Point[segBasePts.size()]));
-
-        if (segment instanceof BezierCurve) {
-            newSegment = new BezierCurve(Arrays.asList(transformedPoints));
-        } else {
-            newSegment = new Line(transformedPoints[0], transformedPoints[1]);
-        }
-
-        return newSegment;
-    }
-
-    private Point[] transformPoints(Matrix transformationMatrix, Point... points) {
-        try {
-
-            AffineTransform t = new AffineTransform(
-                    transformationMatrix.get(Matrix.I11), transformationMatrix.get(Matrix.I12),
-                    transformationMatrix.get(Matrix.I21), transformationMatrix.get(Matrix.I22),
-                    transformationMatrix.get(Matrix.I31), transformationMatrix.get(Matrix.I32)
-            );
-            t = t.createInverse();
-
-            Point[] transformed = new Point[points.length];
-            t.transform(points, 0, transformed, 0, points.length);
-            return transformed;
-
-        } catch (NoninvertibleTransformException e) {
-            throw new PdfException(PdfException.NoninvertibleMatrixCannotBeProcessed, e);
-        }
+        clippingPath = ShapeTransformUtil.transformPath(clippingPath, newCtm);
     }
 }
