@@ -129,6 +129,18 @@ public class EventCounterHandler {
     }
 
     /**
+     * Checks whether the specified {@link IEventCounterFactory} is registered.
+     * @param factory {@link IEventCounterFactory} to be checked
+     * @return {@code true} if the specified factory is registered
+     */
+    public boolean isRegistered(IEventCounterFactory factory) {
+        if (factory != null) {
+            return factories.containsKey(factory);
+        }
+        return false;
+    }
+
+    /**
      * Unregister specified {@link IEventCounterFactory}. Does nothing if this factory wasn't registered first.
      *
      * @param factory {@link IEventCounterFactory} to be unregistered
