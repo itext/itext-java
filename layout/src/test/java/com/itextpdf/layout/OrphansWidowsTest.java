@@ -120,26 +120,36 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         int overflowedToNextPageLinesNum = 2;
         ParagraphWidowsControl widowsControl = new ParagraphWidowsControl(minAllowedWidows,
                 minAllowedWidows - overflowedToNextPageLinesNum, false);
-        Paragraph widowsParagraph = new Paragraph(OrphansWidowsTestUtil.paraText).setWidowsControl(widowsControl);
+        Paragraph widowsParagraph = new Paragraph(OrphansWidowsTestUtil.PARA_TEXT).setWidowsControl(widowsControl);
 
         IRenderer paragraphRenderer = widowsParagraph.createRendererSubTree().setParent(document.getRenderer());
         Rectangle effectiveArea = document.getPageEffectiveArea(pdfDocument.getDefaultPageSize());
         float linesHeight = OrphansWidowsTestUtil.calculateHeightForLinesNum(document, widowsParagraph,
                 effectiveArea.getWidth(), overflowedToNextPageLinesNum, false);
-        Rectangle layoutAreaRect = new Rectangle(effectiveArea).setHeight(linesHeight + 5);
+        Rectangle layoutAreaRect = new Rectangle(effectiveArea)
+                .setHeight(linesHeight + OrphansWidowsTestUtil.LINES_SPACE_EPS);
         LayoutContext layoutContext = new LayoutContext(new LayoutArea(1, layoutAreaRect));
         LayoutResult firstLayoutResult = paragraphRenderer.layout(layoutContext);
         LayoutResult secondLayoutResult = paragraphRenderer.layout(layoutContext);
 
         // toString() comparison is used since it contains report on status, areaBreak and occupiedArea
         Assert.assertEquals(firstLayoutResult.toString(), secondLayoutResult.toString());
+
         ParagraphRenderer firstSplitRenderer = (ParagraphRenderer) firstLayoutResult.getSplitRenderer();
         ParagraphRenderer secondSplitRenderer = (ParagraphRenderer) secondLayoutResult.getSplitRenderer();
         Assert.assertNotNull(firstSplitRenderer);
         Assert.assertNotNull(secondSplitRenderer);
         Assert.assertEquals(firstSplitRenderer.toString(), secondSplitRenderer.toString());
-        Assert.assertNotNull(firstLayoutResult.getOverflowRenderer());
-        Assert.assertNotNull(secondLayoutResult.getOverflowRenderer());
+
+        ParagraphRenderer firstOverflowRenderer = (ParagraphRenderer) firstLayoutResult.getOverflowRenderer();
+        ParagraphRenderer secondOverflowRenderer = (ParagraphRenderer) secondLayoutResult.getOverflowRenderer();
+        Assert.assertNotNull(firstOverflowRenderer);
+        Assert.assertNotNull(secondOverflowRenderer);
+        List<IRenderer> firstOverflowRendererChildren = firstOverflowRenderer.getChildRenderers();
+        List<IRenderer> secondOverflowRendererChildren = secondOverflowRenderer.getChildRenderers();
+        Assert.assertNotNull(firstOverflowRendererChildren);
+        Assert.assertNotNull(secondOverflowRendererChildren);
+        Assert.assertEquals(firstOverflowRendererChildren.size(), secondOverflowRendererChildren.size());
     }
 
     @Test
@@ -149,16 +159,17 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         int minAllowedWidows = 3;
         int overflowedToNextPageLinesNum = 5;
 
-        Paragraph widowsParagraph = new Paragraph(OrphansWidowsTestUtil.paraText);
+        Paragraph widowsParagraph = new Paragraph(OrphansWidowsTestUtil.PARA_TEXT);
         IRenderer paragraphRenderer = widowsParagraph.createRendererSubTree().setParent(document.getRenderer());
         Rectangle effectiveArea = document.getPageEffectiveArea(pdfDocument.getDefaultPageSize());
         float linesHeight = OrphansWidowsTestUtil.calculateHeightForLinesNum(document, widowsParagraph,
                 effectiveArea.getWidth(), overflowedToNextPageLinesNum, false);
-        Rectangle layoutAreaRect = new Rectangle(effectiveArea).setHeight(linesHeight + 5);
+        Rectangle layoutAreaRect = new Rectangle(effectiveArea)
+                .setHeight(linesHeight + OrphansWidowsTestUtil.LINES_SPACE_EPS);
         LayoutContext layoutContext = new LayoutContext(new LayoutArea(1, layoutAreaRect));
         LayoutResult noWidowsControlLayoutResult = paragraphRenderer.layout(layoutContext);
 
-        ParagraphWidowsControl widowsControl = new ParagraphWidowsControl(minAllowedWidows,1, false);
+        ParagraphWidowsControl widowsControl = new ParagraphWidowsControl(minAllowedWidows, 1, false);
         widowsParagraph.setWidowsControl(widowsControl);
         LayoutResult widowsControlLayoutResult = paragraphRenderer.layout(layoutContext);
 
@@ -173,11 +184,267 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         Assert.assertNotNull(widowsControlLayoutResult.getOverflowRenderer());
     }
 
-    private static void runMinThreeOrphansTest(String testName, int linesLeft) throws InterruptedException, IOException {
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT)})
+    public void maxHeightLimitCausesOrphans() throws IOException, InterruptedException {
+        runMaxHeightLimit("maxHeightLimitCausesOrphans", true);
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT)})
+    public void maxHeightLimitCausesWidows() throws IOException, InterruptedException {
+        runMaxHeightLimit("maxHeightLimitCausesWidows", false);
+    }
+
+    @Test
+    public void canvasHeightCausesOrphansViolation() throws IOException, InterruptedException {
+        runCanvasSize("canvasHeightCausesOrphansViolation", true);
+    }
+
+    /* NOTE in this test the last possibly fitting line is removed as if to fix widows violation!
+     * When the area is limited by highlevel conditions like paragraph's or div's size,
+     * there's no attempt to fix orphans or widows. In this test case on the lowlevel canvas limitation
+     * there is an attempt of fixing widows.
+     */
+    @Test
+    public void canvasHeightCausesWidowsViolation() throws IOException, InterruptedException {
+        runCanvasSize("canvasHeightCausesWidowsViolation", false);
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT)})
+    public void divSizeCausesOrphans() throws IOException, InterruptedException {
+        runDivSize("divSizeCausesOrphans", true);
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT)})
+    public void divSizeCausesWidows() throws IOException, InterruptedException {
+        runDivSize("divSizeCausesWidows", false);
+    }
+
+    @Test
+    public void keepTogetherOrphans() throws IOException, InterruptedException {
+        runKeepTogether("keepTogetherOrphans", true, false);
+    }
+
+    @Test
+    public void keepTogetherWidows() throws IOException, InterruptedException {
+        runKeepTogether("keepTogetherWidows", false, false);
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    public void keepTogetherLargeParagraphOrphans() throws IOException, InterruptedException {
+        runKeepTogether("keepTogetherLargeParagraphOrphans", true, true);
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    public void keepTogetherLargeParagraphWidows() throws IOException, InterruptedException {
+        runKeepTogether("keepTogetherLargeParagraphWidows", false, true);
+    }
+
+    @Test
+    public void inlineImageOrphans() throws IOException, InterruptedException {
+        runInlineImage("inlineImageOrphans", true);
+    }
+
+    @Test
+    public void inlineImageWidows() throws IOException, InterruptedException {
+        runInlineImage("inlineImageWidows", false);
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)})
+    public void hugeInlineImageOrphans() throws IOException, InterruptedException {
+        runHugeInlineImage("hugeInlineImageOrphans", true);
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2),
+            @LogMessage(messageTemplate = LogMessageConstant.WIDOWS_CONSTRAINT_VIOLATED)})
+    public void hugeInlineImageWidows() throws IOException, InterruptedException {
+        runHugeInlineImage("hugeInlineImageWidows", false);
+    }
+
+    @Test
+    public void customParagraphAndRendererOrphans() throws IOException, InterruptedException {
+        runCustomParagraphAndRendererTest("customParagraphAndRendererOrphans", true);
+    }
+
+    @Test
+    public void customParagraphAndRendererWidows() throws IOException, InterruptedException {
+        runCustomParagraphAndRendererTest("customParagraphAndRendererWidows", false);
+    }
+
+    @Test
+    public void unexpectedlyWideNextArea() throws IOException, InterruptedException {
+        runUnexpectedWidthOfNextAreaTest("unexpectedlyWideNextArea", true);
+    }
+
+    @Test
+    public void unexpectedlyNarrowNextArea() throws IOException, InterruptedException {
+        runUnexpectedWidthOfNextAreaTest("unexpectedlyNarrowNextArea", false);
+    }
+
+    @Test
+    public void inlineBlockOrphans() throws IOException, InterruptedException {
+        runInlineBlockTest("inlineBlockOrphans", true);
+    }
+
+    @Test
+    public void inlineBlockWidows() throws IOException, InterruptedException {
+        runInlineBlockTest("inlineBlockWidows", false);
+    }
+
+    @Test
+    public void inlineFloatOrphans() throws IOException, InterruptedException {
+        runInlineFloatTest("inlineFloatOrphans", true);
+    }
+
+    @Test
+    public void inlineFloatWidows() throws IOException, InterruptedException {
+        runInlineFloatTest("inlineFloatWidows", false);
+    }
+
+    @Test
+    public void floatingDivOrphans() throws IOException, InterruptedException {
+        runFloatingDiv("floatingDivOrphans", true);
+    }
+
+    @Test
+    public void floatingDivWidows() throws IOException, InterruptedException {
+        runFloatingDiv("floatingDivWidows", false);
+    }
+
+    @Test
+    public void singleLineParagraphOrphans() throws IOException, InterruptedException {
+        runOrphansWidowsBiggerThanLinesCount("singleLineParagraphOrphans", true, true);
+    }
+
+    @Test
+    public void singleLineParagraphWidows() throws IOException, InterruptedException {
+        runOrphansWidowsBiggerThanLinesCount("singleLineParagraphWidows", false, true);
+    }
+
+    @Test
+    public void twoLinesParagraphMin3Orphans() throws IOException, InterruptedException {
+        runOrphansWidowsBiggerThanLinesCount("twoLinesParagraphMin3Orphans", true, false);
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.WIDOWS_CONSTRAINT_VIOLATED)})
+    public void twoLinesParagraphMin3Widows() throws IOException, InterruptedException {
+        runOrphansWidowsBiggerThanLinesCount("twoLinesParagraphMin3Widows", false, false);
+    }
+
+    private static void runMaxHeightLimit(String fileName, boolean orphans) throws IOException, InterruptedException {
+        String outPdf = destinationFolder + fileName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
+        OrphansWidowsTestUtil.produceOrphansWidowsAndMaxHeightLimitTestCase(outPdf, orphans);
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    private static void runCanvasSize(String fileName, boolean orphans) throws IOException, InterruptedException {
+        String outPdf = destinationFolder + fileName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
+        OrphansWidowsTestUtil.produceOrphansWidowsOnCanvasOfLimitedSizeTestCase(outPdf, orphans);
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    private static void runDivSize(String fileName, boolean orphans) throws IOException, InterruptedException {
+        String outPdf = destinationFolder + fileName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
+        OrphansWidowsTestUtil.produceOrphansWidowsWithinDivOfLimitedSizeTestCase(outPdf, orphans);
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    private static void runKeepTogether(String fileName, boolean orphans, boolean large)
+            throws IOException, InterruptedException {
+        String outPdf = destinationFolder + fileName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
+        OrphansWidowsTestUtil.produceOrphansWidowsKeepTogetherTestCase(outPdf, orphans, large);
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    private static void runInlineImage(String fileName, boolean orphans) throws IOException, InterruptedException {
+        String outPdf = destinationFolder + fileName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
+        String imagePath = sourceFolder + "bulb.gif";
+        OrphansWidowsTestUtil.produceOrphansWidowsInlineImageTestCase(outPdf, imagePath, orphans);
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    private static void runHugeInlineImage(String fileName, boolean orphans) throws IOException, InterruptedException {
+        String outPdf = destinationFolder + fileName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
+        String imagePath = sourceFolder + "imageA4.png";
+        OrphansWidowsTestUtil.produceOrphansWidowsHugeInlineImageTestCase(outPdf, imagePath, orphans);
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    private static void runCustomParagraphAndRendererTest(String fileName, boolean orphans)
+            throws IOException, InterruptedException {
+        String outPdf = destinationFolder + fileName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
+        CustomParagraph customParagraph = new CustomParagraph();
+        if (orphans) {
+            customParagraph.setOrphansControl(new ParagraphOrphansControl(3));
+        } else {
+            customParagraph.setWidowsControl(new ParagraphWidowsControl(3, 1, false));
+        }
+        OrphansWidowsTestUtil.produceOrphansWidowsTestCase(outPdf, 2, orphans, customParagraph, false);
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    private static void runUnexpectedWidthOfNextAreaTest(String fileName, boolean wide)
+            throws IOException, InterruptedException {
+        String outPdf = destinationFolder + fileName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
+        OrphansWidowsTestUtil.produceOrphansWidowsUnexpectedWidthOfNextAreaTestCase(outPdf, wide);
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    private static void runInlineBlockTest(String fileName, boolean orphans)
+            throws IOException, InterruptedException {
+        String outPdf = destinationFolder + fileName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
+        OrphansWidowsTestUtil.produceOrphansWidowsInlineBlockTestCase(outPdf, orphans);
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    private static void runInlineFloatTest(String fileName, boolean orphans)
+            throws IOException, InterruptedException {
+        String outPdf = destinationFolder + fileName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
+        OrphansWidowsTestUtil.produceOrphansWidowsInlineFloatTestCase(outPdf, orphans);
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    private static void runFloatingDiv(String fileName, boolean orphans)
+            throws IOException, InterruptedException {
+        String outPdf = destinationFolder + fileName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
+        OrphansWidowsTestUtil.produceOrphansWidowsFloatingDivTestCase(outPdf, orphans);
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    private static void runOrphansWidowsBiggerThanLinesCount(String fileName, boolean orphans, boolean singleLine)
+            throws IOException, InterruptedException {
+        String outPdf = destinationFolder + fileName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + fileName + ".pdf";
+        OrphansWidowsTestUtil.produceOrphansWidowsBiggerThanLinesCountTestCase(outPdf, orphans, singleLine);
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    private static void runMinThreeOrphansTest(String testName, int linesLeft)
+            throws InterruptedException, IOException {
         runMinThreeOrphansTest(testName, linesLeft, false, false);
     }
 
-    private static void runMinThreeOrphansTest(String testName, int linesLeft, boolean forcedPlacement, boolean marginCollapseTestCase) throws InterruptedException, IOException {
+    private static void runMinThreeOrphansTest(String testName, int linesLeft, boolean forcedPlacement,
+            boolean marginCollapseTestCase) throws InterruptedException, IOException {
         Paragraph testPara = new Paragraph();
         testPara.setOrphansControl(new ParagraphOrphansControl(3));
         if (forcedPlacement) {
@@ -191,7 +458,8 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         runMinThreeWidowsTest(testName, linesLeft, false, true);
     }
 
-    private static void runMinThreeWidowsTest(String testName, int linesLeft, boolean forcedPlacement, boolean overflowParagraphOnViolation)
+    private static void runMinThreeWidowsTest(String testName, int linesLeft, boolean forcedPlacement,
+            boolean overflowParagraphOnViolation)
             throws IOException, InterruptedException {
         Paragraph testPara = new Paragraph();
         testPara.setWidowsControl(new ParagraphWidowsControl(3, 1, overflowParagraphOnViolation));
@@ -201,16 +469,32 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         runTest(testName, linesLeft, false, testPara);
     }
 
-    private static void runTest(String testName, int linesLeft, boolean orphans, Paragraph testPara) throws InterruptedException, IOException {
+    private static void runTest(String testName, int linesLeft, boolean orphans, Paragraph testPara)
+            throws InterruptedException, IOException {
         runTest(testName, linesLeft, orphans, testPara, false);
     }
 
-    private static void runTest(String testName, int linesLeft, boolean orphans, Paragraph testPara, boolean marginCollapseTestCase) throws InterruptedException, IOException {
+    private static void runTest(String testName, int linesLeft, boolean orphans, Paragraph testPara,
+            boolean marginCollapseTestCase) throws InterruptedException, IOException {
         String outPdf = destinationFolder + testName + ".pdf";
         String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
 
-        OrphansWidowsTestUtil.produceOrphansWidowsTestCase(outPdf, linesLeft, orphans, testPara, marginCollapseTestCase);
+        OrphansWidowsTestUtil
+                .produceOrphansWidowsTestCase(outPdf, linesLeft, orphans, testPara, marginCollapseTestCase);
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    private static class CustomParagraphRenderer extends ParagraphRenderer {
+        public CustomParagraphRenderer(CustomParagraph modelElement) {
+            super(modelElement);
+        }
+    }
+
+    private static class CustomParagraph extends Paragraph {
+        @Override
+        protected IRenderer makeNewRenderer() {
+            return new CustomParagraphRenderer(this);
+        }
     }
 }
