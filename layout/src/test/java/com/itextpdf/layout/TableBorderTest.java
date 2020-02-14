@@ -67,17 +67,22 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class TableBorderTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TableBorderTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/TableBorderTest/";
     public static final String cmpPrefix = "cmp_";
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     String fileName;
     String outFileName;
@@ -86,6 +91,23 @@ public class TableBorderTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
+    }
+
+    @Test
+    public void cellWithBigRowspanCompletedButRowNotCompletedOnThreePagesTest() throws IOException, InterruptedException {
+        junitExpectedException.expect(NullPointerException.class);
+
+        fileName = "cellWithBigRowspanCompletedButRowNotCompletedOnThreePagesTest.pdf";
+        Document doc = createDocument();
+
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth()
+                .setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.addCell(new Cell(2, 1));
+        table.addCell(new Cell(1, 1).setHeight(2000).setBackgroundColor(ColorConstants.RED));
+
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
     }
 
     @LogMessages(messages = {
