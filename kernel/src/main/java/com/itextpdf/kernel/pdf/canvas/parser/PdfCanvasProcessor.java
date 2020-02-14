@@ -48,6 +48,7 @@ import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.KernelLogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.CalGray;
 import com.itextpdf.kernel.colors.CalRgb;
@@ -91,6 +92,8 @@ import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1027,6 +1030,11 @@ public class PdfCanvasProcessor {
                 }
             }
         }
+
+        Logger logger = LoggerFactory.getLogger(PdfCanvasProcessor.class);
+        logger.warn(MessageFormatUtil.format(KernelLogMessageConstant.UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE,
+                Arrays.toString((Object[])operands.toArray()), pdfColorSpace.getPdfObject()));
+
         return null;
     }
 

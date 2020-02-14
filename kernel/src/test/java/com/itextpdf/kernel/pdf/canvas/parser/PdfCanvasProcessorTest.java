@@ -44,6 +44,9 @@ package com.itextpdf.kernel.pdf.canvas.parser;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.KernelLogMessageConstant;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -55,6 +58,8 @@ import com.itextpdf.kernel.pdf.canvas.parser.data.PathRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -63,6 +68,8 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -141,6 +148,82 @@ public class PdfCanvasProcessorTest extends ExtendedITextTest {
         processor.processPageContent(page);
 
         pdfDocument.close();
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE))
+    public void patternColorParsingNotValidPdfTest() throws IOException {
+        String inputFile = sourceFolder + "patternColorParsingNotValidPdfTest.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputFile));
+
+        for (int i = 1; i <= pdfDocument.getNumberOfPages(); ++i) {
+            PdfPage page = pdfDocument.getPage(i);
+
+            ColorParsingEventListener colorParsingEventListener = new ColorParsingEventListener();
+
+            PdfCanvasProcessor processor = new PdfCanvasProcessor(colorParsingEventListener);
+            processor.processPageContent(page);
+
+            Color renderInfo = colorParsingEventListener.getEncounteredPath().getFillColor();
+
+            Assert.assertNull(renderInfo);
+        }
+    }
+
+    @Test
+    public void patternColorParsingValidPdfTest() throws IOException {
+        String inputFile = sourceFolder + "patternColorParsingValidPdfTest.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputFile));
+
+        for (int i = 1; i <= pdfDocument.getNumberOfPages(); ++i) {
+            PdfPage page = pdfDocument.getPage(i);
+
+            ColorParsingEventListener colorParsingEventListener = new ColorParsingEventListener();
+
+            PdfCanvasProcessor processor = new PdfCanvasProcessor(colorParsingEventListener);
+            processor.processPageContent(page);
+
+            PathRenderInfo renderInfo = colorParsingEventListener.getEncounteredPath();
+            PdfColorSpace colorSpace = renderInfo.getGraphicsState().getFillColor().getColorSpace();
+
+            Assert.assertTrue(colorSpace instanceof PdfSpecialCs.Pattern);
+        }
+    }
+
+    private static class ColorParsingEventListener implements IEventListener {
+        private List<IEventData> content = new ArrayList<>();
+        private static final String pathDataExpected = "Path data expected.";
+
+        public void eventOccurred(IEventData data, EventType type) {
+            if (type.equals(EventType.RENDER_PATH)) {
+                PathRenderInfo pathRenderInfo = (PathRenderInfo) data;
+                pathRenderInfo.preserveGraphicsState();
+                content.add(data);
+            }
+        }
+
+        /**
+         * Get the last encountered PathRenderInfo, then clears the internal buffer
+         *
+         * @return the PathRenderInfo object that was encountered when processing the last path rendering operation
+         */
+        PathRenderInfo getEncounteredPath() {
+            if (content.size() == 0) {
+                return null;
+            }
+
+            IEventData eventData = content.get(0);
+            if (!(eventData instanceof PathRenderInfo)) {
+                throw new PdfException(pathDataExpected);
+            }
+            content.clear();
+
+            return (PathRenderInfo) eventData;
+        }
+
+        public Set<EventType> getSupportedEvents() {
+            return null;
+        }
     }
 
     private static class NoOpEventListener implements IEventListener {
