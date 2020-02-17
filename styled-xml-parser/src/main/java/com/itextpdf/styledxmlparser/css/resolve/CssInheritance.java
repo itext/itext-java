@@ -126,7 +126,10 @@ public class CssInheritance implements IStyleInheritance {
             CommonCssConstants.LIST_STYLE_TYPE,
 
             // Generated Content for Paged Media
-            CommonCssConstants.QUOTES
+            CommonCssConstants.QUOTES,
+
+            CommonCssConstants.ORPHANS,
+            CommonCssConstants.WIDOWS
     ));
 
     /**

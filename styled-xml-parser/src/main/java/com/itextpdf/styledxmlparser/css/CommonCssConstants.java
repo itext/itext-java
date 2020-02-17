@@ -464,6 +464,11 @@ public class CommonCssConstants {
     public static final String OPACITY = "opacity";
 
     /**
+     * The Constant OPRPHANS.
+     */
+    public static final String ORPHANS = "orphans";
+
+    /**
      * The Constant OUTLINE.
      */
     public static final String OUTLINE = "outline";
@@ -617,6 +622,11 @@ public class CommonCssConstants {
      * The Constant WHITE_SPACE.
      */
     public static final String WHITE_SPACE = "white-space";
+
+    /**
+     * The Constant WIDOWS.
+     */
+    public static final String WIDOWS = "widows";
 
     /**
      * The Constant WIDTH.
