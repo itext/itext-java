@@ -42,52 +42,56 @@
  */
 package com.itextpdf.pdfa;
 
-
-import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfOutputIntent;
+import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Div;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.pdfa.VeraPdfValidator;
+
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-
 @Category(IntegrationTest.class)
-public class PdfABigNumberTest extends ExtendedITextTest {
-
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfABigNumberTest/";
+public class PdfAStampingModeTest extends ExtendedITextTest {
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfAStampingModeTest/";
+    public static final String cmpFolder = sourceFolder + "cmp/PdfAStampingModeTest/";
 
     @BeforeClass
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
-    //TODO(DEVSIX-2979): Produces non-conforming PDF/A document
-    public void runTest() throws Exception {
-        String file = "pdfABigNumber.pdf";
-        String filename = destinationFolder + file;
-        try (InputStream icm = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
-             PdfADocument pdf = new PdfADocument(new PdfWriter(new FileOutputStream(filename)),
-                     PdfAConformanceLevel.PDF_A_3U,
-                     new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB ICC preference", icm));
-             Document document = new Document(pdf)) {
-            Div div = new Div();
-            div.setMinWidth(Float.MAX_VALUE / 4);
-            div.setMinHeight(100);
-            div.setBackgroundColor(ColorConstants.LIGHT_GRAY);
-            document.add(div);
-        }
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp/PdfABigNumberTest/cmp_" + file, destinationFolder, "diff_"));
+    public void pdfA1FieldStampingModeTest01() throws IOException, InterruptedException {
+        String fileName = "pdfA1FieldStampingModeTest01.pdf";
+        PdfADocument pdfDoc = new PdfADocument(new PdfReader(sourceFolder + "pdfs/pdfA1DocumentWithPdfA1Fields01.pdf"), new PdfWriter(destinationFolder + fileName));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+        form.getField("checkBox").setValue("0");
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        Assert.assertNull(compareTool.compareByContent(destinationFolder + fileName, cmpFolder + "cmp_" + fileName, destinationFolder, "diff_"));
+        Assert.assertNull(compareTool.compareXmp(destinationFolder + fileName, cmpFolder + "cmp_" + fileName, true));
+        Assert.assertNull(new VeraPdfValidator().validate(destinationFolder + fileName));
+    }
+
+    @Test
+    public void pdfA2FieldStampingModeTest01() throws IOException, InterruptedException {
+        String fileName = "pdfA2FieldStampingModeTest01.pdf";
+        PdfADocument pdfDoc = new PdfADocument(new PdfReader(sourceFolder + "pdfs/pdfA2DocumentWithPdfA2Fields01.pdf"), new PdfWriter(destinationFolder + fileName));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+        form.getField("checkBox").setValue("0");
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        Assert.assertNull(compareTool.compareByContent(destinationFolder + fileName, cmpFolder + "cmp_" + fileName, destinationFolder, "diff_"));
+        Assert.assertNull(compareTool.compareXmp(destinationFolder + fileName, cmpFolder + "cmp_" + fileName, true));
+        Assert.assertNull(new VeraPdfValidator().validate(destinationFolder + fileName));
     }
 }

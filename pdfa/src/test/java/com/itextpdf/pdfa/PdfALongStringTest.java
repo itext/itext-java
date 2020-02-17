@@ -94,6 +94,6 @@ public class PdfALongStringTest extends ExtendedITextTest {
             p.setFont(font);
             document.add(p);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp/PdfALongStringTest/cmp_" + file, destinationFolder, "diff_"));
     }
 }
