@@ -70,6 +70,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -106,6 +108,34 @@ public class PdfCanvasProcessorTest extends ExtendedITextTest {
         String expectedPageEventsLog = new String(logBytes, StandardCharsets.UTF_8);
 
         Assert.assertEquals(expectedPageEventsLog, pageEventsLog.toString());
+    }
+
+    @Test
+    public void processGraphicsStateResourceOperatorFillOpacityTest() throws IOException {
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "transparentText.pdf"));
+        Float expOpacity = 0.5f;
+
+        Map<String, Object> textRenderInfo = new HashMap<>();
+        for (int i = 1; i <= document.getNumberOfPages(); ++i) {
+            PdfPage page = document.getPage(i);
+            PdfCanvasProcessor processor = new PdfCanvasProcessor(new RecordEveryTextRenderEvent(textRenderInfo));
+            processor.processPageContent(page);
+        }
+        Assert.assertEquals("Expected fill opacity not found", expOpacity, textRenderInfo.get("FillOpacity"));
+    }
+
+    @Test
+    public void processGraphicsStateResourceOperatorStrokeOpacityTest() throws IOException {
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "hiddenText.pdf"));
+        Float expOpacity = 0.0f;
+
+        Map<String, Object> textRenderInfo = new HashMap<>();
+        for (int i = 1; i <= document.getNumberOfPages(); ++i) {
+            PdfPage page = document.getPage(i);
+            PdfCanvasProcessor processor = new PdfCanvasProcessor(new RecordEveryTextRenderEvent(textRenderInfo));
+            processor.processPageContent(page);
+        }
+        Assert.assertEquals("Expected stroke opacity not found", expOpacity, textRenderInfo.get("StrokeOpacity"));
     }
 
     @Test
@@ -294,6 +324,27 @@ public class PdfCanvasProcessorTest extends ExtendedITextTest {
 
                     sb.append(END_EVENT_OCCURRENCE).append("\n");
                     break;
+            }
+        }
+
+        public Set<EventType> getSupportedEvents() {
+            return null;
+        }
+    }
+
+    private static class RecordEveryTextRenderEvent implements IEventListener {
+        private Map<String, Object> map;
+
+        RecordEveryTextRenderEvent(Map<String, Object> map) {
+            this.map = map;
+        }
+
+        public void eventOccurred(IEventData data, EventType type) {
+            if (data instanceof TextRenderInfo) {
+                TextRenderInfo renderInfo = (TextRenderInfo) data;
+                map.put("String", renderInfo.getPdfString().toUnicodeString());
+                map.put("FillOpacity", renderInfo.getGraphicsState().getFillOpacity());
+                map.put("StrokeOpacity", renderInfo.getGraphicsState().getStrokeOpacity());
             }
         }
 
