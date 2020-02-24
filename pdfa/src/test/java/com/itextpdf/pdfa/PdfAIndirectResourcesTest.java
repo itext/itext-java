@@ -42,35 +42,26 @@
  */
 package com.itextpdf.pdfa;
 
-import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfOutputIntent;
-import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.layer.PdfLayer;
-import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.Canvas;
-import com.itextpdf.layout.element.Image;
+import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.Set;
 
 @Category(IntegrationTest.class)
-public class PdfA2LayoutOcgTest extends ExtendedITextTest {
-
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA2LayoutOcgTest/";
+public class PdfAIndirectResourcesTest extends ExtendedITextTest {
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/pdfs/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfAIndirectResourcesTest/";
 
     @Before
     public void configure() {
@@ -78,34 +69,39 @@ public class PdfA2LayoutOcgTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkIfOcgForPdfA2Works() throws IOException, InterruptedException {
-        String fileName = "createdOcgPdfA.pdf";
-        InputStream colorStream = new FileInputStream(sourceFolder + "color/sRGB_CS_profile.icm");
-        String outFileName = destinationFolder + fileName;
-        String cmpFileName = sourceFolder + "cmp/PdfA2LayoutOcgTest/cmp_" + fileName;
-        PdfDocument pdfDoc = new PdfADocument(new PdfWriter(outFileName), PdfAConformanceLevel.PDF_A_2A,
-                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", colorStream));
-        pdfDoc.setTagged();
-        pdfDoc.getCatalog().setLang(new PdfString("en-US"));
-
-        pdfDoc.addNewPage();
-
-        Image image1 = new Image(ImageDataFactory.create(sourceFolder + "images/manualTransparency_for_png.png"));
-
-        PdfCanvas pdfCanvas = new PdfCanvas(pdfDoc, 1);
-
-        Canvas canvas1 = new Canvas(pdfCanvas, pdfDoc, new Rectangle(0, 0, 590, 420));
-        PdfLayer imageLayer1 = new PdfLayer("*SomeTest_image$here@.1", pdfDoc);
-        imageLayer1.setOn(true);
-        pdfCanvas.beginLayer(imageLayer1);
-        canvas1.add(image1);
-        pdfCanvas.endLayer();
-
-        canvas1.close();
-
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = PdfAConformanceLogMessageConstant.CATALOG_SHOULD_CONTAIN_LANG_ENTRY)
+    })
+    public void indirectResources01Test() throws IOException, XMPException, InterruptedException {
+        String fileName = destinationFolder + "indirectResources01Test.pdf";
+        PdfADocument pdfDoc = new PdfADocument(new PdfReader(sourceFolder + "indirectResources01.pdf"), new PdfWriter(fileName));
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff01_"));
-        Assert.assertNull(new VeraPdfValidator().validate(outFileName));
     }
 
+    @Test
+    public void indirectResources02Test() throws IOException, XMPException, InterruptedException {
+        String fileName = destinationFolder + "indirectResources02Test.pdf";
+
+        PdfWriter writer = new CustomPdfWriter(fileName, 19);
+        PdfADocument pdfDoc = new PdfADocument(new PdfReader(sourceFolder + "indirectResources02.pdf"), writer);
+        pdfDoc.close();
+    }
+
+    private static class CustomPdfWriter extends PdfWriter {
+        private int objectToFlushNumber;
+
+        public CustomPdfWriter(String filename, int objectToFlushNumber) throws FileNotFoundException {
+            super(filename);
+            this.objectToFlushNumber = objectToFlushNumber;
+        }
+
+        @Override
+        protected void flushWaitingObjects(Set<PdfIndirectReference> forbiddenToFlush) {
+            // Because of flushing order in PdfDocument is uncertain, flushWaitingObjects() method is overridden
+            // to simulate the issue when the certain PdfObject A, that exists in the Catalog entry and in the resources
+            // of another PdfObject B, is flushed before the flushing of the PdfObject B.
+            super.document.getPdfObject(objectToFlushNumber).flush();
+            super.flushWaitingObjects(forbiddenToFlush);
+        }
+    }
 }
