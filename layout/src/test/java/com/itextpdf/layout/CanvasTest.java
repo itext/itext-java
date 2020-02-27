@@ -90,7 +90,7 @@ public class CanvasTest extends ExtendedITextTest {
                 pageSize.getWidth() - 72,
                 50);
 
-        Canvas canvas = new Canvas(pdfCanvas, pdf, rectangle);
+        Canvas canvas = new Canvas(pdfCanvas, rectangle);
         canvas.add(
                 new Paragraph(
                         new Link("Google link!", PdfAction.createURI("https://www.google.com"))

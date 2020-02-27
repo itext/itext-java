@@ -902,7 +902,7 @@ public class ImageTest extends ExtendedITextTest {
         PdfCanvas currentPdfCanvas = new PdfCanvas(page);
 
         Rectangle rc = new Rectangle(56.6929131f, 649.13385f, 481.889771f, 136.062988f);
-        Canvas canvas = new Canvas(currentPdfCanvas, pdfDoc, rc);
+        Canvas canvas = new Canvas(currentPdfCanvas, rc);
 
         Table table = new Table(UnitValue.createPointArray(new float[]{158f}));
         table.setTextAlignment(TextAlignment.LEFT);

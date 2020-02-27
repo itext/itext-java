@@ -94,7 +94,7 @@ public class PdfA2LayoutOcgTest extends ExtendedITextTest {
 
         PdfCanvas pdfCanvas = new PdfCanvas(pdfDoc, 1);
 
-        Canvas canvas1 = new Canvas(pdfCanvas, pdfDoc, new Rectangle(0, 0, 590, 420));
+        Canvas canvas1 = new Canvas(pdfCanvas, new Rectangle(0, 0, 590, 420));
         PdfLayer imageLayer1 = new PdfLayer("*SomeTest_image$here@.1", pdfDoc);
         imageLayer1.setOn(true);
         pdfCanvas.beginLayer(imageLayer1);

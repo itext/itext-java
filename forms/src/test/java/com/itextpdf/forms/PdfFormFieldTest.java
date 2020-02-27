@@ -614,7 +614,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         field.setFont(PdfFontFactory.createFont(StandardFonts.COURIER));
         field.setValue("New value size must be 8, but with different font.");
 
-        new Canvas(new PdfCanvas(pdfDoc.getFirstPage()), pdfDoc, new Rectangle(30, 500, 500, 200))
+        new Canvas(new PdfCanvas(pdfDoc.getFirstPage()), new Rectangle(30, 500, 500, 200))
                 .add(new Paragraph("The text font after modification it via PDF viewer (e.g. Acrobat) shall be preserved."));
 
         pdfDoc.close();

@@ -901,7 +901,7 @@ public class PdfSignatureAppearance {
         PdfCanvas canvas;
         canvas = new PdfCanvas(n2, document);
         Paragraph paragraph = new Paragraph(text).setFont(font).setMargin(0).setMultipliedLeading(0.9f);
-        Canvas layoutCanvas = new Canvas(canvas, document, dataRect);
+        Canvas layoutCanvas = new Canvas(canvas, dataRect);
         paragraph.setFontColor(layer2FontColor);
         if (layer2FontSize == 0) {
             applyCopyFittingFontSize(paragraph, dataRect, layoutCanvas.getRenderer());

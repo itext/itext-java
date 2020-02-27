@@ -2477,7 +2477,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             x = rect.getWidth() / 2;
         }
 
-        Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(0, -height, 0, 2 * height));
+        Canvas modelCanvas = new Canvas(canvas, new Rectangle(0, -height, 0, 2 * height));
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
 
         Style paragraphStyle = new Style().setFont(font).setFontSize(fontSize);
@@ -2549,7 +2549,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         canvas.beginVariableText();
 
         Rectangle areaRect = new Rectangle(0, 0, width, height);
-        Canvas modelCanvas = new Canvas(canvas, getDocument(), areaRect);
+        Canvas modelCanvas = new Canvas(canvas, areaRect);
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
 
         Paragraph paragraph = createParagraphForTextFieldValue(value).setFont(font)
@@ -2606,7 +2606,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 clip().
                 endPath();
 
-        Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(3, 0, Math.max(0, width - widthBorder), Math.max(0, height - heightBorder)));
+        Canvas modelCanvas = new Canvas(canvas, new Rectangle(3, 0, Math.max(0, width - widthBorder), Math.max(0, height - heightBorder)));
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
         for (int index = 0; index < strings.size(); index++) {
             Boolean isFull = modelCanvas.getRenderer().getPropertyAsBoolean(Property.FULL);
@@ -2998,7 +2998,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         Paragraph paragraph = new Paragraph(text).setFont(font).setFontSize(fontSize).setMargin(0).setMultipliedLeading(1).
                 setVerticalAlignment(VerticalAlignment.MIDDLE);
-        Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(0, -height, width, 2 * height));
+        Canvas modelCanvas = new Canvas(canvas, new Rectangle(0, -height, width, 2 * height));
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
         modelCanvas.showTextAligned(paragraph, width / 2, height / 2, TextAlignment.CENTER, VerticalAlignment.MIDDLE);
     }

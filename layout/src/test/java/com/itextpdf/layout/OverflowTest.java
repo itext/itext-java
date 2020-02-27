@@ -217,7 +217,7 @@ public class OverflowTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         PdfPage page = pdfDocument.addNewPage();
-        Canvas canvas = new Canvas(new PdfCanvas(page), pdfDocument, page.getPageSize().clone().applyMargins(36, 36, 36, 36, false));
+        Canvas canvas = new Canvas(new PdfCanvas(page), page.getPageSize().clone().applyMargins(36, 36, 36, 36, false));
 
         addParaWithImgSetOverflowX(canvas, OverflowPropertyValue.HIDDEN);
 
@@ -251,7 +251,7 @@ public class OverflowTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         PdfPage page = pdfDocument.addNewPage();
-        Canvas canvas = new Canvas(new PdfCanvas(page), pdfDocument, page.getPageSize().clone().applyMargins(36, 36, 36, 36, false));
+        Canvas canvas = new Canvas(new PdfCanvas(page), page.getPageSize().clone().applyMargins(36, 36, 36, 36, false));
 
         addParaWithImgSetOverflowX(canvas, OverflowPropertyValue.VISIBLE);
 
