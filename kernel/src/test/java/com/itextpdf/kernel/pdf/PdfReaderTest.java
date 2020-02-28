@@ -48,7 +48,6 @@ import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -62,7 +61,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -2018,6 +2016,12 @@ public class PdfReaderTest extends ExtendedITextTest {
         };
 
         readingNotCompletedTest(isEncryptedReader);
+    }
+
+    @Test
+    public void pdf11VersionValidTest() throws IOException {
+        String fileName = sourceFolder + "pdf11Version.pdf";
+        new PdfDocument(new PdfReader(fileName));
     }
 
     private PdfReader pdfDocumentNotReadTestInit() throws IOException {
