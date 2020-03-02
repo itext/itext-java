@@ -39,9 +39,13 @@ import com.itextpdf.test.ExtendedITextTest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+@Category(IntegrationTest.class)
 public class PdfCanvasParserTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/PdfCanvasParserTest/";

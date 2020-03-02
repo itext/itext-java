@@ -24,10 +24,14 @@ package com.itextpdf.layout.property;
 
 import com.itextpdf.kernel.geom.AffineTransform;
 
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
-public class TransformTest {
+@Category(UnitTest.class)
+public class TransformTest extends ExtendedITextTest {
     // AffineTransform.TYPE_UNKNOWN
     private static final float type = -1;
 
