@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
@@ -31,7 +32,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class SmartModePdfObjectsSerializerTest {
+public class SmartModePdfObjectsSerializerTest extends ExtendedITextTest {
 
     @Test
     public void smartModeObjectSelfReferencingTest() {

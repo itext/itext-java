@@ -42,6 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
@@ -53,7 +54,7 @@ import static com.itextpdf.test.ITextTest.createOrClearDestinationFolder;
 import static org.junit.Assert.assertTrue;
 
 @Category(IntegrationTest.class)
-public class PdfStructTreeRootTest {
+public class PdfStructTreeRootTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfStructTreeRootTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfStructTreeRootTest/";
 
