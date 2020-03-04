@@ -59,9 +59,14 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileOutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Queue;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import javax.xml.bind.Element;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -647,6 +652,74 @@ public class PdfPagesTest extends ExtendedITextTest {
         Assert.assertEquals(3, getAmountOfReadPages(pageIndRefArray));
 
         document.close();
+    }
+
+    @Test
+    public void implicitPagesTreeRebuildingTest() throws IOException, InterruptedException {
+        String inFileName = sourceFolder + "implicitPagesTreeRebuilding.pdf";
+        String outFileName = destinationFolder + "implicitPagesTreeRebuilding.pdf";
+        String cmpFileName = sourceFolder + "cmp_implicitPagesTreeRebuilding.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName), new PdfWriter(outFileName));
+        pdfDocument.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName,cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE)})
+    public void brokenPageTreeWithExcessiveLastPageTest() throws IOException {
+        String inFileName = sourceFolder + "brokenPageTreeNullLast.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
+
+        List<Integer> pages = Arrays.asList(4);
+        Set<Integer> nullPages = new HashSet<>(pages);
+
+        findAndAssertNullPages(pdfDocument, nullPages);
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE)})
+    public void brokenPageTreeWithExcessiveMiddlePageTest() throws IOException {
+        String inFileName = sourceFolder + "brokenPageTreeNullMiddle.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
+
+        List<Integer> pages = Arrays.asList(3);
+        Set<Integer> nullPages = new HashSet<>(pages);
+
+        findAndAssertNullPages(pdfDocument, nullPages);
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, count = 7)})
+    public void brokenPageTreeWithExcessiveMultipleNegativePagesTest() throws IOException {
+        String inFileName = sourceFolder + "brokenPageTreeNullMultipleSequence.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
+
+        List<Integer> pages = Arrays.asList(2, 3, 4, 6, 7, 8, 9);
+        Set<Integer> nullPages = new HashSet<>(pages);
+
+        findAndAssertNullPages(pdfDocument, nullPages);
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, count = 2)})
+    public void brokenPageTreeWithExcessiveRangeNegativePagesTest() throws IOException {
+        String inFileName = sourceFolder + "brokenPageTreeNullRangeNegative.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
+
+        List<Integer> pages = Arrays.asList(2, 4);
+        Set<Integer> nullPages = new HashSet<>(pages);
+
+        findAndAssertNullPages(pdfDocument, nullPages);
+    }
+
+    private static void findAndAssertNullPages(PdfDocument pdfDocument, Set<Integer> nullPages) {
+            for (Integer e : nullPages) {
+                Assert.assertNull(pdfDocument.getPage((int) e));
+            }
     }
 
     private int getAmountOfReadPages(PdfArray pageIndRefArray) {
