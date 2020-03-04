@@ -208,7 +208,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         processor.process(null);
     }
 
-    @Ignore("TODO: Implement Tree comparison. Blocked by RND-868\n")
+    @Ignore("TODO: Implement Tree comparison. Blocked by DEVSIX-2253\n")
     @Test()
     public void defaultProcessingTestNoPassedProperties() {
         //Setup nodes
@@ -225,7 +225,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         Assert.assertNull(rootActual);
     }
 
-    @Ignore("TODO: Implement Tree comparison. Blocked by RND-868\n")
+    @Ignore("TODO: Implement Tree comparison. Blocked by DEVSIX-2253\n")
     @Test()
     public void defaultProcessingTestPassedPropertiesNull() {
         //Setup nodes
@@ -242,7 +242,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         Assert.assertNull(rootActual);
     }
 
-    @Ignore("TODO: Implement Tree comparison. Blocked by RND-868\n")
+    @Ignore("TODO: Implement Tree comparison. Blocked by DEVSIX-2253\n")
     @Test()
     public void defaultProcessingTestPassedPropertiesReturnNullValues() {
         //Setup nodes
@@ -268,7 +268,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("RND-868")
+    @Ignore("DEVSIX-2253")
     public void processWithNullPropertiesTest() {
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
         Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");

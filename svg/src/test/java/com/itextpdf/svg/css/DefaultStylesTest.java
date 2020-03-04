@@ -130,7 +130,7 @@ public class DefaultStylesTest extends ExtendedITextTest {
 
 
     @Test
-    @Ignore("RND-1089")
+    @Ignore("DEVSIX-2289")
     public void inheritedDefaultStyleTest() {
         ICssResolver styleResolver = new SvgStyleResolver();
         Element svg = new Element(Tag.valueOf("svg"), "");
