@@ -60,6 +60,7 @@ import com.itextpdf.layout.renderer.DivRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -89,7 +90,6 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "collapsingMarginsTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_collapsingMarginsTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
-
 
         drawPageBorders(pdfDocument, 4);
 
@@ -139,7 +139,6 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "collapsingMarginsTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_collapsingMarginsTest02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
-
 
         drawPageBorders(pdfDocument, 3);
 
@@ -196,7 +195,6 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_collapsingMarginsTest03.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
-
         drawPageBorders(pdfDocument, 3);
 
         String textByron =
@@ -248,7 +246,6 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "collapsingMarginsTest04.pdf";
         String cmpFileName = sourceFolder + "cmp_collapsingMarginsTest04.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
-
 
         drawPageBorders(pdfDocument, 3);
 
@@ -307,7 +304,6 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_collapsingMarginsTest05.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
-
         drawPageBorders(pdfDocument, 2);
 
         String textByron =
@@ -357,9 +353,12 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-2901 the exception should not be thrown
+    /* TODO DEVSIX-2901 the exception should not be thrown
+       if after DEVSIX-2901 the exception persists,
+       change the type of the expected exception to a more specific one to make the test stricter.
+    */
     public void columnRendererTest() throws IOException, InterruptedException {
-        junitExpectedException.expect(ArrayIndexOutOfBoundsException.class);
+        junitExpectedException.expect(Exception.class);
         String outFileName = destinationFolder + "columnRendererTest.pdf";
         String cmpFileName = sourceFolder + "cmp_columnRendererTest.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
@@ -377,7 +376,6 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDocument);
         doc.setProperty(Property.COLLAPSING_MARGINS, true);
-
 
         Paragraph p = new Paragraph();
         for (int i = 0; i < 10; i++) {
