@@ -1,0 +1,5 @@
+These fonts are under Bitstream Vera Fonts Copyright:
+
+DejaVuSans.ttf
+DejaVuSansMono.ttf
+DejaVuSerif.ttf
