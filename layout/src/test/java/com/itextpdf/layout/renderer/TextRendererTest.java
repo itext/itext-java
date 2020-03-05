@@ -43,6 +43,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -62,12 +63,14 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class TextRendererTest extends AbstractRendererUnitTest {
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     private static final double EPS = 1e-5;
 
@@ -165,5 +168,26 @@ public class TextRendererTest extends AbstractRendererUnitTest {
         textRenderer.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
         Assert.assertTrue(new Rectangle(0, 986.68f, 5.343998f, -26.68f)
                 .equalsWithEpsilon(textRenderer.getInnerAreaBBox()));
+    }
+
+    @Test
+    public void resolveFirstPdfFontWithGlyphsAvailableOnlyInSecondaryFont() {
+        // Test that in TextRenderer the #resolveFirstPdfFont method is overloaded in such way
+        // that yielded font contains at least some of the glyphs for the text characters.
+
+        Text text = new Text("\u043A\u0456\u0440\u044B\u043B\u0456\u0446\u0430"); // "кірыліца"
+
+        // Puritan doesn't contain cyrillic symbols, while Noto Sans does.
+        text.setFontFamily(Arrays.asList("Puritan 2.0", "Noto Sans"));
+
+        FontProvider fontProvider = new FontProvider();
+        fontProvider.addFont(FONTS_FOLDER + "Puritan2.otf");
+        fontProvider.addFont(FONTS_FOLDER + "NotoSans-Regular.ttf");
+        text.setProperty(Property.FONT_PROVIDER, fontProvider);
+
+        TextRenderer renderer = (TextRenderer) new TextRenderer(text);
+        PdfFont pdfFont = renderer.resolveFirstPdfFont();
+
+        Assert.assertEquals("NotoSans", pdfFont.getFontProgram().getFontNames().getFontName());
     }
 }

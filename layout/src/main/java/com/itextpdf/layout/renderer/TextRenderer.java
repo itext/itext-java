@@ -1279,8 +1279,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     @Override
-    PdfFont resolveFirstPdfFont(String[] font, FontProvider provider, FontCharacteristics fc) {
-        FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted, Arrays.asList(font), fc);
+    PdfFont resolveFirstPdfFont(String[] font, FontProvider provider, FontCharacteristics fc, FontSet additionalFonts) {
+        FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted, Arrays.asList(font), fc, additionalFonts);
         List<Glyph> resolvedGlyphs;
         PdfFont currentFont;
         //try to find first font that can render at least one glyph.
@@ -1293,7 +1293,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 }
             }
         }
-        return super.resolveFirstPdfFont(font, provider, fc);
+        return super.resolveFirstPdfFont(font, provider, fc, additionalFonts);
     }
 
     private static int numberOfElementsLessThan(ArrayList<Integer> numbers, int n) {

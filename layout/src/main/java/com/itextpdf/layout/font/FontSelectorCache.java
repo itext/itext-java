@@ -66,15 +66,15 @@ class FontSelectorCache {
         }
     }
 
-    FontSelector get(FontSelectorKey key, FontSet fontSet) {
-        if (fontSet == null) {
+    FontSelector get(FontSelectorKey key, FontSet additionalFonts) {
+        if (additionalFonts == null) {
             return get(key);
         } else {
-            FontSetSelectors selectors = caches.get(fontSet.getId());
+            FontSetSelectors selectors = caches.get(additionalFonts.getId());
             if (selectors == null) {
-                caches.put(fontSet.getId(), selectors = new FontSetSelectors());
+                caches.put(additionalFonts.getId(), selectors = new FontSetSelectors());
             }
-            if (update(selectors, fontSet)) {
+            if (update(selectors, additionalFonts)) {
                 return null;
             } else {
                 return selectors.map.get(key);

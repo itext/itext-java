@@ -69,8 +69,8 @@ import java.util.Map;
  * In the former case the {@link FontSelectorCache} is reused and in the latter it's reinitialised.
  * FontProvider the only end point for creating {@link PdfFont}.
  * <p>
- * It is allowed to use only one {@link FontProvider} per document. If temporary fonts per element needed,
- * additional {@link FontSet} can be used. For more details see {@link com.itextpdf.layout.property.Property#FONT_SET},
+ * It is allowed to use only one {@link FontProvider} per document. If additional fonts per element needed,
+ * another instance of  {@link FontSet} can be used. For more details see {@link com.itextpdf.layout.property.Property#FONT_SET},
  * {@link #getPdfFont(FontInfo, FontSet)}, {@link #getStrategy(String, List, FontCharacteristics, FontSet)}.
  * <p>
  * Note, FontProvider does not close created {@link FontProgram}s, because of possible conflicts with {@link FontCache}.
@@ -240,8 +240,8 @@ public class FontProvider {
         return true;
     }
 
-    public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, FontCharacteristics fc, FontSet additonalFonts) {
-        return new ComplexFontSelectorStrategy(text, getFontSelector(fontFamilies, fc, additonalFonts), this, additonalFonts);
+    public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, FontCharacteristics fc, FontSet additionalFonts) {
+        return new ComplexFontSelectorStrategy(text, getFontSelector(fontFamilies, fc, additionalFonts), this, additionalFonts);
     }
 
     public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, FontCharacteristics fc) {
@@ -276,17 +276,17 @@ public class FontProvider {
      *
      * @param fontFamilies target font families
      * @param fc           instance of {@link FontCharacteristics}.
-     * @param tempFonts    set of temporary fonts.
+     * @param additionalFonts    set of additional fonts.
      * @return an instance of {@link FontSelector}.
      * @see #createFontSelector(Collection, List, FontCharacteristics) }
      */
     public final FontSelector getFontSelector(List<String> fontFamilies, FontCharacteristics fc,
-                                              FontSet tempFonts) {
+                                              FontSet additionalFonts) {
         FontSelectorKey key = new FontSelectorKey(fontFamilies, fc);
-        FontSelector fontSelector = fontSelectorCache.get(key, tempFonts);
+        FontSelector fontSelector = fontSelectorCache.get(key, additionalFonts);
         if (fontSelector == null) {
-            fontSelector = createFontSelector(fontSet.getFonts(tempFonts), fontFamilies, fc);
-            fontSelectorCache.put(key, fontSelector, tempFonts);
+            fontSelector = createFontSelector(fontSet.getFonts(additionalFonts), fontFamilies, fc);
+            fontSelectorCache.put(key, fontSelector, additionalFonts);
         }
         return fontSelector;
     }
@@ -322,16 +322,16 @@ public class FontProvider {
      * Get from cache or create a new instance of {@link PdfFont}.
      *
      * @param fontInfo  font info, to create {@link FontProgram} and {@link PdfFont}.
-     * @param tempFonts Set of temporary fonts.
+     * @param additionalFonts set of additional fonts to consider.
      * @return cached or new instance of {@link PdfFont}.
      */
-    public PdfFont getPdfFont(FontInfo fontInfo, FontSet tempFonts) {
+    public PdfFont getPdfFont(FontInfo fontInfo, FontSet additionalFonts) {
         if (pdfFonts.containsKey(fontInfo)) {
             return pdfFonts.get(fontInfo);
         } else {
             FontProgram fontProgram = null;
-            if (tempFonts != null) {
-                fontProgram = tempFonts.getFontProgram(fontInfo);
+            if (additionalFonts != null) {
+                fontProgram = additionalFonts.getFontProgram(fontInfo);
             }
             if (fontProgram == null) {
                 fontProgram = fontSet.getFontProgram(fontInfo);

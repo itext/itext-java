@@ -27,6 +27,7 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.property.LineHeight;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.RenderingMode;
 
 class LineHeightHelper {
     private static float DEFAULT_LINE_HEIGHT_COEFF = 1.15f;

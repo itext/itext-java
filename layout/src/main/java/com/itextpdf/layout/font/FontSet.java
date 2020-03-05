@@ -424,11 +424,11 @@ public final class FontSet {
      * <p>
      * Note, the collection is unmodifiable.
      *
-     * @param tempFonts set of temporary fonts
+     * @param additionalFonts set of temporary fonts
      * @return set of all available and temporary fonts
      */
-    public Collection<FontInfo> getFonts(FontSet tempFonts) {
-        return new FontSetCollection(fonts, tempFonts != null ? tempFonts.fonts : null);
+    public Collection<FontInfo> getFonts(FontSet additionalFonts) {
+        return new FontSetCollection(fonts, additionalFonts != null ? additionalFonts.fonts : null);
     }
 
     /**

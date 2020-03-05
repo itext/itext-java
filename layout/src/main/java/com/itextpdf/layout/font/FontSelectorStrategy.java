@@ -56,13 +56,13 @@ public abstract class FontSelectorStrategy {
     protected String text;
     protected int index;
     protected final FontProvider provider;
-    protected final FontSet tempFonts;
+    protected final FontSet additionalFonts;
 
-    protected FontSelectorStrategy(String text, FontProvider provider, FontSet tempFonts) {
+    protected FontSelectorStrategy(String text, FontProvider provider, FontSet additionalFonts) {
         this.text = text;
         this.index = 0;
         this.provider = provider;
-        this.tempFonts = tempFonts;
+        this.additionalFonts = additionalFonts;
     }
 
     public boolean endOfText() {
@@ -81,6 +81,6 @@ public abstract class FontSelectorStrategy {
      * @see FontProvider#getPdfFont(FontInfo, FontSet)
      */
     protected PdfFont getPdfFont(FontInfo fontInfo) {
-        return provider.getPdfFont(fontInfo, tempFonts);
+        return provider.getPdfFont(fontInfo, additionalFonts);
     }
 }
