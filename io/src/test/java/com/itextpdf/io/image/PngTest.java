@@ -73,6 +73,21 @@ public class PngTest extends ExtendedITextTest {
     }
 
     @Test
+    public void graya8BpcDepthWithoutEmbeddedProfileImageTest() throws IOException {
+        ImageData img = ImageDataFactory.create(sourceFolder + "graya8BpcWithoutProfile.png");
+        Assert.assertEquals(ImageType.PNG, img.getOriginalType());
+        Assert.assertEquals(100, img.getWidth(), 0);
+        Assert.assertEquals(100, img.getHeight(), 0);
+        Assert.assertEquals(8, img.getBpc());
+        Assert.assertEquals(1, img.getColorSpace());
+        Assert.assertEquals(4, ((PngImageData) img).getColorType());
+        Assert.assertNotNull(img.getImageMask());
+        Assert.assertEquals(1, img.getImageMask().getColorSpace());
+        Assert.assertEquals(8, img.getImageMask().getBpc());
+        Assert.assertNull(img.getProfile());
+    }
+
+    @Test
     public void graya8BpcAddColorToAlphaImageTest() throws IOException {
         ImageData img = ImageDataFactory.create(sourceFolder + "graya8BpcAddColorToAlpha.png");
         Assert.assertEquals(ImageType.PNG, img.getOriginalType());
