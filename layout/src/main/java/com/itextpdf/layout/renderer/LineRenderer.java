@@ -387,8 +387,7 @@ public class LineRenderer extends AbstractRenderer {
                     && childResult.getStatus() != LayoutResult.NOTHING) {
                 if (RenderingMode.HTML_MODE.equals(childRenderer.<RenderingMode>getProperty(Property.RENDERING_MODE))
                         && childRenderer instanceof TextRenderer) {
-                    float[] ascenderDescender = LineHeightHelper
-                            .getActualAscenderDescender((AbstractRenderer) childRenderer);
+                    float[] ascenderDescender = LineHeightHelper.getActualAscenderDescender((TextRenderer) childRenderer);
                     childAscent = ascenderDescender[0];
                     childDescent = ascenderDescender[1];
                 } else {

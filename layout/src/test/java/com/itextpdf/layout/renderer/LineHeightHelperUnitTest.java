@@ -30,7 +30,6 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.property.LineHeight;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.RenderingMode;
@@ -38,7 +37,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -52,26 +50,26 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
 
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsCourierTest() throws IOException {
-        float[] fontAscenderDescender = LineHeightHelper
-                .calculateFontAscenderDescenderFromFontMetrics(PdfFontFactory.createFont(StandardFonts.COURIER));
-        Assert.assertEquals(629.0f, fontAscenderDescender[0], EPS);
-        Assert.assertEquals(-157.0f, fontAscenderDescender[1], EPS);
+        PdfFont font = PdfFontFactory.createFont(StandardFonts.COURIER);
+        float[] fontAscenderDescender = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
+        Assert.assertEquals(629.0f * TextRenderer.TYPO_ASCENDER_SCALE_COEFF, fontAscenderDescender[0], EPS);
+        Assert.assertEquals(-157.0f * TextRenderer.TYPO_ASCENDER_SCALE_COEFF, fontAscenderDescender[1], EPS);
     }
 
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsTimesTest() throws IOException {
-        float[] fontAscenderDescender = LineHeightHelper
-                .calculateFontAscenderDescenderFromFontMetrics(PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN));
-        Assert.assertEquals(683.0f, fontAscenderDescender[0], EPS);
-        Assert.assertEquals(-217.0f, fontAscenderDescender[1], EPS);
+        PdfFont font = PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN);
+        float[] fontAscenderDescender = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
+        Assert.assertEquals(683.0f * TextRenderer.TYPO_ASCENDER_SCALE_COEFF, fontAscenderDescender[0], EPS);
+        Assert.assertEquals(-217.0f * TextRenderer.TYPO_ASCENDER_SCALE_COEFF, fontAscenderDescender[1], EPS);
     }
 
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsHelveticaTest() throws IOException {
-        float[] fontAscenderDescender = LineHeightHelper
-                .calculateFontAscenderDescenderFromFontMetrics(PdfFontFactory.createFont(StandardFonts.HELVETICA));
-        Assert.assertEquals(718.0f, fontAscenderDescender[0], EPS);
-        Assert.assertEquals(-207.0f, fontAscenderDescender[1], EPS);
+        PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+        float[] fontAscenderDescender = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
+        Assert.assertEquals(718.0f * TextRenderer.TYPO_ASCENDER_SCALE_COEFF, fontAscenderDescender[0], EPS);
+        Assert.assertEquals(-207.0f * TextRenderer.TYPO_ASCENDER_SCALE_COEFF, fontAscenderDescender[1], EPS);
     }
 
     @Test
@@ -80,8 +78,8 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
         TextRenderer textRenderer = new TextRenderer(new Text("Hello"));
         textRenderer.setParent(document.getRenderer());
         float[] ascenderDescender = LineHeightHelper.getFontAscenderDescenderNormalized(textRenderer);
-        Assert.assertEquals(8.61600f, ascenderDescender[0], EPS);
-        Assert.assertEquals(-2.483999f, ascenderDescender[1], EPS);
+        Assert.assertEquals(10.33920f, ascenderDescender[0], EPS);
+        Assert.assertEquals(-2.9808f, ascenderDescender[1], EPS);
     }
 
     @Test
@@ -172,14 +170,14 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
         TextRenderer textRenderer = new TextRenderer(new Text("Hello"));
         textRenderer.setParent(document.getRenderer());
         float[] ascenderDescender = LineHeightHelper.getActualAscenderDescender(textRenderer);
-        Assert.assertEquals(9.96599f, ascenderDescender[0], EPS);
-        Assert.assertEquals(-3.83399f, ascenderDescender[1], EPS);
+        Assert.assertEquals(10.57919f, ascenderDescender[0], EPS);
+        Assert.assertEquals(-3.22079f, ascenderDescender[1], EPS);
     }
 
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsNotoEmojiFontTest() throws IOException {
         PdfFont font = PdfFontFactory.createFont(FONTS + "NotoEmoji-Regular.ttf");
-        float[] ascenderDescenderFromFontMetrics = LineHeightHelper.calculateFontAscenderDescenderFromFontMetrics(font);
+        float[] ascenderDescenderFromFontMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
         Assert.assertEquals(1068.0f, ascenderDescenderFromFontMetrics[0], EPS);
         Assert.assertEquals(-292.0f, ascenderDescenderFromFontMetrics[1], EPS);
     }
@@ -187,7 +185,7 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsNotoSansFontTest() throws IOException {
         PdfFont font = PdfFontFactory.createFont(FONTS + "NotoSans-Regular.ttf");
-        float[] ascenderDescenderFromFontMetrics = LineHeightHelper.calculateFontAscenderDescenderFromFontMetrics(font);
+        float[] ascenderDescenderFromFontMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
         Assert.assertEquals(1068.0f, ascenderDescenderFromFontMetrics[0], EPS);
         Assert.assertEquals(-292.0f, ascenderDescenderFromFontMetrics[1], EPS);
     }
@@ -195,7 +193,7 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsNotoColorEmojiFontTest() throws IOException {
         PdfFont font = PdfFontFactory.createFont(FONTS + "NotoColorEmoji.ttf");
-        float[] ascenderDescenderFromFontMetrics = LineHeightHelper.calculateFontAscenderDescenderFromFontMetrics(font);
+        float[] ascenderDescenderFromFontMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
         System.out.println(ascenderDescenderFromFontMetrics[0]);
         System.out.println(ascenderDescenderFromFontMetrics[1]);
     }
@@ -203,7 +201,7 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsNotoSansCJKscRegularFontTest() throws IOException {
         PdfFont font = PdfFontFactory.createFont(FONTS + "NotoSansCJKsc-Regular.otf");
-        float[] ascenderDescenderFromFontMetrics = LineHeightHelper.calculateFontAscenderDescenderFromFontMetrics(font);
+        float[] ascenderDescenderFromFontMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
         Assert.assertEquals(1160.0f, ascenderDescenderFromFontMetrics[0], EPS);
         Assert.assertEquals(-320.0f, ascenderDescenderFromFontMetrics[1], EPS);
     }
@@ -211,7 +209,7 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsPuritan2FontTest() throws IOException {
         PdfFont font = PdfFontFactory.createFont(FONTS + "Puritan2.otf");
-        float[] ascenderDescenderFromFontMetrics = LineHeightHelper.calculateFontAscenderDescenderFromFontMetrics(font);
+        float[] ascenderDescenderFromFontMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
         Assert.assertEquals(860.0f, ascenderDescenderFromFontMetrics[0], EPS);
         Assert.assertEquals(-232.0f, ascenderDescenderFromFontMetrics[1], EPS);
     }
@@ -219,7 +217,7 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsNotoSansCJKjpBoldFontTest() throws IOException {
         PdfFont font = PdfFontFactory.createFont(FONTS + "NotoSansCJKjp-Bold.otf");
-        float[] ascenderDescenderFromFontMetrics = LineHeightHelper.calculateFontAscenderDescenderFromFontMetrics(font);
+        float[] ascenderDescenderFromFontMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
         Assert.assertEquals(1160.0f, ascenderDescenderFromFontMetrics[0], EPS);
         Assert.assertEquals(-320.0f, ascenderDescenderFromFontMetrics[1], EPS);
     }
@@ -227,7 +225,7 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsFreeSansFontTest() throws IOException {
         PdfFont font = PdfFontFactory.createFont(FONTS + "FreeSans.ttf");
-        float[] ascenderDescenderFromFontMetrics = LineHeightHelper.calculateFontAscenderDescenderFromFontMetrics(font);
+        float[] ascenderDescenderFromFontMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
         Assert.assertEquals(800.0f, ascenderDescenderFromFontMetrics[0], EPS);
         Assert.assertEquals(-200.0f, ascenderDescenderFromFontMetrics[1], EPS);
     }
@@ -235,7 +233,7 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsOpenSansRegularFontTest() throws IOException {
         PdfFont font = PdfFontFactory.createFont(OPEN_SANS_FONTS + "OpenSans-Regular.ttf");
-        float[] ascenderDescenderFromFontMetrics = LineHeightHelper.calculateFontAscenderDescenderFromFontMetrics(font);
+        float[] ascenderDescenderFromFontMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
         Assert.assertEquals(1068.0f, ascenderDescenderFromFontMetrics[0], EPS);
         Assert.assertEquals(-292.0f, ascenderDescenderFromFontMetrics[1], EPS);
     }

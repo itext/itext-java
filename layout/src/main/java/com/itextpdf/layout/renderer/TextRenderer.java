@@ -56,6 +56,7 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfType0Font;
+import com.itextpdf.kernel.font.PdfType1Font;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -105,9 +106,9 @@ import org.slf4j.LoggerFactory;
 public class TextRenderer extends AbstractRenderer implements ILeafElementRenderer {
 
     protected static final float TEXT_SPACE_COEFF = FontProgram.UNITS_NORMALIZATION;
+    static final float TYPO_ASCENDER_SCALE_COEFF = 1.2f;
     private static final float ITALIC_ANGLE = 0.21256f;
     private static final float BOLD_SIMULATION_STROKE_COEFF = 1 / 30f;
-    private static final float TYPO_ASCENDER_SCALE_COEFF = 1.2f;
 
     protected float yLineOffset;
 
@@ -227,17 +228,14 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         float currentLineWidth = 0;
         int previousCharPos = -1;
 
-        if(RenderingMode.HTML_MODE.equals(this.<RenderingMode>getProperty(Property.RENDERING_MODE))) {
-            float[] ascenderDescender = LineHeightHelper.calculateFontAscenderDescenderFromFontMetrics(font);
-            ascender = ascenderDescender[0];
-            descender = ascenderDescender[1];
+        RenderingMode mode = this.<RenderingMode>getProperty(Property.RENDERING_MODE);
+        float[] ascenderDescender = calculateAscenderDescender(font, mode);
+        ascender = ascenderDescender[0];
+        descender = ascenderDescender[1];
+        if (RenderingMode.HTML_MODE.equals(mode)) {
             currentLineAscender = ascenderDescender[0];
             currentLineDescender = ascenderDescender[1];
             currentLineHeight = (currentLineAscender - currentLineDescender) * fontSize.getValue() / TEXT_SPACE_COEFF + textRise;
-        } else {
-            float[] ascenderDescender = calculateAscenderDescender(font);
-            ascender = ascenderDescender[0];
-            descender = ascenderDescender[1];
         }
 
         savedWordBreakAtLineEnding = null;
@@ -1070,13 +1068,21 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     static float[] calculateAscenderDescender(PdfFont font) {
+        return calculateAscenderDescender(font, RenderingMode.DEFAULT_LAYOUT_MODE);
+    }
+
+    static float[] calculateAscenderDescender(PdfFont font, RenderingMode mode) {
         FontMetrics fontMetrics = font.getFontProgram().getFontMetrics();
         float ascender;
         float descender;
+        float usedTypoAscenderScaleCoeff = TYPO_ASCENDER_SCALE_COEFF;
+        if (RenderingMode.HTML_MODE.equals(mode) && !(font instanceof PdfType1Font)) {
+            usedTypoAscenderScaleCoeff = 1;
+        }
         if (fontMetrics.getWinAscender() == 0 || fontMetrics.getWinDescender() == 0 ||
                 fontMetrics.getTypoAscender() == fontMetrics.getWinAscender() && fontMetrics.getTypoDescender() == fontMetrics.getWinDescender()) {
-            ascender = fontMetrics.getTypoAscender() * TYPO_ASCENDER_SCALE_COEFF;
-            descender = fontMetrics.getTypoDescender() * TYPO_ASCENDER_SCALE_COEFF;
+            ascender = fontMetrics.getTypoAscender() * usedTypoAscenderScaleCoeff;
+            descender = fontMetrics.getTypoDescender() * usedTypoAscenderScaleCoeff;
         } else {
             ascender = fontMetrics.getWinAscender();
             descender = fontMetrics.getWinDescender();

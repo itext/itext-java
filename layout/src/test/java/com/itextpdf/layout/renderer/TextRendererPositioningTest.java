@@ -33,12 +33,15 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+@Category(IntegrationTest.class)
 public class TextRendererPositioningTest extends ExtendedITextTest {
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/TextRendererPositioningTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/TextRendererPositioningTest/";

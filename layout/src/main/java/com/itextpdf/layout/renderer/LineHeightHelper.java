@@ -22,7 +22,6 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.font.FontMetrics;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.property.LineHeight;
@@ -49,7 +48,7 @@ class LineHeightHelper {
     static float[] getFontAscenderDescenderNormalized(AbstractRenderer renderer) {
         PdfFont font = renderer.resolveFirstPdfFont();
         float fontSize = renderer.getPropertyAsUnitValue(Property.FONT_SIZE).getValue();
-        float[] fontAscenderDescenderFromMetrics = calculateFontAscenderDescenderFromFontMetrics(font);
+        float[] fontAscenderDescenderFromMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
         float fontAscender = fontAscenderDescenderFromMetrics[0] / FontProgram.UNITS_NORMALIZATION * fontSize;
         float fontDescender = fontAscenderDescenderFromMetrics[1] / FontProgram.UNITS_NORMALIZATION * fontSize;
         return new float[] {fontAscender, fontDescender};
@@ -74,21 +73,5 @@ class LineHeightHelper {
             }
         }
         return lineHeightValue;
-    }
-
-    static float[] calculateFontAscenderDescenderFromFontMetrics(PdfFont font) {
-        FontMetrics fontMetrics = font.getFontProgram().getFontMetrics();
-        float ascender;
-        float descender;
-        if (fontMetrics.getWinAscender() == 0 || fontMetrics.getWinDescender() == 0 ||
-                fontMetrics.getTypoAscender() == fontMetrics.getWinAscender()
-                        && fontMetrics.getTypoDescender() == fontMetrics.getWinDescender()) {
-            ascender = fontMetrics.getTypoAscender();
-            descender = fontMetrics.getTypoDescender();
-        } else {
-            ascender = fontMetrics.getWinAscender();
-            descender = fontMetrics.getWinDescender();
-        }
-        return new float[] {ascender, descender};
     }
 }
