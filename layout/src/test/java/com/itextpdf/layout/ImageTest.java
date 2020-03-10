@@ -43,6 +43,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -942,5 +943,49 @@ public class ImageTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 3)})
+    public void createTiffImageTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "createTiffImageTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_createTiffImageTest.pdf";
+        String imgPath = sourceFolder + "group4Compression.tif";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdfDoc);
+
+        ImageData id = ImageDataFactory.create(imgPath);
+
+        ImageData idAsTiff = ImageDataFactory
+                .createTiff(UrlUtil.toURL(imgPath), true, 1, true);
+
+        ImageData idAsTiffFalse = ImageDataFactory
+                .createTiff(UrlUtil.toURL(imgPath), false, 1, false);
+
+        document.add(new Image(id));
+        document.add(new Image(idAsTiff));
+        document.add(new Image(idAsTiffFalse));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void tiffImageWithoutCompressionTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tiffImageWithoutCompression.pdf";
+        String cmpFileName = sourceFolder + "cmp_tiffImageWithoutCompression.pdf";
+        String imgPath = sourceFolder + "no-compression-tag.tiff";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdfDoc);
+
+        ImageData id = ImageDataFactory.create(imgPath);
+        document.add(new Image(id));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff02_"));
     }
 }
