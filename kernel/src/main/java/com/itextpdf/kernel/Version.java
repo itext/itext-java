@@ -281,11 +281,10 @@ public final class Version {
     }
 
     static boolean isVersionNumeric(String version) {
-        //I did not want to introduce an extra dependency on apache.commons in order to use StringUtils.
-        //This small method is not the most optimal, but it should do for release
         try {
-            Double.parseDouble(version);
-            return true;
+            int value = (int) Integer.parseInt(version);
+            // parseInt accepts numbers which start with a plus sign, but for a version it's unacceptable
+            return value >= 0 && !version.contains("+");
         } catch (NumberFormatException e) {
             return false;
         }
