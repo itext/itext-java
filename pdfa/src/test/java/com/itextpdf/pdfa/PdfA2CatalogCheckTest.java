@@ -384,6 +384,80 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
         doc.close();
     }
 
+    @Test
+    //TODO Remove expected exception when DEVSIX-3206 will be fixed
+    public void checkAbsenceOfOptionalConfigEntry() throws FileNotFoundException {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS);
+
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B,
+                new PdfOutputIntent("Custom", "",
+                        "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.addNewPage();
+
+        PdfDictionary ocProperties = new PdfDictionary();
+
+        PdfDictionary d = new PdfDictionary();
+        d.put(PdfName.Name, new PdfString("CustomName"));
+
+        PdfDictionary orderItem = new PdfDictionary();
+        orderItem.put(PdfName.Name, new PdfString("CustomName2"));
+
+        PdfArray ocgs = new PdfArray();
+        ocgs.add(orderItem);
+
+        ocProperties.put(PdfName.OCGs, ocgs);
+        ocProperties.put(PdfName.D, d);
+        doc.getCatalog().put(PdfName.OCProperties, ocProperties);
+
+        doc.close();
+    }
+
+    @Test
+    //TODO Remove expected exception when DEVSIX-3206 will be fixed
+    public void checkAbsenceOfOptionalOrderEntry() throws FileNotFoundException {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS);
+
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B,
+                new PdfOutputIntent("Custom", "",
+                        "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.addNewPage();
+
+        PdfDictionary ocProperties = new PdfDictionary();
+
+        PdfDictionary d = new PdfDictionary();
+        d.put(PdfName.Name, new PdfString("CustomName"));
+
+        PdfDictionary orderItem = new PdfDictionary();
+        orderItem.put(PdfName.Name, new PdfString("CustomName2"));
+
+        PdfArray ocgs = new PdfArray();
+        ocgs.add(orderItem);
+
+        PdfArray configs = new PdfArray();
+
+        PdfDictionary config = new PdfDictionary();
+        config.put(PdfName.Name, new PdfString("CustomName1"));
+
+        configs.add(config);
+
+        ocProperties.put(PdfName.OCGs, ocgs);
+        ocProperties.put(PdfName.D, d);
+        ocProperties.put(PdfName.Configs, configs);
+        doc.getCatalog().put(PdfName.OCProperties, ocProperties);
+
+        doc.close();
+    }
+
     private void compareResult(String outPdf, String cmpPdf) throws IOException, InterruptedException {
         String result = new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (result != null) {
