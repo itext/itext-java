@@ -170,6 +170,81 @@ public class HighlightItemsTest extends ExtendedITextTest {
         Assert.assertEquals(null, new CompareTool().compareByContent(output, cmp, outputPath, "diff"));
     }
 
+    @Test
+    public void fillStandardEncodingType1NoDescriptorTest() throws IOException, InterruptedException {
+        String input = sourceFolder + "fillStandardEncodingType1NoDescriptorTest.pdf";
+        String output = outputPath + "fillStandardEncodingType1NoDescriptorTest.pdf";
+        String cmp = sourceFolder + "cmp_fillStandardEncodingType1NoDescriptorTest.pdf";
+        parseAndHighlight(input, output, true);
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));
+    }
+
+    @Test
+    public void fillStandardEncodingTrueTypeFontDescriptorTest() throws IOException, InterruptedException {
+        String input = sourceFolder + "fillStandardEncodingTrueTypeFontDescriptorTest.pdf";
+        String output = outputPath + "fillStandardEncodingTrueTypeFontDescriptorTest.pdf";
+        String cmp = sourceFolder + "cmp_fillStandardEncodingTrueTypeFontDescriptorTest.pdf";
+        parseAndHighlight(input, output, true);
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));
+    }
+
+    @Test
+    public void fillStandardEncodingType1FontDescriptorTest() throws IOException, InterruptedException {
+        String input = sourceFolder + "fillStandardEncodingType1FontDescriptorTest.pdf";
+        String output = outputPath + "fillStandardEncodingType1FontDescriptorTest.pdf";
+        String cmp = sourceFolder + "cmp_fillStandardEncodingType1FontDescriptorTest.pdf";
+        parseAndHighlight(input, output, true);
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));
+    }
+
+    @Test
+    // As the negative ascent is not covered by pdf specification in details,
+    // we work with it as usual (which results with not very beautiful view).
+    public void incorrectAscentFontDescriptorTest() throws IOException, InterruptedException {
+        String input = sourceFolder + "incorrectAscentFontDescriptorTest.pdf";
+        String output = outputPath + "incorrectAscentFontDescriptorTest.pdf";
+        String cmp = sourceFolder + "cmp_incorrectAscentFontDescriptorTest.pdf";
+        parseAndHighlight(input, output, true);
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));
+    }
+
+    @Test
+    public void incorrectDescentFontDescriptorTest() throws IOException, InterruptedException {
+        String input = sourceFolder + "incorrectDescentFontDescriptorTest.pdf";
+        String output = outputPath + "incorrectDescentFontDescriptorTest.pdf";
+        String cmp = sourceFolder + "cmp_incorrectDescentFontDescriptorTest.pdf";
+        parseAndHighlight(input, output, true);
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));
+    }
+
+    @Test
+    public void fontDictWidthArrayMissingWidthTest() throws IOException, InterruptedException {
+        String input = sourceFolder + "fontDictWidthArrayMissingWidthTest.pdf";
+        String output = outputPath + "fontDictWidthArrayMissingWidthTest.pdf";
+        String cmp = sourceFolder + "cmp_fontDictWidthArrayMissingWidthTest.pdf";
+        parseAndHighlight(input, output, true);
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));
+    }
+
+    @Test
+    public void trueTypeCIDFontWithDWWithoutProperWidthGlyphTest() throws IOException, InterruptedException {
+        String input = sourceFolder + "trueTypeCIDFontWithDWWithoutProperWidthGlyphTest.pdf";
+        String output = outputPath + "trueTypeCIDFontWithDWWithoutProperWidthGlyphTest.pdf";
+        String cmp = sourceFolder + "cmp_trueTypeCIDFontWithDWWithoutProperWidthGlyphTest.pdf";
+        parseAndHighlight(input, output, true);
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));
+    }
+
+    @Test
+    //TODO: DEVSIX-4784 (incorrect displaying of highlights)
+    public void invalidHighlightTest() throws IOException, InterruptedException {
+        String input = sourceFolder + "invalidHighlight.pdf";
+        String output = outputPath + "invalidHighlightOutput.pdf";
+        String cmp = sourceFolder + "cmp_invalidHighlight.pdf";
+        parseAndHighlight(input, output, true);
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));
+    }
+
     private void parseAndHighlight(String input, String output, boolean singleCharacters) throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(input), new PdfWriter(output));
 
