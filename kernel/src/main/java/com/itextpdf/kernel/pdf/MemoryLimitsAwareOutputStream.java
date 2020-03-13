@@ -108,6 +108,7 @@ class MemoryLimitsAwareOutputStream extends ByteArrayOutputStream {
      */
     @Override
     public synchronized void write(byte[] b, int off, int len) {
+        // NOTE: in case this method is updated, the ManualCompressionTest should be run!
         if ((off < 0) || (off > b.length) || (len < 0) ||
                 ((off + len) - b.length > 0)) {
             throw new IndexOutOfBoundsException();
