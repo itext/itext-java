@@ -820,7 +820,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (isFixedLayout()) {
                 occupiedArea.getBBox().setY(blockBottom).setHeight((float) blockMinHeight);
             } else {
-                if (isOverflowFit(overflowY) && blockBottom < layoutBox.getBottom()) {
+                // Because of float precision inaccuracy, iText can incorrectly calculate that the block of fixed height
+                // needs to be split. As a result, an empty block with a height equal to sum of paddings
+                // may appear on the next area. To prevent such situations epsilon is used.
+                if (isOverflowFit(overflowY) && blockBottom + EPS < layoutBox.getBottom()) {
                     float hDelta = occupiedArea.getBBox().getBottom() - layoutBox.getBottom();
                     occupiedArea.getBBox()
                             .increaseHeight(hDelta)
