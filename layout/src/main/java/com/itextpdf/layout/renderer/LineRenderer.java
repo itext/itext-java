@@ -125,9 +125,12 @@ public class LineRenderer extends AbstractRenderer {
 
         occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox.clone().moveUp(layoutBox.getHeight()).setHeight(0).setWidth(0));
 
+        updateChildrenParent();
+
         float curWidth = 0;
         if (RenderingMode.HTML_MODE.equals(this.<RenderingMode>getProperty(Property.RENDERING_MODE))
-                && hasProperty(Property.LINE_HEIGHT)) {
+                && hasProperty(Property.LINE_HEIGHT)
+                && hasChildRendererInHtmlMode()) {
             float[] ascenderDescender = LineHeightHelper.getActualAscenderDescender(this);
             maxAscent = ascenderDescender[0];
             maxDescent = ascenderDescender[1];
@@ -149,8 +152,6 @@ public class LineRenderer extends AbstractRenderer {
         } else {
             widthHandler = new MaxSumWidthHandler(minMaxWidth);
         }
-
-        updateChildrenParent();
 
         resolveChildrenFonts();
 
@@ -920,6 +921,15 @@ public class LineRenderer extends AbstractRenderer {
     public MinMaxWidth getMinMaxWidth() {
         LineLayoutResult result = (LineLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(MinMaxWidthUtils.getInfWidth(), AbstractRenderer.INF))));
         return result.getMinMaxWidth();
+    }
+
+    boolean hasChildRendererInHtmlMode() {
+        for (IRenderer childRenderer : childRenderers) {
+            if (RenderingMode.HTML_MODE.equals(childRenderer.<RenderingMode>getProperty(Property.RENDERING_MODE))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     float getTopLeadingIndent(Leading leading) {

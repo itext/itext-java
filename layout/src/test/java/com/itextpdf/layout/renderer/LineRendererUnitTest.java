@@ -53,6 +53,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.FloatPropertyValue;
+import com.itextpdf.layout.property.LineHeight;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.RenderingMode;
 import com.itextpdf.layout.property.UnitValue;
@@ -60,11 +61,10 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.util.Arrays;
 
 @Category(UnitTest.class)
 public class LineRendererUnitTest extends AbstractRendererUnitTest {
@@ -180,5 +180,103 @@ public class LineRendererUnitTest extends AbstractRendererUnitTest {
 
         Assert.assertEquals(50f, lineRenderer.getOccupiedAreaBBox().getBottom(), EPS);
         Assert.assertEquals(150.0, childImageRenderer.getOccupiedAreaBBox().getBottom(), EPS);
+    }
+
+    @Test
+    public void hasChildRendererInHtmlModeTest() {
+        LineRenderer lineRenderer = new LineRenderer();
+
+        TextRenderer textRenderer1 = new TextRenderer(new Text("text1"));
+
+        TextRenderer textRenderer2 = new TextRenderer(new Text("text2"));
+        textRenderer2.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
+        lineRenderer.addChild(textRenderer1);
+        lineRenderer.addChild(textRenderer2);
+
+        Assert.assertTrue(lineRenderer.hasChildRendererInHtmlMode());
+    }
+
+    @Test
+    public void childRendererInDefaultModeTest() {
+        LineRenderer lineRenderer = new LineRenderer();
+
+        TextRenderer textRenderer1 = new TextRenderer(new Text("text1"));
+
+        TextRenderer textRenderer2 = new TextRenderer(new Text("text2"));
+        textRenderer2.setProperty(Property.RENDERING_MODE, RenderingMode.DEFAULT_LAYOUT_MODE);
+
+        lineRenderer.addChild(textRenderer1);
+        lineRenderer.addChild(textRenderer2);
+
+        Assert.assertFalse(lineRenderer.hasChildRendererInHtmlMode());
+    }
+
+    @Test
+    public void hasChildRendererInHtmlModeNoChildrenTest() {
+        LineRenderer lineRenderer = new LineRenderer();
+        Assert.assertFalse(lineRenderer.hasChildRendererInHtmlMode());
+    }
+
+    @Test
+    public void lineRendererLayoutInHtmlModeWithLineHeightAndNoChildrenTest() {
+        Document document = createDocument();
+
+        LineRenderer lineRenderer = new LineRenderer();
+        lineRenderer.setParent(document.getRenderer());
+        lineRenderer.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        lineRenderer.setProperty(Property.LINE_HEIGHT, LineHeight.createNormalValue());
+
+        lineRenderer.layout(new LayoutContext(createLayoutArea(1000, 1000)));
+
+        Assert.assertEquals(0f, lineRenderer.maxAscent, 0f);
+        Assert.assertEquals(0f, lineRenderer.maxDescent, 0f);
+    }
+
+    @Test
+    public void lineRendererLayoutInHtmlModeWithLineHeightAndChildrenInDefaultModeTest() {
+        Document document = createDocument();
+
+        LineRenderer lineRenderer = new LineRenderer();
+        lineRenderer.setParent(document.getRenderer());
+        lineRenderer.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        lineRenderer.setProperty(Property.LINE_HEIGHT, LineHeight.createFixedValue(50));
+
+        TextRenderer textRenderer1 = new TextRenderer(new Text("text"));
+        textRenderer1.setProperty(Property.RENDERING_MODE, RenderingMode.DEFAULT_LAYOUT_MODE);
+
+        TextRenderer textRenderer2 = new TextRenderer(new Text("text"));
+        textRenderer2.setProperty(Property.RENDERING_MODE, RenderingMode.DEFAULT_LAYOUT_MODE);
+
+        lineRenderer.addChild(textRenderer1);
+        lineRenderer.addChild(textRenderer2);
+
+        lineRenderer.layout(new LayoutContext(createLayoutArea(1000, 1000)));
+
+        Assert.assertEquals(10.3392f, lineRenderer.maxAscent, EPS);
+        Assert.assertEquals(-2.98079f, lineRenderer.maxDescent, EPS);
+    }
+
+    @Test
+    public void lineRendererLayoutInHtmlModeWithLineHeightAndChildInHtmlModeTest() {
+        Document document = createDocument();
+
+        LineRenderer lineRenderer = new LineRenderer();
+        lineRenderer.setParent(document.getRenderer());
+        lineRenderer.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        lineRenderer.setProperty(Property.LINE_HEIGHT, LineHeight.createFixedValue(50));
+
+        TextRenderer textRenderer1 = new TextRenderer(new Text("text"));
+        textRenderer1.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
+        TextRenderer textRenderer2 = new TextRenderer(new Text("text"));
+
+        lineRenderer.addChild(textRenderer1);
+        lineRenderer.addChild(textRenderer2);
+
+        lineRenderer.layout(new LayoutContext(createLayoutArea(1000, 1000)));
+
+        Assert.assertEquals(28.67920f, lineRenderer.maxAscent, EPS);
+        Assert.assertEquals(-21.32080f, lineRenderer.maxDescent, EPS);
     }
 }
