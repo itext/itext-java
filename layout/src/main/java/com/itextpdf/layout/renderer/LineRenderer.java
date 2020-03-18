@@ -72,10 +72,12 @@ import com.itextpdf.layout.property.UnitValue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -169,6 +171,8 @@ public class LineRenderer extends AbstractRenderer {
         List<IRenderer> floatsToNextPageOverflowRenderers = new ArrayList<>();
         List<IRenderer> floatsOverflowedToNextLine = new ArrayList<>();
         int lastTabIndex = 0;
+
+        Map<Integer, LayoutResult> specialScriptLayoutResults = new HashMap<>();
 
         while (childPos < childRenderers.size()) {
             IRenderer childRenderer = childRenderers.get(childPos);
@@ -350,7 +354,15 @@ public class LineRenderer extends AbstractRenderer {
                     wasXOverflowChanged = true;
                     setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
                 }
+
+                if (TypographyUtils.isPdfCalligraphAvailable()
+                        && isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(childRenderer)) {
+                    specialScriptPreLayoutProcessing(childPos);
+                }
+
                 childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox), wasParentsHeightClipped));
+
+                updateSpecialScriptLayoutResults(specialScriptLayoutResults, childRenderer, childPos, childResult);
 
                 // it means that we've already increased layout area by MIN_MAX_WIDTH_CORRECTION_EPS
                 if (childResult instanceof MinMaxWidthLayoutResult && null != childBlockMinMaxWidth) {
@@ -413,7 +425,12 @@ public class LineRenderer extends AbstractRenderer {
 
             boolean wordWasSplitAndItWillFitOntoNextLine = false;
 
-            if (shouldBreakLayouting && childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isWordHasBeenSplit()) {
+            // if childRenderer contains scripts which require word wrapping,
+            // we don't need to attempt to relayout it and see if the split word could fit the next line
+            // word wrapping is handled on shouldBreakLayouting
+            if (shouldBreakLayouting && childResult instanceof TextLayoutResult
+                    && ((TextLayoutResult) childResult).isWordHasBeenSplit()
+                    && !((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(true)) {
                 if (wasXOverflowChanged) {
                     setProperty(Property.OVERFLOW_X, oldXOverflow);
                 }
@@ -424,6 +441,17 @@ public class LineRenderer extends AbstractRenderer {
                 if (newLayoutResult instanceof TextLayoutResult && !((TextLayoutResult) newLayoutResult).isWordHasBeenSplit()) {
                     wordWasSplitAndItWillFitOntoNextLine = true;
                 }
+            } else if (shouldBreakLayouting && !newLineOccurred && childRenderers.get(childPos) instanceof TextRenderer
+                        && ((TextRenderer) childRenderers.get(childPos)).textContainsSpecialScriptGlyphs(true)) {
+                LastFittingChildRendererData lastFittingChildRendererData =
+                        getIndexAndLayoutResultOfTheLastRendererToRemainOnTheLine
+                                (childPos, specialScriptLayoutResults, wasParentsHeightClipped, floatsOverflowedToNextLine);
+
+                curWidth -= getCurWidthSpecialScriptsDecrement(childPos, lastFittingChildRendererData.childIndex,
+                        lastFittingChildRendererData.childLayoutResult, specialScriptLayoutResults);
+
+                childPos = lastFittingChildRendererData.childIndex;
+                childResult = lastFittingChildRendererData.childLayoutResult;
             }
 
             if (!wordWasSplitAndItWillFitOntoNextLine) {
@@ -483,7 +511,6 @@ public class LineRenderer extends AbstractRenderer {
                 LineRenderer[] split = split();
                 split[0].childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
 
-
                 if (wordWasSplitAndItWillFitOntoNextLine) {
                     split[1].childRenderers.add(childRenderer);
                     split[1].childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
@@ -521,7 +548,7 @@ public class LineRenderer extends AbstractRenderer {
                     split[1] = null;
                 }
 
-                IRenderer causeOfNothing = childResult.getStatus() == LayoutResult.NOTHING ? childResult.getCauseOfNothing() : childRenderer;
+                IRenderer causeOfNothing = childResult.getStatus() == LayoutResult.NOTHING ? childResult.getCauseOfNothing() : childRenderers.get(childPos);
                 if (split[1] == null) {
                     result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, split[0], split[1], causeOfNothing);
                 } else {
@@ -1218,6 +1245,247 @@ public class LineRenderer extends AbstractRenderer {
         return baseDirection;
     }
 
+    static boolean isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(IRenderer childRenderer) {
+        return childRenderer instanceof TextRenderer
+                && ((TextRenderer) childRenderer).getSpecialScriptsWordBreakPoints() == null
+                && ((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(false);
+    }
+
+    static boolean isChildFloating(IRenderer childRenderer) {
+        FloatPropertyValue kidFloatPropertyVal = childRenderer.<FloatPropertyValue>getProperty(Property.FLOAT);
+        return childRenderer instanceof AbstractRenderer
+                && FloatingHelper.isRendererFloating(childRenderer, kidFloatPropertyVal);
+    }
+
+    static void updateSpecialScriptLayoutResults(Map<Integer, LayoutResult> specialScriptLayoutResults,
+                                          IRenderer childRenderer, int childPos, LayoutResult childResult) {
+        if ((childRenderer instanceof TextRenderer && ((TextRenderer) childRenderer)
+                .textContainsSpecialScriptGlyphs(true))) {
+            specialScriptLayoutResults.put(childPos, childResult);
+        } else if (!specialScriptLayoutResults.isEmpty() && !isChildFloating(childRenderer)) {
+            specialScriptLayoutResults.clear();
+        }
+    }
+
+    static float getCurWidthSpecialScriptsDecrement(int childPos, int newChildPos, LayoutResult newLayoutResult,
+                                                    Map<Integer, LayoutResult> specialScriptLayoutResults) {
+        float decrement = 0.0f;
+        // if childPos == newChildPos, curWidth doesn't include width of the current childRenderer yet, so no decrement is needed
+        if (childPos != newChildPos) {
+            for (int i = childPos - 1; i >= newChildPos; i--) {
+                if (specialScriptLayoutResults.get(i) != null) {
+                    decrement += specialScriptLayoutResults.get(i).getOccupiedArea().getBBox().getWidth();
+                }
+            }
+
+            // when LayoutResult.NOTHING has artificially been created in getIndexOfRendererWithLastFullyFittingWord,
+            // it's occupiedArea isn't 0.0x0.0 as it should be, so we need to subtract it here twice, because it'll be added later
+            if (newLayoutResult.getStatus() == LayoutResult.NOTHING) {
+                decrement += specialScriptLayoutResults.get(newChildPos).getOccupiedArea().getBBox().getWidth();
+            }
+        }
+
+        return decrement;
+    }
+
+    /**
+     * Preprocess a continuous sequence of TextRenderer containing special scripts
+     * prior to layouting the first TextRenderer in the sequence.
+     *
+     * In this method we preprocess a sequence containing special scripts only,
+     * skipping floating renderers as they're not part of a regular layout flow,
+     * and breaking the prelayout processing once a non-special script containing renderer occurs.
+     *
+     * Prelayout processing includes the following steps:
+     * - {@link #getSpecialScriptsContainingTextRendererSequenceInfo(int)}: determine boundaries of the sequence
+     * and concatenate its TextRenderer#text fields converted to a String representation;
+     * - get the String analyzed with WordWrapper#getPossibleBreaks and
+     * receive a zero-based array of points where the String is allowed to got broken in lines;
+     * - {@link #distributePossibleBreakPointsOverSequentialTextRenderers(int, int, List, List)}:
+     * distribute the list over the TextRenderer#specialScriptsWordBreakPoints, preliminarily having the points shifted,
+     * so that each TextRenderer#specialScriptsWordBreakPoints is based on the first element of TextRenderer#text.
+     *
+     * @param childPos index of the childRenderer in LineRenderer#childRenderers
+     *                 from which the a continuous sequence of TextRenderer containing special scripts starts
+     */
+    void specialScriptPreLayoutProcessing(int childPos) {
+        SpecialScriptsContainingTextRendererSequenceInfo info =
+                getSpecialScriptsContainingTextRendererSequenceInfo(childPos);
+        int numberOfSequentialTextRenderers = info.numberOfSequentialTextRenderers;
+        String sequentialTextContent = info.sequentialTextContent;
+        List<Integer> indicesOfFloating = info.indicesOfFloating;
+        List<Integer> possibleBreakPointsGlobal = TypographyUtils.getPossibleBreaks(sequentialTextContent);
+        distributePossibleBreakPointsOverSequentialTextRenderers(childPos, numberOfSequentialTextRenderers,
+                possibleBreakPointsGlobal, indicesOfFloating);
+    }
+
+    SpecialScriptsContainingTextRendererSequenceInfo getSpecialScriptsContainingTextRendererSequenceInfo(int childPos) {
+        StringBuilder sequentialTextContentBuilder = new StringBuilder();
+        int numberOfSequentialTextRenderers = 0;
+        List<Integer> indicesOfFloating = new ArrayList<>();
+        for (int i = childPos; i < childRenderers.size(); i++) {
+            if (isChildFloating(childRenderers.get(i))) {
+                numberOfSequentialTextRenderers++;
+                indicesOfFloating.add(i);
+            } else {
+                if (childRenderers.get(i) instanceof TextRenderer
+                        && ((TextRenderer) childRenderers.get(i))
+                        .textContainsSpecialScriptGlyphs(false)) {
+                    sequentialTextContentBuilder.append(((TextRenderer) childRenderers.get(i)).text.toString());
+                    numberOfSequentialTextRenderers++;
+                } else {
+                    break;
+                }
+            }
+        }
+        return new SpecialScriptsContainingTextRendererSequenceInfo(numberOfSequentialTextRenderers,
+                sequentialTextContentBuilder.toString(), indicesOfFloating);
+    }
+
+    void distributePossibleBreakPointsOverSequentialTextRenderers(
+            int childPos, int numberOfSequentialTextRenderers, List<Integer> possibleBreakPointsGlobal,
+            List<Integer> indicesOfFloating) {
+        int alreadyProcessedNumberOfGlyphs = 0;
+        int indexToBeginWith = 0;
+        for (int i = 0; i < numberOfSequentialTextRenderers; i++) {
+            if (!indicesOfFloating.contains(i)) {
+                TextRenderer childTextRenderer = (TextRenderer) childRenderers.get(childPos + i);
+                int length = childTextRenderer.length();
+                List<Integer> possibleBreakPoints = new ArrayList<Integer>();
+                for (int j = indexToBeginWith; j < possibleBreakPointsGlobal.size(); j++) {
+                    int shiftedBreakPoint = possibleBreakPointsGlobal.get(j) - alreadyProcessedNumberOfGlyphs;
+                    if (shiftedBreakPoint > length) {
+                        indexToBeginWith = j;
+                        alreadyProcessedNumberOfGlyphs += length;
+                        break;
+                    }
+                    possibleBreakPoints.add(shiftedBreakPoint + childTextRenderer.text.start);
+                }
+                if (possibleBreakPoints.isEmpty()) {
+                    possibleBreakPoints.add(-1);
+                }
+                childTextRenderer.setSpecialScriptsWordBreakPoints(possibleBreakPoints);
+            }
+        }
+    }
+
+    LastFittingChildRendererData getIndexAndLayoutResultOfTheLastRendererToRemainOnTheLine
+            (int childPos, Map<Integer, LayoutResult> specialScriptLayoutResults, boolean wasParentsHeightClipped,
+             List<IRenderer> floatsOverflowedToNextLine) {
+        int indexOfRendererContainingLastFullyFittingWord = childPos;
+        int splitPosition = 0;
+        boolean needToSplitRendererContainingLastFullyFittingWord = false;
+        int fittingLengthWithTrailingRightSideSpaces = 0;
+        int amountOfTrailingRightSideSpaces = 0;
+        Set<Integer> indicesOfFloats = new HashSet<Integer>();
+        LayoutResult childPosLayoutResult = specialScriptLayoutResults.get(childPos);
+        LayoutResult returnLayoutResult = null;
+        for (int analyzedTextRendererIndex = childPos; analyzedTextRendererIndex >= 0; analyzedTextRendererIndex--) {
+            // get the number of fitting glyphs in the renderer being analyzed
+            TextRenderer textRenderer = (TextRenderer) childRenderers.get(analyzedTextRendererIndex);
+            if (analyzedTextRendererIndex != childPos) {
+                fittingLengthWithTrailingRightSideSpaces = textRenderer.length();
+            } else if (childPosLayoutResult.getSplitRenderer() != null) {
+                TextRenderer splitTextRenderer = (TextRenderer) childPosLayoutResult.getSplitRenderer();
+                GlyphLine splitText = splitTextRenderer.text;
+                if (splitTextRenderer.length() > 0) {
+                    fittingLengthWithTrailingRightSideSpaces = splitTextRenderer.length();
+                    while (splitText.end + amountOfTrailingRightSideSpaces < splitText.size()
+                            && TextUtil.isWhitespace(splitText.get(splitText.end + amountOfTrailingRightSideSpaces))) {
+                        fittingLengthWithTrailingRightSideSpaces++;
+                        amountOfTrailingRightSideSpaces++;
+                    }
+                }
+            }
+
+            // check if line break can happen in this renderer relying on its specialScriptsWordBreakPoints list
+            if (fittingLengthWithTrailingRightSideSpaces > 0) {
+                List<Integer> breakPoints = textRenderer.getSpecialScriptsWordBreakPoints();
+                if (breakPoints != null && breakPoints.size() > 0 && breakPoints.get(0) != -1) {
+                    int possibleBreakPointPosition =
+                            textRenderer.findPossibleBreaksSplitPosition(
+                                    fittingLengthWithTrailingRightSideSpaces + textRenderer.text.start, false);
+                    if (possibleBreakPointPosition > -1) {
+                        splitPosition = breakPoints.get(possibleBreakPointPosition) - amountOfTrailingRightSideSpaces;
+                        needToSplitRendererContainingLastFullyFittingWord = splitPosition != textRenderer.text.end;
+                        if (!needToSplitRendererContainingLastFullyFittingWord) {
+                            analyzedTextRendererIndex++;
+                            while (analyzedTextRendererIndex <= childPos
+                                    && isChildFloating(childRenderers.get(analyzedTextRendererIndex))) {
+                                analyzedTextRendererIndex++;
+                            }
+                        }
+                        indexOfRendererContainingLastFullyFittingWord = analyzedTextRendererIndex;
+                        break;
+                    }
+                }
+            }
+
+            int amountOfFloating = 0;
+
+            while (analyzedTextRendererIndex - 1 >= 0
+                    && isChildFloating(childRenderers.get(analyzedTextRendererIndex - 1))) {
+                indicesOfFloats.add(analyzedTextRendererIndex - 1);
+                analyzedTextRendererIndex--;
+                amountOfFloating++;
+            }
+
+            // move to the previous renderer if line break isn't allowed to happen within the renderer being analyzed
+            if (analyzedTextRendererIndex == 0
+                    || !(childRenderers.get(analyzedTextRendererIndex - 1) instanceof TextRenderer)) {
+                // possible breaks haven't been found, can't move back
+                // forced split on the latter renderer having either Full or Partial result
+                if (childPosLayoutResult.getStatus() != LayoutResult.NOTHING) {
+                    returnLayoutResult = childPosLayoutResult;
+                }
+                indexOfRendererContainingLastFullyFittingWord = childPos;
+                break;
+            }
+
+            // possible breaks haven't been found, can't move back
+            // move the entire renderer on the next line
+            if (!((TextRenderer) childRenderers.get(analyzedTextRendererIndex - 1))
+                    .textContainsSpecialScriptGlyphs(true)) {
+                indexOfRendererContainingLastFullyFittingWord = analyzedTextRendererIndex + amountOfFloating;
+                break;
+            }
+        }
+
+        updateFloatsOverflowedToNextLine(floatsOverflowedToNextLine, indicesOfFloats, indexOfRendererContainingLastFullyFittingWord);
+
+        if (returnLayoutResult == null) {
+            returnLayoutResult = childPosLayoutResult;
+
+            TextRenderer childRenderer = (TextRenderer) childRenderers.get(indexOfRendererContainingLastFullyFittingWord);
+
+            if (needToSplitRendererContainingLastFullyFittingWord) {
+                int amountOfFitOnTheFirstLayout = fittingLengthWithTrailingRightSideSpaces - amountOfTrailingRightSideSpaces
+                        + childRenderer.text.start;
+                if (amountOfFitOnTheFirstLayout != splitPosition) {
+                    LayoutArea layoutArea = childRenderer.getOccupiedArea();
+                    childRenderer.setSpecialScriptFirstNotFittingIndex(splitPosition);
+                    returnLayoutResult = childRenderer.layout(new LayoutContext(layoutArea, wasParentsHeightClipped));
+                    childRenderer.setSpecialScriptFirstNotFittingIndex(-1);
+                }
+            } else {
+                LayoutArea occupiedArea = specialScriptLayoutResults.get(indexOfRendererContainingLastFullyFittingWord)
+                        .getOccupiedArea();
+                returnLayoutResult = new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, childRenderer);
+            }
+        }
+
+        return new LastFittingChildRendererData(indexOfRendererContainingLastFullyFittingWord, returnLayoutResult);
+    }
+
+    void updateFloatsOverflowedToNextLine(List<IRenderer> floatsOverflowedToNextLine, Set<Integer> indicesOfFloats,
+                                             int indexOfRendererContainingLastFullyFittingWord) {
+        for (int index : indicesOfFloats) {
+            if (index > indexOfRendererContainingLastFullyFittingWord) {
+                floatsOverflowedToNextLine.remove(childRenderers.get(index));
+            }
+        }
+    }
+
     private void updateBidiLevels(int totalNumberOfTrimmedGlyphs, BaseDirection baseDirection) {
         if (totalNumberOfTrimmedGlyphs != 0 && levels != null) {
             levels = Arrays.copyOfRange(levels, totalNumberOfTrimmedGlyphs, levels.length);
@@ -1255,11 +1523,11 @@ public class LineRenderer extends AbstractRenderer {
      */
     private void resolveChildrenFonts() {
         List<IRenderer> newChildRenderers = new ArrayList<>(childRenderers.size());
-        boolean updateChildRendrers = false;
+        boolean updateChildRenderers = false;
         for (IRenderer child : childRenderers) {
             if (child instanceof TextRenderer) {
                 if (((TextRenderer) child).resolveFonts(newChildRenderers)) {
-                    updateChildRendrers = true;
+                    updateChildRenderers = true;
                 }
             } else {
                 newChildRenderers.add(child);
@@ -1267,7 +1535,7 @@ public class LineRenderer extends AbstractRenderer {
         }
 
         // this mean, that some TextRenderer has been replaced.
-        if (updateChildRendrers) {
+        if (updateChildRenderers) {
             childRenderers = newChildRenderers;
         }
     }
@@ -1299,6 +1567,33 @@ public class LineRenderer extends AbstractRenderer {
         public RendererGlyph(Glyph glyph, TextRenderer textRenderer) {
             this.glyph = glyph;
             this.renderer = textRenderer;
+        }
+    }
+
+    // numberOfSequentialTextRenderers - number of sequential TextRenderers containing special scripts,
+    // plus number of ignored floating renderers occurring amidst the sequence;
+    // sequentialTextContent - converted to String and concatenated TextRenderer#text-s;
+    // indicesOfFloating - indices of ignored floating child renderers of this LineRenderer
+    class SpecialScriptsContainingTextRendererSequenceInfo {
+        public int numberOfSequentialTextRenderers;
+        public String sequentialTextContent;
+        List<Integer> indicesOfFloating;
+
+        public SpecialScriptsContainingTextRendererSequenceInfo
+                (int numberOfSequentialTextRenderers, String sequentialTextContent, List<Integer> indicesOfFloating) {
+            this.numberOfSequentialTextRenderers = numberOfSequentialTextRenderers;
+            this.sequentialTextContent = sequentialTextContent;
+            this.indicesOfFloating = indicesOfFloating;
+        }
+    }
+
+    class LastFittingChildRendererData {
+        public int childIndex;
+        public LayoutResult childLayoutResult;
+
+        public LastFittingChildRendererData(int childIndex, LayoutResult childLayoutResult) {
+            this.childIndex = childIndex;
+            this.childLayoutResult = childLayoutResult;
         }
     }
 }

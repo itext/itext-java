@@ -125,6 +125,15 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     protected GlyphLine savedWordBreakAtLineEnding;
 
+    // if list is null, presence of special scripts in the TextRenderer#text hasn't been checked yet
+    // if list is empty, TextRenderer#text has been analyzed and no special scripts have been detected
+    // if list contains -1, TextRenderer#text contains special scripts, but no word break is possible within it
+    // Must remain ArrayList: once an instance is formed and filled prior to layouting on split of this TextRenderer,
+    // it's used to get element by index or passed to List.subList()
+    private List<Integer> specialScriptsWordBreakPoints;
+
+    private int specialScriptFirstNotFittingIndex = -1;
+
     /**
      * Creates a TextRenderer from its corresponding layout object.
      *
@@ -156,6 +165,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         this.otfFeaturesApplied = other.otfFeaturesApplied;
         this.tabAnchorCharacterPosition = other.tabAnchorCharacterPosition;
         this.reversedRanges = other.reversedRanges;
+        this.specialScriptsWordBreakPoints = other.specialScriptsWordBreakPoints;
     }
 
     @Override
@@ -329,9 +339,11 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 if (xAdvance != 0) {
                     xAdvance = scaleXAdvance(xAdvance, fontSize.getValue(), hScale) / TEXT_SPACE_COEFF;
                 }
+
                 if (!noSoftWrap
                         && (nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition) > layoutBox.getWidth() - currentLineWidth
-                        && firstCharacterWhichExceedsAllowedWidth == -1) {
+                        && firstCharacterWhichExceedsAllowedWidth == -1
+                        || ind == specialScriptFirstNotFittingIndex) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
                     if (TextUtil.isSpaceOrWhitespace(text.get(ind))) {
                         wordBreakGlyphAtLineEnding = currentGlyph;
@@ -377,9 +389,11 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     }
                 }
 
-                if (splitCharacters.isSplitCharacter(text, ind) || ind + 1 == text.end ||
+                boolean endOfWordBelongingToSpecialScripts = textContainsSpecialScriptGlyphs(true)
+                        && findPossibleBreaksSplitPosition(ind + 1, true) >= 0;
+                if (ind + 1 == text.end || splitCharacters.isSplitCharacter(text, ind) ||
                         splitCharacters.isSplitCharacter(text, ind + 1) &&
-                                TextUtil.isSpaceOrWhitespace(text.get(ind + 1))) {
+                                TextUtil.isSpaceOrWhitespace(text.get(ind + 1)) || endOfWordBelongingToSpecialScripts) {
                     nonBreakablePartEnd = ind;
                     break;
                 }
@@ -471,13 +485,20 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         }
                     }
 
-                    if ((nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) || forcePartialSplitOnFirstChar || -1 != nonBreakingHyphenRelatedChunkStart) {
+                    boolean specialScriptWordSplit = textContainsSpecialScriptGlyphs(true)
+                            && !isSplitForcedByNewLine;
+                    if ((nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied)
+                            || forcePartialSplitOnFirstChar
+                            || -1 != nonBreakingHyphenRelatedChunkStart
+                            || specialScriptWordSplit) {
                         // if the word is too long for a single line we will have to split it
+                        // we also need to split the word here if text contains glyphs from scripts
+                        // which require word wrapping for further processing in LineRenderer
                         if (line.start == -1) {
                             line.start = currentTextPos;
                         }
                         if (!crlf) {
-                            currentTextPos = (forcePartialSplitOnFirstChar || isOverflowFit(overflowX)) ? firstCharacterWhichExceedsAllowedWidth : nonBreakablePartEnd + 1;
+                            currentTextPos = (forcePartialSplitOnFirstChar || isOverflowFit(overflowX) || specialScriptWordSplit) ? firstCharacterWhichExceedsAllowedWidth : nonBreakablePartEnd + 1;
                         }
                         line.end = Math.max(line.end, currentTextPos);
                         wordSplit = !forcePartialSplitOnFirstChar && (text.end != currentTextPos);
@@ -1085,6 +1106,54 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         return font instanceof PdfType0Font && font.getFontProgram() instanceof TrueTypeFont;
     }
 
+    /**
+     * Analyzes/checks whether {@link TextRenderer#text}, bounded by start and end,
+     * contains glyphs belonging to special script.
+     *
+     * Mind that the behavior of this method depends on the analyzeSpecialScriptsWordBreakPointsOnly parameter:
+     * - pass {@code false} if you need to analyze the {@link TextRenderer#text} by checking each of its glyphs
+     * AND to fill {@link TextRenderer#specialScriptsWordBreakPoints} list,
+     * i.e. when analyzing a sequence of TextRenderers prior to layouting;
+     * - pass {@code true} if you want to check if text contains glyphs belonging to special scripts,
+     * according to the already filled {@link TextRenderer#specialScriptsWordBreakPoints} list.
+     *
+     * @param analyzeSpecialScriptsWordBreakPointsOnly false if analysis of each glyph is required,
+     *                                                 true if analysis has already been performed earlier
+     *                                                 and the results are stored in {@link TextRenderer#specialScriptsWordBreakPoints}
+     * @return true if {@link TextRenderer#text}, bounded by start and end, contains glyphs belonging to special script, otherwise false
+     * @see TextRenderer#specialScriptsWordBreakPoints
+     */
+    boolean textContainsSpecialScriptGlyphs(boolean analyzeSpecialScriptsWordBreakPointsOnly) {
+        if (specialScriptsWordBreakPoints != null) {
+            return !specialScriptsWordBreakPoints.isEmpty();
+        }
+        if (!analyzeSpecialScriptsWordBreakPointsOnly) {
+            for (int i = text.start; i < text.end; i++) {
+                int unicode = text.get(i).getUnicode();
+                if (unicode > -1) {
+                    Character.UnicodeScript glyphScript = Character.UnicodeScript.of(unicode);
+                    if (Character.UnicodeScript.THAI.equals(glyphScript)) {
+                        return true;
+                    }
+                }
+            }
+            specialScriptsWordBreakPoints = new ArrayList<>();
+        }
+        return false;
+    }
+
+    void setSpecialScriptsWordBreakPoints(List<Integer> specialScriptsWordBreakPoints) {
+        this.specialScriptsWordBreakPoints = specialScriptsWordBreakPoints;
+    }
+
+    List<Integer> getSpecialScriptsWordBreakPoints() {
+        return this.specialScriptsWordBreakPoints;
+    }
+
+    void setSpecialScriptFirstNotFittingIndex(int lastFittingIndex) {
+        this.specialScriptFirstNotFittingIndex = lastFittingIndex;
+    }
+
     @Override
     protected Rectangle getBackgroundArea(Rectangle occupiedAreaWithMargins) {
         float textRise = (float) this.getPropertyAsFloat(Property.TEXT_RISE);
@@ -1170,6 +1239,41 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         overflowRenderer.otfFeaturesApplied = otfFeaturesApplied;
         overflowRenderer.parent = parent;
         overflowRenderer.addAllProperties(getOwnProperties());
+
+        if (specialScriptsWordBreakPoints != null) {
+            if (specialScriptsWordBreakPoints.isEmpty()) {
+                splitRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>());
+                overflowRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>());
+            } else if (specialScriptsWordBreakPoints.get(0) == -1) {
+                List<Integer> split = new ArrayList<Integer>(1);
+                split.add(-1);
+                splitRenderer.setSpecialScriptsWordBreakPoints(split);
+
+                List<Integer> overflow = new ArrayList<Integer>(1);
+                overflow.add(-1);
+                overflowRenderer.setSpecialScriptsWordBreakPoints(overflow);
+            } else {
+                int splitIndex = findPossibleBreaksSplitPosition(initialOverflowTextPos, false);
+
+                if (splitIndex > -1) {
+                    splitRenderer.setSpecialScriptsWordBreakPoints(specialScriptsWordBreakPoints
+                            .subList(0, splitIndex + 1));
+                } else {
+                    List<Integer> split = new ArrayList<Integer>(1);
+                    split.add(-1);
+                    splitRenderer.setSpecialScriptsWordBreakPoints(split);
+                }
+
+                if (splitIndex + 1 < specialScriptsWordBreakPoints.size()) {
+                    overflowRenderer.setSpecialScriptsWordBreakPoints(specialScriptsWordBreakPoints
+                            .subList(splitIndex + 1, specialScriptsWordBreakPoints.size()));
+                } else {
+                    List<Integer> split = new ArrayList<Integer>(1);
+                    split.add(-1);
+                    overflowRenderer.setSpecialScriptsWordBreakPoints(split);
+                }
+            }
+        }
 
         return new TextRenderer[]{splitRenderer, overflowRenderer};
     }
@@ -1268,6 +1372,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         this.font = font;
         this.otfFeaturesApplied = false;
         this.strToBeConverted = null;
+        this.specialScriptsWordBreakPoints = null;
         setProperty(Property.FONT, font);
     }
 
@@ -1418,6 +1523,34 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             // it's word-break character at the end of the line, which we want to save after trimming
             savedWordBreakAtLineEnding = new GlyphLine(Collections.<Glyph>singletonList(wordBreak));
         }
+    }
+    // if amongPresentOnly is true, returns the index of specialScriptsWordBreakPoints's element
+    // or -1 if element wasn't found.
+    // if amongPresentOnly is false, returns the index of specialScriptsWordBreakPoints's element
+    // that is not greater than textStartBasedInitialOverflowTextPos
+    // if there's no such element in specialScriptsWordBreakPoints, -1 is returned
+    int findPossibleBreaksSplitPosition(int textStartBasedInitialOverflowTextPos, boolean amongPresentOnly) {
+        int low = 0;
+        int high = specialScriptsWordBreakPoints.size() - 1;
+
+        while (low <= high) {
+            int middle = (low + high) >>> 1;
+            if (specialScriptsWordBreakPoints.get(middle)
+                    .compareTo(textStartBasedInitialOverflowTextPos) < 0) {
+                low = middle + 1;
+            }
+            else if (specialScriptsWordBreakPoints.get(middle)
+                    .compareTo(textStartBasedInitialOverflowTextPos) > 0) {
+                high = middle - 1;
+            }
+            else {
+                return middle;
+            }
+        }
+        if (!amongPresentOnly && low > 0) {
+            return low - 1;
+        }
+        return -1;
     }
 
     private static class ReversedCharsIterator implements Iterator<GlyphLine.GlyphLinePart> {
