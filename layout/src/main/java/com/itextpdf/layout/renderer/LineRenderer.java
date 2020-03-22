@@ -129,7 +129,6 @@ public class LineRenderer extends AbstractRenderer {
 
         float curWidth = 0;
         if (RenderingMode.HTML_MODE.equals(this.<RenderingMode>getProperty(Property.RENDERING_MODE))
-                && hasProperty(Property.LINE_HEIGHT)
                 && hasChildRendererInHtmlMode()) {
             float[] ascenderDescender = LineHeightHelper.getActualAscenderDescender(this);
             maxAscent = ascenderDescender[0];

@@ -43,6 +43,8 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.Document;
@@ -61,6 +63,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.io.IOException;
 import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
@@ -278,5 +281,28 @@ public class LineRendererUnitTest extends AbstractRendererUnitTest {
 
         Assert.assertEquals(28.67920f, lineRenderer.maxAscent, EPS);
         Assert.assertEquals(-21.32080f, lineRenderer.maxDescent, EPS);
+    }
+
+    @Test
+    public void lineRendererLayoutInHtmlModeWithLineHeightPropertyNotSet() throws IOException {
+        LineRenderer lineRenderer = new LineRenderer();
+        lineRenderer.setParent(createDocument().getRenderer());
+        lineRenderer.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
+        // Set fonts with different ascent/descent to line and text
+        lineRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(StandardFonts.HELVETICA));
+
+        TextRenderer textRenderer = new TextRenderer(new Text("text"));
+        textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(StandardFonts.COURIER));
+
+        lineRenderer.addChild(textRenderer);
+        LayoutResult layoutResLineHeightNotSet = lineRenderer.layout(new LayoutContext(createLayoutArea(1000, 1000)));
+
+        lineRenderer.setProperty(Property.LINE_HEIGHT, LineHeight.createNormalValue());
+        LayoutResult layoutResLineHeightNormal = lineRenderer.layout(new LayoutContext(createLayoutArea(1000, 1000)));
+
+        Rectangle bboxLineHeightNotSet = layoutResLineHeightNotSet.getOccupiedArea().getBBox();
+        Rectangle bboxLineHeightNormal = layoutResLineHeightNormal.getOccupiedArea().getBBox();
+        Assert.assertTrue(bboxLineHeightNotSet.equalsWithEpsilon(bboxLineHeightNormal));
     }
 }
