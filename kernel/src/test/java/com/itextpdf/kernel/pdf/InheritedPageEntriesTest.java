@@ -31,6 +31,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import javax.swing.text.Document;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -82,6 +83,26 @@ public class InheritedPageEntriesTest extends ExtendedITextTest {
         page.setRotation(90);
 
         pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    //TODO: update cmp-files when DEVSIX-3635 will be fixed
+    public void copySeveralPagesToDocumentWithInheritedPageRotationTest() throws InterruptedException, IOException {
+        String outputFileName = destinationFolder + "copySeveralPagesToDocumentWithInheritedPageRotation.pdf";
+        String cmpFileName = sourceFolder + "cmp_copySeveralPagesToDocumentWithInheritedPageRotation.pdf";
+
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfReader(sourceFolder + "noPagesRotation.pdf"));
+
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfReader
+                (sourceFolder + "addSeveralPagesToDocumentWithInheritedPageRotation.pdf"),
+                new PdfWriter(outputFileName));
+
+        pdfDoc1.copyPagesTo(1, 2, pdfDoc2);
+        pdfDoc1.close();
+
+        pdfDoc2.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, destinationFolder));
     }
