@@ -71,6 +71,22 @@ public class InheritedPageEntriesTest extends ExtendedITextTest {
     }
 
     @Test
+    public void setRotationToPageTest() throws InterruptedException, IOException {
+        String outputFileName = destinationFolder + "setRotationToPage.pdf";
+        String cmpFileName = sourceFolder + "cmp_setRotationToPage.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader
+                (sourceFolder + "srcFileTestRotationInheritance.pdf"), new PdfWriter(outputFileName));
+
+        PdfPage page = pdfDoc.getPage(1);
+        page.setRotation(90);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
     public void mediaBoxInheritance() throws IOException {
         String inputFileName = sourceFolder + "mediaBoxInheritanceTestSource.pdf";
 

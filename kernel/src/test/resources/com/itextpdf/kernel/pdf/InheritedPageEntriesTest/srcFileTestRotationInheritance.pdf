@@ -1,39 +1,9 @@
 %PDF-1.7
 %‚„œ”
 5 0 obj
-<</Length 262>>stream
-q
-BT
-/F1 12 Tf
-36 789.33 Td
-2 Tr
-0.1 w
-1 0 0 RG
-(This is a fill and stroke text)Tj
-ET
-Q
-q
-BT
-/F1 12 Tf
-36 763.35 Td
-1 Tr
-0.3 w
-0 1 0 RG
-(This is a stroke-only text)Tj
-ET
-Q
-q
-BT
-/F1 20 Tf
-36 728.92 Td
-2 Tr
-0.3 w
-0 0 1 RG
-0 1 0 rg
-(This is a colorful text)Tj
-ET
-Q
-
+<</Filter/FlateDecode/Length 151>>stream
+xúuŒ¡
+¬0–˚~≈ı`L≤X€´†ûï˝ÅbmM#ÍﬂõÑJëô””√éa}P®4≤ põÇπÇ∏xêB· òÛ|kå-—4÷bŸU8ÔÓ5Ü˙ñ‹¬û·˝‹ÕH–ftUr)∫’ÃM‹ uˆ˝«‘ÚkÍ\zÚ5ô£ÕÑ˚Îø8Îºyÿ_˘4¢B 
 endstream
 endobj
 4 0 obj
@@ -43,19 +13,16 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20150924110049+03'00')/ModDate(D:20200116144642+03'00')/Producer(iTextÆ 6.0.0-SNAPSHOT ©2000-2014 iText Group NV \(AGPL-version\); modified using iTextÆ 7.1.5-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20150924110049+03'00')/ModDate(D:20200323173038+03'00')/Producer(iTextÆ 6.0.0-SNAPSHOT ©2000-2014 iText Group NV \(AGPL-version\); modified using iTextÆ 7.1.10 ©2000-2020 iText Group NV \(AGPL-version\))>>
 endobj
 2 0 obj
-<</Count 1/CropBox 8 0 R/Kids[4 0 R]/MediaBox 7 0 R/Resources 10 0 R/Rotate 9 0 R/Type/Pages>>
+<</Count 1/CropBox 8 0 R/Kids[4 0 R]/MediaBox 7 0 R/Resources 10 0 R/Type/Pages>>
 endobj
 7 0 obj
 [0 0 595 842]
 endobj
 8 0 obj
 [0 0 595 842]
-endobj
-9 0 obj
-90
 endobj
 10 0 obj
 <</Font<</F1 6 0 R>>>>
@@ -65,20 +32,20 @@ endobj
 endobj
 xref
 0 11
-0000000000 65535 f 
-0000000413 00000 n 
-0000000705 00000 n 
-0000000458 00000 n 
-0000000325 00000 n 
+0000000009 65535 f 
+0000000321 00000 n 
+0000000605 00000 n 
+0000000366 00000 n 
+0000000233 00000 n 
 0000000015 00000 n 
-0000000930 00000 n 
-0000000815 00000 n 
-0000000844 00000 n 
-0000000873 00000 n 
-0000000891 00000 n 
+0000000799 00000 n 
+0000000702 00000 n 
+0000000731 00000 n 
+0000000000 00001 f 
+0000000760 00000 n 
 trailer
-<</ID [<5195e9165a91a71cac59a8208234b2ce><fd20c15cfb66337fb43859981611cf04>]/Info 3 0 R/Root 1 0 R/Size 11>>
-%iText-7.1.5-SNAPSHOT
+<</ID [<5195e9165a91a71cac59a8208234b2ce><b71a4676c036a6766c303e2fe00e4dc8>]/Info 3 0 R/Root 1 0 R/Size 11>>
+%iText-7.1.10
 startxref
-1018
+887
 %%EOF
