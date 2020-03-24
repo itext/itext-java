@@ -684,6 +684,14 @@ public class PdfPKCS7 {
                 this.digestEncryptionAlgorithmOid = SecurityIDs.ID_DSA;
             } else if (digestEncryptionAlgorithm.equals("ECDSA")) {
                 this.digestEncryptionAlgorithmOid = SecurityIDs.ID_ECDSA;
+            } else if (digestEncryptionAlgorithm.equals("GOST3410_2012_256")) {
+                this.digestEncryptionAlgorithmOid = SecurityIDs.ID_GOST3410_2012_256;
+            } else if (digestEncryptionAlgorithm.equals("GOST3410DH_2012_256")) {
+                this.digestEncryptionAlgorithmOid = SecurityIDs.ID_GOST3410DH_2012_256;
+            } else if (digestEncryptionAlgorithm.equals("GOST3410_2012_512")) {
+                this.digestEncryptionAlgorithmOid = SecurityIDs.ID_GOST3410_2012_512;
+            } else if (digestEncryptionAlgorithm.equals("GOST3410DH_2012_512")) {
+                this.digestEncryptionAlgorithmOid = SecurityIDs.ID_GOST3410DH_2012_512;
             } else
                 throw new PdfException(PdfException.UnknownKeyAlgorithm1).setMessageParams(digestEncryptionAlgorithm);
         }

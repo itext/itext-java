@@ -61,4 +61,8 @@ public class SecurityIDs {
     public static final String ID_OCSP = "1.3.6.1.5.5.7.48.1";
     public static final String ID_AA_SIGNING_CERTIFICATE_V1 = "1.2.840.113549.1.9.16.2.12";
     public static final String ID_AA_SIGNING_CERTIFICATE_V2 = "1.2.840.113549.1.9.16.2.47";
+    public static final String ID_GOST3410_2012_256 = "1.2.643.7.1.1.1.1";
+    public static final String ID_GOST3410_2012_512 = "1.2.643.7.1.1.1.2";
+    public static final String ID_GOST3410DH_2012_256 = "1.2.643.7.1.1.6.1";
+    public static final String ID_GOST3410DH_2012_512 = "1.2.643.7.1.1.6.2";
 }
