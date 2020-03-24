@@ -173,10 +173,10 @@ public final class TextUtil {
     }
 
     /**
-     * Converts a UTF32 code point value to a String with the corresponding character(s).
+     * Converts a UTF32 code point value to a char array with the corresponding character(s).
      *
      * @param codePoint a Unicode value
-     * @return the corresponding characters in a String
+     * @return the corresponding char array
      */
     public static char[] convertFromUtf32(int codePoint) {
         if (codePoint < 0x10000) {
