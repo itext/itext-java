@@ -49,13 +49,13 @@ import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+@Category(IntegrationTest.class)
 public class StylesTest extends ExtendedITextTest {
 
     public static float EPS = 0.0001f;
