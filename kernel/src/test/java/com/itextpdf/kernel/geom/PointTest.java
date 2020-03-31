@@ -42,6 +42,7 @@
  */
 package com.itextpdf.kernel.geom;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
@@ -49,7 +50,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class PointTest {
+public class PointTest extends ExtendedITextTest {
     private static double EPSILON_COMPARISON = 1E-12;
 
     @Test
