@@ -331,9 +331,10 @@ public final class SvgConstants {
         public static final String LINE = "line";
 
         /**
-         * Tag defining a linear gradient
+         * Tag defining a {@link com.itextpdf.svg.renderers.impl.LinearGradientSvgNodeRenderer linear gradient}.
          */
-        public static final String LINEAR_GRADIENT = "linearGradient";
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        public static final String LINEAR_GRADIENT = "linearGradient".toLowerCase();
 
         /**
          * Tag defining a link
@@ -417,6 +418,16 @@ public final class SvgConstants {
          * Tag defining the ramp of colors in a gradient.
          */
         public static final String STOP = "stop";
+
+        /**
+         * Tag defining the color in stop point of a gradient.
+         */
+        public static final String STOP_COLOR = "stop-color";
+
+        /**
+         * Tag defining the opacity in stop point of a gradient.
+         */
+        public static final String STOP_OPACITY = "stop-opacity";
 
         /**
          * Tag defining the style to be.
@@ -569,6 +580,18 @@ public final class SvgConstants {
         public static final String BOLD = "bold";
 
         /**
+         * Attribute defining the units relation for a color gradient.
+         */
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        public static final String GRADIENT_UNITS = "gradientUnits".toLowerCase();
+
+        /**
+         * Attribute defining the transformations for a color gradient.
+         */
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        public static final String GRADIENT_TRANSFORM = "gradientTransform".toLowerCase();
+
+        /**
          * Attribute defining the height. Used in several elements.
          */
         public static final String HEIGHT = "height";
@@ -615,6 +638,11 @@ public final class SvgConstants {
          */
         // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
         public static final String MARKER_UNITS = "markerUnits".toLowerCase();
+
+        /**
+         * Attribute defining the offset of a stop color for gradients.
+         */
+        public static final String OFFSET = "offset";
 
         /**
          * Attribute defining the opacity of a group or graphic element.
@@ -778,6 +806,12 @@ public final class SvgConstants {
         public static final String RY = "ry";
 
         /**
+         * Attribute defining the spread method for a color gradient.
+         */
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        public static final String SPREAD_METHOD = "spreadMethod".toLowerCase();
+
+        /**
          * Attribute defining the stroke color.
          */
         public static final String STROKE = "stroke";
@@ -930,6 +964,16 @@ public final class SvgConstants {
         public static final String FILL_RULE_NONZERO = "nonzero";
 
         /**
+         * Value representing the gradient units relation "objectBoundingBox".
+         */
+        public static final String GRADIENT_UNITS_OBJECT_BOUNDING_BOX = "objectBoundingBox";
+
+        /**
+         * Value representing the gradient units relation "userSpaceOnUse".
+         */
+        public static final String GRADIENT_UNITS_USER_SPACE_ON_USE = "userSpaceOnUse";
+
+        /**
          * Value representing the meet for preserve aspect ratio calculations.
          */
         public static final String MEET = "meet";
@@ -964,6 +1008,21 @@ public final class SvgConstants {
          * Value representing the text-alignment start for text objects
          */
         public static final String TEXT_ANCHOR_START = "start";
+
+        /**
+         * Value representing the gradient spread method "pad".
+         */
+        public static final String SPREAD_METHOD_PAD = "pad";
+
+        /**
+         * Value representing the gradient spread method "repeat".
+         */
+        public static final String SPREAD_METHOD_REPEAT = "repeat";
+
+        /**
+         * Value representing the gradient spread method "reflect".
+         */
+        public static final String SPREAD_METHOD_REFLECT = "reflect";
 
         /**
          * The value for markerUnits that represent values in a coordinate system which has a single unit equal the size in user units of the current stroke width.

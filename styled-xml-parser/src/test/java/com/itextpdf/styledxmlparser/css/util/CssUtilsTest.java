@@ -67,7 +67,7 @@ public class CssUtilsTest extends ExtendedITextTest {
     @Test
     public void parseAbsoluteLengthFromNAN() {
         junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "Definitely not a number"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.NAN, "Definitely not a number"));
 
         String value = "Definitely not a number";
         CssUtils.parseAbsoluteLength(value);
@@ -76,7 +76,7 @@ public class CssUtilsTest extends ExtendedITextTest {
     @Test
     public void parseAbsoluteLengthFromNull() {
         junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.NAN, "null"));
 
         String value = null;
         CssUtils.parseAbsoluteLength(value);

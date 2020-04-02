@@ -283,7 +283,7 @@
             </text>
             <text text-anchor="start" x="-2813" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="5470">It
             </text>
-            <rect x="0" y="5" width="32.333333333333336" height="486" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+            <rect x="0" y="5" width="32.333333333333336" height="486" stroke="none" stroke-width="0" fill="url(#_ABSTRACT_RENDERER_ID_0)">
             </rect>
         </g>
         <g>
@@ -453,7 +453,7 @@
             </text>
             <text text-anchor="start" x="695" y="426.9"  font-size="24" stroke="none" stroke-width="0" fill="#000000" id="8529">.
             </text>
-            <rect x="868.6666666666666" y="5" width="32.333333333333336" height="486" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_1)">
+            <rect x="868.6666666666666" y="5" width="32.333333333333336" height="486" stroke="none" stroke-width="0" fill="url(#_ABSTRACT_RENDERER_ID_1)">
             </rect>
         </g>
         <text text-anchor="start" x="390.5" y="253.5"  font-size="40" font-weight="bold" stroke="none" stroke-width="0" fill="#000000">nation

@@ -51,6 +51,8 @@ import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -178,7 +180,7 @@ public class CssUtils {
             if (angle == null) {
                 angle = "null";
             }
-            throw new StyledXMLParserException(MessageFormatUtil.format(LogMessageConstant.NAN, angle));
+            throw new StyledXMLParserException(MessageFormatUtil.format(StyledXMLParserException.NAN, angle));
         }
 
         float floatValue  = Float.parseFloat(angle.substring(0, pos));
@@ -251,7 +253,7 @@ public class CssUtils {
             if (length == null) {
                 length = "null";
             }
-            throw new StyledXMLParserException(MessageFormatUtil.format(LogMessageConstant.NAN, length));
+            throw new StyledXMLParserException(MessageFormatUtil.format(StyledXMLParserException.NAN, length));
         }
 
         // Use double type locally to have better precision of the result after applying arithmetic operations
@@ -467,7 +469,7 @@ public class CssUtils {
      * @return int position between the numeric value and unit or 0 if string is null or string started with a
      * non-numeric value.
      */
-    private static int determinePositionBetweenValueAndUnit(String string) {
+    public static int determinePositionBetweenValueAndUnit(String string) {
         if (string == null) {
             return 0;
         }

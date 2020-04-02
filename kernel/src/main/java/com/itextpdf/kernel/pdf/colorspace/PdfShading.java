@@ -389,13 +389,33 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          *
          * @param cs the {@link PdfColorSpace} object in which colour values shall be expressed.
          *           The special Pattern space isn't excepted.
-         * @param coords the {@link PdfArray} of four number four numbers [x0 y0 x1 y1] that specified the starting
+         * @param coords the {@link PdfArray} of four numbers [x0 y0 x1 y1] that specified the starting
          *               and the endings coordinates of thew axis, expressed in the shading's target coordinate space.
          * @param function the {@link PdfFunction} object, that is used to calculate color transitions.
          */
         public Axial(PdfColorSpace cs, PdfArray coords, PdfFunction function) {
+            this(cs, coords, null, function);
+        }
+
+        /**
+         * Creates the new instance of the class.
+         *
+         * @param cs       the {@link PdfColorSpace} object in which colour values shall be expressed.
+         *                 The special Pattern space isn't excepted.
+         * @param coords   the {@link PdfArray} of four numbers [x0 y0 x1 y1] that specified
+         *                 the starting and the endings coordinates of thew axis, expressed
+         *                 in the shading's target coordinate space.
+         * @param domain   the {@link PdfArray} of two numbers [t0 t1] specifying the limiting values
+         *                 of a parametric variable t which is considered to vary linearly between
+         *                 these two values and becomes the input argument to the colour function.
+         * @param function the {@link PdfFunction} object, that is used to calculate color transitions.
+         */
+        public Axial(PdfColorSpace cs, PdfArray coords, PdfArray domain, PdfFunction function) {
             super(new PdfDictionary(), ShadingType.AXIAL, cs);
             setCoords(coords);
+            if (domain != null) {
+                setDomain(domain);
+            }
             setFunction(function);
         }
 

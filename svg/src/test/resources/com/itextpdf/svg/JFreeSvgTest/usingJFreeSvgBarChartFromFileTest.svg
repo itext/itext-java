@@ -548,7 +548,7 @@
           style="stroke-width: 0.5;stroke: rgb(255,255,255);stroke-opacity: 1.0;stroke-linejoin: bevel;stroke-dasharray: 2.0, 2.0;"
           transform="matrix(1,0,0,1,0,0)" clip-path="url(#_2060007299665300clip-2)"/>
     <line x1="56" y1="199.35" x2="488" y2="199.35"
-          style="stroke-width: 0.5;stroke: rgb(255,255,255);stroke-opacity: 1.0;stroke-linejoin: bevel;stroke-dasharray: 2.0, 2.0;"
+          style="stroke-width: 0.5;stroke: rgb(255,255,255);stroke-opacity: 1.0;stroke-linejoin: bevel;" stroke-dasharray = " 2.0, 2.0"
           transform="matrix(1,0,0,1,0,0)" clip-path="url(#_2060007299665300clip-2)"/>
     <line x1="56" y1="176.58" x2="488" y2="176.58"
           style="stroke-width: 0.5;stroke: rgb(255,255,255);stroke-opacity: 1.0;stroke-linejoin: bevel;stroke-dasharray: 2.0, 2.0;"

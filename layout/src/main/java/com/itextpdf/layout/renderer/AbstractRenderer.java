@@ -48,6 +48,8 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.NumberUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
+import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
@@ -64,6 +66,7 @@ import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.borders.Border;
@@ -530,8 +533,17 @@ public abstract class AbstractRenderer implements IRenderer {
                     if (backgroundXObject == null) {
                         backgroundXObject = backgroundImage.getForm();
                     }
-                    Rectangle imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundXObject.getHeight(),
-                            backgroundXObject.getWidth(), backgroundXObject.getHeight());
+                    // TODO: DEVSIX-3108 due to invalid logic of `PdfCanvas.addXObject(PdfXObject, Rectangle)`
+                    //  for PDfFormXObject (invalid scaling) for now the imageRectangle initialization
+                    //  for gradient uses width and height = 1. For all othe cases the logic left as it was.
+                    Rectangle imageRectangle;
+                    if (backgroundXObject == null) {
+                        backgroundXObject = createXObject(backgroundImage.getLinearGradientBuilder(), backgroundArea, drawContext.getDocument());
+                        imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundXObject.getHeight(),1, 1);
+                    } else {
+                         imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundXObject.getHeight(),
+                                backgroundXObject.getWidth(), backgroundXObject.getHeight());
+                    }
                     if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
                         Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                         logger.warn(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
@@ -561,6 +573,21 @@ public abstract class AbstractRenderer implements IRenderer {
                 drawContext.getCanvas().closeTag();
             }
         }
+    }
+
+    public PdfFormXObject createXObject(AbstractLinearGradientBuilder linearGradientBuilder,
+            Rectangle xObjectArea, PdfDocument document) {
+        if (linearGradientBuilder == null) {
+            return null;
+        }
+        Rectangle formBBox = new Rectangle(0, 0, xObjectArea.getWidth(), xObjectArea.getHeight());
+        PdfFormXObject xObject = new PdfFormXObject(formBBox);
+        Color gradientColor = linearGradientBuilder.buildColor(formBBox, null);
+        new PdfCanvas(xObject, document)
+                .setColor(gradientColor, true)
+                .rectangle(formBBox)
+                .fill();
+        return xObject;
     }
 
     protected boolean clipBorderArea(DrawContext drawContext, Rectangle outerBorderBox) {

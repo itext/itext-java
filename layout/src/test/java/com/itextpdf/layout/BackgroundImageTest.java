@@ -42,8 +42,13 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
+import com.itextpdf.kernel.colors.gradients.GradientColorStop;
+import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -55,7 +60,13 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.BackgroundImage;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.Transform;
+import com.itextpdf.layout.property.Transform.SingleTransform;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -86,6 +97,29 @@ public class BackgroundImageTest extends ExtendedITextTest {
         Assert.assertTrue(backgroundImage.isRepeatY());
 
         backgroundImageGenericTest("backgroundImage", backgroundImage);
+    }
+
+    @Test
+    public void backgroundImageWithLinearGradientTest() throws IOException, InterruptedException {
+        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
+                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
+                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
+        BackgroundImage backgroundImage = new BackgroundImage(gradientBuilder);
+        backgroundImageGenericTest("backgroundImageWithLinearGradient", backgroundImage);
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel = LogLevelConstants.WARN)
+    })
+    public void backgroundImageWithLinearGradientAndTransformTest() throws IOException, InterruptedException {
+        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
+                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
+                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
+        BackgroundImage backgroundImage = new BackgroundImage(gradientBuilder);
+        backgroundImageGenericTest("backgroundImageWithLinearGradientAndTransform", backgroundImage, Math.PI / 4);
     }
 
     @Test
@@ -248,6 +282,10 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
 
     private void backgroundImageGenericTest(String filename, BackgroundImage backgroundImage) throws IOException, InterruptedException {
+        backgroundImageGenericTest(filename, backgroundImage, null);
+    }
+
+    private void backgroundImageGenericTest(String filename, BackgroundImage backgroundImage, Double angle) throws IOException, InterruptedException {
         Assert.assertTrue(backgroundImage.isBackgroundSpecified());
 
         String outFileName = destinationFolder + filename + ".pdf";
@@ -266,6 +304,10 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
 
         Div div = new Div().add(new Paragraph(text + text + text));
+
+        if (angle != null) {
+            div.setRotationAngle(angle.doubleValue());
+        }
         div.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
         doc.add(div);
 

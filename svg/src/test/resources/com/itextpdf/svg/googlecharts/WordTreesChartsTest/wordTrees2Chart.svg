@@ -136,7 +136,7 @@
         </path>
         <text text-anchor="start" x="129" y="472.2071428571429" font-size="11" stroke="none" stroke-width="0" fill="#000000" id="7">Bacteria
         </text>
-        <rect x="825.9166666666666" y="0" width="75.08333333333333" height="501" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+        <rect x="825.9166666666666" y="0" width="75.08333333333333" height="501" stroke="none" stroke-width="0" fill="url(#_ABSTRACT_RENDERER_ID_0)">
         </rect>
     </g>
     <g>

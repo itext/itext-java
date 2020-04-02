@@ -145,9 +145,6 @@ public class FillTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
-    })
     //TODO update cmp file after DEVSIX-3365 will be fixed
     public void invalidUrlFillTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "invalidUrlFillTest");

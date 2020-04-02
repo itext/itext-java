@@ -43,6 +43,7 @@
 package com.itextpdf.svg.renderers;
 
 import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.font.FontProvider;
@@ -305,5 +306,18 @@ public class SvgDrawContext {
     public void addTextMove(float additionalMoveX, float additionalMoveY) {
         textMove[0] += additionalMoveX;
         textMove[1] += additionalMoveY;
+    }
+
+    /**
+     * Get the current canvas transformation
+     * @return the {@link AffineTransform} representing the current canvas transformation
+     */
+    public AffineTransform getCurrentCanvasTransform() {
+        Matrix currentTransform = getCurrentCanvas().getGraphicsState().getCtm();
+        if (currentTransform != null) {
+            return new AffineTransform(currentTransform.get(0), currentTransform.get(1),
+                    currentTransform.get(3), currentTransform.get(4), currentTransform.get(6), currentTransform.get(7));
+        }
+        return new AffineTransform();
     }
 }

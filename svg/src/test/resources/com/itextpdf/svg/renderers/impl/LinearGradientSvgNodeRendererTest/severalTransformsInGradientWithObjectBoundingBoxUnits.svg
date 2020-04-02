@@ -1,0 +1,16 @@
+<svg x="0" y="0" width="600" height="600" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+        <linearGradient x1="0" y1="1" x2="0" y2="0" id="myFillGradient" spreadMethod="repeat" gradientUnits="objectBoundingBox">
+            <stop offset="0%" stop-color="red"/>
+            <stop offset="100%" stop-color="blue"/>
+        </linearGradient>
+    </defs>
+
+    <svg x="0" y="0" width="300" height="300">
+	<g transform="translate(0, -10.7) rotate(-10)">
+		<g transform="matrix(0.95516166,-0.46694301,0.71994792,0.61949768,-106.90347,78.6637)">
+			<rect x="10" y="200" width="150" height="100" fill="url(#myFillGradient)" stroke-width="2"/>
+		</g>
+		</g>
+    </svg>
+</svg>

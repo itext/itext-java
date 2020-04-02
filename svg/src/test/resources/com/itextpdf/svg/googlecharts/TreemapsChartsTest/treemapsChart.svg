@@ -16,9 +16,9 @@
     <g>
         <rect x="588.3333333333333" y="11.345075188955022" width="296.6666666666667" height="7.060958678806189" stroke="#999999" stroke-width="2" fill-opacity="1" fill="none">
         </rect>
-        <rect x="588.3333333333333" y="11.345075188955022" width="149.33333333333334" height="7.060958678806189" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+        <rect x="588.3333333333333" y="11.345075188955022" width="149.33333333333334" height="7.060958678806189" stroke="none" stroke-width="0" fill="url(#_ABSTRACT_RENDERER_ID_0)">
         </rect>
-        <rect x="736.6666666666666" y="11.345075188955022" width="148.33333333333334" height="7.060958678806189" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_1)">
+        <rect x="736.6666666666666" y="11.345075188955022" width="148.33333333333334" height="7.060958678806189" stroke="none" stroke-width="0" fill="url(#_ABSTRACT_RENDERER_ID_1)">
         </rect>
     </g>
     <g style="cursor: pointer;">

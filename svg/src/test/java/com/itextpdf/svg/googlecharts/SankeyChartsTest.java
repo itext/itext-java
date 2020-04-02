@@ -75,9 +75,6 @@ public class SankeyChartsTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 46),
-    })
     public void sankeyColoredChart() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "sankeyColoredChart");
     }

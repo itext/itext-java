@@ -1,0 +1,15 @@
+<svg x="0" y="0" width="600" height="600" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+        <linearGradient x1="0" y1="0" x2="1" y2="0" id="myFillGradient"
+                        gradientTransform="translate(0.7, 0)">
+            <stop offset="0" stop-color="red"/>
+            <stop offset="0" stop-color="green"/>
+            <stop offset="1" stop-color="blue"/>
+        </linearGradient>
+    </defs>
+
+    <rect x="100"
+          y="300"
+          width="250" height="100"
+          fill="url(#myFillGradient)" stroke="black" stroke-width="10"/>
+</svg>

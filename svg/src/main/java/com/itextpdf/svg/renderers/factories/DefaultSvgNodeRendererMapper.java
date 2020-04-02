@@ -50,12 +50,14 @@ import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.EllipseSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.ImageSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.LineSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.LinearGradientSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.MarkerSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.NoDrawOperationSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PolygonSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PolylineSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.RectangleSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.StopSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer;
 import com.itextpdf.svg.renderers.impl.TextSvgTSpanBranchRenderer;
@@ -85,11 +87,13 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
         result.put(SvgConstants.Tags.G, GroupSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.IMAGE, ImageSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.LINE, LineSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.LINEAR_GRADIENT, LinearGradientSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.MARKER, MarkerSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.PATH, PathSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.POLYGON, PolygonSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.POLYLINE, PolylineSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.RECT, RectangleSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.STOP, StopSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.SVG, SvgTagSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.TEXT, TextSvgBranchRenderer.class);
         result.put(SvgConstants.Tags.TSPAN, TextSvgTSpanBranchRenderer.class);
@@ -150,8 +154,6 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
 
         ignored.add(SvgConstants.Tags.HKERN);
 
-        ignored.add(SvgConstants.Tags.LINEAR_GRADIENT);
-
         ignored.add(SvgConstants.Tags.MASK);
         ignored.add(SvgConstants.Tags.METADATA);
         ignored.add(SvgConstants.Tags.MISSING_GLYPH);
@@ -160,7 +162,6 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
 
         ignored.add(SvgConstants.Tags.RADIAL_GRADIENT);
 
-        ignored.add(SvgConstants.Tags.STOP);
         ignored.add(SvgConstants.Tags.STYLE);
 
         ignored.add(SvgConstants.Tags.TITLE);

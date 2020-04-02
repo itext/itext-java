@@ -711,7 +711,7 @@
             </g>
         </g>
         <g>
-            <rect x="57.50103736548411" y="473.93" width="180.3312586023651" height="13.07" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_1)">
+            <rect x="57.50103736548411" y="473.93" width="180.3312586023651" height="13.07" stroke="none" stroke-width="0" fill="url(#_ABSTRACT_RENDERER_ID_1)">
             </rect>
             <g>
                 <text text-anchor="start" x="7" y="484.9" font-size="14" stroke="#ffffff" stroke-width="3" fill="#000000" aria-hidden="true">38,262

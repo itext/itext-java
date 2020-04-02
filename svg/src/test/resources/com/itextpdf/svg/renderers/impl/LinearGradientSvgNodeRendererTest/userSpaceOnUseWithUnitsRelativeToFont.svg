@@ -1,0 +1,53 @@
+<svg x="0" y="0" width = "1200" height = "1200" xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    <linearGradient id="LinearGradient1"
+                    x1="1em" y1="10em"
+                    x2="10em" y2="12em"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="green" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="red" stop-opacity="1"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="1"/>
+      <stop offset="100%"   stop-color="yellow" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="LinearGradient2"
+                    x1="1ex" y1="25ex"
+                    x2="2ex" y2="5ex"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="green" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="red" stop-opacity="1"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="1"/>
+      <stop offset="100%"   stop-color="yellow" stop-opacity="1"/>
+    </linearGradient>
+  
+    <linearGradient id="LinearGradient3"
+                    x1="4rem" y1="1.5rem"
+                    x2="14rem" y2="3rem"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="green" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="red" stop-opacity="1"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="1"/>
+      <stop offset="100%" stop-color="yellow" stop-opacity="1"/>
+    </linearGradient>
+
+  </defs>
+
+  <svg x="0" y="80" width="600" height="950">
+  <text x = "15" y = "15" >"em"</text>
+  <rect x="10" y="30" width="175" height="200" rx="10" ry="10"
+     style="fill:url(#LinearGradient1);
+            stroke: #005000;
+            stroke-width: 3;" />
+  <text x = "315" y = "15" >"ex"</text>
+  <rect x="300" y="30" width="175" height="200" rx="10" ry="10"
+        style="fill:url(#LinearGradient2);
+            stroke: #005000;
+            stroke-width: 3;" />
+  <text x = "15" y = "255" >"rem"</text>
+  <rect x="10" y="270" width="175" height="200" rx="10" ry="10"
+        style="fill:url(#LinearGradient3);
+            stroke: #005000;
+            stroke-width: 3;" />
+
+  </svg>
+</svg>

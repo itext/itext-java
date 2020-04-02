@@ -167,7 +167,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
      */
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 32),
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 31),
     })
     public void convertFileWithAllIgnoredTags() throws IOException, InterruptedException {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "ignored_tags");
@@ -184,7 +184,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 14),
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 12),
     })
     public void caseSensitiveTagTest() {
         String contents = "<svg width='100pt' height='100pt'>" +

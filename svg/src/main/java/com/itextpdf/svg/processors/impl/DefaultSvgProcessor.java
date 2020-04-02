@@ -187,7 +187,8 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             IElementNode element = (IElementNode) node;
 
             if (!rendererFactory.isTagIgnored(element)) {
-                ISvgNodeRenderer renderer = createRenderer(element, processorState.top());
+                ISvgNodeRenderer parentRenderer = processorState.top();
+                ISvgNodeRenderer renderer = createRenderer(element, parentRenderer);
                 if (renderer != null) {
                     Map<String, String> styles;
                     if (cssResolver instanceof SvgStyleResolver
@@ -206,13 +207,18 @@ public class DefaultSvgProcessor implements ISvgProcessor {
                         namedObjects.put(attribute, renderer);
                     }
 
-                    // don't add the NoDrawOperationSvgNodeRenderer or its subtree to the ISvgNodeRenderer tree
-                    if (!(renderer instanceof NoDrawOperationSvgNodeRenderer)) {
-                        if (processorState.top() instanceof IBranchSvgNodeRenderer) {
-                            ((IBranchSvgNodeRenderer) processorState.top()).addChild(renderer);
-                        } else if (processorState.top() instanceof TextSvgBranchRenderer && renderer instanceof ISvgTextNodeRenderer) {
+                    if (renderer instanceof NoDrawOperationSvgNodeRenderer) {
+                        // add the NoDrawOperationSvgNodeRenderer or its subtree to the ISvgNodeRenderer tree
+                        // only if the parent is NoDrawOperationSvgNodeRenderer itself
+                        if (parentRenderer instanceof NoDrawOperationSvgNodeRenderer) {
+                            ((NoDrawOperationSvgNodeRenderer) parentRenderer).addChild(renderer);
+                        }
+                    } else {
+                        if (parentRenderer instanceof IBranchSvgNodeRenderer) {
+                            ((IBranchSvgNodeRenderer) parentRenderer).addChild(renderer);
+                        } else if (parentRenderer instanceof TextSvgBranchRenderer && renderer instanceof ISvgTextNodeRenderer) {
                             //Text branch node renderers only accept ISvgTextNodeRenderers
-                            ((TextSvgBranchRenderer) processorState.top()).addChild((ISvgTextNodeRenderer) renderer);
+                            ((TextSvgBranchRenderer) parentRenderer).addChild((ISvgTextNodeRenderer) renderer);
                         }
                     }
 

@@ -97,6 +97,7 @@ public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    //TODO: update cmp file after DEVSIX-4044 will be fixed
     public void multiClipPathComplexTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_multi_complex");
     }
