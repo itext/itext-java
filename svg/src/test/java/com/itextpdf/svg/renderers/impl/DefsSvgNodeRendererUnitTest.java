@@ -63,7 +63,7 @@ public class DefsSvgNodeRendererUnitTest extends ExtendedITextTest {
     @Test
     public void processDefsNoChildrenTest() throws IOException {
         INode parsedSvg = SvgConverter.parse(new FileInputStream(sourceFolder + "onlyDefsWithNoChildren.svg"));
-        ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg);
+        ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, null);
 
         Assert.assertTrue(result.getNamedObjects().isEmpty());
     }
@@ -71,7 +71,7 @@ public class DefsSvgNodeRendererUnitTest extends ExtendedITextTest {
     @Test
     public void processDefsOneChildTest() throws IOException {
         INode parsedSvg = SvgConverter.parse(new FileInputStream(sourceFolder + "onlyDefsWithOneChild.svg"));
-        ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg);
+        ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, null);
 
         Assert.assertTrue(result.getNamedObjects().get("circle1") instanceof CircleSvgNodeRenderer);
     }
@@ -79,7 +79,7 @@ public class DefsSvgNodeRendererUnitTest extends ExtendedITextTest {
     @Test
     public void processDefsMultipleChildrenTest() throws IOException {
         INode parsedSvg = SvgConverter.parse(new FileInputStream(sourceFolder + "onlyDefsWithMultipleChildren.svg"));
-        ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg);
+        ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, null);
 
         Assert.assertTrue(result.getNamedObjects().get("circle1") instanceof CircleSvgNodeRenderer);
         Assert.assertTrue(result.getNamedObjects().get("line1") instanceof LineSvgNodeRenderer);
@@ -89,7 +89,7 @@ public class DefsSvgNodeRendererUnitTest extends ExtendedITextTest {
     @Test
     public void processDefsParentShouldBeNullTest() throws IOException {
         INode parsedSvg = SvgConverter.parse(new FileInputStream(sourceFolder + "onlyDefsWithOneChild.svg"));
-        ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg);
+        ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, null);
 
         Assert.assertNull(result.getNamedObjects().get("circle1").getParent());
     }

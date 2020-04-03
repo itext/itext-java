@@ -91,7 +91,7 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
                 "</svg>\n";
         JsoupXmlParser xmlParser = new JsoupXmlParser();
         IDocumentNode root = xmlParser.parse(svg);
-        IBranchSvgNodeRenderer nodeRenderer = (IBranchSvgNodeRenderer) new DefaultSvgProcessor().process(root).getRootRenderer();
+        IBranchSvgNodeRenderer nodeRenderer = (IBranchSvgNodeRenderer) new DefaultSvgProcessor().process(root, null).getRootRenderer();
 
         Map<String, String> actual = new HashMap<>();
         //Traverse to ellipse
@@ -134,7 +134,7 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
                 "</svg>\n";
         JsoupXmlParser xmlParser = new JsoupXmlParser();
         IDocumentNode root = xmlParser.parse(svg);
-        IBranchSvgNodeRenderer nodeRenderer = (IBranchSvgNodeRenderer) new DefaultSvgProcessor().process(root).getRootRenderer();
+        IBranchSvgNodeRenderer nodeRenderer = (IBranchSvgNodeRenderer) new DefaultSvgProcessor().process(root, null).getRootRenderer();
 
         Map<String, String> actual = new HashMap<>();
         //Traverse to ellipse
@@ -171,7 +171,7 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
                 "</svg>";
         JsoupXmlParser xmlParser = new JsoupXmlParser();
         IDocumentNode root = xmlParser.parse(svg);
-        IBranchSvgNodeRenderer nodeRenderer = (IBranchSvgNodeRenderer) new DefaultSvgProcessor().process(root).getRootRenderer();
+        IBranchSvgNodeRenderer nodeRenderer = (IBranchSvgNodeRenderer) new DefaultSvgProcessor().process(root, null).getRootRenderer();
 
         PathSvgNodeRenderer pathSvgNodeRenderer = (PathSvgNodeRenderer) ((IBranchSvgNodeRenderer) nodeRenderer.getChildren().get(0)).getChildren().get(0);
 

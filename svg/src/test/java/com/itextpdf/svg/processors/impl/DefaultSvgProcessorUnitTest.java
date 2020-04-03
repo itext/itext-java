@@ -58,17 +58,18 @@ import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessor;
-import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
-import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
+import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
+
+import java.util.List;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -205,59 +206,50 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         junitExpectedException.expect(SvgProcessingException.class);
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
 
-        processor.process(null);
+        processor.process(null, null);
     }
 
-    @Ignore("TODO: Implement Tree comparison. Blocked by DEVSIX-2253\n")
-    @Test()
-    public void defaultProcessingTestNoPassedProperties() {
+    @Test
+    public void processWithNullPropertiesTest() {
+        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
+        INode root = new JsoupElementNode(jsoupSVGRoot);
+
+        DefaultSvgProcessor processor = new DefaultSvgProcessor();
+
+        SvgConverterProperties convProps = new SvgConverterProperties();
+        convProps.setRendererFactory(null);
+        convProps.setCharset(null);
+
+        ISvgNodeRenderer rootRenderer = processor.process(root, convProps).getRootRenderer();
+
+        Assert.assertTrue(rootRenderer instanceof SvgTagSvgNodeRenderer);
+        Assert.assertEquals(0, ((SvgTagSvgNodeRenderer) rootRenderer).getChildren().size());
+    }
+
+    @Test
+    public void defaultProcessingCorrectlyNestedRenderersTest() {
         //Setup nodes
         Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
         Element jsoupSVGCircle = new Element(Tag.valueOf("circle"), "");
         Element jsoupSVGPath = new Element(Tag.valueOf("path"), "");
+
         INode root = new JsoupElementNode(jsoupSVGRoot);
         root.addChild(new JsoupElementNode(jsoupSVGCircle));
         root.addChild(new JsoupElementNode(jsoupSVGPath));
         //Run
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        ISvgNodeRenderer rootActual = processor.process(root).getRootRenderer();
-        //Compare
-        Assert.assertNull(rootActual);
-    }
 
-    @Ignore("TODO: Implement Tree comparison. Blocked by DEVSIX-2253\n")
-    @Test()
-    public void defaultProcessingTestPassedPropertiesNull() {
-        //Setup nodes
-        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
-        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"), "");
-        Element jsoupSVGPath = new Element(Tag.valueOf("path"), "");
-        INode root = new JsoupElementNode(jsoupSVGRoot);
-        root.addChild(new JsoupElementNode(jsoupSVGCircle));
-        root.addChild(new JsoupElementNode(jsoupSVGPath));
-        //Run
-        DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        ISvgNodeRenderer rootActual = processor.process(root, null).getRootRenderer();
-        //Compare
-        Assert.assertNull(rootActual);
-    }
+        SvgConverterProperties convProps = new SvgConverterProperties();
 
-    @Ignore("TODO: Implement Tree comparison. Blocked by DEVSIX-2253\n")
-    @Test()
-    public void defaultProcessingTestPassedPropertiesReturnNullValues() {
-        //Setup nodes
-        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
-        Element jsoupSVGCircle = new Element(Tag.valueOf("circle"), "");
-        Element jsoupSVGPath = new Element(Tag.valueOf("path"), "");
-        INode root = new JsoupElementNode(jsoupSVGRoot);
-        root.addChild(new JsoupElementNode(jsoupSVGCircle));
-        root.addChild(new JsoupElementNode(jsoupSVGPath));
-        //Run
-        DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        ISvgConverterProperties convProps = new EmptySvgConverterProperties();
-        ISvgNodeRenderer rootActual = processor.process(root, convProps).getRootRenderer();
-        //Compare
-        Assert.assertNull(rootActual);
+        ISvgNodeRenderer rootRenderer = processor.process(root, convProps).getRootRenderer();
+
+        Assert.assertTrue(rootRenderer instanceof SvgTagSvgNodeRenderer);
+
+        List<ISvgNodeRenderer> children = ((SvgTagSvgNodeRenderer) rootRenderer).getChildren();
+
+        Assert.assertEquals(2, children.size());
+        Assert.assertTrue(children.get(0) instanceof CircleSvgNodeRenderer);
+        Assert.assertTrue(children.get(1) instanceof PathSvgNodeRenderer);
     }
 
     @Test
@@ -265,18 +257,6 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
         IElementNode actual = processor.findFirstElement(null, "name");
         Assert.assertNull(actual);
-    }
-
-    @Test
-    @Ignore("DEVSIX-2253")
-    public void processWithNullPropertiesTest() {
-        DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
-        INode root = new JsoupElementNode(jsoupSVGRoot);
-        ISvgProcessorResult actual = processor.process(root, null);
-        ISvgProcessorResult expected = processor.process(root);
-
-        Assert.assertEquals(expected.getRootRenderer(), actual.getRootRenderer());
     }
 
     @Test
@@ -337,18 +317,5 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
 
     private static ISvgProcessor processor() {
         return new DefaultSvgProcessor();
-    }
-
-    private static class EmptySvgConverterProperties extends SvgConverterProperties {
-
-        @Override
-        public ISvgNodeRendererFactory getRendererFactory() {
-            return null;
-        }
-
-        @Override
-        public String getCharset() {
-            return null;
-        }
     }
 }

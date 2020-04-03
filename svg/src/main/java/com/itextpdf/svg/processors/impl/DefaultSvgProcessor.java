@@ -57,6 +57,7 @@ import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.font.SvgFontProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.impl.ISvgTextNodeRenderer;
 import com.itextpdf.svg.renderers.impl.NoDrawOperationSvgNodeRenderer;
@@ -114,6 +115,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         }
     }
 
+    @Deprecated
     public ISvgProcessorResult process(INode root) throws SvgProcessingException {
         return process(root, null);
     }
@@ -127,6 +129,8 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         processorState = new ProcessorState();
         if (converterProps.getRendererFactory() != null) {
             rendererFactory = converterProps.getRendererFactory();
+        } else {
+            rendererFactory = new DefaultSvgNodeRendererFactory();
         }
         context = new SvgProcessorContext(converterProps);
         cssResolver = new SvgStyleResolver(root, context);

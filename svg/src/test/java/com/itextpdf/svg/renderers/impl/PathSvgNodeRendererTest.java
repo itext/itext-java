@@ -244,7 +244,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         IElementNode rootTag = new JsoupXmlParser().parse(xmlStream, "ISO-8859-1");
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag).getRootRenderer();
+        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag, null).getRootRenderer();
 
         SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
@@ -265,7 +265,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         IElementNode rootTag = new JsoupXmlParser().parse(xmlStream, "ISO-8859-1");
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag).getRootRenderer();
+        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag, null).getRootRenderer();
 
         SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
@@ -286,7 +286,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         IElementNode rootTag = new JsoupXmlParser().parse(xmlStream, "ISO-8859-1");
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag).getRootRenderer();
+        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag, null).getRootRenderer();
 
         SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);

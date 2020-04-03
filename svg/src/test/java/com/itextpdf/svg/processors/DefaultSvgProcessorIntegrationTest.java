@@ -78,7 +78,7 @@ public class DefaultSvgProcessorIntegrationTest extends SvgIntegrationTest {
         InputStream svg = new FileInputStream(svgFile);
         JsoupXmlParser xmlParser = new JsoupXmlParser();
         IDocumentNode root = xmlParser.parse(svg, null);
-        IBranchSvgNodeRenderer actual = (IBranchSvgNodeRenderer) new DefaultSvgProcessor().process(root).getRootRenderer();
+        IBranchSvgNodeRenderer actual = (IBranchSvgNodeRenderer) new DefaultSvgProcessor().process(root, null).getRootRenderer();
 
         IBranchSvgNodeRenderer expected = new SvgTagSvgNodeRenderer();
         ISvgNodeRenderer expectedEllipse = new EllipseSvgNodeRenderer();
@@ -99,7 +99,7 @@ public class DefaultSvgProcessorIntegrationTest extends SvgIntegrationTest {
         InputStream svg = new FileInputStream(svgFile);
         JsoupXmlParser xmlParser = new JsoupXmlParser();
         IDocumentNode root = xmlParser.parse(svg, null);
-        ISvgProcessorResult processorResult = new DefaultSvgProcessor().process(root);
+        ISvgProcessorResult processorResult = new DefaultSvgProcessor().process(root, null);
         Map<String, ISvgNodeRenderer> actual = processorResult.getNamedObjects();
         Assert.assertEquals(1, actual.size());
         Assert.assertTrue(actual.containsKey("MyRect"));

@@ -864,10 +864,11 @@ public final class SvgConverter {
      *
      * @param root the XML DOM tree
      * @return a node renderer tree corresponding to the passed XML DOM tree
+     * @deprecated will be removed in iText 7.2.
      */
+    @Deprecated
     public static ISvgProcessorResult process(INode root) {
-        checkNull(root);
-        return new DefaultSvgProcessor().process(root);
+        return process(root, null);
     }
 
     /**
