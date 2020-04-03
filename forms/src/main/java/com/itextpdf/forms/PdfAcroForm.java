@@ -1036,6 +1036,16 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         fields = null;
     }
 
+    @Override
+    public PdfObjectWrapper<PdfDictionary> setModified() {
+        if (getPdfObject().getIndirectReference() != null) {
+            super.setModified();
+        } else {
+            document.getCatalog().setModified();
+        }
+        return this;
+    }
+
     private static PdfDictionary createAcroFormDictionaryByFields(PdfArray fields) {
         PdfDictionary dictionary = new PdfDictionary();
         dictionary.put(PdfName.Fields, fields);

@@ -32,7 +32,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -41,24 +40,24 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
-    private static final String testFolder = "PdfAcroFormInAppendModeTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/forms/" + testFolder;
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/" + testFolder;
+    private static final String TEST_NAME = "PdfAcroFormInAppendModeTest/";
+    private static final String DESTINATION_DIR = "./target/test/com/itextpdf/forms/" + TEST_NAME;
+    private static final String SOURCE_DIR = "./src/test/resources/com/itextpdf/forms/" + TEST_NAME;
 
-    private static final String inputFile = destinationFolder + "inputFile.pdf";
-    private static final String inputFileWithIndirectFieldsArray = destinationFolder + "inputFileWithIndirectFieldsArray.pdf";
+    private static final String INPUT_FILE_WITH_TWO_FORM_FIELDS = SOURCE_DIR + "inputFileWithTwoFormFields.pdf";
+    private static final String INPUT_FILE_WITH_INDIRECT_FIELDS_ARRAY =
+            SOURCE_DIR + "inputFileWithIndirectFieldsArray.pdf";
 
     @BeforeClass
-    public static void beforeClass() throws FileNotFoundException {
-        createDestinationFolder(destinationFolder);
-        createInputFile();
-        createInputFileWithIndirectFieldsArray();
+    public static void beforeClass() {
+        createDestinationFolder(DESTINATION_DIR);
     }
 
     @Test
     public void addFieldTest() throws IOException, InterruptedException {
         String outputFile = "addFieldTest.pdf";
-        PdfDocument outputDoc = new PdfDocument(new PdfReader(inputFile), new PdfWriter(destinationFolder + outputFile),
+        PdfDocument outputDoc = new PdfDocument(new PdfReader(INPUT_FILE_WITH_TWO_FORM_FIELDS),
+                new PdfWriter(DESTINATION_DIR + outputFile),
                 new StampingProperties().useAppendMode());
         PdfFormField field = PdfFormField.createCheckBox(
                 outputDoc,
@@ -73,7 +72,8 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
     @Test
     public void removeFieldTest() throws IOException, InterruptedException {
         String outputFile = "removeFieldTest.pdf";
-        PdfDocument outputDoc = new PdfDocument(new PdfReader(inputFile), new PdfWriter(destinationFolder + outputFile),
+        PdfDocument outputDoc = new PdfDocument(new PdfReader(INPUT_FILE_WITH_TWO_FORM_FIELDS),
+                new PdfWriter(DESTINATION_DIR + outputFile),
                 new StampingProperties().useAppendMode());
         PdfAcroForm.getAcroForm(outputDoc, true).removeField("textfield2");
         outputDoc.close();
@@ -84,7 +84,7 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
     public void removeKidTest() throws IOException, InterruptedException {
         // Creating input document
         String inputFile = "in_removeKidTest.pdf";
-        PdfDocument inDoc = new PdfDocument(new PdfWriter(destinationFolder + inputFile));
+        PdfDocument inDoc = new PdfDocument(new PdfWriter(DESTINATION_DIR + inputFile));
         inDoc.addNewPage();
         PdfFormField root = PdfFormField.createEmptyField(inDoc);
         root.setFieldName("root");
@@ -96,8 +96,8 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
 
         // Creating stamping document
         String outputFile = "removeKidTest.pdf";
-        PdfReader reader = new PdfReader(destinationFolder + inputFile);
-        PdfWriter writer = new PdfWriter(destinationFolder + outputFile);
+        PdfReader reader = new PdfReader(DESTINATION_DIR + inputFile);
+        PdfWriter writer = new PdfWriter(DESTINATION_DIR + outputFile);
         PdfDocument outputDoc = new PdfDocument(reader, writer, new StampingProperties().useAppendMode());
 
         PdfAcroForm.getAcroForm(outputDoc, true).removeField("root.child");
@@ -109,7 +109,8 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
     @Test
     public void replaceFieldTest() throws IOException, InterruptedException {
         String outputFile = "replaceFieldTest.pdf";
-        PdfDocument outputDoc = new PdfDocument(new PdfReader(inputFile), new PdfWriter(destinationFolder + outputFile),
+        PdfDocument outputDoc = new PdfDocument(new PdfReader(INPUT_FILE_WITH_TWO_FORM_FIELDS),
+                new PdfWriter(DESTINATION_DIR + outputFile),
                 new StampingProperties().useAppendMode());
         PdfFormField newField = PdfFormField
                 .createText(outputDoc, new Rectangle(20, 160, 100, 20), "newfield", "new field");
@@ -122,8 +123,8 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
     public void addFieldToIndirectFieldsArrayTest() throws IOException, InterruptedException {
         String outputFile = "addFieldToIndirectFieldsArrayTest.pdf";
 
-        PdfDocument document = new PdfDocument(new PdfReader(inputFileWithIndirectFieldsArray),
-                new PdfWriter(destinationFolder + outputFile), new StampingProperties().useAppendMode());
+        PdfDocument document = new PdfDocument(new PdfReader(INPUT_FILE_WITH_INDIRECT_FIELDS_ARRAY),
+                new PdfWriter(DESTINATION_DIR + outputFile), new StampingProperties().useAppendMode());
 
         PdfFormField field = PdfFormField.createCheckBox(
                 document,
@@ -142,7 +143,8 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
     @Test
     public void removeFieldFromIndirectFieldsArrayTest() throws IOException, InterruptedException {
         String outputFile = "removeFieldFromIndirectFieldsArrayTest.pdf";
-        PdfDocument outputDoc = new PdfDocument(new PdfReader(inputFileWithIndirectFieldsArray), new PdfWriter(destinationFolder + outputFile),
+        PdfDocument outputDoc = new PdfDocument(new PdfReader(INPUT_FILE_WITH_INDIRECT_FIELDS_ARRAY),
+                new PdfWriter(DESTINATION_DIR + outputFile),
                 new StampingProperties().useAppendMode());
         PdfAcroForm.getAcroForm(outputDoc, true).removeField("textfield2");
         outputDoc.close();
@@ -156,7 +158,7 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
         String outputFile = "removeKidFromIndirectKidsArrayTest.pdf";
 
         // Creating input document
-        PdfDocument inDoc = new PdfDocument(new PdfWriter(destinationFolder + inputFile));
+        PdfDocument inDoc = new PdfDocument(new PdfWriter(DESTINATION_DIR + inputFile));
         inDoc.addNewPage();
         PdfFormField root = PdfFormField.createEmptyField(inDoc);
         root.setFieldName("root");
@@ -169,8 +171,8 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
         inDoc.close();
 
         // Creating stamping document
-        PdfReader reader = new PdfReader(destinationFolder + inputFile);
-        PdfWriter writer = new PdfWriter(destinationFolder + outputFile);
+        PdfReader reader = new PdfReader(DESTINATION_DIR + inputFile);
+        PdfWriter writer = new PdfWriter(DESTINATION_DIR + outputFile);
         PdfDocument outputDoc = new PdfDocument(reader, writer, new StampingProperties().useAppendMode());
 
         PdfAcroForm.getAcroForm(outputDoc, true).removeField("root.child");
@@ -179,30 +181,26 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
         compareWithCmp(outputFile);
     }
 
-    private static void createInputFile() throws FileNotFoundException {
-        PdfDocument document = new PdfDocument(new PdfWriter(inputFile));
-        document.addNewPage();
-        PdfAcroForm.getAcroForm(document, true)
-                .addField(PdfFormField.createText(document, new Rectangle(20, 160, 100, 20), "textfield1", "text1"));
-        PdfAcroForm.getAcroForm(document, true)
-                .addField(PdfFormField.createText(document, new Rectangle(20, 130, 100, 20), "textfield2", "text2"));
-        document.close();
-    }
-
-    private static void createInputFileWithIndirectFieldsArray()
-            throws FileNotFoundException {
-        PdfDocument document = new PdfDocument(new PdfWriter(inputFileWithIndirectFieldsArray));
-        document.addNewPage();
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
-        acroForm.getFields().makeIndirect(document);
-        acroForm.addField(PdfFormField.createText(document, new Rectangle(20, 160, 100, 20), "textfield1", "text1"));
-        acroForm.addField(PdfFormField.createText(document, new Rectangle(20, 130, 100, 20), "textfield2", "text2"));
-        document.close();
+    @Test
+    public void addFieldToDirectAcroFormTest() throws IOException, InterruptedException {
+        String inputFile = SOURCE_DIR + "inputFileWithDirectAcroForm.pdf";
+        String outputFile = "addFieldToDirectAcroFormTest.pdf";
+        PdfDocument outputDoc = new PdfDocument(new PdfReader(inputFile),
+                new PdfWriter(DESTINATION_DIR + outputFile),
+                new StampingProperties().useAppendMode());
+        PdfFormField field = PdfFormField.createCheckBox(
+                outputDoc,
+                new Rectangle(10, 10, 24, 24),
+                "checkboxname", "On",
+                PdfFormField.TYPE_CHECK);
+        PdfAcroForm.getAcroForm(outputDoc, true).addField(field);
+        outputDoc.close();
+        compareWithCmp(outputFile);
     }
 
     private static void compareWithCmp(String outputFile) throws IOException, InterruptedException {
         Assert.assertNull(new CompareTool()
-                .compareByContent(destinationFolder + outputFile, sourceFolder + "cmp_" + outputFile, destinationFolder,
+                .compareByContent(DESTINATION_DIR + outputFile, SOURCE_DIR + "cmp_" + outputFile, DESTINATION_DIR,
                         "diff_"));
     }
 }
