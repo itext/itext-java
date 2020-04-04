@@ -108,8 +108,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             //Iterate over children
             executeDepthFirstTraversal(svgRoot);
             ISvgNodeRenderer rootSvgRenderer = createResultAndClean();
-            return new SvgProcessorResult(namedObjects, rootSvgRenderer,
-                    context.getFontProvider(), context.getTempFonts());
+            return new SvgProcessorResult(namedObjects, rootSvgRenderer, context);
         } else {
             throw new SvgProcessingException(SvgLogMessageConstant.NOROOT);
         }

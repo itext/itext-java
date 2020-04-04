@@ -65,6 +65,8 @@ import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
+import com.itextpdf.svg.processors.impl.SvgProcessorContext;
+import com.itextpdf.svg.processors.impl.SvgProcessorResult;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.PdfRootSvgNodeRenderer;
@@ -551,14 +553,27 @@ public final class SvgConverter {
             writerProps = new WriterProperties();
         }
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(pdfDest, writerProps));
-        //TODO DEVSIX-2095
         //process
         ISvgProcessorResult processorResult = process(parse(svgStream, props), props);
         ISvgNodeRenderer topSvgRenderer = processorResult.getRootRenderer();
 
         String baseUri = tryToExtractBaseUri(props);
+        ResourceResolver resourceResolver = null;
+
+        if (processorResult instanceof SvgProcessorResult) {
+            //TODO add assert after 7.2 cause now be have a null pointer on deprecated constructor
+            SvgProcessorContext context = ((SvgProcessorResult) processorResult).getContext();
+            if (context != null) {
+                resourceResolver = context.getResourceResolver();
+            }
+        }
+        //TODO remove the clause when the deprecated  constructor SvgProcessorResult(Map<String, ISvgNodeRenderer>,
+        // ISvgNodeRenderer, FontProvider, FontSet) is removed
+        if (resourceResolver == null) {
+            resourceResolver = new ResourceResolver(baseUri);
+        }
         SvgDrawContext drawContext =
-                new SvgDrawContext(new ResourceResolver(baseUri), processorResult.getFontProvider());
+                new SvgDrawContext(resourceResolver, processorResult.getFontProvider());
 
         drawContext.addNamedObjects(processorResult.getNamedObjects());
         //Add temp fonts
@@ -666,11 +681,8 @@ public final class SvgConverter {
 
     //Private converter for unification
     private static PdfFormXObject convertToXObject(ISvgProcessorResult processorResult, PdfDocument document, ISvgConverterProperties props) {
-        String baseUri = "";
-        if (props != null) {
-            baseUri = props.getBaseUri();
-        }
-        SvgDrawContext drawContext = new SvgDrawContext(new ResourceResolver(baseUri), processorResult.getFontProvider());
+        ResourceResolver resourceResolver = getResourceResolver(processorResult, props);
+        SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider());
         drawContext.setTempFonts(processorResult.getTempFonts());
         drawContext.addNamedObjects(processorResult.getNamedObjects());
         return convertToXObject(processorResult.getRootRenderer(), document, drawContext);
@@ -985,6 +997,28 @@ public final class SvgConverter {
         return res;
 
 
+    }
+
+    static ResourceResolver getResourceResolver(ISvgProcessorResult processorResult, ISvgConverterProperties props) {
+        ResourceResolver resourceResolver = null;
+        if (processorResult instanceof SvgProcessorResult) {
+            //TODO add assert after 7.2 cause now be have a null pointer on deprecated constructor
+            SvgProcessorContext context = ((SvgProcessorResult) processorResult).getContext();
+            if (context != null) {
+                resourceResolver = context.getResourceResolver();
+            }
+
+        }
+        //TODO remove the clause when the deprecated  constructor SvgProcessorResult(Map<String, ISvgNodeRenderer>,
+        // ISvgNodeRenderer, FontProvider, FontSet) is removed
+        if (resourceResolver == null) {
+            String baseUri = "";
+            if (props != null) {
+                baseUri = props.getBaseUri();
+            }
+            resourceResolver = new ResourceResolver(baseUri);
+        }
+       return  resourceResolver;
     }
 
     /**
