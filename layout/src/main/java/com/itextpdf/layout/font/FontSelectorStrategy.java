@@ -56,13 +56,17 @@ public abstract class FontSelectorStrategy {
     protected String text;
     protected int index;
     protected final FontProvider provider;
-    protected final FontSet additionalFonts;
+    /**
+     * @deprecated This field will be renamed to {@code additionalFonts} in iText Core 7.2.
+     */
+    @Deprecated
+    protected final FontSet tempFonts;
 
     protected FontSelectorStrategy(String text, FontProvider provider, FontSet additionalFonts) {
         this.text = text;
         this.index = 0;
         this.provider = provider;
-        this.additionalFonts = additionalFonts;
+        this.tempFonts = additionalFonts;
     }
 
     public boolean endOfText() {
@@ -81,6 +85,6 @@ public abstract class FontSelectorStrategy {
      * @see FontProvider#getPdfFont(FontInfo, FontSet)
      */
     protected PdfFont getPdfFont(FontInfo fontInfo) {
-        return provider.getPdfFont(fontInfo, additionalFonts);
+        return provider.getPdfFont(fontInfo, tempFonts);
     }
 }
