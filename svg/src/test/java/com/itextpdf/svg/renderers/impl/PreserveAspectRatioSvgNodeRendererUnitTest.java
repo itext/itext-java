@@ -27,6 +27,7 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,7 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Category(UnitTest.class)
-public class PreserveAspectRatioSvgNodeRendererUnitTest {
+public class PreserveAspectRatioSvgNodeRendererUnitTest extends ExtendedITextTest {
 
     private static final Rectangle VIEWPORT_VALUE = PageSize.Default;
     private static final float[] VIEWBOX_VALUES = new float[]{0, 0, 300, 400};

@@ -97,6 +97,16 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    // The first message for the case when the FormField is null,
+    // the second message when the FormField is a indirect reference to null.
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CANNOT_CREATE_FORMFIELD, count = 2)})
+    public void nullFormFieldTest() throws IOException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "nullFormField.pdf"));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        pdfDoc.close();
+    }
+
+    @Test
     public void formFieldTest01() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "formFieldFile.pdf"));
 
@@ -604,7 +614,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         field.setFont(PdfFontFactory.createFont(StandardFonts.COURIER));
         field.setValue("New value size must be 8, but with different font.");
 
-        new Canvas(new PdfCanvas(pdfDoc.getFirstPage()), pdfDoc, new Rectangle(30, 500, 500, 200))
+        new Canvas(new PdfCanvas(pdfDoc.getFirstPage()), new Rectangle(30, 500, 500, 200))
                 .add(new Paragraph("The text font after modification it via PDF viewer (e.g. Acrobat) shall be preserved."));
 
         pdfDoc.close();
@@ -1036,6 +1046,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD)})
     public void pdfWithDifferentFieldsTest() throws IOException, InterruptedException {
         String fileName = destinationFolder + "pdfWithDifferentFieldsTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileName));
@@ -1305,6 +1316,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES)})
     public void choiceFieldAutoSize02Test() throws IOException, InterruptedException {
         String filename = destinationFolder + "choiceFieldAutoSize02Test.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));

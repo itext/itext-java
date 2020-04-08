@@ -197,7 +197,6 @@ public class SvgCssUtilsTest extends ExtendedITextTest {
         Assert.assertEquals(expected, actual);
     }
 
-    @Ignore("TODO: Check autoport for failing float comparisons. Blocked by RND-882\n")
     @Test
     public void convertFloatMinimumToPdfTest() {
         float expected = 1.4E-45f;

@@ -90,9 +90,23 @@ public class Canvas extends RootElement<Canvas> {
      * @param rootArea the maximum area that the Canvas may write upon
      */
     public Canvas(PdfPage page, Rectangle rootArea) {
-        this(initPdfCanvasOrThrowIfPageIsFlushed(page), page.getDocument(), rootArea);
+        this(initPdfCanvasOrThrowIfPageIsFlushed(page), rootArea);
         this.enableAutoTagging(page);
         this.isCanvasOfPage = true;
+    }
+
+    /**
+     * Creates a new Canvas to manipulate a specific content stream, which might be for example a page
+     * or {@link PdfFormXObject} stream.
+     *
+     * @param pdfCanvas the low-level content stream writer
+     * @param rootArea the maximum area that the Canvas may write upon
+     */
+    public Canvas(PdfCanvas pdfCanvas, Rectangle rootArea) {
+        super();
+        this.pdfDocument = pdfCanvas.getDocument();
+        this.pdfCanvas = pdfCanvas;
+        this.rootArea = rootArea;
     }
 
     /**
@@ -102,7 +116,11 @@ public class Canvas extends RootElement<Canvas> {
      * @param pdfCanvas the low-level content stream writer
      * @param pdfDocument the document that the resulting content stream will be written to
      * @param rootArea the maximum area that the Canvas may write upon
+     *                 
+     * To be removed in 7.2
+     * @deprecated use {@link Canvas#Canvas(PdfCanvas, Rectangle)} instead.
      */
+    @Deprecated
     public Canvas(PdfCanvas pdfCanvas, PdfDocument pdfDocument, Rectangle rootArea) {
         super();
         this.pdfDocument = pdfDocument;
@@ -114,12 +132,28 @@ public class Canvas extends RootElement<Canvas> {
      * Creates a new Canvas to manipulate a specific document and page.
      *
      * @param pdfCanvas         The low-level content stream writer
-     * @param pdfDocument       The document that the resulting content stream will be written to
      * @param rootArea          The maximum area that the Canvas may write upon
      * @param immediateFlush    Whether to flush the canvas immediately after operations, false otherwise
      */
+    public Canvas(PdfCanvas pdfCanvas, Rectangle rootArea, boolean immediateFlush) {
+        this(pdfCanvas, rootArea);
+        this.immediateFlush = immediateFlush;
+    }
+
+    /**
+     * Creates a new Canvas to manipulate a specific document and page.
+     *
+     * @param pdfCanvas         The low-level content stream writer
+     * @param pdfDocument       The document that the resulting content stream will be written to
+     * @param rootArea          The maximum area that the Canvas may write upon
+     * @param immediateFlush    Whether to flush the canvas immediately after operations, false otherwise
+     *                          
+     * To be removed in 7.2
+     * @deprecated use {@link Canvas#Canvas(PdfCanvas, Rectangle, boolean)} instead.
+     */
+    @Deprecated
     public Canvas(PdfCanvas pdfCanvas, PdfDocument pdfDocument, Rectangle rootArea, boolean immediateFlush) {
-        this(pdfCanvas, pdfDocument, rootArea);
+        this(pdfCanvas, rootArea);
         this.immediateFlush = immediateFlush;
     }
 
@@ -130,7 +164,7 @@ public class Canvas extends RootElement<Canvas> {
      * @param pdfDocument the document that the resulting content stream will be written to
      */
     public Canvas(PdfFormXObject formXObject, PdfDocument pdfDocument) {
-        this(new PdfCanvas(formXObject, pdfDocument), pdfDocument, formXObject.getBBox().toRectangle());
+        this(new PdfCanvas(formXObject, pdfDocument), formXObject.getBBox().toRectangle());
     }
 
     /**

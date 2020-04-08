@@ -72,6 +72,8 @@ import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.font.FontSelector;
+import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
@@ -89,8 +91,6 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.Transform;
 import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.UnitValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -98,6 +98,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Defines the most common properties and behavior that are shared by most
@@ -2149,16 +2151,22 @@ public abstract class AbstractRenderer implements IRenderer {
         return fc;
     }
 
-    // This method is intended to get first valid PdfFont in this renderer, based of font property.
-    // It is usually done for counting some layout characteristics like ascender or descender.
-    // NOTE: It neither change Font Property of renderer, nor is guarantied to contain all glyphs used in renderer.
+    /**
+     * Gets any valid {@link PdfFont} for this renderer, based on {@link Property#FONT}, {@link Property#FONT_PROVIDER} and
+     * {@link Property#FONT_SET} properties.
+     * This method will not change font property of renderer. Also it is not guarantied that returned font will contain
+     * all glyphs used in renderer or its children.
+     * <p>
+     * This method is usually needed for evaluating some layout characteristics like ascender or descender.
+     * @return a valid {@link PdfFont} instance based on renderer {@link Property#FONT} property.
+     */
     PdfFont resolveFirstPdfFont() {
         Object font = this.<Object>getProperty(Property.FONT);
         if (font instanceof PdfFont) {
             return (PdfFont) font;
         } else if (font instanceof String || font instanceof String[]) {
             if (font instanceof String) {
-                // TODO remove this if-clause before 7.2
+                // TODO DEVSIX-3814 remove this if-clause before 7.2
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                 logger.warn(LogMessageConstant.FONT_PROPERTY_OF_STRING_TYPE_IS_DEPRECATED_USE_STRINGS_ARRAY_INSTEAD);
                 List<String> splitFontFamily = FontFamilySplitter.splitFontFamily((String) font);
@@ -2168,20 +2176,28 @@ public abstract class AbstractRenderer implements IRenderer {
             if (provider == null) {
                 throw new IllegalStateException(PdfException.FontProviderNotSetFontFamilyNotResolved);
             }
+            FontSet fontSet = this.<FontSet>getProperty(Property.FONT_SET);
+            if (provider.getFontSet().isEmpty() && (fontSet == null || fontSet.isEmpty())) {
+                throw new IllegalStateException(PdfException.FontProviderNotSetFontFamilyNotResolved);
+            }
             FontCharacteristics fc = createFontCharacteristics();
-            return resolveFirstPdfFont((String[]) font, provider, fc);
+            return resolveFirstPdfFont((String[]) font, provider, fc, fontSet);
         } else {
             throw new IllegalStateException("String[] or PdfFont expected as value of FONT property");
         }
     }
 
-    // This method is intended to get first valid PdfFont described in font string,
-    // with specific FontCharacteristics with the help of specified font provider.
-    // This method is intended to be called from previous method that deals with Font Property.
-    // NOTE: It neither change Font Property of renderer, nor is guarantied to contain all glyphs used in renderer.
-    // TODO this mechanism does not take text into account
-    PdfFont resolveFirstPdfFont(String[] font, FontProvider provider, FontCharacteristics fc) {
-        return provider.getPdfFont(provider.getFontSelector(Arrays.asList(font), fc).bestMatch());
+    /**
+     * Get first valid {@link PdfFont} for this renderer, based on given font-families, font provider and font characteristics.
+     * This method will not change font property of renderer. Also it is not guarantied that returned font will contain
+     * all glyphs used in renderer or its children.
+     * <p>
+     * This method is usually needed for evaluating some layout characteristics like ascender or descender.
+     * @return a valid {@link PdfFont} instance based on renderer {@link Property#FONT} property.
+     */
+    PdfFont resolveFirstPdfFont(String[] font, FontProvider provider, FontCharacteristics fc, FontSet additionalFonts) {
+        FontSelector fontSelector = provider.getFontSelector(Arrays.asList(font), fc, additionalFonts);
+        return provider.getPdfFont(fontSelector.bestMatch(), additionalFonts);
     }
 
     static Border[] getBorders(IRenderer renderer) {

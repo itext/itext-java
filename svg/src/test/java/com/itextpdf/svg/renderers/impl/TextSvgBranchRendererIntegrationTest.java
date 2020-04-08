@@ -42,12 +42,9 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
@@ -232,5 +229,21 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidY");
     }
 
+    @Test
+    // TODO (DEVSIX-3636) Change cmp after fixing
+    public void textFontSizeEmUnitsTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textFontSizeEmUnitsTest");
+    }
 
+    @Test
+    // TODO (DEVSIX-3636) Change cmp after fixing
+    public void textFontSizeRemUnitsTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textFontSizeRemUnitsTest");
+    }
+
+    @Test
+    // TODO (DEVSIX-3636) Change cmp after fixing
+    public void textFontSizeExUnitsTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textFontSizeExUnitsTest");
+    }
 }

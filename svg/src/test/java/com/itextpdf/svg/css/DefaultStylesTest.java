@@ -50,8 +50,6 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import com.itextpdf.svg.dummy.sdk.ExceptionInputStream;
-import com.itextpdf.svg.processors.impl.SvgConverterProperties;
-import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -60,7 +58,6 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -125,21 +122,5 @@ public class DefaultStylesTest extends ExtendedITextTest {
     public void emptyStylesFallbackTest() throws IOException {
         junitExpectedException.expect(IOException.class);
         new SvgStyleResolver(new ExceptionInputStream());
-    }
-
-
-
-    @Test
-    @Ignore("RND-1089")
-    public void inheritedDefaultStyleTest() {
-        ICssResolver styleResolver = new SvgStyleResolver();
-        Element svg = new Element(Tag.valueOf("svg"), "");
-        Element circle = new Element(Tag.valueOf("circle"), "");
-        INode svgNode = new JsoupElementNode(svg);
-        svgNode.addChild(new JsoupElementNode(circle));
-
-        Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode.childNodes().get(0), null);
-
-        Assert.assertEquals("black", resolvedStyles.get(SvgConstants.Attributes.STROKE));
     }
 }

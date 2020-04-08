@@ -43,6 +43,9 @@
  */
 package com.itextpdf.io.util;
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedOutputStream;
@@ -179,6 +182,10 @@ public final class FileUtil {
 
     public static FileOutputStream getFileOutputStream(File tempFile) throws FileNotFoundException {
         return new FileOutputStream(tempFile);
+    }
+
+    public static InputStream getInputStreamForFile(String path) throws IOException {
+        return Files.newInputStream(Paths.get(path));
     }
 
     public static RandomAccessFile getRandomAccessFile(File tempFile) throws FileNotFoundException {

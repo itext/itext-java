@@ -97,6 +97,7 @@ public final class LogMessageConstant {
      */
     @Deprecated
     public static final String FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX = "Failed to process a transformation matrix which is noninvertible. Some content may be placed not as expected.";
+    public static final String FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY = "Value \"{0}\" is not contained in /Opt array of field \"{1}\".";
     public static final String FILE_CHANNEL_CLOSING_FAILED = "Closing of the file channel this source is based on failed.";
     public static final String FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE = "Flushed object contains indirect reference which is free. Null object will be written instead.";
     public static final String FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT = "Flushed object contains indirect reference which doesn't refer to any other object. Null object will be written instead.";
@@ -137,6 +138,7 @@ public final class LogMessageConstant {
     public static final String MAPPING_IN_NAMESPACE_OVERWRITTEN = "Existing mapping for {0} in {1} namespace was overwritten.";
     public static final String MAPPING_IN_STRUCT_ROOT_OVERWRITTEN = "Existing mapping for {0} in structure tree root role map was {1} and it was overwritten with {2}.";
     public static final String METHOD_IS_NOT_IMPLEMENTED_BY_DEFAULT_OTHER_METHOD_WILL_BE_USED = "Method {0} is not implemented by default: please, override and implement it. {1} will be used instead.";
+    public static final String MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD = "Multiple values were set to a field that does not have MultiSelect flag set.";
     public static final String NAME_ALREADY_EXISTS_IN_THE_NAME_TREE = "Name \"{0}\" already exists in the name tree; old value will be replaced by the new one.";
     public static final String NOT_TAGGED_PAGES_IN_TAGGED_DOCUMENT = "Not tagged pages are copied to the tagged document. Destination document now may contain not tagged content.";
     public static final String NO_FIELDS_IN_ACROFORM = "Required AcroForm entry /Fields does not exist in the document. Empty array /Fields will be created.";
@@ -148,6 +150,7 @@ public final class LogMessageConstant {
     public static final String ONE_OF_GROUPED_SOURCES_CLOSING_FAILED = "Closing of one of the grouped sources failed.";
     public static final String ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE = "Only one of artbox or trimbox can exist on the page. The trimbox will be deleted";
     public static final String OPENTYPE_GDEF_TABLE_ERROR = "OpenType GDEF table error: {0}";
+    public static final String ORPHANS_CONSTRAINT_VIOLATED = "Orphans constraint violated for paragraph split at page {0}. Min number of orphans: {1}; actual: {2}. \nComment: {3}";
     public static final String PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE = "Page tree is broken. Failed to retrieve page number {0}. Null will be returned.";
     public static final String PASSED_PAGE_SHALL_BE_ON_WHICH_CANVAS_WILL_BE_RENDERED = "The page passed to Canvas#enableAutoTagging(PdfPage) method shall be the one on which this canvas will be rendered. However the actual passed PdfPage instance sets not such page. This might lead to creation of malformed PDF document.";
     public static final String PATH_KEY_IS_PRESENT_VERTICES_WILL_BE_IGNORED = "Path key is present. Vertices will be ignored";
@@ -157,6 +160,7 @@ public final class LogMessageConstant {
     public static final String PDF_WRITER_CLOSING_FAILED = "PdfWriter closing failed due to the error occurred!";
     public static final String PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS = "Png image has color profile with incompatible number of color components.";
     public static final String POPUP_ENTRY_IS_NOT_POPUP_ANNOTATION = "Popup entry in the markup annotations refers not to the annotation with Popup subtype.";
+    public static final String PREMATURE_CALL_OF_HANDLE_VIOLATION_METHOD = "Premature call of handleViolation method.";
     public static final String PROPERTY_IN_PERCENTS_NOT_SUPPORTED = "Property {0} in percents is not supported";
     public static final String RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES = "The {0} rectangle has negative or zero sizes. It will not be displayed.";
     public static final String RECTANGLE_HAS_NEGATIVE_SIZE = "The {0} rectangle has negative size. It will not be displayed.";
@@ -195,6 +199,7 @@ public final class LogMessageConstant {
     public static final String UNKNOWN_ERROR_WHILE_PROCESSING_CMAP = "Unknown error while processing CMap.";
     public static final String UNSUPPORTED_COLOR_IN_DA = "Unsupported color in FormField's DA";
     public static final String VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY = "\"{0}\" entry in the \"{1}\" dictionary is a {2} and higher version feature. It is meaningless for the current {3} version.";
+    public static final String WIDOWS_CONSTRAINT_VIOLATED = "Widows constraint violated for paragraph split at page {0}. Min number of widows: {1}; actual: {2}.\nComment: {3}";
     public static final String WRITER_ENCRYPTION_IS_IGNORED_APPEND = "Writer encryption will be ignored, because append mode is used. Document will preserve the original encryption (or will stay unencrypted)";
     public static final String WRITER_ENCRYPTION_IS_IGNORED_PRESERVE = "Writer encryption will be ignored, because preservation of encryption is enabled. Document will preserve the original encryption (or will stay unencrypted)";
     public static final String WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS = "Wrong media box size: {0}. The arguments beyond the 4th will be ignored";

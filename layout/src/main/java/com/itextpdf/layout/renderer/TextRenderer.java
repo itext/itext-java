@@ -56,6 +56,7 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfType0Font;
+import com.itextpdf.kernel.font.PdfType1Font;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -82,13 +83,12 @@ import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.FontKerning;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.RenderingMode;
 import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,6 +96,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
@@ -104,9 +106,9 @@ import java.util.List;
 public class TextRenderer extends AbstractRenderer implements ILeafElementRenderer {
 
     protected static final float TEXT_SPACE_COEFF = FontProgram.UNITS_NORMALIZATION;
+    static final float TYPO_ASCENDER_SCALE_COEFF = 1.2f;
     private static final float ITALIC_ANGLE = 0.21256f;
     private static final float BOLD_SIMULATION_STROKE_COEFF = 1 / 30f;
-    private static final float TYPO_ASCENDER_SCALE_COEFF = 1.2f;
 
     protected float yLineOffset;
 
@@ -216,9 +218,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         line = new GlyphLine(text);
         line.start = line.end = -1;
 
-        float[] ascenderDescender = calculateAscenderDescender(font);
-        float ascender = ascenderDescender[0];
-        float descender = ascenderDescender[1];
+        float ascender = 0;
+        float descender = 0;
 
         float currentLineAscender = 0;
         float currentLineDescender = 0;
@@ -226,6 +227,16 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         int initialLineTextPos = currentTextPos;
         float currentLineWidth = 0;
         int previousCharPos = -1;
+
+        RenderingMode mode = this.<RenderingMode>getProperty(Property.RENDERING_MODE);
+        float[] ascenderDescender = calculateAscenderDescender(font, mode);
+        ascender = ascenderDescender[0];
+        descender = ascenderDescender[1];
+        if (RenderingMode.HTML_MODE.equals(mode)) {
+            currentLineAscender = ascenderDescender[0];
+            currentLineDescender = ascenderDescender[1];
+            currentLineHeight = (currentLineAscender - currentLineDescender) * fontSize.getValue() / TEXT_SPACE_COEFF + textRise;
+        }
 
         savedWordBreakAtLineEnding = null;
         Glyph wordBreakGlyphAtLineEnding = null;
@@ -522,9 +533,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         layoutBox.setHeight(area.getBBox().getHeight() - currentLineHeight);
 
         occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() + italicSkewAddition + boldSimulationAddition);
+
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         applyMargins(occupiedArea.getBBox(), margins, true);
+
+        increaseYLineOffset(paddings, borders, margins);
 
         if (result == null) {
             result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null, isPlacingForcedWhileNothing ? this : null);
@@ -563,6 +577,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         result.setMinMaxWidth(countedMinMaxWidth);
         return result;
+    }
+
+    private void increaseYLineOffset(UnitValue[] paddings, Border[] borders, UnitValue[] margins) {
+        yLineOffset += paddings[0] != null ? paddings[0].getValue() : 0;
+        yLineOffset += borders[0] != null ?borders[0].getWidth() : 0;
+        yLineOffset +=  margins[0] != null ? margins[0].getValue() : 0;
     }
 
     public void applyOtf() {
@@ -674,16 +694,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         super.draw(drawContext);
 
-        applyMargins(occupiedArea.getBBox(), getMargins(), false);
-        applyBorderBox(occupiedArea.getBBox(), false);
-        applyPaddings(occupiedArea.getBBox(), getPaddings(), false);
-
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
             applyRelativePositioningTranslation(false);
         }
 
-        float leftBBoxX = occupiedArea.getBBox().getX();
+        float leftBBoxX = getInnerAreaBBox().getX();
 
         if (line.end > line.start || savedWordBreakAtLineEnding != null) {
             UnitValue fontSize = this.getPropertyAsUnitValue(Property.FONT_SIZE);
@@ -837,10 +853,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             applyRelativePositioningTranslation(false);
         }
 
-        applyPaddings(occupiedArea.getBBox(), true);
-        applyBorderBox(occupiedArea.getBBox(), true);
-        applyMargins(occupiedArea.getBBox(), getMargins(), true);
-
         if (isTagged && !isArtifact) {
             if (isLastRendererForModelElement) {
                 taggingHelper.finishTaggingHint(this);
@@ -949,7 +961,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      */
     @Override
     public float getDescent() {
-        return -(occupiedArea.getBBox().getHeight() - yLineOffset - (float) this.getPropertyAsFloat(Property.TEXT_RISE));
+        return -(getOccupiedAreaBBox().getHeight() - yLineOffset - (float) this.getPropertyAsFloat(Property.TEXT_RISE));
     }
 
     /**
@@ -1056,13 +1068,21 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     static float[] calculateAscenderDescender(PdfFont font) {
+        return calculateAscenderDescender(font, RenderingMode.DEFAULT_LAYOUT_MODE);
+    }
+
+    static float[] calculateAscenderDescender(PdfFont font, RenderingMode mode) {
         FontMetrics fontMetrics = font.getFontProgram().getFontMetrics();
         float ascender;
         float descender;
+        float usedTypoAscenderScaleCoeff = TYPO_ASCENDER_SCALE_COEFF;
+        if (RenderingMode.HTML_MODE.equals(mode) && !(font instanceof PdfType1Font)) {
+            usedTypoAscenderScaleCoeff = 1;
+        }
         if (fontMetrics.getWinAscender() == 0 || fontMetrics.getWinDescender() == 0 ||
                 fontMetrics.getTypoAscender() == fontMetrics.getWinAscender() && fontMetrics.getTypoDescender() == fontMetrics.getWinDescender()) {
-            ascender = fontMetrics.getTypoAscender() * TYPO_ASCENDER_SCALE_COEFF;
-            descender = fontMetrics.getTypoDescender() * TYPO_ASCENDER_SCALE_COEFF;
+            ascender = fontMetrics.getTypoAscender() * usedTypoAscenderScaleCoeff;
+            descender = fontMetrics.getTypoDescender() * usedTypoAscenderScaleCoeff;
         } else {
             ascender = fontMetrics.getWinAscender();
             descender = fontMetrics.getWinDescender();
@@ -1180,8 +1200,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             float yLine = getYLine();
             float underlineYPosition = underline.getYPosition(fontSize) + yLine;
             float italicWidthSubstraction = .5f * fontSize * italicAngleTan;
-            canvas.moveTo(occupiedArea.getBBox().getX(), underlineYPosition).
-                    lineTo(occupiedArea.getBBox().getX() + occupiedArea.getBBox().getWidth() - italicWidthSubstraction, underlineYPosition).
+            Rectangle innerAreaBbox = getInnerAreaBBox();
+            canvas.moveTo(innerAreaBbox.getX(), underlineYPosition).
+                    lineTo(innerAreaBbox.getX() + innerAreaBbox.getWidth() - italicWidthSubstraction, underlineYPosition).
                     stroke();
         }
 
@@ -1264,8 +1285,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     @Override
-    PdfFont resolveFirstPdfFont(String[] font, FontProvider provider, FontCharacteristics fc) {
-        FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted, Arrays.asList(font), fc);
+    PdfFont resolveFirstPdfFont(String[] font, FontProvider provider, FontCharacteristics fc, FontSet additionalFonts) {
+        FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted, Arrays.asList(font), fc, additionalFonts);
         List<Glyph> resolvedGlyphs;
         PdfFont currentFont;
         //try to find first font that can render at least one glyph.
@@ -1278,7 +1299,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 }
             }
         }
-        return super.resolveFirstPdfFont(font, provider, fc);
+        return super.resolveFirstPdfFont(font, provider, fc, additionalFonts);
     }
 
     private static int numberOfElementsLessThan(ArrayList<Integer> numbers, int n) {

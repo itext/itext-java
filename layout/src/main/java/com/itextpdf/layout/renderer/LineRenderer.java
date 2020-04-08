@@ -65,10 +65,9 @@ import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.RenderingMode;
 import com.itextpdf.layout.property.TabAlignment;
 import com.itextpdf.layout.property.UnitValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,6 +76,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LineRenderer extends AbstractRenderer {
 
@@ -124,13 +125,23 @@ public class LineRenderer extends AbstractRenderer {
 
         occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox.clone().moveUp(layoutBox.getHeight()).setHeight(0).setWidth(0));
 
+        updateChildrenParent();
+
         float curWidth = 0;
-        maxAscent = 0;
-        maxDescent = 0;
+        if (RenderingMode.HTML_MODE.equals(this.<RenderingMode>getProperty(Property.RENDERING_MODE))
+                && hasChildRendererInHtmlMode()) {
+            float[] ascenderDescender = LineHeightHelper.getActualAscenderDescender(this);
+            maxAscent = ascenderDescender[0];
+            maxDescent = ascenderDescender[1];
+        } else {
+            maxAscent = 0;
+            maxDescent = 0;
+        }
         maxTextAscent = 0;
         maxTextDescent = 0;
         maxBlockAscent = -1e20f;
         maxBlockDescent = 1e20f;
+
         int childPos = 0;
 
         MinMaxWidth minMaxWidth = new MinMaxWidth();
@@ -140,8 +151,6 @@ public class LineRenderer extends AbstractRenderer {
         } else {
             widthHandler = new MaxSumWidthHandler(minMaxWidth);
         }
-
-        updateChildrenParent();
 
         resolveChildrenFonts();
 
@@ -374,9 +383,17 @@ public class LineRenderer extends AbstractRenderer {
 
             float childAscent = 0;
             float childDescent = 0;
-            if (childRenderer instanceof ILeafElementRenderer && childResult.getStatus() != LayoutResult.NOTHING) {
-                childAscent = ((ILeafElementRenderer) childRenderer).getAscent();
-                childDescent = ((ILeafElementRenderer) childRenderer).getDescent();
+            if (childRenderer instanceof ILeafElementRenderer
+                    && childResult.getStatus() != LayoutResult.NOTHING) {
+                if (RenderingMode.HTML_MODE.equals(childRenderer.<RenderingMode>getProperty(Property.RENDERING_MODE))
+                        && childRenderer instanceof TextRenderer) {
+                    float[] ascenderDescender = LineHeightHelper.getActualAscenderDescender((TextRenderer) childRenderer);
+                    childAscent = ascenderDescender[0];
+                    childDescent = ascenderDescender[1];
+                } else {
+                    childAscent = ((ILeafElementRenderer) childRenderer).getAscent();
+                    childDescent = ((ILeafElementRenderer) childRenderer).getDescent();
+                }
             } else if (isInlineBlockChild && childResult.getStatus() != LayoutResult.NOTHING) {
                 if (childRenderer instanceof AbstractRenderer) {
                     Float yLine = ((AbstractRenderer) childRenderer).getLastYLineRecursively();
@@ -903,6 +920,15 @@ public class LineRenderer extends AbstractRenderer {
     public MinMaxWidth getMinMaxWidth() {
         LineLayoutResult result = (LineLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(MinMaxWidthUtils.getInfWidth(), AbstractRenderer.INF))));
         return result.getMinMaxWidth();
+    }
+
+    boolean hasChildRendererInHtmlMode() {
+        for (IRenderer childRenderer : childRenderers) {
+            if (RenderingMode.HTML_MODE.equals(childRenderer.<RenderingMode>getProperty(Property.RENDERING_MODE))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     float getTopLeadingIndent(Leading leading) {

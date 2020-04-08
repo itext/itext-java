@@ -279,8 +279,9 @@ public class LtvVerifier extends RootStoreVerifier {
         latestRevision = false;
         dss = document.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
         Calendar cal = pkcs7.getTimeStampDate();
-        if (cal == SignUtils.UNDEFINED_TIMESTAMP_DATE)
+        if (cal == TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {
             cal = pkcs7.getSignDate();
+        }
         // TODO: get date from signature
         signDate = cal.getTime();
         List<String> names = sgnUtil.getSignatureNames();

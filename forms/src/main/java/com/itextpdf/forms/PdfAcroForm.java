@@ -46,6 +46,7 @@ package com.itextpdf.forms;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.xfa.XfaForm;
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
@@ -69,6 +70,7 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -879,6 +881,11 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 continue;
             }
             PdfFormField formField = PdfFormField.makeFormField(field, document);
+            if (formField == null) {
+                logger.warn(MessageFormatUtil.format(LogMessageConstant.CANNOT_CREATE_FORMFIELD,
+                        field.getIndirectReference() == null ? field : field.getIndirectReference()));
+                continue;
+            }
             PdfString fieldName = formField.getFieldName();
             String name;
             if (fieldName == null) {

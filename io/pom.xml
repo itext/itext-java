@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.1.10</version>
+    <version>7.1.11</version>
   </parent>
   <artifactId>io</artifactId>
   <name>iText 7 - io</name>

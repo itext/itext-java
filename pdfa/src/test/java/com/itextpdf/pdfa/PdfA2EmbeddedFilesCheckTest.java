@@ -143,7 +143,7 @@ public class PdfA2EmbeddedFilesCheckTest extends ExtendedITextTest {
                 .endText()
                 .restoreState();
 
-        FileInputStream fis = new FileInputStream(sourceFolder + "pdfa.pdf");
+        FileInputStream fis = new FileInputStream(sourceFolder + "pdfs/pdfa.pdf");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int length;

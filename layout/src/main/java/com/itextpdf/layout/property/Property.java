@@ -136,6 +136,7 @@ public final class Property {
     public static final int LEADING = 33;
     public static final int LEFT = 34;
     public static final int LINE_DRAWER = 35;
+    public static final int LINE_HEIGHT = 124;
     public static final int LINK_ANNOTATION = 88;
     public static final int LIST_START = 36;
     public static final int LIST_SYMBOL = 37;
@@ -157,6 +158,7 @@ public final class Property {
     public static final int NO_SOFT_WRAP_INLINE = 118;
 
     public static final int OPACITY = 92;
+    public static final int ORPHANS_CONTROL = 121;
     public static final int OUTLINE = 106;
     public static final int OUTLINE_OFFSET = 107;
     /**
@@ -173,6 +175,7 @@ public final class Property {
     public static final int PADDING_TOP = 50;
     public static final int PAGE_NUMBER = 51;
     public static final int POSITION = 52;
+    public static final int RENDERING_MODE = 123;
     public static final int RIGHT = 54;
     public static final int ROTATION_ANGLE = 55;
     public static final int ROTATION_INITIAL_HEIGHT = 56;
@@ -208,6 +211,7 @@ public final class Property {
      * Value of 1 is equivalent to no scaling
      **/
     public static final int VERTICAL_SCALING = 76;
+    public static final int WIDOWS_CONTROL = 122;
     public static final int WIDTH = 77;
     public static final int WORD_SPACING = 78;
 
@@ -217,7 +221,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 119;
+    private static final int MAX_INHERITED_PROPERTY_ID = 124;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -244,6 +248,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.KEEP_TOGETHER] = true;
         INHERITED_PROPERTIES[Property.LEADING] = true;
         INHERITED_PROPERTIES[Property.NO_SOFT_WRAP_INLINE] = true;
+        INHERITED_PROPERTIES[Property.ORPHANS_CONTROL] = true;
         INHERITED_PROPERTIES[Property.SPACING_RATIO] = true;
         INHERITED_PROPERTIES[Property.SPLIT_CHARACTERS] = true;
         INHERITED_PROPERTIES[Property.STROKE_COLOR] = true;
@@ -252,9 +257,12 @@ public final class Property {
         INHERITED_PROPERTIES[Property.TEXT_RENDERING_MODE] = true;
         INHERITED_PROPERTIES[Property.TEXT_RISE] = true;
         INHERITED_PROPERTIES[Property.UNDERLINE] = true;
+        INHERITED_PROPERTIES[Property.WIDOWS_CONTROL] = true;
         INHERITED_PROPERTIES[Property.WORD_SPACING] = true;
         INHERITED_PROPERTIES[Property.TAGGING_HELPER] = true;
         INHERITED_PROPERTIES[Property.TYPOGRAPHY_CONFIG] = true;
+        INHERITED_PROPERTIES[Property.RENDERING_MODE] = true;
+        INHERITED_PROPERTIES[Property.LINE_HEIGHT] = true;
     }
 
     /**

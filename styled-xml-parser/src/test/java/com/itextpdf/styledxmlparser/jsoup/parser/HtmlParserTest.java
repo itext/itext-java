@@ -885,7 +885,7 @@ public class HtmlParserTest extends ExtendedITextTest {
 
         doc = Jsoup.parse("<!DOCTYPE \u0000>");
         assertEquals(
-                "<!doctype �> <html> <head></head> <body></body> </html>",
+                "<!doctype \ufffd> <html> <head></head> <body></body> </html>",
                 StringUtil.normaliseWhitespace(doc.outerHtml()));
     }
     

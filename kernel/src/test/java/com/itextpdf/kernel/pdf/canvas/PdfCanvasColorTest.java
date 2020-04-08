@@ -183,7 +183,6 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest03.pdf", sourceFolder + "cmp_colorTest03.pdf", destinationFolder, "diff_"));
-
     }
 
     @Test

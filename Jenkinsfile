@@ -1,9 +1,24 @@
 #!/usr/bin/env groovy
 @Library('pipeline-library')_
 
-def schedule = env.BRANCH_NAME.contains('master') ? '@monthly' : env.BRANCH_NAME == 'develop' ? '@midnight' : ''
-def sonarBranchName = env.BRANCH_NAME.contains('master') ? '-Dsonar.branch.name=master' : '-Dsonar.branch.name=' + env.BRANCH_NAME
-def sonarBranchTarget = env.BRANCH_NAME.contains('master') ? '' : env.BRANCH_NAME == 'develop' ? '-Dsonar.branch.target=master' : '-Dsonar.branch.target=develop'
+def schedule, sonarBranchName, sonarBranchTarget
+switch (env.BRANCH_NAME) {
+    case ~/.*master.*/:
+        schedule = '@monthly'
+        sonarBranchName = '-Dsonar.branch.name=master'
+        sonarBranchTarget = ''
+        break
+    case ~/.*develop.*/:
+        schedule = '@midnight'
+        sonarBranchName = '-Dsonar.branch.name=develop'
+        sonarBranchTarget = '-Dsonar.branch.target=master'
+        break
+    default:
+        schedule = ''
+        sonarBranchName = '-Dsonar.branch.name=' + env.BRANCH_NAME
+        sonarBranchTarget = '-Dsonar.branch.target=develop'
+        break
+}
 
 pipeline {
 
@@ -17,7 +32,6 @@ pipeline {
         ansiColor('xterm')
         buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
         parallelsAlwaysFailFast()
-        retry(1)
         skipStagesAfterUnstable()
         timeout(time: 2, unit: 'HOURS')
         timestamps()
@@ -33,46 +47,66 @@ pipeline {
     }
 
     stages {
-        stage('Clean workspace') {
+        stage('Build') {
             options {
-                timeout(time: 5, unit: 'MINUTES')
+                retry(2)
             }
-            steps {
-                withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
-                    sh 'mvn --threads 2C clean'
-                    sh 'mvn dependency:purge-local-repository -Dinclude=com.itextpdf -DresolutionFuzziness=groupId -DreResolve=false'
-                }
-            }
-        }
-        stage('Compile') {
-            options {
-                timeout(time: 10, unit: 'MINUTES')
-            }
-            steps {
-                withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
-                    sh 'mvn --threads 2C compile test-compile package -Dmaven.test.skip=true -Dmaven.javadoc.failOnError=false'
-                }
-            }
-        }
-        stage('Run Tests') {
-            options {
-                timeout(time: 1, unit: 'HOURS')
-            }
-            steps {
-                withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
-                    withSonarQubeEnv('Sonar') {
-                        sh 'mvn --activate-profiles test -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.test.skip=false -Dmaven.test.failure.ignore=false -Dmaven.javadoc.skip=true org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report -Dsonar.java.spotbugs.reportPaths="target/spotbugs.xml" sonar:sonar ' + sonarBranchName + ' ' + sonarBranchTarget
+            stages {
+                stage('Clean workspace') {
+                    options {
+                        timeout(time: 5, unit: 'MINUTES')
                     }
+                    steps {
+                        withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
+                            sh 'mvn --threads 2C --no-transfer-progress clean dependency:purge-local-repository -Dinclude=com.itextpdf -DresolutionFuzziness=groupId -DreResolve=false'
+                        }
+                    }
+                }
+                stage('Compile') {
+                    options {
+                        timeout(time: 10, unit: 'MINUTES')
+                    }
+                    steps {
+                        withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
+                            sh 'mvn --threads 2C --no-transfer-progress package -Dmaven.test.skip=true'
+                        }
+                    }
+                }
+            }
+            post {
+                failure {
+                    sleep time: 2, unit: 'MINUTES'
+                }
+                success {
+                    script { currentBuild.result = 'SUCCESS' }
                 }
             }
         }
         stage('Static Code Analysis') {
             options {
+                timeout(time: 1, unit: 'HOURS')
+            }
+            steps {
+                withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
+                    sh 'mvn --no-transfer-progress verify --activate-profiles qa -Dpmd.analysisCache=true'
+                }
+                recordIssues(tools: [
+                        checkStyle(),
+                        pmdParser(),
+                        spotBugs(useRankAsPriority: true)
+                ])
+                dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+            }
+        }
+        stage('Run Tests') {
+            options {
                 timeout(time: 30, unit: 'MINUTES')
             }
             steps {
                 withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
-                    sh 'mvn --activate-profiles qa verify -Dpmd.analysisCache=true'
+                    withSonarQubeEnv('Sonar') {
+                        sh 'mvn --no-transfer-progress --activate-profiles test -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.main.skip=true -Dmaven.test.failure.ignore=false org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report -Dsonar.java.spotbugs.reportPaths="target/spotbugs.xml" sonar:sonar ' + sonarBranchName + ' ' + sonarBranchTarget
+                    }
                 }
             }
         }
@@ -94,13 +128,15 @@ pipeline {
                 }
             }
             steps {
-                script {
-                    def server = Artifactory.server('itext-artifactory')
-                    def rtMaven = Artifactory.newMavenBuild()
-                    rtMaven.deployer server: server, releaseRepo: 'releases', snapshotRepo: 'snapshot'
-                    rtMaven.tool = 'M3'
-                    def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'package --threads 2C --offline -Dmaven.main.skip=true -Dmaven.test.skip=true -Dmaven.javadoc.failOnError=false'
-                    server.publishBuildInfo buildInfo
+                withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
+                    script {
+                        def server = Artifactory.server('itext-artifactory')
+                        def rtMaven = Artifactory.newMavenBuild()
+                        rtMaven.deployer server: server, releaseRepo: 'releases', snapshotRepo: 'snapshot'
+                        rtMaven.tool = 'M3'
+                        def buildInfo = rtMaven.run pom: 'pom.xml', goals: '--threads 2C --no-transfer-progress install --activate-profiles artifactory'
+                        server.publishBuildInfo buildInfo
+                    }
                 }
             }
         }
@@ -121,8 +157,8 @@ pipeline {
                     getAndConfigureJFrogCLI()
                     if (env.GIT_URL) {
                         repoName = ("${env.GIT_URL}" =~ /(.*\/)(.*)(\.git)/)[ 0 ][ 2 ]
-                        findFiles(glob: 'target/*.jar').each { item ->
-                            if (!(item ==~ /.*\/fb-contrib-.*?.jar/) && !(item ==~ /.*\/findsecbugs-plugin-.*?.jar/) && !(item ==~ /.*-sources.jar/) && !(item ==~ /.*-javadoc.jar/)) {
+                        findFiles(glob: '*/target/*.jar').each { item ->
+                            if (!(item ==~ /.*\/[fs]b-contrib-.*?.jar/) && !(item ==~ /.*\/findsecbugs-plugin-.*?.jar/) && !(item ==~ /.*-sources.jar/) && !(item ==~ /.*-javadoc.jar/)) {
                                 sh "./jfrog rt u \"${item.path}\" branch-artifacts/${env.BRANCH_NAME}/${repoName}/java/ --recursive=false --build-name ${env.BRANCH_NAME} --build-number ${env.BUILD_NUMBER} --props \"vcs.revision=${env.GIT_COMMIT};repo.name=${repoName}\""
                             }
                         }
@@ -139,14 +175,6 @@ pipeline {
                         }
                     }
                 }
-            }
-        }
-        stage('Archive Artifacts') {
-            options {
-                timeout(time: 5, unit: 'MINUTES')
-            }
-            steps {
-                archiveArtifacts allowEmptyArchive: true, artifacts: '**/*.jar, **/*.pom', excludes: '**/fb-contrib-*.jar, **/findsecbugs-plugin-*.jar'
             }
         }
     }

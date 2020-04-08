@@ -86,6 +86,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -128,7 +129,7 @@ public class CompareTool {
     private static final String cannotOpenOutputDirectory = "Cannot open output directory for <filename>.";
     private static final String gsFailed = "GhostScript failed for <filename>.";
     private static final String unexpectedNumberOfPages = "Unexpected number of pages for <filename>.";
-    private static final String differentPages = "File file:///<filename> differs on page <pagenumber>.";
+    private static final String differentPages = "File file://<filename> differs on page <pagenumber>.";
     private static final String undefinedGsPath = "Path to GhostScript is not specified. Please use -DgsExec=<path_to_ghostscript> (e.g. -DgsExec=\"C:/Program Files/gs/gs9.14/bin/gswin32c.exe\")";
     private static final String ignoredAreasPrefix = "ignored_areas_";
 
@@ -375,8 +376,8 @@ public class CompareTool {
      */
     public String compareVisually(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
         init(outPdf, cmpPdf);
-        System.out.println("Out pdf: file:///" + UrlUtil.toNormalizedURI(outPdf).getPath());
-        System.out.println("Cmp pdf: file:///" + UrlUtil.toNormalizedURI(cmpPdf).getPath() + "\n");
+        System.out.println("Out pdf: " + UrlUtil.getNormalizedFileUriString(outPdf));
+        System.out.println("Cmp pdf: " + UrlUtil.getNormalizedFileUriString(cmpPdf)+ "\n");
         return compareVisually(outPath, differenceImagePrefix, ignoredAreas);
     }
 
@@ -525,8 +526,8 @@ public class CompareTool {
      */
     public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas, byte[] outPass, byte[] cmpPass) throws InterruptedException, IOException {
         init(outPdf, cmpPdf);
-        System.out.println("Out pdf: file:///" + UrlUtil.toNormalizedURI(outPdf).getPath());
-        System.out.println("Cmp pdf: file:///" + UrlUtil.toNormalizedURI(cmpPdf).getPath() + "\n");
+        System.out.println("Out pdf: " + UrlUtil.getNormalizedFileUriString(outPdf));
+        System.out.println("Cmp pdf: " + UrlUtil.getNormalizedFileUriString(cmpPdf)+ "\n");
         setPassword(outPass, cmpPass);
         return compareByContent(outPath, differenceImagePrefix, ignoredAreas);
     }
@@ -592,6 +593,30 @@ public class CompareTool {
         CompareResult compareResult = new CompareResult(compareByContentErrorsLimit);
         CompareTool.ObjectPath currentPath = new ObjectPath(cmpDict.getIndirectReference(), outDict.getIndirectReference());
         if (!compareDictionariesExtended(outDict, cmpDict, currentPath, compareResult, excludedKeys)) {
+            assert !compareResult.isOk();
+            System.out.println(compareResult.getReport());
+            return compareResult;
+        }
+        assert compareResult.isOk();
+        return null;
+    }
+
+    /**
+     * Compares structures of two corresponding streams from out and cmp PDF documents. You can roughly
+     * imagine it as depth-first traversal of the two trees that represent pdf objects structure of the documents.
+     * <p>
+     * For more explanations about what outPdf and cmpPdf are see last paragraph of the {@link CompareTool}
+     * class description.
+     *
+     * @param outStream      a {@link PdfStream} from the output file, which is to be compared to cmp-file stream.
+     * @param cmpStream     a {@link PdfStream} from the cmp-file file, which is to be compared to output file stream.
+     * @return {@link CompareResult} instance containing differences between the two streams,
+     * or {@code null} if streams are equal.
+     */
+    public CompareResult compareStreamsStructure(PdfStream outStream, PdfStream cmpStream) {
+        CompareResult compareResult = new CompareResult(compareByContentErrorsLimit);
+        CompareTool.ObjectPath currentPath = new ObjectPath(cmpStream.getIndirectReference(), outStream.getIndirectReference());
+        if (!compareStreamsExtended(outStream, cmpStream, currentPath, compareResult)) {
             assert !compareResult.isOk();
             System.out.println(compareResult.getReport());
             return compareResult;
@@ -756,9 +781,12 @@ public class CompareTool {
      * @throws IOException
      */
     public boolean compareXmls(String outXmlFile, String cmpXmlFile) throws ParserConfigurationException, SAXException, IOException {
-        System.out.println("Out xml: file:///" + UrlUtil.toNormalizedURI(outXmlFile).getPath());
-        System.out.println("Cmp xml: file:///" + UrlUtil.toNormalizedURI(cmpXmlFile).getPath() + "\n");
-        return XmlUtils.compareXmls(new FileInputStream(outXmlFile), new FileInputStream(cmpXmlFile));
+        System.out.println("Out xml: " + UrlUtil.getNormalizedFileUriString(outXmlFile));
+        System.out.println("Cmp xml: " + UrlUtil.getNormalizedFileUriString(cmpXmlFile) + "\n");
+        try (InputStream outXmlStream = FileUtil.getInputStreamForFile(outXmlFile);
+                InputStream cmpXmlStream = FileUtil.getInputStreamForFile(cmpXmlFile)) {
+            return XmlUtils.compareXmls(outXmlStream, cmpXmlStream);
+        }
     }
 
     /**
@@ -998,7 +1026,8 @@ public class CompareTool {
         for (int i = 0; i < cnt; i++) {
             if (equalPages != null && equalPages.contains(i))
                 continue;
-            System.out.println("Comparing page " + Integer.toString(i + 1) + ": file:///" + UrlUtil.toNormalizedURI(imageFiles[i]).getPath() + " ...");
+            System.out.println("Comparing page " + Integer.toString(i + 1) + ": " + UrlUtil.getNormalizedFileUriString(imageFiles[i].getName()) + " ...");
+            System.out.println("Comparing page " + Integer.toString(i + 1) + ": " + UrlUtil.getNormalizedFileUriString(imageFiles[i].getName()) + " ...");
             FileInputStream is1 = new FileInputStream(imageFiles[i].getAbsolutePath());
             FileInputStream is2 = new FileInputStream(cmpImageFiles[i].getAbsolutePath());
             boolean cmpResult = compareStreams(is1, is2);
@@ -1127,8 +1156,8 @@ public class CompareTool {
     }
 
     private void printOutCmpDirectories() {
-        System.out.println("Out file folder: file:///" + UrlUtil.toNormalizedURI(new File(outPdf).getParentFile()).getPath());
-        System.out.println("Cmp file folder: file:///" + UrlUtil.toNormalizedURI(new File(cmpPdf).getParentFile()).getPath());
+        System.out.println("Out file folder: file://" + UrlUtil.toNormalizedURI(new File(outPdf).getParentFile()).getPath());
+        System.out.println("Cmp file folder: file://" + UrlUtil.toNormalizedURI(new File(cmpPdf).getParentFile()).getPath());
     }
 
     private String compareByContent(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {

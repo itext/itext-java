@@ -83,6 +83,8 @@ public class CharacterRenderInfo extends TextChunk {
                     }
                     putCharsWithIndex(chunk.getText(), i, indexMap, sb);
                 } else {
+                    // we insert a newline character in the resulting string if the chunks are placed on different lines
+                    sb.append('\n');
                     putCharsWithIndex(chunk.getText(), i, indexMap, sb);
                 }
             }

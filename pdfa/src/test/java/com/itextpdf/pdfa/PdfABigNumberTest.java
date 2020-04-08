@@ -88,6 +88,6 @@ public class PdfABigNumberTest extends ExtendedITextTest {
             div.setBackgroundColor(ColorConstants.LIGHT_GRAY);
             document.add(div);
         }
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp/PdfABigNumberTest/cmp_" + file, destinationFolder, "diff_"));
     }
 }

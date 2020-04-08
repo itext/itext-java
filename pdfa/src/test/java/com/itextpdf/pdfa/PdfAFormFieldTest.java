@@ -46,6 +46,7 @@ import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
@@ -70,6 +71,8 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator;
 
@@ -146,7 +149,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         pdf.close();
         Assert.assertNull(
-                new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+                new CompareTool().compareByContent(filename, sourceFolder + "cmp/PdfAFormFieldTest/cmp_" + file, destinationFolder, "diff_"));
     }
 
     static class PdfAButtonFieldTestRenderer extends ParagraphRenderer {
@@ -196,7 +199,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     public void pdfA1DocWithPdfA1ButtonFieldTest() throws IOException, InterruptedException {
         String name = "pdfA1DocWithPdfA1ButtonField";
         String fileName = destinationFolder + name + ".pdf";
-        String cmp = sourceFolder + "cmp_pdfA1DocWithPdfA1ButtonField.pdf";
+        String cmp = sourceFolder + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1ButtonField.pdf";
 
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
 
@@ -222,7 +225,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     public void pdfA1DocWithPdfA1CheckBoxFieldTest() throws IOException, InterruptedException {
         String name = "pdfA1DocWithPdfA1CheckBoxField";
         String fileName = destinationFolder + name + ".pdf";
-        String cmp = sourceFolder + "cmp_pdfA1DocWithPdfA1CheckBoxField.pdf";
+        String cmp = sourceFolder + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1CheckBoxField.pdf";
 
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
 
@@ -242,10 +245,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY)})
     public void pdfA1DocWithPdfA1ChoiceFieldTest() throws IOException, InterruptedException {
         String name = "pdfA1DocWithPdfA1ChoiceField";
         String fileName = destinationFolder + name + ".pdf";
-        String cmp = sourceFolder + "cmp_pdfA1DocWithPdfA1ChoiceField.pdf";
+        String cmp = sourceFolder + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1ChoiceField.pdf";
 
         PdfFont fontFreeSans = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -271,7 +275,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     public void pdfA1DocWithPdfA1ComboBoxFieldTest() throws IOException, InterruptedException {
         String name = "pdfA1DocWithPdfA1ComboBoxField";
         String fileName = destinationFolder + name + ".pdf";
-        String cmp = sourceFolder + "cmp_pdfA1DocWithPdfA1ComboBoxField.pdf";
+        String cmp = sourceFolder + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1ComboBoxField.pdf";
 
         PdfFont fontCJK = PdfFontFactory
                 .createFont(sourceFolder + "NotoSansCJKtc-Light.otf", PdfEncodings.IDENTITY_H, true);
@@ -294,10 +298,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD)})
     public void pdfA1DocWithPdfA1ListFieldTest() throws IOException, InterruptedException {
         String name = "pdfA1DocWithPdfA1ListField";
         String fileName = destinationFolder + name + ".pdf";
-        String cmp = sourceFolder + "cmp_pdfA1DocWithPdfA1ListField.pdf";
+        String cmp = sourceFolder + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1ListField.pdf";
 
         PdfFont fontFreeSans = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
                 "WinAnsi", true);
@@ -329,7 +334,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     public void pdfA1DocWithPdfA1PushButtonFieldTest() throws IOException, InterruptedException {
         String name = "pdfA1DocWithPdfA1PushButtonField";
         String fileName = destinationFolder + name + ".pdf";
-        String cmp = sourceFolder + "cmp_pdfA1DocWithPdfA1PushButtonField.pdf";
+        String cmp = sourceFolder + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1PushButtonField.pdf";
 
         PdfFont fontFreeSans = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
                 "WinAnsi", true);
@@ -355,7 +360,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     public void pdfA1DocWithPdfA1RadioButtonFieldTest() throws IOException, InterruptedException {
         String name = "pdfA1DocWithPdfA1RadioButtonField";
         String fileName = destinationFolder + name + ".pdf";
-        String cmp = sourceFolder + "cmp_pdfA1DocWithPdfA1RadioButtonField.pdf";
+        String cmp = sourceFolder + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1RadioButtonField.pdf";
 
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
 
@@ -384,7 +389,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     public void pdfA1DocWithPdfA1TextFieldTest() throws IOException, InterruptedException {
         String name = "pdfA1DocWithPdfA1TextField";
         String fileName = destinationFolder + name + ".pdf";
-        String cmp = sourceFolder + "cmp_pdfA1DocWithPdfA1TextField.pdf";
+        String cmp = sourceFolder + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1TextField.pdf";
 
         PdfFont fontFreeSans = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
                 "WinAnsi", true);
@@ -400,6 +405,33 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         form.addField(PdfFormField.createText(pdfDoc, new Rectangle(36, 466, 90, 20),
                 "text", "textField", fontFreeSans, 12, false, conformanceLevel).setValue("iText"));
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, destinationFolder));
+        Assert.assertNull(new VeraPdfValidator().validate(fileName));
+    }
+
+    @Test
+    public void pdfA1DocWithPdfA1SignatureFieldTest() throws IOException, InterruptedException {
+        String name = "pdfA1DocWithPdfA1SignatureField";
+        String fileName = destinationFolder + name + ".pdf";
+        String cmp = sourceFolder + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1SignatureField.pdf";
+
+        PdfFont fontFreeSans = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "WinAnsi", true);
+        fontFreeSans.setSubset(false);
+
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+
+        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
+        PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
+                new PdfOutputIntent("Custom", "",
+                        "http://www.color.org", "sRGB IEC61966-2.1", is));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        form.addField(PdfFormField.createSignature(pdfDoc, conformanceLevel).setFieldName("signature")
+                .setFont(fontFreeSans).setFontSize(20));
 
         pdfDoc.close();
 

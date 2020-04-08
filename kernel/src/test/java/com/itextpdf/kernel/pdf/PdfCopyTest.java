@@ -50,6 +50,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -108,7 +109,8 @@ public class PdfCopyTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copying1_2.pdf"));
         pdfDoc2.addNewPage();
-        pdfDoc2.getDocumentInfo().getPdfObject().put(new PdfName("a"), pdfDoc1.getCatalog().getPdfObject().get(new PdfName("a")).copyTo(pdfDoc2));
+        pdfDoc2.getDocumentInfo().getPdfObject()
+                .put(new PdfName("a"), pdfDoc1.getCatalog().getPdfObject().get(new PdfName("a")).copyTo(pdfDoc2));
         pdfDoc2.close();
         pdfDoc1.close();
 
@@ -127,7 +129,8 @@ public class PdfCopyTest extends ExtendedITextTest {
         PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copying2_1.pdf"));
         for (int i = 0; i < 10; i++) {
             PdfPage page1 = pdfDoc1.addNewPage();
-            page1.getContentStream(0).getOutputStream().write(ByteUtils.getIsoBytes("%page " + String.valueOf(i + 1) + "\n"));
+            page1.getContentStream(0).getOutputStream()
+                    .write(ByteUtils.getIsoBytes("%page " + String.valueOf(i + 1) + "\n"));
             page1.flush();
         }
         pdfDoc1.close();
@@ -219,7 +222,8 @@ public class PdfCopyTest extends ExtendedITextTest {
         sourceDoc.close();
         pdfDoc.close();
 
-        assertNull(new CompareTool().compareByContent(destinationFolder + "copyDocumentsWithFormFields.pdf", sourceFolder + "cmp_copyDocumentsWithFormFields.pdf", destinationFolder, "diff_"));
+        assertNull(new CompareTool().compareByContent(destinationFolder + "copyDocumentsWithFormFields.pdf",
+                sourceFolder + "cmp_copyDocumentsWithFormFields.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -227,7 +231,8 @@ public class PdfCopyTest extends ExtendedITextTest {
         String filename = sourceFolder + "rotated_annotation.pdf";
 
         PdfDocument sourceDoc = new PdfDocument(new PdfReader(filename));
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "copySamePageWithAnnotationsSeveralTimes.pdf"));
+        PdfDocument pdfDoc = new PdfDocument(
+                new PdfWriter(destinationFolder + "copySamePageWithAnnotationsSeveralTimes.pdf"));
 
         sourceDoc.initializeOutlines();
         sourceDoc.copyPagesTo(Arrays.asList(1, 1, 1), pdfDoc);
@@ -235,7 +240,8 @@ public class PdfCopyTest extends ExtendedITextTest {
         sourceDoc.close();
         pdfDoc.close();
 
-        assertNull(new CompareTool().compareByContent(destinationFolder + "copySamePageWithAnnotationsSeveralTimes.pdf", sourceFolder + "cmp_copySamePageWithAnnotationsSeveralTimes.pdf", destinationFolder, "diff_"));
+        assertNull(new CompareTool().compareByContent(destinationFolder + "copySamePageWithAnnotationsSeveralTimes.pdf",
+                sourceFolder + "cmp_copySamePageWithAnnotationsSeveralTimes.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -256,6 +262,59 @@ public class PdfCopyTest extends ExtendedITextTest {
     }
 
     @Test
+    public void copyPageNoRotationToDocWithRotationInKidsPageTest() throws IOException, InterruptedException {
+        String src = sourceFolder + "srcFileWithSetRotation.pdf";
+        String dest = destinationFolder + "copyPageNoRotationToDocWithRotationInKidsPage.pdf";
+        String cmp = sourceFolder + "cmp_copyPageNoRotationToDocWithRotationInKidsPage.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+        PdfDocument sourceDoc = new PdfDocument(new PdfReader(sourceFolder + "noRotationProp.pdf"));
+        sourceDoc.copyPagesTo(1, sourceDoc.getNumberOfPages(), pdfDoc);
+
+        sourceDoc.close();
+
+        pdfDoc.close();
+
+        assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder));
+    }
+
+    @Test
+    //TODO: update cmp-files when DEVSIX-3635 will be fixed
+    public void copyPageNoRotationToDocWithRotationInPagesDictTest() throws IOException, InterruptedException {
+        String src = sourceFolder + "indirectPageProps.pdf";
+        String dest = destinationFolder + "copyPageNoRotationToDocWithRotationInPagesDict.pdf";
+        String cmp = sourceFolder + "cmp_copyPageNoRotationToDocWithRotationInPagesDict.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+        PdfDocument sourceDoc = new PdfDocument(new PdfReader(sourceFolder + "noRotationProp.pdf"));
+        sourceDoc.copyPagesTo(1, sourceDoc.getNumberOfPages(), pdfDoc);
+
+        sourceDoc.close();
+
+        pdfDoc.close();
+
+        assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder));
+    }
+
+    @Test
+    public void copyPageWithRotationInPageToDocWithRotationInPagesDictTest() throws IOException, InterruptedException {
+        String src = sourceFolder + "indirectPageProps.pdf";
+        String dest = destinationFolder + "copyPageWithRotationInPageToDocWithRotationInPagesDict.pdf";
+        String cmp = sourceFolder + "cmp_copyPageWithRotationInPageToDocWithRotationInPagesDict.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+        PdfDocument sourceDoc = new PdfDocument(
+                new PdfReader(sourceFolder + "srcFileCopyPageWithSetRotationValueInKids.pdf"));
+        sourceDoc.copyPagesTo(1, sourceDoc.getNumberOfPages(), pdfDoc);
+
+        sourceDoc.close();
+
+        pdfDoc.close();
+
+        assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder));
+    }
+
+    @Test
     public void copySelfContainedObject() throws IOException {
         ByteArrayOutputStream inputBytes = new ByteArrayOutputStream();
         PdfDocument prepInputDoc = new PdfDocument(new PdfWriter(inputBytes));
@@ -268,7 +327,6 @@ public class PdfCopyTest extends ExtendedITextTest {
         prepInputDoc.addNewPage().put(randDictName, selfContainedDict.makeIndirect(prepInputDoc));
         prepInputDoc.close();
 
-
         PdfDocument srcDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(inputBytes.toByteArray())));
         PdfDocument destDoc = new PdfDocument(new PdfWriter(destinationFolder + "copySelfContainedObject.pdf"));
 
@@ -279,11 +337,12 @@ public class PdfCopyTest extends ExtendedITextTest {
         PdfDictionary destSelfContainedDictR = destSelfContainedDict.getAsDictionary(randEntry1);
         PdfDictionary destSelfContainedDictS = destSelfContainedDict.getAsDictionary(randEntry2);
 
-        Assert.assertEquals(destSelfContainedDict.getIndirectReference(), destSelfContainedDictR.getIndirectReference());
-        Assert.assertEquals(destSelfContainedDict.getIndirectReference(), destSelfContainedDictS.getIndirectReference());
+        Assert.assertEquals(destSelfContainedDict.getIndirectReference(),
+                destSelfContainedDictR.getIndirectReference());
+        Assert.assertEquals(destSelfContainedDict.getIndirectReference(),
+                destSelfContainedDictS.getIndirectReference());
 
         destDoc.close();
         srcDoc.close();
     }
-
 }

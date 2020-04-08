@@ -618,55 +618,6 @@ public class PdfCanvasTest extends ExtendedITextTest {
         pdfDocument.close();
     }
 
-    @Test(timeout = 0)
-    @Ignore("Too big result file. This test is for manual testing. -Xmx6g shall be set.")
-    public void hugeDocumentWithFullCompression() throws IOException {
-        int pageCount = 800;
-        String filename = destinationFolder + "hugeDocumentWithFullCompression.pdf";
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
-
-        PdfWriter writer = new PdfWriter(filename, new WriterProperties().setFullCompressionMode(true));
-        PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
-        for (int i = 0; i < pageCount; i++) {
-            PdfPage page = pdfDoc.addNewPage();
-            PdfCanvas canvas = new PdfCanvas(page);
-            canvas
-                    .saveState()
-                    .beginText()
-                    .moveText(36, 700)
-                    .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 72)
-                    .showText(Integer.toString(i + 1))
-                    .endText()
-                    .restoreState();
-            PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Willaerts_Adam_The_Embarkation_of_the_Elector_Palantine_Oil_Canvas-huge.jpg"));
-            canvas.addXObject(xObject, 100, 500, 400);
-            canvas.release();
-            page.flush();
-
-        }
-        pdfDoc.close();
-
-        PdfReader reader = new PdfReader(filename);
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
-        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
-        for (int i = 1; i <= pageCount; i++) {
-            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
-            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        }
-        pdfDocument.close();
-    }
-
     @Test
     public void smallDocumentWithFullCompression() throws IOException {
         String filename = destinationFolder + "smallDocumentWithFullCompression.pdf";

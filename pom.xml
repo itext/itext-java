@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.1.10</version>
+  <version>7.1.11</version>
   <packaging>pom</packaging>
   <name>iText 7</name>
   <description>A Free Java-PDF library</description>
@@ -72,9 +72,8 @@
   <properties>
     <argLine>-Xmx1024m</argLine>
     <bouncycastle.version>1.64</bouncycastle.version>
-    <checkstyle.version>2.15</checkstyle.version>
+    <checkstyle.version>3.1.0</checkstyle.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
-    <fb-contrib.version>7.4.3</fb-contrib.version>
     <findsecbugs.version>1.8.0</findsecbugs.version>
     <hsqldb.version>2.3.3</hsqldb.version>
     <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>
@@ -98,6 +97,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sampletests>com.itextpdf.test.annotations.type.SampleTest</sampletests>
+    <sb-contrib.version>7.4.7</sb-contrib.version>
     <skipTests>true</skipTests>
     <slf4j.version>1.7.13</slf4j.version>
     <slowtests>com.itextpdf.test.annotations.type.SlowTest</slowtests>
@@ -189,37 +189,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>com.github.spotbugs</groupId>
-        <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>${spotbugs.version}</version>
-        <executions>
-          <execution>
-            <phase>verify</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <effort>Max</effort>
-          <threshold>High</threshold>
-          <xmlOutput>true</xmlOutput>
-          <failOnError>false</failOnError>
-          <plugins>
-            <plugin>
-              <groupId>com.mebigfatguy.fb-contrib</groupId>
-              <artifactId>fb-contrib</artifactId>
-              <version>${fb-contrib.version}</version>
-            </plugin>
-            <plugin>
-              <groupId>com.h3xstream.findsecbugs</groupId>
-              <artifactId>findsecbugs-plugin</artifactId>
-              <version>${findsecbugs.version}</version>
-            </plugin>
-          </plugins>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
         <version>4.2.0</version>
@@ -244,31 +213,6 @@
           <source>${java.version}</source>
           <target>${java.version}</target>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-artifact</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>${project.groupId}</groupId>
-                  <artifactId>${project.artifactId}</artifactId>
-                  <version>${project.version}</version>
-                  <type>${project.packaging}</type>
-                  <destFileName>itext7-${project.artifactId}-${project.version}.jar</destFileName>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>../target</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
       <!-- Run integration tests -->
       <plugin>
@@ -434,7 +378,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>tidy-maven-plugin</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
         <executions>
           <execution>
             <phase>verify</phase>
@@ -443,23 +387,6 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.owasp</groupId>
-        <artifactId>dependency-check-maven</artifactId>
-        <version>5.2.4</version>
-        <executions>
-          <execution>
-            <phase>verify</phase>
-            <goals>
-              <goal>aggregate</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <format>XML</format>
-          <prettyPrint>true</prettyPrint>
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -564,9 +491,16 @@
       <build>
         <plugins>
           <plugin>
+            <groupId>com.github.ekryd.sortpom</groupId>
+            <artifactId>sortpom-maven-plugin</artifactId>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+          <plugin>
             <groupId>com.github.siom79.japicmp</groupId>
             <artifactId>japicmp-maven-plugin</artifactId>
-            <version>0.14.0</version>
+            <version>0.14.1</version>
             <executions>
               <execution>
                 <phase>verify</phase>
@@ -579,10 +513,7 @@
               <parameter>
                 <onlyModified>true</onlyModified>
                 <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
-                <ignoreMissingClassesByRegularExpressions>
-                  <ignoreMissingClassesByRegularExpression>org.bouncycastle.*</ignoreMissingClassesByRegularExpression>
-                  <ignoreMissingClassesByRegularExpression>com.itextpdf.kernel.pdf.tagutils.IAccessibleElement</ignoreMissingClassesByRegularExpression>
-                </ignoreMissingClassesByRegularExpressions>
+                <ignoreMissingClasses>true</ignoreMissingClasses>
               </parameter>
             </configuration>
           </plugin>
@@ -590,8 +521,31 @@
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-maven-plugin</artifactId>
             <version>${spotbugs.version}</version>
+            <executions>
+              <execution>
+                <phase>verify</phase>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
             <configuration>
-              <skip>true</skip>
+              <effort>Max</effort>
+              <threshold>High</threshold>
+              <xmlOutput>true</xmlOutput>
+              <failOnError>false</failOnError>
+              <plugins>
+                <plugin>
+                  <groupId>com.mebigfatguy.sb-contrib</groupId>
+                  <artifactId>sb-contrib</artifactId>
+                  <version>${sb-contrib.version}</version>
+                </plugin>
+                <plugin>
+                  <groupId>com.h3xstream.findsecbugs</groupId>
+                  <artifactId>findsecbugs-plugin</artifactId>
+                  <version>${findsecbugs.version}</version>
+                </plugin>
+              </plugins>
             </configuration>
           </plugin>
           <plugin>
@@ -605,7 +559,6 @@
             </executions>
           </plugin>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
             <version>${checkstyle.version}</version>
             <executions>
@@ -626,16 +579,7 @@
             </executions>
           </plugin>
           <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>default-testCompile</id>
-                <phase/>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <artifactId>maven-failsafe-plugin</artifactId>
+            <artifactId>maven-javadoc-plugin</artifactId>
             <configuration>
               <skip>true</skip>
             </configuration>
@@ -681,15 +625,6 @@
             </configuration>
           </plugin>
           <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>default-test</id>
-                <phase/>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>clirr-maven-plugin</artifactId>
             <version>2.8</version>
@@ -709,16 +644,31 @@
             </configuration>
           </plugin>
           <plugin>
-            <groupId>org.owasp</groupId>
-            <artifactId>dependency-check-maven</artifactId>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>tidy-maven-plugin</artifactId>
             <configuration>
               <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <version>5.3.1</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>aggregate</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <format>ALL</format>
+            </configuration>
+          </plugin>
+          <plugin>
             <groupId>org.revapi</groupId>
             <artifactId>revapi-maven-plugin</artifactId>
-            <version>0.11.0</version>
+            <version>0.11.1</version>
             <executions>
               <execution>
                 <goals>
@@ -741,11 +691,22 @@
           </plugin>
         </plugins>
       </build>
+      <properties>
+        <maven.main.skip>true</maven.main.skip>
+        <maven.test.skip>true</maven.test.skip>
+      </properties>
     </profile>
     <profile>
       <id>test</id>
       <build>
         <plugins>
+          <plugin>
+            <groupId>com.github.ekryd.sortpom</groupId>
+            <artifactId>sortpom-maven-plugin</artifactId>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
           <!-- Run integration tests -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -770,6 +731,18 @@
               <threadCount>1</threadCount>
             </configuration>
           </plugin>
+          <plugin>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+          <plugin>
+            <artifactId>maven-source-plugin</artifactId>
+            <configuration>
+              <skipSource>true</skipSource>
+            </configuration>
+          </plugin>
           <!-- Run unit tests -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -787,6 +760,13 @@
               <skipTests>false</skipTests>
               <groups>${unittests}</groups>
               <argLine>@{jacoco.agent.argLine}</argLine>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>tidy-maven-plugin</artifactId>
+            <configuration>
+              <skip>true</skip>
             </configuration>
           </plugin>
           <!-- Compute test coverage for Sonar BEWARE: Sonar
@@ -837,6 +817,38 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>artifactory</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.ekryd.sortpom</groupId>
+            <artifactId>sortpom-maven-plugin</artifactId>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+          <plugin>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <failOnError>false</failOnError>
+              <quiet>true</quiet>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>tidy-maven-plugin</artifactId>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <properties>
+        <maven.main.skip>true</maven.main.skip>
+        <maven.test.skip>true</maven.test.skip>
+      </properties>
     </profile>
   </profiles>
 </project>

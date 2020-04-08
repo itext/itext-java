@@ -45,8 +45,12 @@ package com.itextpdf.kernel.pdf.xobject;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.colors.IccProfile;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageType;
+import com.itextpdf.io.image.PngChromaticities;
+import com.itextpdf.io.image.PngImageHelperConstants;
+import com.itextpdf.io.image.PngImageData;
 import com.itextpdf.io.image.RawImageData;
 import com.itextpdf.io.image.RawImageHelper;
 import com.itextpdf.kernel.PdfException;
@@ -69,8 +73,10 @@ import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
@@ -222,7 +228,7 @@ public class PdfImageXObject extends PdfXObject {
     /**
      * Identifies the type of the image that is stored in the bytes of this {@link PdfImageXObject}.
      * Note that this has nothing to do with the original type of the image. For instance, the return value
-     * of this method will never be {@link ImageType#PNG} as we loose this information when converting a
+     * of this method will never be {@link ImageType#PNG} as we lose this information when converting a
      * PNG image into something that can be put into a PDF file.
      * The possible values are: {@link ImageType#JPEG}, {@link ImageType#JPEG2000}, {@link ImageType#JBIG2},
      * {@link ImageType#TIFF}, {@link ImageType#PNG}
@@ -332,19 +338,20 @@ public class PdfImageXObject extends PdfXObject {
             stream.put(PdfName.DecodeParms, decodeParms);
         }
 
-
-        PdfName colorSpace;
-        switch (image.getColorSpace()) {
-            case 1:
-                colorSpace = PdfName.DeviceGray;
-                break;
-            case 3:
-                colorSpace = PdfName.DeviceRGB;
-                break;
-            default:
-                colorSpace = PdfName.DeviceCMYK;
+        if (!(image instanceof PngImageData)) {
+            PdfName colorSpace;
+            switch (image.getColorSpace()) {
+                case 1:
+                    colorSpace = PdfName.DeviceGray;
+                    break;
+                case 3:
+                    colorSpace = PdfName.DeviceRGB;
+                    break;
+                default:
+                    colorSpace = PdfName.DeviceCMYK;
+            }
+            stream.put(PdfName.ColorSpace, colorSpace);
         }
-        stream.put(PdfName.ColorSpace, colorSpace);
 
         if (image.getBpc() != 0) {
             stream.put(PdfName.BitsPerComponent, new PdfNumber(image.getBpc()));
@@ -357,12 +364,37 @@ public class PdfImageXObject extends PdfXObject {
 //        if (image.getLayer() != null)
 //            put(PdfName.OC, image.getLayer().getRef());
 
-
         if (image.getColorSpace() == -1) {
             stream.remove(PdfName.ColorSpace);
         }
 
-        PdfDictionary additional = createDictionaryFromMap(stream, image.getImageAttributes());
+        PdfDictionary additional = null;
+        if (image instanceof PngImageData) {
+            PngImageData pngImage = (PngImageData) image;
+
+            if (pngImage.isIndexed()) {
+                PdfArray colorspace = new PdfArray();
+                colorspace.add(PdfName.Indexed);
+                colorspace.add(getColorSpaceInfo(pngImage));
+
+                if ((pngImage.getColorPalette() != null) && (pngImage.getColorPalette().length > 0)) {
+                    //Each palette entry is a three-byte series, so the number of entries is calculated as the length
+                    //of the stream divided by 3. The number below specifies the maximum valid index value (starting from 0 up)
+                    colorspace.add(new PdfNumber(pngImage.getColorPalette().length / 3 - 1));
+                }
+
+                if (pngImage.getColorPalette() != null) {
+                    colorspace.add(new PdfString(PdfEncodings
+                            .convertToString(pngImage.getColorPalette(), null)));
+                }
+
+                stream.put(PdfName.ColorSpace, colorspace);
+            } else {
+                stream.put(PdfName.ColorSpace, getColorSpaceInfo(pngImage));
+            }
+        }
+        additional = createDictionaryFromMap(stream, image.getImageAttributes());
+
         if (additional != null) {
             stream.putAll(additional);
         }
@@ -405,37 +437,43 @@ public class PdfImageXObject extends PdfXObject {
             }
         }
 
-        if (image.isMask() && (image.getBpc() == 1 || image.getBpc() > 0xff))
+        if (image.isMask() && (image.getBpc() == 1 || image.getBpc() > 0xff)) {
             stream.put(PdfName.ImageMask, PdfBoolean.TRUE);
+        }
 
         if (imageMask != null) {
-            if (imageMask.softMask)
+            if (imageMask.softMask) {
                 stream.put(PdfName.SMask, imageMask.getPdfObject());
-            else if (imageMask.mask)
+            } else if (imageMask.mask) {
                 stream.put(PdfName.Mask, imageMask.getPdfObject());
+            }
         }
 
         ImageData mask = image.getImageMask();
         if (mask != null) {
-            if (mask.isSoftMask())
+            if (mask.isSoftMask()) {
                 stream.put(PdfName.SMask, new PdfImageXObject(image.getImageMask()).getPdfObject());
-            else if (mask.isMask())
+            } else if (mask.isMask()) {
                 stream.put(PdfName.Mask, new PdfImageXObject(image.getImageMask()).getPdfObject());
+            }
         }
 
         if (image.getDecode() != null) {
             stream.put(PdfName.Decode, new PdfArray(image.getDecode()));
         }
-        if (image.isMask() && image.isInverted())
-            stream.put(PdfName.Decode, new PdfArray(new float[]{1, 0}));
-        if (image.isInterpolation())
+        if (image.isMask() && image.isInverted()) {
+            stream.put(PdfName.Decode, new PdfArray(new float[] {1, 0}));
+        }
+        if (image.isInterpolation()) {
             stream.put(PdfName.Interpolate, PdfBoolean.TRUE);
+        }
         // deal with transparency
         int[] transparency = image.getTransparency();
         if (transparency != null && !image.isMask() && imageMask == null) {
             PdfArray t = new PdfArray();
-            for (int transparencyItem : transparency)
+            for (int transparencyItem : transparency) {
                 t.add(new PdfNumber(transparencyItem));
+            }
             stream.put(PdfName.Mask, t);
         }
 
@@ -455,7 +493,7 @@ public class PdfImageXObject extends PdfXObject {
                 } else if (value instanceof Float) {
                     dictionary.put(new PdfName(key), new PdfNumber((float) value));
                 } else if (value instanceof String) {
-                    if (value.equals("Mask")) {
+                    if (value.equals(PngImageHelperConstants.MASK)) {
                         dictionary.put(PdfName.Mask, new PdfLiteral((String) value));
                     } else {
                         String str = (String) value;
@@ -514,5 +552,104 @@ public class PdfImageXObject extends PdfXObject {
             throw new PdfException(PdfException.CannotCreatePdfImageXObjectByWmfImage);
         }
         return image;
+    }
+
+    private static PdfObject getColorSpaceInfo(PngImageData pngImageData) {
+        if (pngImageData.getProfile() != null) {
+            if (pngImageData.isGrayscaleImage()) {
+                return PdfName.DeviceGray;
+            } else {
+                return PdfName.DeviceRGB;
+            }
+        }
+        if (pngImageData.getGamma() == 1f && !pngImageData.isHasCHRM()) {
+            if (pngImageData.isGrayscaleImage()) {
+                return PdfName.DeviceGray;
+            } else {
+                return PdfName.DeviceRGB;
+            }
+        } else {
+            PdfArray array = new PdfArray();
+            PdfDictionary map = new PdfDictionary();
+            if (pngImageData.isGrayscaleImage()) {
+                if (pngImageData.getGamma() == 1f) {
+                    return PdfName.DeviceGray;
+                }
+                array.add(PdfName.CalGray);
+                map.put(PdfName.Gamma, new PdfNumber(pngImageData.getGamma()));
+                map.put(PdfName.WhitePoint, new PdfArray(new int[] {1, 1, 1}));
+            } else {
+                float[] wp = new float[] {1, 1, 1};
+                array.add(PdfName.CalRGB);
+                float gamma = pngImageData.getGamma();
+                if (gamma != 1f) {
+                    float[] gm = new float[3];
+                    gm[0] = gamma;
+                    gm[1] = gamma;
+                    gm[2] = gamma;
+                    map.put(PdfName.Gamma, new PdfArray(gm));
+                }
+                if (pngImageData.isHasCHRM()) {
+                    PngChromaticitiesHelper helper = new PngChromaticitiesHelper();
+                    helper.constructMatrix(pngImageData);
+                    wp = helper.wp;
+                    map.put(PdfName.Matrix, new PdfArray(helper.matrix));
+                }
+                map.put(PdfName.WhitePoint, new PdfArray(wp));
+            }
+            array.add(map);
+            return array;
+        }
+    }
+
+    private static class PngChromaticitiesHelper {
+
+        float[] matrix = new float[9];
+        float[] wp = new float[3];
+
+        public void constructMatrix(PngImageData pngImageData) {
+            PngChromaticities pngChromaticities = pngImageData.getPngChromaticities();
+            float z = pngChromaticities.getYW() *
+                    ((pngChromaticities.getXG() - pngChromaticities.getXB()) * pngChromaticities.getYR() -
+                            (pngChromaticities.getXR() - pngChromaticities.getXB()) * pngChromaticities.getYG() +
+                            (pngChromaticities.getXR() - pngChromaticities.getXG()) * pngChromaticities.getYB());
+            float YA = pngChromaticities.getYR() *
+                    ((pngChromaticities.getXG() - pngChromaticities.getXB()) * pngChromaticities.getYW() -
+                            (pngChromaticities.getXW() - pngChromaticities.getXB()) * pngChromaticities.getYG() +
+                            (pngChromaticities.getXW() - pngChromaticities.getXG()) * pngChromaticities.getYB()) / z;
+            float XA = YA * pngChromaticities.getXR() / pngChromaticities.getYR();
+            float ZA = YA * ((1 - pngChromaticities.getXR()) / pngChromaticities.getYR() - 1);
+            float YB = -pngChromaticities.getYG() *
+                    ((pngChromaticities.getXR() - pngChromaticities.getXB()) * pngChromaticities.getYW() -
+                            (pngChromaticities.getXW() - pngChromaticities.getXB()) * pngChromaticities.getYR() +
+                            (pngChromaticities.getXW() - pngChromaticities.getXR()) * pngChromaticities.getYB()) / z;
+            float XB = YB * pngChromaticities.getXG() / pngChromaticities.getYG();
+            float ZB = YB * ((1 - pngChromaticities.getXG()) / pngChromaticities.getYG() - 1);
+            float YC = pngChromaticities.getYB() *
+                    ((pngChromaticities.getXR() - pngChromaticities.getXG()) * pngChromaticities.getYW() -
+                            (pngChromaticities.getXW() - pngChromaticities.getXG()) * pngChromaticities.getYW() +
+                            (pngChromaticities.getXW() - pngChromaticities.getXR()) * pngChromaticities.getYG()) / z;
+            float XC = YC * pngChromaticities.getXB() / pngChromaticities.getYB();
+            float ZC = YC * ((1 - pngChromaticities.getXB()) / pngChromaticities.getYB() - 1);
+            float XW = XA + XB + XC;
+            float YW = 1;
+            float ZW = ZA + ZB + ZC;
+            float[] wpa = new float[3];
+            wpa[0] = XW;
+            wpa[1] = YW;
+            wpa[2] = ZW;
+            this.wp = Arrays.copyOf(wpa, 3);
+            float[] matrix = new float[9];
+            matrix[0] = XA;
+            matrix[1] = YA;
+            matrix[2] = ZA;
+            matrix[3] = XB;
+            matrix[4] = YB;
+            matrix[5] = ZB;
+            matrix[6] = XC;
+            matrix[7] = YC;
+            matrix[8] = ZC;
+            this.matrix = Arrays.copyOf(matrix, 9);
+        }
     }
 }

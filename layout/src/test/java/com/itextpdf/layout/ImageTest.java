@@ -43,6 +43,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -73,6 +74,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -902,7 +904,7 @@ public class ImageTest extends ExtendedITextTest {
         PdfCanvas currentPdfCanvas = new PdfCanvas(page);
 
         Rectangle rc = new Rectangle(56.6929131f, 649.13385f, 481.889771f, 136.062988f);
-        Canvas canvas = new Canvas(currentPdfCanvas, pdfDoc, rc);
+        Canvas canvas = new Canvas(currentPdfCanvas, rc);
 
         Table table = new Table(UnitValue.createPointArray(new float[]{158f}));
         table.setTextAlignment(TextAlignment.LEFT);
@@ -942,5 +944,49 @@ public class ImageTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 3)})
+    public void createTiffImageTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "createTiffImageTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_createTiffImageTest.pdf";
+        String imgPath = sourceFolder + "group4Compression.tif";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdfDoc);
+
+        ImageData id = ImageDataFactory.create(imgPath);
+
+        ImageData idAsTiff = ImageDataFactory
+                .createTiff(UrlUtil.toURL(imgPath), true, 1, true);
+
+        ImageData idAsTiffFalse = ImageDataFactory
+                .createTiff(UrlUtil.toURL(imgPath), false, 1, false);
+
+        document.add(new Image(id));
+        document.add(new Image(idAsTiff));
+        document.add(new Image(idAsTiffFalse));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void tiffImageWithoutCompressionTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tiffImageWithoutCompression.pdf";
+        String cmpFileName = sourceFolder + "cmp_tiffImageWithoutCompression.pdf";
+        String imgPath = sourceFolder + "no-compression-tag.tiff";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdfDoc);
+
+        ImageData id = ImageDataFactory.create(imgPath);
+        document.add(new Image(id));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff02_"));
     }
 }

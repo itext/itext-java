@@ -315,7 +315,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         canvas.openTag(new CanvasTag(link.addKid(new PdfMcrNumber(page, link))));
         canvas.setFillColorRgb(0, 0, 1).showText("here");
         PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(new Rectangle(80, 508, 40, 18));
-        linkAnnotation.setColor(new float[] {0, 0, 1}).setBorder(new PdfArray(new float[]{0, 0, 1}));
+        linkAnnotation.setColor(new float[] {0, 0, 1}).setBorder(new PdfArray(new float[] {0, 0, 1}));
         page.addAnnotation(-1, linkAnnotation, false);
         link.addKid(new PdfObjRef(linkAnnotation, link, document.getNextStructParentIndex()));
         canvas.closeTag();
@@ -363,8 +363,8 @@ public class PdfStructElemTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages( messages =
-            @LogMessage(messageTemplate = LogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY, count = 5))
+    @LogMessages(messages =
+    @LogMessage(messageTemplate = LogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY, count = 5))
     public void structElemTest07() throws Exception {
         PdfWriter writer = new PdfWriter(destinationFolder + "structElemTest07.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
@@ -444,7 +444,8 @@ public class PdfStructElemTest extends ExtendedITextTest {
     public void structElemTest09() throws Exception {
         PdfWriter writer = new PdfWriter(destinationFolder + "structElemTest09.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
-        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "88th_Academy_Awards_mult_roots.pdf"), writer);
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "88th_Academy_Awards_mult_roots.pdf"),
+                writer);
 
         document.removePage(1);
         document.close();
@@ -470,7 +471,6 @@ public class PdfStructElemTest extends ExtendedITextTest {
         pagesToCopy.add(11);
         source.copyPagesTo(pagesToCopy, destination);
         source.copyPagesTo(50, 52, destination);
-
 
         destination.close();
         source.close();
@@ -532,8 +532,9 @@ public class PdfStructElemTest extends ExtendedITextTest {
         destination.setTagged();
         destination.initializeOutlines();
 
-        for (int i = 1; i <= source.getNumberOfPages(); i++)
+        for (int i = 1; i <= source.getNumberOfPages(); i++) {
             source.copyPagesTo(i, i, destination);
+        }
 
         destination.close();
         source.close();
@@ -687,10 +688,10 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ENCOUNTERED_INVALID_MCR, count = 72)
+            @LogMessage(messageTemplate = LogMessageConstant.ENCOUNTERED_INVALID_MCR)
     })
     public void corruptedTagStructureTest01() throws IOException {
-        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "cocacola_corruptedTagStruct.pdf"));
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "invalidMcr.pdf"));
         assertTrue(document.isTagged());
         document.close();
     }
@@ -750,5 +751,4 @@ public class PdfStructElemTest extends ExtendedITextTest {
             fail(errorMessage);
         }
     }
-
 }

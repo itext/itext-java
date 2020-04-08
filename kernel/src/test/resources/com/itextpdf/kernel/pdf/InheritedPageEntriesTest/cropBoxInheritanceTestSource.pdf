@@ -1,0 +1,81 @@
+%PDF-1.7
+%‚„œ”
+5 0 obj
+<</Length 262>>stream
+q
+BT
+/F1 12 Tf
+36 789.33 Td
+2 Tr
+0.1 w
+1 0 0 RG
+(This is a fill and stroke text)Tj
+ET
+Q
+q
+BT
+/F1 12 Tf
+36 763.35 Td
+1 Tr
+0.3 w
+0 1 0 RG
+(This is a stroke-only text)Tj
+ET
+Q
+q
+BT
+/F1 20 Tf
+36 728.92 Td
+2 Tr
+0.3 w
+0 0 1 RG
+0 1 0 rg
+(This is a colorful text)Tj
+ET
+Q
+
+endstream
+endobj
+4 0 obj
+<</Contents 5 0 R/Parent 2 0 R/TrimBox[0 0 595 842]/Type/Page>>
+endobj
+1 0 obj
+<</Pages 2 0 R/Type/Catalog>>
+endobj
+3 0 obj
+<</CreationDate(D:20150924110049+03'00')/ModDate(D:20200117143645+03'00')/Producer(iTextÆ 6.0.0-SNAPSHOT ©2000-2014 iText Group NV \(AGPL-version\); modified using iTextÆ 7.1.5-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+endobj
+2 0 obj
+<</Count 1/CropBox 8 0 R/Kids[4 0 R]/MediaBox 7 0 R/Resources 10 0 R/Type/Pages>>
+endobj
+7 0 obj
+[0 0 595 842]
+endobj
+8 0 obj
+[0 0 595 842]
+endobj
+10 0 obj
+<</Font<</F1 6 0 R>>>>
+endobj
+6 0 obj
+<</BaseFont/Helvetica/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+xref
+0 11
+0000000009 65535 f 
+0000000404 00000 n 
+0000000696 00000 n 
+0000000449 00000 n 
+0000000325 00000 n 
+0000000015 00000 n 
+0000000890 00000 n 
+0000000793 00000 n 
+0000000822 00000 n 
+0000000000 00001 f 
+0000000851 00000 n 
+trailer
+<</ID [<5195e9165a91a71cac59a8208234b2ce><c0b7d463a30cd90aab73c9a9c4f80dab>]/Info 3 0 R/Root 1 0 R/Size 11>>
+%iText-7.1.5-SNAPSHOT
+startxref
+978
+%%EOF

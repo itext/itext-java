@@ -57,6 +57,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import static java.util.Collections.emptySet;
 
 /**
  * Wrapper class that represent resource dictionary - that define named resources
@@ -389,7 +390,6 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
      * @return the name of all the added resources.
      */
     public Set<PdfName> getResourceNames() {
-        // TODO: isn't it better to use HashSet? Do we really need certain order?
         Set<PdfName> names = new TreeSet<>();
         for (PdfName resType : getPdfObject().keySet()) {
             names.addAll(getResourceNames(resType));
@@ -427,8 +427,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
      */
     public Set<PdfName> getResourceNames(PdfName resType) {
         PdfDictionary resourceCategory = getPdfObject().getAsDictionary(resType);
-        // TODO: TreeSet or HashSet enough?
-        return resourceCategory == null ? new TreeSet<PdfName>() : resourceCategory.keySet();
+        return resourceCategory == null ? Collections.<PdfName>emptySet() : resourceCategory.keySet();
     }
 
     /**

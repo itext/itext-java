@@ -142,6 +142,9 @@ public class CssDefaults {
         defaultValues.put(CommonCssConstants.WHITE_SPACE, CommonCssConstants.NORMAL);
         defaultValues.put(CommonCssConstants.WIDTH, CommonCssConstants.AUTO);
 
+        defaultValues.put(CommonCssConstants.ORPHANS, "2");
+        defaultValues.put(CommonCssConstants.WIDOWS, "2");
+
         // TODO not complete
     }
 

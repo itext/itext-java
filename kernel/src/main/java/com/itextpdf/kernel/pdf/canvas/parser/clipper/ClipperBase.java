@@ -73,7 +73,7 @@ public abstract class ClipperBase implements IClipper {
     private static boolean rangeTest( LongPoint Pt, boolean useFullRange ) {
         if (useFullRange) {
             if (Pt.getX() > HI_RANGE || Pt.getY() > HI_RANGE || -Pt.getX() > HI_RANGE || -Pt.getY() > HI_RANGE)
-                throw new IllegalStateException("Coordinate outside allowed range");
+                throw new ClipperException(ClipperExceptionConstant.COORDINATE_OUTSIDE_ALLOWED_RANGE);
         } else if (Pt.getX() > LOW_RANGE || Pt.getY() > LOW_RANGE || -Pt.getX() > LOW_RANGE || -Pt.getY() > LOW_RANGE) {
             return rangeTest(Pt, true);
         }

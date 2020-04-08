@@ -66,10 +66,6 @@ public class GposLookupType5 extends OpenTableLookup {
 
     @Override
     public boolean transformOne(GlyphLine line) {
-        // TODO it seems that for complex cases (symbol1, symbol2, mark, symbol3) and (symbol1, symbol2, symbol3) compose a ligature,
-        // mark should be placed in the corresponding anchor of that ligature (second component's anchor).
-        // But for now we do not store all the substitution info and therefore not able to follow that logic.
-        // Place the mark symbol in the first available place for now.
         if (line.idx >= line.end)
             return false;
         if (openReader.isSkip(line.get(line.idx).getCode(), lookupFlag)) {
@@ -78,38 +74,55 @@ public class GposLookupType5 extends OpenTableLookup {
         }
 
         boolean changed = false;
-        GlyphIndexer gi = null;
+        GlyphIndexer ligatureGlyphIndexer = null;
         for (MarkToLigature mb : marksligatures) {
             OtfMarkRecord omr = mb.marks.get(line.get(line.idx).getCode());
             if (omr == null)
                 continue;
-            if (gi == null) {
-                gi = new GlyphIndexer();
-                gi.idx = line.idx;
-                gi.line = line;
+            if (ligatureGlyphIndexer == null) {
+                ligatureGlyphIndexer = new GlyphIndexer();
+                ligatureGlyphIndexer.idx = line.idx;
+                ligatureGlyphIndexer.line = line;
                 while (true) {
-                    gi.previousGlyph(openReader, lookupFlag);
-                    if (gi.glyph == null)
+                    ligatureGlyphIndexer.previousGlyph(openReader, lookupFlag);
+                    if (ligatureGlyphIndexer.glyph == null) {
                         break;
+                    }
                     // not mark => ligature glyph
-                    if (!mb.marks.containsKey(gi.glyph.getCode()))
+                    if (!mb.marks.containsKey(ligatureGlyphIndexer.glyph.getCode())) {
                         break;
+                    }
                 }
-                if (gi.glyph == null)
+                if (ligatureGlyphIndexer.glyph == null) {
                     break;
+                }
             }
-            List<GposAnchor[]> gpas = mb.ligatures.get(gi.glyph.getCode());
-            if (gpas == null)
+            List<GposAnchor[]> componentAnchors = mb.ligatures.get(ligatureGlyphIndexer.glyph.getCode());
+            if (componentAnchors == null) {
                 continue;
+            }
             int markClass = omr.markClass;
-            for (int component = 0; component < gpas.size(); component++) {
-                if (gpas.get(component)[markClass] != null) {
-                    GposAnchor baseAnchor = gpas.get(component)[markClass];
+            // TODO DEVSIX-3732 For complex cases like (glyph1, glyph2, mark, glyph3) and
+            //  (glyph1, mark, glyph2, glyph3) when the base glyphs compose a ligature and the mark
+            //  is attached to the ligature afterwards, mark should be placed in the corresponding anchor
+            //  of that ligature (by finding the right component's anchor).
+            //  Excerpt from Microsoft Docs: "For a given mark assigned to a particular class, the appropriate
+            //  base attachment point is determined by which ligature component the mark is associated with.
+            //  This is dependent on the original character string and subsequent character- or glyph-sequence
+            //  processing, not the font data alone. While a text-layout client is performing any character-based
+            //  preprocessing or any glyph-substitution operations using the GSUB table, the text-layout client
+            //  must keep track of the associations of marks to particular ligature-glyph components."
+            //  For now we do not store all the substitution info and therefore not able to follow that logic.
+            //  We place the mark symbol in the last available place for now (seems to be better default than
+            //  first available place).
+            for (int component = componentAnchors.size() - 1; component >= 0; component--) {
+                if (componentAnchors.get(component)[markClass] != null) {
+                    GposAnchor baseAnchor = componentAnchors.get(component)[markClass];
                     GposAnchor markAnchor = omr.anchor;
-            line.add(line.idx, new Glyph(line.get(line.idx),
-                    markAnchor.XCoordinate - baseAnchor.XCoordinate,
-                    markAnchor.YCoordinate - baseAnchor.YCoordinate,
-                    0, 0, gi.idx - line.idx));
+                    line.set(line.idx, new Glyph(line.get(line.idx),
+                            baseAnchor.XCoordinate - markAnchor.XCoordinate,
+                            baseAnchor.YCoordinate - markAnchor.YCoordinate,
+                            0, 0, ligatureGlyphIndexer.idx - line.idx));
                     changed = true;
                     break;
                 }
@@ -150,7 +163,9 @@ public class GposLookupType5 extends OpenTableLookup {
 
     public static class MarkToLigature implements Serializable {
         private static final long serialVersionUID = 4249432630962669432L;
-        public final Map<Integer,OtfMarkRecord> marks = new HashMap<>();
-        public final Map<Integer,List<GposAnchor[]>> ligatures = new HashMap<>();
+        public final Map<Integer, OtfMarkRecord> marks = new HashMap<>();
+        // Glyph id to list of components, each component has a separate list of attachment points
+        // defined for different mark classes
+        public final Map<Integer, List<GposAnchor[]>> ligatures = new HashMap<>();
     }
 }

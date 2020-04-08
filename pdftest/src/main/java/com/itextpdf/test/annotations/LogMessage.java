@@ -43,6 +43,7 @@
  */
 package com.itextpdf.test.annotations;
 
+import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.LogListener;
 
 /**
@@ -52,18 +53,21 @@ import com.itextpdf.test.LogListener;
  */
 public @interface LogMessage {
     /**
-     * Defines the parameterized log message to look for in the logs. 
+     * Defines the parameterized log message to look for in the logs.
+     *
      * @return the message template that must be checked for
      */
     String messageTemplate();
-    
+
     /**
      * A certain message may have to be called several times, and the {@link
      * LogListener} algorithm checks whether it has been called the correct
      * number of times.
      * Defaults to once.
-     * 
+     *
      * @return the number of times a message template must appear in the logs
      */
     int count() default 1;
+
+    int logLevel() default LogLevelConstants.UNKNOWN;
 }

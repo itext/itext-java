@@ -59,6 +59,14 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import javax.xml.bind.Element;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -100,29 +108,6 @@ public class PdfPagesTest extends ExtendedITextTest {
         pdfDoc.close();
         verifyPagesOrder(destinationFolder + filename, pageCount);
     }
-
-//    @Test
-//    public void simpleClonePagesTest() throws IOException {
-//        String filename = "simpleClonePagesTest.pdf";
-//        int pageCount = 111;
-//
-//        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
-//        PdfWriter writer = new PdfWriter(fos);
-//        PdfDocument pdfDoc = new PdfDocument(writer);
-//
-//        for (int i = 0; i < pageCount; i++) {
-//            PdfPage page = pdfDoc.addNewPage();
-//            page.getPdfObject().put(PageNum, new PdfNumber(i + 1));
-//        }
-//        for (int i = 0; i < pageCount; i++) {
-//            PdfPage page = pdfDoc.addPage((PdfPage)pdfDoc.getPage(i + 1).clone());
-//            page.getPdfObject().put(PageNum, new PdfNumber(pageCount + i + 1));
-//            pdfDoc.getPage(i + 1).flush();
-//            page.flush();
-//        }
-//        pdfDoc.close();
-//        verifyPagesOrder(destinationFolder + filename, pageCount);
-//    }
 
     @Test
     public void reversePagesTest() throws IOException {
@@ -348,15 +333,33 @@ public class PdfPagesTest extends ExtendedITextTest {
         Assert.assertEquals(10, gState.getLineWidth().intValue());
     }
 
-    //    @Test(expected = PdfException.class)
-//    public void testCircularReferencesInResources() throws IOException {
-//        String inputFileName1 = sourceFolder + "circularReferencesInResources.pdf";
-//        PdfReader reader1 = new PdfReader(inputFileName1);
-//        PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
-//        PdfPage page = inputPdfDoc1.getPage(1);
-//        List<PdfFont> list = page.getResources().getFonts(true);
-//    }
-//
+    @Test
+    public void readFormXObjectsWithCircularReferencesInResources() throws IOException {
+
+        // given input file contains circular reference in resources of form xobjects
+        // (form xobjects are nested inside each other)
+        String input = sourceFolder + "circularReferencesInResources.pdf";
+
+        PdfReader reader1 = new PdfReader(input);
+        PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
+        PdfPage page = inputPdfDoc1.getPage(1);
+        PdfResources resources = page.getResources();
+        List<PdfFormXObject> formXObjects = new ArrayList<>();
+
+        // We just try to work with resources in arbitrary way and make sure that circular reference
+        // doesn't block it. However it is expected that PdfResources doesn't try to "look in deep"
+        // and recursively resolves resources, so this test should never meet any issues.
+        for (PdfName xObjName : resources.getResourceNames(PdfName.XObject)) {
+            PdfFormXObject form = resources.getForm(xObjName);
+            if (form != null) {
+                formXObjects.add(form);
+            }
+        }
+
+        // ensure resources XObject entry is read correctly
+        Assert.assertEquals(2, formXObjects.size());
+    }
+
     @Test
     public void testInheritedResourcesUpdate() throws IOException, InterruptedException {
         PdfDocument pdfDoc = new PdfDocument(
@@ -649,6 +652,74 @@ public class PdfPagesTest extends ExtendedITextTest {
         Assert.assertEquals(3, getAmountOfReadPages(pageIndRefArray));
 
         document.close();
+    }
+
+    @Test
+    public void implicitPagesTreeRebuildingTest() throws IOException, InterruptedException {
+        String inFileName = sourceFolder + "implicitPagesTreeRebuilding.pdf";
+        String outFileName = destinationFolder + "implicitPagesTreeRebuilding.pdf";
+        String cmpFileName = sourceFolder + "cmp_implicitPagesTreeRebuilding.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName), new PdfWriter(outFileName));
+        pdfDocument.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName,cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE)})
+    public void brokenPageTreeWithExcessiveLastPageTest() throws IOException {
+        String inFileName = sourceFolder + "brokenPageTreeNullLast.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
+
+        List<Integer> pages = Arrays.asList(4);
+        Set<Integer> nullPages = new HashSet<>(pages);
+
+        findAndAssertNullPages(pdfDocument, nullPages);
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE)})
+    public void brokenPageTreeWithExcessiveMiddlePageTest() throws IOException {
+        String inFileName = sourceFolder + "brokenPageTreeNullMiddle.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
+
+        List<Integer> pages = Arrays.asList(3);
+        Set<Integer> nullPages = new HashSet<>(pages);
+
+        findAndAssertNullPages(pdfDocument, nullPages);
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, count = 7)})
+    public void brokenPageTreeWithExcessiveMultipleNegativePagesTest() throws IOException {
+        String inFileName = sourceFolder + "brokenPageTreeNullMultipleSequence.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
+
+        List<Integer> pages = Arrays.asList(2, 3, 4, 6, 7, 8, 9);
+        Set<Integer> nullPages = new HashSet<>(pages);
+
+        findAndAssertNullPages(pdfDocument, nullPages);
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, count = 2)})
+    public void brokenPageTreeWithExcessiveRangeNegativePagesTest() throws IOException {
+        String inFileName = sourceFolder + "brokenPageTreeNullRangeNegative.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
+
+        List<Integer> pages = Arrays.asList(2, 4);
+        Set<Integer> nullPages = new HashSet<>(pages);
+
+        findAndAssertNullPages(pdfDocument, nullPages);
+    }
+
+    private static void findAndAssertNullPages(PdfDocument pdfDocument, Set<Integer> nullPages) {
+            for (Integer e : nullPages) {
+                Assert.assertNull(pdfDocument.getPage((int) e));
+            }
     }
 
     private int getAmountOfReadPages(PdfArray pageIndRefArray) {

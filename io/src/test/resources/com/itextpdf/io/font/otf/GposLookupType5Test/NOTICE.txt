@@ -1,0 +1,4 @@
+Please note the following license information about the fonts used in the tests:
+
+* KhmerOS.ttf font has been downloaded from https://sourceforge.net/projects/khmer/files/Fonts%20-%20KhmerOS/KhmerOS%20Fonts%205.0-%20LGPL%20Licence/ (distributed under LGPL Licence)
+* NotoNaskhArabic-Regular is used under SIL Open Font License v1.1 (see LICENSE_OFL.txt)

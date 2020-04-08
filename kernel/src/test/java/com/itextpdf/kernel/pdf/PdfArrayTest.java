@@ -43,8 +43,17 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.parser.EventType;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
+import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -224,6 +233,44 @@ public class PdfArrayTest extends ExtendedITextTest {
 
         for (int i = 0; i < array2.size(); i++) {
             Assert.assertEquals(i, array.indexOf(array2.get(i)));
+        }
+    }
+
+    @Test
+    public void pdfUncoloredPatternColorSize1Test() {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+
+        String contentColorSpace = "/Cs1 cs\n";
+        PdfDictionary pageDictionary = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDocument);
+        PdfStream contentStream = new PdfStream(contentColorSpace.getBytes());
+        pageDictionary.put(PdfName.Contents, contentStream);
+
+        PdfPage page = pdfDocument.addNewPage();
+        page.getPdfObject().put(PdfName.Contents, contentStream);
+
+        PdfArray pdfArray = new PdfArray();
+        pdfArray.add(PdfName.Pattern);
+        PdfColorSpace space = PdfColorSpace.makeColorSpace(pdfArray);
+        page.getResources().addColorSpace(space);
+
+        Rectangle rectangle = new Rectangle(50, 50, 1000, 1000);
+        page.setMediaBox(rectangle);
+
+        PdfCanvasProcessor processor = new PdfCanvasProcessor(new NoOpListener());
+        processor.processPageContent(page);
+
+        // Check if we reach the end of the test without failings together with verifying expected color space instance
+        Assert.assertTrue(processor.getGraphicsState().getFillColor().getColorSpace() instanceof PdfSpecialCs.Pattern);
+    }
+
+    private static class NoOpListener implements IEventListener {
+        @Override
+        public void eventOccurred(IEventData data, EventType type) {
+        }
+
+        @Override
+        public Set<EventType> getSupportedEvents() {
+            return null;
         }
     }
 }

@@ -46,6 +46,10 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -85,5 +89,15 @@ public class UrlUtilTest extends ExtendedITextTest {
         String expected = "";
         File tempFile = null;
         Assert.assertEquals(expected, FileUtil.getParentDirectory(tempFile));
+    }
+
+    @Test
+    public void openStreamTest() throws IOException {
+        String resPath = "./src/test/resources/com/itextpdf/io/util/textFile.dat";
+        InputStream openStream = UrlUtil.openStream(new File(resPath).toURI().toURL());
+
+        String actual = new String(StreamUtil.inputStreamToArray(openStream), StandardCharsets.UTF_8);
+        Assert.assertEquals("Hello world from text file!", actual);
+
     }
 }

@@ -130,4 +130,12 @@ public final class UrlUtil {
         return new File(filename).toURI().toURL().toExternalForm();
     }
 
+    /**
+     * This method gets normalized uri string from a file.
+     * @param filename a given filename
+     * @return a normalized uri string
+     */
+    public static String getNormalizedFileUriString(String filename) {
+        return "file://" + UrlUtil.toNormalizedURI(filename).getPath();
+    }
 }

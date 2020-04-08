@@ -67,7 +67,7 @@ public class FilteredEventListenerTest extends ExtendedITextTest {
     public void test() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "test.pdf"));
 
-        final String[] expectedText = new String[]{
+        final String[] expectedText = new String[] {
                 "PostScript Compatibility",
                 "Because the PostScript language does not support the transparent imaging \n" +
                         "model, PDF 1.4 consumer applications must have some means for converting the \n" +
@@ -79,18 +79,18 @@ public class FilteredEventListenerTest extends ExtendedITextTest {
                         "determined calibration. In the generated PostScript output, paint the flattened \n" +
                         "colors in a CIE-based color space having that calibration. "};
 
-        final Rectangle[] regions = new Rectangle[]{new Rectangle(90, 581, 130, 24),
+        final Rectangle[] regions = new Rectangle[] {new Rectangle(90, 581, 130, 24),
                 new Rectangle(80, 486, 370, 92), new Rectangle(103, 143, 357, 53)};
 
         final TextRegionEventFilter[] regionFilters = new TextRegionEventFilter[regions.length];
         for (int i = 0; i < regions.length; i++)
             regionFilters[i] = new TextRegionEventFilter(regions[i]);
 
-
         FilteredEventListener listener = new FilteredEventListener();
         LocationTextExtractionStrategy[] extractionStrategies = new LocationTextExtractionStrategy[regions.length];
         for (int i = 0; i < regions.length; i++)
-            extractionStrategies[i] = listener.attachEventListener(new LocationTextExtractionStrategy(), regionFilters[i]);
+            extractionStrategies[i] = listener
+                    .attachEventListener(new LocationTextExtractionStrategy(), regionFilters[i]);
 
         new PdfCanvasProcessor(listener).processPageContent(pdfDocument.getPage(1));
 
@@ -104,7 +104,7 @@ public class FilteredEventListenerTest extends ExtendedITextTest {
     public void multipleFiltersForOneRegionTest() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "test.pdf"));
 
-        final Rectangle[] regions = new Rectangle[]{new Rectangle(0, 0, 500, 650),
+        final Rectangle[] regions = new Rectangle[] {new Rectangle(0, 0, 500, 650),
                 new Rectangle(0, 0, 400, 400), new Rectangle(200, 200, 300, 400), new Rectangle(100, 100, 350, 300)};
 
         final TextRegionEventFilter[] regionFilters = new TextRegionEventFilter[regions.length];
@@ -112,13 +112,14 @@ public class FilteredEventListenerTest extends ExtendedITextTest {
             regionFilters[i] = new TextRegionEventFilter(regions[i]);
 
         FilteredEventListener listener = new FilteredEventListener();
-        LocationTextExtractionStrategy extractionStrategy = listener.attachEventListener(new LocationTextExtractionStrategy(), regionFilters);
+        LocationTextExtractionStrategy extractionStrategy = listener
+                .attachEventListener(new LocationTextExtractionStrategy(), regionFilters);
         new PdfCanvasProcessor(listener).processPageContent(pdfDocument.getPage(1));
         String actualText = extractionStrategy.getResultantText();
 
-        String expectedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilters));
+        String expectedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1),
+                new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilters));
 
         Assert.assertEquals(expectedText, actualText);
     }
-
 }

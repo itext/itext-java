@@ -453,7 +453,7 @@ public class FloatTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile)).setTagged();
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas pdfCanvas = new PdfCanvas(page);
-        Canvas canvas = new Canvas(pdfCanvas, pdfDoc, page.getPageSize().applyMargins(36, 36, 36, 36, false));
+        Canvas canvas = new Canvas(pdfCanvas, page.getPageSize().applyMargins(36, 36, 36, 36, false));
         canvas.enableAutoTagging(page);
 
         Div div = new Div().setBackgroundColor(ColorConstants.RED);

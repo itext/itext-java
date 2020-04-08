@@ -44,67 +44,63 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.layout.LayoutArea;
-import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-
-@Category(UnitTest.class)
-public class TableRendererTest  extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
+@Category(IntegrationTest.class)
+public class TableRendererTest extends ExtendedITextTest {
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, count=13)})
-    public void calculateColumnWidthsNotPointValue() throws FileNotFoundException {
-        junitExpectedException.expect(NullPointerException.class);
-
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream("table_out.pdf")));
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, count = 6)})
+    public void calculateColumnWidthsNotPointValue() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document doc = new Document(pdfDoc);
-        LayoutArea area = new LayoutArea(1, new Rectangle(0,0,100,100));
-        LayoutContext layoutContext = new LayoutContext(area);
-        Rectangle layoutBox = area.getBBox().clone();
 
+        Rectangle layoutBox = new Rectangle(0, 0, 1000, 100);
 
-        Table table = new Table(UnitValue.createPercentArray(new float[]{10, 10, 80}));
+        Table table = new Table(UnitValue.createPercentArray(new float[] {10, 10, 80}));
+
+        // Set margins and paddings in percents, which is not expected
         table.setProperty(Property.MARGIN_RIGHT, UnitValue.createPercentValue(7));
         table.setProperty(Property.MARGIN_LEFT, UnitValue.createPercentValue(7));
         table.setProperty(Property.PADDING_RIGHT, UnitValue.createPercentValue(7));
         table.setProperty(Property.PADDING_LEFT, UnitValue.createPercentValue(7));
-        table.addCell("Col a");
-        table.addCell("Col b");
-        table.addCell("Col c");
-        table.addCell("Value a");
-        table.addCell("Value b");
-        table.addCell("This is a long description for column c. " +
-                "It needs much more space hence we made sure that the third column is wider.");
-        doc.add(table);
 
-        TableRenderer tableRenderer = (TableRenderer) table.getRenderer();
+        // Fill the table somehow. The layout area is wide enough to calculate the widths as expected
+        for (int i = 0; i < 3; i++) {
+            table.addCell("Hello");
+        }
+
+        // Create a TableRenderer, the instance of which will be used to test the application of margins and paddings
+        TableRenderer tableRenderer = (TableRenderer) table.createRendererSubTree().setParent(doc.getRenderer());
+        tableRenderer.bordersHandler = (TableBorders) new SeparatedTableBorders(tableRenderer.rows, 3,
+                tableRenderer.getBorders(), 0);
 
         tableRenderer.applyMarginsAndPaddingsAndCalculateColumnWidths(layoutBox);
 
+        // Specify that the render is not original in order not to recalculate the column widths
+        tableRenderer.isOriginalNonSplitRenderer = false;
+
+        MinMaxWidth minMaxWidth = tableRenderer.getMinMaxWidth();
+        // TODO DEVSIX-3676: currently margins and paddings are still applied as if they are in points. After the mentioned ticket is fixed, the expected values should be updated.
+        Assert.assertEquals(minMaxWidth.getMaxWidth(), 332.46f, 0.001);
+        Assert.assertEquals(minMaxWidth.getMinWidth(), 332.46f, 0.001);
     }
 
     @Test
@@ -121,6 +117,4 @@ public class TableRendererTest  extends ExtendedITextTest {
 
         Assert.assertFalse(grandChildren[0].isOriginalNonSplitRenderer);
     }
-
-
 }

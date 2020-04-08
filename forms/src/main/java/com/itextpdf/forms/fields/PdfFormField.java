@@ -116,8 +116,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
@@ -671,13 +669,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         field.put(PdfName.Opt, options);
         field.setFieldFlags(flags);
         field.setFieldName(name);
-        field.put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
+        ((PdfChoiceFormField) field).setListSelected(new String[] {value}, false);
         if ((flags & PdfChoiceFormField.FF_COMBO) == 0) {
             value = optionsArrayToString(options);
         }
 
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
-        field.drawChoiceAppearance(rect, field.fontSize, value, xObject);
+        field.drawChoiceAppearance(rect, field.fontSize, value, xObject, 0);
         annot.setNormalAppearance(xObject.getPdfObject());
 
         return (PdfChoiceFormField) field;
@@ -1155,10 +1153,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Sets a value to the field and generating field appearance if needed.
+     * Sets a value to the field and generates field appearance if needed.
      *
      * @param value              of the field
-     * @param generateAppearance set this flat to false if you want to keep the appearance of the field generated before
+     * @param generateAppearance if false, appearance won't be regenerated
      * @return the field
      */
     public PdfFormField setValue(String value, boolean generateAppearance) {
@@ -1178,7 +1176,16 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     }
                 }
             }
-            put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
+            if (PdfName.Ch.equals(formType)) {
+                if (this instanceof PdfChoiceFormField) {
+                    ((PdfChoiceFormField) this).setListSelected(new String[] {value}, false);
+                } else {
+                    PdfChoiceFormField choice = new PdfChoiceFormField(this.getPdfObject());
+                    choice.setListSelected(new String[] {value}, false);
+                }
+            } else {
+                put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
+            }
         } else if (PdfName.Btn.equals(formType)) {
             if (getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
                 try {
@@ -1247,9 +1254,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
         setValue(display, true);
         PdfName formType = getFormType();
-        if (PdfName.Tx.equals(formType) || PdfName.Ch.equals(formType)) {
-            put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
-        } else if (PdfName.Btn.equals(formType)) {
+        if (PdfName.Btn.equals(formType)) {
             if ((getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
                 text = value;
             } else {
@@ -2271,8 +2276,29 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    /**
+     * Inserts the value into the {@link PdfDictionary} of this field and associates it with the specified key.
+     * If the key is already present in this field dictionary,
+     * this method will override the old value with the specified one.
+     *
+     * @param key  key to insert or to override
+     * @param value the value to associate with the specified key
+     * @return this {@link PdfFormField} instance
+     */
     public PdfFormField put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
+        return this;
+    }
+
+    /**
+     * Removes the specified key from the {@link PdfDictionary} of this field.
+     *
+     * @param key key to be removed
+     * @return this {@link PdfFormField} instance
+     */
+    public PdfFormField remove(PdfName key) {
+        getPdfObject().remove(key);
         setModified();
         return this;
     }
@@ -2451,7 +2477,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             x = rect.getWidth() / 2;
         }
 
-        Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(0, -height, 0, 2 * height));
+        Canvas modelCanvas = new Canvas(canvas, new Rectangle(0, -height, 0, 2 * height));
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
 
         Style paragraphStyle = new Style().setFont(font).setFontSize(fontSize);
@@ -2523,7 +2549,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         canvas.beginVariableText();
 
         Rectangle areaRect = new Rectangle(0, 0, width, height);
-        Canvas modelCanvas = new Canvas(canvas, getDocument(), areaRect);
+        Canvas modelCanvas = new Canvas(canvas, areaRect);
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
 
         Paragraph paragraph = createParagraphForTextFieldValue(value).setFont(font)
@@ -2560,7 +2586,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param value      The initial value
      * @param appearance The appearance
      */
-    private void drawChoiceAppearance(Rectangle rect, float fontSize, String value, PdfFormXObject appearance) {
+    private void drawChoiceAppearance(Rectangle rect, float fontSize, String value, PdfFormXObject appearance, int topIndex) {
         PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
         PdfResources resources = appearance.getResources();
         PdfCanvas canvas = new PdfCanvas(stream, resources, getDocument());
@@ -2580,7 +2606,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 clip().
                 endPath();
 
-        Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(3, 0, Math.max(0, width - widthBorder), Math.max(0, height - heightBorder)));
+        Canvas modelCanvas = new Canvas(canvas, new Rectangle(3, 0, Math.max(0, width - widthBorder), Math.max(0, height - heightBorder)));
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
         for (int index = 0; index < strings.size(); index++) {
             Boolean isFull = modelCanvas.getRenderer().getPropertyAsBoolean(Property.FULL);
@@ -2594,17 +2620,19 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             if (color != null) {
                 paragraph.setFontColor(color);
             }
-            PdfArray indices = getPdfObject().getAsArray(PdfName.I);
-            if (indices == null && this.getKids() == null && this.getParent() != null) {
-                indices = this.getParent().getAsArray(PdfName.I);
-            }
-            if (indices != null && indices.size() > 0) {
-                for (PdfObject ind : indices) {
-                    if (!ind.isNumber())
-                        continue;
-                    if (((PdfNumber) ind).getValue() == index) {
-                        paragraph.setBackgroundColor(new DeviceRgb(10, 36, 106));
-                        paragraph.setFontColor(ColorConstants.LIGHT_GRAY);
+            if (!this.getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
+                PdfArray indices = getPdfObject().getAsArray(PdfName.I);
+                if (indices == null && this.getKids() == null && this.getParent() != null) {
+                    indices = this.getParent().getAsArray(PdfName.I);
+                }
+                if (indices != null && indices.size() > 0) {
+                    for (PdfObject ind : indices) {
+                        if (!ind.isNumber())
+                            continue;
+                        if (((PdfNumber) ind).getValue() == index + topIndex) {
+                            paragraph.setBackgroundColor(new DeviceRgb(10, 36, 106));
+                            paragraph.setFontColor(ColorConstants.LIGHT_GRAY);
+                        }
                     }
                 }
             }
@@ -2970,7 +2998,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         Paragraph paragraph = new Paragraph(text).setFont(font).setFontSize(fontSize).setMargin(0).setMultipliedLeading(1).
                 setVerticalAlignment(VerticalAlignment.MIDDLE);
-        Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(0, -height, width, 2 * height));
+        Canvas modelCanvas = new Canvas(canvas, new Rectangle(0, -height, width, 2 * height));
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
         modelCanvas.showTextAligned(paragraph, width / 2, height / 2, TextAlignment.CENTER, VerticalAlignment.MIDDLE);
     }
@@ -3539,21 +3567,24 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 drawTextAppearance(bboxRectangle, this.font, getFontSize(bBox, value), value, appearance);
             }
         } else {
+            int topIndex = 0;
             if (!getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
-                PdfNumber topIndex = this.getPdfObject().getAsNumber(PdfName.TI);
-                if (topIndex == null && this.getParent() != null) {
-                    topIndex = this.getParent().getAsNumber(PdfName.TI);
+                PdfNumber topIndexNum = this.getPdfObject().getAsNumber(PdfName.TI);
+                if (topIndexNum == null && this.getParent() != null) {
+                    topIndexNum = this.getParent().getAsNumber(PdfName.TI);
                 }
                 PdfArray options = getOptions();
                 if (null == options && this.getParent() != null) {
                     options = this.getParent().getAsArray(PdfName.Opt);
                 }
                 if (null != options) {
-                    PdfArray visibleOptions = null != topIndex ? new PdfArray(options.subList(topIndex.intValue(), options.size() - 1)) : (PdfArray) options.clone();
+                    topIndex = null != topIndexNum ? topIndexNum.intValue() : 0;
+                    PdfArray visibleOptions = topIndex > 0
+                            ? new PdfArray(options.subList(topIndex, options.size())) : (PdfArray) options.clone();
                     value = optionsArrayToString(visibleOptions);
                 }
             }
-            drawChoiceAppearance(bboxRectangle, getFontSize(bBox, value), value, appearance);
+            drawChoiceAppearance(bboxRectangle, getFontSize(bBox, value), value, appearance, topIndex);
         }
         PdfDictionary ap = new PdfDictionary();
         ap.put(PdfName.N, appearance.getPdfObject());
@@ -3628,6 +3659,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 if (element.isString()) {
                     sb.append(((PdfString) element).toUnicodeString()).append('\n');
                 }
+            } else {
+                sb.append('\n');
             }
         }
         // last '\n'

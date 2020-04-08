@@ -47,11 +47,60 @@ import java.net.URL;
 
 public class PngImageData extends RawImageData {
 
+    private byte[] colorPalette;
+    private int colorType;
+    private float gamma = 1f;
+    private PngChromaticities pngChromaticities;
+
     protected PngImageData(byte[] bytes) {
         super(bytes, ImageType.PNG);
     }
 
     protected PngImageData(URL url) {
         super(url, ImageType.PNG);
+    }
+
+    public byte[] getColorPalette() {
+        return colorPalette;
+    }
+
+    public void setColorPalette(byte[] colorPalette) {
+        this.colorPalette = colorPalette;
+    }
+
+    public float getGamma() {
+        return gamma;
+    }
+
+    public void setGamma(float gamma) {
+        this.gamma = gamma;
+    }
+
+    public boolean isHasCHRM() {
+        return this.pngChromaticities != null;
+    }
+
+    public PngChromaticities getPngChromaticities() {
+        return pngChromaticities;
+    }
+
+    public void setPngChromaticities(PngChromaticities pngChromaticities) {
+        this.pngChromaticities = pngChromaticities;
+    }
+
+    public int getColorType() {
+        return colorType;
+    }
+
+    public void setColorType(int colorType) {
+        this.colorType = colorType;
+    }
+
+    public boolean isIndexed() {
+        return this.colorType == 3;
+    }
+
+    public boolean isGrayscaleImage() {
+        return (this.colorType & 2) == 0;
     }
 }

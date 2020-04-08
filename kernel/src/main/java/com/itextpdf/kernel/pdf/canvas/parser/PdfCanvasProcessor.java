@@ -48,6 +48,7 @@ import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.KernelLogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.CalGray;
 import com.itextpdf.kernel.colors.CalRgb;
@@ -91,19 +92,15 @@ import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+
+import java.util.Objects;
+import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 import static com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.FillingRule;
 
@@ -915,7 +912,6 @@ public class PdfCanvasProcessor {
                 if (gsDic == null)
                     throw new PdfException(PdfException._1IsAnUnknownGraphicsStateDictionary).setMessageParams(dictionaryName);
             }
-            // at this point, all we care about is the FONT entry in the GS dictionary TODO merge the whole gs dictionary
             PdfArray fontParameter = gsDic.getAsArray(PdfName.Font);
             if (fontParameter != null) {
                 PdfFont font = processor.getFont(fontParameter.getAsDictionary(0));
@@ -924,6 +920,8 @@ public class PdfCanvasProcessor {
                 processor.getGraphicsState().setFont(font);
                 processor.getGraphicsState().setFontSize(size);
             }
+            PdfExtGState pdfExtGState = new PdfExtGState(gsDic.clone(Collections.singletonList(PdfName.Font)));
+            processor.getGraphicsState().updateFromExtGState(pdfExtGState);
         }
     }
 
@@ -1027,6 +1025,11 @@ public class PdfCanvasProcessor {
                 }
             }
         }
+
+        Logger logger = LoggerFactory.getLogger(PdfCanvasProcessor.class);
+        logger.warn(MessageFormatUtil.format(KernelLogMessageConstant.UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE,
+                Arrays.toString((Object[])operands.toArray()), pdfColorSpace.getPdfObject()));
+
         return null;
     }
 

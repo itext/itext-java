@@ -78,7 +78,7 @@ public final class Version {
      * This String contains the version number of this iText release.
      * For debugging purposes, we request you NOT to change this constant.
      */
-    private static final String release = "7.1.10";
+    private static final String release = "7.1.11";
     /**
      * This String contains the iText version as shown in the producer line.
      * iText is a product developed by iText Group NV.
@@ -102,7 +102,7 @@ public final class Version {
         this.info = new VersionInfo(iTextProductName, release, producerLine, null);
     }
 
-    private Version(VersionInfo info, boolean expired) {
+    Version(VersionInfo info, boolean expired) {
         this.info = info;
         this.expired = expired;
     }
@@ -255,11 +255,47 @@ public final class Version {
         return info;
     }
 
+    static String[] parseVersionString(String version) {
+        String splitRegex = "\\.";
+        String[] split = version.split(splitRegex);
+        //Guard for empty versions and throw exceptions
+        if (split.length == 0) {
+            throw new LicenseVersionException(LicenseVersionException.VERSION_STRING_IS_EMPTY_AND_CANNOT_BE_PARSED);
+        }
+        //Desired Format: X.Y.Z-....
+        //Also catch X, X.Y-...
+        String major = split[0];
+        //If no minor version is present, default to 0
+        String minor = "0";
+        if (split.length > 1) {
+            minor = split[1].substring(0);
+        }
+        //Check if both values are numbers
+        if (!isVersionNumeric(major)) {
+            throw new LicenseVersionException(LicenseVersionException.MAJOR_VERSION_IS_NOT_NUMERIC);
+        }
+        if (!isVersionNumeric(minor)) {
+            throw new LicenseVersionException(LicenseVersionException.MINOR_VERSION_IS_NOT_NUMERIC);
+        }
+        return new String[] {major, minor};
+    }
+
+    static boolean isVersionNumeric(String version) {
+        try {
+            int value = (int) Integer.parseInt(version);
+            // parseInt accepts numbers which start with a plus sign, but for a version it's unacceptable
+            return value >= 0 && !version.contains("+");
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
     /**
      * Checks if the current object has been initialized with AGPL license.
+     *
      * @return returns true if the current object has been initialized with AGPL license.
      */
-    private boolean isAGPL() {
+    boolean isAGPL() {
         return getVersion().indexOf(AGPL) > 0;
     }
 
@@ -318,27 +354,6 @@ public final class Version {
 
     }
 
-    private static String[] parseVersionString(String version){
-        String splitRegex = "\\.";
-        String[] split = version.split(splitRegex);
-        //Guard for empty versions and throw exceptions
-        if(split.length == 0){
-            throw new LicenseVersionException(LicenseVersionException.VERSION_STRING_IS_EMPTY_AND_CANNOT_BE_PARSED);
-        }
-        //Desired Format: X.Y.Z-....
-        //Also catch X, X.Y-...
-        String major = split[0];
-        //If no minor version is present, default to 0
-        String minor ="0";
-        if(split.length > 1) {
-            minor = split[1].substring(0);
-        }
-        //Check if both values are numbers
-        if(!isVersionNumeric(major)) throw new LicenseVersionException(LicenseVersionException.MAJOR_VERSION_IS_NOT_NUMERIC);
-        if(!isVersionNumeric(minor)) throw new LicenseVersionException(LicenseVersionException.MINOR_VERSION_IS_NOT_NUMERIC);
-        return new String[]{major,minor};
-    }
-
     private static String[] getLicenseeInfoFromLicenseKey(String validatorKey) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
         String licenseeInfoMethodName = "getLicenseeInfoForVersion";
         Class<?> klass = getLicenseKeyClass();
@@ -362,17 +377,6 @@ public final class Version {
             //TODO: Log this exception?
         }
         return result;
-    }
-
-    private static boolean isVersionNumeric(String version){
-        //I did not want to introduce an extra dependency on apache.commons in order to use StringUtils.
-        //This small method is not the most optimal, but it should do for release
-        try{
-            Double.parseDouble(version);
-            return true;
-        }catch(NumberFormatException e){
-            return false;
-        }
     }
 
     private static Version atomicSetVersion(Version newVersion) {

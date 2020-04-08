@@ -57,6 +57,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.w3c.dom.Node;
 
 @Category(IntegrationTest.class)
 public class XFAFormTest extends ExtendedITextTest {
@@ -141,4 +142,15 @@ public class XFAFormTest extends ExtendedITextTest {
         Assert.assertNull(name);
     }
 
+    @Test
+    public void extractXFADataTest() throws IOException {
+        String src = sourceFolder + "xfaFormWithDataSet.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(src));
+        XfaForm xfa = new XfaForm(pdfDocument);
+
+        Node node = xfa.findDatasetsNode("Number1");
+        Assert.assertNotNull(node);
+        Assert.assertEquals("Number1", node.getNodeName());
+    }
 }

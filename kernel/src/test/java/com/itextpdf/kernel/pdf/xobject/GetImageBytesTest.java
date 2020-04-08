@@ -47,6 +47,7 @@ import com.itextpdf.io.codec.TIFFDirectory;
 import com.itextpdf.io.codec.TIFFField;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -56,25 +57,39 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.canvas.parser.EventType;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
+import com.itextpdf.kernel.pdf.canvas.parser.data.ImageRenderInfo;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 
+import java.util.Set;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class GetImageBytesTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/";
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -143,6 +158,77 @@ public class GetImageBytesTest extends ExtendedITextTest {
     @Test
     public void testFlateCalRgb() throws Exception {
         testFile("img_calrgb.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void extractByteAlignedG4TiffImageTest() throws IOException {
+        String inFileName = sourceFolder + "extractByteAlignedG4TiffImage.pdf";
+        String outImageFileName = destinationFolder + "extractedByteAlignedImage.png";
+        String cmpImageFileName = sourceFolder + "cmp_extractByteAlignedG4TiffImage.png";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
+
+        ImageExtractor listener = new ImageExtractor();
+        PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
+        processor.processPageContent(pdfDocument.getPage(1));
+
+        java.util.List<byte[]> images = listener.getImages();
+        Assert.assertEquals(1, images.size());
+
+        try (FileOutputStream fos = new FileOutputStream(outImageFileName)) {
+            fos.write(images.get(0), 0, images.size());
+        }
+
+        // expected and actual are swapped here for simplicity
+        int expectedLen = images.get(0).length;
+        byte[] buf = new byte[expectedLen];
+        try (FileInputStream is = new FileInputStream(cmpImageFileName)) {
+            int read = is.read(buf, 0, buf.length);
+            Assert.assertEquals(expectedLen, read);
+            read = is.read(buf, 0, buf.length);
+            Assert.assertTrue(read <= 0);
+        }
+        Assert.assertArrayEquals(images.get(0), buf);
+    }
+
+    @Test
+    public void expectedByteAlignedTiffImageExtractionTest() throws IOException {
+        //Byte-aligned image is expected in pdf file, but in fact it's not
+        junitExpectedException.expect(com.itextpdf.io.IOException.class);
+        junitExpectedException.expectMessage(MessageFormatUtil.format
+                (com.itextpdf.io.IOException.ExpectedTrailingZeroBitsForByteAlignedLines));
+
+        String inFileName = sourceFolder + "expectedByteAlignedTiffImageExtraction.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
+
+        ImageExtractor listener = new ImageExtractor();
+        PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
+        processor.processPageContent(pdfDocument.getPage(1));
+    }
+
+    private class ImageExtractor implements IEventListener {
+        private java.util.List<byte[]> images = new ArrayList<>();
+
+        public void eventOccurred(IEventData data, EventType type) {
+            switch (type) {
+                case RENDER_IMAGE:
+                    ImageRenderInfo renderInfo = (ImageRenderInfo) data;
+                    byte[] bytes = renderInfo.getImage().getImageBytes();
+                    images.add(bytes);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public Set<EventType> getSupportedEvents() {
+            return null;
+        }
+
+        public java.util.List<byte[]> getImages() {
+            return images;
+        }
     }
 
     private void testFile(String filename, String objectid, String expectedImageFormat) throws Exception {

@@ -96,11 +96,11 @@ public class TableTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TableTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/TableTest/";
 
-    static final String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
+    private static final String TEXT_CONTENT = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
             "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
             "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
-    static final String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
-    static final String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
+    private static final String SHORT_TEXT_CONTENT = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
+    private static final String MIDDLE_TEXT_CONTENT = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
             "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
     @Rule
@@ -618,7 +618,7 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        doc.add(new Paragraph(textContent));
+        doc.add(new Paragraph(TEXT_CONTENT));
 
         Table table = new Table(new float[]{50, 50, 50})
                 .addCell(new Cell().add(new Paragraph("cell 1, 1")))
@@ -651,19 +651,19 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{130, 130, 260})
-                .addCell(new Cell(3, 2).add(new Paragraph("cell 1:2, 1:3\n" + textContent + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 1, 3\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + textContent)))
+                .addCell(new Cell(3, 2).add(new Paragraph("cell 1:2, 1:3\n" + TEXT_CONTENT + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 3\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + TEXT_CONTENT)))
                 .addCell(new Cell().add(new Image(ImageDataFactory.create(sourceFolder + "red.png"))))
-                .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + shortTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 5, 2\n" + shortTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 5, 3\n" + middleTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 6, 1\n" + middleTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 6, 2\n" + middleTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + middleTextContent)));
+                .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + SHORT_TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + MIDDLE_TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + SHORT_TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 2\n" + SHORT_TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 3\n" + MIDDLE_TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 6, 1\n" + MIDDLE_TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 6, 2\n" + MIDDLE_TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + MIDDLE_TEXT_CONTENT)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -683,14 +683,14 @@ public class TableTest extends ExtendedITextTest {
 
         Table table = new Table(new float[]{130, 130, 260})
                 .addCell(new Cell().add(new Image(ImageDataFactory.create(sourceFolder + "red.png"))))
-                .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + shortTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 5, 2\n" + shortTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 5, 3\n" + middleTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 6, 1\n" + middleTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 6, 2\n" + middleTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + middleTextContent)));
+                .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + SHORT_TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + MIDDLE_TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + SHORT_TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 2\n" + SHORT_TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 3\n" + MIDDLE_TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 6, 1\n" + MIDDLE_TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 6, 2\n" + MIDDLE_TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + MIDDLE_TEXT_CONTENT)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -2912,6 +2912,87 @@ public class TableTest extends ExtendedITextTest {
 
         doc.add(table);
         doc.close();
+    }
+
+    @Test
+    // TODO DEVSIX-3716
+    public void cellWithBigRowspanCompletedRowTooTest() throws IOException, InterruptedException {
+        String testName = "cellWithBigRowspanCompletedRowTooTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Div div = new Div();
+        div.setHeight(700);
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(1));
+        table.setHorizontalBorderSpacing(5);
+        table.setVerticalBorderSpacing(5);
+
+        table.addCell(new Cell(7, 1).add(new Paragraph("Rowspan 7")).setBackgroundColor(ColorConstants.RED));
+        for (int i = 0; i < 7; i++) {
+            table.addCell(new Cell().add(new Paragraph("Rowspan 1")));
+        }
+
+        // test separated borders when j == 0 and collapsed borders when j == 1
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        for (int j = 0; j < 2; j++) {
+            doc.add(div);
+            doc.add(table);
+
+            if (0 == j) {
+                doc.add(new AreaBreak());
+                table.setBorderCollapse(BorderCollapsePropertyValue.COLLAPSE);
+            }
+        }
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    // TODO DEVSIX-3716
+    public void cellWithBigRowspanCompletedRowNotTest() throws IOException, InterruptedException {
+        String testName = "cellWithBigRowspanCompletedRowNotTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Div div = new Div();
+        div.setHeight(700);
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(1));
+        table.setHorizontalBorderSpacing(5);
+        table.setVerticalBorderSpacing(5);
+
+        table.addCell(new Cell(7, 1).add(new Paragraph("Rowspan 7")).setBackgroundColor(ColorConstants.RED));
+        table.addCell(new Cell().add(new Paragraph(TEXT_CONTENT)));
+        for (int i = 0; i < 6; i++) {
+            table.addCell(new Cell().add(new Paragraph("Rowspan 1")));
+        }
+
+        // test separated borders when j == 0 and collapsed borders when j == 1
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        for (int j = 0; j < 2; j++) {
+            doc.add(div);
+            doc.add(table);
+
+            if (0 == j) {
+                doc.add(new AreaBreak());
+                table.setBorderCollapse(BorderCollapsePropertyValue.COLLAPSE);
+            }
+        }
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     private static class RotatedDocumentRenderer extends DocumentRenderer {

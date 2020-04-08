@@ -56,13 +56,17 @@ public abstract class FontSelectorStrategy {
     protected String text;
     protected int index;
     protected final FontProvider provider;
+    /**
+     * @deprecated This field will be renamed to {@code additionalFonts} in iText Core 7.2.
+     */
+    @Deprecated
     protected final FontSet tempFonts;
 
-    protected FontSelectorStrategy(String text, FontProvider provider, FontSet tempFonts) {
+    protected FontSelectorStrategy(String text, FontProvider provider, FontSet additionalFonts) {
         this.text = text;
         this.index = 0;
         this.provider = provider;
-        this.tempFonts = tempFonts;
+        this.tempFonts = additionalFonts;
     }
 
     public boolean endOfText() {
