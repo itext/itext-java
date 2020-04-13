@@ -107,7 +107,8 @@ public final class SvgConstants {
         /**
          * Tag defining a clipping path. A clipping path defines the region where can be drawn. Anything outside the path won't be drawn.
          */
-        public static final String CLIP_PATH = "clippath";
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        public static final String CLIP_PATH = "clipPath".toLowerCase();
 
         /**
          * Tag defining the color profile to be used.
@@ -590,7 +591,8 @@ public final class SvgConstants {
         /**
          * Attribute defining the height of the viewport in which the marker is to be fitted
          */
-        public static final String MARKER_HEIGHT = "markerheight";
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        public static final String MARKER_HEIGHT = "markerHeight".toLowerCase();
 
         /**
          * Attribute defining the marker drawn at every other vertex but the start and end of a path, line, polygon or polyline
@@ -605,12 +607,14 @@ public final class SvgConstants {
         /**
          * Attribute defining the width of the viewport in which the marker is to be fitted
          */
-        public static final String MARKER_WIDTH = "markerwidth";
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        public static final String MARKER_WIDTH = "markerWidth".toLowerCase();
 
         /**
          * Attribute defining the coordinate system for attributes ‘markerWidth’, ‘markerHeight’ and the contents of the ‘marker’.
          */
-        public static final String MARKER_UNITS = "markerunits";
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        public static final String MARKER_UNITS = "markerUnits".toLowerCase();
 
         /**
          * Attribute defining the opacity of a group or graphic element.
@@ -743,7 +747,8 @@ public final class SvgConstants {
         /**
          * Attribute defining how to preserve the aspect ratio when scaling.
          */
-        public static final String PRESERVE_ASPECT_RATIO = "preserveaspectratio";
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        public static final String PRESERVE_ASPECT_RATIO = "preserveAspectRatio".toLowerCase();
 
         /**
          * Attribute defining the radius of a circle.
@@ -753,12 +758,14 @@ public final class SvgConstants {
         /**
          * Attribute defining the x-axis coordinate of the reference point which is to be aligned exactly at the marker position.
          */
-        public static final String REFX = "refx";
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        public static final String REFX = "refX".toLowerCase();
 
         /**
          * Attribute defining the y-axis coordinate of the reference point which is to be aligned exactly at the marker position.
          */
-        public static final String REFY = "refy";
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        public static final String REFY = "refY".toLowerCase();
 
         /**
          * Attribute defining the x-axis of an ellipse or the x-axis radius of rounded rectangles.
@@ -828,7 +835,8 @@ public final class SvgConstants {
         /**
          * Attribute defining the viewbox of an element.
          */
-        public static final String VIEWBOX = "viewbox";
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        public static final String VIEWBOX = "viewBox".toLowerCase();
 
         /**
          * Attribute defining the width of an element.
