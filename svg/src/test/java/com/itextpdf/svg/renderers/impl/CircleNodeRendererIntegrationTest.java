@@ -136,4 +136,10 @@ public class CircleNodeRendererIntegrationTest extends SvgIntegrationTest {
     public void circleSkewYTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "circleSkewY");
     }
+
+    @Test
+    // TODO: DEVSIX-3932 update cmp_ after fix
+    public void circleWithBigStrokeWidthTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "circleWithBigStrokeWidth");
+    }
 }
