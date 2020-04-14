@@ -70,7 +70,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class    LayoutTaggingHelper {
+public class LayoutTaggingHelper {
     private TagStructureContext context;
     private PdfDocument document;
     private boolean immediateFlush;
@@ -291,20 +291,18 @@ public class    LayoutTaggingHelper {
             finishDummyKids(getKidsHint(hint));
         }
 
-        List<TaggingHintKey> hintsToBeHeld = new ArrayList<>();
+        Set<TaggingHintKey> hintsToBeHeld = new HashSet<>();
         for (TaggingHintKey hint : allHints) {
             if (!isNonAccessibleHint(hint)) {
                 List<TaggingHintKey> siblingsHints = getAccessibleKidsHint(hint);
-                if (null != siblingsHints) {
-                    boolean holdTheFirstFinishedToBeFound = false;
-                    for (TaggingHintKey sibling : siblingsHints) {
-                        if (!sibling.isFinished()) {
-                            holdTheFirstFinishedToBeFound = true;
-                        } else if (holdTheFirstFinishedToBeFound) {
-                            // here true == sibling.isFinished
-                            hintsToBeHeld.add(sibling);
-                            holdTheFirstFinishedToBeFound = false;
-                        }
+                boolean holdTheFirstFinishedToBeFound = false;
+                for (TaggingHintKey sibling : siblingsHints) {
+                    if (!sibling.isFinished()) {
+                        holdTheFirstFinishedToBeFound = true;
+                    } else if (holdTheFirstFinishedToBeFound) {
+                        // here true == sibling.isFinished
+                        hintsToBeHeld.add(sibling);
+                        holdTheFirstFinishedToBeFound = false;
                     }
                 }
             }
@@ -708,7 +706,7 @@ public class    LayoutTaggingHelper {
         return context.getWaitingTagsManager().isObjectAssociatedWithWaitingTag(tagHint);
     }
 
-    private void releaseHint(TaggingHintKey hint, List<TaggingHintKey> hintsToBeHeld, boolean checkContextIsFinished) {
+    private void releaseHint(TaggingHintKey hint, Set<TaggingHintKey> hintsToBeHeld, boolean checkContextIsFinished) {
         TaggingHintKey parentHint = parentHints.get(hint);
         List<TaggingHintKey> kidsHint = kidsHints.get(hint);
         if (checkContextIsFinished && parentHint != null) {

@@ -87,6 +87,9 @@ public class FloatTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FloatTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/FloatTest/";
 
+    private static final String shortText =
+            "Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add. You can also type a keyword to search online for the video that best fits your document. ";
+
     private static final String text =
             "Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add. You can also type a keyword to search online for the video that best fits your document. " +
             "To make your document look professionally produced, Word provides header, footer, cover page, and text box designs that complement each other. For example, you can add a matching cover page, header, and sidebar. Click Insert and then choose the elements you want from the different galleries. " +
@@ -1737,6 +1740,35 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2))
+    public void floatsKeepTogetherOnPageSplit03() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatsKeepTogetherOnPageSplit03.pdf";
+        String outFile = destinationFolder + "floatsKeepTogetherOnPageSplit03.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        document.add(new Paragraph(text));
+
+        Div floatedKeptTogetherDiv = new Div()
+                .add(new Paragraph(text + text))
+                .setBackgroundColor(ColorConstants.BLUE)
+                .setWidth(200)
+                .setKeepTogether(true);
+        floatedKeptTogetherDiv.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        document.add(floatedKeptTogetherDiv);
+
+        Div longKeptTogetherDiv = new Div()
+                .add(new Paragraph(text + text + text + text + text + text))
+                .setKeepTogether(true);
+        document.add(longKeptTogetherDiv);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff39_"));
+    }
+
+
+    @Test
     public void floatsInParagraphPartialSplit01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit01.pdf";
         String outFile = destinationFolder + "floatsInParagraphPartialSplit01.pdf";
@@ -3093,7 +3125,7 @@ public class FloatTest extends ExtendedITextTest {
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
 
-        fillWithKeptTogetherElement(document, 2, false);
+        fillWithKeptTogetherElement(document, text, 2, false, false);
 
         document.close();
 
@@ -3109,7 +3141,7 @@ public class FloatTest extends ExtendedITextTest {
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
 
-        fillWithKeptTogetherElement(document, 3, false);
+        fillWithKeptTogetherElement(document, text, 3, false, false);
 
         document.close();
 
@@ -3124,12 +3156,28 @@ public class FloatTest extends ExtendedITextTest {
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
 
-        fillWithKeptTogetherElement(document, 4, false);
+        fillWithKeptTogetherElement(document, text, 4, false, false);
 
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
     }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1))
+    public void keepTogetherNotEnoughSpaceOnNewEmptyPageShortFloatTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_keepTogetherNotEnoughSpaceOnNewEmptyPageShortFloatTest.pdf";
+        String outFile = destinationFolder + "keepTogetherNotEnoughSpaceOnNewEmptyPageShortFloatTest.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        fillWithKeptTogetherElement(document, "Some short text", 4, false, true);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
+    }
+
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
@@ -3139,7 +3187,7 @@ public class FloatTest extends ExtendedITextTest {
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
 
-        fillWithKeptTogetherElement(document, 2, true);
+        fillWithKeptTogetherElement(document, text, 2, true, false);
 
         document.close();
 
@@ -3156,7 +3204,7 @@ public class FloatTest extends ExtendedITextTest {
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
 
-        fillWithKeptTogetherElement(document, 3, true);
+        fillWithKeptTogetherElement(document, text, 3, true, false);
 
         document.close();
 
@@ -3171,7 +3219,7 @@ public class FloatTest extends ExtendedITextTest {
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
 
-        fillWithKeptTogetherElement(document, 4, true);
+        fillWithKeptTogetherElement(document, text, 4, true, false);
 
         document.close();
 
@@ -3179,14 +3227,14 @@ public class FloatTest extends ExtendedITextTest {
     }
 
 
-    private static void fillWithKeptTogetherElement(Document doc, int textTimes, boolean isInner) {
+    private static void fillWithKeptTogetherElement(Document doc, String floatText, int textTimes, boolean isInner, boolean floatAsFirst) {
 
         Div floatedDiv = new Div()
                 .setWidth(150)
                 .setBorder(new SolidBorder(ColorConstants.BLUE, 3))
                 .setKeepTogether(true);
         floatedDiv.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
-        floatedDiv.add(new Paragraph(text).setFontColor(ColorConstants.LIGHT_GRAY));
+        floatedDiv.add(new Paragraph(floatText).setFontColor(ColorConstants.LIGHT_GRAY));
 
         Paragraph keptTogetherParagraph = new Paragraph().setKeepTogether(true);
         for (int i = 0; i < textTimes; i++) {
@@ -3198,10 +3246,12 @@ public class FloatTest extends ExtendedITextTest {
 
             container.add(floatedDiv);
 
-            container.add(new Paragraph("Hello"));
-            container.add(new Paragraph("Hello"));
-            container.add(new Paragraph("Hello"));
-            container.add(new Paragraph("Hello"));
+            if (!floatAsFirst) {
+                container.add(new Paragraph("Hello"));
+                container.add(new Paragraph("Hello"));
+                container.add(new Paragraph("Hello"));
+                container.add(new Paragraph("Hello"));
+            }
 
             container.add(keptTogetherParagraph);
 
@@ -3209,10 +3259,12 @@ public class FloatTest extends ExtendedITextTest {
         } else {
             doc.add(floatedDiv);
 
-            doc.add(new Paragraph("Hello"));
-            doc.add(new Paragraph("Hello"));
-            doc.add(new Paragraph("Hello"));
-            doc.add(new Paragraph("Hello"));
+            if (!floatAsFirst) {
+                doc.add(new Paragraph("Hello"));
+                doc.add(new Paragraph("Hello"));
+                doc.add(new Paragraph("Hello"));
+                doc.add(new Paragraph("Hello"));
+            }
 
             doc.add(keptTogetherParagraph);
         }

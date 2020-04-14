@@ -66,10 +66,6 @@ public final class TaggingHintKey {
         this.isFinished = true;
     }
 
-    void setFinished(boolean finished) {
-        this.isFinished = finished;
-    }
-
     boolean isArtifact() {
         return isArtifact;
     }

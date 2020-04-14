@@ -71,11 +71,12 @@ public abstract class RootRenderer extends AbstractRenderer {
     protected RootLayoutArea currentArea;
     protected int currentPageNumber;
     protected List<IRenderer> waitingDrawingElements = new ArrayList<>();
+    RootRendererAreaStateHandler rootRendererStateHandler;
+    List<Rectangle> floatRendererAreas;
     private IRenderer keepWithNextHangingRenderer;
     private LayoutResult keepWithNextHangingRendererLayoutResult;
     private MarginsCollapseHandler marginsCollapseHandler;
     private LayoutArea initialCurrentArea;
-    private List<Rectangle> floatRendererAreas;
     private List<IRenderer> waitingNextPageRenderers = new ArrayList<>();
     private boolean floatOverflowedCompletely = false;
 
@@ -111,6 +112,10 @@ public abstract class RootRenderer extends AbstractRenderer {
 
         // Static layout
         for (int i = 0; currentArea != null && i < addedRenderers.size(); i++) {
+            if (null == rootRendererStateHandler) {
+                rootRendererStateHandler = new RootRendererAreaStateHandler();
+            }
+
             renderer = addedRenderers.get(i);
             boolean rendererIsFloat = FloatingHelper.isRendererFloating(renderer);
             boolean clearanceOverflowsToNextPage = FloatingHelper.isClearanceApplied(waitingNextPageRenderers, renderer.<ClearPropertyValue>getProperty(Property.CLEAR));
@@ -124,8 +129,6 @@ public abstract class RootRenderer extends AbstractRenderer {
 
             List<IRenderer> resultRenderers = new ArrayList<>();
             LayoutResult result = null;
-
-            RootRendererStoredState storedState = new RootRendererStoredState();
 
             MarginsCollapseInfo childMarginsInfo = null;
             if (marginsCollapsingEnabled && currentArea != null && renderer != null) {
@@ -145,7 +148,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                         break;
                     } else {
                         processRenderer(result.getSplitRenderer(), resultRenderers);
-                        if (!storedState.restoreNextState()) {
+                        if (!rootRendererStateHandler.attemptGoForwardToStoredNextState(this)) {
                             currentAreaNeedsToBeUpdated = true;
                         }
                     }
@@ -172,7 +175,9 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 result.getOverflowRenderer().getModelElement().setProperty(Property.KEEP_TOGETHER, false);
                                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
                                 logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "KeepTogether property will be ignored."));
-                                storedState.restoreState();
+                                if (!rendererIsFloat) {
+                                    rootRendererStateHandler.attemptGoBackToStoredPreviousStateAndStoreNextState(this);
+                                }
                             } else if (null != result.getCauseOfNothing() && Boolean.TRUE.equals(result.getCauseOfNothing().<Boolean>getProperty(Property.KEEP_TOGETHER))) {
                                 // set KEEP_TOGETHER false on the deepest parent (maybe the element itself) to have KEEP_TOGETHER == true
                                 IRenderer theDeepestKeptTogether = result.getCauseOfNothing();
@@ -201,7 +206,8 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 break;
                             }
                         } else {
-                                if (!storedState.storeState()) {
+                            rootRendererStateHandler.storePreviousState(this);
+                            if (!rootRendererStateHandler.attemptGoForwardToStoredNextState(this)) {
                                 if (rendererIsFloat) {
                                     waitingNextPageRenderers.add(result.getOverflowRenderer());
                                     floatOverflowedCompletely = true;
@@ -339,24 +345,6 @@ public abstract class RootRenderer extends AbstractRenderer {
 
     protected abstract LayoutArea updateCurrentArea(LayoutResult overflowResult);
 
-    protected void flushWaitingDrawingElements() {
-        flushWaitingDrawingElements(true);
-    }
-
-    protected void flushWaitingDrawingElements(boolean force) {
-        Set<IRenderer> flushedElements = new HashSet<>();
-        for (int i = 0; i < waitingDrawingElements.size(); ++i)
-        {
-            IRenderer waitingDrawingElement = waitingDrawingElements.get(i);
-            // TODO Remove checking occupied area to be not null when DEVSIX-1655 is resolved.
-            if (force || (null != waitingDrawingElement.getOccupiedArea() && waitingDrawingElement.getOccupiedArea().getPageNumber() < currentArea.getPageNumber())) {
-                flushSingleRenderer(waitingDrawingElement);
-                flushedElements.add(waitingDrawingElement);
-            }
-        }
-        waitingDrawingElements.removeAll(flushedElements);
-    }
-
     protected void shrinkCurrentAreaAndProcessRenderer(IRenderer renderer, List<IRenderer> resultRenderers, LayoutResult result) {
         if (currentArea != null) {
             float resultRendererHeight = result.getOccupiedArea().getBBox().getHeight();
@@ -370,6 +358,26 @@ public abstract class RootRenderer extends AbstractRenderer {
         if (!immediateFlush) {
             childRenderers.addAll(resultRenderers);
         }
+    }
+
+    protected void flushWaitingDrawingElements() {
+        flushWaitingDrawingElements(true);
+    }
+
+    void flushWaitingDrawingElements(boolean force) {
+        Set<IRenderer> flushedElements = new HashSet<>();
+        for (int i = 0; i < waitingDrawingElements.size(); ++i)
+        {
+            IRenderer waitingDrawingElement = waitingDrawingElements.get(i);
+            // TODO Remove checking occupied area to be not null when DEVSIX-1655 is resolved.
+            if (force || (null != waitingDrawingElement.getOccupiedArea() && waitingDrawingElement.getOccupiedArea().getPageNumber() < currentArea.getPageNumber())) {
+                flushSingleRenderer(waitingDrawingElement);
+                flushedElements.add(waitingDrawingElement);
+            } else if (null == waitingDrawingElement.getOccupiedArea()) {
+                flushedElements.add(waitingDrawingElement);
+            }
+        }
+        waitingDrawingElements.removeAll(flushedElements);
     }
 
     private void processRenderer(IRenderer renderer, List<IRenderer> resultRenderers) {
@@ -480,60 +488,6 @@ public abstract class RootRenderer extends AbstractRenderer {
         waitingNextPageRenderers.clear();
         for (IRenderer renderer : waitingFloatRenderers) {
             addChild(renderer);
-        }
-    }
-
-
-    private class RootRendererStoredState {
-        private RootLayoutArea storedArea;
-        private RootLayoutArea nextStoredArea;
-
-        private List<Rectangle> storedFloatRendererAreas = null;
-        private List<Rectangle> nextStoredFloatRendererAreas = null;
-
-        public boolean restoreState() {
-            boolean result = false;
-            if (storedArea != null) {
-                currentArea = storedArea;
-                currentPageNumber = storedArea.getPageNumber();
-                floatRendererAreas = storedFloatRendererAreas;
-
-                nextStoredArea = currentArea;
-                nextStoredFloatRendererAreas = floatRendererAreas;
-
-                result = true;
-            }
-            storedArea = currentArea;
-            return result;
-        }
-
-        public boolean restoreNextState() {
-            if (nextStoredArea != null) {
-                currentArea = nextStoredArea;
-                currentPageNumber = nextStoredArea.getPageNumber();
-                floatRendererAreas = nextStoredFloatRendererAreas;
-
-                nextStoredArea = null;
-                nextStoredFloatRendererAreas = null;
-
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        public boolean storeState() {
-            storedArea = currentArea;
-            storedFloatRendererAreas = floatRendererAreas;
-
-            if (nextStoredArea != null) {
-                currentArea = nextStoredArea;
-                currentPageNumber = nextStoredArea.getPageNumber();
-
-                nextStoredArea = null;
-                return true;
-            }
-            return false;
         }
     }
 }

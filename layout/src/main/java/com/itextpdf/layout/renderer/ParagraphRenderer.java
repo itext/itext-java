@@ -310,6 +310,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 } else {
                     boolean keepTogether = isKeepTogether();
                     if (keepTogether) {
+                        floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
                         return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
                     } else {
                         if (marginsCollapsingEnabled) {
@@ -390,6 +391,7 @@ public class ParagraphRenderer extends BlockRenderer {
                                     return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, this).setMinMaxWidth(minMaxWidth);
                                 }
                             } else {
+                                floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
                                 return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
                             }
                         }
@@ -454,6 +456,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
         AbstractRenderer overflowRenderer = applyMinHeight(overflowY, layoutBox);
         if (overflowRenderer != null && isKeepTogether()) {
+            floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
             return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
         }
 
@@ -471,6 +474,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 if(isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
                     LoggerFactory.getLogger(getClass()).warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "It fits by height so it will be forced placed"));
                 } else if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+                    floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
                     return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, this);
                 }
             }
