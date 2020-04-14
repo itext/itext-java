@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -127,5 +128,38 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         Assert.assertTrue(xref.get(5).isFree());
         
         pdfDoc1.close();
+    }
+
+    @Test
+    public void checkEncryptionInXrefStmInIncrementsTest() throws IOException, InterruptedException {
+        String inFileName = sourceFolder + "encryptedDocWithXrefStm.pdf";
+        String outFileName = destinationFolder + "checkEncryptionInXrefStmInIncrements.pdf";
+
+        PdfReader pdfReader = new PdfReader(inFileName).setUnethicalReading(true);
+
+        PdfDocument pdfDocument = new PdfDocument(pdfReader, new PdfWriter(outFileName),
+                new StampingProperties().useAppendMode().preserveEncryption());
+
+        PdfDictionary xrefStm = (PdfDictionary) pdfDocument.getPdfObject(6);
+
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, inFileName, destinationFolder));
+        Assert.assertEquals(PdfName.XRef, xrefStm.get(PdfName.Type));
+    }
+
+    @Test
+    public void hybridReferenceInIncrementsTest() throws IOException, InterruptedException {
+        String inFileName = sourceFolder + "hybridReferenceDocument.pdf";
+        String outFileName = destinationFolder + "hybridReferenceInIncrements.pdf";
+
+        PdfReader pdfReader = new PdfReader(inFileName);
+
+        PdfDocument pdfDocument = new PdfDocument(pdfReader, new PdfWriter(outFileName),
+                new StampingProperties().useAppendMode());
+
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, inFileName, destinationFolder));
     }
 }
