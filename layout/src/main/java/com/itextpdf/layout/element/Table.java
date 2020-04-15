@@ -71,9 +71,9 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     protected PdfName role = PdfName.Table;
     protected AccessibilityProperties tagProperties;
 
-    private List<Cell[]> rows;
+    public List<Cell[]> rows;
 
-    private UnitValue[] columnWidths;
+    public UnitValue[] columnWidths;
     private int currentColumn = 0;
     private int currentRow = -1;
     private Table header;
