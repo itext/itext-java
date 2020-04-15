@@ -126,7 +126,7 @@ public class LayoutContext {
     /**
      * Defines whether the layout area's height is clipped or not.
      *
-     * @param clippedHeight
+     * @param clippedHeight indicates whether the height is clipped or not.
      */
     public void setClippedHeight(boolean clippedHeight) {
         this.clippedHeight = clippedHeight;

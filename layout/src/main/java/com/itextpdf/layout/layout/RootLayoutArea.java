@@ -70,7 +70,7 @@ public class RootLayoutArea extends LayoutArea implements Cloneable {
     /**
      * Defines whether the area already has some placed content or not.
      *
-     * @param emptyArea
+     * @param emptyArea indicates whether the area already has some placed content or not.
      */
     public void setEmptyArea(boolean emptyArea) {
         this.emptyArea = emptyArea;

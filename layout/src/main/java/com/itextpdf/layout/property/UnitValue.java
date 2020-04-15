@@ -69,7 +69,7 @@ public class UnitValue {
     /**
      * Creates a copy of UnitValue object.
      *
-     * @param unitValue
+     * @param unitValue the value to be stored
      */
     public UnitValue(UnitValue unitValue) {
         this(unitValue.unitType, unitValue.value);

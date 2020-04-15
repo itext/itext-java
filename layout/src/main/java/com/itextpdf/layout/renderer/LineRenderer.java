@@ -802,6 +802,7 @@ public class LineRenderer extends AbstractRenderer {
     /**
      * Gets the total lengths of characters in this line. Other elements (images, tables) are not taken
      * into account.
+     * @return the total lengths of characters in this line.
      */
     protected int length() {
         int length = 0;
@@ -815,6 +816,7 @@ public class LineRenderer extends AbstractRenderer {
 
     /**
      * Returns the number of base characters, i.e. non-mark characters
+     * @return the number of base non-mark characters
      */
     protected int baseCharactersCount() {
         int count = 0;
