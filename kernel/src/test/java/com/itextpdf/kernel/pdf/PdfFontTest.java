@@ -307,9 +307,13 @@ public class PdfFontTest extends ExtendedITextTest {
         a.lineTo(595, 5);
         a.closePathFillStroke();
 
+        Assert.assertEquals(600.0, getContentWidth(type3, 'A'), 1e-5);
+
         Type3Glyph space = type3.addGlyph(' ', 600, 0, 0, 600, 700);
         space.setLineWidth(10);
         space.closePathFillStroke();
+
+        Assert.assertEquals(600.0, getContentWidth(type3, ' '), 1e-5);
 
         Type3Glyph e = type3.addGlyph('E', 600, 0, 0, 600, 700);
         e.setLineWidth(100);
@@ -320,17 +324,23 @@ public class PdfFontTest extends ExtendedITextTest {
         e.lineTo(595, 695);
         e.stroke();
 
+        Assert.assertEquals(600.0, getContentWidth(type3, 'E'), 1e-5);
+
         Type3Glyph tilde = type3.addGlyph('~', 600, 0, 0, 600, 700);
         tilde.setLineWidth(100);
         tilde.moveTo(595, 5);
         tilde.lineTo(5, 5);
         tilde.stroke();
 
+        Assert.assertEquals(600.0, getContentWidth(type3, '~'), 1e-5);
+
         Type3Glyph symbol233 = type3.addGlyph('\u00E9', 600, 0, 0, 600, 700);
         symbol233.setLineWidth(100);
         symbol233.moveTo(540, 5);
         symbol233.lineTo(5, 340);
         symbol233.stroke();
+
+        Assert.assertEquals(600.0, getContentWidth(type3, '\u00E9'), 1e-5);
 
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -1980,5 +1990,9 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder));
+    }
+
+    private float getContentWidth(PdfType3Font type3, char glyph) {
+        return type3.getContentWidth(new PdfString(new byte[]{(byte) type3.getGlyph(glyph).getCode()}));
     }
 }

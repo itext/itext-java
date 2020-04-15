@@ -407,7 +407,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                     //prevent lost of widths info
                     int uni = fontEncoding.getUnicode(k);
                     Glyph glyph = uni > -1 ? getGlyph(uni) : fontProgram.getGlyphByCode(k);
-                    wd.add(new PdfNumber(glyph != null ? glyph.getWidth() : 0));
+                    wd.add(new PdfNumber(getGlyphWidth(glyph)));
                 }
             }
             getPdfObject().put(PdfName.Widths, wd);
@@ -474,5 +474,9 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
     protected void setFontProgram(T fontProgram) {
         this.fontProgram = fontProgram;
+    }
+
+    protected double getGlyphWidth(Glyph glyph) {
+        return glyph != null ? glyph.getWidth() : 0;
     }
 }
