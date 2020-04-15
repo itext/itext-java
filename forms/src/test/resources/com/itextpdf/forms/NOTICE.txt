@@ -1,0 +1,6 @@
+Please notice that the following fonts are published under the following licenses:
+
+* All Noto fonts are published under the SIL Open Font License ( https://www.google.com/get/noto/), Version 1.1. Please follow http://scripts.sil.org/OFL
+
+for more information.
+
