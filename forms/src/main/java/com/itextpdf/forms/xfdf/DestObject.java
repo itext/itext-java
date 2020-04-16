@@ -46,7 +46,7 @@ package com.itextpdf.forms.xfdf;
 /**
  * Represents Dest element, a child of the link, GoTo, and GoToR elements.
  * Corresponds to the Dest key in the link annotations dictionary.
- * For more details see paragraph 6.5.10 in Xfdf document specification.
+ * For more details see paragraph 6.5.10 in XFDF document specification.
  * Content model: ( Named | XYZ | Fit | FitH | FitV | FitR | FitB | FitBH | FitBV )
  */
 public class DestObject {
@@ -54,7 +54,7 @@ public class DestObject {
     /**
      * Represents Name attribute of Named element, a child of Dest element.
      * Allows a destination to be referred to indirectly by means of a name object or a byte string.
-     * For more details see paragraph 6.5.25 in Xfdf document specification.
+     * For more details see paragraph 6.5.25 in XFDF document specification.
      */
     private String name;
 
@@ -62,7 +62,7 @@ public class DestObject {
      * Represents the XYZ element, a child of the Dest element.
      * Corresponds to the XYZ key in the destination syntax.
      * Required attributes: Page, Left, Bottom, Right, Top.
-     * For more details see paragraph 6.5.32 in Xfdf document specification.
+     * For more details see paragraph 6.5.32 in XFDF document specification.
      */
     private FitObject xyz;
 
@@ -70,7 +70,7 @@ public class DestObject {
      * Represents the Fit element, a child of the Dest element.
      * Corresponds to the Fit key in the destination syntax.
      * Required attributes: Page.
-     * For more details see paragraph 6.5.13 in Xfdf document specification.
+     * For more details see paragraph 6.5.13 in XFDF document specification.
      */
     private FitObject fit;
 
@@ -78,7 +78,7 @@ public class DestObject {
      * Represents the FitH element, a child of the Dest element.
      * Corresponds to the FitH key in the destination syntax.
      * Required attributes: Page, Top.
-     * For more details see paragraph 6.5.17 in Xfdf document specification.
+     * For more details see paragraph 6.5.17 in XFDF document specification.
      */
     private FitObject fitH;
 
@@ -86,7 +86,7 @@ public class DestObject {
      * Represents the FitV element, a child of the Dest element.
      * Corresponds to the FitV key in the destination syntax.
      * Required attributes: Page, Left.
-     * For more details see paragraph 6.5.19 in Xfdf document specification.
+     * For more details see paragraph 6.5.19 in XFDF document specification.
      */
     private FitObject fitV;
 
@@ -94,7 +94,7 @@ public class DestObject {
      * Represents the FitR element, a child of the Dest element.
      * Corresponds to the FitR key in the destination syntax.
      * Required attributes: Page, Left, Bottom, Right, Top.
-     * For more details see paragraph 6.5.18 in Xfdf document specification.
+     * For more details see paragraph 6.5.18 in XFDF document specification.
      */
     private FitObject fitR;
 
@@ -102,7 +102,7 @@ public class DestObject {
      * Represents the FitB element, a child of the Dest element.
      * Corresponds to the FitB key in the destination syntax.
      * Required attributes: Page.
-     * For more details see paragraph 6.5.14 in Xfdf document specification.
+     * For more details see paragraph 6.5.14 in XFDF document specification.
      */
     private FitObject fitB;
 
@@ -110,7 +110,7 @@ public class DestObject {
      * Represents the FitBH element, a child of the Dest element.
      * Corresponds to the FitBH key in the destination syntax.
      * Required attributes: Page, Top.
-     * For more details see paragraph 6.5.15 in Xfdf document specification.
+     * For more details see paragraph 6.5.15 in XFDF document specification.
      */
     private FitObject fitBH;
 
@@ -118,7 +118,7 @@ public class DestObject {
      * Represents the FitBV element, a child of the Dest element.
      * Corresponds to the FitBV key in the destination syntax.
      * Required attributes: Page, Left.
-     * For more details see paragraph 6.5.16 in Xfdf document specification.
+     * For more details see paragraph 6.5.16 in XFDF document specification.
      */
     private FitObject fitBV;
 
@@ -127,17 +127,22 @@ public class DestObject {
     }
 
     /**
-     * Gets string value of the Name attribute of Named element, a child of Dest element.
+     * Gets the Name attribute of Named element, a child of Dest element.
      * Allows a destination to be referred to indirectly by means of a name object or a byte string.
-     * For more details see paragraph 6.5.25 in Xfdf document specification.
+     * For more details see paragraph 6.5.25 in XFDF document specification.
+     *
+     * @return string value of the Name attribute.
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Sets string value of the Name attribute of Named element, a child of Dest element.
+     * Sets the Name attribute of Named element, a child of Dest element.
      * Allows a destination to be referred to indirectly by means of a name object or a byte string.
+     *
+     * @param name string value of the Name attribute.
+     * @return this {@link DestObject} instance.
      */
     public DestObject setName(String name) {
         this.name = name;
@@ -148,7 +153,9 @@ public class DestObject {
      * Gets the XYZ element, a child of the Dest element.
      * Corresponds to the XYZ key in the destination syntax.
      * Required attributes: Page, Left, Bottom, Right, Top.
-     * For more details see paragraph 6.5.32 in Xfdf document specification.
+     * For more details see paragraph 6.5.32 in XFDF document specification.
+     *
+     * @return a {@link FitObject} that represents XYZ of Dest element.
      */
     public FitObject getXyz() {
         return xyz;
@@ -158,6 +165,9 @@ public class DestObject {
      * Sets the XYZ element, a child of the Dest element.
      * Corresponds to the XYZ key in the destination syntax.
      * Required attributes: Page, Left, Bottom, Right, Top.
+     *
+     * @param xyz a {@link FitObject} that represents XYZ of Dest element.
+     * @return this {@link DestObject} instance.
      */
     public DestObject setXyz(FitObject xyz) {
         this.xyz = xyz;
@@ -168,7 +178,9 @@ public class DestObject {
      * Gets the Fit element, a child of the Dest element.
      * Corresponds to the Fit key in the destination syntax.
      * Required attributes: Page.
-     * For more details see paragraph 6.5.13 in Xfdf document specification.
+     * For more details see paragraph 6.5.13 in XFDF document specification.
+     *
+     * @return a {@link FitObject} that represents Fit of Dest element.
      */
     public FitObject getFit() {
         return fit;
@@ -178,6 +190,9 @@ public class DestObject {
      * Sets the Fit element, a child of the Dest element.
      * Corresponds to the Fit key in the destination syntax.
      * Required attributes: Page.
+     *
+     * @param fit a {@link FitObject} that represents Fit of Dest element.
+     * @return this {@link DestObject} instance.
      */
     public DestObject setFit(FitObject fit) {
         this.fit = fit;
@@ -188,7 +203,9 @@ public class DestObject {
      * Gets the FitH element, a child of the Dest element.
      * Corresponds to the FitH key in the destination syntax.
      * Required attributes: Page, Top.
-     * For more details see paragraph 6.5.17 in Xfdf document specification.
+     * For more details see paragraph 6.5.17 in XFDF document specification.
+     *
+     * @return a {@link FitObject} that represents FitH of Dest element.
      */
     public FitObject getFitH() {
         return fitH;
@@ -198,6 +215,9 @@ public class DestObject {
      * Sets the FitH element, a child of the Dest element.
      * Corresponds to the FitH key in the destination syntax.
      * Required attributes: Page, Top.
+     *
+     * @param fitH a {@link FitObject} that represents FitH of Dest element.
+     * @return this {@link DestObject} instance.
      */
     public DestObject setFitH(FitObject fitH) {
         this.fitH = fitH;
@@ -208,7 +228,9 @@ public class DestObject {
      * Gets the FitV element, a child of the Dest element.
      * Corresponds to the FitV key in the destination syntax.
      * Required attributes: Page, Left.
-     * For more details see paragraph 6.5.19 in Xfdf document specification.
+     * For more details see paragraph 6.5.19 in XFDF document specification.
+     *
+     * @return a {@link FitObject} that represents FitV of Dest element.
      */
     public FitObject getFitV() {
         return fitV;
@@ -218,6 +240,9 @@ public class DestObject {
      * Sets the FitV element, a child of the Dest element.
      * Corresponds to the FitV key in the destination syntax.
      * Required attributes: Page, Left.
+     *
+     * @param fitV a {@link FitObject} that represents FitV of Dest element.
+     * @return this {@link DestObject} instance.
      */
     public DestObject setFitV(FitObject fitV) {
         this.fitV = fitV;
@@ -228,7 +253,9 @@ public class DestObject {
      * Gets the FitR element, a child of the Dest element.
      * Corresponds to the FitR key in the destination syntax.
      * Required attributes: Page, Left, Bottom, Right, Top.
-     * For more details see paragraph 6.5.18 in Xfdf document specification.
+     * For more details see paragraph 6.5.18 in XFDF document specification.
+     *
+     * @return a {@link FitObject} that represents FitR of Dest element.
      */
     public FitObject getFitR() {
         return fitR;
@@ -238,6 +265,9 @@ public class DestObject {
      * Sets the FitR element, a child of the Dest element.
      * Corresponds to the FitR key in the destination syntax.
      * Required attributes: Page, Left, Bottom, Right, Top.
+     *
+     * @param fitR a {@link FitObject} that represents FitR of Dest element.
+     * @return this {@link DestObject} instance.
      */
     public DestObject setFitR(FitObject fitR) {
         this.fitR = fitR;
@@ -248,7 +278,9 @@ public class DestObject {
      * Sets the FitB element, a child of the Dest element.
      * Corresponds to the FitB key in the destination syntax.
      * Required attributes: Page.
-     * For more details see paragraph 6.5.14 in Xfdf document specification.
+     * For more details see paragraph 6.5.14 in XFDF document specification.
+     *
+     * @return a {@link FitObject} that represents FitB of Dest element.
      */
     public FitObject getFitB() {
         return fitB;
@@ -258,6 +290,10 @@ public class DestObject {
      * Gets the FitB element, a child of the Dest element.
      * Corresponds to the FitB key in the destination syntax.
      * Required attributes: Page.
+     * For more details see paragraph 6.5.14 in XFDF document specification.
+     *
+     * @param fitB a {@link FitObject} that represents FitB of Dest element.
+     * @return this {@link DestObject} instance.
      */
     public DestObject setFitB(FitObject fitB) {
         this.fitB = fitB;
@@ -268,7 +304,9 @@ public class DestObject {
      * Sets the FitBH element, a child of the Dest element.
      * Corresponds to the FitBH key in the destination syntax.
      * Required attributes: Page, Top.
-     * For more details see paragraph 6.5.15 in Xfdf document specification.
+     * For more details see paragraph 6.5.15 in XFDF document specification.
+     *
+     * @return a {@link FitObject} that represents FitBH of Dest element.
      */
     public FitObject getFitBH() {
         return fitBH;
@@ -278,6 +316,9 @@ public class DestObject {
      * Gets the FitBH element, a child of the Dest element.
      * Corresponds to the FitBH key in the destination syntax.
      * Required attributes: Page, Top.
+     *
+     * @param fitBH a {@link FitObject} that represents FitBH of Dest element.
+     * @return this {@link DestObject} instance.
      */
     public DestObject setFitBH(FitObject fitBH) {
         this.fitBH = fitBH;
@@ -288,7 +329,9 @@ public class DestObject {
      * Sets the FitBV element, a child of the Dest element.
      * Corresponds to the FitBV key in the destination syntax.
      * Required attributes: Page, Left.
-     * For more details see paragraph 6.5.16 in Xfdf document specification.
+     * For more details see paragraph 6.5.16 in XFDF document specification.
+     *
+     * @return a {@link FitObject} that represents FitBV of Dest element.
      */
     public FitObject getFitBV() {
         return fitBV;
@@ -298,6 +341,9 @@ public class DestObject {
      * Sets the FitBV element, a child of the Dest element.
      * Corresponds to the FitBV key in the destination syntax.
      * Required attributes: Page, Left.
+     *
+     * @param fitBV a {@link FitObject} that represents FitBV of Dest element.
+     * @return this {@link DestObject} instance.
      */
     public DestObject setFitBV(FitObject fitBV) {
         this.fitBV = fitBV;

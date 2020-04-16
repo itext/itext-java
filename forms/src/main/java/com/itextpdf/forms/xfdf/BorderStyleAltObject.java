@@ -54,7 +54,6 @@ package com.itextpdf.forms.xfdf;
  */
 public class BorderStyleAltObject {
 
-
     /**
      * Number specifying the horizontal corner radius of the rectangular border.
      * Corresponds to array index 0 in the Border key in the common annotation dictionary.
@@ -84,6 +83,13 @@ public class BorderStyleAltObject {
      */
     private String content;
 
+    /**
+     * Creates an instance that encapsulates BorderStyleAlt XFDF element data.
+     *
+     * @param hCornerRadius a float value specifying the horizontal corner radius of the rectangular border.
+     * @param vCornerRadius a float value specifying the vertical corner radius of the rectangular border.
+     * @param width         a float value specifying the width of the rectangular border.
+     */
     public BorderStyleAltObject(float hCornerRadius, float vCornerRadius, float width) {
         this.hCornerRadius = hCornerRadius;
         this.vCornerRadius = vCornerRadius;
@@ -91,40 +97,51 @@ public class BorderStyleAltObject {
     }
 
     /**
-     * Gets a float value specifying the horizontal corner radius of the rectangular border.
+     * Gets the horizontal corner radius of the rectangular border.
      * Corresponds to array index 0 in the Border key in the common annotation dictionary.
+     *
+     * @return a float value specifying the horizontal corner radius.
      */
     public float getHCornerRadius() {
         return hCornerRadius;
     }
 
     /**
-     * Gets a float value specifying the vertical corner radius of the rectangular border.
+     * Gets the vertical corner radius of the rectangular border.
      * Corresponds to array index 1 in the Border key in the common annotation dictionary.
+     *
+     * @return a float value specifying the vertical corner radius.
      */
     public float getVCornerRadius() {
         return vCornerRadius;
     }
 
     /**
-     * Gets a float value specifying the width of the rectangular border.
+     * Gets the width of the rectangular border.
      * Corresponds to array index 2 in the Border key in the common annotation dictionary.
+     *
+     * @return a float value specifying the width of the border.
      */
     public float getWidth() {
         return width;
     }
 
     /**
-     * Gets a array of numbers specifying the pattern of dashes and gaps of the border.
+     * Gets the dash pattern of the border.
      * Corresponds to array index 3 in the Border key in the common annotation dictionary.
+     *
+     * @return an array of numbers specifying the pattern of dashes and gaps of the border.
      */
     public float[] getDashPattern() {
         return dashPattern;
     }
 
     /**
-     * Sets a array of numbers specifying the pattern of dashes and gaps of the border.
+     * Sets the dash pattern of the border.
      * Corresponds to array index 3 in the Border key in the common annotation dictionary.
+     *
+     * @param dashPattern an array of numbers specifying the pattern of dashes and gaps of the border.
+     * @return this {@link BorderStyleAltObject} instance.
      */
     public BorderStyleAltObject setDashPattern(float[] dashPattern) {
         this.dashPattern = dashPattern;
@@ -132,14 +149,19 @@ public class BorderStyleAltObject {
     }
 
     /**
-     * Gets an encoded border style string.
+     * Gets border style.
+     *
+     * @return an encoded border style as string.
      */
     public String getContent() {
         return content;
     }
 
     /**
-     * Sets an encoded border style string.
+     * Sets border style.
+     *
+     * @param content an encoded border style as string.
+     * @return this {@link BorderStyleAltObject} instance.
      */
     public BorderStyleAltObject setContent(String content) {
         this.content = content;

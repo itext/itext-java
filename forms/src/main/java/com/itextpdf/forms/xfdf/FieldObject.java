@@ -46,9 +46,9 @@ package com.itextpdf.forms.xfdf;
 /**
  * Represents the field element, a child of the fields and field elements.
  * The field element corresponds to a form field.
- * Content model: ( field* | value* | ( value? & value-richtext? )).
+ * Content model: ( field* | value* | ( value? &amp; value-richtext? )).
  * Required attributes: name.
- * For more details see paragraph 6.3.2 in Xfdf document specification.
+ * For more details see paragraph 6.3.2 in XFDF document specification.
  */
 public class FieldObject {
 
@@ -56,7 +56,7 @@ public class FieldObject {
      * Represents the name attribute of the field element.
      * Corresponds to the T key in the field dictionary.
      * In a hierarchical form field, the name is the partial field name.
-     * For more details see paragraph 6.3.2.2 in Xfdf document specification.
+     * For more details see paragraph 6.3.2.2 in XFDF document specification.
      */
     private String name;
 
@@ -65,7 +65,7 @@ public class FieldObject {
      * vary depending on the field type.
      * Corresponds to the V key in the FDF field dictionary.
      * Content model: text string.
-     * For more details see paragraph 6.3.3 in Xfdf document specification.
+     * For more details see paragraph 6.3.3 in XFDF document specification.
      */
     private String value;
 
@@ -75,7 +75,7 @@ public class FieldObject {
      * Corresponds to the RV key in the variable text field dictionary.
      * Content model: text strign or rich text string.
      * Attributes: none.
-     * For more details see paragraph 6.3.4 in Xfdf document specification.
+     * For more details see paragraph 6.3.4 in XFDF document specification.
      */
     private String richTextValue;
 
@@ -106,7 +106,7 @@ public class FieldObject {
      * Gets the string value of the name attribute of the field element.
      * Corresponds to the T key in the field dictionary.
      * In a hierarchical form field, the name is the partial field name.
-     * For more details see paragraph 6.3.2.2 in Xfdf document specification.
+     * For more details see paragraph 6.3.2.2 in XFDF document specification.
      */
     public String getName() {
         return name;
@@ -122,18 +122,18 @@ public class FieldObject {
     }
 
     /**
-     * Gets the string representation of the value element, a child of the field element and contains the field's value, whose format may
-     * vary depending on the field type.
+     * Gets the string representation of the value element, a child of the field element and contains the field's value,
+     * whose format may vary depending on the field type.
      * Corresponds to the V key in the FDF field dictionary.
-     * For more details see paragraph 6.3.3 in Xfdf document specification.
+     * For more details see paragraph 6.3.3 in XFDF document specification.
      */
     public String getValue() {
         return value;
     }
 
     /**
-     * Sets the string representation of the value element, a child of the field element and contains the field's value, whose format may
-     * vary depending on the field type.
+     * Sets the string representation of the value element, a child of the field element and contains the field's value,
+     * whose format may vary depending on the field type.
      * Corresponds to the V key in the FDF field dictionary.
      */
     public void setValue(String value) {
@@ -141,19 +141,19 @@ public class FieldObject {
     }
 
     /**
-     * Gets the string representation of the value-richtext element, a child of the field element and contains the field's value formatted as a
-     * rich text string.
+     * Gets the string representation of the value-richtext element, a child of the field element and contains the
+     * field's value formatted as a rich text string.
      * Corresponds to the RV key in the variable text field dictionary.
      * Content model: text strign or rich text string.
-     * For more details see paragraph 6.3.4 in Xfdf document specification.
+     * For more details see paragraph 6.3.4 in XFDF document specification.
      */
     public String getRichTextValue() {
         return richTextValue;
     }
 
     /**
-     * Sets the string representation of the value-richtext element, a child of the field element and contains the field's value formatted as a
-     * rich text string.
+     * Sets the string representation of the value-richtext element, a child of the field element and contains the
+     * field's value formatted as a rich text string.
      * Corresponds to the RV key in the variable text field dictionary.
      * Content model: text strign or rich text string.
      */

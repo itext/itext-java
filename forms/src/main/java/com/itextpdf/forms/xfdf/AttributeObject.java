@@ -44,13 +44,18 @@ package com.itextpdf.forms.xfdf;
 
 
 /**
- * Represents the attribute of any xfdf element.
+ * Represents the attribute of any XFDF element.
  */
 public class AttributeObject {
 
     private String name;
     private String value;
 
+    /**
+     * Creates an instance with given attribute name and value.
+     * @param name the name of the attribute, constrained by XML attributes specification.
+     * @param value the value of the attribute, constrained by XML attributes specification.
+     */
     public AttributeObject(String name, String value) {
         if(name == null || value == null) {
             throw new XfdfException(XfdfConstants.ATTRIBUTE_NAME_OR_VALUE_MISSING);
@@ -60,14 +65,16 @@ public class AttributeObject {
     }
 
     /**
-     * Returns a string containing attribute name.
+     * Returns attribute name.
+     * @return a string representation of attribute name, case-sensitive as per XML specification.
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Returns a string representation of attribute value.
+     * Returns attribute value.
+     * @return a string representation of attribute value.
      */
     public String getValue() {
         return value;

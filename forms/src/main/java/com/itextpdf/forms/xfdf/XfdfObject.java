@@ -44,17 +44,17 @@ package com.itextpdf.forms.xfdf;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 /**
  * Represents xfdf element, the top level element in an xfdf document.
  * For more details see paragraph 6.2.1 in Xfdf document specification.
- * Content model: ( f? & ids? & fields? & annots? )
+ * Content model: ( f? &amp; ids? &amp; fields? &amp; annots? )
  * Attributes: xml:space, xmlns.
  */
 public class XfdfObject {
@@ -162,7 +162,8 @@ public class XfdfObject {
 
     /**
      * Merges info from XfdfObject to pdf document.
-     * @param pdfDocument the target document for merge.
+     *
+     * @param pdfDocument     the target document for merge.
      * @param pdfDocumentName the name of the target document. Will be checked in the merge process to determined
      *                        if it is the same as href attribute of f element of merged XfdfObject. If the names are
      *                        different, a warning will be thrown.
@@ -174,9 +175,10 @@ public class XfdfObject {
 
     /**
      * Writes info from XfdfObject to .xfdf file.
+     *
      * @param filename name of the target file.
-     * @throws IOException if a problem occured during opening the target file.
-     * @throws TransformerException if there is an error while creating xml structure.
+     * @throws IOException                  if a problem occured during opening the target file.
+     * @throws TransformerException         if there is an error while creating xml structure.
      * @throws ParserConfigurationException if there is an error while writing info into xnl format.
      */
     public void writeToFile(String filename) throws IOException, TransformerException, ParserConfigurationException {
@@ -187,8 +189,9 @@ public class XfdfObject {
 
     /**
      * Writes info from XfdfObject to .xfdf file.
+     *
      * @param os target output stream.
-     * @throws TransformerException if there is an error while creating xml structure.
+     * @throws TransformerException         if there is an error while creating xml structure.
      * @throws ParserConfigurationException if there is an error while writing info into xml format.
      */
     public void writeToFile(OutputStream os) throws TransformerException, ParserConfigurationException {
