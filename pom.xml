@@ -92,7 +92,6 @@
     <maven.jar.version>3.1.0</maven.jar.version>
     <maven.source.version>3.0.1</maven.source.version>
     <performancetests>com.itextpdf.test.annotations.type.PerformanceTest</performancetests>
-    <pitest.version>1.1.11</pitest.version>
     <pmd.version>3.11.0</pmd.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -161,6 +160,38 @@
 
   <build>
     <finalName>itext7-${project.artifactId}-${project.version}</finalName>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.pitest</groupId>
+          <artifactId>pitest-maven</artifactId>
+          <version>1.5.1</version>
+          <executions>
+            <execution>
+              <id>default-mutationCoverage</id>
+              <goals>
+                <goal>mutationCoverage</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <timestampedReports>false</timestampedReports>
+            <outputFormats>
+              <outputFormat>XML</outputFormat>
+              <outputFormat>HTML</outputFormat>
+            </outputFormats>
+            <targetClasses>
+              <param>com.itextpdf*</param>
+            </targetClasses>
+            <targetTests>
+              <param>com.itextpdf*</param>
+            </targetTests>
+            <historyInputFile>${project.build.directory}/pitest.history</historyInputFile>
+            <historyOutputFile>${project.build.directory}/pitest.history</historyOutputFile>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>com.github.ekryd.sortpom</groupId>
@@ -802,21 +833,23 @@
               <!-- report -->
             </configuration>
           </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <!-- This profile is only used by Jenkins. -->
+      <id>mutationtest</id>
+      <build>
+        <plugins>
           <plugin>
             <groupId>org.pitest</groupId>
             <artifactId>pitest-maven</artifactId>
-            <version>${pitest.version}</version>
-            <configuration>
-              <targetClasses>
-                <param>com.itextpdf*</param>
-              </targetClasses>
-              <targetTests>
-                <param>com.itextpdf*</param>
-              </targetTests>
-            </configuration>
           </plugin>
         </plugins>
       </build>
+      <properties>
+        <sonar.pitest.mode>reuseReport</sonar.pitest.mode>
+      </properties>
     </profile>
     <profile>
       <id>artifactory</id>
