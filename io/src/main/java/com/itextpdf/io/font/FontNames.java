@@ -219,7 +219,7 @@ public class FontNames implements Serializable {
      * Sets Open Type head.macStyle.
      * <p>
      * {@link FontMacStyleFlags}
-     * @param macStyle
+     * @param macStyle macStyle flag
      */
     protected void setMacStyle(int macStyle) {
         this.macStyle = macStyle;
