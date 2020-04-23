@@ -1234,4 +1234,37 @@ public class LargeElementTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
+
+    @Test
+    // TODO DEVSIX-3953
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)})
+    public void largeTableFooterNotFitTest() throws IOException, InterruptedException {
+        String testName = "largeTableFooterNotFitTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(595, 100));
+
+        float[] colWidths = new float[]{200, -1, 40, 40};
+
+        Table table = new Table(UnitValue.createPointArray(colWidths), true);
+        Cell footerCell = new Cell(1, 4).add(new Paragraph("Table footer: continue on next page"));
+        table.addFooterCell(footerCell);
+        doc.add(table);
+
+        for (int i = 0; i < 2; i++) {
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 0))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 1))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 2))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 3))));
+
+            table.flush();
+        }
+
+        table.complete();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
 }
