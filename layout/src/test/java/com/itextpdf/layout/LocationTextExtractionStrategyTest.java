@@ -69,6 +69,9 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -235,7 +238,8 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
 
         pdf.close();
 
-        Assert.assertEquals(new String(java.nio.file.Files.readAllBytes(new java.io.File(comparedTextFile).toPath()), StandardCharsets.UTF_8), result);
+        byte[] bytes = Files.readAllBytes(java.nio.file.Paths.get(comparedTextFile));
+        Assert.assertEquals(new String(bytes, StandardCharsets.UTF_8), result);
 
         Assert.assertEquals(83, pdfType3Font.getNumberOfGlyphs());
 
