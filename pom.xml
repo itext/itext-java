@@ -681,6 +681,8 @@
             </executions>
             <configuration>
               <format>ALL</format>
+              <dataDirectory>${user.home}/security/owasp-nvd/</dataDirectory>
+              <autoUpdate>false</autoUpdate>
             </configuration>
           </plugin>
           <plugin>
