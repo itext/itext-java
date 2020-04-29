@@ -22,49 +22,54 @@
  */
 package com.itextpdf.io.image;
 
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.net.MalformedURLException;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class ImageTypeDetectorTest extends ExtendedITextTest {
+public class ImageDataFactoryTest extends ExtendedITextTest {
 
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/image/ImageTypeDetectorTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/image/ImageDataFactoryTest/";
     private static final String IMAGE_NAME = "image";
 
     @Test
-    public void testUnknown() throws MalformedURLException {
-        test(UrlUtil.toURL(SOURCE_FOLDER + IMAGE_NAME + ".txt"), ImageType.NONE);
+    public void testImageTypeSupportUnknownFile() throws IOException {
+        testImageTypeSupport(UrlUtil.toURL(SOURCE_FOLDER + IMAGE_NAME + ".txt"), false);
     }
 
     @Test
-    public void testGif() throws MalformedURLException {
-        test(UrlUtil.toURL(SOURCE_FOLDER + IMAGE_NAME + ".gif"), ImageType.GIF);
+    public void testImageTypeSupportGifFile() throws IOException {
+        testImageTypeSupport(UrlUtil.toURL(SOURCE_FOLDER + IMAGE_NAME + ".gif"), true);
     }
 
     @Test
-    public void testJpeg() throws MalformedURLException {
-        test(UrlUtil.toURL(SOURCE_FOLDER + IMAGE_NAME + ".jpg"), ImageType.JPEG);
+    public void testImageTypeSupportJpegFile() throws IOException {
+        testImageTypeSupport(UrlUtil.toURL(SOURCE_FOLDER + IMAGE_NAME + ".jpg"), true);
     }
 
     @Test
-    public void testTiff() throws MalformedURLException {
-        test(UrlUtil.toURL(SOURCE_FOLDER + IMAGE_NAME + ".tiff"), ImageType.TIFF);
+    public void testImageTypeSupportTiffFile() throws IOException {
+        testImageTypeSupport(UrlUtil.toURL(SOURCE_FOLDER + IMAGE_NAME + ".tiff"), true);
     }
 
     @Test
-    public void testWmf() throws MalformedURLException {
-        test(UrlUtil.toURL(SOURCE_FOLDER + IMAGE_NAME + ".wmf"), ImageType.WMF);
+    public void testImageTypeSupportWmfType() {
+        Assert.assertFalse(ImageDataFactory.isSupportedType(ImageType.WMF));
     }
 
-    private void test(URL location, ImageType expectedType) {
-        Assert.assertEquals(expectedType, ImageTypeDetector.detectImageType(location));
+    private void testImageTypeSupport(URL location, boolean expectedResult) throws IOException {
+        Assert.assertEquals(expectedResult, ImageDataFactory.isSupportedType(location));
+        try (FileInputStream inputStream = new FileInputStream(location.getFile())) {
+            Assert.assertEquals(expectedResult, ImageDataFactory.isSupportedType(StreamUtil.inputStreamToArray(inputStream)));
+        }
     }
 
 }

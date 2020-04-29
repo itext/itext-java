@@ -98,21 +98,12 @@ public final class ImageTypeDetector {
     }
 
     private static byte[] readImageType(URL source) {
-        InputStream stream = null;
-        try {
-            stream = UrlUtil.openStream(source);
+        try (InputStream stream = UrlUtil.openStream(source)) {
             byte[] bytes = new byte[8];
             stream.read(bytes);
             return bytes;
         } catch (java.io.IOException e) {
             throw new IOException(IOException.IoException, e);
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (java.io.IOException ignored) {
-                }
-            }
         }
     }
 

@@ -259,51 +259,35 @@ public final class ImageDataFactory {
      * Returns a specified frame of the gif image
      *
      * @param url   url of gif image
-     * @param frame number of frame to be returned
+     * @param frame number of frame to be returned, 1-based
      * @return GifImageData instance.
      */
     public static ImageData createGifFrame(URL url, int frame) {
-        if (ImageTypeDetector.detectImageType(url) == ImageType.GIF) {
-            GifImageData image = new GifImageData(url);
-            GifImageHelper.processImage(image, frame - 1);
-            return image.getFrames().get(frame - 1);
-        }
-        throw new IllegalArgumentException("GIF image expected.");
+        return createGifFrames(url, new int[] {frame}).get(0);
     }
 
     /**
      * Returns a specified frame of the gif image
      *
      * @param bytes byte array of gif image
-     * @param frame number of frame to be returned
+     * @param frame number of frame to be returned, 1-based
      * @return GifImageData instance
      */
     public static ImageData createGifFrame(byte[] bytes, int frame) {
-        if (ImageTypeDetector.detectImageType(bytes) == ImageType.GIF) {
-            GifImageData image = new GifImageData(bytes);
-            GifImageHelper.processImage(image, frame - 1);
-            return image.getFrames().get(frame - 1);
-        }
-        throw new IllegalArgumentException("GIF image expected.");
+        return createGifFrames(bytes, new int[] {frame}).get(0);
     }
 
     /**
      * Returns <CODE>List</CODE> of gif image frames
      *
      * @param bytes        byte array of gif image
-     * @param frameNumbers array of frame numbers of gif image
+     * @param frameNumbers array of frame numbers of gif image, 1-based
      * @return all frames of gif image
      */
     public static List<ImageData> createGifFrames(byte[] bytes, int[] frameNumbers) {
         if (ImageTypeDetector.detectImageType(bytes) == ImageType.GIF) {
             GifImageData image = new GifImageData(bytes);
-            Arrays.sort(frameNumbers);
-            GifImageHelper.processImage(image, frameNumbers[frameNumbers.length - 1] - 1);
-            List<ImageData> frames = new ArrayList<>();
-            for (int frame : frameNumbers) {
-                frames.add(image.getFrames().get(frame - 1));
-            }
-            return frames;
+            return processGifImageAndExtractFrames(frameNumbers, image);
         }
         throw new IllegalArgumentException("GIF image expected.");
     }
@@ -312,19 +296,13 @@ public final class ImageDataFactory {
      * Returns <CODE>List</CODE> of gif image frames
      *
      * @param url          url of gif image
-     * @param frameNumbers array of frame numbers of gif image
+     * @param frameNumbers array of frame numbers of gif image, 1-based
      * @return all frames of gif image
      */
     public static List<ImageData> createGifFrames(URL url, int[] frameNumbers) {
         if (ImageTypeDetector.detectImageType(url) == ImageType.GIF) {
             GifImageData image = new GifImageData(url);
-            Arrays.sort(frameNumbers);
-            GifImageHelper.processImage(image, frameNumbers[frameNumbers.length - 1] - 1);
-            List<ImageData> frames = new ArrayList<>();
-            for (int frame : frameNumbers) {
-                frames.add(image.getFrames().get(frame - 1));
-            }
-            return frames;
+            return processGifImageAndExtractFrames(frameNumbers, image);
         }
         throw new IllegalArgumentException("GIF image expected.");
     }
@@ -596,5 +574,13 @@ public final class ImageDataFactory {
         }
     }
 
-
+    private static List<ImageData> processGifImageAndExtractFrames(int[] frameNumbers, GifImageData image) {
+        Arrays.sort(frameNumbers);
+        GifImageHelper.processImage(image, frameNumbers[frameNumbers.length - 1] - 1);
+        List<ImageData> frames = new ArrayList<>();
+        for (int frame : frameNumbers) {
+            frames.add(image.getFrames().get(frame - 1));
+        }
+        return frames;
+    }
 }

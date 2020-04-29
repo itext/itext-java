@@ -151,8 +151,9 @@ public final class GifImageHelper {
         gif.input = stream;
         readHeader(gif);
         readContents(gif, lastFrameNumber);
-        if (gif.currentFrame <= lastFrameNumber)
+        if (gif.currentFrame <= lastFrameNumber) {
             throw new IOException(IOException.CannotFind1Frame).setMessageParams(lastFrameNumber);
+        }
     }
 
     /**
