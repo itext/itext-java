@@ -110,7 +110,6 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO (RND-904) This test should fail when RND-904 (relative line operator l ) is implemented.
     public void pathNodeRendererMoveToTest1() throws IOException, InterruptedException {
         String filename = "pathNodeRendererMoveToTest1.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));

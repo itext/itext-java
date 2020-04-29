@@ -114,8 +114,8 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO-2331 Update the cmp after the issue is resolved
-    // UPD: Seems to be fixed now, but leaving the TODO and issue open because the scope of the issue might be bigger than
+    // TODO DEVSIX-2331 Update the cmp after the issue is resolved
+    // UPD: Seems to be fixed now, but leaving the remark and issue open because the scope of the issue might be bigger than
     // this test
     public void moreThanOneHParam() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "moreThanOneHParam");
