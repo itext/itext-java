@@ -642,13 +642,8 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         ISvgProcessorResult expected = new SvgProcessorResult(map, root, new FontProvider(), new FontSet());
 
         ISvgProcessorResult actual = SvgConverter.parseAndProcess(fis);
-        //TODO(RND-868): remove below checks
-        Assert.assertEquals(SvgTagSvgNodeRenderer.class, actual.getRootRenderer().getClass());
-        Assert.assertEquals(0, actual.getNamedObjects().size());
-        Assert.assertEquals("500", actual.getRootRenderer().getAttribute("width"));
 
-        //TODO(RND-868): Switch test over to this logic
-        //Assert.assertEquals(expected,actual);
+        Assert.assertEquals(expected.getRootRenderer().getAttributeMapCopy(), actual.getRootRenderer().getAttributeMapCopy());
     }
 
     @Test
