@@ -161,6 +161,11 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    public void testJPXDecode() throws Exception {
+        testFile("JPXDecode.pdf", "Im1", "jp2");
+    }
+
+    @Test
     public void extractByteAlignedG4TiffImageTest() throws IOException {
         String inFileName = sourceFolder + "extractByteAlignedG4TiffImage.pdf";
         String outImageFileName = destinationFolder + "extractedByteAlignedImage.png";
