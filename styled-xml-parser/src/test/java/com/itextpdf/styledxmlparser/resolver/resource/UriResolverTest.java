@@ -265,8 +265,6 @@ public class UriResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO RND-1019 this test should fail in .Net version when RND-1019 is resolved this method produces a behavior that is not consistant in java vs .Net
-    // the whitespace characters are
     public void uriResolverTest16B() throws MalformedURLException {
         String absolutePathRoot = Paths.get("").toAbsolutePath().getRoot().toUri().toURL().toString();
 
