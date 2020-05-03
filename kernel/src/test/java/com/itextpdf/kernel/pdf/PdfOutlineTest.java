@@ -452,4 +452,16 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder, "diff_"));
     }
+
+    @Test
+    public void testReinitializingOutlines() throws IOException {
+        String input = sourceFolder + "outlineTree.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(input));
+        PdfOutline root = pdfDocument.getOutlines(false);
+        Assert.assertEquals(4, root.getAllChildren().size());
+        pdfDocument.getCatalog().getPdfObject().remove(PdfName.Outlines);
+        root = pdfDocument.getOutlines(true);
+        Assert.assertNull(root);
+        pdfDocument.close();
+    }
 }
