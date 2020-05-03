@@ -579,7 +579,7 @@ public class MetaDo {
                         cb.rectangle(xDest, yDest, destWidth, destHeight);
                         cb.clip();
                         cb.endPath();
-                        ImageData bmpImage = ImageDataFactory.createBmp(b, true, b.length);
+                        ImageData bmpImage = ImageDataFactory.createBmp(b, true);
                         PdfImageXObject imageXObject = new PdfImageXObject(bmpImage);
 
                         float width = destWidth * bmpImage.getWidth() / srcWidth;
