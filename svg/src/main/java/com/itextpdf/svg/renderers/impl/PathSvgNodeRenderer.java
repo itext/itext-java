@@ -165,7 +165,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
                     startingControlPoint[1] = SvgCssUtils.convertDoubleToString(previousEndPoint.getY());
                 }
             } else {
-                // TODO RND-951
+                // TODO DEVSIX-2278
                 startingControlPoint[0] = pathProperties[0];
                 startingControlPoint[1] = pathProperties[1];
             }

@@ -53,7 +53,7 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 
 /**
  * Responsible for drawing Images to the canvas.
- * Referenced SVG images aren't supported yet. TODO RND-984
+ * Referenced SVG images aren't supported yet. TODO DEVSIX-2277
  */
 public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
 

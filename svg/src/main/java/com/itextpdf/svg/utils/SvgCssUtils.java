@@ -52,7 +52,7 @@ import java.util.List;
 /**
  * Utility class that facilitates parsing values from CSS.
  */
-// TODO RND-875
+// TODO DEVSIX-2266
 
 public final class SvgCssUtils {
 
