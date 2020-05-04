@@ -23,6 +23,8 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -161,5 +163,77 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         pdfDocument.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, inFileName, destinationFolder));
+    }
+
+    @Test
+    //TODO: update assert condition after DEVSIX-3952 will be fixed
+    public void xrefStmInWriteModeTest() throws IOException {
+        String fileName = destinationFolder + "xrefStmInWriteMode.pdf";
+
+        PdfWriter writer = new PdfWriter(fileName, new WriterProperties().setFullCompressionMode(true)
+                .setCompressionLevel(CompressionConstants.NO_COMPRESSION));
+        PdfDocument pdfDocument = new PdfDocument(writer);
+        PdfPage page = pdfDocument.addNewPage();
+
+        PdfTextAnnotation textannot = new PdfTextAnnotation(new Rectangle(100, 600, 50, 40));
+        textannot
+                .setText(new PdfString("Text Annotation 01"))
+                .setContents(new PdfString("Some contents..."));
+        page.addAnnotation(textannot);
+        pdfDocument.close();
+
+        PdfDocument doc = new PdfDocument(new PdfReader(fileName));
+
+        int x = 0;
+
+        for (int i = 1; i < doc.getNumberOfPdfObjects(); i++) {
+            PdfObject obj = doc.getPdfObject(i);
+
+            if (obj instanceof PdfDictionary) {
+                PdfDictionary objStmDict = (PdfDictionary) doc.getPdfObject(i);
+                PdfObject type = objStmDict.get(PdfName.Type);
+
+                if (type != null && type.equals(PdfName.XRef)) {
+                    x++;
+                }
+            }
+        }
+
+        doc.close();
+        //expected number of objects with /Type /Xref should be 1
+        Assert.assertEquals(0, x);
+    }
+
+    @Test
+    //TODO: update assert condition after DEVSIX-3952 will be fixed and update the input file
+    //where indirect reference of xref stream will be in the xref.
+    public void xrefStmInAppendModeTest() throws IOException {
+        String fileName = destinationFolder + "xrefStmInAppendMode.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "xrefStmInWriteMode.pdf"),
+                new PdfWriter(fileName).setCompressionLevel(CompressionConstants.NO_COMPRESSION),
+                new StampingProperties().useAppendMode());
+        pdfDocument.close();
+
+        PdfDocument doc = new PdfDocument(new PdfReader(fileName));
+
+        int x = 0;
+
+        for (int i = 1; i < doc.getNumberOfPdfObjects(); i++) {
+            PdfObject obj = doc.getPdfObject(i);
+
+            if (obj instanceof PdfDictionary) {
+                PdfDictionary objStmDict = (PdfDictionary) doc.getPdfObject(i);
+                PdfObject type = objStmDict.get(PdfName.Type);
+
+                if (type != null && type.equals(PdfName.XRef)) {
+                    x++;
+                }
+            }
+        }
+
+        doc.close();
+        //expected number of objects with /Type /Xref should be 2
+        Assert.assertEquals(0, x);
     }
 }
