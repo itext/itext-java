@@ -217,8 +217,6 @@ final class TableWidths {
     }
 
     void processColumns() {
-
-        //TODO add colgroup information.
         for (int i = 0; i < numberOfColumns; i++) {
             UnitValue colWidth = getTable().getColumnWidth(i);
             if (colWidth != null && colWidth.getValue() > 0) {

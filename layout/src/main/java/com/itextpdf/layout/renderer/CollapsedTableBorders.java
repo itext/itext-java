@@ -168,8 +168,6 @@ class CollapsedTableBorders extends TableBorders {
                 int col = 0;
                 int row = index - 1;
                 while (col < numberOfColumns) {
-
-                    // TODO
                     if (null != rows.get(row - largeTableIndexOffset)[col]) {
                         CellRenderer cell = rows.get(row - largeTableIndexOffset)[col];
                         Border cellModelBottomBorder = TableBorderUtil.getCellSideBorder(((Cell) cell.getModelElement()), Property.BORDER_BOTTOM);
