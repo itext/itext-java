@@ -497,7 +497,7 @@ public class Rectangle implements Cloneable, Serializable {
      * @param bottomIndent the value on which the bottom y coordinate will change.
      * @param leftIndent the value on which the left x coordinate will change.
      * @param reverse if {@code true} the rectangle will expand, otherwise it will shrink
-     * @return the  rectanglewith applied margins
+     * @return the rectangle with applied margins
      */
     public Rectangle applyMargins(float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse) {
         x += leftIndent * (reverse ? -1 : 1);
