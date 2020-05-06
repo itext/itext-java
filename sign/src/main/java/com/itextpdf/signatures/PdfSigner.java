@@ -73,6 +73,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
@@ -301,7 +302,16 @@ public class PdfSigner {
     }
 
     protected PdfDocument initDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
-        PdfAConformanceLevel conformanceLevel = reader.getPdfAConformanceLevel();
+        // we can't use reader.getPdfAConformanceLevel() because PdfReader's pdfAConformanceLevel
+        // is initialized only after opening PdfDocument.
+        PdfAConformanceLevel conformanceLevel = null;
+        try {
+            // since PdfReader cannot be reused, create a new instance for conformanceLevel detection
+            PdfDocument tempDocument = new PdfDocument(new PdfReader(reader.getSafeFile().createSourceView(), new ReaderProperties()));
+            conformanceLevel = tempDocument.getReader().getPdfAConformanceLevel();
+            tempDocument.close();
+        } catch (IOException ignored) {
+        }
         if (null == conformanceLevel) {
             return new PdfDocument(reader, writer, properties);
         } else {
