@@ -134,7 +134,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         context = new SvgProcessorContext(converterProps);
         cssResolver = new SvgStyleResolver(root, context);
         new SvgFontProcessor(context).addFontFaceFonts(cssResolver);
-        //TODO RND-1042
+        //TODO DEVSIX-2264
         namedObjects = new HashMap<>();
         cssContext = new SvgCssContext();
     }
