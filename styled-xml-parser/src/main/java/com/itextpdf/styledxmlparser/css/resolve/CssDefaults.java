@@ -136,8 +136,10 @@ public class CssDefaults {
 
         defaultValues.put(CommonCssConstants.TEXT_ALIGN, CommonCssConstants.START);
         defaultValues.put(CommonCssConstants.TEXT_DECORATION, CommonCssConstants.NONE);
+        defaultValues.put(CommonCssConstants.TEXT_DECORATION_LINE, CommonCssConstants.NONE);
+        defaultValues.put(CommonCssConstants.TEXT_DECORATION_STYLE, CommonCssConstants.SOLID);
+        defaultValues.put(CommonCssConstants.TEXT_DECORATION_COLOR, CommonCssConstants.CURRENTCOLOR);
         defaultValues.put(CommonCssConstants.TEXT_TRANSFORM, CommonCssConstants.NONE);
-        defaultValues.put(CommonCssConstants.TEXT_DECORATION, CommonCssConstants.NONE);
 
         defaultValues.put(CommonCssConstants.WHITE_SPACE, CommonCssConstants.NORMAL);
         defaultValues.put(CommonCssConstants.WIDTH, CommonCssConstants.AUTO);
