@@ -40,43 +40,52 @@ public final class TextPreprocessingUtil {
      */
     public static GlyphLine replaceSpecialWhitespaceGlyphs(GlyphLine line, PdfFont font) {
         if (null != line) {
+            boolean isMonospaceFont = font.getFontProgram().getFontMetrics().isFixedPitch();
             Glyph space = font.getGlyph('\u0020');
+            int spaceWidth = space.getWidth();
             Glyph glyph;
             for (int i = 0; i < line.size(); i++) {
                 glyph = line.get(i);
-                Integer xAdvance = getSpecialWhitespaceXAdvance(glyph, space, font.getFontProgram().getFontMetrics().isFixedPitch());
-                if (xAdvance != null) {
+
+                int xAdvance = 0;
+                boolean isSpecialWhitespaceGlyph = false;
+
+                if (glyph.getCode() <= 0) {
+                    switch (glyph.getUnicode()) {
+                        // ensp
+                        case '\u2002': {
+                            xAdvance = isMonospaceFont ? 0 : 500 - spaceWidth;
+                            isSpecialWhitespaceGlyph = true;
+                            break;
+                        }
+                        // emsp
+                        case '\u2003': {
+                            xAdvance = isMonospaceFont ? 0 : 1000 - spaceWidth;
+                            isSpecialWhitespaceGlyph = true;
+                            break;
+                        }
+                        // thinsp
+                        case '\u2009': {
+                            xAdvance = isMonospaceFont ? 0 : 200 - spaceWidth;
+                            isSpecialWhitespaceGlyph = true;
+                            break;
+                        }
+                        case '\t': {
+                            xAdvance = 3 * spaceWidth;
+                            isSpecialWhitespaceGlyph = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (isSpecialWhitespaceGlyph) {
                     Glyph newGlyph = new Glyph(space, glyph.getUnicode());
                     assert xAdvance <= Short.MAX_VALUE && xAdvance >= Short.MIN_VALUE;
-                    newGlyph.setXAdvance((short) (int) xAdvance);
+                    newGlyph.setXAdvance((short) xAdvance);
                     line.set(i, newGlyph);
                 }
             }
         }
         return line;
-    }
-
-    private static Integer getSpecialWhitespaceXAdvance(Glyph glyph, Glyph spaceGlyph, boolean isMonospaceFont) {
-        if (glyph.getCode() > 0) {
-            return null;
-        }
-        switch (glyph.getUnicode()) {
-
-            // ensp
-            case '\u2002':
-                return isMonospaceFont ? 0 : 500 - spaceGlyph.getWidth();
-
-            // emsp
-            case '\u2003':
-                return isMonospaceFont ? 0 : 1000 - spaceGlyph.getWidth();
-
-            // thinsp
-            case '\u2009':
-                return isMonospaceFont ? 0 : 200 - spaceGlyph.getWidth();
-            case '\t':
-                return 3 * spaceGlyph.getWidth();
-        }
-
-        return null;
     }
 }
