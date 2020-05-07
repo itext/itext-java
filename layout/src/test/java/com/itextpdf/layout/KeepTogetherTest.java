@@ -584,6 +584,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
+    // TODO DEVSIX-3995 The margin between the divs occupies 100 points instead of 300. After a fix the cmp should be updated
     public void marginCollapseKeptTogetherDivGoesBackTest02() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_marginCollapseKeptTogetherDivGoesBackTest02.pdf";
         String outFile = destinationFolder + "marginCollapseKeptTogetherDivGoesBackTest02.pdf";
