@@ -44,7 +44,8 @@ public final class TextPreprocessingUtil {
             Glyph space = font.getGlyph('\u0020');
             int spaceWidth = space.getWidth();
             Glyph glyph;
-            for (int i = 0; i < line.size(); i++) {
+            int lineSize = line.size();
+            for (int i = 0; i < lineSize; i++) {
                 glyph = line.get(i);
 
                 int xAdvance = 0;
