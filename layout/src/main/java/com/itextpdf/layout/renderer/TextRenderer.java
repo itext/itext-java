@@ -112,7 +112,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     protected float yLineOffset;
 
-    // font should be stored only during converting original string to GlyphLine, however now it's not true
     private PdfFont font;
     protected GlyphLine text;
     protected GlyphLine line;
@@ -162,10 +161,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         updateFontAndText();
-        if (null != text) {
-            // if text != null => font != null
-            text = TextPreprocessingUtil.replaceSpecialWhitespaceGlyphs(text, font);
-        }
 
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = area.getBBox().clone();
@@ -998,19 +993,33 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     /**
-     * Manually sets a GlyphLine to be rendered with a specific start and end
-     * point.
+     * Manually sets a GlyphLine to be rendered with a specific start and end point.
      *
      * @param text     a {@link GlyphLine}
      * @param leftPos  the leftmost end of the GlyphLine
      * @param rightPos the rightmost end of the GlyphLine
      */
+    @Deprecated
     public void setText(GlyphLine text, int leftPos, int rightPos) {
-        this.strToBeConverted = null;
-        this.text = new GlyphLine(text);
-        this.text.start = leftPos;
-        this.text.end = rightPos;
-        this.otfFeaturesApplied = false;
+        GlyphLine newText = new GlyphLine(text);
+        newText.start = leftPos;
+        newText.end = rightPos;
+        if (this.font != null) {
+            newText = TextPreprocessingUtil.replaceSpecialWhitespaceGlyphs(newText, this.font);
+        }
+        setProcessedGlyphLineAndFont(newText, this.font);
+    }
+
+    /**
+     * Manually set a GlyphLine and PdfFont for rendering.
+     *
+     * @param text the {@link GlyphLine}
+     * @param font the font
+     */
+    public void setText(GlyphLine text, PdfFont font) {
+        GlyphLine newText = new GlyphLine(text);
+        newText = TextPreprocessingUtil.replaceSpecialWhitespaceGlyphs(newText, font);
+        setProcessedGlyphLineAndFont(newText, font);
     }
 
     public GlyphLine getText() {
@@ -1165,8 +1174,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     protected TextRenderer[] split(int initialOverflowTextPos) {
         TextRenderer splitRenderer = createSplitRenderer();
-        splitRenderer.setText(text, text.start, initialOverflowTextPos);
-        splitRenderer.font = font;
+        GlyphLine newText = new GlyphLine(text);
+        newText.start = text.start;
+        newText.end = initialOverflowTextPos;
+        splitRenderer.setProcessedGlyphLineAndFont(newText, font);
         splitRenderer.line = line;
         splitRenderer.occupiedArea = occupiedArea.clone();
         splitRenderer.parent = parent;
@@ -1176,8 +1187,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         splitRenderer.addAllProperties(getOwnProperties());
 
         TextRenderer overflowRenderer = createOverflowRenderer();
-        overflowRenderer.setText(text, initialOverflowTextPos, text.end);
-        overflowRenderer.font = font;
+        newText = new GlyphLine(text);
+        newText.start = initialOverflowTextPos;
+        newText.end = text.end;
+        overflowRenderer.setProcessedGlyphLineAndFont(newText, font);
         overflowRenderer.otfFeaturesApplied = otfFeaturesApplied;
         overflowRenderer.parent = parent;
         overflowRenderer.addAllProperties(getOwnProperties());
@@ -1264,7 +1277,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
     }
 
+    @Deprecated
     protected void setGlyphLineAndFont(GlyphLine gl, PdfFont font) {
+        setProcessedGlyphLineAndFont(gl, font);
+    }
+
+    protected void setProcessedGlyphLineAndFont(GlyphLine gl, PdfFont font) {
         this.text = gl;
         this.font = font;
         this.otfFeaturesApplied = false;
@@ -1274,7 +1292,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     protected TextRenderer createCopy(GlyphLine gl, PdfFont font) {
         TextRenderer copy = new TextRenderer(this);
-        copy.setGlyphLineAndFont(gl, font);
+        copy.setProcessedGlyphLineAndFont(gl, font);
         return copy;
     }
 
@@ -1393,18 +1411,19 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     private void updateFontAndText() {
         if (strToBeConverted != null) {
+            PdfFont newFont;
             try {
-                font = getPropertyAsFont(Property.FONT);
+                newFont = getPropertyAsFont(Property.FONT);
             } catch (ClassCastException cce) {
-                font = resolveFirstPdfFont();
+                newFont = resolveFirstPdfFont();
                 if (!strToBeConverted.isEmpty()) {
                     Logger logger = LoggerFactory.getLogger(TextRenderer.class);
                     logger.error(LogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT);
                 }
             }
-            text = convertToGlyphLine(strToBeConverted);
-            otfFeaturesApplied = false;
-            strToBeConverted = null;
+            GlyphLine newText = newFont.createGlyphLine(strToBeConverted);
+            newText = TextPreprocessingUtil.replaceSpecialWhitespaceGlyphs(newText, newFont);
+            setProcessedGlyphLineAndFont(newText, newFont);
         }
     }
 
