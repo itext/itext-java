@@ -144,4 +144,59 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
         //TODO: update cmp_ when DEVSIX-2250, DEVSIX-2258 fixed
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithTransparency", properties);
     }
+
+    @Test
+    public void imageWithPreserveAspectRatioNoneTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioNone", properties);
+    }
+
+    @Test
+    public void imageWithPreserveAspectRatioInvalidValueTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioInvalidValue", properties);
+    }
+
+    @Test
+    public void imageWithPreserveAspectRatioXMinYMinTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMinYMin", properties);
+    }
+
+    @Test
+    public void imageWithPreserveAspectRatioXMinYMidTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMinYMid", properties);
+    }
+
+    @Test
+    public void imageWithPreserveAspectRatioXMinYMaxTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMinYMax", properties);
+    }
+
+    @Test
+    public void imageWithPreserveAspectRatioXMidYMinTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMidYMin", properties);
+    }
+
+    @Test
+    public void imageWithPreserveAspectRatioXMidYMidTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMidYMid", properties);
+    }
+
+    @Test
+    public void imageWithPreserveAspectRatioXMidYMaxTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMidYMax", properties);
+    }
+
+    @Test
+    public void imageWithPreserveAspectRatioXMaxYMinTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMaxYMin", properties);
+    }
+
+    @Test
+    public void imageWithPreserveAspectRatioXMaxYMidTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMaxYMid", properties);
+    }
+
+    @Test
+    public void imageWithPreserveAspectRatioXMaxYMaxTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMaxYMax", properties);
+    }
 }
