@@ -121,10 +121,10 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    public void comboNoHighlightOfChosenFirstItemTest() throws IOException, InterruptedException {
-        String srcPdf = sourceFolder + "comboNoHighlightOfChosenFirstItemTest.pdf";
-        String outPdf = destinationFolder + "comboNoHighlightOfChosenFirstItemTest.pdf";
-        String cmpPdf = sourceFolder + "cmp_comboNoHighlightOfChosenFirstItemTest.pdf";
+    public void comboNoHighlightCenteredTextOfChosenFirstItemTest() throws IOException, InterruptedException {
+        String srcPdf = sourceFolder + "comboNoHighlightCenteredTextOfChosenFirstItemTest.pdf";
+        String outPdf = destinationFolder + "comboNoHighlightCenteredTextOfChosenFirstItemTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_comboNoHighlightCenteredTextOfChosenFirstItemTest.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
         form.getField("First").setValue("Default");

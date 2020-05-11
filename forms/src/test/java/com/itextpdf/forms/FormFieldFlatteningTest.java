@@ -153,6 +153,31 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
     }
 
     @Test
+    public void centeredTextFieldFlatteningTest() throws IOException, InterruptedException {
+        String srcFilename = "src_01.pdf";
+        String outFilename = "01.pdf";
+
+        PdfReader reader = new PdfReader(sourceFolder + srcFilename);
+        PdfWriter writer = new PdfWriter(destinationFolder + outFilename);
+        PdfDocument document = new PdfDocument(reader, writer);
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, false);
+        PdfFormField field = acroForm.getField("Second");
+        field.setValue("Second");
+        acroForm.flattenFields();
+
+        document.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool
+                .compareByContent(destinationFolder + outFilename, sourceFolder + "cmp_" + outFilename, destinationFolder,
+                        "diff_");
+
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
     public void rotatedFieldAppearanceTest02() throws IOException, InterruptedException {
         String srcFilename = "src_rotatedFieldAppearanceTest02.pdf";
         String filename = "rotatedFieldAppearanceTest02.pdf";
