@@ -369,7 +369,7 @@ public abstract class PdfObject implements Serializable {
                 indirectReference = null;
                 setState(READ_ONLY);
             }
-            //TODO log reasonless call of method
+            // TODO DEVSIX-4020. Log reasonless call of method
         }
     }
 
