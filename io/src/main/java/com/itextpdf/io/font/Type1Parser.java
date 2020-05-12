@@ -129,14 +129,14 @@ class Type1Parser implements Serializable {
                 try {
                     Pfm2afm.convert(rf, ba);
                 } catch (Exception ignored) {
-                    throw new IOException("Invalid afm or pfm font file.");
+                    throw new IOException(IOException.InvalidAfmPfm);
                 } finally {
                     rf.close();
                 }
                 return new RandomAccessFileOrArray(sourceFactory.createSource(ba.toByteArray()));
             }
         } else {
-            throw new IOException("Invalid afm or pfm font file.");
+            throw new IOException(IOException.InvalidAfmPfm);
         }
     }
 

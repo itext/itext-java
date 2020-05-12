@@ -1374,7 +1374,7 @@ public class PdfFontTest extends ExtendedITextTest {
         } catch (com.itextpdf.io.IOException e) {
             message = e.getMessage();
         }
-        Assert.assertEquals("Invalid afm or pfm font file.", message);
+        Assert.assertEquals(IOException.InvalidAfmPfm, message);
     }
 
     @Test

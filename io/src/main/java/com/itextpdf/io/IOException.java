@@ -112,6 +112,7 @@ public class IOException extends RuntimeException {
     public static final String InvalidWoffFile = "Invalid WOFF font file.";
     public static final String InvalidMagicValueForBmpFileMustBeBM = "Invalid magic value for bmp file. Must be 'BM'";
     public static final String InvalidTtcFile = "{0} is not a valid TTC file.";
+    public static final String InvalidAfmPfm = "Invalid afm or pfm font file.";
     public static final String IoException = "I/O exception.";
     public static final String Jbig2ImageException = "JBIG2 image exception.";
     public static final String Jpeg2000ImageException = "JPEG2000 image exception.";
