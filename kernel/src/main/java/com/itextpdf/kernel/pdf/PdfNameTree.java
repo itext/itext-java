@@ -94,9 +94,8 @@ public class PdfNameTree implements Serializable {
             dictionary = dictionary.getAsDictionary(treeType);
             if (dictionary != null) {
                 items = readTree(dictionary);
-                //@TODO It's done for auto porting to itextsharp, cuz u cannot change collection which you iterate
-                // in for loop (even if you change only value of a Map entry) in .NET. Java doesn't have such a problem.
-                // We should find a better solution in the future.
+                // A separate collection for keys is used for auto porting to C#, because in C#
+                // it is impossible to change the collection which you iterate in for loop
                 Set<String> keys = new HashSet<>();
                 keys.addAll(items.keySet());
                 for (String key : keys) {
