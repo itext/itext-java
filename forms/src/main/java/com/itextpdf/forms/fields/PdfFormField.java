@@ -2899,6 +2899,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Draws PDF/A-1 compliant check appearance.
+     * 
      * @param width         width of the checkbox
      * @param height        height of the checkbox
      * @param selectedValue the selected value of the checkbox which determines the appearance of the checkbox
@@ -2906,8 +2908,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *                      {@value TYPE_CIRCLE}, {@value TYPE_CROSS}, {@value TYPE_DIAMOND}, {@value TYPE_SQUARE}, {@value TYPE_STAR}
      * @deprecated use {@link #drawPdfA2CheckAppearance(float, float, String, int)} instead.
      */
-    // TODO when removing the method: check {@link #drawCheckBox(PdfCanvas, float, float, float, boolean)} and consider
-    //  removing last redundant "on" parameter
     @Deprecated
     protected void drawPdfA1CheckAppearance(float width, float height, String selectedValue, int checkType) {
         PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
