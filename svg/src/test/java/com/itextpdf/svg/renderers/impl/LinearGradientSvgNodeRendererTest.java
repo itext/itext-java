@@ -85,6 +85,96 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
         convertAndCompare(sourceFolder, destinationFolder, "pathLinesBasedWithTwoFigures");
     }
 
+    @Test
+    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void cubicBezierTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "cubicBezier");
+    }
+
+    @Test
+    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void cubicBezierInsideOtherCubicBezierTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "cubicBezierInsideOtherCubicBezier");
+    }
+
+    @Test
+    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void smoothCubicBezierWithAbsoluteCoordinatesTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "smoothCubicBezierWithAbsoluteCoordinates");
+    }
+
+    @Test
+    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void smoothCubicBezierWithRelativeCoordinatesTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "smoothCubicBezierWithRelativeCoordinates");
+    }
+
+    @Test
+    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void smoothCubicBezierRelativeAndAbsoluteCoordWithMoveTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "smoothCubicBezierRelativeAndAbsoluteCoordWithMove");
+    }
+
+    @Test
+    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void smoothCubicBezierRelativeAndAbsoluteCoordNoZOperatorTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "smoothCubicBezierRelativeAndAbsoluteCoordNoZOperator");
+    }
+
+    @Test
+    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void quadraticBezierTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "quadraticBezier");
+    }
+
+    @Test
+    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void quadraticBezierInsideOtherQuadraticBezierTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "quadraticBezierInsideOtherQuadraticBezier");
+    }
+
+    @Test
+    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void smoothQuadraticBezierWithAbsoluteCoordinatesTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "smoothQuadraticBezierWithAbsoluteCoordinates");
+    }
+
+    @Test
+    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void smoothQuadraticBezierWithRelativeCoordinatesTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "smoothQuadraticBezierWithRelativeCoordinates");
+    }
+
+    @Test
+    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void smoothQuadraticBezierAbsoluteAndRelativeCoordWithMoveTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "smoothQuadraticBezierAbsoluteAndRelativeCoordWithMove");
+    }
+
+    @Test
+    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void smoothQuadraticBezierRelativeAndAbsoluteCoordNoZOperatorTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "smoothQuadraticBezierRelativeAndAbsoluteCoordNoZOperator");
+    }
+
+    @Test
+    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void ellipticalArcsTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcs");
+    }
+
+    @Test
+    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void ellipticalArcsRelativeCoordinatesTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsRelativeCoordinates");
+    }
+
+    @Test
+    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void arcInsideOtherEllipticalArcTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "arcInsideOtherEllipticalArc");
+    }
+
     // TODO: DEVSIX-3932 update cmp_ after fix
     @Test
     public void polygonTest() throws IOException, InterruptedException, java.io.IOException {
