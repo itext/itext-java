@@ -42,9 +42,9 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.io.IoExceptionMessage;
+import com.itextpdf.io.util.GhostscriptHelper;
 import com.itextpdf.io.util.SystemUtil;
-import com.itextpdf.kernel.KernelLogMessageConstant;
-import com.itextpdf.kernel.utils.CompareTool.CompareToolExecutionException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -74,26 +74,6 @@ public class CompareToolTest extends ExtendedITextTest {
     @BeforeClass
     public static void setUp() {
         createOrClearDestinationFolder(destinationFolder);
-    }
-
-    @Test
-    public void ghostScriptIsSpecifiedInSystem() {
-        String gsExec = SystemUtil.getPropertyOrEnvironmentVariable(CompareTool.GHOSTSCRIPT_ENVIRONMENT_VARIABLE);
-        if (gsExec == null) {
-            gsExec = SystemUtil.getPropertyOrEnvironmentVariable(CompareTool.GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY);
-        }
-        Assert.assertTrue(CompareTool.isVersionCommandExecutable(gsExec, CompareTool.GHOSTSCRIPT_KEYWORD));
-    }
-
-    @Test
-    public void magickCompareIsSpecifiedInSystem() {
-        String compareExec = SystemUtil
-                .getPropertyOrEnvironmentVariable(CompareTool.MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
-        if (compareExec == null) {
-            compareExec = SystemUtil
-                    .getPropertyOrEnvironmentVariable(CompareTool.MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY);
-        }
-        Assert.assertTrue(CompareTool.isVersionCommandExecutable(compareExec, CompareTool.MAGICK_COMPARE_KEYWORD));
     }
 
     @Test
@@ -184,40 +164,48 @@ public class CompareToolTest extends ExtendedITextTest {
 
     @Test
     public void gsEnvironmentVariableIsNotSpecifiedExceptionTest() throws IOException, InterruptedException {
-        junitExpectedException.expect(CompareToolExecutionException.class);
-        junitExpectedException.expectMessage(CompareToolExecutionException.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED);
         String outPdf = sourceFolder + "simple_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
-        new CompareTool("unspecified", "unspecified").compareVisually(outPdf, cmpPdf, destinationFolder, "diff_");
+        new CompareTool(null, null).compareVisually(outPdf, cmpPdf, destinationFolder, "diff_");
+        Assert.assertTrue(new File(destinationFolder + "diff_1.png").exists());
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.COMPARE_COMMAND_IS_NOT_SPECIFIED)})
+    public void gsEnvironmentVariableSpecifiedIncorrectlyTest() throws IOException, InterruptedException {
+        junitExpectedException.expect(CompareTool.CompareToolExecutionException.class);
+        junitExpectedException.expectMessage(IoExceptionMessage.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED);
+        String outPdf = sourceFolder + "simple_pdf.pdf";
+        String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
+        new CompareTool("unspecified", null).compareVisually(outPdf, cmpPdf, destinationFolder, "diff_");
+    }
+
+    @Test
     public void compareCommandIsNotSpecifiedTest() throws IOException, InterruptedException {
         String outPdf = sourceFolder + "simple_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
-        String gsExec = SystemUtil.getPropertyOrEnvironmentVariable(CompareTool.GHOSTSCRIPT_ENVIRONMENT_VARIABLE);
+        String gsExec = SystemUtil.getPropertyOrEnvironmentVariable(GhostscriptHelper.GHOSTSCRIPT_ENVIRONMENT_VARIABLE);
         if (gsExec == null) {
-            gsExec = SystemUtil.getPropertyOrEnvironmentVariable(CompareTool.GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY);
+            gsExec = SystemUtil.getPropertyOrEnvironmentVariable("gsExec");
         }
         String result = new CompareTool(gsExec, null)
                 .compareVisually(outPdf, cmpPdf, destinationFolder, "diff_");
-        Assert.assertTrue(result.contains(CompareTool.UNABLE_TO_CREATE_DIFF_FILES_ERROR_MESSAGE));
+        Assert.assertFalse(result.contains(IoExceptionMessage.COMPARE_COMMAND_IS_NOT_SPECIFIED));
+        Assert.assertTrue(new File(destinationFolder + "diff_1.png").exists());
     }
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = KernelLogMessageConstant.COMPARE_COMMAND_SPECIFIED_INCORRECTLY)})
+            @LogMessage(messageTemplate = IoExceptionMessage.COMPARE_COMMAND_SPECIFIED_INCORRECTLY)})
     public void compareCommandSpecifiedIncorrectlyTest() throws IOException, InterruptedException {
         String outPdf = sourceFolder + "simple_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
-        String gsExec = SystemUtil.getPropertyOrEnvironmentVariable(CompareTool.GHOSTSCRIPT_ENVIRONMENT_VARIABLE);
+        String gsExec = SystemUtil.getPropertyOrEnvironmentVariable(GhostscriptHelper.GHOSTSCRIPT_ENVIRONMENT_VARIABLE);
         if (gsExec == null) {
-            gsExec = SystemUtil.getPropertyOrEnvironmentVariable(CompareTool.GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY);
+            gsExec = SystemUtil.getPropertyOrEnvironmentVariable("gsExec");
         }
         String result = new CompareTool(gsExec, "unspecified")
                 .compareVisually(outPdf, cmpPdf, destinationFolder, "diff_");
-        Assert.assertTrue(result.contains(CompareTool.UNABLE_TO_CREATE_DIFF_FILES_ERROR_MESSAGE));
+        Assert.assertTrue(result.contains(IoExceptionMessage.COMPARE_COMMAND_SPECIFIED_INCORRECTLY));
     }
 
     @Test

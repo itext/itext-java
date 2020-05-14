@@ -46,10 +46,10 @@ package com.itextpdf.kernel.utils;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.io.util.GhostscriptHelper;
+import com.itextpdf.io.util.ImageMagickHelper;
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.io.util.SystemUtil;
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.kernel.KernelLogMessageConstant;
 import com.itextpdf.kernel.counter.event.IMetaInfo;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.DocumentProperties;
@@ -126,40 +126,9 @@ import org.xml.sax.SAXException;
  * for the content of the cmpDoc and "but was" part stands for the content of the outDoc.
  */
 public class CompareTool {
-    /**
-     * The name of the environment variable with the command to execute Ghostscript operations.
-     */
-    public static final String GHOSTSCRIPT_ENVIRONMENT_VARIABLE = "ITEXT_GS_EXEC";
-
-    /**
-     * The name of the environment variable with the command to execute ImageMagic comparison operations.
-     */
-    public static final String MAGICK_COMPARE_ENVIRONMENT_VARIABLE = "ITEXT_MAGICK_COMPARE_EXEC";
-
-    @Deprecated
-    static final String GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY = "gsExec";
-    
-    @Deprecated
-    static final String MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY = "compareExec";
-
-    static final String GHOSTSCRIPT_KEYWORD = "GPL Ghostscript";
-
-    static final String MAGICK_COMPARE_KEYWORD = "ImageMagick Studio LLC";
-
-    static final String UNABLE_TO_CREATE_DIFF_FILES_ERROR_MESSAGE =
-            "Unable to create files with differences between pages because ImageMagick comparison command is not specified. Set the "
-                    + MAGICK_COMPARE_ENVIRONMENT_VARIABLE
-                    + " environment variable with the CLI command which can run the ImageMagic comparison. See BUILDING.MD in the root of the repository for more details.";
-
-    private static final String CANNOT_OPEN_OUTPUT_DIRECTORY = "Cannot open output directory for <filename>.";
-    private static final String GHOSTSCRIPT_FAILED = "GhostScript failed for <filename>.";
     private static final String UNEXPECTED_NUMBER_OF_PAGES = "Unexpected number of pages for <filename>.";
     private static final String DIFFERENT_PAGES = "File file:///<filename> differs on page <pagenumber>.";
     private static final String IGNORED_AREAS_PREFIX = "ignored_areas_";
-
-
-    private static final String GHOSTSCRIPT_PARAMS = " -dSAFER -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -sOutputFile='<outputfile>' '<inputfile>'";
-    private static final String COMPARE_PARAMS = " '<image1>' '<image2>' '<difference>'";
 
     private static final String VERSION_REGEXP = "(iText\u00ae( pdfX(FA|fa)| DITO)?|iTextSharp\u2122) (\\d+\\.)+\\d+(-SNAPSHOT)?";
     private static final String VERSION_REPLACEMENT = "iText\u00ae <version>";
@@ -167,9 +136,6 @@ public class CompareTool {
     private static final String COPYRIGHT_REPLACEMENT = "\u00a9<copyright years> iText Group NV";
 
     private static final String NEW_LINES = "\\r|\\n";
-
-    private String gsExec;
-    private String compareExec;
 
     private String cmpPdf;
     private String cmpPdfName;
@@ -192,18 +158,10 @@ public class CompareTool {
     private boolean useCachedPagesForComparison = true;
     private IMetaInfo metaInfo;
 
-    /**
-     * Creates an instance of the CompareTool.
-     */
+    private String gsExec;
+    private String compareExec;
+
     public CompareTool() {
-        gsExec = SystemUtil.getPropertyOrEnvironmentVariable(GHOSTSCRIPT_ENVIRONMENT_VARIABLE);
-        compareExec = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
-        if (gsExec == null) {
-            gsExec = SystemUtil.getPropertyOrEnvironmentVariable(GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY);
-        }
-        if (compareExec == null) {
-            compareExec = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY);
-        }
     }
 
     CompareTool(String gsExec, String compareExec) {
@@ -985,15 +943,6 @@ public class CompareTool {
                 COPYRIGHT_REPLACEMENT);
     }
 
-    static boolean isVersionCommandExecutable(String command, String keyWord) {
-        try {
-            String result = SystemUtil.runProcessAndGetOutput(command, "-version");
-            return result.contains(keyWord);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     private void init(String outPdf, String cmpPdf) {
         this.outPdf = outPdf;
         this.cmpPdf = cmpPdf;
@@ -1018,10 +967,6 @@ public class CompareTool {
     }
 
     private String compareVisually(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas, List<Integer> equalPages) throws IOException, InterruptedException {
-        if (gsExec == null || !isVersionCommandExecutable(gsExec, GHOSTSCRIPT_KEYWORD)) {
-            throw new CompareToolExecutionException(
-                    CompareToolExecutionException.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED);
-        }
         if (!outPath.endsWith("/")) {
             outPath = outPath + "/";
         }
@@ -1042,8 +987,15 @@ public class CompareTool {
             createIgnoredAreasPdfs(outPath, ignoredAreas);
         }
 
-        runGhostScriptImageGeneration(outPath);
+        GhostscriptHelper ghostscriptHelper = null;
+        try {
+             ghostscriptHelper = new GhostscriptHelper(gsExec);
+        } catch (IllegalArgumentException e) {
+            throw new CompareToolExecutionException(e.getMessage());
+        }
 
+        ghostscriptHelper.runGhostScriptImageGeneration(outPdf, outPath, outImage);
+        ghostscriptHelper.runGhostScriptImageGeneration(cmpPdf, outPath, cmpImage);
         return compareImagesOfPdfs(outPath, differenceImagePrefix, equalPages);
     }
 
@@ -1062,13 +1014,16 @@ public class CompareTool {
         Arrays.sort(imageFiles, new ImageNameComparator());
         Arrays.sort(cmpImageFiles, new ImageNameComparator());
 
-        boolean compareVarIsSpecified = compareExec != null;
-        boolean compareVarIsExec = isVersionCommandExecutable(compareExec, MAGICK_COMPARE_KEYWORD);
-        boolean compareExecIsOk = compareVarIsSpecified && compareVarIsExec;
-        if (!compareVarIsSpecified) {
-            LoggerFactory.getLogger(CompareTool.class).warn(KernelLogMessageConstant.COMPARE_COMMAND_IS_NOT_SPECIFIED);
-        } else if (!compareVarIsExec) {
-            LoggerFactory.getLogger(CompareTool.class).warn(KernelLogMessageConstant.COMPARE_COMMAND_SPECIFIED_INCORRECTLY);
+        boolean compareExecIsOk;
+        String imageMagickInitError = null;
+        ImageMagickHelper imageMagickHelper = null;
+        try {
+            imageMagickHelper = new ImageMagickHelper(compareExec);
+            compareExecIsOk = true;
+        } catch (IllegalArgumentException e) {
+            compareExecIsOk = false;
+            imageMagickInitError = e.getMessage();
+            LoggerFactory.getLogger(CompareTool.class).warn(e.getMessage());
         }
 
         List<Integer> diffPages = new ArrayList<>();
@@ -1088,12 +1043,11 @@ public class CompareTool {
                 differentPagesFail = "Page is different!";
                 diffPages.add(i + 1);
                 if (compareExecIsOk) {
-                    String currCompareParams = COMPARE_PARAMS.replace("<image1>", imageFiles[i].getAbsolutePath())
-                            .replace("<image2>", cmpImageFiles[i].getAbsolutePath())
-                            .replace("<difference>", outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png");
-                    if (!SystemUtil.runProcessAndWait(compareExec, currCompareParams)) {
-                        File diffFile = new File(outPath + differenceImagePrefix + (i + 1) + ".png");
-                        differentPagesFail += "\nPlease, examine " +  "file:///" + UrlUtil.toNormalizedURI(diffFile).getPath() + " for more details.";
+                    String diffName = outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png";
+                    if (!imageMagickHelper.runImageMagickImageCompare(imageFiles[i].getAbsolutePath(),
+                            cmpImageFiles[i].getAbsolutePath(), diffName)) {
+                        File diffFile = new File(diffName);
+                        differentPagesFail += "\nPlease, examine " + "file:///" + UrlUtil.toNormalizedURI(diffFile).getPath() + " for more details.";
                     }
                 }
                 System.out.println(differentPagesFail);
@@ -1104,7 +1058,7 @@ public class CompareTool {
         if (differentPagesFail != null) {
             String errorMessage = DIFFERENT_PAGES.replace("<filename>", UrlUtil.toNormalizedURI(outPdf).getPath()).replace("<pagenumber>", listDiffPagesAsString(diffPages));
             if (!compareExecIsOk) {
-                errorMessage += "\n" + UNABLE_TO_CREATE_DIFF_FILES_ERROR_MESSAGE;
+                errorMessage += "\n" + imageMagickInitError;
             }
             return errorMessage;
         } else {
@@ -1182,30 +1136,6 @@ public class CompareTool {
             for (File file : diffFiles) {
                 file.delete();
             }
-        }
-    }
-
-    /**
-     * Runs ghostscript to create images of pdfs.
-     *
-     * @param outPath Path to the output folder.
-     * @throws CompareToolExecutionException
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    private void runGhostScriptImageGeneration(String outPath) throws IOException, InterruptedException {
-        if (!FileUtil.directoryExists(outPath)) {
-            throw new CompareToolExecutionException(CANNOT_OPEN_OUTPUT_DIRECTORY.replace("<filename>", outPdf));
-        }
-
-        String currGsParams = GHOSTSCRIPT_PARAMS
-                .replace("<outputfile>", outPath + cmpImage).replace("<inputfile>", cmpPdf);
-        if (!SystemUtil.runProcessAndWait(gsExec, currGsParams)) {
-            throw new CompareToolExecutionException(GHOSTSCRIPT_FAILED.replace("<filename>", cmpPdf));
-        }
-        currGsParams = GHOSTSCRIPT_PARAMS.replace("<outputfile>", outPath + outImage).replace("<inputfile>", outPdf);
-        if (!SystemUtil.runProcessAndWait(gsExec, currGsParams)) {
-            throw new CompareToolExecutionException(GHOSTSCRIPT_FAILED.replace("<filename>", outPdf));
         }
     }
 
@@ -1496,7 +1426,7 @@ public class CompareTool {
         return null;
     }
 
-    private boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath, CompareResult compareResult) {
+    protected boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath, CompareResult compareResult) {
         PdfObject outDirectObj = null;
         PdfObject cmpDirectObj = null;
         if (outObj != null)
@@ -2045,13 +1975,13 @@ public class CompareTool {
          * @param baseCmpObject base object in cmp document.
          * @param baseOutObject base object in out document.
          */
-        protected ObjectPath(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject) {
+        public ObjectPath(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject) {
             this.baseCmpObject = baseCmpObject;
             this.baseOutObject = baseOutObject;
             indirects.push(new IndirectPathItem(baseCmpObject, baseOutObject));
         }
 
-        private ObjectPath(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject,
+        public ObjectPath(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject,
                            Stack<LocalPathItem> path, Stack<IndirectPathItem> indirects) {
             this.baseCmpObject = baseCmpObject;
             this.baseOutObject = baseOutObject;
@@ -2507,13 +2437,6 @@ public class CompareTool {
      * files.
      */
     public class CompareToolExecutionException extends RuntimeException {
-        /**
-         * Exception message when Ghostscript environment variable is not specified.
-         */
-        public static final String GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED =
-                "Ghostscript command is not specified. Set the " + GHOSTSCRIPT_ENVIRONMENT_VARIABLE
-                        + " environment variable to a CLI command that can run the Ghostscript application. See BUILDING.MD in the root of the repository for more details.";
-
         /**
          * Creates a new {@link CompareToolExecutionException}.
          *

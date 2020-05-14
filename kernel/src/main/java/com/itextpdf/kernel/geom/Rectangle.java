@@ -215,7 +215,14 @@ public class Rectangle implements Cloneable, Serializable {
 
         //If width or height is non-negative, there is overlap and we can construct the intersection rectangle
         float width = urx - llx;
+        if (Math.abs(width) < EPS) {
+            width = 0;
+        }
+
         float height = ury - lly;
+        if (Math.abs(height) < EPS) {
+            height = 0;
+        }
 
         if (Float.compare(width, 0) >= 0
                 && Float.compare(height, 0) >= 0) {
@@ -259,16 +266,16 @@ public class Rectangle implements Cloneable, Serializable {
     public boolean overlaps(Rectangle rect) {
         // Two rectangles do not overlap if any of the following holds
         // 1. the lower left corner of the second rectangle is to the right of the upper-right corner of the first.
-        return !(this.getX() + this.getWidth() < rect.getX()
+        return !((rect.getX() - (this.getX() + this.getWidth()) > EPS)
 
                 // 2. the lower left corner of the second rectangle is above the upper right corner of the first.
-                || this.getY() + this.getHeight() < rect.getY()
+                || (rect.getY() - (this.getY() + this.getHeight()) > EPS)
 
                 // 3. the upper right corner of the second rectangle is to the left of the lower-left corner of the first.
-                || this.getX() > rect.getX() + rect.getWidth()
+                || (this.getX() - (rect.getX() + rect.getWidth()) > EPS)
 
                 // 4. the upper right corner of the second rectangle is below the lower left corner of the first.
-                || this.getY() > rect.getY() + rect.getHeight()
+                || (this.getY() - (rect.getY() + rect.getHeight()) > EPS)
         );
 
     }

@@ -107,9 +107,13 @@ public final class SystemUtil {
     }
 
     public static boolean runProcessAndWait(String exec, String params) throws IOException, InterruptedException {
+        return runProcessAndGetExitCode(exec, params) == 0;
+    }
+
+    public static int runProcessAndGetExitCode(String exec, String params) throws IOException, InterruptedException {
         Process p = runProcess(exec, params);
         System.out.println(getProcessOutput(p));
-        return p.waitFor() == 0;
+        return p.waitFor();
     }
 
     public static String runProcessAndGetOutput(String command, String params) throws IOException {

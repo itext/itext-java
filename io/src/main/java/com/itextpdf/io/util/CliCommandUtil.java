@@ -1,4 +1,5 @@
 /*
+
     This file is part of the iText (R) project.
     Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
@@ -40,26 +41,32 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
+package com.itextpdf.io.util;
 
-package com.itextpdf.kernel;
+public final class CliCommandUtil {
 
-/**
- * Class that bundles all the error message templates as constants.
- */
-public final class KernelLogMessageConstant {
-
-    private KernelLogMessageConstant() {
-        //Private constructor will prevent the instantiation of this class directly
+    private CliCommandUtil() {
     }
-    public static final String FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY = "Full compression mode requested "
-            + "in append mode but the original document has cross-reference table, not cross-reference stream. "
-            + "Falling back to cross-reference table in appended document and switching full compression off";
 
-    public static final String FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY = "Full compression mode was "
-            + "requested to be switched off in append mode but the original document has cross-reference stream, not "
-            + "cross-reference table. Falling back to cross-reference stream in appended document and switching full "
-            + "compression on";
+    /**
+     * Checks if the command, passed as parameter, is executable and the output version text contains
+     * expected text
+     *
+     * @param command     a string command to execute
+     * @param versionText an expected version text line
+     * @return boolean result of checking: true - the required command is executable and the output version
+     * text is correct
+     */
+    public static boolean isVersionCommandExecutable(String command, String versionText) {
+        if ((command == null) || (versionText == null)) {
+            return false;
+        }
 
-    public static final String UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE = "Unable to parse color {0} within {1} color space";
-
+        try {
+            String result = SystemUtil.runProcessAndGetOutput(command, "-version");
+            return result.contains(versionText);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
