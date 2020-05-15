@@ -256,7 +256,7 @@ class XfdfWriter {
 
         //optional attribute
         if (borderStyleAltObject.getDashPattern() != null) {
-            //TODO add real conversion from PdfArray (PdfName.D in Border dictionary) to String
+            //TODO DEVSIX-4028 add real conversion from PdfArray (PdfName.D in Border dictionary) to String
             borderStyleAlt.setAttribute(XfdfConstants.DASH_PATTERN, Arrays.toString(borderStyleAltObject.getDashPattern()));
         }
 
