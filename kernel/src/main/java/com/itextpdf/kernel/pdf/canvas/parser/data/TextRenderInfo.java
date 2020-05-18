@@ -191,7 +191,9 @@ public class TextRenderInfo extends AbstractRenderInfo {
     }
 
     /**
-     * @return the marked content associated with the TextRenderInfo instance.
+     * Gets the marked-content identifier associated with this {@link TextRenderInfo} instance
+     *
+     * @return associated marked-content identifier or -1 in case content is unmarked
      */
     public int getMcid() {
         for (CanvasTag tag : canvasTagHierarchy) {
