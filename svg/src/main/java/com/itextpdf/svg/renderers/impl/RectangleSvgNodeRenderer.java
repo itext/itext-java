@@ -123,7 +123,7 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
     }
 
     @Override
-    protected Rectangle getObjectBoundingBox() {
+    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
         setParameters();
         return new Rectangle(this.x, this.y, this.width, this.height);
     }

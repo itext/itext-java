@@ -71,8 +71,6 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.PdfRootSvgNodeRenderer;
 import com.itextpdf.svg.utils.SvgCssUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -81,6 +79,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is the main container class for static methods that do high-level
@@ -573,7 +573,7 @@ public final class SvgConverter {
             resourceResolver = new ResourceResolver(baseUri);
         }
         SvgDrawContext drawContext =
-                new SvgDrawContext(resourceResolver, processorResult.getFontProvider());
+                new SvgDrawContext(resourceResolver, processorResult.getFontProvider(), processorResult.getRootRenderer());
 
         drawContext.addNamedObjects(processorResult.getNamedObjects());
         //Add temp fonts
@@ -680,9 +680,11 @@ public final class SvgConverter {
     }
 
     //Private converter for unification
-    private static PdfFormXObject convertToXObject(ISvgProcessorResult processorResult, PdfDocument document, ISvgConverterProperties props) {
+    private static PdfFormXObject convertToXObject(ISvgProcessorResult processorResult, PdfDocument document,
+            ISvgConverterProperties props) {
         ResourceResolver resourceResolver = getResourceResolver(processorResult, props);
-        SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider());
+        SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider(),
+                processorResult.getRootRenderer());
         drawContext.setTempFonts(processorResult.getTempFonts());
         drawContext.addNamedObjects(processorResult.getNamedObjects());
         return convertToXObject(processorResult.getRootRenderer(), document, drawContext);

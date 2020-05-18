@@ -48,10 +48,14 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.styledxmlparser.css.resolve.CssDefaults;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.renderers.impl.AbstractSvgNodeRenderer;
 
 import java.util.Deque;
 import java.util.HashMap;
@@ -72,15 +76,44 @@ public class SvgDrawContext {
     private ResourceResolver resourceResolver;
     private FontProvider fontProvider;
     private FontSet tempFonts;
+    // value of root element font-size in points
+    private float remValue;
 
     private AffineTransform lastTextTransform = new AffineTransform();
     private float textMove[] = new float[]{0.0f, 0.0f};
 
+    /**
+     * Create an instance of the context that is used to store information when converting SVG.
+     *
+     * @param resourceResolver instance of {@link ResourceResolver}
+     * @param fontProvider instance of {@link FontProvider}
+     */
     public SvgDrawContext(ResourceResolver resourceResolver, FontProvider fontProvider) {
-        if (resourceResolver == null) resourceResolver = new ResourceResolver("");
+        this (resourceResolver, fontProvider, null);
+    }
+
+    /**
+     * Create an instance of the context that is used to store information when converting SVG.
+     *
+     * @param resourceResolver instance of {@link ResourceResolver}
+     * @param fontProvider instance of {@link FontProvider}
+     * @param svgRootRenderer svg element that is root for current file
+     */
+    public SvgDrawContext(ResourceResolver resourceResolver, FontProvider fontProvider, ISvgNodeRenderer svgRootRenderer) {
+        if (resourceResolver == null) {
+            resourceResolver = new ResourceResolver("");
+        }
         this.resourceResolver = resourceResolver;
-        if (fontProvider == null) fontProvider = new BasicFontProvider();
+        if (fontProvider == null) {
+            fontProvider = new BasicFontProvider();
+        }
         this.fontProvider = fontProvider;
+        if (svgRootRenderer instanceof AbstractSvgNodeRenderer) {
+            remValue =  ((AbstractSvgNodeRenderer) svgRootRenderer).getCurrentFontSize();
+        } else {
+            // default font-size value
+            remValue = CssUtils.parseAbsoluteFontSize(CssDefaults.getDefaultValue(CommonCssConstants.FONT_SIZE));
+        }
     }
 
     /**
@@ -319,5 +352,14 @@ public class SvgDrawContext {
                     currentTransform.get(3), currentTransform.get(4), currentTransform.get(6), currentTransform.get(7));
         }
         return new AffineTransform();
+    }
+
+    /**
+     * Return the value of root svg element font-size
+     *
+     * @return rem value
+     */
+    public float getRemValue() {
+        return remValue;
     }
 }

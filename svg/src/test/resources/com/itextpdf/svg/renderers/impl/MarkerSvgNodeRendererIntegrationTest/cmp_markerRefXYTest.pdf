@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191213193537+03'00')/ModDate(D:20191213193537+03'00')/Producer(iText® 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20200609223506+03'00')/ModDate(D:20200609223506+03'00')/Producer(iText® 7.1.12-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +36,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 750 450]/Length 3350/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm11 11 0 R/Fm12 12 0 R/Fm13 13 0 R/Fm2 14 0 R/Fm3 15 0 R/Fm4 16 0 R/Fm5 17 0 R/Fm6 18 0 R/Fm7 19 0 R/Fm8 20 0 R/Fm9 21 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 750 450]/Length 3316/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm11 11 0 R/Fm12 12 0 R/Fm13 13 0 R/Fm2 14 0 R/Fm3 15 0 R/Fm4 16 0 R/Fm5 17 0 R/Fm6 18 0 R/Fm7 19 0 R/Fm8 20 0 R/Fm9 21 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 750 450 re
 W
 n
@@ -184,7 +184,6 @@ q
 0.3 0 0 0.3 0 0 cm
 1 0 0 1 250 750 cm
 8 0 0 8 0 0 cm
-1 0 0 1 0 -24 cm
 q
 1 0 0 1 0 0 cm
 /Fm5 Do
@@ -317,7 +316,6 @@ q
 1 0 0 1 2250 750 cm
 0.70711 0.70711 -0.70711 0.70711 0 0 cm
 8 0 0 8 0 0 cm
-1 0 0 1 0 -30 cm
 q
 1 0 0 1 0 0 cm
 /Fm9 Do
@@ -706,22 +704,22 @@ xref
 0000000438 00000 n 
 0000000579 00000 n 
 0000000762 00000 n 
-0000004395 00000 n 
-0000004568 00000 n 
-0000004742 00000 n 
-0000004916 00000 n 
-0000005090 00000 n 
-0000005264 00000 n 
-0000005438 00000 n 
-0000005612 00000 n 
-0000005786 00000 n 
-0000005960 00000 n 
-0000006134 00000 n 
-0000006308 00000 n 
-0000006482 00000 n 
+0000004361 00000 n 
+0000004534 00000 n 
+0000004708 00000 n 
+0000004882 00000 n 
+0000005056 00000 n 
+0000005230 00000 n 
+0000005404 00000 n 
+0000005578 00000 n 
+0000005752 00000 n 
+0000005926 00000 n 
+0000006100 00000 n 
+0000006274 00000 n 
+0000006448 00000 n 
 trailer
-<</ID [<89f1ecfd1454acd02d2789f6be884ec5><89f1ecfd1454acd02d2789f6be884ec5>]/Info 3 0 R/Root 1 0 R/Size 22>>
-%iText-7.1.10-SNAPSHOT
+<</ID [<f655179357fca9ca9174d7d1db2bda7c><f655179357fca9ca9174d7d1db2bda7c>]/Info 3 0 R/Root 1 0 R/Size 22>>
+%iText-7.1.12-SNAPSHOT
 startxref
-6656
+6622
 %%EOF

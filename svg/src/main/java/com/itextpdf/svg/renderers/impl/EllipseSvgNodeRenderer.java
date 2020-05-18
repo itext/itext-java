@@ -70,11 +70,11 @@ public class EllipseSvgNodeRenderer extends AbstractSvgNodeRenderer {
     }
 
     @Override
-    protected Rectangle getObjectBoundingBox() {
+    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
         if (setParameters()) {
             return new Rectangle(cx - rx, cy - ry, rx + rx, ry + ry);
         } else {
-            return super.getObjectBoundingBox();
+            return super.getObjectBoundingBox(context);
         }
     }
 

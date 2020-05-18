@@ -42,10 +42,22 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.svg.renderers.SvgDrawContext;
+
 public class TextSvgTSpanBranchRenderer extends TextSvgBranchRenderer {
 
-    public TextSvgTSpanBranchRenderer(){
+    public TextSvgTSpanBranchRenderer() {
         this.performRootTransformations = false;
     }
 
+    @Override
+    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        // TODO DEVSIX-3814 change to getParent().getObjectBoundingBox(context) in 7.2 update
+        if (getParent() instanceof AbstractSvgNodeRenderer) {
+            return ((AbstractSvgNodeRenderer) getParent()).getObjectBoundingBox(context);
+        } else {
+            return null;
+        }
+    }
 }

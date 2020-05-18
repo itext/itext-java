@@ -1051,6 +1051,45 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         return new TextRenderer((Text) modelElement);
     }
 
+    /**
+     * Get ascender and descender from font metrics.
+     * If these values are obtained from typo metrics they are normalized with a scale coefficient.
+     *
+     * @param font from which metrics will be extracted
+     * @return array in which the first element is an ascender and the second is a descender
+     */
+    public static float[] calculateAscenderDescender(PdfFont font) {
+        return calculateAscenderDescender(font, RenderingMode.DEFAULT_LAYOUT_MODE);
+    }
+
+    /**
+     * Get ascender and descender from font metrics.
+     * In RenderingMode.DEFAULT_LAYOUT_MODE if these values are obtained from typo metrics they are normalized with a scale coefficient.
+     *
+     * @param font from which metrics will be extracted
+     * @param mode mode in which metrics will be obtained. Impact on the use of scale coefficient
+     * @return array in which the first element is an ascender and the second is a descender
+     */
+    public static float[] calculateAscenderDescender(PdfFont font, RenderingMode mode) {
+        FontMetrics fontMetrics = font.getFontProgram().getFontMetrics();
+        float ascender;
+        float descender;
+        float usedTypoAscenderScaleCoeff = TYPO_ASCENDER_SCALE_COEFF;
+        if (RenderingMode.HTML_MODE.equals(mode) && !(font instanceof PdfType1Font)) {
+            usedTypoAscenderScaleCoeff = 1;
+        }
+        if (fontMetrics.getWinAscender() == 0 || fontMetrics.getWinDescender() == 0 ||
+                fontMetrics.getTypoAscender() == fontMetrics.getWinAscender()
+                        && fontMetrics.getTypoDescender() == fontMetrics.getWinDescender()) {
+            ascender = fontMetrics.getTypoAscender() * usedTypoAscenderScaleCoeff;
+            descender = fontMetrics.getTypoDescender() * usedTypoAscenderScaleCoeff;
+        } else {
+            ascender = fontMetrics.getWinAscender();
+            descender = fontMetrics.getWinDescender();
+        }
+        return new float[] {ascender, descender};
+    }
+    
     List<int[]> getReversedRanges() {
         return reversedRanges;
     }
@@ -1065,29 +1104,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     TextRenderer removeReversedRanges() {
         reversedRanges = null;
         return this;
-    }
-
-    static float[] calculateAscenderDescender(PdfFont font) {
-        return calculateAscenderDescender(font, RenderingMode.DEFAULT_LAYOUT_MODE);
-    }
-
-    static float[] calculateAscenderDescender(PdfFont font, RenderingMode mode) {
-        FontMetrics fontMetrics = font.getFontProgram().getFontMetrics();
-        float ascender;
-        float descender;
-        float usedTypoAscenderScaleCoeff = TYPO_ASCENDER_SCALE_COEFF;
-        if (RenderingMode.HTML_MODE.equals(mode) && !(font instanceof PdfType1Font)) {
-            usedTypoAscenderScaleCoeff = 1;
-        }
-        if (fontMetrics.getWinAscender() == 0 || fontMetrics.getWinDescender() == 0 ||
-                fontMetrics.getTypoAscender() == fontMetrics.getWinAscender() && fontMetrics.getTypoDescender() == fontMetrics.getWinDescender()) {
-            ascender = fontMetrics.getTypoAscender() * usedTypoAscenderScaleCoeff;
-            descender = fontMetrics.getTypoDescender() * usedTypoAscenderScaleCoeff;
-        } else {
-            ascender = fontMetrics.getWinAscender();
-            descender = fontMetrics.getWinDescender();
-        }
-        return new float[]{ascender, descender};
     }
 
     private TextRenderer[] splitIgnoreFirstNewLine(int currentTextPos) {

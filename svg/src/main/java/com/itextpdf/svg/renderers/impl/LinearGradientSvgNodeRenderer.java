@@ -31,6 +31,7 @@ import com.itextpdf.kernel.colors.gradients.GradientColorStop;
 import com.itextpdf.kernel.colors.gradients.LinearGradientBuilder;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -144,10 +145,12 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
             double y = currentViewPort.getY();
             double width = currentViewPort.getWidth();
             double height = currentViewPort.getHeight();
-            start = new Point(getCoordinateForUserSpaceOnUse(Attributes.X1, x, x, width),
-                    getCoordinateForUserSpaceOnUse(Attributes.Y1, y, y, height));
-            end = new Point(getCoordinateForUserSpaceOnUse(Attributes.X2, x + width, x, width),
-                    getCoordinateForUserSpaceOnUse(Attributes.Y2, y, y, height));
+            float em = getCurrentFontSize();
+            float rem = context.getRemValue();
+            start = new Point(getCoordinateForUserSpaceOnUse(Attributes.X1, x, x, width, em, rem),
+                    getCoordinateForUserSpaceOnUse(Attributes.Y1, y, y, height, em, rem));
+            end = new Point(getCoordinateForUserSpaceOnUse(Attributes.X2, x + width, x, width, em, rem),
+                    getCoordinateForUserSpaceOnUse(Attributes.Y2, y, y, height, em, rem));
         }
 
         return new Point[] {start, end};
@@ -185,12 +188,10 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
     }
 
     private double getCoordinateForUserSpaceOnUse(String attributeName, double defaultValue,
-            double start, double length) {
+            double start, double length, float em, float rem) {
         String attributeValue = getAttribute(attributeName);
         double absoluteValue;
-        // TODO: DEVSIX-4018 em and rem actual values are obtained. Default is in use
-        //  do not forget to add the test to cover these values change
-        UnitValue unitValue = CssUtils.parseLengthValueToPt(attributeValue, 12, 12);
+        UnitValue unitValue = CssUtils.parseLengthValueToPt(attributeValue, em, rem);
         if (unitValue == null) {
             absoluteValue = defaultValue;
         } else if (unitValue.getUnitType() == UnitValue.PERCENT) {

@@ -379,6 +379,7 @@ public class CssUtils {
      * @return the unit value
      */
     public static UnitValue parseLengthValueToPt(final String value, final float emValue, final float remValue) {
+        // TODO (DEVSIX-3596) Add support of 'lh' 'ch' units and viewport-relative units
         if (isMetricValue(value) || isNumericValue(value)) {
             return new UnitValue(UnitValue.POINT, parseAbsoluteLength(value));
         } else if (value != null && value.endsWith(CommonCssConstants.PERCENTAGE)) {
@@ -768,6 +769,46 @@ public class CssUtils {
             }
         }
         return builder.create();
+    }
+
+    /**
+     * Convert given point value to a pixel value. 1 px is 0.75 pts.
+     *
+     * @param pts float value to be converted to pixels
+     * @return float converted value pts/0.75f
+     */
+    public static float convertPtsToPx(float pts) {
+        return pts / 0.75f;
+    }
+
+    /**
+     * Convert given point value to a pixel value. 1 px is 0.75 pts.
+     *
+     * @param pts double value to be converted to pixels
+     * @return double converted value pts/0.75
+     */
+    public static double convertPtsToPx(double pts) {
+        return pts / 0.75;
+    }
+
+    /**
+     * Convert given point value to a point value. 1 px is 0.75 pts.
+     *
+     * @param px float value to be converted to pixels
+     * @return float converted value px*0.75
+     */
+    public static float convertPxToPts(float px) {
+        return px * 0.75f;
+    }
+
+    /**
+     * Convert given point value to a point value. 1 px is 0.75 pts.
+     *
+     * @param px double value to be converted to pixels
+     * @return double converted value px*0.75
+     */
+    public static double convertPxToPts(double px) {
+        return px * 0.75;
     }
 
     private static boolean addRange(RangeBuilder builder, String range) {

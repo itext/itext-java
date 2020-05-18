@@ -45,6 +45,8 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.Point;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.layout.font.FontCharacteristics;
@@ -59,6 +61,7 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.utils.SvgTextUtil;
+import com.itextpdf.svg.utils.TextRectangle;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,7 +71,8 @@ import java.util.List;
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;text&gt; and &lt;tspan&gt; tag.
  */
-public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements ISvgTextNodeRenderer {
+public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements ISvgTextNodeRenderer,
+        ISvgTextNodeHelper {
 
     /**
      * Top level transformation to flip the y-axis results in the character glyphs being mirrored, this tf corrects for this behaviour
@@ -153,6 +157,46 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
 
     public void markWhiteSpaceProcessed() {
         whiteSpaceProcessed = true;
+    }
+
+    @Override
+    public TextRectangle getTextRectangle(SvgDrawContext context, Point basePoint) {
+        if (this.attributesAndStyles != null) {
+            resolveFontSize();
+            resolveFont(context);
+            double x = 0, y = 0;
+            if (getAbsolutePositionChanges()[0] != null) {
+                x = getAbsolutePositionChanges()[0][0];
+            } else if (basePoint != null) {
+                x = basePoint.getX();
+            }
+            if (getAbsolutePositionChanges()[1] != null) {
+                y = getAbsolutePositionChanges()[1][0];
+            } else if (basePoint != null) {
+                y = basePoint.getY();
+            }
+            basePoint = new Point(x, y);
+            basePoint.translate(getRelativeTranslation()[0], getRelativeTranslation()[1]);
+            Rectangle commonRect = null;
+            for (ISvgTextNodeRenderer child : getChildren()) {
+                if (child instanceof ISvgTextNodeHelper) {
+                    TextRectangle rectangle = ((ISvgTextNodeHelper) child)
+                            .getTextRectangle(context, basePoint);
+                    basePoint = rectangle.getTextBaseLineRightPoint();
+                    commonRect = Rectangle.getCommonRectangle(commonRect, rectangle);
+                }
+            }
+            if (commonRect != null) {
+                return new TextRectangle(commonRect.getX(), commonRect.getY(), commonRect.getWidth(),
+                        commonRect.getHeight(), (float) basePoint.getY());
+            }
+        }
+        return null;
+    }
+
+    @Override
+    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        return getTextRectangle(context, null);
     }
 
     /**
@@ -272,7 +316,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         return provider.getFontSelector(stringArrayList, fontCharacteristics, tempFonts).bestMatch();
     }
 
-    private void resolveFont(SvgDrawContext context) {
+    void resolveFont(SvgDrawContext context) {
         FontProvider provider = context.getFontProvider();
         FontSet tempFonts = context.getTempFonts();
         font = null;
@@ -297,9 +341,29 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         }
     }
 
-    private void resolveFontSize() {
+    void resolveFontSize() {
         //TODO: DEVSIX-2607 (re)move static variable
         fontSize = (float) SvgTextUtil.resolveFontSize(this, DEFAULT_FONT_SIZE);
+    }
+
+    /**
+     * Return the font used in this text element.
+     * Note that font should already be resolved with {@link TextSvgBranchRenderer#resolveFont}.
+     *
+     * @return font of the current text element
+     */
+    PdfFont getFont() {
+        return font;
+    }
+
+    /**
+     * Return the font size of this text element.
+     * Note that font size should already be resolved with {@link TextSvgBranchRenderer#resolveFontSize()}.
+     *
+     * @return font size of current text element.
+     */
+    float getFontSize() {
+        return fontSize;
     }
 
     private void resolveTextPosition() {

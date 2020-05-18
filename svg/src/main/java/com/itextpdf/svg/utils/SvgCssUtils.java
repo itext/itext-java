@@ -103,7 +103,10 @@ public final class SvgCssUtils {
      *
      * @param pts float value to be converted to pixels
      * @return float converted value pts/0.75f
+     * @deprecated Will be replaced by the {@link com.itextpdf.styledxmlparser.css.util.CssUtils#convertPtsToPx(float)}
+     * in update 7.2.
      */
+    @Deprecated
     public static float convertPtsToPx(float pts) {
         return pts / 0.75f;
     }
@@ -113,7 +116,10 @@ public final class SvgCssUtils {
      *
      * @param pts double value to be converted to pixels
      * @return double converted value pts/0.75
+     * @deprecated Will be replaced by the {@link com.itextpdf.styledxmlparser.css.util.CssUtils#convertPtsToPx(double)}
+     * in update 7.2.
      */
+    @Deprecated
     public static double convertPtsToPx(double pts) {
         return pts / 0.75;
     }

@@ -172,6 +172,7 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    // TODO DEVSIX-4140 update cmp
     public void markerRefXYTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerRefXYTest");
     }
@@ -198,7 +199,7 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO: update when DEVSIX-3432 will be fixed
+    // TODO: update when DEVSIX-3432 and DEVSIX-4140 will be fixed
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 3))
     public void testMarkerUnitsStrokeWidthWhenParentStrokeWidthIsFontRelativeValues() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "testMarkerUnitsStrokeWidthWhenParentStrokeWidthIsFontRelativeValues");
@@ -244,12 +245,11 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void fontRelativeValueInRefX() throws IOException, InterruptedException {
-        // This file is rendered differently in different browsers.
-        // Look at MarkerSvgNOdeRenderer#parseFontRelativeOrAbsoluteLengthOnMarker to see the processing of font-relative unit .
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "fontRelativeValueInRefX");
     }
 
     @Test
+    // TODO DEVSIX-4140 update cmp
     public void fontRelativeValueInRefXDefault() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "fontRelativeValueInRefXDefault");
     }

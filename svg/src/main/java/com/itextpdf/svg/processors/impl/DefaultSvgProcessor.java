@@ -47,6 +47,7 @@ import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.ITextNode;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.SvgConstants.Tags;
 import com.itextpdf.svg.css.SvgCssContext;
 import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
@@ -239,7 +240,8 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     }
 
     private static boolean onlyNativeStylesShouldBeResolved(IElementNode element) {
-        return !SvgConstants.Tags.MARKER.equals(element.name())
+        return !Tags.LINEAR_GRADIENT.equals(element.name())
+                && !SvgConstants.Tags.MARKER.equals(element.name())
                 && isElementNested(element, SvgConstants.Tags.DEFS)
                 && !isElementNested(element, SvgConstants.Tags.MARKER);
     }

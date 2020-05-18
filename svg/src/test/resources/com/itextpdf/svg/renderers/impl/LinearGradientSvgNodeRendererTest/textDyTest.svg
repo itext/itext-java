@@ -1,0 +1,13 @@
+<svg x="0" y="0" width="600" height="600" xmlns="http://www.w3.org/2000/svg" version="1.1">
+	<defs>
+		<linearGradient y1="0%" x2="0%" y2="100%" id="myFillGradient">
+			<stop offset="0"  stop-color="red" />
+			<stop offset="0.5"  stop-color="green" />
+			<stop offset="1" stop-color="blue" />
+		</linearGradient>
+	</defs>
+	<text x="0" y="100"
+		  font-family="Courier" font-size="100" fill="url(#myFillGradient)" stroke-width="5" >
+		Hel<tspan dy="100">lo</tspan>
+	</text>
+</svg>

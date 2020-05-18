@@ -23,6 +23,7 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
@@ -33,7 +34,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -64,113 +64,180 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     public void lineTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "line");
     }
-
-    // TODO: DEVSIX-4018 add tests for all other types of path components
-
-    // TODO: DEVSIX-4018 update cmp_ after fix (box for path is not implemented)
+    
     @Test
     public void pathLinesBasedTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "pathLinesBased");
     }
 
-    // TODO: DEVSIX-4018 update cmp_ after fix (box for path is not implemented)
+    @Test
+    public void pathLinesBasedTransformedTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "pathLinesBasedTransformed");
+    }
+    
     @Test
     public void pathLinesBasedWithMoveTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "pathLinesBasedWithMove");
     }
-
-    // TODO: DEVSIX-4018 update cmp_ after fix (box for path is not implemented)
+    
     @Test
     public void pathLinesBasedWithTwoFiguresTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "pathLinesBasedWithTwoFigures");
     }
 
     @Test
-    // TODO: update cmp-file after DEVSIX-4018 will be fixed
     public void cubicBezierTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "cubicBezier");
     }
 
     @Test
-    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void cubicBezier2Test() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "cubicBezier2");
+    }
+
+    @Test
+    public void cubicBezier3Test() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "cubicBezier3");
+    }
+
+    @Test
+    public void cubicBezier4Test() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "cubicBezier4");
+    }
+
+    @Test
+    // See CurveTo#calculateTValues to see which discriminant is mentioned.
+    public void cubicBezierZeroDiscriminantTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "cubicBezierZeroDiscriminant");
+    }
+
+    @Test
+    // See CurveTo#calculateTValues to see which discriminant is mentioned.
+    public void cubicBezierNegativeDiscriminantTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "cubicBezierNegativeDiscriminant");
+    }
+
+    @Test
     public void cubicBezierInsideOtherCubicBezierTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "cubicBezierInsideOtherCubicBezier");
     }
 
     @Test
-    // TODO: update cmp-file after DEVSIX-4018 will be fixed
     public void smoothCubicBezierWithAbsoluteCoordinatesTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "smoothCubicBezierWithAbsoluteCoordinates");
     }
 
     @Test
-    // TODO: update cmp-file after DEVSIX-4018 will be fixed
     public void smoothCubicBezierWithRelativeCoordinatesTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "smoothCubicBezierWithRelativeCoordinates");
     }
 
     @Test
-    // TODO: update cmp-file after DEVSIX-4018 will be fixed
     public void smoothCubicBezierRelativeAndAbsoluteCoordWithMoveTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "smoothCubicBezierRelativeAndAbsoluteCoordWithMove");
     }
 
     @Test
-    // TODO: update cmp-file after DEVSIX-4018 will be fixed
     public void smoothCubicBezierRelativeAndAbsoluteCoordNoZOperatorTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "smoothCubicBezierRelativeAndAbsoluteCoordNoZOperator");
     }
 
     @Test
-    // TODO: update cmp-file after DEVSIX-4018 will be fixed
     public void quadraticBezierTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "quadraticBezier");
     }
 
     @Test
-    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void quadraticBezier2Test() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "quadraticBezier2");
+    }
+
+    @Test
+    public void quadraticBezier3Test() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "quadraticBezier3");
+    }
+
+    @Test
     public void quadraticBezierInsideOtherQuadraticBezierTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "quadraticBezierInsideOtherQuadraticBezier");
     }
 
     @Test
-    // TODO: update cmp-file after DEVSIX-4018 will be fixed
     public void smoothQuadraticBezierWithAbsoluteCoordinatesTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "smoothQuadraticBezierWithAbsoluteCoordinates");
     }
 
     @Test
-    // TODO: update cmp-file after DEVSIX-4018 will be fixed
     public void smoothQuadraticBezierWithRelativeCoordinatesTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "smoothQuadraticBezierWithRelativeCoordinates");
     }
 
     @Test
-    // TODO: update cmp-file after DEVSIX-4018 will be fixed
     public void smoothQuadraticBezierAbsoluteAndRelativeCoordWithMoveTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "smoothQuadraticBezierAbsoluteAndRelativeCoordWithMove");
     }
 
     @Test
-    // TODO: update cmp-file after DEVSIX-4018 will be fixed
     public void smoothQuadraticBezierRelativeAndAbsoluteCoordNoZOperatorTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "smoothQuadraticBezierRelativeAndAbsoluteCoordNoZOperator");
     }
 
     @Test
-    // TODO: update cmp-file after DEVSIX-4018 will be fixed
     public void ellipticalArcsTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcs");
     }
 
     @Test
-    // TODO: update cmp-file after DEVSIX-4018 will be fixed
+    public void ellipticalArcsNegativeRxRyTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsNegativeRxRy");
+    }
+
+    @Test
+    public void ellipticalArcZeroRxRyTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcZeroRxRy");
+    }
+
+    @Test
+    public void ellipticalArcsWithPhiTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsWithPhi", PageSize.A3.rotate());
+    }
+
+    @Test
+    public void ellipticalArcsWithPhi0Test() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsWithPhi0");
+    }
+
+    @Test
+    public void ellipticalArcsWithPhi90Test() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsWithPhi90");
+    }
+
+    @Test
+    public void ellipticalArcsWithPhi180Test() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsWithPhi180");
+    }
+    @Test
+    public void ellipticalArcsWithPhi270Test() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsWithPhi270");
+    }
+
+    @Test
+    public void ellipticalArcsWithPhiRelativeTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsWithPhiRelative");
+    }
+
+    @Test
+    public void ellipticalArcsWithPhiAbsoluteTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsWithPhiAbsolute");
+    }
+
+
+    @Test
     public void ellipticalArcsRelativeCoordinatesTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsRelativeCoordinates");
     }
 
     @Test
-    // TODO: update cmp-file after DEVSIX-4018 will be fixed
     public void arcInsideOtherEllipticalArcTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "arcInsideOtherEllipticalArc");
     }
@@ -256,13 +323,92 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
         convertAndCompare(sourceFolder, destinationFolder, "rectWithMultipleTransforms");
     }
 
-    // TODO: DEVSIX-4018 update cmp_ after fix (box for text is not implemented)
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)
     })
+    // TODO DEVSIX-4140 remove log message check and update cmp
     public void textTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "text");
+    }
+    
+    @Test
+    public void textNestedTSpansTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "textNestedTSpansTest");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)
+    })
+    public void textRotatedTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "textRotatedTest");
+    }
+
+    @Test
+    public void textDxTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "textDxTest");
+    }
+
+    @Test
+    public void textDyTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "textDyTest");
+    }
+
+    @Test
+    public void textXYOffset() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "textXYOffset");
+    }
+
+    @Test
+    // TODO DEVSIX-4143 change cmp file after fixing
+    public void textXOffset() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "textXOffset");
+    }
+
+    @Test
+    public void textXYDxDyOffset() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "textXYDxDyOffset");
+    }
+
+    @Test
+    public void textGradientEmUnits() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "textGradientEmUnits");
+    }
+
+    @Test
+    // TODO DEVSIX-4140 update cmp file
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)})
+    public void textGradientEmUnitsRelated() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "textGradientEmUnitsRelated");
+    }
+
+    @Test
+    // TODO DEVSIX-4140 update cmp file
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)})
+    public void textGradientEmUnitsRelatedNotDefs() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "textGradientEmUnitsRelatedNotDefs");
+    }
+
+    @Test
+    // TODO DEVSIX-4140 update cmp file
+    public void textGradientEmUnitsRelatedDefault() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "textGradientEmUnitsRelatedDefault");
+    }
+
+    @Test
+    public void textGradientExUnits() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "textGradientExUnits");
+    }
+
+    @Test
+    public void textGradientRemUnits() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "textGradientRemUnits");
+    }
+
+    @Test
+    public void textGradientRemUnitsNestedSvg() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "textGradientRemUnitsNestedSvg");
     }
 
     @Test
@@ -327,6 +473,7 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
+    // TODO DEVSIX-4140 update after fix
     public void userSpaceOnUseWithUnitsRelativeToFontTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "userSpaceOnUseWithUnitsRelativeToFont");
     }
@@ -338,7 +485,7 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO: DEVSIX-3596 update cmp_ after fix ("ch" "vmin"+"vmax"+"vw"+"vh" not implemented yet)
+    // TODO: DEVSIX-4140, DEVSIX-3596 update cmp_ after fix ("ch" "vmin"+"vmax"+"vw"+"vh" not implemented yet)
     public void userSpaceOnUseDiffRelativeUnitsInGradientTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "userSpaceOnUseDiffRelativeUnitsInGradient");
     }
@@ -391,6 +538,7 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
+    //TODO change cmp after DEVSIX-4143 is fixed (bug with only one absolute coordinate in tspan)
     public void matrixTransformInGradientWithObjectBoundingBoxUnitsTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "matrixTransformInGradientWithObjectBoundingBoxUnits");
     }

@@ -1,0 +1,26 @@
+<svg x="0" y="0" width="600" height="600" xmlns="http://www.w3.org/2000/svg" version="1.1">
+	<defs>
+		<linearGradient y1="0%" x2="0%" y2="100%" id="myFillGradient">
+			<stop offset="0"  stop-color="red" />
+			<stop offset="0.5"  stop-color="green" />
+			<stop offset="1" stop-color="blue" />
+		</linearGradient>
+		<linearGradient id="myStrokeGradient">
+			<stop offset="0"  stop-color="black" />
+			<stop offset="0.5"  stop-color="yellow" />
+			<stop offset="1" stop-color="magenta" />
+		</linearGradient>
+	</defs>
+
+	<g font-family="Courier" font-size="64" >
+		<text transform="translate(100) rotate(30)" x="20" y="150" fill="url(#myFillGradient)" >
+			iText
+			<tspan dx="1em" dy="-50" font-weight="bold" fill="url(#myStrokeGradient)" >
+				iText
+			</tspan>
+			<tspan dx="-190" dy="100">
+				iText
+			</tspan>
+		</text>
+	</g>
+</svg>

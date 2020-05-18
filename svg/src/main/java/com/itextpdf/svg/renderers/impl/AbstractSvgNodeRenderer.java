@@ -50,6 +50,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.layout.property.TransparentColor;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.TokenType;
@@ -60,6 +61,7 @@ import com.itextpdf.svg.SvgConstants.Values;
 import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.utils.SvgTextUtil;
 import com.itextpdf.svg.utils.TransformUtils;
 
@@ -196,6 +198,17 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         return false;
     }
 
+
+    /**
+     * Return font-size of the current element
+     *
+     * @return absolute value of font-size
+     */
+    public float getCurrentFontSize() {
+        // TODO DEVSIX-4140 check work of this method with relative unit
+        return CssUtils.parseAbsoluteFontSize(getAttribute(SvgConstants.Attributes.FONT_SIZE));
+    }
+
     /**
      * Make a deep copy of the styles and attributes of this renderer
      * Helper method for deep copying logic
@@ -217,12 +230,15 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      */
     protected abstract void doDraw(SvgDrawContext context);
 
+
     /**
      * Evaluate the current object bounding box
      *
      * @return the {@link Rectangle} representing the current object's bounding box
      */
-    protected Rectangle getObjectBoundingBox() {
+    @Deprecated
+    // TODO DEVSIX-3814 move to ISvgNodeRenderer in 7.2
+    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
         return null;
     }
 
@@ -403,6 +419,30 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         }
     }
 
+    /**
+     * Parse absolute length.
+     * @param length {@link String} for parsing
+     * @param percentRelativeValue the value on which percent length is based on
+     * @param defaultValue default value if length is not recognized
+     * @param context current {@link SvgDrawContext}
+     * @return absolute value in points
+     */
+    protected float parseAbsoluteLength(String length, float percentRelativeValue, float defaultValue,
+            SvgDrawContext context) {
+        if (CssUtils.isPercentageValue(length)) {
+            return CssUtils.parseRelativeValue(length, percentRelativeValue);
+        } else {
+            float em = getCurrentFontSize();
+            float rem = context.getRemValue();
+            UnitValue unitValue = CssUtils.parseLengthValueToPt(length, em, rem);
+            if (unitValue != null && unitValue.isPointValue()) {
+                return unitValue.getValue();
+            } else {
+                return defaultValue;
+            }
+        }
+    }
+
     private TransparentColor getColorFromAttributeValue(SvgDrawContext context, String rawColorValue,
             float objectBoundingBoxMargin, float parentOpacity) {
         if (rawColorValue == null) {
@@ -421,7 +461,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             ISvgNodeRenderer colorRenderer = context.getNamedObject(normalizedName);
             if (colorRenderer instanceof AbstractGradientSvgNodeRenderer) {
                 resolvedColor = ((AbstractGradientSvgNodeRenderer) colorRenderer).createColor(
-                        context, getObjectBoundingBox(), objectBoundingBoxMargin, parentOpacity);
+                        context, getObjectBoundingBox(context), objectBoundingBoxMargin, parentOpacity);
             }
             if (resolvedColor != null) {
                 return new TransparentColor(resolvedColor, resolvedOpacity);

@@ -103,7 +103,7 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
     }
 
     @Override
-    protected Rectangle getObjectBoundingBox() {
+    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
         setPoints(getAttribute(SvgConstants.Attributes.POINTS));
         if (points.size() > 1) {
             Point firstPoint = points.get(0);
@@ -129,7 +129,7 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
 
             return new Rectangle((float) minX, (float) minY, (float) width, (float) height);
         } else {
-            return super.getObjectBoundingBox();
+            return super.getObjectBoundingBox(context);
         }
     }
 
@@ -172,8 +172,8 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
             point = points.get(points.size() - 1);
         }
         if (point != null) {
-            String moveX = SvgCssUtils.convertDoubleToString(SvgCssUtils.convertPtsToPx(point.x));
-            String moveY = SvgCssUtils.convertDoubleToString(SvgCssUtils.convertPtsToPx(point.y));
+            String moveX = SvgCssUtils.convertDoubleToString(CssUtils.convertPtsToPx(point.x));
+            String moveY = SvgCssUtils.convertDoubleToString(CssUtils.convertPtsToPx(point.y));
             MarkerSvgNodeRenderer.drawMarker(context, moveX, moveY, markerVertexType, this);
         }
     }

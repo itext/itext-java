@@ -1,0 +1,17 @@
+<!-- if gradient vector coordinate set in em unit, it is related to the parent element that is <defs>-->
+<svg x="0" y="0" width="600" height="400" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+        <linearGradient x2="30em" id="gradient1" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="red"/>
+            <stop offset="0.5" stop-color="green"/>
+            <stop offset="1" stop-color="blue"/>
+        </linearGradient>
+    </defs>
+
+    <g font-size="100">
+        <text x="50" y="150"
+              font-family="Courier" font-size="128" fill="url(#gradient1)">
+            iText
+        </text>
+    </g>
+</svg>

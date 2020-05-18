@@ -24,7 +24,6 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
@@ -159,49 +158,6 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
         return isCorrect;
     }
 
-    private ISvgNodeRenderer getSvgRootElement(ISvgNodeRenderer element) {
-        if (element instanceof SvgTagSvgNodeRenderer
-                && element.getParent() instanceof PdfRootSvgNodeRenderer) {
-            return element;
-        }
-        if (element.getParent() != null) {
-            return getSvgRootElement(element.getParent());
-        }
-        return null;
-    }
-
-    // TODO (DEVSIX-3596) Add support of 'lh' 'ch' units and viewport-relative units
-    private float parseFontRelativeOrAbsoluteLengthOnMarker(String length) {
-        float value = 0f;
-        if (CssUtils.isMetricValue(length) || CssUtils.isNumericValue(length)) {
-            value = CssUtils.parseAbsoluteLength(length);
-        } else if (CssUtils.isFontRelativeValue(length)) {
-            // Defaut font-size is medium
-            value = CssUtils.parseRelativeValue(length, CssUtils.parseAbsoluteFontSize(CommonCssConstants.MEDIUM));
-            // Different browsers process font-relative units for markers differently.
-            // We do it according to the css specification.
-            if (CssUtils.isRemValue(length)) {
-                ISvgNodeRenderer rootElement = getSvgRootElement(getParent());
-                if (rootElement != null && rootElement.getAttribute(CommonCssConstants.FONT_SIZE) != null) {
-                    value = CssUtils.parseRelativeValue(length,
-                            CssUtils.parseAbsoluteFontSize(rootElement.getAttribute(CommonCssConstants.FONT_SIZE)));
-                }
-            } else if (CssUtils.isEmValue(length)) {
-                ISvgNodeRenderer parentElement = this.getParent();
-                if (parentElement != null && parentElement.getAttribute(CommonCssConstants.FONT_SIZE) != null) {
-                    value = CssUtils.parseRelativeValue(length,
-                            CssUtils.parseAbsoluteFontSize(parentElement.getAttribute(CommonCssConstants.FONT_SIZE)));
-                }
-            } else if (CssUtils.isExValue(length)) {
-                if (this.getAttribute(CommonCssConstants.FONT_SIZE) != null) {
-                    value = CssUtils.parseRelativeValue(length,
-                            CssUtils.parseAbsoluteFontSize(this.getAttribute(CommonCssConstants.FONT_SIZE)));
-                }
-            }
-        }
-        return value;
-    }
-
     private void applyRotation(SvgDrawContext context) {
         if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.ORIENT)) {
             String orient = this.attributesAndStyles.get(SvgConstants.Attributes.ORIENT);
@@ -231,18 +187,13 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
                 .equals(this.attributesAndStyles.get(SvgConstants.Attributes.MARKER_UNITS))) {
             String parentValue = this.getParent().getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
             if (parentValue != null) {
-                float strokeWidthScale;
-                if (CssUtils.isPercentageValue(parentValue)) {
-                    // If stroke width is a percentage value is always computed as a percentage of the normalized viewBox diagonal length.
-                    double rootViewPortHeight = context.getRootViewPort().getHeight();
-                    double rootViewPortWidth = context.getRootViewPort().getWidth();
-                    double viewBoxDiagonalLength = Math
-                            .sqrt(rootViewPortHeight * rootViewPortHeight + rootViewPortWidth * rootViewPortWidth);
-                    strokeWidthScale = CssUtils.parseRelativeValue(parentValue, (float) viewBoxDiagonalLength);
-                } else {
-                    strokeWidthScale = SvgCssUtils
-                            .convertPtsToPx(parseFontRelativeOrAbsoluteLengthOnMarker(parentValue));
-                }
+                // If stroke width is a percentage value is always computed as a percentage of the normalized viewBox diagonal length.
+                double rootViewPortHeight = context.getRootViewPort().getHeight();
+                double rootViewPortWidth = context.getRootViewPort().getWidth();
+                double viewBoxDiagonalLength = CssUtils.convertPxToPts(Math
+                        .sqrt(rootViewPortHeight * rootViewPortHeight + rootViewPortWidth * rootViewPortWidth));
+                float strokeWidthScale = CssUtils
+                        .convertPtsToPx(parseAbsoluteLength(parentValue, (float) viewBoxDiagonalLength, 1f, context));
                 context.getCurrentCanvas()
                         .concatMatrix(AffineTransform.getScaleInstance(strokeWidthScale, strokeWidthScale));
             }
@@ -263,22 +214,14 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
         float moveX = DEFAULT_REF_X;
         if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.REFX)) {
             String refX = this.attributesAndStyles.get(SvgConstants.Attributes.REFX);
-            if (CssUtils.isPercentageValue(refX)) {
-                moveX = CssUtils.parseRelativeValue(refX, context.getRootViewPort().getWidth());
-            } else {
-                moveX = parseFontRelativeOrAbsoluteLengthOnMarker(refX);
-            }
+            moveX = parseAbsoluteLength(refX, context.getRootViewPort().getWidth(), moveX, context);
             //Apply scale
             moveX *= -1 * xScale;
         }
         float moveY = DEFAULT_REF_Y;
         if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.REFY)) {
             String refY = this.attributesAndStyles.get(SvgConstants.Attributes.REFY);
-            if (CssUtils.isPercentageValue(refY)) {
-                moveY = CssUtils.parseRelativeValue(refY, context.getRootViewPort().getHeight());
-            } else {
-                moveY = parseFontRelativeOrAbsoluteLengthOnMarker(refY);
-            }
+            moveY = parseAbsoluteLength(refY, context.getRootViewPort().getHeight(), moveY, context);
             moveY *= -1 * yScale;
         }
         AffineTransform translation = AffineTransform.getTranslateInstance(moveX, moveY);
