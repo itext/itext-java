@@ -998,6 +998,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      * @param text     a {@link GlyphLine}
      * @param leftPos  the leftmost end of the GlyphLine
      * @param rightPos the rightmost end of the GlyphLine
+     * @deprecated use {@link TextRenderer#setText(GlyphLine, PdfFont)} instead
      */
     @Deprecated
     public void setText(GlyphLine text, int leftPos, int rightPos) {
@@ -1277,6 +1278,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
     }
 
+    /**
+     * @deprecated use {@link TextRenderer#setProcessedGlyphLineAndFont(GlyphLine, PdfFont)} instead
+     */
     @Deprecated
     protected void setGlyphLineAndFont(GlyphLine gl, PdfFont font) {
         setProcessedGlyphLineAndFont(gl, font);
