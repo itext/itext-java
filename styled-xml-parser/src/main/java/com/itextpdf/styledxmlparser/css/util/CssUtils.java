@@ -436,9 +436,8 @@ public class CssUtils {
      * Parses the resolution.
      *
      * @param resolutionStr the resolution as a string
-     * @return a value in dpi (currently)
+     * @return a value in dpi
      */
-    // TODO change default units? If so, change MediaDeviceDescription#resolutoin as well
     public static float parseResolution(String resolutionStr) {
         int pos = determinePositionBetweenValueAndUnit(resolutionStr);
         if (pos == 0) {
@@ -450,7 +449,10 @@ public class CssUtils {
             f *= 2.54;
         } else if (unit.startsWith(CommonCssConstants.DPPX)) {
             f *= 96;
+        } else if (!unit.startsWith(CommonCssConstants.DPI)) {
+            throw new StyledXMLParserException(LogMessageConstant.INCORRECT_RESOLUTION_UNIT_VALUE);
         }
+        
         return (float) f;
     }
 

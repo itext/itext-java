@@ -1427,6 +1427,11 @@ public class CommonCssConstants {
     public static final String DPCM = "dpcm";
 
     /**
+     * The Constant DPI.
+     */
+    public static final String DPI = "dpi";
+
+    /**
      * The Constant DPPX.
      */
     public static final String DPPX = "dppx";

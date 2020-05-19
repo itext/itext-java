@@ -285,4 +285,27 @@ public class CssUtilsTest extends ExtendedITextTest {
         Assert.assertFalse(CssUtils.isAngleValue("10in"));
         Assert.assertFalse(CssUtils.isAngleValue("10px"));
     }
+
+    @Test
+    public void parseResolutionValidDpiUnit() {
+        Assert.assertEquals(10f, CssUtils.parseResolution("10dpi"), 0);
+    }
+
+    @Test
+    public void parseResolutionValidDpcmUnit() {
+        Assert.assertEquals(25.4f, CssUtils.parseResolution("10dpcm"), 0);
+    }
+
+    @Test
+    public void parseResolutionValidDppxUnit() {
+        Assert.assertEquals(960f, CssUtils.parseResolution("10dppx"), 0);
+    }
+
+    @Test
+    public void parseResolutionInvalidUnit() {
+        junitExpectedException.expect(StyledXMLParserException.class);
+        junitExpectedException.expectMessage(LogMessageConstant.INCORRECT_RESOLUTION_UNIT_VALUE);
+
+        CssUtils.parseResolution("10incorrectUnit");
+    }
 }

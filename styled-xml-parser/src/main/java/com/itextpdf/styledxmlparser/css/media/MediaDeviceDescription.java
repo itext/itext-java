@@ -77,7 +77,6 @@ public class MediaDeviceDescription {
     private int monochrome;
     
     /** The resolution in DPI. */
-    // TODO change default units? If so, change CssUtils#parseResolution as well
     private float resolution;
 
     /**
