@@ -111,7 +111,7 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
 
         List<String> commaSeparatedExpressions = splitMultipleBackgrounds(shorthandExpression);
 
-        // TODO ignore multiple backgrounds at the moment
+        //TODO: DEVSIX-2027 ignore multiple backgrounds at the moment
         String backgroundExpression = commaSeparatedExpressions.get(0);
         String[] resolvedProps = new String[8];
 
