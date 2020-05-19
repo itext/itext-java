@@ -170,7 +170,7 @@ public final class LogMessageConstant {
      */
     @Deprecated
     public static final String REDACTION_OF_ANNOTATION_TYPE_WATERMARK_IS_NOT_SUPPORTED = "Redaction of annotation subtype /Watermark is not supported";
-    public static final String REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED = "The removing page has already been flushed.";
+    public static final String REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED = "The page requested to be removed has already been flushed.";
     public static final String RENDERER_WAS_NOT_ABLE_TO_PROCESS_KEEP_WITH_NEXT = "The renderer was not able to process keep with next property properly";
     public static final String ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED_ALREADY_EXIST = "Role mapping \"{0}\" from source document is not copied. Destination document already has \"{1}\" mapping.";
     public static final String ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED_INVALID = "Role mapping for \"{0}\" from source document is not copied. Mapping to namespace is in an invalid form (should be [PdfName, PdfDictionary]).";

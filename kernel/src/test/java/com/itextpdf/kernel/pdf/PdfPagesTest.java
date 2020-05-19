@@ -59,14 +59,14 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.lang.reflect.Array;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
-import javax.xml.bind.Element;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -74,17 +74,13 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.Random;
-
 @Category(IntegrationTest.class)
 public class PdfPagesTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfPagesTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfPagesTest/";
-    static final PdfName PageNum = new PdfName("PageNum");
-    static final PdfName PageNum5 = new PdfName("PageNum");
+    private static final PdfName PageNum = new PdfName("PageNum");
+    private static final PdfName PageNum5 = new PdfName("PageNum");
+
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
 
@@ -229,19 +225,12 @@ public class PdfPagesTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         PdfDocument pdfDoc = new PdfDocument(writer);
         PdfPage page = pdfDoc.addNewPage();
-        boolean error = false;
-        try {
-            page.flush();
-            pdfDoc.removePage(page);
-            pdfDoc.addPage(1, page);
-            pdfDoc.close();
-        } catch (PdfException e) {
-            if (PdfException.FlushedPageCannotBeAddedOrInserted.equals(e.getMessage())) {
-                error = true;
-            }
-        }
+        page.flush();
+        pdfDoc.removePage(page);
 
-        Assert.assertTrue(error);
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(PdfException.FlushedPageCannotBeAddedOrInserted);
+        pdfDoc.addPage(1, page);
     }
 
     @Test
@@ -252,19 +241,12 @@ public class PdfPagesTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         PdfDocument pdfDoc = new PdfDocument(writer);
         PdfPage page = pdfDoc.addNewPage();
-        boolean error = false;
-        try {
-            page.flush();
-            pdfDoc.removePage(page);
-            pdfDoc.addPage(page);
-            pdfDoc.close();
-        } catch (PdfException e) {
-            if (PdfException.FlushedPageCannotBeAddedOrInserted.equals(e.getMessage())) {
-                error = true;
-            }
-        }
+        page.flush();
+        pdfDoc.removePage(page);
 
-        Assert.assertTrue(error);
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(PdfException.FlushedPageCannotBeAddedOrInserted);
+        pdfDoc.addPage(page);
     }
 
     @Test
@@ -295,32 +277,30 @@ public class PdfPagesTest extends ExtendedITextTest {
         verifyPagesOrder(destinationFolder + filename, pageCount - 1);
     }
 
-    void verifyPagesOrder(String filename, int numOfPages) throws IOException {
-        PdfReader reader = new PdfReader(filename);
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+    @Test
+    public void removeFlushedPageFromTaggedDocument() {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            pdfDocument.setTagged();
+            pdfDocument.addNewPage();
+            pdfDocument.getPage(1).flush();
 
-        for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
-            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
-            Assert.assertNotNull(page);
-            PdfNumber number = page.getAsNumber(PageNum5);
-            Assert.assertEquals("Page number", i, number.intValue());
+            junitExpectedException.expect(PdfException.class);
+            junitExpectedException.expectMessage(PdfException.FLUSHED_PAGE_CANNOT_BE_REMOVED);
+            pdfDocument.removePage(1);
         }
-
-        Assert.assertEquals("Number of pages", numOfPages, pdfDocument.getNumberOfPages());
-        pdfDocument.close();
     }
 
-    int verifyIntegrity(PdfPagesTree pagesTree) {
-        List<PdfPages> parents = pagesTree.getParents();
-        int from = 0;
-        for (int i = 0; i < parents.size(); i++) {
-            if (parents.get(i).getFrom() != from) {
-                return i;
-            }
-            from = parents.get(i).getFrom() + parents.get(i).getCount();
+    @Test
+    public void removeFlushedPageFromDocumentWithAcroForm() {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            pdfDocument.getCatalog().put(PdfName.AcroForm, new PdfDictionary());
+            pdfDocument.addNewPage();
+            pdfDocument.getPage(1).flush();
+
+            junitExpectedException.expect(PdfException.class);
+            junitExpectedException.expectMessage(PdfException.FLUSHED_PAGE_CANNOT_BE_REMOVED);
+            pdfDocument.removePage(1);
         }
-        return -1;
     }
 
     @Test
@@ -570,17 +550,15 @@ public class PdfPagesTest extends ExtendedITextTest {
 
     @Test
     public void pageGetMediaBoxNotEnoughArgumentsTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException
-                .expectMessage(MessageFormatUtil.format(PdfException.WRONGMEDIABOXSIZETOOFEWARGUMENTS, 3));
-
         PdfReader reader = new PdfReader(sourceFolder + "helloWorldMediaboxNotEnoughArguments.pdf");
 
         PdfDocument pdfDoc = new PdfDocument(reader);
         PdfPage pageOne = pdfDoc.getPage(1);
-        Rectangle actual = pageOne.getPageSize();
 
-        Assert.fail("Exception was not thrown");
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException
+                .expectMessage(MessageFormatUtil.format(PdfException.WRONGMEDIABOXSIZETOOFEWARGUMENTS, 3));
+        pageOne.getPageSize();
     }
 
     @Test
@@ -717,12 +695,12 @@ public class PdfPagesTest extends ExtendedITextTest {
     }
 
     private static void findAndAssertNullPages(PdfDocument pdfDocument, Set<Integer> nullPages) {
-            for (Integer e : nullPages) {
-                Assert.assertNull(pdfDocument.getPage((int) e));
-            }
+        for (Integer e : nullPages) {
+            Assert.assertNull(pdfDocument.getPage((int) e));
+        }
     }
 
-    private int getAmountOfReadPages(PdfArray pageIndRefArray) {
+    private static int getAmountOfReadPages(PdfArray pageIndRefArray) {
         int amountOfLoadedPages = 0;
         for (int i = 0; i < pageIndRefArray.size(); i++) {
             if (((PdfIndirectReference) pageIndRefArray.get(i, false)).refersTo != null) {
@@ -732,7 +710,33 @@ public class PdfPagesTest extends ExtendedITextTest {
         return amountOfLoadedPages;
     }
 
+    private static void verifyPagesOrder(String filename, int numOfPages) throws IOException {
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
 
+        for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
+            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
+            Assert.assertNotNull(page);
+            PdfNumber number = page.getAsNumber(PageNum5);
+            Assert.assertEquals("Page number", i, number.intValue());
+        }
+
+        Assert.assertEquals("Number of pages", numOfPages, pdfDocument.getNumberOfPages());
+        pdfDocument.close();
+    }
+
+    private static int verifyIntegrity(PdfPagesTree pagesTree) {
+        List<PdfPages> parents = pagesTree.getParents();
+        int from = 0;
+        for (int i = 0; i < parents.size(); i++) {
+            if (parents.get(i).getFrom() != from) {
+                return i;
+            }
+            from = parents.get(i).getFrom() + parents.get(i).getCount();
+        }
+        return -1;
+    }
 
     private class CustomPdfReader extends PdfReader {
 
@@ -755,4 +759,5 @@ public class PdfPagesTest extends ExtendedITextTest {
             return toReturn;
         }
     }
+
 }

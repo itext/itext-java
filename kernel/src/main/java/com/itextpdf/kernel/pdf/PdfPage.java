@@ -420,7 +420,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (copier != null) {
             copier.copy(this, page);
         } else {
-            if (!toDocument.getWriter().isUserWarnedAboutAcroFormCopying && getDocument().getCatalog().getPdfObject().containsKey(PdfName.AcroForm)) {
+            if (!toDocument.getWriter().isUserWarnedAboutAcroFormCopying && getDocument().hasAcroForm()) {
                 Logger logger = LoggerFactory.getLogger(PdfPage.class);
                 logger.warn(LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY);
                 toDocument.getWriter().isUserWarnedAboutAcroFormCopying = true;

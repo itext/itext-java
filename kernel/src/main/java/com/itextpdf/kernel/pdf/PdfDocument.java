@@ -619,7 +619,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public void removePage(int pageNum) {
         checkClosingStatus();
-        PdfPage removedPage = catalog.getPageTree().removePage(pageNum);
+
+        PdfPage removedPage = getPage(pageNum);
+        if (removedPage != null && removedPage.isFlushed() && (isTagged() || hasAcroForm())) {
+            throw new PdfException(PdfException.FLUSHED_PAGE_CANNOT_BE_REMOVED);
+        }
+
+        catalog.getPageTree().removePage(pageNum);
 
         if (removedPage != null) {
             catalog.removeOutlines(removedPage);
@@ -627,8 +633,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             if (isTagged()) {
                 getTagStructureContext().removePageTags(removedPage);
             }
-            // TODO should we remove everything (outlines, tags) if page won't be removed in the end, because it's already flushed? wouldn't tags be also flushed?
-            if (!removedPage.getPdfObject().isFlushed()) {
+            if (!removedPage.isFlushed()) {
                 removedPage.getPdfObject().remove(PdfName.Parent);
                 removedPage.getPdfObject().getIndirectReference().setFree();
             }
@@ -2156,6 +2161,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     final VersionInfo getVersionInfo() {
         return versionInfo;
+    }
+
+    boolean hasAcroForm() {
+        return getCatalog().getPdfObject().containsKey(PdfName.AcroForm);
     }
 
     private void updateProducerInInfoDictionary() {
