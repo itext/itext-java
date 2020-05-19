@@ -48,6 +48,7 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.KernelLogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.Version;
@@ -83,8 +84,6 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -102,6 +101,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main enter point to work with PDF document.
@@ -1983,8 +1984,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 }
                 file.close();
                 writer.write((byte) '\n');
-                //TODO log if full compression differs
-                writer.properties.isFullCompression = reader.hasXrefStm();
+
+                overrideFullCompressionInWriterProperties(writer.properties, reader.hasXrefStm());
 
                 writer.crypto = reader.decrypt;
 
@@ -2354,10 +2355,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         names.setModified();
     }
 
-    private static boolean isXmpMetaHasProperty(XMPMeta xmpMeta, String schemaNS, String propName) throws XMPException {
-        return xmpMeta.getProperty(schemaNS, propName) != null;
-    }
-
     @SuppressWarnings("unused")
     private byte[] getSerializedBytes() {
         ByteArrayOutputStream bos = null;
@@ -2463,5 +2460,20 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             buf.append(versionInfo.getVersion());
             return buf.toString();
         }
+    }
+
+    private static void overrideFullCompressionInWriterProperties(WriterProperties properties, boolean readerHasXrefStream) {
+        if (Boolean.TRUE == properties.isFullCompression && !readerHasXrefStream) {
+            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+            logger.warn(KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY);
+        } else if (Boolean.FALSE == properties.isFullCompression && readerHasXrefStream) {
+            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+            logger.warn(KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY);
+        }
+        properties.isFullCompression = readerHasXrefStream;
+    }
+
+    private static boolean isXmpMetaHasProperty(XMPMeta xmpMeta, String schemaNS, String propName) throws XMPException {
+        return xmpMeta.getProperty(schemaNS, propName) != null;
     }
 }
