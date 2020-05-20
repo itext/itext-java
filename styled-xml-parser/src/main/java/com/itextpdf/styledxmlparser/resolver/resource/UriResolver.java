@@ -140,7 +140,6 @@ public class UriResolver {
         }
 
         if (baseUrl == null) {
-            // TODO styledxmlparserException?
             throw new IllegalArgumentException(MessageFormatUtil.format("Invalid base URI: {0}", base));
         }
     }
