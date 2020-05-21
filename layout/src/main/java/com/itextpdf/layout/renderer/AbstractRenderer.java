@@ -1702,11 +1702,12 @@ public abstract class AbstractRenderer implements IRenderer {
                 logger.warn(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN, logMessageArg));
                 return;
             }
+            // If an element with a link annotation occupies more than two pages,
+            // then a NPE might occur, because of the annotation being partially flushed.
+            // That's why we create and use an annotation's copy.
+            PdfDictionary oldAnnotation = (PdfDictionary) linkAnnotation.getPdfObject().clone();
+            linkAnnotation = (PdfLinkAnnotation) PdfAnnotation.makeAnnotation(oldAnnotation);
             Rectangle pdfBBox = calculateAbsolutePdfBBox();
-            if (linkAnnotation.getPage() != null) {
-                PdfDictionary oldAnnotation = (PdfDictionary) linkAnnotation.getPdfObject().clone();
-                linkAnnotation = (PdfLinkAnnotation) PdfAnnotation.makeAnnotation(oldAnnotation);
-            }
             linkAnnotation.setRectangle(new PdfArray(pdfBBox));
 
             PdfPage page = document.getPage(pageNumber);
