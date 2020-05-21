@@ -43,25 +43,30 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
-import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class StylesTest extends ExtendedITextTest {
 
     public static float EPS = 0.0001f;
 
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
+
     @Test
-    public void stylesTest01() {
+    public void addingStyleBeforeSettingPropertyTest() {
         Style myStyle = new Style();
         myStyle.setFontColor(ColorConstants.RED);
 
@@ -69,38 +74,71 @@ public class StylesTest extends ExtendedITextTest {
                 .addStyle(myStyle)
                 .setFontColor(ColorConstants.GREEN);
 
-        Assert.assertEquals(ColorConstants.GREEN, p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
+        Assert.assertEquals(ColorConstants.GREEN,
+                p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
     }
 
     @Test
-    public void stylesTest02() {
+    public void addingStyleAfterSettingPropertyTest() {
+        Style myStyle = new Style();
+        myStyle.setFontColor(ColorConstants.RED);
+
+        Paragraph p = new Paragraph("text")
+                .setFontColor(ColorConstants.GREEN)
+                .addStyle(myStyle);
+
+        Assert.assertEquals(ColorConstants.GREEN,
+                p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
+    }
+
+    @Test
+    public void addingStyleTest() {
         Style myStyle = new Style();
         myStyle.setFontColor(ColorConstants.RED);
 
         Paragraph p = new Paragraph("text").addStyle(myStyle);
 
-        Assert.assertEquals(ColorConstants.RED, p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
+        Assert.assertEquals(ColorConstants.RED,
+                p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
     }
 
     @Test
-    public void stylesTest03() {
+    public void addingSeveralStyleTest() {
         Style myStyle = new Style();
         myStyle.setFontColor(ColorConstants.RED);
 
         Paragraph p = new Paragraph("text").addStyle(myStyle);
 
-        Assert.assertEquals(ColorConstants.RED, p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
+        Assert.assertEquals(ColorConstants.RED,
+                p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
 
         Style myStyle2 = new Style();
         myStyle2.setFontColor(ColorConstants.GREEN);
 
         p.addStyle(myStyle2);
 
-        Assert.assertEquals(ColorConstants.GREEN, p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
+        Assert.assertEquals(ColorConstants.GREEN,
+                p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
     }
 
     @Test
-    public void getMarginsTest() {
+    public void addNullAsStyleTest() {
+        // Sharpen mappings map NPE to NullReferenceException, however in .NET in this situation
+        // ArgumentNullException is thrown. In order not to introduce any porting issues,
+        // which unfortunately couldn't be handled in a convenient way, the most basic Exception
+        // is set to be expected.
+        junitExpectedException.expect(Exception.class);
+
+        Style myStyle = null;
+
+        Paragraph p = new Paragraph("text").addStyle(myStyle);
+
+        // the following line should produce a NPE
+        p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR);
+    }
+
+    @Test
+    public void setMarginsViaStyleTest() {
         float expectedMarginTop = 92;
         float expectedMarginRight = 90;
         float expectedMarginBottom = 86;
@@ -123,7 +161,7 @@ public class StylesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void getMarginTopTest() {
+    public void setMarginTopViaStyleTest() {
         float expectedMarginTop = 92;
 
         Style style = new Style();
@@ -137,7 +175,7 @@ public class StylesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void setVerticalAlignmentTest() {
+    public void setVerticalAlignmentViaStyleTest() {
         VerticalAlignment expectedAlignment = VerticalAlignment.MIDDLE;
 
         Style style = new Style();
@@ -150,7 +188,7 @@ public class StylesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void setSpacingRatioTest() {
+    public void setSpacingRatioViaStyleTest() {
         float expectedSpacingRatio = 0.5f;
 
         Style style = new Style();
@@ -159,11 +197,11 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph();
         p.addStyle(style);
 
-        Assert.assertEquals(expectedSpacingRatio, (float)p.<Float>getProperty(Property.SPACING_RATIO), EPS);
+        Assert.assertEquals(expectedSpacingRatio, (float) p.<Float>getProperty(Property.SPACING_RATIO), EPS);
     }
 
     @Test
-    public void keepTogetherTrueTest() {
+    public void setKeepTogetherTrueViaStyleTest() {
         Style trueStyle = new Style();
         trueStyle.setKeepTogether(true);
 
@@ -174,18 +212,18 @@ public class StylesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void keepTogetherFalseTest() {
+    public void setKeepTogetherFalseViaStyleTest() {
         Style falseStyle = new Style();
         falseStyle.setKeepTogether(false);
 
         Paragraph p = new Paragraph();
         p.addStyle(falseStyle);
 
-        Assert.assertEquals(false, p.<Boolean>getProperty(Property.KEEP_TOGETHER));
+        Assert.assertEquals(false, p.isKeepTogether());
     }
 
     @Test
-    public void setRotationAngleTest() {
+    public void setRotationAngleViaStyleTest() {
         float expectedRotationAngle = 20f;
 
         Style style = new Style();
@@ -194,11 +232,11 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph();
         p.addStyle(style);
 
-        Assert.assertEquals(expectedRotationAngle, (float)p.<Float>getProperty(Property.ROTATION_ANGLE), EPS);
+        Assert.assertEquals(expectedRotationAngle, (float) p.<Float>getProperty(Property.ROTATION_ANGLE), EPS);
     }
 
     @Test
-    public void setWidthTest() {
+    public void setWidthViaStyleTest() {
         float expectedWidth = 100;
 
         Style style = new Style();
@@ -211,7 +249,7 @@ public class StylesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void setWidthUnitValueTest() {
+    public void setWidthInUnitValueViaStyleTest() {
         float expectedWidth = 100;
 
         Style style = new Style();
@@ -224,7 +262,7 @@ public class StylesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void setAndGetHeightTest() {
+    public void setHeightViaStyleTest() {
         float expectedHeight = 100;
 
         Style style = new Style();
@@ -237,7 +275,7 @@ public class StylesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void setAndGetHeightUnitValueTest() {
+    public void setHeightInUnitValueViaStyleTest() {
         float expectedHeight = 100;
 
         Style style = new Style();
@@ -250,7 +288,7 @@ public class StylesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void setMaxHeightTest() {
+    public void setMaxHeightViaStyleTest() {
         float expectedMaxHeight = 80;
 
         Style style = new Style();
@@ -259,11 +297,12 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph();
         p.addStyle(style);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMaxHeight), p.<UnitValue>getProperty(Property.MAX_HEIGHT));
+        Assert.assertEquals(UnitValue.createPointValue(expectedMaxHeight),
+                p.<UnitValue>getProperty(Property.MAX_HEIGHT));
     }
 
     @Test
-    public void setMinHeightTest() {
+    public void setMinHeightViaStyleTest() {
         float expectedMinHeight = 20;
 
         Style style = new Style();
@@ -272,11 +311,12 @@ public class StylesTest extends ExtendedITextTest {
         Paragraph p = new Paragraph();
         p.addStyle(style);
 
-        Assert.assertEquals(UnitValue.createPointValue(expectedMinHeight), p.<UnitValue>getProperty(Property.MIN_HEIGHT));
+        Assert.assertEquals(UnitValue.createPointValue(expectedMinHeight),
+                p.<UnitValue>getProperty(Property.MIN_HEIGHT));
     }
 
     @Test
-    public void setMaxWidthTest() {
+    public void setMaxWidthViaStyleTest() {
         float expectedMaxWidth = 200;
 
         Style style = new Style();
@@ -289,7 +329,7 @@ public class StylesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void setMinWidthTest() {
+    public void setMinWidthViaStyleTest() {
         float expectedMinWidth = 20;
 
         Style style = new Style();

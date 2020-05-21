@@ -52,7 +52,11 @@ import com.itextpdf.layout.property.VerticalAlignment;
 /**
  * Container object for style properties of an element. A style can be used as
  * an effective way to define multiple equal properties to several elements.
- * Used in {@link AbstractElement}
+ * Used in {@link AbstractElement}.
+ *
+ * The properties set via Style have a lower priority than directly set properties.
+ * For example, if the same property is set directly and added via Style, then,
+ * no matter in which order they are set, the one set directly will be chosen.
  */
 public class Style extends ElementPropertyContainer<Style> {
 
