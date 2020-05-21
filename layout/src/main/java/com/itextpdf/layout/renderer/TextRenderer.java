@@ -409,7 +409,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     if (line.start == -1) {
                         line.start = currentTextPos;
                     }
-                    line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth - 1);
+                    line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth);
                     // the line does not fit because of height - full overflow
                     TextRenderer[] splitResult = split(initialLineTextPos);
                     return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1], this);
