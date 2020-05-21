@@ -43,7 +43,6 @@
 package com.itextpdf.svg.css.impl;
 
 import com.itextpdf.io.util.ResourceUtil;
-import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
@@ -69,10 +68,10 @@ import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.styledxmlparser.util.StyleUtil;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -108,21 +107,48 @@ public class SvgStyleResolver implements ICssResolver {
     /**
      * The resource resolver
      */
-    private ResourceResolver resourceResolver = new ResourceResolver("");
+    private ResourceResolver resourceResolver;
 
     /**
      * Creates a {@link SvgStyleResolver} with a given default CSS.
      *
      * @param defaultCssStream the default CSS
+     * @deprecated will be removed in next major release, use
+     * {@link SvgStyleResolver#SvgStyleResolver(InputStream, SvgProcessorContext)} instead
      */
+    @Deprecated
     public SvgStyleResolver(InputStream defaultCssStream) throws IOException {
-        this.css = CssStyleSheetParser.parse(defaultCssStream);
+        this(defaultCssStream, new SvgProcessorContext(new SvgConverterProperties()));
     }
 
     /**
-     * Creates a SvgStyleResolver.
+     * Creates a {@link SvgStyleResolver}.
+     *
+     * @deprecated will be removed in next major release, use
+     * {@link SvgStyleResolver#SvgStyleResolver(SvgProcessorContext)} instead
      */
+    @Deprecated
     public SvgStyleResolver() {
+        this(new SvgProcessorContext(new SvgConverterProperties()));
+    }
+
+    /**
+     * Creates a {@link SvgStyleResolver} with a given default CSS.
+     *
+     * @param defaultCssStream the default CSS
+     * @param context the processor context
+     */
+    public SvgStyleResolver(InputStream defaultCssStream, SvgProcessorContext context) throws IOException {
+        this.css = CssStyleSheetParser.parse(defaultCssStream);
+        this.resourceResolver = context.getResourceResolver();
+    }
+
+    /**
+     * Creates a {@link SvgStyleResolver}.
+     *
+     * @param context the processor context
+     */
+    public SvgStyleResolver(SvgProcessorContext context) {
         try (InputStream defaultCss = ResourceUtil.getResourceStream(DEFAULT_CSS_PATH)) {
             this.css = CssStyleSheetParser.parse(defaultCss);
         } catch (IOException e) {
@@ -130,20 +156,21 @@ public class SvgStyleResolver implements ICssResolver {
             logger.warn(SvgLogMessageConstant.ERROR_INITIALIZING_DEFAULT_CSS, e);
             this.css = new CssStyleSheet();
         }
+        this.resourceResolver = context.getResourceResolver();
     }
 
     /**
-     * Creates a SvgStyleResolver. This constructor will instantiate its internal style sheet and it
-     * will collect the css declarations from the provided node.
+     * Creates a {@link SvgStyleResolver}. This constructor will instantiate its internal
+     * style sheet and it will collect the css declarations from the provided node.
      *
      * @param rootNode node to collect css from
-     * @param context  the processor context
+     * @param context the processor context
      */
     public SvgStyleResolver(INode rootNode, SvgProcessorContext context) {
         // TODO DEVSIX-2060. Fetch default styles first.
         this.deviceDescription = context.getDeviceDescription();
         this.resourceResolver = context.getResourceResolver();
-        collectCssDeclarations(rootNode, context.getResourceResolver());
+        collectCssDeclarations(rootNode, this.resourceResolver);
         collectFonts();
     }
 
@@ -262,13 +289,13 @@ public class SvgStyleResolver implements ICssResolver {
 
                 } else if (SvgCssUtils.isStyleSheetLink(headChildElement)) {
                     String styleSheetUri = headChildElement.getAttribute(SvgConstants.Attributes.HREF);
-                    try {
-                        InputStream stream = resourceResolver.retrieveStyleSheet(styleSheetUri);
-                        byte[] bytes = StreamUtil.inputStreamToArray(stream);
-
-                        CssStyleSheet styleSheet = CssStyleSheetParser.parse(new ByteArrayInputStream(bytes), resourceResolver.resolveAgainstBaseUri(styleSheetUri).toExternalForm());
-                        this.css.appendCssStyleSheet(styleSheet);
-                    } catch (IOException exc) {
+                    try (InputStream stream = resourceResolver.retrieveResourceAsInputStream(styleSheetUri)) {
+                        if (stream != null) {
+                            CssStyleSheet styleSheet = CssStyleSheetParser.parse(stream,
+                                    resourceResolver.resolveAgainstBaseUri(styleSheetUri).toExternalForm());
+                            this.css.appendCssStyleSheet(styleSheet);
+                        }
+                    } catch (Exception exc) {
                         Logger logger = LoggerFactory.getLogger(SvgStyleResolver.class);
                         logger.error(LogMessageConstant.UNABLE_TO_PROCESS_EXTERNAL_CSS_FILE, exc);
                     }

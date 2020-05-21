@@ -74,6 +74,10 @@ public final class LogMessageConstant {
      */
     @Deprecated
     public static final String NAN = "The passed value (@{0}) is not a number";
+    /** The Constant RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT. */
+    public static final String RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT = "Resource with given URL ({0}) was filtered out.";
+    /** The Constant UNABLE_TO_RETRIEVE_RESOURCE_WITH_GIVEN_RESOURCE_SIZE_BYTE_LIMIT. */
+    public static final String UNABLE_TO_RETRIEVE_RESOURCE_WITH_GIVEN_RESOURCE_SIZE_BYTE_LIMIT = "Unable to retrieve resource with given URL ({0}) and resource size byte limit ({1}).";
     /** The Constant UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI. */
     public static final String UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI = "Unable to retrieve image with given base URI ({0}) and image source path ({1})";
     public static final String UNABLE_TO_RESOLVE_IMAGE_URL  = "Unable to resolve image path with given base URI ({0}) and image source path ({1})";

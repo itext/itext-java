@@ -44,46 +44,47 @@ package com.itextpdf.svg.processors.impl;
 
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
+import com.itextpdf.styledxmlparser.resolver.resource.DefaultResourceRetriever;
+import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
+
 import java.nio.charset.StandardCharsets;
 
 /**
  * Default and fallback implementation of {@link ISvgConverterProperties} for
- * {@link DefaultSvgProcessor}
+ * {@link DefaultSvgProcessor}.
  */
 public class SvgConverterProperties implements ISvgConverterProperties {
-
-    /**
-     * The media device description.
-     */
+    /** The media device description. */
     private MediaDeviceDescription mediaDeviceDescription;
 
-    /**
-     * The font provider.
-     */
+    /** The font provider. */
     private FontProvider fontProvider;
 
-    /**
-     * The base URI.
-     */
+    /** The base URI. */
     private String baseUri = "";
+
+    /** The resource retriever. */
+    private IResourceRetriever resourceRetriever;
 
     private ISvgNodeRendererFactory rendererFactory;
 
     private String charset = StandardCharsets.UTF_8.name();
 
+    /**
+     * Creates a new {@link SvgConverterProperties} instance.
+     * Instantiates its members, IResourceRetriever and ISvgNodeRendererFactory, to its default implementations.
+     */
+    public SvgConverterProperties() {
+        this.resourceRetriever = new DefaultResourceRetriever();
+        this.rendererFactory = new DefaultSvgNodeRendererFactory();
+    }
+
     public SvgConverterProperties setRendererFactory(ISvgNodeRendererFactory rendererFactory) {
         this.rendererFactory = rendererFactory;
         return this;
-    }
-
-    /**
-     * Creates a SvgConverterProperties object. Instantiates its members, ICssResolver and ISvgNodeRenderer, to its default implementations.
-     */
-    public SvgConverterProperties() {
-        this.rendererFactory = new DefaultSvgNodeRendererFactory();
     }
 
     public SvgConverterProperties setFontProvider(FontProvider fontProvider) {
@@ -156,6 +157,30 @@ public class SvgConverterProperties implements ISvgConverterProperties {
      */
     public SvgConverterProperties setBaseUri(String baseUri) {
         this.baseUri = baseUri;
+        return this;
+    }
+
+    /**
+     * Gets the resource retriever.
+     *
+     * The resourceRetriever is used to retrieve data from resources by URL.
+     *
+     * @return the resource retriever
+     */
+    public IResourceRetriever getResourceRetriever() {
+        return resourceRetriever;
+    }
+
+    /**
+     * Sets the resource retriever.
+     *
+     * The resourceRetriever is used to retrieve data from resources by URL.
+     *
+     * @param resourceRetriever the resource retriever
+     * @return the {@link SvgConverterProperties} instance
+     */
+    public SvgConverterProperties setResourceRetriever(IResourceRetriever resourceRetriever) {
+        this.resourceRetriever = resourceRetriever;
         return this;
     }
 }

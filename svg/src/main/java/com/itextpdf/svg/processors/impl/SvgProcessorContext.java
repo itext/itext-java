@@ -48,6 +48,7 @@ import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
+import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 
@@ -76,7 +77,6 @@ public class SvgProcessorContext {
      * @param converterProperties a {@link ISvgConverterProperties} instance
      */
     public SvgProcessorContext(ISvgConverterProperties converterProperties) {
-
         deviceDescription = converterProperties.getMediaDeviceDescription();
         if (deviceDescription == null) {
             deviceDescription = MediaDeviceDescription.getDefault();
@@ -87,12 +87,13 @@ public class SvgProcessorContext {
             fontProvider = new BasicFontProvider();
         }
 
-        String baseUri = converterProperties.getBaseUri();
-        if (baseUri == null) {
-            baseUri = "";
+        IResourceRetriever retriever = null;
+        // TODO DEVSIX-3814 change the clause if block to retriever = new ResourceResolver(props.getBaseUri(),
+        //  converterProperties.getResourceRetriever()) when the ISvgConverterProperties#getResourceRetriever() is added
+        if (converterProperties instanceof SvgConverterProperties) {
+            retriever = ((SvgConverterProperties) converterProperties).getResourceRetriever();
         }
-
-        resourceResolver = new ResourceResolver(baseUri);
+        resourceResolver = new ResourceResolver(converterProperties.getBaseUri(), retriever);
     }
 
     /**
