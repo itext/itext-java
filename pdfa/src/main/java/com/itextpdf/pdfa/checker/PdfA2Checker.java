@@ -491,7 +491,7 @@ public class PdfA2Checker extends PdfA1Checker {
                 }
             }
 
-            Set<PdfObject> ocgs = new HashSet<>();
+            HashSet<PdfObject> ocgs = new HashSet<>();
             PdfArray ocgsArray = oCProperties.getAsArray(PdfName.OCGs);
             if (ocgsArray != null) {
                 for (PdfObject ocg : ocgsArray) {
@@ -500,30 +500,9 @@ public class PdfA2Checker extends PdfA1Checker {
             }
 
             HashSet<String> names = new HashSet<>();
-            HashSet<PdfObject> order = new HashSet<>();
-            for (PdfDictionary config : configList) {
-                PdfString name = config.getAsString(PdfName.Name);
-                if (name == null) {
-                    throw new PdfAConformanceException(PdfAConformanceException.OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY_SHALL_CONTAIN_NAME_ENTRY);
-                }
-                if (!names.add(name.toUnicodeString())) {
-                    throw new PdfAConformanceException(PdfAConformanceException.VALUE_OF_NAME_ENTRY_SHALL_BE_UNIQUE_AMONG_ALL_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARIES);
-                }
-                if (config.containsKey(PdfName.AS)) {
-                    throw new PdfAConformanceException(PdfAConformanceException.THE_AS_KEY_SHALL_NOT_APPEAR_IN_ANY_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY);
-                }
-                PdfArray orderArray = config.getAsArray(PdfName.Order);
-                if (orderArray != null) {
-                    fillOrderRecursively(orderArray, order);
-                }
-            }
 
-            if (order.size() != ocgs.size()) {
-                throw new PdfAConformanceException(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS);
-            }
-            order.retainAll(ocgs);
-            if (order.size() != ocgs.size()) {
-                throw new PdfAConformanceException(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS);
+            for (PdfDictionary config : configList) {
+                checkCatalogConfig(config, ocgs, names);
             }
         }
     }
@@ -932,6 +911,28 @@ public class PdfA2Checker extends PdfA1Checker {
             altCSIsTheSame = ((PdfArray) cs1).get(0).equals(((PdfArray) cs1).get(0));
         }
         return altCSIsTheSame;
+    }
+
+    private void checkCatalogConfig(PdfDictionary config, HashSet<PdfObject> ocgs, HashSet<String> names)  {
+        PdfString name = config.getAsString(PdfName.Name);
+        if (name == null) {
+            throw new PdfAConformanceException(PdfAConformanceException.OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY_SHALL_CONTAIN_NAME_ENTRY);
+        }
+        if (!names.add(name.toUnicodeString())) {
+            throw new PdfAConformanceException(PdfAConformanceException.VALUE_OF_NAME_ENTRY_SHALL_BE_UNIQUE_AMONG_ALL_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARIES);
+        }
+        if (config.containsKey(PdfName.AS)) {
+            throw new PdfAConformanceException(PdfAConformanceException.THE_AS_KEY_SHALL_NOT_APPEAR_IN_ANY_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY);
+        }
+        PdfArray orderArray = config.getAsArray(PdfName.Order);
+        if (orderArray != null) {
+            HashSet<PdfObject> order = new HashSet<>();
+            fillOrderRecursively(orderArray, order);
+            if (!order.equals(ocgs)) {
+                throw new PdfAConformanceException(
+                        PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS);
+            }
+        }
     }
 
     private void fillOrderRecursively(PdfArray orderArray, Set<PdfObject> order) {
