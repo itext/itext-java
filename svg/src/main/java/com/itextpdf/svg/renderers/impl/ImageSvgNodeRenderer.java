@@ -109,7 +109,7 @@ public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
         }
 
         preserveAspectRatio = preserveAspectRatio.toLowerCase();
-        if (!SvgConstants.Values.NONE.equals(preserveAspectRatio)) {
+        if (!SvgConstants.Values.NONE.equals(preserveAspectRatio) && !(width == 0 || height == 0)) {
             float normalizedWidth;
             float normalizedHeight;
             if (xObject.getWidth() / width >  xObject.getHeight() / height) {
