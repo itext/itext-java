@@ -197,7 +197,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
                 for (ISvgTextNodeRenderer c : children) {
                     float childLength = c.getTextContentLength(fontSize, font);
                     if (c.containsAbsolutePositionChange()) {
-                        //TODO(DEVSIX-2507) support rotate and other attributes
+                        //TODO: DEVSIX-2507 support rotate and other attributes
                         float[][] absolutePositions = c.getAbsolutePositionChanges();
                         AffineTransform newTransform = getTextTransform(absolutePositions, context);
                         //overwrite the last transformation stored in the context
@@ -288,9 +288,8 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         }
         if (font == null) {
             try {
-                // TODO (DEVSIX-2057)
-                // TODO each call of createFont() create a new instance of PdfFont.
-                // TODO FontProvider shall be used instead.
+                // TODO: DEVSIX-2057 each call of createFont() create a new instance of PdfFont.
+                // FontProvider shall be used instead.
                 font = PdfFontFactory.createFont();
             } catch (IOException e) {
                 throw new SvgProcessingException(SvgLogMessageConstant.FONT_NOT_FOUND, e);
@@ -299,7 +298,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
     }
 
     private void resolveFontSize() {
-        //TODO (DEVSIX-2607) (re)move static variable
+        //TODO: DEVSIX-2607 (re)move static variable
         fontSize = (float) SvgTextUtil.resolveFontSize(this, DEFAULT_FONT_SIZE);
     }
 
