@@ -561,13 +561,13 @@ public final class SvgConverter {
         ResourceResolver resourceResolver = null;
 
         if (processorResult instanceof SvgProcessorResult) {
-            //TODO add assert after 7.2 cause now be have a null pointer on deprecated constructor
+            //TODO DEVSIX-3814 add assert after 7.2 cause now be have a null pointer on deprecated constructor
             SvgProcessorContext context = ((SvgProcessorResult) processorResult).getContext();
             if (context != null) {
                 resourceResolver = context.getResourceResolver();
             }
         }
-        //TODO remove the clause when the deprecated  constructor SvgProcessorResult(Map<String, ISvgNodeRenderer>,
+        //TODO DEVSIX-3814 remove the clause when the deprecated  constructor SvgProcessorResult(Map<String, ISvgNodeRenderer>,
         // ISvgNodeRenderer, FontProvider, FontSet) is removed
         if (resourceResolver == null) {
             resourceResolver = new ResourceResolver(baseUri);
@@ -1002,14 +1002,14 @@ public final class SvgConverter {
     static ResourceResolver getResourceResolver(ISvgProcessorResult processorResult, ISvgConverterProperties props) {
         ResourceResolver resourceResolver = null;
         if (processorResult instanceof SvgProcessorResult) {
-            //TODO add assert after 7.2 cause now be have a null pointer on deprecated constructor
+            //TODO DEVSIX-3814 add assert after 7.2 cause now be have a null pointer on deprecated constructor
             SvgProcessorContext context = ((SvgProcessorResult) processorResult).getContext();
             if (context != null) {
                 resourceResolver = context.getResourceResolver();
             }
 
         }
-        //TODO remove the clause when the deprecated  constructor SvgProcessorResult(Map<String, ISvgNodeRenderer>,
+        //TODO DEVSIX-3814 remove the clause when the deprecated  constructor SvgProcessorResult(Map<String, ISvgNodeRenderer>,
         // ISvgNodeRenderer, FontProvider, FontSet) is removed
         if (resourceResolver == null) {
             String baseUri = "";
