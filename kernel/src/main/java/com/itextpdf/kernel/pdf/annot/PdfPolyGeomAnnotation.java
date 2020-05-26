@@ -76,7 +76,11 @@ public abstract class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
     }
 
     /**
-     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
+     * Instantiates a new {@link PdfPolyGeomAnnotation} instance based on {@link PdfDictionary}
+     * instance, that represents existing annotation object in the document.
+     *
+     * @param pdfObject the {@link PdfDictionary} representing annotation object
+     * @see PdfAnnotation#makeAnnotation(PdfObject)
      */
     protected PdfPolyGeomAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);

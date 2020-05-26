@@ -91,12 +91,12 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
 
     /**
      * Creates a {@link PdfLineAnnotation} instance from the given {@link PdfDictionary}
-     * that represents annotation object. This method is useful for property reading in reading mode or
-     * modifying in stamping mode.
+     * that represents existing annotation object in the document.
+     * This method is useful for property reading in reading mode or modifying in stamping mode.
      * TrapNet annotations are deprecated in PDF 2.0.
      *
-     * @param pdfObject a {@link PdfDictionary} that represents existing annotation in the document.
-     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
+     * @param pdfObject the {@link PdfDictionary} representing annotation object
+     * @see PdfAnnotation#makeAnnotation(PdfObject)
      */
     protected PdfTrapNetworkAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
@@ -136,8 +136,7 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
     /**
      * An unordered array of all objects present in the page description at the time the trap networks
      * were generated and that, if changed, could affect the appearance of the page.
-     * <p>
-     * <p>
+     * <br><br>
      * This entry is required if /AnnotStates ({@link #getAnnotStates()}) is present;
      * shall be absent if /LastModified ({@link #getLastModified()}) is present.
      *
@@ -172,8 +171,7 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
      * in the page’s /Annots array. For an annotation with no /AS entry, the corresponding array element
      * should be {@link com.itextpdf.kernel.pdf.PdfNull}.
      * No appearance state shall be included for the trap network annotation itself.
-     * <p>
-     * <p>
+     * <br><br>
      * Required if /Version ({@link #getVersion()}) is present; shall be absent if /LastModified {@link #getLastModified()} is present.
      *
      * @param annotStates a {@link PdfArray} of name objects representing the appearance states for annotations associated with the page.

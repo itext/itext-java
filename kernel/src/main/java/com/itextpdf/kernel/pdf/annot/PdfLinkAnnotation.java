@@ -69,7 +69,11 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     public static final PdfName Push = PdfName.P;
 
     /**
-     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
+     * Instantiates a new {@link PdfLinkAnnotation} instance based on {@link PdfDictionary}
+     * instance, that represents existing annotation object in the document.
+     *
+     * @param pdfObject the {@link PdfDictionary} representing annotation object
+     * @see PdfAnnotation#makeAnnotation(PdfObject)
      */
     protected PdfLinkAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);

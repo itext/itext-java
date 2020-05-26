@@ -59,7 +59,11 @@ public class PdfCaretAnnotation extends PdfMarkupAnnotation {
     }
 
     /**
-     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
+     * Instantiates a new {@link PdfCaretAnnotation} instance based on {@link PdfDictionary}
+     * instance, that represents existing annotation object in the document.
+     *
+     * @param pdfObject the {@link PdfDictionary} representing annotation object
+     * @see PdfAnnotation#makeAnnotation(PdfObject)
      */
     protected PdfCaretAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
