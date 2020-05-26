@@ -100,7 +100,6 @@
     <skipTests>true</skipTests>
     <slf4j.version>1.7.13</slf4j.version>
     <slowtests>com.itextpdf.test.annotations.type.SlowTest</slowtests>
-    <sonar.clirr.reportPath>${project.build.directory}/clirr-report.txt</sonar.clirr.reportPath>
     <sonar.dependencyCheck.htmlReportPath>target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
     <sonar.dependencyCheck.reportPath>target/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
     <spotbugs.version>3.1.11</spotbugs.version>
@@ -474,17 +473,6 @@
         <artifactId>maven-surefire-report-plugin</artifactId>
         <version>${surefire.version}</version>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>clirr-maven-plugin</artifactId>
-        <version>2.7</version>
-        <configuration>
-          <comparisonVersion>7.0.1</comparisonVersion>
-          <textOutputFile>${project.build.directory}/clirr-report.txt</textOutputFile>
-          <linkXRef>false</linkXRef>
-          <failOnError>false</failOnError>
-        </configuration>
-      </plugin>
     </plugins>
   </reporting>
   <profiles>
@@ -640,25 +628,6 @@
             <artifactId>maven-source-plugin</artifactId>
             <configuration>
               <skipSource>true</skipSource>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>clirr-maven-plugin</artifactId>
-            <version>2.8</version>
-            <executions>
-              <execution>
-                <id>clirr</id>
-                <goals>
-                  <goal>check-no-fork</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <comparisonVersion>7.1.0</comparisonVersion>
-              <textOutputFile>${project.build.directory}/clirr-report.txt</textOutputFile>
-              <linkXRef>false</linkXRef>
-              <failOnError>false</failOnError>
             </configuration>
           </plugin>
           <plugin>
