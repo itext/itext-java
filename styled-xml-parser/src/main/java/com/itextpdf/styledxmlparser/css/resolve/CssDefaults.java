@@ -145,7 +145,7 @@ public class CssDefaults {
         defaultValues.put(CommonCssConstants.ORPHANS, "2");
         defaultValues.put(CommonCssConstants.WIDOWS, "2");
 
-        // TODO not complete
+        // Other css properties default values will be added as needed
     }
 
     /**
