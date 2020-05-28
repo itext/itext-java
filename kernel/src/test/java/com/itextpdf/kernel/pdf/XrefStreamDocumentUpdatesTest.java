@@ -166,7 +166,6 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO: update assert condition after DEVSIX-3952 will be fixed
     public void xrefStmInWriteModeTest() throws IOException {
         String fileName = destinationFolder + "xrefStmInWriteMode.pdf";
 
@@ -182,10 +181,10 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         page.addAnnotation(textannot);
         pdfDocument.close();
 
+
         PdfDocument doc = new PdfDocument(new PdfReader(fileName));
 
-        int x = 0;
-
+        int xrefTableCounter = 0;
         for (int i = 1; i < doc.getNumberOfPdfObjects(); i++) {
             PdfObject obj = doc.getPdfObject(i);
 
@@ -194,19 +193,17 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
                 PdfObject type = objStmDict.get(PdfName.Type);
 
                 if (type != null && type.equals(PdfName.XRef)) {
-                    x++;
+                    xrefTableCounter++;
                 }
             }
         }
 
+        Assert.assertEquals(((PdfNumber) doc.getTrailer().get(PdfName.Size)).intValue(), doc.getNumberOfPdfObjects());
         doc.close();
-        //expected number of objects with /Type /Xref should be 1
-        Assert.assertEquals(0, x);
+        Assert.assertEquals(1, xrefTableCounter);
     }
 
     @Test
-    //TODO: update assert condition after DEVSIX-3952 will be fixed and update the input file
-    //where indirect reference of xref stream will be in the xref.
     public void xrefStmInAppendModeTest() throws IOException {
         String fileName = destinationFolder + "xrefStmInAppendMode.pdf";
 
@@ -215,10 +212,10 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
                 new StampingProperties().useAppendMode());
         pdfDocument.close();
 
+
         PdfDocument doc = new PdfDocument(new PdfReader(fileName));
 
-        int x = 0;
-
+        int xrefTableCounter = 0;
         for (int i = 1; i < doc.getNumberOfPdfObjects(); i++) {
             PdfObject obj = doc.getPdfObject(i);
 
@@ -227,13 +224,47 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
                 PdfObject type = objStmDict.get(PdfName.Type);
 
                 if (type != null && type.equals(PdfName.XRef)) {
-                    x++;
+                    xrefTableCounter++;
                 }
             }
         }
 
+        Assert.assertEquals(((PdfNumber) doc.getTrailer().get(PdfName.Size)).intValue(), doc.getNumberOfPdfObjects());
         doc.close();
-        //expected number of objects with /Type /Xref should be 2
-        Assert.assertEquals(0, x);
+        Assert.assertEquals(2, xrefTableCounter);
+    }
+
+    @Test
+    public void closeDocumentWithoutModificationsTest() throws IOException {
+        String fileName = destinationFolder + "xrefStmInAppendMode.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "xrefStmInWriteMode.pdf"),
+                new PdfWriter(fileName).setCompressionLevel(CompressionConstants.NO_COMPRESSION),
+                new StampingProperties().useAppendMode());
+        // Clear state for document info indirect reference so that there are no modified objects
+        // in the document due to which, the document will have only one href table.
+        pdfDocument.getDocumentInfo().getPdfObject().getIndirectReference().clearState(PdfObject.MODIFIED);
+        pdfDocument.close();
+
+
+        PdfDocument doc = new PdfDocument(new PdfReader(fileName));
+
+        int xrefTableCounter = 0;
+        for (int i = 1; i < doc.getNumberOfPdfObjects(); i++) {
+            PdfObject obj = doc.getPdfObject(i);
+
+            if (obj instanceof PdfDictionary) {
+                PdfDictionary objStmDict = (PdfDictionary) doc.getPdfObject(i);
+                PdfObject type = objStmDict.get(PdfName.Type);
+
+                if (type != null && type.equals(PdfName.XRef)) {
+                    xrefTableCounter++;
+                }
+            }
+        }
+
+        Assert.assertEquals(((PdfNumber) doc.getTrailer().get(PdfName.Size)).intValue(), doc.getNumberOfPdfObjects());
+        doc.close();
+        Assert.assertEquals(1, xrefTableCounter);
     }
 }

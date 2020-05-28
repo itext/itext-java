@@ -249,19 +249,23 @@ class PdfXrefTable implements Serializable {
             }
         }
 
+        PdfStream xrefStream = null;
+        if (writer.isFullCompression()) {
+            xrefStream = new PdfStream();
+            xrefStream.makeIndirect(document);
+        }
         List<Integer> sections = createSections(document, false);
-        if (document.properties.appendMode && sections.size() == 0) {
-            // no modifications.
-
+        boolean noModifiedObjects = (sections.size() == 0) ||
+                (xrefStream != null && sections.size() == 2 && sections.get(0) == count && sections.get(1) == 1);
+        if (document.properties.appendMode && noModifiedObjects) {
+            // No modifications in document
             xref = null;
             return;
         }
 
         long startxref = writer.getCurrentPos();
         long xRefStmPos = -1;
-        if (writer.isFullCompression()) {
-            PdfStream xrefStream = (PdfStream) new PdfStream().makeIndirect(document);
-            xrefStream.makeIndirect(document);
+        if (xrefStream != null) {
             xrefStream.put(PdfName.Type, PdfName.XRef);
             xrefStream.put(PdfName.ID, fileId);
             if (crypto != null)
@@ -283,6 +287,7 @@ class PdfXrefTable implements Serializable {
                 xrefStream.put(PdfName.Prev, lastXref);
             }
             xrefStream.put(PdfName.Index, index);
+            xrefStream.getIndirectReference().setOffset(startxref);
             PdfXrefTable xrefTable = document.getXref();
             for (int k = 0; k < sections.size(); k += 2) {
                 int first = (int) sections.get(k);
@@ -311,7 +316,7 @@ class PdfXrefTable implements Serializable {
         // For documents with hybrid cross-reference table, i.e. containing xref streams as well as regular xref sections,
         // we write additional regular xref section at the end of the document because the /Prev reference from
         // xref stream to a regular xref section doesn't seem to be valid
-        boolean needsRegularXref = !writer.isFullCompression() || document.properties.appendMode && document.reader.hybridXref;
+        boolean needsRegularXref = !writer.isFullCompression() || (document.properties.appendMode && document.reader.hybridXref);
 
         if (needsRegularXref) {
             startxref = writer.getCurrentPos();
@@ -385,7 +390,7 @@ class PdfXrefTable implements Serializable {
         for (int i = 0; i < size(); i++) {
             PdfIndirectReference reference = xref[i];
             if (document.properties.appendMode && reference != null &&
-                    (!reference.checkState(PdfObject.MODIFIED) || dropObjectsFromObjectStream && reference.getObjStreamNumber() != 0)) {
+                    (!reference.checkState(PdfObject.MODIFIED) || (dropObjectsFromObjectStream && reference.getObjStreamNumber() != 0))) {
                 reference = null;
             }
 
