@@ -43,6 +43,7 @@
 package com.itextpdf.svg.css;
 
 
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
@@ -226,18 +227,18 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     // TODO: update cmp files when DEVSIX-2286 resolved
     public void svgWithExternalCSStoCustomPage() throws IOException,InterruptedException {
         // Take a note this method differs from the one used in Default Page test
-        convertAndCompare(sourceFolder, destinationFolder, "internalCss");
+        convertAndCompare(sourceFolder, destinationFolder, "externalCss_custom", PageSize.A3.rotate());
     }
 
     @Test
     // TODO: update cmp files when DEVSIX-2286 resolved
     public void svgWithInternalCSStoCustomPage() throws IOException,InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "internalCss_custom");
+        convertAndCompare(sourceFolder, destinationFolder, "internalCss_custom", PageSize.A3.rotate());
     }
 
     @Test
     // TODO: update cmp files when DEVSIX-2286 resolved
     public void multipleSVGtagsWithDiffStylesFromExternalCSS() throws IOException,InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "externalCss_palette");
+        convertAndCompare(sourceFolder, destinationFolder, "externalCss_palette", PageSize.A3.rotate());
     }
 }
