@@ -1279,6 +1279,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     /**
+     * @param gl {@link GlyphLine} glyph to be set
+     * @param font {@link PdfFont} font to be set
      * @deprecated use {@link TextRenderer#setProcessedGlyphLineAndFont(GlyphLine, PdfFont)} instead
      */
     @Deprecated
