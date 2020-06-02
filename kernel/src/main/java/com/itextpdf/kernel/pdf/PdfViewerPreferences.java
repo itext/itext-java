@@ -142,7 +142,9 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method sets HideToolBar flag to true or false
-     * @param hideToolbar
+     *
+     * @param hideToolbar HideToolBar flag's boolean value
+     * @return current instance of {@link PdfViewerPreferences}
      */
     public PdfViewerPreferences setHideToolbar(boolean hideToolbar) {
         return put(PdfName.HideToolbar, PdfBoolean.valueOf(hideToolbar));
@@ -150,7 +152,9 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method sets HideMenuBar flag to true or false
-     * @param hideMenubar
+     *
+     * @param hideMenubar HideMenuBar flag's boolean value
+     * @return current instance of {@link PdfViewerPreferences}
      */
     public PdfViewerPreferences setHideMenubar(boolean hideMenubar) {
         return put(PdfName.HideMenubar, PdfBoolean.valueOf(hideMenubar));
@@ -158,7 +162,9 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method sets HideWindowUI flag to true or false
-     * @param hideWindowUI
+     *
+     * @param hideWindowUI HideWindowUI flag's boolean value
+     * @return current instance of {@link PdfViewerPreferences}
      */
     public PdfViewerPreferences setHideWindowUI(boolean hideWindowUI) {
         return put(PdfName.HideWindowUI, PdfBoolean.valueOf(hideWindowUI));
@@ -166,7 +172,9 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method sets FitWindow flag to true or false
-     * @param fitWindow
+     *
+     * @param fitWindow FitWindow flag's boolean value
+     * @return current instance of {@link PdfViewerPreferences}
      */
     public PdfViewerPreferences setFitWindow(boolean fitWindow) {
         return put(PdfName.FitWindow, PdfBoolean.valueOf(fitWindow));
@@ -174,7 +182,9 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method sets CenterWindow flag to true or false
-     * @param centerWindow
+     *
+     * @param centerWindow CenterWindow flag's boolean value
+     * @return current instance of {@link PdfViewerPreferences}
      */
     public PdfViewerPreferences setCenterWindow(boolean centerWindow) {
         return put(PdfName.CenterWindow, PdfBoolean.valueOf(centerWindow));
@@ -182,7 +192,9 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method sets DisplayDocTitle flag to true or false
-     * @param displayDocTitle
+     *
+     * @param displayDocTitle DisplayDocTitle flag's boolean value
+     * @return current instance of {@link PdfViewerPreferences}
      */
     public PdfViewerPreferences setDisplayDocTitle(boolean displayDocTitle) {
         return put(PdfName.DisplayDocTitle, PdfBoolean.valueOf(displayDocTitle));
@@ -191,7 +203,9 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This method sets NonFullScreenPageMode property. Allowed values are UseNone, UseOutlines, useThumbs, UseOC.
      * This entry is meaningful only if the value of the PageMode entry in the Catalog dictionary is FullScreen
-     * @param nonFullScreenPageMode
+     *
+     * @param nonFullScreenPageMode NonFullScreenPageMode property type value
+     * @return current instance of {@link PdfViewerPreferences}
      */
     public PdfViewerPreferences setNonFullScreenPageMode(PdfViewerPreferencesConstants nonFullScreenPageMode) {
         switch (nonFullScreenPageMode) {
@@ -214,7 +228,9 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method sets predominant reading order of text.
-     * @param direction
+     *
+     * @param direction reading order type value
+     * @return current instance of {@link PdfViewerPreferences}
      */
     public PdfViewerPreferences setDirection(PdfViewerPreferencesConstants direction) {
         switch (direction) {
@@ -233,7 +249,9 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
      * This method sets the name of the page boundary representing the area of a page that shall be displayed when
      * viewing the document on the screen.
      * Deprecated in PDF 2.0.
-     * @param pageBoundary
+     *
+     * @param pageBoundary page boundary type value
+     * @return current instance of {@link PdfViewerPreferences}
      */
     public PdfViewerPreferences setViewArea(PdfViewerPreferencesConstants pageBoundary) {
         return setPageBoundary(PdfViewerPreferencesConstants.VIEW_AREA, pageBoundary);
@@ -243,7 +261,9 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
      * This method sets the name of the page boundary to which the contents of a page shall be clipped when
      * viewing the document on the screen.
      * Deprecated in PDF 2.0.
-     * @param pageBoundary
+     *
+     * @param pageBoundary page boundary type value
+     * @return current instance of {@link PdfViewerPreferences}
      */
     public PdfViewerPreferences setViewClip(PdfViewerPreferencesConstants pageBoundary) {
         return setPageBoundary(PdfViewerPreferencesConstants.VIEW_CLIP, pageBoundary);
@@ -253,7 +273,9 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
      * This method sets the name of the page boundary representing the area of a page that shall be
      * rendered when printing the document.
      * Deprecated in PDF 2.0.
-     * @param pageBoundary
+     *
+     * @param pageBoundary page boundary type value
+     * @return current instance of {@link PdfViewerPreferences}
      */
     public PdfViewerPreferences setPrintArea(PdfViewerPreferencesConstants pageBoundary) {
         return setPageBoundary(PdfViewerPreferencesConstants.PRINT_AREA, pageBoundary);
@@ -263,7 +285,9 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
      * This method sets the name of the page boundary to which the contents of a page shall be clipped when
      * printing the document.
      * Deprecated in PDF 2.0.
-     * @param pageBoundary
+     *
+     * @param pageBoundary page boundary type value
+     * @return current instance of {@link PdfViewerPreferences}
      */
     public PdfViewerPreferences setPrintClip(PdfViewerPreferencesConstants pageBoundary) {
         return setPageBoundary(PdfViewerPreferencesConstants.PRINT_CLIP, pageBoundary);
@@ -272,7 +296,9 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This method sets the page scaling option that shall be selected when a print dialog is displayed for this
      * document. Valid values are None and AppDefault.
-     * @param printScaling
+     *
+     * @param printScaling page scaling option's type value
+     * @return current instance of {@link PdfViewerPreferences}
      */
     public PdfViewerPreferences setPrintScaling(PdfViewerPreferencesConstants printScaling) {
         switch (printScaling) {
@@ -291,7 +317,9 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This method sets the paper handling option that shall be used when printing the file from the print dialog.
      * The following values are valid: Simplex, DuplexFlipShortEdge, DuplexFlipLongEdge.
-     * @param duplex
+     *
+     * @param duplex paper handling option's type value
+     * @return current instance of {@link PdfViewerPreferences}
      */
     public PdfViewerPreferences setDuplex(PdfViewerPreferencesConstants duplex) {
         switch (duplex) {
@@ -311,7 +339,9 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method sets PickTrayByPDFSize flag to true or false.
-     * @param pickTrayByPdfSize
+     *
+     * @param pickTrayByPdfSize PickTrayByPDFSize flag's boolean value
+     * @return current instance of {@link PdfViewerPreferences}
      */
     public PdfViewerPreferences setPickTrayByPDFSize(boolean pickTrayByPdfSize) {
         return put(PdfName.PickTrayByPDFSize, PdfBoolean.valueOf(pickTrayByPdfSize));
@@ -319,7 +349,9 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method sets the page numbers used to initialize the print dialog box when the file is printed.
-     * @param printPageRange
+     *
+     * @param printPageRange the array of page numbers
+     * @return current instance of {@link PdfViewerPreferences}
      */
     public PdfViewerPreferences setPrintPageRange(int[] printPageRange) {
         return put(PdfName.PrintPageRange, new PdfArray(printPageRange));
@@ -327,7 +359,9 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method sets the number of copies that shall be printed when the print dialog is opened for this file.
-     * @param numCopies
+     *
+     * @param numCopies the number of copies to print when the print dialog is opened
+     * @return current instance of {@link PdfViewerPreferences}
      */
     public PdfViewerPreferences setNumCopies(int numCopies) {
         return put(PdfName.NumCopies, new PdfNumber(numCopies));
