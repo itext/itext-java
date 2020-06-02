@@ -91,7 +91,9 @@ public class PageSize extends Rectangle implements Cloneable, Serializable {
     }
 
     /**
-     * Rotates PageSize clockwise.
+     * Rotates {@link PageSize} clockwise.
+     *
+     * @return the rotated {@link PageSize}.
      */
     public PageSize rotate() {
         return new PageSize(height, width);

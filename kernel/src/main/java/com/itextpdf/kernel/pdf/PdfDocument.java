@@ -346,6 +346,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Gets XMPMetadata.
+     *
+     * @return the XMPMetadata
      */
     public byte[] getXmpMetadata() {
         return getXmpMetadata(false);
@@ -1422,6 +1424,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Gets static copy of cross reference table.
+     *
+     * @return  a static copy of cross reference table
      */
     public List<PdfIndirectReference> listIndirectReferences() {
         checkClosingStatus();
@@ -1716,6 +1720,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Create a new instance of {@link PdfFont} or load already created one.
+     *
+     * @param dictionary {@link PdfDictionary} that presents {@link PdfFont}.
+     *
+     * @return instance of {@link PdfFont}
      * <p>
      * Note, PdfFont which created with {@link PdfFontFactory#createFont(PdfDictionary)} won't be cached
      * until it will be added to {@link com.itextpdf.kernel.pdf.canvas.PdfCanvas} or {@link PdfResources}.
@@ -1752,6 +1760,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Adds a {@link PdfFont} instance to this document so that this font is flushed automatically
      * on document close. As a side effect, the underlying font dictionary is made indirect if it wasn't the case yet
+     *
+     * @param font a {@link PdfFont} instance to add
      *
      * @return the same PdfFont instance.
      */
@@ -2063,6 +2073,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Update XMP metadata values from {@link PdfDocumentInfo}.
+     *
+     * @return the XMPMetadata
      */
     protected XMPMeta updateDefaultXmpMetadata() throws XMPException {
         XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(getXmpMetadata(true));

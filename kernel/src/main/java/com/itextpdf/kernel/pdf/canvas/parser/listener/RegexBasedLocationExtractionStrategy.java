@@ -151,7 +151,9 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
      * merely the {@link Rectangle} describing the bounding box. E.g. a custom implementation might choose to
      * store {@link Color} information as well, to better match the content surrounding the redaction {@link Rectangle}.
      *
-     * @param tri
+     * @param tri {@link TextRenderInfo} object
+     *
+     * @return a list of {@link CharacterRenderInfo}s which represents the passed {@link TextRenderInfo} ?
      */
     protected List<CharacterRenderInfo> toCRI(TextRenderInfo tri) {
         List<CharacterRenderInfo> cris = new ArrayList<>();
@@ -170,7 +172,9 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
      * or match color of background, by the mere virtue of offering access to the {@link CharacterRenderInfo} objects
      * that generated the {@link Rectangle}.
      *
-     * @param cris
+     * @param cris list of {@link CharacterRenderInfo} objects
+     *
+     * @return an array containing the elements of this list
      */
     protected List<Rectangle> toRectangles(List<CharacterRenderInfo> cris) {
         List<Rectangle> retval = new ArrayList<>();

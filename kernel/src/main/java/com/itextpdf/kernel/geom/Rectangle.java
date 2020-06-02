@@ -260,7 +260,7 @@ public class Rectangle implements Cloneable, Serializable {
     /**
      * Check if this rectangle and the passed rectangle overlap
      *
-     * @param rect
+     * @param rect a rectangle which is to be checked if it overlaps the passed rectangle.
      * @return true if there is overlap of some kind
      */
     public boolean overlaps(Rectangle rect) {
