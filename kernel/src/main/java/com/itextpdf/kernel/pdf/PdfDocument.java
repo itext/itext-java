@@ -118,13 +118,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     private static IPdfPageFactory pdfPageFactory = new PdfPageFactory();
 
     /**
-     * Currently active page.
-     * @deprecated Will be removed in iText 7.2
-     */
-    @Deprecated
-    protected PdfPage currentPage = null;
-
-    /**
      * Default page size.
      * New page by default will be created with this size.
      */
@@ -520,7 +513,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         checkClosingStatus();
         PdfPage page = getPageFactory().createPdfPage(this, pageSize);
         checkAndAddPage(index, page);
-        currentPage = page;
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_PAGE, page));
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.INSERT_PAGE, page));
         return page;
@@ -551,7 +543,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     public PdfPage addPage(int index, PdfPage page) {
         checkClosingStatus();
         checkAndAddPage(index, page);
-        currentPage = page;
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.INSERT_PAGE, page));
         return page;
     }
@@ -1525,19 +1516,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param key type of object to conform.
      */
     public void checkIsoConformance(Object obj, IsoKey key) {
-    }
-
-    /**
-     * Checks whether PDF document conforms a specific standard.
-     * Shall be override.
-     * @deprecated This method will be replaced by {@link #checkIsoConformance(Object, IsoKey, PdfResources, PdfStream) checkIsoConformance} in  7.2 release
-     *
-     * @param obj       an object to conform.
-     * @param key       type of object to conform.
-     * @param resources {@link PdfResources} associated with an object to check.
-     */
-    @Deprecated
-    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources) {
     }
 
     /**

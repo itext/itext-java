@@ -167,12 +167,6 @@ public class PdfADocument extends PdfDocument {
     }
 
     @Override
-    @Deprecated
-    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources) {
-        checkIsoConformance(obj, key, resources, null);
-    }
-
-    @Override
     public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream) {
         CanvasGraphicsState gState;
         PdfDictionary currentColorSpaces = null;
