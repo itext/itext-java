@@ -80,11 +80,6 @@ pipeline {
                 withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
                     sh 'mvn --no-transfer-progress verify --activate-profiles qa -Dpmd.analysisCache=true'
                 }
-                recordIssues(tools: [
-                        checkStyle(),
-                        pmdParser(),
-                        spotBugs(useRankAsPriority: true)
-                ])
                 dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
             }
         }
