@@ -105,7 +105,11 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
     }
 
     /**
-     * Method to to distinguish struct elements from other elements of the logical tree (like mcr or struct tree root).
+     * Method to distinguish struct elements from other elements of the logical tree (like mcr or struct tree root).
+     *
+     * @param dictionary the {@link PdfDictionary} to check on containing struct elements
+     * @return if the type of {@link PdfDictionary} is StructElem or {@link PdfDictionary} contains the required key S
+     * then true, otherwise false
      */
     public static boolean isStructElem(PdfDictionary dictionary) {
         // S is required key of the struct elem

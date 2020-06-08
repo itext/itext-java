@@ -211,6 +211,8 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets the list of all the layers currently registered in the OCProperties.
      * Note that this is just a new list and modifications to it will not affect anything.
+     *
+     * @return list of all the {@link PdfLayer layers} currently registered in the OCProperties
      */
     public List<PdfLayer> getLayers() {
         return new ArrayList<>(layers);
