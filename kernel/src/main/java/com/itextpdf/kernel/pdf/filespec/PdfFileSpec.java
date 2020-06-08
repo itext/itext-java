@@ -100,16 +100,19 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
     }
 
     /**
-     * Embed a file to a PdfDocument.
+     * Create an embedded file specification.
      *
-     * @param doc                 PdfDocument to add the file to
+     * @param doc                 {@link PdfDocument} instance to make this file specification indirect
      * @param fileStore           byte[] containing the file
      * @param description         file description
      * @param fileDisplay         actual file name stored in the pdf
-     * @param mimeType            mime-type of the file
-     * @param fileParameter       Pdfdictionary containing fil parameters
-     * @param afRelationshipValue AFRelationship key value, @see AFRelationshipValue. If <CODE>null</CODE>, @see AFRelationshipValue.Unspecified will be added.
-     * @return PdfFileSpec containing the file specification of the file as Pdfobject
+     * @param mimeType            subtype of the embedded file. The value of this entry shall conform
+     *                            to the MIME media type names
+     * @param fileParameter       {@link PdfDictionary} containing fil parameters
+     * @param afRelationshipValue value that represents the relationship between the component of the passed PDF document
+     *                            that refers to this file specification and the associated file. If <CODE>null</CODE>,
+     *                            {@link PdfName#Unspecified} will be added.
+     * @return {@link PdfFileSpec} containing the file specification of the file
      */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String description, String fileDisplay, PdfName mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue) {
         PdfStream stream = (PdfStream)new PdfStream(fileStore).makeIndirect(doc);
@@ -128,14 +131,16 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
     }
 
     /**
-     * Embed a file to a PdfDocument.
+     * Create an embedded file specification.
      *
-     * @param doc                 PdfDocument to add the file to
+     * @param doc                 {@link PdfDocument} instance to make this file specification indirect
      * @param fileStore           byte[] containing the file
      * @param fileDisplay         actual file name stored in the pdf
-     * @param fileParameter       Pdfdictionary containing fil parameters
-     * @param afRelationshipValue AFRelationship key value, @see AFRelationshipValue. If <CODE>null</CODE>, @see AFRelationshipValue.Unspecified will be added.
-     * @return PdfFileSpec containing the file specification of the file as Pdfobject
+     * @param fileParameter       {@link PdfDictionary} containing fil parameters
+     * @param afRelationshipValue value that represents the relationship between the component of the passed PDF document
+     *                            that refers to this file specification and the associated file. If <CODE>null</CODE>,
+     *                            {@link PdfName#Unspecified} will be added.
+     * @return {@link PdfFileSpec} containing the file specification of the file
      */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String description, String fileDisplay, PdfDictionary fileParameter, PdfName afRelationshipValue) {
         return createEmbeddedFileSpec(doc, fileStore, description, fileDisplay, null, fileParameter, afRelationshipValue);
@@ -143,41 +148,47 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
 
 
     /**
-     * Embed a file to a PdfDocument.
+     * Create an embedded file specification.
      *
-     * @param doc                 PdfDocument to add the file to
+     * @param doc                 {@link PdfDocument} instance to make this file specification indirect
      * @param fileStore           byte[] containing the file
      * @param fileDisplay         actual file name stored in the pdf
-     * @param fileParameter       Pdfdictionary containing fil parameters
-     * @param afRelationshipValue AFRelationship key value, @see AFRelationshipValue. If <CODE>null</CODE>, @see AFRelationshipValue.Unspecified will be added.
-     * @return PdfFileSpec containing the file specification of the file as Pdfobject
+     * @param fileParameter       {@link PdfDictionary} containing fil parameters
+     * @param afRelationshipValue value that represents the relationship between the component of the passed PDF document that
+     *                            refers to this file specification and the associated file. If <CODE>null</CODE>,
+     *                            {@link PdfName#Unspecified} will be added.
+     * @return {@link PdfFileSpec} containing the file specification of the file
      */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String fileDisplay, PdfDictionary fileParameter, PdfName afRelationshipValue) {
         return createEmbeddedFileSpec(doc, fileStore, null, fileDisplay, null, fileParameter, afRelationshipValue);
     }
 
     /**
-     * Embed a file to a PdfDocument.
+     * Create an embedded file specification.
      *
-     * @param doc                 PdfDocument to add the file to
+     * @param doc                 {@link PdfDocument} instance to make this file specification indirect
      * @param fileStore           byte[] containing the file
      * @param fileDisplay         actual file name stored in the pdf
-     * @param afRelationshipValue AFRelationship key value, @see AFRelationshipValue. If <CODE>null</CODE>, @see AFRelationshipValue.Unspecified will be added.
-     * @return PdfFileSpec containing the file specification of the file as Pdfobject
+     * @param afRelationshipValue value that represents the relationship between the component of the passed PDF document that
+     *                            refers to this file specification and the associated file. If <CODE>null</CODE>,
+     *                            {@link PdfName#Unspecified} will be added.
+     * @return {@link PdfFileSpec} containing the file specification of the file
      */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String fileDisplay, PdfName afRelationshipValue) {
         return createEmbeddedFileSpec(doc, fileStore, null, fileDisplay, null, null, afRelationshipValue);
     }
 
     /**
-     * Embed a file to a PdfDocument.
+     * Create an embedded file specification.
      *
-     * @param doc                 PdfDocument to add the file to
+     * @param doc                 {@link PdfDocument} instance to make this file specification indirect
      * @param fileStore           byte[] containing the file
      * @param description         file description
      * @param fileDisplay         actual file name stored in the pdf
-     * @param afRelationshipValue AFRelationship key value, @see AFRelationshipValue. If <CODE>null</CODE>, @see AFRelationshipValue.Unspecified will be added.
-     * @return PdfFileSpec containing the file specification of the file as Pdfobject
+     * @param afRelationshipValue value that represents the relationship between the component of the passed PDF document that
+     *                            refers to this file specification and the associated file. If <CODE>null</CODE>,
+     *                            {@link PdfName#Unspecified} will be added.
+     * @return {@link PdfFileSpec} containing the file specification of the file
      */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String description, String fileDisplay, PdfName afRelationshipValue) {
         return createEmbeddedFileSpec(doc, fileStore, description, fileDisplay, null, null, afRelationshipValue);
@@ -185,16 +196,20 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
 
 
     /**
-     * Embed a file to a PdfDocument.
+     * Create an embedded file specification.
      *
-     * @param doc
-     * @param filePath
-     * @param description
-     * @param fileDisplay
-     * @param mimeType
-     * @param fileParameter
-     * @param afRelationshipValue
-     * @throws IOException
+     * @param doc                 {@link PdfDocument} instance to make this file specification indirect
+     * @param filePath            file specification string, describing the path to the file to embed
+     * @param description         file description
+     * @param fileDisplay         actual file name stored in the pdf
+     * @param mimeType            subtype of the embedded file. The value of this entry shall conform
+     *                            to the MIME media type names
+     * @param fileParameter       dictionary with file parameters
+     * @param afRelationshipValue value that represents the relationship between the component of the passed PDF document that
+     *                            refers to this file specification and the associated file. If <CODE>null</CODE>,
+     *                            {@link PdfName#Unspecified} will be added.
+     * @return {@link PdfFileSpec} containing the file specification of the file
+     * @throws IOException if there are errors while creating an URL from the passed file path.
      */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, String filePath, String description, String fileDisplay, PdfName mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue) throws IOException {
         PdfStream stream = new PdfStream(doc, UrlUtil.toURL(filePath).openStream());
@@ -210,57 +225,71 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
     }
 
     /**
-     * Embed a file to a PdfDocument.
+     * Create an embedded file specification.
      *
-     * @param doc
-     * @param filePath
-     * @param description
-     * @param fileDisplay
-     * @param mimeType
-     * @param afRelationshipValue
-     * @throws IOException
+     * @param doc                 {@link PdfDocument} instance to make this file specification indirect
+     * @param filePath            file specification string, describing the path to the file to embed
+     * @param description         file description
+     * @param fileDisplay         actual file name stored in the pdf
+     * @param mimeType            subtype of the embedded file. The value of this entry shall conform
+     *                            to the MIME media type names
+     * @param afRelationshipValue value that represents the relationship between the component of the passed PDF document that
+     *                            refers to this file specification and the associated file. If <CODE>null</CODE>,
+     *                            {@link PdfName#Unspecified} will be added.
+     * @return {@link PdfFileSpec} containing the file specification of the file
+     * @throws IOException if there are errors while creating an URL from the passed file path.
      */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, String filePath, String description, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue) throws IOException {
         return createEmbeddedFileSpec(doc, filePath, description, fileDisplay, mimeType, null, afRelationshipValue);
     }
 
     /**
-     * Embed a file to a PdfDocument.
+     * Create an embedded file specification.
      *
-     * @param doc
-     * @param filePath
-     * @param description
-     * @param fileDisplay
-     * @param afRelationshipValue
-     * @throws IOException
+     * @param doc                 {@link PdfDocument} instance to make this file specification indirect
+     * @param filePath            file specification string, describing the path to the file to embed
+     * @param description         file description
+     * @param fileDisplay         actual file name stored in the pdf
+     * @param afRelationshipValue value that represents the relationship between the component of the passed PDF document that
+     *                            refers to this file specification and the associated file. If <CODE>null</CODE>,
+     *                            {@link PdfName#Unspecified} will be added.
+     * @return @return {@link PdfFileSpec} containing the file specification of the file
+     * @throws IOException if there are errors while creating an URL from the passed file path.
      */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, String filePath, String description, String fileDisplay, PdfName afRelationshipValue) throws IOException {
         return createEmbeddedFileSpec(doc, filePath, description, fileDisplay, null, null, afRelationshipValue);
     }
 
     /**
-     * Embed a file to a PdfDocument.
+     * Create an embedded file specification.
      *
-     * @param doc
-     * @param filePath
-     * @param fileDisplay
-     * @param afRelationshipValue
-     * @throws IOException
+     * @param doc                 {@link PdfDocument} instance to make this file specification indirect
+     * @param filePath            path to the file to embed
+     * @param fileDisplay         actual file name stored in the pdf
+     * @param afRelationshipValue value that represents the relationship between the component of the passed PDF document that
+     *                            refers to this file specification and the associated file. If <CODE>null</CODE>,
+     *                            {@link PdfName#Unspecified} will be added.
+     * @return {@link PdfFileSpec} containing the file specification of the file
+     * @throws IOException if there are errors while creating an URL from the passed file path.
      */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, String filePath, String fileDisplay, PdfName afRelationshipValue) throws IOException {
         return createEmbeddedFileSpec(doc, filePath, null, fileDisplay, null, null, afRelationshipValue);
     }
 
     /**
-     * Embed a file to a PdfDocument.
+     * Create an embedded file specification.
      *
-     * @param doc
-     * @param is
-     * @param description
-     * @param fileDisplay
-     * @param mimeType
-     * @param fileParameter
-     * @param afRelationshipValue
+     * @param doc                 {@link PdfDocument} instance to make this file specification indirect
+     * @param is                  stream containing the file to embed
+     * @param description         file description
+     * @param fileDisplay         actual file name stored in the pdf
+     * @param mimeType            subtype of the embedded file. The value of this entry shall conform
+     *                            to the MIME media type names
+     * @param fileParameter       dictionary with file parameters
+     * @param afRelationshipValue value that represents the relationship between the component of the passed PDF document that
+     *                            refers to this file specification and the associated file. If <CODE>null</CODE>,
+     *                            {@link PdfName#Unspecified} will be added.
+     * @return {@link PdfFileSpec} containing the file specification of the file
      */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, InputStream is, String description, String fileDisplay, PdfName mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue) {
         PdfStream stream = new PdfStream(doc, is);
@@ -276,28 +305,36 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
     }
 
     /**
-     * Embed a file to a PdfDocument.
+     * Create an embedded file specification.
      *
-     * @param doc
-     * @param is
-     * @param description
-     * @param fileDisplay
-     * @param mimeType
-     * @param afRelationshipValue
+     * @param doc                 {@link PdfDocument} instance to make this file specification indirect
+     * @param is                  stream containing the file to embed
+     * @param description         file description
+     * @param fileDisplay         actual file name stored in the pdf
+     * @param mimeType            subtype of the embedded file. The value of this entry shall conform
+     *                            to the MIME media type names
+     * @param afRelationshipValue value that represents the relationship between the component of the passed PDF document that
+     *                            refers to this file specification and the associated file. If <CODE>null</CODE>,
+     *                            {@link PdfName#Unspecified} will be added.
+     * @return {@link PdfFileSpec} containing the file specification of the file
      */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, InputStream is, String description, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue) {
         return createEmbeddedFileSpec(doc, is, description, fileDisplay, mimeType, null, afRelationshipValue);
     }
 
     /**
-     * Embed a file to a PdfDocument.
+     * Create an embedded file specification.
      *
-     * @param doc
-     * @param stream
-     * @param description
-     * @param fileDisplay
-     * @param mimeType
-     * @param afRelationshipValue
+     * @param doc                 {@link PdfDocument} instance to make this file specification indirect
+     * @param stream              an embedded file stream dictionary
+     * @param description         file description
+     * @param fileDisplay         actual file name stored in the pdf
+     * @param mimeType            subtype of the embedded file. The value of this entry shall conform
+     *                            to the MIME media type names
+     * @param afRelationshipValue value that represents the relationship between the component of the passed PDF document that
+     *                            refers to this file specification and the associated file. If <CODE>null</CODE>,
+     *                            {@link PdfName#Unspecified} will be added.
+     * @return {@link PdfFileSpec} containing the file specification of the file
      */
     private static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, PdfStream stream, String description, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue) {
         PdfDictionary dict = new PdfDictionary();
@@ -330,12 +367,15 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
     }
 
     /**
-     * Embed a file to a PdfDocument.
+     * Create an embedded file specification.
      *
-     * @param doc
-     * @param stream
-     * @param fileDisplay
-     * @param afRelationshipValue
+     * @param doc                 {@link PdfDocument} instance to make this file specification indirect
+     * @param stream              an embedded file stream dictionary
+     * @param fileDisplay         actual file name stored in the pdf
+     * @param afRelationshipValue value that represents the relationship between the component of the passed PDF document that
+     *                            refers to this file specification and the associated file. If <CODE>null</CODE>,
+     *                            {@link PdfName#Unspecified} will be added.
+     * @return {@link PdfFileSpec} containing the file specification of the file
      */
     private static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, PdfStream stream, String description, String fileDisplay, PdfName afRelationshipValue) {
         return createEmbeddedFileSpec(doc, stream, description, fileDisplay, null, afRelationshipValue);
