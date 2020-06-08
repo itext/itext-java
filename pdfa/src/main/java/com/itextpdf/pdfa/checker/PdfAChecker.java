@@ -148,6 +148,8 @@ public abstract class PdfAChecker implements Serializable {
     protected Set<PdfObject> checkedObjects = new HashSet<>();
     protected Map<PdfObject, PdfColorSpace> checkedObjectsColorspace = new HashMap<>();
 
+    private boolean fullCheckMode = false;
+
     protected PdfAChecker(PdfAConformanceLevel conformanceLevel) {
         this.conformanceLevel = conformanceLevel;
     }
@@ -196,11 +198,11 @@ public abstract class PdfAChecker implements Serializable {
             case PdfObject.NUMBER:
                 checkPdfNumber((PdfNumber) obj);
                 break;
-            case PdfObject.STREAM:
-                checkPdfStream((PdfStream) obj);
-                break;
             case PdfObject.STRING:
                 checkPdfString((PdfString) obj);
+                break;
+            case PdfObject.ARRAY:
+                checkArrayRecursively((PdfArray) obj);
                 break;
             case PdfObject.DICTIONARY:
                 PdfDictionary dict = (PdfDictionary) obj;
@@ -208,6 +210,12 @@ public abstract class PdfAChecker implements Serializable {
                 if (PdfName.Filespec.equals(type)) {
                     checkFileSpec(dict);
                 }
+                checkDictionaryRecursively(dict);
+                break;
+            case PdfObject.STREAM:
+                PdfStream stream = (PdfStream) obj;
+                checkPdfStream(stream);
+                checkDictionaryRecursively(stream);
                 break;
         }
     }
@@ -219,6 +227,28 @@ public abstract class PdfAChecker implements Serializable {
      */
     public PdfAConformanceLevel getConformanceLevel() {
         return conformanceLevel;
+    }
+
+    /**
+     * In full check mode all objects will be tested for ISO conformance. If full check mode is
+     * switched off objects which were not modified might be skipped to speed up the validation
+     * of the document
+     * @return true if full check mode is switched on
+     * @see PdfObject#isModified()
+     */
+    public boolean isFullCheckMode() {
+        return fullCheckMode;
+    }
+
+    /**
+     * In full check mode all objects will be tested for ISO conformance. If full check mode is
+     * switched off objects which were not modified might be skipped to speed up the validation
+     * of the document
+     * @param fullCheckMode is a new value for full check mode switcher
+     * @see PdfObject#isModified()
+     */
+    public void setFullCheckMode(boolean fullCheckMode) {
+        this.fullCheckMode = fullCheckMode;
     }
 
     /**
@@ -351,6 +381,24 @@ public abstract class PdfAChecker implements Serializable {
     protected void checkPageTransparency(PdfDictionary pageDict, PdfDictionary pageResources) {
     }
 
+    /**
+     * Attest content stream conformance with appropriate specification.
+     * Throws PdfAConformanceException if any discrepancy was found
+     *
+     * @param contentStream is a content stream to validate
+     */
+    protected void checkContentStream(PdfStream contentStream) {
+    }
+
+    /**
+     * Verify the conformity of the operand of content stream with appropriate
+     * specification. Throws PdfAConformanceException if any discrepancy was found
+     *
+     * @param object is an operand of content stream to validate
+     */
+    protected void checkContentStreamObject(PdfObject object) {
+    }
+
     protected abstract Set<PdfName> getForbiddenActions();
     protected abstract Set<PdfName> getAllowedNamedActions();
     protected abstract void checkAction(PdfDictionary action);
@@ -454,6 +502,24 @@ public abstract class PdfAChecker implements Serializable {
         }
     }
 
+    private void checkArrayRecursively(PdfArray array) {
+        for (int i = 0; i < array.size(); i++) {
+            PdfObject object = array.get(i, false);
+            if (object != null && ! object.isIndirect()) {
+                checkPdfObject(object);
+            }
+        }
+    }
+
+    private void checkDictionaryRecursively(PdfDictionary dictionary) {
+        for (PdfName name: dictionary.keySet()) {
+            PdfObject object = dictionary.get(name, false);
+            if (object != null && ! object.isIndirect()) {
+                checkPdfObject(object);
+            }
+        }
+    }
+
     private void checkPages(PdfDocument document) {
         for (int i = 1; i <= document.getNumberOfPages(); i++) {
             checkPage(document.getPage(i));
@@ -474,7 +540,9 @@ public abstract class PdfAChecker implements Serializable {
 
         int contentStreamCount = page.getContentStreamCount();
         for (int j = 0; j < contentStreamCount; ++j) {
-            checkedObjects.add(page.getContentStream(j));
+            PdfStream contentStream = page.getContentStream(j);
+            checkContentStream(contentStream);
+            checkedObjects.add(contentStream);
         }
     }
 

@@ -42,13 +42,28 @@
  */
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.PatternColor;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
+import com.itextpdf.kernel.pdf.colorspace.PdfPattern.Shading;
+import com.itextpdf.kernel.pdf.colorspace.PdfPattern.Tiling;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.pdfa.PdfAConformanceException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.nio.charset.StandardCharsets;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -58,6 +73,11 @@ import org.junit.rules.ExpectedException;
 public class PdfA1CheckerTest extends ExtendedITextTest {
 
     private PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformanceLevel.PDF_A_1B);
+
+    @Before
+    public void before() {
+        pdfA1Checker.setFullCheckMode(true);
+    }
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -105,5 +125,312 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
         // and doesn't return any value. The only result is exception which
         // was or wasn't thrown. Successful scenario is tested here therefore
         // no assertion is provided
+    }
+
+    @Test
+    public void independentLongStringTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
+
+        final int maxAllowedLength = pdfA1Checker.getMaxStringLength();
+        final int testLength = maxAllowedLength + 1;
+
+        Assert.assertEquals(testLength, 65536);
+        PdfString longString = new PdfString(PdfACheckerTestUtils.getLongString(testLength));
+
+        // An exception should be thrown as provided String is longer then
+        // it is allowed per specification
+        pdfA1Checker.checkPdfObject(longString);
+
+    }
+
+    @Test
+    public void independentNormalStringTest() {
+        final int testLength = pdfA1Checker.getMaxStringLength();
+
+        Assert.assertEquals(testLength, 65535);
+        PdfString longString = new PdfString(PdfACheckerTestUtils.getLongString(testLength));
+
+        // An exception should not be thrown as provided String matches
+        // the limitations provided in specification
+        pdfA1Checker.checkPdfObject(longString);
+
+    }
+
+    @Test
+    public void longStringInDictionaryTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
+
+        final int maxAllowedLength = pdfA1Checker.getMaxStringLength();
+        final int testLength = maxAllowedLength + 1;
+
+        Assert.assertEquals(testLength, 65536);
+
+        PdfDictionary dict = new PdfDictionary();
+        dict.put(new PdfName("Key1"), new PdfString("value1"));
+        dict.put(new PdfName("Key2"), new PdfString("value2"));
+        dict.put(new PdfName("Key3"), new PdfString(PdfACheckerTestUtils.getLongString(testLength)));
+
+        // An exception should be thrown as value for 'key3' is longer then
+        // it is allowed per specification
+        pdfA1Checker.checkPdfObject(dict);
+
+    }
+
+    @Test
+    public void normalStringInDictionaryTest() {
+        final int testLength = pdfA1Checker.getMaxStringLength();
+
+        PdfDictionary dict = new PdfDictionary();
+        dict.put(new PdfName("Key1"), new PdfString("value1"));
+        dict.put(new PdfName("Key2"), new PdfString("value2"));
+        dict.put(new PdfName("Key3"), new PdfString(PdfACheckerTestUtils.getLongString(testLength)));
+
+        // An exception should not be thrown as all values match the
+        // limitations provided in specification
+        pdfA1Checker.checkPdfObject(dict);
+
+    }
+
+    @Test
+    public void longStringInArrayTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
+
+        final int maxAllowedLength = pdfA1Checker.getMaxStringLength();
+        final int testLength = maxAllowedLength + 1;
+
+        Assert.assertEquals(testLength, 65536);
+
+        PdfArray array = new PdfArray();
+        array.add(new PdfString("value1"));
+        array.add(new PdfString("value2"));
+        array.add(new PdfString(PdfACheckerTestUtils.getLongString(testLength)));
+
+        // An exception should be thrown as 3rd element is longer then
+        // it is allowed per specification
+        pdfA1Checker.checkPdfObject(array);
+    }
+
+    @Test
+    public void normalStringInArrayTest() {
+        final int testLength = pdfA1Checker.getMaxStringLength();
+
+        Assert.assertEquals(testLength, 65535);
+
+        PdfArray array = new PdfArray();
+        array.add(new PdfString("value1"));
+        array.add(new PdfString("value2"));
+        array.add(new PdfString(PdfACheckerTestUtils.getLongString(testLength)));
+
+        // An exception should not be thrown as all elements match the
+        // limitations provided in specification
+        pdfA1Checker.checkPdfObject(array);
+
+    }
+
+    @Test
+    public void longStringInContentStreamTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
+
+        final int maxAllowedLength = pdfA1Checker.getMaxStringLength();
+        final int testLength = maxAllowedLength + 1;
+
+        Assert.assertEquals(testLength, 65536);
+
+        String newContentString = PdfACheckerTestUtils.getStreamWithLongString(testLength);
+        byte[] newContent = newContentString.getBytes(StandardCharsets.UTF_8);
+        PdfStream stream = new PdfStream(newContent);
+
+        // An exception should be thrown as content stream has a string which
+        // is longer then it is allowed per specification
+        pdfA1Checker.checkContentStream(stream);
+    }
+
+    @Test
+    public void contentStreamIsNotCheckedForNotModifiedObjectTest() {
+        pdfA1Checker.setFullCheckMode(false);
+
+        final int maxAllowedLength = pdfA1Checker.getMaxStringLength();
+        final int testLength = maxAllowedLength + 1;
+
+        Assert.assertEquals(testLength, 65536);
+
+        String newContentString = PdfACheckerTestUtils.getStreamWithLongString(testLength);
+        byte[] newContent = newContentString.getBytes(StandardCharsets.UTF_8);
+        PdfStream stream = new PdfStream(newContent);
+
+        // An exception should not be thrown as content stream considered as not modified
+        // and won't be tested
+        pdfA1Checker.checkContentStream(stream);
+    }
+
+    @Test
+    public void normalStringInContentStreamTest() {
+        final int testLength = pdfA1Checker.getMaxStringLength();
+
+        Assert.assertEquals(testLength, 65535);
+
+        String newContentString = PdfACheckerTestUtils.getStreamWithLongString(testLength);
+        byte[] newContent = newContentString.getBytes(StandardCharsets.UTF_8);
+        PdfStream stream = new PdfStream(newContent);
+
+        // An exception should be thrown as  all strings inside content stream
+        // are not longer then it is allowed per specification
+        pdfA1Checker.checkContentStream(stream);
+    }
+
+    @Test
+    public void longStringInArrayInContentStreamTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
+
+        final int maxAllowedLength = pdfA1Checker.getMaxStringLength();
+        final int testLength = maxAllowedLength + 1;
+
+        Assert.assertEquals(testLength, 65536);
+
+        String newContentString = PdfACheckerTestUtils.getStreamWithLongStringInArray(testLength);
+        byte[] newContent = newContentString.getBytes(StandardCharsets.UTF_8);
+        PdfStream stream = new PdfStream(newContent);
+
+        // An exception should be thrown as content stream has a string which
+        // is longer then it is allowed per specification
+        pdfA1Checker.checkContentStream(stream);
+    }
+
+    @Test
+    public void longStringInDictionaryInContentStreamTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
+
+        final int maxAllowedLength = pdfA1Checker.getMaxStringLength();
+        final int testLength = maxAllowedLength + 1;
+
+        Assert.assertEquals(testLength, 65536);
+
+        String newContentString = PdfACheckerTestUtils.getStreamWithLongStringInDictionary(testLength);
+        byte[] newContent = newContentString.getBytes(StandardCharsets.UTF_8);
+        PdfStream stream = new PdfStream(newContent);
+
+        // An exception should be thrown as content stream has a string which
+        // is longer then it is allowed per specification
+        pdfA1Checker.checkContentStream(stream);
+    }
+
+    @Test
+    public void longStringInComplexStructureTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
+
+        final int maxAllowedLength = pdfA1Checker.getMaxStringLength();
+        final int testLength = maxAllowedLength + 1;
+
+        Assert.assertEquals(testLength, 65536);
+
+        PdfDictionary dict1 = new PdfDictionary();
+        dict1.put(new PdfName("Key1"), new PdfString("value1"));
+        dict1.put(new PdfName("Key2"), new PdfString("value2"));
+        dict1.put(new PdfName("Key3"), new PdfString(PdfACheckerTestUtils.getLongString(testLength)));
+
+        PdfArray array = new PdfArray();
+        array.add(new PdfString("value3"));
+        array.add(new PdfString("value4"));
+        array.add(dict1);
+
+        PdfDictionary dict = new PdfDictionary();
+        dict.put(new PdfName("Key4"), new PdfString("value5"));
+        dict.put(new PdfName("Key5"), new PdfString("value6"));
+        dict.put(new PdfName("Key6"), array);
+
+        // An exception should be thrown as there is a string element which
+        // doesn't match the limitations provided in specification
+        pdfA1Checker.checkPdfObject(array);
+    }
+
+    @Test
+    public void longStringInPdfFormXObjectTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
+
+        final int maxAllowedLength = pdfA1Checker.getMaxStringLength();
+        final int testLength = maxAllowedLength + 1;
+
+        Assert.assertEquals(testLength, 65536);
+
+        String newContentString = PdfACheckerTestUtils.getStreamWithLongString(testLength);
+        byte[] newContent = newContentString.getBytes(StandardCharsets.UTF_8);
+        PdfStream stream = new PdfStream(newContent);
+        PdfXObject xobject = new PdfFormXObject(stream);
+
+        // An exception should be thrown as form xobject content stream has a string which
+        // is longer then it is allowed per specification
+        pdfA1Checker.checkFormXObject(xobject.getPdfObject());
+    }
+
+    @Test
+    public void longStringInTilingPatternTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
+
+        final int maxAllowedLength = pdfA1Checker.getMaxStringLength();
+        final int testLength = maxAllowedLength + 1;
+
+        Assert.assertEquals(testLength, 65536);
+
+        String newContentString = PdfACheckerTestUtils.getStreamWithLongString(testLength);
+        byte[] newContent = newContentString.getBytes(StandardCharsets.UTF_8);
+        PdfPattern pattern = new Tiling(200, 200);
+        ((PdfStream) pattern.getPdfObject()).setData(newContent);
+
+        Color color = new PatternColor(pattern);
+        // An exception should be thrown as tiling pattern's content stream has a string which
+        // is longer then it is allowed per specification
+        pdfA1Checker.checkColor(color, new PdfDictionary(), true, null);
+    }
+
+    @Test
+    public void longStringInShadingPatternTest() {
+        final int maxAllowedLength = pdfA1Checker.getMaxStringLength();
+        final int testLength = maxAllowedLength + 1;
+
+        Assert.assertEquals(testLength, 65536);
+
+        String newContentString = PdfACheckerTestUtils.getStreamWithLongString(testLength);
+        byte[] newContent = newContentString.getBytes(StandardCharsets.UTF_8);
+        PdfStream stream = new PdfStream(newContent);
+        PdfPattern pattern = new Shading(stream);
+
+        // An exception should not be thrown as shading pattern doesn't have
+        // content stream to validate
+        pdfA1Checker.checkPdfObject(pattern.getPdfObject());
+    }
+
+    @Test
+    public void longStringInType3FontTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
+
+        final int maxAllowedLength = pdfA1Checker.getMaxStringLength();
+        final int testLength = maxAllowedLength + 1;
+
+        Assert.assertEquals(testLength, 65536);
+
+        String newContentString = PdfACheckerTestUtils.getStreamWithLongString(testLength);
+        byte[] newContent = newContentString.getBytes(StandardCharsets.UTF_8);
+
+        PdfFont font = PdfFontFactory.createType3Font(null, true);
+
+        PdfDictionary charProcs = new PdfDictionary();
+        charProcs.put(PdfName.A, new PdfStream(newContent));
+
+        PdfDictionary dictionary = font.getPdfObject();
+        dictionary.put(PdfName.Subtype, PdfName.Type3);
+        dictionary.put(PdfName.CharProcs, charProcs);
+        // An exception should be thrown as content stream of type3 font has a string which
+        // is longer then it is allowed per specification
+        pdfA1Checker.checkFont(font);
     }
 }

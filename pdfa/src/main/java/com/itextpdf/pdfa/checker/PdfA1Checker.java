@@ -44,8 +44,14 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.source.PdfTokenizer;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
+import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
@@ -58,13 +64,18 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.canvas.parser.util.PdfCanvasParser;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.pdfa.PdfAConformanceException;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.itextpdf.pdfa.PdfAConformanceLogMessageConstant;
@@ -137,6 +148,12 @@ public class PdfA1Checker extends PdfAChecker {
     @Override
     public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill, PdfStream stream) {
         checkColorSpace(color.getColorSpace(), currentColorSpaces, true, fill);
+        if (color instanceof PatternColor) {
+            PdfPattern pattern = ((PatternColor) color).getPattern();
+            if (pattern instanceof PdfPattern.Tiling) {
+                checkContentStream((PdfStream) pattern.getPdfObject());
+            }
+        }
     }
 
     @Override
@@ -254,6 +271,55 @@ public class PdfA1Checker extends PdfAChecker {
                 checkNonSymbolicTrueTypeFont(trueTypeFont);
             }
         }
+
+        if (pdfFont instanceof PdfType3Font) {
+            PdfDictionary charProcs = pdfFont.getPdfObject().getAsDictionary(PdfName.CharProcs);
+            for (PdfName charName : charProcs.keySet()) {
+                checkContentStream(charProcs.getAsStream(charName));
+            }
+        }
+    }
+
+    @Override
+    protected void checkContentStream(PdfStream contentStream) {
+        if (isFullCheckMode() || contentStream.isModified()) {
+            byte[] contentBytes = contentStream.getBytes();
+            PdfTokenizer tokenizer = new PdfTokenizer(
+                    new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(contentBytes)));
+
+            PdfCanvasParser parser = new PdfCanvasParser(tokenizer);
+            List<PdfObject> operands = new ArrayList<>();
+            try {
+                while (parser.parse(operands).size() > 0) {
+                    for (PdfObject operand : operands) {
+                        checkContentStreamObject(operand);
+                    }
+                }
+            } catch (IOException e) {
+                throw new PdfException(PdfException.CannotParseContentStream, e);
+            }
+        }
+    }
+
+    @Override
+    protected void checkContentStreamObject(PdfObject object) {
+        byte type = object.getType();
+        switch (type) {
+            case PdfObject.STRING:
+                checkPdfString((PdfString) object);
+                break;
+            case PdfObject.ARRAY:
+                for (PdfObject obj : (PdfArray) object) {
+                    checkContentStreamObject(obj);
+                }
+                break;
+            case PdfObject.DICTIONARY:
+                PdfDictionary dictionary = (PdfDictionary) object;
+                for (PdfObject obj : dictionary.values()) {
+                    checkContentStreamObject(obj);
+                }
+                break;
+        }
     }
 
     @Override
@@ -330,6 +396,7 @@ public class PdfA1Checker extends PdfAChecker {
         }
 
         checkResources(form.getAsDictionary(PdfName.Resources));
+        checkContentStream(form);
     }
 
     @Override

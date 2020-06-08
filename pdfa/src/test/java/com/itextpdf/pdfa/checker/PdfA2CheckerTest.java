@@ -46,11 +46,14 @@ import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.pdfa.PdfAConformanceException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.nio.charset.StandardCharsets;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -331,5 +334,42 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         catalog.put(PdfName.Requirements, new PdfDictionary());
 
         pdfA2Checker.checkCatalogValidEntries(catalog);
+    }
+
+    @Test
+    public void independentLongStringTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
+
+        final int maxAllowedLength = pdfA2Checker.getMaxStringLength();
+        final int testLength = maxAllowedLength + 1;
+
+        Assert.assertEquals(testLength, 32768);
+        PdfString longString = new PdfString(PdfACheckerTestUtils.getLongString(testLength));
+
+        // An exception should be thrown as provided String is longer then
+        // it is allowed per specification
+        pdfA2Checker.checkPdfObject(longString);
+    }
+
+    @Test
+    public void longStringInContentStreamTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
+
+        pdfA2Checker.setFullCheckMode(true);
+
+        final int maxAllowedLength = pdfA2Checker.getMaxStringLength();
+        final int testLength = maxAllowedLength + 1;
+
+        Assert.assertEquals(testLength, 32768);
+
+        String newContentString = PdfACheckerTestUtils.getStreamWithLongString(testLength);
+        byte[] newContent = newContentString.getBytes(StandardCharsets.UTF_8);
+        PdfStream stream = new PdfStream(newContent);
+
+        // An exception should be thrown as content stream has a string which
+        // is longer then it is allowed per specification
+        pdfA2Checker.checkContentStream(stream);
     }
 }

@@ -167,10 +167,12 @@ public class PdfA2Checker extends PdfA1Checker {
                     }
                 };
                 checkExtGState(gState, contentStream);
+            } else if (pattern instanceof PdfPattern.Tiling) {
+                checkContentStream((PdfStream) pattern.getPdfObject());
             }
         }
 
-        checkColorSpace(color.getColorSpace(), currentColorSpaces, true, fill);
+        super.checkColor(color, currentColorSpaces, fill, contentStream);
     }
 
     @Override
@@ -823,6 +825,7 @@ public class PdfA2Checker extends PdfA1Checker {
         }
 
         checkResources(form.getAsDictionary(PdfName.Resources));
+        checkContentStream(form);
     }
 
     private void checkContentsForTransparency(PdfDictionary pageDict) {
