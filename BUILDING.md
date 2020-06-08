@@ -18,8 +18,10 @@ The syntax of commands depends on installed Ghostscript and Imagemagick versions
 environment variables. Examples of paths on Windows:
 - `C:\Program Files\gs\gs9.26\bin\gswin64c.exe`
 - `C:\Program Files\ImageMagick-7.0.9-Q16\compare.exe`
+
 If you have a new version of ImageMagick, then there is no compare.exe utility there, wrap the path to magick.exe in quotes and call compare command:
-`ITEXT_MAGICK_COMPARE_EXEC="\"C:\Program Files\ImageMagick-7.0.9-Q16\magick.exe\" compare"`
+ITEXT_MAGICK_COMPARE_EXEC=`"C:\Program Files\ImageMagick-7.0.9-Q16\magick.exe" compare`
+
 To run build with tests, activate the `test` profile and pass ITEXT_GS_EXEC and ITEXT_MAGICK_COMPARE_EXEC environment variables:
 ```bash
 $ mvn clean install \
