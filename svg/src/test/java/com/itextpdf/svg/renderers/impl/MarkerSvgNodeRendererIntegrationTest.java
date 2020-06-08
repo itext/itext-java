@@ -311,4 +311,11 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     public void deformationWhenRotationAndPreserveAspectRationNone() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "deformationWhenRotationAndPreserveAspectRationNone");
     }
+
+    @Test
+    // TODO DEVSIX-4130 fix after ticket will be completed
+    // Compare with Chrome browser
+    public void markerParentElementTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerParentElementTest");
+    }
 }

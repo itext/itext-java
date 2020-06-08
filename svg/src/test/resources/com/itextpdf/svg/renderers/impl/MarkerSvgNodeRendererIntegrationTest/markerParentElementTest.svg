@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" font-size="1" viewBox="0 0 200 200">
+
+    <defs font-size="10">
+        <marker id="markerArrow" refX="6em" refY="6"
+                markerWidth="15" markerHeight="15" viewBox="0 0 15 15">
+            <path d="M2,2 L2,11 L10,6 L2,2" style="fill: #000000;"/>
+        </marker>
+    </defs>
+
+    <g font-size="5">
+        <marker id="markerArrow2" refX="6em" refY="6"
+                markerWidth="15" markerHeight="15" viewBox="0 0 15 15">
+            <path d="M2,2 L2,11 L10,6 L2,2" style="fill: #000000;"/>
+        </marker>
+    </g>
+
+    <g font-size="1">
+        <line x1="50" y1="50" x2="150" y2="50" stroke="black" marker-end="url(#markerArrow)"/>
+    </g>
+
+    <g font-size="1">
+        <line x1="50" y1="150" x2="150" y2="150" stroke="black" marker-end="url(#markerArrow2)"/>
+    </g>
+</svg>
