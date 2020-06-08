@@ -185,7 +185,7 @@ public class CompareTool {
      * @param outDocument a {@link PdfDocument} corresponding to the output file, which is to be compared with cmp-file.
      * @param cmpDocument a {@link PdfDocument} corresponding to the cmp-file, which is to be compared with output file.
      * @return the report on comparison of two files in the form of the custom class {@link CompareResult} instance.
-     * @throws IOException
+     * @throws IOException obsolete. Would be removed in 7.2.
      * @see CompareResult
      */
     public CompareResult compareByCatalog(PdfDocument outDocument, PdfDocument cmpDocument) throws IOException {
@@ -339,8 +339,11 @@ public class CompareTool {
      * @param outPath               the absolute path to the folder, which will be used to store image files for visual comparison.
      * @param differenceImagePrefix file name prefix for image files with marked differences if there is any.
      * @return string containing list of the pages that are visually different, or null if there are no visual differences.
-     * @throws InterruptedException
-     * @throws IOException
+     * @throws InterruptedException if the current thread is interrupted by another thread while it is waiting
+     *                              for ghostscript or imagemagic processes, then the wait is ended and
+     *                              an {@link InterruptedException} is thrown.
+     * @throws IOException          is thrown if any of the input files are missing or any of the auxiliary files
+     *                              that are created during comparison process weren't possible to be created.
      */
     public String compareVisually(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix) throws InterruptedException, IOException {
         return compareVisually(outPdf, cmpPdf, outPath, differenceImagePrefix, null);
@@ -365,8 +368,11 @@ public class CompareTool {
      * @param differenceImagePrefix file name prefix for image files with marked differences if there is any.
      * @param ignoredAreas          a map with one-based page numbers as keys and lists of ignored rectangles as values.
      * @return string containing list of the pages that are visually different, or null if there are no visual differences.
-     * @throws InterruptedException
-     * @throws IOException
+     * @throws InterruptedException if the current thread is interrupted by another thread while it is waiting
+     *                              for ghostscript or imagemagic processes, then the wait is ended and
+     *                              an {@link InterruptedException} is thrown.
+     * @throws IOException          is thrown if any of the input files are missing or any of the auxiliary files
+     *                              that are created during comparison process weren't possible to be created.
      */
     public String compareVisually(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
         init(outPdf, cmpPdf);
@@ -533,7 +539,7 @@ public class CompareTool {
      * @param outDict dictionary to compare.
      * @param cmpDict dictionary to compare.
      * @return true if dictionaries are equal by content, otherwise false.
-     * @throws IOException
+     * @throws IOException obsolete. Would be removed in 7.2.
      */
     public boolean compareDictionaries(PdfDictionary outDict, PdfDictionary cmpDict) throws IOException {
         return compareDictionariesExtended(outDict, cmpDict, null, null);
@@ -626,7 +632,7 @@ public class CompareTool {
      * @param outStream stream to compare.
      * @param cmpStream stream to compare.
      * @return true if stream are equal by content, otherwise false.
-     * @throws IOException
+     * @throws IOException obsolete. Would be removed in 7.2.
      */
     public boolean compareStreams(PdfStream outStream, PdfStream cmpStream) throws IOException {
         return compareStreamsExtended(outStream, cmpStream, null, null);
@@ -639,7 +645,7 @@ public class CompareTool {
      * @param outArray array to compare.
      * @param cmpArray array to compare.
      * @return true if arrays are equal by content, otherwise false.
-     * @throws IOException
+     * @throws IOException obsolete. Would be removed in 7.2.
      */
     public boolean compareArrays(PdfArray outArray, PdfArray cmpArray) throws IOException {
         return compareArraysExtended(outArray, cmpArray, null, null);
@@ -756,9 +762,10 @@ public class CompareTool {
      * @param xml1 first xml file data to compare.
      * @param xml2 second xml file data to compare.
      * @return true if xml structures are identical, false otherwise.
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @throws IOException
+     * @throws ParserConfigurationException if a XML DocumentBuilder cannot be created
+     *                                      which satisfies the configuration requested.
+     * @throws SAXException                 if any XML parse errors occur.
+     * @throws IOException                  If any IO errors occur during reading XML files.
      */
     public boolean compareXmls(byte[] xml1, byte[] xml2) throws ParserConfigurationException, SAXException, IOException {
         return XmlUtils.compareXmls(new ByteArrayInputStream(xml1), new ByteArrayInputStream(xml2));
@@ -770,9 +777,10 @@ public class CompareTool {
      * @param outXmlFile absolute path to the out xml file to compare.
      * @param cmpXmlFile absolute path to the cmp xml file to compare.
      * @return true if xml structures are identical, false otherwise.
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @throws IOException
+     * @throws ParserConfigurationException if a XML DocumentBuilder cannot be created
+     *                                      which satisfies the configuration requested.
+     * @throws SAXException                 if any XML parse errors occur.
+     * @throws IOException                  If any IO errors occur during reading XML files.
      */
     public boolean compareXmls(String outXmlFile, String cmpXmlFile) throws ParserConfigurationException, SAXException, IOException {
         System.out.println("Out xml: " + UrlUtil.getNormalizedFileUriString(outXmlFile));
@@ -794,7 +802,7 @@ public class CompareTool {
      * @param outPass password for the encrypted document specified by the outPdf absolute path.
      * @param cmpPass password for the encrypted document specified by the cmpPdf absolute path.
      * @return text report on the differences in documents infos.
-     * @throws IOException
+     * @throws IOException if PDF reader cannot be created due to IO issues
      */
     public String compareDocumentInfo(String outPdf, String cmpPdf, byte[] outPass, byte[] cmpPass) throws IOException {
         System.out.print("[itext] INFO  Comparing document info.......");
@@ -827,7 +835,7 @@ public class CompareTool {
      * @param outPdf the absolute path to the output file, which info is to be compared to cmp-file info.
      * @param cmpPdf the absolute path to the cmp-file, which info is to be compared to output file info.
      * @return text report on the differences in documents infos.
-     * @throws IOException
+     * @throws IOException if PDF reader cannot be created due to IO issues
      */
     public String compareDocumentInfo(String outPdf, String cmpPdf) throws IOException {
         return compareDocumentInfo(outPdf, cmpPdf, null, null);
@@ -839,7 +847,7 @@ public class CompareTool {
      * @param outPdf the absolute path to the output file, which links are to be compared to cmp-file links.
      * @param cmpPdf the absolute path to the cmp-file, which links are to be compared to output file links.
      * @return text report on the differences in documents links.
-     * @throws IOException
+     * @throws IOException if PDF reader cannot be created due to IO issues
      */
     public String compareLinkAnnotations(String outPdf, String cmpPdf) throws IOException {
         System.out.print("[itext] INFO  Comparing link annotations....");
@@ -880,9 +888,11 @@ public class CompareTool {
      * @param outPdf the absolute path to the output file, which tags are to be compared to cmp-file tags.
      * @param cmpPdf the absolute path to the cmp-file, which tags are to be compared to output file tags.
      * @return text report of the differences in documents tags.
-     * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws SAXException
+     * @throws IOException                 is thrown if any of the input files are missing or any of the auxiliary files
+     *                                     that are created during comparison process weren't possible to be created.
+     * @throws ParserConfigurationException if a XML DocumentBuilder cannot be created
+     *                                      which satisfies the configuration requested.
+     * @throws SAXException                 if any XML parse errors occur.
      */
     public String compareTagStructures(String outPdf, String cmpPdf) throws IOException, ParserConfigurationException, SAXException {
         System.out.print("[itext] INFO  Comparing tag structures......");
@@ -1912,8 +1922,10 @@ public class CompareTool {
          * Converts this CompareResult into xml form.
          *
          * @param stream output stream to which xml report will be written.
-         * @throws ParserConfigurationException
-         * @throws TransformerException
+         * @throws ParserConfigurationException if a XML DocumentBuilder cannot be created
+         *                                      which satisfies the configuration requested.
+         * @throws TransformerException         if it is not possible to create an XML Transformer instance or
+         *                                      an unrecoverable error occurs during the course of the transformation.
          */
         public void writeReportToXml(OutputStream stream) throws ParserConfigurationException, TransformerException {
             Document xmlReport = XmlUtils.initNewXmlDocument();
