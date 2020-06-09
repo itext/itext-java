@@ -44,6 +44,7 @@ package com.itextpdf.svg.css;
 
 
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
@@ -52,15 +53,17 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
@@ -240,5 +243,12 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     // TODO: update cmp files when DEVSIX-2286 resolved
     public void multipleSVGtagsWithDiffStylesFromExternalCSS() throws IOException,InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "externalCss_palette", PageSize.A3.rotate());
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 2)})
+    // TODO DEVSIX-4140 update cmp, remove logger check
+    public void relativeStyleInheritanceTest() throws IOException,InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "relativeStyleInheritanceTest");
     }
 }
