@@ -497,7 +497,7 @@ public class XfdfObjectFactory {
     }
 
     private static void updateXfdfAnnotation(AnnotObject annotObject, PdfAnnotation pdfAnnotation, int pageNumber) {
-        //tODO implement update, refactor createXfdfAnnotation() method to accomodate the change
+        //TODO DEVSIX-4132 implement update, refactor createXfdfAnnotation() method to accommodate the change
     }
 
     private static void addCommonAnnotationAttributes(AnnotObject annot, PdfAnnotation pdfAnnotation) {
@@ -579,7 +579,7 @@ public class XfdfObjectFactory {
         }
 
         if (pdfCircleAnnotation.getBorderEffect() != null) {
-            //TODO how to map intensity?
+            //TODO DEVSIX-4133 map intensity to border effect dictionary's I key
             //annot.addAttribute(new AttributeObject("intensity", pdfCircleAnnotation.getBorderEffect().getAsString()));
             annot.addAttribute(XfdfConstants.STYLE, pdfCircleAnnotation.getBorderEffect().getAsString(PdfName.Style));
 
@@ -613,7 +613,7 @@ public class XfdfObjectFactory {
         }
 
         if (pdfSquareAnnotation.getBorderEffect() != null) {
-            //TODO how to map intensity?
+            //TODO DEVSIX-4133 map intensity to border effect dictionary's I key
             //annot.addAttribute(new AttributeObject("intensity", pdfCircleAnnotation.getBorderEffect().getAsString()));
             annot.addAttribute(XfdfConstants.STYLE, pdfSquareAnnotation.getBorderEffect().getAsString(PdfName.Style));
         }
@@ -669,7 +669,7 @@ public class XfdfObjectFactory {
             annot.addAttribute(XfdfConstants.STYLE, pdfFreeTextAnnotation.getBorderStyle().getAsString(PdfName.Style));
         }
 
-        //TODO add rotation optional attribute
+        //TODO DEVSIX-4134 add rotation optional attribute
         //annot.addAttribute(new AttributeObject("rotation", pdfFreeTextAnnotation.));
         annot.addAttribute(new AttributeObject(XfdfConstants.JUSTIFICATION, String.valueOf(pdfFreeTextAnnotation.getJustification())));
         if (pdfFreeTextAnnotation.getIntent() != null) {
@@ -679,7 +679,7 @@ public class XfdfObjectFactory {
         if (pdfFreeTextAnnotation.getContents() != null) {
             annot.setContents(pdfFreeTextAnnotation.getContents());
         }
-        //TODO add contents-richtext
+        //TODO DEVSIX-3215 add contents-richtext
         if (pdfFreeTextAnnotation.getDefaultAppearance() != null) {
             annot.setDefaultAppearance(pdfFreeTextAnnotation.getDefaultAppearance().getValue());
         }
@@ -834,7 +834,7 @@ public class XfdfObjectFactory {
         }
 
         if (pdfPolyGeomAnnotation.getBorderEffect() != null) {
-            //TODO how to map intensity?
+            //TODO DEVSIX-4133 map intensity to border effect dictionary's I key
             //annot.addAttribute(new AttributeObject("intensity", pdfCircleAnnotation.getBorderEffect().getAsString()));
             annot.addAttribute(XfdfConstants.STYLE, pdfPolyGeomAnnotation.getBorderEffect().getAsString(PdfName.Style));
         }
@@ -872,7 +872,7 @@ public class XfdfObjectFactory {
         AnnotObject annot = new AnnotObject();
         annot.setRef(pdfAnnotation.getPdfObject().getIndirectReference());
         annot.addFdfAttributes(pageNumber);
-        //TODO move here all common methods like addFDFAttributes and Add common annotations
+        //TODO DEVSIX-4135 move here all common methods like addFDFAttributes and Add common annotations
 
         if (pdfAnnotation instanceof PdfTextMarkupAnnotation) {
             createTextMarkupAnnotation(pdfAnnotation, annot, pageNumber);
