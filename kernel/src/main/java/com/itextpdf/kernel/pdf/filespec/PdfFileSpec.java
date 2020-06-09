@@ -71,6 +71,13 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
         super(pdfObject);
     }
 
+    /**
+     * Wrap the passed {@link PdfObject} to the specific {@link PdfFileSpec} object,
+     * according to the type of the passed pdf object.
+     *
+     * @param fileSpecObject object to wrap
+     * @return wrapped {@link PdfFileSpec} instance
+     */
     public static PdfFileSpec wrapFileSpecObject(PdfObject fileSpecObject) {
         if (fileSpecObject != null) {
             if (fileSpecObject.isString()) {
@@ -82,6 +89,16 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
         return null;
     }
 
+    /**
+     * Create an external file specification.
+     *
+     * @param doc                 {@link PdfDocument} instance to make this file specification indirect
+     * @param filePath            file specification string, describing the path to the external file
+     * @param afRelationshipValue value that represents the relationship between the component of the passed PDF document
+     *                            that refers to this file specification and the associated file. If <CODE>null</CODE>,
+     *                            {@link PdfName#Unspecified} will be added.
+     * @return {@link PdfFileSpec} containing the file specification of the file
+     */
     public static PdfFileSpec createExternalFileSpec(PdfDocument doc, String filePath, PdfName afRelationshipValue) {
         PdfDictionary dict = new PdfDictionary();
         dict.put(PdfName.Type, PdfName.Filespec);
@@ -95,6 +112,13 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
         return (PdfFileSpec) new PdfFileSpec(dict).makeIndirect(doc);
     }
 
+    /**
+     * Create an external file specification.
+     *
+     * @param doc      {@link PdfDocument} instance to make this file specification indirect
+     * @param filePath file specification string, describing the path to the external file
+     * @return {@link PdfFileSpec} containing the file specification of the file
+     */
     public static PdfFileSpec createExternalFileSpec(PdfDocument doc, String filePath) {
         return createExternalFileSpec(doc, filePath, null);
     }
