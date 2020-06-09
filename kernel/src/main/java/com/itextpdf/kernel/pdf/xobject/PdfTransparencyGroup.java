@@ -61,7 +61,8 @@ public class PdfTransparencyGroup extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Determining the initial backdrop against which its stack is composited.
-     * @param isolated
+     *
+     * @param isolated defines whether the {@link PdfName#I} flag will be set or removed
      */
     public void setIsolated(boolean isolated) {
         if (isolated) {
@@ -73,7 +74,8 @@ public class PdfTransparencyGroup extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Determining whether the objects within the stack are composited with one another or only with the group's backdrop.
-     * @param knockout
+     *
+     * @param knockout defines whether the {@link PdfName#K} flag will be set or removed
      */
     public void setKnockout(boolean knockout) {
         if (knockout) {

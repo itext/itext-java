@@ -316,8 +316,10 @@ public class TagStructureContext {
     /**
      * Removes annotation content item from the tag structure.
      * If annotation is not added to the document or is not tagged, nothing will happen.
+     *
+     * @param annotation the {@link PdfAnnotation} that will be removed from the tag structure
      * @return {@link TagTreePointer} instance which points at annotation tag parent if annotation was removed,
-     * otherwise returns null.
+     * otherwise returns null
      */
     public TagTreePointer removeAnnotationTag(PdfAnnotation annotation) {
         PdfStructElem structElem = null;
@@ -365,8 +367,9 @@ public class TagStructureContext {
     /**
      * Removes all tags that belong only to this page. The logic which defines if tag belongs to the page is described
      * at {@link #flushPageTags(PdfPage)}.
+     *
      * @param page page that defines which tags are to be removed
-     * @return current {@link TagStructureContext} instance.
+     * @return current {@link TagStructureContext} instance
      */
     public TagStructureContext removePageTags(PdfPage page) {
         PdfStructTreeRoot structTreeRoot = document.getStructTreeRoot();
@@ -392,7 +395,9 @@ public class TagStructureContext {
      * <br><br>
      * If some of the page's tags have waiting state (see {@link WaitingTagsManager} these tags are considered
      * as not yet finished ones, and they and their children won't be flushed.
-     * @param page a page which tags will be flushed.
+     *
+     * @param page a page which tags will be flushed
+     * @return current {@link TagStructureContext} instance
      */
     public TagStructureContext flushPageTags(PdfPage page) {
         PdfStructTreeRoot structTreeRoot = document.getStructTreeRoot();

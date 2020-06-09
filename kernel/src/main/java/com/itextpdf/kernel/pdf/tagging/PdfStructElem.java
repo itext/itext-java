@@ -475,8 +475,8 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
     /**
      * Returns files associated with structure element.
      *
-     * @param create iText will create AF array if it doesn't exist and create value is true
-     * @return associated files array.
+     * @param create defines whether AF arrays will be created if it doesn't exist
+     * @return associated files array
      */
     public PdfArray getAssociatedFiles(boolean create) {
         PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);

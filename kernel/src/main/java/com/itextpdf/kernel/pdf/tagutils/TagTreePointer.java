@@ -168,7 +168,8 @@ public class TagTreePointer {
      * NOTE: It's important to set a {@code null} for this value, when tagging of this stream content is finished.
      *
      * @param contentStream the content stream which content will be tagged with this instance of {@code TagTreePointer}
-     *                      or {@code null} if content stream tagging is finished.
+     *                      or {@code null} if content stream tagging is finished
+     * @return current {@link TagTreePointer} instance
      */
     public TagTreePointer setContentStreamForTagging(PdfStream contentStream) {
         this.contentStream = contentStream;
