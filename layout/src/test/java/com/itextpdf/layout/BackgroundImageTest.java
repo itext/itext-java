@@ -58,11 +58,9 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.BackgroundImage;
 import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.Transform;
-import com.itextpdf.layout.property.Transform.SingleTransform;
-import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
@@ -120,6 +118,34 @@ public class BackgroundImageTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
         BackgroundImage backgroundImage = new BackgroundImage(gradientBuilder);
         backgroundImageGenericTest("backgroundImageWithLinearGradientAndTransform", backgroundImage, Math.PI / 4);
+    }
+
+    @Test
+    public void backgroundImageForText() throws IOException, InterruptedException {
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg"));
+        BackgroundImage backgroundImage = new BackgroundImage(xObject);
+
+        Assert.assertTrue(backgroundImage.isRepeatX());
+        Assert.assertTrue(backgroundImage.isRepeatY());
+
+        Assert.assertTrue(backgroundImage.isBackgroundSpecified());
+
+        String outFileName = destinationFolder + "backgroundImageForText.pdf";
+        String cmpFileName = sourceFolder + "cmp_backgroundImageForText.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
+            Document doc = new Document(pdfDocument);
+
+            Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
+            textElement.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+            textElement.setFontSize(50);
+
+            doc.add(new Paragraph(textElement));
+
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test

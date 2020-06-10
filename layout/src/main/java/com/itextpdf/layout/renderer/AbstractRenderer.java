@@ -506,7 +506,7 @@ public abstract class AbstractRenderer implements IRenderer {
             if (isTagged) {
                 drawContext.getCanvas().openTag(new CanvasArtifact());
             }
-            Rectangle backgroundArea = applyMargins(bBox, false);
+            Rectangle backgroundArea = getBackgroundArea(applyMargins(bBox, false));
             if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                 logger.warn(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
@@ -588,6 +588,16 @@ public abstract class AbstractRenderer implements IRenderer {
                 .rectangle(formBBox)
                 .fill();
         return xObject;
+    }
+
+    /**
+     * Evaluate the actual background
+     *
+     * @param occupiedAreaWithMargins the current occupied area with applied margins
+     * @return the actual background area
+     */
+    protected Rectangle getBackgroundArea(Rectangle occupiedAreaWithMargins) {
+        return occupiedAreaWithMargins;
     }
 
     protected boolean clipBorderArea(DrawContext drawContext, Rectangle outerBorderBox) {

@@ -856,37 +856,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
     }
 
-    @Override
-    public void drawBackground(DrawContext drawContext) {
-        Background background = this.<Background>getProperty(Property.BACKGROUND);
-        Float textRise = this.getPropertyAsFloat(Property.TEXT_RISE);
-        Rectangle bBox = getOccupiedAreaBBox();
-        Rectangle backgroundArea = applyMargins(bBox, false);
-        float bottomBBoxY = backgroundArea.getY();
-        float leftBBoxX = backgroundArea.getX();
-        if (background != null) {
-            boolean isTagged = drawContext.isTaggingEnabled();
-            PdfCanvas canvas = drawContext.getCanvas();
-            if (isTagged) {
-                canvas.openTag(new CanvasArtifact());
-            }
-            boolean backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
-            canvas.saveState().setFillColor(background.getColor());
-            TransparentColor backgroundColor = new TransparentColor(background.getColor(), background.getOpacity());
-            backgroundColor.applyFillTransparency(drawContext.getCanvas());
-            canvas.rectangle(leftBBoxX - background.getExtraLeft(), bottomBBoxY + (float) textRise - background.getExtraBottom(),
-                    backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
-                    backgroundArea.getHeight() - (float) textRise + background.getExtraTop() + background.getExtraBottom());
-            canvas.fill().restoreState();
-            if (backgroundAreaIsClipped) {
-                drawContext.getCanvas().restoreState();
-            }
-            if (isTagged) {
-                canvas.closeTag();
-            }
-        }
-    }
-
     /**
      * Trims any whitespace characters from the start of the {@link GlyphLine}
      * to be rendered.
@@ -1114,6 +1083,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     private boolean hasOtfFont() {
         return font instanceof PdfType0Font && font.getFontProgram() instanceof TrueTypeFont;
+    }
+
+    @Override
+    protected Rectangle getBackgroundArea(Rectangle occupiedAreaWithMargins) {
+        float textRise = (float) this.getPropertyAsFloat(Property.TEXT_RISE);
+        return occupiedAreaWithMargins.moveUp(textRise).decreaseHeight(textRise);
     }
 
     @Override
