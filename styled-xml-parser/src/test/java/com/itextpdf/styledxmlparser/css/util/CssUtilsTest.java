@@ -50,6 +50,10 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -63,6 +67,47 @@ public class CssUtilsTest extends ExtendedITextTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
+
+    @Test
+    public void extractShorthandPropertiesFromEmptyStringTest() {
+        String sourceString = "";
+        List<List<String>> expected = new ArrayList<>();
+        expected.add(new ArrayList<String>());
+
+        Assert.assertEquals(expected, CssUtils.extractShorthandProperties(sourceString));
+    }
+
+    @Test
+    public void extractShorthandPropertiesFromStringWithOnePropertyTest() {
+        String sourceString = "square inside url('sqpurple.gif')";
+        List<List<String>> expected = new ArrayList<>();
+        List<String> layer = new ArrayList<>();
+        layer.add("square");
+        layer.add("inside");
+        layer.add("url('sqpurple.gif')");
+        expected.add(layer);
+
+        Assert.assertEquals(expected, CssUtils.extractShorthandProperties(sourceString));
+    }
+
+    @Test
+    public void extractShorthandPropertiesFromStringWithMultiplyPropertiesTest() {
+        String sourceString = "center no-repeat url('sqpurple.gif'), #eee 35% url('sqpurple.gif')";
+        List<List<String>> expected = new ArrayList<>();
+        List<String> layer = new ArrayList<>();
+        layer.add("center");
+        layer.add("no-repeat");
+        layer.add("url('sqpurple.gif')");
+        expected.add(layer);
+
+        layer = new ArrayList<>();
+        layer.add("#eee");
+        layer.add("35%");
+        layer.add("url('sqpurple.gif')");
+        expected.add(layer);
+
+        Assert.assertEquals(expected, CssUtils.extractShorthandProperties(sourceString));
+    }
 
     @Test
     public void parseAbsoluteLengthFromNAN() {

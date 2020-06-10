@@ -43,19 +43,16 @@
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
-import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
-import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;
-import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.TokenType;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.util.CssGradientUtil;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import java.util.ArrayList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -113,14 +110,8 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
             );
         }
 
-        List<String> props = new ArrayList<>();
-        CssDeclarationValueTokenizer tokenizer = new CssDeclarationValueTokenizer(shorthandExpression);
-        Token nextToken = tokenizer.getNextValidToken();
         // TODO: DEVSIX-2027 ignore multiple backgrounds at the moment (stop parsing after comma)
-        while (nextToken != null && nextToken.getType() != TokenType.COMMA) {
-            props.add(nextToken.getValue());
-            nextToken = tokenizer.getNextValidToken();
-        }
+        List<String> props = CssUtils.extractShorthandProperties(shorthandExpression).get(0);
 
         String[] resolvedProps = new String[8];
         boolean slashEncountered = false;

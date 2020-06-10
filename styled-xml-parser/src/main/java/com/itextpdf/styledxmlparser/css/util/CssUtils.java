@@ -49,6 +49,9 @@ import com.itextpdf.layout.font.RangeBuilder;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
+import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;
+import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.TokenType;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 
 import java.util.ArrayList;
@@ -82,6 +85,33 @@ public class CssUtils {
      * Creates a new {@link CssUtils} instance.
      */
     private CssUtils() {
+    }
+
+    /**
+     * Extracts shorthand properties as list of string lists from a string, where the top level
+     * list is shorthand property and the lower level list is properties included in shorthand property.
+     *
+     * @param str the source string with shorthand properties
+     * @return the list of string lists
+     */
+    public static List<List<String>> extractShorthandProperties(String str) {
+        List<List<String>> result = new ArrayList<>();
+        List<String> currentLayer = new ArrayList<>();
+        CssDeclarationValueTokenizer tokenizer = new CssDeclarationValueTokenizer(str);
+
+        Token currentToken = tokenizer.getNextValidToken();
+        while (currentToken != null) {
+            if (currentToken.getType() == TokenType.COMMA) {
+                result.add(currentLayer);
+                currentLayer = new ArrayList<>();
+            } else {
+                currentLayer.add(currentToken.getValue());
+            }
+            currentToken = tokenizer.getNextValidToken();
+        }
+        result.add(currentLayer);
+
+        return result;
     }
 
     /**

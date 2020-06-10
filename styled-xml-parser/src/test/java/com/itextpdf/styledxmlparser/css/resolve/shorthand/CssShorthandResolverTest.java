@@ -46,8 +46,6 @@ import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.util.Set;
 import java.util.HashSet;
@@ -55,12 +53,56 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class CssShorthandResolverTest extends ExtendedITextTest {
+    @Test
+    public void linearGradientInlistStyleImageTest() {
+        String shorthandExpression = "inside linear-gradient(red, green, blue)";
+        Set<String> expectedResolvedProperties = new HashSet<>(Arrays.asList(
+                "list-style-type: initial",
+                "list-style-position: inside",
+                "list-style-image: linear-gradient(red,green,blue)"
+        ));
 
+        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver(CommonCssConstants.LIST_STYLE);
+        Assert.assertNotNull(resolver);
+        List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand(shorthandExpression);
+        compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
+    }
+
+    @Test
+    public void repeatingLinearGradientInlistStyleImageTest() {
+        String shorthandExpression = "square inside repeating-linear-gradient(45deg, blue 7%, red 10%)";
+        Set<String> expectedResolvedProperties = new HashSet<>(Arrays.asList(
+                "list-style-type: square",
+                "list-style-position: inside",
+                "list-style-image: repeating-linear-gradient(45deg,blue 7%,red 10%)"
+        ));
+
+        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver(CommonCssConstants.LIST_STYLE);
+        Assert.assertNotNull(resolver);
+        List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand(shorthandExpression);
+        compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
+    }
+
+    @Test
+    public void noneInlistStyleImageTest() {
+        String shorthandExpression = "circle none inside";
+        Set<String> expectedResolvedProperties = new HashSet<>(Arrays.asList(
+                "list-style-type: circle",
+                "list-style-position: inside",
+                "list-style-image: none"
+        ));
+
+        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver(CommonCssConstants.LIST_STYLE);
+        Assert.assertNotNull(resolver);
+        List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand(shorthandExpression);
+        compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
+    }
 
     @Test
     public void fontTest01() {
@@ -75,7 +117,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ) );
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
-        assertNotNull( resolver );
+        Assert.assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );
     }
@@ -93,7 +135,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ) );
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
-        assertNotNull( resolver );
+        Assert.assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );
     }
@@ -111,7 +153,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ) );
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
-        assertNotNull( resolver );
+        Assert.assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );
     }
@@ -129,7 +171,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ) );
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
-        assertNotNull( resolver );
+        Assert.assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );
     }
@@ -147,7 +189,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ) );
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
-        assertNotNull( resolver );
+        Assert.assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );
     }
@@ -165,7 +207,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ) );
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
-        assertNotNull( resolver );
+        Assert.assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );
     }
@@ -183,7 +225,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ) );
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
-        assertNotNull( resolver );
+        Assert.assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );
     }
@@ -201,7 +243,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ) );
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
-        assertNotNull( resolver );
+        Assert.assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );
     }
@@ -219,7 +261,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         ) );
 
         IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver( CommonCssConstants.FONT );
-        assertNotNull( resolver );
+        Assert.assertNotNull( resolver );
         List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand( shorthandExpression );
         compareResolvedProps( resolvedShorthandProps, expectedResolvedProperties );
     }
@@ -253,7 +295,7 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
         }
 
         if (areDifferent) {
-            fail( sb.toString() );
+            Assert.fail( sb.toString() );
         }
     }
 }
