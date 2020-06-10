@@ -48,6 +48,10 @@ package com.itextpdf.kernel.pdf.canvas;
  */
 public class PdfCanvasConstants {
 
+    private PdfCanvasConstants() {
+        // This private constructor will prevent the instantiation of this class
+    }
+
     /**
      * The text rendering mode determines whether showing text causes glyph
      * outlines to be stroked, filled, used as a clipping boundary, or some
@@ -91,6 +95,9 @@ public class PdfCanvasConstants {
      * 8.4.3.3 "Line Cap Style".
      */
     public static class LineCapStyle {
+        private LineCapStyle(){
+            // This private constructor will prevent the instantiation of this class
+        }
         /**
          * The stroke is squared of at the endpoint of the path. There is no
          * projection beyond the end of the path.
@@ -118,6 +125,9 @@ public class PdfCanvasConstants {
      * 8.4.3.4 "Line Join Style".
      */
     public static class LineJoinStyle {
+        private LineJoinStyle(){
+            // This private constructor will prevent the instantiation of this class
+        }
         /**
          * The outer edges of the strokes for the two segments are extended
          * until they meet at an angle, as in a picture frame. If the segments
@@ -140,6 +150,9 @@ public class PdfCanvasConstants {
     }
 
     public static class FillingRule {
+        private FillingRule() {
+            // This private constructor will prevent the instantiation of this class
+        }
 
         public static final int NONZERO_WINDING = 1;
 
