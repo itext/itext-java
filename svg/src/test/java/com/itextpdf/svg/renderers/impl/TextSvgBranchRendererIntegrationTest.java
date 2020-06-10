@@ -246,4 +246,10 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
     public void textFontSizeExUnitsTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textFontSizeExUnitsTest");
     }
+
+    @Test
+    // TODO change cmp after DEVSIX-4143 is fixed
+    public void tspanWithOneAbsoluteCoordinateTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanWithOneAbsoluteCoordinateTest");
+    }
 }

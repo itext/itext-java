@@ -1,0 +1,5 @@
+<svg x="0" y="0" width="600" height="400" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <text x="100" y="300" font-family="Courier" font-size="64">
+        Word1<tspan x="300">Word2</tspan>
+    </text>
+</svg>
