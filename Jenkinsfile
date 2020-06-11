@@ -37,6 +37,13 @@ pipeline {
     }
 
     stages {
+	    stage('Abort possible previous builds') {
+            steps {
+                script {
+                    abortPreviousBuilds()
+                }
+            }
+        }
         stage('Build') {
             options {
                 retry(2)
