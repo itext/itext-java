@@ -1391,8 +1391,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * This method returns a complete outline tree of the whole document.
      *
-     * @param updateOutlines if the flag is true, the method read the whole document and creates outline tree.
-     *                       If false the method gets cached outline tree (if it was cached via calling getOutlines method before).
+     * @param updateOutlines if the flag is {@code true}, the method reads the whole document and creates outline tree.
+     *                       If the flag is {@code false}, the method gets cached outline tree
+     *                       (if it was cached via calling getOutlines method before).
      * @return fully initialize {@link PdfOutline} object.
      */
     public PdfOutline getOutlines(boolean updateOutlines) {

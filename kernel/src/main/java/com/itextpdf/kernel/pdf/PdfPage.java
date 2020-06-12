@@ -436,6 +436,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param toDocument a document to copy to.
      * @return copied {@link PdfFormXObject} object.
+     * @throws IOException if an I/O error occurs.
      */
     public PdfFormXObject copyAsFormXObject(PdfDocument toDocument) throws IOException {
         PdfFormXObject xObject = new PdfFormXObject(getCropBox());
@@ -955,6 +956,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This method gets outlines of a current page
      *
+     * @param updateOutlines if the flag is {@code true}, the method reads the whole document and creates outline tree.
+     *                       If the flag is {@code false}, the method gets cached outline tree
+     *                       (if it was cached via calling getOutlines method before).
      * @return return all outlines of a current page
      */
     public List<PdfOutline> getOutlines(boolean updateOutlines) {
@@ -976,6 +980,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Default value - {@code false}.
      *
      * @param ignorePageRotationForContent - true to ignore rotation of the new content on the rotated page.
+     * @return this {@link PdfPage} instance.
      */
     public PdfPage setIgnorePageRotationForContent(boolean ignorePageRotationForContent) {
         this.ignorePageRotationForContent = ignorePageRotationForContent;

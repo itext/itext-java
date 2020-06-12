@@ -117,6 +117,7 @@ public class PdfReader implements Closeable, Serializable {
      *
      * @param byteSource source of bytes for the reader
      * @param properties properties of the created reader
+     * @throws IOException if an I/O error occurs
      */
     public PdfReader(IRandomAccessSource byteSource, ReaderProperties properties) throws IOException {
         this.properties = properties;
@@ -197,6 +198,10 @@ public class PdfReader implements Closeable, Serializable {
     /**
      * The iText is not responsible if you decide to change the
      * value of this parameter.
+     *
+     * @param unethicalReading true to enable unethicalReading, false to disable it.
+     *                         By default unethicalReading is disabled.
+     * @return this {@link PdfReader} instance.
      */
     public PdfReader setUnethicalReading(boolean unethicalReading) {
         this.unethicalReading = unethicalReading;
@@ -315,6 +320,7 @@ public class PdfReader implements Closeable, Serializable {
      * Reads, decrypt and optionally decode stream bytes.
      * Note, this method doesn't store actual bytes in any internal structures.
      *
+     * @param stream a {@link PdfStream} stream instance to be read and optionally decoded.
      * @param decode true if to get decoded stream bytes, false if to leave it originally encoded.
      * @return byte[] array.
      * @throws IOException on error.
@@ -332,6 +338,7 @@ public class PdfReader implements Closeable, Serializable {
      * Reads and decrypt stream bytes.
      * Note, this method doesn't store actual bytes in any internal structures.
      *
+     * @param stream a {@link PdfStream} stream instance to be read
      * @return byte[] array.
      * @throws IOException on error.
      */
@@ -383,9 +390,10 @@ public class PdfReader implements Closeable, Serializable {
     }
 
     /**
-     * Reads, decrypt and optionally decode stream bytes into {@link ByteArrayInputStream}.
+     * Reads, decrypts and optionally decodes stream bytes into {@link ByteArrayInputStream}.
      * User is responsible for closing returned stream.
      *
+     * @param stream a {@link PdfStream} stream instance to be read
      * @param decode true if to get decoded stream, false if to leave it originally encoded.
      * @return InputStream or {@code null} if reading was failed.
      * @throws IOException on error.
@@ -561,6 +569,7 @@ public class PdfReader implements Closeable, Serializable {
     /**
      * Gets encryption algorithm and access permissions.
      *
+     * @return {@code int} value corresponding to a certain type of encryption.
      * @see EncryptionConstants
      * @throws PdfException if the method has been invoked before the PDF document was read.
      */
@@ -653,6 +662,9 @@ public class PdfReader implements Closeable, Serializable {
     }
 
     /**
+     * Checks if the {@link PdfDocument} read with this {@link PdfReader} is encrypted.
+     *
+     * @return {@code true} is the document is encrypted, otherwise {@code false}.
      * @throws PdfException if the method has been invoked before the PDF document was read.
      */
     public boolean isEncrypted() {
@@ -665,6 +677,8 @@ public class PdfReader implements Closeable, Serializable {
 
     /**
      * Parses the entire PDF
+     *
+     * @throws IOException if an I/O error occurs.
      */
     protected void readPdf() throws IOException {
         String version = tokens.checkPdfHeader();
