@@ -23,6 +23,8 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -61,6 +63,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
     public static final String SRC = "./src/test/resources/com/itextpdf/layout/WordWrapUnitTest/glyphLineData.txt";
     public static final String THAI_FONT = "./src/test/resources/com/itextpdf/layout/fonts/NotoSansThai-Regular.ttf";
     public static final String REGULAR_FONT = "./src/test/resources/com/itextpdf/layout/fonts/NotoSans-Regular.ttf";
+    public static final String KHMER_FONT = "./src/test/resources/com/itextpdf/layout/fonts/KhmerOS.ttf";
 
     // หากอากาศดีในวันพรุ่งนี้เราจะไปปิกนิก - one sentence, multiple words.
     public static final String THAI_TEXT = "\u0E2B\u0E32\u0E01\u0E2D\u0E32\u0E01\u0E32\u0E28\u0E14\u0E35"
@@ -332,8 +335,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
 
         Assert.assertEquals(5, lastFittingChildRendererData.childIndex);
         Assert.assertEquals(LayoutResult.NOTHING, lastFittingChildRendererData.childLayoutResult.getStatus());
-        float occupiedAreaWidth = lastFittingChildRendererData.childLayoutResult.getOccupiedArea().getBBox().getWidth();
-        Assert.assertEquals(500, occupiedAreaWidth, 0.0001);
+        Assert.assertNull(lastFittingChildRendererData.childLayoutResult.getOccupiedArea());
     }
 
     @Test
@@ -693,7 +695,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
     public void curWidthZeroDecrement() {
         int oldNewChildPos = 1;
         float decrement = LineRenderer.getCurWidthSpecialScriptsDecrement(oldNewChildPos, oldNewChildPos,
-                new LayoutResult(0, null, null, null), new HashMap<Integer, LayoutResult>());
+                new HashMap<Integer, LayoutResult>());
         Assert.assertEquals(0.0f, decrement, 0.0001);
     }
 
@@ -702,7 +704,6 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         float widthOfNewNothingResult = 500;
         LayoutArea occupiedArea = new LayoutArea(1, new Rectangle(0, 0, widthOfNewNothingResult, 0));
         LayoutResult oldResult = new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
-        LayoutResult newResult = new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, null);
 
         float simpleWidth = 200;
         LayoutResult simpleDecrement = new LayoutResult(LayoutResult.FULL,
@@ -711,17 +712,15 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         specialScriptLayoutResults.put(0, oldResult);
         // leave specialScriptLayoutResults.get(1) null, as if childRenderers.get(1) is floating
         specialScriptLayoutResults.put(2, simpleDecrement);
-        float decrement = LineRenderer.getCurWidthSpecialScriptsDecrement(3, 0, newResult, specialScriptLayoutResults);
-        Assert.assertEquals(2 * widthOfNewNothingResult + simpleWidth, decrement, 0.00001);
+        float decrement = LineRenderer.getCurWidthSpecialScriptsDecrement(3, 0, specialScriptLayoutResults);
+        Assert.assertEquals(widthOfNewNothingResult + simpleWidth, decrement, 0.00001);
     }
 
     @Test
     public void curWidthLayoutResultPartial() {
         float widthOfNewPartialResult = 500;
         LayoutArea oldOccupiedArea = new LayoutArea(1, new Rectangle(0, 0, widthOfNewPartialResult, 0));
-        LayoutArea newOccupiedArea = new LayoutArea(1, new Rectangle(0, 0, widthOfNewPartialResult / 2, 0));
         LayoutResult oldResult = new LayoutResult(LayoutResult.FULL, oldOccupiedArea, null, null);
-        LayoutResult newResult = new LayoutResult(LayoutResult.PARTIAL, newOccupiedArea, null, null);
 
         float simpleWidth = 200;
         LayoutResult simpleDecrement = new LayoutResult(LayoutResult.FULL,
@@ -730,7 +729,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         specialScriptLayoutResults.put(0, oldResult);
         // leave specialScriptLayoutResults.get(1) null, as if childRenderers.get(1) is floating
         specialScriptLayoutResults.put(2, simpleDecrement);
-        float decrement = LineRenderer.getCurWidthSpecialScriptsDecrement(3, 0, newResult, specialScriptLayoutResults);
+        float decrement = LineRenderer.getCurWidthSpecialScriptsDecrement(3, 0, specialScriptLayoutResults);
         Assert.assertEquals(widthOfNewPartialResult + simpleWidth, decrement, 0.00001);
     }
 
@@ -761,5 +760,61 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         lineRenderer.updateFloatsOverflowedToNextLine(floatsOverflowedToNextLineIRenderers, indicesOfFloats,1);
         Assert.assertEquals(1, floatsOverflowedToNextLineIRenderers.size());
         Assert.assertEquals(onlyFloatToRemain, floatsOverflowedToNextLineIRenderers.get(0));
+    }
+
+    @Test
+    public void possibleBreakWithinActualText() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document document = new Document(pdfDocument);
+
+        LineRenderer lineRenderer = new LineRenderer();
+        lineRenderer.setParent(document.getRenderer());
+
+        TextRenderer textRenderer = new TextRenderer(new Text(""));
+
+        List<Glyph> glyphs = new ArrayList<>();
+        glyphs.add(new Glyph(629, 378, new char[]{'\u17c3'}));
+        glyphs.add(new Glyph(578, 756, new char[]{'\u1790'}));
+        glyphs.add(new Glyph(386, 0, new char[]{'\u17d2', '\u1784'}));
+        glyphs.add(new Glyph(627, 378, new char[]{'\u17c1'}));
+        glyphs.add(new Glyph(581, 756, new char[]{'\u1793'}));
+        glyphs.add(new Glyph(633, 512, new char[]{'\u17c7'}));
+        GlyphLine glyphLine = new GlyphLine(glyphs);
+        glyphLine.setActualText(0, 3, "\u1790\u17d2\u1784\u17c3");
+        glyphLine.setActualText(3, 6, "\u1793\u17c1\u17c7");
+
+        textRenderer.setText(glyphLine, PdfFontFactory.createFont(KHMER_FONT, PdfEncodings.IDENTITY_H));
+
+        lineRenderer.addChild(textRenderer);
+        List<Integer> possibleBreakPoints = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7));
+        lineRenderer.distributePossibleBreakPointsOverSequentialTextRenderers(
+                0, 1, possibleBreakPoints, new ArrayList<Integer>());
+        List<Integer> distributed = ((TextRenderer) lineRenderer.getChildRenderers().get(0))
+                .getSpecialScriptsWordBreakPoints();
+        Assert.assertEquals(new ArrayList<Integer>(Arrays.asList(3, 6)), distributed);
+    }
+
+    @Test
+    public void trimFirstOnePossibleBreak() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document document = new Document(pdfDocument);
+        PdfFont pdfFont = PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H);
+
+        // " อากาศ"
+        String thai = "\u0020" + THAI_WORD;
+        TextRenderer textRenderer = new TextRenderer(new Text(""));
+        textRenderer.setProperty(Property.FONT, pdfFont);
+        textRenderer.setText(thai);
+        textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(1)));
+
+        LineRenderer lineRenderer = new LineRenderer();
+        lineRenderer.setParent(document.getRenderer());
+        lineRenderer.addChild(textRenderer);
+
+        lineRenderer.trimFirst();
+        TextRenderer childTextRenderer = (TextRenderer) lineRenderer.getChildRenderers().get(0);
+        Assert.assertNotNull(childTextRenderer.getSpecialScriptsWordBreakPoints());
+        Assert.assertEquals(1, childTextRenderer.getSpecialScriptsWordBreakPoints().size());
+        Assert.assertEquals(-1, (int) childTextRenderer.getSpecialScriptsWordBreakPoints().get(0));
     }
 }

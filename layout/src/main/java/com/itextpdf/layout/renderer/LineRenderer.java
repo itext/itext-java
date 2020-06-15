@@ -44,6 +44,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.otf.ActualTextIterator;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
@@ -448,7 +449,7 @@ public class LineRenderer extends AbstractRenderer {
                                 (childPos, specialScriptLayoutResults, wasParentsHeightClipped, floatsOverflowedToNextLine);
 
                 curWidth -= getCurWidthSpecialScriptsDecrement(childPos, lastFittingChildRendererData.childIndex,
-                        lastFittingChildRendererData.childLayoutResult, specialScriptLayoutResults);
+                        specialScriptLayoutResults);
 
                 childPos = lastFittingChildRendererData.childIndex;
                 childResult = lastFittingChildRendererData.childLayoutResult;
@@ -1202,7 +1203,7 @@ public class LineRenderer extends AbstractRenderer {
      *
      * @return total number of trimmed glyphs.
      */
-    private int trimFirst() {
+    int trimFirst() {
         int totalNumberOfTrimmedGlyphs = 0;
         for (IRenderer renderer : childRenderers) {
             if (FloatingHelper.isRendererFloating(renderer)) {
@@ -1267,7 +1268,7 @@ public class LineRenderer extends AbstractRenderer {
         }
     }
 
-    static float getCurWidthSpecialScriptsDecrement(int childPos, int newChildPos, LayoutResult newLayoutResult,
+    static float getCurWidthSpecialScriptsDecrement(int childPos, int newChildPos,
                                                     Map<Integer, LayoutResult> specialScriptLayoutResults) {
         float decrement = 0.0f;
         // if childPos == newChildPos, curWidth doesn't include width of the current childRenderer yet, so no decrement is needed
@@ -1276,12 +1277,6 @@ public class LineRenderer extends AbstractRenderer {
                 if (specialScriptLayoutResults.get(i) != null) {
                     decrement += specialScriptLayoutResults.get(i).getOccupiedArea().getBBox().getWidth();
                 }
-            }
-
-            // when LayoutResult.NOTHING has artificially been created in getIndexOfRendererWithLastFullyFittingWord,
-            // it's occupiedArea isn't 0.0x0.0 as it should be, so we need to subtract it here twice, because it'll be added later
-            if (newLayoutResult.getStatus() == LayoutResult.NOTHING) {
-                decrement += specialScriptLayoutResults.get(newChildPos).getOccupiedArea().getBBox().getWidth();
             }
         }
 
@@ -1315,6 +1310,7 @@ public class LineRenderer extends AbstractRenderer {
         String sequentialTextContent = info.sequentialTextContent;
         List<Integer> indicesOfFloating = info.indicesOfFloating;
         List<Integer> possibleBreakPointsGlobal = TypographyUtils.getPossibleBreaks(sequentialTextContent);
+
         distributePossibleBreakPointsOverSequentialTextRenderers(childPos, numberOfSequentialTextRenderers,
                 possibleBreakPointsGlobal, indicesOfFloating);
     }
@@ -1345,26 +1341,35 @@ public class LineRenderer extends AbstractRenderer {
     void distributePossibleBreakPointsOverSequentialTextRenderers(
             int childPos, int numberOfSequentialTextRenderers, List<Integer> possibleBreakPointsGlobal,
             List<Integer> indicesOfFloating) {
-        int alreadyProcessedNumberOfGlyphs = 0;
+        int alreadyProcessedNumberOfCharsWithinGlyphLines = 0;
         int indexToBeginWith = 0;
         for (int i = 0; i < numberOfSequentialTextRenderers; i++) {
             if (!indicesOfFloating.contains(i)) {
                 TextRenderer childTextRenderer = (TextRenderer) childRenderers.get(childPos + i);
-                int length = childTextRenderer.length();
+                List<Integer> amountOfCharsBetweenTextStartAndActualTextChunk = new ArrayList<>();
+                List<Integer> glyphLineBasedIndicesOfActualTextChunkEnds = new ArrayList<>();
+
+                fillActualTextChunkRelatedLists(childTextRenderer.getText(),
+                        amountOfCharsBetweenTextStartAndActualTextChunk, glyphLineBasedIndicesOfActualTextChunkEnds);
+
                 List<Integer> possibleBreakPoints = new ArrayList<Integer>();
                 for (int j = indexToBeginWith; j < possibleBreakPointsGlobal.size(); j++) {
-                    int shiftedBreakPoint = possibleBreakPointsGlobal.get(j) - alreadyProcessedNumberOfGlyphs;
-                    if (shiftedBreakPoint > length) {
+                    int shiftedBreakPoint = possibleBreakPointsGlobal.get(j)
+                            - alreadyProcessedNumberOfCharsWithinGlyphLines;
+                    int amountOfCharsBetweenTextStartAndTextEnd = amountOfCharsBetweenTextStartAndActualTextChunk
+                            .get(amountOfCharsBetweenTextStartAndActualTextChunk.size() - 1);
+                    if (shiftedBreakPoint > amountOfCharsBetweenTextStartAndTextEnd) {
                         indexToBeginWith = j;
-                        alreadyProcessedNumberOfGlyphs += length;
+                        alreadyProcessedNumberOfCharsWithinGlyphLines += amountOfCharsBetweenTextStartAndTextEnd;
                         break;
                     }
-                    possibleBreakPoints.add(shiftedBreakPoint + childTextRenderer.text.start);
+                    possibleBreakPoints.add(shiftedBreakPoint);
                 }
-                if (possibleBreakPoints.isEmpty()) {
-                    possibleBreakPoints.add(-1);
-                }
-                childTextRenderer.setSpecialScriptsWordBreakPoints(possibleBreakPoints);
+
+                List<Integer> glyphLineBasedPossibleBreakPoints = convertPossibleBreakPointsToGlyphLineBased(
+                        possibleBreakPoints, amountOfCharsBetweenTextStartAndActualTextChunk,
+                        glyphLineBasedIndicesOfActualTextChunkEnds);
+                childTextRenderer.setSpecialScriptsWordBreakPoints(glyphLineBasedPossibleBreakPoints);
             }
         }
     }
@@ -1402,9 +1407,9 @@ public class LineRenderer extends AbstractRenderer {
             if (fittingLengthWithTrailingRightSideSpaces > 0) {
                 List<Integer> breakPoints = textRenderer.getSpecialScriptsWordBreakPoints();
                 if (breakPoints != null && breakPoints.size() > 0 && breakPoints.get(0) != -1) {
-                    int possibleBreakPointPosition =
-                            textRenderer.findPossibleBreaksSplitPosition(
-                                    fittingLengthWithTrailingRightSideSpaces + textRenderer.text.start, false);
+                    int possibleBreakPointPosition = TextRenderer.findPossibleBreaksSplitPosition(
+                            textRenderer.getSpecialScriptsWordBreakPoints(),
+                            fittingLengthWithTrailingRightSideSpaces + textRenderer.text.start, false);
                     if (possibleBreakPointPosition > -1) {
                         splitPosition = breakPoints.get(possibleBreakPointPosition) - amountOfTrailingRightSideSpaces;
                         needToSplitRendererContainingLastFullyFittingWord = splitPosition != textRenderer.text.end;
@@ -1451,7 +1456,8 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
 
-        updateFloatsOverflowedToNextLine(floatsOverflowedToNextLine, indicesOfFloats, indexOfRendererContainingLastFullyFittingWord);
+        updateFloatsOverflowedToNextLine(floatsOverflowedToNextLine, indicesOfFloats,
+                indexOfRendererContainingLastFullyFittingWord);
 
         if (returnLayoutResult == null) {
             returnLayoutResult = childPosLayoutResult;
@@ -1468,9 +1474,7 @@ public class LineRenderer extends AbstractRenderer {
                     childRenderer.setSpecialScriptFirstNotFittingIndex(-1);
                 }
             } else {
-                LayoutArea occupiedArea = specialScriptLayoutResults.get(indexOfRendererContainingLastFullyFittingWord)
-                        .getOccupiedArea();
-                returnLayoutResult = new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, childRenderer);
+                returnLayoutResult = new TextLayoutResult(LayoutResult.NOTHING, null, null, childRenderer);
             }
         }
 
@@ -1558,6 +1562,55 @@ public class LineRenderer extends AbstractRenderer {
 
     private boolean isInlineBlockChild(IRenderer child) {
         return child instanceof BlockRenderer || child instanceof TableRenderer;
+    }
+
+    // ActualTextChunk is either an ActualText or a single independent glyph
+    private static void fillActualTextChunkRelatedLists(
+            GlyphLine glyphLine, List<Integer> amountOfCharsBetweenTextStartAndActualTextChunk,
+            List<Integer> glyphLineBasedIndicesOfActualTextChunkEnds) {
+        ActualTextIterator actualTextIterator = new ActualTextIterator(glyphLine);
+
+        int amountOfCharsBetweenTextStartAndCurrentActualTextStartOrGlyph = 0;
+        while (actualTextIterator.hasNext()) {
+            GlyphLine.GlyphLinePart part = actualTextIterator.next();
+            int amountOfCharsWithinCurrentActualTextOrGlyph = 0;
+            if (part.actualText != null) {
+                amountOfCharsWithinCurrentActualTextOrGlyph = part.actualText.length();
+                int nextAmountOfChars = amountOfCharsWithinCurrentActualTextOrGlyph
+                        + amountOfCharsBetweenTextStartAndCurrentActualTextStartOrGlyph;
+                amountOfCharsBetweenTextStartAndActualTextChunk.add(nextAmountOfChars);
+                glyphLineBasedIndicesOfActualTextChunkEnds.add(part.end);
+                amountOfCharsBetweenTextStartAndCurrentActualTextStartOrGlyph = nextAmountOfChars;
+            } else {
+                for (int j = part.start; j < part.end; j++) {
+                    char[] chars = glyphLine.get(j).getChars();
+                    amountOfCharsWithinCurrentActualTextOrGlyph = chars != null ? chars.length : 0;
+                    int nextAmountOfChars = amountOfCharsWithinCurrentActualTextOrGlyph
+                            + amountOfCharsBetweenTextStartAndCurrentActualTextStartOrGlyph;
+                    amountOfCharsBetweenTextStartAndActualTextChunk.add(nextAmountOfChars);
+                    glyphLineBasedIndicesOfActualTextChunkEnds.add(j + 1);
+                    amountOfCharsBetweenTextStartAndCurrentActualTextStartOrGlyph = nextAmountOfChars;
+                }
+            }
+        }
+    }
+
+    private static List<Integer> convertPossibleBreakPointsToGlyphLineBased(
+            List<Integer> possibleBreakPoints, List<Integer> amountOfChars, List<Integer> indices) {
+        if (possibleBreakPoints.isEmpty()) {
+            possibleBreakPoints.add(-1);
+            return possibleBreakPoints;
+        } else {
+            List<Integer> glyphLineBased = new ArrayList<>();
+
+            for (int j : possibleBreakPoints) {
+                int found = TextRenderer.findPossibleBreaksSplitPosition(amountOfChars, j, true);
+                if (found >= 0) {
+                    glyphLineBased.add(indices.get(found));
+                }
+            }
+            return glyphLineBased;
+        }
     }
 
     static class RendererGlyph {

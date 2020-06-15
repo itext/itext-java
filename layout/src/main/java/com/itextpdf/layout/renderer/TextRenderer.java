@@ -390,7 +390,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 }
 
                 boolean endOfWordBelongingToSpecialScripts = textContainsSpecialScriptGlyphs(true)
-                        && findPossibleBreaksSplitPosition(ind + 1, true) >= 0;
+                        && findPossibleBreaksSplitPosition(specialScriptsWordBreakPoints,
+                        ind + 1, true) >= 0;
                 if (ind + 1 == text.end || splitCharacters.isSplitCharacter(text, ind) ||
                         splitCharacters.isSplitCharacter(text, ind + 1) &&
                                 TextUtil.isSpaceOrWhitespace(text.get(ind + 1)) || endOfWordBelongingToSpecialScripts) {
@@ -891,6 +892,23 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 text.start++;
             }
         }
+
+        /*  Between two sentences separated by one or more whitespaces,
+            icu allows to break right after the last whitespace.
+            Therefore we need to carefully edit specialScriptsWordBreakPoints list after trimming:
+            if a break is allowed to happen right before the first glyph of an already trimmed text,
+            we need to remove this point from the list
+            (or replace it with -1 thus marking that text contains special scripts,
+             in case if the removed break point was the only possible break point).
+         */
+        if (textContainsSpecialScriptGlyphs(true)
+                && specialScriptsWordBreakPoints.get(0) == text.start) {
+            if (specialScriptsWordBreakPoints.size() == 1) {
+                specialScriptsWordBreakPoints.set(0, -1);
+            } else {
+                specialScriptsWordBreakPoints.remove(0);
+            }
+        }
     }
 
     float trimLast() {
@@ -1128,7 +1146,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      *
      * Mind that the behavior of this method depends on the analyzeSpecialScriptsWordBreakPointsOnly parameter:
      * - pass {@code false} if you need to analyze the {@link TextRenderer#text} by checking each of its glyphs
-     * AND to fill {@link TextRenderer#specialScriptsWordBreakPoints} list,
+     * AND to fill {@link TextRenderer#specialScriptsWordBreakPoints} list afterwards,
      * i.e. when analyzing a sequence of TextRenderers prior to layouting;
      * - pass {@code true} if you want to check if text contains glyphs belonging to special scripts,
      * according to the already filled {@link TextRenderer#specialScriptsWordBreakPoints} list.
@@ -1143,18 +1161,33 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         if (specialScriptsWordBreakPoints != null) {
             return !specialScriptsWordBreakPoints.isEmpty();
         }
-        if (!analyzeSpecialScriptsWordBreakPointsOnly) {
-            for (int i = text.start; i < text.end; i++) {
-                int unicode = text.get(i).getUnicode();
-                if (unicode > -1) {
-                    Character.UnicodeScript glyphScript = Character.UnicodeScript.of(unicode);
-                    if (Character.UnicodeScript.THAI.equals(glyphScript)) {
-                        return true;
+
+        if (analyzeSpecialScriptsWordBreakPointsOnly) {
+            return false;
+        }
+
+        for (int i = text.start; i < text.end; i++) {
+            int unicode = text.get(i).getUnicode();
+            if (unicode > -1) {
+                if (codePointIsOfSpecialScript(unicode)) {
+                    return true;
+                }
+            } else {
+                char[] chars = text.get(i).getChars();
+                if (chars != null) {
+                    for (char ch : chars) {
+                        if (codePointIsOfSpecialScript(ch)) {
+                            return true;
+                        }
                     }
                 }
             }
-            specialScriptsWordBreakPoints = new ArrayList<>();
         }
+        // if we've reached this point, it means we've analyzed the entire TextRenderer#text
+        // and haven't found special scripts, therefore we define specialScriptsWordBreakPoints
+        // as an empty list to mark, it's already been analyzed
+        specialScriptsWordBreakPoints = new ArrayList<>();
+
         return false;
     }
 
@@ -1269,7 +1302,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 overflow.add(-1);
                 overflowRenderer.setSpecialScriptsWordBreakPoints(overflow);
             } else {
-                int splitIndex = findPossibleBreaksSplitPosition(initialOverflowTextPos, false);
+                int splitIndex = findPossibleBreaksSplitPosition(specialScriptsWordBreakPoints, initialOverflowTextPos,
+                        false);
 
                 if (splitIndex > -1) {
                     splitRenderer.setSpecialScriptsWordBreakPoints(specialScriptsWordBreakPoints
@@ -1540,26 +1574,24 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             savedWordBreakAtLineEnding = new GlyphLine(Collections.<Glyph>singletonList(wordBreak));
         }
     }
-    // if amongPresentOnly is true, returns the index of specialScriptsWordBreakPoints's element
-    // or -1 if element wasn't found.
-    // if amongPresentOnly is false, returns the index of specialScriptsWordBreakPoints's element
+    // if amongPresentOnly is true,
+    // returns the index of lists's element which equals textStartBasedInitialOverflowTextPos
+    // or -1 if textStartBasedInitialOverflowTextPos wasn't found in the list.
+    // if amongPresentOnly is false, returns the index of list's element
     // that is not greater than textStartBasedInitialOverflowTextPos
-    // if there's no such element in specialScriptsWordBreakPoints, -1 is returned
-    int findPossibleBreaksSplitPosition(int textStartBasedInitialOverflowTextPos, boolean amongPresentOnly) {
+    // if there's no such element in the list, -1 is returned
+    static int findPossibleBreaksSplitPosition(List<Integer> list, int textStartBasedInitialOverflowTextPos,
+                                               boolean amongPresentOnly) {
         int low = 0;
-        int high = specialScriptsWordBreakPoints.size() - 1;
+        int high = list.size() - 1;
 
         while (low <= high) {
             int middle = (low + high) >>> 1;
-            if (specialScriptsWordBreakPoints.get(middle)
-                    .compareTo(textStartBasedInitialOverflowTextPos) < 0) {
+            if (list.get(middle).compareTo(textStartBasedInitialOverflowTextPos) < 0) {
                 low = middle + 1;
-            }
-            else if (specialScriptsWordBreakPoints.get(middle)
-                    .compareTo(textStartBasedInitialOverflowTextPos) > 0) {
+            } else if (list.get(middle).compareTo(textStartBasedInitialOverflowTextPos) > 0) {
                 high = middle - 1;
-            }
-            else {
+            } else {
                 return middle;
             }
         }
@@ -1567,6 +1599,13 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             return low - 1;
         }
         return -1;
+    }
+
+    private boolean codePointIsOfSpecialScript(int codePoint) {
+        Character.UnicodeScript glyphScript = Character.UnicodeScript.of(codePoint);
+        return Character.UnicodeScript.THAI == glyphScript
+                || Character.UnicodeScript.KHMER == glyphScript
+                || Character.UnicodeScript.LAO == glyphScript;
     }
 
     private static class ReversedCharsIterator implements Iterator<GlyphLine.GlyphLinePart> {
