@@ -53,6 +53,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfTransparencyGroup;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -260,11 +261,8 @@ public class PdfA1GraphicsTest extends ExtendedITextTest {
         PdfCanvas xObjCanvas = new PdfCanvas(xObject, doc);
         xObjCanvas.rectangle(30, 30, 10, 10).fill();
 
-        //imitating transparency group
-        //todo replace with real transparency group logic when implemented
-        PdfDictionary group = new PdfDictionary();
-        group.put(PdfName.S, PdfName.Transparency);
-        xObject.put(PdfName.Group, group);
+        PdfTransparencyGroup group = new PdfTransparencyGroup();
+        xObject.setGroup(group);
         canvas.addXObject(xObject, new Rectangle(300, 300));
 
         doc.close();
