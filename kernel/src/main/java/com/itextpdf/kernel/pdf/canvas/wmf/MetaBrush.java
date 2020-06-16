@@ -81,7 +81,7 @@ public class MetaBrush extends MetaObject {
      * Initializes this MetaBrush object.
      *
      * @param in the InputMeta
-     * @throws IOException
+     * @throws IOException an {@link IOException}
      */
     public void init(InputMeta in) throws IOException {
         style = in.readWord();

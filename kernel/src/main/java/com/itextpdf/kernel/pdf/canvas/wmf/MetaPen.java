@@ -76,7 +76,7 @@ public class MetaPen extends MetaObject {
      * Initializes a MetaPen object.
      *
      * @param in the InputMeta object that holds the inputstream of the WMF image
-     * @throws IOException
+     * @throws IOException an {@link IOException}
      */
     public void init(InputMeta in) throws IOException {
         style = in.readWord();

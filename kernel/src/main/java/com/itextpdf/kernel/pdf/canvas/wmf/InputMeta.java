@@ -71,7 +71,7 @@ public class InputMeta {
      * Read the next word from the InputStream.
      *
      * @return the next word or 0 if the end of the stream has been reached
-     * @throws IOException
+     * @throws IOException an {@link IOException}
      */
     public int readWord() throws IOException {
         length += 2;
@@ -85,7 +85,7 @@ public class InputMeta {
      * Read the next short from the InputStream.
      *
      * @return the next short value
-     * @throws IOException
+     * @throws IOException an {@link IOException}
      */
     public int readShort() throws IOException{
         int k = readWord();
@@ -98,7 +98,7 @@ public class InputMeta {
      * Read the next int from the InputStream.
      *
      * @return the next int
-     * @throws IOException
+     * @throws IOException an {@link IOException}
      */
     public int readInt() throws IOException{
         length += 4;
@@ -114,7 +114,7 @@ public class InputMeta {
      * Read the next byte from the InputStream.
      *
      * @return the next byte
-     * @throws IOException
+     * @throws IOException an {@link IOException}
      */
     public int readByte() throws IOException{
         ++length;
@@ -125,7 +125,7 @@ public class InputMeta {
      * Skips "len" amount of bytes from the InputStream. If len is &lt; 0, nothing is skipped.
      *
      * @param len amount of bytes needed to skip
-     * @throws IOException
+     * @throws IOException an {@link IOException}
      */
     public void skip(int len) throws IOException{
         length += len;
@@ -145,7 +145,7 @@ public class InputMeta {
      * Read the next {@link Color} from the InputStream. This reads 4 bytes.
      *
      * @return the next Color
-     * @throws IOException
+     * @throws IOException an {@link IOException}
      */
     public Color readColor() throws IOException{
         int red = readByte();

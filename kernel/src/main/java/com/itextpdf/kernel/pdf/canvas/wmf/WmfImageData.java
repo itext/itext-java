@@ -65,7 +65,7 @@ public class WmfImageData extends ImageData {
      * Creates a WmfImage from a file.
      *
      * @param fileName pah to the file
-     * @throws MalformedURLException
+     * @throws MalformedURLException a {@link MalformedURLException}
      */
     public WmfImageData(String fileName) throws MalformedURLException {
         this(UrlUtil.toURL(fileName));

@@ -106,7 +106,7 @@ public class MetaFont extends MetaObject {
      * Initializes the MetaFont instance.
      *
      * @param in InputMeta containing the WMF data
-     * @throws IOException
+     * @throws IOException an {@link IOException}
      */
     public void init(InputMeta in) throws IOException {
         height = Math.abs(in.readShort());
@@ -141,7 +141,7 @@ public class MetaFont extends MetaObject {
      * Returns the Font.
      *
      * @return the font
-     * @throws IOException
+     * @throws IOException an {@link IOException}
      */
     public FontProgram getFont() throws IOException {
         if (font != null)

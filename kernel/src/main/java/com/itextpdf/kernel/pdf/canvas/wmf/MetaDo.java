@@ -169,7 +169,7 @@ public class MetaDo {
     /**
      * Reads and processes all the data of the InputMeta.
      *
-     * @throws IOException
+     * @throws IOException an {@link IOException}
      */
     public void readAll() throws IOException {
         if (in.readInt() != 0x9AC6CDD7) {
@@ -611,7 +611,7 @@ public class MetaDo {
      * @param x2 x2-coordinate of the rectangle if clipped or opaque
      * @param y2 y1-coordinate of the rectangle if clipped or opaque
      * @param text text to output
-     * @throws IOException
+     * @throws IOException an {@link IOException}
      */
     public void outputText(int x, int y, int flag, int x1, int y1, int x2, int y2, String text) throws IOException {
 
@@ -739,7 +739,7 @@ public class MetaDo {
      *
      * @param image the BMP image to be wrapped
      * @return the wrapped BMP
-     * @throws IOException
+     * @throws IOException an {@link IOException}
      */
     public static byte[] wrapBMP(ImageData image) throws IOException {
         if (image.getOriginalType() != ImageType.BMP) {
@@ -811,7 +811,7 @@ public class MetaDo {
      *
      * @param os outputstream to write the word to
      * @param v value to be written
-     * @throws IOException
+     * @throws IOException an {@link IOException}
      */
     public static void writeWord(OutputStream os, int v) throws IOException {
         os.write(v & 0xff);
@@ -823,7 +823,7 @@ public class MetaDo {
      *
      * @param os outputstream to write the dword to
      * @param v value to be written
-     * @throws IOException
+     * @throws IOException an {@link IOException}
      */
     public static void writeDWord(OutputStream os, int v) throws IOException {
         writeWord(os, v & 0xffff);
