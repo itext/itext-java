@@ -453,6 +453,249 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
     }
 
+    @Test
+    //TODO DEVSIX-4021 update cmp file after fix
+    public void tableWithAlignmentNextToRightFloatTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tableWithAlignmentNextToRightFloat.pdf";
+        String cmpFileName = sourceFolder + "cmp_tableWithAlignmentNextToRightFloat.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Table table1 = createTable(HorizontalAlignment.RIGHT);
+        Table table2 = createTable(HorizontalAlignment.LEFT);
+        Table table3 = createTable(HorizontalAlignment.CENTER);
+
+        Div div = createDiv(ColorConstants.GREEN, ClearPropertyValue.NONE,
+                FloatPropertyValue.RIGHT, UnitValue.createPointValue(200));
+
+        Div spaceDiv = new Div();
+        spaceDiv.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
+        spaceDiv.add(new Paragraph("Space Div").setFontColor(ColorConstants.BLUE));
+
+        document.add(div);
+        document.add(table1);
+        document.add(spaceDiv);
+
+        document.add(div);
+        document.add(table2);
+        document.add(spaceDiv);
+
+        document.add(div);
+        document.add(table3);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    //TODO DEVSIX-4021 update cmp file after fix
+    public void tableWithAlignmentNextToLeftFloatTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tableWithAlignmentNextToLeftFloat.pdf";
+        String cmpFileName = sourceFolder + "cmp_tableWithAlignmentNextToLeftFloat.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Table table1 = createTable(HorizontalAlignment.RIGHT);
+        Table table2 = createTable(HorizontalAlignment.LEFT);
+        Table table3 = createTable(HorizontalAlignment.CENTER);
+
+        Div div = createDiv(ColorConstants.GREEN, ClearPropertyValue.NONE,
+                FloatPropertyValue.LEFT, UnitValue.createPointValue(200));
+
+        Div spaceDiv = new Div();
+        spaceDiv.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
+        spaceDiv.add(new Paragraph("Space Div").setFontColor(ColorConstants.BLUE));
+
+        document.add(div);
+        document.add(table1);
+        document.add(spaceDiv);
+
+        document.add(div);
+        document.add(table2);
+        document.add(spaceDiv);
+
+        document.add(div);
+        document.add(table3);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    //TODO DEVSIX-4021 update cmp file after fix
+    public void tableWithAlignmentBetweenFloatsTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tableWithAlignmentBetweenFloats.pdf";
+        String cmpFileName = sourceFolder + "cmp_tableWithAlignmentBetweenFloats.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Table table1 = createTable(HorizontalAlignment.RIGHT).setWidth(250);
+        Table table2 = createTable(HorizontalAlignment.LEFT).setWidth(250);
+        Table table3 = createTable(HorizontalAlignment.CENTER).setWidth(250);
+
+        Div div1 = createDiv(ColorConstants.GREEN, ClearPropertyValue.NONE,
+                FloatPropertyValue.LEFT, UnitValue.createPointValue(100));
+
+        Div div2 = createDiv(ColorConstants.BLUE, ClearPropertyValue.NONE,
+                FloatPropertyValue.RIGHT, UnitValue.createPointValue(100));
+
+        Div spaceDiv = new Div();
+        spaceDiv.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
+        spaceDiv.add(new Paragraph("Space Div").setFontColor(ColorConstants.BLUE));
+
+        document.add(div1);
+        document.add(div2);
+        document.add(table1);
+        document.add(spaceDiv);
+
+        document.add(div1);
+        document.add(div2);
+        document.add(table2);
+        document.add(spaceDiv);
+
+        document.add(div1);
+        document.add(div2);
+        document.add(table3);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    //TODO DEVSIX-4021 update cmp file after fix
+    public void tableWithBigLeftMarginAfterFloatTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tableWithBigLeftMarginAfterFloat.pdf";
+        String cmpFileName = sourceFolder + "cmp_tableWithBigLeftMarginAfterFloat.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Table table1 = createTable(HorizontalAlignment.RIGHT);
+        table1.setMarginLeft(300);
+        Table table2 = createTable(HorizontalAlignment.LEFT);
+        table2.setMarginLeft(300);
+        Table table3 = createTable(HorizontalAlignment.CENTER);
+        table3.setMarginLeft(300);
+
+        Div div = createDiv(ColorConstants.GREEN, ClearPropertyValue.NONE,
+                FloatPropertyValue.RIGHT, UnitValue.createPointValue(200));
+
+        Div spaceDiv = new Div();
+        spaceDiv.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
+        spaceDiv.add(new Paragraph("Space Div").setFontColor(ColorConstants.BLUE));
+
+        document.add(div);
+        document.add(table1);
+        document.add(spaceDiv);
+
+        document.add(div);
+        document.add(table2);
+        document.add(spaceDiv);
+
+        document.add(div);
+        document.add(table3);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    //TODO DEVSIX-4021 update cmp file after fix
+    public void tableWithBigRightMarginAfterFloatTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tableWithBigRightMarginAfterFloat.pdf";
+        String cmpFileName = sourceFolder + "cmp_tableWithBigRightMarginAfterFloat.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Table table1 = createTable(HorizontalAlignment.RIGHT);
+        table1.setMarginRight(300);
+        Table table2 = createTable(HorizontalAlignment.LEFT);
+        table2.setMarginRight(300);
+        Table table3 = createTable(HorizontalAlignment.CENTER);
+        table3.setMarginRight(300);
+
+        Div div = createDiv(ColorConstants.GREEN, ClearPropertyValue.NONE,
+                FloatPropertyValue.LEFT, UnitValue.createPointValue(200));
+
+        Div spaceDiv = new Div();
+        spaceDiv.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
+        spaceDiv.add(new Paragraph("Space Div").setFontColor(ColorConstants.BLUE));
+
+        document.add(div);
+        document.add(table1);
+        document.add(spaceDiv);
+
+        document.add(div);
+        document.add(table2);
+        document.add(spaceDiv);
+
+        document.add(div);
+        document.add(table3);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    //TODO DEVSIX-4021 update cmp file after fix
+    public void tableWithSideMarginsBetweenFloatTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tableWithSideMarginsBetweenFloat.pdf";
+        String cmpFileName = sourceFolder + "cmp_tableWithSideMarginsBetweenFloat.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Table table1 = createTable(HorizontalAlignment.RIGHT);
+        table1.setMarginRight(150)
+              .setMarginLeft(150);
+        Table table2 = createTable(HorizontalAlignment.LEFT);
+        table2.setMarginRight(300);
+        Table table3 = createTable(HorizontalAlignment.CENTER);
+        table3.setMarginLeft(300);
+
+        Div div1 = createDiv(ColorConstants.GREEN, ClearPropertyValue.NONE,
+                FloatPropertyValue.LEFT, UnitValue.createPointValue(100));
+        Div div2 = createDiv(ColorConstants.BLUE, ClearPropertyValue.NONE,
+                FloatPropertyValue.RIGHT, UnitValue.createPointValue(100));
+
+        Div spaceDiv = new Div();
+        spaceDiv.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
+        spaceDiv.add(new Paragraph("Space Div").setFontColor(ColorConstants.BLUE));
+
+        document.add(div1);
+        document.add(div2);
+        document.add(table1);
+        document.add(spaceDiv);
+
+        document.add(div1);
+        document.add(div2);
+        document.add(table2);
+        document.add(spaceDiv);
+
+        document.add(div1);
+        document.add(div2);
+        document.add(table3);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
     private Div createParentDiv(HorizontalAlignment horizontalAlignment, ClearPropertyValue clearPropertyValue, UnitValue width) {
         Div divParent1 = new Div()
                 .setBorder(new SolidBorder(5) )
@@ -474,10 +717,36 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         div.setHorizontalAlignment( horizontalAlignment);
         div.setProperty( Property.CLEAR, clearPropertyValue);
         div.setProperty(Property.FLOAT, floatPropertyValue);
-        div.add( new Paragraph( "Div with HorizontalAlignment."+ horizontalAlignment
+        String cont = "Div with HorizontalAlignment."+ horizontalAlignment
                 +", ClearPropertyValue." +clearPropertyValue
-                + ", FloatPropertyValue." +floatPropertyValue) );
+                + ", FloatPropertyValue." +floatPropertyValue;
+        div.add( new Paragraph(cont) );
         return div;
+    }
+
+    private static Div createDiv(Color color, ClearPropertyValue clearPropertyValue,
+            FloatPropertyValue floatPropertyValue, UnitValue width) {
+        Div div = new Div()
+                .setBorder(new SolidBorder( color, 1) )
+                .setBackgroundColor(color, 0.3f)
+                .setMargins(10, 10, 10, 10)
+                .setWidth(width);
+        div.setProperty( Property.CLEAR, clearPropertyValue);
+        div.setProperty(Property.FLOAT, floatPropertyValue);
+        String cont = "Div with ClearPropertyValue." +clearPropertyValue
+                + ", FloatPropertyValue." +floatPropertyValue;
+        div.add( new Paragraph(cont) );
+        return div;
+    }
+
+    private static Table createTable(HorizontalAlignment horizontalAlignment) {
+        Table table = new Table(3);
+        table.addCell("Align" + horizontalAlignment.toString());
+        table.addCell("Cell number two");
+        table.addCell("Cell number three");
+        table.setHorizontalAlignment(horizontalAlignment);
+
+        return table;
     }
 
 
