@@ -125,6 +125,32 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
     }
 
     @Test
+    public void buildWithTwoStopsBeforeTheBeginningTest() throws IOException, InterruptedException {
+        Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
+        AbstractLinearGradientBuilder gradientBuilder = new LinearGradientBuilder()
+                .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f,
+                        targetBoundingBox.getRight() - 100f, targetBoundingBox.getTop() - 100f)
+                .setSpreadMethod(GradientSpreadMethod.PAD)
+                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), -0.1d, OffsetType.RELATIVE))
+                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(),  -0.2d, OffsetType.RELATIVE));
+
+        generateAndComparePdfs("buildWithTwoStopsBeforeTheBeginningTest.pdf", targetBoundingBox, null, gradientBuilder);
+    }
+
+    @Test
+    public void buildWithTwoStopsAfterTheEndTest() throws IOException, InterruptedException {
+        Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
+        AbstractLinearGradientBuilder gradientBuilder = new LinearGradientBuilder()
+                .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f,
+                        targetBoundingBox.getRight() - 100f, targetBoundingBox.getTop() - 100f)
+                .setSpreadMethod(GradientSpreadMethod.PAD)
+                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 1.2d, OffsetType.RELATIVE))
+                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 0d, OffsetType.RELATIVE));
+
+        generateAndComparePdfs("buildWithTwoStopsAfterTheEndTest.pdf", targetBoundingBox, null, gradientBuilder);
+    }
+
+    @Test
     public void padCaseWithVeryCloseCornerStopsTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
         AbstractLinearGradientBuilder gradientBuilder = new LinearGradientBuilder()

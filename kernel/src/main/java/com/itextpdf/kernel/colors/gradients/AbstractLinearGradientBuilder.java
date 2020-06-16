@@ -281,14 +281,17 @@ public abstract class AbstractLinearGradientBuilder {
             // to ensure that stops list covers the full domain. For repeat and reflect cases
             // this is done by adjusting the initial stops to cover the evaluated domain
             coordinatesDomain[0] = Math.max(coordinatesDomain[0], stopsToConstruct.get(0).getOffset());
-            coordinatesDomain[1] = Math
-                    .min(coordinatesDomain[1], stopsToConstruct.get(stopsToConstruct.size() - 1).getOffset());
+            coordinatesDomain[1] = Math.min(coordinatesDomain[1],
+                    stopsToConstruct.get(stopsToConstruct.size() - 1).getOffset());
+            coordinatesDomain[1] = Math.max(coordinatesDomain[0], coordinatesDomain[1]);
         }
 
         // workaround for PAD case
         if (spreadMethod == GradientSpreadMethod.PAD) {
             coordinatesDomain = modifyNormalizedStopsForPad(stopsToConstruct, coordinatesDomain);
         }
+
+        assert coordinatesDomain[0] <= coordinatesDomain[1];
 
         Point[] actualCoordinates = createCoordinatesForNewDomain(coordinatesDomain, baseCoordinatesVector);
 
