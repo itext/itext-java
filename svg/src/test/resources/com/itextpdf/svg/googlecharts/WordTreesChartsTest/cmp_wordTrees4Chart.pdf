@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20200521094557+03'00')/ModDate(D:20200521094557+03'00')/Producer(iText® 7.1.12-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20200617112617+03'00')/ModDate(D:20200617112617+03'00')/Producer(iText® 7.1.12-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
 endobj
 7 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -2870,10 +2870,10 @@ endobj
 <</Matrix[32.33 0 0 486 651.5 3.75]/PatternType 2/Shading 13 0 R/Type/Pattern>>
 endobj
 12 0 obj
-<</ColorSpace/DeviceRGB/Coords[0.75 0 0 0]/Domain[0 1]/Extend[true true]/Function 14 0 R/ShadingType 2>>
+<</ColorSpace/DeviceRGB/Coords[0.75 0 0 0]/Domain[0 1]/Function 14 0 R/ShadingType 2>>
 endobj
 13 0 obj
-<</ColorSpace/DeviceRGB/Coords[0 0 0.75 0]/Domain[0 1]/Extend[true true]/Function 15 0 R/ShadingType 2>>
+<</ColorSpace/DeviceRGB/Coords[0 0 0.75 0]/Domain[0 1]/Function 15 0 R/ShadingType 2>>
 endobj
 14 0 obj
 <</Bounds[]/Domain[0 1]/Encode[0 1]/FunctionType 3/Functions[16 0 R]>>
@@ -2902,14 +2902,14 @@ xref
 0000018421 00000 n 
 0000018513 00000 n 
 0000018609 00000 n 
-0000018730 00000 n 
-0000018851 00000 n 
-0000018938 00000 n 
-0000019025 00000 n 
-0000019097 00000 n 
+0000018712 00000 n 
+0000018815 00000 n 
+0000018902 00000 n 
+0000018989 00000 n 
+0000019061 00000 n 
 trailer
-<</ID [<266af2faa65da24dc73bb4f375561386><266af2faa65da24dc73bb4f375561386>]/Info 3 0 R/Root 1 0 R/Size 18>>
+<</ID [<56a047b0995abd8672f47a2c2f52ee88><56a047b0995abd8672f47a2c2f52ee88>]/Info 3 0 R/Root 1 0 R/Size 18>>
 %iText-7.1.12-SNAPSHOT
 startxref
-19169
+19133
 %%EOF

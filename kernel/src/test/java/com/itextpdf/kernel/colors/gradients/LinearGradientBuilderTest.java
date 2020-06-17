@@ -695,6 +695,71 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
         generateAndComparePdfs("builderWithZeroColorsLengthAndReflect.pdf", targetBoundingBox, null, gradientBuilder);
     }
 
+    @Test
+    public void buildWithTwoStopsBeforeTheBeginningAndNoneTest() throws IOException, InterruptedException {
+        Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
+        AbstractLinearGradientBuilder gradientBuilder = new LinearGradientBuilder()
+                .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f,
+                        targetBoundingBox.getRight() - 100f, targetBoundingBox.getTop() - 100f)
+                .setSpreadMethod(GradientSpreadMethod.NONE)
+                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), -10d, OffsetType.RELATIVE))
+                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(),  -5d, OffsetType.RELATIVE));
+
+        Assert.assertNull(gradientBuilder.buildColor(targetBoundingBox, null));
+    }
+
+    @Test
+    public void buildWithTwoStopsAfterEndAndNoneTest() throws IOException, InterruptedException {
+        Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
+        AbstractLinearGradientBuilder gradientBuilder = new LinearGradientBuilder()
+                .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f,
+                        targetBoundingBox.getRight() - 100f, targetBoundingBox.getTop() - 100f)
+                .setSpreadMethod(GradientSpreadMethod.NONE)
+                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 5d, OffsetType.RELATIVE))
+                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(),  10d, OffsetType.RELATIVE));
+
+        Assert.assertNull(gradientBuilder.buildColor(targetBoundingBox, null));
+    }
+
+    @Test
+    public void buildWithTwoEqualOffsetsStopsAndNoneTest() throws IOException, InterruptedException {
+        Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
+        AbstractLinearGradientBuilder gradientBuilder = new LinearGradientBuilder()
+                .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f,
+                        targetBoundingBox.getRight() - 100f, targetBoundingBox.getTop() - 100f)
+                .setSpreadMethod(GradientSpreadMethod.NONE)
+                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0.5d, OffsetType.RELATIVE))
+                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(),  0.5d, OffsetType.RELATIVE));
+
+        Assert.assertNull(gradientBuilder.buildColor(targetBoundingBox, null));
+    }
+
+    @Test
+    public void buildWithTwoStopsInCenterAndNoneTest() throws IOException, InterruptedException {
+        Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
+        AbstractLinearGradientBuilder gradientBuilder = new LinearGradientBuilder()
+                .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f,
+                        targetBoundingBox.getRight() - 100f, targetBoundingBox.getTop() - 100f)
+                .setSpreadMethod(GradientSpreadMethod.NONE)
+                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0.2d, OffsetType.RELATIVE))
+                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(),  0.8d, OffsetType.RELATIVE));
+
+        generateAndComparePdfs("buildWithTwoEqualOffsetsStopsTest.pdf", targetBoundingBox, null, gradientBuilder);
+    }
+
+    @Test
+    public void buildWithTwoStopsOutsideAndNoneTest() throws IOException, InterruptedException {
+        Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
+        AbstractLinearGradientBuilder gradientBuilder = new LinearGradientBuilder()
+                .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f,
+                        targetBoundingBox.getRight() - 100f, targetBoundingBox.getTop() - 100f)
+                .setSpreadMethod(GradientSpreadMethod.NONE)
+                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), -1.5d, OffsetType.RELATIVE))
+                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(),  2.5d, OffsetType.RELATIVE));
+
+        generateAndComparePdfs("buildWithTwoStopsOutsideAndNoneTest.pdf", targetBoundingBox, null, gradientBuilder);
+    }
+
     private void generateAndComparePdfs(String fileName, Rectangle toDraw, AffineTransform transform,
             AbstractLinearGradientBuilder gradientBuilder) throws InterruptedException, IOException {
         String outPdfPath = destinationFolder + fileName;

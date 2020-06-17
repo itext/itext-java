@@ -47,6 +47,8 @@ package com.itextpdf.styledxmlparser.exceptions;
  */
 public class StyledXMLParserException extends RuntimeException {
 
+    /** The Constant INVALID_GRADIENT_VALUE. */
+    public static final String INVALID_GRADIENT_FUNCTION_ARGUMENTS_LIST = "Invalid gradient function arguments list: {0}";
     /** The Constant INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING. */
     public static final String INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING = "Invalid direction string: {0}";
     /** The Constant INVALID_GRADIENT_COLOR_STOP_VALUE. */

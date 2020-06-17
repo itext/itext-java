@@ -123,21 +123,17 @@ public abstract class AbstractLinearGradientBuilder {
      *                          the current space. The {@code null} value is valid and can be used
      *                          if there is no transformation from base coordinates to current space
      *                          specified, or it is equal to identity transformation.
-     * @return the constructed {@link Color}
+     * @return the constructed {@link Color} or {@code null} if no color to be applied
+     * or base gradient vector has been specified
      */
     public Color buildColor(Rectangle targetBoundingBox, AffineTransform contextTransform) {
-        Point[] coordinates = getGradientVector(targetBoundingBox, contextTransform);
-        if (coordinates == null || this.stops.isEmpty()) {
-            // Can not create gradient color with 0 stops
+        Point[] baseCoordinatesVector = getGradientVector(targetBoundingBox, contextTransform);
+        if (baseCoordinatesVector == null || this.stops.isEmpty()) {
+            // Can not create gradient color with 0 stops or null coordinates vector
             return null;
-        } else if (this.stops.size() == 1 || coordinates[0].equals(coordinates[1])) {
-            // single stop and zero vector case
-            float[] lastStopRgb = this.stops.get(this.stops.size() - 1).getRgbArray();
-            return new DeviceRgb(lastStopRgb[0], lastStopRgb[1], lastStopRgb[2]);
         }
 
         // evaluate actual coordinates and transformation
-        Point[] baseCoordinatesVector = new Point[] {coordinates[0].getLocation(), coordinates[1].getLocation()};
         AffineTransform shadingTransform = new AffineTransform();
         if (contextTransform != null) {
             shadingTransform.concatenate(contextTransform);
@@ -167,6 +163,9 @@ public abstract class AbstractLinearGradientBuilder {
 
         PdfShading.Axial axial = createAxialShading(baseCoordinatesVector, this.stops, this.spreadMethod,
                 targetBoundingBox);
+        if (axial == null) {
+            return null;
+        }
 
         PdfPattern.Shading shading = new PdfPattern.Shading(axial);
         if (!shadingTransform.isIdentity()) {
@@ -271,91 +270,61 @@ public abstract class AbstractLinearGradientBuilder {
 
     private static PdfShading.Axial createAxialShading(Point[] baseCoordinatesVector,
             List<GradientColorStop> stops, GradientSpreadMethod spreadMethod, Rectangle targetBoundingBox) {
-        List<GradientColorStop> stopsToConstruct = normalizeStops(stops, baseCoordinatesVector);
+        double baseVectorLength = baseCoordinatesVector[1].distance(baseCoordinatesVector[0]);
 
+        List<GradientColorStop> stopsToConstruct = normalizeStops(stops, baseVectorLength);
         double[] coordinatesDomain = new double[] {0, 1};
-        if (spreadMethod == GradientSpreadMethod.REPEAT || spreadMethod == GradientSpreadMethod.REFLECT) {
-            coordinatesDomain = evaluateCoveringDomain(baseCoordinatesVector, targetBoundingBox);
-            stopsToConstruct = adjustNormalizedStopsToCoverDomain(stopsToConstruct, coordinatesDomain, spreadMethod);
+        Point[] actualCoordinates;
+        if (baseVectorLength < ZERO_EPSILON || stopsToConstruct.size() == 1) {
+            // single color case
+            if (spreadMethod == GradientSpreadMethod.NONE) {
+                return null;
+            }
+            actualCoordinates = new Point[]{new Point(targetBoundingBox.getLeft(), targetBoundingBox.getBottom()),
+                    new Point(targetBoundingBox.getRight(), targetBoundingBox.getBottom())};
+
+            GradientColorStop lastColorStop = stopsToConstruct.get(stopsToConstruct.size() - 1);
+            stopsToConstruct = Arrays.asList(new GradientColorStop(lastColorStop, 0d, OffsetType.RELATIVE),
+                    new GradientColorStop(lastColorStop, 1d, OffsetType.RELATIVE));
         } else {
-            // to ensure that stops list covers the full domain. For repeat and reflect cases
-            // this is done by adjusting the initial stops to cover the evaluated domain
-            coordinatesDomain[0] = Math.max(coordinatesDomain[0], stopsToConstruct.get(0).getOffset());
-            coordinatesDomain[1] = Math.min(coordinatesDomain[1],
-                    stopsToConstruct.get(stopsToConstruct.size() - 1).getOffset());
-            coordinatesDomain[1] = Math.max(coordinatesDomain[0], coordinatesDomain[1]);
+            coordinatesDomain = evaluateCoveringDomain(baseCoordinatesVector, targetBoundingBox);
+            if (spreadMethod == GradientSpreadMethod.REPEAT || spreadMethod == GradientSpreadMethod.REFLECT) {
+                stopsToConstruct = adjustNormalizedStopsToCoverDomain(stopsToConstruct, coordinatesDomain,
+                        spreadMethod);
+            } else if (spreadMethod == GradientSpreadMethod.PAD) {
+                adjustStopsForPadIfNeeded(stopsToConstruct, coordinatesDomain);
+            } else {
+                // none case
+                double firstStopOffset = stopsToConstruct.get(0).getOffset();
+                double lastStopOffset = stopsToConstruct.get(stopsToConstruct.size() - 1).getOffset();
+                if ((lastStopOffset - firstStopOffset < ZERO_EPSILON)
+                        || coordinatesDomain[1] <= firstStopOffset
+                        || coordinatesDomain[0] >= lastStopOffset) {
+                    return null;
+                }
+                coordinatesDomain[0] = Math.max(coordinatesDomain[0], firstStopOffset);
+                coordinatesDomain[1] = Math.min(coordinatesDomain[1], lastStopOffset);
+            }
+            assert coordinatesDomain[0] <= coordinatesDomain[1];
+
+            actualCoordinates = createCoordinatesForNewDomain(coordinatesDomain, baseCoordinatesVector);
         }
 
-        // workaround for PAD case
-        if (spreadMethod == GradientSpreadMethod.PAD) {
-            coordinatesDomain = modifyNormalizedStopsForPad(stopsToConstruct, coordinatesDomain);
-        }
-
-        assert coordinatesDomain[0] <= coordinatesDomain[1];
-
-        Point[] actualCoordinates = createCoordinatesForNewDomain(coordinatesDomain, baseCoordinatesVector);
-
-        PdfShading.Axial axial = new PdfShading.Axial(
+        return new PdfShading.Axial(
                 new PdfDeviceCs.Rgb(),
                 createCoordsPdfArray(actualCoordinates),
                 new PdfArray(coordinatesDomain),
                 constructFunction(stopsToConstruct)
         );
-        // apply extended flag for PAD case
-        if (spreadMethod == GradientSpreadMethod.PAD) {
-            axial.setExtend(true, true);
-        }
-        return axial;
-    }
-
-    private static double[] modifyNormalizedStopsForPad(List<GradientColorStop> stopsToConstruct,
-            double[] coordinatesDomain) {
-        double[] newDomain = new double[] {coordinatesDomain[0], coordinatesDomain[1]};
-        double eps = Math.max(1, (coordinatesDomain[1] - coordinatesDomain[0])) * 0.05;
-
-        for (int i = stopsToConstruct.size() - 1; i > 0; --i) {
-            GradientColorStop currentStop = stopsToConstruct.get(i);
-            double currentStopOffset = currentStop.getOffset();
-            if (Math.abs(currentStopOffset - coordinatesDomain[1]) < eps) {
-                GradientColorStop prevStop = stopsToConstruct.get(i - 1);
-                if ((prevStop.getHintOffsetType() == HintOffsetType.RELATIVE_BETWEEN_COLORS
-                        && prevStop.getHintOffset() >= 1d - ZERO_EPSILON)
-                        || (prevStop.getOffset() > currentStopOffset - eps)) {
-                    double lastOffset = currentStopOffset + eps;
-                    stopsToConstruct.add(i + 1, new GradientColorStop(currentStop, lastOffset, OffsetType.RELATIVE));
-                    newDomain[1] = lastOffset;
-                }
-                break;
-            }
-            if (currentStopOffset < coordinatesDomain[1]) {
-                break;
-            }
-        }
-
-        for (int i = 0; i < stopsToConstruct.size() - 1; ++i) {
-            GradientColorStop currentStop = stopsToConstruct.get(i);
-            double currentStopOffset = currentStop.getOffset();
-            if (Math.abs(currentStopOffset - coordinatesDomain[0]) < eps) {
-                if ((currentStop.getHintOffsetType() == HintOffsetType.RELATIVE_BETWEEN_COLORS
-                        && currentStop.getHintOffset() <= 0d + ZERO_EPSILON)
-                        || (stopsToConstruct.get(i + 1).getOffset() < currentStopOffset + eps)) {
-                    double firstOffset = currentStopOffset - eps;
-                    stopsToConstruct.add(i, new GradientColorStop(currentStop, firstOffset, OffsetType.RELATIVE));
-                    newDomain[0] = firstOffset;
-                }
-                break;
-            }
-            if (currentStopOffset > coordinatesDomain[0]) {
-                break;
-            }
-        }
-        return newDomain;
     }
 
     // the result list would have the same list of stop colors as the original one
     // with all offsets on coordinates domain dimension and adjusted for ascending values
-    private static List<GradientColorStop> normalizeStops(List<GradientColorStop> toNormalize, Point[] coordinates) {
-        double baseVectorLength = coordinates[1].distance(coordinates[0]);
+    private static List<GradientColorStop> normalizeStops(List<GradientColorStop> toNormalize, double baseVectorLength) {
+        if (baseVectorLength < ZERO_EPSILON) {
+            return Arrays.asList(new GradientColorStop(toNormalize.get(toNormalize.size() - 1),
+                    0d, OffsetType.RELATIVE));
+        }
         // get rid of all absolute on vector offsets and hint offsets
         List<GradientColorStop> result = copyStopsAndNormalizeAbsoluteOffsets(toNormalize, baseVectorLength);
         // normalize 1st stop as it may be a special case
@@ -500,6 +469,18 @@ public abstract class AbstractLinearGradientBuilder {
             copy.add(result);
         }
         return copy;
+    }
+
+    private static void adjustStopsForPadIfNeeded(List<GradientColorStop> stopsToConstruct,
+            double[] coordinatesDomain) {
+        GradientColorStop firstStop = stopsToConstruct.get(0);
+        if (coordinatesDomain[0] < firstStop.getOffset()) {
+            stopsToConstruct.add(0, new GradientColorStop(firstStop, coordinatesDomain[0], OffsetType.RELATIVE));
+        }
+        GradientColorStop lastStop = stopsToConstruct.get(stopsToConstruct.size() - 1);
+        if (coordinatesDomain[1] > lastStop.getOffset()) {
+            stopsToConstruct.add(new GradientColorStop(lastStop, coordinatesDomain[1], OffsetType.RELATIVE));
+        }
     }
 
     private static List<GradientColorStop> adjustNormalizedStopsToCoverDomain(List<GradientColorStop> normalizedStops,

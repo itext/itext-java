@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20200520144857+03'00')/ModDate(D:20200520144857+03'00')/Producer(iText® 7.1.12-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20200617115021+03'00')/ModDate(D:20200617115021+03'00')/Producer(iText® 7.1.12-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -207,46 +207,46 @@ endobj
 <</Matrix[175 0 0 200 225 202.5]/PatternType 2/Shading 17 0 R/Type/Pattern>>
 endobj
 14 0 obj
-<</ColorSpace/DeviceRGB/Coords[-0.0375 0 0.7875 0]/Domain[-0.05 1.05]/Extend[true true]/Function 18 0 R/ShadingType 2>>
+<</ColorSpace/DeviceRGB/Coords[0 0 0.75 0]/Domain[0 1]/Function 18 0 R/ShadingType 2>>
 endobj
 15 0 obj
-<</ColorSpace/DeviceRGB/Coords[-0.0375 0 0.7875 0]/Domain[-0.05 1.05]/Extend[true true]/Function 19 0 R/ShadingType 2>>
+<</ColorSpace/DeviceRGB/Coords[0 0 0.75 0]/Domain[0 1]/Function 19 0 R/ShadingType 2>>
 endobj
 16 0 obj
-<</ColorSpace/DeviceRGB/Coords[-0.0375 0 0.7875 0]/Domain[-0.05 1.05]/Extend[true true]/Function 20 0 R/ShadingType 2>>
+<</ColorSpace/DeviceRGB/Coords[0 0 0.75 0]/Domain[0 1]/Function 20 0 R/ShadingType 2>>
 endobj
 17 0 obj
-<</ColorSpace/DeviceRGB/Coords[-0.0375 0 0.7875 0]/Domain[-0.05 1.05]/Extend[true true]/Function 21 0 R/ShadingType 2>>
+<</ColorSpace/DeviceRGB/Coords[0 0 0.75 0]/Domain[0 1]/Function 21 0 R/ShadingType 2>>
 endobj
 18 0 obj
-<</Bounds[0 0 1 1]/Domain[-0.05 1.05]/Encode[0 1 0 1 0 1 0 1 0 1]/FunctionType 3/Functions[22 0 R 23 0 R 24 0 R 25 0 R 26 0 R]>>
+<</Bounds[0 1]/Domain[0 1]/Encode[0 1 0 1 0 1]/FunctionType 3/Functions[22 0 R 23 0 R 24 0 R]>>
 endobj
 19 0 obj
-<</Bounds[0 0 1 1]/Domain[-0.05 1.05]/Encode[0 1 0 1 0 1 0 1 0 1]/FunctionType 3/Functions[27 0 R 28 0 R 29 0 R 30 0 R 31 0 R]>>
+<</Bounds[0 1]/Domain[0 1]/Encode[0 1 0 1 0 1]/FunctionType 3/Functions[25 0 R 26 0 R 27 0 R]>>
 endobj
 20 0 obj
-<</Bounds[0 0 1 1]/Domain[-0.05 1.05]/Encode[0 1 0 1 0 1 0 1 0 1]/FunctionType 3/Functions[32 0 R 33 0 R 34 0 R 35 0 R 36 0 R]>>
+<</Bounds[0 1]/Domain[0 1]/Encode[0 1 0 1 0 1]/FunctionType 3/Functions[28 0 R 29 0 R 30 0 R]>>
 endobj
 21 0 obj
-<</Bounds[0 0 1 1]/Domain[-0.05 1.05]/Encode[0 1 0 1 0 1 0 1 0 1]/FunctionType 3/Functions[37 0 R 38 0 R 39 0 R 40 0 R 41 0 R]>>
+<</Bounds[0 1]/Domain[0 1]/Encode[0 1 0 1 0 1]/FunctionType 3/Functions[31 0 R 32 0 R 33 0 R]>>
 endobj
 22 0 obj
-<</C0[0 0.50196 0]/C1[0 0.50196 0]/Domain[0 1]/FunctionType 2/N 1>>
-endobj
-23 0 obj
 <</C0[0 0.50196 0]/C1[1 0 0]/Domain[0 1]/FunctionType 2/N 1>>
 endobj
-24 0 obj
+23 0 obj
 <</C0[1 0 0]/C1[0 0 1]/Domain[0 1]/FunctionType 2/N 1>>
 endobj
-25 0 obj
+24 0 obj
 <</C0[0 0 1]/C1[1 1 0]/Domain[0 1]/FunctionType 2/N 1>>
 endobj
+25 0 obj
+<</C0[0 0.50196 0]/C1[1 0 0]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
 26 0 obj
-<</C0[1 1 0]/C1[1 1 0]/Domain[0 1]/FunctionType 2/N 1>>
+<</C0[1 0 0]/C1[0 0 1]/Domain[0 1]/FunctionType 2/N 1>>
 endobj
 27 0 obj
-<</C0[0 0.50196 0]/C1[0 0.50196 0]/Domain[0 1]/FunctionType 2/N 1>>
+<</C0[0 0 1]/C1[1 1 0]/Domain[0 1]/FunctionType 2/N 1>>
 endobj
 28 0 obj
 <</C0[0 0.50196 0]/C1[1 0 0]/Domain[0 1]/FunctionType 2/N 1>>
@@ -258,40 +258,16 @@ endobj
 <</C0[0 0 1]/C1[1 1 0]/Domain[0 1]/FunctionType 2/N 1>>
 endobj
 31 0 obj
-<</C0[1 1 0]/C1[1 1 0]/Domain[0 1]/FunctionType 2/N 1>>
+<</C0[0 0.50196 0]/C1[1 0 0]/Domain[0 1]/FunctionType 2/N 1>>
 endobj
 32 0 obj
-<</C0[0 0.50196 0]/C1[0 0.50196 0]/Domain[0 1]/FunctionType 2/N 1>>
+<</C0[1 0 0]/C1[0 0 1]/Domain[0 1]/FunctionType 2/N 1>>
 endobj
 33 0 obj
-<</C0[0 0.50196 0]/C1[1 0 0]/Domain[0 1]/FunctionType 2/N 1>>
-endobj
-34 0 obj
-<</C0[1 0 0]/C1[0 0 1]/Domain[0 1]/FunctionType 2/N 1>>
-endobj
-35 0 obj
 <</C0[0 0 1]/C1[1 1 0]/Domain[0 1]/FunctionType 2/N 1>>
-endobj
-36 0 obj
-<</C0[1 1 0]/C1[1 1 0]/Domain[0 1]/FunctionType 2/N 1>>
-endobj
-37 0 obj
-<</C0[0 0.50196 0]/C1[0 0.50196 0]/Domain[0 1]/FunctionType 2/N 1>>
-endobj
-38 0 obj
-<</C0[0 0.50196 0]/C1[1 0 0]/Domain[0 1]/FunctionType 2/N 1>>
-endobj
-39 0 obj
-<</C0[1 0 0]/C1[0 0 1]/Domain[0 1]/FunctionType 2/N 1>>
-endobj
-40 0 obj
-<</C0[0 0 1]/C1[1 1 0]/Domain[0 1]/FunctionType 2/N 1>>
-endobj
-41 0 obj
-<</C0[1 1 0]/C1[1 1 0]/Domain[0 1]/FunctionType 2/N 1>>
 endobj
 xref
-0 42
+0 34
 0000000000 65535 f 
 0000000226 00000 n 
 0000000528 00000 n 
@@ -307,36 +283,28 @@ xref
 0000002839 00000 n 
 0000002932 00000 n 
 0000003025 00000 n 
-0000003161 00000 n 
-0000003297 00000 n 
-0000003433 00000 n 
-0000003569 00000 n 
-0000003714 00000 n 
-0000003859 00000 n 
-0000004004 00000 n 
-0000004149 00000 n 
-0000004233 00000 n 
-0000004311 00000 n 
-0000004383 00000 n 
-0000004455 00000 n 
-0000004527 00000 n 
-0000004611 00000 n 
-0000004689 00000 n 
-0000004761 00000 n 
-0000004833 00000 n 
-0000004905 00000 n 
-0000004989 00000 n 
-0000005067 00000 n 
-0000005139 00000 n 
-0000005211 00000 n 
-0000005283 00000 n 
-0000005367 00000 n 
-0000005445 00000 n 
-0000005517 00000 n 
-0000005589 00000 n 
+0000003128 00000 n 
+0000003231 00000 n 
+0000003334 00000 n 
+0000003437 00000 n 
+0000003549 00000 n 
+0000003661 00000 n 
+0000003773 00000 n 
+0000003885 00000 n 
+0000003963 00000 n 
+0000004035 00000 n 
+0000004107 00000 n 
+0000004185 00000 n 
+0000004257 00000 n 
+0000004329 00000 n 
+0000004407 00000 n 
+0000004479 00000 n 
+0000004551 00000 n 
+0000004629 00000 n 
+0000004701 00000 n 
 trailer
-<</ID [<98bbfb17a447d8eff42afa4d00f29c54><98bbfb17a447d8eff42afa4d00f29c54>]/Info 3 0 R/Root 1 0 R/Size 42>>
+<</ID [<71112213ec92f5f3914124e2aa4e2896><71112213ec92f5f3914124e2aa4e2896>]/Info 3 0 R/Root 1 0 R/Size 34>>
 %iText-7.1.12-SNAPSHOT
 startxref
-5661
+4773
 %%EOF

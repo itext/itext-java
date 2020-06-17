@@ -581,12 +581,15 @@ public abstract class AbstractRenderer implements IRenderer {
             return null;
         }
         Rectangle formBBox = new Rectangle(0, 0, xObjectArea.getWidth(), xObjectArea.getHeight());
-        PdfFormXObject xObject = new PdfFormXObject(formBBox);
+        PdfFormXObject xObject = null;
         Color gradientColor = linearGradientBuilder.buildColor(formBBox, null);
-        new PdfCanvas(xObject, document)
-                .setColor(gradientColor, true)
-                .rectangle(formBBox)
-                .fill();
+        if (gradientColor != null) {
+            xObject = new PdfFormXObject(formBBox);
+            new PdfCanvas(xObject, document)
+                    .setColor(gradientColor, true)
+                    .rectangle(formBBox)
+                    .fill();
+        }
         return xObject;
     }
 

@@ -161,6 +161,28 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     }
 
     @Test
+    public void emptyParsedArguments1Test() {
+        junitExpectedException.expect(StyledXMLParserException.class);
+        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_FUNCTION_ARGUMENTS_LIST, "linear-gradient()"));
+
+        String gradientValue = "linear-gradient()";
+
+        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+    }
+
+    @Test
+    public void emptyParsedArguments2Test() {
+        junitExpectedException.expect(StyledXMLParserException.class);
+        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_FUNCTION_ARGUMENTS_LIST, "linear-gradient( , )"));
+
+        String gradientValue = "linear-gradient( , )";
+
+        Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
+        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+    }
+
+    @Test
     public void invalidFirstArgumentTest() {
         junitExpectedException.expect(StyledXMLParserException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "not-angle-or-color"));

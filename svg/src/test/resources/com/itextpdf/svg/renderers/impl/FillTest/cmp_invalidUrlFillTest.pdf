@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20200521093534+03'00')/ModDate(D:20200521093534+03'00')/Producer(iText® 7.1.12-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20200617112621+03'00')/ModDate(D:20200617112621+03'00')/Producer(iText® 7.1.12-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -101,7 +101,7 @@ endobj
 <</Matrix[100 0 0 100 150 300]/PatternType 2/Shading 9 0 R/Type/Pattern>>
 endobj
 9 0 obj
-<</ColorSpace/DeviceRGB/Coords[0 0 0.75 0]/Domain[0 1]/Extend[true true]/Function 10 0 R/ShadingType 2>>
+<</ColorSpace/DeviceRGB/Coords[0 0 0.75 0]/Domain[0 1]/Function 10 0 R/ShadingType 2>>
 endobj
 10 0 obj
 <</Bounds[]/Domain[0 1]/Encode[0 1]/FunctionType 3/Functions[11 0 R]>>
@@ -121,11 +121,11 @@ xref
 0000000672 00000 n 
 0000001226 00000 n 
 0000001315 00000 n 
-0000001435 00000 n 
-0000001522 00000 n 
+0000001417 00000 n 
+0000001504 00000 n 
 trailer
-<</ID [<e157b5f64c536919ad69d359fdd0db2c><e157b5f64c536919ad69d359fdd0db2c>]/Info 3 0 R/Root 1 0 R/Size 12>>
+<</ID [<84a84b10b3bd8f629d053adad3bfcdce><84a84b10b3bd8f629d053adad3bfcdce>]/Info 3 0 R/Root 1 0 R/Size 12>>
 %iText-7.1.12-SNAPSHOT
 startxref
-1611
+1593
 %%EOF

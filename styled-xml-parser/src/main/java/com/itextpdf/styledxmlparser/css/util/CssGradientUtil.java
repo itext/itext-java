@@ -116,6 +116,10 @@ public final class CssGradientUtil {
                 if (buff.length() != 0) {
                     argumentsList.add(buff.toString().trim());
                 }
+                if (argumentsList.isEmpty()) {
+                    throw new StyledXMLParserException(MessageFormatUtil.format(
+                            StyledXMLParserException.INVALID_GRADIENT_FUNCTION_ARGUMENTS_LIST, cssGradientValue));
+                }
                 return parseCssLinearGradient(argumentsList, isRepeating, emValue, remValue);
             }
         }

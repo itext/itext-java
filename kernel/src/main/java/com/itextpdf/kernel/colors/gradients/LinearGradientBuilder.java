@@ -74,7 +74,7 @@ public class LinearGradientBuilder extends AbstractLinearGradientBuilder {
 
     @Override
     public Point[] getGradientVector(Rectangle targetBoundingBox, AffineTransform contextTransform) {
-        return this.coordinates;
+        return new Point[] {this.coordinates[0].getLocation(), this.coordinates[1].getLocation()};
     }
 
     @Override
