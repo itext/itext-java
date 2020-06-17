@@ -73,7 +73,14 @@ import java.util.Map;
  * default in the {@link DefaultSvgNodeRendererFactory}. It contains the mapping
  * of the default implementations, provided by this project for the standard SVG
  * tags as defined in the SVG Specification.
+ *
+ * @deprecated The public access to this class will be removed in 7.2. The class itself can become
+ * either package private or the inner private static class for
+ * the {@link DefaultSvgNodeRendererFactory}. Users should override {@link ISvgNodeRendererFactory}
+ * (or at least {@link DefaultSvgNodeRendererFactory}) and should not deal with the mapping class
+ * as it's more of an implementation detail.
  */
+@Deprecated
 public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
 
     @Override
