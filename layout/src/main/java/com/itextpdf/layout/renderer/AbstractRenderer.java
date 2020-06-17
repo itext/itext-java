@@ -49,7 +49,6 @@ import com.itextpdf.io.util.NumberUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
-import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
@@ -538,7 +537,8 @@ public abstract class AbstractRenderer implements IRenderer {
                     //  for gradient uses width and height = 1. For all othe cases the logic left as it was.
                     Rectangle imageRectangle;
                     if (backgroundXObject == null) {
-                        backgroundXObject = createXObject(backgroundImage.getLinearGradientBuilder(), backgroundArea, drawContext.getDocument());
+                        backgroundXObject = AbstractRenderer.createXObject(backgroundImage.getLinearGradientBuilder(),
+                                backgroundArea, drawContext.getDocument());
                         imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundXObject.getHeight(),1, 1);
                     } else {
                          imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundXObject.getHeight(),
@@ -575,20 +575,26 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    public PdfFormXObject createXObject(AbstractLinearGradientBuilder linearGradientBuilder,
+    /**
+     * Create a {@link PdfFormXObject} with the given area and containing a linear gradient inside.
+     *
+     * @param linearGradientBuilder the linear gradient builder
+     * @param xObjectArea the result object area
+     * @param document the pdf document
+     * @return the xObject with a specified area and a linear gradient
+     */
+    public static PdfFormXObject createXObject(AbstractLinearGradientBuilder linearGradientBuilder,
             Rectangle xObjectArea, PdfDocument document) {
-        if (linearGradientBuilder == null) {
-            return null;
-        }
         Rectangle formBBox = new Rectangle(0, 0, xObjectArea.getWidth(), xObjectArea.getHeight());
-        PdfFormXObject xObject = null;
-        Color gradientColor = linearGradientBuilder.buildColor(formBBox, null);
-        if (gradientColor != null) {
-            xObject = new PdfFormXObject(formBBox);
-            new PdfCanvas(xObject, document)
-                    .setColor(gradientColor, true)
-                    .rectangle(formBBox)
-                    .fill();
+        PdfFormXObject xObject = new PdfFormXObject(formBBox);
+        if (linearGradientBuilder != null) {
+            Color gradientColor = linearGradientBuilder.buildColor(formBBox, null);
+            if (gradientColor != null) {
+                new PdfCanvas(xObject, document)
+                        .setColor(gradientColor, true)
+                        .rectangle(formBBox)
+                        .fill();
+            }
         }
         return xObject;
     }
