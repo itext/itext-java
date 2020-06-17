@@ -49,14 +49,14 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class RectangleTest extends ExtendedITextTest {
@@ -643,5 +643,19 @@ public class RectangleTest extends ExtendedITextTest {
         Rectangle copyAsRectangle = ((Rectangle) originalPageSize).clone();
         Assert.assertEquals(PageSize.class, copyAsPageSize.getClass());
         Assert.assertEquals(PageSize.class, copyAsRectangle.getClass());
+    }
+
+    @Test
+    public void decreaseWidthTest() {
+        Rectangle rectangle = new Rectangle(100, 200);
+        rectangle.decreaseWidth(10);
+        Assert.assertEquals(90, rectangle.getWidth(), Rectangle.EPS);
+    }
+    
+    @Test
+    public void increaseWidthTest() {
+        Rectangle rectangle = new Rectangle(100, 200);
+        rectangle.increaseWidth(10);
+        Assert.assertEquals(110, rectangle.getWidth(), Rectangle.EPS);
     }
 }

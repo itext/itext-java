@@ -58,9 +58,9 @@ import java.util.List;
  */
 public class Rectangle implements Cloneable, Serializable {
 
-    private static final long serialVersionUID = 8025677415569233446L;
+    static float EPS = 1e-4f;
 
-    private static float EPS = 1e-4f;
+    private static final long serialVersionUID = 8025677415569233446L;
 
     protected float x;
     protected float y;
@@ -412,6 +412,28 @@ public class Rectangle implements Cloneable, Serializable {
      */
     public Rectangle decreaseHeight(float extra) {
         this.height -= extra;
+        return this;
+    }
+
+    /**
+     * Increases the width of rectangle by the given value. May be used in chain.
+     *
+     * @param extra the value of the extra wudth to be added.
+     * @return this {@link Rectangle} instance.
+     */
+    public Rectangle increaseWidth(float extra) {
+        this.width += extra;
+        return this;
+    }
+
+    /**
+     * Decreases the width of rectangle by the given value. May be used in chain.
+     *
+     * @param extra the value of the extra width to be subtracted.
+     * @return this {@link Rectangle} instance.
+     */
+    public Rectangle decreaseWidth(float extra) {
+        this.width -= extra;
         return this;
     }
 
