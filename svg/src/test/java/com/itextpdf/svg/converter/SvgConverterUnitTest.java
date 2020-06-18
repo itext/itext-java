@@ -341,7 +341,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO remove in version 7.2
+    //TODO DEVSIX-3814: remove in version 7.2
     public void resourceResolverInstanceCustomResolverTest() {
         DummySvgConverterProperties properties = new DummySvgConverterProperties();
         TestSvgProcessorResult testSvgProcessorResult = new TestSvgProcessorResult();
@@ -351,7 +351,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO remove in version 7.2
+    //TODO DEVSIX-3814: remove in version 7.2
     public void resourceResolverInstanceCustomResolverNullPropsTest() {
         TestSvgProcessorResult testSvgProcessorResult = new TestSvgProcessorResult();
 
@@ -359,7 +359,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
         Assert.assertNotNull(currentResolver);
     }
 
-    //TODO remove in version 7.2
+    //TODO DEVSIX-3814: remove in version 7.2
     class TestSvgProcessorResult implements ISvgProcessorResult {
 
         public TestSvgProcessorResult() {
