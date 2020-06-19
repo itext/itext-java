@@ -367,14 +367,14 @@ public final class Version {
         return null;
     }
 
-    private static boolean isiText5licenseLoaded(){
+    private static boolean isiText5licenseLoaded() {
         String validatorKey5 = "5";
         boolean result = false;
         try {
             String[] info = getLicenseeInfoFromLicenseKey(validatorKey5);
             result = true;
-        }catch(Exception e){
-            //TODO: Log this exception?
+        } catch (Exception ignore) {
+
         }
         return result;
     }
