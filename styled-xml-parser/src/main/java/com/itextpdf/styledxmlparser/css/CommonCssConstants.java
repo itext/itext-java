@@ -649,6 +649,11 @@ public class CommonCssConstants {
     public static final String WIDTH = "width";
 
     /**
+     * The Constant HEIGHT.
+     */
+    public static final String HEIGHT = "height";
+
+    /**
      * The Constant WORDWRAP.
      */
     public static final String WORDWRAP = "word-wrap";

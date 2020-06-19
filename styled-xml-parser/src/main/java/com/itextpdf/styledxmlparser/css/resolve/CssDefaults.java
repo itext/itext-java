@@ -103,6 +103,7 @@ public class CssDefaults {
         defaultValues.put(CommonCssConstants.FONT_VARIANT, CommonCssConstants.NORMAL);
         defaultValues.put(CommonCssConstants.FONT_WEIGHT, CommonCssConstants.NORMAL);
 
+        defaultValues.put(CommonCssConstants.HEIGHT, CommonCssConstants.AUTO);
         defaultValues.put(CommonCssConstants.HYPHENS, CommonCssConstants.MANUAL);
 
         defaultValues.put(CommonCssConstants.LINE_HEIGHT, CommonCssConstants.NORMAL);
