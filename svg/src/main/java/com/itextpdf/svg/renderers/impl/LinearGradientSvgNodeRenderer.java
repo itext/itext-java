@@ -71,7 +71,7 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
 
         return builder.buildColor(
                 objectBoundingBox.applyMargins(objectBoundingBoxMargin, objectBoundingBoxMargin, objectBoundingBoxMargin, objectBoundingBoxMargin, true),
-                context.getCurrentCanvasTransform()
+                context.getCurrentCanvasTransform(), context.getCurrentCanvas().getDocument()
         );
     }
 

@@ -57,7 +57,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
         AbstractLinearGradientBuilder gradientBuilder = new LinearGradientBuilder();
 
-        Assert.assertNull(gradientBuilder.buildColor(targetBoundingBox, null));
+        Assert.assertNull(gradientBuilder.buildColor(targetBoundingBox, null, null));
     }
 
     @Test
@@ -235,7 +235,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
                         targetBoundingBox.getRight() - 100f, targetBoundingBox.getTop() - 100f)
                 .setSpreadMethod(GradientSpreadMethod.PAD);
 
-        Assert.assertNull(gradientBuilder.buildColor(null, null));
+        Assert.assertNull(gradientBuilder.buildColor(null, null, null));
     }
 
     @Test
@@ -705,7 +705,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), -10d, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(),  -5d, OffsetType.RELATIVE));
 
-        Assert.assertNull(gradientBuilder.buildColor(targetBoundingBox, null));
+        Assert.assertNull(gradientBuilder.buildColor(targetBoundingBox, null, null));
     }
 
     @Test
@@ -718,7 +718,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 5d, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(),  10d, OffsetType.RELATIVE));
 
-        Assert.assertNull(gradientBuilder.buildColor(targetBoundingBox, null));
+        Assert.assertNull(gradientBuilder.buildColor(targetBoundingBox, null, null));
     }
 
     @Test
@@ -731,7 +731,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0.5d, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(),  0.5d, OffsetType.RELATIVE));
 
-        Assert.assertNull(gradientBuilder.buildColor(targetBoundingBox, null));
+        Assert.assertNull(gradientBuilder.buildColor(targetBoundingBox, null, null));
     }
 
     @Test
@@ -770,7 +770,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
                 canvas.concatMatrix(transform);
             }
 
-            canvas.setFillColor(gradientBuilder.buildColor(toDraw, transform))
+            canvas.setFillColor(gradientBuilder.buildColor(toDraw, transform, pdfDoc))
                     .setStrokeColor(ColorConstants.BLACK)
                     .rectangle(toDraw)
                     .fillStroke();
@@ -786,7 +786,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new File(outPdfPath)))) {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
-            canvas.setFillColor(gradientBuilder.buildColor(null, null))
+            canvas.setFillColor(gradientBuilder.buildColor(null, null, pdfDoc))
                     .setStrokeColor(ColorConstants.BLACK)
                     .rectangle(toDraw)
                     .fillStroke();

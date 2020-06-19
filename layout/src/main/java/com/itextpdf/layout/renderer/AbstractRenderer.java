@@ -588,7 +588,7 @@ public abstract class AbstractRenderer implements IRenderer {
         Rectangle formBBox = new Rectangle(0, 0, xObjectArea.getWidth(), xObjectArea.getHeight());
         PdfFormXObject xObject = new PdfFormXObject(formBBox);
         if (linearGradientBuilder != null) {
-            Color gradientColor = linearGradientBuilder.buildColor(formBBox, null);
+            Color gradientColor = linearGradientBuilder.buildColor(formBBox, null, document);
             if (gradientColor != null) {
                 new PdfCanvas(xObject, document)
                         .setColor(gradientColor, true)

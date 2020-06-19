@@ -23,14 +23,15 @@
 package com.itextpdf.kernel.colors.gradients;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
@@ -123,10 +124,12 @@ public abstract class AbstractLinearGradientBuilder {
      *                          the current space. The {@code null} value is valid and can be used
      *                          if there is no transformation from base coordinates to current space
      *                          specified, or it is equal to identity transformation.
+     * @param document          the {@link PdfDocument} for which the linear gradient would be built.
      * @return the constructed {@link Color} or {@code null} if no color to be applied
      * or base gradient vector has been specified
      */
-    public Color buildColor(Rectangle targetBoundingBox, AffineTransform contextTransform) {
+    // TODO: DEVSIX-4136 the document argument would be required for opaque gradients (as we would need to create a mask form xObject)
+    public Color buildColor(Rectangle targetBoundingBox, AffineTransform contextTransform, PdfDocument document) {
         Point[] baseCoordinatesVector = getGradientVector(targetBoundingBox, contextTransform);
         if (baseCoordinatesVector == null || this.stops.isEmpty()) {
             // Can not create gradient color with 0 stops or null coordinates vector

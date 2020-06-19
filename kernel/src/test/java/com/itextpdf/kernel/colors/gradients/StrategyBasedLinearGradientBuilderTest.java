@@ -59,7 +59,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void noSettersTest() {
         Assert.assertNull(new StrategyBasedLinearGradientBuilder()
-                .buildColor(new Rectangle(50f, 450f, 500f, 300f), null));
+                .buildColor(new Rectangle(50f, 450f, 500f, 300f), null, null));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE))
-                .buildColor(null, null));
+                .buildColor(null, null, null));
     }
 
     @Test
@@ -276,7 +276,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
             }
 
             Rectangle toDraw = new Rectangle(50f, 450f, 500f, 300f);
-            canvas.setFillColor(gradientBuilder.buildColor(toDraw, transform))
+            canvas.setFillColor(gradientBuilder.buildColor(toDraw, transform, pdfDoc))
                     .setStrokeColor(ColorConstants.BLACK)
                     .rectangle(toDraw)
                     .fillStroke();
