@@ -114,9 +114,6 @@ public class DefaultLayoutTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, count = 1)
-    })
     public void emptyParagraphsTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "emptyParagraphsTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_emptyParagraphsTest01.pdf";

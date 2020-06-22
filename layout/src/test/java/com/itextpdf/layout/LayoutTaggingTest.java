@@ -956,7 +956,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, count = 2)})
     public void emptyDivTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfWriter writer = new PdfWriter(destinationFolder + "emptyDivTest.pdf");
         PdfDocument pdf = new PdfDocument(writer);

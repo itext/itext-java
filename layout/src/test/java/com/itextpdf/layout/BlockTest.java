@@ -704,7 +704,6 @@ public class BlockTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES))
     public void marginsBordersPaddingOverflow01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "marginsBordersPaddingOverflow01.pdf";
         String cmpFileName = sourceFolder + "cmp_marginsBordersPaddingOverflow01.pdf";

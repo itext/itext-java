@@ -1313,7 +1313,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES)})
     public void choiceFieldAutoSize02Test() throws IOException, InterruptedException {
         String filename = destinationFolder + "choiceFieldAutoSize02Test.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
