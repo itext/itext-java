@@ -30,20 +30,29 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class SystemUtilTest extends ExtendedITextTest {
-
     private final static String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/util/SystemUtilTest/";
+
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/io/util/SystemUtilTest/";
 
     // This is empty file that used to check the logic for existed execution file
     private final static String STUB_EXEC_FILE = SOURCE_FOLDER + "folder with space/stubFile";
+
+    @Before
+    public void setUp() {
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
 
     @Test
     public void prepareProcessArgumentsStubExecFileTest() {
@@ -131,6 +140,28 @@ public class SystemUtilTest extends ExtendedITextTest {
     public void getProcessOutputEmptyTest() throws IOException {
         String result = SystemUtil.getProcessOutput(new EmptyTestProcess());
         Assert.assertEquals("This is error info", result);
+    }
+
+    @Test
+    public void runProcessAndWaitWithWorkingDirectoryTest() throws IOException, InterruptedException {
+        String imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(ImageMagickHelper.MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
+        if (imageMagickPath == null) {
+            imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(ImageMagickHelper.MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY);
+        }
+        String inputImage = "image.jpg";
+        String cmpImage = "cmp_image.jpg";
+        String diff = System.getProperty("user.dir") + DESTINATION_FOLDER.substring(1) + "diff.png";
+
+        StringBuilder currCompareParams = new StringBuilder();
+        currCompareParams
+                .append("'")
+                .append(inputImage).append("' '")
+                .append(cmpImage).append("' '")
+                .append(diff).append("'");
+        boolean result = SystemUtil.runProcessAndWait(imageMagickPath, currCompareParams.toString(), SOURCE_FOLDER);
+
+        Assert.assertFalse(result);
+        Assert.assertTrue(FileUtil.fileExists(diff));
     }
 
 

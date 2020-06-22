@@ -107,26 +107,40 @@ public final class SystemUtil {
     }
 
     public static boolean runProcessAndWait(String exec, String params) throws IOException, InterruptedException {
-        return runProcessAndGetExitCode(exec, params) == 0;
+        return runProcessAndWait(exec, params, null);
+    }
+
+    public static boolean runProcessAndWait(String exec, String params, String workingDirPath) throws IOException, InterruptedException {
+        return runProcessAndGetExitCode(exec, params, workingDirPath) == 0;
     }
 
     public static int runProcessAndGetExitCode(String exec, String params) throws IOException, InterruptedException {
-        Process p = runProcess(exec, params);
+        return runProcessAndGetExitCode(exec, params, null);
+    }
+
+    public static int runProcessAndGetExitCode(String exec, String params, String workingDirPath) throws IOException, InterruptedException {
+        Process p = runProcess(exec, params, workingDirPath);
         System.out.println(getProcessOutput(p));
         return p.waitFor();
     }
 
     public static String runProcessAndGetOutput(String command, String params) throws IOException {
-        return getProcessOutput(runProcess(command, params));
+        return getProcessOutput(runProcess(command, params, null));
     }
 
     public static StringBuilder runProcessAndCollectErrors(String execPath, String params) throws IOException {
-        return printProcessErrorsOutput(runProcess(execPath, params));
+        return printProcessErrorsOutput(runProcess(execPath, params, null));
     }
 
-    static Process runProcess(String execPath, String params) throws IOException {
+    static Process runProcess(String execPath, String params, String workingDirPath) throws IOException {
         List<String> cmdList = prepareProcessArguments(execPath, params);
-        return Runtime.getRuntime().exec(cmdList.toArray(new String[cmdList.size()]));
+        String[] cmdArray = cmdList.toArray(new String[cmdList.size()]);
+        if (workingDirPath != null) {
+            File workingDir = new File(workingDirPath);
+            return Runtime.getRuntime().exec(cmdArray, null, workingDir);
+        } else {
+            return Runtime.getRuntime().exec(cmdArray);
+        }
     }
 
     static List<String> prepareProcessArguments(String exec, String params) {
