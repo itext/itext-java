@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.converter;
 
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -284,7 +285,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         String name = "eclipse";
         int x = 50;
         int y = 0;
-        String destName = name + "_" + x + "_" + y;
+        String destName = MessageFormatUtil.format("{0}_{1}_{2}", name, x, y);
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
@@ -296,7 +297,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         String name = "eclipse";
         int x = 0;
         int y = 100;
-        String destName = name + "_" + x + "_" + y;
+        String destName = MessageFormatUtil.format("{0}_{1}_{2}", name, x, y);
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
@@ -308,7 +309,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         String name = "eclipse";
         int x = 50;
         int y = 100;
-        String destName = name + "_" + x + "_" + y;
+        String destName = MessageFormatUtil.format("{0}_{1}_{2}", name, x, y);
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
@@ -321,7 +322,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         String name = "eclipse";
         int x = -50;
         int y = 0;
-        String destName = name + "_" + x + "_" + y;
+        String destName = MessageFormatUtil.format("{0}_{1}_{2}", name, x, y);
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
@@ -333,7 +334,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         String name = "eclipse";
         int x = 0;
         int y = -100;
-        String destName = name + "_" + x + "_" + y;
+        String destName = MessageFormatUtil.format("{0}_{1}_{2}", name, x, y);
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
@@ -346,7 +347,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         String name = "eclipse";
         int x = -50;
         int y = -100;
-        String destName = name + "_" + x + "_" + y;
+        String destName = MessageFormatUtil.format("{0}_{1}_{2}", name, x, y);
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
@@ -359,7 +360,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         String name = "eclipse";
         int x = -50;
         int y = -50;
-        String destName = name + "_" + x + "_" + y;
+        String destName = MessageFormatUtil.format("{0}_{1}_{2}", name, x, y);
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
