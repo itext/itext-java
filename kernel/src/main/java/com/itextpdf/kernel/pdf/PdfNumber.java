@@ -143,6 +143,14 @@ public class PdfNumber extends PdfPrimitiveObject {
                 o != null && getClass() == o.getClass() && Double.compare(((PdfNumber) o).value, value) == 0;
     }
 
+    /**
+     * Checks if string representation of the value contains decimal point.
+     * @return true if contains so the number must be real not integer
+     */
+    public boolean hasDecimalPoint() {
+        return this.toString().contains(".");
+    }
+
     @Override
     public int hashCode() {
         if (changed) {

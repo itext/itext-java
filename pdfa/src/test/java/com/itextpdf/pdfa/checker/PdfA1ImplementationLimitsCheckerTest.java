@@ -50,6 +50,7 @@ import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -89,27 +90,39 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         final int maxStringLength = pdfA1Checker.getMaxStringLength();
         final int maxArrayCapacity = MAX_ARRAY_CAPACITY;
         final int maxDictionaryCapacity = MAX_DICTIONARY_CAPACITY;
+        final long maxIntegerValue = pdfA1Checker.getMaxIntegerValue();
+        final long minIntegerValue = pdfA1Checker.getMinIntegerValue();
+        final double maxRealValue = pdfA1Checker.getMaxRealValue();
 
-        Assert.assertEquals(maxStringLength, 65535);
+        Assert.assertEquals(65535, maxStringLength);
         PdfString longString = PdfACheckerTestUtils.getLongString(maxStringLength);
 
         PdfArray longArray = PdfACheckerTestUtils.getLongArray(maxArrayCapacity);
         PdfDictionary longDictionary = PdfACheckerTestUtils.getLongDictionary(maxDictionaryCapacity);
 
-        PdfObject[] longObjects = {longString, longArray, longDictionary};
+        Assert.assertEquals(2147483647, maxIntegerValue);
+        Assert.assertEquals(-2147483648, minIntegerValue);
+        Assert.assertEquals(32767, maxRealValue, 0.001);
+
+        PdfNumber largeInteger = new PdfNumber(maxIntegerValue);
+        PdfNumber negativeInteger = new PdfNumber(minIntegerValue);
+        PdfNumber largeReal = new PdfNumber(maxRealValue - 0.001);
+
+        PdfObject[] largeObjects = {longString, longArray, longDictionary,
+                largeInteger, negativeInteger, largeReal};
         // No exceptions should not be thrown as all values match the
         // limitations provided in specification
-        for (PdfObject longObject: longObjects) {
-            pdfA1Checker.checkPdfObject(longObject);
-            checkInArray(longObject);
-            checkInDictionary(longObject);
-            checkInComplexStructure(longObject);
-            checkInContentStream(longObject);
-            checkInArrayInContentStream(longObject);
-            checkInDictionaryInContentStream(longObject);
-            checkInFormXObject(longObject);
-            checkInTilingPattern(longObject);
-            checkInType3Font(longObject);
+        for (PdfObject largeObject: largeObjects) {
+            pdfA1Checker.checkPdfObject(largeObject);
+            checkInArray(largeObject);
+            checkInDictionary(largeObject);
+            checkInComplexStructure(largeObject);
+            checkInContentStream(largeObject);
+            checkInArrayInContentStream(largeObject);
+            checkInDictionaryInContentStream(largeObject);
+            checkInFormXObject(largeObject);
+            checkInTilingPattern(largeObject);
+            checkInType3Font(largeObject);
         }
     }
 
@@ -132,6 +145,40 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         // An exception should be thrown as provided String is longer then
         // it is allowed per specification
         pdfA1Checker.checkPdfObject(longString);
+    }
+
+    @Test
+    public void independentLargeIntegerTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE);
+
+        PdfNumber largeNumber = new PdfNumber(pdfA1Checker.getMaxIntegerValue() + 1L);
+
+        // An exception should be thrown as provided integer is larger then
+        // it is allowed per specification
+        pdfA1Checker.checkPdfObject(largeNumber);
+    }
+
+    @Test
+    public void independentLargeNegativeIntegerTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE);
+
+        PdfNumber largeNumber = new PdfNumber(pdfA1Checker.getMinIntegerValue() - 1L);
+
+        // An exception should be thrown as provided integer is smaller then
+        // it is allowed per specification
+        pdfA1Checker.checkPdfObject(largeNumber);
+    }
+
+    @Test
+    public void independentLargeRealTest() {
+
+        PdfNumber largeNumber = new PdfNumber(pdfA1Checker.getMaxRealValue() + 1.0);
+
+        // TODO DEVSIX-4182
+        // An exception is not thrown as any number greater then 32767 is considered as Integer
+        pdfA1Checker.checkPdfObject(largeNumber);
     }
 
     @Test
@@ -203,6 +250,40 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         // An exception should be thrown as content stream has a string which
         // is longer then it is allowed per specification
         checkInContentStream(longString);
+    }
+
+    @Test
+    public void largeIntegerInContentStreamTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE);
+
+        PdfNumber largeNumber = new PdfNumber(pdfA1Checker.getMaxIntegerValue() + 1L);
+
+        // An exception should be thrown as provided integer is larger then
+        // it is allowed per specification
+        checkInContentStream(largeNumber);
+    }
+
+    @Test
+    public void largeNegativeIntegerInContentStreamTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE);
+
+        PdfNumber largeNumber = new PdfNumber(pdfA1Checker.getMinIntegerValue() - 1L);
+
+        // An exception should be thrown as provided integer is smaller then
+        // it is allowed per specification
+        checkInContentStream(largeNumber);
+    }
+
+    @Test
+    public void largeRealInContentStreamTest() {
+
+        PdfNumber largeNumber = new PdfNumber(pdfA1Checker.getMaxRealValue() + 1.0);
+
+        // TODO DEVSIX-4182
+        // An exception is not thrown as any number greater then 32767 is considered as Integer
+        checkInContentStream(largeNumber);
     }
 
     @Test
@@ -366,10 +447,11 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         final int maxAllowedLength = pdfA1Checker.getMaxStringLength();
         final int testLength = maxAllowedLength + 1;
 
-        Assert.assertEquals(testLength, 65536);
+        Assert.assertEquals(65536, testLength);
 
         return PdfACheckerTestUtils.getLongString(testLength);
     }
+
 
     private PdfArray buildLongArray() {
 

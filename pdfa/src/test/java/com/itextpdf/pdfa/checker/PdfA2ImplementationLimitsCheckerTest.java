@@ -45,6 +45,7 @@ package com.itextpdf.pdfa.checker;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.pdfa.PdfAConformanceException;
@@ -134,5 +135,17 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
         // and stream in PDFA 2
         pdfA2Checker.checkPdfObject(longStream);
 
+    }
+
+    @Test
+    public void independentLargeRealTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE);
+
+        PdfNumber largeNumber = new PdfNumber(pdfA2Checker.getMaxRealValue());
+
+        // TODO DEVSIX-4182
+        // An exception is thrown as any number greater then 32767 is considered as Integer
+        pdfA2Checker.checkPdfObject(largeNumber);
     }
 }

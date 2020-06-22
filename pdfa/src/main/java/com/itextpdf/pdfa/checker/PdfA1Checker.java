@@ -308,6 +308,9 @@ public class PdfA1Checker extends PdfAChecker {
             case PdfObject.STRING:
                 checkPdfString((PdfString) object);
                 break;
+            case PdfObject.NUMBER:
+                checkPdfNumber((PdfNumber) object);
+                break;
             case PdfObject.ARRAY:
                 PdfArray array = (PdfArray) object;
                 checkPdfArray(array);
@@ -445,13 +448,39 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     protected void checkPdfNumber(PdfNumber number) {
-        if (Math.abs(number.longValue()) > getMaxRealValue() && number.toString().contains(".")) {
-            throw new PdfAConformanceException(PdfAConformanceException.REAL_NUMBER_IS_OUT_OF_RANGE);
+        if (number.hasDecimalPoint()) {
+            if (Math.abs(number.longValue()) > getMaxRealValue()) {
+                throw new PdfAConformanceException(PdfAConformanceException.REAL_NUMBER_IS_OUT_OF_RANGE);
+            }
+        } else {
+            if (number.longValue() > getMaxIntegerValue() || number.longValue() < getMinIntegerValue()) {
+                throw new PdfAConformanceException(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE);
+            }
         }
     }
 
+    /**
+     * Retrieve maximum allowed real value.
+     * @return maximum allowed real number
+     */
     protected double getMaxRealValue() {
         return 32767;
+    }
+
+    /**
+     * Retrieve maximal allowed integer value.
+     * @return maximal allowed integer number
+     */
+    protected long getMaxIntegerValue() {
+        return Integer.MAX_VALUE;
+    }
+
+    /**
+     * Retrieve minimal allowed integer value.
+     * @return minimal allowed integer number
+     */
+    protected long getMinIntegerValue() {
+        return Integer.MIN_VALUE;
     }
 
     @Override
