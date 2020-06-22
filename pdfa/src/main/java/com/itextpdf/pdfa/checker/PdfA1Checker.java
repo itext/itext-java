@@ -309,12 +309,15 @@ public class PdfA1Checker extends PdfAChecker {
                 checkPdfString((PdfString) object);
                 break;
             case PdfObject.ARRAY:
-                for (PdfObject obj : (PdfArray) object) {
+                PdfArray array = (PdfArray) object;
+                checkPdfArray(array);
+                for (PdfObject obj : array) {
                     checkContentStreamObject(obj);
                 }
                 break;
             case PdfObject.DICTIONARY:
                 PdfDictionary dictionary = (PdfDictionary) object;
+                checkPdfDictionary(dictionary);
                 for (PdfObject obj : dictionary.values()) {
                     checkContentStreamObject(obj);
                 }
@@ -452,7 +455,23 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
+    protected void checkPdfArray(PdfArray array) {
+        if (array.size() > getMaxArrayCapacity()) {
+            throw new PdfAConformanceException(PdfAConformanceException.MAXIMUM_ARRAY_CAPACITY_IS_EXCEEDED);
+        }
+    }
+
+    @Override
+    protected void checkPdfDictionary(PdfDictionary dictionary) {
+        if (dictionary.size() > getMaxDictionaryCapacity()) {
+            throw new PdfAConformanceException(PdfAConformanceException.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED);
+        }
+    }
+
+    @Override
     protected void checkPdfStream(PdfStream stream) {
+        checkPdfDictionary(stream);
+
         if (stream.containsKey(PdfName.F) || stream.containsKey(PdfName.FFilter) || stream.containsKey(PdfName.FDecodeParams)) {
             throw new PdfAConformanceException(PdfAConformanceException.STREAM_OBJECT_DICTIONARY_SHALL_NOT_CONTAIN_THE_F_FFILTER_OR_FDECODEPARAMS_KEYS);
         }
@@ -646,5 +665,13 @@ public class PdfA1Checker extends PdfAChecker {
             }
         }
         return fields;
+    }
+
+    private int getMaxArrayCapacity() {
+        return 8191;
+    }
+
+    private int getMaxDictionaryCapacity() {
+        return 4095;
     }
 }

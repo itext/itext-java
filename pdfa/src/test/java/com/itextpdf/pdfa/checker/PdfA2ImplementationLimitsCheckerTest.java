@@ -42,21 +42,11 @@
  */
 package com.itextpdf.pdfa.checker;
 
-import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.colors.PatternColor;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
-import com.itextpdf.kernel.pdf.colorspace.PdfPattern.Shading;
-import com.itextpdf.kernel.pdf.colorspace.PdfPattern.Tiling;
-import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.pdfa.PdfAConformanceException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -70,60 +60,79 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
-public class PdfA1CheckerTest extends ExtendedITextTest {
-
-    private PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformanceLevel.PDF_A_1B);
+public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
+    private PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B);
 
     @Before
     public void before() {
-        pdfA1Checker.setFullCheckMode(true);
+        pdfA2Checker.setFullCheckMode(true);
     }
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
+
     @Test
-    public void checkCatalogDictionaryWithoutAAEntry() {
+    public void independentLongStringTest() {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
 
-        PdfDictionary catalog = new PdfDictionary();
-        catalog.put(PdfName.AA, new PdfDictionary());
+        final int maxAllowedLength = pdfA2Checker.getMaxStringLength();
+        final int testLength = maxAllowedLength + 1;
 
-        pdfA1Checker.checkCatalogValidEntries(catalog);
+        Assert.assertEquals(testLength, 32768);
+        PdfString longString = PdfACheckerTestUtils.getLongString(testLength);
+
+        // An exception should be thrown as provided String is longer then
+        // it is allowed per specification
+        pdfA2Checker.checkPdfObject(longString);
     }
 
     @Test
-    public void checkCatalogDictionaryWithoutOCPropertiesEntry() {
+    public void longStringInContentStreamTest() {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_OCPROPERTIES_KEY);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
 
-        PdfDictionary catalog = new PdfDictionary();
-        catalog.put(PdfName.OCProperties, new PdfDictionary());
+        pdfA2Checker.setFullCheckMode(true);
 
-        pdfA1Checker.checkCatalogValidEntries(catalog);
+        final int maxAllowedLength = pdfA2Checker.getMaxStringLength();
+        final int testLength = maxAllowedLength + 1;
+
+        Assert.assertEquals(testLength, 32768);
+
+        PdfString longString = PdfACheckerTestUtils.getLongString(testLength);
+        String newContentString = PdfACheckerTestUtils.getStreamWithValue(longString);
+        byte[] newContent = newContentString.getBytes(StandardCharsets.UTF_8);
+        PdfStream stream = new PdfStream(newContent);
+
+        // An exception should be thrown as content stream has a string which
+        // is longer then it is allowed per specification
+        pdfA2Checker.checkContentStream(stream);
     }
 
     @Test
-    public void checkCatalogDictionaryWithoutEmbeddedFiles() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.A_NAME_DICTIONARY_SHALL_NOT_CONTAIN_THE_EMBEDDED_FILES_KEY);
+    public void arrayCapacityHasNoLimitsTest() {
 
-        PdfDictionary names = new PdfDictionary();
-        names.put(PdfName.EmbeddedFiles, new PdfDictionary());
+        PdfArray longArray = PdfACheckerTestUtils.getLongArray(999999);
 
-        PdfDictionary catalog = new PdfDictionary();
-        catalog.put(PdfName.Names, names);
-
-        pdfA1Checker.checkCatalogValidEntries(catalog);
+        // An exception should not be thrown as there is no limits for capacity of an array
+        // in PDFA 2
+        pdfA2Checker.checkPdfObject(longArray);
     }
 
     @Test
-    public void checkValidCatalog() {
-        pdfA1Checker.checkCatalogValidEntries(new PdfDictionary());
+    public void dictionaryCapacityHasNoLimitsTest() {
 
-        // checkCatalogValidEntries doesn't change the state of any object
-        // and doesn't return any value. The only result is exception which
-        // was or wasn't thrown. Successful scenario is tested here therefore
-        // no assertion is provided
+        PdfDictionary longDictionary = PdfACheckerTestUtils.getLongDictionary(999999);
+
+        // An exception should not be thrown as there is no limits for capacity of a dictionary
+        // in PDFA 2
+        pdfA2Checker.checkPdfObject(longDictionary);
+
+        PdfStream longStream = PdfACheckerTestUtils.getStreamWithLongDictionary(999999);
+
+        // An exception should not be thrown as there is no limits for capacity of a dictionary
+        // and stream in PDFA 2
+        pdfA2Checker.checkPdfObject(longStream);
+
     }
 }

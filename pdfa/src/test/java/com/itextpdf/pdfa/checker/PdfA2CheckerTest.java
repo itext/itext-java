@@ -335,41 +335,4 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
 
         pdfA2Checker.checkCatalogValidEntries(catalog);
     }
-
-    @Test
-    public void independentLongStringTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
-
-        final int maxAllowedLength = pdfA2Checker.getMaxStringLength();
-        final int testLength = maxAllowedLength + 1;
-
-        Assert.assertEquals(testLength, 32768);
-        PdfString longString = new PdfString(PdfACheckerTestUtils.getLongString(testLength));
-
-        // An exception should be thrown as provided String is longer then
-        // it is allowed per specification
-        pdfA2Checker.checkPdfObject(longString);
-    }
-
-    @Test
-    public void longStringInContentStreamTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
-
-        pdfA2Checker.setFullCheckMode(true);
-
-        final int maxAllowedLength = pdfA2Checker.getMaxStringLength();
-        final int testLength = maxAllowedLength + 1;
-
-        Assert.assertEquals(testLength, 32768);
-
-        String newContentString = PdfACheckerTestUtils.getStreamWithLongString(testLength);
-        byte[] newContent = newContentString.getBytes(StandardCharsets.UTF_8);
-        PdfStream stream = new PdfStream(newContent);
-
-        // An exception should be thrown as content stream has a string which
-        // is longer then it is allowed per specification
-        pdfA2Checker.checkContentStream(stream);
-    }
 }

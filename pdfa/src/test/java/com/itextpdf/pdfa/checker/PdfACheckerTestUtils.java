@@ -42,37 +42,62 @@
  */
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfOutputStream;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
+
 public class PdfACheckerTestUtils {
     private PdfACheckerTestUtils() {
     }
 
-    static String getLongString(int length) {
+    static PdfString getLongString(int length) {
         final char charToFill = 'A';
         char[] array = new char[length];
         for (int i = 0; i < array.length; i++) {
             array[i] = charToFill;
         }
-        return new String(array);
+        return new PdfString(new String(array));
     }
 
-    static String getStreamWithLongString(int length) {
-        return getStreamWithValue("(" + getLongString(length) + ")");
+    static PdfArray getLongArray(int length) {
+        PdfArray array = new PdfArray();
+        for (int i = 0; i < length; i++) {
+            array.add(new PdfNumber(i));
+        }
+        return array;
     }
 
-    static String getStreamWithLongStringInArray(int length) {
-        return getStreamWithValue("[(" + getLongString(length) + "), (a)]");
+    static PdfDictionary getLongDictionary(int length) {
+        PdfDictionary dict = new PdfDictionary();
+        for (int i = 0; i < length; i++) {
+            dict.put(new PdfName("value #" + i), new PdfNumber(i));
+        }
+        return dict;
     }
 
-    static String getStreamWithLongStringInDictionary(int length) {
-        return getStreamWithValue("<</Value (" + getLongString(length) + ")>>");
+    static PdfStream getStreamWithLongDictionary(int length) {
+        PdfStream stream = new PdfStream("Hello, world!".getBytes());
+        for (int i = 0; i < length; i++) {
+            stream.put(new PdfName("value #" + i), new PdfNumber(i));
+        }
+        return stream;
     }
 
-    private static String getStreamWithValue(String value) {
+    static String getStreamWithValue(PdfObject object) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfOutputStream stream = new PdfOutputStream(baos);
+        stream.write(object);
         return "q\n"
                 + "BT\n"
                 + "/F1 12 Tf\n"
                 + "36 787.96 Td\n"
-                + value + " Tj\n"
+                + new String(baos.toByteArray()) + " Tj\n"
                 + "ET\n"
                 + "Q";
     }

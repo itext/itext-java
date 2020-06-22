@@ -332,6 +332,15 @@ public class PdfA2Checker extends PdfA1Checker {
     protected int getMaxStringLength() {
         return 32767;
     }
+    @Override
+    protected void checkPdfArray(PdfArray array) {
+        // currently no validation for arrays is implemented for PDF/A 2
+    }
+
+    @Override
+    protected void checkPdfDictionary(PdfDictionary dictionary) {
+        // currently no validation for dictionaries is implemented for PDF/A 2
+    }
 
     @Override
     protected void checkAnnotation(PdfDictionary annotDic) {
@@ -547,6 +556,7 @@ public class PdfA2Checker extends PdfA1Checker {
 
     @Override
     protected void checkPdfStream(PdfStream stream) {
+        checkPdfDictionary(stream);
 
         if (stream.containsKey(PdfName.F) || stream.containsKey(PdfName.FFilter) || stream.containsKey(PdfName.FDecodeParams)) {
             throw new PdfAConformanceException(PdfAConformanceException.STREAM_OBJECT_DICTIONARY_SHALL_NOT_CONTAIN_THE_F_FFILTER_OR_FDECODEPARAMS_KEYS);

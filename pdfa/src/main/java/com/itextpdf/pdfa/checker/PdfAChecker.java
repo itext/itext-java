@@ -202,7 +202,9 @@ public abstract class PdfAChecker implements Serializable {
                 checkPdfString((PdfString) obj);
                 break;
             case PdfObject.ARRAY:
-                checkArrayRecursively((PdfArray) obj);
+                PdfArray array = (PdfArray) obj;
+                checkPdfArray(array);
+                checkArrayRecursively(array);
                 break;
             case PdfObject.DICTIONARY:
                 PdfDictionary dict = (PdfDictionary) obj;
@@ -210,6 +212,7 @@ public abstract class PdfAChecker implements Serializable {
                 if (PdfName.Filespec.equals(type)) {
                     checkFileSpec(dict);
                 }
+                checkPdfDictionary(dict);
                 checkDictionaryRecursively(dict);
                 break;
             case PdfObject.STREAM:
@@ -415,6 +418,8 @@ public abstract class PdfAChecker implements Serializable {
     protected abstract void checkOutputIntents(PdfDictionary catalog);
     protected abstract void checkPageObject(PdfDictionary page, PdfDictionary pageResources);
     protected abstract void checkPageSize(PdfDictionary page);
+    protected abstract void checkPdfArray(PdfArray array);
+    protected abstract void checkPdfDictionary(PdfDictionary dictionary);
     protected abstract void checkPdfNumber(PdfNumber number);
     protected abstract void checkPdfStream(PdfStream stream);
     protected abstract void checkPdfString(PdfString string);
