@@ -206,11 +206,12 @@ public class ByteBuffer
 	
 	
 	/**
-	 * Appends a byte array or part of to the buffer.
+	 * Appends a part of byte array to the buffer. Elements on positions {@code offset}
+	 * through {@code offset+len-1} of provided array will be copied
 	 * 
 	 * @param bytes a byte array
-	 * @param offset an offset with
-	 * @param len
+	 * @param offset is a position of the first element to copy
+	 * @param len the number of array elements to be added
 	 */
 	public void append(byte[] bytes, int offset, int len)
 	{

@@ -101,11 +101,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 		this.tree = tree;
 	}
 
-
-	/**
-	 * @see XMPMeta#appendArrayItem(String, String, PropertyOptions, String,
-	 *      PropertyOptions)
-	 */
 	public void appendArrayItem(String schemaNS, String arrayName, PropertyOptions arrayOptions,
 			String itemValue, PropertyOptions itemOptions) throws XMPException
 	{
@@ -170,21 +165,12 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 		doSetArrayItem(arrayNode, ARRAY_LAST_ITEM, itemValue, itemOptions, true);
 	}
 
-	
-	/**
-	 * @see XMPMeta#appendArrayItem(String, String, String)
-	 */
 	public void appendArrayItem(String schemaNS, String arrayName, String itemValue)
 			throws XMPException
 	{
 		appendArrayItem(schemaNS, arrayName, null, itemValue, null);
 	}
 
-
-	/**
-	 * @throws XMPException
-	 * @see XMPMeta#countArrayItems(String, String)
-	 */
 	public int countArrayItems(String schemaNS, String arrayName) throws XMPException
 	{
 		ParameterAsserts.assertSchemaNS(schemaNS);
@@ -209,9 +195,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#deleteArrayItem(String, String, int)
-	 */
 	public void deleteArrayItem(String schemaNS, String arrayName, int itemIndex)
 	{
 		try
@@ -229,9 +212,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#deleteProperty(String, String)
-	 */
 	public void deleteProperty(String schemaNS, String propName)
 	{
 		try
@@ -254,9 +234,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#deleteQualifier(String, String, String, String)
-	 */
 	public void deleteQualifier(String schemaNS, String propName, String qualNS, String qualName)
 	{
 		try
@@ -275,9 +252,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#deleteStructField(String, String, String, String)
-	 */
 	public void deleteStructField(String schemaNS, String structName, String fieldNS,
 			String fieldName)
 	{
@@ -298,9 +272,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#doesPropertyExist(String, String)
-	 */
 	public boolean doesPropertyExist(String schemaNS, String propName)
 	{
 		try
@@ -319,9 +290,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#doesArrayItemExist(String, String, int)
-	 */
 	public boolean doesArrayItemExist(String schemaNS, String arrayName, int itemIndex)
 	{
 		try
@@ -339,9 +307,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#doesStructFieldExist(String, String, String, String)
-	 */
 	public boolean doesStructFieldExist(String schemaNS, String structName, String fieldNS,
 			String fieldName)
 	{
@@ -361,9 +326,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#doesQualifierExist(String, String, String, String)
-	 */
 	public boolean doesQualifierExist(String schemaNS, String propName, String qualNS,
 			String qualName)
 	{
@@ -383,9 +345,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#getArrayItem(String, String, int)
-	 */
 	public XMPProperty getArrayItem(String schemaNS, String arrayName, int itemIndex)
 			throws XMPException
 	{
@@ -397,10 +356,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @throws XMPException
-	 * @see XMPMeta#getLocalizedText(String, String, String, String)
-	 */
 	public XMPProperty getLocalizedText(String schemaNS, String altTextName, String genericLang,
 			String specificLang) throws XMPException
 	{
@@ -457,10 +412,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#setLocalizedText(String, String, String, String, String,
-	 *      PropertyOptions)
-	 */
 	public void setLocalizedText(String schemaNS, String altTextName, String genericLang,
 			String specificLang, String itemValue, PropertyOptions options) throws XMPException
 	{
@@ -641,10 +592,7 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 		}
 	}
 
-	
-	/**
-	 * @see XMPMeta#setLocalizedText(String, String, String, String, String)
-	 */
+
 	public void setLocalizedText(String schemaNS, String altTextName, String genericLang,
 			String specificLang, String itemValue) throws XMPException
 	{
@@ -652,10 +600,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 	
 
-	/**
-	 * @throws XMPException
-	 * @see XMPMeta#getProperty(String, String)
-	 */
 	public XMPProperty getProperty(String schemaNS, String propName) throws XMPException
 	{
 		return getProperty(schemaNS, propName, VALUE_STRING);
@@ -773,19 +717,12 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#getPropertyBoolean(String, String)
-	 */
 	public Boolean getPropertyBoolean(String schemaNS, String propName) throws XMPException
 	{
 		return (Boolean) getPropertyObject(schemaNS, propName, VALUE_BOOLEAN);
 	}
 
 
-	/**
-	 * @throws XMPException
-	 * @see XMPMeta#setPropertyBoolean(String, String, boolean, PropertyOptions)
-	 */
 	public void setPropertyBoolean(String schemaNS, String propName, boolean propValue,
 			PropertyOptions options) throws XMPException
 	{
@@ -793,9 +730,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#setPropertyBoolean(String, String, boolean)
-	 */
 	public void setPropertyBoolean(String schemaNS, String propName, boolean propValue)
 			throws XMPException
 	{
@@ -803,18 +737,12 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#getPropertyInteger(String, String)
-	 */
 	public Integer getPropertyInteger(String schemaNS, String propName) throws XMPException
 	{
 		return (Integer) getPropertyObject(schemaNS, propName, VALUE_INTEGER);
 	}
 
 
-	/**
-	 * @see XMPMeta#setPropertyInteger(String, String, int, PropertyOptions)
-	 */
 	public void setPropertyInteger(String schemaNS, String propName, int propValue,
 			PropertyOptions options) throws XMPException
 	{
@@ -822,9 +750,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#setPropertyInteger(String, String, int)
-	 */
 	public void setPropertyInteger(String schemaNS, String propName, int propValue)
 			throws XMPException
 	{
@@ -832,18 +757,12 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#getPropertyLong(String, String)
-	 */
 	public Long getPropertyLong(String schemaNS, String propName) throws XMPException
 	{
 		return (Long) getPropertyObject(schemaNS, propName, VALUE_LONG);
 	}
 
 
-	/**
-	 * @see XMPMeta#setPropertyLong(String, String, long, PropertyOptions)
-	 */
 	public void setPropertyLong(String schemaNS, String propName, long propValue,
 			PropertyOptions options) throws XMPException
 	{
@@ -851,9 +770,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#setPropertyLong(String, String, long)
-	 */
 	public void setPropertyLong(String schemaNS, String propName, long propValue)
 			throws XMPException
 	{
@@ -861,18 +777,12 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#getPropertyDouble(String, String)
-	 */
 	public Double getPropertyDouble(String schemaNS, String propName) throws XMPException
 	{
 		return (Double) getPropertyObject(schemaNS, propName, VALUE_DOUBLE);
 	}
 
 
-	/**
-	 * @see XMPMeta#setPropertyDouble(String, String, double, PropertyOptions)
-	 */
 	public void setPropertyDouble(String schemaNS, String propName, double propValue,
 			PropertyOptions options) throws XMPException
 	{
@@ -880,9 +790,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#setPropertyDouble(String, String, double)
-	 */
 	public void setPropertyDouble(String schemaNS, String propName, double propValue)
 			throws XMPException
 	{
@@ -890,19 +797,12 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#getPropertyDate(String, String)
-	 */
 	public XMPDateTime getPropertyDate(String schemaNS, String propName) throws XMPException
 	{
 		return (XMPDateTime) getPropertyObject(schemaNS, propName, VALUE_DATE);
 	}
 
 
-	/**
-	 * @see XMPMeta#setPropertyDate(String, String, XMPDateTime,
-	 *      PropertyOptions)
-	 */
 	public void setPropertyDate(String schemaNS, String propName, XMPDateTime propValue,
 			PropertyOptions options) throws XMPException
 	{
@@ -910,9 +810,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#setPropertyDate(String, String, XMPDateTime)
-	 */
 	public void setPropertyDate(String schemaNS, String propName, XMPDateTime propValue)
 			throws XMPException
 	{
@@ -920,19 +817,12 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#getPropertyCalendar(String, String)
-	 */
 	public Calendar getPropertyCalendar(String schemaNS, String propName) throws XMPException
 	{
 		return (Calendar) getPropertyObject(schemaNS, propName, VALUE_CALENDAR);
 	}
 
 
-	/**
-	 * @see XMPMeta#setPropertyCalendar(String, String, java.util.Calendar,
-	 *      PropertyOptions)
-	 */
 	public void setPropertyCalendar(String schemaNS, String propName, Calendar propValue,
 			PropertyOptions options) throws XMPException
 	{
@@ -940,9 +830,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#setPropertyCalendar(String, String, java.util.Calendar)
-	 */
 	public void setPropertyCalendar(String schemaNS, String propName, Calendar propValue)
 			throws XMPException
 	{
@@ -950,27 +837,18 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#getPropertyBase64(String, String)
-	 */
 	public byte[] getPropertyBase64(String schemaNS, String propName) throws XMPException
 	{
 		return (byte[]) getPropertyObject(schemaNS, propName, VALUE_BASE64);
 	}
 
 
-	/**
-	 * @see XMPMeta#getPropertyString(String, String)
-	 */
 	public String getPropertyString(String schemaNS, String propName) throws XMPException
 	{
 		return (String) getPropertyObject(schemaNS, propName, VALUE_STRING);
 	}
 
 
-	/**
-	 * @see XMPMeta#setPropertyBase64(String, String, byte[], PropertyOptions)
-	 */
 	public void setPropertyBase64(String schemaNS, String propName, byte[] propValue,
 			PropertyOptions options) throws XMPException
 	{
@@ -978,9 +856,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#setPropertyBase64(String, String, byte[])
-	 */
 	public void setPropertyBase64(String schemaNS, String propName, byte[] propValue)
 			throws XMPException
 	{
@@ -988,10 +863,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @throws XMPException
-	 * @see XMPMeta#getQualifier(String, String, String, String)
-	 */
 	public XMPProperty getQualifier(String schemaNS, String propName, String qualNS,
 		String qualName) throws XMPException
 	{
@@ -1004,9 +875,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#getStructField(String, String, String, String)
-	 */
 	public XMPProperty getStructField(String schemaNS, String structName, String fieldNS,
 			String fieldName) throws XMPException
 	{
@@ -1019,28 +887,18 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @throws XMPException
-	 * @see XMPMeta#iterator()
-	 */
 	public XMPIterator iterator() throws XMPException
 	{
 		return iterator(null, null, null);
 	}
 
 
-	/**
-	 * @see XMPMeta#iterator(IteratorOptions)
-	 */
 	public XMPIterator iterator(IteratorOptions options) throws XMPException
 	{
 		return iterator(null, null, options);
 	}
 
 
-	/**
-	 * @see XMPMeta#iterator(String, String, IteratorOptions)
-	 */
 	public XMPIterator iterator(String schemaNS, String propName, IteratorOptions options)
 			throws XMPException
 	{
@@ -1048,10 +906,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @throws XMPException
-	 * @see XMPMeta#setArrayItem(String, String, int, String, PropertyOptions)
-	 */
 	public void setArrayItem(String schemaNS, String arrayName, int itemIndex, String itemValue,
 			PropertyOptions options) throws XMPException
 	{
@@ -1073,9 +927,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#setArrayItem(String, String, int, String)
-	 */
 	public void setArrayItem(String schemaNS, String arrayName, int itemIndex, String itemValue)
 			throws XMPException
 	{
@@ -1083,11 +934,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @throws XMPException
-	 * @see XMPMeta#insertArrayItem(String, String, int, String,
-	 *      PropertyOptions)
-	 */
 	public void insertArrayItem(String schemaNS, String arrayName, int itemIndex, String itemValue,
 			PropertyOptions options) throws XMPException
 	{
@@ -1109,9 +955,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#insertArrayItem(String, String, int, String)
-	 */
 	public void insertArrayItem(String schemaNS, String arrayName, int itemIndex, String itemValue)
 			throws XMPException
 	{
@@ -1119,10 +962,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @throws XMPException
-	 * @see XMPMeta#setProperty(String, String, Object, PropertyOptions)
-	 */
 	public void setProperty(String schemaNS, String propName, Object propValue,
 			PropertyOptions options) throws XMPException
 	{
@@ -1145,20 +984,12 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#setProperty(String, String, Object)
-	 */
 	public void setProperty(String schemaNS, String propName, Object propValue) throws XMPException
 	{
 		setProperty(schemaNS, propName, propValue, null);
 	}
 
 
-	/**
-	 * @throws XMPException
-	 * @see XMPMeta#setQualifier(String, String, String, String, String,
-	 *      PropertyOptions)
-	 */
 	public void setQualifier(String schemaNS, String propName, String qualNS, String qualName,
 			String qualValue, PropertyOptions options) throws XMPException
 	{
@@ -1175,9 +1006,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#setQualifier(String, String, String, String, String)
-	 */
 	public void setQualifier(String schemaNS, String propName, String qualNS, String qualName,
 			String qualValue) throws XMPException
 	{
@@ -1186,10 +1014,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#setStructField(String, String, String, String, String,
-	 *      PropertyOptions)
-	 */
 	public void setStructField(String schemaNS, String structName, String fieldNS,
 			String fieldName, String fieldValue, PropertyOptions options) throws XMPException
 	{
@@ -1201,9 +1025,6 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#setStructField(String, String, String, String, String)
-	 */
 	public void setStructField(String schemaNS, String structName, String fieldNS,
 			String fieldName, String fieldValue) throws XMPException
 	{
@@ -1211,27 +1032,18 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#getObjectName()
-	 */
 	public String getObjectName()
 	{
 		return tree.getName() != null ? tree.getName() : "";
 	}
 
 
-	/**
-	 * @see XMPMeta#setObjectName(String)
-	 */
 	public void setObjectName(String name)
 	{
 		tree.setName(name);
 	}
 
 
-	/**
-	 * @see XMPMeta#getPacketHeader()
-	 */
 	public String getPacketHeader()
 	{
 		return packetHeader;
@@ -1260,28 +1072,19 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	}
 
 
-	/**
-	 * @see XMPMeta#dumpObject()
-	 */
 	public String dumpObject()
 	{
 		// renders tree recursively
 		return getRoot().dumpNode(true);
 	}
 
-	
-	/**
-	 * @see XMPMeta#sort()
-	 */
+
 	public void sort()
 	{
 		this.tree.sort();
 	}
 
 
-	/**
-	 * @see XMPMeta#normalize(ParseOptions)
-	 */
 	public void normalize(ParseOptions options) throws XMPException
 	{
 		if (options == null)
@@ -1318,7 +1121,7 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	 * @param itemValue the item value
 	 * @param itemOptions the options for the new item
 	 * @param insert insert oder overwrite at index position?
-	 * @throws XMPException
+	 * @throws XMPException array item cannot be set
 	 */
 	private void doSetArrayItem(XMPNode arrayNode, int itemIndex, String itemValue,
 			PropertyOptions itemOptions, boolean insert) throws XMPException
@@ -1401,7 +1204,8 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 	 * @param propNode
 	 *            the node containing the value
 	 * @return Returns a literal value for the node.
-	 * @throws XMPException
+	 * @throws XMPException if the value of <code>propNode</code> is <code>null</code> or empty or the
+	 * 	 *             conversion fails.
 	 */
 	private Object evaluateNodeValue(int valueType, final XMPNode propNode) throws XMPException
 	{

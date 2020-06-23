@@ -54,7 +54,7 @@ public class XMPSerializerHelper
 	 * @param xmp a metadata implementation object
 	 * @param output the output stream to serialize to
 	 * @param options serialization options, can be <code>null</code> for default.
-	 * @throws XMPException
+	 * @throws XMPException if serialization failed
 	 */
 	public static void serialize(XMPMetaImpl xmp, OutputStream output,
 		SerializeOptions options)
@@ -80,7 +80,7 @@ public class XMPSerializerHelper
 	 * @param options Options to control the serialization (see
 	 *            {@link SerializeOptions}).
 	 * @return Returns a string containing the serialized RDF.
-	 * @throws XMPException on serializsation errors.
+	 * @throws XMPException on serialization errors.
 	 */
 	public static String serializeToString(XMPMetaImpl xmp, SerializeOptions options)
 		throws XMPException
@@ -111,7 +111,7 @@ public class XMPSerializerHelper
 	 * @param xmp a metadata implementation object
 	 * @param options Options to control the serialization (see {@link SerializeOptions}).
 	 * @return Returns a byte buffer containing the serialized RDF.
-	 * @throws XMPException on serializsation errors.
+	 * @throws XMPException on serialization errors.
 	 */
 	public static byte[] serializeToBuffer(XMPMetaImpl xmp, SerializeOptions options)
 			throws XMPException
