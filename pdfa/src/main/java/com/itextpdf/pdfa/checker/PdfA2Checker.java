@@ -103,6 +103,7 @@ public class PdfA2Checker extends PdfA1Checker {
 
     static final int MAX_PAGE_SIZE = 14400;
     static final int MIN_PAGE_SIZE = 3;
+    private static final int MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS = 32;
     private static final long serialVersionUID = -5937712517954260687L;
 
     private boolean currentFillCsIsIccBasedCMYK = false;
@@ -196,14 +197,24 @@ public class PdfA2Checker extends PdfA1Checker {
         } else if (colorSpace instanceof PdfSpecialCs.DeviceN) {
 
             PdfSpecialCs.DeviceN deviceN = (PdfSpecialCs.DeviceN) colorSpace;
+            if (deviceN.getNumberOfComponents() > MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS) {
+                throw new PdfAConformanceException(PdfAConformanceException.
+                        THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED,
+                        MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS);
+            }
+            //TODO DEVSIX-4203 Fix IndexOutOfBounds exception being thrown for DeviceN (not NChannel) colorspace without
+            // attributes. According to the spec PdfAConformanceException should be thrown.
             PdfDictionary attributes = ((PdfArray) deviceN.getPdfObject()).getAsDictionary(4);
             PdfDictionary colorants = attributes.getAsDictionary(PdfName.Colorants);
+            //TODO DEVSIX-4203 Colorants dictionary is mandatory in PDF/A-2 spec. Need to throw an appropriate exception
+            // if it is not present.
             if (colorants != null) {
                 for (Map.Entry<PdfName, PdfObject> entry : colorants.entrySet()) {
                     PdfArray separation = (PdfArray) entry.getValue();
                     checkSeparationInsideDeviceN(separation, ((PdfArray) deviceN.getPdfObject()).get(2), ((PdfArray) deviceN.getPdfObject()).get(3));
                 }
             }
+
             if (checkAlternate) {
                 checkColorSpace(deviceN.getBaseCs(), currentColorSpaces, false, fill);
             }
@@ -987,5 +998,4 @@ public class PdfA2Checker extends PdfA1Checker {
             }
         }
     }
-
 }

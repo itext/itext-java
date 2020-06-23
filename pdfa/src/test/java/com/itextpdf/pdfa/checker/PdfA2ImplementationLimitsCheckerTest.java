@@ -48,11 +48,16 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.pdfa.PdfAConformanceException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -147,5 +152,48 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
         // TODO DEVSIX-4182
         // An exception is thrown as any number greater then 32767 is considered as Integer
         pdfA2Checker.checkPdfObject(largeNumber);
+    }
+
+    @Test
+    public void deviceNColorspaceWithMoreThan32Components() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED);
+
+        checkColorspace(buildDeviceNColorspace(34));
+
+    }
+
+    @Test
+    public void deviceNColorspaceWithLessThan32Components() {
+        checkColorspace(buildDeviceNColorspace(16));
+    }
+
+    @Test
+    public void deviceNColorspaceWith32Components() {
+        checkColorspace(buildDeviceNColorspace(32));
+    }
+
+    private void checkColorspace(PdfColorSpace colorSpace) {
+        PdfDictionary currentColorSpaces = new PdfDictionary();
+        pdfA2Checker.checkColorSpace(colorSpace, currentColorSpaces, true, false);
+    }
+
+    private PdfColorSpace buildDeviceNColorspace(int numberOfComponents) {
+        List<String> tmpArray = new ArrayList<String>(numberOfComponents);
+        float[] transformArray = new float[numberOfComponents * 2];
+
+        for (int i = 0; i < numberOfComponents; i++) {
+            tmpArray.add("MyColor" + i + 1);
+            transformArray[i * 2] = 0;
+            transformArray[i * 2 + 1]  = 1;
+        }
+        com.itextpdf.kernel.pdf.function.PdfFunction.Type4 function = new com.itextpdf.kernel.pdf.function.PdfFunction.Type4
+                (new PdfArray(transformArray), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0}".getBytes(StandardCharsets.ISO_8859_1));
+
+        //TODO DEVSIX-4205 Replace with a constructor with 4 parameters or use a setter for attributes dictionary
+        PdfArray deviceNAsArray = ((PdfArray)(new  PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function)).getPdfObject());
+        PdfDictionary attributes = new PdfDictionary();
+        deviceNAsArray.add(attributes);
+        return new PdfSpecialCs.DeviceN(deviceNAsArray);
     }
 }

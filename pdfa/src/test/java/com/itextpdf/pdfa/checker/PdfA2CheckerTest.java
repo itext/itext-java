@@ -48,11 +48,15 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.pdfa.PdfAConformanceException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -334,5 +338,30 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         catalog.put(PdfName.Requirements, new PdfDictionary());
 
         pdfA2Checker.checkCatalogValidEntries(catalog);
+    }
+
+    @Test
+    public void deviceNColorspaceNoAttributesDictionary() {
+        //TODO DEVSIX-4203 should not cause an IndexOutOfBoundException.
+        // Should throw PdfAConformanceException as Colorants dictionary always must be present
+        // for Pdf/A-2
+        junitExpectedException.expect(RuntimeException.class);
+
+        int numberOfComponents = 2;
+        List<String> tmpArray = new ArrayList<String>(numberOfComponents);
+        float[] transformArray = new float[numberOfComponents * 2];
+
+        for (int i = 0; i < numberOfComponents; i++) {
+            tmpArray.add("MyColor" + i + 1);
+            transformArray[i * 2] = 0;
+            transformArray[i * 2 + 1]  = 1;
+        }
+        com.itextpdf.kernel.pdf.function.PdfFunction.Type4 function = new com.itextpdf.kernel.pdf.function.PdfFunction.Type4
+                (new PdfArray(transformArray), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0}".getBytes(StandardCharsets.ISO_8859_1));
+
+        PdfDictionary currentColorSpaces = new PdfDictionary();
+        pdfA2Checker.checkColorSpace(new  PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function),
+        currentColorSpaces, true, false);
+
     }
 }

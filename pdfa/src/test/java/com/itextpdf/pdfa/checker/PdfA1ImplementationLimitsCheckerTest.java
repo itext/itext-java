@@ -54,9 +54,12 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern.Shading;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern.Tiling;
+import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.pdfa.PdfAConformanceException;
@@ -64,6 +67,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -442,6 +447,24 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         checkInType3Font(longString);
     }
 
+    @Test
+    public void deviceNColorspaceWithMoreThan8Components() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED);
+
+        checkColorspace(buildDeviceNColorspace(10));
+    }
+
+    @Test
+    public void deviceNColorspaceWith8Components() {
+        checkColorspace(buildDeviceNColorspace(8));
+    }
+
+    @Test
+    public void deviceNColorspaceWithLessThan8Components() {
+        checkColorspace(buildDeviceNColorspace(2));
+    }
+
     private PdfString buildLongString() {
 
         final int maxAllowedLength = pdfA1Checker.getMaxStringLength();
@@ -579,5 +602,25 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         dictionary.put(PdfName.Subtype, PdfName.Type3);
         dictionary.put(PdfName.CharProcs, charProcs);
         pdfA1Checker.checkFont(font);
+    }
+
+    private void checkColorspace(PdfColorSpace colorSpace) {
+        PdfDictionary currentColorSpaces = new PdfDictionary();
+        pdfA1Checker.checkColorSpace(colorSpace, currentColorSpaces, false, false);
+    }
+
+    private PdfColorSpace buildDeviceNColorspace(int numberOfComponents) {
+        List<String> tmpArray = new ArrayList<String>(numberOfComponents);
+        float[] transformArray = new float[numberOfComponents * 2];
+
+        for (int i = 0; i < numberOfComponents; i++) {
+            tmpArray.add("MyColor" + i + 1);
+            transformArray[i * 2] = 0;
+            transformArray[i * 2 + 1]  = 1;
+        }
+        com.itextpdf.kernel.pdf.function.PdfFunction.Type4 function = new com.itextpdf.kernel.pdf.function.PdfFunction.Type4
+                (new PdfArray(transformArray), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0}".getBytes(StandardCharsets.ISO_8859_1));
+
+        return new PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function);
     }
 }

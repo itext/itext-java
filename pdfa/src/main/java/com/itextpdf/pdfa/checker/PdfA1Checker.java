@@ -99,6 +99,7 @@ public class PdfA1Checker extends PdfAChecker {
             PdfName.PrevPage, PdfName.FirstPage, PdfName.LastPage));
     protected static final Set<PdfName> allowedRenderingIntents = new HashSet<>(Arrays.asList(PdfName.RelativeColorimetric,
             PdfName.AbsoluteColorimetric, PdfName.Perceptual, PdfName.Saturation));
+    private static final int MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS = 8;
     private static final long serialVersionUID = 5103027349795298132L;
 
     /**
@@ -161,7 +162,13 @@ public class PdfA1Checker extends PdfAChecker {
         if (colorSpace instanceof PdfSpecialCs.Separation) {
             colorSpace = ((PdfSpecialCs.Separation) colorSpace).getBaseCs();
         } else if (colorSpace instanceof PdfSpecialCs.DeviceN) {
-            colorSpace = ((PdfSpecialCs.DeviceN) colorSpace).getBaseCs();
+            PdfSpecialCs.DeviceN deviceNColorspace = (PdfSpecialCs.DeviceN) colorSpace;
+            if (deviceNColorspace.getNumberOfComponents() > MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS) {
+                throw new PdfAConformanceException(PdfAConformanceException.
+                        THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED,
+                        MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS);
+            }
+            colorSpace = deviceNColorspace.getBaseCs();
         }
 
         if (colorSpace instanceof PdfDeviceCs.Rgb) {

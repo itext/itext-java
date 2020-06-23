@@ -97,6 +97,7 @@ public abstract class PdfColorSpace extends PdfObjectWrapper<PdfObject> {
             else if (PdfName.Separation.equals(csType))
                 return new PdfSpecialCs.Separation(array);
             else if (PdfName.DeviceN.equals(csType))
+                //TODO DEVSIX-4205 Fix colorspace creation
                 return array.size() == 4 ? new PdfSpecialCs.DeviceN(array) : new PdfSpecialCs.NChannel(array);
             else if (PdfName.Pattern.equals(csType))
                 return new PdfSpecialCs.UncoloredTilingPattern(array);
