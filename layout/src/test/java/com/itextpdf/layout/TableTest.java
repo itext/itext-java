@@ -2995,6 +2995,35 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Test
+    public void inheritHeaderPropsWhileMinMaxWidthCalculationsTest() throws IOException, InterruptedException {
+        String filename = "inheritHeaderPropsWhileMinMaxWidthCalculations.pdf";
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        Document document = new Document(pdf);
+
+        Paragraph p = new Paragraph("Some text is placed at the beginning"
+                + " of the page, so that page isn't being empty.");
+        document.add(p);
+
+        Table table = new Table(new float[1]);
+
+        // The header's text is longer than the body's text, hence the width
+        // of the table will be calculated by the header.
+        table.addHeaderCell(new Cell().add(new Paragraph("Hello")));
+        table.addCell(new Cell().add(new Paragraph("He")));
+        
+        // If this property is not inherited while calculating min/max widths,
+        // then while layouting header will request more space than the layout box's width
+        table.getHeader().setBold();
+        document.add(table);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
+                sourceFolder + "cmp_" + filename, destinationFolder, "diff"));
+    }
+
     private static class RotatedDocumentRenderer extends DocumentRenderer {
         private final PdfDocument pdfDoc;
 
