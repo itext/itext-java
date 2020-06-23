@@ -167,10 +167,10 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      * </tr>
      * </table>
      *
-     * @param tag The tag
-     * @param type
-     * @param count
-     * @param data
+     * @param tag   the tag number
+     * @param type  the tag type
+     * @param count the number of data items present in the field
+     * @param data  the field data
      */
     public TIFFField(int tag, int type, int count, Object data) {
         this.tag = tag;
@@ -246,6 +246,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      *
      * <p> A ClassCastException will be thrown if the field is not
      * of type TIFF_SSHORT.
+     *
+     * @return TIFF_SSHORT data as an array of shorts (signed 16-bit integers).
      */
     public short[] getAsShorts() {
         return (short[])data;
@@ -257,6 +259,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      *
      * <p> A ClassCastException will be thrown if the field is not
      * of type TIFF_SLONG.
+     *
+     * @return TIFF_SLONG data as an array of ints (signed 32-bit integers).
      */
     public int[] getAsInts() {
         return (int[])data;
@@ -268,6 +272,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      *
      * <p> A ClassCastException will be thrown if the field is not
      * of type TIFF_LONG.
+     *
+     * @return TIFF_LONG data as an array of longs (signed 64-bit integers).
      */
     public long[] getAsLongs() {
         return (long[])data;
@@ -278,6 +284,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      *
      * <p> A ClassCastException will be thrown if the field is not
      * of type TIFF_FLOAT.
+     *
+     * @return TIFF_FLOAT data as an array of floats.
      */
     public float[] getAsFloats() {
         return (float[])data;
@@ -288,6 +296,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      *
      * <p> A ClassCastException will be thrown if the field is not
      * of type TIFF_DOUBLE.
+     *
+     * @return TIFF_DOUBLE data as an array of doubles.
      */
     public double[] getAsDoubles() {
         return (double[])data;
@@ -298,6 +308,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      *
      * <p> A ClassCastException will be thrown if the field is not
      * of type TIFF_ASCII.
+     *
+     * @return TIFF_ASCII data as an array of strings.
      */
     public String[] getAsStrings() {
         return (String[]) data;
@@ -308,6 +320,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      *
      * <p> A ClassCastException will be thrown if the field is not
      * of type TIFF_SRATIONAL.
+     *
+     * @return TIFF_SRATIONAL data as an array of 2-element arrays of ints.
      */
     public int[][] getAsSRationals() {
         return (int[][])data;
@@ -318,6 +332,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      *
      * <p> A ClassCastException will be thrown if the field is not
      * of type TIFF_RATTIONAL.
+     *
+     * @return TIFF_RATIONAL data as an array of 2-element arrays of longs.
      */
     public long[][] getAsRationals() {
         return (long[][])data;
@@ -337,6 +353,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      * TIFF_SSHORT, or TIFF_SLONG.
      *
      * @param index The index
+     * @return data in TIFF_BYTE, TIFF_SBYTE, TIFF_UNDEFINED, TIFF_SHORT, TIFF_SSHORT,
+     * or TIFF_SLONG format as an int.
      */
     public int getAsInt(int index) {
         switch (type) {
@@ -369,6 +387,8 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      * TIFF_SSHORT, TIFF_SLONG, or TIFF_LONG.
      *
      * @param index The index
+     * @return data in TIFF_BYTE, TIFF_SBYTE, TIFF_UNDEFINED, TIFF_SHORT, TIFF_SSHORT, TIFF_SLONG,
+     * or TIFF_LONG format as a long.
      */
     public long getAsLong(int index) {
         switch (type) {
@@ -390,17 +410,18 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
     }
 
     /**
-     * Returns data in any numerical format as a float.  Data in
+     * Returns data in any numerical format as a float. Data in
      * TIFF_SRATIONAL or TIFF_RATIONAL format are evaluated by
      * dividing the numerator into the denominator using
      * double-precision arithmetic and then truncating to single
-     * precision.  Data in TIFF_SLONG, TIFF_LONG, or TIFF_DOUBLE
+     * precision. Data in TIFF_SLONG, TIFF_LONG, or TIFF_DOUBLE
      * format may suffer from truncation.
      *
      * <p> A ClassCastException will be thrown if the field is
      * of type TIFF_UNDEFINED or TIFF_ASCII.
      *
      * @param index The index
+     * @return data in any numerical format as a float.
      */
     public float getAsFloat(int index) {
         switch (type) {
@@ -432,7 +453,7 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
     }
 
     /**
-     * Returns data in any numerical format as a float.  Data in
+     * Returns data in any numerical format as a double. Data in
      * TIFF_SRATIONAL or TIFF_RATIONAL format are evaluated by
      * dividing the numerator into the denominator using
      * double-precision arithmetic.
@@ -441,6 +462,7 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      * type TIFF_UNDEFINED or TIFF_ASCII.
      *
      * @param index The index
+     * @return data in any numerical format as a double.
      */
     public double getAsDouble(int index) {
         switch (type) {
@@ -478,6 +500,7 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      * of type TIFF_ASCII.
      *
      * @param index The index
+     * @return a TIFF_ASCII data item as a String.
      */
     public String getAsString(int index) {
         return ((String[])data)[index];
@@ -491,6 +514,7 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      * of type TIFF_SRATIONAL.
      *
      * @param index The index
+     * @return a TIFF_SRATIONAL data item as a two-element array of ints.
      */
     public int[] getAsSRational(int index) {
         return ((int[][])data)[index];
@@ -504,6 +528,7 @@ public class TIFFField implements Comparable<TIFFField>, Serializable {
      * of type TIFF_RATIONAL.
      *
      * @param index The index
+     * @return a TIFF_RATIONAL data item as a two-element array of ints
      */
     public long[] getAsRational(int index) {
         if (type == TIFF_LONG)
