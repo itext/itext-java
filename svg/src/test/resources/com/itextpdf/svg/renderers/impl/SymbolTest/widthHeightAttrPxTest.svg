@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg"
+	 xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="myDot" width="90" height="90" viewBox="0 0 100 100" fill="purple" >
+		<circle r="50" cx="60" cy="60"/>
+	</symbol>
+	<use xlink:href="#myDot" x="50" y="0"/>
+</svg>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"
+	 xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol id="myDot" width="5" height="30%">
+		<circle cx="15" cy="60" r="20"/>
+	</symbol>
+
+<!-- Use is parent here. 40px, 35% width/height will be applied -->
+	<use xlink:href="#myDot" x="0"  y="0" width="40" height="35%"/>
+</svg>

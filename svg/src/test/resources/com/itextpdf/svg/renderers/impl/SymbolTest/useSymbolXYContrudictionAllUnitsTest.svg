@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"
+	 xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<!-- x, y values are summarized here: if in Symbol x=10, y=10 and in Use x=10, y=10 thus total values for the element will be x=25, y=25 -->
+	<symbol id="myDot" x="30%"  y="10">
+		<circle cx="15" cy="60" r="20"/>
+	</symbol>
+	<use xlink:href="#myDot" x="15"  y="15%"/>
+</svg>
