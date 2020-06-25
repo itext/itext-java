@@ -42,7 +42,6 @@
  */
 package com.itextpdf.styledxmlparser.resolver.resource;
 
-import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
@@ -52,14 +51,14 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.io.*;
-
 import java.nio.file.Files;
-
 import java.net.URL;
 import java.net.MalformedURLException;
-
 import java.nio.file.Paths;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -151,9 +150,23 @@ public class ResourceResolverTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
     public void retrieveImageExtendedByMalformedResourceNameTest() {
         String fileName = "retrieveStyl eSheetTest.css";
+
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         PdfXObject pdfXObject = resourceResolver.retrieveImageExtended(fileName);
         Assert.assertNull(pdfXObject);
+    }
+
+    @Test
+    public void malformedResourceNameTest07() throws IOException {
+        String fileName = "%23%5B%5D@!$&'()+,;=._~-/styles09.css";
+
+        InputStream expected = new FileInputStream(baseUri + "#[]@!$&'()+,;=._~-/styles09.css");
+
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri);
+        InputStream stream = resourceResolver.retrieveStyleSheet(fileName);
+
+        Assert.assertNotNull(stream);
+        Assert.assertEquals(expected.read(), stream.read());
     }
 
     // Boolean method tests block
@@ -185,11 +198,11 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI))
     public void retrieveImageExtendedIncorrectBase64Test() {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        PdfXObject pdfXObject = resourceResolver.retrieveImageExtended(bLogoIncorrect);
-        Assert.assertNull(pdfXObject);
+        PdfXObject image = resourceResolver.retrieveImageExtended(bLogoCorruptedData);
+        Assert.assertNull(image);
     }
 
     @Test
@@ -279,6 +292,130 @@ public class ResourceResolverTest extends ExtendedITextTest {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         resourceResolver.setRetriever(new FilterResourceRetriever());
         byte[] bytes = resourceResolver.retrieveBytesFromResource(fileName);
+        Assert.assertNull(bytes);
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI))
+    public void retrieveImageWrongPathTest() {
+        String fileName = "/itextpdf.com/itis.jpg";
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri);
+        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        Assert.assertNull(image);
+    }
+
+    @Test
+    public void retrieveImageRightPathTest() {
+        String fileName = "itextpdf.com/itis.jpg";
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri);
+        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        Assert.assertNotNull(image);
+        Assert.assertTrue(image.identifyImageFileExtension().equalsIgnoreCase("jpg"));
+    }
+
+    @Test
+    public void retrieveImagePathWithSpacesTest() {
+        String fileName = "retrieveImagePathWithSpaces.jpg";
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri + "path%with%spaces/");
+        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        Assert.assertNotNull(image);
+        Assert.assertTrue(image.identifyImageFileExtension().equalsIgnoreCase("jpg"));
+    }
+
+    @Test
+    public void retrieveImagePathWithSpaces01Test() {
+        String fileName = "retrieveImagePathWithSpaces.jpg";
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri + "path%25with%25spaces/");
+        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        Assert.assertNotNull(image);
+    }
+
+    @Test
+    public void retrieveImagePathWithSpaces02Test() {
+        String fileName = "retrieveImagePathWithSpaces02.png";
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri + "path%2525with%2525spaces/");
+        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        Assert.assertNotNull(image);
+    }
+
+    @Test
+    public void retrieveImagePathWithSpaces03Test() {
+        String fileName = "retrieveImagePathWithSpaces0304.jpg";
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri + "path with spaces/");
+        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        Assert.assertNotNull(image);
+    }
+
+    @Test
+    public void retrieveImagePathWithSpaces04Test() {
+        String fileName = "retrieveImagePathWithSpaces0304.jpg";
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri + "path%20with%20spaces/");
+        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        Assert.assertNotNull(image);
+    }
+
+    @Test
+    public void retrieveImagePathWithSpaces05Test() {
+        String fileName = "retrieveImagePathWithSpaces05.png";
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri + "path%2520with%2520spaces/");
+        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        Assert.assertNotNull(image);
+    }
+
+    @Test
+    public void retrieveImagePathWithSpaces06Test() {
+        String fileName = "retrieveImagePathWithSpaces0607.jpg";
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri + "path/with/spaces/");
+        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        Assert.assertNotNull(image);
+    }
+
+    @Test
+    public void retrieveImagePathWithSpaces07Test() {
+        String fileName = "retrieveImagePathWithSpaces0607.jpg";
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri + "path%2Fwith%2Fspaces/");
+        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        Assert.assertNotNull(image);
+    }
+
+    @Test
+    public void retrieveImagePathWithSpaces08Test() {
+        String fileName = "retrieveImagePathWithSpaces08.png";
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri + "path%252Fwith%252Fspaces/");
+        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        Assert.assertNotNull(image);
+    }
+
+    @Test
+    public void retrieveImagePathWithSpaces09Test() {
+        String fileName = "retrieveImagePathWithSpaces09.jpg";
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri + "path%25252Fwith%25252Fspaces/");
+        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        Assert.assertNotNull(image);
+    }
+
+    @Test
+    public void retrieveImagePathWithSpaces10Test() {
+        String fileName = "path with spaces/retrieveImagePathWithSpaces1011.jpg";
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri);
+        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        Assert.assertNotNull(image);
+    }
+
+    @Test
+    public void retrieveImagePathWithSpaces11Test() {
+        String fileName = "path%20with%20spaces/retrieveImagePathWithSpaces1011.jpg";
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri);
+        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        Assert.assertNotNull(image);
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI))
+    public void retrieveBytesMalformedResourceNameTest() {
+        String fileName = "resourceResolverTest .png";
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri);
+        byte[] bytes =resourceResolver.retrieveBytesFromResource(fileName);
         Assert.assertNull(bytes);
     }
 
