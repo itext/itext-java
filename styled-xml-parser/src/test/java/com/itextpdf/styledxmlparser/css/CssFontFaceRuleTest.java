@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css;
 
+import com.itextpdf.layout.font.Range;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
@@ -47,6 +48,17 @@ public class CssFontFaceRuleTest extends ExtendedITextTest {
                              "    font-weight: bold;\n" +
                              "}";
         Assert.assertEquals(expectedCss, fontFaceRule.toString());
+    }
+
+    @Test
+    public void resolveUnicodeRangeTest() {
+        CssFontFaceRule fontFaceRule = new CssFontFaceRule();
+        List<CssDeclaration> declarations = new ArrayList<>();
+        declarations.add(new CssDeclaration("unicode-range", "U+75"));
+        fontFaceRule.addBodyCssDeclarations(declarations);
+        Range range = fontFaceRule.resolveUnicodeRange();
+        Assert.assertNotNull(range);
+        Assert.assertTrue(range.contains(117));
     }
 
 }

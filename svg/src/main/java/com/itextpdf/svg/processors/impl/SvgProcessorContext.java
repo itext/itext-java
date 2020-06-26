@@ -46,6 +46,7 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.layout.font.FontInfo;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
+import com.itextpdf.layout.font.Range;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
 import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
@@ -130,6 +131,21 @@ public class SvgProcessorContext {
      */
     public FontSet getTempFonts() {
         return tempFonts;
+    }
+
+    /**
+     * Add temporary font from @font-face.
+     *
+     * @param fontProgram the font program
+     * @param encoding    the encoding
+     * @param alias       the alias
+     */
+    public void addTemporaryFont(FontProgram fontProgram, String encoding, String alias,
+            Range unicodeRange) {
+        if (tempFonts == null) {
+            tempFonts = new FontSet();
+        }
+        tempFonts.addFont(fontProgram, encoding, alias, unicodeRange);
     }
 
     /**

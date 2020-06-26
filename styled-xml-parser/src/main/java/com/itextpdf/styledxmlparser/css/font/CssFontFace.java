@@ -1,51 +1,31 @@
 /*
     This file is part of the iText (R) project.
     Copyright (c) 1998-2020 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Authors: iText Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.svg.processors.impl.font;
+package com.itextpdf.styledxmlparser.css.font;
 
-import com.itextpdf.styledxmlparser.css.CssDeclaration;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.layout.font.FontFamilySplitter;
+import com.itextpdf.styledxmlparser.css.CssDeclaration;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,25 +36,26 @@ import java.util.regex.Pattern;
  * Class that will examine the font as described in the CSS, and store it
  * in a form that the font provider will understand.
  */
-class FontFace {
+public class CssFontFace {
 
     /** Name that will be used as the alias of the font. */
     private final String alias;
     /** A list of font face sources. */
-    private final List<FontFaceSrc> sources;
+    private final List<CssFontFaceSrc> sources;
 
     /**
-     * Create a {@link FontFace} instance from a list of
+     * Create a {@link CssFontFace} instance from a list of
      * CSS font attributes ("font-family" or "src").
      *
      * @param properties the font properties
-     * @return the {@link FontFace} instance
+     * @return the {@link CssFontFace} instance
      */
-    public static FontFace create(List<CssDeclaration> properties) {
+    public static CssFontFace create(List<CssDeclaration> properties) {
         String fontFamily = null;
         String srcs = null;
         for(CssDeclaration descriptor: properties) {
             if ("font-family".equals(descriptor.getProperty())) {
+                // TODO DEVSIX-2534
                 fontFamily = FontFamilySplitter.removeQuotes(descriptor.getExpression());
             } else if ("src".equals(descriptor.getProperty())) {
                 srcs = descriptor.getExpression();
@@ -87,30 +68,32 @@ class FontFace {
             return null;
         }
 
-        List<FontFaceSrc> sources = new ArrayList<>();
+        List<CssFontFaceSrc> sources = new ArrayList<>();
         // ttc collection are supported via url(Arial.ttc#1), url(Arial.ttc#2), etc.
         for (String src : splitSourcesSequence(srcs)) {
             //local|url("ideal-sans-serif.woff")( format("woff"))?
-            FontFaceSrc source = FontFaceSrc.create(src.trim());
+            CssFontFaceSrc source = CssFontFaceSrc.create(src.trim());
             if (source != null) {
                 sources.add(source);
             }
         }
 
         if (sources.size() > 0) {
-            return new FontFace(fontFamily, sources);
+            return new CssFontFace(fontFamily, sources);
         } else {
             return null;
         }
     }
 
-    // NOTE: If src property is written in incorrect format (for example, contains token url(<url_content>)<some_nonsense>),
+    // NOTE: If src property is written in incorrect format
+    // (for example, contains token url(<url_content>)<some_nonsense>),
     // then browser ignores it altogether and doesn't load font at all, even if there are valid tokens.
     // iText will still process all split tokens and can possibly load this font in case it contains some correct urls.
     /**
-     * Processes and splits a string sequence containing a url/uri
-     * @param src a string representing css src attribute
+     * Processes and splits a string sequence containing a url/uri.
      *
+     * @param src a string representing css src attribute
+     * @return an array of {@link String} urls for font loading
      */
     public static String[] splitSourcesSequence(String src) {
         List<String> list = new ArrayList<>();
@@ -119,16 +102,19 @@ class FontFace {
             int indexToCut;
             int indexUnescapedOpeningQuoteMark = Math.min(CssUtils.findNextUnescapedChar(src, '\'', indexToStart) >= 0 ?
                             CssUtils.findNextUnescapedChar(src, '\'', indexToStart) : Integer.MAX_VALUE,
-                    CssUtils.findNextUnescapedChar(src, '"', indexToStart)  >= 0
+                    CssUtils.findNextUnescapedChar(src, '"', indexToStart) >= 0
                             ? CssUtils.findNextUnescapedChar(src, '"', indexToStart) : Integer.MAX_VALUE);
             int indexUnescapedBracket = CssUtils.findNextUnescapedChar(src, ')', indexToStart);
             if (indexUnescapedOpeningQuoteMark < indexUnescapedBracket) {
-                indexToCut = CssUtils.findNextUnescapedChar(src, src.charAt(indexUnescapedOpeningQuoteMark), indexUnescapedOpeningQuoteMark + 1);
-                if (indexToCut == -1)
+                indexToCut = CssUtils.findNextUnescapedChar(src, src.charAt(indexUnescapedOpeningQuoteMark),
+                        indexUnescapedOpeningQuoteMark + 1);
+                if (indexToCut == -1) {
                     indexToCut = src.length();
+                }
             }
-            else
+            else {
                 indexToCut = indexUnescapedBracket;
+            }
             while (indexToCut < src.length() && src.charAt(indexToCut) != ',') {
                 indexToCut++;
             }
@@ -138,6 +124,25 @@ class FontFace {
         String[] result = new String[list.size()];
         list.toArray(result);
         return result;
+    }
+
+    /**
+     * Checks whether in general we support requested font format.
+     *
+     * @param format {@link FontFormat}
+     * @return true, if supported or unrecognized.
+     */
+    public static boolean isSupportedFontFormat(FontFormat format) {
+        switch (format) {
+            case None:
+            case TrueType:
+            case OpenType:
+            case WOFF:
+            case WOFF2:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
@@ -155,8 +160,8 @@ class FontFace {
      *
      * @return the sources
      */
-    public List<FontFaceSrc> getSources() {
-        return new ArrayList<FontFaceSrc>(sources);
+    public List<CssFontFaceSrc> getSources() {
+        return new ArrayList<CssFontFaceSrc>(sources);
     }
 
     /**
@@ -165,29 +170,46 @@ class FontFace {
      * @param alias the font-family (or alias)
      * @param sources the sources
      */
-    private FontFace(String alias, List<FontFaceSrc> sources) {
+    private CssFontFace(String alias, List<CssFontFaceSrc> sources) {
         this.alias = alias;
-        this.sources = new ArrayList<FontFaceSrc>(sources);
+        this.sources = new ArrayList<CssFontFaceSrc>(sources);
     }
 
-    //region Nested types
+    /**
+     * The Enum FontFormat.
+     */
+    public enum FontFormat {
+        None,
+        /** "truetype" */
+        TrueType,
+        /** "opentype" */
+        OpenType,
+        /** "woff" */
+        WOFF,
+        /** "woff2" */
+        WOFF2,
+        /** "embedded-opentype" */
+        EOT,
+        /** "svg" */
+        SVG
+    }
 
     /**
      * Class that defines a font face source.
      */
-    static class FontFaceSrc {
+    public static class CssFontFaceSrc {
 
         /** The UrlPattern used to compose a source path. */
-        static final Pattern UrlPattern = Pattern.compile("^((local)|(url))\\(((\'[^\']*\')|(\"[^\"]*\")|([^\'\"\\)]*))\\)( format\\(((\'[^\']*\')|(\"[^\"]*\")|([^\'\"\\)]*))\\))?$");
+        public static final Pattern UrlPattern = Pattern.compile("^((local)|(url))\\(((\'[^\']*\')|(\"[^\"]*\")|([^\'\"\\)]*))\\)( format\\(((\'[^\']*\')|(\"[^\"]*\")|([^\'\"\\)]*))\\))?$");
 
         /** The Constant TypeGroup. */
-        static final int TypeGroup = 1;
+        public static final int TypeGroup = 1;
 
         /** The Constant UrlGroup. */
-        static final int UrlGroup = 4;
+        public static final int UrlGroup = 4;
 
         /** The Constant FormatGroup. */
-        static final int FormatGroup = 9;
+        public static final int FormatGroup = 9;
 
         /** The font format. */
         final FontFormat format;
@@ -198,28 +220,42 @@ class FontFace {
         /** Indicates if the font is local. */
         final boolean isLocal;
 
+        public FontFormat getFormat() {
+            return format;
+        }
+
+        public String getSrc() {
+            return src;
+        }
+
+        public boolean isLocal() {
+            return isLocal;
+        }
+
         /* (non-Javadoc)
          * @see java.lang.Object#toString()
          */
         @Override
         public String toString() {
-            return MessageFormatUtil.format("{0}({1}){2}", isLocal ? "local" : "url", src, format != FontFormat.None ? MessageFormatUtil.format(" format({0})", format) : "");
+            return MessageFormatUtil.
+                    format("{0}({1}){2}", isLocal ? "local" : "url", src, format != FontFormat.None ?
+                                    MessageFormatUtil.format(" format({0})", format) : "");
         }
 
         /**
-         * Creates a {@link FontFace} object by parsing a {@link String}
+         * Creates a {@link CssFontFaceSrc} object by parsing a {@link String}
          * trying to match patterns that reveal the font name, whether that font is local,
          * and which format the font is in.
          *
          * @param src a string containing information about a font
-         * @return the font in the form of a {@link FontFace} object
+         * @return the font in the form of a {@link CssFontFaceSrc} object
          */
-        static FontFaceSrc create(String src) {
+        public static CssFontFaceSrc create(String src) {
             Matcher m = UrlPattern.matcher(src);
             if (!m.matches()) {
                 return null;
             }
-            return new FontFaceSrc(unquote(m.group(UrlGroup)),
+            return new CssFontFaceSrc(unquote(m.group(UrlGroup)),
                     "local".equals(m.group(TypeGroup)),
                     parseFormat(m.group(FormatGroup)));
         }
@@ -230,7 +266,7 @@ class FontFace {
          * @param formatStr a string
          * @return a font format
          */
-        static FontFormat parseFormat(String formatStr) {
+        public static FontFormat parseFormat(String formatStr) {
             if (formatStr != null && formatStr.length() > 0) {
                 switch (unquote(formatStr).toLowerCase()) {
                     case "truetype":
@@ -256,7 +292,7 @@ class FontFace {
          * @param quotedString a {@link String} that might be between quotes
          * @return the {@link String} without the quotes
          */
-        static String unquote(String quotedString) {
+        public static String unquote(String quotedString) {
             if (quotedString.charAt(0) == '\'' || quotedString.charAt(0) == '\"') {
                 return quotedString.substring(1, quotedString.length() - 1);
             }
@@ -264,37 +300,16 @@ class FontFace {
         }
 
         /**
-         * Instantiates a new {@link FontFaceSrc} instance.
+         * Instantiates a new {@link CssFontFaceSrc} instance.
          *
          * @param src a source path
          * @param isLocal indicates if the font is local
          * @param format the font format (true type, open type, woff,...)
          */
-        private FontFaceSrc(String src, boolean isLocal, FontFormat format) {
+        private CssFontFaceSrc(String src, boolean isLocal, FontFormat format) {
             this.format = format;
             this.src = src;
             this.isLocal = isLocal;
         }
     }
-
-    /**
-     * The Enum FontFormat.
-     */
-    enum FontFormat {
-        None,
-        /** "truetype" */
-        TrueType,
-        /** "opentype" */
-        OpenType,
-        /** "woff" */
-        WOFF,
-        /** "woff2" */
-        WOFF2,
-        /** "embedded-opentype" */
-        EOT,
-        /** "svg" */
-        SVG
-    }
-
-    //endregion
 }

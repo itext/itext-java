@@ -79,6 +79,19 @@ public class FontFaceTest extends SvgIntegrationTest {
     }
 
     @Test
+    // TODO fix cmp file after DEVSIX-2256 is finished. Right now unicode range is not processed correctly
+    public void unicodeRangeTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "unicodeRangeTest");
+    }
+
+    @Test
+    // TODO fix cmp file after DEVSIX-2534 is finished. Right now droid fonts are not applied if
+    //  their aliases are inside single quotes and contain spaces
+    public void droidSerifSingleQuotesTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "droidSerifSingleQuotesTest");
+    }
+
+    @Test
     public void droidSerifWebFontTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "droidSerifWebFontTest");
     }

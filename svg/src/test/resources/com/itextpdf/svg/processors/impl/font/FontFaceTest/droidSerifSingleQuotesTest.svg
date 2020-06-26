@@ -1,0 +1,41 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="500" height="400" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <style>
+
+        @font-face {
+        font-family: 'Droid Italic';
+        src: url("web-fonts/droid-serif-italic.ttf") ;
+        }
+
+        @font-face {
+        font-family: 'Droid Bold';
+        src: url("web-fonts/droid-serif-bold.ttf") ;
+        }
+
+
+        @font-face {
+        font-family: 'Droid Bold Italic';
+        src: url("web-fonts/droid-serif-bolditalic.ttf") ;
+        }
+
+        text.droiditalic {
+        font-family: 'Droid Italic';;
+        }
+
+        text.droidbold {
+        font-family: 'Droid Bold';
+        }
+
+        text.droidbolditalic {
+        font-family: 'Droid Bold Italic';
+        }
+
+        text {
+        font-size: 4em;
+        }
+    </style>
+
+    <text x="100" y="100" class="droidbold">j</text>
+    <text x="100" y="150" class="droiditalic">u</text>
+    <text x="100" y="200" class="droidbolditalic">j</text>
+</svg>

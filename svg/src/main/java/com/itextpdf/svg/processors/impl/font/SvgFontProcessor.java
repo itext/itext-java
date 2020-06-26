@@ -47,7 +47,9 @@ import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.layout.font.FontInfo;
+import com.itextpdf.layout.font.Range;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.css.font.CssFontFace;
 import com.itextpdf.styledxmlparser.css.CssFontFaceRule;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.svg.css.impl.SvgStyleResolver;
@@ -77,10 +79,10 @@ public class SvgFontProcessor {
         if (cssResolver instanceof SvgStyleResolver) {
             for (CssFontFaceRule fontFace : ((SvgStyleResolver) cssResolver).getFonts()) {
                 boolean findSupportedSrc = false;
-                FontFace ff = FontFace.create(fontFace.getProperties());
+                CssFontFace ff = CssFontFace.create(fontFace.getProperties());
                 if (ff != null) {
-                    for (FontFace.FontFaceSrc src : ff.getSources()) {
-                        if (createFont(ff.getFontFamily(), src)) {
+                    for (CssFontFace.CssFontFaceSrc src : ff.getSources()) {
+                        if (createFont(ff.getFontFamily(), src, fontFace.resolveUnicodeRange())) {
                             findSupportedSrc = true;
                             break;
                         }
@@ -101,11 +103,11 @@ public class SvgFontProcessor {
      * @param src        the source of the font
      * @return true, if successful
      */
-    private boolean createFont(String fontFamily, FontFace.FontFaceSrc src) {
-        if (!supportedFontFormat(src.format)) {
+    private boolean createFont(String fontFamily, CssFontFace.CssFontFaceSrc src, Range unicodeRange) {
+        if (!CssFontFace.isSupportedFontFormat(src.getFormat())) {
             return false;
-        } else if (src.isLocal) { // to method with lazy initialization
-            Collection<FontInfo> fonts = context.getFontProvider().getFontSet().get(src.src);
+        } else if (src.isLocal()) { // to method with lazy initialization
+            Collection<FontInfo> fonts = context.getFontProvider().getFontSet().get(src.getSrc());
             if (fonts.size() > 0) {
                 for (FontInfo fi : fonts) {
                     context.addTemporaryFont(fi, fontFamily);//
@@ -118,35 +120,15 @@ public class SvgFontProcessor {
             try {
                 // Cache at resource resolver level only, at font level we will create font in any case.
                 // The instance of fontProgram will be collected by GC if the is no need in it.
-                byte[] bytes = context.getResourceResolver().retrieveBytesFromResource(src.src);
+                byte[] bytes = context.getResourceResolver().retrieveBytesFromResource(src.getSrc());
                 if (bytes != null) {
                     FontProgram fp = FontProgramFactory.createFont(bytes, false);
-                    context.addTemporaryFont(fp, PdfEncodings.IDENTITY_H, fontFamily);
+                    context.addTemporaryFont(fp, PdfEncodings.IDENTITY_H, fontFamily, unicodeRange);
                     return true;
                 }
             } catch (Exception ignored) {
             }
             return false;
-        }
-    }
-
-    /**
-     * Checks whether in general we support requested font format.
-     *
-     * @param format {@link com.itextpdf.svg.processors.impl.font.FontFace.FontFormat}
-     * @return true, if supported or unrecognized.
-     */
-    //TODO (DEVSIX-2230) code duplication
-    private boolean supportedFontFormat(FontFace.FontFormat format) {
-        switch (format) {
-            case None:
-            case TrueType:
-            case OpenType:
-            case WOFF:
-            case WOFF2:
-                return true;
-            default:
-                return false;
         }
     }
 }
