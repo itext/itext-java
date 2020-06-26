@@ -49,8 +49,9 @@ import com.itextpdf.kernel.counter.context.IContext;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Comparator;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * The class that retrieves context of its invocation.
@@ -62,7 +63,7 @@ public class ContextManager {
     private static final long SECURITY_ERROR_LOGGING_INTERVAL = 60000;
     private volatile long securityErrorLastLogged = 0;
 
-    private final Map<String, IContext> contextMappings = new ConcurrentHashMap<>();
+    private final SortedMap<String, IContext> contextMappings = new TreeMap<>(new LengthComparator());
 
     private ContextManager() {
         registerGenericContext(Arrays.asList(
@@ -75,10 +76,17 @@ public class ContextManager {
                 NamespaceConstant.CORE_FORMS,
                 NamespaceConstant.CORE_SXP,
                 NamespaceConstant.CORE_SVG), Collections.singletonList(NamespaceConstant.ITEXT));
-        registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_DEBUG), Collections.singletonList(NamespaceConstant.PDF_DEBUG));
-        registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_HTML), Collections.singletonList(NamespaceConstant.PDF_HTML));
-        registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_INVOICE), Collections.singletonList(NamespaceConstant.PDF_INVOICE));
-        registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_SWEEP), Collections.singletonList(NamespaceConstant.PDF_SWEEP));
+        registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_DEBUG),
+                Collections.singletonList(NamespaceConstant.PDF_DEBUG));
+        registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_HTML),
+                Collections.singletonList(NamespaceConstant.PDF_HTML));
+        registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_INVOICE),
+                Collections.singletonList(NamespaceConstant.PDF_INVOICE));
+        registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_SWEEP),
+                Collections.singletonList(NamespaceConstant.PDF_SWEEP));
+        registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_OCR_TESSERACT4),
+                Collections.singletonList(NamespaceConstant.PDF_OCR_TESSERACT4));
+        registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_OCR), Collections.<String>emptyList());
     }
 
     /**
@@ -112,8 +120,11 @@ public class ContextManager {
         return getNamespaceMapping(getRecognisedNamespace(className));
     }
 
-    private String getRecognisedNamespace(String className) {
+    String getRecognisedNamespace(String className) {
         if (className != null) {
+            // If both "a" and "a.b" namespaces are registered,
+            // iText should consider the context of "a.b" for an "a.b" event,
+            // that's why the contexts are sorted by the length of the namespace
             for (String namespace : contextMappings.keySet()) {
                 //Conversion to lowercase is done to be compatible with possible changes in case of packages/namespaces
                 if (className.toLowerCase().startsWith(namespace)) {
@@ -138,8 +149,20 @@ public class ContextManager {
             registerContext(namespace.toLowerCase(), context);
         }
     }
-    
+
     private void registerContext(String namespace, IContext context) {
         contextMappings.put(namespace, context);
+    }
+
+    private static class LengthComparator implements Comparator<String> {
+        @Override
+        public int compare(String o1, String o2) {
+            int lengthComparison = -Integer.compare(o1.length(), o2.length());
+            if (0 != lengthComparison) {
+                return lengthComparison;
+            } else {
+                return o1.compareTo(o2);
+            }
+        }
     }
 }

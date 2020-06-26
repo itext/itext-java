@@ -1,8 +1,7 @@
 /*
-
     This file is part of the iText (R) project.
     Copyright (c) 1998-2020 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -43,26 +42,36 @@
  */
 package com.itextpdf.kernel.counter;
 
-public class NamespaceConstant {
-    
-    public static final String ITEXT = "com.itextpdf";
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
 
-    //Core
-    public static final String CORE_IO = ITEXT + ".io";
-    public static final String CORE_KERNEL = ITEXT + ".kernel";
-    public static final String CORE_LAYOUT = ITEXT + ".layout";
-    public static final String CORE_BARCODES = ITEXT + ".barcodes";
-    public static final String CORE_PDFA = ITEXT + ".pdfa";
-    public static final String CORE_SIGN = ITEXT + ".signatures";
-    public static final String CORE_FORMS = ITEXT + ".forms";
-    public static final String CORE_SXP = ITEXT + ".styledxmlparser";
-    public static final String CORE_SVG = ITEXT + ".svg";
-    
-    //Addons
-    public static final String PDF_DEBUG = ITEXT + ".pdfdebug";
-    public static final String PDF_HTML = ITEXT + ".html2pdf";
-    public static final String PDF_INVOICE = ITEXT + ".zugferd";
-    public static final String PDF_SWEEP = ITEXT + ".pdfcleanup";
-    public static final String PDF_OCR = ITEXT + ".pdfocr";
-    public static final String PDF_OCR_TESSERACT4 = PDF_OCR + ".tesseract4";
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+@Category(UnitTest.class)
+public class ContextManagerTest extends ExtendedITextTest {
+
+    @Test
+    public void getRecognisedNamespaceForSpecificNamespaceTest() {
+        String outerNamespaces = NamespaceConstant.PDF_OCR.toLowerCase();
+        String innerNamespaces = NamespaceConstant.PDF_OCR_TESSERACT4.toLowerCase();
+
+        // Since both NamespaceConstant.PDF_OCR and NamespaceConstant.PDF_OCR_TESSERACT4 are registered
+        // and the latter one begins with the former, we should check that correct namespaces are
+        // recognized for each of them
+        Assert.assertTrue(innerNamespaces.startsWith(outerNamespaces));
+        Assert.assertEquals(outerNamespaces,
+                ContextManager.getInstance().getRecognisedNamespace(outerNamespaces));
+        Assert.assertEquals(innerNamespaces,
+                ContextManager.getInstance().getRecognisedNamespace(innerNamespaces));
+    }
+
+    @Test
+    public void notRegisteredNamespaceTest() {
+        String notRegisteredNamespace = "com.hello.world";
+
+        Assert.assertEquals(null,
+                ContextManager.getInstance().getRecognisedNamespace(notRegisteredNamespace));
+    }
 }
