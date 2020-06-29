@@ -44,8 +44,6 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.log.CounterManager;
-import com.itextpdf.kernel.log.ICounter;
 import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.IPdfPageFactory;
 import com.itextpdf.kernel.pdf.IsoKey;
@@ -74,11 +72,11 @@ import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.checker.PdfA2Checker;
 import com.itextpdf.pdfa.checker.PdfA3Checker;
 import com.itextpdf.pdfa.checker.PdfAChecker;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * This class extends {@link PdfDocument} and is in charge of creating files
@@ -300,12 +298,6 @@ public class PdfADocument extends PdfDocument {
 
     protected void initTagStructureContext() {
         tagStructureContext = new TagStructureContext(this, getPdfVersionForPdfA(checker.getConformanceLevel()));
-    }
-
-    @Deprecated
-    @Override
-    protected List<ICounter> getCounters() {
-        return CounterManager.getInstance().getCounters(PdfADocument.class);
     }
 
     @Override

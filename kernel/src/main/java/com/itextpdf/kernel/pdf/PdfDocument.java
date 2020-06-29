@@ -64,8 +64,6 @@ import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.kernel.log.CounterManager;
-import com.itextpdf.kernel.log.ICounter;
 import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
 import com.itextpdf.kernel.numbering.RomanNumbering;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
@@ -998,9 +996,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         ByteUtils.getIsoBytes(modifiedDocumentId.getValue()));
                 xref.writeXrefTableAndTrailer(this, fileId, crypto);
                 writer.flush();
-                for (ICounter counter : getCounters()) {
-                    counter.onDocumentWritten(writer.getCurrentPos());
-                }
             }
             catalog.getPageTree().clearPageRefs();
             removeAllHandlers();
@@ -1925,9 +1920,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     encryptedEmbeddedStreamsHandler.storeAllEmbeddedStreams();
                     embeddedStreamsSavedOnReading = true;
                 }
-                for (ICounter counter : getCounters()) {
-                    counter.onDocumentRead(reader.getFileLength());
-                }
                 pdfVersion = reader.headerPdfVersion;
                 trailer = new PdfDictionary(reader.trailer);
 
@@ -2173,15 +2165,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (closed) {
             throw new PdfException(PdfException.DocumentClosedItIsImpossibleToExecuteAction);
         }
-    }
-
-    /**
-     * Gets all {@link ICounter} instances.
-     * @return list of {@link ICounter} instances.
-     */
-    @Deprecated
-    protected List<ICounter> getCounters() {
-        return CounterManager.getInstance().getCounters(PdfDocument.class);
     }
 
     /**
