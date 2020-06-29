@@ -1240,8 +1240,6 @@ public class TableRenderer extends AbstractRenderer {
         splitRenderer.rowRange = rowRange;
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
-        // TODO childRenderers will be populated twice during the relayout.
-        // We should probably clean them before #layout().
         splitRenderer.childRenderers = childRenderers;
         splitRenderer.addAllProperties(getOwnProperties());
         splitRenderer.headerRenderer = headerRenderer;
@@ -1545,7 +1543,7 @@ public class TableRenderer extends AbstractRenderer {
         int finish = bordersHandler.getFinishRow();
         bordersHandler.setFinishRow(rowRange.getFinishRow());
 
-        // TODO Correct for collapsed borders only
+        // It's width will be considered only for collapsed borders
         Border currentBorder = bordersHandler.getWidestHorizontalBorder(finish + 1);
         bordersHandler.setFinishRow(finish);
         if (skip) {
