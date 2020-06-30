@@ -72,6 +72,9 @@ public class ClipperBridge {
     /**
      * Converts Clipper library {@link PolyTree} abstraction into iText
      * {@link com.itextpdf.kernel.geom.Path} object.
+     *
+     * @param result {@link PolyTree} object to convert
+     * @return resultant {@link com.itextpdf.kernel.geom.Path} object
      */
     public static com.itextpdf.kernel.geom.Path convertToPath(PolyTree result) {
         com.itextpdf.kernel.geom.Path path = new com.itextpdf.kernel.geom.Path();
@@ -104,6 +107,13 @@ public class ClipperBridge {
      * Adds all iText {@link Subpath}s of the iText {@link com.itextpdf.kernel.geom.Path} to the {@link ClipperOffset} object with one
      * note: it doesn't add degenerate subpaths.
      *
+     * @param offset   the {@link ClipperOffset} object to add all iText {@link Subpath}s that are not degenerated.
+     * @param path     {@link com.itextpdf.kernel.geom.Path} object, containing the required {@link Subpath}s
+     * @param joinType {@link IClipper} join type. The value could be {@link IClipper.JoinType#BEVEL}, {@link IClipper.JoinType#ROUND},
+     *                 {@link IClipper.JoinType#MITER}
+     * @param endType  {@link IClipper} end type. The value could be {@link IClipper.EndType#CLOSED_POLYGON},
+     *                 {@link IClipper.EndType#CLOSED_LINE}, {@link IClipper.EndType#OPEN_BUTT}, {@link IClipper.EndType#OPEN_SQUARE},
+     *                 {@link IClipper.EndType#OPEN_ROUND}
      * @return {@link java.util.List} consisting of all degenerate iText {@link Subpath}s of the path.
      */
     public static List<Subpath> addPath(ClipperOffset offset, com.itextpdf.kernel.geom.Path path, IClipper.JoinType joinType, IClipper.EndType endType) {
@@ -136,6 +146,9 @@ public class ClipperBridge {
     /**
      * Converts list of {@link Point.LongPoint} objects into list of
      * {@link com.itextpdf.kernel.geom.Point} objects.
+     *
+     * @param points the list of {@link Point.LongPoint} objects to convert
+     * @return the resultant list of {@link com.itextpdf.kernel.geom.Point} objects.
      */
     public static List<com.itextpdf.kernel.geom.Point> convertToFloatPoints(List<Point.LongPoint> points) {
         List<com.itextpdf.kernel.geom.Point> convertedPoints = new ArrayList<>(points.size());
@@ -153,6 +166,9 @@ public class ClipperBridge {
     /**
      * Converts list of {@link com.itextpdf.kernel.geom.Point} objects into list of
      * {@link Point.LongPoint} objects.
+     *
+     * @param points the list of {@link com.itextpdf.kernel.geom.Point} objects to convert
+     * @return the resultant list of {@link Point.LongPoint} objects.
      */
     public static List<Point.LongPoint> convertToLongPoints(List<com.itextpdf.kernel.geom.Point> points) {
         List<Point.LongPoint> convertedPoints = new ArrayList<>(points.size());
@@ -276,6 +292,14 @@ public class ClipperBridge {
     }
 
     /**
+     * Adds rectangle path based on array of {@link com.itextpdf.kernel.geom.Point} (internally converting
+     * them by {@link #convertToLongPoints}) and adds this path to {@link IClipper} instance.
+     *
+     * @param clipper      {@link IClipper} instance to which the created rectangle path will be added.
+     * @param rectVertices an array of {@link com.itextpdf.kernel.geom.Point} which will be internally converted
+     *                     to clipper path and added to the clipper instance.
+     * @param polyType     either {@link IClipper.PolyType#SUBJECT} or {@link IClipper.PolyType#CLIP} denoting whether added
+     *                     path is a subject of clipping or a part of the clipping polygon.
      * @deprecated use {@link #addPolygonToClipper} instead.
      */
     @Deprecated
