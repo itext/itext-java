@@ -50,8 +50,6 @@ import com.itextpdf.kernel.PdfException;
  */
 public class PdfAConformanceException extends PdfException {
 
-    private static final long serialVersionUID = -5951503441486657717L;
-
     public static final String _0_ACTIONS_ARE_NOT_ALLOWED = "{0} actions are not allowed";
     public static final String A_CATALOG_DICTIONARY_SHALL_CONTAIN_METADATA_ENTRY = "A catalog dictionary shall contain metadata entry";
     public static final String A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY = "A catalog dictionary shall not contain aa entry";
@@ -128,6 +126,7 @@ public class PdfAConformanceException extends PdfException {
     public static final String ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS = "Order array shall contain references to all ocgs";
     public static final String OUTPUT_INTENT_COLOR_SPACE_SHALL_BE_EITHER_GRAY_RGB_OR_CMYK = "Output intent color space shall be either gray rgb or cmyk";
     public static final String OVERPRINT_MODE_SHALL_NOT_BE_ONE_WHEN_AN_ICCBASED_CMYK_COLOUR_SPACE_IS_USED_AND_WHEN_OVERPRINTING_IS_SET_TO_TRUE = "Overprint mode shall not be one when an ICCBased CMYK colour space is used and when overprinting is set to true";
+    public static final String PDF_NAME_IS_TOO_LONG = "PdfName is too long";
     public static final String PDF_STRING_IS_TOO_LONG = "PdfString is too long";
     public static final String PROFILE_STREAM_OF_OUTPUTINTENT_SHALL_BE_OUTPUT_PROFILE_PRTR_OR_MONITOR_PROFILE_MNTR = "Profile stream of outputintent shall be output profile (prtr) or monitor profile (mntr)";
     public static final String REAL_NUMBER_IS_OUT_OF_RANGE = "Real number is out of range";
@@ -153,6 +152,8 @@ public class PdfAConformanceException extends PdfException {
     public static final String TRANSPARENCY_IS_NOT_ALLOWED_CA_SHALL_BE_EQUAL_TO_1 = "Transparency is not allowed. CA shall be equal to 1";
     public static final String VALUE_OF_NAME_ENTRY_SHALL_BE_UNIQUE_AMONG_ALL_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARIES = "Value of name entry shall be unique among all optional content configuration dictionaries";
     public static final String WIDGET_ANNOTATION_DICTIONARY_OR_FIELD_DICTIONARY_SHALL_NOT_INCLUDE_A_OR_AA_ENTRY = "Widget annotation dictionary or field dictionary shall not include a or aa entry";
+
+    private static final long serialVersionUID = -5951503441486657717L;
     
     @Deprecated
     public static final String IF_THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_TRANSPARENCY_IS_FORBIDDEN = "If the document does not contain a pdfa outputintent transparency is forbidden";

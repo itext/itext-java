@@ -57,12 +57,11 @@ public class PdfACheckerTestUtils {
     }
 
     static PdfString getLongString(int length) {
-        final char charToFill = 'A';
-        char[] array = new char[length];
-        for (int i = 0; i < array.length; i++) {
-            array[i] = charToFill;
-        }
-        return new PdfString(new String(array));
+        return new PdfString(getLongPlainString(length));
+    }
+
+    static PdfName getLongName(int length) {
+        return new PdfName(getLongPlainString(length));
     }
 
     static PdfArray getLongArray(int length) {
@@ -100,5 +99,14 @@ public class PdfACheckerTestUtils {
                 + new String(baos.toByteArray()) + " Tj\n"
                 + "ET\n"
                 + "Q";
+    }
+
+    private static String getLongPlainString(int length) {
+        final char charToFill = 'A';
+        char[] array = new char[length];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = charToFill;
+        }
+        return new String(array);
     }
 }

@@ -92,6 +92,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
     @Test
     public void validObjectsTest() {
+        final int maxNameLength = pdfA1Checker.getMaxNameLength();
         final int maxStringLength = pdfA1Checker.getMaxStringLength();
         final int maxArrayCapacity = MAX_ARRAY_CAPACITY;
         final int maxDictionaryCapacity = MAX_DICTIONARY_CAPACITY;
@@ -100,7 +101,9 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         final double maxRealValue = pdfA1Checker.getMaxRealValue();
 
         Assert.assertEquals(65535, maxStringLength);
+        Assert.assertEquals(127, maxNameLength);
         PdfString longString = PdfACheckerTestUtils.getLongString(maxStringLength);
+        PdfName longName = PdfACheckerTestUtils.getLongName(maxNameLength);
 
         PdfArray longArray = PdfACheckerTestUtils.getLongArray(maxArrayCapacity);
         PdfDictionary longDictionary = PdfACheckerTestUtils.getLongDictionary(maxDictionaryCapacity);
@@ -113,7 +116,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         PdfNumber negativeInteger = new PdfNumber(minIntegerValue);
         PdfNumber largeReal = new PdfNumber(maxRealValue - 0.001);
 
-        PdfObject[] largeObjects = {longString, longArray, longDictionary,
+        PdfObject[] largeObjects = {longName, longString, longArray, longDictionary,
                 largeInteger, negativeInteger, largeReal};
         // No exceptions should not be thrown as all values match the
         // limitations provided in specification
@@ -150,6 +153,18 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         // An exception should be thrown as provided String is longer then
         // it is allowed per specification
         pdfA1Checker.checkPdfObject(longString);
+    }
+
+    @Test
+    public void independentLongNameTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_NAME_IS_TOO_LONG);
+
+        PdfName longName = buildLongName();
+
+        // An exception should be thrown as provided name is longer then
+        // it is allowed per specification
+        pdfA1Checker.checkPdfObject(longName);
     }
 
     @Test
@@ -235,6 +250,23 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void longNameAsKeyInDictionaryTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_NAME_IS_TOO_LONG);
+
+        PdfName longName = buildLongName();
+
+        PdfDictionary dict = new PdfDictionary();
+        dict.put(new PdfName("Key1"), new PdfString("value1"));
+        dict.put(new PdfName("Key2"), new PdfString("value2"));
+        dict.put(longName, new PdfString("value3"));
+
+        // An exception should be thrown as dictionary contains key which is longer then
+        // it is allowed per specification
+        pdfA1Checker.checkPdfObject(dict);
+    }
+
+    @Test
     public void longStringInArrayTest() {
         junitExpectedException.expect(PdfAConformanceException.class);
         junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
@@ -255,6 +287,18 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         // An exception should be thrown as content stream has a string which
         // is longer then it is allowed per specification
         checkInContentStream(longString);
+    }
+
+    @Test
+    public void longNameInContentStreamTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_NAME_IS_TOO_LONG);
+
+        PdfName longName = buildLongName();
+
+        // An exception should be thrown as content stream has a name which
+        // is longer then it is allowed per specification
+        checkInContentStream(longName);
     }
 
     @Test
@@ -368,6 +412,23 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void longNameAsKeyInDictionaryInContentStreamTest() {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.PDF_NAME_IS_TOO_LONG);
+
+        PdfName longName = buildLongName();
+
+        PdfDictionary dict = new PdfDictionary();
+        dict.put(new PdfName("Key1"), new PdfString("value1"));
+        dict.put(new PdfName("Key2"), new PdfString("value2"));
+        dict.put(longName, new PdfString("value3"));
+
+        // An exception should be thrown as content stream has a string which
+        // is longer then it is allowed per specification
+        checkInContentStream(dict);
+    }
+
+    @Test
     public void longStringInComplexStructureTest() {
 
         junitExpectedException.expect(PdfAConformanceException.class);
@@ -475,6 +536,15 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         return PdfACheckerTestUtils.getLongString(testLength);
     }
 
+    private PdfName buildLongName() {
+
+        final int maxAllowedLength = pdfA1Checker.getMaxNameLength();
+        final int testLength = maxAllowedLength + 1;
+
+        Assert.assertEquals(128, testLength);
+
+        return PdfACheckerTestUtils.getLongName(testLength);
+    }
 
     private PdfArray buildLongArray() {
 

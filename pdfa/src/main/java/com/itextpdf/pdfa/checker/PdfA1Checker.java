@@ -312,6 +312,9 @@ public class PdfA1Checker extends PdfAChecker {
     protected void checkContentStreamObject(PdfObject object) {
         byte type = object.getType();
         switch (type) {
+            case PdfObject.NAME:
+                checkPdfName((PdfName) object);
+                break;
             case PdfObject.STRING:
                 checkPdfString((PdfString) object);
                 break;
@@ -328,7 +331,11 @@ public class PdfA1Checker extends PdfAChecker {
             case PdfObject.DICTIONARY:
                 PdfDictionary dictionary = (PdfDictionary) object;
                 checkPdfDictionary(dictionary);
-                for (PdfObject obj : dictionary.values()) {
+                for (final PdfName name: dictionary.keySet()) {
+                    checkPdfName(name);
+                    checkPdfObject(dictionary.get(name, false));
+                }
+                for (final PdfObject obj : dictionary.values()) {
                     checkContentStreamObject(obj);
                 }
                 break;
@@ -522,6 +529,22 @@ public class PdfA1Checker extends PdfAChecker {
                     throw new PdfAConformanceException(PdfAConformanceException.LZWDECODE_FILTER_IS_NOT_PERMITTED);
             }
         }
+    }
+
+    @Override
+    protected void checkPdfName(PdfName name) {
+        if (name.getValue().length() > getMaxNameLength()) {
+            throw new PdfAConformanceException(PdfAConformanceException.PDF_NAME_IS_TOO_LONG);
+        }
+    }
+
+    /**
+     * Retrieve maximum allowed length of the name object.
+     *
+     * @return maximum allowed length of the name
+     */
+    protected int getMaxNameLength() {
+        return 127;
     }
 
     @Override

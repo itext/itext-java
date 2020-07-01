@@ -195,6 +195,9 @@ public abstract class PdfAChecker implements Serializable {
      */
     public void checkPdfObject(PdfObject obj) {
         switch (obj.getType()) {
+            case PdfObject.NAME:
+                checkPdfName((PdfName) obj);
+                break;
             case PdfObject.NUMBER:
                 checkPdfNumber((PdfNumber) obj);
                 break;
@@ -420,6 +423,7 @@ public abstract class PdfAChecker implements Serializable {
     protected abstract void checkPageSize(PdfDictionary page);
     protected abstract void checkPdfArray(PdfArray array);
     protected abstract void checkPdfDictionary(PdfDictionary dictionary);
+    protected abstract void checkPdfName(PdfName name);
     protected abstract void checkPdfNumber(PdfNumber number);
     protected abstract void checkPdfStream(PdfStream stream);
     protected abstract void checkPdfString(PdfString string);
@@ -518,6 +522,7 @@ public abstract class PdfAChecker implements Serializable {
 
     private void checkDictionaryRecursively(PdfDictionary dictionary) {
         for (PdfName name: dictionary.keySet()) {
+            checkPdfName(name);
             PdfObject object = dictionary.get(name, false);
             if (object != null && ! object.isIndirect()) {
                 checkPdfObject(object);
