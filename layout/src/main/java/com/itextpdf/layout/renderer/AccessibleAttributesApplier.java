@@ -188,7 +188,7 @@ public class AccessibleAttributesApplier {
                 renderer.getPropertyAsUnitValue(Property.MARGIN_LEFT),
                 renderer.getPropertyAsUnitValue(Property.MARGIN_RIGHT)};
 
-        //TODO set depending on writing direction
+        //TODO DEVSIX-4218 set depending on writing direction
         int[] marginsOrder = {0, 1, 2, 3};
 
         UnitValue spaceBefore = margins[marginsOrder[0]];
@@ -372,7 +372,7 @@ public class AccessibleAttributesApplier {
         } else {
             PdfArray paddingArray = new PdfArray();
 
-            //TODO set depending on writing direction
+            //TODO DEVSIX-4218 set depending on writing direction
             int[] paddingsOrder = {0, 1, 2, 3};
             for (int i : paddingsOrder) {
                 paddingArray.add(new PdfNumber(paddings[i]));
@@ -434,7 +434,7 @@ public class AccessibleAttributesApplier {
                 }
             }
 
-            //TODO set depending on writing direction
+            //TODO DEVSIX-4218 set depending on writing direction
             int[] borderOrder = {0, 1, 2, 3};
             for (int i : borderOrder) {
                 if (borders[i] != null) {
@@ -486,7 +486,7 @@ public class AccessibleAttributesApplier {
     }
 
     private static PdfName transformTextAlignmentValueToName(TextAlignment textAlignment) {
-        //TODO set rightToLeft value according with actual text content if it is possible.
+        //TODO DEVSIX-4218 set rightToLeft value according with actual text content if it is possible.
         boolean isLeftToRight = true;
         switch (textAlignment) {
             case LEFT:
@@ -512,7 +512,7 @@ public class AccessibleAttributesApplier {
     }
 
     private static PdfName transformBlockAlignToName(HorizontalAlignment horizontalAlignment) {
-        //TODO set rightToLeft value according with actual text content if it is possible.
+        //TODO DEVSIX-4218 set rightToLeft value according with actual text content if it is possible.
         boolean isLeftToRight = true;
         switch (horizontalAlignment) {
             case LEFT:
