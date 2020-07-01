@@ -53,7 +53,6 @@ public class IccBased extends Color {
     private static final long serialVersionUID = -2204252409856288615L;
 
     public IccBased(PdfCieBasedCs.IccBased cs) {
-        // TODO if zero is outside of the Range, default value should be the nearest to the zero valid value
         this(cs, new float[cs.getNumberOfComponents()]);
     }
 

@@ -50,7 +50,6 @@ public class Lab extends Color {
     private static final long serialVersionUID = -103738025280259190L;
 
     public Lab(PdfCieBasedCs.Lab cs) {
-        // TODO if zero is outside of the Range, default value should be the nearest to the zero valid value
         this(cs, new float[cs.getNumberOfComponents()]);
     }
 
