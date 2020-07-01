@@ -73,6 +73,8 @@ public final class FilterHandlers {
         map.put(PdfName.CCITTFaxDecode, new CCITTFaxDecodeFilter());
         map.put(PdfName.Crypt, new DoNothingFilter());
         map.put(PdfName.RunLengthDecode, new RunLengthDecodeFilter());
+        map.put(PdfName.DCTDecode, new DctDecodeFilter());
+        map.put(PdfName.JPXDecode, new JpxDecodeFilter());
 
         defaults = Collections.unmodifiableMap(map);
     }

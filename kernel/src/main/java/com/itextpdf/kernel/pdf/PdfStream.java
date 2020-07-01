@@ -218,8 +218,10 @@ public class PdfStream extends PdfDictionary {
 
     /**
      * Gets decoded stream bytes.
+     * Note, {@link PdfName#DCTDecode} and {@link PdfName#JPXDecode} filters will be ignored.
      *
-     * @return byte[]
+     * @return byte content of the {@code PdfStream}. Byte content will be {@code null},
+     * if the {@code PdfStream} was created by {@code InputStream}.
      */
     public byte[] getBytes() {
         return getBytes(true);
@@ -227,6 +229,7 @@ public class PdfStream extends PdfDictionary {
 
     /**
      * Gets stream bytes.
+     * Note, {@link PdfName#DCTDecode} and {@link PdfName#JPXDecode} filters will be ignored.
      *
      * @param decoded true if to get decoded stream bytes, otherwise false.
      * @return byte content of the {@code PdfStream}. Byte content will be {@code null},

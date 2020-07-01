@@ -204,17 +204,15 @@ public class PdfImageXObject extends PdfXObject {
      * @return byte array.
      */
     public byte[] getImageBytes(boolean decoded) {
-        byte[] bytes;
-        bytes = getPdfObject().getBytes(false);
+        // TODO: DEVSIX-1792 replace `.getBytes(false)` with `getBytes(true) and remove manual decoding
+        byte[] bytes = getPdfObject().getBytes(false);
         if (decoded) {
             Map<PdfName, IFilterHandler> filters = new HashMap<>(FilterHandlers.getDefaultFilterHandlers());
-            DoNothingFilter stubFilter = new DoNothingFilter();
-            filters.put(PdfName.DCTDecode, stubFilter);
-            filters.put(PdfName.JBIG2Decode, stubFilter);
-            filters.put(PdfName.JPXDecode, stubFilter);
+            filters.put(PdfName.JBIG2Decode, new DoNothingFilter());
             bytes = PdfReader.decodeBytes(bytes, getPdfObject(), filters);
 
-            if (stubFilter.getLastFilterName() == null) {
+            ImageType imageType = identifyImageType();
+            if (imageType == ImageType.TIFF || imageType == ImageType.PNG) {
                 try {
                     bytes = new ImagePdfBytesInfo(this).decodeTiffAndPngBytes(bytes);
                 } catch (IOException e) {

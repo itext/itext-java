@@ -43,11 +43,16 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -64,13 +69,6 @@ import java.util.List;
 public class PdfReaderDecodeTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfReaderDecodeTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfReaderDecodeTest/";
-
-
-    @BeforeClass
-    public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
-    }
 
     @Test
     public void noMemoryHandlerTest() throws IOException {

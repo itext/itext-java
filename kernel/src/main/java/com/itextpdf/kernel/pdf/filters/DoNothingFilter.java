@@ -46,6 +46,7 @@ package com.itextpdf.kernel.pdf.filters;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 
 /**
  * A filter that doesn't modify the stream at all
@@ -58,6 +59,15 @@ public class DoNothingFilter implements IFilterHandler {
         return b;
     }
 
+    /**
+     * Returns the last decoded filter name.
+     *
+     * @return the last decoded filter name.
+     * @deprecated Will be removed in 7.2. Used as a crutch in
+     * {@link PdfImageXObject#getImageBytes()} implementation. Now this method does not needed.
+     * If the user has been used it, then the same approach can be reached with nested class.
+     */
+    @Deprecated
     public PdfName getLastFilterName() {
         return lastFilterName;
     }

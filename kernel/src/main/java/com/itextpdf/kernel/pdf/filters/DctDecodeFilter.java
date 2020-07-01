@@ -1,4 +1,5 @@
 /*
+
     This file is part of the iText (R) project.
     Copyright (c) 1998-2020 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
@@ -40,33 +41,27 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
+package com.itextpdf.kernel.pdf.filters;
 
-package com.itextpdf.kernel;
+import com.itextpdf.kernel.KernelLogMessageConstant;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Class that bundles all the error message templates as constants.
+ * Handles a DCTDecode filter. For now no modification applies and the data would be return as is
+ * (in JPEG baseline format).
  */
-public final class KernelLogMessageConstant {
+public class DctDecodeFilter implements IFilterHandler {
 
-    public static final String DCTDECODE_FILTER_DECODING = "DCTDecode filter decoding into the "
-            + "bit map is not supported. The stream data would be left in JPEG baseline format";
+    private static final Logger LOGGER = LoggerFactory.getLogger(DctDecodeFilter.class);
 
-    public static final String FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY = "Full compression mode requested "
-            + "in append mode but the original document has cross-reference table, not cross-reference stream. "
-            + "Falling back to cross-reference table in appended document and switching full compression off";
-
-    public static final String FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY = "Full compression mode was "
-            + "requested to be switched off in append mode but the original document has cross-reference stream, not "
-            + "cross-reference table. Falling back to cross-reference stream in appended document and switching full "
-            + "compression on";
-
-    public static final String JPXDECODE_FILTER_DECODING = "JPXDecode filter decoding into the "
-            + "bit map is not supported. The stream data would be left in JPEG2000 format";
-
-    public static final String UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE = "Unable to parse color {0} within {1} color space";
-
-    private KernelLogMessageConstant() {
-        //Private constructor will prevent the instantiation of this class directly
+    @Override
+    public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
+        LOGGER.info(KernelLogMessageConstant.DCTDECODE_FILTER_DECODING);
+        return b;
     }
-
 }
