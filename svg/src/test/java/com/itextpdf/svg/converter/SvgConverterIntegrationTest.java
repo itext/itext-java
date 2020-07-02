@@ -59,6 +59,7 @@ import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.svg.dummy.sdk.ExceptionInputStream;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
@@ -649,7 +650,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void parseAndProcessIOExceptionTest() throws IOException {
-        junitExpectedException.expect(IOException.class);
+        junitExpectedException.expect(SvgProcessingException.class);
         InputStream fis = new ExceptionInputStream();
 
         ISvgProcessorResult result = SvgConverter.parseAndProcess(fis);

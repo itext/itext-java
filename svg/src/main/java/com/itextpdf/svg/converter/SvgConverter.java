@@ -868,7 +868,12 @@ public final class SvgConverter {
     public static ISvgProcessorResult parseAndProcess(InputStream svgStream, ISvgConverterProperties props) throws IOException {
         IXmlParser parser = new JsoupXmlParser();
         String charset = tryToExtractCharset(props);
-        INode nodeTree = parser.parse(svgStream, charset);
+        INode nodeTree;
+        try {
+            nodeTree = parser.parse(svgStream, charset);
+        } catch (Exception e) {
+            throw new SvgProcessingException(SvgLogMessageConstant.FAILED_TO_PARSE_INPUTSTREAM, e);
+        }
         return new DefaultSvgProcessor().process(nodeTree, props);
     }
 
