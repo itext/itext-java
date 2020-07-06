@@ -88,48 +88,48 @@ public class CssPseudoElementNode extends CssContextNode implements IElementNode
         return pseudoElementName;
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.styledxmlparser.html.node.IElementNode#name()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public String name() {
         return pseudoElementTagName;
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.styledxmlparser.html.node.IElementNode#getAttributes()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public IAttributes getAttributes() {
         return new AttributesStub();
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.styledxmlparser.html.node.IElementNode#getAttribute(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public String getAttribute(String key) {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.styledxmlparser.html.node.IElementNode#getAdditionalHtmlStyles()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public List<Map<String, String>> getAdditionalHtmlStyles() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.styledxmlparser.html.node.IElementNode#addAdditionalHtmlStyles(java.util.Map)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void addAdditionalHtmlStyles(Map<String, String> styles) {
         throw new UnsupportedOperationException();
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.styledxmlparser.html.node.IElementNode#getLang()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public String getLang() {
@@ -140,33 +140,33 @@ public class CssPseudoElementNode extends CssContextNode implements IElementNode
      * A simple {@link IAttributes} implementation.
      */
     private static class AttributesStub implements IAttributes {
-        
-        /* (non-Javadoc)
-         * @see com.itextpdf.styledxmlparser.html.node.IAttributes#getAttribute(java.lang.String)
+
+        /**
+         * {@inheritDoc}
          */
         @Override
         public String getAttribute(String key) {
             return null;
         }
 
-        /* (non-Javadoc)
-         * @see com.itextpdf.styledxmlparser.html.node.IAttributes#setAttribute(java.lang.String, java.lang.String)
+        /**
+         * {@inheritDoc}
          */
         @Override
         public void setAttribute(String key, String value) {
             throw new UnsupportedOperationException();
         }
 
-        /* (non-Javadoc)
-         * @see com.itextpdf.styledxmlparser.html.node.IAttributes#size()
+        /**
+         * {@inheritDoc}
          */
         @Override
         public int size() {
             return 0;
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Iterable#iterator()
+        /**
+         * {@inheritDoc}
          */
         @Override
         public Iterator<IAttribute> iterator() {
