@@ -58,6 +58,7 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfXrefTable;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 
@@ -384,6 +385,14 @@ public abstract class PdfAChecker implements Serializable {
     public void checkFontGlyphs(PdfFont font, PdfStream contentStream) {
     }
 
+
+    /**
+     * Verify the conformity of the cross-reference table.
+     *
+     * @param xrefTable is the Xref table
+     */
+    public abstract void checkXrefTable(PdfXrefTable xrefTable);
+
     protected void checkPageTransparency(PdfDictionary pageDict, PdfDictionary pageResources) {
     }
 
@@ -404,6 +413,13 @@ public abstract class PdfAChecker implements Serializable {
      */
     protected void checkContentStreamObject(PdfObject object) {
     }
+
+    /**
+     * Retrieve maximum allowed number of indirect objects in conforming document.
+     *
+     * @return maximum allowed number of indirect objects
+     */
+    protected abstract long getMaxNumberOfIndirectObjects();
 
     protected abstract Set<PdfName> getForbiddenActions();
     protected abstract Set<PdfName> getAllowedNamedActions();

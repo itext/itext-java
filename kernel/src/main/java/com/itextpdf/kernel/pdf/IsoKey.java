@@ -57,4 +57,5 @@ public enum IsoKey {
     STROKE_COLOR,
     TAG_STRUCTURE_ELEMENT,
     FONT_GLYPHS,
+    XREF_TABLE
 }

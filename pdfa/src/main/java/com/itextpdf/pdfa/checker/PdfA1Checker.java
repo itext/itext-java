@@ -52,6 +52,7 @@ import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.font.PdfType3Font;
+import com.itextpdf.kernel.pdf.PdfXrefTable;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
@@ -186,6 +187,15 @@ public class PdfA1Checker extends PdfAChecker {
         }
     }
 
+
+    @Override
+    public void checkXrefTable(PdfXrefTable xrefTable) {
+        // do not consider 'zero object' as it is not an indirect object
+        if(xrefTable.size() - 1 > getMaxNumberOfIndirectObjects()) {
+            throw new PdfAConformanceException(PdfAConformanceException.MAXIMUM_NUMBER_OF_INDIRECT_OBJECTS_EXCEEDED);
+        }
+    }
+
     @Override
     protected Set<PdfName> getForbiddenActions() {
         return forbiddenActions;
@@ -194,6 +204,11 @@ public class PdfA1Checker extends PdfAChecker {
     @Override
     protected Set<PdfName> getAllowedNamedActions() {
         return allowedNamedActions;
+    }
+
+    @Override
+    protected long getMaxNumberOfIndirectObjects() {
+        return 8_388_607;
     }
 
     @Override

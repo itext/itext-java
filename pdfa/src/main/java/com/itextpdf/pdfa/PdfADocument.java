@@ -61,6 +61,7 @@ import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfXrefTable;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
@@ -222,6 +223,8 @@ public class PdfADocument extends PdfDocument {
             case FONT_GLYPHS:
                 checker.checkFontGlyphs(((CanvasGraphicsState) obj).getFont(), contentStream);
                 break;
+            case XREF_TABLE:
+                checker.checkXrefTable((PdfXrefTable) obj);
         }
     }
 

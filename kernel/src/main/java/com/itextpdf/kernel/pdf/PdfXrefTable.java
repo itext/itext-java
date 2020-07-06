@@ -60,7 +60,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-class PdfXrefTable implements Serializable {
+public class PdfXrefTable implements Serializable {
 
     private static final long serialVersionUID = 4171655392492002944L;
 
@@ -262,6 +262,8 @@ class PdfXrefTable implements Serializable {
             xref = null;
             return;
         }
+
+        document.checkIsoConformance(this, IsoKey.XREF_TABLE);
 
         long startxref = writer.getCurrentPos();
         long xRefStmPos = -1;
