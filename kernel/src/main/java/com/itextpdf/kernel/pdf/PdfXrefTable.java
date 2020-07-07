@@ -60,6 +60,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+/**
+ * A representation of a cross-referenced table of a PDF document.
+ */
 public class PdfXrefTable implements Serializable {
 
     private static final long serialVersionUID = 4171655392492002944L;
@@ -117,6 +120,23 @@ public class PdfXrefTable implements Serializable {
      */
     public int size() {
         return count + 1;
+    }
+
+    /**
+     * Calculates a number of stored references to indirect objects.
+     *
+     * @return number of indirect objects
+     */
+    public int getCountOfIndirectObjects() {
+        int countOfIndirectObjects = 0;
+
+        for(PdfIndirectReference ref: xref) {
+            if(ref != null && ! ref.isFree()) {
+                countOfIndirectObjects++;
+            }
+        }
+
+        return countOfIndirectObjects;
     }
 
     /**
