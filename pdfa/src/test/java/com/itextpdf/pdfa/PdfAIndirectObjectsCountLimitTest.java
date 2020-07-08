@@ -85,11 +85,11 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
         try (
                 InputStream icm = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
                 OutputStream fos = new ByteArrayOutputStream();
-                PdfADocument pdfa =  new PdfADocument(new PdfWriter(fos),
+                Document document = new Document(new PdfADocument(new PdfWriter(fos),
                         PdfAConformanceLevel.PDF_A_1B,
-                        getOutputIntent(icm));
-                Document document = new Document(pdfa)
+                        getOutputIntent(icm)));
         ) {
+            PdfADocument pdfa = (PdfADocument) document.getPdfDocument();
             pdfa.checker = testChecker;
             document.add(buildContent());
 
@@ -114,11 +114,11 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
         try (
                 InputStream icm = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
                 OutputStream fos = new ByteArrayOutputStream();
-                PdfADocument pdfa =  new PdfADocument(new PdfWriter(fos),
+                Document document = new Document(new PdfADocument(new PdfWriter(fos),
                         PdfAConformanceLevel.PDF_A_1B,
-                        getOutputIntent(icm));
-                Document document = new Document(pdfa)
+                        getOutputIntent(icm)));
         ) {
+            PdfADocument pdfa = (PdfADocument) document.getPdfDocument();
             pdfa.checker = testChecker;
             document.add(buildContent());
 
