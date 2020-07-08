@@ -44,18 +44,15 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.action.PdfAction;
-import com.itextpdf.kernel.pdf.annot.PdfCircleAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+
 import java.io.IOException;
-import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -217,5 +214,31 @@ public class SmartModeTest extends ExtendedITextTest {
         assertDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder));
+    }
+
+    @Test
+    public void pageCopyAsFormXObjectWithInheritedResourcesTest() throws IOException, InterruptedException {
+        String cmpFile = sourceFolder + "cmp_pageCopyAsFormXObjectWithInheritedResourcesTest.pdf";
+        String srcFile = sourceFolder + "pageCopyAsFormXObjectWithInheritedResourcesTest.pdf";
+        String destFile = destinationFolder + "pageCopyAsFormXObjectWithInheritedResourcesTest.pdf";
+
+        PdfDocument origPdf = new PdfDocument(new PdfReader(srcFile));
+        PdfDocument copyPdfX = new PdfDocument(new PdfWriter(destFile).setSmartMode(true));
+        PdfDictionary pages = origPdf.getCatalog().getPdfObject().getAsDictionary(PdfName.Pages);
+        if (pages != null) {
+            for (int i = 1; i < origPdf.getNumberOfPages() + 1; i++) {
+                PdfPage origPage = origPdf.getPage(i);
+                Rectangle ps = origPage.getPageSize();
+                PdfPage page = copyPdfX.addNewPage(new PageSize(ps));
+                PdfCanvas canvas = new PdfCanvas(page);
+                PdfFormXObject pageCopy = origPage.copyAsFormXObject(copyPdfX);
+                canvas.addXObject(pageCopy, 0, 0);
+            }
+        }
+
+        copyPdfX.close();
+        origPdf.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder));
     }
 }
