@@ -130,8 +130,8 @@ public class PdfXrefTable implements Serializable {
     public int getCountOfIndirectObjects() {
         int countOfIndirectObjects = 0;
 
-        for(PdfIndirectReference ref: xref) {
-            if(ref != null && ! ref.isFree()) {
+        for (final PdfIndirectReference ref: xref) {
+            if (ref != null && ! ref.isFree()) {
                 countOfIndirectObjects++;
             }
         }
