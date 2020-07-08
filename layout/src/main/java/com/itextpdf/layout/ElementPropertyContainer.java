@@ -292,21 +292,6 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     }
 
     /**
-     * Sets the font family of this Element. Note that {@link com.itextpdf.layout.font.FontProvider} shall be set as well.
-     * See {@link RootElement#setFontProvider(FontProvider)}
-     *
-     * @see com.itextpdf.io.font.constants.StandardFontFamilies
-     * @param font a font name to fetch from {@link com.itextpdf.layout.font.FontProvider}
-     * @return this Element.
-     * @deprecated This method will be removed in 7.2. Use {@link #setFontFamily(String...)} instead.
-     */
-    @Deprecated
-    public T setFont(String font) {
-        setProperty(Property.FONT, font);
-        return (T) (Object) this;
-    }
-
-    /**
      * Sets the font color of this Element.
      *
      * @param fontColor a {@link Color} for the text in this Element.
@@ -448,7 +433,9 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @return this Element.
      */
     public T setBackgroundImage(BackgroundImage image) {
-        setProperty(Property.BACKGROUND_IMAGE, image);
+        final List<BackgroundImage> backgroundImages = new ArrayList<>();
+        backgroundImages.add(image);
+        setProperty(Property.BACKGROUND_IMAGE, backgroundImages);
         return (T) (Object) this;
     }
 

@@ -70,27 +70,6 @@ import com.itextpdf.layout.renderer.RootRenderer;
 public class Document extends RootElement<Document> {
 
     /**
-     * @deprecated To be removed in 7.2. Use {@link com.itextpdf.layout.property.Property#MARGIN_LEFT} instead.
-     */
-    @Deprecated
-    protected float leftMargin = 36;
-    /**
-     * @deprecated To be removed in 7.2. Use {@link com.itextpdf.layout.property.Property#MARGIN_RIGHT} instead.
-     */
-    @Deprecated
-    protected float rightMargin = 36;
-    /**
-     * @deprecated To be removed in 7.2. Use {@link com.itextpdf.layout.property.Property#MARGIN_TOP} instead.
-     */
-    @Deprecated
-    protected float topMargin = 36;
-    /**
-     * @deprecated To be removed in 7.2. Use {@link com.itextpdf.layout.property.Property#MARGIN_BOTTOM} instead.
-     */
-    @Deprecated
-    protected float bottomMargin = 36;
-
-    /**
      * Creates a document from a {@link PdfDocument}. Initializes the first page
      * with the {@link PdfDocument}'s current default {@link PageSize}.
      *
@@ -241,7 +220,6 @@ public class Document extends RootElement<Document> {
      */
     public void setLeftMargin(float leftMargin) {
         setProperty(Property.MARGIN_LEFT, leftMargin);
-        this.leftMargin = leftMargin;
     }
 
     /**
@@ -261,7 +239,6 @@ public class Document extends RootElement<Document> {
      */
     public void setRightMargin(float rightMargin) {
         setProperty(Property.MARGIN_RIGHT, rightMargin);
-        this.rightMargin = rightMargin;
     }
 
     /**
@@ -281,7 +258,6 @@ public class Document extends RootElement<Document> {
      */
     public void setTopMargin(float topMargin) {
         setProperty(Property.MARGIN_TOP, topMargin);
-        this.topMargin = topMargin;
     }
 
     /**
@@ -301,7 +277,6 @@ public class Document extends RootElement<Document> {
      */
     public void setBottomMargin(float bottomMargin) {
         setProperty(Property.MARGIN_BOTTOM, bottomMargin);
-        this.bottomMargin = bottomMargin;
     }
 
     /**

@@ -119,7 +119,6 @@ public final class LogMessageConstant {
     public static final String FONT_DICTIONARY_WITH_NO_WIDTHS = "Font dictionary does not contain required /Widths entry.";
     public static final String FONT_HAS_INVALID_GLYPH = "Font {0} has invalid glyph: {1}";
     public static final String FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT = "The \"Property.FONT\" property must be a PdfFont object in this context.";
-    public static final String FONT_PROPERTY_OF_STRING_TYPE_IS_DEPRECATED_USE_STRINGS_ARRAY_INSTEAD = "The \"Property.FONT\" property with values of String type is deprecated, use String[] as property value type instead.";
     public static final String FONT_SUBSET_ISSUE = "Font subset issue. Full font will be embedded.";
     public static final String FORBID_RELEASE_IS_SET = "ForbidRelease flag is set and release is called. Releasing will not be performed.";
     public static final String FORM_FIELD_WAS_FLUSHED = "A form field was flushed. There's no way to create this field in the AcroForm dictionary.";

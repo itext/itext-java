@@ -79,8 +79,8 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
@@ -145,7 +145,8 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                 return null;
             }
         });
-        renderer.setProperty(Property.BACKGROUND_IMAGE, new BackgroundImage.Builder().setImage(
+        List<BackgroundImage> images = new ArrayList<>();
+        images.add(new BackgroundImage.Builder().setImage(
                 new PdfImageXObject(ImageDataFactory.createRawImage(bytes)) {
                     @Override
                     public float getWidth() {
@@ -157,6 +158,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                         return 10.0f;
                     }
                 }).build());
+        renderer.setProperty(Property.BACKGROUND_IMAGE, images);
         renderer.drawBackground(context);
         Assert.assertEquals(50, counter[0]);
     }
@@ -189,8 +191,9 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                 return null;
             }
         });
-        renderer.setProperty(Property.BACKGROUND_IMAGE,
-                new BackgroundImage.Builder().setImage(new PdfImageXObject(ImageDataFactory.createRawImage(bytes)) {
+        List<BackgroundImage> images = new ArrayList<>();
+        images.add(new BackgroundImage.Builder().setImage(
+                new PdfImageXObject(ImageDataFactory.createRawImage(bytes)) {
                     @Override
                     public float getWidth() {
                         return 10.0f;
@@ -200,7 +203,9 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                     public float getHeight() {
                         return 10.0f;
                     }
-                }).setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT, BackgroundRepeatValue.REPEAT)).build());
+                }).setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT, BackgroundRepeatValue.REPEAT))
+                .build());
+        renderer.setProperty(Property.BACKGROUND_IMAGE, images);
         renderer.drawBackground(context);
         Assert.assertEquals(5, counter[0]);
     }
@@ -233,7 +238,8 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                 return null;
             }
         });
-        renderer.setProperty(Property.BACKGROUND_IMAGE, new BackgroundImage.Builder().setImage(
+        List<BackgroundImage> images = new ArrayList<>();
+        images.add(new BackgroundImage.Builder().setImage(
                 new PdfImageXObject(ImageDataFactory.createRawImage(bytes)) {
                     @Override
                     public float getWidth() {
@@ -244,7 +250,9 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                     public float getHeight() {
                         return 10.0f;
                     }
-                }).setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.REPEAT, BackgroundRepeatValue.NO_REPEAT)).build());
+                }).setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.REPEAT, BackgroundRepeatValue.NO_REPEAT))
+                .build());
+        renderer.setProperty(Property.BACKGROUND_IMAGE, images);
         renderer.drawBackground(context);
         Assert.assertEquals(10, counter[0]);
     }
@@ -277,7 +285,8 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                 return null;
             }
         });
-        renderer.setProperty(Property.BACKGROUND_IMAGE, new BackgroundImage.Builder().setImage(
+        List<BackgroundImage> images = new ArrayList<>();
+        images.add(new BackgroundImage.Builder().setImage(
                 new PdfImageXObject(ImageDataFactory.createRawImage(bytes)) {
                     @Override
                     public float getWidth() {
@@ -289,7 +298,9 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                         return 10.0f;
                     }
                 }).setBackgroundRepeat(
-                new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT)).build());
+                new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT))
+                .build());
+        renderer.setProperty(Property.BACKGROUND_IMAGE, images);
         renderer.drawBackground(context);
         Assert.assertEquals(1, counter[0]);
     }
@@ -322,7 +333,8 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                 return null;
             }
         });
-        renderer.setProperty(Property.BACKGROUND_IMAGE, new BackgroundImage.Builder().setImage(
+        List<BackgroundImage> images = new ArrayList<>();
+        images.add(new BackgroundImage.Builder().setImage(
                 new PdfImageXObject(ImageDataFactory.createRawImage(bytes)) {
                     @Override
                     public float getWidth() {
@@ -333,7 +345,9 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                     public float getHeight() {
                         return 10.0f;
                     }
-                }).setBackgroundPosition(new BackgroundPosition().setXShift(new UnitValue(UnitValue.PERCENT, 30))).build());
+                }).setBackgroundPosition(new BackgroundPosition().setXShift(new UnitValue(UnitValue.PERCENT, 30)))
+                .build());
+        renderer.setProperty(Property.BACKGROUND_IMAGE, images);
         renderer.drawBackground(context);
     }
 
@@ -362,10 +376,15 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                 return null;
             }
         });
-        renderer.setProperty(Property.BACKGROUND_IMAGE, new BackgroundImage.Builder().setLinearGradientBuilder(new StrategyBasedLinearGradientBuilder()
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue())).addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue())))
-                .setBackgroundPosition(new BackgroundPosition().setPositionX(BackgroundPosition.PositionX.RIGHT).setPositionY(BackgroundPosition.PositionY.BOTTOM)
-                        .setYShift(UnitValue.createPointValue(100)).setXShift(UnitValue.createPointValue(30))).build());
+        List<BackgroundImage> images = new ArrayList<>();
+        images.add(new BackgroundImage.Builder().setLinearGradientBuilder(new StrategyBasedLinearGradientBuilder()
+                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
+                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue())))
+                .setBackgroundPosition(new BackgroundPosition().setPositionX(BackgroundPosition.PositionX.RIGHT)
+                        .setPositionY(BackgroundPosition.PositionY.BOTTOM)
+                        .setYShift(UnitValue.createPointValue(100)).setXShift(UnitValue.createPointValue(30)))
+                .build());
+        renderer.setProperty(Property.BACKGROUND_IMAGE, images);
         renderer.drawBackground(context);
     }
 
@@ -394,10 +413,15 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                 return null;
             }
         });
-        renderer.setProperty(Property.BACKGROUND_IMAGE, new BackgroundImage.Builder().setLinearGradientBuilder(new StrategyBasedLinearGradientBuilder()
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue())).addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue())))
-                .setBackgroundPosition(new BackgroundPosition().setPositionX(BackgroundPosition.PositionX.RIGHT).setPositionY(BackgroundPosition.PositionY.BOTTOM)
-                        .setYShift(UnitValue.createPercentValue(70)).setXShift(UnitValue.createPercentValue(33))).build());
+        List<BackgroundImage> images = new ArrayList<>();
+        images.add(new BackgroundImage.Builder().setLinearGradientBuilder(new StrategyBasedLinearGradientBuilder()
+                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
+                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue())))
+                .setBackgroundPosition(new BackgroundPosition().setPositionX(BackgroundPosition.PositionX.RIGHT)
+                        .setPositionY(BackgroundPosition.PositionY.BOTTOM)
+                        .setYShift(UnitValue.createPercentValue(70)).setXShift(UnitValue.createPercentValue(33)))
+                .build());
+        renderer.setProperty(Property.BACKGROUND_IMAGE, images);
         renderer.drawBackground(context);
     }
 
@@ -582,7 +606,10 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
         final BackgroundImage backgroundImage = new Builder().setImage(rawImage)
                 .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT)).setBackgroundClip(BackgroundBox.CONTENT_BOX)
                 .setBackgroundOrigin(BackgroundBox.BORDER_BOX).build();
-        renderer.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+
+        List<BackgroundImage> images = new ArrayList<>();
+        images.add(backgroundImage);
+        renderer.setProperty(Property.BACKGROUND_IMAGE, images);
         renderer.drawBackground(drawContext);
     }
 
@@ -622,7 +649,9 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
         final BackgroundImage backgroundImage = new Builder().setLinearGradientBuilder(gradientBuilder)
                 .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT)).setBackgroundClip(BackgroundBox.CONTENT_BOX)
                 .setBackgroundOrigin(BackgroundBox.BORDER_BOX).build();
-        renderer.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+        List<BackgroundImage> images = new ArrayList<>();
+        images.add(backgroundImage);
+        renderer.setProperty(Property.BACKGROUND_IMAGE, images);
         renderer.drawBackground(drawContext);
     }
 

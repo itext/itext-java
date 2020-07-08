@@ -40,7 +40,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.layout.font;
+package com.itextpdf.styledxmlparser.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,10 +49,8 @@ import java.util.regex.Pattern;
 
 /**
  * Split CSS 'font-family' string into list of font-families or generic-families
- * @deprecated will be moved to styled-xml-parser module in iText 7.2.
  */
-@Deprecated
-public final class FontFamilySplitter {
+public final class FontFamilySplitterUtil {
 
     private static final Pattern FONT_FAMILY_PATTERN = Pattern.compile("^ *([\\w-]+) *$");
     private static final Pattern FONT_FAMILY_PATTERN_QUOTED = Pattern.compile("^ *(('[\\w -]+')|(\"[\\w -]+\")) *$");

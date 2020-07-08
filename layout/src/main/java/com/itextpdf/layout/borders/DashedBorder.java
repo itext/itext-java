@@ -156,17 +156,4 @@ public class DashedBorder extends Border {
         new FixedDashedBorder(getColor(), width, getOpacity(), dash, adjustedGap, dash + adjustedGap / 2)
                 .drawCellBorder(canvas, x1, y1, x2, y2, defaultSide);
     }
-
-    /**
-     * Adjusts the size of the gap between dots
-     *
-     * @param distance   the {@link Border border} length
-     * @param initialGap the initial size of the gap
-     * @return the adjusted size of the gap
-     * @deprecated logic moved to super-class
-     */
-    @Deprecated
-    protected float getDotsGap(double distance, float initialGap) {
-        return super.getDotsGap(distance, initialGap);
-    }
 }

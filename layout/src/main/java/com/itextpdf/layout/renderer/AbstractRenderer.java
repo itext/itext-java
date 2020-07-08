@@ -72,7 +72,6 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.font.FontCharacteristics;
-import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSelector;
 import com.itextpdf.layout.font.FontSet;
@@ -534,13 +533,8 @@ public abstract class AbstractRenderer implements IRenderer {
      */
     public void drawBackground(DrawContext drawContext) {
         final Background background = this.<Background>getProperty(Property.BACKGROUND);
-        final Object uncastedBackgroundImage = this.<Object>getProperty(Property.BACKGROUND_IMAGE);
-        final List<BackgroundImage> backgroundImagesList;
-        if (uncastedBackgroundImage instanceof BackgroundImage) {
-            backgroundImagesList = Collections.singletonList((BackgroundImage) uncastedBackgroundImage);
-        } else {
-            backgroundImagesList = this.<List<BackgroundImage>>getProperty(Property.BACKGROUND_IMAGE);
-        }
+        final List<BackgroundImage>  backgroundImagesList = this.<List<BackgroundImage>>getProperty(Property.BACKGROUND_IMAGE);
+
         if (background != null || backgroundImagesList != null) {
             Rectangle bBox = getOccupiedAreaBBox();
             boolean isTagged = drawContext.isTaggingEnabled();
@@ -2458,13 +2452,7 @@ public abstract class AbstractRenderer implements IRenderer {
         Object font = this.<Object>getProperty(Property.FONT);
         if (font instanceof PdfFont) {
             return (PdfFont) font;
-        } else if (font instanceof String || font instanceof String[]) {
-            if (font instanceof String) {
-                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.warn(LogMessageConstant.FONT_PROPERTY_OF_STRING_TYPE_IS_DEPRECATED_USE_STRINGS_ARRAY_INSTEAD);
-                List<String> splitFontFamily = FontFamilySplitter.splitFontFamily((String) font);
-                font = splitFontFamily.toArray(new String[splitFontFamily.size()]);
-            }
+        } else if (font instanceof String[]) {
             FontProvider provider = this.<FontProvider>getProperty(Property.FONT_PROVIDER);
             if (provider == null) {
                 throw new IllegalStateException(

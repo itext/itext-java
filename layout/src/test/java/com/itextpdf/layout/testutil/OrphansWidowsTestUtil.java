@@ -655,7 +655,7 @@ public class OrphansWidowsTestUtil {
                 .rectangle(rectangle)
                 .fill()
                 .restoreState();
-        Canvas canvas = new Canvas(pdfCanvas, pdfDocument, rectangle);
+        Canvas canvas = new Canvas(pdfCanvas, rectangle);
         canvas.add(paraOnCanvas);
         canvas.close();
     }

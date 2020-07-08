@@ -111,25 +111,6 @@ public class Canvas extends RootElement<Canvas> {
     }
 
     /**
-     * Creates a new Canvas to manipulate a specific document and content stream, which might be for example a page
-     * or {@link PdfFormXObject} stream.
-     *
-     * @param pdfCanvas the low-level content stream writer
-     * @param pdfDocument the document that the resulting content stream will be written to
-     * @param rootArea the maximum area that the Canvas may write upon
-     *                 
-     * To be removed in 7.2
-     * @deprecated use {@link Canvas#Canvas(PdfCanvas, Rectangle)} instead.
-     */
-    @Deprecated
-    public Canvas(PdfCanvas pdfCanvas, PdfDocument pdfDocument, Rectangle rootArea) {
-        super();
-        this.pdfDocument = pdfDocument;
-        this.pdfCanvas = pdfCanvas;
-        this.rootArea = rootArea;
-    }
-
-    /**
      * Creates a new Canvas to manipulate a specific document and page.
      *
      * @param pdfCanvas         The low-level content stream writer
@@ -137,23 +118,6 @@ public class Canvas extends RootElement<Canvas> {
      * @param immediateFlush    Whether to flush the canvas immediately after operations, false otherwise
      */
     public Canvas(PdfCanvas pdfCanvas, Rectangle rootArea, boolean immediateFlush) {
-        this(pdfCanvas, rootArea);
-        this.immediateFlush = immediateFlush;
-    }
-
-    /**
-     * Creates a new Canvas to manipulate a specific document and page.
-     *
-     * @param pdfCanvas         The low-level content stream writer
-     * @param pdfDocument       The document that the resulting content stream will be written to
-     * @param rootArea          The maximum area that the Canvas may write upon
-     * @param immediateFlush    Whether to flush the canvas immediately after operations, false otherwise
-     *                          
-     * To be removed in 7.2
-     * @deprecated use {@link Canvas#Canvas(PdfCanvas, Rectangle, boolean)} instead.
-     */
-    @Deprecated
-    public Canvas(PdfCanvas pdfCanvas, PdfDocument pdfDocument, Rectangle rootArea, boolean immediateFlush) {
         this(pdfCanvas, rootArea);
         this.immediateFlush = immediateFlush;
     }

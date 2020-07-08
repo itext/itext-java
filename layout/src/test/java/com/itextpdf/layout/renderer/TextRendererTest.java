@@ -166,7 +166,9 @@ public class TextRendererTest extends RendererUnitTest {
         }
 
         renderer.setText(new GlyphLine(), pdfFont);
-        renderer.setText(glyphLine, 1, 2);
+        glyphLine.start = 1;
+        glyphLine.end = 2;
+        renderer.setText(glyphLine, pdfFont);
         GlyphLine actualLine = renderer.getText();
 
         Assert.assertFalse(actualLine == glyphLine);

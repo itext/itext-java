@@ -82,11 +82,6 @@ import java.util.Set;
  */
 public class ParagraphRenderer extends BlockRenderer {
 
-    @Deprecated
-    /**
-     * @deprecated will be removed in 7.2
-     */
-    protected float previousDescent = 0;
     protected List<LineRenderer> lines = null;
 
     /**

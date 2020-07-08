@@ -40,12 +40,11 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.layout;
+package com.itextpdf.styledxmlparser.util;
 
-
-import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -146,7 +145,7 @@ public class FontFamilySplitterTest extends ExtendedITextTest {
 
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < splitFontFamilies.length; i+=2) {
-            List<String> fontFamily = FontFamilySplitter.splitFontFamily(splitFontFamilies[i]);
+            List<String> fontFamily = FontFamilySplitterUtil.splitFontFamily(splitFontFamilies[i]);
             result.setLength(0);
             for (String ff: fontFamily) {
                 result.append(ff).append("; ");

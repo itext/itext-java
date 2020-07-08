@@ -42,7 +42,6 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFontFamilies;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -63,12 +62,11 @@ import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.layout.font.RangeBuilder;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -83,6 +81,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class FontSelectorTest extends ExtendedITextTest {
@@ -90,6 +89,9 @@ public class FontSelectorTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FontSelectorTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/FontSelectorTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -176,8 +178,10 @@ public class FontSelectorTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FONT_PROPERTY_OF_STRING_TYPE_IS_DEPRECATED_USE_STRINGS_ARRAY_INSTEAD))
-    public void cyrillicAndLatinGroupDeprecatedFontAsStringValue() throws Exception {
+    public void cyrillicAndLatinGroupFontAsStringValue() throws Exception {
+        junitExpectedException.expect(IllegalStateException.class);
+        junitExpectedException.expectMessage("Invalid FONT property value type.");
+
         String fileName = "cyrillicAndLatinGroupDeprecatedFontAsStringValue";
         String outFileName = destinationFolder + fileName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";

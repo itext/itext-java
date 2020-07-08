@@ -68,7 +68,6 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
     @Override
     public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
-            case Property.OVERFLOW:
             case Property.OVERFLOW_X:
             case Property.OVERFLOW_Y:
                 return (T1) (Object) OverflowPropertyValue.FIT;

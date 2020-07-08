@@ -65,7 +65,6 @@ import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.font.FontCharacteristics;
-import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSelectorStrategy;
 import com.itextpdf.layout.font.FontSet;
@@ -1142,25 +1141,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     /**
-     * Manually sets a GlyphLine to be rendered with a specific start and end point.
-     *
-     * @param text     a {@link GlyphLine}
-     * @param leftPos  the leftmost end of the GlyphLine
-     * @param rightPos the rightmost end of the GlyphLine
-     * @deprecated use {@link TextRenderer#setText(GlyphLine, PdfFont)} instead
-     */
-    @Deprecated
-    public void setText(GlyphLine text, int leftPos, int rightPos) {
-        GlyphLine newText = new GlyphLine(text);
-        newText.start = leftPos;
-        newText.end = rightPos;
-        if (this.font != null) {
-            newText = TextPreprocessingUtil.replaceSpecialWhitespaceGlyphs(newText, this.font);
-        }
-        setProcessedGlyphLineAndFont(newText, this.font);
-    }
-
-    /**
      * Manually set a GlyphLine and PdfFont for rendering.
      *
      * @param text the {@link GlyphLine}
@@ -1543,13 +1523,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         if (font instanceof PdfFont) {
             addTo.add(this);
             return false;
-        } else if (font instanceof String || font instanceof String[]) {
-            if (font instanceof String) {
-                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.warn(LogMessageConstant.FONT_PROPERTY_OF_STRING_TYPE_IS_DEPRECATED_USE_STRINGS_ARRAY_INSTEAD);
-                List<String> splitFontFamily = FontFamilySplitter.splitFontFamily((String) font);
-                font = splitFontFamily.toArray(new String[splitFontFamily.size()]);
-            }
+        } else if (font instanceof String[]) {
             FontProvider provider = this.<FontProvider>getProperty(Property.FONT_PROVIDER);
             FontSet fontSet = this.<FontSet>getProperty(Property.FONT_SET);
             if (provider.getFontSet().isEmpty() && (fontSet == null || fontSet.isEmpty())) {
@@ -1574,16 +1548,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         } else {
             throw new IllegalStateException("Invalid FONT property value type.");
         }
-    }
-
-    /**
-     * @param gl {@link GlyphLine} glyph to be set
-     * @param font {@link PdfFont} font to be set
-     * @deprecated use {@link TextRenderer#setProcessedGlyphLineAndFont(GlyphLine, PdfFont)} instead
-     */
-    @Deprecated
-    protected void setGlyphLineAndFont(GlyphLine gl, PdfFont font) {
-        setProcessedGlyphLineAndFont(gl, font);
     }
 
     protected void setProcessedGlyphLineAndFont(GlyphLine gl, PdfFont font) {

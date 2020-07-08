@@ -248,7 +248,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
             textElement.setFontSize(50);
             backgroundImage.getBackgroundSize().setBackgroundSizeToValues(UnitValue.createPercentValue(30), null);
-            textElement.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+            textElement.setBackgroundImage(backgroundImage);
             doc.add(new Paragraph(textElement));
         }
 
@@ -269,7 +269,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
             textElement.setFontSize(50);
             backgroundImage.getBackgroundSize().setBackgroundSizeToValues(null, UnitValue.createPercentValue(30));
-            textElement.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+            textElement.setBackgroundImage(backgroundImage);
             doc.add(new Paragraph(textElement));
         }
 
@@ -291,7 +291,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
             textElement.setFontSize(50);
             backgroundImage.getBackgroundSize().setBackgroundSizeToValues(UnitValue.createPercentValue(20),
                     UnitValue.createPercentValue(20));
-            textElement.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+            textElement.setBackgroundImage(backgroundImage);
             doc.add(new Paragraph(textElement));
         }
 
@@ -312,7 +312,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
             textElement.setFontSize(50);
             backgroundImage.getBackgroundSize().setBackgroundSizeToValues(UnitValue.createPointValue(15), null);
-            textElement.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+            textElement.setBackgroundImage(backgroundImage);
             doc.add(new Paragraph(textElement));
         }
 
@@ -333,7 +333,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
             textElement.setFontSize(50);
             backgroundImage.getBackgroundSize().setBackgroundSizeToValues(null, UnitValue.createPointValue(20));
-            textElement.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+            textElement.setBackgroundImage(backgroundImage);
             doc.add(new Paragraph(textElement));
         }
 
@@ -355,7 +355,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
             textElement.setFontSize(50);
             backgroundImage.getBackgroundSize().setBackgroundSizeToValues(UnitValue.createPointValue(50),
                     UnitValue.createPointValue(100));
-            textElement.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+            textElement.setBackgroundImage(backgroundImage);
             doc.add(new Paragraph(textElement));
         }
 
@@ -377,7 +377,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
             textElement.setFontSize(50);
             backgroundImage.getBackgroundSize().setBackgroundSizeToValues(UnitValue.createPointValue(-1),
                     UnitValue.createPointValue(-1));
-            textElement.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+            textElement.setBackgroundImage(backgroundImage);
             doc.add(new Paragraph(textElement));
         }
 
@@ -685,7 +685,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .addColorStop(new GradientColorStop(ColorConstants.BLACK.getColorValue()))
                 .addColorStop(new GradientColorStop(ColorConstants.WHITE.getColorValue()));
-        BackgroundImage backgroundImage = new BackgroundImage(gradientBuilder);
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setLinearGradientBuilder(gradientBuilder).build();
         AbstractLinearGradientBuilder topGradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(GradientStrategy.TO_RIGHT)
                 .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
