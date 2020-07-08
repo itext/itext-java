@@ -55,6 +55,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -1065,69 +1066,6 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
         annot.addAttribute(new AttributeObject(nameAbsent, valuePresent));
         annot.addAttribute(new AttributeObject(namePresent, valueAbsent));
-
-    }
-
-
-    //TODO how to define test as unit test inside this whole class? is it even possible
-    @Test
-    public void fieldEmptyValueTest()
-            throws ParserConfigurationException, TransformerException, IOException, SAXException {
-        XfdfObject xfdfObject = new XfdfObject();
-        FieldsObject fieldsObject = new FieldsObject();
-        FieldObject fieldObject = new FieldObject();
-
-        fieldObject.setName("testname");
-        fieldObject.setValue("");
-        fieldsObject.addField(fieldObject);
-        xfdfObject.setFields(fieldsObject);
-
-        String xfdfFilename = destinationFolder + "fieldEmptyValueTest.xfdf";
-        xfdfObject.writeToFile(xfdfFilename);
-
-        Assert.assertTrue(new CompareTool().compareXmls(destinationFolder + "fieldEmptyValueTest.xfdf",
-                sourceFolder + "cmp_fieldEmptyValueTest.xfdf"));
-
-    }
-
-    @Test
-    public void fieldNullValueTest()
-            throws ParserConfigurationException, TransformerException, IOException, SAXException {
-        XfdfObject xfdfObject = new XfdfObject();
-        FieldsObject fieldsObject = new FieldsObject();
-        FieldObject fieldObject = new FieldObject();
-
-        fieldObject.setName("testname");
-        fieldsObject.addField(fieldObject);
-        xfdfObject.setFields(fieldsObject);
-
-        String xfdfFilename = destinationFolder + "fieldNullValueTest.xfdf";
-        xfdfObject.writeToFile(xfdfFilename);
-
-        Assert.assertTrue(new CompareTool().compareXmls(destinationFolder + "fieldNullValueTest.xfdf",
-                sourceFolder + "cmp_fieldNullValueTest.xfdf"));
-
-
-    }
-
-    //TODO how to define test as unit test inside this whole class? is it even possible
-    @Test
-    public void fieldValueTest() throws ParserConfigurationException, TransformerException, IOException, SAXException {
-
-        XfdfObject xfdfObject = new XfdfObject();
-        FieldsObject fieldsObject = new FieldsObject();
-        FieldObject fieldObject = new FieldObject();
-
-        fieldObject.setName("testname");
-        fieldObject.setValue("testvalue");
-        fieldsObject.addField(fieldObject);
-        xfdfObject.setFields(fieldsObject);
-
-        String xfdfFilename = destinationFolder + "fieldValueTest.xfdf";
-        xfdfObject.writeToFile(xfdfFilename);
-
-        Assert.assertTrue(new CompareTool().compareXmls(destinationFolder + "fieldValueTest.xfdf",
-                sourceFolder + "cmp_fieldValueTest.xfdf"));
 
     }
 }
