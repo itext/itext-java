@@ -127,6 +127,7 @@ public final class RandomAccessSourceFactory implements Serializable {
      * as the source for the {@link IRandomAccessSource}
      * @param url the url to read from
      * @return the newly created {@link IRandomAccessSource}
+     * @throws java.io.IOException in case of any I/O error.
      */
     public IRandomAccessSource createSource(URL url) throws java.io.IOException{
         InputStream stream = url.openStream();
@@ -145,6 +146,7 @@ public final class RandomAccessSourceFactory implements Serializable {
      * as the source for the {@link IRandomAccessSource}
      * @param inputStream the stream to read from
      * @return the newly created {@link IRandomAccessSource}
+     * @throws java.io.IOException in case of any I/O error.
      */
     public IRandomAccessSource createSource(InputStream inputStream) throws java.io.IOException{
         return createSource(StreamUtil.inputStreamToArray(inputStream));
