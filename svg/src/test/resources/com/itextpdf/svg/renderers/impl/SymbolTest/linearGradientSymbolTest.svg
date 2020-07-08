@@ -9,8 +9,8 @@
 		<stop offset="0%" stop-color="red"/>
 		<stop offset="100%" stop-color="blue"/>
 	</linearGradient>
-	<symbol id="myDot" viewBox="0 0 500 500" >
-		<circle class="gradient" cx="5" cy="60" r="50"/>
+	<symbol class="gradient" id="myDot" viewBox="0 0 500 500" >
+		<circle  cx="5" cy="60" r="50"/>
 	</symbol>
 	<use xlink:href="#myDot" x="0"  y="100" />
 </svg>

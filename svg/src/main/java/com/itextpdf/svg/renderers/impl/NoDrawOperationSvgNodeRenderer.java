@@ -43,15 +43,18 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.renderers.INoDrawSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
 /**
  * Tags mapped onto this renderer won't be drawn and will be excluded from the renderer tree when processed.
  * Different from being added to the ignored list as this Renderer will allow its children to be processed.
+ *
+ * @deprecated will be removed in iText 7.2 use {@link INoDrawSvgNodeRenderer} instead
  */
+@Deprecated
 public class NoDrawOperationSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
-
     @Override
     protected void doDraw(SvgDrawContext context) {
         throw new UnsupportedOperationException(SvgLogMessageConstant.DRAW_NO_DRAW);
@@ -63,5 +66,4 @@ public class NoDrawOperationSvgNodeRenderer extends AbstractBranchSvgNodeRendere
         deepCopyAttributesAndStyles(copy);
         return copy;
     }
-
 }

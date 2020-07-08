@@ -4,7 +4,11 @@
 
 <!-- x, y values are summarized here: if in Symbol x=10, y=10 and in Use x=10, y=10 thus total values for the element will be x=25, y=25 -->
 	<symbol id="myDot" x="30%"  y="10">
-		<circle cx="15" cy="60" r="20"/>
+		<circle cx="15" cy="20" r="20"/>
 	</symbol>
 	<use xlink:href="#myDot" x="15"  y="15%"/>
+
+	<!-- The center of symbol circle: (circle.cx = 15) + (symbol.x = 60) + (use.x = 15) = 90 -->
+	<!-- The center of symbol circle: (circle.cy = 20) + (symbol.y = 10) + (use.x = 30) = 60 -->
+	<circle cx="90" cy="100" r="20"/>
 </svg>

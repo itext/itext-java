@@ -51,7 +51,7 @@ public final class SvgLogMessageConstant {
     public static final String ATTRIBUTES_NULL = "The attributes of this element are null.";
     public static final String COORDINATE_VALUE_ABSENT = "The coordinate value is empty or null.";
     public static final String COULDNOTINSTANTIATE = "Could not instantiate Renderer for tag {0}";
-    public static final String DRAW_NO_DRAW = "Can't draw a NoDrawOperationSvgNodeRenderer.";
+    public static final String DRAW_NO_DRAW = "Can't draw current SvgNodeRenderer.";
     @Deprecated
     public static final String ERROR_CLOSING_CSS_STREAM = "An error occured when trying to close the InputStream of the default CSS.";
     public static final String ERROR_INITIALIZING_DEFAULT_CSS = "Error loading the default CSS. Initializing an empty style sheet.";

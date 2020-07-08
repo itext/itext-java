@@ -67,6 +67,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +88,7 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
      */
     @Override
     protected void doDraw(SvgDrawContext context) {
-        // if branch has no children, don't do anything
+        // If branch has no children, don't do anything
         if (getChildren().size() > 0) {
             PdfStream stream = new PdfStream();
             stream.put(PdfName.Type, PdfName.XObject);
@@ -130,7 +131,7 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
 
             cleanUp(context);
 
-            // transformation already happened in AbstractSvgNodeRenderer, so no need to do a transformation here
+            // Transformation already happened in AbstractSvgNodeRenderer, so no need to do a transformation here
             context.getCurrentCanvas().addXObject(xObject, 0, 0);
         }
     }

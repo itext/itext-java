@@ -42,87 +42,12 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.styledxmlparser.css.CommonCssConstants;
-import com.itextpdf.styledxmlparser.css.resolve.CssDefaults;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.SvgConstants;
-
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
-import com.itextpdf.svg.renderers.SvgDrawContext;
 
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;svg&gt; tag.
  */
-public class SvgTagSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
-
-    @Override
-    public float getCurrentFontSize() {
-        String fontSizeValue = getAttribute(SvgConstants.Attributes.FONT_SIZE);
-        if (fontSizeValue == null) {
-            fontSizeValue = CssDefaults.getDefaultValue(CommonCssConstants.FONT_SIZE);
-        }
-        return CssUtils.parseAbsoluteFontSize(fontSizeValue);
-    }
-
-    @Override
-    protected void doDraw(SvgDrawContext context) {
-        context.addViewPort(this.calculateViewPort(context));
-        super.doDraw(context);
-    }
-
-    @Override
-    public boolean canConstructViewPort(){ return true;}
-    
-    /**
-     * Calculate the viewport based on the context.
-     *
-     * @param context the SVG draw context
-     * @return the viewport that applies to this renderer
-     */
-    Rectangle calculateViewPort(SvgDrawContext context) {
-        Rectangle currentViewPort = context.getCurrentViewPort();
-
-        float portX = 0f;
-        float portY = 0f;
-        float portWidth = 0f;
-        float portHeight = 0f;
-
-
-        // set default values to parent viewport in the case of a nested svg tag
-        portX = currentViewPort.getX();
-        portY = currentViewPort.getY();
-        portWidth = currentViewPort.getWidth(); // default should be parent portWidth if not outermost
-        portHeight = currentViewPort.getHeight(); // default should be parent height if not outermost
-
-
-        if (attributesAndStyles != null) {
-
-            if (attributesAndStyles.containsKey(SvgConstants.Attributes.X)) {
-                portX = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.X));
-            }
-
-            if (attributesAndStyles.containsKey(SvgConstants.Attributes.Y)) {
-                portY = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.Y));
-            }
-
-            if (attributesAndStyles.containsKey(SvgConstants.Attributes.WIDTH)) {
-                portWidth = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.WIDTH));
-            }
-
-            if (attributesAndStyles.containsKey(SvgConstants.Attributes.HEIGHT)) {
-                portHeight = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.HEIGHT));
-            }
-        }
-
-        return new Rectangle(portX, portY, portWidth, portHeight);
-    }
-
-    @Override
-    protected boolean canElementFill() {
-        return false;
-    }
-
+public class SvgTagSvgNodeRenderer extends AbstractContainerSvgNodeRenderer {
     @Override
     public ISvgNodeRenderer createDeepCopy() {
         SvgTagSvgNodeRenderer copy = new SvgTagSvgNodeRenderer();
