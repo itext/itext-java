@@ -190,7 +190,6 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     public void checkXrefTable(PdfXrefTable xrefTable) {
-        // do not consider 'zero object' as it is not an indirect object
         if (xrefTable.getCountOfIndirectObjects() > getMaxNumberOfIndirectObjects()) {
             throw new PdfAConformanceException(PdfAConformanceException.MAXIMUM_NUMBER_OF_INDIRECT_OBJECTS_EXCEEDED);
         }
