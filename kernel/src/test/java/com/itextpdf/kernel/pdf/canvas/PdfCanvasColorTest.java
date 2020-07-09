@@ -376,6 +376,28 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
     }
 
     @Test
+    public void makePatternColorTest() throws IOException, InterruptedException {
+        PdfWriter writer = new PdfWriter(destinationFolder + "makePatternColorTest.pdf");
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        PdfSpecialCs.Pattern pattern = new PdfSpecialCs.UncoloredTilingPattern(new PdfDeviceCs.Rgb());
+        Color greenPattern = Color.makeColor(pattern, new float[]{0, 1,0});
+
+        PdfPattern.Tiling circle = new PdfPattern.Tiling(10, 10, 12, 12, false);
+        new PdfPatternCanvas(circle, document).circle(5f, 5f, 5f).fill().release();
+        canvas.setColor(greenPattern.getColorSpace(), greenPattern.getColorValue(), circle, true).rectangle(50, 600, 50, 50).fill();
+
+        canvas.release();
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "makePatternColorTest.pdf",
+                sourceFolder + "cmp_makePatternColorTest.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
     public void patternColorColoredAxialPatternTest() throws Exception {
         String name = "patternColorColoredAxialPatternTest.pdf";
         PdfWriter writer = new PdfWriter(destinationFolder + name);

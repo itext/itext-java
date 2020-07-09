@@ -146,7 +146,6 @@ public class Color implements Serializable {
                 unknownColorSpace = true;
             }
         } else if (colorSpace instanceof PdfSpecialCs.Pattern) {
-            // TODO review this. at least log a warning
             c = new Color(colorSpace, colorValue);
         } else {
             unknownColorSpace = true;
