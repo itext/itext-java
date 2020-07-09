@@ -65,8 +65,9 @@ public class PdfSoundAnnotation extends PdfMarkupAnnotation {
      * The first byte of the audio stream data should be deleted, then wav file will be played correctly.
      * Otherwise it will be broken. Other supporting file types don't have such problem.
      * Sound annotations are deprecated in PDF 2.0.
-     * @param rect
-     * @param sound
+     *
+     * @param rect the rectangle that specifies annotation position and bounds on page
+     * @param sound the {@link PdfStream} with sound
      */
     public PdfSoundAnnotation(Rectangle rect, PdfStream sound) {
         super(rect);
@@ -74,6 +75,10 @@ public class PdfSoundAnnotation extends PdfMarkupAnnotation {
     }
 
     /**
+     * Instantiates a new {@link PdfSoundAnnotation} instance based on {@link PdfDictionary}
+     * instance, that represents existing annotation object in the document.
+     *
+     * @param pdfObject the {@link PdfDictionary} representing annotation object
      * @see PdfAnnotation#makeAnnotation(PdfObject)
      */
     protected PdfSoundAnnotation(PdfDictionary pdfObject) {
@@ -82,14 +87,15 @@ public class PdfSoundAnnotation extends PdfMarkupAnnotation {
 
     /**
      * Creates a sound annotation. Sound annotations are deprecated in PDF 2.0.
-     * @param document
-     * @param rect
-     * @param soundStream
-     * @param sampleRate
-     * @param encoding
-     * @param channels
-     * @param sampleSizeInBits
-     * @throws IOException
+     *
+     * @param document the {@link PdfDocument} to which annotation will be added
+     * @param rect the rectangle that specifies annotation position and bounds on page
+     * @param soundStream the {@link PdfStream} with sound
+     * @param sampleRate the sampling rate, in samples per second
+     * @param encoding the encoding format for the sample data
+     * @param channels the number of sound channels
+     * @param sampleSizeInBits the number of bits per sample value per channel
+     * @throws IOException in case of corrupted data or source stream problems
      */
     public PdfSoundAnnotation(PdfDocument document, Rectangle rect, InputStream soundStream, float sampleRate, PdfName encoding, int channels, int sampleSizeInBits) throws IOException {
         super(rect);

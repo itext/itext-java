@@ -138,9 +138,9 @@ public abstract class PdfXObject extends PdfObjectWrapper<PdfStream> {
     /**
      * Returns files associated with XObject.
      *
-     * @return associated files array.
+     * @param create defines whether AF arrays will be created if it doesn't exist
+     * @return associated files array
      */
-
     public PdfArray getAssociatedFiles(boolean create) {
         PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
         if (afArray == null && create) {

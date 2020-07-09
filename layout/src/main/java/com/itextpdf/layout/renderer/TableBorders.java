@@ -55,24 +55,74 @@ import java.util.ArrayList;
 import java.util.List;
 
 abstract class TableBorders {
+    /**
+     * Horizontal borders of the table.
+     *
+     * It consists of a list, each item of which represents
+     * a horizontal border of a row, each of them is a list of borders of the cells.
+     * The amount of the lists is the number of rows + 1, the size of each of these lists
+     * corresponds to the number of columns.
+     */
     protected List<List<Border>> horizontalBorders = new ArrayList<>();
+
+    /**
+     * Vertical borders of the table.
+     *
+     * It consists of a list, each item of which represents
+     * a vertical border of a row, each of them is a list of borders of the cells.
+     * The amount of the lists is the number of columns + 1, the size of each of these lists
+     * corresponds to the number of rows.
+     */
     protected List<List<Border>> verticalBorders = new ArrayList<>();
 
+    /**
+     * The number of the table's columns.
+     */
     protected final int numberOfColumns;
 
+    /**
+     * The outer borders of the table (as body).
+     */
     protected Border[] tableBoundingBorders = new Border[4];
 
+    /**
+     * All the cells of the table.
+     *
+     * Each item of the list represents a row and consists of its cells.
+     */
     protected List<CellRenderer[]> rows;
 
-    // Zero-based, inclusive
+    /**
+     * The first row, which should be processed on this area.
+     *
+     * The value of this field varies from area to area.
+     * It's zero-based and inclusive.
+     */
     protected int startRow;
-    // Zero-based, inclusive. The last border will have index (finishRow+1) because the number of borders is greater
-    // by one than the number of rows
+    /**
+     * The last row, which should be processed on this area.
+     *
+     * The value of this field varies from area to area.
+     * It's zero-based and inclusive. The last border will have index (finishRow+1) because
+     * the number of borders is greater by one than the number of rows
+     */
     protected int finishRow;
 
+    /**
+     * The width of the widest left border.
+     */
     protected float leftBorderMaxWidth;
+
+    /**
+     * The width of the widest right border.
+     */
     protected float rightBorderMaxWidth;
 
+    /**
+     * The number of rows flushed to the table.
+     *
+     * Its value is zero for regular tables. The field makes sense only for large tables.
+     */
     protected int largeTableIndexOffset = 0;
 
     public TableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders) {

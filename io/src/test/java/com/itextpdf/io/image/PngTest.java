@@ -22,18 +22,20 @@
  */
 package com.itextpdf.io.image;
 
+import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.verapdf.metadata.fixer.entity.PDFDocument;
 
 @Category(UnitTest.class)
 public class PngTest extends ExtendedITextTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/io/image/PngTest/";
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/io/image/PngTest/";
 
     @Test
     public void grayscale8BpcDepthImageTest() throws IOException {
@@ -284,7 +286,8 @@ public class PngTest extends ExtendedITextTest {
 
     @Test
     public void size300Px300DpiImageTest() throws IOException {
-        ImageData img = ImageDataFactory.create(sourceFolder + "size300Px300Dpi.png");
+        // Test a more specific entry point
+        ImageData img = ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "size300Px300Dpi.png"));
         Assert.assertEquals(ImageType.PNG, img.getOriginalType());
         Assert.assertEquals(300, img.getWidth(), 0);
         Assert.assertEquals(300, img.getHeight(), 0);
@@ -294,22 +297,26 @@ public class PngTest extends ExtendedITextTest {
 
     @Test
     public void sRGBImageTest() throws IOException {
-        ImageData img = ImageDataFactory.create(sourceFolder + "sRGBImage.png");
-        Assert.assertEquals(ImageType.PNG, img.getOriginalType());
-        Assert.assertEquals(50, img.getWidth(), 0);
-        Assert.assertEquals(50, img.getHeight(), 0);
-        Assert.assertEquals(96, img.getDpiX());
-        Assert.assertEquals(96, img.getDpiY());
-        Assert.assertEquals(2.2, ((PngImageData)img).getGamma(), 0.0001f);
+        try (FileInputStream fis = new FileInputStream(sourceFolder + "sRGBImage.png")) {
+            byte[] imageBytes = StreamUtil.inputStreamToArray(fis);
+            // Test a more specific entry point
+            ImageData img = ImageDataFactory.createPng(imageBytes);
+            Assert.assertEquals(ImageType.PNG, img.getOriginalType());
+            Assert.assertEquals(50, img.getWidth(), 0);
+            Assert.assertEquals(50, img.getHeight(), 0);
+            Assert.assertEquals(96, img.getDpiX());
+            Assert.assertEquals(96, img.getDpiY());
+            Assert.assertEquals(2.2, ((PngImageData) img).getGamma(), 0.0001f);
 
-        PngChromaticities pngChromaticities = ((PngImageData)img).getPngChromaticities();
-        Assert.assertEquals(0.3127f, pngChromaticities.getXW(), 0.0001f);
-        Assert.assertEquals(0.329f, pngChromaticities.getYW(), 0.0001f);
-        Assert.assertEquals(0.64f, pngChromaticities.getXR(), 0.0001f);
-        Assert.assertEquals(0.33f, pngChromaticities.getYR(), 0.0001f);
-        Assert.assertEquals(0.3f, pngChromaticities.getXG(), 0.0001f);
-        Assert.assertEquals(0.6f, pngChromaticities.getYG(), 0.0001f);
-        Assert.assertEquals(0.15f, pngChromaticities.getXB(), 0.0001f);
-        Assert.assertEquals(0.06f, pngChromaticities.getYB(), 0.0001f);
+            PngChromaticities pngChromaticities = ((PngImageData) img).getPngChromaticities();
+            Assert.assertEquals(0.3127f, pngChromaticities.getXW(), 0.0001f);
+            Assert.assertEquals(0.329f, pngChromaticities.getYW(), 0.0001f);
+            Assert.assertEquals(0.64f, pngChromaticities.getXR(), 0.0001f);
+            Assert.assertEquals(0.33f, pngChromaticities.getYR(), 0.0001f);
+            Assert.assertEquals(0.3f, pngChromaticities.getXG(), 0.0001f);
+            Assert.assertEquals(0.6f, pngChromaticities.getYG(), 0.0001f);
+            Assert.assertEquals(0.15f, pngChromaticities.getXB(), 0.0001f);
+            Assert.assertEquals(0.06f, pngChromaticities.getYB(), 0.0001f);
+        }
     }
 }

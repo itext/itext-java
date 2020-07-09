@@ -48,6 +48,7 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.NumberUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
@@ -64,6 +65,7 @@ import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.borders.Border;
@@ -503,10 +505,10 @@ public abstract class AbstractRenderer implements IRenderer {
             if (isTagged) {
                 drawContext.getCanvas().openTag(new CanvasArtifact());
             }
-            Rectangle backgroundArea = applyMargins(bBox, false);
+            Rectangle backgroundArea = getBackgroundArea(applyMargins(bBox, false));
             if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
+                logger.info(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
             } else {
                 boolean backgroundAreaIsClipped = false;
                 if (background != null) {
@@ -530,11 +532,21 @@ public abstract class AbstractRenderer implements IRenderer {
                     if (backgroundXObject == null) {
                         backgroundXObject = backgroundImage.getForm();
                     }
-                    Rectangle imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundXObject.getHeight(),
-                            backgroundXObject.getWidth(), backgroundXObject.getHeight());
+                    // TODO: DEVSIX-3108 due to invalid logic of `PdfCanvas.addXObject(PdfXObject, Rectangle)`
+                    //  for PDfFormXObject (invalid scaling) for now the imageRectangle initialization
+                    //  for gradient uses width and height = 1. For all othe cases the logic left as it was.
+                    Rectangle imageRectangle;
+                    if (backgroundXObject == null) {
+                        backgroundXObject = AbstractRenderer.createXObject(backgroundImage.getLinearGradientBuilder(),
+                                backgroundArea, drawContext.getDocument());
+                        imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundXObject.getHeight(),1, 1);
+                    } else {
+                         imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundXObject.getHeight(),
+                                backgroundXObject.getWidth(), backgroundXObject.getHeight());
+                    }
                     if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
                         Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                        logger.warn(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
+                        logger.info(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
                     } else {
                         applyBorderBox(backgroundArea, true);
                         drawContext.getCanvas().saveState().rectangle(backgroundArea).clip().endPath();
@@ -561,6 +573,40 @@ public abstract class AbstractRenderer implements IRenderer {
                 drawContext.getCanvas().closeTag();
             }
         }
+    }
+
+    /**
+     * Create a {@link PdfFormXObject} with the given area and containing a linear gradient inside.
+     *
+     * @param linearGradientBuilder the linear gradient builder
+     * @param xObjectArea the result object area
+     * @param document the pdf document
+     * @return the xObject with a specified area and a linear gradient
+     */
+    public static PdfFormXObject createXObject(AbstractLinearGradientBuilder linearGradientBuilder,
+            Rectangle xObjectArea, PdfDocument document) {
+        Rectangle formBBox = new Rectangle(0, 0, xObjectArea.getWidth(), xObjectArea.getHeight());
+        PdfFormXObject xObject = new PdfFormXObject(formBBox);
+        if (linearGradientBuilder != null) {
+            Color gradientColor = linearGradientBuilder.buildColor(formBBox, null, document);
+            if (gradientColor != null) {
+                new PdfCanvas(xObject, document)
+                        .setColor(gradientColor, true)
+                        .rectangle(formBBox)
+                        .fill();
+            }
+        }
+        return xObject;
+    }
+
+    /**
+     * Evaluate the actual background
+     *
+     * @param occupiedAreaWithMargins the current occupied area with applied margins
+     * @return the actual background area
+     */
+    protected Rectangle getBackgroundArea(Rectangle occupiedAreaWithMargins) {
+        return occupiedAreaWithMargins;
     }
 
     protected boolean clipBorderArea(DrawContext drawContext, Rectangle outerBorderBox) {
@@ -1702,11 +1748,12 @@ public abstract class AbstractRenderer implements IRenderer {
                 logger.warn(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN, logMessageArg));
                 return;
             }
+            // If an element with a link annotation occupies more than two pages,
+            // then a NPE might occur, because of the annotation being partially flushed.
+            // That's why we create and use an annotation's copy.
+            PdfDictionary oldAnnotation = (PdfDictionary) linkAnnotation.getPdfObject().clone();
+            linkAnnotation = (PdfLinkAnnotation) PdfAnnotation.makeAnnotation(oldAnnotation);
             Rectangle pdfBBox = calculateAbsolutePdfBBox();
-            if (linkAnnotation.getPage() != null) {
-                PdfDictionary oldAnnotation = (PdfDictionary) linkAnnotation.getPdfObject().clone();
-                linkAnnotation = (PdfLinkAnnotation) PdfAnnotation.makeAnnotation(oldAnnotation);
-            }
             linkAnnotation.setRectangle(new PdfArray(pdfBBox));
 
             PdfPage page = document.getPage(pageNumber);

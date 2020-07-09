@@ -187,4 +187,10 @@ public class EllipseSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
                 + "130.21 250.13 132.22 252.14 132.22 254.63 c";
         Assert.assertTrue(pageContentBytes.contains(expectedResult));
     }
+
+    @Test
+    // TODO: DEVSIX-3932 update cmp_ after fix
+    public void ellipseWithBigStrokeWidthTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "ellipseWithBigStrokeWidth");
+    }
 }

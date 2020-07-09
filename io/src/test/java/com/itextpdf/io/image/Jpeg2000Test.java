@@ -43,9 +43,10 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
-
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -58,8 +59,8 @@ public class Jpeg2000Test extends ExtendedITextTest {
     @Test
     public void openJpeg2000_1() throws java.io.IOException {
         try {
-            ImageData img = ImageDataFactory.create(sourceFolder + "WP_20140410_001.JP2");
-            Jpeg2000ImageHelper.processImage(img);
+            // Test a more specific entry point
+            ImageDataFactory.createJpeg2000(UrlUtil.toURL(sourceFolder + "WP_20140410_001.JP2"));
         } catch (IOException e) {
             Assert.assertEquals(IOException.UnsupportedBoxSizeEqEq0, e.getMessage());
         }
@@ -68,7 +69,6 @@ public class Jpeg2000Test extends ExtendedITextTest {
     @Test
     public void openJpeg2000_2() throws java.io.IOException {
         ImageData img = ImageDataFactory.create(sourceFolder + "WP_20140410_001.JPC");
-        Jpeg2000ImageHelper.processImage(img);
         Assert.assertEquals(2592, img.getWidth(), 0);
         Assert.assertEquals(1456, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());

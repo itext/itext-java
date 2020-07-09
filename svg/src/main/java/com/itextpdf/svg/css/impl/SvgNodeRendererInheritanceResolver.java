@@ -42,22 +42,24 @@
  */
 package com.itextpdf.svg.css.impl;
 
+import com.itextpdf.styledxmlparser.css.resolve.CssInheritance;
+import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
+import com.itextpdf.styledxmlparser.util.StyleUtil;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.AbstractBranchSvgNodeRenderer;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Style and attribute inheritance resolver for {@link ISvgNodeRenderer} objects
  */
 public class SvgNodeRendererInheritanceResolver {
 
-    private StyleResolverUtil sru;
-
     public SvgNodeRendererInheritanceResolver(){
-        sru = new StyleResolverUtil();
     }
     /**
      * Apply style and attribute inheritance to the tree formed by the root and the subTree
@@ -88,13 +90,15 @@ public class SvgNodeRendererInheritanceResolver {
                 parentFontSize = "0";
             }
 
+            Set<IStyleInheritance> inheritanceRules = new HashSet<>();
+            inheritanceRules.add(new CssInheritance());
+            inheritanceRules.add(new SvgAttributeInheritance());
+
             for (Map.Entry<String, String> parentAttribute : parentStyles.entrySet()) {
-                sru.mergeParentStyleDeclaration(childStyles, parentAttribute.getKey(), parentAttribute.getValue(), parentFontSize);
+                childStyles = StyleUtil
+                        .mergeParentStyleDeclaration(childStyles, parentAttribute.getKey(), parentAttribute.getValue(), parentFontSize, inheritanceRules);
             }
             child.setAttributesAndStyles(childStyles);
         }
     }
-
-
-
 }

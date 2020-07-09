@@ -42,15 +42,18 @@
  */
 package com.itextpdf.io.image;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import com.itextpdf.io.codec.TIFFDirectory;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -62,7 +65,9 @@ public class TiffTest extends ExtendedITextTest {
 
     @Test
     public void openTiff1() throws IOException {
-        ImageData img = ImageDataFactory.create(sourceFolder + "WP_20140410_001.tif");
+        byte[] imageBytes = StreamUtil.inputStreamToArray(new FileInputStream(sourceFolder + "WP_20140410_001.tif"));
+        // Test a more specific entry point
+        ImageData img = ImageDataFactory.createTiff(imageBytes, false, 1, false);
         Assert.assertEquals(2592, img.getWidth(), 0);
         Assert.assertEquals(1456, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
@@ -70,7 +75,9 @@ public class TiffTest extends ExtendedITextTest {
 
     @Test
     public void openTiff2() throws IOException {
-        ImageData img = ImageDataFactory.create(sourceFolder + "WP_20140410_001_gray.tiff");
+        // Test a more specific entry point
+        ImageData img = ImageDataFactory.createTiff(UrlUtil.toURL(sourceFolder + "WP_20140410_001_gray.tiff"),
+                false, 1, false);
         Assert.assertEquals(2592, img.getWidth(), 0);
         Assert.assertEquals(1456, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());

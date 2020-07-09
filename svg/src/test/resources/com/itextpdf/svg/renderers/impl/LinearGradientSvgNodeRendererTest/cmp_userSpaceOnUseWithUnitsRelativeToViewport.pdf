@@ -1,0 +1,310 @@
+%PDF-1.7
+%‚„œ”
+5 0 obj
+<</Length 27>>stream
+q
+1 0 0 1 0 0 cm
+/Fm1 Do
+Q
+
+endstream
+endobj
+4 0 obj
+<</Contents 5 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</XObject<</Fm1 7 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
+endobj
+1 0 obj
+<</Pages 2 0 R/Type/Catalog>>
+endobj
+3 0 obj
+<</CreationDate(D:20200617114807+03'00')/ModDate(D:20200617114807+03'00')/Producer(iTextÆ 7.1.12-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
+endobj
+6 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+2 0 obj
+<</Count 1/Kids[4 0 R]/Type/Pages>>
+endobj
+7 0 obj
+<</BBox[0 0 900 900]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+1 0 0 -1 0 900 cm
+% svg root
+q
+1 0 0 1 0 0 cm
+/Fm1 Do
+Q
+
+endstream
+endobj
+8 0 obj
+<</BBox[0 0 900 900]/Length 66/Resources<</XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
+0 0 900 900 re
+W
+n
+q
+1 0 0 1 0 60 cm
+q
+1 0 0 1 0 0 cm
+/Fm1 Do
+Q
+Q
+
+endstream
+endobj
+9 0 obj
+<</BBox[0 0 450 712.5]/Length 1521/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 10 0 R/P2 11 0 R/P3 12 0 R/P4 13 0 R>>>>/Subtype/Form/Type/XObject>>stream
+0 0 450 712.5 re
+W
+n
+q
+0 0 0 rg
+BT
+1 0 0 -1 11.25 11.25 Tm
+0 Tr
+/F1 12 Tf
+q
+0 0 Td
+("vw")Tj
+n
+Q
+ET
+f
+Q
+q
+/Pattern cs
+
+/P1 scn
+0 0.31373 0 RG
+2.25 w
+% rect
+% ellipse rounded rect
+15 22.5 m
+131.25 22.5 l
+135.39 22.5 138.75 25.86 138.75 30 c
+138.75 165 l
+138.75 169.14 135.39 172.5 131.25 172.5 c
+15 172.5 l
+10.86 172.5 7.5 169.14 7.5 165 c
+7.5 30 l
+7.5 25.86 10.86 22.5 15 22.5 c
+h
+B
+Q
+q
+0 0 0 rg
+BT
+1 0 0 -1 236.25 11.25 Tm
+0 Tr
+/F1 12 Tf
+q
+0 0 Td
+("vh")Tj
+n
+Q
+ET
+f
+Q
+q
+/Pattern cs
+
+/P2 scn
+0 0.31373 0 RG
+2.25 w
+% rect
+% ellipse rounded rect
+232.5 22.5 m
+348.75 22.5 l
+352.89 22.5 356.25 25.86 356.25 30 c
+356.25 165 l
+356.25 169.14 352.89 172.5 348.75 172.5 c
+232.5 172.5 l
+228.36 172.5 225 169.14 225 165 c
+225 30 l
+225 25.86 228.36 22.5 232.5 22.5 c
+h
+B
+Q
+q
+0 0 0 rg
+BT
+1 0 0 -1 11.25 191.25 Tm
+0 Tr
+/F1 12 Tf
+q
+0 0 Td
+("vmin")Tj
+n
+Q
+ET
+f
+Q
+q
+/Pattern cs
+
+/P3 scn
+0 0.31373 0 RG
+2.25 w
+% rect
+% ellipse rounded rect
+15 202.5 m
+131.25 202.5 l
+135.39 202.5 138.75 205.86 138.75 210 c
+138.75 345 l
+138.75 349.14 135.39 352.5 131.25 352.5 c
+15 352.5 l
+10.86 352.5 7.5 349.14 7.5 345 c
+7.5 210 l
+7.5 205.86 10.86 202.5 15 202.5 c
+h
+B
+Q
+q
+0 0 0 rg
+BT
+1 0 0 -1 236.25 191.25 Tm
+0 Tr
+/F1 12 Tf
+q
+0 0 Td
+("vmax")Tj
+n
+Q
+ET
+f
+Q
+q
+/Pattern cs
+
+/P4 scn
+0 0.31373 0 RG
+2.25 w
+% rect
+% ellipse rounded rect
+232.5 202.5 m
+348.75 202.5 l
+352.89 202.5 356.25 205.86 356.25 210 c
+356.25 345 l
+356.25 349.14 352.89 352.5 348.75 352.5 c
+232.5 352.5 l
+228.36 352.5 225 349.14 225 345 c
+225 210 l
+225 205.86 228.36 202.5 232.5 202.5 c
+h
+B
+Q
+
+endstream
+endobj
+10 0 obj
+<</PatternType 2/Shading 14 0 R/Type/Pattern>>
+endobj
+11 0 obj
+<</PatternType 2/Shading 15 0 R/Type/Pattern>>
+endobj
+12 0 obj
+<</PatternType 2/Shading 16 0 R/Type/Pattern>>
+endobj
+13 0 obj
+<</PatternType 2/Shading 17 0 R/Type/Pattern>>
+endobj
+14 0 obj
+<</ColorSpace/DeviceRGB/Coords[7.5 0 138.75 0]/Domain[0.01667 0.30833]/Function 18 0 R/ShadingType 2>>
+endobj
+15 0 obj
+<</ColorSpace/DeviceRGB/Coords[225 0 356.25 0]/Domain[0.5 0.79167]/Function 19 0 R/ShadingType 2>>
+endobj
+16 0 obj
+<</ColorSpace/DeviceRGB/Coords[7.5 0 138.75 0]/Domain[0.01667 0.30833]/Function 20 0 R/ShadingType 2>>
+endobj
+17 0 obj
+<</ColorSpace/DeviceRGB/Coords[225 0 356.25 0]/Domain[0.5 0.79167]/Function 21 0 R/ShadingType 2>>
+endobj
+18 0 obj
+<</Bounds[0 1]/Domain[0 1]/Encode[0 1 0 1 0 1]/FunctionType 3/Functions[22 0 R 23 0 R 24 0 R]>>
+endobj
+19 0 obj
+<</Bounds[0 1]/Domain[0 1]/Encode[0 1 0 1 0 1]/FunctionType 3/Functions[25 0 R 26 0 R 27 0 R]>>
+endobj
+20 0 obj
+<</Bounds[0 1]/Domain[0 1]/Encode[0 1 0 1 0 1]/FunctionType 3/Functions[28 0 R 29 0 R 30 0 R]>>
+endobj
+21 0 obj
+<</Bounds[0 1]/Domain[0 1]/Encode[0 1 0 1 0 1]/FunctionType 3/Functions[31 0 R 32 0 R 33 0 R]>>
+endobj
+22 0 obj
+<</C0[0 0.50196 0]/C1[1 0 0]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+23 0 obj
+<</C0[1 0 0]/C1[0 0 1]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+24 0 obj
+<</C0[0 0 1]/C1[1 1 0]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+25 0 obj
+<</C0[0 0.50196 0]/C1[1 0 0]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+26 0 obj
+<</C0[1 0 0]/C1[0 0 1]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+27 0 obj
+<</C0[0 0 1]/C1[1 1 0]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+28 0 obj
+<</C0[0 0.50196 0]/C1[1 0 0]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+29 0 obj
+<</C0[1 0 0]/C1[0 0 1]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+30 0 obj
+<</C0[0 0 1]/C1[1 1 0]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+31 0 obj
+<</C0[0 0.50196 0]/C1[1 0 0]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+32 0 obj
+<</C0[1 0 0]/C1[0 0 1]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+33 0 obj
+<</C0[0 0 1]/C1[1 1 0]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+xref
+0 34
+0000000000 65535 f 
+0000000226 00000 n 
+0000000528 00000 n 
+0000000271 00000 n 
+0000000089 00000 n 
+0000000015 00000 n 
+0000000438 00000 n 
+0000000579 00000 n 
+0000000762 00000 n 
+0000000955 00000 n 
+0000002655 00000 n 
+0000002718 00000 n 
+0000002781 00000 n 
+0000002844 00000 n 
+0000002907 00000 n 
+0000003026 00000 n 
+0000003141 00000 n 
+0000003260 00000 n 
+0000003375 00000 n 
+0000003487 00000 n 
+0000003599 00000 n 
+0000003711 00000 n 
+0000003823 00000 n 
+0000003901 00000 n 
+0000003973 00000 n 
+0000004045 00000 n 
+0000004123 00000 n 
+0000004195 00000 n 
+0000004267 00000 n 
+0000004345 00000 n 
+0000004417 00000 n 
+0000004489 00000 n 
+0000004567 00000 n 
+0000004639 00000 n 
+trailer
+<</ID [<47fa322082d793396e5476f70dbff512><47fa322082d793396e5476f70dbff512>]/Info 3 0 R/Root 1 0 R/Size 34>>
+%iText-7.1.12-SNAPSHOT
+startxref
+4711
+%%EOF

@@ -83,9 +83,6 @@ public class MaskTest extends SvgIntegrationTest {
 
   @Test
   //TODO: update after DEVSIX-2378 implementation
-  @LogMessages(messages = {
-          @LogMessage(messageTemplate =  SvgLogMessageConstant.UNMAPPEDTAG),
-  })
   public void maskWithGradient() throws IOException, InterruptedException {
     convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "maskWithGradient", properties);
   }

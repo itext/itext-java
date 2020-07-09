@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.converter;
 
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -167,7 +168,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
      */
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 32),
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 31),
     })
     public void convertFileWithAllIgnoredTags() throws IOException, InterruptedException {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "ignored_tags");
@@ -184,7 +185,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 14),
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 12),
     })
     public void caseSensitiveTagTest() {
         String contents = "<svg width='100pt' height='100pt'>" +
@@ -284,7 +285,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         String name = "eclipse";
         int x = 50;
         int y = 0;
-        String destName = name + "_" + x + "_" + y;
+        String destName = MessageFormatUtil.format("{0}_{1}_{2}", name, x, y);
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
@@ -296,7 +297,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         String name = "eclipse";
         int x = 0;
         int y = 100;
-        String destName = name + "_" + x + "_" + y;
+        String destName = MessageFormatUtil.format("{0}_{1}_{2}", name, x, y);
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
@@ -308,7 +309,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         String name = "eclipse";
         int x = 50;
         int y = 100;
-        String destName = name + "_" + x + "_" + y;
+        String destName = MessageFormatUtil.format("{0}_{1}_{2}", name, x, y);
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
@@ -321,7 +322,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         String name = "eclipse";
         int x = -50;
         int y = 0;
-        String destName = name + "_" + x + "_" + y;
+        String destName = MessageFormatUtil.format("{0}_{1}_{2}", name, x, y);
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
@@ -333,7 +334,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         String name = "eclipse";
         int x = 0;
         int y = -100;
-        String destName = name + "_" + x + "_" + y;
+        String destName = MessageFormatUtil.format("{0}_{1}_{2}", name, x, y);
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
@@ -346,7 +347,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         String name = "eclipse";
         int x = -50;
         int y = -100;
-        String destName = name + "_" + x + "_" + y;
+        String destName = MessageFormatUtil.format("{0}_{1}_{2}", name, x, y);
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
@@ -359,7 +360,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         String name = "eclipse";
         int x = -50;
         int y = -50;
-        String destName = name + "_" + x + "_" + y;
+        String destName = MessageFormatUtil.format("{0}_{1}_{2}", name, x, y);
         FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         drawOnSpecifiedPositionDocument(fis, destinationFolder + destName + ".pdf", x, y);
 
@@ -642,13 +643,8 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         ISvgProcessorResult expected = new SvgProcessorResult(map, root, new FontProvider(), new FontSet());
 
         ISvgProcessorResult actual = SvgConverter.parseAndProcess(fis);
-        //TODO(RND-868): remove below checks
-        Assert.assertEquals(SvgTagSvgNodeRenderer.class, actual.getRootRenderer().getClass());
-        Assert.assertEquals(0, actual.getNamedObjects().size());
-        Assert.assertEquals("500", actual.getRootRenderer().getAttribute("width"));
 
-        //TODO(RND-868): Switch test over to this logic
-        //Assert.assertEquals(expected,actual);
+        Assert.assertEquals(expected.getRootRenderer().getAttributeMapCopy(), actual.getRootRenderer().getAttributeMapCopy());
     }
 
     @Test

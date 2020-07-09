@@ -60,6 +60,7 @@ import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.ListStyleShorthan
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.MarginShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.OutlineShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.PaddingShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.TextDecorationShorthandResolver;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -88,7 +89,7 @@ public class ShorthandResolverFactory {
         shorthandResolvers.put(CommonCssConstants.MARGIN, new MarginShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.OUTLINE, new OutlineShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.PADDING, new PaddingShorthandResolver());
-        // TODO text-decoration is a shorthand in CSS3, however it is not yet supported in any major browsers
+        shorthandResolvers.put(CommonCssConstants.TEXT_DECORATION, new TextDecorationShorthandResolver());
     }
 
     /**

@@ -43,6 +43,8 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.styledxmlparser.css.resolve.CssDefaults;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
 
@@ -55,12 +57,23 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 public class SvgTagSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
 
     @Override
+    public float getCurrentFontSize() {
+        String fontSizeValue = getAttribute(SvgConstants.Attributes.FONT_SIZE);
+        if (fontSizeValue == null) {
+            fontSizeValue = CssDefaults.getDefaultValue(CommonCssConstants.FONT_SIZE);
+        }
+        return CssUtils.parseAbsoluteFontSize(fontSizeValue);
+    }
+
+    @Override
     protected void doDraw(SvgDrawContext context) {
         context.addViewPort(this.calculateViewPort(context));
         super.doDraw(context);
     }
+
     @Override
     public boolean canConstructViewPort(){ return true;}
+    
     /**
      * Calculate the viewport based on the context.
      *

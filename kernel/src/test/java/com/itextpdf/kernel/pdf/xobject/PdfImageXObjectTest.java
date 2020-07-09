@@ -120,8 +120,6 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
 
     @Test
     public void grayAlphaPngWithoutEmbeddedProfileImageXObjectTest() throws IOException {
-        // TODO DEVSIX-1313
-        // Update cmp file after the specified ticket will be resolved
         convertAndCompare(destinationFolder + "graya8BpcWithoutProfile.pdf",
                 sourceFolder + "cmp_graya8BpcWithoutProfile.pdf",
                 sourceFolder + "graya8BpcWithoutProfile.png");

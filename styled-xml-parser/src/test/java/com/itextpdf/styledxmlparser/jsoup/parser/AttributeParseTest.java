@@ -85,7 +85,7 @@ public class AttributeParseTest extends ExtendedITextTest {
         String html = "<a\r\nfoo='bar\r\nqux'\r\nbar\r\n=\r\ntwo>One</a>";
         Element el = Jsoup.parse(html).select("a").first();
         assertEquals(2, el.attributes().size());
-        assertEquals("bar\r\nqux", el.attr("foo")); // currently preserves newlines in quoted attributes. todo confirm if should.
+        assertEquals("bar\r\nqux", el.attr("foo"));
         assertEquals("two", el.attr("bar"));
     }
 

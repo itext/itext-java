@@ -42,15 +42,21 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.kernel.pdf.tagging.IStructureNode;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import static com.itextpdf.test.ITextTest.createOrClearDestinationFolder;
 import static org.junit.Assert.assertTrue;
 
 @Category(IntegrationTest.class)
@@ -76,5 +82,29 @@ public class PdfStructTreeRootTest extends ExtendedITextTest {
                 new PdfWriter(new ByteArrayOutputStream()));
         assertTrue(document.isTagged());
         document.close();
+    }
+
+    @Test
+    public void severalSameElementsInStructTreeRootTest() throws IOException {
+        String inFile = sourceFolder + "severalSameElementsInStructTreeRoot.pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfReader(inFile), new PdfWriter(new ByteArrayOutputStream()));
+
+        PdfStructTreeRoot structTreeRoot = doc.getStructTreeRoot();
+
+        List<PdfStructElem> kidsOfStructTreeRootKids = new ArrayList<>();
+        for (IStructureNode kid : structTreeRoot.getKids()) {
+            for (IStructureNode kidOfKid : kid.getKids()) {
+                if (kidOfKid instanceof PdfStructElem) {
+                    kidsOfStructTreeRootKids.add((PdfStructElem) kidOfKid);
+                }
+            }
+        }
+
+        structTreeRoot.flush();
+
+        for (PdfStructElem kidsOfStructTreeRootKid : kidsOfStructTreeRootKids) {
+            Assert.assertTrue(kidsOfStructTreeRootKid.isFlushed());
+        }
     }
 }

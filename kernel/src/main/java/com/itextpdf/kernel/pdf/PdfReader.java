@@ -117,6 +117,7 @@ public class PdfReader implements Closeable, Serializable {
      *
      * @param byteSource source of bytes for the reader
      * @param properties properties of the created reader
+     * @throws IOException if an I/O error occurs
      */
     public PdfReader(IRandomAccessSource byteSource, ReaderProperties properties) throws IOException {
         this.properties = properties;
@@ -197,6 +198,10 @@ public class PdfReader implements Closeable, Serializable {
     /**
      * The iText is not responsible if you decide to change the
      * value of this parameter.
+     *
+     * @param unethicalReading true to enable unethicalReading, false to disable it.
+     *                         By default unethicalReading is disabled.
+     * @return this {@link PdfReader} instance.
      */
     public PdfReader setUnethicalReading(boolean unethicalReading) {
         this.unethicalReading = unethicalReading;
@@ -242,7 +247,7 @@ public class PdfReader implements Closeable, Serializable {
      * If any exception generated while reading XRef section, PdfReader will try to rebuild it.
      *
      * @return true, if PdfReader rebuilt Cross-Reference section.
-     * @throws PdfException, if the method has been invoked before the PDF document was read.
+     * @throws PdfException if the method has been invoked before the PDF document was read.
      */
     public boolean hasRebuiltXref() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
@@ -257,7 +262,7 @@ public class PdfReader implements Closeable, Serializable {
      * That Do Not Support Compressed Reference Streams" in PDF 32000-1:2008 spec.
      *
      * @return true, if the document has hybrid Cross-Reference section.
-     * @throws PdfException, if the method has been invoked before the PDF document was read.
+     * @throws PdfException if the method has been invoked before the PDF document was read.
      */
     public boolean hasHybridXref() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
@@ -271,7 +276,7 @@ public class PdfReader implements Closeable, Serializable {
      * Indicates whether the document has Cross-Reference Streams.
      *
      * @return true, if the document has Cross-Reference Streams.
-     * @throws PdfException, if the method has been invoked before the PDF document was read.
+     * @throws PdfException if the method has been invoked before the PDF document was read.
      */
     public boolean hasXrefStm() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
@@ -287,7 +292,7 @@ public class PdfReader implements Closeable, Serializable {
      * This method's returned value might change over time, because PdfObjects reading
      * can be postponed even up to document closing.
      * @return true, if PdfReader fixed offsets of PdfObjects.
-     * @throws PdfException, if the method has been invoked before the PDF document was read.
+     * @throws PdfException if the method has been invoked before the PDF document was read.
      */
     public boolean hasFixedXref() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
@@ -301,7 +306,7 @@ public class PdfReader implements Closeable, Serializable {
      * Gets position of the last Cross-Reference table.
      *
      * @return -1 if Cross-Reference table has rebuilt, otherwise position of the last Cross-Reference table.
-     * @throws PdfException, if the method has been invoked before the PDF document was read.
+     * @throws PdfException if the method has been invoked before the PDF document was read.
      */
     public long getLastXref() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
@@ -315,6 +320,7 @@ public class PdfReader implements Closeable, Serializable {
      * Reads, decrypt and optionally decode stream bytes.
      * Note, this method doesn't store actual bytes in any internal structures.
      *
+     * @param stream a {@link PdfStream} stream instance to be read and optionally decoded.
      * @param decode true if to get decoded stream bytes, false if to leave it originally encoded.
      * @return byte[] array.
      * @throws IOException on error.
@@ -332,6 +338,7 @@ public class PdfReader implements Closeable, Serializable {
      * Reads and decrypt stream bytes.
      * Note, this method doesn't store actual bytes in any internal structures.
      *
+     * @param stream a {@link PdfStream} stream instance to be read
      * @return byte[] array.
      * @throws IOException on error.
      */
@@ -383,9 +390,10 @@ public class PdfReader implements Closeable, Serializable {
     }
 
     /**
-     * Reads, decrypt and optionally decode stream bytes into {@link ByteArrayInputStream}.
+     * Reads, decrypts and optionally decodes stream bytes into {@link ByteArrayInputStream}.
      * User is responsible for closing returned stream.
      *
+     * @param stream a {@link PdfStream} stream instance to be read
      * @param decode true if to get decoded stream, false if to leave it originally encoded.
      * @return InputStream or {@code null} if reading was failed.
      * @throws IOException on error.
@@ -522,7 +530,7 @@ public class PdfReader implements Closeable, Serializable {
      *
      * @return {@code true} if the document was opened with the owner password or if it's not encrypted,
      * {@code false} if the document was opened with the user password.
-     * @throws PdfException, if the method has been invoked before the PDF document was read.
+     * @throws PdfException if the method has been invoked before the PDF document was read.
      */
     public boolean isOpenedWithFullPermission() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
@@ -538,7 +546,7 @@ public class PdfReader implements Closeable, Serializable {
      * See ISO 32000-1, Table 22 for more details.
      *
      * @return the encryption permissions, an unsigned 32-bit quantity.
-     * @throws PdfException, if the method has been invoked before the PDF document was read.
+     * @throws PdfException if the method has been invoked before the PDF document was read.
      */
     public long getPermissions() {
 
@@ -561,8 +569,9 @@ public class PdfReader implements Closeable, Serializable {
     /**
      * Gets encryption algorithm and access permissions.
      *
+     * @return {@code int} value corresponding to a certain type of encryption.
      * @see EncryptionConstants
-     * @throws PdfException, if the method has been invoked before the PDF document was read.
+     * @throws PdfException if the method has been invoked before the PDF document was read.
      */
     public int getCryptoMode() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
@@ -590,7 +599,7 @@ public class PdfReader implements Closeable, Serializable {
      * Computes user password if standard encryption handler is used with Standard40, Standard128 or AES128 encryption algorithm.
      *
      * @return user password, or null if not a standard encryption handler was used or if ownerPasswordUsed wasn't use to open the document.
-     * @throws PdfException, if the method has been invoked before the PDF document was read.
+     * @throws PdfException if the method has been invoked before the PDF document was read.
      */
     public byte[] computeUserPassword() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
@@ -613,7 +622,7 @@ public class PdfReader implements Closeable, Serializable {
      *
      * @return byte array represents original file ID.
      * @see PdfDocument#getOriginalDocumentId()
-     * @throws PdfException, if the method has been invoked before the PDF document was read.
+     * @throws PdfException if the method has been invoked before the PDF document was read.
      */
     public byte[] getOriginalFileId() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
@@ -637,7 +646,7 @@ public class PdfReader implements Closeable, Serializable {
      *
      * @return byte array represents modified file ID.
      * @see PdfDocument#getModifiedDocumentId()
-     * @throws PdfException, if the method has been invoked before the PDF document was read.
+     * @throws PdfException if the method has been invoked before the PDF document was read.
      */
     public byte[] getModifiedFileId() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
@@ -653,7 +662,10 @@ public class PdfReader implements Closeable, Serializable {
     }
 
     /**
-     * @throws PdfException, if the method has been invoked before the PDF document was read.
+     * Checks if the {@link PdfDocument} read with this {@link PdfReader} is encrypted.
+     *
+     * @return {@code true} is the document is encrypted, otherwise {@code false}.
+     * @throws PdfException if the method has been invoked before the PDF document was read.
      */
     public boolean isEncrypted() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
@@ -665,6 +677,8 @@ public class PdfReader implements Closeable, Serializable {
 
     /**
      * Parses the entire PDF
+     *
+     * @throws IOException if an I/O error occurs.
      */
     protected void readPdf() throws IOException {
         String version = tokens.checkPdfHeader();

@@ -50,12 +50,17 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.pdfa.VeraPdfValidator;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -64,23 +69,25 @@ import org.junit.rules.ExpectedException;
 @Category(IntegrationTest.class)
 public class PdfA3CatalogCheckTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
+    public static final String cmpFolder = sourceFolder + "cmp/PdfA3CatalogCheckTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA3CatalogCheckTest/";
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
 
+    @BeforeClass
+    public static void beforeClass() {
+        createOrClearDestinationFolder(destinationFolder);
+    }
+
     @Test
-    //TODO Remove expected exception when DEVSIX-3206 will be fixed
-    public void checkAbsenceOfConfigEntry() throws FileNotFoundException {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS);
+    public void catalogCheck01() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "pdfA3b_catalogCheck01.pdf";
+        String cmpPdf = cmpFolder + "cmp_pdfA3b_catalogCheck01.pdf";
 
-        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
-
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B,
-                new PdfOutputIntent("Custom", "",
-                        "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
 
         PdfDictionary ocProperties = new PdfDictionary();
@@ -99,46 +106,9 @@ public class PdfA3CatalogCheckTest extends ExtendedITextTest {
         doc.getCatalog().put(PdfName.OCProperties, ocProperties);
 
         doc.close();
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf));
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+
     }
 
-    @Test
-    //TODO Remove expected exception when DEVSIX-3206 will be fixed
-    public void checkAbsenceOfOrderEntry() throws FileNotFoundException {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS);
-
-        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
-
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B,
-                new PdfOutputIntent("Custom", "",
-                        "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.addNewPage();
-
-        PdfDictionary ocProperties = new PdfDictionary();
-
-        PdfDictionary d = new PdfDictionary();
-        d.put(PdfName.Name, new PdfString("CustomName"));
-
-        PdfDictionary orderItem = new PdfDictionary();
-        orderItem.put(PdfName.Name, new PdfString("CustomName2"));
-
-        PdfArray ocgs = new PdfArray();
-        ocgs.add(orderItem);
-
-        PdfArray configs = new PdfArray();
-
-        PdfDictionary config = new PdfDictionary();
-        config.put(PdfName.Name, new PdfString("CustomName1"));
-
-        configs.add(config);
-
-        ocProperties.put(PdfName.OCGs, ocgs);
-        ocProperties.put(PdfName.D, d);
-        ocProperties.put(PdfName.Configs, configs);
-        doc.getCatalog().put(PdfName.OCProperties, ocProperties);
-
-        doc.close();
-    }
 }

@@ -110,7 +110,6 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO (RND-904) This test should fail when RND-904 (relative line operator l ) is implemented.
     public void pathNodeRendererMoveToTest1() throws IOException, InterruptedException {
         String filename = "pathNodeRendererMoveToTest1.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
@@ -244,7 +243,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         IElementNode rootTag = new JsoupXmlParser().parse(xmlStream, "ISO-8859-1");
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag).getRootRenderer();
+        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag, null).getRootRenderer();
 
         SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
@@ -265,7 +264,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         IElementNode rootTag = new JsoupXmlParser().parse(xmlStream, "ISO-8859-1");
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag).getRootRenderer();
+        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag, null).getRootRenderer();
 
         SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
@@ -286,7 +285,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         IElementNode rootTag = new JsoupXmlParser().parse(xmlStream, "ISO-8859-1");
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
-        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag).getRootRenderer();
+        IBranchSvgNodeRenderer root = (IBranchSvgNodeRenderer) processor.process(rootTag, null).getRootRenderer();
 
         SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);

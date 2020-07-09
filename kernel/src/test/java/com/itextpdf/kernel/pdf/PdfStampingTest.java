@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.DateTimeUtil;
+import com.itextpdf.kernel.KernelLogMessageConstant;
 import com.itextpdf.kernel.events.Event;
 import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
@@ -57,17 +58,18 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
-
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -993,6 +995,7 @@ public class PdfStampingTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY)})
     public void stampingAppend5() throws IOException {
         String filename1 = destinationFolder + "stampingAppend5_1.pdf";
         String filename2 = destinationFolder + "stampingAppend5_2.pdf";
@@ -1075,6 +1078,7 @@ public class PdfStampingTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY)})
     public void stampingAppend9() throws IOException {
         String filename1 = destinationFolder + "stampingAppend9_1.pdf";
         String filename2 = destinationFolder + "stampingAppend9_2.pdf";
@@ -1116,6 +1120,7 @@ public class PdfStampingTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY)})
     public void stampingAppend10() throws IOException {
         String filename1 = destinationFolder + "stampingAppend10_1.pdf";
         String filename2 = destinationFolder + "stampingAppend10_2.pdf";

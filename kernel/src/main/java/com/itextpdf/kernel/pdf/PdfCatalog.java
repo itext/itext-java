@@ -187,7 +187,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This method sets a page layout of the document
      *
-     * @param pageLayout
+     * @param pageLayout page layout of the document
+     * @return {@link PdfCatalog} instance with applied page layout
      */
     public PdfCatalog setPageLayout(PdfName pageLayout) {
         if (PAGE_LAYOUTS.contains(pageLayout)) {
@@ -204,7 +205,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * This method sets the document viewer preferences, specifying the way the document shall be displayed on the
      * screen
      *
-     * @param preferences
+     * @param preferences document's {@link PdfViewerPreferences viewer preferences}
+     * @return {@link PdfCatalog} instance with applied viewer preferences
      */
     public PdfCatalog setViewerPreferences(PdfViewerPreferences preferences) {
         return put(PdfName.ViewerPreferences, preferences.getPdfObject());
@@ -238,6 +240,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This method returns the NumberTree of Page Labels
      *
+     * @param createIfNotExists defines whether the NumberTree of Page Labels should be created
+     *                          if it didn't exist before
      * @return returns {@link PdfNumTree}
      */
     public PdfNumTree getPageLabelsTree(boolean createIfNotExists) {
@@ -252,6 +256,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * An entry specifying the natural language, and optionally locale. Use this
      * to specify the Language attribute on a Tagged Pdf element.
      * For the content usage dictionary, use PdfName.Language
+     *
+     * @param lang {@link PdfString language} to be set
      */
     public void setLang(PdfString lang) {
         put(PdfName.Lang, lang);
@@ -300,7 +306,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * Sets collection dictionary that a conforming reader shall use to enhance the presentation of file attachments
      * stored in the PDF document.
      *
-     * @param collection
+     * @param collection {@link PdfCollection dictionary}
+     * @return {@link PdfCatalog} instance with applied collection dictionary
      */
     public PdfCatalog setCollection(PdfCollection collection) {
         put(PdfName.Collection, collection.getPdfObject());
@@ -327,6 +334,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     /**
      * True indicates that getOCProperties() was called, may have been modified,
      * and thus its dictionary needs to be reconstructed.
+     *
+     * @return boolean indicating if the dictionary needs to be reconstructed
      */
     protected boolean isOCPropertiesMayHaveChanged() {
         return ocProperties != null;

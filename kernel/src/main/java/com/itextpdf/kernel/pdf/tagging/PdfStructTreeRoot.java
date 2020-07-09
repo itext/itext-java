@@ -302,6 +302,9 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * NOTE: Do not remove tags when iterating over returned collection, this could
      * lead to the ConcurrentModificationException, because returned collection is backed by the internal list of the
      * actual page tags.
+     *
+     * @param page {@link PdfPage} to obtain unmodifiable collection of marked content references
+     * @return the unmodifiable collection of marked content references on page, if no Mcrs defined returns null
      */
     public Collection<PdfMcr> getPageMarkedContentReferences(PdfPage page) {
         ParentTreeHandler.PageMcrsContainer pageMcrs = getParentTreeHandler().getPageMarkedContentReferences(page);
@@ -437,8 +440,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     /**
      * Returns files associated with structure tree root.
      *
-     * @param create iText will create AF array if it doesn't exist and create value is true
-     * @return associated files array.
+     * @param create defines whether AF arrays will be created if it doesn't exist
+     * @return associated files array
      */
     public PdfArray getAssociatedFiles(boolean create) {
         PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);

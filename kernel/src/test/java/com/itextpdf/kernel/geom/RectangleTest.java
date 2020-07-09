@@ -49,14 +49,14 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class RectangleTest extends ExtendedITextTest {
@@ -493,11 +493,169 @@ public class RectangleTest extends ExtendedITextTest {
     }
 
     @Test
+    public void setBBoxWithoutNormalizationTest() {
+        Rectangle rectangle = new Rectangle(0, 0, 100, 200);
+        Assert.assertEquals(0, rectangle.getX(), 1e-5);
+        Assert.assertEquals(0, rectangle.getY(), 1e-5);
+        Assert.assertEquals(100, rectangle.getWidth(), 1e-5);
+        Assert.assertEquals(200, rectangle.getHeight(), 1e-5);
+
+        //set bBox without any normalization needed
+        rectangle.setBbox(10, 10, 90, 190);
+        Assert.assertEquals(10, rectangle.getX(), 1e-5);
+        Assert.assertEquals(10, rectangle.getY(), 1e-5);
+        Assert.assertEquals(80, rectangle.getWidth(), 1e-5);
+        Assert.assertEquals(180, rectangle.getHeight(), 1e-5);
+    }
+
+    @Test
+    public void setBBoxNormalizeXTest() {
+        Rectangle rectangle = new Rectangle(0, 0, 100, 200);
+        Assert.assertEquals(0, rectangle.getX(), 1e-5);
+        Assert.assertEquals(0, rectangle.getY(), 1e-5);
+        Assert.assertEquals(100, rectangle.getWidth(), 1e-5);
+        Assert.assertEquals(200, rectangle.getHeight(), 1e-5);
+
+        //set bBox where llx > urx
+        rectangle.setBbox(90, 10, 10, 190);
+        Assert.assertEquals(10, rectangle.getX(), 1e-5);
+        Assert.assertEquals(10, rectangle.getY(), 1e-5);
+        Assert.assertEquals(80, rectangle.getWidth(), 1e-5);
+        Assert.assertEquals(180, rectangle.getHeight(), 1e-5);
+    }
+
+    @Test
+    public void setBBoxNormalizeYTest() {
+        Rectangle rectangle = new Rectangle(0, 0, 100, 200);
+        Assert.assertEquals(0, rectangle.getX(), 1e-5);
+        Assert.assertEquals(0, rectangle.getY(), 1e-5);
+        Assert.assertEquals(100, rectangle.getWidth(), 1e-5);
+        Assert.assertEquals(200, rectangle.getHeight(), 1e-5);
+
+        //set bBox where lly > ury
+        rectangle.setBbox(10, 190, 90, 10);
+        Assert.assertEquals(10, rectangle.getX(), 1e-5);
+        Assert.assertEquals(10, rectangle.getY(), 1e-5);
+        Assert.assertEquals(80, rectangle.getWidth(), 1e-5);
+        Assert.assertEquals(180, rectangle.getHeight(), 1e-5);
+    }
+
+    @Test
+    public void setXTest() {
+        Rectangle rectangle = new Rectangle(0,0,100,200);
+        Assert.assertEquals(0, rectangle.getX(), 1e-5);
+
+        rectangle.setX(50);
+        Assert.assertEquals(50, rectangle.getX(), 1e-5);
+    }
+
+    @Test
+    public void setYTest() {
+        Rectangle rectangle = new Rectangle(0,0,100,200);
+        Assert.assertEquals(0, rectangle.getY(), 1e-5);
+
+        rectangle.setY(50);
+        Assert.assertEquals(50, rectangle.getY(), 1e-5);
+    }
+
+    @Test
+    public void setWidthTest() {
+        Rectangle rectangle = new Rectangle(0,0,100,200);
+        Assert.assertEquals(100, rectangle.getWidth(), 1e-5);
+
+        rectangle.setWidth(50);
+        Assert.assertEquals(50, rectangle.getWidth(), 1e-5);
+    }
+
+    @Test
+    public void setHeightTest() {
+        Rectangle rectangle = new Rectangle(0,0,100,200);
+        Assert.assertEquals(200, rectangle.getHeight(), 1e-5);
+
+        rectangle.setHeight(50);
+        Assert.assertEquals(50, rectangle.getHeight(), 1e-5);
+    }
+
+    @Test
+    public void increaseHeightTest() {
+        Rectangle rectangle = new Rectangle(0,0,100,200);
+        Assert.assertEquals(200, rectangle.getHeight(), 1e-5);
+
+        rectangle.increaseHeight(50);
+        Assert.assertEquals(250, rectangle.getHeight(), 1e-5);
+    }
+
+    @Test
+    public void decreaseHeightTest() {
+        Rectangle rectangle = new Rectangle(0,0,100,200);
+        Assert.assertEquals(200, rectangle.getHeight(), 1e-5);
+
+        rectangle.decreaseHeight(50);
+        Assert.assertEquals(150, rectangle.getHeight(), 1e-5);
+    }
+
+    @Test
+    public void applyMarginsShrinkTest() {
+        Rectangle rectangle = new Rectangle(0,0,100,200);
+        Assert.assertEquals(0, rectangle.getX(), 1e-5);
+        Assert.assertEquals(0, rectangle.getY(), 1e-5);
+        Assert.assertEquals(100, rectangle.getWidth(), 1e-5);
+        Assert.assertEquals(200, rectangle.getHeight(), 1e-5);
+
+        //shrink the rectangle
+        rectangle.applyMargins(20,20,20,20, false);
+        Assert.assertEquals(20, rectangle.getX(), 1e-5);
+        Assert.assertEquals(20, rectangle.getY(), 1e-5);
+        Assert.assertEquals(60, rectangle.getWidth(), 1e-5);
+        Assert.assertEquals(160, rectangle.getHeight(), 1e-5);
+    }
+
+    @Test
+    public void applyMarginsExpandTest() {
+        Rectangle rectangle = new Rectangle(20,20,100,200);
+        Assert.assertEquals(20, rectangle.getX(), 1e-5);
+        Assert.assertEquals(20, rectangle.getY(), 1e-5);
+        Assert.assertEquals(100, rectangle.getWidth(), 1e-5);
+        Assert.assertEquals(200, rectangle.getHeight(), 1e-5);
+
+        //expand the rectangle
+        rectangle.applyMargins(10,10,10,10, true);
+        Assert.assertEquals(10, rectangle.getX(), 1e-5);
+        Assert.assertEquals(10, rectangle.getY(), 1e-5);
+        Assert.assertEquals(120, rectangle.getWidth(), 1e-5);
+        Assert.assertEquals(220, rectangle.getHeight(), 1e-5);
+    }
+
+    @Test
+    public void toStringTest() {
+        Rectangle rectangle = new Rectangle(0, 0, 100f, 200f);
+        String rectangleString = rectangle.toString();
+        //Using contains() to check for value instead of equals() on the whole string due to the
+        //differences between decimal numbers formatting in java and .NET.
+        Assert.assertTrue(rectangleString.contains("100"));
+        Assert.assertTrue(rectangleString.contains("200"));
+    }
+
+    @Test
     public void cloneTest() {
         PageSize originalPageSize = new PageSize(15, 20);
         PageSize copyAsPageSize = (PageSize) originalPageSize.clone();
         Rectangle copyAsRectangle = ((Rectangle) originalPageSize).clone();
         Assert.assertEquals(PageSize.class, copyAsPageSize.getClass());
         Assert.assertEquals(PageSize.class, copyAsRectangle.getClass());
+    }
+
+    @Test
+    public void decreaseWidthTest() {
+        Rectangle rectangle = new Rectangle(100, 200);
+        rectangle.decreaseWidth(10);
+        Assert.assertEquals(90, rectangle.getWidth(), Rectangle.EPS);
+    }
+    
+    @Test
+    public void increaseWidthTest() {
+        Rectangle rectangle = new Rectangle(100, 200);
+        rectangle.increaseWidth(10);
+        Assert.assertEquals(110, rectangle.getWidth(), Rectangle.EPS);
     }
 }

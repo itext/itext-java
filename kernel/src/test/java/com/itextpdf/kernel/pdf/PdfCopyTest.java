@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -52,13 +53,17 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
+import org.junit.rules.ExpectedException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -67,6 +72,9 @@ public class PdfCopyTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfCopyTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfCopyTest/";
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -344,5 +352,67 @@ public class PdfCopyTest extends ExtendedITextTest {
 
         destDoc.close();
         srcDoc.close();
+    }
+
+    @Test
+    public void copyDifferentRangesOfPagesWithBookmarksTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "copyDifferentRangesOfPagesWithBookmarksTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_copyDifferentRangesOfPagesWithBookmarksTest.pdf";
+        PdfDocument targetPdf = new PdfDocument(new PdfWriter(outFileName));
+        targetPdf.initializeOutlines();
+
+        PdfDocument sourcePdf = new PdfDocument(new PdfReader(sourceFolder + "sameDocWithBookmarksPdf.pdf"));
+        sourcePdf.initializeOutlines();
+
+        int sourcePdfLength = sourcePdf.getNumberOfPages();
+        int sourcePdfOutlines = sourcePdf.getOutlines(false).getAllChildren().size();
+
+        sourcePdf.copyPagesTo(3, sourcePdfLength, targetPdf);
+        sourcePdf.copyPagesTo(1, 2, targetPdf);
+
+        int targetOutlines = targetPdf.getOutlines(false).getAllChildren().size();
+
+        Assert.assertEquals(sourcePdfOutlines, targetOutlines);
+
+        sourcePdf.close();
+        targetPdf.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    // TODO DEVSIX-577. Update cmp, remove junitExpectedException after fix
+    public void copyPagesLinkAnnotationTest() throws IOException, InterruptedException {
+        junitExpectedException.expect(AssertionError.class);
+
+        String outFileName = destinationFolder + "copyPagesLinkAnnotationTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_copyPagesLinkAnnotationTest.pdf";
+        PdfDocument targetPdf = new PdfDocument(new PdfWriter(outFileName));
+
+        PdfDocument linkAnotPdf = new PdfDocument(new PdfReader(sourceFolder + "pdfLinkAnnotationTest.pdf"));
+
+        int linkPdfLength = linkAnotPdf.getNumberOfPages();
+
+        linkAnotPdf.copyPagesTo(3, linkPdfLength, targetPdf);
+        linkAnotPdf.copyPagesTo(1, 2, targetPdf);
+
+        List<PdfAnnotation> annotations = getPdfAnnotations(targetPdf);
+        Assert.assertEquals("The number of merged annotations are not the same.", 1,  annotations.size());
+
+        linkAnotPdf.close();
+        targetPdf.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    private List<PdfAnnotation> getPdfAnnotations(PdfDocument pdfDoc) {
+        int number = pdfDoc.getNumberOfPages();
+        ArrayList<PdfAnnotation> annotations = new ArrayList<>();
+
+        for(int i = 1; i <= number; i++){
+            annotations.addAll(pdfDoc.getPage(i).getAnnotations());
+        }
+
+        return annotations;
     }
 }

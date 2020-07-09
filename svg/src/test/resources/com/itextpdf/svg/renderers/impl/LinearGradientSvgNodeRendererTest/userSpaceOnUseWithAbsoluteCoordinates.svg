@@ -1,0 +1,96 @@
+<svg x="0" y="0" width = "1200" height = "1200" xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    <linearGradient id="LinearGradient1"
+                    x1="1cm" y1="1cm"
+                    x2="3cm" y2="3cm"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="green" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="red" stop-opacity="1"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="1"/>
+      <stop offset="100%"   stop-color="yellow" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="LinearGradient2"
+                    x1="1mm" y1="20mm"
+                    x2="3mm" y2="50mm"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="green" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="red" stop-opacity="1"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="1"/>
+      <stop offset="100%"   stop-color="yellow" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="LinearGradient3"
+                    x1="2in" y1="1in"
+                    x2="3.5in" y2="2in"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="green" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="red" stop-opacity="1"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="1"/>
+      <stop offset="100%"   stop-color="yellow" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="LinearGradient4"
+                    x1="200pt" y1="500pt"
+                    x2="300pt" y2="520pt"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="green" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="red" stop-opacity="1"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="1"/>
+      <stop offset="100%"   stop-color="yellow" stop-opacity="1"/>
+    </linearGradient>
+
+    <linearGradient id="LinearGradient5"
+                    x1="3pc" y1="35pc"
+                    x2="5pc" y2="42pc"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="green" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="red" stop-opacity="1"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="1"/>
+      <stop offset="100%" stop-color="yellow" stop-opacity="1"/>
+    </linearGradient>
+
+    <linearGradient id="LinearGradient6"
+                    x1="100px" y1="0.1px"
+                    x2="0.1px" y2="60px"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="green" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="red" stop-opacity="1"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="1"/>
+      <stop offset="100%" stop-color="yellow" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+
+  <svg x="0" y="80" width="600" height="950">
+  <text x = "15" y = "15" >"cm"</text>
+  <rect x="10" y="30" width="175" height="200" rx="10" ry="10"
+     style="fill:url(#LinearGradient1);
+            stroke: #005000;
+            stroke-width: 3;" />
+  <text x = "315" y = "15" >"mm"</text>
+  <rect x="300" y="30" width="175" height="200" rx="10" ry="10"
+        style="fill:url(#LinearGradient2);
+            stroke: #005000;
+            stroke-width: 3;" />
+  <text x = "15" y = "255" >"in"</text>
+  <rect x="10" y="270" width="175" height="200" rx="10" ry="10"
+        style="fill:url(#LinearGradient3);
+            stroke: #005000;
+            stroke-width: 3;" />
+  <text x = "315" y = "255" >"pt"</text>
+  <rect x="300" y="270" width="175" height="200" rx="10" ry="10"
+        style="fill:url(#LinearGradient4);
+            stroke: #005000;
+            stroke-width: 3;" />
+
+  <text x = "15" y = "485" >"pc"</text>
+  <rect x="10" y="500" width="175" height="200" rx="10" ry="10"
+        style="fill:url(#LinearGradient5);
+            stroke: #005000;
+            stroke-width: 3;" />
+
+  <text x = "315" y = "485" >"px"</text>
+  <rect x="300" y="500" width="175" height="200" rx="10" ry="10"
+        style="fill:url(#LinearGradient6);
+            stroke: #005000;
+            stroke-width: 3;" />
+  </svg>
+</svg>

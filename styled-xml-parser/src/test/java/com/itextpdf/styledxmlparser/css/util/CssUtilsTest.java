@@ -50,6 +50,10 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -65,9 +69,50 @@ public class CssUtilsTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
+    public void extractShorthandPropertiesFromEmptyStringTest() {
+        String sourceString = "";
+        List<List<String>> expected = new ArrayList<>();
+        expected.add(new ArrayList<String>());
+
+        Assert.assertEquals(expected, CssUtils.extractShorthandProperties(sourceString));
+    }
+
+    @Test
+    public void extractShorthandPropertiesFromStringWithOnePropertyTest() {
+        String sourceString = "square inside url('sqpurple.gif')";
+        List<List<String>> expected = new ArrayList<>();
+        List<String> layer = new ArrayList<>();
+        layer.add("square");
+        layer.add("inside");
+        layer.add("url('sqpurple.gif')");
+        expected.add(layer);
+
+        Assert.assertEquals(expected, CssUtils.extractShorthandProperties(sourceString));
+    }
+
+    @Test
+    public void extractShorthandPropertiesFromStringWithMultiplyPropertiesTest() {
+        String sourceString = "center no-repeat url('sqpurple.gif'), #eee 35% url('sqpurple.gif')";
+        List<List<String>> expected = new ArrayList<>();
+        List<String> layer = new ArrayList<>();
+        layer.add("center");
+        layer.add("no-repeat");
+        layer.add("url('sqpurple.gif')");
+        expected.add(layer);
+
+        layer = new ArrayList<>();
+        layer.add("#eee");
+        layer.add("35%");
+        layer.add("url('sqpurple.gif')");
+        expected.add(layer);
+
+        Assert.assertEquals(expected, CssUtils.extractShorthandProperties(sourceString));
+    }
+
+    @Test
     public void parseAbsoluteLengthFromNAN() {
         junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "Definitely not a number"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.NAN, "Definitely not a number"));
 
         String value = "Definitely not a number";
         CssUtils.parseAbsoluteLength(value);
@@ -76,7 +121,7 @@ public class CssUtilsTest extends ExtendedITextTest {
     @Test
     public void parseAbsoluteLengthFromNull() {
         junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "null"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.NAN, "null"));
 
         String value = null;
         CssUtils.parseAbsoluteLength(value);
@@ -284,5 +329,28 @@ public class CssUtilsTest extends ExtendedITextTest {
         Assert.assertFalse(CssUtils.isAngleValue("0"));
         Assert.assertFalse(CssUtils.isAngleValue("10in"));
         Assert.assertFalse(CssUtils.isAngleValue("10px"));
+    }
+
+    @Test
+    public void parseResolutionValidDpiUnit() {
+        Assert.assertEquals(10f, CssUtils.parseResolution("10dpi"), 0);
+    }
+
+    @Test
+    public void parseResolutionValidDpcmUnit() {
+        Assert.assertEquals(25.4f, CssUtils.parseResolution("10dpcm"), 0);
+    }
+
+    @Test
+    public void parseResolutionValidDppxUnit() {
+        Assert.assertEquals(960f, CssUtils.parseResolution("10dppx"), 0);
+    }
+
+    @Test
+    public void parseResolutionInvalidUnit() {
+        junitExpectedException.expect(StyledXMLParserException.class);
+        junitExpectedException.expectMessage(LogMessageConstant.INCORRECT_RESOLUTION_UNIT_VALUE);
+
+        CssUtils.parseResolution("10incorrectUnit");
     }
 }

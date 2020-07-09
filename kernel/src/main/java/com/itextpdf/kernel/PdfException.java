@@ -168,6 +168,7 @@ public class PdfException extends RuntimeException {
     public static final String FilterCcittfaxdecodeIsOnlySupportedForImages = "Filter CCITTFaxDecode is only supported for images";
     public static final String FilterIsNotANameOrArray = "filter is not a name or array.";
     public static final String FlushedPageCannotBeAddedOrInserted = "Flushed page cannot be added or inserted.";
+    public static final String FLUSHED_PAGE_CANNOT_BE_REMOVED = "Flushed page cannot be removed from a document which is tagged or has an AcroForm";
     public static final String FlushingHelperFLushingModeIsNotForDocReadingMode = "Flushing writes the object to the output stream and releases it from memory. It is only possible for documents that have a PdfWriter associated with them. Use PageFlushingHelper#releaseDeep method instead.";
     public static final String FontAndSizeMustBeSetBeforeWritingAnyText = "Font and size must be set before writing any text.";
     public static final String FontEmbeddingIssue = "Font embedding issue.";
@@ -176,6 +177,7 @@ public class PdfException extends RuntimeException {
     public static final String FontSizeIsTooSmall = "Font size is too small.";
     public static final String FormXObjectMustHaveBbox = "Form XObject must have BBox.";
     public static final String FunctionIsNotCompatibleWitColorSpace = "Function is not compatible with ColorSpace.";
+    @Deprecated
     public static final String GivenAccessibleElementIsNotConnectedToAnyTag = "Given accessible element is not connected to any tag.";
     public static final String IllegalCharacterInAsciihexdecode = "illegal character in ASCIIHexDecode.";
     public static final String IllegalCharacterInAscii85decode = "Illegal character in ASCII85Decode.";

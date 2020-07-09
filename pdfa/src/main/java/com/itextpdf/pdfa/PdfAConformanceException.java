@@ -50,8 +50,6 @@ import com.itextpdf.kernel.PdfException;
  */
 public class PdfAConformanceException extends PdfException {
 
-    private static final long serialVersionUID = -5951503441486657717L;
-
     public static final String _0_ACTIONS_ARE_NOT_ALLOWED = "{0} actions are not allowed";
     public static final String A_CATALOG_DICTIONARY_SHALL_CONTAIN_METADATA_ENTRY = "A catalog dictionary shall contain metadata entry";
     public static final String A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY = "A catalog dictionary shall not contain aa entry";
@@ -110,9 +108,12 @@ public class PdfAConformanceException extends PdfException {
     public static final String IF_DEVICE_RGB_CMYK_GRAY_USED_IN_FILE_THAT_FILE_SHALL_CONTAIN_PDFA_OUTPUTINTENT_OR_DEFAULT_RGB_CMYK_GRAY_IN_USAGE_CONTEXT = "If device rgb cmyk gray used in file that file shall contain pdfa outputintent orDefaultRgb Cmyk Gray in usage context";
     public static final String IF_OUTPUTINTENTS_ARRAY_HAS_MORE_THAN_ONE_ENTRY_WITH_DESTOUTPUTPROFILE_KEY_THE_SAME_INDIRECT_OBJECT_SHALL_BE_USED_AS_THE_VALUE_OF_THAT_OBJECT = "If outputintents array has more than one entry with destoutputprofile key the same indirect object shall be used as the value of that object";
     public static final String IF_SPECIFIED_RENDERING_SHALL_BE_ONE_OF_THE_FOLLOWING_RELATIVECOLORIMETRIC_ABSOLUTECOLORIMETRIC_PERCEPTUAL_OR_SATURATION = "If specified rendering shall be one of the following relativecolorimetric absolutecolorimetric perceptual or saturation";
+    public static final String INTEGER_NUMBER_IS_OUT_OF_RANGE = "Integer number is out of range";
     public static final String THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE = "If the document does not contain a OutputIntent, then page with transparency shall include the dictionary with Group key that include a CS with blending colour space";
     public static final String JPEG2000_ENUMERATED_COLOUR_SPACE_19_CIEJAB_SHALL_NOT_BE_USED = "jpeg2000 enumerated colour space 19 (CIEJab) shall not be used";
     public static final String LZWDECODE_FILTER_IS_NOT_PERMITTED = "LZWDecode filter is not permitted";
+    public static final String MAXIMUM_ARRAY_CAPACITY_IS_EXCEEDED = "Maximum array capacity is exceeded";
+    public static final String MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED = "Maximum dictionary capacity is exceeded";
     public static final String MIME_TYPE_SHALL_BE_SPECIFIED_USING_THE_SUBTYPE_KEY_OF_THE_FILE_SPECIFICATION_STREAM_DICTIONARY = "Mime type shall be specified using the subtype key of the file specification stream dictionary";
     public static final String N_KEY_SHALL_BE_APPEARANCE_SUBDICTIONARY = "If an annotation dictionary's Subtype key has a value of Widget and its FT key has a value of Btn, the value of the N key shall be an appearance subdictionary";
     public static final String NAMED_ACTION_TYPE_0_IS_NOT_ALLOWED = "Named action type {0} not allowed";
@@ -125,6 +126,7 @@ public class PdfAConformanceException extends PdfException {
     public static final String ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS = "Order array shall contain references to all ocgs";
     public static final String OUTPUT_INTENT_COLOR_SPACE_SHALL_BE_EITHER_GRAY_RGB_OR_CMYK = "Output intent color space shall be either gray rgb or cmyk";
     public static final String OVERPRINT_MODE_SHALL_NOT_BE_ONE_WHEN_AN_ICCBASED_CMYK_COLOUR_SPACE_IS_USED_AND_WHEN_OVERPRINTING_IS_SET_TO_TRUE = "Overprint mode shall not be one when an ICCBased CMYK colour space is used and when overprinting is set to true";
+    public static final String PDF_NAME_IS_TOO_LONG = "PdfName is too long";
     public static final String PDF_STRING_IS_TOO_LONG = "PdfString is too long";
     public static final String PROFILE_STREAM_OF_OUTPUTINTENT_SHALL_BE_OUTPUT_PROFILE_PRTR_OR_MONITOR_PROFILE_MNTR = "Profile stream of outputintent shall be output profile (prtr) or monitor profile (mntr)";
     public static final String REAL_NUMBER_IS_OUT_OF_RANGE = "Real number is out of range";
@@ -136,6 +138,7 @@ public class PdfAConformanceException extends PdfException {
     public static final String THE_F_KEYS_PRINT_FLAG_BIT_SHALL_BE_SET_TO_1_AND_ITS_HIDDEN_INVISIBLE_AND_NOVIEW_FLAG_BITS_SHALL_BE_SET_TO_0 = "The f keys print flag bit shall be set to 1 and its hidden invisible and noview flag bits shall be set to 0";
     public static final String THE_F_KEYS_PRINT_FLAG_BIT_SHALL_BE_SET_TO_1_AND_ITS_HIDDEN_INVISIBLE_NOVIEW_AND_TOGGLENOVIEW_FLAG_BITS_SHALL_BE_SET_TO_0 = "The f keys print flag bit shall be set to 1 and its hidden invisible noview and togglenoview flag bits shall be set to 0";
     public static final String THE_INTERACTIVE_FORM_DICTIONARY_SHALL_NOT_CONTAIN_THE_XFA_KEY = "The interactive form dictionary shall not contain the xfa key";
+    public static final String THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED = "The number of color components in DeviceN colorspace should not exceed {0}";
     public static final String THE_NUMBER_OF_COLOUR_CHANNELS_IN_THE_JPEG2000_DATA_SHALL_BE_1_3_OR_4 = "The number of colour channels in the jpeg2000 data shall be 1, 3 or 4";
     public static final String THE_PAGE_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY = "The page dictionary shall not contain aa entry";
     public static final String THE_PAGE_DICTIONARY_SHALL_NOT_CONTAIN_PRESSTEPS_ENTRY = "The page dictionary shall not contain pressteps entry";
@@ -149,6 +152,8 @@ public class PdfAConformanceException extends PdfException {
     public static final String TRANSPARENCY_IS_NOT_ALLOWED_CA_SHALL_BE_EQUAL_TO_1 = "Transparency is not allowed. CA shall be equal to 1";
     public static final String VALUE_OF_NAME_ENTRY_SHALL_BE_UNIQUE_AMONG_ALL_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARIES = "Value of name entry shall be unique among all optional content configuration dictionaries";
     public static final String WIDGET_ANNOTATION_DICTIONARY_OR_FIELD_DICTIONARY_SHALL_NOT_INCLUDE_A_OR_AA_ENTRY = "Widget annotation dictionary or field dictionary shall not include a or aa entry";
+
+    private static final long serialVersionUID = -5951503441486657717L;
     
     @Deprecated
     public static final String IF_THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_TRANSPARENCY_IS_FORBIDDEN = "If the document does not contain a pdfa outputintent transparency is forbidden";

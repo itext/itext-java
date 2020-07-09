@@ -43,9 +43,11 @@
 package com.itextpdf.io.util;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,6 +57,8 @@ import java.util.regex.Pattern;
  * Be aware that its API and functionality may be changed in future.
  */
 public final class SystemUtil {
+
+    private final static String SPLIT_REGEX = "((\".+?\"|[^'\\s]|'.+?')+)\\s*";
 
     /**
      * @deprecated To be removed in iText version 7.2. For time-based seed, please use {@link #getTimeBasedSeed()} instead.
@@ -74,7 +78,7 @@ public final class SystemUtil {
 
     /**
      * Should be used in relative constructs (for example to check how many milliseconds have passed).
-     *
+     * <p>
      * Shouldn't be used in the Date creation since the value returned by this method is different in С#.
      * For getting current time consistently use {@link DateTimeUtil#getCurrentTimeDate()}.
      *
@@ -90,6 +94,7 @@ public final class SystemUtil {
 
     /**
      * Gets either java property or environment variable with given name.
+     *
      * @param name the name of either java property or environment variable.
      * @return property or variable value or null if there is no such.
      */
@@ -101,56 +106,91 @@ public final class SystemUtil {
         return s;
     }
 
-
-    public static boolean runProcessAndWait(String execPath, String params) throws IOException, InterruptedException {
-        List<String> cmdArray = new ArrayList<String>();
-        cmdArray.add(execPath);
-        Matcher m = Pattern.compile("((?:[^'\\s]|'.+?')+)\\s*").matcher(params);
-        while (m.find()) {
-            cmdArray.add(m.group(1).replace("'", ""));
-        }
-        Process p = Runtime.getRuntime().exec(cmdArray.toArray(new String[cmdArray.size()]));
-        printProcessOutput(p);
-        return p.waitFor() == 0;
+    public static boolean runProcessAndWait(String exec, String params) throws IOException, InterruptedException {
+        return runProcessAndWait(exec, params, null);
     }
 
-    private static void printProcessOutput(Process p) throws IOException {
-        BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-        String line;
-        while ((line = bri.readLine()) != null) {
-            System.out.println(line);
-        }
-        bri.close();
-        while ((line = bre.readLine()) != null) {
-            System.out.println(line);
-        }
-        bre.close();
+    public static boolean runProcessAndWait(String exec, String params, String workingDirPath) throws IOException, InterruptedException {
+        return runProcessAndGetExitCode(exec, params, workingDirPath) == 0;
+    }
+
+    public static int runProcessAndGetExitCode(String exec, String params) throws IOException, InterruptedException {
+        return runProcessAndGetExitCode(exec, params, null);
+    }
+
+    public static int runProcessAndGetExitCode(String exec, String params, String workingDirPath) throws IOException, InterruptedException {
+        Process p = runProcess(exec, params, workingDirPath);
+        System.out.println(getProcessOutput(p));
+        return p.waitFor();
+    }
+
+    public static String runProcessAndGetOutput(String command, String params) throws IOException {
+        return getProcessOutput(runProcess(command, params, null));
     }
 
     public static StringBuilder runProcessAndCollectErrors(String execPath, String params) throws IOException {
-        List<String> cmdArray = new ArrayList<String>();
-        cmdArray.add(execPath);
-        Matcher m = Pattern.compile("((?:[^'\\s]|'.+?')+)\\s*").matcher(params);
-        while (m.find()) {
-            cmdArray.add(m.group(1).replace("'", ""));
-        }
-        Process p = Runtime.getRuntime().exec(cmdArray.toArray(new String[cmdArray.size()]));
-        StringBuilder errorsBuilder = printProcessErrorsOutput(p);
-        return errorsBuilder;
+        return printProcessErrorsOutput(runProcess(execPath, params, null));
     }
 
-    private static StringBuilder printProcessErrorsOutput(Process p) throws IOException {
-        StringBuilder builder = new StringBuilder(  );
+    static Process runProcess(String execPath, String params, String workingDirPath) throws IOException {
+        List<String> cmdList = prepareProcessArguments(execPath, params);
+        String[] cmdArray = cmdList.toArray(new String[cmdList.size()]);
+        if (workingDirPath != null) {
+            File workingDir = new File(workingDirPath);
+            return Runtime.getRuntime().exec(cmdArray, null, workingDir);
+        } else {
+            return Runtime.getRuntime().exec(cmdArray);
+        }
+    }
+
+    static List<String> prepareProcessArguments(String exec, String params) {
+        List<String> cmdList;
+        if (new File(exec).exists()) {
+            cmdList = new ArrayList<>(Collections.singletonList(exec));
+        } else {
+            cmdList = new ArrayList<>(splitIntoProcessArguments(exec));
+        }
+        cmdList.addAll(splitIntoProcessArguments(params));
+        return cmdList;
+    }
+
+    static List<String> splitIntoProcessArguments(String line) {
+        List<String> list = new ArrayList<>();
+        Matcher m = Pattern.compile(SPLIT_REGEX).matcher(line);
+        while (m.find()) {
+            list.add(m.group(1).replace("'", "").replace("\"", "").trim());
+        }
+        return list;
+    }
+
+    static String getProcessOutput(Process p) throws IOException {
+        BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+        String line;
+        StringBuilder result = new StringBuilder();
+        while ((line = bri.readLine()) != null) {
+            result.append(line);
+        }
+        bri.close();
+        if (result.length() > 0) {
+            result.append('\n');
+        }
+        while ((line = bre.readLine()) != null) {
+            result.append(line);
+        }
+        bre.close();
+        return result.toString();
+    }
+
+    static StringBuilder printProcessErrorsOutput(Process p) throws IOException {
+        StringBuilder builder = new StringBuilder();
         BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
         String line;
         while ((line = bre.readLine()) != null) {
             System.out.println(line);
-            builder.append( line );
+            builder.append(line);
         }
         bre.close();
         return builder;
     }
-
-
 }

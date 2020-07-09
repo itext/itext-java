@@ -53,7 +53,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 class CollapsedTableBorders extends TableBorders {
+    /**
+     * The list of the cells' borders which should be collapsed
+     * with the first border of this TableRenderer instance, to be drawn on the area.
+     */
     private List<Border> topBorderCollapseWith = new ArrayList<Border>();
+
+    /**
+     * The list of the cells' borders which should be collapsed
+     * with the last border of this TableRenderer instance, to be drawn on the area.
+     */
     private List<Border> bottomBorderCollapseWith = new ArrayList<Border>();
 
     // region constructors
@@ -168,8 +177,6 @@ class CollapsedTableBorders extends TableBorders {
                 int col = 0;
                 int row = index - 1;
                 while (col < numberOfColumns) {
-
-                    // TODO
                     if (null != rows.get(row - largeTableIndexOffset)[col]) {
                         CellRenderer cell = rows.get(row - largeTableIndexOffset)[col];
                         Border cellModelBottomBorder = TableBorderUtil.getCellSideBorder(((Cell) cell.getModelElement()), Property.BORDER_BOTTOM);

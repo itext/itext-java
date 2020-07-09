@@ -730,10 +730,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             PdfDictionary parent = fieldObject.getAsDictionary(PdfName.Parent);
             if (parent != null) {
                 PdfArray kids = parent.getAsArray(PdfName.Kids);
-                if(kids!=null) {
+                if (kids != null) {
                     kids.remove(fieldObject);
-                    // TODO what if parent was in it's turn the only child of it's parent (parent of parent)?
-                    // shouldn't we remove them recursively? check it
+                    // TODO DEVSIX-2715 if parent was in it's turn the only child of it's parent, we should remove them recursively
                     if (kids.isEmpty()) {
                         fFields.remove(parent);
                     }
@@ -976,7 +975,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         boolean tagged = page.getDocument().isTagged();
         if (tagged) {
             tagPointer = page.getDocument().getTagStructureContext().getAutoTaggingPointer();
-            //TODO attributes?
+            //TODO DEVSIX-4117 PrintField attributes
             tagPointer.addTag(StandardRoles.FORM);
         }
 
@@ -1034,6 +1033,16 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             field.release();
         }
         fields = null;
+    }
+
+    @Override
+    public PdfObjectWrapper<PdfDictionary> setModified() {
+        if (getPdfObject().getIndirectReference() != null) {
+            super.setModified();
+        } else {
+            document.getCatalog().setModified();
+        }
+        return this;
     }
 
     private static PdfDictionary createAcroFormDictionaryByFields(PdfArray fields) {

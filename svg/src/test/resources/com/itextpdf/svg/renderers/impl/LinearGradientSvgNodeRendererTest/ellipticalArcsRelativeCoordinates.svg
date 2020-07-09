@@ -1,0 +1,20 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="450" height="450" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient x1="20%" y1="20%" x2="80%" y2="80%" id="myFillGradient">
+      <stop offset="0"  stop-color="#ffcc00" />
+      <stop offset="0.5"  stop-color="#cc6699" />
+      <stop offset="1" stop-color="#66cc99" />
+    </linearGradient>
+    <linearGradient x1="80%" y1="80%" x2="20%" y2="20%" id="myStrokeGradient">
+      <stop offset="0"  stop-color="#ffcc00" />
+      <stop offset="0.5"  stop-color="magenta" />
+      <stop offset="1" stop-color="#66cc99" />
+    </linearGradient>
+</defs>
+
+  <path d="M80 80 a 45 45, 0, 0, 0, 45 45 L 125 80 z M50,100" fill="url(#myFillGradient)" stroke="url(#myStrokeGradient)" stroke-width="20"/>
+  <path d="M230 80 a 45 45, 0, 1, 0, 45 45 L 275 80z m50,100" fill="url(#myFillGradient)" stroke="url(#myStrokeGradient)" stroke-width="20"/>
+  <path d="M80 230 a 105 105, 0, 0, 1, 45 45 L 125 230" fill="url(#myFillGradient)" stroke="url(#myStrokeGradient)" stroke-width="10"/>
+  <path d="M230 330 a 45 45, 0, 1, 1, 45 45 L 275 330Z" fill="url(#myFillGradient)" stroke="url(#myStrokeGradient)" stroke-width="20"/>
+</svg>

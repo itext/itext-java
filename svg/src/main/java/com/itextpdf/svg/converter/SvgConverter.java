@@ -65,12 +65,12 @@ import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
+import com.itextpdf.svg.processors.impl.SvgProcessorContext;
+import com.itextpdf.svg.processors.impl.SvgProcessorResult;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.PdfRootSvgNodeRenderer;
 import com.itextpdf.svg.utils.SvgCssUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -79,6 +79,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is the main container class for static methods that do high-level
@@ -551,14 +553,27 @@ public final class SvgConverter {
             writerProps = new WriterProperties();
         }
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(pdfDest, writerProps));
-        //TODO DEVSIX-2095
         //process
         ISvgProcessorResult processorResult = process(parse(svgStream, props), props);
         ISvgNodeRenderer topSvgRenderer = processorResult.getRootRenderer();
 
         String baseUri = tryToExtractBaseUri(props);
+        ResourceResolver resourceResolver = null;
+
+        if (processorResult instanceof SvgProcessorResult) {
+            //TODO DEVSIX-3814 add assert after 7.2 cause now be have a null pointer on deprecated constructor
+            SvgProcessorContext context = ((SvgProcessorResult) processorResult).getContext();
+            if (context != null) {
+                resourceResolver = context.getResourceResolver();
+            }
+        }
+        //TODO DEVSIX-3814 remove the clause when the deprecated  constructor SvgProcessorResult(Map<String, ISvgNodeRenderer>,
+        // ISvgNodeRenderer, FontProvider, FontSet) is removed
+        if (resourceResolver == null) {
+            resourceResolver = new ResourceResolver(baseUri);
+        }
         SvgDrawContext drawContext =
-                new SvgDrawContext(new ResourceResolver(baseUri), processorResult.getFontProvider());
+                new SvgDrawContext(resourceResolver, processorResult.getFontProvider(), processorResult.getRootRenderer());
 
         drawContext.addNamedObjects(processorResult.getNamedObjects());
         //Add temp fonts
@@ -665,12 +680,11 @@ public final class SvgConverter {
     }
 
     //Private converter for unification
-    private static PdfFormXObject convertToXObject(ISvgProcessorResult processorResult, PdfDocument document, ISvgConverterProperties props) {
-        String baseUri = "";
-        if (props != null) {
-            baseUri = props.getBaseUri();
-        }
-        SvgDrawContext drawContext = new SvgDrawContext(new ResourceResolver(baseUri), processorResult.getFontProvider());
+    private static PdfFormXObject convertToXObject(ISvgProcessorResult processorResult, PdfDocument document,
+            ISvgConverterProperties props) {
+        ResourceResolver resourceResolver = getResourceResolver(processorResult, props);
+        SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider(),
+                processorResult.getRootRenderer());
         drawContext.setTempFonts(processorResult.getTempFonts());
         drawContext.addNamedObjects(processorResult.getNamedObjects());
         return convertToXObject(processorResult.getRootRenderer(), document, drawContext);
@@ -864,10 +878,11 @@ public final class SvgConverter {
      *
      * @param root the XML DOM tree
      * @return a node renderer tree corresponding to the passed XML DOM tree
+     * @deprecated will be removed in iText 7.2.
      */
+    @Deprecated
     public static ISvgProcessorResult process(INode root) {
-        checkNull(root);
-        return new DefaultSvgProcessor().process(root);
+        return process(root, null);
     }
 
     /**
@@ -984,6 +999,28 @@ public final class SvgConverter {
         return res;
 
 
+    }
+
+    static ResourceResolver getResourceResolver(ISvgProcessorResult processorResult, ISvgConverterProperties props) {
+        ResourceResolver resourceResolver = null;
+        if (processorResult instanceof SvgProcessorResult) {
+            //TODO DEVSIX-3814 add assert after 7.2 cause now be have a null pointer on deprecated constructor
+            SvgProcessorContext context = ((SvgProcessorResult) processorResult).getContext();
+            if (context != null) {
+                resourceResolver = context.getResourceResolver();
+            }
+
+        }
+        //TODO DEVSIX-3814 remove the clause when the deprecated  constructor SvgProcessorResult(Map<String, ISvgNodeRenderer>,
+        // ISvgNodeRenderer, FontProvider, FontSet) is removed
+        if (resourceResolver == null) {
+            String baseUri = "";
+            if (props != null) {
+                baseUri = props.getBaseUri();
+            }
+            resourceResolver = new ResourceResolver(baseUri);
+        }
+       return  resourceResolver;
     }
 
     /**

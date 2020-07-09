@@ -206,6 +206,7 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         }
 
         public IccBased(final InputStream iccStream) {
+		    // TODO DEVSIX-4217 add parsing of the Range
             this(getInitialPdfArray(iccStream, null));
         }
 

@@ -48,8 +48,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Split css font-family string into list of font-families or generic-families
- * @deprecated will be removed in iText 7.2.
+ * Split CSS 'font-family' string into list of font-families or generic-families
+ * @deprecated will be moved to styled-xml-parser module in iText 7.2.
  */
 @Deprecated
 public final class FontFamilySplitter {
@@ -65,6 +65,7 @@ public final class FontFamilySplitter {
         String[] names = fontFamilies.split(",");
         List<String> result = new ArrayList<>(names.length);
         for (String name : names) {
+            // TODO DEVSIX-2534 improve pattern matching according to CSS specification. E.g. unquoted font-families with spaces.
             if (FONT_FAMILY_PATTERN.matcher(name).matches()) {
                 result.add(name.trim());
             } else if (FONT_FAMILY_PATTERN_QUOTED.matcher(name).matches()) {

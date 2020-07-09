@@ -1,0 +1,18 @@
+<svg x="0" y="0" width="600" height="600" xmlns="http://www.w3.org/2000/svg" version="1.1">
+	<defs>
+		<linearGradient id="myStrokeGradient">
+			<stop offset="0"  stop-color="black" />
+			<stop offset="0.5"  stop-color="yellow" />
+			<stop offset="1" stop-color="magenta" />
+		</linearGradient>
+	</defs>
+
+	<g font-family="Courier" font-size="64" >
+		<text x="230" y="150" fill="url(#myStrokeGradient)" >
+			iText
+			<tspan dx="-460">
+				iText
+			</tspan>
+		</text>
+	</g>
+</svg>

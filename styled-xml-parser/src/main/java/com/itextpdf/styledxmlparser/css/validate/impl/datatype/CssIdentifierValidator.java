@@ -60,7 +60,7 @@ public class CssIdentifierValidator implements ICssDataTypeValidator {
      */
     @Override
     public boolean isValid(String objectString) {
-        // TODO now the validation is very lenient. Make it more strict
+        // TODO DEVSIX-3969: now the validation is very lenient. Make it more strict
         if (objectString.length() >= 2 && objectString.startsWith("--")) {
             return false;
         } else if (objectString.matches("^[0-9].*")) {

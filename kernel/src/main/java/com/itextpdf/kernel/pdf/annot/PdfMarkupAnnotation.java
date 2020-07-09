@@ -71,6 +71,13 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
         super(rect);
     }
 
+    /**
+     * Instantiates a new {@link PdfMarkupAnnotation} instance based on {@link PdfDictionary}
+     * instance, that represents existing annotation object in the document.
+     *
+     * @param pdfObject the {@link PdfDictionary} representing annotation object
+     * @see PdfAnnotation#makeAnnotation(PdfObject)
+     */
     protected PdfMarkupAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
@@ -318,6 +325,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      *     shall be associated with. The only defined value is {@link PdfName#Markup3D}. Table 298 (ISO-320001)
      *     lists the values that correspond to a subtype of Markup3D (See also {@link Pdf3DAnnotation}).
      * </ul>
+     *
      * @return An external data {@link PdfDictionary}, or null if not specified.
      */
     public PdfDictionary getExternalData() {
@@ -333,9 +341,30 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      *     shall be associated with. The only defined value is {@link PdfName#Markup3D}. Table 298 (ISO-320001)
      *     lists the values that correspond to a subtype of Markup3D (See also {@link Pdf3DAnnotation}).
      * </ul>
-     * @return this {@link PdfMarkupAnnotation} instance.
+     *
+     * @param exData the external data dictionary
+     * @return this {@link PdfMarkupAnnotation} instance
+     * @deprecated use {@link PdfMarkupAnnotation#setExternalData(PdfDictionary)} instead
      */
+    @Deprecated
     public PdfMarkupAnnotation setExternalData(PdfName exData) {
+        return (PdfMarkupAnnotation) put(PdfName.ExData, exData);
+    }
+
+    /**
+     * Sets an external data dictionary specifying data that shall be associated with the annotation.
+     * This dictionary should contain the following entries:
+     * <ul>
+     *     <li>{@link PdfName#Type} - (optional) If present, shall be {@link PdfName#ExData}.
+     *     <li>{@link PdfName#Subtype} - (required) a name specifying the type of data that the markup annotation
+     *     shall be associated with. The only defined value is {@link PdfName#Markup3D}. Table 298 (ISO-320001)
+     *     lists the values that correspond to a subtype of Markup3D (See also {@link Pdf3DAnnotation}).
+     * </ul>
+     *
+     * @param exData the external data dictionary
+     * @return this {@link PdfMarkupAnnotation} instance
+     */
+    public PdfMarkupAnnotation setExternalData(PdfDictionary exData) {
         return (PdfMarkupAnnotation) put(PdfName.ExData, exData);
     }
 }

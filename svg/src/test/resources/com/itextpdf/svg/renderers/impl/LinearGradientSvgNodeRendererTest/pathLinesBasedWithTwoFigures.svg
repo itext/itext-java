@@ -1,0 +1,16 @@
+<svg x="0" y="0" width="600" height="600" xmlns="http://www.w3.org/2000/svg" version="1.1">
+	<defs>
+		<linearGradient x1="20%" y1="20%" x2="80%" y2="80%" id="myFillGradient">
+			<stop offset="0"  stop-color="red" />
+			<stop offset="0.5"  stop-color="green" />
+			<stop offset="1" stop-color="blue" />
+		</linearGradient>
+		<linearGradient x1="80%" y1="80%" x2="20%" y2="20%" id="myStrokeGradient">
+			<stop offset="0"  stop-color="black" />
+			<stop offset="0.5"  stop-color="orange" />
+			<stop offset="1" stop-color="magenta" />
+		</linearGradient>
+	</defs>
+	<path d="M 50 100 H 300 L 180 500 Z m 250 400 h 250 l -100 -400 z"
+		  stroke="url(#myStrokeGradient)" fill="url(#myFillGradient)" stroke-width="20" />
+</svg>

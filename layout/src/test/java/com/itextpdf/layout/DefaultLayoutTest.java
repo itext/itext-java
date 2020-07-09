@@ -44,6 +44,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -65,6 +66,8 @@ import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class DefaultLayoutTest extends ExtendedITextTest {
+
+    public static float EPS = 0.001f;
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/DefaultLayoutTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/DefaultLayoutTest/";
@@ -111,9 +114,6 @@ public class DefaultLayoutTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, count = 1)
-    })
     public void emptyParagraphsTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "emptyParagraphsTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_emptyParagraphsTest01.pdf";
@@ -216,4 +216,35 @@ public class DefaultLayoutTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void addWordOnShortPageTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "addWordOnShortPageTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_addWordOnShortPageTest01.pdf";
+
+        // Default font size
+        float defaultFontSize = 12;
+        // Use the default font to get the width which will be occupied by two letters
+        float contentWidth = PdfFontFactory.createFont().getWidth("he", defaultFontSize);
+        // Not enough height to place letters without FORCED_PLACEMENT
+        float shortHeight = 15;
+        // The sum of either top and bottom page margins, or left and right page margins
+        float margins = 36 + 36;
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(margins + contentWidth + EPS, margins + shortHeight));
+
+        Paragraph p = new Paragraph("hello");
+
+        // The area's height is not enough to place the paragraph.
+        // The area's width is enough to place 2 characters.
+        doc.add(p);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
 }

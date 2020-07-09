@@ -83,6 +83,17 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     private double[] fontMatrix = DEFAULT_FONT_MATRIX;
 
     /**
+     * Used to normalize the values of glyphs widths and bBox measurements.
+     * iText process glyph width and bBox width and height in integer values from 0 to 1000.
+     * Such behaviour is based on the assumption that this is the most common way to store such values. It also implies
+     * that the fontMatrix contains the following values: [0.001, 0, 0, 0.001, 0, 0].
+     * However for the other cases of font matrix the values stored inside pdfWidth and bBox arrays need to be normalized
+     * by multiplying them by fontMatrix[0] * 1000 to be processed correctly. The opposite procedure, division by
+     * dimensionsMultiplier is performed on font flush in order to maintain correct pdfObject for underlysing font.
+     */
+    private double dimensionsMultiplier;
+
+    /**
      * Creates a Type 3 font.
      *
      * @param colorized defines whether the glyph color is specified in the glyph descriptions in the font.
@@ -94,6 +105,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         embedded = true;
         fontProgram = new Type3Font(colorized);
         fontEncoding = FontEncoding.createEmptyFontEncoding();
+        dimensionsMultiplier = 1.0f;
     }
 
     /**
@@ -108,6 +120,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         this(document, colorized);
         ((Type3Font) fontProgram).setFontName(fontName);
         ((Type3Font) fontProgram).setFontFamily(fontFamily);
+        dimensionsMultiplier = 1.0f;
     }
 
     /**
@@ -123,10 +136,24 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUnicode);
         PdfDictionary charProcsDic = getPdfObject().getAsDictionary(PdfName.CharProcs);
         PdfArray fontMatrixArray = getPdfObject().getAsArray(PdfName.FontMatrix);
+
+        double[] fontMatrix = new double[6];
+        for (int i = 0; i < fontMatrixArray.size(); i++) {
+            fontMatrix[i] = ((PdfNumber) fontMatrixArray.get(i)).getValue();
+        }
+        setDimensionsMultiplier(fontMatrix[0] * 1000);
+        for (int i = 0; i < 6; i++) {
+            fontMatrix[i] /= getDimensionsMultiplier();
+        }
+        setFontMatrix(fontMatrix);
+
+
         if (getPdfObject().containsKey(PdfName.FontBBox)) {
             PdfArray fontBBox = getPdfObject().getAsArray(PdfName.FontBBox);
-            fontProgram.getFontMetrics().setBbox(fontBBox.getAsNumber(0).intValue(), fontBBox.getAsNumber(1).intValue(),
-                    fontBBox.getAsNumber(2).intValue(), fontBBox.getAsNumber(3).intValue());
+            fontProgram.getFontMetrics().setBbox((int)(fontBBox.getAsNumber(0).doubleValue() * getDimensionsMultiplier()),
+                    (int)(fontBBox.getAsNumber(1).doubleValue() * getDimensionsMultiplier()),
+                    (int)(fontBBox.getAsNumber(2).doubleValue() * getDimensionsMultiplier()),
+                    (int)(fontBBox.getAsNumber(3).doubleValue() * getDimensionsMultiplier()));
         } else {
             fontProgram.getFontMetrics().setBbox(0, 0, 0, 0);
         }
@@ -135,13 +162,16 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         for (int i = firstChar; i <= lastChar; i++) {
             shortTag[i] = 1;
         }
-        int[] widths = FontUtil.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar, 0);
 
-        double[] fontMatrix = new double[6];
-        for (int i = 0; i < fontMatrixArray.size(); i++) {
-            fontMatrix[i] = ((PdfNumber) fontMatrixArray.get(i)).getValue();
+        PdfArray pdfWidths = fontDictionary.getAsArray(PdfName.Widths);
+
+        double[] multipliedWidths = new double[pdfWidths.size()];
+        for (int i = 0; i < pdfWidths.size(); i++) {
+            multipliedWidths[i] = pdfWidths.getAsNumber(i).doubleValue() * getDimensionsMultiplier();
         }
-        setFontMatrix(fontMatrix);
+        PdfArray multipliedPdfWidths = new PdfArray(multipliedWidths);
+
+        int[] widths = FontUtil.convertSimpleWidthsArray(multipliedPdfWidths, firstChar, 0);
 
         if (toUnicode != null && toUnicode.hasByteMappings() && fontEncoding.hasDifferences()) {
             for (int i = 0; i < 256; i++) {
@@ -349,8 +379,13 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         }
 
         getPdfObject().put(PdfName.CharProcs, charProcs);
+
+        for (int i = 0; i < fontMatrix.length; i++) {
+            fontMatrix[i] *= getDimensionsMultiplier();
+        }
+
         getPdfObject().put(PdfName.FontMatrix, new PdfArray(getFontMatrix()));
-        getPdfObject().put(PdfName.FontBBox, new PdfArray(fontProgram.getFontMetrics().getBbox()));
+        getPdfObject().put(PdfName.FontBBox, normalizeBBox(fontProgram.getFontMetrics().getBbox()));
 
         String fontName = fontProgram.getFontNames().getFontName();
         super.flushFontData(fontName, PdfName.Type3);
@@ -402,6 +437,23 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         return getPdfObject().getIndirectReference().getDocument();
     }
 
+    @Override
+    protected double getGlyphWidth(Glyph glyph) {
+        return glyph != null ? glyph.getWidth()/this.getDimensionsMultiplier() : 0;
+    }
+
+    /**
+     * Gets dimensionsMultiplier for normalizing glyph width, fontMatrix values and bBox dimensions.
+     * @return dimensionsMultiplier double value
+     */
+    double getDimensionsMultiplier() {
+        return dimensionsMultiplier;
+    }
+
+    void setDimensionsMultiplier(double dimensionsMultiplier) {
+        this.dimensionsMultiplier = dimensionsMultiplier;
+    }
+
     /**
      * Gets the first empty code that could be passed to {@link FontEncoding#addSymbol(int, int)}
      *
@@ -450,5 +502,13 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         if (firstLast == null) return defaultValue;
         int result = firstLast.intValue();
         return result < 0 || result > 255 ? defaultValue : result;
+    }
+
+    private PdfArray normalizeBBox(int[] bBox) {
+        double [] normalizedBBox = new double [4];
+        for (int i = 0; i < 4; i++) {
+           normalizedBBox[i] = bBox[i] / getDimensionsMultiplier();
+        }
+        return new PdfArray(normalizedBBox);
     }
 }

@@ -78,7 +78,7 @@ public final class Version {
      * This String contains the version number of this iText release.
      * For debugging purposes, we request you NOT to change this constant.
      */
-    private static final String release = "7.1.11";
+    private static final String release = "7.1.12";
     /**
      * This String contains the iText version as shown in the producer line.
      * iText is a product developed by iText Group NV.
@@ -367,14 +367,14 @@ public final class Version {
         return null;
     }
 
-    private static boolean isiText5licenseLoaded(){
+    private static boolean isiText5licenseLoaded() {
         String validatorKey5 = "5";
         boolean result = false;
         try {
             String[] info = getLicenseeInfoFromLicenseKey(validatorKey5);
             result = true;
-        }catch(Exception e){
-            //TODO: Log this exception?
+        } catch (Exception ignore) {
+
         }
         return result;
     }

@@ -43,6 +43,7 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.Point;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.svg.MarkerVertexType;
@@ -135,6 +136,24 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
         return copy;
     }
 
+    @Override
+    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        Point lastPoint = null;
+        Rectangle commonRectangle = null;
+        for (IPathShape item : getShapes()) {
+            if (lastPoint == null) {
+                lastPoint = item.getEndingPoint();
+            }
+            // TODO DEVSIX-3814 - remove this check after moving method getPathShapeRectangle to IPathShape
+            if (item instanceof AbstractPathShape) {
+                Rectangle rectangle = ((AbstractPathShape) item).getPathShapeRectangle(lastPoint);
+                commonRectangle = Rectangle.getCommonRectangle(commonRectangle, rectangle);
+            }
+            lastPoint = item.getEndingPoint();
+        }
+        return commonRectangle;
+    }
+
     /**
      * Gets the coordinates that shall be passed to {@link IPathShape#setCoordinates} for the current shape.
      *
@@ -165,9 +184,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
                     startingControlPoint[1] = SvgCssUtils.convertDoubleToString(previousEndPoint.getY());
                 }
             } else {
-                // TODO RND-951
-                startingControlPoint[0] = pathProperties[0];
-                startingControlPoint[1] = pathProperties[1];
+                throw new SvgProcessingException(SvgExceptionMessageConstant.INVALID_SMOOTH_CURVE_USE);
             }
             shapeCoordinates = concatenate(startingControlPoint, pathProperties);
         }

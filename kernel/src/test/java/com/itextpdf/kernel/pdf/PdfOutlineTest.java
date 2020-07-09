@@ -433,7 +433,35 @@ public class PdfOutlineTest extends ExtendedITextTest {
         pdfDocument.getOutlines(true).removeOutline();
         pdfDocument.close();
 
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void removeOneOutlineTest() throws IOException, InterruptedException {
+        String filename = "removeOneOutline.pdf";
+        String input = sourceFolder + "outlineTree.pdf";
+        String output = destinationFolder + "cmp_" + filename;
+        String cmp = sourceFolder + "cmp_" + filename;
+        PdfReader reader = new PdfReader(input);
+        PdfWriter writer = new PdfWriter(output);
+        PdfDocument pdfDocument = new PdfDocument(reader, writer);
+        PdfOutline root = pdfDocument.getOutlines(true);
+        PdfOutline toRemove = root.getAllChildren().get(2);
+        toRemove.removeOutline();
+        pdfDocument.close();
 
         Assert.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void testReinitializingOutlines() throws IOException {
+        String input = sourceFolder + "outlineTree.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(input));
+        PdfOutline root = pdfDocument.getOutlines(false);
+        Assert.assertEquals(4, root.getAllChildren().size());
+        pdfDocument.getCatalog().getPdfObject().remove(PdfName.Outlines);
+        root = pdfDocument.getOutlines(true);
+        Assert.assertNull(root);
+        pdfDocument.close();
     }
 }

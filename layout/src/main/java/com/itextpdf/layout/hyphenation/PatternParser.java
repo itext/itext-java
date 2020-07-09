@@ -81,7 +81,7 @@ public class PatternParser extends DefaultHandler {
      * Parses a hyphenation pattern file.
      * @param filename the filename
      * @throws HyphenationException In case of an exception while parsing
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException If the specified file is not found
      */
     public void parse(String filename) throws HyphenationException, FileNotFoundException {
         parse(new FileInputStream(filename), filename);
@@ -271,7 +271,7 @@ public class PatternParser extends DefaultHandler {
 
     /**
      * {@inheritDoc}
-     * @throws SAXException
+     * @throws SAXException if parsing of hyphenation classes resource xml has failed.
      */
     public void startElement(String uri, String local, String raw,
                              Attributes attrs) throws SAXException {

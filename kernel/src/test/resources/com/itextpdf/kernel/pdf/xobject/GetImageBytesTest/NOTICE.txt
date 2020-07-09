@@ -1,0 +1,2 @@
+JPXDecode.jp2 is originally developed by Algo Vision Technology GmbH, Aware Inc., Kodak Inc., and Ricoh Innovations Inc.
+See copyright/copyright.html

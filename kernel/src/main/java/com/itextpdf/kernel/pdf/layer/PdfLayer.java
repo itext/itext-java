@@ -186,7 +186,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
     /**
      * Gets whether the layer is currently locked or not. If the layer is locked,
      * it will not be possible to change its state (on/off) in a viewer.
-     * @return true of the layer is currently locked, false otherwise.
+     * @return true if the layer is currently locked, false otherwise.
      */
     public boolean isLocked() {
         return locked;
@@ -197,6 +197,8 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
      * The state of a locked group cannot be changed through the user interface
      * of a viewer application. Producers can use this entry to prevent the visibility
      * of content that depends on these groups from being changed by users.
+     *
+     * @param locked sets whether the layer is currently locked or not
      */
     public void setLocked(boolean locked) {
         if (this.isLocked() != locked)
@@ -422,6 +424,8 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
 
     /**
      * Gets the title of the layer if it is a title layer, or null if it is a usual layer.
+     *
+     * @return the title of the layer if it is a title layer, or null if it is a usual layer
      */
     public String getTitle() {
         return title;

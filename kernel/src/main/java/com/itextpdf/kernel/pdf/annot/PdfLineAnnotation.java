@@ -77,10 +77,14 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
     }
 
     /**
-     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
+     * Instantiates a new {@link PdfLineAnnotation} instance based on {@link PdfDictionary}
+     * instance, that represents existing annotation object in the document.
+     *
+     * @param pdfObject the {@link PdfDictionary} representing annotation object
+     * @see PdfAnnotation#makeAnnotation(PdfObject)
      */
-    protected PdfLineAnnotation(PdfDictionary pdfDictionary) {
-        super(pdfDictionary);
+    protected PdfLineAnnotation(PdfDictionary pdfObject) {
+        super(pdfObject);
     }
 
     /**

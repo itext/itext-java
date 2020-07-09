@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
@@ -68,9 +69,18 @@ public class EllipseSvgNodeRenderer extends AbstractSvgNodeRenderer {
         }
     }
 
+    @Override
+    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        if (setParameters()) {
+            return new Rectangle(cx - rx, cy - ry, rx + rx, ry + ry);
+        } else {
+            return super.getObjectBoundingBox(context);
+        }
+    }
+
     /**
-     * Fetches a map of String values by calling getAttribute(Strng s) method
-     * and maps it's values to arc parmateter cx, cy , rx, ry respectively
+     * Fetches a map of String values by calling getAttribute(String s) method
+     * and maps it's values to arc parameter cx, cy , rx, ry respectively
      *
      * @return boolean values to indicate whether all values exit or not
      */

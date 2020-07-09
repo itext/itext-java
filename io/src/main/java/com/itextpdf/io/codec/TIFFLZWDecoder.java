@@ -83,9 +83,10 @@ public class TIFFLZWDecoder {
     /**
      * Method to decode LZW compressed data.
      *
-     * @param data       The compressed data.
-     * @param uncompData Array to return the uncompressed data in.
-     * @param h          The number of rows the compressed data contains.
+     * @param data       The compressed data
+     * @param uncompData Array to return the uncompressed data in
+     * @param h          The number of rows the compressed data contains
+     * @return           The decoded data
      */
     public byte[] decode(byte[] data, byte[] uncompData, int h) {
 
@@ -173,7 +174,7 @@ public class TIFFLZWDecoder {
     /**
      * Write out the string just uncompressed.
      *
-     * @param str
+     * @param str the byte string for uncompressed write out
      */
     public void writeString(byte[] str) {
         // Fix for broken tiff files
@@ -187,8 +188,9 @@ public class TIFFLZWDecoder {
     /**
      * Add a new string to the string table.
      *
-     * @param oldString
-     * @param newString
+     * @param oldString the byte string at the end of which the new string
+     *                  will be written and which will be added to the string table
+     * @param newString the byte to be written to the end of the old string
      */
     public void addStringToTable(byte[] oldString, byte newString) {
         int length = oldString.length;
@@ -211,7 +213,7 @@ public class TIFFLZWDecoder {
     /**
      * Add a new string to the string table.
      *
-     * @param str
+     * @param str the byte string which will be added to the string table
      */
     public void addStringToTable(byte[] str) {
 
@@ -230,8 +232,9 @@ public class TIFFLZWDecoder {
     /**
      * Append <code>newString</code> to the end of <code>oldString</code>.
      *
-     * @param oldString
-     * @param newString
+     * @param oldString the byte string at the end of which the new string will be written
+     * @param newString the byte to be written to the end of the old string
+     * @return the byte string which is the sum of the new string and the old string
      */
     public byte[] composeString(byte[] oldString, byte newString) {
         int length = oldString.length;

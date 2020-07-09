@@ -530,14 +530,14 @@ public class PdfTokenizer implements Closeable, Serializable {
 
     /**
      * Resolve escape symbols or hexadecimal symbols.
-     * <br>
+     * <p>
      * NOTE Due to PdfReference 1.7 part 3.2.3 String value contain ASCII characters,
      * so we can convert it directly to byte array.
      *
-     * @param content
-     * @param from
-     * @param to
-     * @param hexWriting
+     * @param content string bytes to be decoded
+     * @param from given start index
+     * @param to given end index
+     * @param hexWriting true if given string is hex-encoded, e.g. '<69546578…>'. False otherwise, e.g. '((iText( some version)…)'
      * @return byte[] for decrypting or for creating {@link java.lang.String}.
      */
     protected static byte[] decodeStringContent(byte[] content, int from, int to, boolean hexWriting) {
@@ -636,8 +636,8 @@ public class PdfTokenizer implements Closeable, Serializable {
      * NOTE Due to PdfReference 1.7 part 3.2.3 String value contain ASCII characters,
      * so we can convert it directly to byte array.
      *
-     * @param content
-     * @param hexWriting
+     * @param content string bytes to be decoded
+     * @param hexWriting true if given string is hex-encoded, e.g. '<69546578…>'. False otherwise, e.g. '((iText( some version)…)'
      * @return byte[] for decrypting or for creating {@link java.lang.String}.
      */
     public static byte[] decodeStringContent(byte[] content, boolean hexWriting) {
@@ -713,9 +713,9 @@ public class PdfTokenizer implements Closeable, Serializable {
      * <br>
      * The same as calling {@link #readLineSegment(com.itextpdf.io.source.ByteBuffer, boolean) readLineSegment(input, true)}.
      *
-     * @param buffer @see ByteBuffer
-     * @return boolean
-     * @throws java.io.IOException
+     * @param buffer a {@link ByteBuffer} to which the result of reading will be saved
+     * @return true, if something was read or if the end of the input stream is not reached
+     * @throws java.io.IOException in case of any reading error
      */
     public boolean readLineSegment(ByteBuffer buffer) throws java.io.IOException {
         return readLineSegment(buffer, true);
@@ -726,11 +726,11 @@ public class PdfTokenizer implements Closeable, Serializable {
      * See {@link #isWhitespace(int) isWhiteSpace(int)} or {@link #isWhitespace(int, boolean) isWhiteSpace(int, boolean)}
      * for a list of whitespace characters.
      *
-     * @param buffer           @see ByteBuffer
+     * @param buffer a {@link ByteBuffer} to which the result of reading will be saved
      * @param isNullWhitespace boolean to indicate whether '0' is whitespace or not.
      *                         If in doubt, use true or overloaded method {@link #readLineSegment(com.itextpdf.io.source.ByteBuffer) readLineSegment(input)}
-     * @return boolean
-     * @throws java.io.IOException
+     * @return true, if something was read or if the end of the input stream is not reached
+     * @throws java.io.IOException in case of any reading error
      */
     public boolean readLineSegment(ByteBuffer buffer, boolean isNullWhitespace) throws java.io.IOException {
         int c;

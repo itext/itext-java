@@ -43,6 +43,7 @@
 package com.itextpdf.svg.renderers.impl;
 
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
@@ -57,6 +58,15 @@ import java.util.List;
  */
 public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
+    private float x = 0f;
+    private float y = 0f;
+    private float width;
+    private float height;
+    private boolean rxPresent = false;
+    private boolean ryPresent = false;
+    private float rx = 0f;
+    private float ry = 0f;
+
     /**
      * Constructs a RectangleSvgNodeRenderer.
      */
@@ -68,34 +78,9 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
     protected void doDraw(SvgDrawContext context) {
         PdfCanvas cv = context.getCurrentCanvas();
         cv.writeLiteral("% rect\n");
-        float x=0.0f,y=0.0f;
-        if(getAttribute(SvgConstants.Attributes.X)!=null) {
-             x = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.X));
-        }
-        if(getAttribute(SvgConstants.Attributes.Y)!=null) {
-            y = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.Y));
-        }
-        float width = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.WIDTH));
-        float height = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.HEIGHT));
-
-        boolean rxPresent = false;
-        boolean ryPresent = false;
-        float rx = 0f;
-        float ry = 0f;
-        if (attributesAndStyles.containsKey(SvgConstants.Attributes.RX)) {
-            rx = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RX));
-            rxPresent = true;
-        }
-        if (attributesAndStyles.containsKey(SvgConstants.Attributes.RY)) {
-            ry = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RY));
-            ryPresent = true;
-        }
-
+        setParameters();
         boolean singleValuePresent = (rxPresent && !ryPresent) || (!rxPresent && ryPresent);
 
-        // these checks should happen in all cases
-        rx = checkRadius(rx, width);
-        ry = checkRadius(ry, height);
         if (!rxPresent && !ryPresent) {
             cv.rectangle(x, y, width, height);
         } else if (singleValuePresent) {
@@ -134,6 +119,32 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
             cv.lineTo(x, y + ry);
             arc(x, y + 2 * ry, x + 2 * rx, y, 180, 90, cv);
             cv.closePath();
+        }
+    }
+
+    @Override
+    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        setParameters();
+        return new Rectangle(this.x, this.y, this.width, this.height);
+    }
+
+    private void setParameters() {
+        if(getAttribute(SvgConstants.Attributes.X)!=null) {
+            x = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.X));
+        }
+        if(getAttribute(SvgConstants.Attributes.Y)!=null) {
+            y = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.Y));
+        }
+        width = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.WIDTH));
+        height = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.HEIGHT));
+
+        if (attributesAndStyles.containsKey(SvgConstants.Attributes.RX)) {
+            rx = checkRadius(CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RX)), width);
+            rxPresent = true;
+        }
+        if (attributesAndStyles.containsKey(SvgConstants.Attributes.RY)) {
+            ry = checkRadius(CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RY)), height);
+            ryPresent = true;
         }
     }
 

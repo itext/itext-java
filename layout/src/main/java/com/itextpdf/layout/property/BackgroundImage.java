@@ -42,6 +42,7 @@
  */
 package com.itextpdf.layout.property;
 
+import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
@@ -50,6 +51,8 @@ public class BackgroundImage {
     protected PdfXObject image;
     protected boolean repeatX;
     protected boolean repeatY;
+
+    protected AbstractLinearGradientBuilder linearGradientBuilder;
 
     private BackgroundImage(PdfXObject image, boolean repeatX, boolean repeatY) {
         this.image = image;
@@ -66,11 +69,17 @@ public class BackgroundImage {
     }
 
     public BackgroundImage(PdfImageXObject image, boolean repeatX, boolean repeatY) {
-        this((PdfXObject)image, repeatX, repeatY);
+        this((PdfXObject) image, repeatX, repeatY);
     }
 
     public BackgroundImage(PdfFormXObject image, boolean repeatX, boolean repeatY) {
-        this((PdfXObject)image, repeatX, repeatY);
+        this((PdfXObject) image, repeatX, repeatY);
+    }
+
+    public BackgroundImage(AbstractLinearGradientBuilder linearGradientBuilder) {
+        this.linearGradientBuilder = linearGradientBuilder;
+        this.repeatX = false;
+        this.repeatY = false;
     }
 
     public PdfImageXObject getImage() {
@@ -81,8 +90,12 @@ public class BackgroundImage {
         return image instanceof PdfFormXObject ? (PdfFormXObject) image : null;
     }
 
+    public AbstractLinearGradientBuilder getLinearGradientBuilder() {
+        return this.linearGradientBuilder;
+    }
+
     public boolean isBackgroundSpecified() {
-        return image instanceof PdfFormXObject || image instanceof PdfImageXObject;
+        return image instanceof PdfFormXObject || image instanceof PdfImageXObject || linearGradientBuilder != null;
     }
 
     public boolean isRepeatX() {

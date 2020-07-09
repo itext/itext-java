@@ -108,8 +108,10 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Adds font to resources and register PdfFont in the document for further flushing.
+     * Adds font to resources and registers PdfFont in the document for further flushing.
      *
+     * @param pdfDocument a {@link PdfDocument} instance to which the font is added for further flushing
+     * @param font a {@link PdfFont} instance to be added
      * @return added font resource name.
      */
     public PdfName addFont(PdfDocument pdfDocument, PdfFont font) {
@@ -311,6 +313,12 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Sets the 'modified' flag to this {@link PdfResources} indirect object.
+     * The flag denotes that the object was modified since the document opening.
+     *
+     * @param isModified {@code true} if this {@link PdfResources} indirect object has been modified,
+     *                              otherwise {@code false}.
+     * @see PdfObject#setModified()
      * @deprecated Please use {@link #setModified()}.
      */
     @Deprecated
@@ -485,6 +493,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary resourceCategory = getPdfObject().getAsDictionary(resType);
         if (resourceCategory == null) {
             getPdfObject().put(resType, resourceCategory = new PdfDictionary());
+        } else {
+            resourceCategory.setModified();
         }
         resourceCategory.put(resName, resource);
         setModified();

@@ -259,7 +259,7 @@ public class SvgConverterUnitNullTest extends ExtendedITextTest {
     @Test
     public void convertToXObjectDocWithRendererNullTest() throws IOException {
         junitExpectedException.expect(SvgProcessingException.class);
-        ISvgNodeRenderer renderer = SvgConverter.process(SvgConverter.parse(is)).getRootRenderer();
+        ISvgNodeRenderer renderer = SvgConverter.process(SvgConverter.parse(is), null).getRootRenderer();
         SvgConverter.convertToXObject(renderer, null);
     }
 
@@ -312,12 +312,6 @@ public class SvgConverterUnitNullTest extends ExtendedITextTest {
     public void parseStringPropsNullTest() throws IOException {
         junitExpectedException.expect(SvgProcessingException.class);
         SvgConverter.parse(null, null);
-    }
-
-    @Test
-    public void processNullTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        SvgConverter.process(null);
     }
 
     @Test

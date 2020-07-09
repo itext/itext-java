@@ -49,8 +49,13 @@ import com.itextpdf.layout.font.RangeBuilder;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
+import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;
+import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.TokenType;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +85,33 @@ public class CssUtils {
      * Creates a new {@link CssUtils} instance.
      */
     private CssUtils() {
+    }
+
+    /**
+     * Extracts shorthand properties as list of string lists from a string, where the top level
+     * list is shorthand property and the lower level list is properties included in shorthand property.
+     *
+     * @param str the source string with shorthand properties
+     * @return the list of string lists
+     */
+    public static List<List<String>> extractShorthandProperties(String str) {
+        List<List<String>> result = new ArrayList<>();
+        List<String> currentLayer = new ArrayList<>();
+        CssDeclarationValueTokenizer tokenizer = new CssDeclarationValueTokenizer(str);
+
+        Token currentToken = tokenizer.getNextValidToken();
+        while (currentToken != null) {
+            if (currentToken.getType() == TokenType.COMMA) {
+                result.add(currentLayer);
+                currentLayer = new ArrayList<>();
+            } else {
+                currentLayer.add(currentToken.getValue());
+            }
+            currentToken = tokenizer.getNextValidToken();
+        }
+        result.add(currentLayer);
+
+        return result;
     }
 
     /**
@@ -178,7 +210,7 @@ public class CssUtils {
             if (angle == null) {
                 angle = "null";
             }
-            throw new StyledXMLParserException(MessageFormatUtil.format(LogMessageConstant.NAN, angle));
+            throw new StyledXMLParserException(MessageFormatUtil.format(StyledXMLParserException.NAN, angle));
         }
 
         float floatValue  = Float.parseFloat(angle.substring(0, pos));
@@ -251,7 +283,7 @@ public class CssUtils {
             if (length == null) {
                 length = "null";
             }
-            throw new StyledXMLParserException(MessageFormatUtil.format(LogMessageConstant.NAN, length));
+            throw new StyledXMLParserException(MessageFormatUtil.format(StyledXMLParserException.NAN, length));
         }
 
         // Use double type locally to have better precision of the result after applying arithmetic operations
@@ -347,6 +379,7 @@ public class CssUtils {
      * @return the unit value
      */
     public static UnitValue parseLengthValueToPt(final String value, final float emValue, final float remValue) {
+        // TODO (DEVSIX-3596) Add support of 'lh' 'ch' units and viewport-relative units
         if (isMetricValue(value) || isNumericValue(value)) {
             return new UnitValue(UnitValue.POINT, parseAbsoluteLength(value));
         } else if (value != null && value.endsWith(CommonCssConstants.PERCENTAGE)) {
@@ -436,9 +469,8 @@ public class CssUtils {
      * Parses the resolution.
      *
      * @param resolutionStr the resolution as a string
-     * @return a value in dpi (currently)
+     * @return a value in dpi
      */
-    // TODO change default units? If so, change MediaDeviceDescription#resolutoin as well
     public static float parseResolution(String resolutionStr) {
         int pos = determinePositionBetweenValueAndUnit(resolutionStr);
         if (pos == 0) {
@@ -450,7 +482,10 @@ public class CssUtils {
             f *= 2.54;
         } else if (unit.startsWith(CommonCssConstants.DPPX)) {
             f *= 96;
+        } else if (!unit.startsWith(CommonCssConstants.DPI)) {
+            throw new StyledXMLParserException(LogMessageConstant.INCORRECT_RESOLUTION_UNIT_VALUE);
         }
+        
         return (float) f;
     }
 
@@ -465,7 +500,7 @@ public class CssUtils {
      * @return int position between the numeric value and unit or 0 if string is null or string started with a
      * non-numeric value.
      */
-    private static int determinePositionBetweenValueAndUnit(String string) {
+    public static int determinePositionBetweenValueAndUnit(String string) {
         if (string == null) {
             return 0;
         }
@@ -734,6 +769,46 @@ public class CssUtils {
             }
         }
         return builder.create();
+    }
+
+    /**
+     * Convert given point value to a pixel value. 1 px is 0.75 pts.
+     *
+     * @param pts float value to be converted to pixels
+     * @return float converted value pts/0.75f
+     */
+    public static float convertPtsToPx(float pts) {
+        return pts / 0.75f;
+    }
+
+    /**
+     * Convert given point value to a pixel value. 1 px is 0.75 pts.
+     *
+     * @param pts double value to be converted to pixels
+     * @return double converted value pts/0.75
+     */
+    public static double convertPtsToPx(double pts) {
+        return pts / 0.75;
+    }
+
+    /**
+     * Convert given point value to a point value. 1 px is 0.75 pts.
+     *
+     * @param px float value to be converted to pixels
+     * @return float converted value px*0.75
+     */
+    public static float convertPxToPts(float px) {
+        return px * 0.75f;
+    }
+
+    /**
+     * Convert given point value to a point value. 1 px is 0.75 pts.
+     *
+     * @param px double value to be converted to pixels
+     * @return double converted value px*0.75
+     */
+    public static double convertPxToPts(double px) {
+        return px * 0.75;
     }
 
     private static boolean addRange(RangeBuilder builder, String range) {

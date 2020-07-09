@@ -48,6 +48,7 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.KernelLogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.Version;
@@ -83,8 +84,6 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -102,6 +101,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main enter point to work with PDF document.
@@ -345,6 +346,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Gets XMPMetadata.
+     *
+     * @return the XMPMetadata
      */
     public byte[] getXmpMetadata() {
         return getXmpMetadata(false);
@@ -618,7 +621,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public void removePage(int pageNum) {
         checkClosingStatus();
-        PdfPage removedPage = catalog.getPageTree().removePage(pageNum);
+
+        PdfPage removedPage = getPage(pageNum);
+        if (removedPage != null && removedPage.isFlushed() && (isTagged() || hasAcroForm())) {
+            throw new PdfException(PdfException.FLUSHED_PAGE_CANNOT_BE_REMOVED);
+        }
+
+        catalog.getPageTree().removePage(pageNum);
 
         if (removedPage != null) {
             catalog.removeOutlines(removedPage);
@@ -626,8 +635,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             if (isTagged()) {
                 getTagStructureContext().removePageTags(removedPage);
             }
-            // TODO should we remove everything (outlines, tags) if page won't be removed in the end, because it's already flushed? wouldn't tags be also flushed?
-            if (!removedPage.getPdfObject().isFlushed()) {
+            if (!removedPage.isFlushed()) {
                 removedPage.getPdfObject().remove(PdfName.Parent);
                 removedPage.getPdfObject().getIndirectReference().setFree();
             }
@@ -1383,8 +1391,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * This method returns a complete outline tree of the whole document.
      *
-     * @param updateOutlines if the flag is true, the method read the whole document and creates outline tree.
-     *                       If false the method gets cached outline tree (if it was cached via calling getOutlines method before).
+     * @param updateOutlines if the flag is {@code true}, the method reads the whole document and creates outline tree.
+     *                       If the flag is {@code false}, the method gets cached outline tree
+     *                       (if it was cached via calling getOutlines method before).
      * @return fully initialize {@link PdfOutline} object.
      */
     public PdfOutline getOutlines(boolean updateOutlines) {
@@ -1416,6 +1425,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Gets static copy of cross reference table.
+     *
+     * @return  a static copy of cross reference table
      */
     public List<PdfIndirectReference> listIndirectReferences() {
         checkClosingStatus();
@@ -1710,6 +1721,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Create a new instance of {@link PdfFont} or load already created one.
+     *
+     * @param dictionary {@link PdfDictionary} that presents {@link PdfFont}.
+     *
+     * @return instance of {@link PdfFont}
      * <p>
      * Note, PdfFont which created with {@link PdfFontFactory#createFont(PdfDictionary)} won't be cached
      * until it will be added to {@link com.itextpdf.kernel.pdf.canvas.PdfCanvas} or {@link PdfResources}.
@@ -1746,6 +1761,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Adds a {@link PdfFont} instance to this document so that this font is flushed automatically
      * on document close. As a side effect, the underlying font dictionary is made indirect if it wasn't the case yet
+     *
+     * @param font a {@link PdfFont} instance to add
      *
      * @return the same PdfFont instance.
      */
@@ -1983,8 +2000,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 }
                 file.close();
                 writer.write((byte) '\n');
-                //TODO log if full compression differs
-                writer.properties.isFullCompression = reader.hasXrefStm();
+
+                overrideFullCompressionInWriterProperties(writer.properties, reader.hasXrefStm());
 
                 writer.crypto = reader.decrypt;
 
@@ -2057,6 +2074,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Update XMP metadata values from {@link PdfDocumentInfo}.
+     *
+     * @return the XMPMetadata
      */
     protected XMPMeta updateDefaultXmpMetadata() throws XMPException {
         XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(getXmpMetadata(true));
@@ -2155,6 +2174,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     final VersionInfo getVersionInfo() {
         return versionInfo;
+    }
+
+    boolean hasAcroForm() {
+        return getCatalog().getPdfObject().containsKey(PdfName.AcroForm);
     }
 
     private void updateProducerInInfoDictionary() {
@@ -2354,10 +2377,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         names.setModified();
     }
 
-    private static boolean isXmpMetaHasProperty(XMPMeta xmpMeta, String schemaNS, String propName) throws XMPException {
-        return xmpMeta.getProperty(schemaNS, propName) != null;
-    }
-
     @SuppressWarnings("unused")
     private byte[] getSerializedBytes() {
         ByteArrayOutputStream bos = null;
@@ -2463,5 +2482,20 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             buf.append(versionInfo.getVersion());
             return buf.toString();
         }
+    }
+
+    private static void overrideFullCompressionInWriterProperties(WriterProperties properties, boolean readerHasXrefStream) {
+        if (Boolean.TRUE == properties.isFullCompression && !readerHasXrefStream) {
+            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+            logger.warn(KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY);
+        } else if (Boolean.FALSE == properties.isFullCompression && readerHasXrefStream) {
+            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+            logger.warn(KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY);
+        }
+        properties.isFullCompression = readerHasXrefStream;
+    }
+
+    private static boolean isXmpMetaHasProperty(XMPMeta xmpMeta, String schemaNS, String propName) throws XMPException {
+        return xmpMeta.getProperty(schemaNS, propName) != null;
     }
 }

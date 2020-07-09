@@ -304,15 +304,10 @@ public class FontFaceTest extends SvgIntegrationTest {
         compare(fileName, sourceFolder, destinationFolder);
     }
 
-    // TODO DEVSIX-2113
-    // This test passes correctly when baseUri is set manually. Remove SvgConverterProperties and use convertToSinglePage(File, File) method instead.
-    // It must produce the same pdf as the one with a pre-defined baseUri does
     @Test
     public void resolveFontsDefaultUri() throws IOException, InterruptedException {
-        SvgConverterProperties properties = new SvgConverterProperties();
-        properties.setBaseUri(sourceFolder);
         String fileName = "fontSelectorTest02";
-        convertToSinglePage(new File(sourceFolder + fileName + ".svg"), new File(destinationFolder + fileName + ".pdf"), properties);
+        convertToSinglePage(new File(sourceFolder + fileName + ".svg"), new File(destinationFolder + fileName + ".pdf"));
         compare(fileName, sourceFolder, destinationFolder);
     }
 

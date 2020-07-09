@@ -1,24 +1,7 @@
 #!/usr/bin/env groovy
 @Library('pipeline-library')_
 
-def schedule, sonarBranchName, sonarBranchTarget
-switch (env.BRANCH_NAME) {
-    case ~/.*master.*/:
-        schedule = '@monthly'
-        sonarBranchName = '-Dsonar.branch.name=master'
-        sonarBranchTarget = ''
-        break
-    case ~/.*develop.*/:
-        schedule = '@midnight'
-        sonarBranchName = '-Dsonar.branch.name=develop'
-        sonarBranchTarget = '-Dsonar.branch.target=master'
-        break
-    default:
-        schedule = ''
-        sonarBranchName = '-Dsonar.branch.name=' + env.BRANCH_NAME
-        sonarBranchTarget = '-Dsonar.branch.target=develop'
-        break
-}
+def vars = setBranchDependentVars(env.BRANCH_NAME)
 
 pipeline {
 
@@ -30,7 +13,14 @@ pipeline {
 
     options {
         ansiColor('xterm')
-        buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
+        buildDiscarder(
+            logRotator(
+                numToKeepStr: vars.buildNumToKeep,
+                artifactNumToKeepStr: vars.buildArtifactNumToKeep,
+                daysToKeepStr: vars.buildDaysToKeep,
+                artifactDaysToKeepStr: vars.buildArtifactDaysToKeep
+            )
+        )
         parallelsAlwaysFailFast()
         skipStagesAfterUnstable()
         timeout(time: 2, unit: 'HOURS')
@@ -38,7 +28,7 @@ pipeline {
     }
 
     triggers {
-        cron(schedule)
+        cron(vars.schedule)
     }
 
     tools {
@@ -47,6 +37,13 @@ pipeline {
     }
 
     stages {
+	    stage('Abort possible previous builds') {
+            steps {
+                script {
+                    abortPreviousBuilds()
+                }
+            }
+        }
         stage('Build') {
             options {
                 retry(2)
@@ -90,11 +87,6 @@ pipeline {
                 withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
                     sh 'mvn --no-transfer-progress verify --activate-profiles qa -Dpmd.analysisCache=true'
                 }
-                recordIssues(tools: [
-                        checkStyle(),
-                        pmdParser(),
-                        spotBugs(useRankAsPriority: true)
-                ])
                 dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
             }
         }
@@ -105,7 +97,7 @@ pipeline {
             steps {
                 withMaven(jdk: "${JDK_VERSION}", maven: 'M3', mavenLocalRepo: '.repository') {
                     withSonarQubeEnv('Sonar') {
-                        sh 'mvn --no-transfer-progress --activate-profiles test -DgsExec="${gsExec}" -DcompareExec="${compareExec}" -Dmaven.main.skip=true -Dmaven.test.failure.ignore=false org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report -Dsonar.java.spotbugs.reportPaths="target/spotbugs.xml" sonar:sonar ' + sonarBranchName + ' ' + sonarBranchTarget
+                        sh "mvn --no-transfer-progress --activate-profiles test -DgsExec=\"$gsExec\" -DcompareExec=\"$compareExec\" -Dmaven.main.skip=true -Dmaven.test.failure.ignore=false org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report -Dsonar.java.spotbugs.reportPaths=\"target/spotbugs.xml\" sonar:sonar $vars.sonarBranchName $vars.sonarBranchTarget"
                     }
                 }
             }
@@ -198,14 +190,14 @@ pipeline {
         }
         fixed {
             script {
-                if (env.BRANCH_NAME.contains('master') || env.BRANCH_NAME.contains('develop')) {
+                if (vars.notifySlack) {
                     slackNotifier("#ci", currentBuild.currentResult, "${env.BRANCH_NAME} - Back to normal")
                 }
             }
         }
         regression {
             script {
-                if (env.BRANCH_NAME.contains('master') || env.BRANCH_NAME.contains('develop')) {
+                if (vars.notifySlack) {
                     slackNotifier("#ci", currentBuild.currentResult, "${env.BRANCH_NAME} - First failure")
                 }
             }

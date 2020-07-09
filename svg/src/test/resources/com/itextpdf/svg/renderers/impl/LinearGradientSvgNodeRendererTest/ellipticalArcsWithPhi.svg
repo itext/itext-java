@@ -1,0 +1,39 @@
+<svg width="1600" height="1000" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient x1="20%" y1="20%" x2="80%" y2="80%" id="myFillGradient">
+            <stop offset="0" stop-color="#ffcc00"/>
+            <stop offset="0.5" stop-color="#cc6699"/>
+            <stop offset="1" stop-color="#66cc99"/>
+        </linearGradient>
+        <linearGradient x1="80%" y1="80%" x2="20%" y2="20%" id="myStrokeGradient">
+            <stop offset="0" stop-color="#ffcc00"/>
+            <stop offset="0.5" stop-color="magenta"/>
+            <stop offset="1" stop-color="#66cc99"/>
+        </linearGradient>
+    </defs>
+
+    <path d="M 0 250
+           a 30 50 50 0 1 250 150" fill="url(#myFillGradient)"/>
+
+    <path d="M 350 250
+           a 30 50 50 0 1 250 150" fill="url(#myFillGradient)"/>
+
+    <path d="M 700 250
+           a 30 50 50 1 1 250 150" fill="url(#myFillGradient)"/>
+
+    <path d="M 1200 150
+           a 30 50 50 0 0 250 150" fill="url(#myFillGradient)"/>
+
+
+    <path d="M 0 600
+           a 30 50 0 0 1 250 150" fill="url(#myFillGradient)"/>
+
+    <path d="M 350 600
+           a 30 50 0 0 1 250 150" fill="url(#myFillGradient)"/>
+
+    <path d="M 700 600
+           a 30 50 0 1 1 250 150" fill="url(#myFillGradient)"/>
+
+    <path d="M 1200 500
+           a 30 50 0 0 0 250 150" fill="url(#myFillGradient)"/>
+</svg>

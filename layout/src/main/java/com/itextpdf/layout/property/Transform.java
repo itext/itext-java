@@ -83,6 +83,7 @@ public class Transform {
      * @param t      a {@link Transform} instance to convert
      * @param width  the width of available area, the point value of which is equivalent to 100% for percentage resolving
      * @param height the height of available area, the point value of which is equivalent to 100% for percentage resolving
+     * @return resulting affine transformation instance, accumulated from {@link Transform}
      */
     public static AffineTransform getAffineTransform(Transform t, float width, float height) {
         List<SingleTransform> multipleTransform = t.getMultipleTransform();

@@ -220,7 +220,7 @@
         </path>
         <text text-anchor="start" x="203" y="465.86558441558424" font-size="7" stroke="none" stroke-width="0" fill="#f3b300" id="56">Thermotogae
         </text>
-        <rect x="825.9166666666666" y="0" width="75.08333333333333" height="501" stroke="none" stroke-width="0" fill="url(https://www.w3schools.com/howto/tryit.asp?filename=tryhow_google_pie_chart#_ABSTRACT_RENDERER_ID_0)">
+        <rect x="825.9166666666666" y="0" width="75.08333333333333" height="501" stroke="none" stroke-width="0" fill="url(#_ABSTRACT_RENDERER_ID_0)">
         </rect>
     </g>
     <g>

@@ -574,6 +574,21 @@ public class CommonCssConstants {
     public static final String TEXT_DECORATION = "text-decoration";
 
     /**
+     * The Constant TEXT_DECORATION_LINE.
+     */
+    public static final String TEXT_DECORATION_LINE = "text-decoration-line";
+
+    /**
+     * The Constant TEXT_DECORATION_STYLE.
+     */
+    public static final String TEXT_DECORATION_STYLE = "text-decoration-style";
+
+    /**
+     * The Constant TEXT_DECORATION_COLOR.
+     */
+    public static final String TEXT_DECORATION_COLOR = "text-decoration-color";
+
+    /**
      * The Constant TEXT_INDENT.
      */
     public static final String TEXT_INDENT = "text-indent";
@@ -634,6 +649,11 @@ public class CommonCssConstants {
     public static final String WIDTH = "width";
 
     /**
+     * The Constant HEIGHT.
+     */
+    public static final String HEIGHT = "height";
+
+    /**
      * The Constant WORDWRAP.
      */
     public static final String WORDWRAP = "word-wrap";
@@ -674,6 +694,11 @@ public class CommonCssConstants {
      * The Constant AUTO.
      */
     public static final String AUTO = "auto";
+
+    /**
+     * The Constant BLINK.
+     */
+    public static final String BLINK = "blink";
 
     /**
      * The Constant BOLD.
@@ -860,6 +885,11 @@ public class CommonCssConstants {
     public static final String LIGHTER = "lighter";
 
     /**
+     * The Constant value LINE_THROUGH.
+     */
+    public static final String LINE_THROUGH = "line-through";
+
+    /**
      * The Constant LOCAL.
      */
     public static final String LOCAL = "local";
@@ -953,6 +983,11 @@ public class CommonCssConstants {
      * The Constant OUTSET.
      */
     public static final String OUTSET = "outset";
+
+    /**
+     * The Constant value OVERLINE.
+     */
+    public static final String OVERLINE= "overline";
 
     /**
      * The Constant PADDING_BOX.
@@ -1110,6 +1145,11 @@ public class CommonCssConstants {
     public static final String TRANSPARENT = "transparent";
 
     /**
+     * The Constant value UNDERLINE
+     */
+    public static final String UNDERLINE = "underline";
+
+    /**
      * The Constant UPPER_ALPHA.
      */
     public static final String UPPER_ALPHA = "upper-alpha";
@@ -1128,6 +1168,11 @@ public class CommonCssConstants {
      * The Constant value VISIBLE.
      */
     public static final String VISIBLE = "visible";
+
+    /**
+     * The Constant value WAVY.
+     */
+    public static final String WAVY = "wavy";
 
     /**
      * The Constant X_LARGE.
@@ -1425,6 +1470,11 @@ public class CommonCssConstants {
      * The Constant DPCM.
      */
     public static final String DPCM = "dpcm";
+
+    /**
+     * The Constant DPI.
+     */
+    public static final String DPI = "dpi";
 
     /**
      * The Constant DPPX.

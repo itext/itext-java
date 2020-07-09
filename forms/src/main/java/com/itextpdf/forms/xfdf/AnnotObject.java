@@ -485,6 +485,7 @@ public class AnnotObject {
 
     /**
      * Gets the reference to the source {@link PdfAnnotation}. Used for attaching popups in case of reading data from pdf file.
+     * @return an {@link PdfIndirectReference} of the source annotation object.
      */
     public PdfIndirectReference getRef() {
         return ref;
@@ -492,6 +493,8 @@ public class AnnotObject {
 
     /**
      * Sets the reference to the source {@link PdfAnnotation}. Used for attaching popups in case of reading data from pdf file.
+     * @param ref {@link PdfIndirectReference} of the source annotation object.
+     * @return this {@link AnnotObject} instance.
      */
     public AnnotObject setRef(PdfIndirectReference ref) {
         this.ref = ref;

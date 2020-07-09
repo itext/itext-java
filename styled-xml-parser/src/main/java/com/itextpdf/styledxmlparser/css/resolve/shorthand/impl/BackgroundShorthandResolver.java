@@ -43,15 +43,16 @@
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
+import com.itextpdf.styledxmlparser.css.util.CssGradientUtil;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import java.util.ArrayList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -109,13 +110,10 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
             );
         }
 
-        List<String> commaSeparatedExpressions = splitMultipleBackgrounds(shorthandExpression);
+        // TODO: DEVSIX-2027 ignore multiple backgrounds at the moment (stop parsing after comma)
+        List<String> props = CssUtils.extractShorthandProperties(shorthandExpression).get(0);
 
-        // TODO ignore multiple backgrounds at the moment
-        String backgroundExpression = commaSeparatedExpressions.get(0);
         String[] resolvedProps = new String[8];
-
-        String[] props = backgroundExpression.split("\\s+");
         boolean slashEncountered = false;
         for (String value : props) {
             int slashCharInd = value.indexOf('/');
@@ -157,7 +155,7 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
      * @return the property type value
      */
     private int resolvePropertyType(String value) {
-        if (value.contains("url(") || CommonCssConstants.NONE.equals(value)) {
+        if (value.contains("url(") || CssGradientUtil.isCssLinearGradientValue(value) || CommonCssConstants.NONE.equals(value)) {
             return BACKGROUND_IMAGE_TYPE;
         } else if (CommonCssConstants.BACKGROUND_REPEAT_VALUES.contains(value)) {
             return BACKGROUND_REPEAT_TYPE;
@@ -204,32 +202,5 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
         } else {
             resolvedProps[type] = value;
         }
-    }
-
-    /**
-     * Splits multiple backgrounds.
-     *
-     * @param shorthandExpression the shorthand expression
-     * @return the list of backgrounds
-     */
-    private List<String> splitMultipleBackgrounds(String shorthandExpression) {
-        List<String> commaSeparatedExpressions = new ArrayList<>();
-        boolean isInsideParentheses = false; // in order to avoid split inside rgb/rgba color definition
-        int prevStart = 0;
-        for (int i = 0; i < shorthandExpression.length(); ++i) {
-            if (shorthandExpression.charAt(i) == ',' && !isInsideParentheses) {
-                commaSeparatedExpressions.add(shorthandExpression.substring(prevStart, i));
-                prevStart = i + 1;
-            } else if (shorthandExpression.charAt(i) == '(') {
-                isInsideParentheses = true;
-            } else if (shorthandExpression.charAt(i) == ')') {
-                isInsideParentheses = false;
-            }
-        }
-
-        if (commaSeparatedExpressions.isEmpty()) {
-            commaSeparatedExpressions.add(shorthandExpression);
-        }
-        return commaSeparatedExpressions;
     }
 }

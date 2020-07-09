@@ -58,9 +58,9 @@ import java.util.List;
  */
 public class Rectangle implements Cloneable, Serializable {
 
-    private static final long serialVersionUID = 8025677415569233446L;
+    static float EPS = 1e-4f;
 
-    private static float EPS = 1e-4f;
+    private static final long serialVersionUID = 8025677415569233446L;
 
     protected float x;
     protected float y;
@@ -215,7 +215,14 @@ public class Rectangle implements Cloneable, Serializable {
 
         //If width or height is non-negative, there is overlap and we can construct the intersection rectangle
         float width = urx - llx;
+        if (Math.abs(width) < EPS) {
+            width = 0;
+        }
+
         float height = ury - lly;
+        if (Math.abs(height) < EPS) {
+            height = 0;
+        }
 
         if (Float.compare(width, 0) >= 0
                 && Float.compare(height, 0) >= 0) {
@@ -253,22 +260,22 @@ public class Rectangle implements Cloneable, Serializable {
     /**
      * Check if this rectangle and the passed rectangle overlap
      *
-     * @param rect
+     * @param rect a rectangle which is to be checked if it overlaps the passed rectangle.
      * @return true if there is overlap of some kind
      */
     public boolean overlaps(Rectangle rect) {
         // Two rectangles do not overlap if any of the following holds
         // 1. the lower left corner of the second rectangle is to the right of the upper-right corner of the first.
-        return !(this.getX() + this.getWidth() < rect.getX()
+        return !((rect.getX() - (this.getX() + this.getWidth()) > EPS)
 
                 // 2. the lower left corner of the second rectangle is above the upper right corner of the first.
-                || this.getY() + this.getHeight() < rect.getY()
+                || (rect.getY() - (this.getY() + this.getHeight()) > EPS)
 
                 // 3. the upper right corner of the second rectangle is to the left of the lower-left corner of the first.
-                || this.getX() > rect.getX() + rect.getWidth()
+                || (this.getX() - (rect.getX() + rect.getWidth()) > EPS)
 
                 // 4. the upper right corner of the second rectangle is below the lower left corner of the first.
-                || this.getY() > rect.getY() + rect.getHeight()
+                || (this.getY() - (rect.getY() + rect.getHeight()) > EPS)
         );
 
     }
@@ -409,6 +416,28 @@ public class Rectangle implements Cloneable, Serializable {
     }
 
     /**
+     * Increases the width of rectangle by the given value. May be used in chain.
+     *
+     * @param extra the value of the extra wudth to be added.
+     * @return this {@link Rectangle} instance.
+     */
+    public Rectangle increaseWidth(float extra) {
+        this.width += extra;
+        return this;
+    }
+
+    /**
+     * Decreases the width of rectangle by the given value. May be used in chain.
+     *
+     * @param extra the value of the extra width to be subtracted.
+     * @return this {@link Rectangle} instance.
+     */
+    public Rectangle decreaseWidth(float extra) {
+        this.width -= extra;
+        return this;
+    }
+
+    /**
      * Gets the X coordinate of the left edge of the rectangle. Same as: {@code getX()}.
      *
      * @return the X coordinate of the left edge of the rectangle.
@@ -497,7 +526,7 @@ public class Rectangle implements Cloneable, Serializable {
      * @param bottomIndent the value on which the bottom y coordinate will change.
      * @param leftIndent the value on which the left x coordinate will change.
      * @param reverse if {@code true} the rectangle will expand, otherwise it will shrink
-     * @return the  rectanglewith applied margins
+     * @return the rectangle with applied margins
      */
     public Rectangle applyMargins(float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse) {
         x += leftIndent * (reverse ? -1 : 1);

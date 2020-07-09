@@ -10,13 +10,13 @@ Q
 endstream
 endobj
 4 0 obj
-<</Contents 5 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</XObject<</Fm1 7 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
+<</Contents 5 0 R/MediaBox[0 0 1684 2384]/Parent 2 0 R/Resources<</XObject<</Fm1 7 0 R>>>>/TrimBox[0 0 1684 2384]/Type/Page>>
 endobj
 1 0 obj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191219144059+03'00')/ModDate(D:20191219144059+03'00')/Producer(iText® 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20200617112614+03'00')/ModDate(D:20200617112614+03'00')/Producer(iText® 7.1.12-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +36,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 675.75 375.75]/Length 7838/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675.75 375.75]/Length 7859/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675.75 375.75 re
 W
 n
@@ -775,6 +775,9 @@ ET
 f
 Q
 q
+/Pattern cs
+
+/P1 scn
 % rect
 619.44 0 56.31 375.75 re
 f
@@ -791,20 +794,36 @@ Q
 
 endstream
 endobj
+9 0 obj
+<</Matrix[75.08 0 0 501 619.44 0]/PatternType 2/Shading 10 0 R/Type/Pattern>>
+endobj
+10 0 obj
+<</ColorSpace/DeviceRGB/Coords[0 0 0.75 0]/Domain[0 1]/Function 11 0 R/ShadingType 2>>
+endobj
+11 0 obj
+<</Bounds[]/Domain[0 1]/Encode[0 1]/FunctionType 3/Functions[12 0 R]>>
+endobj
+12 0 obj
+<</C0[1 1 1]/C1[1 1 1]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
 xref
-0 9
+0 13
 0000000000 65535 f 
-0000000226 00000 n 
-0000000528 00000 n 
-0000000271 00000 n 
+0000000230 00000 n 
+0000000532 00000 n 
+0000000275 00000 n 
 0000000089 00000 n 
 0000000015 00000 n 
-0000000438 00000 n 
-0000000579 00000 n 
-0000000771 00000 n 
+0000000442 00000 n 
+0000000583 00000 n 
+0000000775 00000 n 
+0000008786 00000 n 
+0000008879 00000 n 
+0000008982 00000 n 
+0000009069 00000 n 
 trailer
-<</ID [<b5ce63be615d550558b1a062fafa7bca><b5ce63be615d550558b1a062fafa7bca>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-7.1.10-SNAPSHOT
+<</ID [<0ed1cab497af9866fdabef9c30831914><0ed1cab497af9866fdabef9c30831914>]/Info 3 0 R/Root 1 0 R/Size 13>>
+%iText-7.1.12-SNAPSHOT
 startxref
-8740
+9141
 %%EOF

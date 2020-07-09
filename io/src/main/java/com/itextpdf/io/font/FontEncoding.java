@@ -120,6 +120,8 @@ public class FontEncoding implements Serializable {
 
     /**
      * This encoding will base on font encoding (FontSpecific encoding in Type 1 terminology)
+     *
+     * @return created font specific encoding
      */
     public static FontEncoding createFontSpecificEncoding() {
         FontEncoding encoding = new FontEncoding();

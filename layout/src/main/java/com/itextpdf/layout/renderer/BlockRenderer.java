@@ -209,6 +209,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
                         return new LayoutResult(layoutResult, editedArea, splitRenderer, overflowRenderer, null).setAreaBreak(result.getAreaBreak());
                     } else {
+                        floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
                         return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing()).setAreaBreak(result.getAreaBreak());
                     }
                 }
@@ -352,6 +353,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                                 LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
                                 return new LayoutResult(layoutResult, editedArea, splitRenderer, overflowRenderer, null).setAreaBreak(result.getAreaBreak());
                             } else {
+                                floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
                                 return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing()).setAreaBreak(result.getAreaBreak());
                             }
                         }
@@ -409,6 +411,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         boolean minHeightOverflow = overflowRenderer != null;
         if (minHeightOverflow && isKeepTogether()) {
+            floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
             return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
         }
 
@@ -478,6 +481,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 if (isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
                     LoggerFactory.getLogger(getClass()).warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "It fits by height so it will be forced placed"));
                 } else if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+                    floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
                     return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, this);
                 }
             }
@@ -493,6 +497,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (positionedRenderers.size() > 0) {
                 overflowRenderer.positionedRenderers = new ArrayList<>(positionedRenderers);
             }
+            floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
             return new LayoutResult(LayoutResult.NOTHING, null, null, overflowRenderer, causeOfNothing);
         }
     }

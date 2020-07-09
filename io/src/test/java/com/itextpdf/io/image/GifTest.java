@@ -42,27 +42,71 @@
  */
 package com.itextpdf.io.image;
 
+import com.itextpdf.io.IOException;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.FileInputStream;
-import java.io.IOException;
+import java.util.List;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class GifTest extends ExtendedITextTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/io/image/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/io/image/GifTest/";
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
-    public void gifImageTest() throws IOException {
+    public void gifImageTest() throws IOException, java.io.IOException {
         try (FileInputStream file = new FileInputStream(sourceFolder + "WP_20140410_001.gif")) {
             byte[] fileContent = StreamUtil.inputStreamToArray(file);
-            ImageData img = ImageDataFactory.create(fileContent, false);
+            ImageData img = ImageDataFactory.createGif(fileContent).getFrames().get(0);
             Assert.assertTrue(img.isRawImage());
             Assert.assertEquals(ImageType.GIF, img.getOriginalType());
+        }
+    }
+
+    @Test
+    public void gifImageFrameOutOfBoundsTest() throws java.io.IOException {
+        junitExpectedException.expect(IOException.class);
+        junitExpectedException.expectMessage(MessageFormatUtil.format(IOException.CannotFind1Frame, 2));
+        ImageDataFactory.createGifFrame(UrlUtil.toURL(sourceFolder + "image-2frames.gif"), 3);
+    }
+
+    @Test
+    public void gifImageSpecificFrameTest() throws IOException, java.io.IOException {
+        String imageFilePath = sourceFolder + "image-2frames.gif";
+        try (FileInputStream file = new FileInputStream(imageFilePath)) {
+            byte[] fileContent = StreamUtil.inputStreamToArray(file);
+            ImageData img = ImageDataFactory.createGifFrame(fileContent, 2);
+            Assert.assertEquals(100, (int)img.getWidth());
+            Assert.assertEquals(100, (int)img.getHeight());
+
+            ImageData imgFromUrl = ImageDataFactory.createGifFrame(UrlUtil.toURL(imageFilePath), 2);
+            Assert.assertArrayEquals(img.getData(), imgFromUrl.getData());
+        }
+    }
+
+    @Test
+    public void gifImageReadingAllFramesTest() throws IOException, java.io.IOException {
+        String imageFilePath = sourceFolder + "image-2frames.gif";
+        try (FileInputStream file = new FileInputStream(imageFilePath)) {
+            byte[] fileContent = StreamUtil.inputStreamToArray(file);
+            List<ImageData> frames = ImageDataFactory.createGifFrames(fileContent);
+            Assert.assertEquals(2, frames.size());
+            Assert.assertNotEquals(frames.get(0).getData(), frames.get(1).getData());
+
+            List<ImageData> framesFromUrl = ImageDataFactory.createGifFrames(UrlUtil.toURL(imageFilePath));
+            Assert.assertArrayEquals(frames.get(0).getData(), framesFromUrl.get(0).getData());
+            Assert.assertArrayEquals(frames.get(1).getData(), framesFromUrl.get(1).getData());
         }
     }
 }

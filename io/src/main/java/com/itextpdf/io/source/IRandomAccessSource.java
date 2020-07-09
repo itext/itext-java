@@ -82,7 +82,7 @@ public interface IRandomAccessSource {
     /**
      * Closes this source. The underlying data structure or source (if any) will also be closed
      *
-     * @throws java.io.IOException
+     * @throws java.io.IOException in case of any reading error.
      */
     void close() throws java.io.IOException;
 }

@@ -44,8 +44,14 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.source.PdfTokenizer;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
+import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
@@ -58,13 +64,18 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.canvas.parser.util.PdfCanvasParser;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.pdfa.PdfAConformanceException;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.itextpdf.pdfa.PdfAConformanceLogMessageConstant;
@@ -88,6 +99,7 @@ public class PdfA1Checker extends PdfAChecker {
             PdfName.PrevPage, PdfName.FirstPage, PdfName.LastPage));
     protected static final Set<PdfName> allowedRenderingIntents = new HashSet<>(Arrays.asList(PdfName.RelativeColorimetric,
             PdfName.AbsoluteColorimetric, PdfName.Perceptual, PdfName.Saturation));
+    private static final int MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS = 8;
     private static final long serialVersionUID = 5103027349795298132L;
 
     /**
@@ -137,6 +149,12 @@ public class PdfA1Checker extends PdfAChecker {
     @Override
     public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill, PdfStream stream) {
         checkColorSpace(color.getColorSpace(), currentColorSpaces, true, fill);
+        if (color instanceof PatternColor) {
+            PdfPattern pattern = ((PatternColor) color).getPattern();
+            if (pattern instanceof PdfPattern.Tiling) {
+                checkContentStream((PdfStream) pattern.getPdfObject());
+            }
+        }
     }
 
     @Override
@@ -144,7 +162,13 @@ public class PdfA1Checker extends PdfAChecker {
         if (colorSpace instanceof PdfSpecialCs.Separation) {
             colorSpace = ((PdfSpecialCs.Separation) colorSpace).getBaseCs();
         } else if (colorSpace instanceof PdfSpecialCs.DeviceN) {
-            colorSpace = ((PdfSpecialCs.DeviceN) colorSpace).getBaseCs();
+            PdfSpecialCs.DeviceN deviceNColorspace = (PdfSpecialCs.DeviceN) colorSpace;
+            if (deviceNColorspace.getNumberOfComponents() > MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS) {
+                throw new PdfAConformanceException(PdfAConformanceException.
+                        THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED,
+                        MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS);
+            }
+            colorSpace = deviceNColorspace.getBaseCs();
         }
 
         if (colorSpace instanceof PdfDeviceCs.Rgb) {
@@ -254,6 +278,68 @@ public class PdfA1Checker extends PdfAChecker {
                 checkNonSymbolicTrueTypeFont(trueTypeFont);
             }
         }
+
+        if (pdfFont instanceof PdfType3Font) {
+            PdfDictionary charProcs = pdfFont.getPdfObject().getAsDictionary(PdfName.CharProcs);
+            for (PdfName charName : charProcs.keySet()) {
+                checkContentStream(charProcs.getAsStream(charName));
+            }
+        }
+    }
+
+    @Override
+    protected void checkContentStream(PdfStream contentStream) {
+        if (isFullCheckMode() || contentStream.isModified()) {
+            byte[] contentBytes = contentStream.getBytes();
+            PdfTokenizer tokenizer = new PdfTokenizer(
+                    new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(contentBytes)));
+
+            PdfCanvasParser parser = new PdfCanvasParser(tokenizer);
+            List<PdfObject> operands = new ArrayList<>();
+            try {
+                while (parser.parse(operands).size() > 0) {
+                    for (PdfObject operand : operands) {
+                        checkContentStreamObject(operand);
+                    }
+                }
+            } catch (IOException e) {
+                throw new PdfException(PdfException.CannotParseContentStream, e);
+            }
+        }
+    }
+
+    @Override
+    protected void checkContentStreamObject(PdfObject object) {
+        byte type = object.getType();
+        switch (type) {
+            case PdfObject.NAME:
+                checkPdfName((PdfName) object);
+                break;
+            case PdfObject.STRING:
+                checkPdfString((PdfString) object);
+                break;
+            case PdfObject.NUMBER:
+                checkPdfNumber((PdfNumber) object);
+                break;
+            case PdfObject.ARRAY:
+                PdfArray array = (PdfArray) object;
+                checkPdfArray(array);
+                for (PdfObject obj : array) {
+                    checkContentStreamObject(obj);
+                }
+                break;
+            case PdfObject.DICTIONARY:
+                PdfDictionary dictionary = (PdfDictionary) object;
+                checkPdfDictionary(dictionary);
+                for (final PdfName name: dictionary.keySet()) {
+                    checkPdfName(name);
+                    checkPdfObject(dictionary.get(name, false));
+                }
+                for (final PdfObject obj : dictionary.values()) {
+                    checkContentStreamObject(obj);
+                }
+                break;
+        }
     }
 
     @Override
@@ -330,6 +416,7 @@ public class PdfA1Checker extends PdfAChecker {
         }
 
         checkResources(form.getAsDictionary(PdfName.Resources));
+        checkContentStream(form);
     }
 
     @Override
@@ -375,17 +462,59 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     protected void checkPdfNumber(PdfNumber number) {
-        if (Math.abs(number.longValue()) > getMaxRealValue() && number.toString().contains(".")) {
-            throw new PdfAConformanceException(PdfAConformanceException.REAL_NUMBER_IS_OUT_OF_RANGE);
+        if (number.hasDecimalPoint()) {
+            if (Math.abs(number.longValue()) > getMaxRealValue()) {
+                throw new PdfAConformanceException(PdfAConformanceException.REAL_NUMBER_IS_OUT_OF_RANGE);
+            }
+        } else {
+            if (number.longValue() > getMaxIntegerValue() || number.longValue() < getMinIntegerValue()) {
+                throw new PdfAConformanceException(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE);
+            }
         }
     }
 
+    /**
+     * Retrieve maximum allowed real value.
+     * @return maximum allowed real number
+     */
     protected double getMaxRealValue() {
         return 32767;
     }
 
+    /**
+     * Retrieve maximal allowed integer value.
+     * @return maximal allowed integer number
+     */
+    protected long getMaxIntegerValue() {
+        return Integer.MAX_VALUE;
+    }
+
+    /**
+     * Retrieve minimal allowed integer value.
+     * @return minimal allowed integer number
+     */
+    protected long getMinIntegerValue() {
+        return Integer.MIN_VALUE;
+    }
+
+    @Override
+    protected void checkPdfArray(PdfArray array) {
+        if (array.size() > getMaxArrayCapacity()) {
+            throw new PdfAConformanceException(PdfAConformanceException.MAXIMUM_ARRAY_CAPACITY_IS_EXCEEDED);
+        }
+    }
+
+    @Override
+    protected void checkPdfDictionary(PdfDictionary dictionary) {
+        if (dictionary.size() > getMaxDictionaryCapacity()) {
+            throw new PdfAConformanceException(PdfAConformanceException.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED);
+        }
+    }
+
     @Override
     protected void checkPdfStream(PdfStream stream) {
+        checkPdfDictionary(stream);
+
         if (stream.containsKey(PdfName.F) || stream.containsKey(PdfName.FFilter) || stream.containsKey(PdfName.FDecodeParams)) {
             throw new PdfAConformanceException(PdfAConformanceException.STREAM_OBJECT_DICTIONARY_SHALL_NOT_CONTAIN_THE_F_FFILTER_OR_FDECODEPARAMS_KEYS);
         }
@@ -400,6 +529,22 @@ public class PdfA1Checker extends PdfAChecker {
                     throw new PdfAConformanceException(PdfAConformanceException.LZWDECODE_FILTER_IS_NOT_PERMITTED);
             }
         }
+    }
+
+    @Override
+    protected void checkPdfName(PdfName name) {
+        if (name.getValue().length() > getMaxNameLength()) {
+            throw new PdfAConformanceException(PdfAConformanceException.PDF_NAME_IS_TOO_LONG);
+        }
+    }
+
+    /**
+     * Retrieve maximum allowed length of the name object.
+     *
+     * @return maximum allowed length of the name
+     */
+    protected int getMaxNameLength() {
+        return 127;
     }
 
     @Override
@@ -579,5 +724,13 @@ public class PdfA1Checker extends PdfAChecker {
             }
         }
         return fields;
+    }
+
+    private int getMaxArrayCapacity() {
+        return 8191;
+    }
+
+    private int getMaxDictionaryCapacity() {
+        return 4095;
     }
 }

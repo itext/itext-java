@@ -62,7 +62,11 @@ public class PdfSquareAnnotation extends PdfMarkupAnnotation {
     }
 
     /**
-     * see {@link PdfAnnotation#makeAnnotation(PdfObject)}
+     * Instantiates a new {@link PdfSquareAnnotation} instance based on {@link PdfDictionary}
+     * instance, that represents existing annotation object in the document.
+     *
+     * @param pdfObject the {@link PdfDictionary} representing annotation object
+     * @see PdfAnnotation#makeAnnotation(PdfObject)
      */
     protected PdfSquareAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);

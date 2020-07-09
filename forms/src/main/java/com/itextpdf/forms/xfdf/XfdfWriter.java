@@ -43,17 +43,17 @@
 package com.itextpdf.forms.xfdf;
 
 import com.itextpdf.kernel.pdf.PdfName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 class XfdfWriter {
 
@@ -256,7 +256,7 @@ class XfdfWriter {
 
         //optional attribute
         if (borderStyleAltObject.getDashPattern() != null) {
-            //TODO add real conversion from PdfArray (PdfName.D in Border dictionary) to String
+            //TODO DEVSIX-4028 add real conversion from PdfArray (PdfName.D in Border dictionary) to String
             borderStyleAlt.setAttribute(XfdfConstants.DASH_PATTERN, Arrays.toString(borderStyleAltObject.getDashPattern()));
         }
 

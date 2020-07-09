@@ -91,7 +91,7 @@ public class FillTest extends SvgIntegrationTest {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill");
     }
 
-    /* This test should fail when RND-910 is resolved*/
+    /* This test should fail when DEVSIX-2251 is resolved*/
     @Test
     public void eoFillTest01() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill01");
@@ -117,7 +117,7 @@ public class FillTest extends SvgIntegrationTest {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "eofillstroke");
     }
 
-    /* This test should fail when RND-1031 is resolved*/
+    /* This test should fail when DEVSIX-2251 is resolved*/
     @Test
     public void nonZeroFillTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "nonzerofill");
@@ -128,7 +128,6 @@ public class FillTest extends SvgIntegrationTest {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "opacityfill");
     }
 
-    /* This test should fail when RND-1108 is resolved*/
     @Test
     public void eofillUnsuportedAtributeTest() throws IOException, InterruptedException {
         junitExpectedException.expect(SvgProcessingException.class);
@@ -146,9 +145,6 @@ public class FillTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
-    })
     //TODO update cmp file after DEVSIX-3365 will be fixed
     public void invalidUrlFillTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "invalidUrlFillTest");

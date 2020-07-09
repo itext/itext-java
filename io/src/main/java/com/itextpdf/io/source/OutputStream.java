@@ -239,6 +239,10 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
 
     /**
      * This method is invoked while deserialization
+     *
+     * @param in given ObjectInputStream
+     * @throws java.io.IOException occurs in cases of producing failed or interrupted I/O operations
+     * @throws java.lang.ClassNotFoundException thrown when an application could not find the desired class
      */
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
         in.defaultReadObject();
@@ -246,6 +250,9 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
 
     /**
      * This method is invoked while serialization
+     *
+     * @param out given ObjectOutputStream
+     * @throws java.io.IOException occurs in cases of producing failed or interrupted I/O operations
      */
     private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
         java.io.OutputStream tempOutputStream = outputStream;

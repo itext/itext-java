@@ -69,7 +69,7 @@ public class NamedObjectsTest extends SvgIntegrationTest {
     })
     public void addNamedObject() throws IOException {
         INode parsedSvg = SvgConverter.parse(new FileInputStream("./src/test/resources/com/itextpdf/svg/renderers/impl/NamedObjectsTest/names.svg"));
-        ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg);
+        ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, null);
 
         Assert.assertTrue(result.getNamedObjects().get("name_svg") instanceof SvgTagSvgNodeRenderer);
         Assert.assertTrue(result.getNamedObjects().get("name_rect") instanceof RectangleSvgNodeRenderer);

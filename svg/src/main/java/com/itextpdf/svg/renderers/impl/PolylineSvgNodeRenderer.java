@@ -43,6 +43,7 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.Point;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
@@ -92,11 +93,43 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
                     .setMessageParams(pointsAttribute);
         }
 
+        this.points.clear();
         float x, y;
         for (int i = 0; i < points.size(); i = i + 2) {
             x = CssUtils.parseAbsoluteLength(points.get(i));
             y = CssUtils.parseAbsoluteLength(points.get(i + 1));
             this.points.add(new Point(x, y));
+        }
+    }
+
+    @Override
+    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        setPoints(getAttribute(SvgConstants.Attributes.POINTS));
+        if (points.size() > 1) {
+            Point firstPoint = points.get(0);
+            double minX = firstPoint.getX();
+            double minY = firstPoint.getY();
+            double maxX = minX;
+            double maxY = minY;
+
+            for (int i = 1; i < points.size(); ++i) {
+                Point current = points.get(i);
+
+                double currentX = current.getX();
+                minX = Math.min(minX, currentX);
+                maxX = Math.max(maxX, currentX);
+
+                double currentY = current.getY();
+                minY = Math.min(minY, currentY);
+                maxY = Math.max(maxY, currentY);
+            }
+
+            double width = maxX - minX;
+            double height = maxY - minY;
+
+            return new Rectangle((float) minX, (float) minY, (float) width, (float) height);
+        } else {
+            return super.getObjectBoundingBox(context);
         }
     }
 
@@ -139,8 +172,8 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
             point = points.get(points.size() - 1);
         }
         if (point != null) {
-            String moveX = SvgCssUtils.convertDoubleToString(SvgCssUtils.convertPtsToPx(point.x));
-            String moveY = SvgCssUtils.convertDoubleToString(SvgCssUtils.convertPtsToPx(point.y));
+            String moveX = SvgCssUtils.convertDoubleToString(CssUtils.convertPtsToPx(point.x));
+            String moveY = SvgCssUtils.convertDoubleToString(CssUtils.convertPtsToPx(point.y));
             MarkerSvgNodeRenderer.drawMarker(context, moveX, moveY, markerVertexType, this);
         }
     }

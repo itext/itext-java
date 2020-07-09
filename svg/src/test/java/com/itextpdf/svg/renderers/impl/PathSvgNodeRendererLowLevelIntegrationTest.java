@@ -44,6 +44,7 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.svg.renderers.path.IPathShape;
@@ -199,5 +200,27 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
         path.setAttribute(SvgConstants.Attributes.D, instructions);
         Assert.assertEquals(3, path.getShapes().size());
         Assert.assertTrue(((List<IPathShape>) path.getShapes()).get(2) instanceof SmoothSCurveTo);
+    }
+
+    @Test
+    public void smoothCurveAsFirstShapeTest1() {
+        junitExpectedException.expect(SvgProcessingException.class);
+        junitExpectedException.expectMessage(SvgExceptionMessageConstant.INVALID_SMOOTH_CURVE_USE);
+
+        String instructions = "S 100 200 300 400";
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, instructions);
+        path.getShapes();
+    }
+
+    @Test
+    public void smoothCurveAsFirstShapeTest2() {
+        junitExpectedException.expect(SvgProcessingException.class);
+        junitExpectedException.expectMessage(SvgExceptionMessageConstant.INVALID_SMOOTH_CURVE_USE);
+
+        String instructions = "T 100,200";
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, instructions);
+        path.getShapes();
     }
 }

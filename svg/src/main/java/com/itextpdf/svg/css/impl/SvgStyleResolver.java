@@ -56,6 +56,8 @@ import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.parse.CssRuleSetParser;
 import com.itextpdf.styledxmlparser.css.parse.CssStyleSheetParser;
 import com.itextpdf.styledxmlparser.css.resolve.AbstractCssContext;
+import com.itextpdf.styledxmlparser.css.resolve.CssInheritance;
+import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
 import com.itextpdf.styledxmlparser.node.IAttribute;
 import com.itextpdf.styledxmlparser.node.IDataNode;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
@@ -64,8 +66,8 @@ import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.IStylesContainer;
 import com.itextpdf.styledxmlparser.node.ITextNode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
+import com.itextpdf.styledxmlparser.util.StyleUtil;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.css.SvgCssContext;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
@@ -76,10 +78,12 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,11 +104,6 @@ public class SvgStyleResolver implements ICssResolver {
      * The list of fonts.
      */
     private List<CssFontFaceRule> fonts = new ArrayList<>();
-
-    /**
-     * The style-resolver util responsible for resolving inheritance rules
-     */
-    private StyleResolverUtil sru = new StyleResolverUtil();
 
     /**
      * The resource resolver
@@ -161,13 +160,19 @@ public class SvgStyleResolver implements ICssResolver {
                 Logger logger = LoggerFactory.getLogger(SvgStyleResolver.class);
                 logger.error(LogMessageConstant.ERROR_RESOLVING_PARENT_STYLES);
             }
+
+            Set<IStyleInheritance> inheritanceRules = new HashSet<>();
+            inheritanceRules.add(new CssInheritance());
+            inheritanceRules.add(new SvgAttributeInheritance());
+
             if (parentStyles != null) {
                 for (Map.Entry<String, String> entry : parentStyles.entrySet()) {
                     String parentFontSizeString = parentStyles.get(CommonCssConstants.FONT_SIZE);
                     if (parentFontSizeString == null) {
                         parentFontSizeString = "0";
                     }
-                    sru.mergeParentStyleDeclaration(styles, entry.getKey(), entry.getValue(), parentFontSizeString);
+                    styles = StyleUtil
+                            .mergeParentStyleDeclaration(styles, entry.getKey(), entry.getValue(), parentFontSizeString, inheritanceRules);
                 }
             }
         }
@@ -245,13 +250,12 @@ public class SvgStyleResolver implements ICssResolver {
                             currentNode.childNodes().get(0) instanceof ITextNode)) {
                         String styleData;
                         if (currentNode.childNodes().get(0) instanceof IDataNode) {
-                            // TODO (RND-865)
                             styleData = ((IDataNode) currentNode.childNodes().get(0)).getWholeData();
                         } else {
                             styleData = ((ITextNode) currentNode.childNodes().get(0)).wholeText();
                         }
                         CssStyleSheet styleSheet = CssStyleSheetParser.parse(styleData);
-                        //TODO(RND-863): media query wrap
+                        //TODO (DEVSIX-2263): media query wrap
                         //styleSheet = wrapStyleSheetInMediaQueryIfNecessary(headChildElement, styleSheet);
                         this.css.appendCssStyleSheet(styleSheet);
                     }

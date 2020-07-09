@@ -88,9 +88,6 @@ public class GoogleChartsTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
-    })
     public void annotationChart() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "annotationChart");
     }
@@ -116,12 +113,8 @@ public class GoogleChartsTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
-    })
-    //TODO update cmp file after DEVSIX-3347  and DEVSIX-2086 will be fixed
+    //TODO update cmp file after DEVSIX-3347 will be fixed
     public void calendarChart() throws IOException, java.io.IOException, InterruptedException {
-
         PageSize pageSize = PageSize.A4;
         TestUtils.convertSVGtoPDF(destinationFolder + "calendarChart.pdf",
                 sourceFolder + "calendarChart.svg", 1, pageSize);
@@ -146,9 +139,6 @@ public class GoogleChartsTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 5),
-    })
     public void diffChart() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "diffChart");
     }

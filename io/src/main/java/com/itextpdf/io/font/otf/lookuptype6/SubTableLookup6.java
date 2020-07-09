@@ -87,9 +87,10 @@ public abstract class SubTableLookup6 extends ContextualSubTable {
     /**
      * Checks if given glyph line at the given position matches given rule.
      *
-     * @param line
-     * @param rule
-     * @param startIdx
+     * @param line glyph line to be checked
+     * @param rule rule to be compared with a given line
+     * @param startIdx glyph line position
+     * @return true if given glyph line at the given position matches given rule
      */
     protected boolean checkIfLookaheadContextMatch(GlyphLine line, ContextualSubstRule rule, int startIdx) {
         int j;
@@ -108,8 +109,9 @@ public abstract class SubTableLookup6 extends ContextualSubTable {
     /**
      * Checks if given glyph line at the given position matches given rule.
      *
-     * @param line
-     * @param rule
+     * @param line glyph line to be checked
+     * @param rule rule to be compared with a given line
+     * @return true if given glyph line matches given rule
      */
     protected boolean checkIfBacktrackContextMatch(GlyphLine line, ContextualSubstRule rule) {
         int j;

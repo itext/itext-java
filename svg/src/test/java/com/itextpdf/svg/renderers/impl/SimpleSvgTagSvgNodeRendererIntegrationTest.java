@@ -126,14 +126,14 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
     @Test
     public void invalidHeight() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "abc"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.NAN, "abc"));
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidHeight");
     }
 
     @Test
     public void invalidWidth() throws IOException, InterruptedException {
         junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "abc"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.NAN, "abc"));
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidWidth");
     }
 

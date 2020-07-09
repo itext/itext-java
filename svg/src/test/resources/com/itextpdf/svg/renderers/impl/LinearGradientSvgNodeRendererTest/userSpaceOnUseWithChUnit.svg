@@ -1,0 +1,25 @@
+<svg x="0" y="0" width = "1200" height = "1200" xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    
+    <linearGradient id="LinearGradient1"
+                    x1="4ch" y1="1ch"
+                    x2="20ch" y2="2ch"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="green" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="red" stop-opacity="1"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="1"/>
+      <stop offset="100%" stop-color="yellow" stop-opacity="1"/>
+    </linearGradient>
+    
+  </defs>
+
+  <svg x="0" y="80" width="600" height="950">
+  <text x = "15" y = "15" >"ch"</text>
+  <rect x="10" y="30" width="175" height="200" rx="10" ry="10"
+     style="fill:url(#LinearGradient1);
+            stroke: #005000;
+            stroke-width: 3;" />
+  
+  </svg>
+</svg>

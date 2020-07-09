@@ -49,12 +49,20 @@ import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.layout.property.TransparentColor;
+import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
+import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;
+import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.TokenType;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.SvgConstants.Values;
 import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.utils.SvgCssUtils;
+import com.itextpdf.svg.utils.SvgTextUtil;
 import com.itextpdf.svg.utils.TransformUtils;
 
 import java.util.HashMap;
@@ -98,6 +106,20 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
     @Override
     public String getAttribute(String key) {
         return attributesAndStyles.get(key);
+    }
+
+    /**
+     * Retrieves the property value for a given key name or default if the property value is
+     * {@code null} or missing.
+     *
+     * @param key          the name of the property to search for
+     * @param defaultValue the default value to be returned if the property is
+     *                     {@code null} or missing
+     * @return the value for this key, or {@code defaultValue}
+     */
+    public String getAttributeOrDefault(String key, String defaultValue) {
+        String rawValue = getAttribute(key);
+        return rawValue != null ? rawValue : defaultValue;
     }
 
     @Override
@@ -176,6 +198,17 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         return false;
     }
 
+
+    /**
+     * Return font-size of the current element
+     *
+     * @return absolute value of font-size
+     */
+    public float getCurrentFontSize() {
+        // TODO DEVSIX-4140 check work of this method with relative unit
+        return CssUtils.parseAbsoluteFontSize(getAttribute(SvgConstants.Attributes.FONT_SIZE));
+    }
+
     /**
      * Make a deep copy of the styles and attributes of this renderer
      * Helper method for deep copying logic
@@ -197,6 +230,18 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      */
     protected abstract void doDraw(SvgDrawContext context);
 
+
+    /**
+     * Evaluate the current object bounding box
+     *
+     * @return the {@link Rectangle} representing the current object's bounding box
+     */
+    @Deprecated
+    // TODO DEVSIX-3814 move to ISvgNodeRenderer in 7.2
+    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        return null;
+    }
+
     static float getAlphaFromRGBA(String value) {
         try {
             return WebColors.getRGBAColor(value)[3];
@@ -207,7 +252,8 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
 
     /**
-     * Calculate the transformation for the viewport based on the context. Only used by elements that can create viewports
+     * Calculate the transformation for the viewport based on the context. Only used by elements that can create
+     * viewports
      *
      * @param context the SVG draw context
      * @return the transformation that needs to be applied to this renderer
@@ -232,7 +278,8 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
             // fill-rule
             if (partOfClipPath) {
-                if (SvgConstants.Values.FILL_RULE_EVEN_ODD.equalsIgnoreCase(this.getAttribute(SvgConstants.Attributes.CLIP_RULE))) {
+                if (SvgConstants.Values.FILL_RULE_EVEN_ODD
+                        .equalsIgnoreCase(this.getAttribute(SvgConstants.Attributes.CLIP_RULE))) {
                     currentCanvas.eoClip();
                 } else {
                     currentCanvas.clip();
@@ -257,7 +304,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                     }
                 } else if (doStroke) {
                     currentCanvas.stroke();
-                }else if(!TextSvgBranchRenderer.class.isInstance(this)){
+                } else if (!TextSvgBranchRenderer.class.isInstance(this)) {
                     currentCanvas.endPath();
                 }
 
@@ -295,62 +342,71 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                 float generalOpacity = getOpacity();
                 // fill
                 {
-                    String fillRawValue = getAttribute(SvgConstants.Attributes.FILL);
+                    String fillRawValue = getAttributeOrDefault(SvgConstants.Attributes.FILL, "black");
                     this.doFill = !SvgConstants.Values.NONE.equalsIgnoreCase(fillRawValue);
 
                     if (doFill && canElementFill()) {
-                        Color rgbColor = ColorConstants.BLACK;
 
-                        float fillOpacity = generalOpacity;
-                        String opacityValue = getAttribute(SvgConstants.Attributes.FILL_OPACITY);
+                        float fillOpacity = getOpacityByAttributeName(
+                                SvgConstants.Attributes.FILL_OPACITY, generalOpacity);
 
-                        if (opacityValue != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityValue)) {
-                            fillOpacity *= Float.valueOf(opacityValue);
-                        }
-
-                        if (fillRawValue != null) {
-                            fillOpacity *= getAlphaFromRGBA(fillRawValue);
-                            rgbColor = WebColors.getRGBColor(fillRawValue);
+                        Color fillColor = null;
+                        TransparentColor transparentColor = getColorFromAttributeValue(
+                                context, fillRawValue, 0, fillOpacity);
+                        if (transparentColor != null) {
+                            fillColor = transparentColor.getColor();
+                            fillOpacity = transparentColor.getOpacity();
                         }
 
                         if (!CssUtils.compareFloats(fillOpacity, 1f)) {
                             opacityGraphicsState.setFillOpacity(fillOpacity);
                         }
-                        currentCanvas.setFillColor(rgbColor);
+
+                        // set default if no color has been parsed
+                        if (fillColor == null) {
+                            fillColor = ColorConstants.BLACK;
+                        }
+                        currentCanvas.setFillColor(fillColor);
                     }
                 }
                 // stroke
                 {
-                    String strokeRawValue = getAttribute(SvgConstants.Attributes.STROKE);
+                    String strokeRawValue = getAttributeOrDefault(SvgConstants.Attributes.STROKE,
+                            SvgConstants.Values.NONE);
 
                     if (!SvgConstants.Values.NONE.equalsIgnoreCase(strokeRawValue)) {
-                        if (strokeRawValue != null) {
-                            Color rgbColor = WebColors.getRGBColor(strokeRawValue);
-                            float strokeOpacity = generalOpacity;
-                            String opacityValue = getAttribute(SvgConstants.Attributes.STROKE_OPACITY);
+                        String strokeWidthRawValue = getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
 
-                            if (opacityValue != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityValue)) {
-                                strokeOpacity *= Float.valueOf(opacityValue);
-                            }
-                            strokeOpacity *= getAlphaFromRGBA(strokeRawValue);
-                            if (!CssUtils.compareFloats(strokeOpacity, 1f)) {
-                                opacityGraphicsState.setStrokeOpacity(strokeOpacity);
-                            }
+                        // 1 px = 0,75 pt
+                        float strokeWidth = 0.75f;
 
-                            currentCanvas.setStrokeColor(rgbColor);
-
-                            String strokeWidthRawValue = getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
-
-                            // 1 px = 0,75 pt
-                            float strokeWidth = 0.75f;
-
-                            if (strokeWidthRawValue != null) {
-                                strokeWidth = CssUtils.parseAbsoluteLength(strokeWidthRawValue);
-                            }
-
-                            currentCanvas.setLineWidth(strokeWidth);
-                            doStroke = true;
+                        if (strokeWidthRawValue != null) {
+                            strokeWidth = CssUtils.parseAbsoluteLength(strokeWidthRawValue);
                         }
+
+                        float strokeOpacity = getOpacityByAttributeName(SvgConstants.Attributes.STROKE_OPACITY,
+                                generalOpacity);
+
+                        Color strokeColor = null;
+                        TransparentColor transparentColor = getColorFromAttributeValue(
+                                context, strokeRawValue, strokeWidth / 2, strokeOpacity);
+                        if (transparentColor != null) {
+                            strokeColor = transparentColor.getColor();
+                            strokeOpacity = transparentColor.getOpacity();
+                        }
+
+                        if (!CssUtils.compareFloats(strokeOpacity, 1f)) {
+                            opacityGraphicsState.setStrokeOpacity(strokeOpacity);
+                        }
+
+                        // as default value for stroke is 'none' we should not set
+                        // it in case when value obtaining fails
+                        if (strokeColor != null) {
+                            currentCanvas.setStrokeColor(strokeColor);
+                        }
+
+                        currentCanvas.setLineWidth(strokeWidth);
+                        doStroke = true;
                     }
                 }
                 // opacity
@@ -363,11 +419,80 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         }
     }
 
+    /**
+     * Parse absolute length.
+     * @param length {@link String} for parsing
+     * @param percentRelativeValue the value on which percent length is based on
+     * @param defaultValue default value if length is not recognized
+     * @param context current {@link SvgDrawContext}
+     * @return absolute value in points
+     */
+    protected float parseAbsoluteLength(String length, float percentRelativeValue, float defaultValue,
+            SvgDrawContext context) {
+        if (CssUtils.isPercentageValue(length)) {
+            return CssUtils.parseRelativeValue(length, percentRelativeValue);
+        } else {
+            float em = getCurrentFontSize();
+            float rem = context.getRemValue();
+            UnitValue unitValue = CssUtils.parseLengthValueToPt(length, em, rem);
+            if (unitValue != null && unitValue.isPointValue()) {
+                return unitValue.getValue();
+            } else {
+                return defaultValue;
+            }
+        }
+    }
+
+    private TransparentColor getColorFromAttributeValue(SvgDrawContext context, String rawColorValue,
+            float objectBoundingBoxMargin, float parentOpacity) {
+        if (rawColorValue == null) {
+            return null;
+        }
+        CssDeclarationValueTokenizer tokenizer = new CssDeclarationValueTokenizer(rawColorValue);
+        Token token = tokenizer.getNextValidToken();
+        if (token == null) {
+            return null;
+        }
+        String tokenValue = token.getValue();
+        if (tokenValue.startsWith("url(#") && tokenValue.endsWith(")")) {
+            Color resolvedColor = null;
+            float resolvedOpacity = 1;
+            String normalizedName = tokenValue.substring(5, tokenValue.length() - 1).trim();
+            ISvgNodeRenderer colorRenderer = context.getNamedObject(normalizedName);
+            if (colorRenderer instanceof AbstractGradientSvgNodeRenderer) {
+                resolvedColor = ((AbstractGradientSvgNodeRenderer) colorRenderer).createColor(
+                        context, getObjectBoundingBox(context), objectBoundingBoxMargin, parentOpacity);
+            }
+            if (resolvedColor != null) {
+                return new TransparentColor(resolvedColor, resolvedOpacity);
+            }
+            token = tokenizer.getNextValidToken();
+        }
+        // may become null after function parsing and reading the 2nd token
+        if (token != null) {
+            String value = token.getValue();
+            if (!SvgConstants.Values.NONE.equalsIgnoreCase(value)) {
+                return new TransparentColor(WebColors.getRGBColor(value),
+                        parentOpacity * getAlphaFromRGBA(value));
+            }
+        }
+        return null;
+    }
+
+    private float getOpacityByAttributeName(String attributeName, float generalOpacity) {
+        float opacity = generalOpacity;
+
+        String opacityValue = getAttribute(attributeName);
+        if (opacityValue != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityValue)) {
+            opacity *= Float.valueOf(opacityValue);
+        }
+        return opacity;
+    }
 
     private boolean drawInClipPath(SvgDrawContext context) {
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.CLIP_PATH)) {
             String clipPathName = attributesAndStyles.get(SvgConstants.Attributes.CLIP_PATH);
-            ISvgNodeRenderer template = context.getNamedObject(normalizeClipPathName(clipPathName));
+            ISvgNodeRenderer template = context.getNamedObject(normalizeLocalUrlName(clipPathName));
             //Clone template to avoid muddying the state
             if (template instanceof ClipPathSvgNodeRenderer) {
                 ClipPathSvgNodeRenderer clipPath = (ClipPathSvgNodeRenderer) template.createDeepCopy();
@@ -379,7 +504,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         return false;
     }
 
-    private String normalizeClipPathName(String name) {
+    private String normalizeLocalUrlName(String name) {
         return name.replace("url(#", "").replace(")", "").trim();
     }
 

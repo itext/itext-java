@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.1.11</version>
+    <version>7.1.12</version>
   </parent>
   <artifactId>font-asian</artifactId>
   <name>iText 7 - Asian fonts</name>
@@ -21,25 +21,19 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${failsafe.version}</version>
         <configuration>
           <skip>true</skip>
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${javadoc.version}</version>
         <configuration>
           <skip>true</skip>
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>${surefire.version}</version>
         <configuration>
           <skip>true</skip>
         </configuration>
@@ -47,7 +41,6 @@
       <plugin>
         <groupId>org.pitest</groupId>
         <artifactId>pitest-maven</artifactId>
-        <version>${pitest.version}</version>
         <configuration>
           <skip>true</skip>
         </configuration>

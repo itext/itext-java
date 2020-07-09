@@ -112,7 +112,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     protected float yLineOffset;
 
-    // font should be stored only during converting original string to GlyphLine, however now it's not true
     private PdfFont font;
     protected GlyphLine text;
     protected GlyphLine line;
@@ -125,6 +124,15 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     protected List<int[]> reversedRanges;
 
     protected GlyphLine savedWordBreakAtLineEnding;
+
+    // if list is null, presence of special scripts in the TextRenderer#text hasn't been checked yet
+    // if list is empty, TextRenderer#text has been analyzed and no special scripts have been detected
+    // if list contains -1, TextRenderer#text contains special scripts, but no word break is possible within it
+    // Must remain ArrayList: once an instance is formed and filled prior to layouting on split of this TextRenderer,
+    // it's used to get element by index or passed to List.subList()
+    private List<Integer> specialScriptsWordBreakPoints;
+
+    private int specialScriptFirstNotFittingIndex = -1;
 
     /**
      * Creates a TextRenderer from its corresponding layout object.
@@ -157,15 +165,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         this.otfFeaturesApplied = other.otfFeaturesApplied;
         this.tabAnchorCharacterPosition = other.tabAnchorCharacterPosition;
         this.reversedRanges = other.reversedRanges;
+        this.specialScriptsWordBreakPoints = other.specialScriptsWordBreakPoints;
     }
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         updateFontAndText();
-        if (null != text) {
-            // if text != null => font != null
-            text = replaceSpecialWhitespaceGlyphs(text, font);
-        }
 
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = area.getBBox().clone();
@@ -334,9 +339,11 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 if (xAdvance != 0) {
                     xAdvance = scaleXAdvance(xAdvance, fontSize.getValue(), hScale) / TEXT_SPACE_COEFF;
                 }
+
                 if (!noSoftWrap
                         && (nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition) > layoutBox.getWidth() - currentLineWidth
-                        && firstCharacterWhichExceedsAllowedWidth == -1) {
+                        && firstCharacterWhichExceedsAllowedWidth == -1
+                        || ind == specialScriptFirstNotFittingIndex) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
                     if (TextUtil.isSpaceOrWhitespace(text.get(ind))) {
                         wordBreakGlyphAtLineEnding = currentGlyph;
@@ -382,9 +389,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     }
                 }
 
-                if (splitCharacters.isSplitCharacter(text, ind) || ind + 1 == text.end ||
+                boolean endOfWordBelongingToSpecialScripts = textContainsSpecialScriptGlyphs(true)
+                        && findPossibleBreaksSplitPosition(specialScriptsWordBreakPoints,
+                        ind + 1, true) >= 0;
+                if (ind + 1 == text.end || splitCharacters.isSplitCharacter(text, ind) ||
                         splitCharacters.isSplitCharacter(text, ind + 1) &&
-                                TextUtil.isSpaceOrWhitespace(text.get(ind + 1))) {
+                                TextUtil.isSpaceOrWhitespace(text.get(ind + 1)) || endOfWordBelongingToSpecialScripts) {
                     nonBreakablePartEnd = ind;
                     break;
                 }
@@ -414,7 +424,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     if (line.start == -1) {
                         line.start = currentTextPos;
                     }
-                    line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth - 1);
+                    line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth);
                     // the line does not fit because of height - full overflow
                     TextRenderer[] splitResult = split(initialLineTextPos);
                     return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1], this);
@@ -476,13 +486,20 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         }
                     }
 
-                    if ((nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) || forcePartialSplitOnFirstChar || -1 != nonBreakingHyphenRelatedChunkStart) {
+                    boolean specialScriptWordSplit = textContainsSpecialScriptGlyphs(true)
+                            && !isSplitForcedByNewLine;
+                    if ((nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied)
+                            || forcePartialSplitOnFirstChar
+                            || -1 != nonBreakingHyphenRelatedChunkStart
+                            || specialScriptWordSplit) {
                         // if the word is too long for a single line we will have to split it
+                        // we also need to split the word here if text contains glyphs from scripts
+                        // which require word wrapping for further processing in LineRenderer
                         if (line.start == -1) {
                             line.start = currentTextPos;
                         }
                         if (!crlf) {
-                            currentTextPos = (forcePartialSplitOnFirstChar || isOverflowFit(overflowX)) ? firstCharacterWhichExceedsAllowedWidth : nonBreakablePartEnd + 1;
+                            currentTextPos = (forcePartialSplitOnFirstChar || isOverflowFit(overflowX) || specialScriptWordSplit) ? firstCharacterWhichExceedsAllowedWidth : nonBreakablePartEnd + 1;
                         }
                         line.end = Math.max(line.end, currentTextPos);
                         wordSplit = !forcePartialSplitOnFirstChar && (text.end != currentTextPos);
@@ -861,37 +878,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
     }
 
-    @Override
-    public void drawBackground(DrawContext drawContext) {
-        Background background = this.<Background>getProperty(Property.BACKGROUND);
-        Float textRise = this.getPropertyAsFloat(Property.TEXT_RISE);
-        Rectangle bBox = getOccupiedAreaBBox();
-        Rectangle backgroundArea = applyMargins(bBox, false);
-        float bottomBBoxY = backgroundArea.getY();
-        float leftBBoxX = backgroundArea.getX();
-        if (background != null) {
-            boolean isTagged = drawContext.isTaggingEnabled();
-            PdfCanvas canvas = drawContext.getCanvas();
-            if (isTagged) {
-                canvas.openTag(new CanvasArtifact());
-            }
-            boolean backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
-            canvas.saveState().setFillColor(background.getColor());
-            TransparentColor backgroundColor = new TransparentColor(background.getColor(), background.getOpacity());
-            backgroundColor.applyFillTransparency(drawContext.getCanvas());
-            canvas.rectangle(leftBBoxX - background.getExtraLeft(), bottomBBoxY + (float) textRise - background.getExtraBottom(),
-                    backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
-                    backgroundArea.getHeight() - (float) textRise + background.getExtraTop() + background.getExtraBottom());
-            canvas.fill().restoreState();
-            if (backgroundAreaIsClipped) {
-                drawContext.getCanvas().restoreState();
-            }
-            if (isTagged) {
-                canvas.closeTag();
-            }
-        }
-    }
-
     /**
      * Trims any whitespace characters from the start of the {@link GlyphLine}
      * to be rendered.
@@ -904,6 +890,23 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             while (text.start < text.end
                     && TextUtil.isWhitespace(glyph = text.get(text.start)) && !TextUtil.isNewLine(glyph)) {
                 text.start++;
+            }
+        }
+
+        /*  Between two sentences separated by one or more whitespaces,
+            icu allows to break right after the last whitespace.
+            Therefore we need to carefully edit specialScriptsWordBreakPoints list after trimming:
+            if a break is allowed to happen right before the first glyph of an already trimmed text,
+            we need to remove this point from the list
+            (or replace it with -1 thus marking that text contains special scripts,
+             in case if the removed break point was the only possible break point).
+         */
+        if (textContainsSpecialScriptGlyphs(true)
+                && specialScriptsWordBreakPoints.get(0) == text.start) {
+            if (specialScriptsWordBreakPoints.size() == 1) {
+                specialScriptsWordBreakPoints.set(0, -1);
+            } else {
+                specialScriptsWordBreakPoints.remove(0);
             }
         }
     }
@@ -998,19 +1001,34 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     /**
-     * Manually sets a GlyphLine to be rendered with a specific start and end
-     * point.
+     * Manually sets a GlyphLine to be rendered with a specific start and end point.
      *
      * @param text     a {@link GlyphLine}
      * @param leftPos  the leftmost end of the GlyphLine
      * @param rightPos the rightmost end of the GlyphLine
+     * @deprecated use {@link TextRenderer#setText(GlyphLine, PdfFont)} instead
      */
+    @Deprecated
     public void setText(GlyphLine text, int leftPos, int rightPos) {
-        this.strToBeConverted = null;
-        this.text = new GlyphLine(text);
-        this.text.start = leftPos;
-        this.text.end = rightPos;
-        this.otfFeaturesApplied = false;
+        GlyphLine newText = new GlyphLine(text);
+        newText.start = leftPos;
+        newText.end = rightPos;
+        if (this.font != null) {
+            newText = TextPreprocessingUtil.replaceSpecialWhitespaceGlyphs(newText, this.font);
+        }
+        setProcessedGlyphLineAndFont(newText, this.font);
+    }
+
+    /**
+     * Manually set a GlyphLine and PdfFont for rendering.
+     *
+     * @param text the {@link GlyphLine}
+     * @param font the font
+     */
+    public void setText(GlyphLine text, PdfFont font) {
+        GlyphLine newText = new GlyphLine(text);
+        newText = TextPreprocessingUtil.replaceSpecialWhitespaceGlyphs(newText, font);
+        setProcessedGlyphLineAndFont(newText, font);
     }
 
     public GlyphLine getText() {
@@ -1051,6 +1069,45 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         return new TextRenderer((Text) modelElement);
     }
 
+    /**
+     * Get ascender and descender from font metrics.
+     * If these values are obtained from typo metrics they are normalized with a scale coefficient.
+     *
+     * @param font from which metrics will be extracted
+     * @return array in which the first element is an ascender and the second is a descender
+     */
+    public static float[] calculateAscenderDescender(PdfFont font) {
+        return calculateAscenderDescender(font, RenderingMode.DEFAULT_LAYOUT_MODE);
+    }
+
+    /**
+     * Get ascender and descender from font metrics.
+     * In RenderingMode.DEFAULT_LAYOUT_MODE if these values are obtained from typo metrics they are normalized with a scale coefficient.
+     *
+     * @param font from which metrics will be extracted
+     * @param mode mode in which metrics will be obtained. Impact on the use of scale coefficient
+     * @return array in which the first element is an ascender and the second is a descender
+     */
+    public static float[] calculateAscenderDescender(PdfFont font, RenderingMode mode) {
+        FontMetrics fontMetrics = font.getFontProgram().getFontMetrics();
+        float ascender;
+        float descender;
+        float usedTypoAscenderScaleCoeff = TYPO_ASCENDER_SCALE_COEFF;
+        if (RenderingMode.HTML_MODE.equals(mode) && !(font instanceof PdfType1Font)) {
+            usedTypoAscenderScaleCoeff = 1;
+        }
+        if (fontMetrics.getWinAscender() == 0 || fontMetrics.getWinDescender() == 0 ||
+                fontMetrics.getTypoAscender() == fontMetrics.getWinAscender()
+                        && fontMetrics.getTypoDescender() == fontMetrics.getWinDescender()) {
+            ascender = fontMetrics.getTypoAscender() * usedTypoAscenderScaleCoeff;
+            descender = fontMetrics.getTypoDescender() * usedTypoAscenderScaleCoeff;
+        } else {
+            ascender = fontMetrics.getWinAscender();
+            descender = fontMetrics.getWinDescender();
+        }
+        return new float[] {ascender, descender};
+    }
+    
     List<int[]> getReversedRanges() {
         return reversedRanges;
     }
@@ -1067,29 +1124,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         return this;
     }
 
-    static float[] calculateAscenderDescender(PdfFont font) {
-        return calculateAscenderDescender(font, RenderingMode.DEFAULT_LAYOUT_MODE);
-    }
-
-    static float[] calculateAscenderDescender(PdfFont font, RenderingMode mode) {
-        FontMetrics fontMetrics = font.getFontProgram().getFontMetrics();
-        float ascender;
-        float descender;
-        float usedTypoAscenderScaleCoeff = TYPO_ASCENDER_SCALE_COEFF;
-        if (RenderingMode.HTML_MODE.equals(mode) && !(font instanceof PdfType1Font)) {
-            usedTypoAscenderScaleCoeff = 1;
-        }
-        if (fontMetrics.getWinAscender() == 0 || fontMetrics.getWinDescender() == 0 ||
-                fontMetrics.getTypoAscender() == fontMetrics.getWinAscender() && fontMetrics.getTypoDescender() == fontMetrics.getWinDescender()) {
-            ascender = fontMetrics.getTypoAscender() * usedTypoAscenderScaleCoeff;
-            descender = fontMetrics.getTypoDescender() * usedTypoAscenderScaleCoeff;
-        } else {
-            ascender = fontMetrics.getWinAscender();
-            descender = fontMetrics.getWinDescender();
-        }
-        return new float[]{ascender, descender};
-    }
-
     private TextRenderer[] splitIgnoreFirstNewLine(int currentTextPos) {
         if (TextUtil.isCarriageReturnFollowedByLineFeed(text, currentTextPos)) {
             return split(currentTextPos + 2);
@@ -1104,6 +1138,75 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     private boolean hasOtfFont() {
         return font instanceof PdfType0Font && font.getFontProgram() instanceof TrueTypeFont;
+    }
+
+    /**
+     * Analyzes/checks whether {@link TextRenderer#text}, bounded by start and end,
+     * contains glyphs belonging to special script.
+     *
+     * Mind that the behavior of this method depends on the analyzeSpecialScriptsWordBreakPointsOnly parameter:
+     * - pass {@code false} if you need to analyze the {@link TextRenderer#text} by checking each of its glyphs
+     * AND to fill {@link TextRenderer#specialScriptsWordBreakPoints} list afterwards,
+     * i.e. when analyzing a sequence of TextRenderers prior to layouting;
+     * - pass {@code true} if you want to check if text contains glyphs belonging to special scripts,
+     * according to the already filled {@link TextRenderer#specialScriptsWordBreakPoints} list.
+     *
+     * @param analyzeSpecialScriptsWordBreakPointsOnly false if analysis of each glyph is required,
+     *                                                 true if analysis has already been performed earlier
+     *                                                 and the results are stored in {@link TextRenderer#specialScriptsWordBreakPoints}
+     * @return true if {@link TextRenderer#text}, bounded by start and end, contains glyphs belonging to special script, otherwise false
+     * @see TextRenderer#specialScriptsWordBreakPoints
+     */
+    boolean textContainsSpecialScriptGlyphs(boolean analyzeSpecialScriptsWordBreakPointsOnly) {
+        if (specialScriptsWordBreakPoints != null) {
+            return !specialScriptsWordBreakPoints.isEmpty();
+        }
+
+        if (analyzeSpecialScriptsWordBreakPointsOnly) {
+            return false;
+        }
+
+        for (int i = text.start; i < text.end; i++) {
+            int unicode = text.get(i).getUnicode();
+            if (unicode > -1) {
+                if (codePointIsOfSpecialScript(unicode)) {
+                    return true;
+                }
+            } else {
+                char[] chars = text.get(i).getChars();
+                if (chars != null) {
+                    for (char ch : chars) {
+                        if (codePointIsOfSpecialScript(ch)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        // if we've reached this point, it means we've analyzed the entire TextRenderer#text
+        // and haven't found special scripts, therefore we define specialScriptsWordBreakPoints
+        // as an empty list to mark, it's already been analyzed
+        specialScriptsWordBreakPoints = new ArrayList<>();
+
+        return false;
+    }
+
+    void setSpecialScriptsWordBreakPoints(List<Integer> specialScriptsWordBreakPoints) {
+        this.specialScriptsWordBreakPoints = specialScriptsWordBreakPoints;
+    }
+
+    List<Integer> getSpecialScriptsWordBreakPoints() {
+        return this.specialScriptsWordBreakPoints;
+    }
+
+    void setSpecialScriptFirstNotFittingIndex(int lastFittingIndex) {
+        this.specialScriptFirstNotFittingIndex = lastFittingIndex;
+    }
+
+    @Override
+    protected Rectangle getBackgroundArea(Rectangle occupiedAreaWithMargins) {
+        float textRise = (float) this.getPropertyAsFloat(Property.TEXT_RISE);
+        return occupiedAreaWithMargins.moveUp(textRise).decreaseHeight(textRise);
     }
 
     @Override
@@ -1165,8 +1268,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     protected TextRenderer[] split(int initialOverflowTextPos) {
         TextRenderer splitRenderer = createSplitRenderer();
-        splitRenderer.setText(text, text.start, initialOverflowTextPos);
-        splitRenderer.font = font;
+        GlyphLine newText = new GlyphLine(text);
+        newText.start = text.start;
+        newText.end = initialOverflowTextPos;
+        splitRenderer.setProcessedGlyphLineAndFont(newText, font);
         splitRenderer.line = line;
         splitRenderer.occupiedArea = occupiedArea.clone();
         splitRenderer.parent = parent;
@@ -1176,11 +1281,49 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         splitRenderer.addAllProperties(getOwnProperties());
 
         TextRenderer overflowRenderer = createOverflowRenderer();
-        overflowRenderer.setText(text, initialOverflowTextPos, text.end);
-        overflowRenderer.font = font;
+        newText = new GlyphLine(text);
+        newText.start = initialOverflowTextPos;
+        newText.end = text.end;
+        overflowRenderer.setProcessedGlyphLineAndFont(newText, font);
         overflowRenderer.otfFeaturesApplied = otfFeaturesApplied;
         overflowRenderer.parent = parent;
         overflowRenderer.addAllProperties(getOwnProperties());
+
+        if (specialScriptsWordBreakPoints != null) {
+            if (specialScriptsWordBreakPoints.isEmpty()) {
+                splitRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>());
+                overflowRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>());
+            } else if (specialScriptsWordBreakPoints.get(0) == -1) {
+                List<Integer> split = new ArrayList<Integer>(1);
+                split.add(-1);
+                splitRenderer.setSpecialScriptsWordBreakPoints(split);
+
+                List<Integer> overflow = new ArrayList<Integer>(1);
+                overflow.add(-1);
+                overflowRenderer.setSpecialScriptsWordBreakPoints(overflow);
+            } else {
+                int splitIndex = findPossibleBreaksSplitPosition(specialScriptsWordBreakPoints, initialOverflowTextPos,
+                        false);
+
+                if (splitIndex > -1) {
+                    splitRenderer.setSpecialScriptsWordBreakPoints(specialScriptsWordBreakPoints
+                            .subList(0, splitIndex + 1));
+                } else {
+                    List<Integer> split = new ArrayList<Integer>(1);
+                    split.add(-1);
+                    splitRenderer.setSpecialScriptsWordBreakPoints(split);
+                }
+
+                if (splitIndex + 1 < specialScriptsWordBreakPoints.size()) {
+                    overflowRenderer.setSpecialScriptsWordBreakPoints(specialScriptsWordBreakPoints
+                            .subList(splitIndex + 1, specialScriptsWordBreakPoints.size()));
+                } else {
+                    List<Integer> split = new ArrayList<Integer>(1);
+                    split.add(-1);
+                    overflowRenderer.setSpecialScriptsWordBreakPoints(split);
+                }
+            }
+        }
 
         return new TextRenderer[]{splitRenderer, overflowRenderer};
     }
@@ -1253,7 +1396,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 while (!strategy.endOfText()) {
                     GlyphLine nextGlyphs = new GlyphLine(strategy.nextGlyphs());
                     PdfFont currentFont = strategy.getCurrentFont();
-                    TextRenderer textRenderer = createCopy(replaceSpecialWhitespaceGlyphs(nextGlyphs, currentFont), currentFont);
+                    GlyphLine newGlyphs = TextPreprocessingUtil.replaceSpecialWhitespaceGlyphs(nextGlyphs, currentFont);
+                    TextRenderer textRenderer = createCopy(newGlyphs, currentFont);
                     addTo.add(textRenderer);
                 }
             }
@@ -1263,17 +1407,28 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
     }
 
+    /**
+     * @param gl {@link GlyphLine} glyph to be set
+     * @param font {@link PdfFont} font to be set
+     * @deprecated use {@link TextRenderer#setProcessedGlyphLineAndFont(GlyphLine, PdfFont)} instead
+     */
+    @Deprecated
     protected void setGlyphLineAndFont(GlyphLine gl, PdfFont font) {
+        setProcessedGlyphLineAndFont(gl, font);
+    }
+
+    protected void setProcessedGlyphLineAndFont(GlyphLine gl, PdfFont font) {
         this.text = gl;
         this.font = font;
         this.otfFeaturesApplied = false;
         this.strToBeConverted = null;
+        this.specialScriptsWordBreakPoints = null;
         setProperty(Property.FONT, font);
     }
 
     protected TextRenderer createCopy(GlyphLine gl, PdfFont font) {
         TextRenderer copy = new TextRenderer(this);
-        copy.setGlyphLineAndFont(gl, font);
+        copy.setProcessedGlyphLineAndFont(gl, font);
         return copy;
     }
 
@@ -1392,18 +1547,19 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     private void updateFontAndText() {
         if (strToBeConverted != null) {
+            PdfFont newFont;
             try {
-                font = getPropertyAsFont(Property.FONT);
+                newFont = getPropertyAsFont(Property.FONT);
             } catch (ClassCastException cce) {
-                font = resolveFirstPdfFont();
+                newFont = resolveFirstPdfFont();
                 if (!strToBeConverted.isEmpty()) {
                     Logger logger = LoggerFactory.getLogger(TextRenderer.class);
                     logger.error(LogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT);
                 }
             }
-            text = convertToGlyphLine(strToBeConverted);
-            otfFeaturesApplied = false;
-            strToBeConverted = null;
+            GlyphLine newText = newFont.createGlyphLine(strToBeConverted);
+            newText = TextPreprocessingUtil.replaceSpecialWhitespaceGlyphs(newText, newFont);
+            setProcessedGlyphLineAndFont(newText, newFont);
         }
     }
 
@@ -1418,47 +1574,38 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             savedWordBreakAtLineEnding = new GlyphLine(Collections.<Glyph>singletonList(wordBreak));
         }
     }
+    // if amongPresentOnly is true,
+    // returns the index of lists's element which equals textStartBasedInitialOverflowTextPos
+    // or -1 if textStartBasedInitialOverflowTextPos wasn't found in the list.
+    // if amongPresentOnly is false, returns the index of list's element
+    // that is not greater than textStartBasedInitialOverflowTextPos
+    // if there's no such element in the list, -1 is returned
+    static int findPossibleBreaksSplitPosition(List<Integer> list, int textStartBasedInitialOverflowTextPos,
+                                               boolean amongPresentOnly) {
+        int low = 0;
+        int high = list.size() - 1;
 
-    private static GlyphLine replaceSpecialWhitespaceGlyphs(GlyphLine line, PdfFont font) {
-        if (null != line) {
-            Glyph space = font.getGlyph('\u0020');
-            Glyph glyph;
-            for (int i = 0; i < line.size(); i++) {
-                glyph = line.get(i);
-                Integer xAdvance = getSpecialWhitespaceXAdvance(glyph, space, font.getFontProgram().getFontMetrics().isFixedPitch());
-                if (xAdvance != null) {
-                    Glyph newGlyph = new Glyph(space, glyph.getUnicode());
-                    assert xAdvance <= Short.MAX_VALUE && xAdvance >= Short.MIN_VALUE;
-                    newGlyph.setXAdvance((short) (int) xAdvance);
-                    line.set(i, newGlyph);
-                }
+        while (low <= high) {
+            int middle = (low + high) >>> 1;
+            if (list.get(middle).compareTo(textStartBasedInitialOverflowTextPos) < 0) {
+                low = middle + 1;
+            } else if (list.get(middle).compareTo(textStartBasedInitialOverflowTextPos) > 0) {
+                high = middle - 1;
+            } else {
+                return middle;
             }
         }
-        return line;
+        if (!amongPresentOnly && low > 0) {
+            return low - 1;
+        }
+        return -1;
     }
 
-    private static Integer getSpecialWhitespaceXAdvance(Glyph glyph, Glyph spaceGlyph, boolean isMonospaceFont) {
-        if (glyph.getCode() > 0) {
-            return null;
-        }
-        switch (glyph.getUnicode()) {
-
-            // ensp
-            case '\u2002':
-                return isMonospaceFont ? 0 : 500 - spaceGlyph.getWidth();
-
-            // emsp
-            case '\u2003':
-                return isMonospaceFont ? 0 : 1000 - spaceGlyph.getWidth();
-
-            // thinsp
-            case '\u2009':
-                return isMonospaceFont ? 0 : 200 - spaceGlyph.getWidth();
-            case '\t':
-                return 3 * spaceGlyph.getWidth();
-        }
-
-        return null;
+    private boolean codePointIsOfSpecialScript(int codePoint) {
+        Character.UnicodeScript glyphScript = Character.UnicodeScript.of(codePoint);
+        return Character.UnicodeScript.THAI == glyphScript
+                || Character.UnicodeScript.KHMER == glyphScript
+                || Character.UnicodeScript.LAO == glyphScript;
     }
 
     private static class ReversedCharsIterator implements Iterator<GlyphLine.GlyphLinePart> {

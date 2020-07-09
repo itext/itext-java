@@ -162,7 +162,12 @@ public class CssDeclarationValueTokenizer {
                     inString = true;
                     return new Token(buff.toString(), TokenType.FUNCTION);
                 } else if (curChar == ',' && !inString && functionDepth == 0) {
-                    return new Token(",", TokenType.COMMA);
+                    if (buff.length() == 0) {
+                        return new Token(",", TokenType.COMMA);
+                    } else {
+                        --index;
+                        return new Token(buff.toString(), TokenType.UNKNOWN);
+                    }
                 } else if (Character.isWhitespace(curChar)) {
                     if (functionDepth > 0) {
                         buff.append(curChar);

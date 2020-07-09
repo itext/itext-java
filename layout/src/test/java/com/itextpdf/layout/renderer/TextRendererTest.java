@@ -43,7 +43,11 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -63,7 +67,10 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import java.util.Arrays;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -112,6 +119,59 @@ public class TextRendererTest extends AbstractRendererUnitTest {
         rend.setProperty(Property.FONT, new String[] {fontName});
         rend.setText(val);
         Assert.assertEquals(val, rend.getText().toString());
+    }
+
+    @Test
+    public void setTextGlyphLineAndFontParamTest() throws IOException {
+        TextRenderer renderer = new TextRenderer(new Text("Some text"));
+        String text = "\t";
+        PdfFont pdfFont = PdfFontFactory.createFont();
+        GlyphLine glyphLine = new GlyphLine();
+
+        for (int i = 0; i < text.length(); i++) {
+            int codePoint = TextUtil.isSurrogatePair(text, i) ? TextUtil.convertToUtf32(text, i) : (int) text.charAt(i);
+
+            Glyph glyph = pdfFont.getGlyph(codePoint);
+            glyphLine.add(glyph);
+        }
+
+        renderer.setText(glyphLine, pdfFont);
+        GlyphLine actualLine = renderer.getText();
+
+        Assert.assertFalse(actualLine == glyphLine);
+        Glyph glyph = actualLine.get(0);
+        Glyph space = pdfFont.getGlyph('\u0020');
+        // Check that the glyph line has been processed using the replaceSpecialWhitespaceGlyphs method
+        Assert.assertEquals(space.getCode(), glyph.getCode());
+        Assert.assertEquals(space.getWidth(), glyph.getWidth());
+    }
+
+    @Test
+    public void setTextGlyphLineAndPositionsParamTest() throws IOException {
+        TextRenderer renderer = new TextRenderer(new Text("Some text"));
+        String text = "\tsome";
+        PdfFont pdfFont = PdfFontFactory.createFont();
+        GlyphLine glyphLine = new GlyphLine();
+
+        for (int i = 0; i < text.length(); i++) {
+            int codePoint = TextUtil.isSurrogatePair(text, i) ? TextUtil.convertToUtf32(text, i) : (int) text.charAt(i);
+
+            Glyph glyph = pdfFont.getGlyph(codePoint);
+            glyphLine.add(glyph);
+        }
+
+        renderer.setText(new GlyphLine(), pdfFont);
+        renderer.setText(glyphLine, 1, 2);
+        GlyphLine actualLine = renderer.getText();
+
+        Assert.assertFalse(actualLine == glyphLine);
+        Glyph glyph = actualLine.get(0);
+        Glyph space = pdfFont.getGlyph('\u0020');
+        // Check that the glyph line has been processed using the replaceSpecialWhitespaceGlyphs method
+        Assert.assertEquals(space.getCode(), glyph.getCode());
+        Assert.assertEquals(space.getWidth(), glyph.getWidth());
+        Assert.assertEquals(1, actualLine.start);
+        Assert.assertEquals(2, actualLine.end);
     }
 
     /**

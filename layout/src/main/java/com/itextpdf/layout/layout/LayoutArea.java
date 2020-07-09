@@ -94,7 +94,7 @@ public class LayoutArea implements Cloneable {
     /**
      * Sets the {@link Rectangle box} which bounds the area.
      *
-     * @param bbox
+     * @param bbox the area's bounding box
      */
     public void setBBox(Rectangle bbox) {
         this.bBox = bbox;

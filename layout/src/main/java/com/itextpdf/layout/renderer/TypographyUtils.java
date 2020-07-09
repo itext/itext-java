@@ -74,10 +74,12 @@ public final class TypographyUtils {
     private static final String BIDI_CHARACTER_MAP = "bidi.BidiCharacterMap";
     private static final String BIDI_BRACKET_MAP = "bidi.BidiBracketMap";
     private static final String BIDI_ALGORITHM = "bidi.BidiAlgorithm";
+    private static final String WORD_WRAPPER = "WordWrapper";
 
     private static final String APPLY_OTF_SCRIPT = "applyOtfScript";
     private static final String APPLY_KERNING = "applyKerning";
     private static final String GET_SUPPORTED_SCRIPTS = "getSupportedScripts";
+    private static final String GET_POSSIBLE_BREAKS = "getPossibleBreaks";
 
     private static final String GET_CHARACTER_TYPES = "getCharacterTypes";
     private static final String GET_BRACKET_TYPES = "getBracketTypes";
@@ -255,6 +257,10 @@ public final class TypographyUtils {
         } else {
             return (Collection<Character.UnicodeScript>) callMethod(TYPOGRAPHY_PACKAGE + SHAPER, GET_SUPPORTED_SCRIPTS, (Object) null, new Class[] {Object.class}, typographyConfig);
         }
+    }
+
+    static List<Integer> getPossibleBreaks(String str) {
+        return (List<Integer>) callMethod(TYPOGRAPHY_PACKAGE + WORD_WRAPPER, GET_POSSIBLE_BREAKS, new Class[] {String.class}, str);
     }
 
     private static Object callMethod(String className, String methodName, Class[] parameterTypes, Object... args) {

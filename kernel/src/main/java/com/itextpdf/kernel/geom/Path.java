@@ -170,8 +170,13 @@ public class Path implements Serializable {
 
     /**
      * Appends a cubic Bezier curve to the current path. The curve shall extend from
-     * the current point to the point <CODE>(x3, y3)</CODE> with the note that the current
-     * point represents two control points.
+     * the current point to the point <CODE>(x3, y3)</CODE> using the current point and
+     * <CODE>(x2, y2)</CODE> as intermediate control points. Note that current point is both
+     * used as the starting point and a control point
+     * @param x2 x-coordinate of the second intermediate control point
+     * @param y2 y-coordinate of the second intermediate control point
+     * @param x3 x-coordinate of the ending point
+     * @param y3 y-coordinate of the ending point
      */
     public void curveTo(float x2, float y2, float x3, float y3) {
         if (currentPoint == null) {
@@ -182,8 +187,13 @@ public class Path implements Serializable {
 
     /**
      * Appends a cubic Bezier curve to the current path. The curve shall extend from
-     * the current point to the point <CODE>(x3, y3)</CODE> with the note that the (x3, y3)
-     * point represents two control points.
+     * the current point to the point <CODE>(x3, y3)</CODE> using <CODE>(x1, y1)</CODE> and
+     * <CODE>(x3, y3)</CODE> as control points. Note that <CODE>(x3, y3)</CODE> is used both
+     * as both a control point and an ending point
+     * @param x1 x-coordinate of the first intermediate control point
+     * @param y1 y-coordinate of the first intermediate control point
+     * @param x3 x-coordinate of the second intermediate control point (and ending point)
+     * @param y3 y-coordinate of the second intermediate control point (and ending point)
      */
     public void curveFromTo(float x1, float y1, float x3, float y3) {
         if (currentPoint == null) {
@@ -194,6 +204,7 @@ public class Path implements Serializable {
 
     /**
      * Appends a rectangle to the current path as a complete subpath.
+     * @param rect the rectangle to append to the current path
      */
     public void rectangle(Rectangle rect) {
         rectangle(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
@@ -201,6 +212,10 @@ public class Path implements Serializable {
 
     /**
      * Appends a rectangle to the current path as a complete subpath.
+     * @param x lower left x-coordinate of the rectangle
+     * @param y lower left y-coordinate of the rectangle
+     * @param w width of the rectangle
+     * @param h height of the rectangle
      */
     public void rectangle(float x, float y, float w, float h) {
         moveTo(x, y);
@@ -260,6 +275,7 @@ public class Path implements Serializable {
 
     /**
      * Path is empty if it contains no subpaths.
+     * @return <code>true</code> in case the path is empty and <code>false</code> otherwise
      */
     public boolean isEmpty() {
         return subpaths.size() == 0;

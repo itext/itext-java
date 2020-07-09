@@ -43,6 +43,7 @@
 package com.itextpdf.svg.renderers.path.impl;
 
 import com.itextpdf.kernel.geom.Point;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.renderers.path.IPathShape;
 
@@ -93,4 +94,16 @@ public abstract class AbstractPathShape implements IPathShape {
         return createPoint(coordinates[coordinates.length - 2], coordinates[coordinates.length - 1]);
     }
 
+    /**
+     * Get bounding rectangle of the current path shape.
+     *
+     * @param lastPoint start point for this shape
+     * @return calculated rectangle
+     */
+    // TODO DEVSIX-3814 - add method declaration into IPathShape and remove here in iText 7.2
+    public Rectangle getPathShapeRectangle(Point lastPoint) {
+        return new Rectangle((float) CssUtils.convertPxToPts(getEndingPoint().getX()),
+                (float) CssUtils.convertPxToPts(getEndingPoint().getY()), 0,
+                0);
+    }
 }

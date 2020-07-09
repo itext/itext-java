@@ -49,15 +49,22 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
+import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.dummy.processors.impl.DummySvgConverterProperties;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.processors.ISvgProcessorResult;
+import com.itextpdf.svg.processors.impl.SvgProcessorContext;
+import com.itextpdf.svg.processors.impl.SvgProcessorResult;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
+import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -66,6 +73,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -236,7 +246,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
     @Test
     public void processNode() {
         INode svg = new JsoupElementNode(new Element(Tag.valueOf("svg"), ""));
-        IBranchSvgNodeRenderer node = (IBranchSvgNodeRenderer) SvgConverter.process(svg).getRootRenderer();
+        IBranchSvgNodeRenderer node = (IBranchSvgNodeRenderer) SvgConverter.process(svg, null).getRootRenderer();
         Assert.assertTrue(node instanceof SvgTagSvgNodeRenderer);
         Assert.assertEquals(0, node.getChildren().size());
         Assert.assertNull(node.getParent());
@@ -316,5 +326,63 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
         junitExpectedException.expectMessage(SvgLogMessageConstant.PARAMETER_CANNOT_BE_NULL);
         SvgConverter.drawOnDocument("test",null,1);
 
+    }
+
+    @Test
+    public void resourceResolverInstanceTest() {
+        DummySvgConverterProperties properties = new DummySvgConverterProperties();
+        SvgProcessorContext context = new SvgProcessorContext(properties);
+        ResourceResolver initialResolver = context.getResourceResolver();
+        SvgProcessorResult svgProcessorResult = new SvgProcessorResult(new HashMap<String, ISvgNodeRenderer>(),
+                new SvgTagSvgNodeRenderer(), context);
+
+        ResourceResolver currentResolver = SvgConverter.getResourceResolver(svgProcessorResult, properties);
+        Assert.assertEquals(initialResolver, currentResolver);
+    }
+
+    @Test
+    //TODO DEVSIX-3814: remove in version 7.2
+    public void resourceResolverInstanceCustomResolverTest() {
+        DummySvgConverterProperties properties = new DummySvgConverterProperties();
+        TestSvgProcessorResult testSvgProcessorResult = new TestSvgProcessorResult();
+
+        ResourceResolver currentResolver = SvgConverter.getResourceResolver(testSvgProcessorResult, properties);
+        Assert.assertNotNull(currentResolver);
+    }
+
+    @Test
+    //TODO DEVSIX-3814: remove in version 7.2
+    public void resourceResolverInstanceCustomResolverNullPropsTest() {
+        TestSvgProcessorResult testSvgProcessorResult = new TestSvgProcessorResult();
+
+        ResourceResolver currentResolver = SvgConverter.getResourceResolver(testSvgProcessorResult, null);
+        Assert.assertNotNull(currentResolver);
+    }
+
+    //TODO DEVSIX-3814: remove in version 7.2
+    class TestSvgProcessorResult implements ISvgProcessorResult {
+
+        public TestSvgProcessorResult() {
+        }
+
+        @Override
+        public Map<String, ISvgNodeRenderer> getNamedObjects() {
+            return null;
+        }
+
+        @Override
+        public ISvgNodeRenderer getRootRenderer() {
+            return null;
+        }
+
+        @Override
+        public FontProvider getFontProvider() {
+            return null;
+        }
+
+        @Override
+        public FontSet getTempFonts() {
+            return null;
+        }
     }
 }

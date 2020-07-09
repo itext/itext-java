@@ -60,12 +60,16 @@ public class AnnotsObject {
      */
     private List<AnnotObject> annotsList;
 
+    /**
+     * Creates an instance with the empty list of children annotations.
+     */
     public AnnotsObject() {
         annotsList = new ArrayList<>();
     }
 
     /**
-     * Gets a list of children annotations.
+     * Gets children annotations.
+     * @return a {@link List} of {@link AnnotObject} each representing a child annotation of this annots tag.
      */
     public List<AnnotObject> getAnnotsList() {
         return annotsList;
@@ -74,6 +78,7 @@ public class AnnotsObject {
     /**
      * Adds a new {@link AnnotObject} to the list of children annotations.
      * @param annot {@link AnnotObject} containing info about pdf document annotation.
+     * @return this {@link AnnotsObject} instance.
      */
     public AnnotsObject addAnnot(AnnotObject annot) {
         this.annotsList.add(annot);

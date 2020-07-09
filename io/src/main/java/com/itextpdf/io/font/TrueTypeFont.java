@@ -189,6 +189,8 @@ public class TrueTypeFont extends FontProgram {
     /**
      * The offset from the start of the file to the table directory.
      * It is 0 for TTF and may vary for TTC depending on the chosen font.
+     *
+     * @return directory Offset
      */
     public int getDirectoryOffset() {
         return fontParser.directoryOffset;

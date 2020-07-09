@@ -136,7 +136,7 @@ public class SvgFontProcessor {
      * @param format {@link com.itextpdf.svg.processors.impl.font.FontFace.FontFormat}
      * @return true, if supported or unrecognized.
      */
-    //TODO (RND-1065) code duplication
+    //TODO (DEVSIX-2230) code duplication
     private boolean supportedFontFormat(FontFace.FontFormat format) {
         switch (format) {
             case None:

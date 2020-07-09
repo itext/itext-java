@@ -352,8 +352,6 @@ public class LinkTest extends ExtendedITextTest {
 
     @Test
     public void splitLinkTest01() throws IOException, InterruptedException {
-        junitExpectedException.expect(NullPointerException.class);
-
         String outFileName = destinationFolder + "splitLinkTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_splitLinkTest01.pdf";
 
@@ -374,4 +372,50 @@ public class LinkTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
+
+    @Test
+    public void linkAnnotationOnDivSplitTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "linkAnnotationOnDivSplitTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_linkAnnotationOnDivSplitTest01.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        PdfAction action = PdfAction.createURI("http://itextpdf.com");
+        PdfLinkAnnotation annotation = new PdfLinkAnnotation(new Rectangle(1, 1)).setAction(action);
+
+        Div div = new Div()
+                .setHeight(2000)
+                .setBackgroundColor(ColorConstants.RED);
+
+        div.setProperty(Property.LINK_ANNOTATION, annotation);
+
+        doc.add(div);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void linkActionOnDivSplitTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "linkActionOnDivSplitTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_linkActionOnDivSplitTest01.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        PdfAction action = PdfAction.createURI("http://itextpdf.com");
+
+        Div div = new Div()
+                .setHeight(2000)
+                .setBackgroundColor(ColorConstants.RED);
+
+        div.setAction(action);
+
+        doc.add(div);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
 }

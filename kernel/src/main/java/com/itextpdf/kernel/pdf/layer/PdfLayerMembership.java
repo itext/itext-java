@@ -72,6 +72,8 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
 
 	/**
      * Creates a new, empty membership layer.
+     *
+     * @param doc a {@link PdfDocument} where a new empty membership layer creates
      */
     public PdfLayerMembership(PdfDocument doc) {
         super(new PdfDictionary());
@@ -93,6 +95,8 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
 
     /**
      * Gets the collection of the layers this layer membership operates with.
+     *
+     * @return list of {@link PdfLayer layers} this layer membership operates with
      */
     public Collection<PdfLayer> getLayers() {
         final PdfObject layers = getPdfObject().get(PdfName.OCGs);
@@ -144,8 +148,8 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
     }
 
     /**
-     * Gets the visibility policy for content belonging to this
-     * optional content membership dictionary.
+     * Gets the visibility policy for content belonging to this optional content membership dictionary.
+     * @return the visibility policy for content belonging to this membership dictionary
      */
     public PdfName getVisibilityPolicy() {
         PdfName visibilityPolicy = getPdfObject().getAsName(PdfName.P);
@@ -168,8 +172,8 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
     }
 
     /**
-     * Gets the visibility expression for content belonging to this
-     * optional content membership dictionary.
+     * Gets the visibility expression for content belonging to this optional content membership dictionary.
+     * @return the visibility expression for content belonging to this membership dictionary, if not set return null
      */
     public PdfVisibilityExpression getVisibilityExpression() {
         PdfArray ve = getPdfObject().getAsArray(PdfName.VE);

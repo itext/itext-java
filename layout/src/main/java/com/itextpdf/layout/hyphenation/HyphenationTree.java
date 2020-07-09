@@ -130,7 +130,7 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
      * Read hyphenation patterns from an XML file.
      * @param filename the filename
      * @throws HyphenationException In case the parsing fails
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException When the specified file is not found
      */
     public void loadPatterns(String filename) throws HyphenationException, FileNotFoundException {
         loadPatterns(new FileInputStream(filename), filename);

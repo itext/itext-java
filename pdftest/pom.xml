@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.1.11</version>
+    <version>7.1.12</version>
   </parent>
   <artifactId>pdftest</artifactId>
   <name>iText 7 - pdftest</name>
@@ -33,7 +33,6 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
           <includes>
@@ -43,7 +42,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <groups>${unittests}</groups>
@@ -52,7 +50,6 @@
       <plugin>
         <groupId>org.pitest</groupId>
         <artifactId>pitest-maven</artifactId>
-        <version>${pitest.version}</version>
         <configuration>
           <skip>true</skip>
         </configuration>

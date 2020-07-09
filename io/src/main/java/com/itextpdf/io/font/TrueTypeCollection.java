@@ -91,6 +91,7 @@ public class TrueTypeCollection {
      *
      * @param ttcIndex the index for the TTC font
      * @return TrueTypeFont
+     * @throws java.io.IOException in case TTC index does not exist in this TTC file
      */
     public FontProgram getFontByTccIndex(int ttcIndex) throws java.io.IOException {
         if (ttcIndex > TTCSize - 1) {

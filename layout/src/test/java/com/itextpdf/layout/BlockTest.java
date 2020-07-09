@@ -704,7 +704,6 @@ public class BlockTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1092")
     public void marginsBordersPaddingOverflow01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "marginsBordersPaddingOverflow01.pdf";
         String cmpFileName = sourceFolder + "cmp_marginsBordersPaddingOverflow01.pdf";
@@ -716,7 +715,6 @@ public class BlockTest extends ExtendedITextTest {
         div.setHeight(760).setBackgroundColor(ColorConstants.DARK_GRAY);
         doc.add(div);
 
-        // TODO overflow of this div on second page is of much bigger height than 1pt
         Div div1 = new Div().setMarginTop(42).setMarginBottom(42)
                 .setBackgroundColor(ColorConstants.BLUE).setHeight(1);
         doc.add(div1);
@@ -728,7 +726,6 @@ public class BlockTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1092")
     public void marginsBordersPaddingOverflow02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "marginsBordersPaddingOverflow02.pdf";
         String cmpFileName = sourceFolder + "cmp_marginsBordersPaddingOverflow02.pdf";
@@ -737,7 +734,7 @@ public class BlockTest extends ExtendedITextTest {
         Document doc = new Document(pdfDocument);
 
 
-        // TODO div with fixed height is bigger than 60pt
+        // TODO DEVSIX-1092 div with fixed height is bigger than 60pt
         Div div = new Div();
         div.setHeight(60).setBackgroundColor(ColorConstants.DARK_GRAY);
         Div div1 = new Div()
@@ -753,7 +750,6 @@ public class BlockTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1092")
     public void marginsBordersPaddingOverflow03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "marginsBordersPaddingOverflow03.pdf";
         String cmpFileName = sourceFolder + "cmp_marginsBordersPaddingOverflow03.pdf";
@@ -765,14 +761,14 @@ public class BlockTest extends ExtendedITextTest {
         div.setHeight(710).setBackgroundColor(ColorConstants.DARK_GRAY);
         doc.add(div);
 
-        // TODO this element is below first page visible area
+        // TODO DEVSIX-1092 this element is below first page visible area
         Div div1 = new Div()
                 .setMarginTop(200).setMarginBottom(200)
                 .setBorder(new SolidBorder(6));
         doc.add(div1);
 
         doc.add(new AreaBreak());
-        // TODO same with this one the second page
+        // TODO DEVSIX-1092 same with this one the second page
         SolidBorder border = new SolidBorder(400);
         Div div2 = new Div()
                 .setBorderTop(border)
@@ -782,7 +778,7 @@ public class BlockTest extends ExtendedITextTest {
         doc.add(div2);
 
         doc.add(new AreaBreak());
-        // TODO same with this one the third page
+        // TODO DEVSIX-1092 same with this one the third page
         Div div3 = new Div()
                 .setBorder(new SolidBorder(6))
                 .setPaddingTop(400).setPaddingBottom(400);

@@ -164,7 +164,7 @@ public class MarginsCollapseHandler {
     /**
      * This method shall be called after child occupied area is included into parent occupied area.
      *
-     * @param layoutBox
+     * @param layoutBox available area for child and its siblings layout. It might be adjusted inside the method
      */
     public void endChildMarginsHandling(Rectangle layoutBox) {
         int childIndex = processedChildrenNum - 1;

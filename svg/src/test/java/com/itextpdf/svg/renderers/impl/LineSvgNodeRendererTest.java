@@ -134,7 +134,7 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
     @Test
     public void invalidAttributeTest01() {
         junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(LogMessageConstant.NAN, "notAnum"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.NAN, "notAnum"));
 
         PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         doc.addNewPage();

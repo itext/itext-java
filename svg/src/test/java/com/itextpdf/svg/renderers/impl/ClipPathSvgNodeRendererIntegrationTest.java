@@ -97,6 +97,7 @@ public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    //TODO: update cmp file after DEVSIX-4044 will be fixed
     public void multiClipPathComplexTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_multi_complex");
     }
@@ -146,4 +147,9 @@ public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathRulesCombined");
     }
 
+    @Test
+    // TODO: DEVSIX-3923 update cmp_ after fix
+    public void invalidClipPathTagTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_invalid_tag");
+    }
 }

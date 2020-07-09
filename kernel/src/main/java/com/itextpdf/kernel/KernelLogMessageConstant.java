@@ -49,10 +49,17 @@ package com.itextpdf.kernel;
 public final class KernelLogMessageConstant {
 
     private KernelLogMessageConstant() {
-
         //Private constructor will prevent the instantiation of this class directly
     }
+    public static final String FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY = "Full compression mode requested "
+            + "in append mode but the original document has cross-reference table, not cross-reference stream. "
+            + "Falling back to cross-reference table in appended document and switching full compression off";
 
-    /** The Constant UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE */
+    public static final String FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY = "Full compression mode was "
+            + "requested to be switched off in append mode but the original document has cross-reference stream, not "
+            + "cross-reference table. Falling back to cross-reference stream in appended document and switching full "
+            + "compression on";
+
     public static final String UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE = "Unable to parse color {0} within {1} color space";
+
 }

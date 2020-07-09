@@ -80,5 +80,4 @@ public interface ISvgProcessorResult {
      * @return FontSet
      */
     FontSet getTempFonts();
-
 }

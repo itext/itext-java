@@ -47,6 +47,7 @@ import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.ITextNode;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.SvgConstants.Tags;
 import com.itextpdf.svg.css.SvgCssContext;
 import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
@@ -57,6 +58,7 @@ import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.font.SvgFontProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.impl.ISvgTextNodeRenderer;
 import com.itextpdf.svg.renderers.impl.NoDrawOperationSvgNodeRenderer;
@@ -107,13 +109,13 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             //Iterate over children
             executeDepthFirstTraversal(svgRoot);
             ISvgNodeRenderer rootSvgRenderer = createResultAndClean();
-            return new SvgProcessorResult(namedObjects, rootSvgRenderer,
-                    context.getFontProvider(), context.getTempFonts());
+            return new SvgProcessorResult(namedObjects, rootSvgRenderer, context);
         } else {
             throw new SvgProcessingException(SvgLogMessageConstant.NOROOT);
         }
     }
 
+    @Deprecated
     public ISvgProcessorResult process(INode root) throws SvgProcessingException {
         return process(root, null);
     }
@@ -127,11 +129,13 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         processorState = new ProcessorState();
         if (converterProps.getRendererFactory() != null) {
             rendererFactory = converterProps.getRendererFactory();
+        } else {
+            rendererFactory = new DefaultSvgNodeRendererFactory();
         }
         context = new SvgProcessorContext(converterProps);
         cssResolver = new SvgStyleResolver(root, context);
         new SvgFontProcessor(context).addFontFaceFonts(cssResolver);
-        //TODO RND-1042
+        //TODO DEVSIX-2264
         namedObjects = new HashMap<>();
         cssContext = new SvgCssContext();
     }
@@ -184,7 +188,8 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             IElementNode element = (IElementNode) node;
 
             if (!rendererFactory.isTagIgnored(element)) {
-                ISvgNodeRenderer renderer = createRenderer(element, processorState.top());
+                ISvgNodeRenderer parentRenderer = processorState.top();
+                ISvgNodeRenderer renderer = createRenderer(element, parentRenderer);
                 if (renderer != null) {
                     Map<String, String> styles;
                     if (cssResolver instanceof SvgStyleResolver
@@ -203,13 +208,18 @@ public class DefaultSvgProcessor implements ISvgProcessor {
                         namedObjects.put(attribute, renderer);
                     }
 
-                    // don't add the NoDrawOperationSvgNodeRenderer or its subtree to the ISvgNodeRenderer tree
-                    if (!(renderer instanceof NoDrawOperationSvgNodeRenderer)) {
-                        if (processorState.top() instanceof IBranchSvgNodeRenderer) {
-                            ((IBranchSvgNodeRenderer) processorState.top()).addChild(renderer);
-                        } else if (processorState.top() instanceof TextSvgBranchRenderer && renderer instanceof ISvgTextNodeRenderer) {
+                    if (renderer instanceof NoDrawOperationSvgNodeRenderer) {
+                        // add the NoDrawOperationSvgNodeRenderer or its subtree to the ISvgNodeRenderer tree
+                        // only if the parent is NoDrawOperationSvgNodeRenderer itself
+                        if (parentRenderer instanceof NoDrawOperationSvgNodeRenderer) {
+                            ((NoDrawOperationSvgNodeRenderer) parentRenderer).addChild(renderer);
+                        }
+                    } else {
+                        if (parentRenderer instanceof IBranchSvgNodeRenderer) {
+                            ((IBranchSvgNodeRenderer) parentRenderer).addChild(renderer);
+                        } else if (parentRenderer instanceof TextSvgBranchRenderer && renderer instanceof ISvgTextNodeRenderer) {
                             //Text branch node renderers only accept ISvgTextNodeRenderers
-                            ((TextSvgBranchRenderer) processorState.top()).addChild((ISvgTextNodeRenderer) renderer);
+                            ((TextSvgBranchRenderer) parentRenderer).addChild((ISvgTextNodeRenderer) renderer);
                         }
                     }
 
@@ -230,7 +240,8 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     }
 
     private static boolean onlyNativeStylesShouldBeResolved(IElementNode element) {
-        return !SvgConstants.Tags.MARKER.equals(element.name())
+        return !Tags.LINEAR_GRADIENT.equals(element.name())
+                && !SvgConstants.Tags.MARKER.equals(element.name())
                 && isElementNested(element, SvgConstants.Tags.DEFS)
                 && !isElementNested(element, SvgConstants.Tags.MARKER);
     }

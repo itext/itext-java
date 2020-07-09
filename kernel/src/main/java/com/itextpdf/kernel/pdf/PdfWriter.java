@@ -47,6 +47,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.FileUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,6 +101,9 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * Create a PdfWriter writing to the passed File and with default writer properties.
      *
      * @param file File to write to.
+     * @throws FileNotFoundException if the file exists but is a directory
+     *                               rather than a regular file, does not exist but cannot
+     *                               be created, or cannot be opened for any other reason
      */
     public PdfWriter(java.io.File file) throws FileNotFoundException {
         this(file.getAbsolutePath());
@@ -126,7 +130,9 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * Create a PdfWriter writing to the passed filename and with default writer properties.
      *
      * @param filename filename of the resulting pdf.
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException if the file exists but is a directory
+     *                               rather than a regular file, does not exist but cannot
+     *                               be created, or cannot be opened for any other reason
      */
     public PdfWriter(String filename) throws FileNotFoundException {
         this(filename, new WriterProperties());
@@ -137,7 +143,9 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      *
      * @param filename   filename of the resulting pdf.
      * @param properties writerproperties to use.
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException if the file exists but is a directory
+     *                               rather than a regular file, does not exist but cannot
+     *                               be created, or cannot be opened for any other reason
      */
     public PdfWriter(String filename, WriterProperties properties) throws FileNotFoundException {
         this(FileUtil.getBufferedOutputStream(filename), properties);
@@ -167,6 +175,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * For more details @see {@link com.itextpdf.io.source.DeflaterOutputStream}.
      *
      * @param compressionLevel compression level.
+     * @return this {@link PdfWriter} instance
      */
     public PdfWriter setCompressionLevel(int compressionLevel) {
         this.properties.setCompressionLevel(compressionLevel);
@@ -183,6 +192,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * of the resulting PDF document.
      *
      * @param smartMode True for enabling smart mode.
+     * @return this {@link PdfWriter} instance
      */
     public PdfWriter setSmartMode(boolean smartMode) {
         this.properties.smartMode = smartMode;
@@ -193,7 +203,9 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * Write an integer to the underlying stream
      *
      * @param b integer to write
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an I/O error occurs. In particular,
+     *                             an <code>IOException</code> may be thrown if the output stream
+     *                             has been closed.
      */
     @Override
     public void write(int b) throws java.io.IOException {
@@ -207,7 +219,9 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * Write a byte array to the underlying stream
      *
      * @param b byte array to write
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an I/O error occurs. In particular,
+     *                             an <code>IOException</code> may be thrown if the output stream
+     *                             has been closed.
      */
     @Override
     public void write(byte[] b) throws java.io.IOException {
@@ -223,7 +237,9 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * @param b   byte array to slice and write.
      * @param off starting index of the slice.
      * @param len length of the slice.
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an I/O error occurs. In particular,
+     *                             an <code>IOException</code> may be thrown if the output stream
+     *                             has been closed.
      */
     @Override
     public void write(byte[] b, int off, int len) throws java.io.IOException {
@@ -237,7 +253,9 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     /**
      * Close the writer and underlying streams.
      *
-     * @throws IOException
+     * @throws java.io.IOException if an I/O error occurs. In particular,
+     *                             an <code>IOException</code> may be thrown if the output stream
+     *                             has been closed previously.
      */
     @Override
     public void close() throws IOException {
@@ -381,7 +399,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * Writes object to body of PDF document.
      *
      * @param pdfObj object to write.
-     * @throws IOException
+     * @throws IOException obsolete. {@code throws} declaration would be removed in 7.2
      */
     protected void writeToBody(PdfObject pdfObj) throws IOException {
         if (crypto != null) {
@@ -405,7 +423,9 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * Flushes all objects which have not been flushed yet.
-     * @param forbiddenToFlush a {@link Set} of {@link PdfIndirectReference references} that are forbidden to be flushed automatically.
+     *
+     * @param forbiddenToFlush a {@link Set} of {@link PdfIndirectReference references} that are forbidden to be flushed
+     *                         automatically.
      */
     protected void flushWaitingObjects(Set<PdfIndirectReference> forbiddenToFlush) {
         PdfXrefTable xref = document.getXref();
@@ -433,7 +453,9 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * Flushes all modified objects which have not been flushed yet. Used in case incremental updates.
-     * @param forbiddenToFlush a {@link Set} of {@link PdfIndirectReference references} that are forbidden to be flushed automatically.
+     *
+     * @param forbiddenToFlush a {@link Set} of {@link PdfIndirectReference references} that are forbidden to be flushed
+     *                         automatically.
      */
     protected void flushModifiedWaitingObjects(Set<PdfIndirectReference> forbiddenToFlush) {
         PdfXrefTable xref = document.getXref();

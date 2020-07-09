@@ -1,0 +1,69 @@
+<svg x="0" y="0" width = "1200" height = "1200" xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    
+    <linearGradient id="LinearGradient1"
+                    x1="2vw" y1="1vw"
+                    x2="10vw" y2="5vw"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="green" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="red" stop-opacity="1"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="1"/>
+      <stop offset="100%" stop-color="yellow" stop-opacity="1"/>
+    </linearGradient>
+
+    <linearGradient id="LinearGradient2"
+                    x1="1vh" y1="15vh"
+                    x2="5vh" y2="30vh"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="green" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="red" stop-opacity="1"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="1"/>
+      <stop offset="100%" stop-color="yellow" stop-opacity="1"/>
+    </linearGradient>
+
+    <linearGradient id="LinearGradient3"
+                    x1="10vmin" y1="9vmin"
+                    x2="19vmin" y2="11vmin"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="green" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="red" stop-opacity="1"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="1"/>
+      <stop offset="100%"   stop-color="yellow" stop-opacity="1"/>
+    </linearGradient>
+
+    <linearGradient id="LinearGradient4"
+                    x1="15vmax" y1="19vmax"
+                    x2="19vmax" y2="25vmax"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="green" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="red" stop-opacity="1"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="1"/>
+      <stop offset="100%"   stop-color="yellow" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+
+  <svg x="0" y="80" width="600" height="950">
+  <text x = "15" y = "15" >"vw"</text>
+  <rect x="10" y="30" width="175" height="200" rx="10" ry="10"
+     style="fill:url(#LinearGradient1);
+            stroke: #005000;
+            stroke-width: 3;" />
+  <text x = "315" y = "15" >"vh"</text>
+  <rect x="300" y="30" width="175" height="200" rx="10" ry="10"
+        style="fill:url(#LinearGradient2);
+            stroke: #005000;
+            stroke-width: 3;" />
+  <text x = "15" y = "255" >"vmin"</text>
+  <rect x="10" y="270" width="175" height="200" rx="10" ry="10"
+        style="fill:url(#LinearGradient3);
+            stroke: #005000;
+            stroke-width: 3;" />
+  <text x = "315" y = "255" >"vmax"</text>
+  <rect x="300" y="270" width="175" height="200" rx="10" ry="10"
+        style="fill:url(#LinearGradient4);
+            stroke: #005000;
+            stroke-width: 3;" />
+
+  </svg>
+</svg>

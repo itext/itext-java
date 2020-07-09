@@ -731,7 +731,15 @@ public class TableRenderer extends AbstractRenderer {
                     bordersHandler.applyLeftAndRightTableBorder(layoutBox, true);
                     prepareFooterOrHeaderRendererForLayout(footerRenderer, layoutBox.getWidth());
 
+                    // We've already layouted footer one time in order to know how much place it occupies.
+                    // That time, however, we didn't know with which border the top footer's border should be collapsed.
+                    // And now, when we possess such knowledge, we are performing the second attempt, but we need to nullify results
+                    // from the previous attempt
+                    if (bordersHandler instanceof CollapsedTableBorders) {
+                        ((CollapsedTableBorders)bordersHandler).setBottomBorderCollapseWith(null);
+                    }
                     bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, hasContent || 0 != childRenderers.size());
+
                     if (bordersHandler instanceof CollapsedTableBorders) {
                         footerRenderer.setBorders(CollapsedTableBorders.getCollapsedBorder(footerRenderer.getBorders()[2], getBorders()[2]), 2);
                     }
@@ -1232,8 +1240,6 @@ public class TableRenderer extends AbstractRenderer {
         splitRenderer.rowRange = rowRange;
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
-        // TODO childRenderers will be populated twice during the relayout.
-        // We should probably clean them before #layout().
         splitRenderer.childRenderers = childRenderers;
         splitRenderer.addAllProperties(getOwnProperties());
         splitRenderer.headerRenderer = headerRenderer;
@@ -1460,7 +1466,12 @@ public class TableRenderer extends AbstractRenderer {
         if (isTopTablePart) {
             bordersHandler.drawHorizontalBorder(0, startX, startY, drawContext.getCanvas(), countedColumnWidth);
         }
-        if (isBottomTablePart && isComplete) {
+        //!isLastRendererForModelElement is a check that this is a split render. This is the case with the splitting of
+        // one cell when part of the cell moves to the next page. Therefore, if such a splitting occurs, a bottom border
+        // should be drawn. However, this should not be done for empty renderers that are also created during splitting,
+        // but this splitting, if the table does not fit on the page and the next cell is added to the next page.
+        // In this case, this code should not be processed, since the border in the above code has already been drawn.
+        if (isBottomTablePart && (isComplete || (!isLastRendererForModelElement && !isEmptyTableRenderer()))) {
             bordersHandler.drawHorizontalBorder(heights.size(), startX, y1, drawContext.getCanvas(), countedColumnWidth);
         }
         // draw left
@@ -1471,6 +1482,10 @@ public class TableRenderer extends AbstractRenderer {
         if (isTagged) {
             drawContext.getCanvas().closeTag();
         }
+    }
+
+    private boolean isEmptyTableRenderer() {
+        return rows.isEmpty() && heights.size() == 1 && heights.get(0) == 0;
     }
 
     private void applyFixedXOrYPosition(boolean isXPosition, Rectangle layoutBox) {
@@ -1528,7 +1543,7 @@ public class TableRenderer extends AbstractRenderer {
         int finish = bordersHandler.getFinishRow();
         bordersHandler.setFinishRow(rowRange.getFinishRow());
 
-        // TODO Correct for collapsed borders only
+        // It's width will be considered only for collapsed borders
         Border currentBorder = bordersHandler.getWidestHorizontalBorder(finish + 1);
         bordersHandler.setFinishRow(finish);
         if (skip) {
@@ -1766,7 +1781,7 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     private boolean isFooterRendererOfLargeTable() {
-        return isFooterRenderer() && (!getTable().isComplete() || 0 != ((TableRenderer) parent).getTable().getLastRowBottomBorder().size());
+        return isFooterRenderer() && (!((TableRenderer) parent).getTable().isComplete() || 0 != ((TableRenderer) parent).getTable().getLastRowBottomBorder().size());
     }
 
     private boolean isTopTablePart() {

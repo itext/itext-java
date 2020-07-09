@@ -58,8 +58,6 @@ final class TableBorderUtil {
         if (null == cellModelSideBorder && !cellModel.hasProperty(borderType)) {
             cellModelSideBorder = cellModel.<Border>getProperty(Property.BORDER);
             if (null == cellModelSideBorder && !cellModel.hasProperty(Property.BORDER)) {
-
-                // TODO Maybe we need to foresee the possibility of default side border property
                 cellModelSideBorder = cellModel.<Border>getDefaultProperty(Property.BORDER);
             }
         }

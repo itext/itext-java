@@ -1,0 +1,28 @@
+<svg width="600" height="600" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+        <linearGradient x1="20%" y1="20%" x2="80%" y2="80%" id="myFillGradient">
+            <stop offset="0" stop-color="#ffcc00"/>
+            <stop offset="0.5" stop-color="#cc6699"/>
+            <stop offset="1" stop-color="#66cc99"/>
+        </linearGradient>
+        <linearGradient x1="80%" y1="80%" x2="20%" y2="20%" id="myStrokeGradient">
+            <stop offset="0" stop-color="#ffcc00"/>
+            <stop offset="0.5" stop-color="magenta"/>
+            <stop offset="1" stop-color="#66cc99"/>
+        </linearGradient>
+    </defs>
+
+    <path d="M100,200 C100,100 250,100 250,200 z" fill="url(#myFillGradient)" stroke-width="20"
+          stroke="url(#myStrokeGradient)"/>
+    <path d="M100,350 C100,250 250,250 250,350" fill="url(#myFillGradient)" stroke-width="20"
+          stroke="url(#myStrokeGradient)"/>
+    <path d="M100,500 C100,400 250,400 250,500 z M 300,500" fill="url(#myFillGradient)" stroke-width="20"
+          stroke="url(#myStrokeGradient)"/>
+
+    <path d="M400,200 c0,-100 150,-100 150,0z " fill="url(#myFillGradient)" stroke-width="20"
+          stroke="url(#myStrokeGradient)"/>
+    <path d="M400,350 c0,-100 150,-100 150,0" fill="url(#myFillGradient)" stroke-width="20"
+          stroke="url(#myStrokeGradient)"/>
+    <path d="M400,500 c0,-100 150,-100 150,0z M 300,500" fill="url(#myFillGradient)" stroke-width="20"
+          stroke="url(#myStrokeGradient)"/>
+</svg>

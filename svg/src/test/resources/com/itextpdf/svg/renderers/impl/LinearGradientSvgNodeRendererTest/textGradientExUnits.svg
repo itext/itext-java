@@ -1,0 +1,49 @@
+<!-- if gradient vector coordinate set in ex unit, it is related to the parent element that is <defs>-->
+<svg x="0" y="0" width="600" height="1200" font-size="10" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <g font-size="60">
+        <defs font-size="20">
+            <linearGradient x2="100ex" id="gradient1" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="red"/>
+                <stop offset="0.5" stop-color="green"/>
+                <stop offset="1" stop-color="blue"/>
+            </linearGradient>
+        </defs>
+        <defs font-size="40">
+            <linearGradient x2="30ex" id="gradient2" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="red"/>
+                <stop offset="0.5" stop-color="green"/>
+                <stop offset="1" stop-color="blue"/>
+            </linearGradient>
+        </defs>
+        <!-- font-size in <defs> is not defined and it is taken from parent for <defs> that is <g>.
+         Resultant font-size value is 60-->
+        <defs>
+            <linearGradient x2="10ex" id="gradient3" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="red"/>
+                <stop offset="0.5" stop-color="green"/>
+                <stop offset="1" stop-color="blue"/>
+            </linearGradient>
+        </defs>
+    </g>
+
+    <g font-size="100">
+        <text x="50" y="150"
+              font-family="Courier" font-size="128" fill="url(#gradient1)">
+            iText
+        </text>
+    </g>
+
+    <g font-size="100">
+        <text x="50" y="300"
+              font-family="Courier" font-size="128" fill="url(#gradient2)">
+            iText
+        </text>
+    </g>
+
+    <g font-size="100">
+        <text x="50" y="450"
+              font-family="Courier" font-size="128" fill="url(#gradient3)">
+            iText
+        </text>
+    </g>
+</svg>

@@ -86,7 +86,7 @@ class XfdfReader {
         } else {
             logger.warn(LogMessageConstant.XFDF_NO_F_OBJECT_TO_COMPARE);
         }
-        //TODO check for ids original/modified compatability with those in pdf document
+        //TODO DEVSIX-4026 check for ids original/modified compatability with those in pdf document
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
         if (form != null) {
@@ -154,7 +154,7 @@ class XfdfReader {
         String annotName = annotObject.getName();
         if (annotName != null) {
             switch (annotName) {
-                //TODO add all attributes properly one by one
+                //TODO DEVSIX-4027 add all attributes properly one by one
                 case XfdfConstants.TEXT:
                     PdfTextAnnotation pdfTextAnnotation = new PdfTextAnnotation(XfdfObjectUtils.convertRectFromString(annotObject.getAttributeValue(XfdfConstants.RECT)));
                     addCommonAnnotationAttributes(pdfTextAnnotation, annotObject);

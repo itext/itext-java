@@ -1,0 +1,56 @@
+<svg x = "0" y = "0" width = "1200" height = "1200" xmlns="http://www.w3.org/2000/svg" font-size="12">
+
+  <defs>
+    <linearGradient id="LinearGradient1"
+                    x1="1em" y1="1ex"
+                    x2="5em" y2="0.1rem"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="green" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="red" stop-opacity="1"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="1"/>
+      <stop offset="100%"   stop-color="yellow" stop-opacity="1"/>
+    </linearGradient>
+
+    <linearGradient id="LinearGradient2"
+                    x1="1em" y1="0.1rem"
+                    x2="0.2ch" y2="9ex"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="green" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="red" stop-opacity="1"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="1"/>
+      <stop offset="100%" stop-color="yellow" stop-opacity="1"/>
+    </linearGradient>
+    
+    <linearGradient id="LinearGradient3"
+                    x1="0.1vmin" y1="0.7vh"
+                    x2="2vmax" y2="0.2vw"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="green" stop-opacity="1"/>
+      <stop offset="0%"   stop-color="red" stop-opacity="1"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="1"/>
+      <stop offset="100%" stop-color="yellow" stop-opacity="1"/>
+    </linearGradient>
+
+  </defs>
+
+  <svg x = "0" y = "80" width="600" height="950" font-size="24">
+    <text x = "15" y = "15" >"em"+"ex"+"rem"</text>
+    <rect x="10" y="30" width="175" height="200" rx="10" ry="10"
+     style="fill:url(#LinearGradient1);
+            stroke: #005000;
+            stroke-width: 3;" />
+
+    <text x = "315" y = "15" >"em"+"ex"+"rem"+"ch"</text>
+    <rect x="300" y="30" width="175" height="200" rx="10" ry="10"
+        style="fill:url(#LinearGradient2);
+            stroke: #005000;
+            stroke-width: 3;"/>
+    <text x = "15" y = "255" >"vmin"+"vmax"+"vw"+"vh"</text>
+    <rect x="10" y="270" width="175" height="200" rx="10" ry="10"
+        style="fill:url(#LinearGradient3);
+            stroke: #005000;
+            stroke-width: 3;" />
+
+  </svg>
+
+</svg>

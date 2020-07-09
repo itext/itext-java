@@ -89,6 +89,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Style;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -2608,11 +2609,17 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         Canvas modelCanvas = new Canvas(canvas, new Rectangle(3, 0, Math.max(0, width - widthBorder), Math.max(0, height - heightBorder)));
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
+        Div div = new Div();
+        if(getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
+            div.setVerticalAlignment(VerticalAlignment.MIDDLE);
+        }
+        div.setHeight(Math.max(0, height - heightBorder));
         for (int index = 0; index < strings.size(); index++) {
             Boolean isFull = modelCanvas.getRenderer().getPropertyAsBoolean(Property.FULL);
             if (Boolean.TRUE.equals(isFull)) {
                 break;
             }
+
             Paragraph paragraph = new Paragraph(strings.get(index)).setFont(font).setFontSize(fontSize).setMargins(0, 0, 0, 0).setMultipliedLeading(1);
             paragraph.setProperty(Property.FORCED_PLACEMENT, true);
             paragraph.setTextAlignment(convertJustificationToTextAlignment());
@@ -2636,8 +2643,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     }
                 }
             }
-            modelCanvas.add(paragraph);
+            div.add(paragraph);
         }
+        modelCanvas.add(div);
         canvas.
                 restoreState().
                 endVariableText();
@@ -2891,6 +2899,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Draws PDF/A-1 compliant check appearance.
+     * 
      * @param width         width of the checkbox
      * @param height        height of the checkbox
      * @param selectedValue the selected value of the checkbox which determines the appearance of the checkbox
@@ -2898,8 +2908,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *                      {@value TYPE_CIRCLE}, {@value TYPE_CROSS}, {@value TYPE_DIAMOND}, {@value TYPE_SQUARE}, {@value TYPE_STAR}
      * @deprecated use {@link #drawPdfA2CheckAppearance(float, float, String, int)} instead.
      */
-    // TODO when removing the method: check {@link #drawCheckBox(PdfCanvas, float, float, float, boolean)} and consider
-    //  removing last redundant "on" parameter
     @Deprecated
     protected void drawPdfA1CheckAppearance(float width, float height, String selectedValue, int checkType) {
         PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());

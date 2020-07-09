@@ -42,10 +42,13 @@
  */
 package com.itextpdf.io.image;
 
-import java.io.IOException;
-
+import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -65,7 +68,8 @@ public class BmpTest extends ExtendedITextTest {
 
     @Test
     public void openBmp2() throws IOException {
-        ImageData img = ImageDataFactory.create(sourceFolder + "WP_20140410_001_gray.bmp");
+        // Test this a more specific entry point
+        ImageData img = ImageDataFactory.createBmp(UrlUtil.toURL(sourceFolder + "WP_20140410_001_gray.bmp"), false);
         Assert.assertEquals(2592, img.getWidth(), 0);
         Assert.assertEquals(1456, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
@@ -73,9 +77,14 @@ public class BmpTest extends ExtendedITextTest {
 
     @Test
     public void openBmp3() throws IOException {
-        ImageData img = ImageDataFactory.create(sourceFolder + "WP_20140410_001_monochrome.bmp");
-        Assert.assertEquals(2592, img.getWidth(), 0);
-        Assert.assertEquals(1456, img.getHeight(), 0);
-        Assert.assertEquals(1, img.getBpc());
+        String imageFileName = sourceFolder + "WP_20140410_001_monochrome.bmp";
+        try (FileInputStream fis = new FileInputStream(imageFileName)) {
+            byte[] imageBytes = StreamUtil.inputStreamToArray(fis);
+            // Test this a more specific entry point
+            ImageData img = ImageDataFactory.createBmp(imageBytes, false);
+            Assert.assertEquals(2592, img.getWidth(), 0);
+            Assert.assertEquals(1456, img.getHeight(), 0);
+            Assert.assertEquals(1, img.getBpc());
+        }
     }
 }

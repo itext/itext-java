@@ -67,6 +67,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -715,9 +716,68 @@ public class LargeElementTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO(DEVSIX-1664)
     public void largeTableSplitTest01() throws IOException, InterruptedException {
         String testName = "largeTableSplitTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+        largeTableSplitTest(outFileName, 100, 1, false, false);
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void largeTableSplitSeparateTest() throws IOException, InterruptedException {
+        String testName = "largeTableSplitSeparateTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+        largeTableSplitTest(outFileName, 100, 1, false, true);
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void largeTableSplitFooterTest() throws IOException, InterruptedException {
+        String testName = "largeTableSplitFooterTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+        largeTableSplitTest(outFileName, 280, 6, true, false);
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    private void largeTableSplitTest(String outFileName, float pageHeight, float rowsNumber, boolean addFooter, boolean separate) throws IOException, InterruptedException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(595, pageHeight));
+
+        float[] colWidths = new float[]{200, -1, 20, 40};
+
+        Table table = new Table(UnitValue.createPointArray(colWidths), true);
+
+        if (addFooter) {
+            Cell cell = new Cell(1, 4).add(new Paragraph("Table footer: continue on next page"));
+            table.addFooterCell(cell);
+        }
+
+        if (separate) {
+            table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        }
+
+        doc.add(table);
+
+        for (int i = 0; i < rowsNumber; i++) {
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 0))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 1))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 2))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 3))));
+
+            table.flush();
+        }
+
+        table.complete();
+
+        doc.close();
+    }
+
+    @Test
+    public void largeTableWithTableBorderSplitTest() throws IOException, InterruptedException {
+        String testName = "largeTableWithTableBorderSplitTest.pdf";
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
@@ -726,9 +786,10 @@ public class LargeElementTest extends ExtendedITextTest {
 
         float[] colWidths = new float[]{200, -1, 20, 40};
 
-        // please also look at tableOnDifferentPages01
         Table table = new Table(UnitValue.createPointArray(colWidths), true);
         doc.add(table);
+
+        table.setBorder(new SolidBorder(ColorConstants.BLUE, 2));
 
         for (int i = 0; i < 1; i++) {
             table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 0))));
@@ -742,7 +803,91 @@ public class LargeElementTest extends ExtendedITextTest {
         table.complete();
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    public void largeTableWithCellBordersSplitTest() throws IOException, InterruptedException {
+        String testName = "largeTableWithCellBordersSplitTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(595, 100));
+
+        float[] colWidths = new float[]{200, -1, 20, 40};
+
+        Table table = new Table(UnitValue.createPointArray(colWidths), true);
+        doc.add(table);
+
+        for (int i = 0; i < 1; i++) {
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 0)))
+                    .setBorderBottom(new SolidBorder(ColorConstants.BLUE, 2)));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 1)))
+                    .setBorderBottom(new SolidBorder(ColorConstants.RED, 5)));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 2)))
+                    .setBorderBottom(new SolidBorder(ColorConstants.GREEN, 7)));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 3)))
+                    .setBorderBottom(new SolidBorder(ColorConstants.BLUE, 10)));
+
+            table.flush();
+        }
+
+        table.complete();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+
+    @Test
+    public void largeTableSplitFooter2Test() throws IOException, InterruptedException {
+        String testName = "largeTableSplitFooter2Test.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(595, 400));
+
+        float[] colWidths = new float[]{100};
+
+        Table table = new Table(UnitValue.createPointArray(colWidths), true);
+        doc.add(table);
+        table.addFooterCell(new Cell().add(new Paragraph("Footer")).setBorderTop(new SolidBorder(ColorConstants.YELLOW, 15)).setBorderBottom(new SolidBorder(ColorConstants.GREEN, 35)));
+
+        table.addCell(new Cell().add(new Paragraph("Cell1")).setHeight(400).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 20)));
+        table.flush();
+        table.addCell(new Cell().add(new Paragraph("Cell2")).setHeight(200).setBorderTop(new SolidBorder(ColorConstants.RED, 10)));
+
+        table.complete();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void largeTableCollapsingSplitTest() throws IOException, InterruptedException {
+        String testName = "largeTableCollapsingSplitTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(595, 400));
+
+        float[] colWidths = new float[]{100};
+
+        Table table = new Table(UnitValue.createPointArray(colWidths), true);
+        doc.add(table);
+
+        table.addCell(new Cell().add(new Paragraph("Cell1")).setHeight(1000).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 20)));
+        table.flush();
+        table.addCell(new Cell().add(new Paragraph("Cell2")).setHeight(1000).setBorderTop(new SolidBorder(ColorConstants.RED, 40)));
+
+        table.complete();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
@@ -1087,6 +1232,39 @@ public class LargeElementTest extends ExtendedITextTest {
 
         doc.close();
 
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    // TODO DEVSIX-3953
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)})
+    public void largeTableFooterNotFitTest() throws IOException, InterruptedException {
+        String testName = "largeTableFooterNotFitTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(595, 100));
+
+        float[] colWidths = new float[]{200, -1, 40, 40};
+
+        Table table = new Table(UnitValue.createPointArray(colWidths), true);
+        Cell footerCell = new Cell(1, 4).add(new Paragraph("Table footer: continue on next page"));
+        table.addFooterCell(footerCell);
+        doc.add(table);
+
+        for (int i = 0; i < 2; i++) {
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 0))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 1))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 2))));
+            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 3))));
+
+            table.flush();
+        }
+
+        table.complete();
+
+        doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 }

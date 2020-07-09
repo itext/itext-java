@@ -97,7 +97,6 @@ public class CssSelector extends AbstractCssSelector {
         if (lastSelectorItemInd < 0) {
             return true;
         }
-        //TODO: Consider pseudo-elements in SVG
         boolean isPseudoElement = element instanceof CssPseudoElementNode;
         for (int i = lastSelectorItemInd; i >= 0; i--) {
             if (isPseudoElement && selectorItems.get(lastSelectorItemInd) instanceof CssPseudoElementSelectorItem && i < lastSelectorItemInd) {

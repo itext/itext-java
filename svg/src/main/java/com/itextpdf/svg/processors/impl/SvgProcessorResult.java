@@ -57,15 +57,52 @@ public class SvgProcessorResult implements ISvgProcessorResult {
 
     private Map<String, ISvgNodeRenderer> namedObjects;
     private ISvgNodeRenderer root;
-    private FontProvider fontProvider;
-    private FontSet tempFonts;
 
+    /**
+     * @deprecated  Will be removed in 7.2.
+     */
+    @Deprecated
+    private FontProvider fontProvider;
+
+    /**
+     * @deprecated  Will be removed in 7.2.
+     */
+    @Deprecated
+    private FontSet tempFonts;
+    private SvgProcessorContext context;
+
+    /**
+     * Creates new {@link SvgProcessorResult} entity.
+     * @param namedObjects a map of named-objects with their id's as {@link String} keys and
+     *                     the {@link ISvgNodeRenderer} objects as values.
+     * @param root a wrapped {@link ISvgNodeRenderer} root renderer.
+     * @param fontProvider a {@link FontProvider} instance.
+     * @param tempFonts a {@link FontSet} containing temporary fonts.
+     * @deprecated use {@link SvgProcessorResult#SvgProcessorResult(Map, ISvgNodeRenderer, SvgProcessorContext)} instead.
+     * Will be removed in 7.2.
+     */
+    @Deprecated
     public SvgProcessorResult(Map<String, ISvgNodeRenderer> namedObjects, ISvgNodeRenderer root,
                               FontProvider fontProvider, FontSet tempFonts) {
         this.namedObjects = namedObjects;
         this.root = root;
         this.fontProvider = fontProvider;
         this.tempFonts = tempFonts;
+    }
+
+    /**
+     * Creates new {@link SvgProcessorResult} entity.
+     * @param namedObjects a map of named-objects with their id's as {@link String} keys and
+     *                     the {@link ISvgNodeRenderer} objects as values.
+     * @param root a wrapped {@link ISvgNodeRenderer} root renderer.
+     * @param context a {@link SvgProcessorContext} instance.
+     */
+    public SvgProcessorResult(Map<String, ISvgNodeRenderer> namedObjects, ISvgNodeRenderer root, SvgProcessorContext context) {
+        this.namedObjects = namedObjects;
+        this.root = root;
+        this.fontProvider = context.getFontProvider();
+        this.tempFonts = context.getTempFonts();
+        this.context = context;
     }
 
     @Override
@@ -86,6 +123,14 @@ public class SvgProcessorResult implements ISvgProcessorResult {
     @Override
     public FontSet getTempFonts() {
         return tempFonts;
+    }
+
+    /**
+     * Gets processor context, containing {@link FontProvider} and {@link FontSet} of temporary fonts inside.
+     * @return {@link SvgProcessorContext} instance
+     */
+    public SvgProcessorContext getContext() {
+        return context;
     }
 
     @Override

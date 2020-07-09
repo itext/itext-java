@@ -191,7 +191,9 @@ public class TextRenderInfo extends AbstractRenderInfo {
     }
 
     /**
-     * @return the marked content associated with the TextRenderInfo instance.
+     * Gets the marked-content identifier associated with this {@link TextRenderInfo} instance
+     *
+     * @return associated marked-content identifier or -1 in case content is unmarked
      */
     public int getMcid() {
         for (CanvasTag tag : canvasTagHierarchy) {
@@ -477,7 +479,8 @@ public class TextRenderInfo extends AbstractRenderInfo {
         checkGraphicsState();
         if (singleCharString) {
             float[] widthAndWordSpacing = getWidthAndWordSpacing(string);
-            return (widthAndWordSpacing[0] * gs.getFontSize() + gs.getCharSpacing() + widthAndWordSpacing[1]) * gs.getHorizontalScaling() / 100f;
+            return (float)(((double)widthAndWordSpacing[0] * (double)gs.getFontSize() + (double)gs.getCharSpacing()
+                    + (double)widthAndWordSpacing[1]) * (double)gs.getHorizontalScaling() / 100f);
         } else {
             float totalWidth = 0;
             for (PdfString str : splitString(string)) {

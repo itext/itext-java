@@ -48,6 +48,7 @@ import com.itextpdf.styledxmlparser.css.resolve.CssInheritance;
 import com.itextpdf.styledxmlparser.css.resolve.CssPropertyMerger;
 import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.util.StyleUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -56,8 +57,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * @deprecated use {@link StyleUtil} instead.
  * Utility class for resolving parent-inheritance of style and attribute declarations
  */
+@Deprecated
 public class StyleResolverUtil {
 
     private Set<IStyleInheritance> inheritanceRules;
@@ -102,10 +105,10 @@ public class StyleResolverUtil {
                 //Property is inherited, add to element style declarations
                 styles.put(styleProperty, parentPropValue);
             }
-        } else if (CommonCssConstants.TEXT_DECORATION.equals(styleProperty) && !CommonCssConstants.INLINE_BLOCK.equals(styles.get(CommonCssConstants.DISPLAY))) {
-            // TODO Note! This property is formally not inherited, but the browsers behave very similar to inheritance here.
-                        /* Text decorations on inline boxes are drawn across the entire element,
-                            going across any descendant elements without paying any attention to their presence. */
+        } else if ((CommonCssConstants.TEXT_DECORATION_LINE.equals(styleProperty) || CommonCssConstants.TEXT_DECORATION.equals(styleProperty)) && !CommonCssConstants.INLINE_BLOCK.equals(styles.get(CommonCssConstants.DISPLAY))) {
+            // Note! This property is formally not inherited, but the browsers behave very similar to inheritance here.
+            // Text decorations on inline boxes are drawn across the entire element,
+            // going across any descendant elements without paying any attention to their presence.
             // Also, when, for example, parent element has text-decoration:underline, and the child text-decoration:overline,
             // then the text in the child will be both overline and underline. This is why the declarations are merged
             // See TextDecorationTest#textDecoration01Test

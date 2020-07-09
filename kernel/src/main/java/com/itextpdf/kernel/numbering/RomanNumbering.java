@@ -66,7 +66,8 @@ public class RomanNumbering {
     /**
      * Returns a lower case roman representation of an integer.
      *
-     * @param number a number to be converted to roman notation.
+     * @param number a number to be converted to roman notation
+     * @return a lower case roman representation of an integer
      */
     public static String toRomanLowerCase(int number) {
         return convert(number);
@@ -75,7 +76,8 @@ public class RomanNumbering {
     /**
      * Returns an upper case roman representation of an integer.
      *
-     * @param number a number to be converted to roman notation.
+     * @param number a number to be converted to roman notation
+     * @return an upper case roman representation of an integer
      */
     public static String toRomanUpperCase(int number) {
         return convert(number).toUpperCase();
@@ -84,9 +86,10 @@ public class RomanNumbering {
     /**
      * Returns a roman representation of an integer.
      *
-     * @param number     a number to be converted to roman notation.
+     * @param number     a number to be converted to roman notation
      * @param upperCase <code>true</code> for upper case representation,
-     *                  <code>false</code> for lower case one.
+     *                  <code>false</code> for lower case one
+     * @return a roman representation of an integer
      */
     public static String toRoman(int number, boolean upperCase) {
         return upperCase ? toRomanUpperCase(number) : toRomanLowerCase(number);

@@ -61,7 +61,7 @@ public class IOException extends RuntimeException {
     public static final String BmpImageException = "Bmp image exception.";
     public static final String BytesCanBeAssignedToByteArrayOutputStreamOnly = "Bytes can be assigned to ByteArrayOutputStream only.";
     public static final String BytesCanBeResetInByteArrayOutputStreamOnly = "Bytes can be reset in ByteArrayOutputStream only.";
-    public static final String CannotFind1Frame = "Cannot find {0} frame.";
+    public static final String CannotFind1Frame = "Cannot find frame number {0} (zero-based)";
     public static final String CannotGetTiffImageColor = "Cannot get TIFF image color.";
     public static final String CannotHandleBoxSizesHigherThan2_32 = "Cannot handle box sizes higher than 2^32.";
     public static final String CannotInflateTiffImage = "Cannot inflate TIFF image.";

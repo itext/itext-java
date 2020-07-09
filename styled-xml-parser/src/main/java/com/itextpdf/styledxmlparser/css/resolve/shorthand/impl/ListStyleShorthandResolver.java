@@ -45,13 +45,14 @@ package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
+import com.itextpdf.styledxmlparser.css.util.CssGradientUtil;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 
 /**
  * {@link IShorthandResolver} implementation for list styles.
@@ -84,14 +85,15 @@ public class ListStyleShorthandResolver implements IShorthandResolver {
                     new CssDeclaration(CommonCssConstants.LIST_STYLE_IMAGE, shorthandExpression));
         }
 
-        String[] props = shorthandExpression.split("\\s+");
+        List<String> props = CssUtils.extractShorthandProperties(shorthandExpression).get(0);
 
         String listStyleTypeValue = null;
         String listStylePositionValue = null;
         String listStyleImageValue = null;
 
         for (String value : props) {
-            if (value.contains("url(") || CommonCssConstants.NONE.equals(value) && listStyleTypeValue != null) {
+            if (value.contains("url(") || CssGradientUtil.isCssLinearGradientValue(value) ||
+                    (CommonCssConstants.NONE.equals(value) && listStyleTypeValue != null)) {
                 listStyleImageValue = value;
             } else if (LIST_STYLE_TYPE_VALUES.contains(value)) {
                 listStyleTypeValue = value;

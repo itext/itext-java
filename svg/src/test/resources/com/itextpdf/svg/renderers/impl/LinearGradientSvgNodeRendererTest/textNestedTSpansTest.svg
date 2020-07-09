@@ -1,0 +1,20 @@
+<svg x="0" y="0" width="800" height="600" xmlns="http://www.w3.org/2000/svg" version="1.1">
+	<defs>
+		<linearGradient y1="0%" x2="0%" y2="100%" id="horizontalGradient">
+			<stop offset="0"  stop-color="red" />
+			<stop offset="0.5"  stop-color="green" />
+			<stop offset="1" stop-color="blue" />
+		</linearGradient>
+		<linearGradient id="verticalGradient">
+			<stop offset="0"  stop-color="black" />
+			<stop offset="0.5"  stop-color="yellow" />
+			<stop offset="1" stop-color="magenta" />
+		</linearGradient>
+	</defs>
+
+	<g font-family="Courier" font-size="64" >
+		<text x="20" y="150" fill="url(#verticalGradient)" >
+			Text Leaf<tspan x="100" y="300">Span1<tspan dx="100" dy="-80" fill="url(#horizontalGradient)">Span2</tspan></tspan>
+		</text>
+	</g>
+</svg>

@@ -1,0 +1,18 @@
+<svg x="0" y="0" width="600" height="200" xmlns="http://www.w3.org/2000/svg" version="1.1">
+	<defs>
+		<linearGradient y1="0%" x2="0%" y2="100%" id="vertical">
+			<stop offset="0"  stop-color="red" />
+			<stop offset="0.5"  stop-color="green" />
+			<stop offset="1" stop-color="blue" />
+		</linearGradient>
+		<linearGradient id="horizontal">
+			<stop offset="0"  stop-color="black" />
+			<stop offset="0.5"  stop-color="yellow" />
+			<stop offset="1" stop-color="magenta" />
+		</linearGradient>
+	</defs>
+
+	<text x="100" y="100" fill="url(#vertical)" font-family="Courier" font-size="64">
+			Word1<tspan x="200" y="160" fill="url(#horizontal)">Word2</tspan>
+	</text>
+</svg>

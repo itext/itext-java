@@ -42,13 +42,12 @@
  */
 package com.itextpdf.forms.xfdf;
 
+import com.itextpdf.io.LogMessageConstant;
+
 /**
- * Class containing constants to be used in xfdf processing.
+ * Class containing constants to be used in XFDF processing.
  */
 public final class XfdfConstants {
-
-    private XfdfConstants() {
-    }
 
     public static final String TEXT = "text";
     public static final String HIGHLIGHT = "highlight";
@@ -144,7 +143,7 @@ public final class XfdfConstants {
     public static final String GO_TO = "GoTo";
     public static final String GO_TO_R = "GoToR";
     public static final String FILE = "File";
-    public static final String ON_ACTIVATION= "OnActivation";
+    public static final String ON_ACTIVATION = "OnActivation";
     public static final String ACTION = "Action";
     public static final String URI = "URI";
     public static final String IS_MAP = "IsMap";
@@ -181,10 +180,14 @@ public final class XfdfConstants {
      */
     @Deprecated
     public static final String PAGE_IS_MISSING = "Required Page attribute is missing.";
+
     /**
-     * @deprecated Use {@link LogMessageConstant#UNSUPPORTED_ANNOTATION_ATTRIBUTE} instead.
+     * @deprecated Use {@link LogMessageConstant#XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE} instead.
      * The constant will be removed in 7.2.
      */
     @Deprecated
     public static final String UNSUPPORTED_ANNOTATION_ATTRIBUTE = "Unsupported attribute type";
+
+    private XfdfConstants() {
+    }
 }
