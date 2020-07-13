@@ -87,10 +87,9 @@ public class LoggerHelper {
     * */
     static boolean equalsMessageByTemplate(String message, String template) {
         if (template.contains("{") && template.contains("}")) {
-            String templateWithoutParameters = template.replace("''", "'").replaceAll("\\{[0-9]+?\\}", "(.)*?");
+            String templateWithoutParameters = Pattern.quote(template).replace("''", "'").replaceAll("\\{[0-9]+?}", "\\\\E(.)*?\\\\Q");
             Pattern p = Pattern.compile(templateWithoutParameters, Pattern.DOTALL);
-            Matcher m = p.matcher(message);
-            return m.matches();
+            return p.matcher(message).matches();
         } else {
             return message.contains(template);
         }
