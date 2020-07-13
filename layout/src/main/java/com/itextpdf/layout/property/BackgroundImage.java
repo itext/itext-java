@@ -105,4 +105,12 @@ public class BackgroundImage {
     public boolean isRepeatY() {
         return repeatY;
     }
+
+    public float getWidth() {
+        return (float) image.getWidth();
+    }
+
+    public float getHeight() {
+        return (float) image.getHeight();
+    }
 }

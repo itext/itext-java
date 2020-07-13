@@ -508,7 +508,8 @@ public abstract class AbstractRenderer implements IRenderer {
             Rectangle backgroundArea = getBackgroundArea(applyMargins(bBox, false));
             if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.info(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
+                logger.info(MessageFormatUtil.format(
+                        LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
             } else {
                 boolean backgroundAreaIsClipped = false;
                 if (background != null) {
@@ -541,12 +542,15 @@ public abstract class AbstractRenderer implements IRenderer {
                                 backgroundArea, drawContext.getDocument());
                         imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundXObject.getHeight(),1, 1);
                     } else {
-                         imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundXObject.getHeight(),
-                                backgroundXObject.getWidth(), backgroundXObject.getHeight());
+                        imageRectangle = new Rectangle(backgroundArea.getX(),
+                                backgroundArea.getTop() - backgroundImage.getHeight(),
+                                backgroundImage.getWidth(), backgroundImage.getHeight());
                     }
                     if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
                         Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                        logger.info(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
+                        logger.info(MessageFormatUtil.format(
+                                LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES,
+                                "background-image"));
                     } else {
                         applyBorderBox(backgroundArea, true);
                         drawContext.getCanvas().saveState().rectangle(backgroundArea).clip().endPath();
