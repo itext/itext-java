@@ -166,12 +166,18 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
      * The relative order of the field name. Fields are sorted in ascending order.
      *
      * @param order a number indicating the order of the field
+     * @return this instance to support fluent interface
      */
     public PdfCollectionField setOrder(int order) {
         getPdfObject().put(PdfName.O, new PdfNumber(order));
         return this;
     }
 
+    /**
+     * Retrieves the order of the field name.
+     *
+     * @return the {@link PdfNumber PDF number} showing the order of the field name
+     */
     public PdfNumber getOrder() {
         return getPdfObject().getAsNumber(PdfName.O);
     }
@@ -179,13 +185,19 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the initial visibility of the field.
      *
-     * @param visible
+     * @param visible is a state of visibility
+     * @return this instance to support fluent interface
      */
     public PdfCollectionField setVisibility(boolean visible) {
         getPdfObject().put(PdfName.V, PdfBoolean.valueOf(visible));
         return this;
     }
 
+    /**
+     * Retrieves the initial visibility of the field.
+     *
+     * @return the initial visibility of the field as {@link PdfBoolean PDF boolean} value
+     */
     public PdfBoolean getVisibility() {
         return getPdfObject().getAsBoolean(PdfName.V);
     }
@@ -193,17 +205,30 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Indication if the field value should be editable in the viewer.
      *
-     * @param editable
+     * @param editable is a state of editable
+     * @return this instance to support fluent interface
      */
     public PdfCollectionField setEditable(boolean editable) {
         getPdfObject().put(PdfName.E, PdfBoolean.valueOf(editable));
         return this;
     }
 
+    /**
+     * Retrieves the state of the editable of the field.
+     *
+     * @return true if filed is editable and false otherwise. Returned value is presented
+     * as {@link PdfBoolean pdf boolean}.
+     */
     public PdfBoolean getEditable() {
         return getPdfObject().getAsBoolean(PdfName.E);
     }
 
+    /**
+     * Converts string to appropriate pdf value.
+     *
+     * @param value is a plain string representation of the value
+     * @return resulting {@link PdfObject PDF object}
+     */
     public PdfObject getValue(String value) {
         switch (subType) {
             case TEXT:
