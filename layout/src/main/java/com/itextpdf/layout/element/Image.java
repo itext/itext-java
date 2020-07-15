@@ -50,6 +50,7 @@ import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.layout.property.ObjectFit;
 import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -727,6 +728,31 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
         return null == this.<Float>getProperty(Property.VERTICAL_SCALING) ?
                 xObject.getHeight() :
                 xObject.getHeight() * (float) this.<Float>getProperty(Property.VERTICAL_SCALING);
+    }
+
+    /**
+     * Sets an object-fit mode for the image.
+     *
+     * @param objectFit is the {@link ObjectFit} mode
+     * @return this image
+     */
+    public Image setObjectFit(ObjectFit objectFit) {
+        setProperty(Property.OBJECT_FIT, objectFit);
+        return this;
+    }
+
+    /**
+     * Retrieves the {@link ObjectFit} mode for the image.
+     *
+     * @return an object-fit mode for the image if it was set
+     *          and default value {@link ObjectFit#FILL} otherwise
+     */
+    public ObjectFit getObjectFit() {
+        if (hasProperty(Property.OBJECT_FIT)) {
+            return (ObjectFit) this.<ObjectFit>getProperty(Property.OBJECT_FIT);
+        } else {
+            return ObjectFit.FILL;
+        }
     }
 
     @Override
