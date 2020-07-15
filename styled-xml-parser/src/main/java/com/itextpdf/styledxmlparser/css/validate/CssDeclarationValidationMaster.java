@@ -47,6 +47,7 @@ import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssColorValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssEnumValidator;
+import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssNumericValueValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssQuotesValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssTransformValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.declaration.MultiTypeDeclarationValidator;
@@ -94,6 +95,20 @@ public class CssDeclarationValidationMaster {
                         new CssQuotesValidator()));
         DEFAULT_VALIDATORS.put(CommonCssConstants.TRANSFORM,
                 new SingleTypeDeclarationValidator(new CssTransformValidator()));
+
+        final CssEnumValidator enumValidator =
+                new CssEnumValidator(CommonCssConstants.LARGER, CommonCssConstants.SMALLER);
+        enumValidator.addAllowedValues(CommonCssConstants.FONT_ABSOLUTE_SIZE_KEYWORDS_VALUES.keySet());
+        DEFAULT_VALIDATORS.put(CommonCssConstants.FONT_SIZE, new MultiTypeDeclarationValidator(
+                new CssNumericValueValidator(true, false), enumValidator));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.WORD_SPACING, new SingleTypeDeclarationValidator(
+                new CssNumericValueValidator(false, true)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.LETTER_SPACING, new SingleTypeDeclarationValidator(
+                new CssNumericValueValidator(false, true)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.TEXT_INDENT, new SingleTypeDeclarationValidator(
+                new CssNumericValueValidator(true, false)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.LINE_HEIGHT, new SingleTypeDeclarationValidator(
+                new CssNumericValueValidator(true, true)));
     }
 
     /**

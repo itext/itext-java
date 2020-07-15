@@ -393,6 +393,19 @@ public class CssUtils {
     }
 
     /**
+     * Checks if a string is in a valid format.
+     *
+     * @param value the string that needs to be checked.
+     * @return boolean true if value is in a valid format.
+     */
+    public static boolean isValidNumericValue(final String value) {
+        if (value == null || value.contains(" ")) {
+            return false;
+        }
+        return isRelativeValue(value) || isMetricValue(value) || isNumericValue(value);
+    }
+
+    /**
      * Parses the absolute font size.
      * <p>
      * A numeric value (without px, pt, etc in the given length string) is considered to be in the default metric that

@@ -45,7 +45,9 @@ package com.itextpdf.styledxmlparser.css.validate.impl.datatype;
 
 import com.itextpdf.styledxmlparser.css.validate.ICssDataTypeValidator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -62,7 +64,16 @@ public class CssEnumValidator implements ICssDataTypeValidator {
      * @param allowedValues the allowed values
      */
     public CssEnumValidator(String... allowedValues) {
-        this.allowedValues = Arrays.asList(allowedValues);
+        this.allowedValues = new ArrayList<>(Arrays.asList(allowedValues));
+    }
+
+    /**
+     * Adds new allowed values to the allowedValues.
+     *
+     * @param allowedValues the allowed values
+     */
+    public void addAllowedValues(final Collection<String> allowedValues) {
+        this.allowedValues.addAll(allowedValues);
     }
 
     /* (non-Javadoc)

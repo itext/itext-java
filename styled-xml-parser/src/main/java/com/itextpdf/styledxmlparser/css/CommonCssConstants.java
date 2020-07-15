@@ -1150,6 +1150,11 @@ public class CommonCssConstants {
     public static final String UNDERLINE = "underline";
 
     /**
+     * The Constant value UNSET.
+     */
+    public static final String UNSET = "unset";
+
+    /**
      * The Constant UPPER_ALPHA.
      */
     public static final String UPPER_ALPHA = "upper-alpha";
