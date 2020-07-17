@@ -65,9 +65,17 @@ import org.slf4j.LoggerFactory;
  */
 // TODO handle <base href=".."> tag?
 public class ResourceResolver {
+
     /**
      * Identifier string used when loading in base64 images.
      */
+    public static final String BASE64_IDENTIFIER = "base64";
+
+    /**
+     * Identifier string used when loading in base64 images.
+     * @deprecated This variable will be replaced by {@link #BASE64_IDENTIFIER} in 7.2 release
+     */
+    @Deprecated
     public static final String BASE64IDENTIFIER = "base64";
 
     /**
@@ -330,13 +338,12 @@ public class ResourceResolver {
     protected PdfXObject tryResolveBase64ImageSource(String src) {
         try {
             String fixedSrc = src.replaceAll("\\s", "");
-            fixedSrc = fixedSrc.substring(fixedSrc.indexOf(BASE64IDENTIFIER) + 7);
+            fixedSrc = fixedSrc.substring(fixedSrc.indexOf(BASE64_IDENTIFIER) + BASE64_IDENTIFIER.length() + 1);
             PdfXObject imageXObject = imageCache.getImage(fixedSrc);
             if (imageXObject == null) {
                 imageXObject = new PdfImageXObject(ImageDataFactory.create(Base64.decode(fixedSrc)));
                 imageCache.putImage(fixedSrc, imageXObject);
             }
-
             return imageXObject;
         } catch (Exception ignored) {
         }
@@ -377,7 +384,7 @@ public class ResourceResolver {
         if (isContains64Mark(src)) {
             try {
                 String fixedSrc = src.replaceAll("\\s", "");
-                fixedSrc = fixedSrc.substring(fixedSrc.indexOf(BASE64IDENTIFIER) + 7);
+                fixedSrc = fixedSrc.substring(fixedSrc.indexOf(BASE64_IDENTIFIER) + BASE64_IDENTIFIER.length() + 1);
                 return Base64.decode(fixedSrc);
             } catch (Exception ignored) {
             }
@@ -393,6 +400,6 @@ public class ResourceResolver {
      * @return true if string contains base64 mark
      */
     private boolean isContains64Mark(String src) {
-        return src.contains(BASE64IDENTIFIER);
+        return src.contains(BASE64_IDENTIFIER);
     }
 }
