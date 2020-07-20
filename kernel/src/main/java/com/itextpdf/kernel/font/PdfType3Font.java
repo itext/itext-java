@@ -158,7 +158,8 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
             fontProgram.getFontMetrics().setBbox(0, 0, 0, 0);
         }
         int firstChar = normalizeFirstLastChar(fontDictionary.getAsNumber(PdfName.FirstChar), 0);
-        int lastChar = normalizeFirstLastChar(fontDictionary.getAsNumber(PdfName.LastChar), 255);
+        int lastChar = normalizeFirstLastChar(fontDictionary.getAsNumber(PdfName.LastChar),
+                PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE);
         for (int i = firstChar; i <= lastChar; i++) {
             shortTag[i] = 1;
         }
@@ -174,7 +175,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         int[] widths = FontUtil.convertSimpleWidthsArray(multipliedPdfWidths, firstChar, 0);
 
         if (toUnicode != null && toUnicode.hasByteMappings() && fontEncoding.hasDifferences()) {
-            for (int i = 0; i < 256; i++) {
+            for (int i = 0; i <= PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE; i++) {
                 int unicode = fontEncoding.getUnicode(i);
                 PdfName glyphName = new PdfName(fontEncoding.getDifference(i));
                 if (unicode != -1
@@ -368,7 +369,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         }
 
         PdfDictionary charProcs = new PdfDictionary();
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i <= PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE; i++) {
             if (fontEncoding.canDecode(i)) {
                 Type3Glyph glyph = getType3Glyph(fontEncoding.getUnicode(i));
                 if (glyph != null) {
@@ -461,7 +462,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
      */
     private int getFirstEmptyCode() {
         final int startFrom = 1;
-        for (int i = startFrom; i < 256; i++) {
+        for (int i = startFrom; i <= PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE; i++) {
             if (!fontEncoding.canDecode(i)) {
                 return i;
             }
@@ -501,7 +502,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     private int normalizeFirstLastChar(PdfNumber firstLast, int defaultValue) {
         if (firstLast == null) return defaultValue;
         int result = firstLast.intValue();
-        return result < 0 || result > 255 ? defaultValue : result;
+        return result < 0 || result > PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE ? defaultValue : result;
     }
 
     private PdfArray normalizeBBox(int[] bBox) {

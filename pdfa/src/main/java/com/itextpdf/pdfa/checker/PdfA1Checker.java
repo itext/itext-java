@@ -425,7 +425,7 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(PdfAConformanceException.THE_SMASK_KEY_IS_NOT_ALLOWED_IN_XOBJECTS);
         }
 
-        if (form.containsKey(PdfName.Group) && PdfName.Transparency.equals(form.getAsDictionary(PdfName.Group).getAsName(PdfName.S))) {
+        if (isContainsTransparencyGroup(form)) {
             throw new PdfAConformanceException(PdfAConformanceException.A_GROUP_OBJECT_WITH_AN_S_KEY_WITH_A_VALUE_OF_TRANSPARENCY_SHALL_NOT_BE_INCLUDED_IN_A_FORM_XOBJECT);
         }
 
@@ -716,7 +716,7 @@ public class PdfA1Checker extends PdfAChecker {
                 checkAction(action);
             }
         }
-        if (pageDict.containsKey(PdfName.Group) && PdfName.Transparency.equals(pageDict.getAsDictionary(PdfName.Group).getAsName(PdfName.S))) {
+        if (isContainsTransparencyGroup(pageDict)) {
             throw new PdfAConformanceException(PdfAConformanceException.A_GROUP_OBJECT_WITH_AN_S_KEY_WITH_A_VALUE_OF_TRANSPARENCY_SHALL_NOT_BE_INCLUDED_IN_A_PAGE_XOBJECT);
         }
     }

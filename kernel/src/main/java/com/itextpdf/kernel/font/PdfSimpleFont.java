@@ -79,7 +79,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     /**
      * The array used with single byte encodings.
      */
-    protected byte[] shortTag = new byte[256];
+    protected byte[] shortTag = new byte[PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE + 1];
 
     /**
      * Currently only exists for the fonts that are parsed from the document.
@@ -334,15 +334,15 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         }
         int firstChar;
         int lastChar;
-        for (firstChar = 0; firstChar < 256; ++firstChar) {
+        for (firstChar = 0; firstChar <= PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE; ++firstChar) {
             if (shortTag[firstChar] != 0) break;
         }
-        for (lastChar = 255; lastChar >= firstChar; --lastChar) {
+        for (lastChar = PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE; lastChar >= firstChar; --lastChar) {
             if (shortTag[lastChar] != 0) break;
         }
-        if (firstChar > 255) {
-            firstChar = 255;
-            lastChar = 255;
+        if (firstChar > PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE) {
+            firstChar = PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE;
+            lastChar = PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE;
         }
         if (!isSubset() || !isEmbedded()) {
             firstChar = 0;
