@@ -315,6 +315,44 @@ public class PdfMergerTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES, count = 3)
+    })
+    public void mergePdfWithOCGTest() throws IOException, InterruptedException {
+        String pdfWithOCG1 = sourceFolder  + "sourceOCG1.pdf";
+        String pdfWithOCG2 = sourceFolder  + "sourceOCG2.pdf";
+        String outPdf = destinationFolder + "mergePdfWithOCGTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_mergePdfWithOCGTest.pdf";
+
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(pdfWithOCG1));
+        sources.add(new File(pdfWithOCG2));
+        sources.add(new File(pdfWithOCG2));
+        sources.add(new File(pdfWithOCG2));
+        mergePdfs(sources, outPdf);
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES, count = 1)
+    })
+    public void mergePdfWithComplexOCGTest() throws IOException, InterruptedException {
+        String pdfWithOCG1 = sourceFolder  + "sourceOCG1.pdf";
+        String pdfWithOCG2 = sourceFolder  + "pdfWithComplexOCG.pdf";
+        String outPdf = destinationFolder + "mergePdfWithComplexOCGTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_mergePdfWithComplexOCGTest.pdf";
+
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(pdfWithOCG1));
+        sources.add(new File(pdfWithOCG2));
+        mergePdfs(sources, outPdf);
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+    }
+
     private void mergePdfs(List<File> sources, String destination) throws IOException {
         PdfDocument mergedDoc = new PdfDocument(new PdfWriter(destination));
         PdfMerger merger = new PdfMerger(mergedDoc);

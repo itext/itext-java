@@ -227,8 +227,9 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * This method registers a new layer in the OCProperties.
      *
      * @param layer the new layer
+     * @throws IllegalArgumentException if layer param is null
      */
-    protected void registerLayer(PdfLayer layer) {
+    public void registerLayer(PdfLayer layer) {
         if (layer == null)
             throw new IllegalArgumentException("layer argument is null");
         layers.add(layer);

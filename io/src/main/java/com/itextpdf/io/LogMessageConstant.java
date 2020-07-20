@@ -78,6 +78,7 @@ public final class LogMessageConstant {
     public static final String DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT = "DirectOnly object cannot be indirect";
     public static final String DOCFONT_HAS_ILLEGAL_DIFFERENCES = "Document Font has illegal differences array. Entry {0} references a glyph ID over 255 and will be ignored.";
     public static final String DOCUMENT_ALREADY_HAS_FIELD = "The document already has field {0}. Annotations of the fields with this name will be added to the existing one as children. If you want to have separate fields, please, rename them manually before copying.";
+    public static final String DOCUMENT_HAS_CONFLICTING_OCG_NAMES = "Document has conflicting names for optional content groups. Groups with conflicting names will be renamed";
     public static final String DOCUMENT_IDS_ARE_CORRUPTED = "The document original and/or modified id is corrupted";
     public static final String DOCUMENT_SERIALIZATION_EXCEPTION_RAISED = "Unhandled exception while serialization";
     public static final String ELEMENT_DOES_NOT_FIT_AREA = "Element does not fit current area. {0}";
