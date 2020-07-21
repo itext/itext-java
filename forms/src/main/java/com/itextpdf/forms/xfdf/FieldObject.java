@@ -176,7 +176,7 @@ public class FieldObject {
     /**
      * Gets a boolean indicating if a value-richtext element is present inside the field.
      *
-     * @return a boolean indicating if a value-richtext element is present inside the field
+     * @return true if a value-richtext element is present inside the field, false otherwise
      */
     public boolean isContainsRichText() {
         return containsRichText;

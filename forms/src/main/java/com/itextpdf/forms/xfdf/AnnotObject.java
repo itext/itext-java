@@ -250,7 +250,7 @@ public class AnnotObject {
     /**
      * Gets the boolean, indicating if annotation has an inner popup element.
      *
-     * @return boolean value indicating if annotation has an inner popup element
+     * @return true if annotation has an inner popup element, false otherwise
      */
     public boolean isHasPopup() {
         return hasPopup;
