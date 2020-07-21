@@ -107,6 +107,8 @@ public class FieldObject {
      * Corresponds to the T key in the field dictionary.
      * In a hierarchical form field, the name is the partial field name.
      * For more details see paragraph 6.3.2.2 in XFDF document specification.
+     *
+     * @return {@link String} value of field name attribute
      */
     public String getName() {
         return name;
@@ -116,6 +118,8 @@ public class FieldObject {
      * Sets the string value of the name attribute of the field element.
      * Corresponds to the T key in the field dictionary.
      * In a hierarchical form field, the name is the partial field name.
+     *
+     * @param name {@link String} value of field name attribute
      */
     public void setName(String name) {
         this.name = name;
@@ -126,6 +130,8 @@ public class FieldObject {
      * whose format may vary depending on the field type.
      * Corresponds to the V key in the FDF field dictionary.
      * For more details see paragraph 6.3.3 in XFDF document specification.
+     *
+     * @return {@link String} representation of inner value element of the field
      */
     public String getValue() {
         return value;
@@ -135,6 +141,8 @@ public class FieldObject {
      * Sets the string representation of the value element, a child of the field element and contains the field's value,
      * whose format may vary depending on the field type.
      * Corresponds to the V key in the FDF field dictionary.
+     *
+     * @param value {@link String} representation of inner value element of the field
      */
     public void setValue(String value) {
         this.value = value;
@@ -146,6 +154,8 @@ public class FieldObject {
      * Corresponds to the RV key in the variable text field dictionary.
      * Content model: text strign or rich text string.
      * For more details see paragraph 6.3.4 in XFDF document specification.
+     *
+     * @return {@link String} representation of inner value-richtext element of the field
      */
     public String getRichTextValue() {
         return richTextValue;
@@ -155,7 +165,9 @@ public class FieldObject {
      * Sets the string representation of the value-richtext element, a child of the field element and contains the
      * field's value formatted as a rich text string.
      * Corresponds to the RV key in the variable text field dictionary.
-     * Content model: text strign or rich text string.
+     * Content model: text string or rich text string.
+     *
+     * @param richTextValue {@link String} representation of inner value-richtext element of the field
      */
     public void setRichTextValue(String richTextValue) {
         this.richTextValue = richTextValue;
@@ -163,6 +175,8 @@ public class FieldObject {
 
     /**
      * Gets a boolean indicating if a value-richtext element is present inside the field.
+     *
+     * @return a boolean indicating if a value-richtext element is present inside the field
      */
     public boolean isContainsRichText() {
         return containsRichText;
@@ -170,6 +184,8 @@ public class FieldObject {
 
     /**
      * Sets a boolean indicating if a value-richtext element is present inside the field.
+     *
+     * @param containsRichText a boolean indicating if a value-richtext element is present inside the field
      */
     public void setContainsRichText(boolean containsRichText) {
         this.containsRichText = containsRichText;
@@ -177,6 +193,8 @@ public class FieldObject {
 
     /**
      * Gets a parent field of current field.
+     *
+     * @return parent {@link FieldObject field object} of the current field
      */
     public FieldObject getParent() {
         return parent;
@@ -184,6 +202,8 @@ public class FieldObject {
 
     /**
      * Sets a parent field of current field.
+     *
+     * @param parent {@link FieldObject field object} that is a parent of the current field
      */
     public void setParent(FieldObject parent) {
         this.parent = parent;
