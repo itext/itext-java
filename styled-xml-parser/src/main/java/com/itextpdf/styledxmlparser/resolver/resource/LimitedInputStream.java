@@ -22,6 +22,8 @@
  */
 package com.itextpdf.styledxmlparser.resolver.resource;
 
+import com.itextpdf.styledxmlparser.StyledXmlParserExceptionMessage;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -39,9 +41,12 @@ class LimitedInputStream extends InputStream {
      * Creates a new {@link LimitedInputStream} instance.
      *
      * @param inputStream the input stream, the reading of bytes from which will be limited
-     * @param readingByteLimit the reading byte limit
+     * @param readingByteLimit the reading byte limit, must not be less than zero
      */
     public LimitedInputStream(InputStream inputStream, long readingByteLimit) {
+        if (readingByteLimit < 0) {
+            throw new IllegalArgumentException(StyledXmlParserExceptionMessage.READING_BYTE_LIMIT_MUST_NOT_BE_LESS_ZERO);
+        }
         this.isLimitViolated = false;
         this.inputStream = inputStream;
         this.readingByteLimit = readingByteLimit;

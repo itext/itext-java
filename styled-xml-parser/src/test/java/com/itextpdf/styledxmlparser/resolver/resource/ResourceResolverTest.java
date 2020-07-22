@@ -59,6 +59,7 @@ import java.nio.file.Files;
 import java.net.URL;
 import java.net.MalformedURLException;
 
+import java.nio.file.Paths;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -294,8 +295,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_RESOURCE_WITH_GIVEN_RESOURCE_SIZE_BYTE_LIMIT, logLevel = LogLevelConstants.WARN))
     public void attemptToRetrieveBytesFromLocalWithResourceSizeByteLimitTest() {
-        String fileName = "retrieveStyleSheetTest.css";
-        // retrieveStyleSheetTest.css size is 89 bytes
+        String fileName = "retrieveStyleSheetTest.css.dat";
+        // retrieveStyleSheetTest.css.dat size is 89 bytes
         IResourceRetriever retriever = new DefaultResourceRetriever().setResourceSizeByteLimit(88);
         ResourceResolver resourceResolver = new ResourceResolver(baseUri, retriever);
         byte[] bytes = resourceResolver.retrieveBytesFromResource(fileName);
@@ -304,8 +305,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
 
     @Test
     public void retrieveBytesFromLocalWithResourceSizeByteLimitTest() {
-        String fileName = "retrieveStyleSheetTest.css";
-        // retrieveStyleSheetTest.css size is 89 bytes
+        String fileName = "retrieveStyleSheetTest.css.dat";
+        // retrieveStyleSheetTest.css.dat size is 89 bytes
         IResourceRetriever retriever = new DefaultResourceRetriever().setResourceSizeByteLimit(89);
         ResourceResolver resourceResolver = new ResourceResolver(baseUri, retriever);
         byte[] bytes = resourceResolver.retrieveBytesFromResource(fileName);
@@ -318,8 +319,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
     @Test
     public void attemptToReadBytesFromLimitedInputStreamTest() throws IOException {
         junitExpectedException.expect(ReadingByteLimitException.class);
-        String fileName = "retrieveStyleSheetTest.css";
-        // retrieveStyleSheetTest.css size is 89 bytes
+        String fileName = "retrieveStyleSheetTest.css.dat";
+        // retrieveStyleSheetTest.css.dat size is 89 bytes
         IResourceRetriever retriever = new DefaultResourceRetriever().setResourceSizeByteLimit(40);
         ResourceResolver resourceResolver = new ResourceResolver(baseUri, retriever);
         InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileName);
@@ -408,54 +409,56 @@ public class ResourceResolverTest extends ExtendedITextTest {
     // Absolute path tests block
 
     @Test
-    public void retrieveStyleSheetGetPathFromAbsolutePathTest() throws IOException {
+    public void retrieveStyleSheetAbsolutePathTest() throws IOException {
         String fileName = "retrieveStyleSheetTest.css";
-        String absolutePath = UrlUtil.toNormalizedURI(baseUri).getPath() + fileName;
-        InputStream expected = new FileInputStream(absolutePath);
+        String absolutePath = Paths.get(baseUri, fileName).toFile().getAbsolutePath();
 
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        InputStream stream = resourceResolver.retrieveStyleSheet(absolutePath);
-        Assert.assertNotNull(stream);
-        Assert.assertEquals(expected.read(), stream.read());
+        try (InputStream stream = resourceResolver.retrieveStyleSheet(absolutePath);
+                InputStream expected = new FileInputStream(absolutePath);) {
+            Assert.assertNotNull(stream);
+            Assert.assertEquals(expected.read(), stream.read());
+        }
     }
 
     @Test
-    public void retrieveStyleSheetGetStringFromAbsolutePathTest() throws IOException {
+    public void retrieveResourceAsInputStreamAbsolutePathTest() throws IOException {
         String fileName = "retrieveStyleSheetTest.css";
-        String absolutePath = UrlUtil.toNormalizedURI(baseUri).toString() + fileName;
-        // The URI#toString method returns a string that starts with "file:", so to
-        // open InputStream to check the result, a string is taken without "file:".
-        InputStream expected = new FileInputStream(absolutePath.substring(5));
+        String absolutePath = Paths.get(baseUri, fileName).toFile().getAbsolutePath();
 
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        InputStream stream = resourceResolver.retrieveStyleSheet(absolutePath);
-        Assert.assertNotNull(stream);
-        Assert.assertEquals(expected.read(), stream.read());
+        try (InputStream stream = resourceResolver.retrieveResourceAsInputStream(absolutePath);
+                InputStream expected = new FileInputStream(absolutePath);) {
+            Assert.assertNotNull(stream);
+            Assert.assertEquals(expected.read(), stream.read());
+        }
     }
 
     @Test
-    public void retrieveResourceAsInputStreamGetPathFromAbsolutePathTest() throws IOException {
+    public void retrieveStyleSheetFileUrlTest() throws IOException {
         String fileName = "retrieveStyleSheetTest.css";
-        String absolutePath = UrlUtil.toNormalizedURI(baseUri).getPath() + fileName;
-        InputStream expected = new FileInputStream(absolutePath);
+        URL url = Paths.get(baseUri, fileName).toUri().toURL();
+        String fileUrlString = url.toExternalForm();
 
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        InputStream stream = resourceResolver.retrieveResourceAsInputStream(absolutePath);
-        Assert.assertNotNull(stream);
-        Assert.assertEquals(expected.read(), stream.read());
+        try (InputStream stream = resourceResolver.retrieveStyleSheet(fileUrlString);
+                InputStream expected = url.openStream()) {
+            Assert.assertNotNull(stream);
+            Assert.assertEquals(expected.read(), stream.read());
+        }
     }
 
     @Test
-    public void retrieveResourceAsInputStreamGetStringFromAbsolutePathTest() throws IOException {
+    public void retrieveResourceAsInputStreamFileUrlTest() throws IOException {
         String fileName = "retrieveStyleSheetTest.css";
-        String absolutePath = UrlUtil.toNormalizedURI(baseUri).toString() + fileName;
-        // The URI#toString method returns a string that starts with "file:", so to
-        // open InputStream to check the result, a string is taken without "file:".
-        InputStream expected = new FileInputStream(absolutePath.substring(5));
+        URL url = Paths.get(baseUri, fileName).toUri().toURL();
+        String fileUrlString = url.toExternalForm();
 
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        InputStream stream = resourceResolver.retrieveResourceAsInputStream(absolutePath);
-        Assert.assertNotNull(stream);
-        Assert.assertEquals(expected.read(), stream.read());
+        try (InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileUrlString);
+                InputStream expected = url.openStream()) {
+            Assert.assertNotNull(stream);
+            Assert.assertEquals(expected.read(), stream.read());
+        }
     }
 }
