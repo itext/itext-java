@@ -106,7 +106,7 @@ public class PdfString extends PdfPrimitiveObject {
     /**
      * Only PdfReader can use this method!
      *
-     * @param content byte content the {@link PdfString} will be created from
+     * @param content    byte content the {@link PdfString} will be created from
      * @param hexWriting boolean indicating if hex writing will be used
      */
     protected PdfString(byte[] content, boolean hexWriting) {
@@ -144,6 +144,8 @@ public class PdfString extends PdfPrimitiveObject {
 
     /**
      * Gets the encoding of this string.
+     *
+     * @return the name of the encoding specifying the byte representation of current {@link PdfString} value
      */
     public String getEncoding() {
         return encoding;

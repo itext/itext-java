@@ -101,6 +101,7 @@ public class PdfXrefTable implements Serializable {
      * Adds indirect reference to list of indirect objects.
      *
      * @param reference indirect reference to add.
+     * @return reference from param
      */
     public PdfIndirectReference add(PdfIndirectReference reference) {
         if (reference == null) {
@@ -172,7 +173,7 @@ public class PdfXrefTable implements Serializable {
     /**
      * Set up appropriate state for the free references list.
      *
-     * @param pdfDocument is the current document
+     * @param pdfDocument is the current {@link PdfDocument document}
      */
     void initFreeReferencesList(PdfDocument pdfDocument) {
         freeReferencesLinkedList.clear();
@@ -228,7 +229,7 @@ public class PdfXrefTable implements Serializable {
     /**
      * Method is used for object streams to avoid reuse existed references.
      *
-     * @param document is the current document
+     * @param document is the current {@link PdfDocument document}
      * @return created indirect reference to the object stream
      */
     PdfIndirectReference createNewIndirectReference(PdfDocument document) {
@@ -240,6 +241,7 @@ public class PdfXrefTable implements Serializable {
     /**
      * Creates next available indirect reference.
      *
+     * @param document is the current {@link PdfDocument document}
      * @return created indirect reference.
      */
     protected PdfIndirectReference createNextIndirectReference(PdfDocument document) {
@@ -292,6 +294,9 @@ public class PdfXrefTable implements Serializable {
     /**
      * Writes cross reference table and trailer to PDF.
      *
+     * @param document is the current {@link PdfDocument document}
+     * @param fileId   field id
+     * @param crypto   pdf encryption
      * @throws IOException if any I/O error occurs
      */
     protected void writeXrefTableAndTrailer(PdfDocument document, PdfObject fileId, PdfObject crypto) throws IOException {
