@@ -53,6 +53,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
  */
 public class DoNothingFilter implements IFilterHandler {
     private PdfName lastFilterName;
+
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
         lastFilterName = filterName;

@@ -56,24 +56,24 @@ import java.io.ByteArrayOutputStream;
 public class LZWDecodeFilter extends MemoryLimitsAwareFilter {
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
-        ByteArrayOutputStream outputStream = enableMemoryLimitsAwareHandler(streamDictionary);
-        b = LZWDecode(b, outputStream);
-        b = FlateDecodeFilter.decodePredictor(b, decodeParams);
-        return b;
-    }
-
-    /**
      * Decodes a byte[] according to the LZW encoding.
      *
      * @param in byte[] to be decoded
      * @return decoded byte[]
      */
     public static byte[] LZWDecode(byte[] in) {
-        return LZWDecode(in, new ByteArrayOutputStream());
+        return LZWDecodeInternal(in, new ByteArrayOutputStream());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
+        ByteArrayOutputStream outputStream = enableMemoryLimitsAwareHandler(streamDictionary);
+        b = LZWDecodeInternal(b, outputStream);
+        b = FlateDecodeFilter.decodePredictor(b, decodeParams);
+        return b;
     }
 
     /**
@@ -83,7 +83,7 @@ public class LZWDecodeFilter extends MemoryLimitsAwareFilter {
      * @param out the out stream which will be used to write the bytes.
      * @return decoded byte[]
      */
-    private static byte[] LZWDecode(byte[] in, ByteArrayOutputStream out) {
+    private static byte[] LZWDecodeInternal(byte[] in, ByteArrayOutputStream out) {
         LZWDecoder lzw = new LZWDecoder();
         lzw.decode(in, out);
         return out.toByteArray();

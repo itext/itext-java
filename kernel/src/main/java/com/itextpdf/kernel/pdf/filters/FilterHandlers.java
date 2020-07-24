@@ -58,8 +58,11 @@ import java.util.Map;
 // it may also be better to split the sub-classes out into a separate package
 public final class FilterHandlers {
 
-    /** The default {@link IFilterHandler}s used by iText */
+    /**
+     * The default {@link IFilterHandler}s used by iText
+     */
     private static final Map<PdfName, IFilterHandler> defaults;
+
     static {
         Map<PdfName, IFilterHandler> map = new HashMap<>();
 
@@ -82,7 +85,7 @@ public final class FilterHandlers {
     /**
      * @return the default {@link IFilterHandler}s used by iText
      */
-    public static Map<PdfName, IFilterHandler> getDefaultFilterHandlers(){
+    public static Map<PdfName, IFilterHandler> getDefaultFilterHandlers() {
         return defaults;
     }
 }

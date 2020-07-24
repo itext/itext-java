@@ -70,6 +70,24 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void overridenMemoryHandler() {
+        MemoryLimitsAwareHandler defaultHandler = new MemoryLimitsAwareHandler();
+        MemoryLimitsAwareHandler customHandler = new MemoryLimitsAwareHandler() {
+            @Override
+            boolean isPdfStreamSuspicious(PdfArray filters) {
+                return true;
+            }
+        };
+
+        PdfArray filters = new PdfArray();
+        filters.add(PdfName.FlateDecode);
+
+        Assert.assertFalse(defaultHandler.isPdfStreamSuspicious(filters));
+        Assert.assertTrue(customHandler.isPdfStreamSuspicious(filters));
+
+    }
+
+    @Test
     public void defaultSingleMemoryHandler() {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
 

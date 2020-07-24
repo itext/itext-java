@@ -43,57 +43,56 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfReaderDecodeTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfReaderDecodeTest/";
 
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
+
     @Test
     public void noMemoryHandlerTest() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+                FileInputStream is = new FileInputStream(sourceFolder + "stream")) {
+            byte[] b = new byte[51];
+            is.read(b);
 
-        FileInputStream is = new FileInputStream(sourceFolder + "stream");
-        byte[] b = new byte[51];
-        is.read(b);
+            PdfArray array = new PdfArray();
 
-        PdfArray array = new PdfArray();
+            PdfStream stream = new PdfStream(b);
+            stream.put(PdfName.Filter, array);
+            stream.makeIndirect(pdfDocument);
 
-        PdfStream stream = new PdfStream(b);
-        stream.put(PdfName.Filter, array);
-        stream.makeIndirect(pdfDocument);
+            Assert.assertEquals(51, PdfReader.decodeBytes(b, stream).length);
 
-        Assert.assertEquals(51, PdfReader.decodeBytes(b, stream).length);
+            array.add(PdfName.Fl);
+            Assert.assertEquals(40, PdfReader.decodeBytes(b, stream).length);
 
-        array.add(PdfName.Fl);
-        Assert.assertEquals(40, PdfReader.decodeBytes(b, stream).length);
+            array.add(PdfName.Fl);
+            Assert.assertEquals(992, PdfReader.decodeBytes(b, stream).length);
 
-        array.add(PdfName.Fl);
-        Assert.assertEquals(992, PdfReader.decodeBytes(b, stream).length);
+            array.add(PdfName.Fl);
+            Assert.assertEquals(1000000, PdfReader.decodeBytes(b, stream).length);
 
-        array.add(PdfName.Fl);
-        Assert.assertEquals(1000000, PdfReader.decodeBytes(b, stream).length);
+            // needed to close the document
+            pdfDocument.addNewPage();
+        }
     }
 
     @Test
@@ -102,24 +101,26 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
     })
     public void defaultMemoryHandlerTest() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "timing.pdf"), new PdfWriter(new ByteArrayOutputStream()));
+        try (PdfDocument pdfDocument = new PdfDocument(
+                new PdfReader(sourceFolder + "timing.pdf"),
+                new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfStream stream = pdfDocument.getFirstPage().getContentStream(0);
+            byte[] b = stream.getBytes(false);
 
-        PdfStream stream = pdfDocument.getFirstPage().getContentStream(0);
-        byte[] b = stream.getBytes(false);
+            PdfArray array = new PdfArray();
+            stream.put(PdfName.Filter, array);
 
-        PdfArray array = new PdfArray();
-        stream.put(PdfName.Filter, array);
+            Assert.assertEquals(51, PdfReader.decodeBytes(b, stream).length);
 
-        Assert.assertEquals(51, PdfReader.decodeBytes(b, stream).length);
+            array.add(PdfName.Fl);
+            Assert.assertEquals(40, PdfReader.decodeBytes(b, stream).length);
 
-        array.add(PdfName.Fl);
-        Assert.assertEquals(40, PdfReader.decodeBytes(b, stream).length);
+            array.add(PdfName.Fl);
+            Assert.assertEquals(992, PdfReader.decodeBytes(b, stream).length);
 
-        array.add(PdfName.Fl);
-        Assert.assertEquals(992, PdfReader.decodeBytes(b, stream).length);
-
-        array.add(PdfName.Fl);
-        Assert.assertEquals(1000000, PdfReader.decodeBytes(b, stream).length);
+            array.add(PdfName.Fl);
+            Assert.assertEquals(1000000, PdfReader.decodeBytes(b, stream).length);
+        }
     }
 
     @Test
@@ -131,34 +132,33 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
         handler.setMaxSizeOfSingleDecompressedPdfStream(1000);
 
-        PdfDocument pdfDocument = new PdfDocument(
+        junitExpectedException.expect(MemoryLimitsAwareException.class);
+        junitExpectedException
+                .expectMessage(PdfException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed);
+
+        try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfReader(sourceFolder + "timing.pdf",
                         new ReaderProperties().setMemoryLimitsAwareHandler(handler)),
-                new PdfWriter(new ByteArrayOutputStream()));
+                new PdfWriter(new ByteArrayOutputStream()))) {
 
-        PdfStream stream = pdfDocument.getFirstPage().getContentStream(0);
-        byte[] b = stream.getBytes(false);
+            PdfStream stream = pdfDocument.getFirstPage().getContentStream(0);
+            byte[] b = stream.getBytes(false);
 
-        PdfArray array = new PdfArray();
-        stream.put(PdfName.Filter, array);
+            PdfArray array = new PdfArray();
+            stream.put(PdfName.Filter, array);
 
-        Assert.assertEquals(51, PdfReader.decodeBytes(b, stream).length);
+            Assert.assertEquals(51, PdfReader.decodeBytes(b, stream).length);
 
-        array.add(PdfName.Fl);
-        Assert.assertEquals(40, PdfReader.decodeBytes(b, stream).length);
+            array.add(PdfName.Fl);
+            Assert.assertEquals(40, PdfReader.decodeBytes(b, stream).length);
 
-        array.add(PdfName.Fl);
-        Assert.assertEquals(992, PdfReader.decodeBytes(b, stream).length);
+            array.add(PdfName.Fl);
+            Assert.assertEquals(992, PdfReader.decodeBytes(b, stream).length);
 
-        array.add(PdfName.Fl);
-        String expectedExceptionMessage = PdfException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed;
-        String thrownExceptionMessage = null;
-        try {
+            array.add(PdfName.Fl);
+
             PdfReader.decodeBytes(b, stream);
-        } catch (MemoryLimitsAwareException e) {
-            thrownExceptionMessage = e.getMessage();
         }
-        Assert.assertEquals(expectedExceptionMessage, thrownExceptionMessage);
     }
 
     @Test
@@ -170,23 +170,93 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
         handler.setMaxSizeOfSingleDecompressedPdfStream(20);
 
-        PdfDocument pdfDocument = new PdfDocument(
+        try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfReader(sourceFolder + "timing.pdf",
                         new ReaderProperties().setMemoryLimitsAwareHandler(handler)),
-                new PdfWriter(new ByteArrayOutputStream()));
+                new PdfWriter(new ByteArrayOutputStream()))) {
 
-        PdfStream stream = pdfDocument.getFirstPage().getContentStream(0);
-        byte[] b = stream.getBytes(false);
+            PdfStream stream = pdfDocument.getFirstPage().getContentStream(0);
+            byte[] b = stream.getBytes(false);
 
-        PdfArray array = new PdfArray();
-        stream.put(PdfName.Filter, array);
+            PdfArray array = new PdfArray();
+            stream.put(PdfName.Filter, array);
 
-        // Limit is reached, but the stream has no filters. Therefore we don't consider ot to be suspicious
-        Assert.assertEquals(51, PdfReader.decodeBytes(b, stream).length);
+            // Limit is reached, but the stream has no filters. Therefore we don't consider ot to be suspicious
+            Assert.assertEquals(51, PdfReader.decodeBytes(b, stream).length);
 
-        // Limit is reached, but the stream has only one filter. Therefore we don't consider ot to be suspicious
-        array.add(PdfName.Fl);
-        Assert.assertEquals(40, PdfReader.decodeBytes(b, stream).length);
+            // Limit is reached, but the stream has only one filter. Therefore we don't consider ot to be suspicious
+            array.add(PdfName.Fl);
+            Assert.assertEquals(40, PdfReader.decodeBytes(b, stream).length);
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
+    })
+    public void overriddenMemoryHandlerAllStreamsAreSuspiciousTest() throws IOException {
+
+        junitExpectedException.expect(MemoryLimitsAwareException.class);
+        junitExpectedException.expectMessage(PdfException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed);
+
+        MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler() {
+            @Override
+            boolean isPdfStreamSuspicious(PdfArray filters) {
+                return true;
+            }
+        };
+        handler.setMaxSizeOfSingleDecompressedPdfStream(20);
+
+        try (PdfDocument pdfDocument = new PdfDocument(
+                new PdfReader(sourceFolder + "timing.pdf",
+                        new ReaderProperties().setMemoryLimitsAwareHandler(handler)),
+                new PdfWriter(new ByteArrayOutputStream()))) {
+
+            PdfStream stream = pdfDocument.getFirstPage().getContentStream(0);
+            byte[] b = stream.getBytes(false);
+
+            PdfArray array = new PdfArray();
+            stream.put(PdfName.Filter, array);
+            array.add(PdfName.Fl);
+
+            // Limit is reached, and the stream with one filter is considered to be suspicious
+            PdfReader.decodeBytes(b, stream);
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
+    })
+    public void overriddenMemoryHandlerNoStreamsAreSuspiciousTest() throws IOException {
+
+        MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler() {
+            @Override
+            boolean isPdfStreamSuspicious(PdfArray filters) {
+                return false;
+            }
+        };
+        handler.setMaxSizeOfSingleDecompressedPdfStream(20);
+
+        try (PdfDocument pdfDocument = new PdfDocument(
+                new PdfReader(sourceFolder + "timing.pdf",
+                        new ReaderProperties().setMemoryLimitsAwareHandler(handler)),
+                new PdfWriter(new ByteArrayOutputStream()))) {
+
+            PdfStream stream = pdfDocument.getFirstPage().getContentStream(0);
+            byte[] b = stream.getBytes(false);
+
+            PdfArray array = new PdfArray();
+            stream.put(PdfName.Filter, array);
+            array.add(PdfName.Fl);
+            array.add(PdfName.Fl);
+
+            // Limit is reached but the stream with several copies of the filter is not considered
+            // to be suspicious
+            PdfReader.decodeBytes(b, stream);
+        }
     }
 
     @Test
@@ -214,22 +284,20 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
         handler.setMaxSizeOfDecompressedPdfStreamsSum(100000);
 
-        PdfDocument pdfDocument = new PdfDocument(
+        junitExpectedException.expect(MemoryLimitsAwareException.class);
+        junitExpectedException
+                .expectMessage(PdfException.DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed);
+
+        try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfReader(sourceFolder + "timing.pdf",
                         new ReaderProperties().setMemoryLimitsAwareHandler(handler)),
-                new PdfWriter(new ByteArrayOutputStream()));
+                new PdfWriter(new ByteArrayOutputStream()))) {
 
-        PdfStream stream = pdfDocument.getFirstPage().getContentStream(0);
-        byte[] b = stream.getBytes(false);
+            PdfStream stream = pdfDocument.getFirstPage().getContentStream(0);
+            byte[] b = stream.getBytes(false);
 
-        String expectedExceptionMessage = PdfException.DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed;
-        String thrownExceptionMessage = null;
-        try {
             PdfReader.decodeBytes(b, stream);
-        } catch (MemoryLimitsAwareException e) {
-            thrownExceptionMessage = e.getMessage();
         }
-        Assert.assertEquals(expectedExceptionMessage, thrownExceptionMessage);
     }
 
     @Test
@@ -241,20 +309,17 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
         handler.setMaxSizeOfDecompressedPdfStreamsSum(1500000);
 
-        PdfDocument pdfDocument = new PdfDocument(
+        junitExpectedException.expect(MemoryLimitsAwareException.class);
+        junitExpectedException
+                .expectMessage(PdfException.DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed);
+
+        try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfReader(sourceFolder + "timing.pdf",
                         new ReaderProperties().setMemoryLimitsAwareHandler(handler)),
-                new PdfWriter(new ByteArrayOutputStream()));
+                new PdfWriter(new ByteArrayOutputStream()))) {
 
-
-        String expectedExceptionMessage = PdfException.DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed;
-        String thrownExceptionMessage = null;
-        try {
             pdfDocument.getFirstPage().getContentBytes();
-        } catch (MemoryLimitsAwareException e) {
-            thrownExceptionMessage = e.getMessage();
         }
-        Assert.assertEquals(expectedExceptionMessage, thrownExceptionMessage);
     }
 
     @Test
@@ -266,19 +331,15 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
         handler.setMaxSizeOfSingleDecompressedPdfStream(1500000);
 
-        PdfDocument pdfDocument = new PdfDocument(
+        junitExpectedException.expect(MemoryLimitsAwareException.class);
+        junitExpectedException.expectMessage(PdfException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed);
+
+        try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfReader(sourceFolder + "timing.pdf",
                         new ReaderProperties().setMemoryLimitsAwareHandler(handler)),
-                new PdfWriter(new ByteArrayOutputStream()));
+                new PdfWriter(new ByteArrayOutputStream()))) {
 
-
-        String expectedExceptionMessage = PdfException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed;
-        String thrownExceptionMessage = null;
-        try {
             pdfDocument.getFirstPage().getContentBytes();
-        } catch (MemoryLimitsAwareException e) {
-            thrownExceptionMessage = e.getMessage();
         }
-        Assert.assertEquals(expectedExceptionMessage, thrownExceptionMessage);
     }
 }

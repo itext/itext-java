@@ -56,13 +56,13 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
+
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -442,21 +442,12 @@ public class PdfReader implements Closeable, Serializable {
         if (null != streamDictionary.getIndirectReference()) {
             memoryLimitsAwareHandler = streamDictionary.getIndirectReference().getDocument().memoryLimitsAwareHandler;
         }
-        if (null != memoryLimitsAwareHandler) {
-            HashSet<PdfName> filterSet = new HashSet<>();
-            int index;
-            for (index = 0; index < filters.size(); index++) {
-                PdfName filterName = filters.getAsName(index);
-                if (!filterSet.add(filterName)) {
-                    memoryLimitsAwareHandler.beginDecompressedPdfStreamProcessing();
-                    break;
-                }
-            }
-            if (index == filters.size()) {
-                // The stream isn't suspicious. We shouldn't process it.
 
-                memoryLimitsAwareHandler = null;
-            }
+        final boolean memoryLimitsAwarenessRequired = null != memoryLimitsAwareHandler &&
+                memoryLimitsAwareHandler.isPdfStreamSuspicious(filters);
+
+        if(memoryLimitsAwarenessRequired) {
+            memoryLimitsAwareHandler.beginDecompressedPdfStreamProcessing();
         }
 
         PdfArray dp = new PdfArray();
@@ -493,11 +484,11 @@ public class PdfReader implements Closeable, Serializable {
                 decodeParams = null;
             }
             b = filterHandler.decode(b, filterName, decodeParams, streamDictionary);
-            if (null != memoryLimitsAwareHandler) {
+            if (memoryLimitsAwarenessRequired) {
                 memoryLimitsAwareHandler.considerBytesOccupiedByDecompressedPdfStream(b.length);
             }
         }
-        if (null != memoryLimitsAwareHandler) {
+        if (memoryLimitsAwarenessRequired) {
             memoryLimitsAwareHandler.endDecompressedPdfStreamProcessing();
         }
         return b;

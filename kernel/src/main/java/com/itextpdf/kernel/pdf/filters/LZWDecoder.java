@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf.filters;
 
 import com.itextpdf.kernel.PdfException;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -77,12 +78,12 @@ public class LZWDecoder {
     /**
      * Method to decode LZW compressed data.
      *
-     * @param data The compressed data.
+     * @param data       The compressed data.
      * @param uncompData Array to return the uncompressed data in.
      */
     public void decode(byte[] data, OutputStream uncompData) {
 
-        if(data[0] == (byte)0x00 && data[1] == (byte)0x01) {
+        if (data[0] == (byte) 0x00 && data[1] == (byte) 0x01) {
             throw new PdfException(PdfException.LzwFlavourNotSupported);
         }
 
@@ -145,9 +146,9 @@ public class LZWDecoder {
 
         stringTable = new byte[8192][];
 
-        for (int i=0; i<256; i++) {
+        for (int i = 0; i < 256; i++) {
             stringTable[i] = new byte[1];
-            stringTable[i][0] = (byte)i;
+            stringTable[i][0] = (byte) i;
         }
 
         tableIndex = 258;
@@ -226,8 +227,8 @@ public class LZWDecoder {
         return string;
     }
 
-
     // Returns the next 9, 10, 11 or 12 bits
+
     /**
      * Attempt to get the next code. Exceptions are caught to make
      * this robust to cases wherein the EndOfInformation code has been
@@ -248,11 +249,11 @@ public class LZWDecoder {
             }
 
             int code =
-                    (nextData >> (nextBits - bitsToGet)) & andTable[bitsToGet-9];
+                    (nextData >> (nextBits - bitsToGet)) & andTable[bitsToGet - 9];
             nextBits -= bitsToGet;
 
             return code;
-        } catch(ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
             // Strip not terminated as expected: return EndOfInformation code.
             return 257;
         }

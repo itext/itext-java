@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.PdfException;
 
 import java.io.Serializable;
+import java.util.HashSet;
 
 /**
  * A {@link MemoryLimitsAwareHandler} handles memory allocation and prevents decompressed pdf streams from occupation of more space than allowed.
@@ -152,6 +153,29 @@ public class MemoryLimitsAwareHandler implements Serializable {
             }
         }
         return this;
+    }
+
+    /**
+     * Performs a check if the setup of the filters of {@link PdfStream} is suspicious so that
+     * during the processing we should keep in mind that possible 'decompression bomb' scenario
+     * has to be handled.
+     *
+     * 'Decompression bomb' is a small piece of extremely compressed data whose size is increasing
+     * dramatically during decompression so that the system cannot handle it and is going to crash
+     * <p>
+     * @param filters is an {@link PdfArray} of names of filters
+     * @return true if PDF stream is suspicious and false otherwise
+     */
+    boolean isPdfStreamSuspicious(PdfArray filters) {
+        final HashSet<PdfName> filterSet = new HashSet<>();
+        for (int index = 0; index < filters.size(); index++) {
+            final PdfName filterName = filters.getAsName(index);
+            if (!filterSet.add(filterName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
