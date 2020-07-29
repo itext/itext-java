@@ -352,20 +352,37 @@ public class CFFFont {
 
     protected static abstract class Item {
         protected int myOffset = -1;
-        /** remember the current offset and increment by item's size in bytes. */
+
+        /**
+         * Remember the current offset and increment by item's size in bytes.
+         *
+         * @param currentOffset increment offset by item's size
+         */
         public void increment(int[] currentOffset) {
             myOffset = currentOffset[0];
         }
-        /** Emit the byte stream for this item. */
+
+        /**
+         * Emit the byte stream for this item.
+         *
+         * @param buffer byte array
+         */
         public void emit(byte[] buffer) {}
-        /** Fix up cross references to this item (applies only to markers). */
+
+        /**
+         *  Fix up cross references to this item (applies only to markers).
+         */
         public void xref() {}
     }
 
     protected static abstract class OffsetItem extends Item {
         public int value;
-        /** set the value of an offset item that was initially unknown.
+
+        /**
+         * Set the value of an offset item that was initially unknown.
          * It will be fixed up latex by a call to xref on some marker.
+         *
+         * @param offset offset to set
          */
         public void set(int offset) { this.value = offset; }
     }
@@ -661,10 +678,9 @@ public class CFFFont {
      * a PDF restriction) and to subset the CharStrings glyph
      * description.
      *
-     * @param fontName
+     * @param fontName name of the font
+     * @return byte array represents the CID font
      */
-
-
     public byte[] getCID(String fontName)
     //throws java.io.FileNotFoundException
     {

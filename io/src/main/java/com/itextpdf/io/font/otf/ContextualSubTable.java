@@ -86,17 +86,20 @@ public abstract class ContextualSubTable implements Serializable {
 
     /**
      * Gets a set of rules, which start with given glyph id.
-     * @param startId id of the first glyph in the sequence.
+     *
+     * @param startId id of the first glyph in the sequence
+     * @return a list of {@link ContextualSubstRule} instances. The list will be empty if there are no rules
+     *     that start with a given glyph id
      */
     protected abstract List<ContextualSubstRule> getSetOfRulesForStartGlyph(int startId);
 
     /**
-     * Checks if given glyph line at the given position matches given rule.
-     * @return either index which corresponds to the last glyph of the matching context inside the glyph line if context matches,
-     * or -1 if context doesn't match.
+     * Checks if given glyph line matches given rule.
      *
-     * @param line
-     * @param rule
+     * @param line glyph line to be checked
+     * @param rule rule to be compared with a given glyph line
+     * @return either index which corresponds to the last glyph of the matching context inside the glyph line
+     *     if context matches, or -1 if context doesn't match
      */
     protected int checkIfContextMatch(GlyphLine line, ContextualSubstRule rule) {
         int j;

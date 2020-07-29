@@ -49,13 +49,13 @@ public abstract class ContextualSubstRule implements Serializable {
     private static final long serialVersionUID = -8640866820690910047L;
 
     /**
-     * @return length of the context glyph sequence defined by this rule.
+     * @return length of the context glyph sequence defined by this rule
      */
     public abstract int getContextLength();
 
     /**
      * @return an array of <code>SubstLookupRecord</code>. Each record specifies a position in the context glyph
-     * sequence and a LookupListIndex to the substitution lookup that is applied at that position.
+     * sequence and a LookupListIndex to the substitution lookup that is applied at that position
      */
     public abstract SubstLookupRecord[] getSubstLookupRecords();
 
@@ -65,38 +65,43 @@ public abstract class ContextualSubstRule implements Serializable {
      * NOTE: rules do not contain the first element of the input sequence, the first element is defined by rule
      * position in substitution table. Therefore atIdx shall not be 0.
      *
-     * @param glyphId
-     * @param atIdx index in the rule sequence. Shall be: 0 &lt; atIdx &lt; ContextualSubstRule.getContextLength().
+     * @param glyphId glyph code id
+     * @param atIdx   index in the rule sequence. Shall be: 0 &lt; atIdx &lt; {@link ContextualSubstRule#getContextLength}
+     * @return {@code true} if glyph matches element
      */
     public abstract boolean isGlyphMatchesInput(int glyphId, int atIdx);
 
-
     /**
-     * @return length of the lookahead context glyph sequence defined by this rule.
+     * @return length of the lookahead context glyph sequence defined by this rule
      */
     public int getLookaheadContextLength() {
         return 0;
     }
+
     /**
-     * @return length of the backtrack context glyph sequence defined by this rule.
+     * @return length of the backtrack context glyph sequence defined by this rule
      */
     public int getBacktrackContextLength() {
         return 0;
     }
+
     /**
      * Checks if glyph line element matches element from lookahead sequence of the rule.
      *
-     * @param glyphId
-     * @param atIdx index in rule sequence. Shall be: 0 &lt;= atIdx &lt; ContextualSubstRule.getLookaheadContextLength().
+     * @param glyphId glyph code id
+     * @param atIdx   index in rule sequence. Shall be: 0 &lt;= atIdx &lt; {@link ContextualSubstRule#getLookaheadContextLength()}
+     * @return {@code true} if glyph matches element from lookahead sequence
      */
     public boolean isGlyphMatchesLookahead(int glyphId, int atIdx) {
         return false;
     }
+
     /**
      * Checks if glyph line element matches element from backtrack sequence of the rule.
      *
-     * @param glyphId
-     * @param atIdx index in rule sequence. Shall be: 0 &lt;= atIdx &lt; ContextualSubstRule.getBacktrackContextLength().
+     * @param glyphId glyph code id
+     * @param atIdx   index in rule sequence. Shall be: 0 &lt;= atIdx &lt; {@link ContextualSubstRule#getBacktrackContextLength()}
+     * @return {@code true} if glyph matches element from backtrack sequence
      */
     public boolean isGlyphMatchesBacktrack(int glyphId, int atIdx) {
         return false;
