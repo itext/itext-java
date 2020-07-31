@@ -101,11 +101,12 @@ public class MemoryLimitsAwareHandler implements Serializable {
      * Sets the maximum allowed size which can be occupied by a single decompressed pdf stream.
      * This value correlates with maximum heap size. This value should not exceed limit of the heap size.
      *
-     * iText will throw an exception if during decompression a pdf stream with two or more filters of identical type
-     * occupies more memory than allowed.
+     * iText will throw an exception if during decompression a pdf stream which was identified as
+     * requiring memory limits awareness occupies more memory than allowed.
      *
      * @param maxSizeOfSingleDecompressedPdfStream the maximum allowed size which can be occupied by a single decompressed pdf stream.
      * @return this {@link MemoryLimitsAwareHandler} instance.
+     * @see MemoryLimitsAwareHandler#isMemoryLimitsAwarenessRequiredOnDecompression(PdfArray)
      */
     public MemoryLimitsAwareHandler setMaxSizeOfSingleDecompressedPdfStream(int maxSizeOfSingleDecompressedPdfStream) {
         this.maxSizeOfSingleDecompressedPdfStream = maxSizeOfSingleDecompressedPdfStream;
@@ -126,15 +127,35 @@ public class MemoryLimitsAwareHandler implements Serializable {
      * This value can be limited by the maximum expected PDF file size when it's completely decompressed.
      * Setting this value correlates with the maximum processing time spent on document reading
      *
-     * iText will throw an exception if during decompression pdf streams with two or more filters of identical type
-     * occupy more memory than allowed.
+     * iText will throw an exception if during decompression pdf streams which were identified as
+     * requiring memory limits awareness occupy more memory than allowed.
      *
      * @param maxSizeOfDecompressedPdfStreamsSum he maximum allowed size which can be occupied by all decompressed pdf streams.
      * @return this {@link MemoryLimitsAwareHandler} instance.
+     * @see MemoryLimitsAwareHandler#isMemoryLimitsAwarenessRequiredOnDecompression(PdfArray)
      */
     public MemoryLimitsAwareHandler setMaxSizeOfDecompressedPdfStreamsSum(long maxSizeOfDecompressedPdfStreamsSum) {
         this.maxSizeOfDecompressedPdfStreamsSum = maxSizeOfDecompressedPdfStreamsSum;
         return this;
+    }
+
+    /**
+     * Performs a check if the {@link PdfStream} with provided setup of the filters requires
+     * memory limits awareness during decompression.
+
+     * @param filters is an {@link PdfArray} of names of filters
+     * @return true if PDF stream is suspicious and false otherwise
+     */
+    public boolean isMemoryLimitsAwarenessRequiredOnDecompression(PdfArray filters) {
+        final HashSet<PdfName> filterSet = new HashSet<>();
+        for (int index = 0; index < filters.size(); index++) {
+            final PdfName filterName = filters.getAsName(index);
+            if (!filterSet.add(filterName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -153,29 +174,6 @@ public class MemoryLimitsAwareHandler implements Serializable {
             }
         }
         return this;
-    }
-
-    /**
-     * Performs a check if the setup of the filters of {@link PdfStream} is suspicious so that
-     * during the processing we should keep in mind that possible 'decompression bomb' scenario
-     * has to be handled.
-     *
-     * 'Decompression bomb' is a small piece of extremely compressed data whose size is increasing
-     * dramatically during decompression so that the system cannot handle it and is going to crash
-     * <p>
-     * @param filters is an {@link PdfArray} of names of filters
-     * @return true if PDF stream is suspicious and false otherwise
-     */
-    boolean isPdfStreamSuspicious(PdfArray filters) {
-        final HashSet<PdfName> filterSet = new HashSet<>();
-        for (int index = 0; index < filters.size(); index++) {
-            final PdfName filterName = filters.getAsName(index);
-            if (!filterSet.add(filterName)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**

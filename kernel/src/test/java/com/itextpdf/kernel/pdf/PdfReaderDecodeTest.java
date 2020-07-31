@@ -202,7 +202,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
 
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler() {
             @Override
-            boolean isPdfStreamSuspicious(PdfArray filters) {
+            public boolean isMemoryLimitsAwarenessRequiredOnDecompression(PdfArray filters) {
                 return true;
             }
         };
@@ -234,7 +234,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
 
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler() {
             @Override
-            boolean isPdfStreamSuspicious(PdfArray filters) {
+            public boolean isMemoryLimitsAwarenessRequiredOnDecompression(PdfArray filters) {
                 return false;
             }
         };

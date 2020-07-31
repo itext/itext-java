@@ -444,7 +444,7 @@ public class PdfReader implements Closeable, Serializable {
         }
 
         final boolean memoryLimitsAwarenessRequired = null != memoryLimitsAwareHandler &&
-                memoryLimitsAwareHandler.isPdfStreamSuspicious(filters);
+                memoryLimitsAwareHandler.isMemoryLimitsAwarenessRequiredOnDecompression(filters);
 
         if(memoryLimitsAwarenessRequired) {
             memoryLimitsAwareHandler.beginDecompressedPdfStreamProcessing();

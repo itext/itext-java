@@ -74,7 +74,7 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
         MemoryLimitsAwareHandler defaultHandler = new MemoryLimitsAwareHandler();
         MemoryLimitsAwareHandler customHandler = new MemoryLimitsAwareHandler() {
             @Override
-            boolean isPdfStreamSuspicious(PdfArray filters) {
+            public boolean isMemoryLimitsAwarenessRequiredOnDecompression(PdfArray filters) {
                 return true;
             }
         };
@@ -82,8 +82,8 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
         PdfArray filters = new PdfArray();
         filters.add(PdfName.FlateDecode);
 
-        Assert.assertFalse(defaultHandler.isPdfStreamSuspicious(filters));
-        Assert.assertTrue(customHandler.isPdfStreamSuspicious(filters));
+        Assert.assertFalse(defaultHandler.isMemoryLimitsAwarenessRequiredOnDecompression(filters));
+        Assert.assertTrue(customHandler.isMemoryLimitsAwarenessRequiredOnDecompression(filters));
 
     }
 
