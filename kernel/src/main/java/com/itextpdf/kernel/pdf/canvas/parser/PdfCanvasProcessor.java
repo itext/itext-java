@@ -1248,7 +1248,7 @@ public class PdfCanvasProcessor {
          */
         public void invoke(PdfCanvasProcessor processor,
                            PdfLiteral operator, List<PdfObject> operands) {
-            processor.beginMarkedContent((PdfName) operands.get(0), new PdfDictionary());
+            processor.beginMarkedContent((PdfName) operands.get(0), null);
         }
 
     }

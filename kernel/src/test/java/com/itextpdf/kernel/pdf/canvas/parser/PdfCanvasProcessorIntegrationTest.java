@@ -83,7 +83,7 @@ import java.util.Set;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class PdfCanvasProcessorTest extends ExtendedITextTest {
+public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/PdfCanvasProcessorTest/";
 
