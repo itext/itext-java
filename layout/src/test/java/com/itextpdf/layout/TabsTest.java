@@ -55,6 +55,7 @@ import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Tab;
@@ -315,6 +316,38 @@ public class TabsTest extends ExtendedITextTest {
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tabPositionAbsoluteValueTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tabPositionAbsoluteValue.pdf";
+        String cmpFileName = sourceFolder + "cmp_tabPositionAbsoluteValue.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        
+        Document doc = new Document(pdfDoc);
+        doc.add(new Paragraph("x-coordinate = 100").setFontColor(ColorConstants.RED)
+                .setFirstLineIndent(100).setFontSize(8));
+        doc.add(new Paragraph("x-coordinate = 200").setFontColor(ColorConstants.GREEN)
+                .setFirstLineIndent(200).setFontSize(8));
+        doc.add(new Paragraph("x-coordinate = 300").setFontColor(ColorConstants.BLUE)
+                .setFirstLineIndent(300).setFontSize(8));
+
+        Paragraph p = new Paragraph()
+                .add("Hello, iText!").add(new Tab()).addTabStops(new TabStop(100))
+                .add("Hi, iText!").add(new Tab()).addTabStops(new TabStop(200))
+                .add("Hello, iText!").add(new Tab()).addTabStops(new TabStop(300))
+                .add("Hello, iText!");
+
+        doc.add(p);
+
+        float[] positions = {100, 200, 300};
+
+        drawTabStopsPositions(positions, doc, 1, 0, 120);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
