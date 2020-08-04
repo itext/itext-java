@@ -217,6 +217,16 @@ public class PdfOutlineTest extends ExtendedITextTest {
     }
 
     @Test
+    public void getOutlinesInvalidParentLink() throws IOException, InterruptedException {
+        junitExpectedException.expect(NullPointerException.class);
+        PdfReader reader = new PdfReader(sourceFolder + "outlinesInvalidParentLink.pdf");
+        String filename = "updateOutlineTitleInvalidParentLink.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        PdfOutline outlines = pdfDoc.getOutlines(false);
+    }
+
+    @Test
     public void readOutlineTitle() throws IOException {
         String filename = sourceFolder + "updateOutlineTitleResult.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
