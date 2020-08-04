@@ -72,7 +72,7 @@ public class PdfDictionaryTest extends ExtendedITextTest {
         List<Integer> nums = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6));
         for (Map.Entry<PdfName, PdfObject> e: dict.entrySet()) {
             Assert.assertEquals(e.getKey().toString(), "/"+e.getValue());
-            if (!nums.remove((Object)((PdfNumber)e.getValue()).intValue())) {
+            if (!nums.remove(Integer.valueOf(((PdfNumber)e.getValue()).intValue()))) {
                 Assert.fail("Element not found");
             }
         }
@@ -140,7 +140,7 @@ public class PdfDictionaryTest extends ExtendedITextTest {
         dict2.put(new PdfName("6"), new PdfNumber(6));
 
         for (Map.Entry<PdfName, PdfObject> e: dict2.entrySet()) {
-            dict.entrySet().remove(e);
+            Assert.assertTrue(dict.entrySet().remove(e));
         }
 
         Assert.assertEquals(0, dict.entrySet().size());
@@ -255,7 +255,7 @@ public class PdfDictionaryTest extends ExtendedITextTest {
         List<Integer> nums = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6));
         for (Map.Entry<PdfName, PdfObject> e: dict.entrySet()) {
             Assert.assertEquals(e.getKey().toString(), "/"+e.getValue());
-            if (!nums.remove((Object)((PdfNumber)e.getValue()).intValue())) {
+            if (!nums.remove(Integer.valueOf(((PdfNumber)e.getValue()).intValue()))) {
                 Assert.fail("Element not found");
             }
         }
@@ -279,30 +279,6 @@ public class PdfDictionaryTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testValuesRemove() {
-        PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-
-        PdfDictionary dict = new PdfDictionary();
-        dict.put(new PdfName("1"), new PdfNumber(1).makeIndirect(doc).getIndirectReference());
-        dict.put(new PdfName("2"), new PdfNumber(2).makeIndirect(doc).getIndirectReference());
-        dict.put(new PdfName("3"), new PdfNumber(3).makeIndirect(doc));
-        dict.put(new PdfName("4"), new PdfNumber(4).makeIndirect(doc));
-        dict.put(new PdfName("5"), new PdfNumber(5));
-        dict.put(new PdfName("6"), new PdfNumber(6));
-
-        List<PdfObject> toRemove = new ArrayList<>();
-        for (PdfObject v: dict.values()) {
-            toRemove.add(v);
-        }
-        for (PdfObject v: toRemove) {
-            Assert.assertTrue(dict.values().remove(v));
-        }
-        Assert.assertEquals(0, dict.entrySet().size());
-        Assert.assertEquals(0, dict.values().size());
-        Assert.assertEquals(0, dict.size());
-    }
-
-    @Test
     public void testValuesIndirectContains() {
         PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
@@ -318,153 +294,6 @@ public class PdfDictionaryTest extends ExtendedITextTest {
         Assert.assertTrue(dict.values().contains(dict.get(new PdfName("2"), false)));
         Assert.assertTrue(dict.values().contains(dict.get(new PdfName("3")).getIndirectReference()));
         Assert.assertTrue(dict.values().contains(dict.get(new PdfName("4")).getIndirectReference()));
-    }
-
-    @Test
-    public void testValuesIndirectRemove() {
-        PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-
-        PdfDictionary dict = new PdfDictionary();
-        dict.put(new PdfName("1"), new PdfNumber(1).makeIndirect(doc).getIndirectReference());
-        dict.put(new PdfName("2"), new PdfNumber(2).makeIndirect(doc).getIndirectReference());
-        dict.put(new PdfName("3"), new PdfNumber(3).makeIndirect(doc));
-        dict.put(new PdfName("4"), new PdfNumber(4).makeIndirect(doc));
-        dict.put(new PdfName("5"), new PdfNumber(5));
-        dict.put(new PdfName("6"), new PdfNumber(6));
-
-        Assert.assertTrue(dict.values().remove(dict.get(new PdfName("1"), false)));
-        Assert.assertTrue(dict.values().remove(dict.get(new PdfName("2"), false)));
-        Assert.assertTrue(dict.values().remove(dict.get(new PdfName("3")).getIndirectReference()));
-        Assert.assertTrue(dict.values().remove(dict.get(new PdfName("4")).getIndirectReference()));
-
-        Assert.assertEquals(2, dict.entrySet().size());
-        Assert.assertEquals(2, dict.values().size());
-        Assert.assertEquals(2, dict.size());
-    }
-
-    @Test
-    public void testValuesRemove2() {
-        PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-
-        PdfDictionary dict = new PdfDictionary();
-        dict.put(new PdfName("1"), new PdfNumber(1).makeIndirect(doc).getIndirectReference());
-        dict.put(new PdfName("2"), new PdfNumber(2).makeIndirect(doc).getIndirectReference());
-        dict.put(new PdfName("3"), new PdfNumber(3).makeIndirect(doc));
-        dict.put(new PdfName("4"), new PdfNumber(4).makeIndirect(doc));
-        dict.put(new PdfName("5"), new PdfNumber(5));
-        dict.put(new PdfName("6"), new PdfNumber(6));
-
-        PdfDictionary dict2 = new PdfDictionary();
-        dict2.put(new PdfName("1"), new PdfNumber(1).makeIndirect(doc).getIndirectReference());
-        dict2.put(new PdfName("2"), new PdfNumber(2).makeIndirect(doc).getIndirectReference());
-        dict2.put(new PdfName("3"), new PdfNumber(3).makeIndirect(doc));
-        dict2.put(new PdfName("4"), new PdfNumber(4).makeIndirect(doc));
-        dict2.put(new PdfName("5"), new PdfNumber(5));
-        dict2.put(new PdfName("6"), new PdfNumber(6));
-
-        for (PdfObject v: dict2.values()) {
-            dict.values().remove(v);
-        }
-        Assert.assertEquals(0, dict.entrySet().size());
-        Assert.assertEquals(0, dict.values().size());
-        Assert.assertEquals(0, dict.size());
-
-    }
-
-    @Test
-    public void testValuesRemoveAll() {
-        PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-
-        PdfDictionary dict = new PdfDictionary();
-        dict.put(new PdfName("1"), new PdfNumber(1).makeIndirect(doc).getIndirectReference());
-        dict.put(new PdfName("2"), new PdfNumber(2).makeIndirect(doc).getIndirectReference());
-        dict.put(new PdfName("3"), new PdfNumber(3).makeIndirect(doc));
-        dict.put(new PdfName("4"), new PdfNumber(4).makeIndirect(doc));
-        dict.put(new PdfName("5"), new PdfNumber(5));
-        dict.put(new PdfName("6"), new PdfNumber(6));
-
-        List<PdfObject> toRemove = new ArrayList<>();
-        for (PdfObject v: dict.values()) {
-            toRemove.add(v);
-        }
-
-        dict.values().removeAll(toRemove);
-        Assert.assertEquals(0, dict.entrySet().size());
-        Assert.assertEquals(0, dict.values().size());
-        Assert.assertEquals(0, dict.size());
-
-    }
-
-    @Test
-    public void testValuesRemoveAll2() {
-        PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-
-        PdfDictionary dict = new PdfDictionary();
-        dict.put(new PdfName("1"), new PdfNumber(1).makeIndirect(doc).getIndirectReference());
-        dict.put(new PdfName("2"), new PdfNumber(2).makeIndirect(doc).getIndirectReference());
-        dict.put(new PdfName("3"), new PdfNumber(3).makeIndirect(doc));
-        dict.put(new PdfName("4"), new PdfNumber(4).makeIndirect(doc));
-        dict.put(new PdfName("5"), new PdfNumber(5));
-        dict.put(new PdfName("6"), new PdfNumber(6));
-
-        PdfDictionary dict2 = new PdfDictionary();
-        dict2.put(new PdfName("1"), new PdfNumber(1).makeIndirect(doc).getIndirectReference());
-        dict2.put(new PdfName("2"), new PdfNumber(2).makeIndirect(doc).getIndirectReference());
-        dict2.put(new PdfName("3"), new PdfNumber(3).makeIndirect(doc));
-        dict2.put(new PdfName("4"), new PdfNumber(4).makeIndirect(doc));
-        dict2.put(new PdfName("5"), new PdfNumber(5));
-        dict2.put(new PdfName("6"), new PdfNumber(6));
-
-        dict.values().removeAll(dict2.values());
-
-        Assert.assertEquals(0, dict.entrySet().size());
-        Assert.assertEquals(0, dict.values().size());
-        Assert.assertEquals(0, dict.size());
-
-    }
-
-    @Test
-    public void testValuesRetainAll() {
-        PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-
-        PdfDictionary dict = new PdfDictionary();
-        dict.put(new PdfName("1"), new PdfNumber(1).makeIndirect(doc).getIndirectReference());
-        dict.put(new PdfName("2"), new PdfNumber(2).makeIndirect(doc).getIndirectReference());
-        dict.put(new PdfName("3"), new PdfNumber(3).makeIndirect(doc));
-        dict.put(new PdfName("4"), new PdfNumber(4).makeIndirect(doc));
-        dict.put(new PdfName("5"), new PdfNumber(5));
-        dict.put(new PdfName("6"), new PdfNumber(6));
-
-        List<PdfObject> toRemove = new ArrayList<>();
-        int i = 0;
-        for (PdfObject v: dict.values()) {
-            toRemove.add(v);
-            if (i++ > 2) break;
-        }
-
-        dict.values().retainAll(toRemove);
-        Assert.assertEquals(4, dict.entrySet().size());
-        Assert.assertEquals(4, dict.values().size());
-        Assert.assertEquals(4, dict.size());
-
-    }
-
-    @Test
-    public void testValuesClear() {
-        PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-
-        PdfDictionary dict = new PdfDictionary();
-        dict.put(new PdfName("1"), new PdfNumber(1).makeIndirect(doc).getIndirectReference());
-        dict.put(new PdfName("2"), new PdfNumber(2).makeIndirect(doc).getIndirectReference());
-        dict.put(new PdfName("3"), new PdfNumber(3).makeIndirect(doc));
-        dict.put(new PdfName("4"), new PdfNumber(4).makeIndirect(doc));
-        dict.put(new PdfName("5"), new PdfNumber(5));
-        dict.put(new PdfName("6"), new PdfNumber(6));
-
-        dict.values().clear();
-        Assert.assertEquals(0, dict.entrySet().size());
-        Assert.assertEquals(0, dict.values().size());
-        Assert.assertEquals(0, dict.size());
     }
 
     @Test
