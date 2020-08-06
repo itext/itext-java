@@ -86,7 +86,7 @@ public class TextLayoutResult extends MinMaxWidthLayoutResult {
     }
 
     /**
-     * Indicates whether some word in a rendered text was splitted during {@link com.itextpdf.layout.renderer.IRenderer#layout layout}.
+     * Indicates whether some word in a rendered text was split during {@link com.itextpdf.layout.renderer.IRenderer#layout layout}.
      * The value will be set as true if, for example, the rendered words width is bigger than the width of layout area.
      *
      * @return whether some word was splitted or not.
@@ -97,7 +97,7 @@ public class TextLayoutResult extends MinMaxWidthLayoutResult {
 
     /**
      * Sets {@link #wordHasBeenSplit}
-     * @param wordHasBeenSplit indicates that some word was splitted during {@link com.itextpdf.layout.renderer.IRenderer#layout layout}.
+     * @param wordHasBeenSplit indicates that some word was split during {@link com.itextpdf.layout.renderer.IRenderer#layout layout}.
      * @return {@link com.itextpdf.layout.layout.TextLayoutResult this layout result} the setting was applied on
      * @see #wordHasBeenSplit
      */

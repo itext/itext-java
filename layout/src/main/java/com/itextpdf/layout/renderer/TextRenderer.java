@@ -81,6 +81,7 @@ import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.FontKerning;
 import com.itextpdf.layout.property.OverflowPropertyValue;
+import com.itextpdf.layout.property.OverflowWrapPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.RenderingMode;
 import com.itextpdf.layout.property.TransparentColor;
@@ -177,6 +178,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         boolean noSoftWrap = Boolean.TRUE.equals(this.parent.<Boolean>getOwnProperty(Property.NO_SOFT_WRAP_INLINE));
 
         OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
+
+        OverflowWrapPropertyValue overflowWrap = this.<OverflowWrapPropertyValue>getProperty(Property.OVERFLOW_WRAP);
+        if (overflowWrap == OverflowWrapPropertyValue.ANYWHERE
+                || overflowWrap == OverflowWrapPropertyValue.BREAK_WORD) {
+            overflowX = OverflowPropertyValue.FIT;
+        }
 
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
@@ -390,6 +397,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     }
                 }
 
+                if (OverflowWrapPropertyValue.ANYWHERE == overflowWrap) {
+                    widthHandler.updateMinChildWidth((float) ((double) glyphWidth + (double) xAdvance
+                            + (double) italicSkewAddition + (double) boldSimulationAddition));
+                    widthHandler.updateMaxChildWidth((float) ((double) glyphWidth + (double) xAdvance));
+                }
+
                 boolean endOfWordBelongingToSpecialScripts = textContainsSpecialScriptGlyphs(true)
                         && findPossibleBreaksSplitPosition(specialScriptsWordBreakPoints,
                         ind + 1, true) >= 0;
@@ -412,8 +425,17 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
                 currentTextPos = nonBreakablePartEnd + 1;
                 currentLineWidth += nonBreakablePartFullWidth;
-                widthHandler.updateMinChildWidth(nonBreakablePartWidthWhichDoesNotExceedAllowedWidth + italicSkewAddition + boldSimulationAddition);
-                widthHandler.updateMaxChildWidth(nonBreakablePartWidthWhichDoesNotExceedAllowedWidth + italicSkewAddition + boldSimulationAddition);
+                if (OverflowWrapPropertyValue.ANYWHERE == overflowWrap) {
+                    widthHandler.updateMaxChildWidth((float) ((double) italicSkewAddition
+                            + (double) boldSimulationAddition));
+                } else {
+                    widthHandler.updateMinChildWidth(
+                            (float) ((double) nonBreakablePartWidthWhichDoesNotExceedAllowedWidth
+                                    + (double) italicSkewAddition + (double) boldSimulationAddition));
+                    widthHandler.updateMaxChildWidth(
+                            (float) ((double) nonBreakablePartWidthWhichDoesNotExceedAllowedWidth
+                                    + (double) italicSkewAddition + (double) boldSimulationAddition));
+                }
                 anythingPlaced = true;
             } else {
                 // check if line height exceeds the allowed height
@@ -465,9 +487,19 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                                             currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
 
                                             currentLineWidth += currentHyphenationChoicePreTextWidth;
-                                            widthHandler.updateMinChildWidth(currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition);
-                                            widthHandler.updateMaxChildWidth(currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition);
-
+                                            if (OverflowWrapPropertyValue.ANYWHERE == overflowWrap) {
+                                                widthHandler.updateMaxChildWidth((float) ((double) italicSkewAddition
+                                                        + (double) boldSimulationAddition));
+                                            } else {
+                                                widthHandler.updateMinChildWidth(
+                                                        (float) ((double) currentHyphenationChoicePreTextWidth
+                                                                + (double) italicSkewAddition
+                                                                + (double) boldSimulationAddition));
+                                                widthHandler.updateMaxChildWidth(
+                                                        (float) ((double) currentHyphenationChoicePreTextWidth
+                                                                + (double) italicSkewAddition
+                                                                + (double) boldSimulationAddition));
+                                            }
                                             currentTextPos = wordBounds[0] + pre.length();
                                             break;
                                         }
@@ -509,8 +541,17 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                             currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
                             currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
                             currentLineWidth += nonBreakablePartWidthWhichDoesNotExceedAllowedWidth;
-                            widthHandler.updateMinChildWidth(nonBreakablePartWidthWhichDoesNotExceedAllowedWidth + italicSkewAddition + boldSimulationAddition);
-                            widthHandler.updateMaxChildWidth(nonBreakablePartWidthWhichDoesNotExceedAllowedWidth + italicSkewAddition + boldSimulationAddition);
+                            if (OverflowWrapPropertyValue.ANYWHERE == overflowWrap) {
+                                widthHandler.updateMaxChildWidth((float) ((double) italicSkewAddition
+                                        + (double) boldSimulationAddition));
+                            } else {
+                                widthHandler.updateMinChildWidth(
+                                        (float) ((double) nonBreakablePartWidthWhichDoesNotExceedAllowedWidth
+                                                + (double) italicSkewAddition + (double) boldSimulationAddition));
+                                widthHandler.updateMaxChildWidth(
+                                        (float) ((double) nonBreakablePartWidthWhichDoesNotExceedAllowedWidth
+                                                + (double) italicSkewAddition + (double) boldSimulationAddition));
+                            }
                         } else {
                             // process empty line (e.g. '\n')
                             currentLineAscender = ascender;

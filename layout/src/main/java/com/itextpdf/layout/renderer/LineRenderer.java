@@ -182,6 +182,8 @@ public class LineRenderer extends AbstractRenderer {
             LayoutResult childResult = null;
             Rectangle bbox = new Rectangle(layoutBox.getX() + curWidth, layoutBox.getY(), layoutBox.getWidth() - curWidth, layoutBox.getHeight());
 
+            RenderingMode childRenderingMode = childRenderer.<RenderingMode>getProperty(Property.RENDERING_MODE);
+
             if (childRenderer instanceof TextRenderer) {
                 // Delete these properties in case of relayout. We might have applied them during justify().
                 childRenderer.deleteOwnProperty(Property.CHARACTER_SPACING);
@@ -400,8 +402,7 @@ public class LineRenderer extends AbstractRenderer {
             float childDescent = 0;
             if (childRenderer instanceof ILeafElementRenderer
                     && childResult.getStatus() != LayoutResult.NOTHING) {
-                if (RenderingMode.HTML_MODE.equals(childRenderer.<RenderingMode>getProperty(Property.RENDERING_MODE))
-                        && childRenderer instanceof TextRenderer) {
+                if (RenderingMode.HTML_MODE == childRenderingMode && childRenderer instanceof TextRenderer) {
                     float[] ascenderDescender = LineHeightHelper.getActualAscenderDescender((TextRenderer) childRenderer);
                     childAscent = ascenderDescender[0];
                     childDescent = ascenderDescender[1];
@@ -426,7 +427,7 @@ public class LineRenderer extends AbstractRenderer {
             boolean newLineOccurred = (childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isSplitForcedByNewline());
             boolean shouldBreakLayouting = childResult.getStatus() != LayoutResult.FULL || newLineOccurred;
 
-            boolean wordWasSplitAndItWillFitOntoNextLine = false;
+            boolean forceOverflowForTextRendererPartialResult = false;
 
             // if childRenderer contains scripts which require word wrapping,
             // we don't need to attempt to relayout it and see if the split word could fit the next line
@@ -434,15 +435,21 @@ public class LineRenderer extends AbstractRenderer {
             if (shouldBreakLayouting && childResult instanceof TextLayoutResult
                     && ((TextLayoutResult) childResult).isWordHasBeenSplit()
                     && !((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(true)) {
-                if (wasXOverflowChanged) {
-                    setProperty(Property.OVERFLOW_X, oldXOverflow);
-                }
-                LayoutResult newLayoutResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox), wasParentsHeightClipped));
-                if (wasXOverflowChanged) {
-                    setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
-                }
-                if (newLayoutResult instanceof TextLayoutResult && !((TextLayoutResult) newLayoutResult).isWordHasBeenSplit()) {
-                    wordWasSplitAndItWillFitOntoNextLine = true;
+                if (RenderingMode.HTML_MODE == childRenderingMode && anythingPlaced) {
+                    // we don't really know if it will fit,
+                    // it's just used as a flag to mark that the entire word should be pushed to the next line
+                    forceOverflowForTextRendererPartialResult = true;
+                } else {
+                    if (wasXOverflowChanged) {
+                        setProperty(Property.OVERFLOW_X, oldXOverflow);
+                    }
+                    LayoutResult newLayoutResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox), wasParentsHeightClipped));
+                    if (wasXOverflowChanged) {
+                        setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
+                    }
+                    if (newLayoutResult instanceof TextLayoutResult && !((TextLayoutResult) newLayoutResult).isWordHasBeenSplit()) {
+                        forceOverflowForTextRendererPartialResult = true;
+                    }
                 }
             } else if (shouldBreakLayouting && !newLineOccurred && childRenderers.get(childPos) instanceof TextRenderer
                         && ((TextRenderer) childRenderers.get(childPos)).textContainsSpecialScriptGlyphs(true)) {
@@ -457,7 +464,7 @@ public class LineRenderer extends AbstractRenderer {
                 childResult = lastFittingChildRendererData.childLayoutResult;
             }
 
-            if (!wordWasSplitAndItWillFitOntoNextLine) {
+            if (!forceOverflowForTextRendererPartialResult) {
                 maxAscent = Math.max(maxAscent, childAscent);
                 if (childRenderer instanceof TextRenderer) {
                     maxTextAscent = Math.max(maxTextAscent, childAscent);
@@ -506,7 +513,7 @@ public class LineRenderer extends AbstractRenderer {
                 widthHandler.updateMinChildWidth(minChildWidth + currChildTextIndent);
                 widthHandler.updateMaxChildWidth(maxChildWidth + currChildTextIndent);
             }
-            if (!wordWasSplitAndItWillFitOntoNextLine) {
+            if (!forceOverflowForTextRendererPartialResult) {
                 occupiedArea.setBBox(new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight, curWidth, maxHeight));
             }
 
@@ -514,7 +521,7 @@ public class LineRenderer extends AbstractRenderer {
                 LineRenderer[] split = split();
                 split[0].childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
 
-                if (wordWasSplitAndItWillFitOntoNextLine) {
+                if (forceOverflowForTextRendererPartialResult) {
                     split[1].childRenderers.add(childRenderer);
                     split[1].childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                 } else {

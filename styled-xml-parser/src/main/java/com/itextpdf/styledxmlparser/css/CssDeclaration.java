@@ -63,7 +63,7 @@ public class CssDeclaration {
      * @param expression the expression
      */
     public CssDeclaration(String property, String expression) {
-        this.property = CssUtils.normalizeCssProperty(property);
+        this.property = resolveAlias(CssUtils.normalizeCssProperty(property));
         this.expression = CssUtils.normalizeCssProperty(expression);
     }
 
@@ -100,6 +100,20 @@ public class CssDeclaration {
      */
     public void setExpression(String expression) {
         this.expression = expression;
+    }
+
+    /**
+     * Resolves css property aliases.
+     * For example, word-wrap is an alias for overflow-wrap property.
+     *
+     * @param normalizedCssProperty css property to be resolved as alias
+     * @return resolved property if the provided property was an alias, otherwise original provided property.
+     */
+    String resolveAlias(String normalizedCssProperty) {
+        if (CommonCssConstants.WORDWRAP.equals(normalizedCssProperty)) {
+            return CommonCssConstants.OVERFLOW_WRAP;
+        }
+        return normalizedCssProperty;
     }
 
 }

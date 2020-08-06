@@ -726,6 +726,11 @@ public class CommonCssConstants {
     // property values
 
     /**
+     * The Constant ANYWHERE.
+     */
+    public static final String ANYWHERE = "anywhere";
+
+    /**
      * The Constant ALWAYS.
      */
     public static final String ALWAYS = "always";
@@ -769,6 +774,9 @@ public class CommonCssConstants {
      * The Constant BOTTOM.
      */
     public static final String BOTTOM = "bottom";
+
+    /** The Constant BREAK_WORD. */
+    public static final String BREAK_WORD = "break-word";
 
     /**
      * The Constant CAPTION.

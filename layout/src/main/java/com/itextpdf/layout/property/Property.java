@@ -166,6 +166,7 @@ public final class Property {
      */
     @Deprecated
     public static final int OVERFLOW = 102;
+    public static final int OVERFLOW_WRAP = 127;
     public static final int OVERFLOW_X = 103;
     public static final int OVERFLOW_Y = 104;
     public static final int PADDING_BOTTOM = 47;
@@ -220,7 +221,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 125;
+    private static final int MAX_INHERITED_PROPERTY_ID = 127;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -262,6 +263,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.TYPOGRAPHY_CONFIG] = true;
         INHERITED_PROPERTIES[Property.RENDERING_MODE] = true;
         INHERITED_PROPERTIES[Property.LINE_HEIGHT] = true;
+        INHERITED_PROPERTIES[Property.OVERFLOW_WRAP] = true;
     }
 
     private Property() {
