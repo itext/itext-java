@@ -290,4 +290,26 @@ public class SymbolTest extends SvgIntegrationTest {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "useSymbolXYContrudictionAllUnitsTest",
                 properties);
     }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 3),
+            @LogMessage(messageTemplate = LogMessageConstant.ERROR_RESOLVING_PARENT_STYLES, count = 3)
+    })
+    // TODO: check cmp after feature implementation DEVSIX-2257
+    public void useSymbolCoordinatesContrudictionTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "useSymbolCoordinatesContrudiction",
+                properties);
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 5),
+            @LogMessage(messageTemplate = LogMessageConstant.ERROR_RESOLVING_PARENT_STYLES, count = 5)
+    })
+    // TODO: check cmp after feature implementation DEVSIX-2257
+    public void widthHeightAttrInteractionTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightAttrInteraction",
+                properties);
+    }
 }

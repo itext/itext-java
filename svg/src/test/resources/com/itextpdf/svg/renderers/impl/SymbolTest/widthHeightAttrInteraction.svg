@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ 
+ <symbol id="myDot1" width="100" height="100" viewBox="-10 -10 20 20" fill="purple">
+ <circle r="10"/>
+ </symbol>
+ 
+ <symbol id="myDot2" width="10" height="100" viewBox="-10 -10 20 20" fill="yellow">
+ <circle r="10"/>
+ </symbol>
+ 
+ <symbol id="myDot3" width="100" height="10" viewBox="-10 -10 20 20" fill="pink">
+ <circle r="10"/>
+ </symbol>
+ 
+ <symbol id="myDot4"  viewBox="-10 -10 20 20" fill="crimson">
+ <circle r="10"/>
+ </symbol>
+ 
+ <symbol id="myDot5" width="100" height="100" viewBox="-10 -10 20 20" fill="green">
+ <circle r="10"/>
+ </symbol>
+ 
+ <use xlink:href="#myDot1" x="0" y="0"/>
+ <use xlink:href="#myDot2" x="0" y="0"/>
+ <use xlink:href="#myDot3" x="0" y="0"/>
+ <use xlink:href="#myDot4" x="0" y="0" width="100" height="300"/>
+ <use xlink:href="#myDot5" x="0" y="0" width="50" height="50"/>
+ </svg>

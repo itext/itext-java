@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ 
+ <symbol id="originDot">
+ <circle cx="20" cy="20" r="20" stroke="black"/>
+ </symbol>
+ 
+ <symbol id="myDot" x="30%" y="15">
+ <circle cx="20" cy="60" r="20" stroke="black"/>
+ </symbol>
+
+ <symbol id="bigDot2" x="5" y="15%">
+ <circle cx="5" cy="5" r="40" stroke="black"/>
+ </symbol>
+ 
+ <use xlink:href="#originDot" style="fill: green"/>
+ <use xlink:href="#myDot" x="10" y="30" style="fill: red"/>
+ <use xlink:href="#bigDot2" x="10%" y="50%" style="fill: purple"/>
+ 
+ 
+ </svg>
