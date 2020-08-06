@@ -48,7 +48,13 @@ import java.io.Serializable;
 import java.util.HashSet;
 
 /**
- * A {@link MemoryLimitsAwareHandler} handles memory allocation and prevents decompressed pdf streams from occupation of more space than allowed.
+ * A {@link MemoryLimitsAwareHandler} handles memory allocation and prevents decompressed
+ * pdf streams from occupation of more space than allowed.
+ *
+ * <p>A configured MemoryLimitsAwareHandler can be set as a property of {@link ReaderProperties}
+ * instance which is passed to {@link PdfReader}.
+ *
+ * @see ReaderProperties#setMemoryLimitsAwareHandler(MemoryLimitsAwareHandler)
  */
 public class MemoryLimitsAwareHandler implements Serializable {
 
@@ -84,8 +90,10 @@ public class MemoryLimitsAwareHandler implements Serializable {
      * @param documentSize the size of the document, which is going to be handled by iText.
      */
     public MemoryLimitsAwareHandler(long documentSize) {
-        maxSizeOfSingleDecompressedPdfStream = (int) calculateDefaultParameter(documentSize, SINGLE_SCALE_COEFFICIENT, SINGLE_DECOMPRESSED_PDF_STREAM_MIN_SIZE);
-        maxSizeOfDecompressedPdfStreamsSum = calculateDefaultParameter(documentSize, SUM_SCALE_COEFFICIENT, SUM_OF_DECOMPRESSED_PDF_STREAMW_MIN_SIZE);
+        maxSizeOfSingleDecompressedPdfStream = (int) calculateDefaultParameter(documentSize, SINGLE_SCALE_COEFFICIENT,
+                SINGLE_DECOMPRESSED_PDF_STREAM_MIN_SIZE);
+        maxSizeOfDecompressedPdfStreamsSum = calculateDefaultParameter(documentSize, SUM_SCALE_COEFFICIENT,
+                SUM_OF_DECOMPRESSED_PDF_STREAMW_MIN_SIZE);
     }
 
     /**
@@ -101,10 +109,11 @@ public class MemoryLimitsAwareHandler implements Serializable {
      * Sets the maximum allowed size which can be occupied by a single decompressed pdf stream.
      * This value correlates with maximum heap size. This value should not exceed limit of the heap size.
      *
-     * iText will throw an exception if during decompression a pdf stream which was identified as
+     * <p>iText will throw an exception if during decompression a pdf stream which was identified as
      * requiring memory limits awareness occupies more memory than allowed.
      *
-     * @param maxSizeOfSingleDecompressedPdfStream the maximum allowed size which can be occupied by a single decompressed pdf stream.
+     * @param maxSizeOfSingleDecompressedPdfStream the maximum allowed size which can be occupied by a single
+     *                                             decompressed pdf stream.
      * @return this {@link MemoryLimitsAwareHandler} instance.
      * @see MemoryLimitsAwareHandler#isMemoryLimitsAwarenessRequiredOnDecompression(PdfArray)
      */
@@ -127,10 +136,11 @@ public class MemoryLimitsAwareHandler implements Serializable {
      * This value can be limited by the maximum expected PDF file size when it's completely decompressed.
      * Setting this value correlates with the maximum processing time spent on document reading
      *
-     * iText will throw an exception if during decompression pdf streams which were identified as
+     * <p>iText will throw an exception if during decompression pdf streams which were identified as
      * requiring memory limits awareness occupy more memory than allowed.
      *
-     * @param maxSizeOfDecompressedPdfStreamsSum he maximum allowed size which can be occupied by all decompressed pdf streams.
+     * @param maxSizeOfDecompressedPdfStreamsSum he maximum allowed size which can be occupied by all decompressed pdf
+     *                                           streams.
      * @return this {@link MemoryLimitsAwareHandler} instance.
      * @see MemoryLimitsAwareHandler#isMemoryLimitsAwarenessRequiredOnDecompression(PdfArray)
      */
@@ -142,7 +152,7 @@ public class MemoryLimitsAwareHandler implements Serializable {
     /**
      * Performs a check if the {@link PdfStream} with provided setup of the filters requires
      * memory limits awareness during decompression.
-
+     *
      * @param filters is an {@link PdfArray} of names of filters
      * @return true if PDF stream is suspicious and false otherwise
      */
@@ -170,7 +180,8 @@ public class MemoryLimitsAwareHandler implements Serializable {
         if (considerCurrentPdfStream && memoryUsedForCurrentPdfStreamDecompression < numOfOccupiedBytes) {
             memoryUsedForCurrentPdfStreamDecompression = numOfOccupiedBytes;
             if (memoryUsedForCurrentPdfStreamDecompression > maxSizeOfSingleDecompressedPdfStream) {
-                throw new MemoryLimitsAwareException(PdfException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed);
+                throw new MemoryLimitsAwareException(
+                        PdfException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed);
             }
         }
         return this;
@@ -197,7 +208,8 @@ public class MemoryLimitsAwareHandler implements Serializable {
     MemoryLimitsAwareHandler endDecompressedPdfStreamProcessing() {
         allMemoryUsedForDecompression += memoryUsedForCurrentPdfStreamDecompression;
         if (allMemoryUsedForDecompression > maxSizeOfDecompressedPdfStreamsSum) {
-            throw new MemoryLimitsAwareException(PdfException.DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed);
+            throw new MemoryLimitsAwareException(
+                    PdfException.DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed);
         }
         ensureCurrentStreamIsReset();
         considerCurrentPdfStream = false;
