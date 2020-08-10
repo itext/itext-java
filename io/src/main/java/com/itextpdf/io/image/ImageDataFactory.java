@@ -214,22 +214,8 @@ public final class ImageDataFactory {
      * @return created ImageData
      */
     public static ImageData createBmp(URL url, boolean noHeader) {
-        return createBmp(url, noHeader, 0);
-    }
-
-    /**
-     * Get a bitmap ImageData instance from the specified url.
-     *
-     * @param url location of the image.
-     * @param noHeader Whether the image contains a header.
-     * @param size size of the image
-     * @return created ImageData
-     * @deprecated will be removed in 7.2
-     */
-    @Deprecated
-    public static ImageData createBmp(URL url, boolean noHeader, int size) {
         validateImageType(url, ImageType.BMP);
-        ImageData image = new BmpImageData(url, noHeader, size);
+        ImageData image = new BmpImageData(url, noHeader);
         BmpImageHelper.processImage(image);
         return image;
     }
@@ -238,26 +224,12 @@ public final class ImageDataFactory {
      * Get a bitmap ImageData instance from the provided bytes.
      *
      * @param bytes array containing the raw image data
-     * @param noHeader Whether the image contains a header
-     * @return created ImageData.
+     * @param noHeader Whether the image contains a header.
+     * @return created ImageData
      */
     public static ImageData createBmp(byte[] bytes, boolean noHeader) {
-        return createBmp(bytes, noHeader, 0);
-    }
-
-    /**
-     * Get a bitmap ImageData instance from the provided bytes.
-     *
-     * @param bytes array containing the raw image data
-     * @param noHeader Whether the image contains a header.
-     * @param size size of the image
-     * @return created ImageData
-     * @deprecated will be removed in 7.2
-     */
-    @Deprecated
-    public static ImageData createBmp(byte[] bytes, boolean noHeader, int size) {
         if (noHeader || ImageTypeDetector.detectImageType(bytes) == ImageType.BMP) {
-            ImageData image = new BmpImageData(bytes, noHeader, size);
+            ImageData image = new BmpImageData(bytes, noHeader);
             BmpImageHelper.processImage(image);
             return image;
         }

@@ -819,48 +819,4 @@ public class PdfTokenizer implements Closeable {
         }
         return null;
     }
-
-    /**
-     * @deprecated Will be removed in 7.2. This inner class is not used anywhere
-     */
-    @Deprecated
-    protected static class ReusableRandomAccessSource implements IRandomAccessSource {
-        private ByteBuffer buffer;
-
-        public ReusableRandomAccessSource(ByteBuffer buffer) {
-            if (buffer == null) throw new IllegalArgumentException("Passed byte buffer can not be null.");
-            this.buffer = buffer;
-        }
-
-        @Override
-        public int get(long offset) {
-            if (offset >= buffer.size()) return -1;
-            return 0xff & buffer.getInternalBuffer()[(int) offset];
-        }
-
-        @Override
-        public int get(long offset, byte[] bytes, int off, int len) {
-            if (buffer == null) throw new IllegalStateException("Already closed");
-
-            if (offset >= buffer.size())
-                return -1;
-
-            if (offset + len > buffer.size())
-                len = (int) (buffer.size() - offset);
-
-            System.arraycopy(buffer.getInternalBuffer(), (int) offset, bytes, off, len);
-
-            return len;
-        }
-
-        @Override
-        public long length() {
-            return buffer.size();
-        }
-
-        @Override
-        public void close() throws java.io.IOException {
-            buffer = null;
-        }
-    }
 }

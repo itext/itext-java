@@ -60,14 +60,6 @@ public final class SystemUtil {
 
     private final static String SPLIT_REGEX = "((\".+?\"|[^'\\s]|'.+?')+)\\s*";
 
-    /**
-     * @deprecated To be removed in iText version 7.2. For time-based seed, please use {@link #getTimeBasedSeed()} instead.
-     */
-    @Deprecated
-    public static long getSystemTimeMillis() {
-        return System.currentTimeMillis();
-    }
-
     public static long getTimeBasedSeed() {
         return System.currentTimeMillis();
     }

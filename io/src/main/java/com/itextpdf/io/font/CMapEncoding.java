@@ -169,21 +169,6 @@ public class CMapEncoding {
         return Objects.equals(cmap, this.cmap);
     }
 
-    /**
-     * @deprecated Will be removed in 7.2. Use {@link #getCmapBytes(int)} instead.
-     *
-     * @param cid a CID
-     * @return CMAP code as an int
-     */
-    @Deprecated
-    public int getCmapCode(int cid) {
-        if (isDirect) {
-            return cid;
-        } else {
-            return toInteger(cid2Code.lookup(cid));
-        }
-    }
-
     public byte[] getCmapBytes(int cid) {
         int length = getCmapBytesLength(cid);
         byte[] result = new byte[length];

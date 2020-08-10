@@ -298,9 +298,7 @@ public class PdfType0Font extends PdfFont {
                     convertToBytes(glyph, buffer);
                 } else {
                     //getCode() could be either -1 or 0
-                    int nullCode = cmapEncoding.getCmapCode(0);
-                    buffer.append(nullCode >> 8);
-                    buffer.append(nullCode);
+                    buffer.append(cmapEncoding.getCmapBytes(0));
                 }
             }
         }

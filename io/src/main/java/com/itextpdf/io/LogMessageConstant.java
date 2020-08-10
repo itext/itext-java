@@ -107,11 +107,6 @@ public final class LogMessageConstant {
     public static final String EXISTING_TAG_STRUCTURE_ROOT_IS_NOT_STANDARD = "Existing tag structure of the document has a root of \"{0}\" role in \"{1}\" namespace that is not mapped to the standard role.";
     public static final String FAILED_TO_DETERMINE_CID_FONT_SUBTYPE = "Failed to determine CIDFont subtype. The type of CIDFont shall be CIDFontType0 or CIDFontType2.";
     public static final String FAILED_TO_PARSE_ENCODING_STREAM = "Failed to parse encoding stream.";
-    /**
-     * @deprecated Moved into cleanup module
-     * The constant will be removed in 7.2.
-     */
-    @Deprecated
     public static final String FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX = "Failed to process a transformation matrix which is noninvertible. Some content may be placed not as expected.";
     public static final String FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY = "Value \"{0}\" is not contained in /Opt array of field \"{1}\".";
     public static final String FILE_CHANNEL_CLOSING_FAILED = "Closing of the file channel this source is based on failed.";
@@ -143,12 +138,6 @@ public final class LogMessageConstant {
     public static final String IMAGE_HAS_JBIG2DECODE_FILTER = "Image cannot be inline if it has JBIG2Decode filter. It will be added as an ImageXObject";
     public static final String IMAGE_HAS_JPXDECODE_FILTER = "Image cannot be inline if it has JPXDecode filter. It will be added as an ImageXObject";
     public static final String IMAGE_HAS_MASK = "Image cannot be inline if it has a Mask";
-    /**
-     * @deprecated Moved into cleanup module
-     * The constant will be removed in 7.2.
-     */
-    @Deprecated
-    public static final String IMAGE_MASK_CLEAN_UP_NOT_SUPPORTED = "Partial clean up of transparent images with mask encoded with one of the following filters is not supported: JBIG2Decode, DCTDecode, JPXDecode. Image will become non-transparent.";
     public static final String IMAGE_SIZE_CANNOT_BE_MORE_4KB = "Inline image size cannot be more than 4KB. It will be added as an ImageXObject";
     public static final String INCORRECT_PAGEROTATION = "Encounterd a page rotation that was not a multiple of 90°/ (Pi/2) when generating default appearances for form fields";
     public static final String INDIRECT_REFERENCE_USED_IN_FLUSHED_OBJECT_MADE_FREE = "An attempt is made to free an indirect reference which was already used in the flushed object. Indirect reference wasn't freed.";
@@ -193,12 +182,6 @@ public final class LogMessageConstant {
     public static final String PROPERTY_IN_PERCENTS_NOT_SUPPORTED = "Property {0} in percents is not supported";
     public static final String RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES = "The {0} rectangle has negative or zero sizes. It will not be displayed.";
     public static final String RECTANGLE_HAS_NEGATIVE_SIZE = "The {0} rectangle has negative size. It will not be displayed.";
-    /**
-     * @deprecated Moved into cleanup module
-     * The constant will be removed in 7.2.
-     */
-    @Deprecated
-    public static final String REDACTION_OF_ANNOTATION_TYPE_WATERMARK_IS_NOT_SUPPORTED = "Redaction of annotation subtype /Watermark is not supported";
     public static final String REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED = "The page requested to be removed has already been flushed.";
     public static final String RENDERER_WAS_NOT_ABLE_TO_PROCESS_KEEP_WITH_NEXT = "The renderer was not able to process keep with next property properly";
     public static final String ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED_ALREADY_EXIST = "Role mapping \"{0}\" from source document is not copied. Destination document already has \"{1}\" mapping.";
@@ -245,11 +228,5 @@ public final class LogMessageConstant {
     public static final String XFDF_OUTPUT_STREAM_CORRUPTED = "Xfdf output stream is corrupted.";
     public static final String XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE = "Xfdf unsupported attribute type";
     public static final String XOBJECT_HAS_NO_STRUCT_PARENTS = "XObject has no StructParents entry in its stream, no entry in ParentTree will be created for the corresponding structure elements";
-    /**
-     * @deprecated Use {@link LogMessageConstant#XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT} instead.
-     * The constant will be removed in 7.2.
-     */
-    @Deprecated
-    public static final String XREF_ERROR = "Error occurred while reading cross reference table. Cross reference table will be rebuilt.";
     public static final String XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT = "Error occurred while reading cross reference table. Cross reference table will be rebuilt.";
 }
