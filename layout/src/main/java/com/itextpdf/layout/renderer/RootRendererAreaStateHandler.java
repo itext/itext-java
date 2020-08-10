@@ -41,7 +41,6 @@ class RootRendererAreaStateHandler {
             storedNextArea = rootRenderer.currentArea;
 
             rootRenderer.currentArea = storedPreviousArea;
-            rootRenderer.currentPageNumber = storedPreviousArea.getPageNumber();
 
             storedNextFloatRenderAreas = new ArrayList<>(rootRenderer.floatRendererAreas);
             rootRenderer.floatRendererAreas = storedPreviousFloatRenderAreas;
@@ -57,7 +56,6 @@ class RootRendererAreaStateHandler {
     public boolean attemptGoForwardToStoredNextState(RootRenderer rootRenderer) {
         if (storedNextArea != null) {
             rootRenderer.currentArea = storedNextArea;
-            rootRenderer.currentPageNumber = storedNextArea.getPageNumber();
             rootRenderer.floatRendererAreas = storedNextFloatRenderAreas;
 
             storedNextArea = null;

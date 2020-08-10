@@ -3243,7 +3243,8 @@ public class TableTest extends AbstractTableTest {
 
         @Override
         protected PageSize addNewPage(PageSize customPageSize) {
-            PageSize pageSize = currentPageNumber % 2 == 1 ? PageSize.A4 : PageSize.A4.rotate();
+            int currentNumberOfPages = document.getPdfDocument().getNumberOfPages();
+            PageSize pageSize = currentNumberOfPages % 2 == 1 ? PageSize.A4.rotate() : PageSize.A4;
             pdfDoc.addNewPage(pageSize);
             return pageSize;
         }

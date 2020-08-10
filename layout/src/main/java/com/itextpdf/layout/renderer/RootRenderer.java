@@ -69,7 +69,6 @@ public abstract class RootRenderer extends AbstractRenderer {
 
     protected boolean immediateFlush = true;
     protected RootLayoutArea currentArea;
-    protected int currentPageNumber;
     protected List<IRenderer> waitingDrawingElements = new ArrayList<>();
     List<Rectangle> floatRendererAreas;
     private IRenderer keepWithNextHangingRenderer;
@@ -245,8 +244,9 @@ public abstract class RootRenderer extends AbstractRenderer {
             positionedRenderers.add(addedPositionedRenderers.get(i));
             renderer = positionedRenderers.get(positionedRenderers.size() - 1);
             Integer positionedPageNumber = renderer.<Integer>getProperty(Property.PAGE_NUMBER);
-            if (positionedPageNumber == null)
-                positionedPageNumber = currentPageNumber;
+            if (positionedPageNumber == null) {
+                positionedPageNumber = currentArea.getPageNumber();
+            }
 
             LayoutArea layoutArea;
             // For position=absolute, if none of the top, bottom, left, right properties are provided,
@@ -404,7 +404,6 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 ableToProcessKeepWithNext = true;
 
                                 currentArea = firstElementSplitLayoutArea;
-                                currentPageNumber = firstElementSplitLayoutArea.getPageNumber();
                                 shrinkCurrentAreaAndProcessRenderer(firstElementSplitLayoutResult.getSplitRenderer(), new ArrayList<IRenderer>(), firstElementSplitLayoutResult);
                                 updateCurrentAndInitialArea(firstElementSplitLayoutResult);
                                 shrinkCurrentAreaAndProcessRenderer(firstElementSplitLayoutResult.getOverflowRenderer(), new ArrayList<IRenderer>(), firstElementOverflowLayoutResult);
@@ -412,7 +411,6 @@ public abstract class RootRenderer extends AbstractRenderer {
                         }
                         if (!ableToProcessKeepWithNext) {
                             currentArea = storedArea;
-                            currentPageNumber = storedArea.getPageNumber();
                         }
                     }
                 }
@@ -432,7 +430,6 @@ public abstract class RootRenderer extends AbstractRenderer {
                 }
                 if (!ableToProcessKeepWithNext) {
                     currentArea = storedArea;
-                    currentPageNumber = storedArea.getPageNumber();
                 }
             }
             if (!ableToProcessKeepWithNext) {

@@ -122,12 +122,15 @@ public class DocumentRenderer extends RootRenderer {
         }
         AreaBreak areaBreak = overflowResult != null && overflowResult.getAreaBreak() != null ?
                 overflowResult.getAreaBreak() : null;
+        int currentPageNumber = currentArea == null ? 0 : currentArea.getPageNumber();
         if (areaBreak != null && areaBreak.getType() == AreaBreakType.LAST_PAGE) {
             while (currentPageNumber < document.getPdfDocument().getNumberOfPages()) {
-                moveToNextPage();
+                possiblyFlushPreviousPage(currentPageNumber);
+                currentPageNumber++;
             }
         } else {
-            moveToNextPage();
+            possiblyFlushPreviousPage(currentPageNumber);
+            currentPageNumber++;
         }
         PageSize customPageSize = areaBreak != null ? areaBreak.getPageSize() : null;
         while (document.getPdfDocument().getNumberOfPages() >= currentPageNumber &&
@@ -174,6 +177,12 @@ public class DocumentRenderer extends RootRenderer {
         }
     }
 
+    /**
+     * Adds new page with defined page size to PDF document.
+     *
+     * @param customPageSize the size of new page, can be null
+     * @return the page size of created page
+     */
     protected PageSize addNewPage(PageSize customPageSize) {
         if (customPageSize != null) {
             document.getPdfDocument().addNewPage(customPageSize);
@@ -184,10 +193,14 @@ public class DocumentRenderer extends RootRenderer {
     }
 
     /**
-     * Adds some pages so that the overall number is at least n.
-     * Returns the page size of the page number {@code n}.
+     * Ensures that PDF document has n pages. If document has less pages,
+     * adds new pages by calling {@link #addNewPage(PageSize)} method.
+     *
+     * @param n the expected number of pages if document
+     * @param customPageSize the size of created pages, can be null
+     * @return the page size of the last created page, or null if no page was created
      */
-    private PageSize ensureDocumentHasNPages(int n, PageSize customPageSize) {
+    protected PageSize ensureDocumentHasNPages(int n, PageSize customPageSize) {
         PageSize lastPageSize = null;
         while (document.getPdfDocument().getNumberOfPages() < n) {
             lastPageSize = addNewPage(customPageSize);
@@ -206,12 +219,11 @@ public class DocumentRenderer extends RootRenderer {
                 pageSize.getHeight() - bottomMargin - topMargin);
     }
 
-    private void moveToNextPage() {
-        // We don't flush this page immediately, but only flush previous one because of manipulations
-        // with areas in case of keepTogether property.
+    private void possiblyFlushPreviousPage(int currentPageNumber) {
         if (immediateFlush && currentPageNumber > 1) {
+            // We don't flush current page immediately, but only flush previous one
+            // because of manipulations with areas in case of keepTogether property
             document.getPdfDocument().getPage(currentPageNumber - 1).flush();
         }
-        currentPageNumber++;
     }
 }

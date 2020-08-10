@@ -109,6 +109,6 @@ public class ColumnDocumentRenderer extends DocumentRenderer {
         if (nextAreaNumber % columns.length == 0) {
             super.updateCurrentArea(overflowResult);
         }
-        return (currentArea = new RootLayoutArea(currentPageNumber, columns[nextAreaNumber++ % columns.length].clone()));
+        return (currentArea = new RootLayoutArea(currentArea.getPageNumber(), columns[nextAreaNumber++ % columns.length].clone()));
     }
 }
