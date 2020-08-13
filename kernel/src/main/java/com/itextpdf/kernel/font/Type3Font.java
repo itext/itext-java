@@ -177,5 +177,14 @@ public class Type3Font extends FontProgram {
         codeToGlyph.put(code, glyph);
         unicodeToGlyph.put(unicode, glyph);
         type3Glyphs.put(unicode, type3Glyph);
+        recalculateAverageWidth();
+    }
+
+    private void recalculateAverageWidth() {
+        int widthSum = 0;
+        for (Glyph glyph : codeToGlyph.values()) {
+            widthSum += glyph.getWidth();
+        }
+        avgWidth = widthSum / codeToGlyph.size();
     }
 }

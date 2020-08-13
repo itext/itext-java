@@ -79,6 +79,16 @@ public class GlyphBboxCalculationTest extends ExtendedITextTest {
     }
 
     @Test
+    public void checkAverageBboxCalculationForType3FontsWithFontMatrix01Test() throws IOException {
+        String inputPdf = sourceFolder + "checkAverageBboxCalculationForType3FontsWithFontMatrix01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputPdf));
+        CharacterPositionEventListener listener = new CharacterPositionEventListener();
+        PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
+        processor.processPageContent(pdfDocument.getPage(1));
+        Assert.assertEquals(600, listener.firstTextRenderInfo.getFont().getFontProgram().getAvgWidth(), 0.01f);
+    }
+
+    @Test
     public void type3FontsWithIdentityFontMatrixAndMultiplier() throws IOException, InterruptedException {
         String inputPdf = sourceFolder + "type3FontsWithIdentityFontMatrixAndMultiplier.pdf";
         String outputPdf = destinationFolder +  "type3FontsWithIdentityFontMatrixAndMultiplier.pdf";
@@ -102,6 +112,7 @@ public class GlyphBboxCalculationTest extends ExtendedITextTest {
 
     private static class CharacterPositionEventListener implements ITextExtractionStrategy {
         float glyphWidth;
+        TextRenderInfo firstTextRenderInfo;
 
         @Override
         public String getResultantText() {
@@ -112,6 +123,10 @@ public class GlyphBboxCalculationTest extends ExtendedITextTest {
         public void eventOccurred(IEventData data, EventType type) {
             if (type.equals(EventType.RENDER_TEXT)) {
                 TextRenderInfo renderInfo = (TextRenderInfo) data;
+                if (firstTextRenderInfo == null) {
+                    firstTextRenderInfo = renderInfo;
+                    firstTextRenderInfo.preserveGraphicsState();
+                }
                 List<TextRenderInfo> subs = renderInfo.getCharacterRenderInfos();
                 for (int i = 0; i < subs.size(); i++) {
                     TextRenderInfo charInfo = subs.get(i);
