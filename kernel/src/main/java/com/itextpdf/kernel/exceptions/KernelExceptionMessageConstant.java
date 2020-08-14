@@ -130,7 +130,6 @@ public final class KernelExceptionMessageConstant {
     public static final String DOCUMENT_CLOSED_IT_IS_IMPOSSIBLE_TO_EXECUTE_ACTION = "Document was closed. It is "
             + "impossible to execute action.";
     public static final String DOCUMENT_DOES_NOT_CONTAIN_STRUCT_TREE_ROOT = "Document doesn't contain StructTreeRoot.";
-    public static final String DOCUMENT_HAS_NO_PAGES = "Document has no pages.";
     public static final String DOCUMENT_HAS_NO_PDF_CATALOG_OBJECT = "Document has no PDF Catalog object.";
     public static final String DOCUMENT_HAS_NOT_BEEN_READ_YET = "The PDF document has not been read yet. Document "
             + "reading occurs in PdfDocument class constructor";

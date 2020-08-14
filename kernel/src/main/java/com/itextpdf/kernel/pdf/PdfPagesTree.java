@@ -277,10 +277,13 @@ class PdfPagesTree {
      * @throws PdfException in case empty document
      */
     protected PdfObject generateTree() {
-        if (pageRefs.size() == 0)
-            throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NO_PAGES);
-        if (generated)
+        if (pageRefs.size() == 0) {
+            LOGGER.info(LogMessageConstant.ATTEMPT_TO_GENERATE_PDF_PAGES_TREE_WITHOUT_ANY_PAGES);
+            document.addNewPage();
+        }
+        if (generated) {
             throw new PdfException(KernelExceptionMessageConstant.PDF_PAGES_TREE_COULD_BE_GENERATED_ONLY_ONCE);
+        }
 
         if (root == null) {
             while (parents.size() != 1) {

@@ -875,6 +875,12 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 }
                 checkIsoConformance();
 
+                if (getNumberOfPages() == 0) {
+                    // Add new page here, not in PdfPagesTree#generateTree method, so that any page
+                    // operations are available when handling the START_PAGE and INSERT_PAGE events
+                    addNewPage();
+                }
+
                 PdfObject crypto = null;
                 Set<PdfIndirectReference> forbiddenToFlush = new HashSet<>();
                 if (properties.appendMode) {

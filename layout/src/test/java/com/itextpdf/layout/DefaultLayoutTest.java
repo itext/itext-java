@@ -44,19 +44,37 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.events.Event;
+import com.itextpdf.kernel.events.IEventHandler;
+import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.layer.PdfLayer;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -247,4 +265,88 @@ public class DefaultLayoutTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void closeEmptyDocumentTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "closeEmptyDocumentTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_closeEmptyDocumentTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdfDocument);
+        AssertUtil.doesNotThrow(() -> document.close());
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void closeEmptyDocumentWithEventOnAddingPageTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "closeEmptyDocumentWithEventTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_closeEmptyDocumentWithEventTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        new PdfLayer("Some layer", pdfDocument);
+
+        ParagraphAdderHandler handler = new ParagraphAdderHandler();
+        pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, handler);
+        AssertUtil.doesNotThrow(() -> pdfDocument.close());
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void checkPageSizeOfClosedEmptyDocumentTest() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos));
+        AssertUtil.doesNotThrow(() -> pdfDocument.close());
+        byte[] bytes = baos.toByteArray();
+        baos.close();
+
+        PdfDocument newDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes)));
+        Assert.assertTrue(PageSize.Default.equalsWithEpsilon(newDoc.getPage(1).getPageSize()));
+        newDoc.close();
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ATTEMPT_TO_GENERATE_PDF_PAGES_TREE_WITHOUT_ANY_PAGES, logLevel = LogLevelConstants.INFO)
+    })
+    public void closeEmptyDocumentWithRemovingPageEventOnAddingPageTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "closeEmptyDocumentWithRemovingEventTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_closeEmptyDocumentWithRemovingEventTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        PageRemoverHandler handler = new PageRemoverHandler();
+        pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, handler);
+        AssertUtil.doesNotThrow(() -> pdfDocument.close());
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    private static class ParagraphAdderHandler implements IEventHandler {
+        @Override
+        public void handleEvent(Event event) {
+            PdfDocumentEvent docEvent = (PdfDocumentEvent) event;
+            PdfPage page = docEvent.getPage();
+            PdfDocument pdfDoc = ((PdfDocumentEvent) event).getDocument();
+            List<PdfLayer> group = new ArrayList<>();
+            group.add(new PdfLayer("Some second layer", pdfDoc));
+            // If page will be added in PdfPagesTree#generateTree method, after flushing PdfOCProperties,
+            // exception will be thrown, but page will be added before anu flushing, and there is no exception
+            pdfDoc.getCatalog().getOCProperties(false).addOCGRadioGroup(group);
+            PdfCanvas canvas = new PdfCanvas(page.newContentStreamBefore(), page.getResources(), pdfDoc);
+
+            new Canvas(canvas, new Rectangle(0, 0, 600, 600))
+                    .add(new Paragraph("Some text").setFixedPosition(100, 100, 100));
+        }
+    }
+
+    private static class PageRemoverHandler implements IEventHandler {
+        @Override
+        public void handleEvent(Event event) {
+            PdfDocumentEvent docEvent = (PdfDocumentEvent) event;
+            PdfPage page = docEvent.getPage();
+            PdfDocument pdfDoc = ((PdfDocumentEvent) event).getDocument();
+            pdfDoc.removePage(1);
+        }
+    }
 }
