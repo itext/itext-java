@@ -122,6 +122,9 @@ public final class KernelExceptionMessageConstant {
     public static final String CONTENT_STREAM_MUST_NOT_INVOKE_OPERATORS_THAT_SPECIFY_COLORS_OR_OTHER_COLOR_RELATED_PARAMETERS =
             "Content stream must not invoke operators that specify colors or other color related parameters in "
                     + "the graphics state.";
+    public static final String CORRUPTED_OUTLINE_DICTIONARY_HAS_INFINITE_LOOP =
+            "Document outline dictionary is corrupted: some outline (PDF object: \"{0}\") has wrong first/next link "
+                    + "entry.";
     public static final String CORRUPTED_OUTLINE_NO_PARENT_ENTRY =
             "Document outline is corrupted: some outline (PDF object: \"{0}\") lacks the required parent entry.";
     public static final String CORRUPTED_OUTLINE_NO_TITLE_ENTRY =

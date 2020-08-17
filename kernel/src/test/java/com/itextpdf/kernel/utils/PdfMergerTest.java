@@ -417,7 +417,9 @@ public class PdfMergerTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore ("TODO: DEVSIX-5064 (when doing merge with outlines infinite loop occurs )")
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
     public void mergeOutlinesWithWrongStructureTest() throws IOException, InterruptedException {
         PdfDocument inputDoc = new PdfDocument(new PdfReader(
                 sourceFolder + "infiniteLoopInOutlineStructure.pdf"));
