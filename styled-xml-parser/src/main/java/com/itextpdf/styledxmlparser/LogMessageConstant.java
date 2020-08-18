@@ -41,15 +41,20 @@
     address: sales@itextpdf.com
  */
 package com.itextpdf.styledxmlparser;
-
 /**
  * Class that bundles all the error message templates as constants.
  */
 public final class LogMessageConstant {
 
-    /** The Constant BACKGROUND_SHORTHAND_PROPERTY_CANNOT_BE_EMPTY. */
+    /** The Constant SHORTHAND_PROPERTY_CANNOT_BE_EMPTY. */
+    public static final String SHORTHAND_PROPERTY_CANNOT_BE_EMPTY = "{0} shorthand property cannot be empty.";
+    /**
+     * The Constant BACKGROUND_SHORTHAND_PROPERTY_CANNOT_BE_EMPTY.
+     * @deprecated LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY should be used instead.
+     */
+    @Deprecated
     public static final String BACKGROUND_SHORTHAND_PROPERTY_CANNOT_BE_EMPTY =
-            "background shorthand property cannot be empty.";
+            "Background shorthand property cannot be empty.";
     /** The Constant DEFAULT_VALUE_OF_CSS_PROPERTY_UNKNOWN. */
     public static final String DEFAULT_VALUE_OF_CSS_PROPERTY_UNKNOWN = "Default value of the css property \"{0}\" is unknown.";
     /** The Constant ERROR_ADDING_CHILD_NODE. */

@@ -31,6 +31,14 @@ public class BackgroundRepeat {
 
     /**
      * Creates a new {@link BackgroundRepeat} instance.
+     */
+    public BackgroundRepeat() {
+        this.repeatX = true;
+        this.repeatY = true;
+    }
+
+    /**
+     * Creates a new {@link BackgroundRepeat} instance.
      *
      * @param repeatX whether the background repeats in the x dimension.
      * @param repeatY whether the background repeats in the y dimension.

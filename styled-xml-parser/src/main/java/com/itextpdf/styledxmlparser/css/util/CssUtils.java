@@ -922,6 +922,18 @@ public class CssUtils {
                 .equals(headChildElement.getAttribute(CommonAttributeConstants.REL));
     }
 
+    /**
+     * Checks if value is initial, inherit or unset.
+     *
+     * @param value value to check.
+     * @return true if value is initial, inherit or unset. false otherwise.
+     */
+    public static boolean isInitialOrInheritOrUnset(String value) {
+        return CommonCssConstants.INITIAL.equals(value) ||
+                CommonCssConstants.INHERIT.equals(value) ||
+                CommonCssConstants.UNSET.equals(value);
+    }
+
     private static boolean addRange(RangeBuilder builder, String range) {
         range = range.trim();
         if (range.matches("[uU]\\+[0-9a-fA-F?]{1,6}(-[0-9a-fA-F]{1,6})?")) {

@@ -35,6 +35,8 @@ import java.util.List;
  */
 public class CssBackgroundValidator implements ICssDataTypeValidator {
 
+    private static final int MAX_AMOUNT_OF_VALUES = 2;
+
     private final String backgroundProperty;
 
     /**
@@ -54,18 +56,17 @@ public class CssBackgroundValidator implements ICssDataTypeValidator {
         if (objectString == null) {
             return false;
         }
-        if (CommonCssConstants.INITIAL.equals(objectString) || CommonCssConstants.INHERIT.equals(objectString) ||
-                CommonCssConstants.UNSET.equals(objectString)) {
+        if (CssUtils.isInitialOrInheritOrUnset(objectString)) {
             return true;
         }
         // Actually it's not shorthand but extractShorthandProperties method works exactly as needed in this case
         final List<List<String>> extractedProperties = CssUtils.extractShorthandProperties(objectString);
         for (final List<String> propertyValues : extractedProperties) {
-            if (propertyValues.isEmpty()) {
+            if (propertyValues.isEmpty() || propertyValues.size() > MAX_AMOUNT_OF_VALUES) {
                 return false;
             }
-            for (final String propertyValue : propertyValues) {
-                if (!isValidProperty(propertyValue, propertyValues)) {
+            for (int i = 0; i < propertyValues.size(); i++) {
+                if (!isValidProperty(propertyValues, i)) {
                     return false;
                 }
             }
@@ -73,12 +74,12 @@ public class CssBackgroundValidator implements ICssDataTypeValidator {
         return true;
     }
 
-    private boolean isValidProperty(final String propertyValue, final List<String> propertyValues) {
-        if (isPropertyValueCorrespondsPropertyType(propertyValue)) {
-            if (propertyValues.size() > 1) {
-                if (isMultiValueAllowedForThisType() && isMultiValueAllowedForThisValue(propertyValue)) {
+    private boolean isValidProperty(List<String> propertyValues, int index) {
+        if (isPropertyValueCorrespondsPropertyType(propertyValues.get(index))) {
+            if (propertyValues.size() == MAX_AMOUNT_OF_VALUES) {
+                if (isMultiValueAllowedForThisType() && isMultiValueAllowedForThisValue(propertyValues.get(index))) {
                     // TODO DEVSIX-2106 Some extra validations for currently not supported properties.
-                    return true;
+                    return checkMultiValuePositionXY(propertyValues, index);
                 } else {
                     return false;
                 }
@@ -86,6 +87,17 @@ public class CssBackgroundValidator implements ICssDataTypeValidator {
             return true;
         }
         return false;
+    }
+
+    private boolean checkMultiValuePositionXY(List<String> propertyValues, int index) {
+        if (CommonCssConstants.BACKGROUND_POSITION_X.equals(backgroundProperty) ||
+                CommonCssConstants.BACKGROUND_POSITION_Y.equals(backgroundProperty)) {
+            if (CommonCssConstants.BACKGROUND_POSITION_VALUES.contains(propertyValues.get(index)) && index == 1) {
+                return false;
+            }
+            return CommonCssConstants.BACKGROUND_POSITION_VALUES.contains(propertyValues.get(index)) || index == 1;
+        }
+        return true;
     }
 
     private boolean isMultiValueAllowedForThisType() {
@@ -99,7 +111,8 @@ public class CssBackgroundValidator implements ICssDataTypeValidator {
         return !CommonCssConstants.REPEAT_X.equals(value) &&
                 !CommonCssConstants.REPEAT_Y.equals(value) &&
                 !CommonCssConstants.COVER.equals(value) &&
-                !CommonCssConstants.CONTAIN.equals(value);
+                !CommonCssConstants.CONTAIN.equals(value) &&
+                !CommonCssConstants.CENTER.equals(value);
     }
 
     private boolean isPropertyValueCorrespondsPropertyType(final String value) {
@@ -111,13 +124,19 @@ public class CssBackgroundValidator implements ICssDataTypeValidator {
         if (CssBackgroundUtils.getBackgroundPropertyNameFromType(propertyType).equals(backgroundProperty)) {
             return true;
         }
+        if (propertyType == CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION &&
+                (CommonCssConstants.BACKGROUND_POSITION_X.equals(backgroundProperty) ||
+                        CommonCssConstants.BACKGROUND_POSITION_Y.equals(backgroundProperty))) {
+            return true;
+        }
         if (propertyType == CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_ORIGIN_OR_CLIP &&
                 (CommonCssConstants.BACKGROUND_CLIP.equals(backgroundProperty) ||
                         CommonCssConstants.BACKGROUND_ORIGIN.equals(backgroundProperty))) {
             return true;
         }
         return propertyType == CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION_OR_SIZE &&
-                (CommonCssConstants.BACKGROUND_POSITION.equals(backgroundProperty) ||
+                (CommonCssConstants.BACKGROUND_POSITION_X.equals(backgroundProperty) ||
+                        CommonCssConstants.BACKGROUND_POSITION_Y.equals(backgroundProperty) ||
                         CommonCssConstants.BACKGROUND_SIZE.equals(backgroundProperty));
     }
 }

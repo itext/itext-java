@@ -75,7 +75,7 @@ public class CssBackgroundValidatorTest extends ExtendedITextTest {
 
     @Test
     public void propertyValueWithMultiTypesCorrespondsPropertyTypeTest() {
-        final ICssDataTypeValidator positionValidator = new CssBackgroundValidator("background-position");
+        final ICssDataTypeValidator positionValidator = new CssBackgroundValidator("background-position-x");
         final ICssDataTypeValidator sizeValidator = new CssBackgroundValidator("background-size");
         Assert.assertTrue(positionValidator.isValid("5px"));
         Assert.assertTrue(sizeValidator.isValid("5px"));
@@ -97,19 +97,46 @@ public class CssBackgroundValidatorTest extends ExtendedITextTest {
     }
 
     @Test
+    public void checkMultiValuePositionXYTest() {
+        ICssDataTypeValidator positionValidator = new CssBackgroundValidator("background-position-x");
+        Assert.assertFalse(positionValidator.isValid("50px left"));
+        Assert.assertFalse(positionValidator.isValid("50px bottom"));
+        Assert.assertFalse(positionValidator.isValid("center 50pt"));
+        Assert.assertFalse(positionValidator.isValid("50px 50pt"));
+        Assert.assertFalse(positionValidator.isValid("left right"));
+        Assert.assertFalse(positionValidator.isValid("bottom"));
+
+        Assert.assertTrue(positionValidator.isValid("left 10pt"));
+        Assert.assertTrue(positionValidator.isValid("center"));
+
+        positionValidator = new CssBackgroundValidator("background-position-y");
+        Assert.assertTrue(positionValidator.isValid("bottom 10pt"));
+        Assert.assertTrue(positionValidator.isValid("10pt"));
+
+        Assert.assertFalse(positionValidator.isValid("right"));
+
+        final ICssDataTypeValidator notPositionValidator = new CssBackgroundValidator("background-size");
+        Assert.assertTrue(notPositionValidator.isValid("10px 15pt"));
+    }
+
+    @Test
     public void multiValuesAllowedForThisTypeTest() {
         ICssDataTypeValidator validator = new CssBackgroundValidator("background-size");
         Assert.assertTrue(validator.isValid("5px 10%"));
 
-        validator = new CssBackgroundValidator("background-position");
-        Assert.assertTrue(validator.isValid("5px 10%"));
-        // TODO DEVSIX-1457 change to assertFalse when background-position property will be supported.
-        Assert.assertTrue(validator.isValid("5px 5px 5px 5px 5px 5px 5px 5px 5px 5px 5px 5px 5px"));
+        validator = new CssBackgroundValidator("background-position-x");
+        Assert.assertTrue(validator.isValid("left 10px"));
+        Assert.assertFalse(validator.isValid("5px 10%"));
+        Assert.assertFalse(validator.isValid("left left left left left"));
+
+        validator = new CssBackgroundValidator("background-position-y");
+        Assert.assertTrue(validator.isValid("bottom 10px"));
+        Assert.assertFalse(validator.isValid("5px 10%"));
+        Assert.assertFalse(validator.isValid("bottom bottom bottom bottom"));
 
         validator = new CssBackgroundValidator("background-repeat");
         Assert.assertTrue(validator.isValid("repeat no-repeat"));
-        // TODO DEVSIX-4370 change to assertFalse when background-repeat property will be fully supported.
-        Assert.assertTrue(validator.isValid("repeat repeat repeat repeat repeat repeat repeat repeat"));
+        Assert.assertFalse(validator.isValid("repeat repeat repeat repeat repeat repeat repeat repeat"));
 
         validator = new CssBackgroundValidator("background-image");
         Assert.assertFalse(validator.isValid("url(something.png) url(something2.png)"));

@@ -73,17 +73,24 @@ public class BackgroundImage {
 
     private BlendMode blendMode = DEFAULT_BLEND_MODE;
 
+    private BackgroundPosition position;
+
     /**
      * Creates a new {@link BackgroundImage} instance.
      *
-     * @param image     background image property. {@link PdfXObject} instance.
-     * @param repeat    background repeat property. {@link BackgroundRepeat} instance.
-     * @param blendMode the image's blend mode. {@link BlendMode} instance.
+     * @param image                 background-image property. {@link PdfXObject} instance.
+     * @param repeat                background-repeat property. {@link BackgroundRepeat} instance.
+     * @param position              background-position property. {@link BackgroundPosition} instance.
+     * @param linearGradientBuilder background-image property. {@link AbstractLinearGradientBuilder} instance.
+     * @param blendMode             the image's blend mode. {@link BlendMode} instance.
      */
-    private BackgroundImage(final PdfXObject image, final BackgroundRepeat repeat, final BlendMode blendMode) {
+    protected BackgroundImage(PdfXObject image, BackgroundRepeat repeat, BackgroundPosition position,
+                              AbstractLinearGradientBuilder linearGradientBuilder, BlendMode blendMode) {
         this.image = image;
         this.repeatX = repeat.isRepeatX();
         this.repeatY = repeat.isRepeatY();
+        this.position = position;
+        this.linearGradientBuilder = linearGradientBuilder;
         if (blendMode != null) {
             this.blendMode = blendMode;
         }
@@ -95,9 +102,11 @@ public class BackgroundImage {
      * @param image     background image property. {@link PdfImageXObject} instance.
      * @param repeat    background repeat property. {@link BackgroundRepeat} instance.
      * @param blendMode the image's blend mode. {@link BlendMode} instance.
+     * @deprecated Remove this constructor in 7.2.
      */
+    @Deprecated
     public BackgroundImage(final PdfImageXObject image, final BackgroundRepeat repeat, final BlendMode blendMode) {
-        this((PdfXObject) image, repeat, blendMode);
+        this(image, repeat, new BackgroundPosition(), null, blendMode);
     }
 
     /**
@@ -106,73 +115,83 @@ public class BackgroundImage {
      * @param image     background image property. {@link PdfFormXObject} instance.
      * @param repeat    background repeat property. {@link BackgroundRepeat} instance.
      * @param blendMode the image's blend mode. {@link BlendMode} instance.
+     * @deprecated Remove this constructor in 7.2.
      */
+    @Deprecated
     public BackgroundImage(final PdfFormXObject image, final BackgroundRepeat repeat, final BlendMode blendMode) {
-        this((PdfXObject) image, repeat, blendMode);
+        this(image, repeat, new BackgroundPosition(), null, blendMode);
     }
 
     /**
      * Creates a new {@link BackgroundImage} instance.
      *
-     * @param image background image property. {@link PdfImageXObject} instance.
-     * @param repeat background repeat property. {@link BackgroundRepeat} instance.
+     * @param image  background-image property. {@link PdfImageXObject} instance.
+     * @param repeat background-repeat property. {@link BackgroundRepeat} instance.
+     * @deprecated Remove this constructor in 7.2.
      */
+    @Deprecated
     public BackgroundImage(final PdfImageXObject image, final BackgroundRepeat repeat) {
-        this(image, repeat, DEFAULT_BLEND_MODE);
+        this(image, repeat, new BackgroundPosition(), null, DEFAULT_BLEND_MODE);
     }
 
     /**
      * Creates a new {@link BackgroundImage} instance.
      *
-     * @param image background image property. {@link PdfFormXObject} instance.
-     * @param repeat background repeat property. {@link BackgroundRepeat} instance.
+     * @param image  background-image property. {@link PdfFormXObject} instance.
+     * @param repeat background-repeat property. {@link BackgroundRepeat} instance.
+     * @deprecated Remove this constructor in 7.2.
      */
+    @Deprecated
     public BackgroundImage(final PdfFormXObject image, final BackgroundRepeat repeat) {
-        this(image, repeat, DEFAULT_BLEND_MODE);
+        this(image, repeat, new BackgroundPosition(), null, DEFAULT_BLEND_MODE);
     }
 
     /**
      * Creates a new {@link BackgroundImage} instance.
      *
-     * @param image background image property. {@link PdfImageXObject} instance.
+     * @param image background-image property. {@link PdfImageXObject} instance.
+     * @deprecated Remove this constructor in 7.2.
      */
+    @Deprecated
     public BackgroundImage(final PdfImageXObject image) {
-        this(image, new BackgroundRepeat(true, true));
+        this(image, new BackgroundRepeat(), new BackgroundPosition(), null, DEFAULT_BLEND_MODE);
     }
 
     /**
      * Creates a new {@link BackgroundImage} instance.
      *
-     * @param image background image property. {@link PdfFormXObject} instance.
+     * @param image background-image property. {@link PdfFormXObject} instance.
+     * @deprecated Remove this constructor in 7.2.
      */
+    @Deprecated
     public BackgroundImage(final PdfFormXObject image) {
-        this(image, new BackgroundRepeat(true, true));
+        this(image, new BackgroundRepeat(), new BackgroundPosition(), null, DEFAULT_BLEND_MODE);
     }
 
     /**
      * Creates a new {@link BackgroundImage} instance.
      *
-     * @param image background image property. {@link PdfImageXObject} instance.
-     * @param repeatX is background is repeated in x dimension.
-     * @param repeatY is background is repeated in y dimension.
+     * @param image   background-image property. {@link PdfImageXObject} instance.
+     * @param repeatX defines whether background is repeated in x dimension.
+     * @param repeatY defines whether background is repeated in y dimension.
      * @deprecated Remove this constructor in 7.2.
      */
     @Deprecated
     public BackgroundImage(final PdfImageXObject image, final boolean repeatX, final boolean repeatY) {
-        this((PdfXObject) image, new BackgroundRepeat(repeatX, repeatY), DEFAULT_BLEND_MODE);
+        this(image, new BackgroundRepeat(repeatX, repeatY), new BackgroundPosition(), null, DEFAULT_BLEND_MODE);
     }
 
     /**
      * Creates a new {@link BackgroundImage} instance.
      *
-     * @param image background image property. {@link PdfFormXObject} instance.
-     * @param repeatX is background is repeated in x dimension.
-     * @param repeatY is background is repeated in y dimension.
+     * @param image   background-image property. {@link PdfFormXObject} instance.
+     * @param repeatX defines whether background is repeated in x dimension.
+     * @param repeatY defines whether background is repeated in y dimension.
      * @deprecated Remove this constructor in 7.2.
      */
     @Deprecated
     public BackgroundImage(final PdfFormXObject image, final boolean repeatX, final boolean repeatY) {
-        this((PdfXObject) image, new BackgroundRepeat(repeatX, repeatY), DEFAULT_BLEND_MODE);
+        this(image, new BackgroundRepeat(repeatX, repeatY), new BackgroundPosition(), null, DEFAULT_BLEND_MODE);
     }
 
     /**
@@ -180,7 +199,9 @@ public class BackgroundImage {
      *
      * @param linearGradientBuilder the linear gradient builder representing the background image.
      *                              {@link AbstractLinearGradientBuilder} instance.
+     * @deprecated Remove this constructor in 7.2.
      */
+    @Deprecated
     public BackgroundImage(final AbstractLinearGradientBuilder linearGradientBuilder) {
         this(linearGradientBuilder, DEFAULT_BLEND_MODE);
     }
@@ -191,14 +212,11 @@ public class BackgroundImage {
      * @param linearGradientBuilder the linear gradient builder representing the background image.
      *                              {@link AbstractLinearGradientBuilder} instance.
      * @param blendMode             the image's blend mode. {@link BlendMode} instance.
+     * @deprecated Remove this constructor in 7.2.
      */
+    @Deprecated
     public BackgroundImage(final AbstractLinearGradientBuilder linearGradientBuilder, final BlendMode blendMode) {
-        this.linearGradientBuilder = linearGradientBuilder;
-        this.repeatX = false;
-        this.repeatY = false;
-        if (blendMode != null) {
-            this.blendMode = blendMode;
-        }
+        this(null, new BackgroundRepeat(false, false), new BackgroundPosition(), linearGradientBuilder, blendMode);
     }
 
     public PdfImageXObject getImage() {
@@ -207,6 +225,15 @@ public class BackgroundImage {
 
     public PdfFormXObject getForm() {
         return image instanceof PdfFormXObject ? (PdfFormXObject) image : null;
+    }
+
+    /**
+     * Gets background-position.
+     *
+     * @return {@link BackgroundPosition}
+     */
+    public BackgroundPosition getBackgroundPosition() {
+        return position;
     }
 
     public AbstractLinearGradientBuilder getLinearGradientBuilder() {
@@ -240,5 +267,93 @@ public class BackgroundImage {
      */
     public BlendMode getBlendMode() {
         return blendMode;
+    }
+
+    /**
+     * {@link BackgroundImage} builder class.
+     */
+    public static class Builder {
+
+        private PdfXObject image;
+        private AbstractLinearGradientBuilder linearGradientBuilder;
+        private BackgroundPosition position = new BackgroundPosition();
+        private BackgroundRepeat repeat = new BackgroundRepeat();
+        private BlendMode blendMode = DEFAULT_BLEND_MODE;
+
+        public Builder() {
+        }
+
+        /**
+         * Sets image.
+         * <p>
+         * Makes linearGradientBuilder null as far as we can't have them both.
+         *
+         * @param image {@link PdfXObject} to be set.
+         * @return this {@link Builder}.
+         */
+        public Builder setImage(PdfXObject image) {
+            this.image = image;
+            this.linearGradientBuilder = null;
+            return this;
+        }
+
+        /**
+         * Sets linearGradientBuilder.
+         * <p>
+         * Makes image null as far as we can't have them both. It also makes background-repeat: no-repeat.
+         *
+         * @param linearGradientBuilder {@link AbstractLinearGradientBuilder} to be set.
+         * @return this {@link Builder}.
+         */
+        public Builder setLinearGradientBuilder(AbstractLinearGradientBuilder linearGradientBuilder) {
+            this.linearGradientBuilder = linearGradientBuilder;
+            this.repeat = new BackgroundRepeat(false, false);
+            this.image = null;
+            return this;
+        }
+
+        /**
+         * Sets background-repeat.
+         *
+         * @param repeat {@link BackgroundRepeat} to be set.
+         * @return this {@link Builder}.
+         */
+        public Builder setBackgroundRepeat(BackgroundRepeat repeat) {
+            this.repeat = repeat;
+            return this;
+        }
+
+        /**
+         * Sets background-position.
+         *
+         * @param position {@link BackgroundPosition} to be set.
+         * @return this {@link Builder}.
+         */
+        public Builder setBackgroundPosition(BackgroundPosition position) {
+            this.position = position;
+            return this;
+        }
+
+        /**
+         * Set the image's blend mode.
+         *
+         * @param blendMode {@link BlendMode} to be set.
+         * @return this {@link Builder}.
+         */
+        public Builder setBackgroundBlendMode(BlendMode blendMode) {
+            if (blendMode != null) {
+                this.blendMode = blendMode;
+            }
+            return this;
+        }
+
+        /**
+         * Builds new {@link BackgroundImage} using set fields.
+         *
+         * @return new {@link BackgroundImage}.
+         */
+        public BackgroundImage build() {
+            return new BackgroundImage(image, repeat, position, linearGradientBuilder, blendMode);
+        }
     }
 }

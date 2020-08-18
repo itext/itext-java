@@ -68,6 +68,8 @@ public class CssDefaults {
         defaultValues.put(CommonCssConstants.BACKGROUND_COLOR, CommonCssConstants.TRANSPARENT);
         defaultValues.put(CommonCssConstants.BACKGROUND_IMAGE, CommonCssConstants.NONE);
         defaultValues.put(CommonCssConstants.BACKGROUND_POSITION, "0% 0%");
+        defaultValues.put(CommonCssConstants.BACKGROUND_POSITION_X, "0%");
+        defaultValues.put(CommonCssConstants.BACKGROUND_POSITION_Y, "0%");
         defaultValues.put(CommonCssConstants.BACKGROUND_REPEAT, CommonCssConstants.REPEAT);
         defaultValues.put(CommonCssConstants.BACKGROUND_CLIP, CommonCssConstants.BORDER_BOX);
         defaultValues.put(CommonCssConstants.BACKGROUND_ORIGIN, CommonCssConstants.PADDING_BOX);

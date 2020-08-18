@@ -48,6 +48,7 @@ import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.CssDefaults;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.ShorthandResolverFactory;
 import com.itextpdf.styledxmlparser.css.util.CssBackgroundUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 
@@ -79,9 +80,7 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
      */
     @Override
     public List<CssDeclaration> resolveShorthand(final String shorthandExpression) {
-        if (CommonCssConstants.INITIAL.equals(shorthandExpression) ||
-                CommonCssConstants.INHERIT.equals(shorthandExpression) ||
-                CommonCssConstants.UNSET.equals(shorthandExpression)) {
+        if (CssUtils.isInitialOrInheritOrUnset(shorthandExpression)) {
             return Arrays.asList(
                     new CssDeclaration(CommonCssConstants.BACKGROUND_COLOR, shorthandExpression),
                     new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE, shorthandExpression),
@@ -94,7 +93,8 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
             );
         }
         if (shorthandExpression.trim().isEmpty()) {
-            LOGGER.error(LogMessageConstant.BACKGROUND_SHORTHAND_PROPERTY_CANNOT_BE_EMPTY);
+            LOGGER.error(MessageFormatUtil.format(
+                    LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, CommonCssConstants.BACKGROUND));
             return new ArrayList<>();
         }
 
@@ -103,23 +103,16 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
         final Map<CssBackgroundUtils.BackgroundPropertyType, String> resolvedProps = new HashMap<>();
         fillMapWithPropertiesTypes(resolvedProps);
         for (final List<String> props : propsList) {
-            if (props.isEmpty()) {
-                LOGGER.error(LogMessageConstant.BACKGROUND_SHORTHAND_PROPERTY_CANNOT_BE_EMPTY);
-                return new ArrayList<>();
-            }
-            if (resolvedProps.get(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_COLOR) != null) {
-                LOGGER.error(LogMessageConstant.ONLY_THE_LAST_BACKGROUND_CAN_INCLUDE_BACKGROUND_COLOR);
-                return new ArrayList<>();
-            }
-            removeSpacesAroundSlash(props);
             if (!processProperties(props, resolvedProps)) {
                 return new ArrayList<>();
             }
         }
-
         if (resolvedProps.get(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_COLOR) == null) {
             resolvedProps.put(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_COLOR,
                     CommonCssConstants.TRANSPARENT);
+        }
+        if (!checkProperties(resolvedProps)) {
+            return new ArrayList<>();
         }
 
         return Arrays.asList(
@@ -148,6 +141,23 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
                         CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_ATTACHMENT),
                         resolvedProps.get(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_ATTACHMENT))
         );
+    }
+
+    private static boolean checkProperties(Map<CssBackgroundUtils.BackgroundPropertyType, String> resolvedProps) {
+        for (final Map.Entry<CssBackgroundUtils.BackgroundPropertyType, String> property : resolvedProps.entrySet()) {
+            if (!CssDeclarationValidationMaster.checkDeclaration(new CssDeclaration(
+                    CssBackgroundUtils.getBackgroundPropertyNameFromType(property.getKey()), property.getValue()))) {
+                LOGGER.error(MessageFormatUtil.format(
+                        LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, property.getValue()));
+                return false;
+            }
+            final IShorthandResolver resolver = ShorthandResolverFactory
+                    .getShorthandResolver(CssBackgroundUtils.getBackgroundPropertyNameFromType(property.getKey()));
+            if (resolver != null && resolver.resolveShorthand(property.getValue()).isEmpty()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static void removeSpacesAroundSlash(final List<String> props) {
@@ -194,6 +204,16 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
 
     private static boolean processProperties(List<String> props,
                                              Map<CssBackgroundUtils.BackgroundPropertyType, String> resolvedProps) {
+        if (props.isEmpty()) {
+            LOGGER.error(MessageFormatUtil.format(
+                    LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, CommonCssConstants.BACKGROUND));
+            return false;
+        }
+        if (resolvedProps.get(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_COLOR) != null) {
+            LOGGER.error(LogMessageConstant.ONLY_THE_LAST_BACKGROUND_CAN_INCLUDE_BACKGROUND_COLOR);
+            return false;
+        }
+        removeSpacesAroundSlash(props);
         final Set<CssBackgroundUtils.BackgroundPropertyType> usedTypes = new HashSet<>();
         boolean slashEncountered = false;
         for (final String value : props) {
@@ -262,8 +282,12 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
 
     private static CssBackgroundUtils.BackgroundPropertyType changePropertyType(
             CssBackgroundUtils.BackgroundPropertyType propertyType,
-            final boolean slashEncountered,
-            final boolean isBackgroundOriginUsed) {
+            boolean slashEncountered,
+            boolean isBackgroundOriginUsed) {
+        if (propertyType == CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION_X
+                || propertyType == CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION_Y) {
+            propertyType = CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION;
+        }
         if (propertyType == CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION_OR_SIZE) {
             return slashEncountered ? CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_SIZE :
                     CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION;
@@ -305,12 +329,6 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
             resolvedProps.put(type, resolvedProps.get(type) + " " + value);
         } else {
             resolvedProps.put(type, resolvedProps.get(type) + "," + value);
-        }
-        if (!CssDeclarationValidationMaster.checkDeclaration(new CssDeclaration(
-                CssBackgroundUtils.getBackgroundPropertyNameFromType(type), resolvedProps.get(type)))) {
-            LOGGER.error(MessageFormatUtil.format(
-                    LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, resolvedProps.get(type)));
-            return false;
         }
         usedTypes.add(type);
         return true;

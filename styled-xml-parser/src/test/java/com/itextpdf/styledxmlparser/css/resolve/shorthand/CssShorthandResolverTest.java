@@ -42,15 +42,11 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand;
 
-import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Arrays;

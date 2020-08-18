@@ -46,6 +46,10 @@ public final class CssBackgroundUtils {
                 return CommonCssConstants.BACKGROUND_IMAGE;
             case BACKGROUND_POSITION:
                 return CommonCssConstants.BACKGROUND_POSITION;
+            case BACKGROUND_POSITION_X:
+                return CommonCssConstants.BACKGROUND_POSITION_X;
+            case BACKGROUND_POSITION_Y:
+                return CommonCssConstants.BACKGROUND_POSITION_Y;
             case BACKGROUND_SIZE:
                 return CommonCssConstants.BACKGROUND_SIZE;
             case BACKGROUND_REPEAT:
@@ -82,10 +86,19 @@ public final class CssBackgroundUtils {
         if (CommonCssConstants.BACKGROUND_ATTACHMENT_VALUES.contains(value)) {
             return BackgroundPropertyType.BACKGROUND_ATTACHMENT;
         }
-        if (CommonCssConstants.BACKGROUND_POSITION_VALUES.contains(value)) {
+        if (CommonCssConstants.BACKGROUND_POSITION_X_VALUES.contains(value)
+                && !CommonCssConstants.CENTER.equals(value)) {
+            return BackgroundPropertyType.BACKGROUND_POSITION_X;
+        }
+        if (CommonCssConstants.BACKGROUND_POSITION_Y_VALUES.contains(value)
+                && !CommonCssConstants.CENTER.equals(value)) {
+            return BackgroundPropertyType.BACKGROUND_POSITION_Y;
+        }
+        if (CommonCssConstants.CENTER.equals(value)) {
             return BackgroundPropertyType.BACKGROUND_POSITION;
         }
-        if ("0".equals(value) || CssUtils.isMetricValue(value) || CssUtils.isRelativeValue(value)) {
+        if (((Integer) 0).equals(CssUtils.parseInteger(value))
+                || CssUtils.isMetricValue(value) || CssUtils.isRelativeValue(value)) {
             return BackgroundPropertyType.BACKGROUND_POSITION_OR_SIZE;
         }
         if (CommonCssConstants.BACKGROUND_SIZE_VALUES.contains(value)) {
@@ -104,6 +117,8 @@ public final class CssBackgroundUtils {
         BACKGROUND_COLOR,
         BACKGROUND_IMAGE,
         BACKGROUND_POSITION,
+        BACKGROUND_POSITION_X,
+        BACKGROUND_POSITION_Y,
         BACKGROUND_SIZE,
         BACKGROUND_REPEAT,
         BACKGROUND_ORIGIN,

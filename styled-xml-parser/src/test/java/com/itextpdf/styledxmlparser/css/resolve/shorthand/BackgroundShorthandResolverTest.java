@@ -219,6 +219,21 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION)
+    })
+    public void backgroundWithAnotherShorthandFailedTest() {
+        String shorthandExpression = "no-repeat left right";
+        Set<String> expectedResolvedProperties = new HashSet<>(new ArrayList<String>());
+
+        IShorthandResolver backgroundResolver =
+                ShorthandResolverFactory.getShorthandResolver(com.itextpdf.styledxmlparser.css.CommonCssConstants.BACKGROUND);
+        assertNotNull(backgroundResolver);
+        List<CssDeclaration> resolvedShorthandProps = backgroundResolver.resolveShorthand(shorthandExpression);
+        CssShorthandResolverTest.compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
+    }
+
+    @Test
+    @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY)
     })
     public void backgroundWithSlashInvalidPositionTest1() {
@@ -533,7 +548,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY)
     })
     public void backgroundWithSlashAndSpaceIncorrectTest4() {
-        String shorthandExpression = "5px/ repeat";
+        String shorthandExpression = "5px/ repeat-y";
         Set<String> expectedResolvedProperties = new HashSet<>(new ArrayList<String>());
 
         IShorthandResolver backgroundResolver =
@@ -548,7 +563,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY)
     })
     public void backgroundWithSlashAndSpaceIncorrectTest5() {
-        String shorthandExpression = "repeat/ 20px";
+        String shorthandExpression = "repeat-x/ 20px";
         Set<String> expectedResolvedProperties = new HashSet<>(new ArrayList<String>());
 
         IShorthandResolver backgroundResolver =
@@ -563,7 +578,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY)
     })
     public void backgroundWithSlashAndSpaceIncorrectTest6() {
-        String shorthandExpression = "repeat /20px";
+        String shorthandExpression = "no-repeat /20px";
         Set<String> expectedResolvedProperties = new HashSet<>(new ArrayList<String>());
 
         IShorthandResolver backgroundResolver =
@@ -627,7 +642,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.BACKGROUND_SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
+            @LogMessage(messageTemplate = LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
     })
     public void backgroundEmptyShorthandTest() {
         String shorthandExpression = "";
@@ -642,7 +657,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.BACKGROUND_SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
+            @LogMessage(messageTemplate = LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
     })
     public void backgroundEmptyShorthandWithSpaceTest() {
         String shorthandExpression = " ";
@@ -657,7 +672,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.BACKGROUND_SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
+            @LogMessage(messageTemplate = LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
     })
     public void multiBackgroundEmptyShorthandTest1() {
         String shorthandExpression = "none,,none";
@@ -672,7 +687,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.BACKGROUND_SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
+            @LogMessage(messageTemplate = LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
     })
     public void multiBackgroundEmptyShorthandTest2() {
         String shorthandExpression = "none,none,";
@@ -687,7 +702,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.BACKGROUND_SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
+            @LogMessage(messageTemplate = LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
     })
     public void multiBackgroundEmptyShorthandTest3() {
         String shorthandExpression = ",none,none";
@@ -702,7 +717,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.BACKGROUND_SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
+            @LogMessage(messageTemplate = LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
     })
     public void multiBackgroundEmptyShorthandWithSpaceTest() {
         String shorthandExpression = "none, ,none";

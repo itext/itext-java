@@ -364,40 +364,6 @@ public class CssUtilsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void resolveBackgroundPropertyTypeTest() {
-        Assert.assertEquals(CssBackgroundUtils.BackgroundPropertyType.UNDEFINED,
-                CssBackgroundUtils.resolveBackgroundPropertyType("jaja"));
-        Assert.assertEquals(CssBackgroundUtils.BackgroundPropertyType.UNDEFINED,
-                CssBackgroundUtils.resolveBackgroundPropertyType("ul(rock_texture.jpg)"));
-        Assert.assertEquals(CssBackgroundUtils.BackgroundPropertyType.UNDEFINED,
-                CssBackgroundUtils.resolveBackgroundPropertyType("url(rock_texture.jpg"));
-        Assert.assertEquals(CssBackgroundUtils.BackgroundPropertyType.UNDEFINED,
-                CssBackgroundUtils.resolveBackgroundPropertyType("url(rock(_texture.jpg)"));
-        Assert.assertEquals(CssBackgroundUtils.BackgroundPropertyType.UNDEFINED,
-                CssBackgroundUtils.resolveBackgroundPropertyType("url(rock_t(ext)ure.jpg)"));
-        Assert.assertEquals(CssBackgroundUtils.BackgroundPropertyType.UNDEFINED,
-                CssBackgroundUtils.resolveBackgroundPropertyType("url(url(rock_texture.jpg)"));
-        Assert.assertEquals(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_IMAGE,
-                CssBackgroundUtils.resolveBackgroundPropertyType("url(rock_texture.jpg)"));
-        Assert.assertEquals(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_IMAGE,
-                CssBackgroundUtils.resolveBackgroundPropertyType("linear-gradient(#e66465, #9198e5)"));
-        Assert.assertEquals(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_IMAGE,
-                CssBackgroundUtils.resolveBackgroundPropertyType("none"));
-        Assert.assertEquals(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_REPEAT,
-                CssBackgroundUtils.resolveBackgroundPropertyType("repeat-x"));
-        Assert.assertEquals(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION,
-                CssBackgroundUtils.resolveBackgroundPropertyType("left"));
-        Assert.assertEquals(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION_OR_SIZE,
-                CssBackgroundUtils.resolveBackgroundPropertyType("10%"));
-        Assert.assertEquals(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_SIZE,
-                CssBackgroundUtils.resolveBackgroundPropertyType("contain"));
-        Assert.assertEquals(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_ORIGIN_OR_CLIP,
-                CssBackgroundUtils.resolveBackgroundPropertyType("padding-box"));
-        Assert.assertEquals(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_ATTACHMENT,
-                CssBackgroundUtils.resolveBackgroundPropertyType("fixed"));
-    }
-
-    @Test
     public void elementNodeIsStyleSheetLink() {
         Element element = new Element(Tag.valueOf("link"), "");
         element.attr(CommonAttributeConstants.REL, CommonAttributeConstants.STYLESHEET);

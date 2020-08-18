@@ -558,58 +558,108 @@ public abstract class AbstractRenderer implements IRenderer {
                 if (!backgroundAreaIsClipped) {
                     backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
                 }
-                applyBorderBox(backgroundArea, false);
-                PdfXObject backgroundXObject = backgroundImage.getImage();
-                if (backgroundXObject == null) {
-                    backgroundXObject = backgroundImage.getForm();
-                }
-                Rectangle imageRectangle;
-                if (backgroundXObject == null) {
-                    backgroundXObject = AbstractRenderer.createXObject(backgroundImage.getLinearGradientBuilder(),
-                            backgroundArea, drawContext.getDocument());
-                    imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundXObject.getHeight(),
-                            backgroundXObject.getWidth(), backgroundXObject.getHeight());
-                } else {
-                    imageRectangle = new Rectangle(backgroundArea.getX(),
-                            backgroundArea.getTop() - backgroundImage.getHeight(),
-                            backgroundImage.getWidth(), backgroundImage.getHeight());
-                }
-                if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
-                    Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                    logger.info(MessageFormatUtil.format(
-                            LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES,
-                            "background-image"));
-                } else {
-                    applyBorderBox(backgroundArea, true);
-                    drawContext.getCanvas().saveState().rectangle(backgroundArea).clip().endPath();
-                    moveImageRectangle(imageRectangle, backgroundImage, drawContext, backgroundXObject, backgroundArea);
-                    drawContext.getCanvas().restoreState();
-                }
+                drawBackgroundImage(backgroundImage, drawContext, backgroundArea);
             }
         }
         return backgroundAreaIsClipped;
     }
 
-    private static void moveImageRectangle(final Rectangle imageRectangle, final BackgroundImage backgroundImage,
-                                           final DrawContext drawContext, final PdfXObject backgroundXObject,
-                                           final Rectangle backgroundArea) {
+    private void drawBackgroundImage(BackgroundImage backgroundImage,
+                                     DrawContext drawContext, Rectangle backgroundArea) {
+        applyBorderBox(backgroundArea, false);
+        PdfXObject backgroundXObject = backgroundImage.getImage();
+        if (backgroundXObject == null) {
+            backgroundXObject = backgroundImage.getForm();
+        }
+        Rectangle imageRectangle;
+        final UnitValue xPosition = UnitValue.createPointValue(0);
+        final UnitValue yPosition = UnitValue.createPointValue(0);
+        if (backgroundXObject == null) {
+            final AbstractLinearGradientBuilder gradientBuilder = backgroundImage.getLinearGradientBuilder();
+            if (gradientBuilder == null) {
+                return;
+            }
+            // fullWidth and fullHeight is 0 because percentage shifts are ignored for linear-gradients
+            backgroundImage.getBackgroundPosition().calculatePositionValues(0, 0, xPosition, yPosition);
+            backgroundXObject = createXObject(gradientBuilder, backgroundArea, drawContext.getDocument());
+            imageRectangle = new Rectangle(backgroundArea.getLeft() + xPosition.getValue(),
+                    backgroundArea.getTop() - backgroundXObject.getHeight() - yPosition.getValue(),
+                    backgroundXObject.getWidth(), backgroundXObject.getHeight());
+        } else {
+            backgroundImage.getBackgroundPosition().calculatePositionValues(
+                    backgroundArea.getWidth() - backgroundImage.getWidth(),
+                    backgroundArea.getHeight() - backgroundImage.getHeight(), xPosition, yPosition);
+            imageRectangle = new Rectangle(backgroundArea.getLeft() + xPosition.getValue(),
+                    backgroundArea.getTop() - backgroundImage.getHeight() - yPosition.getValue(),
+                    backgroundImage.getWidth(), backgroundImage.getHeight());
+        }
+        if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.info(MessageFormatUtil.format(
+                    LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES,
+                    "background-image"));
+        } else {
+            applyBorderBox(backgroundArea, true);
+            drawContext.getCanvas()
+                    .saveState()
+                    .rectangle(backgroundArea)
+                    .clip()
+                    .endPath();
+            drawPdfXObject(imageRectangle, backgroundImage, drawContext, backgroundXObject, backgroundArea);
+            drawContext.getCanvas().restoreState();
+        }
+    }
+
+    private static void drawPdfXObject(final Rectangle imageRectangle, final BackgroundImage backgroundImage,
+                                       final DrawContext drawContext, final PdfXObject backgroundXObject,
+                                       final Rectangle backgroundArea) {
         BlendMode blendMode = backgroundImage.getBlendMode();
         if (blendMode != BlendMode.NORMAL) {
             drawContext.getCanvas().setExtGState(new PdfExtGState().setBlendMode(blendMode.getPdfRepresentation()));
         }
-        final float initialX = backgroundImage.isRepeatX() ? (imageRectangle.getX() - imageRectangle.getWidth())
-                : imageRectangle.getX();
-        final float initialY = backgroundImage.isRepeatY() ? imageRectangle.getTop() : imageRectangle.getY();
-        imageRectangle.setY(initialY);
+        final float initialX = imageRectangle.getX();
+        int counterY = 1;
+        boolean firstDraw = true;
+        boolean isCurrentOverlaps;
+        boolean isNextOverlaps;
         do {
+            drawPdfXObjectHorizontally(imageRectangle,
+                    backgroundImage, drawContext, backgroundXObject, backgroundArea, firstDraw);
+            firstDraw = false;
             imageRectangle.setX(initialX);
-            do {
-                drawContext.getCanvas().addXObjectFittedIntoRectangle(backgroundXObject, imageRectangle);
-                imageRectangle.moveRight(imageRectangle.getWidth());
+            isCurrentOverlaps = imageRectangle.overlaps(backgroundArea);
+            if (counterY % 2 == 1) {
+                isNextOverlaps =
+                        imageRectangle.moveDown(imageRectangle.getHeight() * counterY).overlaps(backgroundArea);
+            } else {
+                isNextOverlaps = imageRectangle.moveUp(imageRectangle.getHeight() * counterY).overlaps(backgroundArea);
             }
-            while (backgroundImage.isRepeatX() && imageRectangle.getLeft() < backgroundArea.getRight());
-            imageRectangle.moveDown(imageRectangle.getHeight());
-        } while (backgroundImage.isRepeatY() && imageRectangle.getTop() > backgroundArea.getBottom());
+            ++counterY;
+        } while (backgroundImage.isRepeatY() && (isCurrentOverlaps || isNextOverlaps));
+    }
+
+    private static void drawPdfXObjectHorizontally(Rectangle imageRectangle, BackgroundImage backgroundImage,
+                                                   DrawContext drawContext, PdfXObject backgroundXObject,
+                                                   Rectangle backgroundArea, boolean firstDraw) {
+        boolean isItFirstDraw = firstDraw;
+        int counterX = 1;
+        boolean isCurrentOverlaps;
+        boolean isNextOverlaps;
+        do {
+            if (imageRectangle.overlaps(backgroundArea) || isItFirstDraw) {
+                drawContext.getCanvas().addXObjectFittedIntoRectangle(backgroundXObject, imageRectangle);
+                isItFirstDraw = false;
+            }
+            isCurrentOverlaps = imageRectangle.overlaps(backgroundArea);
+            if (counterX % 2 == 1) {
+                isNextOverlaps =
+                        imageRectangle.moveRight(imageRectangle.getWidth() * counterX).overlaps(backgroundArea);
+            } else {
+                isNextOverlaps = imageRectangle.moveLeft(imageRectangle.getWidth() * counterX).overlaps(backgroundArea);
+            }
+            ++counterX;
+        }
+        while (backgroundImage.isRepeatX() && (isCurrentOverlaps || isNextOverlaps));
     }
 
     /**

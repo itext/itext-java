@@ -110,6 +110,16 @@ public class CommonCssConstants {
     public static final String BACKGROUND_POSITION = "background-position";
 
     /**
+     * The Constant BACKGROUND_POSITION_X.
+     */
+    public static final String BACKGROUND_POSITION_X = "background-position-x";
+
+    /**
+     * The Constant BACKGROUND_POSITION_Y.
+     */
+    public static final String BACKGROUND_POSITION_Y = "background-position-y";
+
+    /**
      * The Constant BACKGROUND_REPEAT.
      */
     public static final String BACKGROUND_REPEAT = "background-repeat";
@@ -1316,6 +1326,18 @@ public class CommonCssConstants {
      */
     public static final Set<String> BACKGROUND_POSITION_VALUES = Collections.unmodifiableSet(new HashSet<>(
             Arrays.asList(LEFT, CENTER, BOTTOM, TOP, RIGHT)));
+
+    /**
+     * The Constant BACKGROUND_POSITION_X_VALUES.
+     */
+    public static final Set<String> BACKGROUND_POSITION_X_VALUES = Collections.unmodifiableSet(new HashSet<>(
+            Arrays.asList(LEFT, CENTER, RIGHT)));
+
+    /**
+     * The Constant BACKGROUND_POSITION_Y_VALUES.
+     */
+    public static final Set<String> BACKGROUND_POSITION_Y_VALUES = Collections.unmodifiableSet(new HashSet<>(
+            Arrays.asList(CENTER, BOTTOM, TOP)));
 
     /**
      * The Constant BORDER_WIDTH_VALUES.

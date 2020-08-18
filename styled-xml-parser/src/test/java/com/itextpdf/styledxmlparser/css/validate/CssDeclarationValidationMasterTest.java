@@ -129,60 +129,28 @@ public class CssDeclarationValidationMasterTest extends ExtendedITextTest {
     @Test
     public void backgroundPositionValidationTest() {
         Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "initial")));
+                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION_X, "initial")));
         Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "0")));
+                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION_Y, "-0")));
         Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "5px")));
+                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION_Y, "5px")));
         Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "5em")));
+                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION_X, "5em")));
         Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "5px 5%")));
+                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION_Y, "5px, 5%, bottom")));
         Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "top")));
-        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "left top")));
-        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "top left")));
-        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "50px top")));
-        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "left 50px")));
-        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "left 50px bottom 20px")));
-        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "left 50px bottom")));
-        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "left 10% center")));
-        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "5px, 5%, left")));
-        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "5px 5%, top")));
+                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION_X, "left 5%, right")));
 
         Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "5")));
+                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION_X, "5")));
         Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "ja")));
+                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION_Y, "ja")));
         Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "5px ja")));
+                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION_X, "initial 5px")));
         Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "initial 5px")));
+                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION_Y, "ja, 5px")));
         Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "ja, 5px")));
-        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "initial, 5px")));
-
-        // TODO DEVSIX-1457 change the assertions below when background-position will be fully supported.
-        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "top top")));
-        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "left left")));
-        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "top 50px")));
-        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "50px left")));
-        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION, "left 50px center 20px")));
+                new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION_X, "initial, 5px")));
     }
 
     @Test
@@ -299,8 +267,7 @@ public class CssDeclarationValidationMasterTest extends ExtendedITextTest {
         Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
                 new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE, "none,url(img2.jpg)")));
         Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE,
-                        "linear-gradient(red,green,blue),url(img2.jpg)")));
+                new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE, "linear-gradient(red,green,blue),url(img2.jpg)")));
 
         Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
                 new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE, "ja")));
@@ -309,8 +276,7 @@ public class CssDeclarationValidationMasterTest extends ExtendedITextTest {
         Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
                 new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE, "url(url(rock_texture.jpg)")));
         Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE,
-                        "true-linear-gradient(red,green,blue)")));
+                new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE, "true-linear-gradient(red,green,blue)")));
         Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
                 new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE, "url(img.jpg) url(img2.jpg)")));
         Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
