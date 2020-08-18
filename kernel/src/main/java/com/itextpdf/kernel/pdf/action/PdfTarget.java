@@ -81,6 +81,7 @@ public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
      * Creates a new {@link PdfTarget} object by the underlying dictionary.
      *
      * @param pdfObject the underlying dictionary object
+     * @return a new {@link PdfTarget} object by the underlying dictionary
      */
     public static PdfTarget create(PdfDictionary pdfObject) {
         return new PdfTarget(pdfObject);

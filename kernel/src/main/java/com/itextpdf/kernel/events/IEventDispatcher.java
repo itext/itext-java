@@ -51,15 +51,15 @@ public interface IEventDispatcher {
     /**
      * Adds new event handler.
      *
-     * @param type    a type of event to be handled.
-     * @param handler event handler.
+     * @param type a type of event to be handled
+     * @param handler event handler
      */
     void addEventHandler(String type, IEventHandler handler);
 
     /**
      * Dispatches an event.
      *
-     * @param event
+     * @param event the {@link Event} to be dispatched
      */
     void dispatchEvent(Event event);
 
@@ -68,23 +68,24 @@ public interface IEventDispatcher {
      * Sometimes event cannot be handled immediately because event handler has not been set yet.
      * In this case event is placed into event ques of dispatcher and is waiting until handler is assigned.
      *
-     * @param event
-     * @param delayed
+     * @param event the {@link Event} to be dispatched
+     * @param delayed flag whether {@link Event} delayed or not
      */
     void dispatchEvent(Event event, boolean delayed);
 
     /**
      * Checks if event dispatcher as an event handler assigned for a certain event type.
      *
-     * @param type
+     * @param type a type of the {@link Event}
+     * @return true if event dispatcher as an event handler assigned for a certain event type
      */
     boolean hasEventHandler(String type);
 
     /**
      * Removes event handler.
      *
-     * @param type
-     * @param handler
+     * @param type a type of the {@link Event}
+     * @param handler event handler {@link IEventHandler}
      */
     void removeEventHandler(String type, IEventHandler handler);
 
