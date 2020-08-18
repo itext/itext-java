@@ -52,8 +52,9 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.test.ExtendedITextTest;
 
-public abstract class RendererUnitTest {
+public abstract class RendererUnitTest extends ExtendedITextTest {
 
     // This also can be converted to a @Rule to have it all at hand in the future
     protected static Document createDocument() {
