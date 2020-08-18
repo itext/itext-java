@@ -42,44 +42,292 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
+import com.itextpdf.kernel.colors.gradients.GradientColorStop;
+import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.layout.LayoutArea;
-import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfXObject;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.property.BackgroundImage;
+import com.itextpdf.layout.property.BackgroundRepeat;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+import org.junit.Assert;
+import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Category(UnitTest.class)
-public abstract class AbstractRendererUnitTest extends ExtendedITextTest {
+public class AbstractRendererUnitTest extends ExtendedITextTest {
 
-    // This also can be converted to a @Rule to have it all at hand in the future
-    protected static Document createDocument() {
-        return new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
+    @Test
+    public void createXObjectTest() {
+        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+                .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_BOTTOM_LEFT)
+                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, GradientColorStop.OffsetType.RELATIVE))
+                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, GradientColorStop.OffsetType.RELATIVE));
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfXObject pdfXObject = AbstractRenderer.createXObject(gradientBuilder, new Rectangle(0, 0, 20, 20), pdfDocument);
+        Assert.assertNotNull(pdfXObject.getPdfObject().get(PdfName.Resources));
     }
 
-    protected static TextRenderer createLayoutedTextRenderer(String text, Document document) {
-        TextRenderer renderer = (TextRenderer) new TextRenderer(new Text(text)).setParent(document.getRenderer());
-        renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(1000, 1000))));
-        return renderer;
+    @Test
+    public void createXObjectWithNullLinearGradientTest() {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfXObject pdfXObject = AbstractRenderer.createXObject(null, new Rectangle(0, 0, 20, 20), pdfDocument);
+        Assert.assertNull(pdfXObject.getPdfObject().get(PdfName.Resources));
     }
 
-    protected static ImageRenderer createLayoutedImageRenderer(float width, float height, Document document) {
-        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(width, height));
-        Image img = new Image(xObject);
-        ImageRenderer renderer = (ImageRenderer) new ImageRenderer(img).setParent(document.getRenderer());
-        renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(1000, 1000))));
-        return renderer;
+    @Test
+    public void createXObjectWithInvalidColorTest() {
+        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder();
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfXObject pdfXObject = AbstractRenderer.createXObject(gradientBuilder, new Rectangle(0, 0, 20, 20), pdfDocument);
+        Assert.assertNull(pdfXObject.getPdfObject().get(PdfName.Resources));
     }
 
-    protected static LayoutArea createLayoutArea(float width, float height) {
-        return new LayoutArea(1, new Rectangle(width, height));
+    @Test
+    public void drawBackgroundImageTest() {
+        final AbstractRenderer renderer = new DivRenderer(new Div()) {
+            @Override
+            public Rectangle getOccupiedAreaBBox() {
+                return new Rectangle(100.0f, 50.0f);
+            }
+        };
+        final byte[] bytes = new byte[]{54, 25, 47, 15, 2, 2, 2, 44, 55, 77, 86, 24};
+        final int[] counter = new int[]{0};
+        PdfDocument document = new PdfDocument(new PdfWriter(new java.io.ByteArrayOutputStream()));
+        document.addNewPage();
+        DrawContext context = new DrawContext(document, new PdfCanvas(document, 1) {
+            PdfXObject object = null;
+
+            @Override
+            public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) {
+                ++counter[0];
+                if (object == xObject) {
+                    return null;
+                }
+                object = xObject;
+                Assert.assertTrue(xObject instanceof PdfImageXObject);
+                Assert.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
+                        Arrays.toString(bytes));
+                return null;
+            }
+        });
+        renderer.setProperty(Property.BACKGROUND_IMAGE, new BackgroundImage(new PdfImageXObject(
+                ImageDataFactory.createRawImage(bytes))) {
+            @Override
+            public float getWidth() {
+                return 10.0f;
+            }
+
+            @Override
+            public float getHeight() {
+                return 10.0f;
+            }
+        });
+        renderer.drawBackground(context);
+        Assert.assertEquals(66, counter[0]);
     }
 
+    @Test
+    public void drawBackgroundImageWithNoRepeatXTest() {
+        final AbstractRenderer renderer = new DivRenderer(new Div()) {
+            @Override
+            public Rectangle getOccupiedAreaBBox() {
+                return new Rectangle(100.0f, 50.0f);
+            }
+        };
+        final byte[] bytes = new byte[]{54, 25, 47, 15, 2, 2, 2, 44, 55, 77, 86, 24};
+        final int[] counter = new int[]{0};
+        PdfDocument document = new PdfDocument(new PdfWriter(new java.io.ByteArrayOutputStream()));
+        document.addNewPage();
+        DrawContext context = new DrawContext(document, new PdfCanvas(document, 1) {
+            PdfXObject object = null;
+
+            @Override
+            public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) {
+                ++counter[0];
+                if (object == xObject) {
+                    return null;
+                }
+                object = xObject;
+                Assert.assertTrue(xObject instanceof PdfImageXObject);
+                Assert.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
+                        Arrays.toString(bytes));
+                return null;
+            }
+        });
+        renderer.setProperty(Property.BACKGROUND_IMAGE, new BackgroundImage(new PdfImageXObject(
+                ImageDataFactory.createRawImage(bytes)), new BackgroundRepeat(false, true)) {
+            @Override
+            public float getWidth() {
+                return 10.0f;
+            }
+
+            @Override
+            public float getHeight() {
+                return 10.0f;
+            }
+        });
+        renderer.drawBackground(context);
+        Assert.assertEquals(6, counter[0]);
+    }
+
+    @Test
+    public void drawBackgroundImageWithNoRepeatYTest() {
+        final AbstractRenderer renderer = new DivRenderer(new Div()) {
+            @Override
+            public Rectangle getOccupiedAreaBBox() {
+                return new Rectangle(100.0f, 50.0f);
+            }
+        };
+        final byte[] bytes = new byte[]{54, 25, 47, 15, 2, 2, 2, 44, 55, 77, 86, 24};
+        final int[] counter = new int[]{0};
+        PdfDocument document = new PdfDocument(new PdfWriter(new java.io.ByteArrayOutputStream()));
+        document.addNewPage();
+        DrawContext context = new DrawContext(document, new PdfCanvas(document, 1) {
+            PdfXObject object = null;
+
+            @Override
+            public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) {
+                ++counter[0];
+                if (object == xObject) {
+                    return null;
+                }
+                object = xObject;
+                Assert.assertTrue(xObject instanceof PdfImageXObject);
+                Assert.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
+                        Arrays.toString(bytes));
+                return null;
+            }
+        });
+        renderer.setProperty(Property.BACKGROUND_IMAGE, new BackgroundImage(new PdfImageXObject(
+                ImageDataFactory.createRawImage(bytes)), new BackgroundRepeat(true, false)) {
+            @Override
+            public float getWidth() {
+                return 10.0f;
+            }
+
+            @Override
+            public float getHeight() {
+                return 10.0f;
+            }
+        });
+        renderer.drawBackground(context);
+        Assert.assertEquals(11, counter[0]);
+    }
+
+    @Test
+    public void drawBackgroundImageWithNoRepeatTest() {
+        final AbstractRenderer renderer = new DivRenderer(new Div()) {
+            @Override
+            public Rectangle getOccupiedAreaBBox() {
+                return new Rectangle(100.0f, 50.0f);
+            }
+        };
+        final byte[] bytes = new byte[]{54, 25, 47, 15, 2, 2, 2, 44, 55, 77, 86, 24};
+        final int[] counter = new int[]{0};
+        PdfDocument document = new PdfDocument(new PdfWriter(new java.io.ByteArrayOutputStream()));
+        document.addNewPage();
+        DrawContext context = new DrawContext(document, new PdfCanvas(document, 1) {
+            PdfXObject object = null;
+
+            @Override
+            public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) {
+                ++counter[0];
+                if (object == xObject) {
+                    return null;
+                }
+                object = xObject;
+                Assert.assertTrue(xObject instanceof PdfImageXObject);
+                Assert.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
+                        Arrays.toString(bytes));
+                return null;
+            }
+        });
+        renderer.setProperty(Property.BACKGROUND_IMAGE, new BackgroundImage(new PdfImageXObject(
+                ImageDataFactory.createRawImage(bytes)), new BackgroundRepeat(false, false)) {
+            @Override
+            public float getWidth() {
+                return 10.0f;
+            }
+
+            @Override
+            public float getHeight() {
+                return 10.0f;
+            }
+        });
+        renderer.drawBackground(context);
+        Assert.assertEquals(1, counter[0]);
+    }
+
+    @Test
+    public void drawBackgroundImagesTest() {
+        final AbstractRenderer renderer = new DivRenderer(new Div()) {
+            @Override
+            public Rectangle getOccupiedAreaBBox() {
+                return new Rectangle(100.0f, 50.0f);
+            }
+        };
+        final List<byte[]> listBytes = Arrays.asList(
+                new byte[]{54, 25, 47, 15, 2, 2, 2, 44, 55, 77, 86, 24},
+                new byte[]{4, 15, 41, 23, 3, 2, 7, 14, 55, 27, 46, 12, 14, 14, 7, 7, 24, 25});
+        final int[] counter = new int[]{0};
+        PdfDocument document = new PdfDocument(new PdfWriter(new java.io.ByteArrayOutputStream()));
+        document.addNewPage();
+        DrawContext context = new DrawContext(document, new PdfCanvas(document, 1) {
+            PdfXObject object = null;
+
+            @Override
+            public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) {
+                if (object == xObject) {
+                    return null;
+                }
+                object = xObject;
+                Assert.assertTrue(xObject instanceof PdfImageXObject);
+                Assert.assertEquals(Arrays.toString(((PdfImageXObject) xObject).getImageBytes(false)),
+                        Arrays.toString(listBytes.get(counter[0]++)));
+                return null;
+            }
+        });
+        renderer.setProperty(Property.BACKGROUND_IMAGE, Arrays.asList((BackgroundImage)
+                new BackgroundImage(new PdfImageXObject(ImageDataFactory.createRawImage(listBytes.get(1)))) {
+                    @Override
+                    public float getWidth() {
+                        return 10.0f;
+                    }
+
+                    @Override
+                    public float getHeight() {
+                        return 10.0f;
+                    }
+                }, (BackgroundImage)
+                new BackgroundImage(new PdfImageXObject(ImageDataFactory.createRawImage(listBytes.get(0)))) {
+                    @Override
+                    public float getWidth() {
+                        return 10.0f;
+                    }
+
+                    @Override
+                    public float getHeight() {
+                        return 10.0f;
+                    }
+                }));
+        renderer.drawBackground(context);
+        Assert.assertEquals(listBytes.size(), counter[0]);
+    }
 }

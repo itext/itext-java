@@ -45,6 +45,7 @@ package com.itextpdf.styledxmlparser.css.validate;
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
+import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssBackgroundValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssColorValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssEnumValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssNumericValueValidator;
@@ -109,6 +110,18 @@ public class CssDeclarationValidationMaster {
                 new CssNumericValueValidator(true, false)));
         DEFAULT_VALIDATORS.put(CommonCssConstants.LINE_HEIGHT, new SingleTypeDeclarationValidator(
                 new CssNumericValueValidator(true, true)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_REPEAT, new SingleTypeDeclarationValidator(
+                new CssBackgroundValidator(CommonCssConstants.BACKGROUND_REPEAT)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_IMAGE, new SingleTypeDeclarationValidator(
+                new CssBackgroundValidator(CommonCssConstants.BACKGROUND_IMAGE)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_POSITION, new SingleTypeDeclarationValidator(
+                new CssBackgroundValidator(CommonCssConstants.BACKGROUND_POSITION)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_SIZE, new SingleTypeDeclarationValidator(
+                new CssBackgroundValidator(CommonCssConstants.BACKGROUND_SIZE)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_CLIP, new SingleTypeDeclarationValidator(
+                new CssBackgroundValidator(CommonCssConstants.BACKGROUND_CLIP)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_ORIGIN, new SingleTypeDeclarationValidator(
+                new CssBackgroundValidator(CommonCssConstants.BACKGROUND_ORIGIN)));
     }
 
     /**

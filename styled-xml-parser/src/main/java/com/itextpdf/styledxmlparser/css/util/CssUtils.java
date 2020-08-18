@@ -498,7 +498,7 @@ public class CssUtils {
         } else if (!unit.startsWith(CommonCssConstants.DPI)) {
             throw new StyledXMLParserException(LogMessageConstant.INCORRECT_RESOLUTION_UNIT_VALUE);
         }
-        
+
         return (float) f;
     }
 
@@ -726,7 +726,7 @@ public class CssUtils {
      * @return true, if the value contains a color property
      */
     public static boolean isColorProperty(String value) {
-        return value.contains("rgb(") || value.contains("rgba(") || value.contains("#")
+        return value.startsWith("rgb(") || value.startsWith("rgba(") || value.startsWith("#")
                 || WebColors.NAMES.containsKey(value.toLowerCase()) || CommonCssConstants.TRANSPARENT.equals(value);
     }
 

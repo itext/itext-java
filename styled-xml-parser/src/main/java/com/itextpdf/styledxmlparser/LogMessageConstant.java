@@ -47,6 +47,9 @@ package com.itextpdf.styledxmlparser;
  */
 public final class LogMessageConstant {
 
+    /** The Constant BACKGROUND_SHORTHAND_PROPERTY_CANNOT_BE_EMPTY. */
+    public static final String BACKGROUND_SHORTHAND_PROPERTY_CANNOT_BE_EMPTY =
+            "background shorthand property cannot be empty.";
     /** The Constant DEFAULT_VALUE_OF_CSS_PROPERTY_UNKNOWN. */
     public static final String DEFAULT_VALUE_OF_CSS_PROPERTY_UNKNOWN = "Default value of the css property \"{0}\" is unknown.";
     /** The Constant ERROR_ADDING_CHILD_NODE. */
@@ -55,9 +58,14 @@ public final class LogMessageConstant {
     public static final String ERROR_PARSING_COULD_NOT_MAP_NODE = "Could not map node type: {0}";
     /** The Constant ERROR_PARSING_CSS_SELECTOR. */
     public static final String ERROR_PARSING_CSS_SELECTOR = "Error while parsing css selector: {0}";
+    /** The Constant ONLY_THE_LAST_BACKGROUND_CAN_INCLUDE_BACKGROUND_COLOR. */
+    public static final String ONLY_THE_LAST_BACKGROUND_CAN_INCLUDE_BACKGROUND_COLOR =
+            "Only the last background can include a background color.";
     /** The Constant UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED. */
     public static final String UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED = "Unknown absolute metric length parsed \"{0}\".";
     public static final String UNKNOWN_METRIC_ANGLE_PARSED = "Unknown metric angle parsed: \"{0}\".";
+    /** The Constant UNKNOWN__PROPERTY. */
+    public static final String UNKNOWN_PROPERTY = "Unknown {0} property: \"{1}\".";
     public static final String URL_IS_EMPTY_IN_CSS_EXPRESSION = "url function is empty in expression:{0}";
     public static final String URL_IS_NOT_CLOSED_IN_CSS_EXPRESSION = "url function is not properly closed in expression:{0}";
     /** The Constant QUOTES_PROPERTY_INVALID. */

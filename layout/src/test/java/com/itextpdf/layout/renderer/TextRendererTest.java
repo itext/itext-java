@@ -76,7 +76,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class TextRendererTest extends AbstractRendererUnitTest {
+public class TextRendererTest extends RendererUnitTest {
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     private static final double EPS = 1e-5;

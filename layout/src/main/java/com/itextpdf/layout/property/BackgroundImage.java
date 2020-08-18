@@ -48,32 +48,101 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 
 public class BackgroundImage {
+
     protected PdfXObject image;
+
+    /**
+     * Whether the background repeats in the x dimension.
+     *
+     * @deprecated Replace this field with {@link BackgroundRepeat} instance.
+     */
+    @Deprecated
     protected boolean repeatX;
+
+    /**
+     * Whether the background repeats in the y dimension.
+     *
+     * @deprecated Replace this field with {@link BackgroundRepeat} instance.
+     */
+    @Deprecated
     protected boolean repeatY;
 
     protected AbstractLinearGradientBuilder linearGradientBuilder;
 
-    private BackgroundImage(PdfXObject image, boolean repeatX, boolean repeatY) {
+    /**
+     * Creates a new {@link BackgroundImage} instance.
+     *
+     * @param image background image property. {@link PdfXObject} instance.
+     * @param repeat background repeat property. {@link BackgroundRepeat} instance.
+     */
+    private BackgroundImage(final PdfXObject image, final BackgroundRepeat repeat) {
         this.image = image;
-        this.repeatX = repeatX;
-        this.repeatY = repeatY;
+        this.repeatX = repeat.isRepeatX();
+        this.repeatY = repeat.isRepeatY();
     }
 
-    public BackgroundImage(PdfImageXObject image) {
-        this(image, true, true);
+    /**
+     * Creates a new {@link BackgroundImage} instance.
+     *
+     * @param image background image property. {@link PdfImageXObject} instance.
+     * @param repeat background repeat property. {@link BackgroundRepeat} instance.
+     */
+    public BackgroundImage(final PdfImageXObject image, final BackgroundRepeat repeat) {
+        this((PdfXObject) image, repeat);
     }
 
-    public BackgroundImage(PdfFormXObject image) {
-        this(image, true, true);
+    /**
+     * Creates a new {@link BackgroundImage} instance.
+     *
+     * @param image background image property. {@link PdfFormXObject} instance.
+     * @param repeat background repeat property. {@link BackgroundRepeat} instance.
+     */
+    public BackgroundImage(final PdfFormXObject image, final BackgroundRepeat repeat) {
+        this((PdfXObject) image, repeat);
     }
 
-    public BackgroundImage(PdfImageXObject image, boolean repeatX, boolean repeatY) {
-        this((PdfXObject) image, repeatX, repeatY);
+    /**
+     * Creates a new {@link BackgroundImage} instance.
+     *
+     * @param image background image property. {@link PdfImageXObject} instance.
+     */
+    public BackgroundImage(final PdfImageXObject image) {
+        this(image, new BackgroundRepeat(true, true));
     }
 
-    public BackgroundImage(PdfFormXObject image, boolean repeatX, boolean repeatY) {
-        this((PdfXObject) image, repeatX, repeatY);
+    /**
+     * Creates a new {@link BackgroundImage} instance.
+     *
+     * @param image background image property. {@link PdfFormXObject} instance.
+     */
+    public BackgroundImage(final PdfFormXObject image) {
+        this(image, new BackgroundRepeat(true, true));
+    }
+
+    /**
+     * Creates a new {@link BackgroundImage} instance.
+     *
+     * @param image background image property. {@link PdfImageXObject} instance.
+     * @param repeatX is background is repeated in x dimension.
+     * @param repeatY is background is repeated in y dimension.
+     * @deprecated Remove this constructor in 7.2.
+     */
+    @Deprecated
+    public BackgroundImage(final PdfImageXObject image, final boolean repeatX, final boolean repeatY) {
+        this((PdfXObject) image, new BackgroundRepeat(repeatX, repeatY));
+    }
+
+    /**
+     * Creates a new {@link BackgroundImage} instance.
+     *
+     * @param image background image property. {@link PdfFormXObject} instance.
+     * @param repeatX is background is repeated in x dimension.
+     * @param repeatY is background is repeated in y dimension.
+     * @deprecated Remove this constructor in 7.2.
+     */
+    @Deprecated
+    public BackgroundImage(final PdfFormXObject image, final boolean repeatX, final boolean repeatY) {
+        this((PdfXObject) image, new BackgroundRepeat(repeatX, repeatY));
     }
 
     public BackgroundImage(AbstractLinearGradientBuilder linearGradientBuilder) {

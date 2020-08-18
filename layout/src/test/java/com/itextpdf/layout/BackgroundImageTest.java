@@ -60,6 +60,7 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.BackgroundImage;
+import com.itextpdf.layout.property.BackgroundRepeat;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
@@ -74,6 +75,8 @@ import org.junit.experimental.categories.Category;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Arrays;
+import java.util.List;
 
 @Category(IntegrationTest.class)
 public class BackgroundImageTest extends ExtendedITextTest {
@@ -95,6 +98,14 @@ public class BackgroundImageTest extends ExtendedITextTest {
         Assert.assertTrue(backgroundImage.isRepeatY());
 
         backgroundImageGenericTest("backgroundImage", backgroundImage);
+    }
+
+    @Test
+    public void backgroundMultipleImagesTest() throws IOException, InterruptedException {
+        List<BackgroundImage> images = Arrays.asList(
+                new BackgroundImage(new PdfImageXObject(ImageDataFactory.create(sourceFolder + "rock_texture.jpg")), new BackgroundRepeat(false, true)),
+                new BackgroundImage(new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg")), new BackgroundRepeat(true, false)));
+        backgroundImageGenericTest("backgroundMultipleImages", images);
     }
 
     @Test
@@ -151,7 +162,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
     @Test
     public void backgroundImageWithoutRepeatX() throws IOException, InterruptedException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg"));
-        BackgroundImage backgroundImage = new BackgroundImage(xObject, false, true);
+        BackgroundImage backgroundImage = new BackgroundImage(xObject, new BackgroundRepeat(false, true));
 
         Assert.assertFalse(backgroundImage.isRepeatX());
         Assert.assertTrue(backgroundImage.isRepeatY());
@@ -162,7 +173,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
     @Test
     public void backgroundImageWithoutRepeatY() throws IOException, InterruptedException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg"));
-        BackgroundImage backgroundImage = new BackgroundImage(xObject, true, false);
+        BackgroundImage backgroundImage = new BackgroundImage(xObject, new BackgroundRepeat(true, false));
 
         Assert.assertTrue(backgroundImage.isRepeatX());
         Assert.assertFalse(backgroundImage.isRepeatY());
@@ -173,7 +184,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
     @Test
     public void backgroundImageWithoutRepeatXY() throws IOException, InterruptedException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg"));
-        BackgroundImage backgroundImage = new BackgroundImage(xObject, false, false);
+        BackgroundImage backgroundImage = new BackgroundImage(xObject, new BackgroundRepeat(false, false));
 
         Assert.assertFalse(backgroundImage.isRepeatX());
         Assert.assertFalse(backgroundImage.isRepeatY());
@@ -208,12 +219,13 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + fileName;
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
-            BackgroundImage backgroundImage = new BackgroundImage(createFormXObject(pdfDocument), false, true);
+            BackgroundImage backgroundImage = new BackgroundImage(createFormXObject(pdfDocument),
+                    new BackgroundRepeat(false, true));
 
             Assert.assertFalse(backgroundImage.isRepeatX());
             Assert.assertTrue(backgroundImage.isRepeatY());
 
-            backgroundXObjectGenericTest(filename,  backgroundImage, pdfDocument);
+            backgroundXObjectGenericTest(filename, backgroundImage, pdfDocument);
         }
     }
 
@@ -226,12 +238,13 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + fileName;
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
-            BackgroundImage backgroundImage = new BackgroundImage(createFormXObject(pdfDocument), true, false);
+            BackgroundImage backgroundImage = new BackgroundImage(createFormXObject(pdfDocument),
+                    new BackgroundRepeat(true, false));
 
             Assert.assertTrue(backgroundImage.isRepeatX());
             Assert.assertFalse(backgroundImage.isRepeatY());
 
-            backgroundXObjectGenericTest(filename,  backgroundImage, pdfDocument);
+            backgroundXObjectGenericTest(filename, backgroundImage, pdfDocument);
         }
     }
 
@@ -244,12 +257,13 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + fileName;
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
-            BackgroundImage backgroundImage = new BackgroundImage(createFormXObject(pdfDocument), false, false);
+            BackgroundImage backgroundImage = new BackgroundImage(createFormXObject(pdfDocument),
+                    new BackgroundRepeat(false, false));
 
             Assert.assertFalse(backgroundImage.isRepeatX());
             Assert.assertFalse(backgroundImage.isRepeatY());
 
-            backgroundXObjectGenericTest(filename,  backgroundImage, pdfDocument);
+            backgroundXObjectGenericTest(filename, backgroundImage, pdfDocument);
         }
     }
 
@@ -307,12 +321,18 @@ public class BackgroundImageTest extends ExtendedITextTest {
     }
 
 
-    private void backgroundImageGenericTest(String filename, BackgroundImage backgroundImage) throws IOException, InterruptedException {
+    private void backgroundImageGenericTest(String filename, Object backgroundImage) throws IOException, InterruptedException {
         backgroundImageGenericTest(filename, backgroundImage, null);
     }
 
-    private void backgroundImageGenericTest(String filename, BackgroundImage backgroundImage, Double angle) throws IOException, InterruptedException {
-        Assert.assertTrue(backgroundImage.isBackgroundSpecified());
+    private void backgroundImageGenericTest(String filename, Object backgroundImage, Double angle) throws IOException, InterruptedException {
+        if (backgroundImage instanceof BackgroundImage) {
+            Assert.assertTrue(((BackgroundImage) backgroundImage).isBackgroundSpecified());
+        } else {
+            for (BackgroundImage image : (List<BackgroundImage>) backgroundImage) {
+                Assert.assertTrue((image).isBackgroundSpecified());
+            }
+        }
 
         String outFileName = destinationFolder + filename + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + filename + ".pdf";

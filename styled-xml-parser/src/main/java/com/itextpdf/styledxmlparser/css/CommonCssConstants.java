@@ -1030,6 +1030,11 @@ public class CommonCssConstants {
     public static final String ROTATE = "rotate";
 
     /**
+     * The Constant ROUND.
+     */
+    public static final String ROUND = "round";
+
+    /**
      * The Constant SCALE.
      */
     public static final String SCALE = "scale";
@@ -1090,6 +1095,11 @@ public class CommonCssConstants {
     public static final String SOLID = "solid";
 
     /**
+     * The Constant SPACE.
+     */
+    public static final String SPACE = "space";
+
+    /**
      * The Constant SQUARE.
      */
     public static final String SQUARE = "square";
@@ -1143,6 +1153,11 @@ public class CommonCssConstants {
      * The Constant TRANSPARENT.
      */
     public static final String TRANSPARENT = "transparent";
+
+    /**
+     * The Constant UNDEFINED_NAME.
+     */
+    public static final String UNDEFINED_NAME = "undefined";
 
     /**
      * The Constant value UNDERLINE
@@ -1218,7 +1233,7 @@ public class CommonCssConstants {
      * The Constant BACKGROUND_REPEAT_VALUES.
      */
     public static final Set<String> BACKGROUND_REPEAT_VALUES = Collections.unmodifiableSet(new HashSet<>(
-            Arrays.asList(REPEAT, NO_REPEAT, REPEAT_X, REPEAT_Y)));
+            Arrays.asList(REPEAT, NO_REPEAT, REPEAT_X, REPEAT_Y, ROUND, SPACE)));
 
     /**
      * The Constant BACKGROUND_ATTACHMENT_VALUES.
