@@ -3226,6 +3226,163 @@ public class FloatTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff50_"));
     }
 
+    @Test
+    public void indentInParagraphAndFloatInInnerDivTest() throws IOException, InterruptedException {
+        String outFile = destinationFolder + "indentInParagraphAndFloatInInnerDiv.pdf";
+        String cmpFileName = sourceFolder + "cmp_indentInParagraphAndFloatInInnerDiv.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Div div = new Div().add(new Paragraph("Video provides a powerful way to help you prove"
+                + " your point. When you click Online Video, you can"));
+        div.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        div.setBackgroundColor(ColorConstants.YELLOW);
+
+        Paragraph p = new Paragraph();
+        p.setFirstLineIndent(50);
+        p.add(div);
+        p.add(text);
+        document.add(p);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void floatAndIndentInFirstParagraphInDivTest() throws IOException, InterruptedException {
+        String outFile = destinationFolder + "floatAndIndentInFirstParagraphInDiv.pdf";
+        String cmpFileName = sourceFolder + "cmp_floatAndIndentInFirstParagraphInDiv.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph shortFloat = new Paragraph("Hello, iText! Hello, iText!").setBackgroundColor(ColorConstants.CYAN);
+        shortFloat.setFirstLineIndent(50).setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        Paragraph p = new Paragraph(text).setBackgroundColor(ColorConstants.YELLOW);
+
+        Div div = new Div();
+        div.add(shortFloat);
+        div.add(p);
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void shortFloatRightAndIndentInSecondParagraphInDivTest() throws IOException, InterruptedException {
+        String outFile = destinationFolder + "shortFloatRightAndIndentInSecondParagraphInDiv.pdf";
+        String cmpFileName = sourceFolder + "cmp_shortFloatRightAndIndentInSecondParagraphInDiv.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph shortFloat = new Paragraph("Hello, iText! Hello, iText!").setBackgroundColor(ColorConstants.CYAN);
+        shortFloat.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        Paragraph p = new Paragraph(text).setFirstLineIndent(50).setBackgroundColor(ColorConstants.YELLOW);
+
+        Div div = new Div();
+        div.add(shortFloat);
+        div.add(p);
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void shortFloatLeftAndIndentInSecondParagraphInDivTest() throws IOException, InterruptedException {
+        String outFile = destinationFolder + "shortFloatLeftAndIndentInSecondParagraphInDiv.pdf";
+        String cmpFileName = sourceFolder + "cmp_shortFloatLeftAndIndentInSecondParagraphInDiv.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph shortFloat = new Paragraph("Hello, iText! Hello, iText!").setBackgroundColor(ColorConstants.CYAN);
+        shortFloat.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+        Paragraph p = new Paragraph(text).setFirstLineIndent(50).setBackgroundColor(ColorConstants.YELLOW);
+
+        Div div = new Div();
+        div.add(shortFloat);
+        div.add(p);
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void longFloatAndIndentInSecondParagraphInDivTest() throws IOException, InterruptedException {
+        String outFile = destinationFolder + "longFloatAndIndentInSecondParagraphInDiv.pdf";
+        String cmpFileName = sourceFolder + "cmp_longFloatAndIndentInSecondParagraphInDiv.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph longFloat = new Paragraph(text).setBackgroundColor(ColorConstants.CYAN);
+        longFloat.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        Paragraph p = new Paragraph(text).setFirstLineIndent(50).setBackgroundColor(ColorConstants.YELLOW);
+
+        Div div = new Div();
+        div.add(longFloat);
+        div.add(p);
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void indentInParentParagraphShortFirstFloatTest() throws IOException, InterruptedException {
+        String outFile = destinationFolder + "indentInParentParagraphShortFirstFloat.pdf";
+        String cmpFileName = sourceFolder + "cmp_indentInParentParagraphShortFirstFloat.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph parent = new Paragraph(text).setFirstLineIndent(50);
+
+        Paragraph shortFloat = new Paragraph(shortText).setBackgroundColor(ColorConstants.CYAN);
+        shortFloat.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        parent.add(shortFloat);
+
+        Paragraph p = new Paragraph(text).setBackgroundColor(ColorConstants.YELLOW);
+        parent.add(p);
+
+        document.add(parent);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void indentInParentParagraphLongFirstFloatTest() throws IOException, InterruptedException {
+        String outFile = destinationFolder + "indentInParentParagraphLongFirstFloat.pdf";
+        String cmpFileName = sourceFolder + "cmp_indentInParentParagraphLongFirstFloat.pdf";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+
+        Paragraph parent = new Paragraph(text).setFirstLineIndent(50);
+
+        Paragraph longFloat = new Paragraph(text).setBackgroundColor(ColorConstants.CYAN);
+        longFloat.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        parent.add(longFloat);
+
+        Paragraph p = new Paragraph(text).setBackgroundColor(ColorConstants.YELLOW);
+        parent.add(p);
+
+        document.add(parent);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
 
     private static void fillWithKeptTogetherElement(Document doc, String floatText, int textTimes, boolean isInner, boolean floatAsFirst) {
 
