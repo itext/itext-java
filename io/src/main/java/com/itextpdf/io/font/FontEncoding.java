@@ -181,6 +181,19 @@ public class FontEncoding implements Serializable {
     }
 
     /**
+     * Sets a new value in the differences array.
+     * See {@link #differences}.
+     *
+     * @param index position to replace
+     * @param difference new difference value
+     */
+    public void setDifference(int index, String difference) {
+        if (index >= 0 && differences != null && index < differences.length) {
+            differences[index] = difference;
+        }
+    }
+
+    /**
      * Converts a {@code String} to a {@code byte} array according to the encoding.
      * String could contain a unicode symbols or font specific codes.
      *

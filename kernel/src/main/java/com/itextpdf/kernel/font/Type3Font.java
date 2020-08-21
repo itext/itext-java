@@ -60,9 +60,13 @@ import java.util.Map;
  */
 public class Type3Font extends FontProgram {
 
-	private static final long serialVersionUID = 1027076515537536993L;
-	
-	private final Map<Integer, Type3Glyph> type3Glyphs = new HashMap<>();
+    private static final long serialVersionUID = 1027076515537536993L;
+
+    private final Map<Integer, Type3Glyph> type3Glyphs = new HashMap<>();
+    /**
+     * Stores glyphs without associated unicode.
+     */
+    private final Map<Integer, Type3Glyph> type3GlyphsWithoutUnicode = new HashMap<>();
     private boolean colorized = false;
     private int flags = 0;
 
@@ -77,8 +81,30 @@ public class Type3Font extends FontProgram {
         getFontMetrics().setBbox(0, 0, 0, 0);
     }
 
+    /**
+     * Returns a glyph by unicode.
+     *
+     * @param unicode glyph unicode
+     *
+     * @return {@link Type3Glyph} glyph, or {@code null} if this font does not contain glyph for the unicode
+     */
     public Type3Glyph getType3Glyph(int unicode) {
         return type3Glyphs.get(unicode);
+    }
+
+    /**
+     * Returns a glyph by its code. These glyphs may not have unicode.
+     *
+     * @param code glyph code
+     *
+     * @return {@link Type3Glyph} glyph, or {@code null} if this font does not contain glyph for the code
+     */
+    public Type3Glyph getType3GlyphByCode(int code) {
+        Type3Glyph glyph = type3GlyphsWithoutUnicode.get(code);
+        if (glyph == null && codeToGlyph.get(code) != null) {
+            glyph = type3Glyphs.get(codeToGlyph.get(code).getUnicode());
+        }
+        return glyph;
     }
 
     @Override
@@ -100,14 +126,23 @@ public class Type3Font extends FontProgram {
         return 0;
     }
 
+
+    /**
+     * Returns number of glyphs for this font.
+     * Its also count glyphs without unicode.
+     * See {@link #type3GlyphsWithoutUnicode}.
+     *
+     * @return {@code int} number off all glyphs
+     */
     public int getNumberOfGlyphs() {
-        return type3Glyphs.size();
+        return type3Glyphs.size() + type3GlyphsWithoutUnicode.size();
     }
 
     /**
      * Sets the PostScript name of the font.
      * <p>
      * If full name is null, it will be set as well.
+     *
      * @param fontName the PostScript name of the font, shall not be null or empty.
      */
     @Override
@@ -173,18 +208,44 @@ public class Type3Font extends FontProgram {
     }
 
     void addGlyph(int code, int unicode, int width, int[] bbox, Type3Glyph type3Glyph) {
+        if (codeToGlyph.containsKey(code)) {
+            removeGlyphFromMappings(code);
+        }
         Glyph glyph = new Glyph(code, width, unicode, bbox);
         codeToGlyph.put(code, glyph);
-        unicodeToGlyph.put(unicode, glyph);
-        type3Glyphs.put(unicode, type3Glyph);
+        if (unicode < 0) {
+            type3GlyphsWithoutUnicode.put(code, type3Glyph);
+        } else {
+            unicodeToGlyph.put(unicode, glyph);
+            type3Glyphs.put(unicode, type3Glyph);
+        }
         recalculateAverageWidth();
+    }
+
+    private void removeGlyphFromMappings(int glyphCode) {
+        Glyph removed = codeToGlyph.remove(glyphCode);
+        if (removed == null) {
+            return;
+        }
+        int unicode = removed.getUnicode();
+        if (unicode < 0) {
+            type3GlyphsWithoutUnicode.remove(glyphCode);
+        } else {
+            unicodeToGlyph.remove(unicode);
+            type3Glyphs.remove(unicode);
+        }
     }
 
     private void recalculateAverageWidth() {
         int widthSum = 0;
+        int glyphsNumber = codeToGlyph.size();
         for (Glyph glyph : codeToGlyph.values()) {
+            if (glyph.getWidth() == 0) {
+                glyphsNumber--;
+                continue;
+            }
             widthSum += glyph.getWidth();
         }
-        avgWidth = widthSum / codeToGlyph.size();
+        avgWidth = glyphsNumber == 0 ? 0 : widthSum / glyphsNumber;
     }
 }

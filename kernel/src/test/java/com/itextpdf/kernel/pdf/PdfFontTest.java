@@ -54,6 +54,7 @@ import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.font.constants.FontStyles;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
@@ -72,11 +73,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -361,6 +362,21 @@ public class PdfFontTest extends ExtendedITextTest {
 
         // reading and comparing text
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    //TODO DEVSIX-4995 This test should be updated when DEVSIX-4995 is resolved
+    public void notReplaceToUnicodeMappingTest() throws IOException {
+        String filename = sourceFolder + "toUnicodeAndDifferenceFor32.pdf";
+
+        try (PdfDocument pdf = new PdfDocument(new PdfReader(filename))) {
+            PdfDictionary pdfType3FontDict = (PdfDictionary) pdf.getPdfObject(112);
+            PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory.createFont(pdfType3FontDict);
+            //should be another glyph defined in ToUnicode mapping
+            Glyph glyph = pdfType3Font.getGlyph(32);
+
+            Assert.assertEquals(0, glyph.getWidth());
+        }
     }
 
     @Test
@@ -896,39 +912,37 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpOutputFileName = sourceFolder + "cmp_type3Font_update.pdf";
         String title = "Type3 font iText 7 Document";
 
-        PdfReader reader = new PdfReader(inputFileName);
-        PdfWriter writer = new PdfWriter(outputFileName);
-        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
-        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        int numberOfGlyphs = 0;
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inputFileName),
+                new PdfWriter(outputFileName).setCompressionLevel(CompressionConstants.NO_COMPRESSION))) {
 
+            pdfDoc.getDocumentInfo().setAuthor(author).
+                    setCreator(creator).
+                    setTitle(title);
 
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+            PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory
+                    .createFont((PdfDictionary) pdfDoc.getPdfObject(5));
 
-        PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory.createFont((PdfDictionary) pdfDoc.getPdfObject(5));
+            Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
+            newGlyph.setLineWidth(100);
+            newGlyph.moveTo(540, 5);
+            newGlyph.lineTo(5, 840);
+            newGlyph.stroke();
 
-        Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
-        newGlyph.setLineWidth(100);
-        newGlyph.moveTo(540, 5);
-        newGlyph.lineTo(5, 840);
-        newGlyph.stroke();
-
-        PdfPage page = pdfDoc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-        canvas.saveState()
-                .beginText()
-                .setFontAndSize(pdfType3Font, 12)
-                .moveText(50, 800)
-                // A A A A A A E E E E ~ é ö
-                .showText("A A A A A A E E E E ~ \u00E9 \u00F6")
-                .endText()
-                .restoreState();
-        page.flush();
-        pdfDoc.close();
-
-        Assert.assertEquals(6, pdfType3Font.getNumberOfGlyphs());
-
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas.saveState()
+                    .beginText()
+                    .setFontAndSize(pdfType3Font, 12)
+                    .moveText(50, 800)
+                    // A A A A A A E E E E ~ é ö
+                    .showText("A A A A A A E E E E ~ \u00E9 \u00F6")
+                    .endText()
+                    .restoreState();
+            page.flush();
+            numberOfGlyphs = pdfType3Font.getNumberOfGlyphs();
+        }
+        Assert.assertEquals(6, numberOfGlyphs);
         Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
     }
 
@@ -939,41 +953,74 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpOutputFileName = sourceFolder + "cmp_type3Font_new.pdf";
         String title = "Type3 font iText 7 Document";
 
-        PdfReader reader = new PdfReader(inputFileName);
-        PdfWriter pdfWriter = new PdfWriter(outputFileName);
-        pdfWriter.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
-        PdfDocument inputPdfDoc = new PdfDocument(reader);
-        PdfDocument outputPdfDoc = new PdfDocument(pdfWriter);
+        int numberOfGlyphs = 0;
+        try (PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
+                PdfDocument outputPdfDoc = new PdfDocument(new PdfWriter(outputFileName)
+                        .setCompressionLevel(CompressionConstants.NO_COMPRESSION))) {
 
+            outputPdfDoc.getDocumentInfo().setAuthor(author).
+                    setCreator(creator).
+                    setTitle(title);
 
-        outputPdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+            PdfDictionary pdfType3FontDict = (PdfDictionary) inputPdfDoc.getPdfObject(5);
+            PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory
+                    .createFont((PdfDictionary) pdfType3FontDict.copyTo(outputPdfDoc));
 
-        PdfDictionary pdfType3FontDict = (PdfDictionary) inputPdfDoc.getPdfObject(5);
-        PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory.createFont((PdfDictionary) pdfType3FontDict.copyTo(outputPdfDoc));
+            Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
+            newGlyph.setLineWidth(100);
+            newGlyph.moveTo(540, 5);
+            newGlyph.lineTo(5, 840);
+            newGlyph.stroke();
 
-        Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
-        newGlyph.setLineWidth(100);
-        newGlyph.moveTo(540, 5);
-        newGlyph.lineTo(5, 840);
-        newGlyph.stroke();
+            PdfPage page = outputPdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas.saveState()
+                    .beginText()
+                    .setFontAndSize(pdfType3Font, 12)
+                    .moveText(50, 800)
+                    // AAAAAA EEEE ~ é ö
+                    .showText("AAAAAA EEEE ~ \u00E9 \u00F6")
+                    .endText();
+            page.flush();
+            numberOfGlyphs = pdfType3Font.getNumberOfGlyphs();
+        }
 
-        PdfPage page = outputPdfDoc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-        canvas.saveState()
-                .beginText()
-                .setFontAndSize(pdfType3Font, 12)
-                .moveText(50, 800)
-                // AAAAAA EEEE ~ é ö
-                .showText("AAAAAA EEEE ~ \u00E9 \u00F6")
-                .endText();
-        page.flush();
-        outputPdfDoc.close();
-
-        Assert.assertEquals(6, pdfType3Font.getNumberOfGlyphs());
-
+        Assert.assertEquals(6, numberOfGlyphs);
         Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void testAddGlyphToType3FontWithCustomNames() throws IOException {
+        String inputFile = sourceFolder + "type3FontWithCustomNames.pdf";
+
+        int initialGlyphsNumber = 0;
+        int finalGlyphsNumber = 0;
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inputFile), new PdfWriter(new ByteArrayOutputStream()))) {
+
+            PdfDictionary pdfType3FontDict = (PdfDictionary) pdfDoc.getPdfObject(6);
+            PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory.createFont(pdfType3FontDict);
+            initialGlyphsNumber = pdfType3Font.getNumberOfGlyphs();
+
+            Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
+            newGlyph.setLineWidth(100);
+            newGlyph.moveTo(540, 5);
+            newGlyph.lineTo(5, 840);
+            newGlyph.stroke();
+
+            PdfPage page = pdfDoc.getPage(1);
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas.saveState()
+                    .beginText()
+                    .setFontAndSize(pdfType3Font, 12)
+                    .moveText(50, 800)
+                    // AAAAAA EEEE ~ é ö
+                    .showText("AAAAAA EEEE ~ \u00E9 \u00F6")
+                    .endText();
+            page.flush();
+            finalGlyphsNumber = pdfType3Font.getNumberOfGlyphs();
+        }
+
+        Assert.assertEquals(initialGlyphsNumber + 1, finalGlyphsNumber);
     }
 
     @Test

@@ -22,14 +22,19 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -45,6 +50,7 @@ public class PdfType3FontTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)})
     public void addDifferentGlyphsInConstructorTest() {
         PdfDictionary dictionary = new PdfDictionary();
         dictionary.put(PdfName.FontMatrix, new PdfArray());
@@ -72,6 +78,7 @@ public class PdfType3FontTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)})
     public void addAlreadyExistingGlyphTest() {
         PdfDictionary dictionary = new PdfDictionary();
         dictionary.put(PdfName.FontMatrix, new PdfArray());
@@ -95,6 +102,7 @@ public class PdfType3FontTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)})
     public void setFontStretchTest() {
         PdfDictionary dictionary = new PdfDictionary();
         dictionary.put(PdfName.FontMatrix, new PdfArray());
@@ -111,6 +119,7 @@ public class PdfType3FontTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)})
     public void setPdfFontFlagsTest() {
         PdfDictionary dictionary = new PdfDictionary();
         dictionary.put(PdfName.FontMatrix, new PdfArray());
@@ -126,6 +135,7 @@ public class PdfType3FontTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)})
     public void glyphWithUnicodeBiggerThan32CannotBeEncodedTest() {
         PdfDictionary dictionary = new PdfDictionary();
         dictionary.put(PdfName.FontMatrix, new PdfArray());
@@ -139,6 +149,7 @@ public class PdfType3FontTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)})
     public void containsGlyphTest() {
         PdfDictionary dictionary = new PdfDictionary();
         dictionary.put(PdfName.FontMatrix, new PdfArray());
@@ -162,6 +173,7 @@ public class PdfType3FontTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)})
     public void flushExceptionTest() {
         junitExpectedException.expect(PdfException.class);
         junitExpectedException.expectMessage(PdfException.NoGlyphsDefinedForType3Font);
@@ -176,6 +188,7 @@ public class PdfType3FontTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)})
     public void fillFontDescriptorTest() {
         PdfDictionary dictionary = new PdfDictionary();
         dictionary.put(PdfName.FontMatrix, new PdfArray());
@@ -195,6 +208,59 @@ public class PdfType3FontTest extends ExtendedITextTest {
         Assert.assertNotNull(type3Font.fontProgram);
         Assert.assertNotNull(type3Font.fontProgram.getFontNames());
         Assert.assertEquals(fontStretch, type3Font.fontProgram.getFontNames().getFontStretch());
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)})
+    public void noCharProcsTest() {
+        PdfDictionary dictionary = new PdfDictionary();
+        dictionary.put(PdfName.FontMatrix, new PdfArray());
+        dictionary.put(PdfName.Widths, new PdfArray());
+
+        AssertUtil.doesNotThrow(() -> new PdfType3Font(dictionary));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)})
+    public void noEncodingTest() {
+        PdfDictionary dictionary = new PdfDictionary();
+        dictionary.put(PdfName.FontMatrix, new PdfArray());
+        PdfDictionary charProcs = new PdfDictionary();
+        dictionary.put(PdfName.CharProcs, charProcs);
+        dictionary.put(PdfName.Widths, new PdfArray());
+
+        AssertUtil.doesNotThrow(() -> new PdfType3Font(dictionary));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)})
+    public void noDifferenceTest() {
+        PdfDictionary dictionary = new PdfDictionary();
+        dictionary.put(PdfName.FontMatrix, new PdfArray());
+        PdfDictionary charProcs = new PdfDictionary();
+        dictionary.put(PdfName.CharProcs, charProcs);
+        dictionary.put(PdfName.Widths, new PdfArray());
+        PdfDictionary encoding = new PdfDictionary();
+        dictionary.put(PdfName.Encoding, encoding);
+
+        AssertUtil.doesNotThrow(() -> new PdfType3Font(dictionary));
+    }
+
+    @Test
+    public void noCharProcGlyphForDifferenceTest() {
+        PdfDictionary font = new PdfDictionary();
+        font.put(PdfName.FontMatrix, new PdfArray());
+        font.put(PdfName.Widths, new PdfArray());
+        font.put(PdfName.CharProcs, new PdfDictionary());
+
+        PdfDictionary encoding = new PdfDictionary();
+        PdfArray differences = new PdfArray();
+        differences.add(0, new PdfNumber(65));
+        differences.add(1, new PdfName("A"));
+        encoding.put(PdfName.Differences, differences);
+        font.put(PdfName.Encoding, encoding);
+
+        AssertUtil.doesNotThrow(() -> new PdfType3Font(font));
     }
 
     private class DisableEnsureUnderlyingObjectHasIndirectReference extends PdfType3Font {
