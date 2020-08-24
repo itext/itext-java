@@ -57,7 +57,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * You can implement your own {@link IEventCounterFactory} and register them with {@link EventCounterHandler#register(IEventCounterFactory)}
  * Or implement {@link EventCounter} and register it with {@link SimpleEventCounterFactory} like this:
  * <code>EventCounterHandler.getInstance().register(new SimpleEventCounterFactory(new SystemOutEventCounter());</code>
- * {@link SystemOutEventCounter} is just an example of a {@link EventCounter} implementation.
+ * {@link StandardOutputEventCounter} is just an example of a {@link EventCounter} implementation.
  * <p>
  * This functionality can be used to create metrics in a SaaS context.
  */

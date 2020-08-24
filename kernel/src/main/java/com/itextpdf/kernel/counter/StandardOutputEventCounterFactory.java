@@ -43,35 +43,13 @@
  */
 package com.itextpdf.kernel.counter;
 
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.counter.event.IEvent;
-import com.itextpdf.kernel.counter.event.IMetaInfo;
-
 /**
- * A {@link EventCounter} implementation that outputs event type to {@link System#out}
+ * {@link IEventCounterFactory} implementation that creates new {@link StandardOutputEventCounter} on each call
  */
-public class SystemOutEventCounter extends EventCounter {
-
-    /**
-     * The name of the class for which the ICounter was created
-     * (or iText if no name is available)
-     */
-    protected String name;
-
-    public SystemOutEventCounter(String name) {
-        this.name = name;
-    }
-
-    public SystemOutEventCounter() {
-        this("iText");
-    }
-
-    public SystemOutEventCounter(Class<?> cls) {
-        this(cls.getName());
-    }
+public class StandardOutputEventCounterFactory implements IEventCounterFactory {
 
     @Override
-    protected void onEvent(IEvent event, IMetaInfo metaInfo) {
-        System.out.println(MessageFormatUtil.format("[{0}] {1} event", name, event.getEventType()));
+    public EventCounter getCounter(Class<?> cls) {
+        return cls != null ? new StandardOutputEventCounter(cls) : new StandardOutputEventCounter();
     }
 }

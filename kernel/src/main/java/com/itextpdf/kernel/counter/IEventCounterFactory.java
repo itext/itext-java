@@ -49,8 +49,8 @@ package com.itextpdf.kernel.counter;
  * You can implement your own counter factory and register it like this:
  * <code>EventCounterHandler.getInstance().register(new SystemOutEventCounterFactory());</code>
  * <p>
- * {@link SystemOutEventCounterFactory} is just an example of {@link IEventCounterFactory} implementation.
- * It creates {@link SystemOutEventCounter} that writes info about files being read and written to the {@link System#out}
+ * {@link StandardOutputEventCounterFactory} is just an example of {@link IEventCounterFactory} implementation.
+ * It creates {@link StandardOutputEventCounter} that writes info about files being read and written to the {@link System#out}
  * <p>
  * This functionality can be used to create metrics in a SaaS context.
  */
