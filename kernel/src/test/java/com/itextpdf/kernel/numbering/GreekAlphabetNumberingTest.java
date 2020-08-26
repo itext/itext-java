@@ -40,7 +40,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf.numbering;
+package com.itextpdf.kernel.numbering;
 
 import com.itextpdf.kernel.numbering.GreekAlphabetNumbering;
 import com.itextpdf.test.ExtendedITextTest;
