@@ -63,6 +63,8 @@ public class FObject {
 
     /**
      * Gets the name of the source or target file.
+     *
+     * @return the name of the source or target file
      */
     public String getHref() {
         return href;
@@ -70,6 +72,9 @@ public class FObject {
 
     /**
      * Sets the name of the source or target file.
+     *
+     * @param href the name of the source or target file
+     * @return current {@link FObject f object}
      */
     public FObject setHref(String href) {
         this.href = href;
