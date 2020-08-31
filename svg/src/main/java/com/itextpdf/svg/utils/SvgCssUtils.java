@@ -42,8 +42,8 @@
  */
 package com.itextpdf.svg.utils;
 
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.node.IElementNode;
-import com.itextpdf.svg.SvgConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -129,10 +129,12 @@ public final class SvgCssUtils {
      *
      * @param headChildElement the head child element
      * @return true, if the element node represents a style sheet link
+     * @deprecated Will be replaced by the
+     * {@link com.itextpdf.styledxmlparser.css.util.CssUtils#isStyleSheetLink(IElementNode)} in update 7.2.
      */
+    @Deprecated
     public static boolean isStyleSheetLink(IElementNode headChildElement) {
-        return SvgConstants.Tags.LINK.equals(headChildElement.name())
-                && SvgConstants.Attributes.STYLESHEET.equals(headChildElement.getAttribute(SvgConstants.Attributes.REL));
+        return CssUtils.isStyleSheetLink(headChildElement);
     }
 
 }

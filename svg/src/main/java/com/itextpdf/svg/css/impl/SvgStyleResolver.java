@@ -57,6 +57,7 @@ import com.itextpdf.styledxmlparser.css.parse.CssStyleSheetParser;
 import com.itextpdf.styledxmlparser.css.resolve.AbstractCssContext;
 import com.itextpdf.styledxmlparser.css.resolve.CssInheritance;
 import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.node.IAttribute;
 import com.itextpdf.styledxmlparser.node.IDataNode;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
@@ -70,7 +71,6 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
-import com.itextpdf.svg.utils.SvgCssUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -287,7 +287,7 @@ public class SvgStyleResolver implements ICssResolver {
                         this.css.appendCssStyleSheet(styleSheet);
                     }
 
-                } else if (SvgCssUtils.isStyleSheetLink(headChildElement)) {
+                } else if (CssUtils.isStyleSheetLink(headChildElement)) {
                     String styleSheetUri = headChildElement.getAttribute(SvgConstants.Attributes.HREF);
                     try (InputStream stream = resourceResolver.retrieveResourceAsInputStream(styleSheetUri)) {
                         if (stream != null) {

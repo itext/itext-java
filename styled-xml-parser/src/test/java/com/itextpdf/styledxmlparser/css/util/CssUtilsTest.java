@@ -43,9 +43,13 @@
 package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.styledxmlparser.CommonAttributeConstants;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
+import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -386,5 +390,32 @@ public class CssUtilsTest extends ExtendedITextTest {
                 CssBackgroundUtils.resolveBackgroundPropertyType("padding-box"));
         Assert.assertEquals(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_ATTACHMENT,
                 CssBackgroundUtils.resolveBackgroundPropertyType("fixed"));
+    }
+
+    @Test
+    public void elementNodeIsStyleSheetLink() {
+        Element element = new Element(Tag.valueOf("link"), "");
+        element.attr(CommonAttributeConstants.REL, CommonAttributeConstants.STYLESHEET);
+        JsoupElementNode elementNode = new JsoupElementNode(element);
+
+        Assert.assertTrue(CssUtils.isStyleSheetLink(elementNode));
+    }
+
+    @Test
+    public void elementNodeIsNotLink() {
+        Element element = new Element(Tag.valueOf("p"), "");
+        element.attr(CommonAttributeConstants.REL, CommonAttributeConstants.STYLESHEET);
+        JsoupElementNode elementNode = new JsoupElementNode(element);
+
+        Assert.assertFalse(CssUtils.isStyleSheetLink(elementNode));
+    }
+
+    @Test
+    public void elementNodeAttributeIsNotStylesheet() {
+        Element element = new Element(Tag.valueOf("link"), "");
+        element.attr(CommonAttributeConstants.REL, "");
+        JsoupElementNode elementNode = new JsoupElementNode(element);
+
+        Assert.assertFalse(CssUtils.isStyleSheetLink(elementNode));
     }
 }

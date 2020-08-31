@@ -47,6 +47,7 @@ import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.layout.font.Range;
 import com.itextpdf.layout.font.RangeBuilder;
 import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.styledxmlparser.CommonAttributeConstants;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
@@ -56,6 +57,8 @@ import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.itextpdf.styledxmlparser.node.IElementNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -822,6 +825,18 @@ public class CssUtils {
      */
     public static double convertPxToPts(double px) {
         return px * 0.75;
+    }
+
+    /**
+     * Checks if an {@link IElementNode} represents a style sheet link.
+     *
+     * @param headChildElement the head child element
+     * @return true, if the element node represents a style sheet link
+     */
+    public static boolean isStyleSheetLink(IElementNode headChildElement) {
+        return CommonCssConstants.LINK.equals(headChildElement.name())
+                && CommonAttributeConstants.STYLESHEET
+                .equals(headChildElement.getAttribute(CommonAttributeConstants.REL));
     }
 
     private static boolean addRange(RangeBuilder builder, String range) {
