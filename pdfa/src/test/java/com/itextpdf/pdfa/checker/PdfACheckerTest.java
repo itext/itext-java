@@ -52,6 +52,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
@@ -126,7 +127,7 @@ public class PdfACheckerTest extends ExtendedITextTest {
         }
 
         @Override
-        public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill) {
+        public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill, PdfStream contentStream) {
 
         }
 
@@ -142,7 +143,12 @@ public class PdfACheckerTest extends ExtendedITextTest {
         }
 
         @Override
-        public void checkExtGState(CanvasGraphicsState extGState) {
+        public void checkFontGlyphs(PdfFont font, PdfStream contentStream) {
+
+        }
+
+        @Override
+        public void checkExtGState(CanvasGraphicsState extGState, PdfStream contentStream) {
 
         }
 
@@ -153,6 +159,16 @@ public class PdfACheckerTest extends ExtendedITextTest {
 
         @Override
         public void checkXrefTable(PdfXrefTable xrefTable) {
+
+        }
+
+        @Override
+        protected void checkContentStream(PdfStream contentStream) {
+
+        }
+
+        @Override
+        protected void checkContentStreamObject(PdfObject object) {
 
         }
 
@@ -278,6 +294,11 @@ public class PdfACheckerTest extends ExtendedITextTest {
 
         @Override
         protected void checkTrailer(PdfDictionary trailer) {
+
+        }
+
+        @Override
+        protected void checkPageTransparency(PdfDictionary pageDict, PdfDictionary pageResources) {
 
         }
     }

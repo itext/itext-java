@@ -301,18 +301,6 @@ public abstract class PdfAChecker implements Serializable {
     /**
      * This method checks compliance with the color restrictions imposed by the
      * available color spaces in the document.
-     * @deprecated This method will be replaced by {@link #checkColor(Color, PdfDictionary, Boolean, PdfStream) checkColor} in 7.2 release
-     *
-     * @param color the color to check
-     * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
-     * @param fill whether the color is used for fill or stroke operations
-     */
-    @Deprecated
-    public abstract void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill);
-
-    /**
-     * This method checks compliance with the color restrictions imposed by the
-     * available color spaces in the document.
      * This method will be abstract in update 7.2
      *
      * @param color the color to check
@@ -320,8 +308,8 @@ public abstract class PdfAChecker implements Serializable {
      * @param fill whether the color is used for fill or stroke operations
      * @param contentStream current content stream
      */
-    public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill, PdfStream contentStream) {
-    }
+    public abstract void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill,
+                                    PdfStream contentStream);
 
     /**
      * This method performs a range of checks on the given color space, depending
@@ -344,14 +332,14 @@ public abstract class PdfAChecker implements Serializable {
     public abstract void checkRenderingIntent(PdfName intent);
 
     /**
-     * Performs a number of checks on the graphics state, among others ISO
-     * 19005-1 section 6.2.8 and 6.4 and ISO 19005-2 section 6.2.5 and 6.2.10.
-     * @deprecated This method will be replaced by {@link #checkExtGState(CanvasGraphicsState, PdfStream) checkExtGState} in 7.2 release
+     * Performs a check of the each font glyph as a Form XObject. See ISO 19005-2 Annex A.5.
+     * This only applies to type 3 fonts.
+     * This method will be abstract in update 7.2
      *
-     * @param extGState the graphics state to be checked
+     * @param font {@link PdfFont} to be checked
+     * @param contentStream stream containing checked font
      */
-    @Deprecated
-    public abstract void checkExtGState(CanvasGraphicsState extGState);
+    public abstract void checkFontGlyphs(PdfFont font, PdfStream contentStream);
 
     /**
      * Performs a number of checks on the graphics state, among others ISO
@@ -361,8 +349,7 @@ public abstract class PdfAChecker implements Serializable {
      * @param extGState the graphics state to be checked
      * @param contentStream current content stream
      */
-    public void checkExtGState(CanvasGraphicsState extGState, PdfStream contentStream) {
-    }
+    public abstract void checkExtGState(CanvasGraphicsState extGState, PdfStream contentStream);
 
     /**
      * Performs a number of checks on the font. See ISO 19005-1 section 6.3,
@@ -373,19 +360,6 @@ public abstract class PdfAChecker implements Serializable {
      */
     public abstract void checkFont(PdfFont pdfFont);
 
-
-    /**
-     * Performs a check of the each font glyph as a Form XObject. See ISO 19005-2 Annex A.5.
-     * This only applies to type 3 fonts.
-     * This method will be abstract in update 7.2
-     *
-     * @param font {@link PdfFont} to be checked
-     * @param contentStream stream containing checked font
-     */
-    public void checkFontGlyphs(PdfFont font, PdfStream contentStream) {
-    }
-
-
     /**
      * Verify the conformity of the cross-reference table.
      *
@@ -393,17 +367,13 @@ public abstract class PdfAChecker implements Serializable {
      */
     public abstract void checkXrefTable(PdfXrefTable xrefTable);
 
-    protected void checkPageTransparency(PdfDictionary pageDict, PdfDictionary pageResources) {
-    }
-
     /**
      * Attest content stream conformance with appropriate specification.
      * Throws PdfAConformanceException if any discrepancy was found
      *
      * @param contentStream is a content stream to validate
      */
-    protected void checkContentStream(PdfStream contentStream) {
-    }
+    protected abstract void checkContentStream(PdfStream contentStream);
 
     /**
      * Verify the conformity of the operand of content stream with appropriate
@@ -411,8 +381,7 @@ public abstract class PdfAChecker implements Serializable {
      *
      * @param object is an operand of content stream to validate
      */
-    protected void checkContentStreamObject(PdfObject object) {
-    }
+    protected abstract void checkContentStreamObject(PdfObject object);
 
     /**
      * Retrieve maximum allowed number of indirect objects in conforming document.
@@ -445,6 +414,7 @@ public abstract class PdfAChecker implements Serializable {
     protected abstract void checkPdfString(PdfString string);
     protected abstract void checkSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont);
     protected abstract void checkTrailer(PdfDictionary trailer);
+    protected abstract void checkPageTransparency(PdfDictionary pageDict, PdfDictionary pageResources);
 
 
     protected void checkResources(PdfDictionary resources) {

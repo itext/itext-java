@@ -156,9 +156,7 @@ public class PdfAConformanceException extends PdfException {
     public static final String WIDGET_ANNOTATION_DICTIONARY_OR_FIELD_DICTIONARY_SHALL_NOT_INCLUDE_A_OR_AA_ENTRY = "Widget annotation dictionary or field dictionary shall not include a or aa entry";
 
     private static final long serialVersionUID = -5951503441486657717L;
-    
-    @Deprecated
-    public static final String IF_THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_TRANSPARENCY_IS_FORBIDDEN = "If the document does not contain a pdfa outputintent transparency is forbidden";
+
     /**
      * Creates a PdfAConformanceException.
      *

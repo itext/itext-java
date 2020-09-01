@@ -182,11 +182,6 @@ public class PdfA2Checker extends PdfA1Checker {
     }
 
     @Override
-    public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill) {
-        checkColor(color, currentColorSpaces, fill, null);
-    }
-
-    @Override
     public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill, PdfStream contentStream) {
         if (color instanceof PatternColor) {
             PdfPattern pattern = ((PatternColor) color).getPattern();
@@ -287,11 +282,6 @@ public class PdfA2Checker extends PdfA1Checker {
                 }
             }
         }
-    }
-
-    @Override
-    public void checkExtGState(CanvasGraphicsState extGState) {
-        checkExtGState(extGState, null);
     }
 
     @Override

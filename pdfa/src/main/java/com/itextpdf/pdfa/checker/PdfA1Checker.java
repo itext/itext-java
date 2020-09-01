@@ -171,11 +171,6 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
-    public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill) {
-        checkColorSpace(color.getColorSpace(), currentColorSpaces, true, fill);
-    }
-
-    @Override
     public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill, PdfStream stream) {
         checkColorSpace(color.getColorSpace(), currentColorSpaces, true, fill);
         if (color instanceof PatternColor) {
@@ -257,11 +252,6 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
-    public void checkExtGState(CanvasGraphicsState extGState) {
-        checkExtGState(extGState, null);
-    }
-
-    @Override
     public void checkExtGState(CanvasGraphicsState extGState, PdfStream contentStream) {
         if (extGState.getTransferFunction() != null) {
             throw new PdfAConformanceException(PdfAConformanceException.AN_EXTGSTATE_DICTIONARY_SHALL_NOT_CONTAIN_THE_TR_KEY);
@@ -292,6 +282,11 @@ public class PdfA1Checker extends PdfAChecker {
         if (ca != null && ca != 1) {
             throw new PdfAConformanceException(PdfAConformanceException.TRANSPARENCY_IS_NOT_ALLOWED_AND_CA_SHALL_BE_EQUAL_TO_1);
         }
+    }
+
+    @Override
+    public void checkFontGlyphs(PdfFont font, PdfStream contentStream) {
+        // This check is irrelevant for the PdfA1 checker, so the body of the method is empty
     }
 
     @Override
@@ -327,6 +322,11 @@ public class PdfA1Checker extends PdfAChecker {
                 checkContentStream(charProcs.getAsStream(charName));
             }
         }
+    }
+
+    @Override
+    protected void checkPageTransparency(PdfDictionary pageDict, PdfDictionary pageResources) {
+        // This check is irrelevant for the PdfA1 checker, so the body of the method is empty
     }
 
     @Override
