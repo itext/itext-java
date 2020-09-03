@@ -44,7 +44,6 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
@@ -75,8 +74,6 @@ import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.collection.PdfCollection;
 import com.itextpdf.kernel.pdf.filespec.PdfEncryptedPayloadFileSpecFactory;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
-import com.itextpdf.kernel.pdf.layer.PdfLayer;
-import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
@@ -93,6 +90,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -103,8 +101,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1251,11 +1249,12 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             lastCopiedPageNum = (int) pageNum;
         }
 
-        if (getCatalog() != null && getCatalog().getOCProperties(false) != null) {
-            copyOCGProperties(copiedPages, toDocument);
-        }
-
         copyLinkAnnotations(toDocument, page2page);
+
+        // Copying OCGs should go after copying LinkAnnotations
+        if (getCatalog() != null && getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties) != null) {
+            OcgPropertiesCopier.copyOCGProperties(this, toDocument, page2page);
+        }
 
         // It's important to copy tag structure after link annotations were copied, because object content items in tag
         // structure are not copied in case if their's OBJ key is annotation and doesn't contain /P entry.
@@ -2493,65 +2492,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
     }
 
-    private void copyOCGProperties(List<PdfPage> copiedPages, PdfDocument toDocument) {
-        Set<String> layerNames = new HashSet<>();
-        PdfCatalog catalog = toDocument.getCatalog();
-        PdfOCProperties documentOCProperties = catalog.getOCProperties(false);
-        if (documentOCProperties != null) {
-            for (PdfLayer layer : documentOCProperties.getLayers()) {
-                String name = layer.getPdfObject().getAsString(PdfName.Name).toUnicodeString();
-                layerNames.add(name);
-            }
-        }
-
-        boolean hasConflictingNames = false;
-        for (PdfPage page : copiedPages) {
-
-            PdfDictionary resources = page.getPdfObject().getAsDictionary(PdfName.Resources);
-            if (resources != null && !resources.isFlushed()) {
-                List<PdfDictionary> ocgs = new ArrayList<>();
-                PdfDictionary properties = resources.getAsDictionary(PdfName.Properties);
-                if (properties != null && !properties.isFlushed()) {
-                    for (PdfName name : properties.keySet()) {
-                        PdfObject currObj = properties.get(name);
-                        if (currObj != null && currObj.isDictionary() && !currObj.isFlushed()) {
-                            PdfDictionary currDict =(PdfDictionary) currObj;
-                            PdfName typeName = currDict.getAsName(PdfName.Type);
-                            if (PdfName.OCG.equals(typeName)) {
-                                ocgs.add(currDict);
-                            }
-                        }
-                    }
-                }
-
-                for (PdfDictionary entry : ocgs) {
-                    String ocgLayerName = entry.getAsString(PdfName.Name).toUnicodeString();
-                    for (int i = 0; layerNames.contains(ocgLayerName); ++i) {
-                        if (i == 0) {
-                            hasConflictingNames = true;
-                        }
-                        if (layerNames.contains(ocgLayerName + "_" + i)) {
-                            continue;
-                        }
-                        ocgLayerName += "_" + i;
-                        entry.put(PdfName.Name, new PdfString(ocgLayerName, PdfEncodings.UNICODE_BIG));
-                    }
-                    layerNames.add(ocgLayerName);
-                    entry.makeIndirect(toDocument);
-                    PdfLayer layer = new PdfLayer(entry);
-                    if (!layerAlreadyInProperties(layer, toDocument.getCatalog().getOCProperties(false))) {
-                        toDocument.getCatalog().getOCProperties(true).registerLayer(layer);
-                    }
-                }
-            }
-        }
-
-        if (hasConflictingNames) {
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.warn(LogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES);
-        }
-    }
-
     private static void overrideFullCompressionInWriterProperties(WriterProperties properties, boolean readerHasXrefStream) {
         if (Boolean.TRUE == properties.isFullCompression && !readerHasXrefStream) {
             Logger logger = LoggerFactory.getLogger(PdfDocument.class);
@@ -2565,16 +2505,5 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     private static boolean isXmpMetaHasProperty(XMPMeta xmpMeta, String schemaNS, String propName) throws XMPException {
         return xmpMeta.getProperty(schemaNS, propName) != null;
-    }
-
-    private static boolean layerAlreadyInProperties(PdfLayer newLayer, PdfOCProperties pdfOCProperties) {
-        if (pdfOCProperties != null) {
-            for (PdfLayer layer : pdfOCProperties.getLayers()) {
-                if (newLayer.getIndirectReference().equals(layer.getIndirectReference())) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }

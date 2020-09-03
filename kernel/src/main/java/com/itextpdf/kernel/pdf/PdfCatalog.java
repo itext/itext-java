@@ -501,6 +501,20 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return d;
     }
 
+    PdfDictionary fillAndGetOcPropertiesDictionary() {
+        if (ocProperties != null) {
+            ocProperties.fillDictionary(false);
+            getPdfObject().put(PdfName.OCProperties, ocProperties.getPdfObject());
+            ocProperties = null;
+        }
+        if (getPdfObject().getAsDictionary(PdfName.OCProperties) == null) {
+            final PdfDictionary pdfDictionary = new PdfDictionary();
+            pdfDictionary.makeIndirect(getDocument());
+            getDocument().getCatalog().getPdfObject().put(PdfName.OCProperties, pdfDictionary);
+        }
+        return getPdfObject().getAsDictionary(PdfName.OCProperties);
+    }
+
     private boolean isEqualSameNameDestExist(Map<PdfPage, PdfPage> page2page, PdfDocument toDocument, String srcDestName, PdfArray srcDestArray, PdfPage oldPage) {
         PdfArray sameNameDest = (PdfArray) toDocument.getCatalog().getNameTree(PdfName.Dests).getNames().get(srcDestName);
         boolean equalSameNameDestExists = false;

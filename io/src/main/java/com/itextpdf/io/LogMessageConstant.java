@@ -146,6 +146,7 @@ public final class LogMessageConstant {
     public static final String NUM_TREE_SHALL_NOT_END_WITH_KEY = "Number tree ends with a key which is invalid according to the PDF specification.";
     public static final String N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY = "\\N entry is required to be present in an appearance dictionary.";
     public static final String OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED = "Occupied area has not been initialized. {0}";
+    public static final String OCG_COPYING_ERROR = "OCG copying caused the following exception: {0}.";
     public static final String OCSP_STATUS_IS_REVOKED = "OCSP status is revoked.";
     public static final String OCSP_STATUS_IS_UNKNOWN = "OCSP status is unknown.";
     public static final String ONE_OF_GROUPED_SOURCES_CLOSING_FAILED = "Closing of one of the grouped sources failed.";

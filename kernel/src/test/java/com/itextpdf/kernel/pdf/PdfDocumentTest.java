@@ -50,23 +50,16 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
-import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.kernel.utils.PdfMerger;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.awt.Canvas;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -458,18 +451,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         ignoreTagStructureDocument.close();
     }
 
-    @Test
-    public void createDocwithOCG() throws IOException {
-        String srcFile = sourceFolder + "sourceOCG1.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcFile));
-        PdfDocument outPdf = new PdfDocument(new PdfWriter(destinationFolder + "mergedWithOCG.pdf"));
-        PdfMerger merger = new PdfMerger(outPdf);
-        merger.merge(pdfDoc, 1, 1);
-        pdfDoc.close();
-        outPdf.close();
-    }
-
-    private class IgnoreTagStructurePdfDocument extends PdfDocument {
+    private static class IgnoreTagStructurePdfDocument extends PdfDocument {
 
         IgnoreTagStructurePdfDocument(PdfReader reader) {
             super(reader);
