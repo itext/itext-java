@@ -267,4 +267,27 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
         document.close();
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
     }
+
+    @Test
+    // TODO DEVSIX-4480 iText wraps the text into more than one line when generating listbox appearance
+    public void longOptionWrappedIntoTwoLinesTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "longOptionWrappedIntoTwoLinesTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_longOptionWrappedIntoTwoLinesTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, true);
+
+        String shortOption = "Short option";
+        String longOption = "Long long long long long long long option";
+
+        String[] options = new String[] {shortOption, longOption};
+        Rectangle rect = new Rectangle(50, 650, 100, 100);
+
+        PdfChoiceFormField choice = PdfFormField.createList(pdfDocument, rect, "List", "Short option", options);
+        form.addField(choice);
+
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
 }
