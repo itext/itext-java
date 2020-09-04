@@ -68,12 +68,12 @@ public class BackgroundImage {
      */
     @Deprecated
     protected boolean repeatY;
-
     protected AbstractLinearGradientBuilder linearGradientBuilder;
 
     private BlendMode blendMode = DEFAULT_BLEND_MODE;
 
     private BackgroundPosition position;
+    private BackgroundSize backgroundSize;
 
     /**
      * Creates a new {@link BackgroundImage} instance.
@@ -81,15 +81,18 @@ public class BackgroundImage {
      * @param image                 background-image property. {@link PdfXObject} instance.
      * @param repeat                background-repeat property. {@link BackgroundRepeat} instance.
      * @param position              background-position property. {@link BackgroundPosition} instance.
+     * @param backgroundSize        background-size property. {@link BackgroundSize} instance.
      * @param linearGradientBuilder background-image property. {@link AbstractLinearGradientBuilder} instance.
      * @param blendMode             the image's blend mode. {@link BlendMode} instance.
      */
     protected BackgroundImage(PdfXObject image, BackgroundRepeat repeat, BackgroundPosition position,
-                              AbstractLinearGradientBuilder linearGradientBuilder, BlendMode blendMode) {
+                              BackgroundSize backgroundSize, AbstractLinearGradientBuilder linearGradientBuilder,
+                              BlendMode blendMode) {
         this.image = image;
         this.repeatX = repeat.isRepeatX();
         this.repeatY = repeat.isRepeatY();
         this.position = position;
+        this.backgroundSize = backgroundSize;
         this.linearGradientBuilder = linearGradientBuilder;
         if (blendMode != null) {
             this.blendMode = blendMode;
@@ -106,7 +109,7 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfImageXObject image, final BackgroundRepeat repeat, final BlendMode blendMode) {
-        this(image, repeat, new BackgroundPosition(), null, blendMode);
+        this(image, repeat, new BackgroundPosition(), new BackgroundSize(), null, blendMode);
     }
 
     /**
@@ -119,7 +122,7 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfFormXObject image, final BackgroundRepeat repeat, final BlendMode blendMode) {
-        this(image, repeat, new BackgroundPosition(), null, blendMode);
+        this(image, repeat, new BackgroundPosition(), new BackgroundSize(), null, blendMode);
     }
 
     /**
@@ -131,7 +134,7 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfImageXObject image, final BackgroundRepeat repeat) {
-        this(image, repeat, new BackgroundPosition(), null, DEFAULT_BLEND_MODE);
+        this(image, repeat, new BackgroundPosition(), new BackgroundSize(), null, DEFAULT_BLEND_MODE);
     }
 
     /**
@@ -143,7 +146,7 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfFormXObject image, final BackgroundRepeat repeat) {
-        this(image, repeat, new BackgroundPosition(), null, DEFAULT_BLEND_MODE);
+        this(image, repeat, new BackgroundPosition(), new BackgroundSize(), null, DEFAULT_BLEND_MODE);
     }
 
     /**
@@ -154,7 +157,7 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfImageXObject image) {
-        this(image, new BackgroundRepeat(), new BackgroundPosition(), null, DEFAULT_BLEND_MODE);
+        this(image, new BackgroundRepeat(), new BackgroundPosition(), new BackgroundSize(), null, DEFAULT_BLEND_MODE);
     }
 
     /**
@@ -165,7 +168,7 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfFormXObject image) {
-        this(image, new BackgroundRepeat(), new BackgroundPosition(), null, DEFAULT_BLEND_MODE);
+        this(image, new BackgroundRepeat(), new BackgroundPosition(), new BackgroundSize(), null, DEFAULT_BLEND_MODE);
     }
 
     /**
@@ -178,7 +181,8 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfImageXObject image, final boolean repeatX, final boolean repeatY) {
-        this(image, new BackgroundRepeat(repeatX, repeatY), new BackgroundPosition(), null, DEFAULT_BLEND_MODE);
+        this(image, new BackgroundRepeat(repeatX, repeatY), new BackgroundPosition(), new BackgroundSize(),
+                null, DEFAULT_BLEND_MODE);
     }
 
     /**
@@ -191,7 +195,8 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfFormXObject image, final boolean repeatX, final boolean repeatY) {
-        this(image, new BackgroundRepeat(repeatX, repeatY), new BackgroundPosition(), null, DEFAULT_BLEND_MODE);
+        this(image, new BackgroundRepeat(repeatX, repeatY), new BackgroundPosition(), new BackgroundSize(),
+                null, DEFAULT_BLEND_MODE);
     }
 
     /**
@@ -216,7 +221,8 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final AbstractLinearGradientBuilder linearGradientBuilder, final BlendMode blendMode) {
-        this(null, new BackgroundRepeat(false, false), new BackgroundPosition(), linearGradientBuilder, blendMode);
+        this(null, new BackgroundRepeat(false, false), new BackgroundPosition(), new BackgroundSize()
+                , linearGradientBuilder, blendMode);
     }
 
     public PdfImageXObject getImage() {
@@ -252,10 +258,45 @@ public class BackgroundImage {
         return repeatY;
     }
 
+    /**
+     * Gets the background size property.
+     *
+     * @return {@link BackgroundSize} instance
+     */
+    public BackgroundSize getBackgroundSize() {
+        return backgroundSize;
+    }
+
+    /**
+     * Gets initial image width.
+     */
+    public float getImageWidth() {
+        return (float) image.getWidth();
+    }
+
+    /**
+     * Gets initial image height.
+     */
+    public float getImageHeight() {
+        return (float) image.getHeight();
+    }
+
+    /**
+     * Gets initial image width.
+     *
+     * @deprecated To be removed in 7.2. Use {@link BackgroundImage#getImageWidth()} instead.
+     */
+    @Deprecated
     public float getWidth() {
         return (float) image.getWidth();
     }
 
+    /**
+     * Gets initial image height.
+     *
+     * @deprecated To be removed in 7.2. Use {@link BackgroundImage#getImageHeight()} instead.
+     */
+    @Deprecated
     public float getHeight() {
         return (float) image.getHeight();
     }
@@ -279,6 +320,7 @@ public class BackgroundImage {
         private BackgroundPosition position = new BackgroundPosition();
         private BackgroundRepeat repeat = new BackgroundRepeat();
         private BlendMode blendMode = DEFAULT_BLEND_MODE;
+        private BackgroundSize backgroundSize = new BackgroundSize();
 
         public Builder() {
         }
@@ -348,12 +390,25 @@ public class BackgroundImage {
         }
 
         /**
+         * Set the image's backgroundSize.
+         *
+         * @param backgroundSize {@link BackgroundSize} to be set.
+         * @return this {@link Builder}.
+         */
+        public Builder setBackgroundSize(BackgroundSize backgroundSize) {
+            if (backgroundSize != null) {
+                this.backgroundSize = backgroundSize;
+            }
+            return this;
+        }
+
+        /**
          * Builds new {@link BackgroundImage} using set fields.
          *
          * @return new {@link BackgroundImage}.
          */
         public BackgroundImage build() {
-            return new BackgroundImage(image, repeat, position, linearGradientBuilder, blendMode);
+            return new BackgroundImage(image, repeat, position, backgroundSize, linearGradientBuilder, blendMode);
         }
     }
 }

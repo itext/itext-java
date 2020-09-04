@@ -567,6 +567,8 @@ public abstract class AbstractRenderer implements IRenderer {
     private void drawBackgroundImage(BackgroundImage backgroundImage,
                                      DrawContext drawContext, Rectangle backgroundArea) {
         applyBorderBox(backgroundArea, false);
+        float[] imageWidthAndHeight = BackgroundSizeCalculationUtil.calculateBackgroundImageSize(
+                backgroundImage, backgroundArea.getWidth(), backgroundArea.getHeight());
         PdfXObject backgroundXObject = backgroundImage.getImage();
         if (backgroundXObject == null) {
             backgroundXObject = backgroundImage.getForm();
@@ -583,15 +585,15 @@ public abstract class AbstractRenderer implements IRenderer {
             backgroundImage.getBackgroundPosition().calculatePositionValues(0, 0, xPosition, yPosition);
             backgroundXObject = createXObject(gradientBuilder, backgroundArea, drawContext.getDocument());
             imageRectangle = new Rectangle(backgroundArea.getLeft() + xPosition.getValue(),
-                    backgroundArea.getTop() - backgroundXObject.getHeight() - yPosition.getValue(),
-                    backgroundXObject.getWidth(), backgroundXObject.getHeight());
+                    backgroundArea.getTop() - imageWidthAndHeight[1] - yPosition.getValue(),
+                    imageWidthAndHeight[0], imageWidthAndHeight[1]);
         } else {
             backgroundImage.getBackgroundPosition().calculatePositionValues(
-                    backgroundArea.getWidth() - backgroundImage.getWidth(),
-                    backgroundArea.getHeight() - backgroundImage.getHeight(), xPosition, yPosition);
+                    backgroundArea.getWidth() - imageWidthAndHeight[0],
+                    backgroundArea.getHeight() - imageWidthAndHeight[1], xPosition, yPosition);
             imageRectangle = new Rectangle(backgroundArea.getLeft() + xPosition.getValue(),
-                    backgroundArea.getTop() - backgroundImage.getHeight() - yPosition.getValue(),
-                    backgroundImage.getWidth(), backgroundImage.getHeight());
+                    backgroundArea.getTop() - imageWidthAndHeight[1] - yPosition.getValue(),
+                    imageWidthAndHeight[0], imageWidthAndHeight[1]);
         }
         if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);

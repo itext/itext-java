@@ -66,6 +66,7 @@ import com.itextpdf.layout.property.BackgroundImage;
 import com.itextpdf.layout.property.BackgroundPosition;
 import com.itextpdf.layout.property.BackgroundRepeat;
 import com.itextpdf.layout.property.BlendMode;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
@@ -197,6 +198,163 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
             doc.add(new Paragraph(textElement));
 
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    //TODO DEVSIX-4370 first pixel near the border is redrawn by another image
+    public void backgroundImageWithPercentWidth() throws IOException, InterruptedException {
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
+
+        String outFileName = DESTINATION_FOLDER + "backgroundImageWithPercentWidth.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPercentWidth.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
+            Document doc = new Document(pdfDocument);
+            Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
+            textElement.setFontSize(50);
+            backgroundImage.getBackgroundSize().setBackgroundSizeToValues(UnitValue.createPercentValue(30), null);
+            textElement.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+            doc.add(new Paragraph(textElement));
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    //TODO DEVSIX-4370 first pixel near the border is redrawn by another image
+    public void backgroundImageWithPercentHeight() throws IOException, InterruptedException {
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
+
+        String outFileName = DESTINATION_FOLDER + "backgroundImageWithPercentHeight.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPercentHeight.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
+            Document doc = new Document(pdfDocument);
+            Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
+            textElement.setFontSize(50);
+            backgroundImage.getBackgroundSize().setBackgroundSizeToValues(null, UnitValue.createPercentValue(30));
+            textElement.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+            doc.add(new Paragraph(textElement));
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    //TODO DEVSIX-4370 first pixel near the border is redrawn by another image
+    public void backgroundImageWithPercentHeightAndWidth() throws IOException, InterruptedException {
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
+
+        String outFileName = DESTINATION_FOLDER + "backgroundImageWithPercentHeightAndWidth.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPercentHeightAndWidth.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
+            Document doc = new Document(pdfDocument);
+            Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
+            textElement.setFontSize(50);
+            backgroundImage.getBackgroundSize().setBackgroundSizeToValues(UnitValue.createPercentValue(20),
+                    UnitValue.createPercentValue(20));
+            textElement.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+            doc.add(new Paragraph(textElement));
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    //TODO DEVSIX-4370 first pixel near the border is redrawn by another image
+    public void backgroundImageWithPointWidth() throws IOException, InterruptedException {
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
+
+        String outFileName = DESTINATION_FOLDER + "backgroundImageWithPointWidth.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPointWidth.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
+            Document doc = new Document(pdfDocument);
+            Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
+            textElement.setFontSize(50);
+            backgroundImage.getBackgroundSize().setBackgroundSizeToValues(UnitValue.createPointValue(15), null);
+            textElement.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+            doc.add(new Paragraph(textElement));
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    //TODO DEVSIX-4370 first pixel near the border is redrawn by another image
+    public void backgroundImageWithPointHeight() throws IOException, InterruptedException {
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
+
+        String outFileName = DESTINATION_FOLDER + "backgroundImageWithPointHeight.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPointHeight.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
+            Document doc = new Document(pdfDocument);
+            Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
+            textElement.setFontSize(50);
+            backgroundImage.getBackgroundSize().setBackgroundSizeToValues(null, UnitValue.createPointValue(20));
+            textElement.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+            doc.add(new Paragraph(textElement));
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    //TODO DEVSIX-4370 first pixel near the border is redrawn by another image
+    public void backgroundImageWithPointHeightAndWidth() throws IOException, InterruptedException {
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
+
+        String outFileName = DESTINATION_FOLDER + "backgroundImageWithPointHeightAndWidth.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPointHeightAndWidth.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
+            Document doc = new Document(pdfDocument);
+            Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
+            textElement.setFontSize(50);
+            backgroundImage.getBackgroundSize().setBackgroundSizeToValues(UnitValue.createPointValue(50),
+                    UnitValue.createPointValue(100));
+            textElement.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+            doc.add(new Paragraph(textElement));
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    //TODO DEVSIX-4370 first pixel near the border is redrawn by another image
+    public void backgroundImageWithLowWidthAndHeight() throws IOException, InterruptedException {
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
+
+        String outFileName = DESTINATION_FOLDER + "backgroundImageWithLowWidthAndHeight.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithLowWidthAndHeight.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
+            Document doc = new Document(pdfDocument);
+            Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
+            textElement.setFontSize(50);
+            backgroundImage.getBackgroundSize().setBackgroundSizeToValues(UnitValue.createPointValue(-1),
+                    UnitValue.createPointValue(-1));
+            textElement.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+            doc.add(new Paragraph(textElement));
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
