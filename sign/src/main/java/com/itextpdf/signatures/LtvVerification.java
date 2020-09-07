@@ -186,8 +186,9 @@ public class LtvVerification {
      * @param level the validation options to include
      * @param certInclude certificate inclusion options
      * @return true if a validation was generated, false otherwise
-     * @throws GeneralSecurityException
-     * @throws IOException
+     * @throws GeneralSecurityException when requested cryptographic algorithm or security provider
+     * is not available
+     * @throws IOException signals that an I/O exception has occurred
      */
     public boolean addVerification(String signatureName, IOcspClient ocsp, ICrlClient crl, CertificateOption certOption, Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
         if (used)
@@ -272,8 +273,9 @@ public class LtvVerification {
      * @param crls collection of crls
      * @param certs collection of certificates
      * @return boolean
-     * @throws IOException
-     * @throws GeneralSecurityException
+     * @throws IOException signals that an I/O exception has occurred
+     * @throws GeneralSecurityException when requested cryptographic algorithm or security provider
+     * is not available
      */
     public boolean addVerification(String signatureName, Collection<byte[]> ocsps, Collection<byte[]> crls, Collection<byte[]> certs) throws IOException, GeneralSecurityException {
         if (used)
@@ -327,9 +329,8 @@ public class LtvVerification {
 
     /**
      * Merges the validation with any validation already in the document or creates a new one.
-     * @throws IOException
      */
-    public void merge() throws IOException {
+    public void merge() {
         if (used || validated.size() == 0)
             return;
         used = true;

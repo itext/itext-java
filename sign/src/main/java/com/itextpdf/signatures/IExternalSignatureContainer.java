@@ -59,7 +59,7 @@ public interface IExternalSignatureContainer {
      * Produces the container with the signature.
      * @param data the data to sign
      * @return a container with the signature and other objects, like CRL and OCSP. The container will generally be a PKCS7 one.
-     * @throws GeneralSecurityException
+     * @throws GeneralSecurityException the general security exception
      */
     byte[] sign(InputStream data) throws GeneralSecurityException;
 
