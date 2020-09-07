@@ -67,6 +67,7 @@ import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -74,24 +75,25 @@ import org.junit.experimental.categories.Category;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import java.net.MalformedURLException;
+
 import java.util.Arrays;
 import java.util.List;
 
 @Category(IntegrationTest.class)
 public class BackgroundImageTest extends ExtendedITextTest {
-
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/BackgroundImageTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/BackgroundImageTest/";
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/BackgroundImageTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/BackgroundImageTest/";
 
     @BeforeClass
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void backgroundImage() throws IOException, InterruptedException {
-        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg"));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
         BackgroundImage backgroundImage = new BackgroundImage(xObject);
 
         Assert.assertTrue(backgroundImage.isRepeatX());
@@ -103,8 +105,8 @@ public class BackgroundImageTest extends ExtendedITextTest {
     @Test
     public void backgroundMultipleImagesTest() throws IOException, InterruptedException {
         List<BackgroundImage> images = Arrays.asList(
-                new BackgroundImage(new PdfImageXObject(ImageDataFactory.create(sourceFolder + "rock_texture.jpg")), new BackgroundRepeat(false, true)),
-                new BackgroundImage(new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg")), new BackgroundRepeat(true, false)));
+                new BackgroundImage(new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "rock_texture.jpg")), new BackgroundRepeat(false, true)),
+                new BackgroundImage(new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg")), new BackgroundRepeat(true, false)));
         backgroundImageGenericTest("backgroundMultipleImages", images);
     }
 
@@ -133,7 +135,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
     @Test
     public void backgroundImageForText() throws IOException, InterruptedException {
-        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg"));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
         BackgroundImage backgroundImage = new BackgroundImage(xObject);
 
         Assert.assertTrue(backgroundImage.isRepeatX());
@@ -141,8 +143,8 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
         Assert.assertTrue(backgroundImage.isBackgroundSpecified());
 
-        String outFileName = destinationFolder + "backgroundImageForText.pdf";
-        String cmpFileName = sourceFolder + "cmp_backgroundImageForText.pdf";
+        String outFileName = DESTINATION_FOLDER + "backgroundImageForText.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageForText.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
             Document doc = new Document(pdfDocument);
@@ -156,12 +158,12 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void backgroundImageWithoutRepeatX() throws IOException, InterruptedException {
-        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg"));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
         BackgroundImage backgroundImage = new BackgroundImage(xObject, new BackgroundRepeat(false, true));
 
         Assert.assertFalse(backgroundImage.isRepeatX());
@@ -172,7 +174,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
     @Test
     public void backgroundImageWithoutRepeatY() throws IOException, InterruptedException {
-        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg"));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
         BackgroundImage backgroundImage = new BackgroundImage(xObject, new BackgroundRepeat(true, false));
 
         Assert.assertTrue(backgroundImage.isRepeatX());
@@ -183,7 +185,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
     @Test
     public void backgroundImageWithoutRepeatXY() throws IOException, InterruptedException {
-        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg"));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
         BackgroundImage backgroundImage = new BackgroundImage(xObject, new BackgroundRepeat(false, false));
 
         Assert.assertFalse(backgroundImage.isRepeatX());
@@ -193,12 +195,11 @@ public class BackgroundImageTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-3108
     public void backgroundXObject() throws IOException, InterruptedException {
         String filename = "backgroundXObject";
 
         String fileName = filename + ".pdf";
-        String outFileName = destinationFolder + fileName;
+        String outFileName = DESTINATION_FOLDER + fileName;
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
             BackgroundImage backgroundImage = new BackgroundImage(createFormXObject(pdfDocument));
@@ -211,12 +212,11 @@ public class BackgroundImageTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-3108
     public void backgroundXObjectWithoutRepeatX() throws IOException, InterruptedException {
         String filename = "backgroundXObjectWithoutRepeatX";
 
         String fileName = filename + ".pdf";
-        String outFileName = destinationFolder + fileName;
+        String outFileName = DESTINATION_FOLDER + fileName;
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
             BackgroundImage backgroundImage = new BackgroundImage(createFormXObject(pdfDocument),
@@ -230,12 +230,11 @@ public class BackgroundImageTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-3108
     public void backgroundXObjectWithoutRepeatY() throws IOException, InterruptedException {
         String filename = "backgroundXObjectWithoutRepeatY";
 
         String fileName = filename + ".pdf";
-        String outFileName = destinationFolder + fileName;
+        String outFileName = DESTINATION_FOLDER + fileName;
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
             BackgroundImage backgroundImage = new BackgroundImage(createFormXObject(pdfDocument),
@@ -249,12 +248,11 @@ public class BackgroundImageTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-3108
     public void backgroundXObjectWithoutRepeatXY() throws IOException, InterruptedException {
         String filename = "backgroundXObjectWithoutRepeatXY";
 
         String fileName = filename + ".pdf";
-        String outFileName = destinationFolder + fileName;
+        String outFileName = DESTINATION_FOLDER + fileName;
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
             BackgroundImage backgroundImage = new BackgroundImage(createFormXObject(pdfDocument),
@@ -268,13 +266,12 @@ public class BackgroundImageTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-3108
-    public void backgroundXObjectAndImage() throws IOException, InterruptedException {
-        String filename = "backgroundXObjectAndImage";
+    public void backgroundXObjectAndImageTest() throws IOException, InterruptedException {
+        String filename = "backgroundXObjectAndImageTest";
 
         String fileName = filename + ".pdf";
-        String outFileName = destinationFolder + fileName;
-        String cmpFileName = sourceFolder + "cmp_" + filename + ".pdf";
+        String outFileName = DESTINATION_FOLDER + fileName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + filename + ".pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
 
@@ -290,7 +287,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
 
             Div div = new Div().add(new Paragraph(text + text + text));
-            PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg"));
+            PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
             BackgroundImage backgroundImage = new BackgroundImage(imageXObject);
 
             div.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
@@ -304,13 +301,13 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
             pdfDocument.close();
 
-            Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+            Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
 
         }
     }
 
     private PdfFormXObject createFormXObject(PdfDocument pdfDocument) throws MalformedURLException {
-        ImageData image = ImageDataFactory.create(sourceFolder + "itis.jpg");
+        ImageData image = ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg");
         PdfFormXObject template = new PdfFormXObject(new Rectangle(image.getWidth(), image.getHeight()));
         PdfCanvas canvas = new PdfCanvas(template, pdfDocument);
         canvas.addImage(image, 0, 0, image.getWidth(), false).flush();
@@ -334,8 +331,8 @@ public class BackgroundImageTest extends ExtendedITextTest {
             }
         }
 
-        String outFileName = destinationFolder + filename + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_" + filename + ".pdf";
+        String outFileName = DESTINATION_FOLDER + filename + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + filename + ".pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
         Document doc = new Document(pdfDocument);
@@ -359,14 +356,14 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     private void backgroundXObjectGenericTest(String filename, BackgroundImage backgroundImage, PdfDocument pdfDocument) throws IOException, InterruptedException {
         Assert.assertTrue(backgroundImage.isBackgroundSpecified());
 
-        String outFileName = destinationFolder + filename + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_" + filename + ".pdf";
+        String outFileName = DESTINATION_FOLDER + filename + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + filename + ".pdf";
         Document doc = new Document(pdfDocument);
 
         String text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
@@ -384,7 +381,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 }
 

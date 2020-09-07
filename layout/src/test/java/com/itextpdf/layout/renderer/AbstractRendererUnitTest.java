@@ -61,6 +61,7 @@ import com.itextpdf.layout.property.BackgroundRepeat;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -115,7 +116,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
             PdfXObject object = null;
 
             @Override
-            public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) {
+            public PdfCanvas addXObjectFittedIntoRectangle(PdfXObject xObject, Rectangle rect) {
                 ++counter[0];
                 if (object == xObject) {
                     return null;
@@ -159,7 +160,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
             PdfXObject object = null;
 
             @Override
-            public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) {
+            public PdfCanvas addXObjectFittedIntoRectangle(PdfXObject xObject, Rectangle rect) {
                 ++counter[0];
                 if (object == xObject) {
                     return null;
@@ -203,7 +204,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
             PdfXObject object = null;
 
             @Override
-            public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) {
+            public PdfCanvas addXObjectFittedIntoRectangle(PdfXObject xObject, Rectangle rect) {
                 ++counter[0];
                 if (object == xObject) {
                     return null;
@@ -247,7 +248,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
             PdfXObject object = null;
 
             @Override
-            public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) {
+            public PdfCanvas addXObjectFittedIntoRectangle(PdfXObject xObject, Rectangle rect) {
                 ++counter[0];
                 if (object == xObject) {
                     return null;
@@ -293,7 +294,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
             PdfXObject object = null;
 
             @Override
-            public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) {
+            public PdfCanvas addXObjectFittedIntoRectangle(PdfXObject xObject, Rectangle rect) {
                 if (object == xObject) {
                     return null;
                 }

@@ -76,10 +76,13 @@ import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.imageio.ImageIO;
+
 import org.slf4j.LoggerFactory;
 
 /**

@@ -562,15 +562,12 @@ public abstract class AbstractRenderer implements IRenderer {
                 if (backgroundXObject == null) {
                     backgroundXObject = backgroundImage.getForm();
                 }
-                // TODO: DEVSIX-3108 due to invalid logic of `PdfCanvas.addXObject(PdfXObject, Rectangle)`
-                //  for PDfFormXObject (invalid scaling) for now the imageRectangle initialization
-                //  for gradient uses width and height = 1. For all other cases the logic left as it was.
                 Rectangle imageRectangle;
                 if (backgroundXObject == null) {
                     backgroundXObject = AbstractRenderer.createXObject(backgroundImage.getLinearGradientBuilder(),
                             backgroundArea, drawContext.getDocument());
-                    imageRectangle = new Rectangle(backgroundArea.getX(),
-                            backgroundArea.getTop() - backgroundXObject.getHeight(), 1, 1);
+                    imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundXObject.getHeight(),
+                            backgroundXObject.getWidth(), backgroundXObject.getHeight());
                 } else {
                     imageRectangle = new Rectangle(backgroundArea.getX(),
                             backgroundArea.getTop() - backgroundImage.getHeight(),
@@ -602,7 +599,7 @@ public abstract class AbstractRenderer implements IRenderer {
         do {
             imageRectangle.setX(initialX);
             do {
-                drawContext.getCanvas().addXObject(backgroundXObject, imageRectangle);
+                drawContext.getCanvas().addXObjectFittedIntoRectangle(backgroundXObject, imageRectangle);
                 imageRectangle.moveRight(imageRectangle.getWidth());
             }
             while (backgroundImage.isRepeatX() && imageRectangle.getLeft() < backgroundArea.getRight());
