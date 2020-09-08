@@ -93,6 +93,8 @@ public class PdfSplitter {
      * If original document is tagged, then by default all resultant document will also be tagged.
      * This could be changed with this flag - if set to false, resultant documents will be not tagged, even if
      * original document is tagged.
+     *
+     * @param preserveTagged defines whether the resultant documents need to be tagged
      */
     public void setPreserveTagged(boolean preserveTagged) {
         this.preserveTagged = preserveTagged;
@@ -102,6 +104,8 @@ public class PdfSplitter {
      * If original document has outlines, then by default all resultant document will also have outlines.
      * This could be changed with this flag - if set to false, resultant documents won't contain outlines, even if
      * original document had them.
+     *
+     * @param preserveOutlines defines whether the resultant documents will preserve outlines or not
      */
     public void setPreserveOutlines(boolean preserveOutlines) {
         this.preserveOutlines = preserveOutlines;
@@ -274,6 +278,7 @@ public class PdfSplitter {
      * and places the entire hierarchy in a separate document ( outlines and pages ) .
      *
      * @param outlineTitles list of outline titles .
+     * @return Collection of {@link PdfDocument} which contains split parts of a document
      */
     public List<PdfDocument> splitByOutlines(List<String> outlineTitles) {
         if (outlineTitles == null || outlineTitles.size() == 0) {

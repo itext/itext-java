@@ -109,6 +109,7 @@ public class TaggedPdfReaderTool {
     /**
      * Converts the current tag structure into an XML file with default encoding (UTF-8).
      * @param os the output stream to save XML file to
+     * @throws java.io.IOException in case of any I/O error
      */
     public void convertToXml(OutputStream os)
             throws IOException {
@@ -119,6 +120,7 @@ public class TaggedPdfReaderTool {
      * Converts the current tag structure into an XML file with provided encoding.
      * @param os the output stream to save XML file to
      * @param charset the charset of the resultant XML file
+     * @throws java.io.IOException in case of any I/O error
      */
     public void convertToXml(OutputStream os, String charset)
             throws IOException {

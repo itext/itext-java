@@ -371,7 +371,7 @@ public final class ImageDataFactory {
     }
 
     /**
-     * Create a {@Link ImageData} instance from a Jpeg image url
+     * Create an {@link ImageData} instance from a Jpeg image url
      * @param url URL
      * @return the created JPEG image
      */

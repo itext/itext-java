@@ -453,6 +453,8 @@ public class PdfDictionary extends PdfObject {
     /**
      *
      * @param asDirect true is to extract direct object always.
+     * @param key the key to get the value from the map
+     * @return key if indirect reference is present
      */
     public PdfObject get(PdfName key, boolean asDirect) {
         if (!asDirect)

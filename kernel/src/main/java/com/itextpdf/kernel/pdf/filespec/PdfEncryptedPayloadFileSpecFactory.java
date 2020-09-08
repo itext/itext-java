@@ -103,6 +103,7 @@ public class PdfEncryptedPayloadFileSpecFactory {
      * @param mimeType            mime-type of the file
      * @param fileParameter       Pdfdictionary containing file parameters
      * @return PdfFileSpec containing the file specification of the encrypted payload
+     * @throws java.io.IOException in case of any I/O error
      */
     public static PdfFileSpec create(PdfDocument doc, String filePath, PdfEncryptedPayload encryptedPayload, PdfName mimeType, PdfDictionary fileParameter) throws IOException {
         return addEncryptedPayloadDictionary(PdfFileSpec.createEmbeddedFileSpec(doc, filePath, generateDescription(encryptedPayload), generateFileDisplay(encryptedPayload), mimeType, fileParameter, PdfName.EncryptedPayload), encryptedPayload);
@@ -116,6 +117,7 @@ public class PdfEncryptedPayloadFileSpecFactory {
      * @param encryptedPayload    the encrypted payload dictionary
      * @param mimeType            mime-type of the file
      * @return PdfFileSpec containing the file specification of the encrypted payload
+     * @throws java.io.IOException in case of any I/O error
      */
     public static PdfFileSpec create(PdfDocument doc, String filePath, PdfEncryptedPayload encryptedPayload, PdfName mimeType) throws IOException {
         return create(doc, filePath, encryptedPayload, mimeType, null);
@@ -128,6 +130,7 @@ public class PdfEncryptedPayloadFileSpecFactory {
      * @param filePath            path to the encrypted file
      * @param encryptedPayload    the encrypted payload dictionary
      * @return PdfFileSpec containing the file specification of the encrypted payload
+     * @throws java.io.IOException in case of any I/O error
      */
     public static PdfFileSpec create(PdfDocument doc, String filePath, PdfEncryptedPayload encryptedPayload) throws IOException {
         return create(doc, filePath, encryptedPayload, null, null);

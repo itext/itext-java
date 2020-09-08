@@ -219,6 +219,7 @@ public abstract class PdfObject implements Serializable {
      * Marks object to be saved as indirect.
      *
      * @param document a document the indirect reference will belong to.
+     * @param reference indirect reference which will be associated with this document
      * @return object itself.
      */
     public PdfObject makeIndirect(PdfDocument document, PdfIndirectReference reference) {
@@ -352,6 +353,8 @@ public abstract class PdfObject implements Serializable {
      * Some objects are vital for the living period of {@link PdfDocument} or may be
      * prevented from releasing by high-level entities dealing with the objects.
      * Also it's not possible to release the objects that have been modified.
+     *
+     * @return true if releasing this object is forbidden, otherwise false
      */
     public boolean isReleaseForbidden() {
         return checkState(FORBID_RELEASE);
@@ -501,6 +504,7 @@ public abstract class PdfObject implements Serializable {
      * Sets special states of current object.
      *
      * @param state special flag of current object
+     * @return this {@link PdfObject}
      */
     protected PdfObject setState(short state) {
         this.state |= state;
@@ -511,6 +515,7 @@ public abstract class PdfObject implements Serializable {
      * Clear state of the flag of current object.
      *
      * @param state special flag state to clear
+     * @return this {@link PdfObject}
      */
     protected PdfObject clearState(short state) {
         this.state &= (short) ~state;

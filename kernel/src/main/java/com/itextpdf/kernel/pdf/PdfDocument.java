@@ -2084,6 +2084,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Update XMP metadata values from {@link PdfDocumentInfo}.
      *
      * @return the XMPMetadata
+     * @throws XMPException if the file is not well-formed XML or if parsing fails.
      */
     protected XMPMeta updateDefaultXmpMetadata() throws XMPException {
         XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(getXmpMetadata(true));
