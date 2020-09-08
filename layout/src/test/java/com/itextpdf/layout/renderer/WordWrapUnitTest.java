@@ -40,6 +40,7 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.FloatPropertyValue;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -330,7 +331,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
 
         LineRenderer.LastFittingChildRendererData lastFittingChildRendererData = lineRenderer
                 .getIndexAndLayoutResultOfTheLastRendererToRemainOnTheLine(THAI_WORD.length() + 1,
-                        specialScriptLayoutResults, false, new ArrayList<IRenderer>());
+                        specialScriptLayoutResults, false, new ArrayList<IRenderer>(), true);
 
         Assert.assertEquals(5, lastFittingChildRendererData.childIndex);
         Assert.assertEquals(LayoutResult.NOTHING, lastFittingChildRendererData.childLayoutResult.getStatus());
@@ -365,7 +366,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
 
         LineRenderer.LastFittingChildRendererData lastFittingChildRendererData = lineRenderer
                 .getIndexAndLayoutResultOfTheLastRendererToRemainOnTheLine(indexOfThaiRenderer,
-                        specialScriptLayoutResults, false, new ArrayList<IRenderer>());
+                        specialScriptLayoutResults, false, new ArrayList<IRenderer>(), true);
 
         Assert.assertEquals(indexOfThaiRenderer, lastFittingChildRendererData.childIndex);
         Assert.assertEquals(LayoutResult.NOTHING, lastFittingChildRendererData.childLayoutResult.getStatus());
@@ -405,7 +406,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
 
         LineRenderer.LastFittingChildRendererData lastFittingChildRendererData = lineRenderer
                 .getIndexAndLayoutResultOfTheLastRendererToRemainOnTheLine(THAI_WORD.length() - 1,
-                        specialScriptLayoutResults, false, new ArrayList<IRenderer>());
+                        specialScriptLayoutResults, false, new ArrayList<IRenderer>(), true);
 
         Assert.assertEquals(THAI_WORD.length() - 1, lastFittingChildRendererData.childIndex);
         Assert.assertEquals(specialScriptLayoutResults.get(THAI_WORD.length() - 1), lastFittingChildRendererData.childLayoutResult);
@@ -880,5 +881,58 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         LineRenderer.SpecialScriptsContainingSequenceStatus status =
                 lineRenderer.getSpecialScriptsContainingSequenceStatus(0);
         Assert.assertEquals(LineRenderer.SpecialScriptsContainingSequenceStatus.FORCED_SPLIT, status);
+    }
+
+    @Test
+    public void overflowXSingleWordSingleRenderer() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document document = new Document(pdfDocument);
+
+        TextRenderer textRenderer = new TextRenderer(new Text(THAI_WORD));
+        textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
+        textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(5)));
+
+        LineRenderer lineRenderer = new LineRenderer();
+        lineRenderer.setParent(document.getRenderer());
+        lineRenderer.addChild(textRenderer);
+
+        float minWidth = lineRenderer.getMinMaxWidth().getMinWidth();
+
+        lineRenderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        LayoutArea layoutArea = new LayoutArea(1, new Rectangle(minWidth / 2, 100));
+        LayoutResult layoutResult = lineRenderer.layout(new LayoutContext(layoutArea));
+
+        Assert.assertEquals(LayoutResult.FULL, layoutResult.getStatus());
+    }
+
+    @Test
+    public void overflowXSingleWordOneGlyphPerTextRenderer() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document document = new Document(pdfDocument);
+
+        TextRenderer textRendererForMinMaxWidth = new TextRenderer(new Text(THAI_WORD));
+        textRendererForMinMaxWidth.setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
+        textRendererForMinMaxWidth.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(5)));
+        textRendererForMinMaxWidth.setParent(document.getRenderer());
+        float minWidth = textRendererForMinMaxWidth.getMinMaxWidth().getMinWidth();
+
+        LineRenderer lineRenderer = new LineRenderer();
+        lineRenderer.setParent(document.getRenderer());
+
+        TextRenderer[] textRenderers = new TextRenderer[THAI_WORD.length()];
+        for (int i = 0; i < textRenderers.length; i++) {
+            textRenderers[i] = new TextRenderer(new Text(""));
+            textRenderers[i].setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
+            textRenderers[i].setText(new String(new char[] {THAI_WORD.charAt(i)}));
+            textRenderers[i].setSpecialScriptsWordBreakPoints(
+                    new ArrayList<Integer>(Arrays.asList(i + 1 != textRenderers.length ? -1 : 1)));
+            lineRenderer.addChild(textRenderers[i]);
+        }
+
+        lineRenderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        LayoutArea layoutArea = new LayoutArea(1, new Rectangle(minWidth / 2, 100));
+        LayoutResult layoutResult = lineRenderer.layout(new LayoutContext(layoutArea));
+
+        Assert.assertEquals(LayoutResult.FULL, layoutResult.getStatus());
     }
 }

@@ -376,7 +376,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         nonBreakingHyphenRelatedChunkWidth = 0;
                     }
                 }
-                if (firstCharacterWhichExceedsAllowedWidth == -1) {
+                if (firstCharacterWhichExceedsAllowedWidth == -1 || !isOverflowFit(overflowX)) {
                     nonBreakablePartWidthWhichDoesNotExceedAllowedWidth += glyphWidth + xAdvance;
                 }
                 nonBreakablePartFullWidth += glyphWidth + xAdvance;
@@ -520,7 +520,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     }
 
                     boolean specialScriptWordSplit = textContainsSpecialScriptGlyphs(true)
-                            && !isSplitForcedByNewLine;
+                            && !isSplitForcedByNewLine && isOverflowFit(overflowX);
                     if ((nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied)
                             || forcePartialSplitOnFirstChar
                             || -1 != nonBreakingHyphenRelatedChunkStart
@@ -1243,6 +1243,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     void setSpecialScriptFirstNotFittingIndex(int lastFittingIndex) {
         this.specialScriptFirstNotFittingIndex = lastFittingIndex;
+    }
+
+    int getSpecialScriptFirstNotFittingIndex() {
+        return specialScriptFirstNotFittingIndex;
     }
 
     @Override
