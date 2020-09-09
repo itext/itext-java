@@ -45,19 +45,22 @@ package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontNames;
+import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.TrueTypeFont;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Note. For TrueType FontNames.getStyle() is the same to Subfamily(). So, we shouldn't add style to /BaseFont.
@@ -88,10 +91,28 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     PdfTrueTypeFont(PdfDictionary fontDictionary) {
         super(fontDictionary);
         newFont = false;
-        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUnicode);
-        fontProgram = DocTrueTypeFont.createFontProgram(fontDictionary, fontEncoding, toUnicode);
-        embedded = ((IDocFontProgram) fontProgram).getFontFile() != null;
         subset = false;
+        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUnicode);
+
+        PdfName baseFontName = fontDictionary.getAsName(PdfName.BaseFont);
+        // Section 9.6.3 (ISO-32000-1): A TrueType font dictionary may contain the same entries as a Type 1 font
+        // dictionary (see Table 111), with these differences...
+        // Section 9.6.2.2. (ISO-32000-1) associate standard fonts with Type1 fonts but there does not
+        // seem to be a strict requirement on the subtype
+        // Cases when a font with /TrueType subtype has base font which is one of the Standard 14 fonts
+        // does not seem to be forbidden and it's handled by many PDF tools, so we handle it here as well
+        if (baseFontName != null && StandardFonts.isStandardFont(baseFontName.getValue())
+                && !fontDictionary.containsKey(PdfName.FontDescriptor) && !fontDictionary.containsKey(PdfName.Widths)) {
+            try {
+                fontProgram = FontProgramFactory.createFont(baseFontName.getValue(), true);
+            } catch (IOException e) {
+                throw new PdfException(PdfException.IoExceptionWhileCreatingFont, e);
+            }
+        } else {
+            fontProgram = DocTrueTypeFont.createFontProgram(fontDictionary, fontEncoding, toUnicode);
+        }
+
+        embedded = fontProgram instanceof IDocFontProgram && ((IDocFontProgram) fontProgram).getFontFile() != null;
     }
 
     @Override
@@ -123,7 +144,9 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
     @Override
     public void flush() {
-        if (isFlushed()) return;
+        if (isFlushed()) {
+            return;
+        }
         ensureUnderlyingObjectHasIndirectReference();
         //TODO make subtype class member and simplify this method
         if (newFont) {
