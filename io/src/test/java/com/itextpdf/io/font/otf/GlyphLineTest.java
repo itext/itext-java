@@ -110,6 +110,28 @@ public class GlyphLineTest extends ExtendedITextTest {
     }
 
     @Test
+    public void testAdditionWithActualText() throws IOException {
+        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
+        TrueTypeFont font = new TrueTypeFont(ttf);
+
+        List<Glyph> glyphs = constructGlyphListFromString("Viva France!", font);
+
+        GlyphLine containerLine = new GlyphLine(glyphs);
+        Assert.assertNull(containerLine.actualText);
+
+        containerLine.setActualText(0, 1, "TEST");
+        Assert.assertNotNull(containerLine.actualText);
+        Assert.assertEquals(12, containerLine.actualText.size());
+        Assert.assertEquals("TEST", containerLine.actualText.get(0).value);
+
+        containerLine.add(new GlyphLine(glyphs));
+        Assert.assertEquals(24, containerLine.actualText.size());
+        for (int i = 13; i < 24; i++) {
+            Assert.assertNull(containerLine.actualText.get(i));
+        }
+    }
+
+    @Test
     public void testOtherLinesWithActualTextAddition() throws IOException {
         byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
         TrueTypeFont font = new TrueTypeFont(ttf);

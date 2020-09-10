@@ -220,6 +220,11 @@ public class GlyphLine implements Serializable {
             actualText.addAll(other.actualText.subList(other.start, other.end));
         }
         glyphs.addAll(other.glyphs.subList(other.start, other.end));
+        if (null != actualText) {
+            while (actualText.size() < glyphs.size()) {
+                actualText.add(null);
+            }
+        }
     }
 
     /**
