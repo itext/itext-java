@@ -464,4 +464,36 @@ public class PdfOutlineTest extends ExtendedITextTest {
         Assert.assertNull(root);
         pdfDocument.close();
     }
+
+    @Test
+    //TODO: remove expected exception when DEVSIX-4464 will be fixed
+    public void removePageInDocWithSimpleOutlineTreeStructTest() throws IOException {
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
+
+        String input = sourceFolder + "simpleOutlineTreeStructure.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(input),
+                new PdfWriter(destinationFolder + "removePageInDocWithSimpleOutlineTreeStruct.pdf"));
+        pdfDocument.removePage(2);
+
+        pdfDocument.close();
+
+        Assert.assertEquals(2, pdfDocument.getNumberOfPages());
+    }
+
+    @Test
+    //TODO: remove expected exception when DEVSIX-4464 will be fixed
+    public void removePageInDocWithComplexOutlineTreeStructTest() throws IOException {
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
+
+        String input = sourceFolder + "complexOutlineTreeStructure.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(input),
+                new PdfWriter(destinationFolder + "removePageInDocWithComplexOutlineTreeStruct.pdf"));
+        pdfDocument.removePage(2);
+
+        pdfDocument.close();
+
+        Assert.assertEquals(2, pdfDocument.getNumberOfPages());
+    }
 }
