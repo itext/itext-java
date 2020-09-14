@@ -79,6 +79,37 @@ public class PageSize extends Rectangle implements Cloneable, Serializable {
     public static PageSize LEDGER = new PageSize(1224, 792);
     public static PageSize EXECUTIVE = new PageSize(522, 756);
 
+    public static final Rectangle NOTE = new PageSize(540, 720);
+    public static final Rectangle POSTCARD = new PageSize(283, 416);
+    public static final Rectangle ARCH_E = new PageSize(2592, 3456);
+    public static final Rectangle ARCH_D = new PageSize(1728, 2592);
+    public static final Rectangle ARCH_C = new PageSize(1296, 1728);
+    public static final Rectangle ARCH_B = new PageSize(864, 1296);
+    public static final Rectangle ARCH_A = new PageSize(648, 864);
+    /** This is the American Foolscap format. */
+    public static final Rectangle FLSA = new PageSize(612, 936);
+    /** This is the European Foolscap format. */
+    public static final Rectangle FLSE = new PageSize(648, 936);
+    public static final Rectangle HALFLETTER = new PageSize(396, 612);
+    public static final Rectangle _11X17 = new PageSize(792, 1224);
+    /** This is the ISO 7810 ID-1 format (85.60 x 53.98 mm or 3.370 x 2.125 inch). */
+    public static final Rectangle ID_1 = new PageSize(242.65f, 153);
+    /** This is the ISO 7810 ID-2 format (A7 rotated). */
+    public static final Rectangle ID_2 = new PageSize(297, 210);
+    /** This is the ISO 7810 ID-3 format (B7 rotated). */
+    public static final Rectangle ID_3 = new PageSize(354, 249);
+    public static final Rectangle CROWN_QUARTO = new PageSize(535, 697);
+    public static final Rectangle LARGE_CROWN_QUARTO = new PageSize(569, 731);
+    public static final Rectangle DEMY_QUARTO = new PageSize(620, 782);
+    public static final Rectangle ROYAL_QUARTO = new PageSize(671, 884);
+    public static final Rectangle CROWN_OCTAVO = new PageSize(348, 527);
+    public static final Rectangle LARGE_CROWN_OCTAVO = new PageSize(365, 561);
+    public static final Rectangle DEMY_OCTAVO = new PageSize(391, 612);
+    public static final Rectangle ROYAL_OCTAVO = new PageSize(442, 663);
+    public static final Rectangle SMALL_PAPERBACK = new PageSize(314, 504);
+    public static final Rectangle PENGUIN_SMALL_PAPERBACK = new PageSize(314, 513);
+    public static final Rectangle PENGUIN_LARGE_PAPERBACK = new PageSize(365, 561);
+
     public static PageSize Default = A4;
 
     public PageSize(float width, float height) {
