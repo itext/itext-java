@@ -46,6 +46,7 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.layout.font.Range;
 import com.itextpdf.layout.font.RangeBuilder;
+import com.itextpdf.layout.property.BlendMode;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.styledxmlparser.CommonAttributeConstants;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
@@ -88,6 +89,88 @@ public class CssUtils {
      * Creates a new {@link CssUtils} instance.
      */
     private CssUtils() {
+    }
+
+    /**
+     * Splits the provided {@link String} by comma with respect of brackets.
+     *
+     * @param value to split
+     * @return the {@link List} of split result
+     */
+    public static List<String> splitStringWithComma(final String value) {
+        if (value == null) {
+            return new ArrayList<>();
+        }
+        final List<String> resultList = new ArrayList<>();
+        int lastComma = 0;
+        int notClosedBrackets = 0;
+        for (int i = 0; i < value.length(); ++i) {
+            if (value.charAt(i) == ',' && notClosedBrackets == 0) {
+                resultList.add(value.substring(lastComma, i));
+                lastComma = i + 1;
+            }
+            if (value.charAt(i) == '(') {
+                ++notClosedBrackets;
+            }
+            if (value.charAt(i) == ')') {
+                --notClosedBrackets;
+                notClosedBrackets = Math.max(notClosedBrackets, 0);
+            }
+        }
+        final String lastToken = value.substring(lastComma);
+        if (!lastToken.isEmpty()) {
+            resultList.add(lastToken);
+        }
+        return resultList;
+    }
+
+    /**
+     * Parses the given css blend mode value. If the argument is {@code null} or an unknown blend
+     * mode, then the default css {@link BlendMode#NORMAL} value would be returned.
+     *
+     * @param cssValue the value to parse
+     * @return the {@link BlendMode} instance representing the parsed value
+     */
+    public static BlendMode parseBlendMode(String cssValue) {
+        if (cssValue == null) {
+            return BlendMode.NORMAL;
+        }
+
+        switch (cssValue) {
+            case CommonCssConstants.MULTIPLY:
+                return BlendMode.MULTIPLY;
+            case CommonCssConstants.SCREEN:
+                return BlendMode.SCREEN;
+            case CommonCssConstants.OVERLAY:
+                return BlendMode.OVERLAY;
+            case CommonCssConstants.DARKEN:
+                return BlendMode.DARKEN;
+            case CommonCssConstants.LIGHTEN:
+                return BlendMode.LIGHTEN;
+            case CommonCssConstants.COLOR_DODGE:
+                return BlendMode.COLOR_DODGE;
+            case CommonCssConstants.COLOR_BURN:
+                return BlendMode.COLOR_BURN;
+            case CommonCssConstants.HARD_LIGHT:
+                return BlendMode.HARD_LIGHT;
+            case CommonCssConstants.SOFT_LIGHT:
+                return BlendMode.SOFT_LIGHT;
+            case CommonCssConstants.DIFFERENCE:
+                return BlendMode.DIFFERENCE;
+            case CommonCssConstants.EXCLUSION:
+                return BlendMode.EXCLUSION;
+            case CommonCssConstants.HUE:
+                return BlendMode.HUE;
+            case CommonCssConstants.SATURATION:
+                return BlendMode.SATURATION;
+            case CommonCssConstants.COLOR:
+                return BlendMode.COLOR;
+            case CommonCssConstants.LUMINOSITY:
+                return BlendMode.LUMINOSITY;
+            case CommonCssConstants.NORMAL:
+            default:
+                return BlendMode.NORMAL;
+        }
     }
 
     /**

@@ -46,11 +46,13 @@ package com.itextpdf.styledxmlparser.css.validate;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssBackgroundValidator;
+import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssBlendModeValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssColorValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssEnumValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssNumericValueValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssQuotesValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssTransformValidator;
+import com.itextpdf.styledxmlparser.css.validate.impl.datatype.ArrayDataTypeValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.declaration.MultiTypeDeclarationValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.declaration.SingleTypeDeclarationValidator;
 
@@ -122,6 +124,8 @@ public class CssDeclarationValidationMaster {
                 new CssBackgroundValidator(CommonCssConstants.BACKGROUND_CLIP)));
         DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_ORIGIN, new SingleTypeDeclarationValidator(
                 new CssBackgroundValidator(CommonCssConstants.BACKGROUND_ORIGIN)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_BLEND_MODE, new SingleTypeDeclarationValidator(
+                new ArrayDataTypeValidator(new CssBlendModeValidator())));
     }
 
     /**

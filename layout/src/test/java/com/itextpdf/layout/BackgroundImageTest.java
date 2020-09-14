@@ -49,6 +49,7 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
 import com.itextpdf.kernel.colors.gradients.GradientColorStop;
 import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder;
+import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder.GradientStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -61,6 +62,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.BackgroundImage;
 import com.itextpdf.layout.property.BackgroundRepeat;
+import com.itextpdf.layout.property.BlendMode;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
@@ -304,6 +306,101 @@ public class BackgroundImageTest extends ExtendedITextTest {
             Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
 
         }
+    }
+
+    @Test
+    public void backgroundImageWithLinearGradientAndNormalBlendModeTest() throws IOException, InterruptedException {
+        blendModeTest(BlendMode.NORMAL);
+    }
+
+    @Test
+    public void backgroundImageWithLinearGradientAndMultiplyBlendModeTest() throws IOException, InterruptedException {
+        blendModeTest(BlendMode.MULTIPLY);
+    }
+
+    @Test
+    public void backgroundImageWithLinearGradientAndScreenBlendModeTest() throws IOException, InterruptedException {
+        blendModeTest(BlendMode.SCREEN);
+    }
+
+    @Test
+    public void backgroundImageWithLinearGradientAndOverlayBlendModeTest() throws IOException, InterruptedException {
+        blendModeTest(BlendMode.OVERLAY);
+    }
+
+    @Test
+    public void backgroundImageWithLinearGradientAndDarkenBlendModeTest() throws IOException, InterruptedException {
+        blendModeTest(BlendMode.DARKEN);
+    }
+
+    @Test
+    public void backgroundImageWithLinearGradientAndLightenBlendModeTest() throws IOException, InterruptedException {
+        blendModeTest(BlendMode.LIGHTEN);
+    }
+
+    @Test
+    public void backgroundImageWithLinearGradientAndColorDodgeBlendModeTest() throws IOException, InterruptedException {
+        blendModeTest(BlendMode.COLOR_DODGE);
+    }
+
+    @Test
+    public void backgroundImageWithLinearGradientAndColorBurnBlendModeTest() throws IOException, InterruptedException {
+        blendModeTest(BlendMode.COLOR_BURN);
+    }
+
+    @Test
+    public void backgroundImageWithLinearGradientAndHardLightBlendModeTest() throws IOException, InterruptedException {
+        blendModeTest(BlendMode.HARD_LIGHT);
+    }
+
+    @Test
+    public void backgroundImageWithLinearGradientAndSoftLightBlendModeTest() throws IOException, InterruptedException {
+        blendModeTest(BlendMode.SOFT_LIGHT);
+    }
+
+    @Test
+    public void backgroundImageWithLinearGradientAndDifferenceBlendModeTest() throws IOException, InterruptedException {
+        blendModeTest(BlendMode.DIFFERENCE);
+    }
+
+    @Test
+    public void backgroundImageWithLinearGradientAndExclusionBlendModeTest() throws IOException, InterruptedException {
+        blendModeTest(BlendMode.EXCLUSION);
+    }
+
+    @Test
+    public void backgroundImageWithLinearGradientAndHueBlendModeTest() throws IOException, InterruptedException {
+        blendModeTest(BlendMode.HUE);
+    }
+
+    @Test
+    public void backgroundImageWithLinearGradientAndSaturationBlendModeTest() throws IOException, InterruptedException {
+        blendModeTest(BlendMode.SATURATION);
+    }
+
+    @Test
+    public void backgroundImageWithLinearGradientAndColorBlendModeTest() throws IOException, InterruptedException {
+        blendModeTest(BlendMode.COLOR);
+    }
+
+    @Test
+    public void backgroundImageWithLinearGradientAndLuminosityBlendModeTest() throws IOException, InterruptedException {
+        blendModeTest(BlendMode.LUMINOSITY);
+    }
+
+    private void blendModeTest(BlendMode blendMode) throws IOException, InterruptedException {
+        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+                .addColorStop(new GradientColorStop(ColorConstants.BLACK.getColorValue()))
+                .addColorStop(new GradientColorStop(ColorConstants.WHITE.getColorValue()));
+        BackgroundImage backgroundImage = new BackgroundImage(gradientBuilder);
+        AbstractLinearGradientBuilder topGradientBuilder = new StrategyBasedLinearGradientBuilder()
+                .setGradientDirectionAsStrategy(GradientStrategy.TO_RIGHT)
+                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
+                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
+                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
+        BackgroundImage topBackgroundImage = new BackgroundImage(topGradientBuilder, blendMode);
+        backgroundImageGenericTest("backgroundImageWithLinearGradientAndBlendMode_"
+                + blendMode.getPdfRepresentation().getValue(), Arrays.asList(topBackgroundImage, backgroundImage));
     }
 
     private PdfFormXObject createFormXObject(PdfDocument pdfDocument) throws MalformedURLException {

@@ -275,6 +275,26 @@ public class CommonCssConstants {
     public static final String COLOR = "color";
 
     /**
+     * The Constant COLOR_DODGE.
+     */
+    public static final String COLOR_DODGE = "color-dodge";
+
+    /**
+     * The Constant COLOR_BURN.
+     */
+    public static final String COLOR_BURN = "color-burn";
+
+    /**
+     * The Constant DARKEN.
+     */
+    public static final String DARKEN = "darken";
+
+    /**
+     * The Constant DIFFERENCE.
+     */
+    public static final String DIFFERENCE = "difference";
+
+    /**
      * The Constant DIRECTION.
      */
     public static final String DIRECTION = "direction";
@@ -288,6 +308,11 @@ public class CommonCssConstants {
      * The Constant EMPTY_CELLS.
      */
     public static final String EMPTY_CELLS = "empty-cells";
+
+    /**
+     * The Constant EXCLUSION.
+     */
+    public static final String EXCLUSION = "exclusion";
 
     /**
      * The Constant FLOAT.
@@ -390,6 +415,16 @@ public class CommonCssConstants {
     public static final String HANGING_PUNCTUATION = "hanging-punctuation";
 
     /**
+     * The Constant HARD_LIGHT.
+     */
+    public static final String HARD_LIGHT = "hard-light";
+
+    /**
+     * The Constant HUE.
+     */
+    public static final String HUE = "hue";
+
+    /**
      * The Constant HYPHENS.
      */
     public static final String HYPHENS = "hyphens";
@@ -457,6 +492,11 @@ public class CommonCssConstants {
      * The Constant MIN_HEIGHT.
      */
     public static final String MIN_HEIGHT = "min-height";
+
+    /**
+     * The Constant MULTIPLY.
+     */
+    public static final String MULTIPLY = "multiply";
 
     /**
      * The Constant OPACITY.
@@ -880,6 +920,11 @@ public class CommonCssConstants {
     public static final String LEFT = "left";
 
     /**
+     * The Constant LIGHTEN.
+     */
+    public static final String LIGHTEN = "lighten";
+
+    /**
      * The Constant LIGHTER.
      */
     public static final String LIGHTER = "lighter";
@@ -913,6 +958,11 @@ public class CommonCssConstants {
      * The Constant LOWER_ROMAN.
      */
     public static final String LOWER_ROMAN = "lower-roman";
+
+    /**
+     * The Constant LUMINOSITY.
+     */
+    public static final String LUMINOSITY = "luminosity";
 
     /**
      * The Constant MANUAL.
@@ -985,9 +1035,14 @@ public class CommonCssConstants {
     public static final String OUTSET = "outset";
 
     /**
+     * The Constant value OVERLAY.
+     */
+    public static final String OVERLAY = "overlay";
+
+    /**
      * The Constant value OVERLINE.
      */
-    public static final String OVERLINE= "overline";
+    public static final String OVERLINE = "overline";
 
     /**
      * The Constant PADDING_BOX.
@@ -1035,6 +1090,11 @@ public class CommonCssConstants {
     public static final String ROUND = "round";
 
     /**
+     * The Constant SATURATION.
+     */
+    public static final String SATURATION = "saturation";
+
+    /**
      * The Constant SCALE.
      */
     public static final String SCALE = "scale";
@@ -1048,6 +1108,11 @@ public class CommonCssConstants {
      * The Constant SCALE_Y.
      */
     public static final String SCALE_Y = "scaley";
+
+    /**
+     * The Constant SCREEN.
+     */
+    public static final String SCREEN = "screen";
 
     /**
      * The Constant SCROLL.
@@ -1088,6 +1153,11 @@ public class CommonCssConstants {
      * The Constant SMALLER.
      */
     public static final String SMALLER = "smaller";
+
+    /**
+     * The Constant SOFT_LIGHT.
+     */
+    public static final String SOFT_LIGHT = "soft-light";
 
     /**
      * The Constant SOLID.
@@ -1258,6 +1328,14 @@ public class CommonCssConstants {
      */
     public static final Set<String> BORDER_STYLE_VALUES = Collections.unmodifiableSet(new HashSet<>(
             Arrays.asList(new String[]{NONE, HIDDEN, DOTTED, DASHED, SOLID, DOUBLE, GROOVE, RIDGE, INSET, OUTSET})));
+
+    /**
+     * The Constant BLEND_MODE_VALUES.
+     */
+    public static final Set<String> BLEND_MODE_VALUES = Collections.unmodifiableSet(new HashSet<>(
+            Arrays.asList(new String[]{NORMAL, MULTIPLY, SCREEN, OVERLAY, DARKEN, LIGHTEN,
+                    COLOR_DODGE, COLOR_BURN, HARD_LIGHT, SOFT_LIGHT, DIFFERENCE, EXCLUSION, HUE,
+                    SATURATION, COLOR, LUMINOSITY})));
 
     /**
      * The Constant FONT_ABSOLUTE_SIZE_KEYWORDS.

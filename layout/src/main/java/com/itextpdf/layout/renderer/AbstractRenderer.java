@@ -85,6 +85,7 @@ import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BackgroundImage;
 import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.BlendMode;
 import com.itextpdf.layout.property.BorderRadius;
 import com.itextpdf.layout.property.BoxSizingPropertyValue;
 import com.itextpdf.layout.property.HorizontalAlignment;
@@ -592,6 +593,10 @@ public abstract class AbstractRenderer implements IRenderer {
     private static void moveImageRectangle(final Rectangle imageRectangle, final BackgroundImage backgroundImage,
                                            final DrawContext drawContext, final PdfXObject backgroundXObject,
                                            final Rectangle backgroundArea) {
+        BlendMode blendMode = backgroundImage.getBlendMode();
+        if (blendMode != BlendMode.NORMAL) {
+            drawContext.getCanvas().setExtGState(new PdfExtGState().setBlendMode(blendMode.getPdfRepresentation()));
+        }
         final float initialX = backgroundImage.isRepeatX() ? (imageRectangle.getX() - imageRectangle.getWidth())
                 : imageRectangle.getX();
         final float initialY = backgroundImage.isRepeatY() ? imageRectangle.getTop() : imageRectangle.getY();

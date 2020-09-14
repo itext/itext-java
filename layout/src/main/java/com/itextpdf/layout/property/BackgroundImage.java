@@ -49,6 +49,8 @@ import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 
 public class BackgroundImage {
 
+    private static final BlendMode DEFAULT_BLEND_MODE = BlendMode.NORMAL;
+
     protected PdfXObject image;
 
     /**
@@ -69,16 +71,44 @@ public class BackgroundImage {
 
     protected AbstractLinearGradientBuilder linearGradientBuilder;
 
+    private BlendMode blendMode = DEFAULT_BLEND_MODE;
+
     /**
      * Creates a new {@link BackgroundImage} instance.
      *
-     * @param image background image property. {@link PdfXObject} instance.
-     * @param repeat background repeat property. {@link BackgroundRepeat} instance.
+     * @param image     background image property. {@link PdfXObject} instance.
+     * @param repeat    background repeat property. {@link BackgroundRepeat} instance.
+     * @param blendMode the image's blend mode. {@link BlendMode} instance.
      */
-    private BackgroundImage(final PdfXObject image, final BackgroundRepeat repeat) {
+    private BackgroundImage(final PdfXObject image, final BackgroundRepeat repeat, final BlendMode blendMode) {
         this.image = image;
         this.repeatX = repeat.isRepeatX();
         this.repeatY = repeat.isRepeatY();
+        if (blendMode != null) {
+            this.blendMode = blendMode;
+        }
+    }
+
+    /**
+     * Creates a new {@link BackgroundImage} instance.
+     *
+     * @param image     background image property. {@link PdfImageXObject} instance.
+     * @param repeat    background repeat property. {@link BackgroundRepeat} instance.
+     * @param blendMode the image's blend mode. {@link BlendMode} instance.
+     */
+    public BackgroundImage(final PdfImageXObject image, final BackgroundRepeat repeat, final BlendMode blendMode) {
+        this((PdfXObject) image, repeat, blendMode);
+    }
+
+    /**
+     * Creates a new {@link BackgroundImage} instance.
+     *
+     * @param image     background image property. {@link PdfFormXObject} instance.
+     * @param repeat    background repeat property. {@link BackgroundRepeat} instance.
+     * @param blendMode the image's blend mode. {@link BlendMode} instance.
+     */
+    public BackgroundImage(final PdfFormXObject image, final BackgroundRepeat repeat, final BlendMode blendMode) {
+        this((PdfXObject) image, repeat, blendMode);
     }
 
     /**
@@ -88,7 +118,7 @@ public class BackgroundImage {
      * @param repeat background repeat property. {@link BackgroundRepeat} instance.
      */
     public BackgroundImage(final PdfImageXObject image, final BackgroundRepeat repeat) {
-        this((PdfXObject) image, repeat);
+        this(image, repeat, DEFAULT_BLEND_MODE);
     }
 
     /**
@@ -98,7 +128,7 @@ public class BackgroundImage {
      * @param repeat background repeat property. {@link BackgroundRepeat} instance.
      */
     public BackgroundImage(final PdfFormXObject image, final BackgroundRepeat repeat) {
-        this((PdfXObject) image, repeat);
+        this(image, repeat, DEFAULT_BLEND_MODE);
     }
 
     /**
@@ -129,7 +159,7 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfImageXObject image, final boolean repeatX, final boolean repeatY) {
-        this((PdfXObject) image, new BackgroundRepeat(repeatX, repeatY));
+        this((PdfXObject) image, new BackgroundRepeat(repeatX, repeatY), DEFAULT_BLEND_MODE);
     }
 
     /**
@@ -142,13 +172,33 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfFormXObject image, final boolean repeatX, final boolean repeatY) {
-        this((PdfXObject) image, new BackgroundRepeat(repeatX, repeatY));
+        this((PdfXObject) image, new BackgroundRepeat(repeatX, repeatY), DEFAULT_BLEND_MODE);
     }
 
-    public BackgroundImage(AbstractLinearGradientBuilder linearGradientBuilder) {
+    /**
+     * Creates a new {@link BackgroundImage} instance with linear gradient.
+     *
+     * @param linearGradientBuilder the linear gradient builder representing the background image.
+     *                              {@link AbstractLinearGradientBuilder} instance.
+     */
+    public BackgroundImage(final AbstractLinearGradientBuilder linearGradientBuilder) {
+        this(linearGradientBuilder, DEFAULT_BLEND_MODE);
+    }
+
+    /**
+     * Creates a new {@link BackgroundImage} instance with linear gradient and custom blending mode.
+     *
+     * @param linearGradientBuilder the linear gradient builder representing the background image.
+     *                              {@link AbstractLinearGradientBuilder} instance.
+     * @param blendMode             the image's blend mode. {@link BlendMode} instance.
+     */
+    public BackgroundImage(final AbstractLinearGradientBuilder linearGradientBuilder, final BlendMode blendMode) {
         this.linearGradientBuilder = linearGradientBuilder;
         this.repeatX = false;
         this.repeatY = false;
+        if (blendMode != null) {
+            this.blendMode = blendMode;
+        }
     }
 
     public PdfImageXObject getImage() {
@@ -181,5 +231,14 @@ public class BackgroundImage {
 
     public float getHeight() {
         return (float) image.getHeight();
+    }
+
+    /**
+     * Get the image's blend mode.
+     *
+     * @return the {@link BlendMode} representation of the image's blend mode
+     */
+    public BlendMode getBlendMode() {
+        return blendMode;
     }
 }
