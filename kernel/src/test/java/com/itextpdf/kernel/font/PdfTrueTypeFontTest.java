@@ -1,5 +1,6 @@
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -19,6 +20,8 @@ public class PdfTrueTypeFontTest extends ExtendedITextTest {
 
     @Test
     public void testReadingPdfTrueTypeFontWithType1StandardFontProgram() throws IOException {
+        // We deliberately use an existing PDF in this test and not simplify the test to create the
+        // PDF object structure on the fly to be able to easily inspect the PDF with other processors
         String filePath = SOURCE_FOLDER + "trueTypeFontWithStandardFontProgram.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(filePath));
 
@@ -27,6 +30,29 @@ public class PdfTrueTypeFontTest extends ExtendedITextTest {
 
         Assert.assertEquals(542, pdfFont.getFontProgram().getAvgWidth());
         Assert.assertEquals(556, pdfFont.getGlyph('a').getWidth());
+    }
+
+    @Test
+    public void isBuiltInTest() {
+        PdfFont font = PdfFontFactory.createFont(createTrueTypeFontDictionaryWithStandardHelveticaFont());
+        Assert.assertTrue(font instanceof PdfTrueTypeFont);
+        Assert.assertTrue(((PdfTrueTypeFont) font).isBuiltInFont());
+    }
+
+    @Test
+    public void isNotBuiltInTest() throws IOException {
+        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "NotoSans-Regular_v.1.8.2.ttf");
+        Assert.assertTrue(font instanceof PdfTrueTypeFont);
+        Assert.assertFalse(((PdfTrueTypeFont) font).isBuiltInFont());
+    }
+
+    private static PdfDictionary createTrueTypeFontDictionaryWithStandardHelveticaFont() {
+        PdfDictionary fontDictionary = new PdfDictionary();
+        fontDictionary.put(PdfName.Type, PdfName.Font);
+        fontDictionary.put(PdfName.Subtype, PdfName.TrueType);
+        fontDictionary.put(PdfName.Encoding, PdfName.WinAnsiEncoding);
+        fontDictionary.put(PdfName.BaseFont, new PdfName(StandardFonts.HELVETICA));
+        return fontDictionary;
     }
 
 }

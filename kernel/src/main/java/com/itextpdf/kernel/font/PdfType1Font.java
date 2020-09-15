@@ -141,6 +141,9 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean isBuiltInFont() {
         return ((Type1Font) getFontProgram()).isBuiltInFont();

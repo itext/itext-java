@@ -421,6 +421,10 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         }
     }
 
+    /**
+     * Indicates that the font is built in, i.e. it is one of the 14 Standard fonts
+     * @return {@code true} in case the font is a Standard font and {@code false} otherwise
+     */
     protected boolean isBuiltInFont() {
         return false;
     }

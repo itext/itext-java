@@ -47,6 +47,7 @@ import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontNames;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.TrueTypeFont;
+import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.kernel.PdfException;
@@ -231,5 +232,13 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                 }
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean isBuiltInFont() {
+        return fontProgram instanceof Type1Font && ((Type1Font) fontProgram).isBuiltInFont();
     }
 }
