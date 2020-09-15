@@ -50,6 +50,7 @@ import com.itextpdf.styledxmlparser.css.resolve.CssDefaults;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.ShorthandResolverFactory;
 import com.itextpdf.styledxmlparser.css.util.CssBackgroundUtils;
+import com.itextpdf.styledxmlparser.css.util.CssBackgroundUtils.BackgroundPropertyType;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 
 import com.itextpdf.styledxmlparser.css.validate.CssDeclarationValidationMaster;
@@ -215,34 +216,65 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
         }
         removeSpacesAroundSlash(props);
         final Set<CssBackgroundUtils.BackgroundPropertyType> usedTypes = new HashSet<>();
+        if (processAllSpecifiedProperties(props, resolvedProps, usedTypes)) {
+            fillNotProcessedProperties(resolvedProps, usedTypes);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private static boolean processAllSpecifiedProperties(List<String> props,
+            Map<CssBackgroundUtils.BackgroundPropertyType, String> resolvedProps,
+            Set<CssBackgroundUtils.BackgroundPropertyType> usedTypes) {
+        final List<String> boxValues = new ArrayList<>();
         boolean slashEncountered = false;
+        boolean propertyProcessedCorrectly = true;
         for (final String value : props) {
-            final boolean isBackgroundOriginUsed =
-                    usedTypes.contains(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_ORIGIN);
             final int slashCharInd = value.indexOf('/');
             if (slashCharInd > 0 && slashCharInd < value.length() - 1 && !slashEncountered && !value.contains("url(")) {
                 slashEncountered = true;
-                if (!processValueWithSlash(value, slashCharInd, isBackgroundOriginUsed, resolvedProps, usedTypes)) {
-                    return false;
-                }
+                propertyProcessedCorrectly = processValueWithSlash(value, slashCharInd, resolvedProps, usedTypes);
             } else {
-                if (!putPropertyBasedOnType(changePropertyType(CssBackgroundUtils.resolveBackgroundPropertyType(value),
-                        slashEncountered, isBackgroundOriginUsed), value, resolvedProps, usedTypes)) {
+                final BackgroundPropertyType type = CssBackgroundUtils.resolveBackgroundPropertyType(value);
+                if (BackgroundPropertyType.BACKGROUND_ORIGIN_OR_CLIP == type) {
+                    boxValues.add(value);
+                } else {
+                    propertyProcessedCorrectly = putPropertyBasedOnType(changePropertyType(type, slashEncountered),
+                            value, resolvedProps, usedTypes);
+                }
+            }
+            if (!propertyProcessedCorrectly) {
+                return false;
+            }
+        }
+        return addBackgroundClipAndBackgroundOriginBoxValues(boxValues, resolvedProps, usedTypes);
+    }
+
+    private static boolean addBackgroundClipAndBackgroundOriginBoxValues(List<String> boxValues,
+            Map<BackgroundPropertyType, String> resolvedProps,
+            Set<BackgroundPropertyType> usedTypes) {
+        if (boxValues.size() == 1) {
+            return putPropertyBasedOnType(BackgroundPropertyType.BACKGROUND_CLIP,
+                    boxValues.get(0), resolvedProps, usedTypes);
+        } else if (boxValues.size() >= 2) {
+            for (int i = 0; i < 2; i++) {
+                final BackgroundPropertyType type =
+                        i == 0 ? BackgroundPropertyType.BACKGROUND_ORIGIN : BackgroundPropertyType.BACKGROUND_CLIP;
+                if (!putPropertyBasedOnType(type, boxValues.get(i), resolvedProps, usedTypes)) {
                     return false;
                 }
             }
         }
-        fillNotProcessedProperties(resolvedProps, usedTypes);
         return true;
     }
 
-    private static boolean processValueWithSlash(String value, int slashCharInd, boolean isBackgroundOriginUsed,
+    private static boolean processValueWithSlash(String value, int slashCharInd,
                                                  Map<CssBackgroundUtils.BackgroundPropertyType, String> resolvedProps,
                                                  Set<CssBackgroundUtils.BackgroundPropertyType> usedTypes) {
         final String value1 = value.substring(0, slashCharInd);
         final CssBackgroundUtils.BackgroundPropertyType typeBeforeSlash =
-                changePropertyType(CssBackgroundUtils.resolveBackgroundPropertyType(value1),
-                        false, isBackgroundOriginUsed);
+                changePropertyType(CssBackgroundUtils.resolveBackgroundPropertyType(value1), false);
         if (typeBeforeSlash != CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION &&
                 typeBeforeSlash != CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION_OR_SIZE) {
             LOGGER.error(MessageFormatUtil.format(LogMessageConstant.UNKNOWN_PROPERTY,
@@ -252,8 +284,7 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
 
         final String value2 = value.substring(slashCharInd + 1);
         final CssBackgroundUtils.BackgroundPropertyType typeAfterSlash =
-                changePropertyType(CssBackgroundUtils.resolveBackgroundPropertyType(value2),
-                        true, isBackgroundOriginUsed);
+                changePropertyType(CssBackgroundUtils.resolveBackgroundPropertyType(value2), true);
         if (typeAfterSlash != CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_SIZE &&
                 typeAfterSlash != CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION_OR_SIZE) {
             LOGGER.error(MessageFormatUtil.format(LogMessageConstant.UNKNOWN_PROPERTY,
@@ -282,8 +313,7 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
 
     private static CssBackgroundUtils.BackgroundPropertyType changePropertyType(
             CssBackgroundUtils.BackgroundPropertyType propertyType,
-            boolean slashEncountered,
-            boolean isBackgroundOriginUsed) {
+            boolean slashEncountered) {
         if (propertyType == CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION_X
                 || propertyType == CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION_Y) {
             propertyType = CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION;
@@ -297,10 +327,6 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
         }
         if (propertyType == CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION && slashEncountered) {
             return CssBackgroundUtils.BackgroundPropertyType.UNDEFINED;
-        }
-        if (propertyType == CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_ORIGIN_OR_CLIP) {
-            return isBackgroundOriginUsed ? CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_CLIP :
-                    CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_ORIGIN;
         }
         return propertyType;
     }

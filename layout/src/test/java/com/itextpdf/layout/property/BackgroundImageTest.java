@@ -70,18 +70,16 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import java.net.MalformedURLException;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Category(IntegrationTest.class)
 public class BackgroundImageTest extends ExtendedITextTest {
@@ -100,6 +98,44 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
         Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
         Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
+
+        backgroundImageGenericTest("backgroundImage", backgroundImage);
+    }
+
+    @Test
+    public void copyConstructorTest() throws MalformedURLException {
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
+        BackgroundImage image = new BackgroundImage.Builder().setImage(xObject).build();
+        Field[] imageFields = image.getClass().getDeclaredFields();
+        BackgroundImage copyImage = new BackgroundImage(image);
+        Field[] copyImageFields = copyImage.getClass().getDeclaredFields();
+        Assert.assertEquals(imageFields.length, copyImageFields.length);
+        for (int i = 0; i < imageFields.length; i++) {
+            Field imageField = imageFields[i];
+            Field copyImageField = copyImageFields[i];
+            Assert.assertEquals(imageField, copyImageField);
+        }
+    }
+
+    @Test
+    public void backgroundImageClipOriginDefaultsTest() throws IOException, InterruptedException {
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
+
+        Assert.assertEquals(BackgroundBox.BORDER_BOX, backgroundImage.getBackgroundClip());
+        Assert.assertEquals(BackgroundBox.PADDING_BOX, backgroundImage.getBackgroundOrigin());
+
+        backgroundImageGenericTest("backgroundImage", backgroundImage);
+    }
+
+    @Test
+    public void backgroundImageClipOriginTest() throws IOException, InterruptedException {
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject)
+                .setBackgroundClip(BackgroundBox.CONTENT_BOX).setBackgroundOrigin(BackgroundBox.CONTENT_BOX).build();
+
+        Assert.assertEquals(BackgroundBox.CONTENT_BOX, backgroundImage.getBackgroundClip());
+        Assert.assertEquals(BackgroundBox.CONTENT_BOX, backgroundImage.getBackgroundOrigin());
 
         backgroundImageGenericTest("backgroundImage", backgroundImage);
     }

@@ -45,8 +45,12 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
 import com.itextpdf.kernel.colors.gradients.GradientColorStop;
+import com.itextpdf.kernel.colors.gradients.GradientColorStop.OffsetType;
+import com.itextpdf.kernel.colors.gradients.GradientSpreadMethod;
+import com.itextpdf.kernel.colors.gradients.LinearGradientBuilder;
 import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -56,8 +60,13 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
+import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.BackgroundBox;
 import com.itextpdf.layout.property.BackgroundImage;
+import com.itextpdf.layout.property.BackgroundImage.Builder;
 import com.itextpdf.layout.property.BackgroundPosition;
 import com.itextpdf.layout.property.BackgroundRepeat;
 import com.itextpdf.layout.property.BackgroundRepeat.BackgroundRepeatValue;
@@ -66,12 +75,12 @@ import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Category(UnitTest.class)
 public class AbstractRendererUnitTest extends ExtendedITextTest {
@@ -506,5 +515,110 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                         .setPositionY(BackgroundPosition.PositionY.CENTER).setXShift(new UnitValue(UnitValue.PERCENT, 10))).build()));
         renderer.drawBackground(context);
         Assert.assertEquals(listBytes.size(), counter[0]);
+    }
+
+    @Test
+    public void backgroundColorClipTest() {
+        final PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        final PdfCanvas pdfCanvas = new PdfCanvas(pdfDocument.addNewPage()) {
+            @Override
+            public PdfCanvas rectangle(double x, double y, double width, double height) {
+                Assert.assertEquals(130.0, x, 0);
+                Assert.assertEquals(230.0, y, 0);
+                Assert.assertEquals(240.0, width, 0);
+                Assert.assertEquals(340.0, height, 0);
+                return this;
+            }
+        };
+        final DrawContext drawContext = new DrawContext(pdfDocument, pdfCanvas);
+        final AbstractRenderer renderer = new DivRenderer(new Div().setPadding(20).setBorder(new DashedBorder(10)));
+        renderer.occupiedArea = new LayoutArea(1, new Rectangle(100f, 200f, 300f, 400f));
+        renderer.setProperty(Property.BACKGROUND, new Background(new DeviceRgb(), 1, BackgroundBox.CONTENT_BOX));
+        renderer.drawBackground(drawContext);
+    }
+
+    @Test
+    public void backgroundImageClipOriginNoRepeatTest() {
+        final PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        final byte[] bytes = new byte[] {54, 25, 47, 15, 2, 2, 2, 44, 55, 77, 86, 24};
+        final PdfXObject rawImage = new PdfImageXObject(ImageDataFactory.createRawImage(bytes)) {
+            @Override
+            public float getWidth() {
+                return 50f;
+            }
+
+            @Override
+            public float getHeight() {
+                return 50f;
+            }
+        };
+        final PdfCanvas pdfCanvas = new PdfCanvas(pdfDocument.addNewPage()) {
+            @Override
+            public PdfCanvas rectangle(double x, double y, double width, double height) {
+                Assert.assertEquals(130.0, x, 0);
+                Assert.assertEquals(230.0, y, 0);
+                Assert.assertEquals(240.0, width, 0);
+                Assert.assertEquals(340.0, height, 0);
+                return this;
+            }
+
+            @Override
+            public PdfCanvas addXObjectFittedIntoRectangle(PdfXObject xObject, Rectangle rect) {
+                Assert.assertEquals(rawImage, xObject);
+                Assert.assertEquals(100f, rect.getX(), 0);
+                Assert.assertEquals(550f, rect.getY(), 0);
+                Assert.assertEquals(50f, rect.getWidth(), 0);
+                Assert.assertEquals(50f, rect.getHeight(), 0);
+                return this;
+            }
+        };
+        final DrawContext drawContext = new DrawContext(pdfDocument, pdfCanvas);
+        final AbstractRenderer renderer = new DivRenderer(new Div().setPadding(20).setBorder(new DashedBorder(10)));
+        renderer.occupiedArea = new LayoutArea(1, new Rectangle(100f, 200f, 300f, 400f));
+        final BackgroundImage backgroundImage = new Builder().setImage(rawImage)
+                .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT)).setBackgroundClip(BackgroundBox.CONTENT_BOX)
+                .setBackgroundOrigin(BackgroundBox.BORDER_BOX).build();
+        renderer.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+        renderer.drawBackground(drawContext);
+    }
+
+    @Test
+    public void backgroundLinearGradientClipOriginNoRepeatTest() {
+        final PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        final byte[] bytes = new byte[] {54, 25, 47, 15, 2, 2, 2, 44, 55, 77, 86, 24};
+        final PdfCanvas pdfCanvas = new PdfCanvas(pdfDocument.addNewPage()) {
+            @Override
+            public PdfCanvas rectangle(double x, double y, double width, double height) {
+                Assert.assertEquals(130.0, x, 0);
+                Assert.assertEquals(230.0, y, 0);
+                Assert.assertEquals(240.0, width, 0);
+                Assert.assertEquals(340.0, height, 0);
+                return this;
+            }
+
+            @Override
+            public PdfCanvas addXObjectFittedIntoRectangle(PdfXObject xObject, Rectangle rect) {
+                Assert.assertEquals(100f, rect.getX(), 0);
+                Assert.assertEquals(200f, rect.getY(), 0);
+                Assert.assertEquals(300f, rect.getWidth(), 0);
+                Assert.assertEquals(400f, rect.getHeight(), 0);
+                return this;
+            }
+        };
+        final DrawContext drawContext = new DrawContext(pdfDocument, pdfCanvas);
+        final AbstractRenderer renderer = new DivRenderer(new Div().setPadding(20).setBorder(new DashedBorder(10)));
+        renderer.occupiedArea = new LayoutArea(1, new Rectangle(100f, 200f, 300f, 400f));
+        Rectangle targetBoundingBox = new Rectangle(50f, 150f, 300f, 300f);
+        AbstractLinearGradientBuilder gradientBuilder = new LinearGradientBuilder()
+                .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f,
+                        targetBoundingBox.getRight() - 100f, targetBoundingBox.getTop() - 100f)
+                .setSpreadMethod(GradientSpreadMethod.PAD)
+                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+        final BackgroundImage backgroundImage = new Builder().setLinearGradientBuilder(gradientBuilder)
+                .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT)).setBackgroundClip(BackgroundBox.CONTENT_BOX)
+                .setBackgroundOrigin(BackgroundBox.BORDER_BOX).build();
+        renderer.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+        renderer.drawBackground(drawContext);
     }
 }

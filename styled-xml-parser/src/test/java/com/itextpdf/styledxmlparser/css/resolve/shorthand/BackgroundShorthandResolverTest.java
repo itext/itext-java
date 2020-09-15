@@ -93,7 +93,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
                 "background-position: 25%",
                 "background-size: 50px 150px",
                 "background-repeat: repeat",
-                "background-origin: border-box",
+                "background-origin: padding-box",
                 "background-clip: border-box",
                 "background-attachment: fixed"
         ));

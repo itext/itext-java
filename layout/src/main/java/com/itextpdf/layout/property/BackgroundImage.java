@@ -80,29 +80,26 @@ public class BackgroundImage {
 
     private final BackgroundSize backgroundSize;
 
+    private final BackgroundBox backgroundClip;
+
+    private final BackgroundBox backgroundOrigin;
+
     /**
-     * Creates a new {@link BackgroundImage} instance.
+     * Creates a copy of passed {@link BackgroundImage} instance.
      *
-     * @param image                 background-image property. {@link PdfXObject} instance.
-     * @param repeat                background-repeat property. {@link BackgroundRepeat} instance.
-     * @param position              background-position property. {@link BackgroundPosition} instance.
-     * @param backgroundSize        background-size property. {@link BackgroundSize} instance.
-     * @param linearGradientBuilder background-image property. {@link AbstractLinearGradientBuilder} instance.
-     * @param blendMode             the image's blend mode. {@link BlendMode} instance.
+     * @param backgroundImage {@link BackgroundImage} for cloning
      */
-    protected BackgroundImage(PdfXObject image, BackgroundRepeat repeat, BackgroundPosition position,
-                              BackgroundSize backgroundSize, AbstractLinearGradientBuilder linearGradientBuilder,
-                              BlendMode blendMode) {
-        this.image = image;
-        this.repeatX = !repeat.isNoRepeatOnXAxis();
-        this.repeatY = !repeat.isNoRepeatOnYAxis();
-        this.repeat = repeat;
-        this.position = position;
-        this.backgroundSize = backgroundSize;
-        this.linearGradientBuilder = linearGradientBuilder;
-        if (blendMode != null) {
-            this.blendMode = blendMode;
-        }
+    public BackgroundImage(BackgroundImage backgroundImage) {
+        this(backgroundImage.getImage() == null ? (PdfXObject) backgroundImage.getForm() : backgroundImage.getImage(),
+                backgroundImage.getRepeat(),
+                backgroundImage.getBackgroundPosition(),
+                backgroundImage.getBackgroundSize(),
+                backgroundImage.getLinearGradientBuilder(),
+                backgroundImage.getBlendMode(),
+                backgroundImage.getBackgroundClip(),
+                backgroundImage.getBackgroundOrigin());
+        repeatX = backgroundImage.isRepeatX();
+        repeatY = backgroundImage.isRepeatY();
     }
 
     /**
@@ -115,7 +112,8 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfImageXObject image, final BackgroundRepeat repeat, final BlendMode blendMode) {
-        this(image, repeat, new BackgroundPosition(), new BackgroundSize(), null, blendMode);
+        this(image, repeat, new BackgroundPosition(), new BackgroundSize(), null, blendMode,
+                BackgroundBox.BORDER_BOX, BackgroundBox.PADDING_BOX);
     }
 
     /**
@@ -128,7 +126,8 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfFormXObject image, final BackgroundRepeat repeat, final BlendMode blendMode) {
-        this(image, repeat, new BackgroundPosition(), new BackgroundSize(), null, blendMode);
+        this(image, repeat, new BackgroundPosition(), new BackgroundSize(), null, blendMode,
+                BackgroundBox.BORDER_BOX, BackgroundBox.PADDING_BOX);
     }
 
     /**
@@ -140,7 +139,8 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfImageXObject image, final BackgroundRepeat repeat) {
-        this(image, repeat, new BackgroundPosition(), new BackgroundSize(), null, DEFAULT_BLEND_MODE);
+        this(image, repeat, new BackgroundPosition(), new BackgroundSize(), null, DEFAULT_BLEND_MODE,
+                BackgroundBox.BORDER_BOX, BackgroundBox.PADDING_BOX);
     }
 
     /**
@@ -152,7 +152,8 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfFormXObject image, final BackgroundRepeat repeat) {
-        this(image, repeat, new BackgroundPosition(), new BackgroundSize(), null, DEFAULT_BLEND_MODE);
+        this(image, repeat, new BackgroundPosition(), new BackgroundSize(), null, DEFAULT_BLEND_MODE,
+                BackgroundBox.BORDER_BOX, BackgroundBox.PADDING_BOX);
     }
 
     /**
@@ -163,7 +164,8 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfImageXObject image) {
-        this(image, new BackgroundRepeat(), new BackgroundPosition(), new BackgroundSize(), null, DEFAULT_BLEND_MODE);
+        this(image, new BackgroundRepeat(), new BackgroundPosition(), new BackgroundSize(), null, DEFAULT_BLEND_MODE,
+                BackgroundBox.BORDER_BOX, BackgroundBox.PADDING_BOX);
     }
 
     /**
@@ -174,7 +176,8 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfFormXObject image) {
-        this(image, new BackgroundRepeat(), new BackgroundPosition(), new BackgroundSize(), null, DEFAULT_BLEND_MODE);
+        this(image, new BackgroundRepeat(), new BackgroundPosition(), new BackgroundSize(), null, DEFAULT_BLEND_MODE,
+                BackgroundBox.BORDER_BOX, BackgroundBox.PADDING_BOX);
     }
 
     /**
@@ -188,8 +191,9 @@ public class BackgroundImage {
     @Deprecated
     public BackgroundImage(final PdfImageXObject image, final boolean repeatX, final boolean repeatY) {
         this(image, new BackgroundRepeat(repeatX ? BackgroundRepeatValue.REPEAT : BackgroundRepeatValue.NO_REPEAT,
-                repeatY ? BackgroundRepeatValue.REPEAT : BackgroundRepeatValue.NO_REPEAT), new BackgroundPosition(),
-                new BackgroundSize(), null, DEFAULT_BLEND_MODE);
+                        repeatY ? BackgroundRepeatValue.REPEAT : BackgroundRepeatValue.NO_REPEAT),
+                new BackgroundPosition(), new BackgroundSize(), null, DEFAULT_BLEND_MODE,
+                BackgroundBox.BORDER_BOX, BackgroundBox.PADDING_BOX);
     }
 
     /**
@@ -203,8 +207,9 @@ public class BackgroundImage {
     @Deprecated
     public BackgroundImage(final PdfFormXObject image, final boolean repeatX, final boolean repeatY) {
         this(image, new BackgroundRepeat(repeatX ? BackgroundRepeatValue.REPEAT : BackgroundRepeatValue.NO_REPEAT,
-                repeatY ? BackgroundRepeatValue.REPEAT : BackgroundRepeatValue.NO_REPEAT), new BackgroundPosition(),
-                new BackgroundSize(), null, DEFAULT_BLEND_MODE);
+                        repeatY ? BackgroundRepeatValue.REPEAT : BackgroundRepeatValue.NO_REPEAT),
+                new BackgroundPosition(), new BackgroundSize(), null, DEFAULT_BLEND_MODE,
+                BackgroundBox.BORDER_BOX, BackgroundBox.PADDING_BOX);
     }
 
     /**
@@ -230,7 +235,8 @@ public class BackgroundImage {
     @Deprecated
     public BackgroundImage(final AbstractLinearGradientBuilder linearGradientBuilder, final BlendMode blendMode) {
         this(null, new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT), new BackgroundPosition(),
-                new BackgroundSize(), linearGradientBuilder, blendMode);
+                new BackgroundSize(), linearGradientBuilder, blendMode,
+                BackgroundBox.BORDER_BOX, BackgroundBox.PADDING_BOX);
     }
 
     public PdfImageXObject getImage() {
@@ -239,6 +245,37 @@ public class BackgroundImage {
 
     public PdfFormXObject getForm() {
         return image instanceof PdfFormXObject ? (PdfFormXObject) image : null;
+    }
+
+    /**
+     * Creates a new {@link BackgroundImage} instance.
+     *
+     * @param image                 background-image property. {@link PdfXObject} instance.
+     * @param repeat                background-repeat property. {@link BackgroundRepeat} instance.
+     * @param position              background-position property. {@link BackgroundPosition} instance.
+     * @param backgroundSize        background-size property. {@link BackgroundSize} instance.
+     * @param linearGradientBuilder background-image property. {@link AbstractLinearGradientBuilder} instance.
+     * @param blendMode             the image's blend mode. {@link BlendMode} instance.
+     * @param clip                  background-clip property. {@link BackgroundBox} instance.
+     * @param origin                background-origin property. {@link BackgroundBox} instance.
+     */
+    private BackgroundImage(PdfXObject image, BackgroundRepeat repeat, BackgroundPosition position,
+            BackgroundSize backgroundSize, AbstractLinearGradientBuilder linearGradientBuilder,
+            BlendMode blendMode, BackgroundBox clip, BackgroundBox origin) {
+        this.image = image;
+        if (repeat != null) {
+            this.repeatX = !repeat.isNoRepeatOnXAxis();
+            this.repeatY = !repeat.isNoRepeatOnYAxis();
+        }
+        this.repeat = repeat;
+        this.position = position;
+        this.backgroundSize = backgroundSize;
+        this.linearGradientBuilder = linearGradientBuilder;
+        if (blendMode != null) {
+            this.blendMode = blendMode;
+        }
+        this.backgroundClip = clip;
+        this.backgroundOrigin = origin;
     }
 
     /**
@@ -319,10 +356,12 @@ public class BackgroundImage {
     public BackgroundRepeat getRepeat() {
         // Remove this if-blocks after removing repeatX and repeatY
         if (repeatX == repeat.isNoRepeatOnXAxis()) {
-            repeat = new BackgroundRepeat(repeatX ? BackgroundRepeatValue.REPEAT : BackgroundRepeatValue.NO_REPEAT, repeat.getYAxisRepeat());
+            repeat = new BackgroundRepeat(repeatX ? BackgroundRepeatValue.REPEAT : BackgroundRepeatValue.NO_REPEAT,
+                    repeat.getYAxisRepeat());
         }
         if (repeatY == repeat.isNoRepeatOnYAxis()) {
-            repeat = new BackgroundRepeat(repeat.getXAxisRepeat(), repeatY ? BackgroundRepeatValue.REPEAT : BackgroundRepeatValue.NO_REPEAT);
+            repeat = new BackgroundRepeat(repeat.getXAxisRepeat(),
+                    repeatY ? BackgroundRepeatValue.REPEAT : BackgroundRepeatValue.NO_REPEAT);
         }
 
         return repeat;
@@ -338,6 +377,24 @@ public class BackgroundImage {
     }
 
     /**
+     * Gets background-clip.
+     *
+     * @return {@link BackgroundBox}
+     */
+    public BackgroundBox getBackgroundClip() {
+        return backgroundClip;
+    }
+
+    /**
+     * Gets background-origin.
+     *
+     * @return {@link BackgroundBox}
+     */
+    public BackgroundBox getBackgroundOrigin() {
+        return backgroundOrigin;
+    }
+
+    /**
      * {@link BackgroundImage} builder class.
      */
     public static class Builder {
@@ -348,6 +405,8 @@ public class BackgroundImage {
         private BackgroundRepeat repeat = new BackgroundRepeat();
         private BlendMode blendMode = DEFAULT_BLEND_MODE;
         private BackgroundSize backgroundSize = new BackgroundSize();
+        private BackgroundBox clip = BackgroundBox.BORDER_BOX;
+        private BackgroundBox origin = BackgroundBox.PADDING_BOX;
 
         public Builder() {
         }
@@ -430,12 +489,35 @@ public class BackgroundImage {
         }
 
         /**
+         * Sets background-clip.
+         *
+         * @param clip {@link BackgroundBox} to be set.
+         * @return this {@link Builder}.
+         */
+        public Builder setBackgroundClip(BackgroundBox clip) {
+            this.clip = clip;
+            return this;
+        }
+
+        /**
+         * Sets background-origin.
+         *
+         * @param origin {@link BackgroundBox} to be set.
+         * @return this {@link Builder}.
+         */
+        public Builder setBackgroundOrigin(BackgroundBox origin) {
+            this.origin = origin;
+            return this;
+        }
+
+        /**
          * Builds new {@link BackgroundImage} using set fields.
          *
          * @return new {@link BackgroundImage}.
          */
         public BackgroundImage build() {
-            return new BackgroundImage(image, repeat, position, backgroundSize, linearGradientBuilder, blendMode);
+            return new BackgroundImage(image, repeat, position, backgroundSize, linearGradientBuilder, blendMode, clip,
+                    origin);
         }
     }
 }
