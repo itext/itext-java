@@ -170,7 +170,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     }
 
     /**
-     * Checks whether the glyph is appendable, i.e. has valid unicode and code values
+     * Checks whether the glyph is appendable, i.e. has valid unicode and code values.
      *
      * @param glyph not-null {@link Glyph}
      */
@@ -180,6 +180,11 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         return glyph.getCode() > 0 || TextUtil.isWhitespaceOrNonPrintable(glyph.getUnicode());
     }
 
+    /**
+     * Get the font encoding.
+     *
+     * @return the {@link FontEncoding}
+     */
     public FontEncoding getFontEncoding() {
         return fontEncoding;
     }
