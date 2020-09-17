@@ -135,8 +135,8 @@ public class CssBackgroundValidatorTest extends ExtendedITextTest {
         Assert.assertFalse(validator.isValid("bottom bottom bottom bottom"));
 
         validator = new CssBackgroundValidator("background-repeat");
-        Assert.assertTrue(validator.isValid("repeat no-repeat"));
-        Assert.assertFalse(validator.isValid("repeat repeat repeat repeat repeat repeat repeat repeat"));
+        Assert.assertTrue(validator.isValid("repeat round"));
+        Assert.assertFalse(validator.isValid("repeat-x repeat"));
 
         validator = new CssBackgroundValidator("background-image");
         Assert.assertFalse(validator.isValid("url(something.png) url(something2.png)"));
@@ -155,9 +155,15 @@ public class CssBackgroundValidatorTest extends ExtendedITextTest {
     public void multiValuesAllowedForThisValueTest() {
         ICssDataTypeValidator validator = new CssBackgroundValidator("background-repeat");
         Assert.assertTrue(validator.isValid("repeat no-repeat"));
+        Assert.assertTrue(validator.isValid("round space"));
+        Assert.assertTrue(validator.isValid("no-repeat space"));
+        Assert.assertTrue(validator.isValid("round repeat"));
+        Assert.assertTrue(validator.isValid("space repeat"));
 
         Assert.assertFalse(validator.isValid("repeat-x repeat"));
         Assert.assertFalse(validator.isValid("repeat-y no-repeat"));
+        Assert.assertFalse(validator.isValid("round repeat-x"));
+        Assert.assertFalse(validator.isValid("space repeat-x"));
 
         validator = new CssBackgroundValidator("background-size");
         Assert.assertTrue(validator.isValid("5px 5px"));

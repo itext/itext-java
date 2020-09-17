@@ -111,6 +111,8 @@ import org.slf4j.LoggerFactory;
  * this default implementation.
  */
 public abstract class AbstractRenderer implements IRenderer {
+    public static final float OVERLAP_EPSILON = 1e-4f;
+
 
     /**
      * The maximum difference between {@link Rectangle} coordinates to consider rectangles equal
@@ -619,6 +621,8 @@ public abstract class AbstractRenderer implements IRenderer {
         if (blendMode != BlendMode.NORMAL) {
             drawContext.getCanvas().setExtGState(new PdfExtGState().setBlendMode(blendMode.getPdfRepresentation()));
         }
+        final Point whitespace = backgroundImage.getRepeat().
+                prepareRectangleToDrawingAndGetWhitespace(imageRectangle, backgroundArea, backgroundImage.getBackgroundSize());
         final float initialX = imageRectangle.getX();
         int counterY = 1;
         boolean firstDraw = true;
@@ -626,42 +630,46 @@ public abstract class AbstractRenderer implements IRenderer {
         boolean isNextOverlaps;
         do {
             drawPdfXObjectHorizontally(imageRectangle,
-                    backgroundImage, drawContext, backgroundXObject, backgroundArea, firstDraw);
+                    backgroundImage, drawContext, backgroundXObject, backgroundArea, firstDraw, (float) whitespace.getX());
             firstDraw = false;
             imageRectangle.setX(initialX);
-            isCurrentOverlaps = imageRectangle.overlaps(backgroundArea);
+            isCurrentOverlaps = imageRectangle.overlaps(backgroundArea, OVERLAP_EPSILON);
             if (counterY % 2 == 1) {
                 isNextOverlaps =
-                        imageRectangle.moveDown(imageRectangle.getHeight() * counterY).overlaps(backgroundArea);
+                        imageRectangle.moveDown((imageRectangle.getHeight() + (float) whitespace.getY()) * counterY)
+                                .overlaps(backgroundArea, OVERLAP_EPSILON);
             } else {
-                isNextOverlaps = imageRectangle.moveUp(imageRectangle.getHeight() * counterY).overlaps(backgroundArea);
+                isNextOverlaps = imageRectangle.moveUp((imageRectangle.getHeight() + (float) whitespace.getY()) * counterY)
+                        .overlaps(backgroundArea, OVERLAP_EPSILON);
             }
             ++counterY;
-        } while (backgroundImage.isRepeatY() && (isCurrentOverlaps || isNextOverlaps));
+        } while (!backgroundImage.getRepeat().isNoRepeatOnYAxis() && (isCurrentOverlaps || isNextOverlaps));
     }
 
     private static void drawPdfXObjectHorizontally(Rectangle imageRectangle, BackgroundImage backgroundImage,
                                                    DrawContext drawContext, PdfXObject backgroundXObject,
-                                                   Rectangle backgroundArea, boolean firstDraw) {
+                                                   Rectangle backgroundArea, boolean firstDraw, final float xWhitespace) {
         boolean isItFirstDraw = firstDraw;
         int counterX = 1;
         boolean isCurrentOverlaps;
         boolean isNextOverlaps;
         do {
-            if (imageRectangle.overlaps(backgroundArea) || isItFirstDraw) {
+            if (imageRectangle.overlaps(backgroundArea, OVERLAP_EPSILON) || isItFirstDraw) {
                 drawContext.getCanvas().addXObjectFittedIntoRectangle(backgroundXObject, imageRectangle);
                 isItFirstDraw = false;
             }
-            isCurrentOverlaps = imageRectangle.overlaps(backgroundArea);
+            isCurrentOverlaps = imageRectangle.overlaps(backgroundArea, OVERLAP_EPSILON);
             if (counterX % 2 == 1) {
                 isNextOverlaps =
-                        imageRectangle.moveRight(imageRectangle.getWidth() * counterX).overlaps(backgroundArea);
+                        imageRectangle.moveRight((imageRectangle.getWidth() + xWhitespace) * counterX)
+                                .overlaps(backgroundArea, OVERLAP_EPSILON);
             } else {
-                isNextOverlaps = imageRectangle.moveLeft(imageRectangle.getWidth() * counterX).overlaps(backgroundArea);
+                isNextOverlaps = imageRectangle.moveLeft((imageRectangle.getWidth() + xWhitespace) * counterX)
+                        .overlaps(backgroundArea, OVERLAP_EPSILON);
             }
             ++counterX;
         }
-        while (backgroundImage.isRepeatX() && (isCurrentOverlaps || isNextOverlaps));
+        while (!backgroundImage.getRepeat().isNoRepeatOnXAxis() && (isCurrentOverlaps || isNextOverlaps));
     }
 
     /**

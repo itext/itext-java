@@ -60,6 +60,7 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.property.BackgroundImage;
 import com.itextpdf.layout.property.BackgroundPosition;
 import com.itextpdf.layout.property.BackgroundRepeat;
+import com.itextpdf.layout.property.BackgroundRepeat.BackgroundRepeatValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
@@ -144,7 +145,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                     }
                 }).build());
         renderer.drawBackground(context);
-        Assert.assertEquals(66, counter[0]);
+        Assert.assertEquals(50, counter[0]);
     }
 
     @Test
@@ -186,9 +187,9 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                     public float getHeight() {
                         return 10.0f;
                     }
-                }).setBackgroundRepeat(new BackgroundRepeat(false, true)).build());
+                }).setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT, BackgroundRepeatValue.REPEAT)).build());
         renderer.drawBackground(context);
-        Assert.assertEquals(6, counter[0]);
+        Assert.assertEquals(5, counter[0]);
     }
 
     @Test
@@ -230,9 +231,9 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                     public float getHeight() {
                         return 10.0f;
                     }
-                }).setBackgroundRepeat(new BackgroundRepeat(true, false)).build());
+                }).setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.REPEAT, BackgroundRepeatValue.NO_REPEAT)).build());
         renderer.drawBackground(context);
-        Assert.assertEquals(11, counter[0]);
+        Assert.assertEquals(10, counter[0]);
     }
 
     @Test
@@ -275,7 +276,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                         return 10.0f;
                     }
                 }).setBackgroundRepeat(
-                new BackgroundRepeat(false, false)).build());
+                new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT)).build());
         renderer.drawBackground(context);
         Assert.assertEquals(1, counter[0]);
     }

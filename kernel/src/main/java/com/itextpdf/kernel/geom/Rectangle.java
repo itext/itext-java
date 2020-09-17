@@ -260,24 +260,44 @@ public class Rectangle implements Cloneable, Serializable {
     /**
      * Check if this rectangle and the passed rectangle overlap
      *
-     * @param rect a rectangle which is to be checked if it overlaps the passed rectangle.
+     * @param rect a rectangle which is to be checked if it overlaps the passed rectangle
      * @return true if there is overlap of some kind
      */
-    public boolean overlaps(Rectangle rect) {
+    public boolean overlaps(final Rectangle rect) {
+        return overlaps(rect, -EPS);
+    }
+
+    /**
+     * Check if this rectangle and the passed rectangle overlap
+     *
+     * @param rect a rectangle which is to be checked if it overlaps the passed rectangle
+     * @param epsilon if greater than zero, then this is the maximum distance that one rectangle can go to another, but
+     *               they will not overlap, if less than zero, then this is the minimum required distance between the
+     *                rectangles so that they do not overlap
+     * @return true if there is overlap of some kind
+     */
+    public boolean overlaps(final Rectangle rect, final float epsilon) {
         // Two rectangles do not overlap if any of the following holds
-        // 1. the lower left corner of the second rectangle is to the right of the upper-right corner of the first.
-        return !((rect.getX() - (this.getX() + this.getWidth()) > EPS)
 
-                // 2. the lower left corner of the second rectangle is above the upper right corner of the first.
-                || (rect.getY() - (this.getY() + this.getHeight()) > EPS)
+        // The first rectangle lies to the left of the second rectangle or touches very slightly
+        if ((this.getX() + this.getWidth()) < (rect.getX() + epsilon)) {
+            return false;
+        }
+        // The first rectangle lies to the right of the second rectangle or touches very slightly
+        if ((this.getX() + epsilon) > (rect.getX() + rect.getWidth())) {
+            return false;
+        }
 
-                // 3. the upper right corner of the second rectangle is to the left of the lower-left corner of the first.
-                || (this.getX() - (rect.getX() + rect.getWidth()) > EPS)
+        // The first rectangle lies to the bottom of the second rectangle or touches very slightly
+        if ((this.getY() + this.getHeight()) < (rect.getY() + epsilon)) {
+            return false;
+        }
+        // The first rectangle lies to the top of the second rectangle or touches very slightly
+        if ((this.getY() + epsilon) > (rect.getY() + rect.getHeight())) {
+            return false;
+        }
 
-                // 4. the upper right corner of the second rectangle is below the lower left corner of the first.
-                || (this.getY() - (rect.getY() + rect.getHeight()) > EPS)
-        );
-
+        return true;
     }
 
     /**

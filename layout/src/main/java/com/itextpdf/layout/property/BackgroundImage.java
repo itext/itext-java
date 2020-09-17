@@ -46,6 +46,7 @@ import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
+import com.itextpdf.layout.property.BackgroundRepeat.BackgroundRepeatValue;
 
 public class BackgroundImage {
 
@@ -54,26 +55,30 @@ public class BackgroundImage {
     protected PdfXObject image;
 
     /**
-     * Whether the background repeats in the x dimension.
+     * Whether the background-repeat value is not {@link BackgroundRepeatValue#NO_REPEAT} for X axis.
      *
-     * @deprecated Replace this field with {@link BackgroundRepeat} instance.
+     * @deprecated replace this field with {@link BackgroundRepeat} instance
      */
     @Deprecated
     protected boolean repeatX;
 
     /**
-     * Whether the background repeats in the y dimension.
+     * Whether the background-repeat value is not {@link BackgroundRepeatValue#NO_REPEAT} for Y axis.
      *
-     * @deprecated Replace this field with {@link BackgroundRepeat} instance.
+     * @deprecated replace this field with {@link BackgroundRepeat} instance
      */
     @Deprecated
     protected boolean repeatY;
+
     protected AbstractLinearGradientBuilder linearGradientBuilder;
 
     private BlendMode blendMode = DEFAULT_BLEND_MODE;
 
-    private BackgroundPosition position;
-    private BackgroundSize backgroundSize;
+    private BackgroundRepeat repeat;
+
+    private final BackgroundPosition position;
+
+    private final BackgroundSize backgroundSize;
 
     /**
      * Creates a new {@link BackgroundImage} instance.
@@ -89,8 +94,9 @@ public class BackgroundImage {
                               BackgroundSize backgroundSize, AbstractLinearGradientBuilder linearGradientBuilder,
                               BlendMode blendMode) {
         this.image = image;
-        this.repeatX = repeat.isRepeatX();
-        this.repeatY = repeat.isRepeatY();
+        this.repeatX = !repeat.isNoRepeatOnXAxis();
+        this.repeatY = !repeat.isNoRepeatOnYAxis();
+        this.repeat = repeat;
         this.position = position;
         this.backgroundSize = backgroundSize;
         this.linearGradientBuilder = linearGradientBuilder;
@@ -181,8 +187,9 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfImageXObject image, final boolean repeatX, final boolean repeatY) {
-        this(image, new BackgroundRepeat(repeatX, repeatY), new BackgroundPosition(), new BackgroundSize(),
-                null, DEFAULT_BLEND_MODE);
+        this(image, new BackgroundRepeat(repeatX ? BackgroundRepeatValue.REPEAT : BackgroundRepeatValue.NO_REPEAT,
+                repeatY ? BackgroundRepeatValue.REPEAT : BackgroundRepeatValue.NO_REPEAT), new BackgroundPosition(),
+                new BackgroundSize(), null, DEFAULT_BLEND_MODE);
     }
 
     /**
@@ -195,8 +202,9 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final PdfFormXObject image, final boolean repeatX, final boolean repeatY) {
-        this(image, new BackgroundRepeat(repeatX, repeatY), new BackgroundPosition(), new BackgroundSize(),
-                null, DEFAULT_BLEND_MODE);
+        this(image, new BackgroundRepeat(repeatX ? BackgroundRepeatValue.REPEAT : BackgroundRepeatValue.NO_REPEAT,
+                repeatY ? BackgroundRepeatValue.REPEAT : BackgroundRepeatValue.NO_REPEAT), new BackgroundPosition(),
+                new BackgroundSize(), null, DEFAULT_BLEND_MODE);
     }
 
     /**
@@ -221,8 +229,8 @@ public class BackgroundImage {
      */
     @Deprecated
     public BackgroundImage(final AbstractLinearGradientBuilder linearGradientBuilder, final BlendMode blendMode) {
-        this(null, new BackgroundRepeat(false, false), new BackgroundPosition(), new BackgroundSize()
-                , linearGradientBuilder, blendMode);
+        this(null, new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT), new BackgroundPosition(),
+                new BackgroundSize(), linearGradientBuilder, blendMode);
     }
 
     public PdfImageXObject getImage() {
@@ -250,10 +258,12 @@ public class BackgroundImage {
         return image instanceof PdfFormXObject || image instanceof PdfImageXObject || linearGradientBuilder != null;
     }
 
+    @Deprecated
     public boolean isRepeatX() {
         return repeatX;
     }
 
+    @Deprecated
     public boolean isRepeatY() {
         return repeatY;
     }
@@ -299,6 +309,23 @@ public class BackgroundImage {
     @Deprecated
     public float getHeight() {
         return (float) image.getHeight();
+    }
+
+    /**
+     * Gets image {@link BackgroundRepeat} instance.
+     *
+     * @return the image background repeat
+     */
+    public BackgroundRepeat getRepeat() {
+        // Remove this if-blocks after removing repeatX and repeatY
+        if (repeatX == repeat.isNoRepeatOnXAxis()) {
+            repeat = new BackgroundRepeat(repeatX ? BackgroundRepeatValue.REPEAT : BackgroundRepeatValue.NO_REPEAT, repeat.getYAxisRepeat());
+        }
+        if (repeatY == repeat.isNoRepeatOnYAxis()) {
+            repeat = new BackgroundRepeat(repeat.getXAxisRepeat(), repeatY ? BackgroundRepeatValue.REPEAT : BackgroundRepeatValue.NO_REPEAT);
+        }
+
+        return repeat;
     }
 
     /**
@@ -349,7 +376,7 @@ public class BackgroundImage {
          */
         public Builder setLinearGradientBuilder(AbstractLinearGradientBuilder linearGradientBuilder) {
             this.linearGradientBuilder = linearGradientBuilder;
-            this.repeat = new BackgroundRepeat(false, false);
+            this.repeat = new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT);
             this.image = null;
             return this;
         }

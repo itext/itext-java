@@ -40,7 +40,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.layout;
+package com.itextpdf.layout.property;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageData;
@@ -59,15 +59,11 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.property.BackgroundImage;
-import com.itextpdf.layout.property.BackgroundPosition;
-import com.itextpdf.layout.property.BackgroundRepeat;
-import com.itextpdf.layout.property.BlendMode;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.property.BackgroundRepeat.BackgroundRepeatValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
@@ -102,8 +98,8 @@ public class BackgroundImageTest extends ExtendedITextTest {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
         BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
 
-        Assert.assertTrue(backgroundImage.isRepeatX());
-        Assert.assertTrue(backgroundImage.isRepeatY());
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
         backgroundImageGenericTest("backgroundImage", backgroundImage);
     }
@@ -112,9 +108,9 @@ public class BackgroundImageTest extends ExtendedITextTest {
     public void backgroundMultipleImagesTest() throws IOException, InterruptedException {
         List<BackgroundImage> images = Arrays.asList(
                 new BackgroundImage.Builder().setImage(new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "rock_texture.jpg")))
-                        .setBackgroundRepeat(new BackgroundRepeat(false, true)).setBackgroundPosition(new BackgroundPosition()).build(),
+                        .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT, BackgroundRepeatValue.REPEAT)).setBackgroundPosition(new BackgroundPosition()).build(),
                 new BackgroundImage.Builder().setImage(new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg")))
-                        .setBackgroundRepeat(new BackgroundRepeat(true, false)).build());
+                        .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.REPEAT, BackgroundRepeatValue.NO_REPEAT)).build());
         backgroundImageGenericTest("backgroundMultipleImages", images);
     }
 
@@ -140,7 +136,6 @@ public class BackgroundImageTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-4370. Pay attention at the blue stripe at the top of gradient. It mustn't be there.
     public void backgroundImageWithLinearGradientAndRepeatTest() throws IOException, InterruptedException {
         AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
@@ -180,8 +175,8 @@ public class BackgroundImageTest extends ExtendedITextTest {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
         BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
 
-        Assert.assertTrue(backgroundImage.isRepeatX());
-        Assert.assertTrue(backgroundImage.isRepeatY());
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
         Assert.assertTrue(backgroundImage.isBackgroundSpecified());
 
@@ -204,7 +199,6 @@ public class BackgroundImageTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-4370 first pixel near the border is redrawn by another image
     public void backgroundImageWithPercentWidth() throws IOException, InterruptedException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
         BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
@@ -226,7 +220,6 @@ public class BackgroundImageTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-4370 first pixel near the border is redrawn by another image
     public void backgroundImageWithPercentHeight() throws IOException, InterruptedException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
         BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
@@ -248,7 +241,6 @@ public class BackgroundImageTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-4370 first pixel near the border is redrawn by another image
     public void backgroundImageWithPercentHeightAndWidth() throws IOException, InterruptedException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
         BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
@@ -271,7 +263,6 @@ public class BackgroundImageTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-4370 first pixel near the border is redrawn by another image
     public void backgroundImageWithPointWidth() throws IOException, InterruptedException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
         BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
@@ -293,7 +284,6 @@ public class BackgroundImageTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-4370 first pixel near the border is redrawn by another image
     public void backgroundImageWithPointHeight() throws IOException, InterruptedException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
         BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
@@ -315,7 +305,6 @@ public class BackgroundImageTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-4370 first pixel near the border is redrawn by another image
     public void backgroundImageWithPointHeightAndWidth() throws IOException, InterruptedException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
         BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
@@ -338,7 +327,6 @@ public class BackgroundImageTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-4370 first pixel near the border is redrawn by another image
     public void backgroundImageWithLowWidthAndHeight() throws IOException, InterruptedException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
         BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
@@ -364,10 +352,10 @@ public class BackgroundImageTest extends ExtendedITextTest {
     public void backgroundImageWithoutRepeatXTest() throws IOException, InterruptedException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
         BackgroundImage backgroundImage = new BackgroundImage
-                .Builder().setImage(xObject).setBackgroundRepeat(new BackgroundRepeat(false, true)).build();
+                .Builder().setImage(xObject).setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT, BackgroundRepeatValue.REPEAT)).build();
 
-        Assert.assertFalse(backgroundImage.isRepeatX());
-        Assert.assertTrue(backgroundImage.isRepeatY());
+        Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
         backgroundImageGenericTest("backgroundImageWithoutRepeatX", backgroundImage);
     }
@@ -376,10 +364,10 @@ public class BackgroundImageTest extends ExtendedITextTest {
     public void backgroundImageWithoutRepeatYTest() throws IOException, InterruptedException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
         BackgroundImage backgroundImage = new BackgroundImage
-                .Builder().setImage(xObject).setBackgroundRepeat(new BackgroundRepeat(true, false)).build();
+                .Builder().setImage(xObject).setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.REPEAT, BackgroundRepeatValue.NO_REPEAT)).build();
 
-        Assert.assertTrue(backgroundImage.isRepeatX());
-        Assert.assertFalse(backgroundImage.isRepeatY());
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+        Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
         backgroundImageGenericTest("backgroundImageWithoutRepeatY", backgroundImage);
     }
@@ -388,10 +376,10 @@ public class BackgroundImageTest extends ExtendedITextTest {
     public void backgroundImageWithoutRepeatXYTest() throws IOException, InterruptedException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
         BackgroundImage backgroundImage = new BackgroundImage
-                .Builder().setImage(xObject).setBackgroundRepeat(new BackgroundRepeat(false, false)).build();
+                .Builder().setImage(xObject).setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT)).build();
 
-        Assert.assertFalse(backgroundImage.isRepeatX());
-        Assert.assertFalse(backgroundImage.isRepeatY());
+        Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+        Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
         backgroundImageGenericTest("backgroundImageWithoutRepeatXY", backgroundImage);
     }
@@ -399,7 +387,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
     @Test
     public void backgroundImageWithPositionTest() throws IOException, InterruptedException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
-        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).setBackgroundRepeat(new BackgroundRepeat(false, false))
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT))
                 .setBackgroundPosition(new BackgroundPosition().setXShift(new UnitValue(UnitValue.PERCENT, 80)).setYShift(new UnitValue(UnitValue.POINT, 55))).build();
 
         backgroundImageGenericTest("backgroundImageWithPosition", backgroundImage);
@@ -409,7 +397,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
     public void backgroundImagesWithPositionTest() throws IOException, InterruptedException {
         List<BackgroundImage> images = Arrays.asList(
                 new BackgroundImage.Builder().setImage(new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "rock_texture.jpg")))
-                        .setBackgroundRepeat(new BackgroundRepeat(false, false))
+                        .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT))
                         .setBackgroundPosition(new BackgroundPosition().setXShift(new UnitValue(UnitValue.PERCENT, 100)).setYShift(new UnitValue(UnitValue.PERCENT, 100))).build(),
                 new BackgroundImage.Builder().setImage(new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg")))
                         .setBackgroundPosition(new BackgroundPosition().setXShift(new UnitValue(UnitValue.PERCENT, 0)).setYShift(new UnitValue(UnitValue.PERCENT, 100))).build());
@@ -427,8 +415,8 @@ public class BackgroundImageTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
             BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(createFormXObject(pdfDocument, "itis.jpg")).build();
 
-            Assert.assertTrue(backgroundImage.isRepeatX());
-            Assert.assertTrue(backgroundImage.isRepeatY());
+            Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+            Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
             backgroundXObjectGenericTest(filename, backgroundImage, pdfDocument);
         }
@@ -443,10 +431,11 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
             BackgroundImage backgroundImage = new BackgroundImage.Builder()
-                    .setImage(createFormXObject(pdfDocument, "itis.jpg")).setBackgroundRepeat(new BackgroundRepeat(false, true)).build();
+                    .setImage(createFormXObject(pdfDocument, "itis.jpg"))
+                    .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT, BackgroundRepeatValue.REPEAT)).build();
 
-            Assert.assertFalse(backgroundImage.isRepeatX());
-            Assert.assertTrue(backgroundImage.isRepeatY());
+            Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+            Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
             backgroundXObjectGenericTest(filename, backgroundImage, pdfDocument);
         }
@@ -461,10 +450,11 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
             BackgroundImage backgroundImage = new BackgroundImage
-                    .Builder().setImage(createFormXObject(pdfDocument, "itis.jpg")).setBackgroundRepeat(new BackgroundRepeat(true, false)).build();
+                    .Builder().setImage(createFormXObject(pdfDocument, "itis.jpg"))
+                    .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.REPEAT, BackgroundRepeatValue.NO_REPEAT)).build();
 
-            Assert.assertTrue(backgroundImage.isRepeatX());
-            Assert.assertFalse(backgroundImage.isRepeatY());
+            Assert.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+            Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
             backgroundXObjectGenericTest(filename, backgroundImage, pdfDocument);
         }
@@ -479,10 +469,11 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
             BackgroundImage backgroundImage = new BackgroundImage
-                    .Builder().setImage(createFormXObject(pdfDocument, "itis.jpg")).setBackgroundRepeat(new BackgroundRepeat(false, false)).build();
+                    .Builder().setImage(createFormXObject(pdfDocument, "itis.jpg"))
+                    .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT)).build();
 
-            Assert.assertFalse(backgroundImage.isRepeatX());
-            Assert.assertFalse(backgroundImage.isRepeatY());
+            Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
+            Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, backgroundImage.getRepeat().getYAxisRepeat());
 
             backgroundXObjectGenericTest(filename, backgroundImage, pdfDocument);
         }
@@ -550,7 +541,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
                     "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui " +
                     "officia deserunt mollit anim id est laborum. ";
 
-            BackgroundImage backgroundFormXObject = new BackgroundImage.Builder().setBackgroundRepeat(new BackgroundRepeat(false, false))
+            BackgroundImage backgroundFormXObject = new BackgroundImage.Builder().setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT))
                     .setImage(createFormXObject(pdfDocument, "rock_texture.jpg")
                             .setBBox(new PdfArray(new Rectangle(70, -15, 50, 75)))).build();
             Div div = new Div().add(new Paragraph(text + text + text));
@@ -569,7 +560,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
     public void backgroundImageWithBboxTest() throws IOException, InterruptedException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "rock_texture.jpg"))
                 .put(PdfName.BBox, new PdfArray(new Rectangle(70, -15, 500, 750)));
-        BackgroundImage image = new BackgroundImage.Builder().setImage(xObject).setBackgroundRepeat(new BackgroundRepeat(false, false)).build();
+        BackgroundImage image = new BackgroundImage.Builder().setImage(xObject).setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT)).build();
 
         backgroundImageGenericTest("backgroundImageWithBbox", image);
     }

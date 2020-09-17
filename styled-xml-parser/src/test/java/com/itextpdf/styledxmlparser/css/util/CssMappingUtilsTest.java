@@ -20,22 +20,32 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.layout;
+package com.itextpdf.styledxmlparser.css.util;
 
-import com.itextpdf.layout.property.BackgroundRepeat;
+import com.itextpdf.layout.property.BackgroundRepeat.BackgroundRepeatValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class BackgroundRepeatUnitTest extends ExtendedITextTest {
-
+public class CssMappingUtilsTest extends ExtendedITextTest {
     @Test
-    public void constructorTest() {
-        final BackgroundRepeat backgroundRepeat = new BackgroundRepeat(true, false);
-        Assert.assertTrue(backgroundRepeat.isRepeatX());
-        Assert.assertFalse(backgroundRepeat.isRepeatY());
+    public void parseBackgroundRepeatTest() {
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, CssMappingUtils.parseBackgroundRepeat("repeat"));
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, CssMappingUtils.parseBackgroundRepeat("RePeAt"));
+
+        Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, CssMappingUtils.parseBackgroundRepeat("no-repeat"));
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, CssMappingUtils.parseBackgroundRepeat("no- repeat"));
+
+        Assert.assertEquals(BackgroundRepeatValue.ROUND, CssMappingUtils.parseBackgroundRepeat("round"));
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, CssMappingUtils.parseBackgroundRepeat("ro!und"));
+
+        Assert.assertEquals(BackgroundRepeatValue.SPACE, CssMappingUtils.parseBackgroundRepeat("space"));
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, CssMappingUtils.parseBackgroundRepeat(" space "));
+
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, CssMappingUtils.parseBackgroundRepeat("something"));
     }
 }
