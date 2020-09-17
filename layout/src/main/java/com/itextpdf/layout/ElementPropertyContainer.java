@@ -51,6 +51,7 @@ import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.BackgroundImage;
 import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.BorderRadius;
 import com.itextpdf.layout.property.FontKerning;
@@ -437,6 +438,28 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setBackgroundColor(Color backgroundColor, float opacity, float extraLeft, float extraTop, float extraRight, float extraBottom) {
         setProperty(Property.BACKGROUND, backgroundColor != null ? new Background(backgroundColor, opacity, extraLeft, extraTop, extraRight, extraBottom) : null);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Specifies a background image for the Element.
+     *
+     * @param image {@link BackgroundImage}
+     * @return this Element.
+     */
+    public T setBackgroundImage(BackgroundImage image) {
+        setProperty(Property.BACKGROUND_IMAGE, image);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Specifies a list of background images for the Element.
+     *
+     * @param imagesList List of {@link BackgroundImage}
+     * @return this Element.
+     */
+    public T setBackgroundImage(List<BackgroundImage> imagesList) {
+        setProperty(Property.BACKGROUND_IMAGE, imagesList);
         return (T) (Object) this;
     }
 

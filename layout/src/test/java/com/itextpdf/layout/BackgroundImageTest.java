@@ -51,11 +51,15 @@ import com.itextpdf.kernel.colors.gradients.GradientColorStop;
 import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder;
 import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder.GradientStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfTransparencyGroup;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
@@ -191,7 +195,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
             Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
-            textElement.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+            textElement.setBackgroundImage(backgroundImage);
             textElement.setFontSize(50);
 
             doc.add(new Paragraph(textElement));
@@ -537,7 +541,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
 
         Div div = new Div().add(new Paragraph(text + text + text));
-        div.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+        div.setBackgroundImage(backgroundImage);
         doc.add(div);
 
         pdfDocument.close();
