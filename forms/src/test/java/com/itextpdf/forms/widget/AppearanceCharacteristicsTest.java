@@ -43,43 +43,21 @@
 package com.itextpdf.forms.widget;
 
 import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.forms.fields.PdfButtonFormField;
-import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.StampingProperties;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.Canvas;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.AreaBreak;
-import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Map;
 
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -113,5 +91,63 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
+    }
+
+    @Test
+    //TODO: update cmp file after fixing DEVSIX-836
+    public void borderStyleInCreatedFormFieldsTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "borderStyleInCreatedFormFields.pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(outPdf));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+
+        PdfFormField formField1 = PdfTextFormField.createText(doc,
+                new Rectangle(100, 600, 100, 50), "firstField", "Hello, iText!");
+        formField1.getWidgets().get(0).setBorderStyle(PdfAnnotation.STYLE_BEVELED);
+        formField1.setBorderWidth(2).setBorderColor(ColorConstants.BLUE);
+
+        PdfFormField formField2 = PdfTextFormField.createText(doc,
+                new Rectangle(100, 500, 100, 50), "secondField", "Hello, iText!");
+        formField2.getWidgets().get(0).setBorderStyle(PdfAnnotation.STYLE_UNDERLINE);
+        formField2.setBorderWidth(2).setBorderColor(ColorConstants.BLUE);
+
+        PdfFormField formField3 = PdfTextFormField.createText(doc,
+                new Rectangle(100, 400, 100, 50), "thirdField", "Hello, iText!");
+        formField3.getWidgets().get(0).setBorderStyle(PdfAnnotation.STYLE_INSET);
+        formField3.setBorderWidth(2).setBorderColor(ColorConstants.BLUE);
+
+        form.addField(formField1);
+        form.addField(formField2);
+        form.addField(formField3);
+        form.flattenFields();
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+                sourceFolder + "cmp_borderStyleInCreatedFormFields.pdf", destinationFolder));
+    }
+
+    @Test
+    //TODO: update cmp file after fixing DEVSIX-836
+    public void updatingBorderStyleInFormFieldsTest() throws IOException, InterruptedException {
+        String inputPdf = sourceFolder + "borderStyleInCreatedFormFields.pdf";
+        String outPdf = destinationFolder + "updatingBorderStyleInFormFields.pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfReader(inputPdf), new PdfWriter(outPdf));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, false);
+
+        Map<String, PdfFormField> fields = form.getFormFields();
+        fields.get("firstField").setValue("New Value 1");
+        fields.get("secondField").setValue("New Value 2");
+        fields.get("thirdField").setValue("New Value 3");
+        
+        form.flattenFields();
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf,
+                sourceFolder + "cmp_updatingBorderStyleInFormFields.pdf", destinationFolder));
     }
 }
