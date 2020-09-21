@@ -54,12 +54,10 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
-import com.itextpdf.kernel.pdf.xobject.PdfTransparencyGroup;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
@@ -68,7 +66,6 @@ import com.itextpdf.layout.property.BackgroundImage;
 import com.itextpdf.layout.property.BackgroundPosition;
 import com.itextpdf.layout.property.BackgroundRepeat;
 import com.itextpdf.layout.property.BlendMode;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
@@ -271,7 +268,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName;
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
-            BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(createFormXObject(pdfDocument)).build();
+            BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(createFormXObject(pdfDocument, "itis.jpg")).build();
 
             Assert.assertTrue(backgroundImage.isRepeatX());
             Assert.assertTrue(backgroundImage.isRepeatY());
@@ -289,7 +286,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
             BackgroundImage backgroundImage = new BackgroundImage.Builder()
-                    .setImage(createFormXObject(pdfDocument)).setBackgroundRepeat(new BackgroundRepeat(false, true)).build();
+                    .setImage(createFormXObject(pdfDocument, "itis.jpg")).setBackgroundRepeat(new BackgroundRepeat(false, true)).build();
 
             Assert.assertFalse(backgroundImage.isRepeatX());
             Assert.assertTrue(backgroundImage.isRepeatY());
@@ -307,7 +304,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
             BackgroundImage backgroundImage = new BackgroundImage
-                    .Builder().setImage(createFormXObject(pdfDocument)).setBackgroundRepeat(new BackgroundRepeat(true, false)).build();
+                    .Builder().setImage(createFormXObject(pdfDocument, "itis.jpg")).setBackgroundRepeat(new BackgroundRepeat(true, false)).build();
 
             Assert.assertTrue(backgroundImage.isRepeatX());
             Assert.assertFalse(backgroundImage.isRepeatY());
@@ -325,7 +322,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
             BackgroundImage backgroundImage = new BackgroundImage
-                    .Builder().setImage(createFormXObject(pdfDocument)).setBackgroundRepeat(new BackgroundRepeat(false, false)).build();
+                    .Builder().setImage(createFormXObject(pdfDocument, "itis.jpg")).setBackgroundRepeat(new BackgroundRepeat(false, false)).build();
 
             Assert.assertFalse(backgroundImage.isRepeatX());
             Assert.assertFalse(backgroundImage.isRepeatY());
@@ -359,13 +356,13 @@ public class BackgroundImageTest extends ExtendedITextTest {
             PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
             BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(imageXObject).build();
 
-            div.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+            div.setBackgroundImage(backgroundImage);
             doc.add(div);
 
 
-            BackgroundImage backgroundFormXObject = new BackgroundImage.Builder().setImage(createFormXObject(pdfDocument)).build();
+            BackgroundImage backgroundFormXObject = new BackgroundImage.Builder().setImage(createFormXObject(pdfDocument, "itis.jpg")).build();
             div = new Div().add(new Paragraph(text + text + text));
-            div.setProperty(Property.BACKGROUND_IMAGE, backgroundFormXObject);
+            div.setBackgroundImage(backgroundFormXObject);
             doc.add(div);
 
             pdfDocument.close();
@@ -373,6 +370,51 @@ public class BackgroundImageTest extends ExtendedITextTest {
             Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
 
         }
+    }
+
+    @Test
+    // There shall be rock texture picture at the left top corner with 30pt width and 60pt height
+    public void backgroundXFormObjectWithBboxTest() throws IOException, InterruptedException {
+        String filename = "backgroundComplicatedXFormObjectTest";
+
+        String fileName = filename + ".pdf";
+        String outFileName = DESTINATION_FOLDER + fileName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + filename + ".pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)))) {
+
+            Document doc = new Document(pdfDocument);
+
+            String text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " +
+                    "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi " +
+                    "ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit " +
+                    "in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
+                    "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui " +
+                    "officia deserunt mollit anim id est laborum. ";
+
+            BackgroundImage backgroundFormXObject = new BackgroundImage.Builder().setBackgroundRepeat(new BackgroundRepeat(false, false))
+                    .setImage(createFormXObject(pdfDocument, "rock_texture.jpg")
+                            .setBBox(new PdfArray(new Rectangle(70, -15, 50, 75)))).build();
+            Div div = new Div().add(new Paragraph(text + text + text));
+            div.setBackgroundImage(backgroundFormXObject);
+            doc.add(div);
+
+            pdfDocument.close();
+
+            Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+
+        }
+    }
+
+    @Test
+    // There shall be default rock texture picture with 100pt width and height at the left top corner. BBox shall not do any differences.
+    public void backgroundImageWithBboxTest() throws IOException, InterruptedException {
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "rock_texture.jpg"))
+                .put(PdfName.BBox, new PdfArray(new Rectangle(70, -15, 500, 750)));
+        BackgroundImage image = new BackgroundImage.Builder().setImage(xObject).setBackgroundRepeat(new BackgroundRepeat(false, false)).build();
+
+        backgroundImageGenericTest("backgroundImageWithBbox", image);
     }
 
     @Test
@@ -471,8 +513,8 @@ public class BackgroundImageTest extends ExtendedITextTest {
                 + blendMode.getPdfRepresentation().getValue(), Arrays.asList(topBackgroundImage, backgroundImage));
     }
 
-    private PdfFormXObject createFormXObject(PdfDocument pdfDocument) throws MalformedURLException {
-        ImageData image = ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg");
+    private PdfFormXObject createFormXObject(PdfDocument pdfDocument, String pictureName) throws MalformedURLException {
+        ImageData image = ImageDataFactory.create(SOURCE_FOLDER + pictureName);
         PdfFormXObject template = new PdfFormXObject(new Rectangle(image.getWidth(), image.getHeight()));
         PdfCanvas canvas = new PdfCanvas(template, pdfDocument);
         canvas.addImage(image, 0, 0, image.getWidth(), false).flush();
@@ -516,7 +558,11 @@ public class BackgroundImageTest extends ExtendedITextTest {
         if (angle != null) {
             div.setRotationAngle(angle.doubleValue());
         }
-        div.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
+        if (backgroundImage instanceof BackgroundImage) {
+            div.setBackgroundImage((BackgroundImage) backgroundImage);
+        } else {
+            div.setBackgroundImage((List<BackgroundImage>) backgroundImage);
+        }
         doc.add(div);
 
         pdfDocument.close();
