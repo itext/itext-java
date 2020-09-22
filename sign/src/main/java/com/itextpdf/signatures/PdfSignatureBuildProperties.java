@@ -74,7 +74,7 @@ public class PdfSignatureBuildProperties extends PdfObjectWrapper<PdfDictionary>
      * Sets the signatureCreator property in the underlying
      * {@link PdfSignatureApp} dictionary.
      *
-     * @param name
+     * @param name the signature creator's name to be set
      */
     public void setSignatureCreator(String name) {
         getPdfSignatureAppProperty().setSignatureCreator(name);
