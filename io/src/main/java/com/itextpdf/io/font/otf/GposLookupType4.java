@@ -88,8 +88,9 @@ public class GposLookupType4 extends OpenTableLookup {
                     if (gi.glyph == null)
                         break;
                     // not mark => base glyph
-                    if (!mb.marks.containsKey(gi.glyph.getCode()))
+                    if (openReader.getGlyphClass(gi.glyph.getCode()) != OtfClass.GLYPH_MARK) {
                         break;
+                    }
                 }
                 if (gi.glyph == null)
                     break;
