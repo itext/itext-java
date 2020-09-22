@@ -256,7 +256,7 @@ public class Color implements Serializable {
      */
     @Override
     public int hashCode() {
-        int result = colorSpace != null ? colorSpace.hashCode() : 0;
+        int result = colorSpace != null ? colorSpace.getPdfObject().hashCode() : 0;
         result = 31 * result + (colorValue != null ? Arrays.hashCode(colorValue) : 0);
         return result;
     }
