@@ -765,7 +765,8 @@ public class PdfCanvas implements Serializable {
                             float xPlacementAddition = 0;
                             int currentGlyphIndex = i;
                             Glyph currentGlyph = text.get(i);
-                            while (currentGlyph != null && currentGlyph.getXPlacement() != 0) {
+                            // if xPlacement is not zero, anchorDelta is expected to be non-zero as well
+                            while (currentGlyph != null && (currentGlyph.getAnchorDelta() != 0)) {
                                 xPlacementAddition += currentGlyph.getXPlacement();
                                 if (currentGlyph.getAnchorDelta() == 0) {
                                     break;
