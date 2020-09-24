@@ -50,11 +50,14 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -69,6 +72,7 @@ public class TextWritingTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TextWritingTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/TextWritingTest/";
+    public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeClass
     public static void beforeClass() {
@@ -375,5 +379,29 @@ public class TextWritingTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    // TODO: update cmp file after fixing DEVSIX-4604
+    public void leadingAndFloatInTextTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "leadingAndFloatInText.pdf";
+        String cmpFileName = sourceFolder + "cmp_leadingAndFloatInText.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Paragraph p = new Paragraph().setFixedLeading(30).setBorder(new SolidBorder(ColorConstants.RED, 2));
+        p.add("First text");
+
+        Text text = new Text("Second text with float ");
+        text.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+        p.add(text);
+
+        document.add(p);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 }

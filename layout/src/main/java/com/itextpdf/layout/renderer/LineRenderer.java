@@ -917,7 +917,6 @@ public class LineRenderer extends AbstractRenderer {
             if (!FloatingHelper.isRendererFloating(child)) {
                 child.move(0, deltaY);
             }
-            // TODO for floats we don't apply any leading for the moment (and therefore line-height for pdf2html is not entirely supported in terms of floats)
         }
     }
 
@@ -1050,25 +1049,19 @@ public class LineRenderer extends AbstractRenderer {
             return;
         }
 
-        // TODO handle it
-        boolean ltr = true;
         float floatWidth = justPlacedFloatBox.getWidth();
         if (kidFloatPropertyVal.equals(FloatPropertyValue.LEFT)) {
             layoutBox.setWidth(layoutBox.getWidth() - floatWidth).moveRight(floatWidth);
             occupiedArea.getBBox().moveRight(floatWidth);
-            if (ltr) {
                 for (int i = 0; i < childPos; ++i) {
                     IRenderer prevChild = childRenderers.get(i);
                     if (!FloatingHelper.isRendererFloating(prevChild)) {
                         prevChild.move(floatWidth, 0);
                     }
                 }
-            }
+
         } else {
             layoutBox.setWidth(layoutBox.getWidth() - floatWidth);
-            if (!ltr) {
-                // TODO
-            }
         }
     }
 
