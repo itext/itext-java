@@ -260,7 +260,6 @@ public class BackgroundImageTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-3108
     public void backgroundXObject() throws IOException, InterruptedException {
         String filename = "backgroundXObject";
 

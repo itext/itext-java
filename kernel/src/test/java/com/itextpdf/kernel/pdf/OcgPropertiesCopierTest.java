@@ -216,7 +216,6 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
             try (PdfDocument fromDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(fromDocBytes)))) {
                 // This test verifies that if the PDF is invalid, i.e. if OCProperties.OCGs is empty in the document,
                 // but there are OCGs that are used on the page, then OCGs will be copied
-                // TODO DEVSIX-4393 I think this is normal behavior, Yulian what you think about it?
                 Assert.assertTrue(fromDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties).getAsArray(PdfName.OCGs).isEmpty());
 
                 fromDocument.copyPagesTo(1, 1, toDocument);
