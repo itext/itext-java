@@ -51,7 +51,7 @@ import com.itextpdf.layout.renderer.IRenderer;
 public class TextLayoutResult extends MinMaxWidthLayoutResult {
 
     /**
-     * Indicates whether some word was splitted during {@link com.itextpdf.layout.renderer.TextRenderer#layout(LayoutContext) layout}.
+     * Indicates whether some word was split during {@link com.itextpdf.layout.renderer.TextRenderer#layout(LayoutContext) layout}.
      */
     protected boolean wordHasBeenSplit;
     /**
@@ -59,13 +59,19 @@ public class TextLayoutResult extends MinMaxWidthLayoutResult {
      */
     protected boolean splitForcedByNewline;
 
+    protected boolean containsPossibleBreak = false;
+
+    protected boolean lineStartsWithWhiteSpace = false;
+
+    protected boolean lineEndsWithSplitCharacterOrWhiteSpace = false;
+
     /**
      * Creates the {@link LayoutResult result of {@link com.itextpdf.layout.renderer.TextRenderer#layout(LayoutContext) layouting}}.
      * The {@link LayoutResult#causeOfNothing} will be set as null.
      *
      * @param status the status of {@link com.itextpdf.layout.renderer.TextRenderer#layout(LayoutContext)}
      * @param occupiedArea the area occupied by the content
-     * @param splitRenderer the renderer to draw the splitted part of the content
+     * @param splitRenderer the renderer to draw the split part of the content
      * @param overflowRenderer the renderer to draw the overflowed part of the content
      */
     public TextLayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer) {
@@ -77,7 +83,7 @@ public class TextLayoutResult extends MinMaxWidthLayoutResult {
      *
      * @param status the status of {@link com.itextpdf.layout.renderer.TextRenderer#layout(LayoutContext)}
      * @param occupiedArea the area occupied by the content
-     * @param splitRenderer the renderer to draw the splitted part of the content
+     * @param splitRenderer the renderer to draw the split part of the content
      * @param overflowRenderer the renderer to draw the overflowed part of the content
      * @param cause the first renderer to produce {@link LayoutResult#NOTHING}
      */
@@ -89,7 +95,7 @@ public class TextLayoutResult extends MinMaxWidthLayoutResult {
      * Indicates whether some word in a rendered text was split during {@link com.itextpdf.layout.renderer.IRenderer#layout layout}.
      * The value will be set as true if, for example, the rendered words width is bigger than the width of layout area.
      *
-     * @return whether some word was splitted or not.
+     * @return whether some word was split or not.
      */
     public boolean isWordHasBeenSplit() {
         return wordHasBeenSplit;
@@ -127,5 +133,71 @@ public class TextLayoutResult extends MinMaxWidthLayoutResult {
     public TextLayoutResult setSplitForcedByNewline(boolean isSplitForcedByNewline) {
         this.splitForcedByNewline = isSplitForcedByNewline;
         return this;
+    }
+
+    /**
+     * Indicates whether split renderer contains possible break.
+     * Possible breaks are either whitespaces or split characters.
+     *
+     * @return true if there's a possible break within the split renderer.
+     * @see com.itextpdf.layout.splitting.ISplitCharacters
+     */
+    public boolean isContainsPossibleBreak() {
+        return containsPossibleBreak;
+    }
+
+    /**
+     * Sets {@link #isContainsPossibleBreak()}.
+     *
+     * @param containsPossibleBreak indicates that split renderer contains possible break.
+     * @return {@link com.itextpdf.layout.layout.TextLayoutResult this layout result} the setting was applied on.
+     * @see #isContainsPossibleBreak
+     */
+    public TextLayoutResult setContainsPossibleBreak(boolean containsPossibleBreak) {
+        this.containsPossibleBreak = containsPossibleBreak;
+        return this;
+    }
+
+    /**
+     * Sets {@link #isLineStartsWithWhiteSpace()}.
+     *
+     * @param lineStartsWithWhiteSpace indicates if TextRenderer#line starts with a whitespace.
+     * @return {@link com.itextpdf.layout.layout.TextLayoutResult this layout result} the setting was applied on.
+     * @see #isLineStartsWithWhiteSpace
+     */
+    public TextLayoutResult setLineStartsWithWhiteSpace(boolean lineStartsWithWhiteSpace) {
+        this.lineStartsWithWhiteSpace = lineStartsWithWhiteSpace;
+        return this;
+    }
+
+    /**
+     * Indicates whether TextRenderer#line starts with a whitespace.
+     *
+     * @return true if TextRenderer#line starts with a whitespace.
+     */
+    public boolean isLineStartsWithWhiteSpace() {
+        return lineStartsWithWhiteSpace;
+    }
+
+    /**
+     * Sets {@link #isLineEndsWithSplitCharacterOrWhiteSpace()}.
+     *
+     * @param lineEndsWithSplitCharacterOrWhiteSpace indicates if TextRenderer#line ends with a splitCharacter.
+     * @return {@link com.itextpdf.layout.layout.TextLayoutResult this layout result} the setting was applied on.
+     * @see #isLineEndsWithSplitCharacterOrWhiteSpace
+     */
+    public TextLayoutResult setLineEndsWithSplitCharacterOrWhiteSpace(boolean lineEndsWithSplitCharacterOrWhiteSpace) {
+        this.lineEndsWithSplitCharacterOrWhiteSpace = lineEndsWithSplitCharacterOrWhiteSpace;
+        return this;
+    }
+
+    /**
+     * Indicates whether TextRenderer#line ends with a splitCharacter.
+     *
+     * @return true if TextRenderer#line ends with a splitCharacter.
+     * @see com.itextpdf.layout.splitting.ISplitCharacters
+     */
+    public boolean isLineEndsWithSplitCharacterOrWhiteSpace() {
+        return lineEndsWithSplitCharacterOrWhiteSpace;
     }
 }

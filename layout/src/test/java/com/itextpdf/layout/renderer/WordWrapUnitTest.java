@@ -330,7 +330,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         }
 
         LineRenderer.LastFittingChildRendererData lastFittingChildRendererData = lineRenderer
-                .getIndexAndLayoutResultOfTheLastRendererToRemainOnTheLine(THAI_WORD.length() + 1,
+                .getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts(THAI_WORD.length() + 1,
                         specialScriptLayoutResults, false, new ArrayList<IRenderer>(), true);
 
         Assert.assertEquals(5, lastFittingChildRendererData.childIndex);
@@ -365,7 +365,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
                 new LayoutResult(LayoutResult.NOTHING, layoutArea, null, null));
 
         LineRenderer.LastFittingChildRendererData lastFittingChildRendererData = lineRenderer
-                .getIndexAndLayoutResultOfTheLastRendererToRemainOnTheLine(indexOfThaiRenderer,
+                .getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts(indexOfThaiRenderer,
                         specialScriptLayoutResults, false, new ArrayList<IRenderer>(), true);
 
         Assert.assertEquals(indexOfThaiRenderer, lastFittingChildRendererData.childIndex);
@@ -405,7 +405,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         }
 
         LineRenderer.LastFittingChildRendererData lastFittingChildRendererData = lineRenderer
-                .getIndexAndLayoutResultOfTheLastRendererToRemainOnTheLine(THAI_WORD.length() - 1,
+                .getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts(THAI_WORD.length() - 1,
                         specialScriptLayoutResults, false, new ArrayList<IRenderer>(), true);
 
         Assert.assertEquals(THAI_WORD.length() - 1, lastFittingChildRendererData.childIndex);
@@ -888,8 +888,9 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDocument);
 
-        TextRenderer textRenderer = new TextRenderer(new Text(THAI_WORD));
+        TextRenderer textRenderer = new TextRenderer(new Text(""));
         textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
+        textRenderer.setText(THAI_WORD);
         textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(5)));
 
         LineRenderer lineRenderer = new LineRenderer();

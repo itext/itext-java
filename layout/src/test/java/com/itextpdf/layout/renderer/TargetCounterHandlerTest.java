@@ -35,6 +35,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.splitting.DefaultSplitCharacters;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -70,6 +71,7 @@ public class TargetCounterHandlerTest extends ExtendedITextTest {
         textRenderer.setProperty(Property.WORD_SPACING, 20F);
         textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(StandardFonts.HELVETICA));
         textRenderer.setProperty(Property.FONT_SIZE, new UnitValue(UnitValue.POINT, 20));
+        textRenderer.setProperty(Property.SPLIT_CHARACTERS, new DefaultSplitCharacters());
 
         textRenderer.setParent(documentRenderer);
         String id = "id7";
