@@ -1366,4 +1366,24 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             Assert.fail(errorMessage);
         }
     }
+
+    @Test
+    public void releaseAcroformTest() throws IOException, InterruptedException {
+        String srcFile = sourceFolder + "formFieldFile.pdf";
+        String outPureStamping = destinationFolder + "formFieldFileStamping.pdf";
+        String outStampingRelease = destinationFolder + "formFieldFileStampingRelease.pdf";
+
+        PdfDocument doc = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outPureStamping));
+        // We open/close document to make sure that the results of release logic and simple overwriting coincide.
+        doc.close();
+
+        try (PdfDocument stamperRelease = new PdfDocument(new PdfReader(srcFile),
+                new PdfWriter(outStampingRelease))) {
+
+            PdfAcroForm form = PdfAcroForm.getAcroForm(stamperRelease, false);
+            form.release();
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outStampingRelease, outPureStamping, destinationFolder));
+    }
 }
