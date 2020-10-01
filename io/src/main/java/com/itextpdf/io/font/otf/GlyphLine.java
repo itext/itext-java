@@ -300,6 +300,7 @@ public class GlyphLine implements Serializable {
     public void substituteOneToMany(OpenTypeFontTableReader tableReader, int[] substGlyphIds) {
         //sequence length shall be at least 1
         int substCode = substGlyphIds[0];
+        Glyph oldGlyph = glyphs.get(idx);
         Glyph glyph = tableReader.getGlyph(substCode);
         glyphs.set(idx, glyph);
 
@@ -311,6 +312,14 @@ public class GlyphLine implements Serializable {
                 additionalGlyphs.add(glyph);
             }
             addAllGlyphs(idx + 1, additionalGlyphs);
+            if (null != actualText) {
+                if (null == actualText.get(idx)) {
+                    actualText.set(idx, new ActualText(oldGlyph.getUnicodeString()));
+                }
+                for (int i = 0; i < additionalGlyphs.size(); i++) {
+                    this.actualText.set(idx + 1 + i, actualText.get(idx));
+                }
+            }
             idx += substGlyphIds.length - 1;
             end += substGlyphIds.length - 1;
         }
