@@ -583,4 +583,69 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
             super(pdfObject);
         }
     }
+
+    // Adds PdfFormXObject with matrix close to the identity matrix tests block
+
+
+    @Test
+    public void addFormXObjectWithUserIdentityMatrixTest() throws IOException,  InterruptedException {
+        final String fileName = "addFormXObjectWithUserIdentityMatrixTest.pdf";
+        final String destPdf = DESTINATION_FOLDER + fileName;
+        final String cmpPdf = SOURCE_FOLDER + "cmp_" + fileName;
+        FileOutputStream fos = new FileOutputStream(destPdf);
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfFormXObject formXObject = new PdfFormXObject(new Rectangle(0, 0, 20, 20));
+        new PdfCanvas(formXObject, document).circle(10, 10, 10).fill();
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        // It should be written because it is user matrix
+        canvas.addXObjectWithTransformationMatrix(formXObject, 1.00011f, 0, 0, 1, 0, 0);
+        canvas.release();
+        page.flush();
+
+        page = document.addNewPage();
+        canvas = new PdfCanvas(page);
+        // It should be written because it is user matrix
+        canvas.addXObjectWithTransformationMatrix(formXObject, 1.00009f, 0, 0, 1, 0, 0);
+        canvas.release();
+        page.flush();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void addFormXObjectWithIdentityMatrixTest() throws IOException,  InterruptedException {
+        final String fileName = "addFormXObjectWithIdentityMatrixTest.pdf";
+        final String destPdf = DESTINATION_FOLDER + fileName;
+        final String cmpPdf = SOURCE_FOLDER + "cmp_" + fileName;
+        FileOutputStream fos = new FileOutputStream(destPdf);
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfFormXObject formXObject = new PdfFormXObject(new Rectangle(0, 0, 20, 20));
+        new PdfCanvas(formXObject, document).circle(10, 10, 10).fill();
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        // It should be written because it is larger then PdfCanvas#IDENTITY_MATRIX_EPS
+        canvas.addXObjectAt(formXObject, 0.00011f, 0);
+        canvas.release();
+        page.flush();
+
+        page = document.addNewPage();
+        canvas = new PdfCanvas(page);
+        // It shouldn't be written because it is less then PdfCanvas#IDENTITY_MATRIX_EPS
+        canvas.addXObjectAt(formXObject, 0.00009f, 0);
+        canvas.release();
+        page.flush();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
 }

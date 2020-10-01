@@ -173,6 +173,8 @@ public class PdfCanvas implements Serializable {
     private static final PdfSpecialCs.Pattern pattern = new PdfSpecialCs.Pattern();
     private static final long serialVersionUID = -4706222391732334562L;
 
+    private static final float IDENTITY_MATRIX_EPS = 1e-4f;
+
     /**
      * a LIFO stack of graphics state saved states.
      */
@@ -1995,6 +1997,8 @@ public class PdfCanvas implements Serializable {
      * @param asInline true if to add image as in-line
      * @return the created imageXObject or null in case of in-line image (asInline = true)
      * @see #concatMatrix(double, double, double, double, double, double)
+     * @see PdfXObject#calculateProportionallyFitRectangleWithWidth(PdfXObject, float, float, float)
+     * @see PdfXObject#calculateProportionallyFitRectangleWithHeight(PdfXObject, float, float, float)
      */
     public PdfXObject addImageFittedIntoRectangle(ImageData image, Rectangle rect, boolean asInline) {
         return addImageWithTransformationMatrix(image, rect.getWidth(), 0, 0, rect.getHeight(),
@@ -2124,7 +2128,7 @@ public class PdfCanvas implements Serializable {
      */
     public PdfCanvas addXObjectWithTransformationMatrix(PdfXObject xObject, float a, float b, float c, float d, float e, float f) {
         if (xObject instanceof PdfFormXObject) {
-            return addFormWithTransformationMatrix((PdfFormXObject) xObject, a, b, c, d, e, f);
+            return addFormWithTransformationMatrix((PdfFormXObject) xObject, a, b, c, d, e, f, true);
         } else if (xObject instanceof PdfImageXObject) {
             return addImageWithTransformationMatrix(xObject, a, b, c, d, e, f);
         } else {
@@ -2200,6 +2204,8 @@ public class PdfCanvas implements Serializable {
      * @param xObject the xObject to add
      * @param rect the rectangle in which the xObject will be fitted
      * @return the current canvas
+     * @see PdfXObject#calculateProportionallyFitRectangleWithWidth(PdfXObject, float, float, float)
+     * @see PdfXObject#calculateProportionallyFitRectangleWithHeight(PdfXObject, float, float, float)
      */
     public PdfCanvas addXObjectFittedIntoRectangle(PdfXObject xObject, Rectangle rect) {
         if (xObject instanceof PdfFormXObject) {
@@ -2308,7 +2314,7 @@ public class PdfCanvas implements Serializable {
      */
     public PdfCanvas addXObject(PdfXObject xObject) {
         if (xObject instanceof PdfFormXObject) {
-            return addFormWithTransformationMatrix((PdfFormXObject) xObject, 1, 0, 0, 1, 0, 0);
+            return addFormWithTransformationMatrix((PdfFormXObject) xObject, 1, 0, 0, 1, 0, 0, false);
         } else if (xObject instanceof PdfImageXObject) {
             return addImageAt((PdfImageXObject) xObject, 0, 0);
         } else {
@@ -2506,17 +2512,21 @@ public class PdfCanvas implements Serializable {
      * Adds {@link PdfFormXObject} to canvas.
      *
      * @param form the formXObject to add
-     * @param a    an element of the transformation matrix
-     * @param b    an element of the transformation matrix
-     * @param c    an element of the transformation matrix
-     * @param d    an element of the transformation matrix
-     * @param e    an element of the transformation matrix
-     * @param f    an element of the transformation matrix
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     * @param writeIdentityMatrix true if the matrix is written in any case, otherwise if the
+     *                            {@link #isIdentityMatrix(float, float, float, float, float, float)} method indicates
+     *                            that the matrix is identity, the matrix will not be written
      * @return current canvas
      */
-    private PdfCanvas addFormWithTransformationMatrix(PdfFormXObject form, float a, float b, float c, float d, float e, float f) {
+    private PdfCanvas addFormWithTransformationMatrix(PdfFormXObject form, float a, float b, float c,
+            float d, float e, float f, boolean writeIdentityMatrix) {
         saveState();
-        if (!PdfCanvas.isIdentityMatrix(a, b, c, d, e, f)) {
+        if (writeIdentityMatrix || !PdfCanvas.isIdentityMatrix(a, b, c, d, e, f)) {
             concatMatrix(a, b, c, d, e, f);
         }
         PdfName name = resources.addForm(form);
@@ -2537,7 +2547,7 @@ public class PdfCanvas implements Serializable {
      * @param f    an element of the transformation matrix
      * @return current canvas
      * @deprecated will be removed in 7.2, use
-     * {@link #addFormWithTransformationMatrix(PdfFormXObject, float, float, float, float, float, float)} instead
+     * {@link #addFormWithTransformationMatrix(PdfFormXObject, float, float, float, float, float, float, boolean)} instead
      */
     @Deprecated
     private PdfCanvas addForm(PdfFormXObject form, float a, float b, float c, float d, float e, float f) {
@@ -2566,7 +2576,7 @@ public class PdfCanvas implements Serializable {
                 y + bBoxMax.get(Vector.I2) - bBoxMin.get(Vector.I2), 1);
 
         float[] result = PdfCanvas.calculateTransformationMatrix(rectMin, rectMax, bBoxMin, bBoxMax);
-        return addFormWithTransformationMatrix(form, result[0], result[1], result[2], result[3], result[4], result[5]);
+        return addFormWithTransformationMatrix(form, result[0], result[1], result[2], result[3], result[4], result[5], false);
     }
 
     /**
@@ -2640,7 +2650,7 @@ public class PdfCanvas implements Serializable {
         Vector rectMax = new Vector(rect.getRight(), rect.getTop(), 1);
 
         float[] result = PdfCanvas.calculateTransformationMatrix(rectMin, rectMax, bBoxMin, bBoxMax);
-        return addFormWithTransformationMatrix(form, result[0], result[1], result[2], result[3], result[4], result[5]);
+        return addFormWithTransformationMatrix(form, result[0], result[1], result[2], result[3], result[4], result[5], false);
     }
 
     /**
@@ -2805,7 +2815,7 @@ public class PdfCanvas implements Serializable {
     }
 
     private static boolean isIdentityMatrix(float a, float b, float c, float d, float e, float f) {
-        return Float.compare(a, 1) == 0 && Float.compare(b, 0) == 0 && Float.compare(c, 0) == 0 &&
-                Float.compare(d, 1) == 0 && Float.compare(e, 0) == 0 && Float.compare(f, 0) == 0;
+        return Math.abs(1 - a) < IDENTITY_MATRIX_EPS && Math.abs(b) < IDENTITY_MATRIX_EPS && Math.abs(c) < IDENTITY_MATRIX_EPS &&
+                Math.abs(1 - d) < IDENTITY_MATRIX_EPS && Math.abs(e) < IDENTITY_MATRIX_EPS && Math.abs(f) < IDENTITY_MATRIX_EPS;
     }
 }
