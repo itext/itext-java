@@ -77,6 +77,8 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
             }
         }
         switch (lookupType) {
+            case 1:
+                return new GposLookupType1(this, lookupFlag, subTableLocations);
             case 2:
                 return new GposLookupType2(this, lookupFlag, subTableLocations);
             case 4:
