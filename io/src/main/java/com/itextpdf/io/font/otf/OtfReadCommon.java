@@ -176,15 +176,28 @@ public class OtfReadCommon {
         return marks;
     }
 
-    public static SubstLookupRecord[] readSubstLookupRecords(RandomAccessFileOrArray rf, int substCount) throws java.io.IOException {
-        SubstLookupRecord[] substPosLookUpRecords = new SubstLookupRecord[substCount];
+    public static SubstLookupRecord[] readSubstLookupRecords(RandomAccessFileOrArray rf, int substCount)
+            throws java.io.IOException {
+        SubstLookupRecord[] substLookUpRecords = new SubstLookupRecord[substCount];
         for (int i = 0; i < substCount; ++i) {
             SubstLookupRecord slr = new SubstLookupRecord();
             slr.sequenceIndex = rf.readUnsignedShort();
             slr.lookupListIndex = rf.readUnsignedShort();
-            substPosLookUpRecords[i] = slr;
+            substLookUpRecords[i] = slr;
         }
-        return substPosLookUpRecords;
+        return substLookUpRecords;
+    }
+
+    public static PosLookupRecord[] readPosLookupRecords(RandomAccessFileOrArray rf, int recordCount)
+            throws java.io.IOException {
+        PosLookupRecord[] posLookUpRecords = new PosLookupRecord[recordCount];
+        for (int i = 0; i < recordCount; ++i) {
+            PosLookupRecord lookupRecord = new PosLookupRecord();
+            lookupRecord.sequenceIndex = rf.readUnsignedShort();
+            lookupRecord.lookupListIndex = rf.readUnsignedShort();
+            posLookUpRecords[i] = lookupRecord;
+        }
+        return posLookUpRecords;
     }
 
     public static GposAnchor[] readAnchorArray(OpenTypeFontTableReader tableReader, int[] locations, int left, int right) throws java.io.IOException {

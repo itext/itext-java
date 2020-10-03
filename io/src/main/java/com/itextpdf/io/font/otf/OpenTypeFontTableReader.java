@@ -212,6 +212,10 @@ public abstract class OpenTypeFontTableReader implements Serializable {
         return OtfReadCommon.readSubstLookupRecords(rf, substCount);
     }
 
+    protected PosLookupRecord[] readPosLookupRecords(int substCount) throws java.io.IOException {
+        return OtfReadCommon.readPosLookupRecords(rf, substCount);
+    }
+
     protected TagAndLocation[] readTagAndLocations(int baseLocation) throws java.io.IOException {
         int count = rf.readUnsignedShort();
         TagAndLocation[] tagslLocs = new TagAndLocation[count];
