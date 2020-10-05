@@ -78,14 +78,14 @@ public class OtfReadCommon {
 		int coverageFormat = rf.readShort();
 		List<Integer> glyphIds;
 		if (coverageFormat == 1) {
-			int glyphCount = rf.readShort();
+			int glyphCount = rf.readUnsignedShort();
 			glyphIds = new ArrayList<>(glyphCount);
 			for (int i = 0; i < glyphCount; i++) {
-				int coverageGlyphId = rf.readShort();
+				int coverageGlyphId = rf.readUnsignedShort();
 				glyphIds.add(coverageGlyphId);
 			}
 		} else if (coverageFormat == 2) {
-			int rangeCount = rf.readShort();
+			int rangeCount = rf.readUnsignedShort();
 			glyphIds = new ArrayList<>();
 			for (int i = 0; i < rangeCount; i++) {
 				readRangeRecord(rf, glyphIds);
@@ -99,8 +99,8 @@ public class OtfReadCommon {
 	}
 
 	private static void readRangeRecord(RandomAccessFileOrArray rf, List<Integer> glyphIds) throws java.io.IOException {
-		int startGlyphId = rf.readShort();
-		int endGlyphId = rf.readShort();
+		int startGlyphId = rf.readUnsignedShort();
+		int endGlyphId = rf.readUnsignedShort();
 		@SuppressWarnings("unused")
         int startCoverageIndex = rf.readShort();
 		for (int glyphId = startGlyphId; glyphId <= endGlyphId; glyphId++) {
