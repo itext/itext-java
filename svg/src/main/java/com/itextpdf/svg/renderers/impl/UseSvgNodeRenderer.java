@@ -42,7 +42,6 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -53,6 +52,7 @@ import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgTextUtil;
+
 import org.slf4j.LoggerFactory;
 
 /**
@@ -72,11 +72,10 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
                 String normalizedName = SvgTextUtil.filterReferenceValue(elementToReUse);
                 if (!context.isIdUsedByUseTagBefore(normalizedName)) {
                     ISvgNodeRenderer template = context.getNamedObject(normalizedName);
-                    //Clone template
+                    // Clone template
                     ISvgNodeRenderer namedObject = template == null ? null : template.createDeepCopy();
-                    //Resolve parent inheritance
-                    SvgNodeRendererInheritanceResolver iresolver = new SvgNodeRendererInheritanceResolver();
-                    iresolver.applyInheritanceToSubTree(this,namedObject);
+                    // Resolve parent inheritance
+                    SvgNodeRendererInheritanceResolver.applyInheritanceToSubTree(this, namedObject, context.getCssContext());
 
                     if (namedObject != null) {
                         if (namedObject instanceof AbstractSvgNodeRenderer) {

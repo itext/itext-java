@@ -327,7 +327,7 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)
     })
-    // TODO DEVSIX-4140 remove log message check and update cmp
+    // TODO DEVSIX-4140 font-relative values doesn't support
     public void textTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "text");
     }
@@ -377,21 +377,16 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-4140 update cmp file
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)})
     public void textGradientEmUnitsRelated() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "textGradientEmUnitsRelated");
     }
 
     @Test
-    // TODO DEVSIX-4140 update cmp file
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)})
     public void textGradientEmUnitsRelatedNotDefs() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "textGradientEmUnitsRelatedNotDefs");
     }
 
     @Test
-    // TODO DEVSIX-4140 update cmp file
     public void textGradientEmUnitsRelatedDefault() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "textGradientEmUnitsRelatedDefault");
     }
@@ -473,7 +468,6 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-4140 update after fix
     public void userSpaceOnUseWithUnitsRelativeToFontTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "userSpaceOnUseWithUnitsRelativeToFont");
     }
@@ -485,7 +479,7 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO: DEVSIX-4140, DEVSIX-3596 update cmp_ after fix ("ch" "vmin"+"vmax"+"vw"+"vh" not implemented yet)
+    // TODO: DEVSIX-3596 update cmp_ after fix ("ch" "vmin"+"vmax"+"vw"+"vh" not implemented yet)
     public void userSpaceOnUseDiffRelativeUnitsInGradientTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "userSpaceOnUseDiffRelativeUnitsInGradient");
     }

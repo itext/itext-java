@@ -556,14 +556,18 @@ public final class SvgConverter {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(pdfDest, writerProps));
         // Process
         ISvgProcessorResult processorResult = process(parse(svgStream, props), props);
-        ISvgNodeRenderer topSvgRenderer = processorResult.getRootRenderer();
 
         ResourceResolver resourceResolver = SvgConverter.getResourceResolver(processorResult, props);
-        SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider(), processorResult.getRootRenderer());
+        SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider());
+        if (processorResult instanceof SvgProcessorResult) {
+            drawContext.setCssContext(((SvgProcessorResult) processorResult).getContext().getCssContext());
+        }
 
         drawContext.addNamedObjects(processorResult.getNamedObjects());
         // Add temp fonts
         drawContext.setTempFonts(processorResult.getTempFonts());
+
+        ISvgNodeRenderer topSvgRenderer = processorResult.getRootRenderer();
         // Extract topmost dimensions
         checkNull(topSvgRenderer);
         checkNull(pdfDocument);
@@ -669,8 +673,10 @@ public final class SvgConverter {
     private static PdfFormXObject convertToXObject(ISvgProcessorResult processorResult, PdfDocument document,
             ISvgConverterProperties props) {
         ResourceResolver resourceResolver = SvgConverter.getResourceResolver(processorResult, props);
-        SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider(),
-                processorResult.getRootRenderer());
+        final SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider());
+        if (processorResult instanceof SvgProcessorResult) {
+            drawContext.setCssContext(((SvgProcessorResult) processorResult).getContext().getCssContext());
+        }
         drawContext.setTempFonts(processorResult.getTempFonts());
         drawContext.addNamedObjects(processorResult.getNamedObjects());
         return convertToXObject(processorResult.getRootRenderer(), document, drawContext);

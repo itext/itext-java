@@ -42,7 +42,6 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Point;
@@ -73,9 +72,9 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
     public float getTextContentLength(float parentFontSize, PdfFont font) {
         float contentLength = 0.0f;
         if (font != null && this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_CONTENT)) {
-            //Use own font-size declaration if it is present, parent's otherwise
-            float fontSize = (float)SvgTextUtil.resolveFontSize(this,parentFontSize);
-            String content = this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT);
+            // Use own font-size declaration if it is present, parent's otherwise
+            final float fontSize = SvgTextUtil.resolveFontSize(this, parentFontSize);
+            final String content = this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT);
             contentLength = font.getWidth(content, fontSize);
         }
         return contentLength;
@@ -105,16 +104,15 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
     @Override
     public TextRectangle getTextRectangle(SvgDrawContext context, Point basePoint) {
         if (getParent() instanceof TextSvgBranchRenderer && basePoint != null) {
-            float parentFontSize = ((TextSvgBranchRenderer) getParent()).getFontSize();
-            PdfFont parentFont = ((TextSvgBranchRenderer) getParent()).getFont();
-            float textLength = getTextContentLength(parentFontSize, parentFont);
-            float[] fontAscenderDescenderFromMetrics = TextRenderer
+            final float parentFontSize = ((AbstractSvgNodeRenderer) getParent()).getCurrentFontSize();
+            final PdfFont parentFont = ((TextSvgBranchRenderer) getParent()).getFont();
+            final float textLength = getTextContentLength(parentFontSize, parentFont);
+            final float[] fontAscenderDescenderFromMetrics = TextRenderer
                     .calculateAscenderDescender(parentFont, RenderingMode.HTML_MODE);
-            float fontAscender = fontAscenderDescenderFromMetrics[0] / FontProgram.UNITS_NORMALIZATION * parentFontSize;
-            float fontDescender =
-                    fontAscenderDescenderFromMetrics[1] / FontProgram.UNITS_NORMALIZATION * parentFontSize;
+            final float fontAscender = fontAscenderDescenderFromMetrics[0] / FontProgram.UNITS_NORMALIZATION * parentFontSize;
+            final float fontDescender = fontAscenderDescenderFromMetrics[1] / FontProgram.UNITS_NORMALIZATION * parentFontSize;
             // TextRenderer#calculateAscenderDescender returns fontDescender as a negative value so we should subtract this value
-            float textHeight = fontAscender - fontDescender;
+            final float textHeight = fontAscender - fontDescender;
             return new TextRectangle((float) basePoint.getX(), (float) basePoint.getY() - fontAscender, textLength,
                     textHeight, (float) basePoint.getY());
         } else {

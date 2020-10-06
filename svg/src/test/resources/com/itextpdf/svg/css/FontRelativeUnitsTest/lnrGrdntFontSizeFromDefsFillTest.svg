@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400" font-size="10">
+	<g font-size="60">
+		<defs font-size="20">
+			<linearGradient x2="50em" id="gradient1" gradientUnits="userSpaceOnUse">
+				<stop offset="0" stop-color="red"/>
+				<stop offset="0.5" stop-color="green"/>
+				<stop offset="1" stop-color="blue"/>
+			</linearGradient>
+		</defs>
+	</g>
+
+	<g font-size="100">
+		<text x="10" y="150" font-family="Courier" font-size="120" fill="url(#gradient1)">
+			iText
+		</text>
+	</g>
+
+	<text font-size="20" x="10" y="200">Test passes when the end of the iText word is green</text>
+	<text font-size="20" x="10" y="230">Gradient x2="50em" should calculated from defs font-size</text>
+</svg>

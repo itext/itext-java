@@ -263,8 +263,8 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 2)})
-    // TODO DEVSIX-4140 update cmp, remove logger check
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)})
+    // TODO DEVSIX-4140 font-relative values doesn't support
     public void relativeStyleInheritanceTest() throws IOException,InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "relativeStyleInheritanceTest");
     }

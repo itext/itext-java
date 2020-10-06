@@ -146,7 +146,7 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
             double width = currentViewPort.getWidth();
             double height = currentViewPort.getHeight();
             float em = getCurrentFontSize();
-            float rem = context.getRemValue();
+            float rem = context.getCssContext().getRootFontSize();
             start = new Point(getCoordinateForUserSpaceOnUse(Attributes.X1, x, x, width, em, rem),
                     getCoordinateForUserSpaceOnUse(Attributes.Y1, y, y, height, em, rem));
             end = new Point(getCoordinateForUserSpaceOnUse(Attributes.X2, x + width, x, width, em, rem),

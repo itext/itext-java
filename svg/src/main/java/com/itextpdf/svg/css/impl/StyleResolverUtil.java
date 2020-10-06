@@ -44,17 +44,15 @@ package com.itextpdf.svg.css.impl;
 
 import com.itextpdf.io.util.DecimalFormatUtil;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
-import com.itextpdf.styledxmlparser.css.resolve.CssInheritance;
 import com.itextpdf.styledxmlparser.css.resolve.CssPropertyMerger;
 import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.util.StyleUtil;
+import com.itextpdf.svg.SvgConstants;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @deprecated use {@link StyleUtil} instead.
@@ -63,22 +61,14 @@ import java.util.Set;
 @Deprecated
 public class StyleResolverUtil {
 
-    private Set<IStyleInheritance> inheritanceRules;
-
     /**
      * List to store the properties whose value can depend on parent or element font-size
      */
     private static final List<String> fontSizeDependentPercentage = new ArrayList<String>(2);
 
     static {
-        fontSizeDependentPercentage.add(CommonCssConstants.FONT_SIZE);
+        fontSizeDependentPercentage.add(SvgConstants.Attributes.FONT_SIZE);
         fontSizeDependentPercentage.add(CommonCssConstants.LINE_HEIGHT);
-    }
-
-    public StyleResolverUtil(){
-        this.inheritanceRules = new HashSet<>();
-        inheritanceRules.add(new CssInheritance());
-        inheritanceRules.add(new SvgAttributeInheritance());
     }
 
     /**
@@ -124,7 +114,7 @@ public class StyleResolverUtil {
      * false if it is not marked as inheritable in all rule-sets
      */
     private boolean checkInheritance(String styleProperty) {
-        for (IStyleInheritance inheritanceRule : inheritanceRules) {
+        for (final IStyleInheritance inheritanceRule : SvgStyleResolver.INHERITANCE_RULES) {
             if (inheritanceRule.isInheritable(styleProperty)) {
                 return true;
             }

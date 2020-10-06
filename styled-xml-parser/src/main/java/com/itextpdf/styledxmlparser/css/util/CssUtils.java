@@ -79,6 +79,7 @@ public class CssUtils {
 
     // TODO (DEVSIX-3596) The list of the font-relative measurements is not full.
     //  Add 'ch' units to array and move this array to the CommonCssConstants
+    @Deprecated
     private static final String[] FONT_RELATIVE_MEASUREMENTS_VALUES = new String[] {CommonCssConstants.EM, CommonCssConstants.EX, CommonCssConstants.REM};
 
     private static final float EPSILON = 1e-6f;
@@ -680,7 +681,9 @@ public class CssUtils {
      *
      * @param value the string that needs to be checked.
      * @return boolean true if value contains an allowed font relative value.
+     * @deprecated will be removed in 7.2, use {@link #isRelativeValue(String)} method instead
      */
+    @Deprecated
     public static boolean isFontRelativeValue(final String value) {
         if (value == null) {
             return false;
@@ -749,6 +752,23 @@ public class CssUtils {
         return value != null && (value.matches("^[-+]?\\d\\d*\\.\\d*$")
                 || value.matches("^[-+]?\\d\\d*$")
                 || value.matches("^[-+]?\\.\\d\\d*$"));
+    }
+
+    /**
+     * Checks whether a string matches a negative value (e.g. -123, -2em, -0.123).
+     * All these metric values are allowed in HTML/CSS.
+     *
+     * @param value the string that needs to be checked
+     * @return true if value is negative
+     */
+    public static boolean isNegativeValue(final String value) {
+        if (value == null) {
+            return false;
+        }
+        if (isNumericValue(value) || isRelativeValue(value)) {
+            return value.startsWith("-");
+        }
+        return false;
     }
 
     /**

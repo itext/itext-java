@@ -99,7 +99,8 @@ public class FontSizeTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: update cmp-file after DEVSIX-2785 and DEVSIX-2884
+    // TODO DEVSIX-2785 percentage and em value doesn't correctly support in font-size
+    // TODO DEVSIX-2884 rem in font-size doesn't support correctly
     public void diffUnitsOfMeasure() throws IOException, InterruptedException {
         String name = "diff_units_of_measure";
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, name);

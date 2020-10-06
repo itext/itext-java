@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="400" viewBox="0 0 400 400">
+	<defs>
+		<text id="myText" font-size="2em" y="35" x="10">some text</text>
+	</defs>
+
+	<use xlink:href="#myText" font-size="20"/>
+	<rect x="10" y="10" width="155" height="30" fill="none" stroke="green"/>
+</svg>

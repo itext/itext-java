@@ -184,7 +184,7 @@ public final class SvgTextUtil {
     public static float resolveFontSize(ISvgTextNodeRenderer renderer, float parentFontSize) {
         //Use own font-size declaration if it is present, parent's otherwise
         float fontSize = Float.NaN;
-        String elementFontSize = renderer.getAttribute(SvgConstants.Attributes.FONT_SIZE);
+        final String elementFontSize = renderer.getAttribute(SvgConstants.Attributes.FONT_SIZE);
         if (null != elementFontSize && !elementFontSize.isEmpty()) {
             if (CssUtils.isRelativeValue(elementFontSize) || CommonCssConstants.LARGER.equals(elementFontSize) || CommonCssConstants.SMALLER.equals(elementFontSize)) {
                 fontSize = CssUtils.parseRelativeFontSize(elementFontSize, parentFontSize);

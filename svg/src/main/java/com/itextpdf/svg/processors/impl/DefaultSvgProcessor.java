@@ -47,8 +47,6 @@ import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.ITextNode;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.SvgConstants.Tags;
-import com.itextpdf.svg.css.SvgCssContext;
 import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
@@ -85,7 +83,6 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     private ICssResolver cssResolver;
     private ISvgNodeRendererFactory rendererFactory;
     private Map<String, ISvgNodeRenderer> namedObjects;
-    private SvgCssContext cssContext;
     private SvgProcessorContext context;
 
     /**
@@ -140,7 +137,6 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         new SvgFontProcessor(context).addFontFaceFonts(cssResolver);
         //TODO DEVSIX-2264
         namedObjects = new HashMap<>();
-        cssContext = new SvgCssContext();
     }
 
     /**
@@ -155,7 +151,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
             ISvgNodeRenderer startingRenderer = rendererFactory.createSvgNodeRendererForTag(rootElementNode, null);
             if (startingRenderer != null) {
-                Map<String, String> attributesAndStyles = cssResolver.resolveStyles(startingNode, cssContext);
+                Map<String, String> attributesAndStyles = cssResolver.resolveStyles(startingNode, context.getCssContext());
                 rootElementNode.setStyles(attributesAndStyles);
                 startingRenderer.setAttributesAndStyles(attributesAndStyles);
                 processorState.push(startingRenderer);
@@ -194,13 +190,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
                 ISvgNodeRenderer parentRenderer = processorState.top();
                 ISvgNodeRenderer renderer = rendererFactory.createSvgNodeRendererForTag(element, parentRenderer);
                 if (renderer != null) {
-                    Map<String, String> styles;
-                    if (cssResolver instanceof SvgStyleResolver
-                            && onlyNativeStylesShouldBeResolved(element)) {
-                        styles = ((SvgStyleResolver) cssResolver).resolveNativeStyles(node, cssContext);
-                    } else {
-                        styles = cssResolver.resolveStyles(node, cssContext);
-                    }
+                    final Map<String, String> styles = cssResolver.resolveStyles(node, context.getCssContext());
                     // For inheritance
                     element.setStyles(styles);
                     // For drawing operations
@@ -242,27 +232,6 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         } else if (processAsText(node)) {
             processText((ITextNode) node);
         }
-    }
-
-    private static boolean onlyNativeStylesShouldBeResolved(IElementNode element) {
-        return !Tags.LINEAR_GRADIENT.equals(element.name())
-                && !SvgConstants.Tags.MARKER.equals(element.name())
-                && isElementNested(element, SvgConstants.Tags.DEFS)
-                && !isElementNested(element, SvgConstants.Tags.MARKER);
-    }
-
-    private static boolean isElementNested(IElementNode element, String parentElementNameForSearch) {
-        if (!(element.parentNode() instanceof IElementNode)) {
-            return false;
-        }
-        IElementNode parentElement = (IElementNode) element.parentNode();
-        if (parentElement.name().equals(parentElementNameForSearch)) {
-            return true;
-        }
-        if (element.parentNode() != null) {
-            return isElementNested(parentElement, parentElementNameForSearch);
-        }
-        return false;
     }
 
     /**

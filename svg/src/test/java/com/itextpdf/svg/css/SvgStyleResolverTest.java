@@ -106,6 +106,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         expected.put("ry", "53");
         expected.put("stroke-width", "1.5");
         expected.put("stroke", "#da0000");
+        expected.put("font-size", "12pt");
 
 
         Assert.assertEquals(expected, actual);
@@ -132,6 +133,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         expectedAttr.put(SvgConstants.Attributes.XMLNS, "http://www.w3.org/1999/xhtml");
         expectedAttr.put(SvgConstants.Attributes.REL, SvgConstants.Attributes.STYLESHEET);
         expectedAttr.put(SvgConstants.Attributes.HREF, "styleSheetWithLinkStyle.css");
+        expectedAttr.put(SvgConstants.Attributes.FONT_SIZE, "12pt");
         expectedAttr.put("type", "text/css");
         // Attribute from external stylesheet
         expectedAttr.put(SvgConstants.Attributes.FILL, "black");
@@ -163,6 +165,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         expectedAttr.put(SvgConstants.Attributes.XMLNS, "http://www.w3.org/1999/xhtml");
         expectedAttr.put(SvgConstants.Attributes.REL, SvgConstants.Attributes.STYLESHEET);
         expectedAttr.put(SvgConstants.Attributes.HREF,  "!invalid name!externalSheet.css");
+        expectedAttr.put(SvgConstants.Attributes.FONT_SIZE,  "12pt");
         expectedAttr.put("type", "text/css");
 
         Assert.assertEquals(expectedAttr, attr);
@@ -211,7 +214,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         Element svg = new Element(Tag.valueOf("svg"), "");
         svg.attributes().put(SvgConstants.Attributes.STROKE, "white");
         INode svgNode = new JsoupElementNode(svg);
-        Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
+        Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, new SvgCssContext());
 
         Assert.assertEquals("white", resolvedStyles.get(SvgConstants.Attributes.STROKE));
     }
@@ -240,6 +243,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         expected.put("stroke-width", "1.76388889");
         expected.put("stroke", "#da0000");
         expected.put("stroke-opacity", "1");
+        expected.put("font-size", "12pt");
 
         Assert.assertEquals(expected, actual);
     }

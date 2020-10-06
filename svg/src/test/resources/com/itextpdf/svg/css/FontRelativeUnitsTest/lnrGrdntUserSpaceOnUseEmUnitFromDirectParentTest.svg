@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="400" viewBox="0 0 700 400" font-size="10">
+	<rect x="10" y="40" width="195" height="35" fill="none" stroke="black"/>
+	<svg font-size="2.5rem">
+		<linearGradient x1="2em" x2="3em" id="gradient1" gradientUnits="userSpaceOnUse">
+			<stop offset="0" stop-color="red"/>
+			<stop offset="0.2" stop-color="green"/>
+			<stop offset="1" stop-color="blue"/>
+		</linearGradient>
+		<text x="10" y="70" font-size="2em" fill="url(#gradient1)">some text</text>
+	</svg>
+	<text font-size="20" x="10" y="100">The test passes when the gradient starts at character "m" of the text</text>
+</svg>

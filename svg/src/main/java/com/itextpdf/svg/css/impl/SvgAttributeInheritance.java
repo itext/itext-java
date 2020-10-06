@@ -42,7 +42,6 @@
  */
 package com.itextpdf.svg.css.impl;
 
-
 import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
 import com.itextpdf.svg.SvgConstants;
 

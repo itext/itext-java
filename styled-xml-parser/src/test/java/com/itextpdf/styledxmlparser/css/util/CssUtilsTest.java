@@ -431,4 +431,26 @@ public class CssUtilsTest extends ExtendedITextTest {
         Assert.assertEquals(BlendMode.NORMAL, CssUtils.parseBlendMode("invalid"));
         Assert.assertEquals(BlendMode.NORMAL, CssUtils.parseBlendMode("SCREEN"));
     }
+
+    @Test
+    public void isNegativeValueTest() {
+         // Invalid values
+        Assert.assertFalse(CssUtils.isNegativeValue(null));
+        Assert.assertFalse(CssUtils.isNegativeValue("-..23"));
+        Assert.assertFalse(CssUtils.isNegativeValue("12 34"));
+        Assert.assertFalse(CssUtils.isNegativeValue("12reeem"));
+
+        // Valid not negative values
+        Assert.assertFalse(CssUtils.isNegativeValue(".23"));
+        Assert.assertFalse(CssUtils.isNegativeValue("+123"));
+        Assert.assertFalse(CssUtils.isNegativeValue("57%"));
+        Assert.assertFalse(CssUtils.isNegativeValue("3.7em"));
+
+        // Valid negative values
+        Assert.assertTrue(CssUtils.isNegativeValue("-1.7rem"));
+        Assert.assertTrue(CssUtils.isNegativeValue("-43.56%"));
+        Assert.assertTrue(CssUtils.isNegativeValue("-12"));
+        Assert.assertTrue(CssUtils.isNegativeValue("-0.123"));
+        Assert.assertTrue(CssUtils.isNegativeValue("-.34"));
+    }
 }

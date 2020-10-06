@@ -67,7 +67,8 @@ public final class StyleUtil {
         if ((childPropValue == null && checkInheritance(styleProperty, inheritanceRules)) || CommonCssConstants.INHERIT.equals(childPropValue)) {
             if (valueIsOfMeasurement(parentPropValue, CommonCssConstants.EM)
                     || valueIsOfMeasurement(parentPropValue, CommonCssConstants.EX)
-                    || valueIsOfMeasurement(parentPropValue, CommonCssConstants.PERCENTAGE) && fontSizeDependentPercentage.contains(styleProperty)) {
+                    || valueIsOfMeasurement(parentPropValue, CommonCssConstants.PERCENTAGE)
+                    && fontSizeDependentPercentage.contains(styleProperty)) {
                 float absoluteParentFontSize = CssUtils.parseAbsoluteLength(parentFontSizeString);
                 // Format to 4 decimal places to prevent differences between Java and C#
                 styles.put(styleProperty, DecimalFormatUtil
