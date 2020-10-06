@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font.otf;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,8 +57,8 @@ public class GposLookupType1 extends OpenTableLookup {
         GposValueRecord valueRecord = valueRecordMap.get(glyphCode);
         if (valueRecord != null) {
             Glyph newGlyph = new Glyph(line.get(line.idx));
-            newGlyph.xAdvance += (short)valueRecord.XAdvance;
-            newGlyph.yAdvance += (short)valueRecord.YAdvance;
+            newGlyph.setXAdvance((short)(newGlyph.getXAdvance() + valueRecord.XAdvance));
+            newGlyph.setYAdvance((short)(newGlyph.getYAdvance() + valueRecord.YAdvance));
             line.set(line.idx, newGlyph);
             positionApplied = true;
         }
@@ -68,13 +69,28 @@ public class GposLookupType1 extends OpenTableLookup {
     @Override
     protected void readSubTable(int subTableLocation) throws java.io.IOException {
         openReader.rf.seek(subTableLocation);
-        openReader.rf.readShort();
-        int coverage = openReader.rf.readUnsignedShort();
+        int subTableFormat = openReader.rf.readShort();
+        int coverageOffset = openReader.rf.readUnsignedShort();
         int valueFormat = openReader.rf.readUnsignedShort();
-        GposValueRecord valueRecord = OtfReadCommon.readGposValueRecord(openReader, valueFormat);
-        List<Integer> coverageGlyphIds = openReader.readCoverageFormat(subTableLocation + coverage);
-        for (Integer glyphId : coverageGlyphIds) {
-            valueRecordMap.put((int)glyphId, valueRecord);
+        if (subTableFormat == 1) {
+            GposValueRecord valueRecord = OtfReadCommon.readGposValueRecord(openReader, valueFormat);
+            List<Integer> coverageGlyphIds = openReader.readCoverageFormat(subTableLocation + coverageOffset);
+            for (Integer glyphId : coverageGlyphIds) {
+                valueRecordMap.put((int) glyphId, valueRecord);
+            }
+        } else if (subTableFormat == 2) {
+            int valueCount = openReader.rf.readUnsignedShort();
+            List<GposValueRecord> valueRecords = new ArrayList<>();
+            for (int i = 0; i < valueCount; i++) {
+                GposValueRecord valueRecord = OtfReadCommon.readGposValueRecord(openReader, valueFormat);
+                valueRecords.add(valueRecord);
+            }
+            List<Integer> coverageGlyphIds = openReader.readCoverageFormat(subTableLocation + coverageOffset);
+            for (int i = 0; i < coverageGlyphIds.size(); i++) {
+                valueRecordMap.put((int) coverageGlyphIds.get(i), valueRecords.get(i));
+            }
+        } else {
+            throw new IllegalArgumentException("Bad subtable format identifier: " + subTableFormat);
         }
     }
 }

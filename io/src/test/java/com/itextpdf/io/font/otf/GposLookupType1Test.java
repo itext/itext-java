@@ -39,7 +39,7 @@ public class GposLookupType1Test extends ExtendedITextTest {
     private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/GposLookupType1Test/";
 
     @Test
-    public void verifyXAdvanceIsApplied() throws IOException {
+    public void verifyXAdvanceIsAppliedSubFormat1() throws IOException {
         TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(RESOURCE_FOLDER + "NotoSansMyanmar-Regular.ttf");
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
         GposLookupType1 lookup = (GposLookupType1) gposTableReader.getLookupTable(29);
@@ -57,7 +57,7 @@ public class GposLookupType1Test extends ExtendedITextTest {
     }
 
     @Test
-    public void verifyPositionIsNotAppliedForIrrelevantGlyph() throws IOException {
+    public void verifyPositionIsNotAppliedForIrrelevantGlyphSubFormat1() throws IOException {
         TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(RESOURCE_FOLDER + "NotoSansMyanmar-Regular.ttf");
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
         GposLookupType1 lookup = (GposLookupType1) gposTableReader.getLookupTable(29);
@@ -72,6 +72,29 @@ public class GposLookupType1Test extends ExtendedITextTest {
         Assert.assertFalse(lookup.transformOne(gl));
 
         Assert.assertEquals(0, gl.get(0).getXAdvance());
+    }
+
+    @Test
+    public void verifyDifferentXAdvanceIsAppliedSubFormat2() throws IOException {
+        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(RESOURCE_FOLDER + "NotoSansMyanmar-Regular.ttf");
+        GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
+        GposLookupType1 lookup = (GposLookupType1) gposTableReader.getLookupTable(16);
+
+        List<Glyph> glyphs = Arrays.asList(new Glyph(fontProgram.getGlyphByCode(401)),
+                new Glyph(fontProgram.getGlyphByCode(5)));
+        GlyphLine gl = new GlyphLine(glyphs);
+        Assert.assertEquals(0, gl.get(0).getXAdvance());
+        Assert.assertTrue(lookup.transformOne(gl));
+        Assert.assertEquals(109, gl.get(0).getXAdvance());
+
+        // Subtable type 2 defines different GposValueRecords for different coverage glyphs
+
+        glyphs = Arrays.asList(new Glyph(fontProgram.getGlyphByCode(508)),
+                new Glyph(fontProgram.getGlyphByCode(5)));
+        gl = new GlyphLine(glyphs);
+        Assert.assertEquals(0, gl.get(0).getXAdvance());
+        Assert.assertTrue(lookup.transformOne(gl));
+        Assert.assertEquals(158, gl.get(0).getXAdvance());
     }
 
 }
