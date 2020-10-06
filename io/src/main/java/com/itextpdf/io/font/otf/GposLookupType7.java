@@ -61,7 +61,7 @@ public class GposLookupType7 extends OpenTableLookup {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GposLookupType7.class);
 
-    private List<ContextualPositionTable> subTables;
+    protected List<ContextualTable<ContextualPositionRule>> subTables;
 
     public GposLookupType7(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations)
             throws java.io.IOException {
@@ -77,7 +77,7 @@ public class GposLookupType7 extends OpenTableLookup {
         int oldLineEnd = line.end;
         int initialLineIndex = line.idx;
 
-        for (ContextualPositionTable subTable : subTables) {
+        for (ContextualTable<ContextualPositionRule> subTable : subTables) {
             ContextualPositionRule contextRule = subTable.getMatchingContextRule(line);
             if (contextRule == null) {
                 continue;

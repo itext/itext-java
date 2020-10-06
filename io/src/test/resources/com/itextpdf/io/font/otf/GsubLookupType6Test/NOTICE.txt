@@ -1,0 +1,3 @@
+Please notice that the following fonts are used with the mentioned below licenses.
+
+* Padauk-Regular.ttf - SIL Open Font License v1.1 (obtained from https://fonts.google.com/specimen/Padauk)

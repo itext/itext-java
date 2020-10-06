@@ -43,8 +43,8 @@
  */
 package com.itextpdf.io.font.otf.lookuptype5;
 
-import com.itextpdf.io.font.otf.ContextualSubTable;
 import com.itextpdf.io.font.otf.ContextualSubstRule;
+import com.itextpdf.io.font.otf.ContextualTable;
 import com.itextpdf.io.font.otf.OpenTypeFontTableReader;
 import com.itextpdf.io.font.otf.SubstLookupRecord;
 
@@ -55,7 +55,7 @@ import java.util.Map;
 /**
  * Contextual Substitution Subtable: Simple context glyph substitution
  */
-public class SubTableLookup5Format1 extends ContextualSubTable {
+public class SubTableLookup5Format1 extends ContextualTable<ContextualSubstRule> {
     private Map<Integer, List<ContextualSubstRule>> substMap;
 
     public SubTableLookup5Format1(OpenTypeFontTableReader openReader, int lookupFlag, Map<Integer, List<ContextualSubstRule>> substMap) {
