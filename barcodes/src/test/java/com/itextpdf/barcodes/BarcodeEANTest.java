@@ -54,7 +54,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -88,7 +87,9 @@ public class BarcodeEANTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool()
+                .compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder,
+                        "diff_"));
     }
 
     @Test
@@ -109,7 +110,9 @@ public class BarcodeEANTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool()
+                .compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder,
+                        "diff_"));
     }
 
     @Test
@@ -133,6 +136,96 @@ public class BarcodeEANTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool()
+                .compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder,
+                        "diff_"));
+    }
+
+    @Test
+    public void placeBarcodeUPCATest() throws IOException, PdfException, InterruptedException {
+        String filename = "placeBarcodeUPCATest.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        Barcode1D barcode = new BarcodeEAN(document);
+        barcode.setCodeType(BarcodeEAN.UPCA);
+        barcode.setCode("012340000006");
+
+        barcode.placeBarcode(canvas, ColorConstants.BLACK, ColorConstants.BLACK);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool()
+                .compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder,
+                        "diff_"));
+    }
+
+    @Test
+    public void placeBarcodeUPCETest() throws IOException, PdfException, InterruptedException {
+        String filename = "placeBarcodeUPCETest.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        Barcode1D barcode = new BarcodeEAN(document);
+        barcode.setCodeType(BarcodeEAN.UPCE);
+        barcode.setCode("03456781");
+
+        barcode.placeBarcode(canvas, ColorConstants.BLACK, ColorConstants.BLACK);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool()
+                .compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder,
+                        "diff_"));
+    }
+
+    @Test
+    public void placeBarcodeSUPP2Test() throws IOException, PdfException, InterruptedException {
+        String filename = "placeBarcodeSUPP2Test.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        Barcode1D barcode = new BarcodeEAN(document);
+        barcode.setCodeType(BarcodeEAN.SUPP2);
+        barcode.setCode("03456781");
+
+        barcode.placeBarcode(canvas, ColorConstants.BLACK, ColorConstants.BLACK);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool()
+                .compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder,
+                        "diff_"));
+    }
+
+    @Test
+    public void placeBarcodeSUPP5Test() throws IOException, PdfException, InterruptedException {
+        String filename = "placeBarcodeSUPP5Test.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        Barcode1D barcode = new BarcodeEAN(document);
+        barcode.setCodeType(BarcodeEAN.SUPP5);
+        barcode.setCode("55999");
+
+        barcode.placeBarcode(canvas, ColorConstants.BLACK, ColorConstants.BLACK);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool()
+                .compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder,
+                        "diff_"));
     }
 }

@@ -73,13 +73,20 @@ public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the Collection schema dictionary.
+     *
      * @param schema	an overview of the collection fields
+     * @return this instance to support fluent interface
      */
     public PdfCollection setSchema(PdfCollectionSchema schema) {
         getPdfObject().put(PdfName.Schema, schema.getPdfObject());
         return this;
     }
 
+    /**
+     * Gets the Collection schema dictionary.
+     *
+     * @return the Collection schema dictionary
+     */
     public PdfCollectionSchema getSchema(){
         return new PdfCollectionSchema(getPdfObject().getAsDictionary(PdfName.Schema));
     }
@@ -87,20 +94,30 @@ public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Identifies the document that will be initially presented
      * in the user interface.
+     *
      * @param documentName a string that identifies an entry in the EmbeddedFiles name tree
+     * @return this instance to support fluent interface
      */
     public PdfCollection setInitialDocument(String documentName) {
         getPdfObject().put(PdfName.D, new PdfString(documentName));
         return this;
     }
 
+    /**
+     * Retrieves the document that will be initially presented
+     * in the user interface.
+     *
+     * @return a pdf string that identifies an entry in the EmbeddedFiles name tree
+     */
     public PdfString getInitialDocument() {
         return getPdfObject().getAsString(PdfName.D);
     }
 
     /**
      * Sets the initial view.
-     * @param viewType
+     *
+     * @param viewType is a type of view
+     * @return this instance to support fluent interface
      */
     public PdfCollection setView(int viewType) {
         switch (viewType) {
@@ -118,37 +135,62 @@ public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * @deprecated  Will always return null. The return will be changed to PdfName in 7.2.
-     *              Use {@code getPdfObject().getAsName(PdfName.View)},
-     *              or one of {@link #isViewDetails()}, {@link #isViewTile()}, {@link #isViewHidden()}.
+     * Retrieves view as {@link PdfNumber pdf number}.
+     *
+     * @return the view
+     * @deprecated Will always return null. The return will be changed to PdfName in 7.2.
+     *             Use {@code getPdfObject().getAsName(PdfName.View)},
+     *             or one of {@link #isViewDetails()}, {@link #isViewTile()}, {@link #isViewHidden()}.
      */
     @Deprecated
     public PdfNumber getView() {
         return getPdfObject().getAsNumber(PdfName.View);
     }
 
+    /**
+     * Check if view is in details mode.
+     *
+     * @return true if view is in details mode and false otherwise
+     */
     public boolean isViewDetails() {
         PdfName view = getPdfObject().getAsName(PdfName.View);
         return view == null || view.equals(PdfName.D);
     }
 
+    /**
+     * Check if view is in tile mode.
+     *
+     * @return true if view is in tile mode and false otherwise
+     */
     public boolean isViewTile() {
         return PdfName.T.equals(getPdfObject().getAsName(PdfName.View));
     }
 
+    /**
+     * Check if view is hidden.
+     *
+     * @return true if view is hidden and false otherwise
+     */
     public boolean isViewHidden() {
         return PdfName.H.equals(getPdfObject().getAsName(PdfName.View));
     }
 
     /**
      * Sets the Collection sort dictionary.
-     * @param sort
+     *
+     * @param sort is the Collection sort dictionary
+     * @return this instance to support fluent interface
      */
     public PdfCollection setSort(PdfCollectionSort sort){
         getPdfObject().put(PdfName.Sort, sort.getPdfObject());
         return this;
     }
 
+    /**
+     * Getter for the Collection sort dictionary.
+     *
+     * @return the Collection sort
+     */
     public PdfCollectionSort getSort() {
         return new PdfCollectionSort(getPdfObject().getAsDictionary(PdfName.Sort));
     }

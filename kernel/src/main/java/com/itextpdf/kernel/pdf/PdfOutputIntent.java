@@ -59,6 +59,17 @@ public class PdfOutputIntent extends PdfObjectWrapper<PdfDictionary> {
      * Creates output intent dictionary. Null values are allowed to
      * suppress any key.
      * By default output intent subtype is GTS_PDFA1, use setter to change it.
+     *
+     * @param outputConditionIdentifier (required) identifying the intended output device or production condition in
+     *                                  human or machine readable form
+     * @param outputCondition           (optional) identifying the intended output device or production
+     *                                  condition in human-readable form
+     * @param registryName              identifying the registry in which the condition designated by
+     *                                  {@code outputConditionIdentifier} is defined
+     * @param info                      (required if {@code outputConditionIdentifier} does not specify a standard
+     *                                  production condition; optional otherwise) containing additional information or
+     *                                  comments about the intended target device or production condition
+     * @param iccStream                 ICC profile stream. User is responsible for closing the stream
      */
     public PdfOutputIntent(String outputConditionIdentifier, String outputCondition, String registryName, String info, InputStream iccStream) {
         super(new PdfDictionary());

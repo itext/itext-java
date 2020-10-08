@@ -76,7 +76,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class TextRendererTest extends AbstractRendererUnitTest {
+public class TextRendererTest extends RendererUnitTest {
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     private static final double EPS = 1e-5;
@@ -249,5 +249,35 @@ public class TextRendererTest extends AbstractRendererUnitTest {
         PdfFont pdfFont = renderer.resolveFirstPdfFont();
 
         Assert.assertEquals("NotoSans", pdfFont.getFontProgram().getFontNames().getFontName());
+    }
+
+    @Test
+    public void myanmarCharacterBelongsToSpecificScripts() {
+        // u1042 MYANMAR DIGIT TWO
+        Assert.assertTrue(TextRenderer.codePointIsOfSpecialScript(4162));
+    }
+
+    @Test
+    public void thaiCharacterBelongsToSpecificScripts() {
+        // u0E19 THAI CHARACTER NO NU
+        Assert.assertTrue(TextRenderer.codePointIsOfSpecialScript(3609));
+    }
+
+    @Test
+    public void laoCharacterBelongsToSpecificScripts() {
+        // u0EC8 LAO TONE MAI EK
+        Assert.assertTrue(TextRenderer.codePointIsOfSpecialScript(3784));
+    }
+
+    @Test
+    public void khmerCharacterBelongsToSpecificScripts() {
+        // u1789 KHMER LETTER NYO
+        Assert.assertTrue(TextRenderer.codePointIsOfSpecialScript(6025));
+    }
+
+    @Test
+    public void cyrillicCharacterDoesntBelongToSpecificScripts() {
+        // u0433 Cyrillic Small Letter U
+        Assert.assertFalse(TextRenderer.codePointIsOfSpecialScript(1091));
     }
 }

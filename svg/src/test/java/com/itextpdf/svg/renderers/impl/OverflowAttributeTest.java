@@ -22,21 +22,19 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.styledxmlparser.LogMessageConstant;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
 import static com.itextpdf.svg.SvgNodeRendererIntegrationTestUtil.convertAndCompareSinglePage;
 
 @Category(IntegrationTest.class)
@@ -89,42 +87,26 @@ public class OverflowAttributeTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 2),
-            @LogMessage(messageTemplate = LogMessageConstant.ERROR_RESOLVING_PARENT_STYLES,count = 2),
-    })
     public void overflowVisibleInSymbolElementTest() throws IOException, InterruptedException {
-        //TODO: update when DEVSIX-3482, DEVSIX-2257 fixed
+        //TODO: update when DEVSIX-3482 fixed
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "overflowVisibleInSymbol");
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
-            @LogMessage(messageTemplate = LogMessageConstant.ERROR_RESOLVING_PARENT_STYLES),
-    })
     public void overflowHiddenInSymbolElementTest() throws IOException, InterruptedException {
-        //TODO: update when DEVSIX-3482, DEVSIX-2257 fixed
+        //TODO: update when DEVSIX-3482 fixed
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "overflowHiddenInSymbol");
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
-            @LogMessage(messageTemplate = LogMessageConstant.ERROR_RESOLVING_PARENT_STYLES),
-    })
     public void overflowInitialInSymbolElementTest() throws IOException, InterruptedException {
-        //TODO: update when DEVSIX-3482, DEVSIX-2257 fixed
+        //TODO: update when DEVSIX-3482 fixed
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "overflowInitialInSymbol");
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
-            @LogMessage(messageTemplate = LogMessageConstant.ERROR_RESOLVING_PARENT_STYLES),
-    })
     public void overflowScrollInSymbolElementTest() throws IOException, InterruptedException {
-        //TODO: update when DEVSIX-3482, DEVSIX-2257 fixed
+        //TODO: update when DEVSIX-3482 fixed
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "overflowScrollInSymbol");
     }
 

@@ -70,7 +70,8 @@ public interface IExternalSignature {
      * with the hash algorithm.
      * @param message The message you want to be hashed and signed.
      * @return	A signed message digest.
-     * @throws GeneralSecurityException
+     * @throws GeneralSecurityException when requested cryptographic algorithm or security provider
+     * is not available
      */
     byte[] sign(byte[] message) throws GeneralSecurityException;
 }

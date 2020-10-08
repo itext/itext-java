@@ -55,7 +55,8 @@ public class CircleSvgNodeRenderer extends EllipseSvgNodeRenderer {
 
     @Override
     protected boolean setParameters(){
-        cx=0; cy=0;
+        cx = 0;
+        cy = 0;
         if(getAttribute(SvgConstants.Attributes.CX) != null){
             cx = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.CX));
         }

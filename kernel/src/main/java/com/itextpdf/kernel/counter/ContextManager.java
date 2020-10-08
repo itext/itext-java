@@ -60,9 +60,6 @@ public class ContextManager {
 
     private static final ContextManager instance = new ContextManager();
 
-    private static final long SECURITY_ERROR_LOGGING_INTERVAL = 60000;
-    private volatile long securityErrorLastLogged = 0;
-
     private final SortedMap<String, IContext> contextMappings = new TreeMap<>(new LengthComparator());
 
     private ContextManager() {

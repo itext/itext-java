@@ -107,6 +107,7 @@ public class PdfStream extends PdfDictionary {
      * in.close();
      * </pre>
      *
+     * @param doc              the {@link PdfDocument pdf document} in which this stream lies
      * @param inputStream      the data to write to this stream
      * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
      */
@@ -136,6 +137,7 @@ public class PdfStream extends PdfDictionary {
      * in.close();
      * </pre>
      *
+     * @param doc         the {@link PdfDocument pdf document} in which this stream lies
      * @param inputStream the data to write to this stream
      */
     public PdfStream(PdfDocument doc, InputStream inputStream) {
@@ -218,8 +220,10 @@ public class PdfStream extends PdfDictionary {
 
     /**
      * Gets decoded stream bytes.
+     * Note, {@link PdfName#DCTDecode} and {@link PdfName#JPXDecode} filters will be ignored.
      *
-     * @return byte[]
+     * @return byte content of the {@code PdfStream}. Byte content will be {@code null},
+     * if the {@code PdfStream} was created by {@code InputStream}.
      */
     public byte[] getBytes() {
         return getBytes(true);
@@ -227,6 +231,7 @@ public class PdfStream extends PdfDictionary {
 
     /**
      * Gets stream bytes.
+     * Note, {@link PdfName#DCTDecode} and {@link PdfName#JPXDecode} filters will be ignored.
      *
      * @param decoded true if to get decoded stream bytes, otherwise false.
      * @return byte content of the {@code PdfStream}. Byte content will be {@code null},
@@ -348,6 +353,8 @@ public class PdfStream extends PdfDictionary {
 
     /**
      * Update length manually in case its correction.
+     *
+     * @param length the new length
      * @see com.itextpdf.kernel.pdf.PdfReader#checkPdfStreamLength(PdfStream)
      */
     protected void updateLength(int length) {

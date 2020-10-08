@@ -45,10 +45,14 @@ package com.itextpdf.styledxmlparser.css.validate;
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
+import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssBackgroundValidator;
+import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssBlendModeValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssColorValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssEnumValidator;
+import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssNumericValueValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssQuotesValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssTransformValidator;
+import com.itextpdf.styledxmlparser.css.validate.impl.datatype.ArrayDataTypeValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.declaration.MultiTypeDeclarationValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.declaration.SingleTypeDeclarationValidator;
 
@@ -94,6 +98,36 @@ public class CssDeclarationValidationMaster {
                         new CssQuotesValidator()));
         DEFAULT_VALIDATORS.put(CommonCssConstants.TRANSFORM,
                 new SingleTypeDeclarationValidator(new CssTransformValidator()));
+
+        final CssEnumValidator enumValidator =
+                new CssEnumValidator(CommonCssConstants.LARGER, CommonCssConstants.SMALLER);
+        enumValidator.addAllowedValues(CommonCssConstants.FONT_ABSOLUTE_SIZE_KEYWORDS_VALUES.keySet());
+        DEFAULT_VALIDATORS.put(CommonCssConstants.FONT_SIZE, new MultiTypeDeclarationValidator(
+                new CssNumericValueValidator(true, false), enumValidator));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.WORD_SPACING, new SingleTypeDeclarationValidator(
+                new CssNumericValueValidator(false, true)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.LETTER_SPACING, new SingleTypeDeclarationValidator(
+                new CssNumericValueValidator(false, true)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.TEXT_INDENT, new SingleTypeDeclarationValidator(
+                new CssNumericValueValidator(true, false)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.LINE_HEIGHT, new SingleTypeDeclarationValidator(
+                new CssNumericValueValidator(true, true)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_REPEAT, new SingleTypeDeclarationValidator(
+                new CssBackgroundValidator(CommonCssConstants.BACKGROUND_REPEAT)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_IMAGE, new SingleTypeDeclarationValidator(
+                new CssBackgroundValidator(CommonCssConstants.BACKGROUND_IMAGE)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_POSITION_X, new SingleTypeDeclarationValidator(
+                new CssBackgroundValidator(CommonCssConstants.BACKGROUND_POSITION_X)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_POSITION_Y, new SingleTypeDeclarationValidator(
+                new CssBackgroundValidator(CommonCssConstants.BACKGROUND_POSITION_Y)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_SIZE, new SingleTypeDeclarationValidator(
+                new CssBackgroundValidator(CommonCssConstants.BACKGROUND_SIZE)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_CLIP, new SingleTypeDeclarationValidator(
+                new CssBackgroundValidator(CommonCssConstants.BACKGROUND_CLIP)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_ORIGIN, new SingleTypeDeclarationValidator(
+                new CssBackgroundValidator(CommonCssConstants.BACKGROUND_ORIGIN)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_BLEND_MODE, new SingleTypeDeclarationValidator(
+                new ArrayDataTypeValidator(new CssBlendModeValidator())));
     }
 
     /**

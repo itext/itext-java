@@ -42,6 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
@@ -54,7 +55,11 @@ import com.itextpdf.kernel.pdf.navigation.PdfStructureDestination;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.ByteArrayOutputStream;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -215,6 +220,23 @@ public class PdfDestinationTest extends ExtendedITextTest {
     }
 
     @Test
+    public void structureDestinationWithoutRemoteIdTest() throws IOException {
+        String srcFile = sourceFolder + "customRolesMappingPdf2.pdf";
+        PdfDocument document = new PdfDocument(new PdfReader(srcFile), new PdfWriter(new ByteArrayOutputStream()));
+
+        PdfStructElem imgElement = new PdfStructElem((PdfDictionary) document.getPdfObject(13));
+        try {
+            PdfAction.createGoToR(new PdfStringFS("Some fake destination"),
+                    PdfStructureDestination.createFit(imgElement));
+            Assert.fail("Exception not thrown");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals("Structure destinations shall specify structure element ID in remote go-to actions. Structure element that has no ID is specified instead", e.getMessage());
+        }
+
+        document.close();
+    }
+
+    @Test
     public void structureDestination01Test() throws IOException, InterruptedException {
         String srcFile = sourceFolder + "customRolesMappingPdf2.pdf";
         String outFile = destinationFolder + "structureDestination01Test.pdf";
@@ -269,9 +291,9 @@ public class PdfDestinationTest extends ExtendedITextTest {
     }
 
     @Test
-    public void remoteGoToDestinationTest() throws IOException, InterruptedException {
-        String cmpFile = sourceFolder + "cmp_remoteGoToDestinationTest.pdf";
-        String outFile = destinationFolder + "remoteGoToDestinationTest.pdf";
+    public void remoteGoToDestinationTest01() throws IOException, InterruptedException {
+        String cmpFile = sourceFolder + "cmp_remoteGoToDestinationTest01.pdf";
+        String outFile = destinationFolder + "remoteGoToDestinationTest01.pdf";
 
         PdfDocument out = new PdfDocument(new PdfWriter(outFile));
         out.addNewPage();
@@ -294,6 +316,95 @@ public class PdfDestinationTest extends ExtendedITextTest {
             y -= 20;
         }
         out.close();
+        assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void remoteGoToDestinationTest02() throws IOException, InterruptedException {
+        String cmpFile = sourceFolder + "cmp_remoteGoToDestinationTest02.pdf";
+        String outFile = destinationFolder + "remoteGoToDestinationTest02.pdf";
+
+        PdfDocument out = new PdfDocument(new PdfWriter(outFile));
+        out.addNewPage();
+        out.addNewPage();
+
+        PdfLinkAnnotation linkExplicitDest = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
+        PdfAction action = PdfAction.createGoToR(new PdfStringFS("Some fake destination"),
+                PdfExplicitRemoteGoToDestination.createFitR(2, 10, 10, 10, 10), true);
+        linkExplicitDest.setAction(action);
+        out.getFirstPage().addAnnotation(linkExplicitDest);
+
+        out.close();
+        assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void remoteGoToRIllegalDestinationTest() throws IOException {
+        String outFile = destinationFolder + "remoteGoToDestinationTest01.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(outFile));
+        document.addNewPage();
+        document.addNewPage();
+
+        try {
+            PdfAction.createGoToR(new PdfStringFS("Some fake destination"),
+                    PdfExplicitDestination.createFitB(document.getPage(1)));
+            Assert.fail("Exception not thrown");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals("Explicit destinations shall specify page number in remote go-to actions instead of page dictionary", e.getMessage());
+        }
+        document.close();
+    }
+
+    @Test
+    public void remoteGoToRByIntDestinationTest() throws IOException, InterruptedException {
+        String cmpFile = sourceFolder + "cmp_remoteGoToRByIntDestinationTest.pdf";
+        String outFile = destinationFolder + "remoteGoToRByIntDestinationTest.pdf";
+
+        PdfDocument out = new PdfDocument(new PdfWriter(outFile));
+        out.addNewPage();
+        out.addNewPage();
+
+        PdfLinkAnnotation linkExplicitDest = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
+        PdfAction action = PdfAction.createGoToR("Some fake destination", 2);
+        linkExplicitDest.setAction(action);
+        out.getFirstPage().addAnnotation(linkExplicitDest);
+
+        out.close();
+        assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void remoteGoToRByStringDestinationTest() throws IOException, InterruptedException {
+        String cmpFile = sourceFolder + "cmp_remoteGoToRByStringDestinationTest.pdf";
+        String outFile = destinationFolder + "remoteGoToRByStringDestinationTest.pdf";
+
+        PdfDocument out = new PdfDocument(new PdfWriter(outFile));
+        out.addNewPage();
+
+        PdfLinkAnnotation linkExplicitDest = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
+        PdfAction action = PdfAction.createGoToR("Some fake destination", "1");
+        linkExplicitDest.setAction(action);
+        out.getFirstPage().addAnnotation(linkExplicitDest);
+
+        out.close();
+        assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.INVALID_DESTINATION_TYPE)})
+    public void remoteGoToNotValidExplicitDestinationTest() throws IOException, InterruptedException {
+        String cmpFile = sourceFolder + "cmp_remoteGoToNotValidExplicitDestinationTest.pdf";
+        String outFile = destinationFolder + "remoteGoToNotValidExplicitDestinationTest.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(outFile));
+        document.addNewPage();
+
+        PdfLinkAnnotation linkExplicitDest = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
+        linkExplicitDest.setAction(PdfAction.createGoTo(PdfExplicitRemoteGoToDestination.createFit(1)));
+        document.getFirstPage().addAnnotation(linkExplicitDest);
+        document.close();
+
         assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
     }
 }

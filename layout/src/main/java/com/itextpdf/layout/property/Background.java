@@ -59,6 +59,7 @@ public class Background {
     protected float extraRight;
     protected float extraTop;
     protected float extraBottom;
+    private BackgroundBox backgroundClip = BackgroundBox.BORDER_BOX;
 
     /**
      * Creates a background with a specified color.
@@ -111,6 +112,19 @@ public class Background {
     }
 
     /**
+     * Creates a background with a specified color, opacity and clip value.
+     *
+     * @param color   the background color
+     * @param opacity the opacity of the background color; a float between 0 and 1, where 1 stands for fully opaque
+     *                color and 0 - for fully transparent
+     * @param clip    the value to clip the background color
+     */
+    public Background(Color color, float opacity, BackgroundBox clip) {
+        this(color, opacity);
+        this.backgroundClip = clip;
+    }
+
+    /**
      * Gets the background's color.
      * @return a {@link Color} of any supported kind
      */
@@ -156,5 +170,14 @@ public class Background {
      */
     public float getExtraBottom() {
         return extraBottom;
+    }
+
+    /**
+     * Gets background clip value.
+     *
+     * @return background clip value
+     */
+    public BackgroundBox getBackgroundClip() {
+        return backgroundClip;
     }
 }

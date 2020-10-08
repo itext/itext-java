@@ -42,10 +42,13 @@
  */
 package com.itextpdf.io.font.otf;
 
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
+import java.io.FileNotFoundException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -110,6 +113,28 @@ public class GlyphLineTest extends ExtendedITextTest {
     }
 
     @Test
+    public void testAdditionWithActualText() throws IOException {
+        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
+        TrueTypeFont font = new TrueTypeFont(ttf);
+
+        List<Glyph> glyphs = constructGlyphListFromString("Viva France!", font);
+
+        GlyphLine containerLine = new GlyphLine(glyphs);
+        Assert.assertNull(containerLine.actualText);
+
+        containerLine.setActualText(0, 1, "TEST");
+        Assert.assertNotNull(containerLine.actualText);
+        Assert.assertEquals(12, containerLine.actualText.size());
+        Assert.assertEquals("TEST", containerLine.actualText.get(0).value);
+
+        containerLine.add(new GlyphLine(glyphs));
+        Assert.assertEquals(24, containerLine.actualText.size());
+        for (int i = 13; i < 24; i++) {
+            Assert.assertNull(containerLine.actualText.get(i));
+        }
+    }
+
+    @Test
     public void testOtherLinesWithActualTextAddition() throws IOException {
         byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
         TrueTypeFont font = new TrueTypeFont(ttf);
@@ -170,4 +195,59 @@ public class GlyphLineTest extends ExtendedITextTest {
         // Test that no exception has been thrown. Also check the content.
         Assert.assertEquals("Belarus", lineToBeReplaced.toString());
     }
+
+    @Test
+    public void testActualTextForSubstitutedGlyphProcessingInSubstituteOneToMany01() throws IOException {
+        String expectedActualTextForFirstGlyph = "0";
+        String expectedActualTextForSecondGlyph = "A";
+
+        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
+        TrueTypeFont font = new TrueTypeFont(ttf);
+
+        // no actual text for the second glyph is set - it should be created during substitution
+        GlyphLine line = new GlyphLine(constructGlyphListFromString("AA", font));
+        line.setActualText(0, 1, expectedActualTextForFirstGlyph);
+        line.idx = 1;
+
+        line.substituteOneToMany(font.getGsubTable(), new int[] {39, 40});
+
+        Assert.assertNotNull(line.actualText);
+        Assert.assertEquals(3, line.actualText.size());
+        Assert.assertSame(line.actualText.get(1), line.actualText.get(2));
+        Assert.assertEquals(expectedActualTextForSecondGlyph, line.actualText.get(1).value);
+        // check that it hasn't been corrupted
+        Assert.assertEquals(expectedActualTextForFirstGlyph, line.actualText.get(0).value);
+    }
+
+    @Test
+    public void testActualTextForSubstitutedGlyphProcessingInSubstituteOneToMany02() throws IOException {
+        String expectedActualTextForFirstGlyph = "A";
+
+        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
+        TrueTypeFont font = new TrueTypeFont(ttf);
+
+        GlyphLine line = new GlyphLine(constructGlyphListFromString("A", font));
+        line.setActualText(0, 1, expectedActualTextForFirstGlyph);
+
+        line.substituteOneToMany(font.getGsubTable(), new int[] {39, 40});
+
+        Assert.assertNotNull(line.actualText);
+        Assert.assertEquals(2, line.actualText.size());
+        Assert.assertSame(line.actualText.get(0), line.actualText.get(1));
+        Assert.assertEquals(expectedActualTextForFirstGlyph, line.actualText.get(0).value);
+    }
+
+    @Test
+    public void testActualTextForSubstitutedGlyphProcessingInSubstituteOneToMany03() throws IOException {
+        byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream("./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf"));
+        TrueTypeFont font = new TrueTypeFont(ttf);
+
+        // no actual text is set
+        GlyphLine line = new GlyphLine(constructGlyphListFromString("A", font));
+
+        line.substituteOneToMany(font.getGsubTable(), new int[] {39, 40});
+
+        Assert.assertNull(line.actualText);
+    }
 }
+

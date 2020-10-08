@@ -47,6 +47,7 @@ import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
 
 import java.nio.charset.StandardCharsets;
+
 import java.util.Map;
 
 public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
@@ -150,6 +151,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName BaseFont = createDirectName("BaseFont");
     public static final PdfName BaseEncoding = createDirectName("BaseEncoding");
     public static final PdfName BaselineShift = createDirectName("BaselineShift");
+    public static final PdfName BaseState = createDirectName("BaseState");
     public static final PdfName BaseVersion = createDirectName("BaseVersion");
     public static final PdfName Bates = createDirectName("Bates");
     public static final PdfName BBox = createDirectName("BBox");

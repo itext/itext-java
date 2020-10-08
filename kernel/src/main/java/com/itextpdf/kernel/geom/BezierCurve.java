@@ -84,6 +84,7 @@ public class BezierCurve implements IShape {
 
     /**
      * Constructs new bezier curve.
+     *
      * @param controlPoints Curve's control points.
      */
     public BezierCurve(List<Point> controlPoints) {
@@ -100,7 +101,7 @@ public class BezierCurve implements IShape {
     /**
      * You can adjust precision of the approximation by varying the following
      * parameters: {@link #curveCollinearityEpsilon}, {@link #distanceToleranceSquare},
-     * {@link #distanceToleranceManhattan}
+     * {@link #distanceToleranceManhattan}.
      *
      * @return {@link java.util.List} containing points of piecewise linear approximation
      *         for this bezier curve.

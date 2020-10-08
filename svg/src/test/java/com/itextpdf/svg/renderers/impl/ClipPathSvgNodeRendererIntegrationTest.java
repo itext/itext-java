@@ -141,7 +141,6 @@ public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 27)})
     //TODO: update after DEVSIX-2377
     public void clipPathRulesCombined() throws IOException, InterruptedException {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathRulesCombined");

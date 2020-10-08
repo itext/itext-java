@@ -56,13 +56,13 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
+
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -442,21 +442,12 @@ public class PdfReader implements Closeable, Serializable {
         if (null != streamDictionary.getIndirectReference()) {
             memoryLimitsAwareHandler = streamDictionary.getIndirectReference().getDocument().memoryLimitsAwareHandler;
         }
-        if (null != memoryLimitsAwareHandler) {
-            HashSet<PdfName> filterSet = new HashSet<>();
-            int index;
-            for (index = 0; index < filters.size(); index++) {
-                PdfName filterName = filters.getAsName(index);
-                if (!filterSet.add(filterName)) {
-                    memoryLimitsAwareHandler.beginDecompressedPdfStreamProcessing();
-                    break;
-                }
-            }
-            if (index == filters.size()) {
-                // The stream isn't suspicious. We shouldn't process it.
 
-                memoryLimitsAwareHandler = null;
-            }
+        final boolean memoryLimitsAwarenessRequired = null != memoryLimitsAwareHandler &&
+                memoryLimitsAwareHandler.isMemoryLimitsAwarenessRequiredOnDecompression(filters);
+
+        if(memoryLimitsAwarenessRequired) {
+            memoryLimitsAwareHandler.beginDecompressedPdfStreamProcessing();
         }
 
         PdfArray dp = new PdfArray();
@@ -493,11 +484,11 @@ public class PdfReader implements Closeable, Serializable {
                 decodeParams = null;
             }
             b = filterHandler.decode(b, filterName, decodeParams, streamDictionary);
-            if (null != memoryLimitsAwareHandler) {
+            if (memoryLimitsAwarenessRequired) {
                 memoryLimitsAwareHandler.considerBytesOccupiedByDecompressedPdfStream(b.length);
             }
         }
-        if (null != memoryLimitsAwareHandler) {
+        if (memoryLimitsAwarenessRequired) {
             memoryLimitsAwareHandler.endDecompressedPdfStreamProcessing();
         }
         return b;
@@ -1398,6 +1389,10 @@ public class PdfReader implements Closeable, Serializable {
 
     /**
      * This method is invoked while deserialization
+     *
+     * @param in {@link java.io.ObjectInputStream} inputStream that is read during deserialization
+     * @throws IOException if I/O errors occur while writing to the underlying output stream
+     * @throws ClassNotFoundException if the class of a serialized object could not be found.
      */
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
         in.defaultReadObject();
@@ -1408,6 +1403,9 @@ public class PdfReader implements Closeable, Serializable {
 
     /**
      * This method is invoked while serialization
+     *
+     * @param out {@link java.io.ObjectOutputStream} output stream to write object into
+     * @throws IOException if I/O errors occur while writing to the underlying output stream
      */
     private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
         if (sourcePath != null) {

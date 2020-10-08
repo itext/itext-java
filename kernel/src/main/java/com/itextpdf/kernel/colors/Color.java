@@ -146,7 +146,6 @@ public class Color implements Serializable {
                 unknownColorSpace = true;
             }
         } else if (colorSpace instanceof PdfSpecialCs.Pattern) {
-            // TODO review this. at least log a warning
             c = new Color(colorSpace, colorValue);
         } else {
             unknownColorSpace = true;
@@ -257,7 +256,7 @@ public class Color implements Serializable {
      */
     @Override
     public int hashCode() {
-        int result = colorSpace != null ? colorSpace.hashCode() : 0;
+        int result = colorSpace != null ? colorSpace.getPdfObject().hashCode() : 0;
         result = 31 * result + (colorValue != null ? Arrays.hashCode(colorValue) : 0);
         return result;
     }

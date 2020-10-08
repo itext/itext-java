@@ -84,7 +84,9 @@ import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BackgroundImage;
+import com.itextpdf.layout.property.BackgroundBox;
 import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.BlendMode;
 import com.itextpdf.layout.property.BorderRadius;
 import com.itextpdf.layout.property.BoxSizingPropertyValue;
 import com.itextpdf.layout.property.HorizontalAlignment;
@@ -109,6 +111,8 @@ import org.slf4j.LoggerFactory;
  * this default implementation.
  */
 public abstract class AbstractRenderer implements IRenderer {
+    public static final float OVERLAP_EPSILON = 1e-4f;
+
 
     /**
      * The maximum difference between {@link Rectangle} coordinates to consider rectangles equal
@@ -497,9 +501,16 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param drawContext the context (canvas, document, etc) of this drawing operation.
      */
     public void drawBackground(DrawContext drawContext) {
-        Background background = this.<Background>getProperty(Property.BACKGROUND);
-        BackgroundImage backgroundImage = this.<BackgroundImage>getProperty(Property.BACKGROUND_IMAGE);
-        if (background != null || backgroundImage != null) {
+        final Background background = this.<Background>getProperty(Property.BACKGROUND);
+        final Object uncastedBackgroundImage = this.<Object>getProperty(Property.BACKGROUND_IMAGE);
+        final List<BackgroundImage> backgroundImagesList;
+        // TODO DEVSIX-3814 support only List<BackgroundImage>.
+        if (uncastedBackgroundImage instanceof BackgroundImage) {
+            backgroundImagesList = Collections.singletonList((BackgroundImage) uncastedBackgroundImage);
+        } else {
+            backgroundImagesList = this.<List<BackgroundImage>>getProperty(Property.BACKGROUND_IMAGE);
+        }
+        if (background != null || backgroundImagesList != null) {
             Rectangle bBox = getOccupiedAreaBBox();
             boolean isTagged = drawContext.isTaggingEnabled();
             if (isTagged) {
@@ -508,62 +519,20 @@ public abstract class AbstractRenderer implements IRenderer {
             Rectangle backgroundArea = getBackgroundArea(applyMargins(bBox, false));
             if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.info(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
+                logger.info(MessageFormatUtil.format(
+                        LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
             } else {
                 boolean backgroundAreaIsClipped = false;
                 if (background != null) {
-                    backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
-                    TransparentColor backgroundColor = new TransparentColor(background.getColor(), background.getOpacity());
-                    drawContext.getCanvas().saveState().setFillColor(backgroundColor.getColor());
-                    backgroundColor.applyFillTransparency(drawContext.getCanvas());
-                    drawContext.getCanvas()
-                            .rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
-                                    backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
-                                    backgroundArea.getHeight() + background.getExtraTop() + background.getExtraBottom()).
-                            fill().restoreState();
-
+                    // TODO DEVSIX-4525 determine how background-clip affects background-radius
+                    final Rectangle clippedBackgroundArea = applyBackgroundBoxProperty(backgroundArea.clone(),
+                            background.getBackgroundClip());
+                    backgroundAreaIsClipped = clipBackgroundArea(drawContext, clippedBackgroundArea);
+                    drawColorBackground(background, drawContext, clippedBackgroundArea);
                 }
-                if (backgroundImage != null && backgroundImage.isBackgroundSpecified()) {
-                    if (!backgroundAreaIsClipped) {
-                        backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
-                    }
-                    applyBorderBox(backgroundArea, false);
-                    PdfXObject backgroundXObject = backgroundImage.getImage();
-                    if (backgroundXObject == null) {
-                        backgroundXObject = backgroundImage.getForm();
-                    }
-                    // TODO: DEVSIX-3108 due to invalid logic of `PdfCanvas.addXObject(PdfXObject, Rectangle)`
-                    //  for PDfFormXObject (invalid scaling) for now the imageRectangle initialization
-                    //  for gradient uses width and height = 1. For all othe cases the logic left as it was.
-                    Rectangle imageRectangle;
-                    if (backgroundXObject == null) {
-                        backgroundXObject = AbstractRenderer.createXObject(backgroundImage.getLinearGradientBuilder(),
-                                backgroundArea, drawContext.getDocument());
-                        imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundXObject.getHeight(),1, 1);
-                    } else {
-                         imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundXObject.getHeight(),
-                                backgroundXObject.getWidth(), backgroundXObject.getHeight());
-                    }
-                    if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
-                        Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                        logger.info(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
-                    } else {
-                        applyBorderBox(backgroundArea, true);
-                        drawContext.getCanvas().saveState().rectangle(backgroundArea).clip().endPath();
-                        float initialX = backgroundImage.isRepeatX() ? imageRectangle.getX() - imageRectangle.getWidth() : imageRectangle.getX();
-                        float initialY = backgroundImage.isRepeatY() ? imageRectangle.getTop() : imageRectangle.getY();
-                        imageRectangle.setY(initialY);
-                        do {
-                            imageRectangle.setX(initialX);
-                            do {
-                                drawContext.getCanvas().addXObject(backgroundXObject, imageRectangle);
-                                imageRectangle.moveRight(imageRectangle.getWidth());
-                            }
-                            while (backgroundImage.isRepeatX() && imageRectangle.getLeft() < backgroundArea.getRight());
-                            imageRectangle.moveDown(imageRectangle.getHeight());
-                        } while (backgroundImage.isRepeatY() && imageRectangle.getTop() > backgroundArea.getBottom());
-                        drawContext.getCanvas().restoreState();
-                    }
+                if (backgroundImagesList != null) {
+                    backgroundAreaIsClipped = drawBackgroundImagesList(backgroundImagesList, backgroundAreaIsClipped,
+                            drawContext, backgroundArea);
                 }
                 if (backgroundAreaIsClipped) {
                     drawContext.getCanvas().restoreState();
@@ -575,16 +544,165 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    private void drawColorBackground(Background background, DrawContext drawContext, Rectangle colorBackgroundArea) {
+        final TransparentColor backgroundColor = new TransparentColor(background.getColor(),
+                background.getOpacity());
+        drawContext.getCanvas().saveState().setFillColor(backgroundColor.getColor());
+        backgroundColor.applyFillTransparency(drawContext.getCanvas());
+        drawContext.getCanvas().rectangle((double) colorBackgroundArea.getX() - background.getExtraLeft(),
+                (double) colorBackgroundArea.getY() - background.getExtraBottom(),
+                (double) colorBackgroundArea.getWidth() +
+                        background.getExtraLeft() + background.getExtraRight(),
+                (double) colorBackgroundArea.getHeight() +
+                        background.getExtraTop() + background.getExtraBottom()).fill().restoreState();
+    }
+
+    private Rectangle applyBackgroundBoxProperty(Rectangle rectangle, BackgroundBox clip) {
+        if (BackgroundBox.PADDING_BOX == clip) {
+            applyBorderBox(rectangle, false);
+        } else if (BackgroundBox.CONTENT_BOX == clip) {
+            applyBorderBox(rectangle, false);
+            applyPaddings(rectangle, false);
+        }
+        return rectangle;
+    }
+
+    private boolean drawBackgroundImagesList(final List<BackgroundImage> backgroundImagesList,
+                                             boolean backgroundAreaIsClipped, final DrawContext drawContext,
+                                             final Rectangle backgroundArea) {
+        for (int i = backgroundImagesList.size() - 1; i >= 0; i--) {
+            final BackgroundImage backgroundImage = backgroundImagesList.get(i);
+            if (backgroundImage != null && backgroundImage.isBackgroundSpecified()) {
+                // TODO DEVSIX-4525 determine how background-clip affects background-radius
+                if (!backgroundAreaIsClipped) {
+                    backgroundAreaIsClipped = clipBackgroundArea(drawContext, backgroundArea);
+                }
+                drawBackgroundImage(backgroundImage, drawContext, backgroundArea);
+            }
+        }
+        return backgroundAreaIsClipped;
+    }
+
+    private void drawBackgroundImage(BackgroundImage backgroundImage,
+            DrawContext drawContext, Rectangle backgroundArea) {
+        Rectangle originBackgroundArea = applyBackgroundBoxProperty(backgroundArea.clone(),
+                backgroundImage.getBackgroundOrigin());
+        float[] imageWidthAndHeight = BackgroundSizeCalculationUtil.calculateBackgroundImageSize(
+                backgroundImage, originBackgroundArea.getWidth(), originBackgroundArea.getHeight());
+        PdfXObject backgroundXObject = backgroundImage.getImage();
+        if (backgroundXObject == null) {
+            backgroundXObject = backgroundImage.getForm();
+        }
+        Rectangle imageRectangle;
+        final UnitValue xPosition = UnitValue.createPointValue(0);
+        final UnitValue yPosition = UnitValue.createPointValue(0);
+        if (backgroundXObject == null) {
+            final AbstractLinearGradientBuilder gradientBuilder = backgroundImage.getLinearGradientBuilder();
+            if (gradientBuilder == null) {
+                return;
+            }
+            // fullWidth and fullHeight is 0 because percentage shifts are ignored for linear-gradients
+            backgroundImage.getBackgroundPosition().calculatePositionValues(0, 0, xPosition, yPosition);
+            backgroundXObject = createXObject(gradientBuilder, originBackgroundArea, drawContext.getDocument());
+            imageRectangle = new Rectangle(originBackgroundArea.getLeft() + xPosition.getValue(),
+                    originBackgroundArea.getTop() - imageWidthAndHeight[1] - yPosition.getValue(),
+                    imageWidthAndHeight[0], imageWidthAndHeight[1]);
+        } else {
+            backgroundImage.getBackgroundPosition().calculatePositionValues(
+                    originBackgroundArea.getWidth() - imageWidthAndHeight[0],
+                    originBackgroundArea.getHeight() - imageWidthAndHeight[1], xPosition, yPosition);
+            imageRectangle = new Rectangle(originBackgroundArea.getLeft() + xPosition.getValue(),
+                    originBackgroundArea.getTop() - imageWidthAndHeight[1] - yPosition.getValue(),
+                    imageWidthAndHeight[0], imageWidthAndHeight[1]);
+        }
+        if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.info(MessageFormatUtil.format(
+                    LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES,
+                    "background-image"));
+        } else {
+            final Rectangle clippedBackgroundArea = applyBackgroundBoxProperty(backgroundArea.clone(),
+                    backgroundImage.getBackgroundClip());
+            drawContext.getCanvas()
+                    .saveState()
+                    .rectangle(clippedBackgroundArea)
+                    .clip()
+                    .endPath();
+            drawPdfXObject(imageRectangle, backgroundImage, drawContext, backgroundXObject, backgroundArea,
+                    originBackgroundArea);
+            drawContext.getCanvas().restoreState();
+        }
+    }
+
+    private static void drawPdfXObject(final Rectangle imageRectangle, final BackgroundImage backgroundImage,
+            final DrawContext drawContext, final PdfXObject backgroundXObject,
+            final Rectangle backgroundArea, Rectangle originBackgroundArea) {
+        BlendMode blendMode = backgroundImage.getBlendMode();
+        if (blendMode != BlendMode.NORMAL) {
+            drawContext.getCanvas().setExtGState(new PdfExtGState().setBlendMode(blendMode.getPdfRepresentation()));
+        }
+        final Point whitespace = backgroundImage.getRepeat()
+                .prepareRectangleToDrawingAndGetWhitespace(imageRectangle, originBackgroundArea,
+                        backgroundImage.getBackgroundSize());
+        final float initialX = imageRectangle.getX();
+        int counterY = 1;
+        boolean firstDraw = true;
+        boolean isCurrentOverlaps;
+        boolean isNextOverlaps;
+        do {
+            drawPdfXObjectHorizontally(imageRectangle,
+                    backgroundImage, drawContext, backgroundXObject, backgroundArea, firstDraw, (float) whitespace.getX());
+            firstDraw = false;
+            imageRectangle.setX(initialX);
+            isCurrentOverlaps = imageRectangle.overlaps(backgroundArea, OVERLAP_EPSILON);
+            if (counterY % 2 == 1) {
+                isNextOverlaps =
+                        imageRectangle.moveDown((imageRectangle.getHeight() + (float) whitespace.getY()) * counterY)
+                                .overlaps(backgroundArea, OVERLAP_EPSILON);
+            } else {
+                isNextOverlaps = imageRectangle.moveUp((imageRectangle.getHeight() + (float) whitespace.getY()) * counterY)
+                        .overlaps(backgroundArea, OVERLAP_EPSILON);
+            }
+            ++counterY;
+        } while (!backgroundImage.getRepeat().isNoRepeatOnYAxis() && (isCurrentOverlaps || isNextOverlaps));
+    }
+
+    private static void drawPdfXObjectHorizontally(Rectangle imageRectangle, BackgroundImage backgroundImage,
+                                                   DrawContext drawContext, PdfXObject backgroundXObject,
+                                                   Rectangle backgroundArea, boolean firstDraw, final float xWhitespace) {
+        boolean isItFirstDraw = firstDraw;
+        int counterX = 1;
+        boolean isCurrentOverlaps;
+        boolean isNextOverlaps;
+        do {
+            if (imageRectangle.overlaps(backgroundArea, OVERLAP_EPSILON) || isItFirstDraw) {
+                drawContext.getCanvas().addXObjectFittedIntoRectangle(backgroundXObject, imageRectangle);
+                isItFirstDraw = false;
+            }
+            isCurrentOverlaps = imageRectangle.overlaps(backgroundArea, OVERLAP_EPSILON);
+            if (counterX % 2 == 1) {
+                isNextOverlaps =
+                        imageRectangle.moveRight((imageRectangle.getWidth() + xWhitespace) * counterX)
+                                .overlaps(backgroundArea, OVERLAP_EPSILON);
+            } else {
+                isNextOverlaps = imageRectangle.moveLeft((imageRectangle.getWidth() + xWhitespace) * counterX)
+                        .overlaps(backgroundArea, OVERLAP_EPSILON);
+            }
+            ++counterX;
+        }
+        while (!backgroundImage.getRepeat().isNoRepeatOnXAxis() && (isCurrentOverlaps || isNextOverlaps));
+    }
+
     /**
      * Create a {@link PdfFormXObject} with the given area and containing a linear gradient inside.
      *
      * @param linearGradientBuilder the linear gradient builder
-     * @param xObjectArea the result object area
-     * @param document the pdf document
+     * @param xObjectArea           the result object area
+     * @param document              the pdf document
      * @return the xObject with a specified area and a linear gradient
      */
     public static PdfFormXObject createXObject(AbstractLinearGradientBuilder linearGradientBuilder,
-            Rectangle xObjectArea, PdfDocument document) {
+                                               Rectangle xObjectArea, PdfDocument document) {
         Rectangle formBBox = new Rectangle(0, 0, xObjectArea.getWidth(), xObjectArea.getHeight());
         PdfFormXObject xObject = new PdfFormXObject(formBBox);
         if (linearGradientBuilder != null) {
@@ -2205,6 +2323,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * all glyphs used in renderer or its children.
      * <p>
      * This method is usually needed for evaluating some layout characteristics like ascender or descender.
+     *
      * @return a valid {@link PdfFont} instance based on renderer {@link Property#FONT} property.
      */
     PdfFont resolveFirstPdfFont() {
@@ -2240,6 +2359,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * all glyphs used in renderer or its children.
      * <p>
      * This method is usually needed for evaluating some layout characteristics like ascender or descender.
+     *
      * @return a valid {@link PdfFont} instance based on renderer {@link Property#FONT} property.
      */
     PdfFont resolveFirstPdfFont(String[] font, FontProvider provider, FontCharacteristics fc, FontSet additionalFonts) {

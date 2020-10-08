@@ -399,10 +399,7 @@ public final class InlineImageParsingUtils {
     private static boolean inlineImageStreamBytesAreComplete(byte[] samples, PdfDictionary imageDictionary) {
         try {
             Map<PdfName, IFilterHandler> filters = new HashMap<>(FilterHandlers.getDefaultFilterHandlers());
-            DoNothingFilter stubfilter = new DoNothingFilter();
-            filters.put(PdfName.DCTDecode, stubfilter);
-            filters.put(PdfName.JBIG2Decode, stubfilter);
-            filters.put(PdfName.JPXDecode, stubfilter);
+            filters.put(PdfName.JBIG2Decode, new DoNothingFilter());
             filters.put(PdfName.FlateDecode, new FlateDecodeStrictFilter());
             PdfReader.decodeBytes(samples, imageDictionary, filters);
         } catch (Exception ex) {

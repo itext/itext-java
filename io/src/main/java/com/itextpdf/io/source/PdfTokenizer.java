@@ -537,7 +537,8 @@ public class PdfTokenizer implements Closeable, Serializable {
      * @param content string bytes to be decoded
      * @param from given start index
      * @param to given end index
-     * @param hexWriting true if given string is hex-encoded, e.g. '<69546578…>'. False otherwise, e.g. '((iText( some version)…)'
+     * @param hexWriting true if given string is hex-encoded, e.g. '&lt;69546578…&gt;'.
+     *                   False otherwise, e.g. '((iText( some version)…)'
      * @return byte[] for decrypting or for creating {@link java.lang.String}.
      */
     protected static byte[] decodeStringContent(byte[] content, int from, int to, boolean hexWriting) {
@@ -637,7 +638,8 @@ public class PdfTokenizer implements Closeable, Serializable {
      * so we can convert it directly to byte array.
      *
      * @param content string bytes to be decoded
-     * @param hexWriting true if given string is hex-encoded, e.g. '<69546578…>'. False otherwise, e.g. '((iText( some version)…)'
+     * @param hexWriting true if given string is hex-encoded, e.g. '&lt;69546578…&gt;'.
+     *                   False otherwise, e.g. '((iText( some version)…)'
      * @return byte[] for decrypting or for creating {@link java.lang.String}.
      */
     public static byte[] decodeStringContent(byte[] content, boolean hexWriting) {

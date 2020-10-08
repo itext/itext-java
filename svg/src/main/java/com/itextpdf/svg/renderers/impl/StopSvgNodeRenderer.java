@@ -28,16 +28,17 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.SvgConstants.Tags;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.renderers.INoDrawSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
 /**
  * {@link ISvgNodeRenderer} implementation for the gradient &lt;stop&gt; tag.
  */
-public class StopSvgNodeRenderer extends NoDrawOperationSvgNodeRenderer {
+public class StopSvgNodeRenderer extends NoDrawOperationSvgNodeRenderer implements INoDrawSvgNodeRenderer {
 
     /**
-     * Evaluates the stop color offset value
+     * Evaluates the stop color offset value.
      *
      * @return the stop color offset value in [0, 1] range
      */
@@ -54,7 +55,7 @@ public class StopSvgNodeRenderer extends NoDrawOperationSvgNodeRenderer {
     }
 
     /**
-     * Evaluates the rgba array of the specified stop color
+     * Evaluates the rgba array of the specified stop color.
      *
      * @return the array of 4 floats which contains the rgba value corresponding
      * to the specified stop color
@@ -72,7 +73,7 @@ public class StopSvgNodeRenderer extends NoDrawOperationSvgNodeRenderer {
     }
 
     /**
-     * Evaluates the stop opacity of the specified stop color
+     * Evaluates the stop opacity of the specified stop color.
      *
      * @return the stop opacity value specified in the stop color
      */

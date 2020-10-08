@@ -68,6 +68,7 @@ public interface ITSAClient {
      * Returns the {@link MessageDigest} to digest the data imprint
      *
      * @return The {@link MessageDigest} object.
+     * @throws GeneralSecurityException the general security exception
      */
     MessageDigest getMessageDigest() throws GeneralSecurityException;
 

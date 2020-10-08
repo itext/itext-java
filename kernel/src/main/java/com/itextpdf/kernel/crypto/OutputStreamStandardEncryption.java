@@ -51,10 +51,10 @@ public class OutputStreamStandardEncryption extends OutputStreamEncryption {
     /**
      * Creates a new instance of OutputStreamStandardEncryption
      *
-     * @param out
-     * @param key
-     * @param off
-     * @param len
+     * @param out the {@link java.io.OutputStream} to which data will be written
+     * @param key data to be written
+     * @param off the start offset in data
+     * @param len number of bytes to write
      */
     public OutputStreamStandardEncryption(java.io.OutputStream out, byte[] key, int off, int len) {
         super(out);

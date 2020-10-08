@@ -2862,8 +2862,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param width       width of the checkbox
      * @param height      height of the checkbox
      * @param onStateName name that corresponds to the "On" state of the checkbox
-     * @param checkType   the type that determines how the checkbox will look like. Allowed values are {@value TYPE_CHECK},
-     *                    {@value TYPE_CIRCLE}, {@value TYPE_CROSS}, {@value TYPE_DIAMOND}, {@value TYPE_SQUARE}, {@value TYPE_STAR}
+     * @param checkType   the type that determines how the checkbox will look like. Allowed values are {@link PdfFormField#TYPE_CHECK},
+     *                    {@link PdfFormField#TYPE_CIRCLE}, {@link PdfFormField#TYPE_CROSS}, {@link PdfFormField#TYPE_DIAMOND},
+     *                    {@link PdfFormField#TYPE_SQUARE}, {@link PdfFormField#TYPE_STAR}
      */
     protected void drawPdfA2CheckAppearance(float width, float height, String onStateName, int checkType) {
         this.checkType = checkType;

@@ -917,7 +917,6 @@ public class LineRenderer extends AbstractRenderer {
             if (!FloatingHelper.isRendererFloating(child)) {
                 child.move(0, deltaY);
             }
-            // TODO for floats we don't apply any leading for the moment (and therefore line-height for pdf2html is not entirely supported in terms of floats)
         }
     }
 
@@ -1050,25 +1049,19 @@ public class LineRenderer extends AbstractRenderer {
             return;
         }
 
-        // TODO handle it
-        boolean ltr = true;
         float floatWidth = justPlacedFloatBox.getWidth();
         if (kidFloatPropertyVal.equals(FloatPropertyValue.LEFT)) {
             layoutBox.setWidth(layoutBox.getWidth() - floatWidth).moveRight(floatWidth);
             occupiedArea.getBBox().moveRight(floatWidth);
-            if (ltr) {
                 for (int i = 0; i < childPos; ++i) {
                     IRenderer prevChild = childRenderers.get(i);
                     if (!FloatingHelper.isRendererFloating(prevChild)) {
                         prevChild.move(floatWidth, 0);
                     }
                 }
-            }
+
         } else {
             layoutBox.setWidth(layoutBox.getWidth() - floatWidth);
-            if (!ltr) {
-                // TODO
-            }
         }
     }
 
@@ -1435,11 +1428,12 @@ public class LineRenderer extends AbstractRenderer {
                 amountOfFloating++;
             }
 
-            // move to the previous renderer if line break isn't allowed to happen within the renderer being analyzed
-            if (analyzedTextRendererIndex == 0
-                    || !(childRenderers.get(analyzedTextRendererIndex - 1) instanceof TextRenderer)) {
-                // possible breaks haven't been found, can't move back
-                // forced split on the latter renderer having either Full or Partial result
+            SpecialScriptsContainingSequenceStatus status =
+                    getSpecialScriptsContainingSequenceStatus(analyzedTextRendererIndex);
+
+            // possible breaks haven't been found, can't move back
+            // forced split on the latter renderer having either Full or Partial result
+            if (status == SpecialScriptsContainingSequenceStatus.FORCED_SPLIT) {
                 if (childPosLayoutResult.getStatus() != LayoutResult.NOTHING) {
                     returnLayoutResult = childPosLayoutResult;
                 }
@@ -1449,8 +1443,8 @@ public class LineRenderer extends AbstractRenderer {
 
             // possible breaks haven't been found, can't move back
             // move the entire renderer on the next line
-            if (!((TextRenderer) childRenderers.get(analyzedTextRendererIndex - 1))
-                    .textContainsSpecialScriptGlyphs(true)) {
+            if (status ==
+                    SpecialScriptsContainingSequenceStatus.MOVE_SEQUENCE_CONTAINING_SPECIAL_SCRIPTS_ON_NEXT_LINE) {
                 indexOfRendererContainingLastFullyFittingWord = analyzedTextRendererIndex + amountOfFloating;
                 break;
             }
@@ -1487,6 +1481,49 @@ public class LineRenderer extends AbstractRenderer {
             if (index > indexOfRendererContainingLastFullyFittingWord) {
                 floatsOverflowedToNextLine.remove(childRenderers.get(index));
             }
+        }
+    }
+
+    /**
+     * This method defines how to proceed with a {@link TextRenderer} within which possible breaks haven't been found.
+     * Possible scenarios are:
+     * - Preceding renderer is also an instance of {@link TextRenderer} and does contain special scripts:
+     * {@link LineRenderer#getIndexAndLayoutResultOfTheLastRendererToRemainOnTheLine(int, Map, boolean, List)} will
+     * proceed to analyze the preceding {@link TextRenderer} on the subject of possible breaks;
+     * - Preceding renderer is either an instance of {@link TextRenderer} which does not contain special scripts,
+     * or an instance of {@link ImageRenderer} or is an inlineBlock child: in this case the entire subsequence of
+     * {@link TextRenderer}-s containing special scripts is to be moved to the next line;
+     * - Otherwise a forced split is to happen.
+     * @param analyzedTextRendererIndex index of the latter child
+     *                                  that has been analyzed on the subject of possible breaks
+     * @return {@link SpecialScriptsContainingSequenceStatus} instance standing for the strategy to proceed with.
+     */
+    SpecialScriptsContainingSequenceStatus getSpecialScriptsContainingSequenceStatus(int analyzedTextRendererIndex) {
+        boolean moveSequenceContainingSpecialScriptsOnNextLine = false;
+        boolean moveToPreviousTextRendererContainingSpecialScripts = false;
+
+        if (analyzedTextRendererIndex > 0) {
+            IRenderer prevChildRenderer = childRenderers.get(analyzedTextRendererIndex - 1);
+            if (prevChildRenderer instanceof TextRenderer) {
+                if (((TextRenderer) prevChildRenderer).textContainsSpecialScriptGlyphs(true)) {
+                    moveToPreviousTextRendererContainingSpecialScripts = true;
+                } else {
+                    moveSequenceContainingSpecialScriptsOnNextLine = true;
+                }
+            } else if (prevChildRenderer instanceof ImageRenderer || isInlineBlockChild(prevChildRenderer)) {
+                moveSequenceContainingSpecialScriptsOnNextLine = true;
+            }
+        }
+
+        boolean forcedSplit = !(moveToPreviousTextRendererContainingSpecialScripts
+                || moveSequenceContainingSpecialScriptsOnNextLine);
+
+        if (moveSequenceContainingSpecialScriptsOnNextLine) {
+            return SpecialScriptsContainingSequenceStatus.MOVE_SEQUENCE_CONTAINING_SPECIAL_SCRIPTS_ON_NEXT_LINE;
+        } else if (forcedSplit) {
+            return SpecialScriptsContainingSequenceStatus.FORCED_SPLIT;
+        } else {
+            return SpecialScriptsContainingSequenceStatus.MOVE_TO_PREVIOUS_TEXT_RENDERER_CONTAINING_SPECIAL_SCRIPTS;
         }
     }
 
@@ -1648,5 +1685,11 @@ public class LineRenderer extends AbstractRenderer {
             this.childIndex = childIndex;
             this.childLayoutResult = childLayoutResult;
         }
+    }
+
+    static enum SpecialScriptsContainingSequenceStatus {
+        MOVE_SEQUENCE_CONTAINING_SPECIAL_SCRIPTS_ON_NEXT_LINE,
+        MOVE_TO_PREVIOUS_TEXT_RENDERER_CONTAINING_SPECIAL_SCRIPTS,
+        FORCED_SPLIT
     }
 }

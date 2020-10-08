@@ -93,7 +93,8 @@ public class CertificateUtil {
      * Gets the URL of the Certificate Revocation List for a Certificate
      * @param certificate	the Certificate
      * @return	the String where you can check if the certificate was revoked
-     * @throws CertificateParsingException
+     * @throws CertificateParsingException throws if invalid DER-encoded certificate is parsed or
+     * unsupported DER features are found in the certificate
      */
     public static String getCRLURL(X509Certificate certificate) throws CertificateParsingException {
         ASN1Primitive obj;

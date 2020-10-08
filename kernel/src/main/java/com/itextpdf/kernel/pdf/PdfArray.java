@@ -363,6 +363,8 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
 
     /**
      * @param asDirect true is to extract direct object always.
+     * @param index index of the element to return
+     * @return the element at the specified position in this list
      */
     public PdfObject get(int index, boolean asDirect) {
         if (!asDirect)

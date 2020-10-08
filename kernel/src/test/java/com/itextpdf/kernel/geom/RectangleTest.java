@@ -51,15 +51,68 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class RectangleTest extends ExtendedITextTest {
+    private static final float OVERLAP_EPSILON = 0.1f;
+
+    @Test
+    public void overlapWithEpsilon() {
+        Rectangle first = new Rectangle(0, 0, 10, 10);
+        Rectangle second = new Rectangle(-10, 0, 10.09f, 5);
+
+        Assert.assertFalse(first.overlaps(second, OVERLAP_EPSILON));
+        second.setWidth(10.11f);
+        Assert.assertTrue(first.overlaps(second, OVERLAP_EPSILON));
+
+        second = new Rectangle(5, 9.91f, 5, 5);
+        Assert.assertFalse(first.overlaps(second, OVERLAP_EPSILON));
+        second.setY(9.89f);
+        Assert.assertTrue(first.overlaps(second, OVERLAP_EPSILON));
+
+        second = new Rectangle(9.91f, 0, 5, 5);
+        Assert.assertFalse(first.overlaps(second, OVERLAP_EPSILON));
+        second.setX(9.89f);
+        Assert.assertTrue(first.overlaps(second, OVERLAP_EPSILON));
+
+        second = new Rectangle(5, -10, 5, 10.09f);
+        Assert.assertFalse(first.overlaps(second, OVERLAP_EPSILON));
+        second.setHeight(10.11f);
+        Assert.assertTrue(first.overlaps(second, OVERLAP_EPSILON));
+    }
+
+    @Test
+    public void overlapWithNegativeEpsilon() {
+        Rectangle first = new Rectangle(0, 0, 10, 10);
+        Rectangle second = new Rectangle(-10, 0, 9.89f, 5);
+
+        Assert.assertFalse(first.overlaps(second, -OVERLAP_EPSILON));
+        second.setWidth(9.91f);
+        Assert.assertTrue(first.overlaps(second, -OVERLAP_EPSILON));
+
+        second = new Rectangle(5, 10.11f, 5, 5);
+        Assert.assertFalse(first.overlaps(second, -OVERLAP_EPSILON));
+        second.setY(10.09f);
+        Assert.assertTrue(first.overlaps(second, -OVERLAP_EPSILON));
+
+        second = new Rectangle(10.11f, 0, 5, 5);
+        Assert.assertFalse(first.overlaps(second, -OVERLAP_EPSILON));
+        second.setX(10.09f);
+        Assert.assertTrue(first.overlaps(second, -OVERLAP_EPSILON));
+
+        second = new Rectangle(5, -10, 5, 9.89f);
+        Assert.assertFalse(first.overlaps(second, -OVERLAP_EPSILON));
+        second.setHeight(9.91f);
+        Assert.assertTrue(first.overlaps(second, -OVERLAP_EPSILON));
+    }
 
     @Test
     public void rectangleOverlapTest01() {

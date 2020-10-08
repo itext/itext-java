@@ -77,6 +77,29 @@ class XfdfWriter {
         this.writeDom(xfdfObject);
     }
 
+    static void addField(FieldObject fieldObject, Element parentElement,
+            Document document, List<FieldObject> fieldList) {
+        List<FieldObject> childrenFields = findChildrenFields(fieldObject, fieldList);
+
+        Element field = document.createElement("field");
+        field.setAttribute("name", fieldObject.getName());
+
+
+        if (!childrenFields.isEmpty()) {
+            for (FieldObject childField : childrenFields) {
+                addField(childField, field, document, fieldList);
+            }
+        } else {
+            if (fieldObject.getValue() != null && !fieldObject.getValue().isEmpty()) {
+                Element value = document.createElement("value");
+                value.setTextContent(fieldObject.getValue());
+                field.appendChild(value);
+            } else {
+                logger.info(XfdfConstants.EMPTY_FIELD_VALUE_ELEMENT);
+            }
+        }
+        parentElement.appendChild(field);
+    }
 
     private void writeDom(XfdfObject xfdfObject) throws ParserConfigurationException, TransformerException {
 
@@ -152,29 +175,6 @@ class XfdfWriter {
             }
         }
         return childrenFields;
-    }
-
-    private static void addField(FieldObject fieldObject, Element parentElement, Document document, List<FieldObject> fieldList) {
-        List<FieldObject> childrenFields = findChildrenFields(fieldObject, fieldList);
-
-        Element field = document.createElement("field");
-        field.setAttribute("name", fieldObject.getName());
-
-
-        if (!childrenFields.isEmpty()) {
-            for (FieldObject childField : childrenFields) {
-                addField(childField, field, document, fieldList);
-            }
-        } else {
-            if (fieldObject.getValue() != null && !fieldObject.getValue().isEmpty()) {
-                Element value = document.createElement("value");
-                value.setTextContent(fieldObject.getValue());
-                field.appendChild(value);
-            } else {
-                logger.info(XfdfConstants.EMPTY_FIELD_VALUE_ELEMENT);
-            }
-        }
-        parentElement.appendChild(field);
     }
 
     private static  void addAnnot(AnnotObject annotObject, Element annots, Document document) {

@@ -44,14 +44,17 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.io.colors.IccProfile;
+import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.image.Jpeg2000ImageData;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfSimpleFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.font.PdfType3Font;
+import com.itextpdf.kernel.font.Type3Glyph;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -110,8 +113,6 @@ public class PdfA2Checker extends PdfA1Checker {
     private boolean currentStrokeCsIsIccBasedCMYK = false;
 
     private Map<PdfName, PdfArray> separationColorSpaces = new HashMap<>();
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PdfA2Checker.class);
 
     private Set<PdfObject> transparencyObjects = new HashSet<>();
 
@@ -433,6 +434,18 @@ public class PdfA2Checker extends PdfA1Checker {
     }
 
     @Override
+    protected void checkAppearanceStream(PdfStream appearanceStream) {
+        if (isAlreadyChecked(appearanceStream)) {
+            return;
+        }
+
+        if (isContainsTransparencyGroup(appearanceStream)) {
+            this.transparencyObjects.add(appearanceStream);
+        }
+        checkResources(appearanceStream.getAsDictionary(PdfName.Resources));
+    }
+
+    @Override
     protected void checkForm(PdfDictionary form) {
         if (form != null) {
             PdfBoolean needAppearances = form.getAsBoolean(PdfName.NeedAppearances);
@@ -615,7 +628,7 @@ public class PdfA2Checker extends PdfA1Checker {
             throw new PdfAConformanceException(PdfAConformanceException.THE_PAGE_DICTIONARY_SHALL_NOT_CONTAIN_PRESSTEPS_ENTRY);
         }
 
-        if (pageDict.containsKey(PdfName.Group) && PdfName.Transparency.equals(pageDict.getAsDictionary(PdfName.Group).getAsName(PdfName.S))) {
+        if (isContainsTransparencyGroup(pageDict)) {
             PdfObject cs = pageDict.getAsDictionary(PdfName.Group).get(PdfName.CS);
             if (cs != null) {
                 PdfDictionary currentColorSpaces = pageResources.getAsDictionary(PdfName.ColorSpace);
@@ -633,7 +646,8 @@ public class PdfA2Checker extends PdfA1Checker {
                 throw new PdfAConformanceException(PdfAConformanceException.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE);
             }
             checkContentsForTransparency(pageDict);
-            checkXObjectsForTransparency(pageResources.getAsDictionary(PdfName.XObject));
+            checkAnnotationsForTransparency(pageDict.getAsArray(PdfName.Annots));
+            checkResourcesForTransparency(pageResources, new HashSet<PdfObject>());
         }
     }
 
@@ -814,6 +828,13 @@ public class PdfA2Checker extends PdfA1Checker {
     }
 
     @Override
+    public void checkFontGlyphs(PdfFont font, PdfStream contentStream) {
+        if (font instanceof PdfType3Font) {
+            checkType3FontGlyphs((PdfType3Font) font, contentStream);
+        }
+    }
+
+    @Override
     protected void checkFormXObject(PdfStream form) {
         checkFormXObject(form, null);
     }
@@ -831,7 +852,7 @@ public class PdfA2Checker extends PdfA1Checker {
             throw new PdfAConformanceException(PdfAConformanceException.A_FORM_XOBJECT_DICTIONARY_SHALL_NOT_CONTAIN_SUBTYPE2_KEY_WITH_A_VALUE_OF_PS);
         }
 
-        if (form.containsKey(PdfName.Group) && PdfName.Transparency.equals(form.getAsDictionary(PdfName.Group).getAsName(PdfName.S))) {
+        if (isContainsTransparencyGroup(form)) {
             if (contentStream != null) {
                 transparencyObjects.add(contentStream);
             } else {
@@ -865,17 +886,62 @@ public class PdfA2Checker extends PdfA1Checker {
         }
     }
 
-    private void checkXObjectsForTransparency(PdfDictionary dictionary) {
-        if (dictionary != null) {
-            for (PdfName key : dictionary.keySet()) {
-                PdfDictionary xObject = dictionary.getAsStream(key);
-                if (transparencyObjects.contains(xObject)) {
-                    throw new PdfAConformanceException(PdfAConformanceException.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE);
-                }
-                if (xObject.getAsDictionary(PdfName.Resources) != null
-                        && xObject.getAsDictionary(PdfName.Resources).getAsDictionary(PdfName.XObject) != null) {
-                    checkXObjectsForTransparency(xObject.getAsDictionary(PdfName.Resources).getAsDictionary(PdfName.XObject));
-                }
+    private void checkAnnotationsForTransparency(PdfArray annotations) {
+        if (annotations == null) {
+            return;
+        }
+        for (int i = 0; i < annotations.size(); ++i) {
+            PdfDictionary annot = annotations.getAsDictionary(i);
+            PdfDictionary ap = annot.getAsDictionary(PdfName.AP);
+            if (ap != null) {
+                checkAppearanceStreamForTransparency(ap, new HashSet<PdfObject>());
+            }
+        }
+    }
+
+    private void checkAppearanceStreamForTransparency(PdfDictionary ap, Set<PdfObject> checkedObjects) {
+        if (checkedObjects.contains(ap)) {
+            return;
+        } else {
+            checkedObjects.add(ap);
+        }
+        for (PdfObject val : ap.values()) {
+            if (this.transparencyObjects.contains(val)) {
+                throw new PdfAConformanceException(PdfAConformanceException.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE);
+            } else if (val.isDictionary()) {
+                checkAppearanceStreamForTransparency((PdfDictionary) val, checkedObjects);
+            } else if (val.isStream()) {
+                checkObjectWithResourcesForTransparency(val, checkedObjects);
+            }
+        }
+    }
+
+    private void checkObjectWithResourcesForTransparency(PdfObject objectWithResources, Set<PdfObject> checkedObjects) {
+        if (checkedObjects.contains(objectWithResources)) {
+            return;
+        } else {
+            checkedObjects.add(objectWithResources);
+        }
+
+        if (this.transparencyObjects.contains(objectWithResources)) {
+            throw new PdfAConformanceException(PdfAConformanceException.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE);
+        }
+        if (objectWithResources instanceof PdfDictionary) {
+            checkResourcesForTransparency(((PdfDictionary) objectWithResources).getAsDictionary(PdfName.Resources), checkedObjects);
+        }
+    }
+
+    private void checkResourcesForTransparency(PdfDictionary resources, Set<PdfObject> checkedObjects) {
+        if (resources != null) {
+            checkSingleResourceTypeForTransparency(resources.getAsDictionary(PdfName.XObject), checkedObjects);
+            checkSingleResourceTypeForTransparency(resources.getAsDictionary(PdfName.Pattern), checkedObjects);
+        }
+    }
+
+    private void checkSingleResourceTypeForTransparency(PdfDictionary singleResourceDict, Set<PdfObject> checkedObjects) {
+        if (singleResourceDict != null) {
+            for (PdfObject resource : singleResourceDict.values()) {
+                checkObjectWithResourcesForTransparency(resource, checkedObjects);
             }
         }
     }
@@ -987,13 +1053,13 @@ public class PdfA2Checker extends PdfA1Checker {
         return true;
     }
 
-    @Override
-    public void checkFontGlyphs(PdfFont font, PdfStream contentStream) {
-        if (font instanceof PdfType3Font) {
-            for (int i = 0; i < ((PdfType3Font) font).getNumberOfGlyphs(); i++) {
-                int unicode = ((PdfType3Font) font).getFontEncoding().getUnicode(i);
-                if (unicode != -1) {
-                    checkFormXObject(((PdfType3Font) font).getType3Glyph(unicode).getContentStream(), contentStream);
+    private void checkType3FontGlyphs(PdfType3Font font, PdfStream contentStream) {
+        for (int i = 0; i <= PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE; ++i) {
+            FontEncoding fontEncoding = font.getFontEncoding();
+            if (fontEncoding.canDecode(i)) {
+                Type3Glyph type3Glyph = font.getType3Glyph(fontEncoding.getUnicode(i));
+                if (type3Glyph != null) {
+                    checkFormXObject(type3Glyph.getContentStream(), contentStream);
                 }
             }
         }

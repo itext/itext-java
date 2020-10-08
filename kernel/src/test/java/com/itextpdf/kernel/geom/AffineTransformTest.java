@@ -99,7 +99,7 @@ public class AffineTransformTest extends ExtendedITextTest {
     }
 
     @Test
-    public void rotateTest() {
+    public void getRotateInstanceTest() {
         AffineTransform rotateOne = AffineTransform.getRotateInstance(Math.PI / 2);
         AffineTransform expected = new AffineTransform(0, 1, -1, 0, 0, 0);
 
@@ -107,7 +107,7 @@ public class AffineTransformTest extends ExtendedITextTest {
     }
 
     @Test
-    public void rotateTranslateTest() {
+    public void getRotateInstanceTranslateTest() {
         AffineTransform rotateTranslate = AffineTransform.getRotateInstance(Math.PI / 2, 10, 5);
         AffineTransform expected = new AffineTransform(0, 1, -1, 0, 15, -5);
 
@@ -121,5 +121,287 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         Assert.assertTrue(original != clone);
         Assert.assertTrue(original.equals(clone));
+    }
+
+    @Test
+    public void getTransformValuesTest() {
+        float[] matrix = new float[]{0f, 1f, 2f, 3f, 4f, 5f};
+        AffineTransform affineTransform = new AffineTransform(matrix);
+
+        Assert.assertEquals(matrix[0], affineTransform.getScaleX(), 0.0);
+        Assert.assertEquals(matrix[3], affineTransform.getScaleY(), 0.0);
+        Assert.assertEquals(matrix[2], affineTransform.getShearX(), 0.0);
+        Assert.assertEquals(matrix[1], affineTransform.getShearY(), 0.0);
+        Assert.assertEquals(matrix[4], affineTransform.getTranslateX(), 0.0);
+        Assert.assertEquals(matrix[5], affineTransform.getTranslateY(), 0.0);
+        Assert.assertEquals(32, affineTransform.getType(), 0.0);
+    }
+
+    @Test
+    public void createAffineTransformFromOtherATTest() {
+        AffineTransform template = new AffineTransform(0, 1, 2, 3, 4, 5);
+        AffineTransform result = new AffineTransform(template);
+
+        Assert.assertNotSame(template, result);
+        Assert.assertEquals(template, result);
+    }
+
+    @Test
+    public void createAffineTransformFromFloatArrayTest() {
+        float[] matrix = new float[]{0f, 1f, 2f, 3f, 4f, 5f};
+        AffineTransform expected = new AffineTransform(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
+        AffineTransform result = new AffineTransform(matrix);
+
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void createAffineTransformFromDoubleArrayTest() {
+        double[] matrix = new double[]{0d, 1d, 2d, 3d, 4d, 5d};
+        AffineTransform expected = new AffineTransform(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
+        AffineTransform result = new AffineTransform(matrix);
+
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void setTransformTest() {
+        float[] matrix = new float[]{0f, 1f, 2f, 3f, 4f, 5f};
+        AffineTransform expected = new AffineTransform(matrix);
+        AffineTransform result = new AffineTransform();
+
+        result.setTransform(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
+
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void setToIdentityTest() {
+        AffineTransform expected = new AffineTransform(1, 0, 0, 1, 0, 0);
+        AffineTransform result = new AffineTransform();
+
+        result.setToIdentity();
+
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void setToShearTypeIdentityTest() {
+        double shx = 0d;
+        double shy = 0d;
+        AffineTransform expected = new AffineTransform(1, shx, shy, 1, 0, 0);
+        AffineTransform result = new AffineTransform();
+
+        result.setToShear(shx, shy);
+
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void setToShearTypeUnknownTest() {
+        double shx = 1d;
+        double shy = 1d;
+        AffineTransform expected = new AffineTransform(1, shx, shy, 1, 0, 0);
+        AffineTransform result = new AffineTransform();
+
+        result.setToShear(shx, shy);
+
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void getShearInstanceTest() {
+        double shx = 1d;
+        double shy = 1d;
+        AffineTransform expected = new AffineTransform(1, shx, shy, 1, 0, 0);
+        AffineTransform result = AffineTransform.getShearInstance(shx, shy);
+
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void shearTest() {
+        double shx = 1d;
+        double shy = 1d;
+        AffineTransform expected = new AffineTransform(4d, 6d, 4d, 6d, 5d, 6d);
+        AffineTransform result = new AffineTransform(1d, 2d, 3d, 4d, 5d, 6d);
+
+        result.shear(shx, shy);
+
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void rotateTest() {
+        double angle = Math.PI / 2;
+        AffineTransform expected = new AffineTransform(3d, 4d, -1d, -2d, 5d, 6d);
+        AffineTransform result = new AffineTransform(1d, 2d, 3d, 4d, 5d, 6d);
+
+        result.rotate(angle);
+
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void preConcatenateTest() {
+        AffineTransform expected = new AffineTransform(6d, 6d, 14d, 14d, 24d, 24d);
+        AffineTransform result = new AffineTransform(1d, 2d, 3d, 4d, 5d, 6d);
+        AffineTransform template = new AffineTransform(2d, 2d, 2d, 2d, 2d, 2d);
+
+        result.preConcatenate(template);
+
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void transformDoubleArrayTest() {
+        AffineTransform affineTransform = new AffineTransform(1d, 2d, 3d, 4d, 5d, 6d);
+        double[] expected = new double[]{0d, 13d, 18d, 13d, 18d, 0d};
+        double[] src = new double[]{2d, 2d, 2d, 2d, 2d, 2d};
+        double[] dest = new double[6];
+
+        affineTransform.transform(src, 1, dest, 1, 2);
+
+        Assert.assertArrayEquals(expected, dest, 0);
+    }
+
+    @Test
+    public void transformDoubleArraySourceDestEqualsTest() {
+        AffineTransform affineTransform = new AffineTransform(1d, 2d, 3d, 4d, 5d, 6d);
+        double[] expected = new double[]{2d, 2d, 13d, 18d, 13d, 18d};
+        double[] src = new double[]{2d, 2d, 2d, 2d, 2d, 2d};
+
+        affineTransform.transform(src, 1, src, 2, 2);
+
+        Assert.assertArrayEquals(expected, src, 0);
+    }
+
+    @Test
+    public void transformFloatArrayTest() {
+        AffineTransform affineTransform = new AffineTransform(1f, 2f, 3f, 4f, 5f, 6f);
+        float[] expected = new float[]{0f, 13f, 18f, 13f, 18f, 0f};
+        float[] src = new float[]{2f, 2f, 2f, 2f, 2f, 2f};
+        float[] dest = new float[6];
+
+        affineTransform.transform(src, 1, dest, 1, 2);
+
+        Assert.assertArrayEquals(expected, dest, 0);
+    }
+
+    @Test
+    public void transformFloatArraySourceDestEqualsTest() {
+        AffineTransform affineTransform = new AffineTransform(1f, 2f, 3f, 4f, 5f, 6f);
+        float[] expected = new float[]{2f, 2f, 13f, 18f, 13f, 18f};
+        float[] src = new float[]{2f, 2f, 2f, 2f, 2f, 2f};
+
+        affineTransform.transform(src, 1, src, 2, 2);
+
+        Assert.assertArrayEquals(expected, src, 0);
+    }
+
+    @Test
+    public void transformFloatToDoubleTest() {
+        AffineTransform affineTransform = new AffineTransform(1f, 2f, 3f, 4f, 5f, 6f);
+        double[] expected = new double[]{0d, 13d, 18d, 13d, 18d, 0d};
+        float[] src = new float[]{2f, 2f, 2f, 2f, 2f, 2f};
+        double[] dest = new double[6];
+
+        affineTransform.transform(src, 1, dest, 1, 2);
+
+        Assert.assertArrayEquals(expected, dest, 0);
+    }
+
+    @Test
+    public void transformDoubleToFloatTest() {
+        AffineTransform affineTransform = new AffineTransform(1f, 2f, 3f, 4f, 5f, 6f);
+        float[] expected = new float[]{0f, 13f, 18f, 13f, 18f, 0f};
+        double[] src = new double[]{2d, 2d, 2d, 2d, 2d, 2d};
+        float[] dest = new float[6];
+
+        affineTransform.transform(src, 1, dest, 1, 2);
+
+        Assert.assertArrayEquals(expected, dest, 0);
+    }
+
+    @Test
+    public void deltaTransformPointTest() {
+        AffineTransform affineTransform = new AffineTransform(1f, 2f, 3f, 4f, 5f, 6f);
+        Point src = new Point(2, 2);
+        Point dest = new Point();
+        Point expected = new Point(8, 12);
+
+        affineTransform.deltaTransform(src, dest);
+
+        Assert.assertEquals(expected, dest);
+    }
+
+    @Test
+    public void deltaTransformPointNullDestTest() {
+        AffineTransform affineTransform = new AffineTransform(1f, 2f, 3f, 4f, 5f, 6f);
+        Point src = new Point(2, 2);
+        Point expected = new Point(8, 12);
+
+        Point dest = affineTransform.deltaTransform(src, null);
+
+        Assert.assertEquals(expected, dest);
+    }
+
+    @Test
+    public void deltaTransformDoubleArrayTest() {
+        AffineTransform affineTransform = new AffineTransform(1f, 2f, 3f, 4f, 5f, 6f);
+        double[] expected = new double[]{0d, 8d, 12d, 8d, 12d, 0d};
+        double[] src = new double[]{2d, 2d, 2d, 2d, 2d, 2d};
+        double[] dest = new double[6];
+
+        affineTransform.deltaTransform(src, 1, dest, 1, 2);
+
+        Assert.assertArrayEquals(expected, dest, 0);
+    }
+
+    @Test
+    public void inverseTransformPointTest() throws NoninvertibleTransformException {
+        AffineTransform affineTransform = new AffineTransform(1f, 2f, 3f, 4f, 5f, 6f);
+        Point src = new Point(2, 2);
+        Point dest = new Point();
+        Point expected = new Point(0, -1);
+
+        affineTransform.inverseTransform(src, dest);
+
+        Assert.assertEquals(expected, dest);
+    }
+
+    @Test
+    public void inverseTransformPointNullTest() throws NoninvertibleTransformException {
+        AffineTransform affineTransform = new AffineTransform(1f, 2f, 3f, 4f, 5f, 6f);
+        Point src = new Point(2, 2);
+        Point expected = new Point(0, -1);
+
+        Point dest = affineTransform.inverseTransform(src, null);
+
+        Assert.assertEquals(expected, dest);
+    }
+
+    @Test
+    public void inverseTransformDoubleArrayTest() throws NoninvertibleTransformException {
+        AffineTransform affineTransform = new AffineTransform(1f, 2f, 3f, 4f, 5f, 6f);
+        double[] expected = new double[]{0d, -0d, -1d, -0d, -1d, 0d};
+        double[] src = new double[]{2d, 2d, 2d, 2d, 2d, 2d};
+        double[] dest = new double[6];
+
+        affineTransform.inverseTransform(src, 1, dest, 1, 2);
+
+        Assert.assertArrayEquals(expected, dest, 0);
+    }
+
+    @Test
+    public void inverseTransformFloatArrayTest() throws NoninvertibleTransformException {
+        AffineTransform affineTransform = new AffineTransform(1f, 2f, 3f, 4f, 5f, 6f);
+        float[] expected = new float[]{0f, -0f, -1f, -0f, -1f, 0f};
+        float[] src = new float[]{2f, 2f, 2f, 2f, 2f, 2f};
+        float[] dest = new float[6];
+
+        affineTransform.inverseTransform(src, 1, dest, 1, 2);
+
+        Assert.assertArrayEquals(expected, dest, 0);
     }
 }

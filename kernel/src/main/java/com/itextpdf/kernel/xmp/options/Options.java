@@ -143,7 +143,7 @@ public abstract class Options
 
 	/**
 	 * @param options The options to set.
-	 * @throws XMPException 
+	 * @throws XMPException thrown if the file is not well-formed XML or if the parsing fails
 	 */
 	public void setOptions(int options) throws XMPException
 	{

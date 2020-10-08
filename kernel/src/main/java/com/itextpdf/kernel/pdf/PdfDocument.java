@@ -90,6 +90,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -101,6 +102,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1219,6 +1221,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
         int pageInsertIndex = insertBeforePage;
         boolean insertInBetween = insertBeforePage < toDocument.getNumberOfPages() + 1;
+
         for (Integer pageNum : pagesToCopy) {
             PdfPage page = getPage((int) pageNum);
             PdfPage newPage = page.copyTo(toDocument, copier);
@@ -1247,6 +1250,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
 
         copyLinkAnnotations(toDocument, page2page);
+
+        // Copying OCGs should go after copying LinkAnnotations
+        if (getCatalog() != null && getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties) != null) {
+            OcgPropertiesCopier.copyOCGProperties(this, toDocument, page2page);
+        }
 
         // It's important to copy tag structure after link annotations were copied, because object content items in tag
         // structure are not copied in case if their's OBJ key is annotation and doesn't contain /P entry.
@@ -2076,6 +2084,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Update XMP metadata values from {@link PdfDocumentInfo}.
      *
      * @return the XMPMetadata
+     * @throws XMPException if the file is not well-formed XML or if parsing fails.
      */
     protected XMPMeta updateDefaultXmpMetadata() throws XMPException {
         XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(getXmpMetadata(true));

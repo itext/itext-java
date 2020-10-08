@@ -208,7 +208,12 @@ public class PageRange {
      */
     @Override
     public int hashCode() {
-        return sequences.hashCode();
+        int hashCode = 0;
+        for (IPageRangePart part : sequences) {
+            hashCode += part.hashCode();
+        }
+
+        return hashCode;
     }
 
     /**
@@ -481,7 +486,12 @@ public class PageRange {
          */
         @Override
         public int hashCode() {
-            return conditions.hashCode();
+            int hashCode = 0;
+            for (IPageRangePart part : conditions) {
+                hashCode += part.hashCode();
+            }
+
+            return hashCode;
         }
     }
 }

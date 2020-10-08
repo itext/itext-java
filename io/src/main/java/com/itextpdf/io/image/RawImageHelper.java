@@ -107,7 +107,7 @@ public final class RawImageHelper {
     /**
      * Update original image with Raw Image parameters.
      *
-     * @param image
+     * @param image to update its parameters with Raw Image parameters.
      * @param width the exact width of the image
      * @param height the exact height of the image
      * @param components 1,3 or 4 for GrayScale, RGB and CMYK

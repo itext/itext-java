@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="symbolClass.css"?>
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg"
+	 xmlns:xlink="http://www.w3.org/1999/xlink">
+	<symbol class="symbol" id="myDot" viewBox="0 0 500 500" >
+		<circle cx="5" cy="60" r="50" stroke-width="20" stroke="#f00"/>
+	</symbol>
+	<use xlink:href="#myDot" x="0"  y="100"/>
+	<use xlink:href="#myDot" x="250" y="100"/>
+</svg>

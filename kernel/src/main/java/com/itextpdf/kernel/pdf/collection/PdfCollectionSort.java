@@ -85,6 +85,7 @@ public class PdfCollectionSort extends PdfObjectWrapper<PdfDictionary> {
      * Defines the sort order of the field (ascending or descending).
      *
      * @param ascending true is the default, use false for descending order
+     * @return this instance to support fluent interface
      */
     public PdfCollectionSort setSortOrder(boolean ascending) {
         PdfObject obj = getPdfObject().get(PdfName.S);
@@ -100,6 +101,7 @@ public class PdfCollectionSort extends PdfObjectWrapper<PdfDictionary> {
      * Defines the sort order of the field (ascending or descending).
      *
      * @param ascending an array with every element corresponding with a name of a field.
+     * @return this instance to support fluent interface
      */
     public PdfCollectionSort setSortOrder(boolean[] ascending) {
         PdfObject obj = getPdfObject().get(PdfName.S);

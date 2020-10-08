@@ -51,43 +51,51 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfXObjectTest extends ExtendedITextTest{
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfXObjectTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfXObjectTest/";
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfXObjectTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfXObjectTest/";
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
-    public static final String[] images = new String[]{sourceFolder + "WP_20140410_001.bmp",
-            sourceFolder + "WP_20140410_001.JPC",
-            sourceFolder + "WP_20140410_001.jpg",
-            sourceFolder + "WP_20140410_001.tif"};
+    public static final String[] images = new String[]{SOURCE_FOLDER + "WP_20140410_001.bmp",
+            SOURCE_FOLDER + "WP_20140410_001.JPC",
+            SOURCE_FOLDER + "WP_20140410_001.jpg",
+            SOURCE_FOLDER + "WP_20140410_001.tif"};
 
 
     @BeforeClass
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void createDocumentFromImages1() throws IOException,  InterruptedException {
-        final String destinationDocument = destinationFolder + "documentFromImages1.pdf";
+        final String destinationDocument = DESTINATION_FOLDER + "documentFromImages1.pdf";
         FileOutputStream fos = new FileOutputStream(destinationDocument);
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
@@ -115,7 +123,8 @@ public class PdfXObjectTest extends ExtendedITextTest{
         document.close();
 
         Assert.assertTrue(new File(destinationDocument).length() < 20 * 1024 * 1024);
-        Assert.assertNull(new CompareTool().compareByContent(destinationDocument, sourceFolder + "cmp_documentFromImages1.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationDocument, SOURCE_FOLDER + "cmp_documentFromImages1.pdf",
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -123,12 +132,12 @@ public class PdfXObjectTest extends ExtendedITextTest{
             @LogMessage(messageTemplate = LogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB)
     })
     public void createDocumentFromImages2() throws IOException,  InterruptedException {
-        final String destinationDocument = destinationFolder + "documentFromImages2.pdf";
+        final String destinationDocument = DESTINATION_FOLDER + "documentFromImages2.pdf";
         FileOutputStream fos = new FileOutputStream(destinationDocument);
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
 
-        ImageData image = ImageDataFactory.create(sourceFolder + "itext.jpg");
+        ImageData image = ImageDataFactory.create(SOURCE_FOLDER + "itext.jpg");
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.addImage(image, 50, 500, 100, true);
@@ -138,12 +147,13 @@ public class PdfXObjectTest extends ExtendedITextTest{
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationDocument, sourceFolder + "cmp_documentFromImages2.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationDocument, SOURCE_FOLDER + "cmp_documentFromImages2.pdf",
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void createDocumentWithForms() throws IOException,  InterruptedException {
-        final String destinationDocument = destinationFolder + "documentWithForms1.pdf";
+        final String destinationDocument = DESTINATION_FOLDER + "documentWithForms1.pdf";
         FileOutputStream fos = new FileOutputStream(destinationDocument);
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
@@ -181,7 +191,8 @@ public class PdfXObjectTest extends ExtendedITextTest{
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationDocument, sourceFolder + "cmp_documentWithForms1.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationDocument, SOURCE_FOLDER + "cmp_documentWithForms1.pdf",
+                DESTINATION_FOLDER, "diff_"));
 
     }
 
@@ -191,8 +202,8 @@ public class PdfXObjectTest extends ExtendedITextTest{
 
         // The input file contains circular references chain, see: 8 0 R -> 10 0 R -> 4 0 R -> 8 0 R.
         // Copying of such file even with smart mode is expected to be handled correctly.
-        String src = sourceFolder + "checkboxes_XObject_iterative_reference.pdf";
-        String dest = destinationFolder + "checkboxes_XObject_iterative_reference_out.pdf";
+        String src = SOURCE_FOLDER + "checkboxes_XObject_iterative_reference.pdf";
+        String dest = DESTINATION_FOLDER + "checkboxes_XObject_iterative_reference_out.pdf";
 
         PdfDocument pdf = new PdfDocument(new PdfWriter(dest).setSmartMode(true));
         PdfReader pdfReader = new PdfReader(src);
@@ -263,5 +274,89 @@ public class PdfXObjectTest extends ExtendedITextTest{
         //EXPECTED to be as the original but with different referenced object and marked as modified
         String expected = "<</BBox [0 0 20 20 ] /Filter /FlateDecode /FormType 1 /Length 70 /Matrix [1 0 0 1 0 0 ] /Resources <</Font <</ZaDb " + countIdIn + " 0 R Modified; >> >> /Subtype /Form /Type /XObject >>";
         Assert.assertTrue(mapOut.get(expected).equals(1));
+    }
+
+    @Test
+    public void calculateProportionallyFitRectangleWithWidthTest() throws IOException,  InterruptedException {
+        final String fileName = "calculateProportionallyFitRectangleWithWidthTest.pdf";
+        final String destPdf = DESTINATION_FOLDER + fileName;
+        final String cmpPdf = SOURCE_FOLDER + "cmp_" + fileName;
+        FileOutputStream fos = new FileOutputStream(destPdf);
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfFormXObject formXObject = new PdfFormXObject(new Rectangle(5, 5, 15, 20));
+        formXObject.put(PdfName.Matrix, new PdfArray(new float[] {1, 0.57f, 0, 2, 20, 5}));
+        new PdfCanvas(formXObject, document).circle(10, 15, 10).fill();
+
+        PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itext.png"));
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        Rectangle rect = PdfXObject.calculateProportionallyFitRectangleWithWidth(formXObject, 0, 0, 20);
+        canvas.addXObjectFittedIntoRectangle(formXObject, rect);
+        rect = PdfXObject.calculateProportionallyFitRectangleWithWidth(imageXObject, 20, 0, 20);
+        canvas.addXObjectFittedIntoRectangle(imageXObject, rect);
+
+        canvas.release();
+        page.flush();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    @Category(UnitTest.class)
+    public void calculateProportionallyFitRectangleWithWidthForCustomXObjectTest() {
+        junitExpectedException.expect(IllegalArgumentException.class);
+        junitExpectedException.expectMessage("PdfFormXObject or PdfImageXObject expected.");
+        PdfXObject pdfXObject = new CustomPdfXObject(new PdfStream());
+        PdfXObject.calculateProportionallyFitRectangleWithWidth(pdfXObject, 0, 0, 20);
+    }
+
+    @Test
+    public void calculateProportionallyFitRectangleWithHeightTest() throws IOException,  InterruptedException {
+        final String fileName = "calculateProportionallyFitRectangleWithHeightTest.pdf";
+        final String destPdf = DESTINATION_FOLDER + fileName;
+        final String cmpPdf = SOURCE_FOLDER + "cmp_" + fileName;
+        FileOutputStream fos = new FileOutputStream(destPdf);
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfFormXObject formXObject = new PdfFormXObject(new Rectangle(5, 5, 15, 20));
+        formXObject.put(PdfName.Matrix, new PdfArray(new float[] {1, 0.57f, 0, 2, 20, 5}));
+        new PdfCanvas(formXObject, document).circle(10, 15, 10).fill();
+
+        PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itext.png"));
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        Rectangle rect = PdfXObject.calculateProportionallyFitRectangleWithHeight(formXObject, 0, 0, 20);
+        canvas.addXObjectFittedIntoRectangle(formXObject, rect);
+        rect = PdfXObject.calculateProportionallyFitRectangleWithHeight(imageXObject, 20, 0, 20);
+        canvas.addXObjectFittedIntoRectangle(imageXObject, rect);
+
+        canvas.release();
+        page.flush();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    @Category(UnitTest.class)
+    public void calculateProportionallyFitRectangleWithHeightForCustomXObjectTest() {
+        junitExpectedException.expect(IllegalArgumentException.class);
+        junitExpectedException.expectMessage("PdfFormXObject or PdfImageXObject expected.");
+        PdfXObject pdfXObject = new CustomPdfXObject(new PdfStream());
+        PdfXObject.calculateProportionallyFitRectangleWithHeight(pdfXObject, 0, 0, 20);
+    }
+
+    private static class CustomPdfXObject extends PdfXObject {
+        protected CustomPdfXObject(PdfStream pdfObject) {
+            super(pdfObject);
+        }
     }
 }

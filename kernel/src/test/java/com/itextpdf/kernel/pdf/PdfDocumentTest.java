@@ -451,7 +451,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         ignoreTagStructureDocument.close();
     }
 
-    private class IgnoreTagStructurePdfDocument extends PdfDocument {
+    private static class IgnoreTagStructurePdfDocument extends PdfDocument {
 
         IgnoreTagStructurePdfDocument(PdfReader reader) {
             super(reader);

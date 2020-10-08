@@ -164,6 +164,7 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
      * @param afRelationshipValue value that represents the relationship between the component of the passed PDF document
      *                            that refers to this file specification and the associated file. If <CODE>null</CODE>,
      *                            {@link PdfName#Unspecified} will be added.
+     * @param description         the file description
      * @return {@link PdfFileSpec} containing the file specification of the file
      */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String description, String fileDisplay, PdfDictionary fileParameter, PdfName afRelationshipValue) {
@@ -277,7 +278,7 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
      * @param afRelationshipValue value that represents the relationship between the component of the passed PDF document that
      *                            refers to this file specification and the associated file. If <CODE>null</CODE>,
      *                            {@link PdfName#Unspecified} will be added.
-     * @return @return {@link PdfFileSpec} containing the file specification of the file
+     * @return {@link PdfFileSpec} containing the file specification of the file
      * @throws IOException if there are errors while creating an URL from the passed file path.
      */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, String filePath, String description, String fileDisplay, PdfName afRelationshipValue) throws IOException {

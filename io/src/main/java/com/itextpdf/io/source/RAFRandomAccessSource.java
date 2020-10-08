@@ -74,7 +74,6 @@ class RAFRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
-    // TODO: test to make sure we are handling the length properly (i.e. is raf.length() the last byte in the file, or one past the last byte?)
     public int get(long position) throws java.io.IOException {
         if (position > length)
             return -1;

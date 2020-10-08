@@ -25,7 +25,6 @@ import org.w3c.dom.Node;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 /**
@@ -73,6 +72,8 @@ public class XmlDomWriter {
 
     /**
      * Sets whether output is canonical.
+     *
+     * @param canonical should the writer write canonical output or not
      */
     public void setCanonical(boolean canonical) {
         fCanonical = canonical;
@@ -80,9 +81,11 @@ public class XmlDomWriter {
 
     /**
      * Sets the output stream for printing.
+     *
+     * @param stream the {@link OutputStream} to which data will be written
+     * @param encoding output stream encoding
      */
-    public void setOutput(OutputStream stream, String encoding)
-            throws UnsupportedEncodingException {
+    public void setOutput(OutputStream stream, String encoding) {
 
         if (encoding == null) {
             encoding = "UTF8";
@@ -95,6 +98,8 @@ public class XmlDomWriter {
 
     /**
      * Writes the specified node, recursively.
+     *
+     * @param node the type of {@link Node} for writing
      */
     public void write(Node node) {
 
@@ -243,6 +248,9 @@ public class XmlDomWriter {
 
     /**
      * Returns a sorted list of attributes.
+     *
+     * @param attrs objects implementing {@link NamedNodeMap} that will be sorted
+     * @return a sorted list of attributes
      */
     protected Attr[] sortAttributes(NamedNodeMap attrs) {
 
@@ -278,6 +286,9 @@ public class XmlDomWriter {
 
     /**
      * Normalizes and prints the given string.
+     *
+     * @param s the {@link String} that should be printed
+     * @param isAttValue this flag determines whether some characters will be escaped
      */
     protected void normalizeAndPrint(String s, boolean isAttValue) {
 
@@ -291,6 +302,9 @@ public class XmlDomWriter {
 
     /**
      * Normalizes and print the given character.
+     *
+     * @param c character that should be printed
+     * @param isAttValue this flag determines whether some characters will be escaped
      */
     protected void normalizeAndPrint(char c, boolean isAttValue) {
 

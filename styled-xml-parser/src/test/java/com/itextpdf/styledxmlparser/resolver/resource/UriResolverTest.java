@@ -42,7 +42,6 @@
  */
 package com.itextpdf.styledxmlparser.resolver.resource;
 
-import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
@@ -354,6 +353,15 @@ public class UriResolverTest extends ExtendedITextTest {
         UriResolver resolver = new UriResolver(baseUri);
 
         Assert.assertEquals(expectedUrl, resolver.resolveAgainstBaseUri(relativePath).toExternalForm());
+    }
+
+    @Test
+    public void uriResolverPercentSignTest() throws MalformedURLException {
+        String absolutePathRoot = Paths.get("").toAbsolutePath().getRoot().toUri().toURL().toString();
+        
+        UriResolver resolver = new UriResolver(absolutePathRoot + "%homepath%");
+
+        Assert.assertEquals(absolutePathRoot + "%25homepath%25", resolver.getBaseUri());
     }
 
     private void testPaths(UriResolver resolver, String path) throws MalformedURLException {

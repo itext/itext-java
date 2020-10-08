@@ -34,9 +34,10 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.TransformUtils;
 
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.LoggerFactory;
 
 /**
  * {@link ISvgNodeRenderer} abstract implementation for gradient tags

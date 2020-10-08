@@ -144,6 +144,20 @@ public class SimpleImageCacheTest extends ExtendedITextTest {
 
     }
 
+    @Test
+    public void orderRemovingFromCacheTest() {
+        SimpleImageCache cache = new SimpleImageCache(10);
+        for (int j = 0; j <= 9; j++) {
+            cache.putImage("src" + j + ".jpg", new ImageXObjectStub());
+        }
+
+        for (int i = 0; i <= 9; i++) {
+            cache.putImage("src" + i + 10 + ".jpg", new ImageXObjectStub());
+
+            Assert.assertNull(cache.getImage("src" + i + ".jpg"));
+        }
+    }
+
     private static class ImageXObjectStub extends PdfImageXObject {
         private static int totalNum = 0;
         private int num = 0;

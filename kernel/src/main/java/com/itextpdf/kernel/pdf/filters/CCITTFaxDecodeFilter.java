@@ -62,25 +62,29 @@ public class CCITTFaxDecodeFilter implements IFilterHandler {
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
         PdfNumber wn = streamDictionary.getAsNumber(PdfName.Width);
         PdfNumber hn = streamDictionary.getAsNumber(PdfName.Height);
-        if (wn == null || hn == null)
+        if (wn == null || hn == null) {
             throw new PdfException(PdfException.FilterCcittfaxdecodeIsOnlySupportedForImages);
+        }
         int width = wn.intValue();
         int height = hn.intValue();
 
-        PdfDictionary param = decodeParams instanceof PdfDictionary ? (PdfDictionary)decodeParams : null;
+        PdfDictionary param = decodeParams instanceof PdfDictionary ? (PdfDictionary) decodeParams : null;
         int k = 0;
         boolean blackIs1 = false;
         boolean byteAlign = false;
         if (param != null) {
             PdfNumber kn = param.getAsNumber(PdfName.K);
-            if (kn != null)
+            if (kn != null) {
                 k = kn.intValue();
+            }
             PdfBoolean bo = param.getAsBoolean(PdfName.BlackIs1);
-            if (bo != null)
+            if (bo != null) {
                 blackIs1 = bo.getValue();
+            }
             bo = param.getAsBoolean(PdfName.EncodedByteAlign);
-            if (bo != null)
+            if (bo != null) {
                 byteAlign = bo.getValue();
+            }
         }
         byte[] outBuf = new byte[(width + 7) / 8 * height];
         TIFFFaxDecompressor decoder = new TIFFFaxDecompressor();
@@ -98,8 +102,7 @@ public class CCITTFaxDecodeFilter implements IFilterHandler {
                     outBuf = outBuf2;
                 }
             }
-        }
-        else {
+        } else {
             long tiffT6Options = 0;
             tiffT6Options |= byteAlign ? TIFFConstants.GROUP4OPT_FILLBITS : 0;
             TIFFFaxDecoder deca = new TIFFFaxDecoder(1, width, height);

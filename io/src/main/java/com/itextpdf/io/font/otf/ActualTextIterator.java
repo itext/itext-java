@@ -126,7 +126,6 @@ public class ActualTextIterator implements Iterator<GlyphLine.GlyphLinePart> {
                 needsActualText = true;
                 break;
             }
-            // TODO zero glyph is a special case. Unicode might be special
             toUnicodeMapResult.append(TextUtil.convertFromUtf32(currentGlyph.getUnicode()));
         }
 

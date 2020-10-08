@@ -233,7 +233,7 @@ public class PdfSigner {
      * @param reader       PdfReader that reads the PDF file
      * @param outputStream OutputStream to write the signed PDF file
      * @param append       boolean to indicate whether the signing should happen in append mode or not
-     * @throws IOException
+     * @throws IOException if some I/O problem occurs
      * @deprecated         will be removed in next major release.
      *                     Use {@link #PdfSigner(PdfReader, OutputStream, StampingProperties)} instead.
      */
@@ -249,7 +249,7 @@ public class PdfSigner {
      * @param outputStream OutputStream to write the signed PDF file
      * @param path         File to which the output is temporarily written
      * @param append       boolean to indicate whether the signing should happen in append mode or not
-     * @throws IOException
+     * @throws IOException if some I/O problem occurs
      * @deprecated         will be removed in next major release.
      *                     Use {@link #PdfSigner(PdfReader, OutputStream, String, StampingProperties)} instead.
      */
@@ -265,7 +265,7 @@ public class PdfSigner {
      * @param outputStream OutputStream to write the signed PDF file
      * @param properties   {@link StampingProperties} for the signing document. Note that encryption will be
      *                     preserved regardless of what is set in properties.
-     * @throws IOException
+     * @throws IOException if some I/O problem occurs
      */
     public PdfSigner(PdfReader reader, OutputStream outputStream, StampingProperties properties) throws IOException {
         this(reader, outputStream, null, properties);
@@ -279,7 +279,7 @@ public class PdfSigner {
      * @param path         File to which the output is temporarily written
      * @param properties   {@link StampingProperties} for the signing document. Note that encryption will be
      *                     preserved regardless of what is set in properties.
-     * @throws IOException
+     * @throws IOException if some I/O problem occurs
      */
     public PdfSigner(PdfReader reader, OutputStream outputStream, String path, StampingProperties properties) throws IOException {
         StampingProperties localProps = new StampingProperties(properties).preserveEncryption();
@@ -530,8 +530,8 @@ public class PdfSigner {
      * @param externalDigest    an implementation that provides the digest
      * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
      * @param sigtype           Either Signature.CMS or Signature.CADES
-     * @throws IOException
-     * @throws GeneralSecurityException
+     * @throws IOException              if some I/O problem occurs
+     * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
     public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain, Collection<ICrlClient> crlList, IOcspClient ocspClient,
                              ITSAClient tsaClient, int estimatedSize, CryptoStandard sigtype) throws IOException, GeneralSecurityException {
@@ -553,8 +553,8 @@ public class PdfSigner {
      * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
      * @param sigtype           Either Signature.CMS or Signature.CADES
      * @param signaturePolicy   the signature policy (for EPES signatures)
-     * @throws IOException
-     * @throws GeneralSecurityException
+     * @throws IOException              if some I/O problem occurs
+     * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
     public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain, Collection<ICrlClient> crlList, IOcspClient ocspClient,
                              ITSAClient tsaClient, int estimatedSize, CryptoStandard sigtype, SignaturePolicyInfo signaturePolicy) throws IOException, GeneralSecurityException {
@@ -576,8 +576,8 @@ public class PdfSigner {
      * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
      * @param sigtype           Either Signature.CMS or Signature.CADES
      * @param signaturePolicy   the signature policy (for EPES signatures)
-     * @throws IOException
-     * @throws GeneralSecurityException
+     * @throws IOException              if some I/O problem occurs
+     * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
     public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain, Collection<ICrlClient> crlList, IOcspClient ocspClient,
                              ITSAClient tsaClient, int estimatedSize, CryptoStandard sigtype, SignaturePolicyIdentifier signaturePolicy) throws IOException, GeneralSecurityException {
@@ -669,8 +669,8 @@ public class PdfSigner {
      *
      * @param externalSignatureContainer the interface providing the actual signing
      * @param estimatedSize              the reserved size for the signature
-     * @throws GeneralSecurityException
-     * @throws IOException
+     * @throws GeneralSecurityException if some problem during apply security algorithms occurs
+     * @throws IOException              if some I/O problem occurs
      */
     public void signExternalContainer(IExternalSignatureContainer externalSignatureContainer, int estimatedSize) throws GeneralSecurityException, IOException {
         if (closed) {
@@ -716,8 +716,8 @@ public class PdfSigner {
      * @param tsa           the timestamp generator
      * @param signatureName the signature name or null to have a name generated
      *                      automatically
-     * @throws IOException
-     * @throws GeneralSecurityException
+     * @throws IOException              if some I/O problem occurs
+     * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
     public void timestamp(ITSAClient tsa, String signatureName) throws IOException, GeneralSecurityException {
         if (closed) {
@@ -773,8 +773,8 @@ public class PdfSigner {
      * @param outs                       the output PDF
      * @param externalSignatureContainer the signature container doing the actual signing. Only the
      *                                   method ExternalSignatureContainer.sign is used
-     * @throws IOException
-     * @throws GeneralSecurityException
+     * @throws IOException              if some I/O problem occurs
+     * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
     public static void signDeferred(PdfDocument document, String fieldName, OutputStream outs, IExternalSignatureContainer externalSignatureContainer) throws IOException, GeneralSecurityException {
         SignatureUtil signatureUtil = new SignatureUtil(document);
@@ -1041,7 +1041,7 @@ public class PdfSigner {
      * {@link #preClose(Map)}, {@link #getRangeStream()} and {@link #close(PdfDictionary)}.
      *
      * @return The {@link InputStream} of bytes to be signed.
-     * @throws IOException
+     * @throws IOException if some I/O problem occurs
      */
     protected InputStream getRangeStream() throws IOException {
         RandomAccessSourceFactory fac = new RandomAccessSourceFactory();
@@ -1121,8 +1121,8 @@ public class PdfSigner {
     /**
      * Returns the underlying source.
      *
-     * @return The underlying source
-     * @throws IOException
+     * @return the underlying source
+     * @throws IOException if some I/O problem occurs
      */
     protected IRandomAccessSource getUnderlyingSource() throws IOException {
         RandomAccessSourceFactory fac = new RandomAccessSourceFactory();
@@ -1155,8 +1155,8 @@ public class PdfSigner {
      * Adds keys to the signature dictionary that define the field permissions.
      * This method is only used for signatures that lock fields.
      *
-     * @param crypto the signature dictionary
-     * @param fieldLock
+     * @param crypto    the signature dictionary
+     * @param fieldLock the {@link PdfSigFieldLock} instance specified the field lock to be set
      */
     protected void addFieldMDP(PdfSignature crypto, PdfSigFieldLock fieldLock) {
         PdfDictionary reference = new PdfDictionary();

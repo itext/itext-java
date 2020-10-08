@@ -52,6 +52,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -291,6 +292,7 @@ public class XMPMetaParser
 		{
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			builder.setErrorHandler(null);
+			builder.setEntityResolver(new SafeEmptyEntityResolver());
 			return builder.parse(source);
 		}
 		catch (SAXException e)
@@ -426,7 +428,14 @@ public class XMPMetaParser
 		{
 			// Ignore IllegalArgumentException and ParserConfigurationException
 			// in case the configured XML-Parser does not implement the feature.
-		}		
+		}
 		return factory;
+	}
+
+	// Prevents XXE attacks
+	private static class SafeEmptyEntityResolver implements EntityResolver {
+		public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+			return new InputSource(new StringReader(""));
+		}
 	}
 }

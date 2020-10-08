@@ -217,6 +217,16 @@ public class PdfOutlineTest extends ExtendedITextTest {
     }
 
     @Test
+    public void getOutlinesInvalidParentLink() throws IOException, InterruptedException {
+        junitExpectedException.expect(NullPointerException.class);
+        PdfReader reader = new PdfReader(sourceFolder + "outlinesInvalidParentLink.pdf");
+        String filename = "updateOutlineTitleInvalidParentLink.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        PdfOutline outlines = pdfDoc.getOutlines(false);
+    }
+
+    @Test
     public void readOutlineTitle() throws IOException {
         String filename = sourceFolder + "updateOutlineTitleResult.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
@@ -463,5 +473,37 @@ public class PdfOutlineTest extends ExtendedITextTest {
         root = pdfDocument.getOutlines(true);
         Assert.assertNull(root);
         pdfDocument.close();
+    }
+
+    @Test
+    //TODO: remove expected exception when DEVSIX-4464 will be fixed
+    public void removePageInDocWithSimpleOutlineTreeStructTest() throws IOException {
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
+
+        String input = sourceFolder + "simpleOutlineTreeStructure.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(input),
+                new PdfWriter(destinationFolder + "removePageInDocWithSimpleOutlineTreeStruct.pdf"));
+        pdfDocument.removePage(2);
+
+        pdfDocument.close();
+
+        Assert.assertEquals(2, pdfDocument.getNumberOfPages());
+    }
+
+    @Test
+    //TODO: remove expected exception when DEVSIX-4464 will be fixed
+    public void removePageInDocWithComplexOutlineTreeStructTest() throws IOException {
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
+
+        String input = sourceFolder + "complexOutlineTreeStructure.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(input),
+                new PdfWriter(destinationFolder + "removePageInDocWithComplexOutlineTreeStruct.pdf"));
+        pdfDocument.removePage(2);
+
+        pdfDocument.close();
+
+        Assert.assertEquals(2, pdfDocument.getNumberOfPages());
     }
 }

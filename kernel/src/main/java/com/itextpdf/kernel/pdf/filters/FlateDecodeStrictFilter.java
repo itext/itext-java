@@ -42,14 +42,11 @@
  */
 package com.itextpdf.kernel.pdf.filters;
 
-import com.itextpdf.kernel.pdf.MemoryLimitsAwareException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.zip.InflaterInputStream;
 
 /**
  * Handles strict FlateDecode filter.
@@ -70,26 +67,11 @@ public class FlateDecodeStrictFilter extends FlateDecodeFilter {
     /**
      * A helper to flateDecode.
      *
-     * @param in     the input data
-     * @param out    the out stream which will be used to write the bytes.
+     * @param in  the input data
+     * @param out the out stream which will be used to write the bytes.
      * @return the decoded data
      */
     private static byte[] flateDecode(byte[] in, ByteArrayOutputStream out) {
-        ByteArrayInputStream stream = new ByteArrayInputStream(in);
-        InflaterInputStream zip = new InflaterInputStream(stream);
-        byte[] b = new byte[4092];
-        try {
-            int n;
-            while ((n = zip.read(b)) >= 0) {
-                out.write(b, 0, n);
-            }
-            zip.close();
-            out.close();
-            return out.toByteArray();
-        } catch (MemoryLimitsAwareException e) {
-            throw e;
-        } catch (Exception e) {
-            return null;
-        }
+        return flateDecodeInternal(in, true, out);
     }
 }

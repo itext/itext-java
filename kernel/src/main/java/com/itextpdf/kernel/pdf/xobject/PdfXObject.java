@@ -45,6 +45,8 @@ package com.itextpdf.kernel.pdf.xobject;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -52,6 +54,7 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.layer.IPdfOCG;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +86,60 @@ public abstract class PdfXObject extends PdfObjectWrapper<PdfStream> {
             return new PdfImageXObject(stream);
         } else {
             throw new UnsupportedOperationException(PdfException.UnsupportedXObjectType);
+        }
+    }
+
+    /**
+     * Calculates a rectangle with the specified coordinates and width, and the height is
+     * calculated in such a way that the original proportions of the xObject do not change.
+     *
+     * <p>
+     * To calculate the original width and height of the xObject, the BBox and Matrix fields
+     * are used. For mor information see paragraph 8.10.1 in ISO-32000-1.
+     *
+     * @param xObject the xObject for which we are calculating the rectangle
+     * @param x the x-coordinate of the lower-left corner of the rectangle
+     * @param y the y-coordinate of the lower-left corner of the rectangle
+     * @param width the width of the rectangle
+     * @return the rectangle with specified coordinates and width
+     */
+    public static Rectangle calculateProportionallyFitRectangleWithWidth(PdfXObject xObject, float x, float y, float width) {
+        if (xObject instanceof PdfFormXObject) {
+            PdfFormXObject formXObject = (PdfFormXObject) xObject;
+            Rectangle bBox = PdfFormXObject.calculateBBoxMultipliedByMatrix(formXObject);
+            return new Rectangle(x, y, width, (width / bBox.getWidth()) * bBox.getHeight());
+        } else if (xObject instanceof PdfImageXObject) {
+            PdfImageXObject imageXObject = (PdfImageXObject) xObject;
+            return new Rectangle(x, y, width, (width / imageXObject.getWidth()) * imageXObject.getHeight());
+        } else {
+            throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
+        }
+    }
+
+    /**
+     * Calculates a rectangle with the specified coordinates and height, and the width is
+     * calculated in such a way that the original proportions of the xObject do not change.
+     *
+     * <p>
+     * To calculate the original width and height of the xObject, the BBox and Matrix fields
+     * are used. For mor information see paragraph 8.10.1 in ISO-32000-1.
+     *
+     * @param xObject the xObject for which we are calculating the rectangle
+     * @param x the x-coordinate of the lower-left corner of the rectangle
+     * @param y the y-coordinate of the lower-left corner of the rectangle
+     * @param height the height of the rectangle
+     * @return the rectangle with specified coordinates and height
+     */
+    public static Rectangle calculateProportionallyFitRectangleWithHeight(PdfXObject xObject, float x, float y, float height) {
+        if (xObject instanceof PdfFormXObject) {
+            PdfFormXObject formXObject = (PdfFormXObject) xObject;
+            Rectangle bBox = PdfFormXObject.calculateBBoxMultipliedByMatrix(formXObject);
+            return new Rectangle(x, y, (height / bBox.getHeight()) * bBox.getWidth(), height);
+        } else if (xObject instanceof PdfImageXObject) {
+            PdfImageXObject imageXObject = (PdfImageXObject) xObject;
+            return new Rectangle(x, y, (height / imageXObject.getHeight()) * imageXObject.getWidth(), height);
+        } else {
+            throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
         }
     }
 

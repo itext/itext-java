@@ -42,24 +42,27 @@
  */
 package com.itextpdf.svg.css;
 
-
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
+import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -206,6 +209,20 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     @Test
     public void fontWeightTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "fontWeightTest");
+    }
+
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, logLevel = LogLevelConstants.WARN))
+    // TODO DEVSIX-4275 investigate why fill style not processed
+    public void externalStyleSheetWithFillStyleTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "externalStyleSheetWithFillStyleTest");
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, logLevel = LogLevelConstants.WARN))
+    public void externalStyleSheetWithStrokeStyleTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "externalStyleSheetWithStrokeStyleTest");
     }
 
     @Test

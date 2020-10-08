@@ -70,7 +70,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class LineRendererUnitTest extends AbstractRendererUnitTest {
+public class LineRendererUnitTest extends RendererUnitTest {
 
     private static final double EPS = 1e-5;
 

@@ -70,6 +70,24 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void overridenMemoryHandler() {
+        MemoryLimitsAwareHandler defaultHandler = new MemoryLimitsAwareHandler();
+        MemoryLimitsAwareHandler customHandler = new MemoryLimitsAwareHandler() {
+            @Override
+            public boolean isMemoryLimitsAwarenessRequiredOnDecompression(PdfArray filters) {
+                return true;
+            }
+        };
+
+        PdfArray filters = new PdfArray();
+        filters.add(PdfName.FlateDecode);
+
+        Assert.assertFalse(defaultHandler.isMemoryLimitsAwarenessRequiredOnDecompression(filters));
+        Assert.assertTrue(customHandler.isMemoryLimitsAwarenessRequiredOnDecompression(filters));
+
+    }
+
+    @Test
     public void defaultSingleMemoryHandler() {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
 

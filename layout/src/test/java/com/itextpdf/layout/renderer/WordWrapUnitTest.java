@@ -60,7 +60,6 @@ import java.util.Set;
 @Category(UnitTest.class)
 public class WordWrapUnitTest extends ExtendedITextTest {
 
-    public static final String SRC = "./src/test/resources/com/itextpdf/layout/WordWrapUnitTest/glyphLineData.txt";
     public static final String THAI_FONT = "./src/test/resources/com/itextpdf/layout/fonts/NotoSansThai-Regular.ttf";
     public static final String REGULAR_FONT = "./src/test/resources/com/itextpdf/layout/fonts/NotoSans-Regular.ttf";
     public static final String KHMER_FONT = "./src/test/resources/com/itextpdf/layout/fonts/KhmerOS.ttf";
@@ -491,7 +490,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         LayoutArea layoutArea = new LayoutArea(1, new Rectangle(minWidth / 2, 100));
         LayoutResult layoutResult = lineRenderer.layout(new LayoutContext(layoutArea));
 
-        Assert.assertTrue(layoutResult.getStatus() == LayoutResult.PARTIAL);
+        Assert.assertEquals(LayoutResult.PARTIAL, layoutResult.getStatus());
     }
 
     @Test
@@ -514,7 +513,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         LayoutArea layoutArea = new LayoutArea(1, new Rectangle(minWidth / 2, 100));
         LayoutResult layoutResult = lineRenderer.layout(new LayoutContext(layoutArea));
 
-        Assert.assertTrue(layoutResult.getStatus() == LayoutResult.PARTIAL);
+        Assert.assertEquals(LayoutResult.PARTIAL, layoutResult.getStatus());
     }
 
     @Test
@@ -816,5 +815,70 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         Assert.assertNotNull(childTextRenderer.getSpecialScriptsWordBreakPoints());
         Assert.assertEquals(1, childTextRenderer.getSpecialScriptsWordBreakPoints().size());
         Assert.assertEquals(-1, (int) childTextRenderer.getSpecialScriptsWordBreakPoints().get(0));
+    }
+
+    @Test
+    public void unfittingSequenceWithPrecedingTextRendererContainingNoSpecialScripts() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document document = new Document(pdfDocument);
+
+        TextRenderer thaiTextRenderer = new TextRenderer(new Text(""));
+        thaiTextRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
+        thaiTextRenderer.setText(THAI_WORD);
+        thaiTextRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(5)));
+
+        TextRenderer nonThaiTextRenderer = new TextRenderer(new Text("."));
+
+        LineRenderer lineRenderer = new LineRenderer();
+        lineRenderer.setParent(document.getRenderer());
+        lineRenderer.addChild(nonThaiTextRenderer);
+        lineRenderer.addChild(thaiTextRenderer);
+
+        LineRenderer.SpecialScriptsContainingSequenceStatus status =
+                lineRenderer.getSpecialScriptsContainingSequenceStatus(1);
+        Assert.assertEquals(LineRenderer.SpecialScriptsContainingSequenceStatus
+                .MOVE_SEQUENCE_CONTAINING_SPECIAL_SCRIPTS_ON_NEXT_LINE, status);
+    }
+
+    @Test
+    public void unfittingSequenceWithPrecedingInlineBlockRenderer() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document document = new Document(pdfDocument);
+
+        TextRenderer thaiTextRenderer = new TextRenderer(new Text(""));
+        thaiTextRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
+        thaiTextRenderer.setText(THAI_WORD);
+        thaiTextRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(5)));
+
+        TableRenderer inlineBlock = new TableRenderer(new Table(3));
+
+        LineRenderer lineRenderer = new LineRenderer();
+        lineRenderer.setParent(document.getRenderer());
+        lineRenderer.addChild(inlineBlock);
+        lineRenderer.addChild(thaiTextRenderer);
+
+        LineRenderer.SpecialScriptsContainingSequenceStatus status =
+                lineRenderer.getSpecialScriptsContainingSequenceStatus(1);
+        Assert.assertEquals(LineRenderer.SpecialScriptsContainingSequenceStatus
+                .MOVE_SEQUENCE_CONTAINING_SPECIAL_SCRIPTS_ON_NEXT_LINE, status);
+    }
+
+    @Test
+    public void unfittingSingleTextRendererContainingSpecialScripts() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document document = new Document(pdfDocument);
+
+        TextRenderer thaiTextRenderer = new TextRenderer(new Text(""));
+        thaiTextRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
+        thaiTextRenderer.setText(THAI_WORD);
+        thaiTextRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(5)));
+
+        LineRenderer lineRenderer = new LineRenderer();
+        lineRenderer.setParent(document.getRenderer());
+        lineRenderer.addChild(thaiTextRenderer);
+
+        LineRenderer.SpecialScriptsContainingSequenceStatus status =
+                lineRenderer.getSpecialScriptsContainingSequenceStatus(0);
+        Assert.assertEquals(LineRenderer.SpecialScriptsContainingSequenceStatus.FORCED_SPLIT, status);
     }
 }

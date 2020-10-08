@@ -124,7 +124,7 @@ public class CRLVerifier extends RootStoreVerifier {
      * @param issuerCert	its issuer
      * @param signDate		the sign date
      * @return true if the verification succeeded
-     * @throws GeneralSecurityException
+     * @throws GeneralSecurityException thrown when certificate has been revoked
      */
     public boolean verify(X509CRL crl, X509Certificate signCert, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException {
         if (crl == null || signDate == TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {

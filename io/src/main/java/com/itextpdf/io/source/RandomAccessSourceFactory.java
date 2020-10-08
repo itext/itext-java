@@ -127,6 +127,7 @@ public final class RandomAccessSourceFactory implements Serializable {
      * as the source for the {@link IRandomAccessSource}
      * @param url the url to read from
      * @return the newly created {@link IRandomAccessSource}
+     * @throws java.io.IOException in case of any I/O error.
      */
     public IRandomAccessSource createSource(URL url) throws java.io.IOException{
         InputStream stream = url.openStream();
@@ -145,6 +146,7 @@ public final class RandomAccessSourceFactory implements Serializable {
      * as the source for the {@link IRandomAccessSource}
      * @param inputStream the stream to read from
      * @return the newly created {@link IRandomAccessSource}
+     * @throws java.io.IOException in case of any I/O error.
      */
     public IRandomAccessSource createSource(InputStream inputStream) throws java.io.IOException{
         return createSource(StreamUtil.inputStreamToArray(inputStream));
@@ -159,6 +161,7 @@ public final class RandomAccessSourceFactory implements Serializable {
      * This call will automatically fail over to using {@link RandomAccessFile} if the memory map operation fails
      * @param filename the name of the file or resource to create the {@link IRandomAccessSource} for
      * @return the newly created {@link IRandomAccessSource}
+     * @throws java.io.IOException in case of any I/O error
      */
     public IRandomAccessSource createBestSource(String filename) throws java.io.IOException{
         File file = new File(filename);
@@ -225,6 +228,7 @@ public final class RandomAccessSourceFactory implements Serializable {
      * If the file is large, it will be opened using a paging strategy.
      * @param channel the name of the file or resource to create the {@link IRandomAccessSource} for
      * @return the newly created {@link IRandomAccessSource}
+     * @throws java.io.IOException in case of any I/O error
      */
     public IRandomAccessSource createBestSource(FileChannel channel) throws java.io.IOException {
 

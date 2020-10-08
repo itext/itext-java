@@ -160,8 +160,10 @@ public class DigestAlgorithms {
      * @param digestOid oid of the digest algorithm
      * @param provider the provider you want to use to create the hash
      * @return MessageDigest object
-     * @throws NoSuchAlgorithmException
-     * @throws NoSuchProviderException
+     * @throws NoSuchAlgorithmException thrown when a particular cryptographic algorithm is
+     * requested but is not available in the environment
+     * @throws NoSuchProviderException thrown when a particular security provider is
+     * requested but is not available in the environment
      */
     public static MessageDigest getMessageDigestFromOid(String digestOid, String provider)
             throws NoSuchAlgorithmException, NoSuchProviderException {
@@ -174,8 +176,10 @@ public class DigestAlgorithms {
      * @param hashAlgorithm	the algorithm you want to use to create a hash
      * @param provider	the provider you want to use to create the hash
      * @return	a MessageDigest object
-     * @throws NoSuchAlgorithmException
-     * @throws NoSuchProviderException
+     * @throws NoSuchAlgorithmException thrown when a particular cryptographic algorithm is
+     * requested but is not available in the environment
+     * @throws NoSuchProviderException thrown when a particular security provider is
+     * requested but is not available in the environment
      */
     public static MessageDigest getMessageDigest(String hashAlgorithm, String provider)
             throws NoSuchAlgorithmException, NoSuchProviderException {
@@ -189,8 +193,9 @@ public class DigestAlgorithms {
      * @param hashAlgorithm	the algorithm used to create the hash
      * @param provider	the provider used to create the hash
      * @return	the hash
-     * @throws GeneralSecurityException
-     * @throws IOException
+     * @throws GeneralSecurityException when requested cryptographic algorithm or security provider
+     * is not available
+     * @throws IOException signals that an I/O exception has occurred
      */
     public static byte[] digest(InputStream data, String hashAlgorithm, String provider)
             throws GeneralSecurityException, IOException {
@@ -204,11 +209,10 @@ public class DigestAlgorithms {
      * @param data data to be digested
      * @param messageDigest algorithm to be used
      * @return digest of the data
-     * @throws GeneralSecurityException
-     * @throws IOException
+     * @throws IOException signals that an I/O exception has occurred
      */
     public static byte[] digest(InputStream data, MessageDigest messageDigest)
-            throws GeneralSecurityException, IOException {
+            throws IOException {
         byte[] buf = new byte[8192];
         int n;
         while ((n = data.read(buf)) > 0) {

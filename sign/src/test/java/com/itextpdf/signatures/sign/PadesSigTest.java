@@ -113,9 +113,9 @@ public class PadesSigTest extends ExtendedITextTest {
 
     @Test
     public void padesEccSigTest01() throws IOException, GeneralSecurityException {
-        signApproval(certsSrc + "signCertEcc01.p12", destinationFolder + "padesEccSigTest01.pdf");
+        signApproval(certsSrc + "signCertEcc01.p12",
+                destinationFolder + "padesEccSigTest01.pdf");
 
-        // TODO ECDSA encryption algorithms verification is not supported
         basicCheckSignedDoc(destinationFolder + "padesEccSigTest01.pdf", "Signature1");
     }
 

@@ -89,14 +89,18 @@ public class XfdfObject {
     /**
      * Gets the f element, child of the xfdf element.
      * Corresponds to the F key in the file dictionary.
+     *
+     * @return the f element
      */
     public FObject getF() {
         return f;
     }
 
     /**
-     * Sets the f element, child of the xfdf element.
+     * Sets f element, child of the xfdf element.
      * Corresponds to the F key in the file dictionary.
+     *
+     * @param f element
      */
     public void setF(FObject f) {
         this.f = f;
@@ -105,14 +109,18 @@ public class XfdfObject {
     /**
      * Gets the ids element, child of the xfdf element.
      * Corresponds to the ID key in the file dictionary.
+     *
+     * @return the ids element
      */
     public IdsObject getIds() {
         return ids;
     }
 
     /**
-     * Sets the ids element, child of the xfdf element.
+     * Sets ids element, child of the xfdf element.
      * Corresponds to the ID key in the file dictionary.
+     *
+     * @param ids element
      */
     public void setIds(IdsObject ids) {
         this.ids = ids;
@@ -120,13 +128,17 @@ public class XfdfObject {
 
     /**
      * Gets the fields element, a child of the xfdf element and is the container for form field elements.
+     *
+     * @return the fields element
      */
     public FieldsObject getFields() {
         return fields;
     }
 
     /**
-     * Sets the fields element, a child of the xfdf element and is the container for form field elements.
+     * Sets fields element, a child of the xfdf element and is the container for form field elements.
+     *
+     * @param fields element
      */
     public void setFields(FieldsObject fields) {
         this.fields = fields;

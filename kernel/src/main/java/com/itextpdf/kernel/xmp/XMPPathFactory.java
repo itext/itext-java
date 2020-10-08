@@ -50,7 +50,6 @@ import com.itextpdf.kernel.xmp.impl.xpath.XMPPathParser;
  * You can use these functions is to compose a complete path expression, or all but the last
  * component. Suppose you have a property that is an array of integers within a struct. You can
  * access one of the array items like this:
- * <p>
  * <blockquote>
  * 
  * <pre>
@@ -215,7 +214,6 @@ public final class XMPPathFactory
 	 * that has two fields, the name of a city and the URI of an FTP site in that city. Use this to
 	 * create an array of download alternatives. You can show the user a popup built from the values
 	 * of the city fields. You can then get the corresponding URI as follows:
-	 * <p>
 	 * <blockquote>
 	 * 
 	 * <pre>

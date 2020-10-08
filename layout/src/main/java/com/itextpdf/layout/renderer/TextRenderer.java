@@ -1601,11 +1601,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         return -1;
     }
 
-    private boolean codePointIsOfSpecialScript(int codePoint) {
+    static boolean codePointIsOfSpecialScript(int codePoint) {
         Character.UnicodeScript glyphScript = Character.UnicodeScript.of(codePoint);
         return Character.UnicodeScript.THAI == glyphScript
                 || Character.UnicodeScript.KHMER == glyphScript
-                || Character.UnicodeScript.LAO == glyphScript;
+                || Character.UnicodeScript.LAO == glyphScript
+                || Character.UnicodeScript.MYANMAR == glyphScript;
     }
 
     private static class ReversedCharsIterator implements Iterator<GlyphLine.GlyphLinePart> {

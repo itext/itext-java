@@ -57,11 +57,14 @@ import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.font.SvgFontProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
+import com.itextpdf.svg.renderers.INoDrawSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
+import com.itextpdf.svg.renderers.impl.DefsSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.ISvgTextNodeRenderer;
-import com.itextpdf.svg.renderers.impl.NoDrawOperationSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.LinearGradientSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.StopSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextLeafSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer;
 import com.itextpdf.svg.utils.SvgTextUtil;
@@ -189,7 +192,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
             if (!rendererFactory.isTagIgnored(element)) {
                 ISvgNodeRenderer parentRenderer = processorState.top();
-                ISvgNodeRenderer renderer = createRenderer(element, parentRenderer);
+                ISvgNodeRenderer renderer = rendererFactory.createSvgNodeRendererForTag(element, parentRenderer);
                 if (renderer != null) {
                     Map<String, String> styles;
                     if (cssResolver instanceof SvgStyleResolver
@@ -208,17 +211,19 @@ public class DefaultSvgProcessor implements ISvgProcessor {
                         namedObjects.put(attribute, renderer);
                     }
 
-                    if (renderer instanceof NoDrawOperationSvgNodeRenderer) {
-                        // add the NoDrawOperationSvgNodeRenderer or its subtree to the ISvgNodeRenderer tree
-                        // only if the parent is NoDrawOperationSvgNodeRenderer itself
-                        if (parentRenderer instanceof NoDrawOperationSvgNodeRenderer) {
-                            ((NoDrawOperationSvgNodeRenderer) parentRenderer).addChild(renderer);
+                    if (renderer instanceof StopSvgNodeRenderer) {
+                        if (parentRenderer instanceof LinearGradientSvgNodeRenderer) {
+                            // It is necessary to add StopSvgNodeRenderer only as a child of LinearGradientSvgNodeRenderer,
+                            // because StopSvgNodeRenderer performs an auxiliary function and should not be drawn at all
+                            ((LinearGradientSvgNodeRenderer) parentRenderer).addChild(renderer);
                         }
-                    } else {
+                    }
+                    // DefsSvgNodeRenderer should not have parental relationship with any renderer, it only serves as a storage
+                    else if (!(renderer instanceof INoDrawSvgNodeRenderer) && !(parentRenderer instanceof DefsSvgNodeRenderer)) {
                         if (parentRenderer instanceof IBranchSvgNodeRenderer) {
                             ((IBranchSvgNodeRenderer) parentRenderer).addChild(renderer);
                         } else if (parentRenderer instanceof TextSvgBranchRenderer && renderer instanceof ISvgTextNodeRenderer) {
-                            //Text branch node renderers only accept ISvgTextNodeRenderers
+                            // Text branch node renderers only accept ISvgTextNodeRenderers
                             ((TextSvgBranchRenderer) parentRenderer).addChild((ISvgTextNodeRenderer) renderer);
                         }
                     }
@@ -258,17 +263,6 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             return isElementNested(parentElement, parentElementNameForSearch);
         }
         return false;
-    }
-
-    /**
-     * Create renderer based on the passed SVG tag and assign its parent
-     *
-     * @param tag    SVG tag with all style attributes already assigned
-     * @param parent renderer of the parent tag
-     * @return Configured renderer for the tag
-     */
-    private ISvgNodeRenderer createRenderer(IElementNode tag, ISvgNodeRenderer parent) {
-        return rendererFactory.createSvgNodeRendererForTag(tag, parent);
     }
 
     /**

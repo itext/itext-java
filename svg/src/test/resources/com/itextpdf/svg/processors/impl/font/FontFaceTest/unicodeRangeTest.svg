@@ -1,0 +1,46 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="500" height="400" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <style>
+
+        @font-face {
+        font-family: DroidItalic;
+        src: url("web-fonts/droid-serif-italic.ttf") ;
+        unicode-range:U+6A;
+        }
+
+        @font-face {
+        font-family: DroidBold;
+        src: url("web-fonts/droid-serif-bold.ttf") ;
+        unicode-range:U+75;
+        }
+
+
+        @font-face {
+        font-family: DroidBoldItalic;
+        src: url("web-fonts/droid-serif-bolditalic.ttf") ;
+        unicode-range:U+77;
+        }
+
+        text.droiditalic {
+        font-family: DroidItalic;
+        }
+
+        text.droidbold {
+        font-family: DroidBold;
+        }
+
+        text.droidbolditalic {
+        font-family: DroidBoldItalic;
+        }
+
+        text {
+        font-size: 4em;
+        }
+    </style>
+
+    <text x="100" y="100" class="droidbold">j</text>
+    <text x="100" y="150" class="droiditalic">u</text>
+    <text x="100" y="200" class="droidbold">u</text>
+    <text x="100" y="250" class="droiditalic">j</text>
+    <text x="100" y="300" class="droidbolditalic">j</text>
+</svg>

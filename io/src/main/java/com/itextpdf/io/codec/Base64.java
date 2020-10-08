@@ -1630,7 +1630,7 @@ public class Base64 {
         /**
          * Method added by PHIL. [Thanks, PHIL. -Rob]
          * This pads the buffer without closing the stream.
-         * @throws java.io.IOException
+         * @throws java.io.IOException if an I/O error occurs.
          */
         public void flushBase64() throws java.io.IOException {
             if (position > 0) {
@@ -1669,7 +1669,7 @@ public class Base64 {
          * May be helpful if you need to embed a piece of
          * base640-encoded data in a stream.
          *
-         * @throws java.io.IOException
+         * @throws java.io.IOException if an I/O error occurs.
          *
          * @since 1.5.1
          */

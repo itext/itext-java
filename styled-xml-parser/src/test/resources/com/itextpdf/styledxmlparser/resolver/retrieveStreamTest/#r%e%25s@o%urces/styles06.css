@@ -1,0 +1,6 @@
+@media all, print {
+ul, ol {
+    list-style-image: url('image folder/sqpurple.gif');
+    }
+
+}

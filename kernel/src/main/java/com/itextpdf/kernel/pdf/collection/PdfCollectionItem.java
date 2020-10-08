@@ -65,8 +65,10 @@ public class PdfCollectionItem extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the value of the collection item.
-     * @param key
-     * @param value
+     *
+     * @param key is a key with which the specified value is to be associated
+     * @param value is a value to be associated with the specified key
+     * @return this instance to support fluent interface
      */
     public PdfCollectionItem addItem(String key, String value) {
         PdfCollectionField field = schema.getField(key);
@@ -75,32 +77,38 @@ public class PdfCollectionItem extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Sets the value of the collection item.
-     * @param d
+     * Sets the date value of the collection item.
+     *
+     * @param key is a key with which the specified date value is to be associated
+     * @param date is a {@link PdfDate PDF date} value to be associated with the specified key
      */
-    public void addItem(String key, PdfDate d) {
+    public void addItem(String key, PdfDate date) {
         PdfCollectionField field = schema.getField(key);
         if (field.subType == PdfCollectionField.DATE) {
-            getPdfObject().put(new PdfName(key), d.getPdfObject());
+            getPdfObject().put(new PdfName(key), date.getPdfObject());
         }
     }
 
     /**
-     * Sets the value of the collection item.
-     * @param n
+     * Sets the number value of the collection item.
+     *
+     * @param key is a key with which the specified number value is to be associated
+     * @param number is a {@link PdfNumber PDF number} value to be associated with the specified key
      */
-    public void addItem(String key, PdfNumber n) {
+    public void addItem(String key, PdfNumber number) {
         PdfCollectionField field = schema.getField(key);
         if (field.subType == PdfCollectionField.NUMBER) {
-            getPdfObject().put(new PdfName(key), n);
+            getPdfObject().put(new PdfName(key), number);
         }
     }
 
     /**
      * Adds a prefix for the Collection item.
      * You can only use this method after you have set the value of the item.
-     * @param key
-     * @param prefix
+     *
+     * @param key is a key identifying the Collection item
+     * @param prefix is a prefix to be added
+     * @return this instance to support fluent interface
      */
     public PdfCollectionItem setPrefix(String key, String prefix) {
         PdfName fieldName = new PdfName(key);

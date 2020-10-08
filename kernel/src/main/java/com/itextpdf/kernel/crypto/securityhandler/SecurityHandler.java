@@ -85,8 +85,9 @@ public abstract class SecurityHandler implements Serializable {
     /**
      * Note: For most of the supported security handlers algorithm to calculate encryption key for particular object
      * is the same.
-     * @param objNumber
-     * @param objGeneration
+     *
+     * @param objNumber number of particular object for encryption
+     * @param objGeneration generation of particular object for encryption
      */
     public void setHashKeyForNextObject(int objNumber, int objGeneration) {
         // added by ujihara

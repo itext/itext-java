@@ -55,6 +55,7 @@ import org.junit.rules.ExpectedException;
 import java.io.File;
 import java.io.IOException;
 
+
 @Category(IntegrationTest.class)
 public class GhostscriptHelperTest extends ExtendedITextTest {
     private final static String sourceFolder = "./src/test/resources/com/itextpdf/io/util/GhostscriptHelperTest/";
@@ -167,4 +168,64 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
         Assert.assertTrue(FileUtil.fileExists(destinationFolder + "imageHandlerUtilTest.pdf_allPages-003.png"));
     }
 
+    @Test
+    public void dSaferParamInGhostScriptHelperTest() throws IOException, InterruptedException {
+        String cmpPdf = sourceFolder + "maliciousPsInvokingCalcExe.ps";
+        String maliciousPsInvokingCalcExe = destinationFolder + "maliciousPsInvokingCalcExe.png";
+        int majorVersion = 0;
+        int minorVersion = 0;
+        boolean isWindows = identifyOsType().toLowerCase().contains("win");
+        if (isWindows) {
+            String gsExec = SystemUtil.getPropertyOrEnvironmentVariable(GhostscriptHelper.GHOSTSCRIPT_ENVIRONMENT_VARIABLE);
+            if (gsExec == null) {
+                gsExec = SystemUtil.getPropertyOrEnvironmentVariable(GhostscriptHelper.GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY);
+            }
+            String[] pathParts = gsExec.split("\\d\\.\\d\\d");
+            for (int i = 0; i < pathParts.length; i++) {
+                gsExec = gsExec.replace(pathParts[i], "");
+            }
+            String[] version = gsExec.split("\\.");
+            majorVersion = Integer.parseInt(version[0]);
+            minorVersion = Integer.parseInt(version[1]);
+        }
+        try {
+            GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
+            ghostscriptHelper.runGhostScriptImageGeneration(cmpPdf, destinationFolder, "maliciousPsInvokingCalcExe.png");
+            if (isWindows) {
+                Assert.assertTrue((majorVersion > 9 || (majorVersion == 9 && minorVersion >= 50)));
+            }
+        } catch (GhostscriptHelper.GhostscriptExecutionException e) {
+            if (isWindows) {
+                Assert.assertTrue((majorVersion < 9 || (majorVersion == 9 && minorVersion < 50)));
+            }
+        }
+        Assert.assertFalse(FileUtil.fileExists(maliciousPsInvokingCalcExe));
+    }
+
+    @Test
+    public void ghostScriptImageGenerationTest() throws IOException, InterruptedException {
+        String filename = "resultantImage.png";
+        String psFile = sourceFolder + "simple.ps";
+        String resultantImage = destinationFolder + filename;
+        String cmpResultantImage = sourceFolder + "cmp_" + filename;
+        String diff = destinationFolder + "diff_" + filename;
+
+        GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
+        ghostscriptHelper.runGhostScriptImageGeneration(psFile, destinationFolder, filename);
+        Assert.assertTrue(FileUtil.fileExists(resultantImage));
+
+        ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
+        Assert.assertTrue(imageMagickHelper.runImageMagickImageCompare(resultantImage, cmpResultantImage, diff));
+    }
+
+    /**
+     * Identifies type of current OS and return it (win, linux).
+     *
+     * @return type of current os as {@link java.lang.String}
+     */
+    private static String identifyOsType() {
+        String os = System.getProperty("os.name") == null
+                ? System.getProperty("OS") : System.getProperty("os.name");
+        return os.toLowerCase();
+    }
 }

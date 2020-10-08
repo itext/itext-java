@@ -171,7 +171,7 @@ public class Jbig2SegmentReader {
          * if for_embedding, skip the segment types that are known to be not for acrobat.
          *
          * @param for_embedding         True if the bytes represents embedded data, false otherwise
-         * @throws java.io.IOException
+         * @throws java.io.IOException if an I/O error occurs.
          * @return a byte array
          */
         public byte[] getData(boolean for_embedding) throws java.io.IOException {

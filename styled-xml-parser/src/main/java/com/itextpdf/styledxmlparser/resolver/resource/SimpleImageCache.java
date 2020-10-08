@@ -136,7 +136,9 @@ class SimpleImageCache {
         if (cache.size() >= capacity) {
             String mostUnpopularImg = null;
             int minFrequency = Integer.MAX_VALUE;
-            for (String imgSrc : cache.keySet()) { // TODO keySet preserves order of LinkedList? and in .net?
+            
+            // the keySet method preserves the LinkedList order.
+            for (String imgSrc : cache.keySet()) {
                 Integer imgFrequency = imagesFrequency.get(imgSrc);
                 if (imgFrequency == null || imgFrequency < minFrequency) {
                     mostUnpopularImg = imgSrc;

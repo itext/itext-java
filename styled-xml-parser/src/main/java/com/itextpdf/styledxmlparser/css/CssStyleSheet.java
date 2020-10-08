@@ -170,9 +170,7 @@ public class CssStyleSheet {
                 putDeclarationInMapIfValid(map, declaration);
             } else {
                 List<CssDeclaration> resolvedShorthandProps = shorthandResolver.resolveShorthand(declaration.getExpression());
-                for (CssDeclaration resolvedProp : resolvedShorthandProps) {
-                    putDeclarationInMapIfValid(map, resolvedProp);
-                }
+                populateDeclarationsMap(resolvedShorthandProps, map);
             }
         }
     }

@@ -23,17 +23,26 @@
 package com.itextpdf.kernel.pdf.copy;
 
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfMarkupAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfPopupAnnotation;
+import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -142,6 +151,82 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
             Assert.assertTrue("Markup annotation expected to be present but not found", foundMarkupAnnotation);
         }
         outDocument.close();
+    }
+
+    @Test
+    // TODO DEVSIX-4238 Update cmp file after the ticket DEVSIX-4238 will be resolved
+    public void copySameLinksWithGoToSmartModeTest() throws IOException, InterruptedException {
+        String cmpFilePath = sourceFolder + "cmp_copySameLinksWithGoToSmartMode.pdf";
+        String outFilePath = destinationFolder + "copySameLinksWithGoToSmartMode.pdf";
+
+        copyLinksGoToActionTest(outFilePath, true, false);
+
+        Assert.assertNull(new CompareTool().compareByContent(cmpFilePath, outFilePath, destinationFolder));
+    }
+
+    @Test
+    // TODO DEVSIX-4238 Update cmp file after the ticket DEVSIX-4238 will be resolved
+    public void copyDiffDestLinksWithGoToSmartModeTest() throws IOException, InterruptedException {
+        String cmpFilePath = sourceFolder + "cmp_copyDiffDestLinksWithGoToSmartMode.pdf";
+        String outFilePath = destinationFolder + "copyDiffDestLinksWithGoToSmartMode.pdf";
+
+        copyLinksGoToActionTest(outFilePath, false, false);
+
+        Assert.assertNull(new CompareTool().compareByContent(cmpFilePath, outFilePath, destinationFolder));
+    }
+
+    @Test
+    // TODO DEVSIX-4238 Update cmp file after the ticket DEVSIX-4238 will be resolved
+    public void copyDiffDisplayLinksWithGoToSmartModeTest() throws IOException, InterruptedException {
+        String cmpFilePath = sourceFolder + "cmp_copyDiffDisplayLinksWithGoToSmartMode.pdf";
+        String outFilePath = destinationFolder + "copyDiffDisplayLinksWithGoToSmartMode.pdf";
+
+        copyLinksGoToActionTest(outFilePath, false, true);
+
+        Assert.assertNull(new CompareTool().compareByContent(cmpFilePath, outFilePath, destinationFolder));
+    }
+
+    private void copyLinksGoToActionTest(String dest, boolean isTheSameLinks, boolean diffDisplayOptions)
+            throws IOException {
+        PdfDocument destDoc = new PdfDocument(new PdfWriter(dest).setSmartMode(true));
+        ByteArrayOutputStream sourceBaos1 = createPdfWithGoToAnnot(isTheSameLinks, diffDisplayOptions);
+        PdfDocument sourceDoc1 = new PdfDocument(new PdfReader(new ByteArrayInputStream(sourceBaos1.toByteArray())));
+
+        sourceDoc1.copyPagesTo(1, sourceDoc1.getNumberOfPages(), destDoc);
+
+        sourceDoc1.close();
+        destDoc.close();
+    }
+
+    private ByteArrayOutputStream createPdfWithGoToAnnot(boolean isTheSameLink, boolean diffDisplayOptions) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(stream));
+
+        pdfDocument.addNewPage();
+        pdfDocument.addNewPage();
+        pdfDocument.addNewPage();
+
+        Rectangle linkLocation = new Rectangle(523, 770, 36, 36);
+        PdfExplicitDestination destination = PdfExplicitDestination.createFit(pdfDocument.getPage(3));
+        PdfAnnotation annotation = new PdfLinkAnnotation(linkLocation)
+                .setAction(PdfAction.createGoTo(destination))
+                .setBorder(new PdfArray(new int[]{0, 0, 1}));
+        pdfDocument.getFirstPage().addAnnotation(annotation);
+
+        if (!isTheSameLink) {
+            destination = (diffDisplayOptions)
+                    ? PdfExplicitDestination.create(pdfDocument.getPage(3), PdfName.XYZ, 350, 350,
+                    0, 0, 1)
+                    : PdfExplicitDestination.createFit(pdfDocument.getPage(1));
+        }
+
+        annotation = new PdfLinkAnnotation(linkLocation)
+                .setAction(PdfAction.createGoTo(destination))
+                .setBorder(new PdfArray(new int[]{0, 0, 1}));
+        pdfDocument.getPage(2).addAnnotation(annotation);
+        pdfDocument.close();
+
+        return stream;
     }
 
 }

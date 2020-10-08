@@ -109,7 +109,7 @@ public class LtvVerifier extends RootStoreVerifier {
     /**
      * Creates a VerificationData object for a PdfReader
      * @param document The document we want to verify.
-     * @throws GeneralSecurityException
+     * @throws GeneralSecurityException if some problem with signature or security are occurred
      */
     public LtvVerifier(PdfDocument document) throws GeneralSecurityException {
         super(null);
@@ -140,7 +140,7 @@ public class LtvVerifier extends RootStoreVerifier {
     /**
      * Set the verifyRootCertificate to false if you can't verify the root certificate.
      *
-     * @param verifyRootCertificate
+     * @param verifyRootCertificate false if you can't verify the root certificate, otherwise true
      */
     public void setVerifyRootCertificate(boolean verifyRootCertificate) {
         this.verifyRootCertificate = verifyRootCertificate;
@@ -158,9 +158,10 @@ public class LtvVerifier extends RootStoreVerifier {
     /**
      * Verifies all the document-level timestamps and all the signatures in the document.
      *
-     * @param result
-     * @throws IOException
-     * @throws GeneralSecurityException
+     * @param result a list of {@link VerificationOK} objects
+     * @return a list of all {@link VerificationOK} objects after verification
+     * @throws IOException signals that an I/O exception has occurred
+     * @throws GeneralSecurityException if some problems with signature or security occurred
      */
     public List<VerificationOK> verify(List<VerificationOK> result) throws IOException, GeneralSecurityException {
         if (result == null)
@@ -173,8 +174,10 @@ public class LtvVerifier extends RootStoreVerifier {
 
     /**
      * Verifies a document level timestamp.
-     * @throws GeneralSecurityException
-     * @throws IOException
+     *
+     * @return a list of {@link VerificationOK} objects
+     * @throws GeneralSecurityException if some problems with signature or security occurred
+     * @throws IOException signals that an I/O exception has occurred
      */
     public List<VerificationOK> verifySignature() throws GeneralSecurityException, IOException {
         LOGGER.info("Verifying signature.");
@@ -228,7 +231,9 @@ public class LtvVerifier extends RootStoreVerifier {
      * are they valid on a specific date, and
      * do they chain up correctly?
      * @param chain the certificate chain
-     * @throws GeneralSecurityException
+     * @throws GeneralSecurityException when requested cryptographic algorithm or security provider
+     * is not available, if the certificate is invalid on a specific date and if the certificates
+     * chained up incorrectly
      */
     public void verifyChain(Certificate[] chain) throws GeneralSecurityException {
         // Loop over the certificates in the chain
@@ -249,8 +254,8 @@ public class LtvVerifier extends RootStoreVerifier {
      * @param issuerCert the issuer's certificate
      * @return a list of <code>VerificationOK</code> objects.
      * The list will be empty if the certificate couldn't be verified.
-     * @throws GeneralSecurityException
-     * @throws IOException
+     * @throws GeneralSecurityException if some problems with signature or security occurred
+     * @throws IOException signals that an I/O exception has occurred
      * @see com.itextpdf.signatures.RootStoreVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate, java.util.Date)
      */
     public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException, IOException {
@@ -271,8 +276,8 @@ public class LtvVerifier extends RootStoreVerifier {
 
     /**
      * Switches to the previous revision.
-     * @throws IOException
-     * @throws GeneralSecurityException
+     * @throws IOException signals that an I/O exception has occurred
+     * @throws GeneralSecurityException if some problems with signature or security occurred
      */
     public void switchToPreviousRevision() throws IOException, GeneralSecurityException {
         LOGGER.info("Switching to previous revision.");
@@ -304,8 +309,9 @@ public class LtvVerifier extends RootStoreVerifier {
     /**
      * Gets a list of X509CRL objects from a Document Security Store.
      * @return	a list of CRLs
-     * @throws GeneralSecurityException
-     * @throws IOException
+     * @throws GeneralSecurityException when requested cryptographic algorithm or security provider
+     * is not available
+     * @throws IOException signals that an I/O exception has occurred
      */
     public List<X509CRL> getCRLsFromDSS() throws GeneralSecurityException, IOException {
         List<X509CRL> crls = new ArrayList<>();
@@ -324,8 +330,8 @@ public class LtvVerifier extends RootStoreVerifier {
     /**
      * Gets OCSP responses from the Document Security Store.
      * @return	a list of BasicOCSPResp objects
-     * @throws IOException
-     * @throws GeneralSecurityException
+     * @throws IOException signals that an I/O exception has occurred
+     * @throws GeneralSecurityException if OCSP response failed
      */
     public List<BasicOCSPResp> getOCSPResponsesFromDSS() throws IOException, GeneralSecurityException {
         List<BasicOCSPResp> ocsps = new ArrayList<>();
@@ -362,7 +368,7 @@ public class LtvVerifier extends RootStoreVerifier {
      * Checks if the signature covers the whole document
      * and throws an exception if the document was altered
      * @return a PdfPKCS7 object
-     * @throws GeneralSecurityException
+     * @throws GeneralSecurityException if some problems with signature or security occurred
      */
     protected PdfPKCS7 coversWholeDocument() throws GeneralSecurityException {
         PdfPKCS7 pkcs7 = sgnUtil.readSignatureData(signatureName, securityProviderCode);

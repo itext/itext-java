@@ -58,6 +58,7 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfXrefTable;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 
@@ -384,6 +385,14 @@ public abstract class PdfAChecker implements Serializable {
     public void checkFontGlyphs(PdfFont font, PdfStream contentStream) {
     }
 
+
+    /**
+     * Verify the conformity of the cross-reference table.
+     *
+     * @param xrefTable is the Xref table
+     */
+    public abstract void checkXrefTable(PdfXrefTable xrefTable);
+
     protected void checkPageTransparency(PdfDictionary pageDict, PdfDictionary pageResources) {
     }
 
@@ -404,6 +413,13 @@ public abstract class PdfAChecker implements Serializable {
      */
     protected void checkContentStreamObject(PdfObject object) {
     }
+
+    /**
+     * Retrieve maximum allowed number of indirect objects in conforming document.
+     *
+     * @return maximum allowed number of indirect objects
+     */
+    protected abstract long getMaxNumberOfIndirectObjects();
 
     protected abstract Set<PdfName> getForbiddenActions();
     protected abstract Set<PdfName> getAllowedNamedActions();
@@ -488,6 +504,18 @@ public abstract class PdfAChecker implements Serializable {
                 || conformanceLevel == PdfAConformanceLevel.PDF_A_3A;
     }
 
+    /**
+     * Checks whether the specified dictionary has a transparency group.
+     *
+     * @param dictionary the {@link PdfDictionary} to check
+     * @return true if and only if the specified dictionary has a {@link PdfName#Group} key and its value is
+     * a dictionary with {@link PdfName#Transparency} subtype
+     */
+    protected static boolean isContainsTransparencyGroup(PdfDictionary dictionary) {
+        return dictionary.containsKey(PdfName.Group) && PdfName.Transparency.equals(
+                dictionary.getAsDictionary(PdfName.Group).getAsName(PdfName.S));
+    }
+
     protected boolean isAlreadyChecked(PdfDictionary dictionary) {
         if (checkedObjects.contains(dictionary)) {
             return true;
@@ -496,16 +524,41 @@ public abstract class PdfAChecker implements Serializable {
         return false;
     }
 
+    /**
+     * Checks resources of the appearance streams.
+     *
+     * @param appearanceStreamsDict the dictionary with appearance streams to check.
+     */
     protected void checkResourcesOfAppearanceStreams(PdfDictionary appearanceStreamsDict) {
+        checkResourcesOfAppearanceStreams(appearanceStreamsDict, new HashSet<PdfObject>());
+    }
+
+    /**
+     * Check single annotation appearance stream.
+     *
+     * @param appearanceStream the {@link PdfStream} to check
+     */
+    protected void checkAppearanceStream(PdfStream appearanceStream) {
+        if (isAlreadyChecked(appearanceStream)) {
+            return;
+        }
+
+        checkResources(appearanceStream.getAsDictionary(PdfName.Resources));
+    }
+
+    private void checkResourcesOfAppearanceStreams(PdfDictionary appearanceStreamsDict, Set<PdfObject> checkedObjects) {
+        if (checkedObjects.contains(appearanceStreamsDict)) {
+            return;
+        } else {
+            checkedObjects.add(appearanceStreamsDict);
+        }
         for (PdfObject val : appearanceStreamsDict.values()) {
             if (val instanceof PdfDictionary) {
                 PdfDictionary ap = (PdfDictionary) val;
                 if (ap.isDictionary()) {
-                    checkResourcesOfAppearanceStreams(ap);
+                    checkResourcesOfAppearanceStreams(ap, checkedObjects);
                 } else if (ap.isStream()) {
-                    if (!isAlreadyChecked(ap)) {
-                        checkResources(ap.getAsDictionary(PdfName.Resources));
-                    }
+                    checkAppearanceStream((PdfStream) ap);
                 }
             }
         }

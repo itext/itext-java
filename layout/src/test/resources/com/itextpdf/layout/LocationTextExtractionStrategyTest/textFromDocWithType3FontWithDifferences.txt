@@ -1,6 +1,6 @@
 11/27/2018 Pravilnik o zaštiti radnika od izloženosti opasnim kemikalijama na radu, graničnim vrijednostima izloženosti i biološkim graničnim vrijednostima
 OZNAKE U TABLICI
-– EZ broj – EINECS, ELINCS ili NLP slu žbeni je broj tvari u Europskoj uniji, kako je utvrđeno pod točkom 1.1.1.2., dio 1.
+– EZ broj – EINECS, ELINCS ili NLP službeni je broj tvari u Europskoj uniji, kako je utvrđeno pod točkom 1.1.1.2., dio 1.
 Priloga VI. Uredbe (EZ) br. 1272/2008
 – CAS broj – registarski broj prema Međunarodnom popisu kemijskih tvari (engl. Chemical Abstract Service)
 Oznake za kolone »GVI« i »KGVI«:
@@ -11,9 +11,9 @@ Oznake za kolone »GVI« i »KGVI«:
 3 3
 – vl/cm – broj vlakana po kubičnom centimetru (posebno je označeno ispod broja u koloni za »mg/m «)
 3
-– U – ukupna pra šina, inhalabilne čestice (sve vrijednosti u kolonama za »mg/m « odnose se na ukupnu pra šinu,
-posebno se označava samo u kombinaciji s oznakama za R-respirabilnu pra šinu)
-– R – respirabilna pra šina, frakcija koja udisanjem može doprijeti u pluća
+– U – ukupna prašina, inhalabilne čestice (sve vrijednosti u kolonama za »mg/m « odnose se na ukupnu prašinu,
+posebno se označava samo u kombinaciji s oznakama za R-respirabilnu prašinu)
+– R – respirabilna prašina, frakcija koja udisanjem može doprijeti u pluća
 Oznake za kolonu »Direktiva«:
 – sve oznake odnose se na brojeve iz direktiva navedenih u članku 2. ovoga Pravilnika
 Oznake za kolonu »Napomena«:
@@ -26,7 +26,7 @@ Oznake za kolonu »Napomena«:
 – Repr 1A ili 1B
 – tvar koja je prema Uredbi (EZ) br. 1272/2008 razvrstana kao reproduktivno toksična 1.A ili 1.B kategorije.
 – koža
-– razvrstana kao tvar koja nadra žuje kožu (H315)
+– razvrstana kao tvar koja nadražuje kožu (H315)
 – ili je takva napomena navedena u direktivama
 – alergen koža
 – tvar koja može izazvati alergijsku reakciju na koži (H317)

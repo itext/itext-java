@@ -31,8 +31,8 @@ import com.itextpdf.kernel.colors.gradients.GradientColorStop;
 import com.itextpdf.kernel.colors.gradients.LinearGradientBuilder;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Attributes;
+import com.itextpdf.svg.renderers.INoDrawSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
@@ -42,7 +42,7 @@ import java.util.List;
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;linearGradient&gt; tag.
  */
-public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRenderer {
+public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRenderer implements INoDrawSvgNodeRenderer {
 
     @Override
     public Color createColor(SvgDrawContext context, Rectangle objectBoundingBox, float objectBoundingBoxMargin,

@@ -55,10 +55,11 @@ public interface IFilterHandler {
     /**
      * Decode the byte[] using the provided filterName.
      *
-     * @param b the bytes that need to be decoded
-     * @param filterName PdfName of the filter
-     * @param decodeParams decode parameters
-     * @param streamDictionary the dictionary of the stream. Can contain additional information needed to decode the byte[].
+     * @param b                the bytes that need to be decoded
+     * @param filterName       PdfName of the filter
+     * @param decodeParams     decode parameters
+     * @param streamDictionary the dictionary of the stream. Can contain additional information needed to decode the
+     *                         byte[].
      * @return decoded byte array
      */
     byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary);

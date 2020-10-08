@@ -42,6 +42,11 @@
  */
 package com.itextpdf.svg.utils;
 
+import com.itextpdf.styledxmlparser.CommonAttributeConstants;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
+import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -203,5 +208,17 @@ public class SvgCssUtilsTest extends ExtendedITextTest {
         float actual = SvgCssUtils.convertPtsToPx(Float.MIN_VALUE);
 
         Assert.assertEquals(expected, actual, 0f);
+    }
+
+    @Test
+    public void compareIsStyleSheetLinkResult() {
+        Element element = new Element(Tag.valueOf("link"), "");
+        element.attr(CommonAttributeConstants.REL, CommonAttributeConstants.STYLESHEET);
+        JsoupElementNode elementNode = new JsoupElementNode(element);
+
+        boolean expected = CssUtils.isStyleSheetLink(elementNode);
+        boolean actual = SvgCssUtils.isStyleSheetLink(elementNode);
+
+        Assert.assertEquals(actual, expected);
     }
 }

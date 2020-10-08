@@ -42,6 +42,9 @@
  */
 package com.itextpdf.styledxmlparser.css;
 
+import com.itextpdf.layout.font.Range;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,5 +107,15 @@ public class CssFontFaceRule extends CssNestedAtRule {
         }
         sb.append("}");
         return sb.toString();
+    }
+
+    public Range resolveUnicodeRange() {
+        Range range = null;
+        for (CssDeclaration descriptor : getProperties()) {
+            if ("unicode-range".equals(descriptor.getProperty())) {
+                range = CssUtils.parseUnicodeRange(descriptor.getExpression());
+            }
+        }
+        return range;
     }
 }

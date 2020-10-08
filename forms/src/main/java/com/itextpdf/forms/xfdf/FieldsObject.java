@@ -64,6 +64,8 @@ public class FieldsObject {
 
     /**
      * Gets a list of children fields
+     *
+     * @return {@link List} containing all children {@link FieldObject field objects}
      */
     public List<FieldObject> getFieldList() {
         return fieldList;
@@ -72,6 +74,7 @@ public class FieldsObject {
     /**
      * Adds a new field to the list.
      * @param field FieldObject containing the info about the form field.
+     * @return current {@link FieldsObject fields object}
      */
     public FieldsObject addField(FieldObject field) {
         this.fieldList.add(field);

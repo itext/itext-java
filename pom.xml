@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.1.12</version>
+  <version>7.1.13</version>
   <packaging>pom</packaging>
   <name>iText 7</name>
   <description>A Free Java-PDF library</description>
@@ -652,30 +652,6 @@
               <format>ALL</format>
               <dataDirectory>${user.home}/security/owasp-nvd/</dataDirectory>
               <autoUpdate>false</autoUpdate>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.revapi</groupId>
-            <artifactId>revapi-maven-plugin</artifactId>
-            <version>0.11.1</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>org.revapi</groupId>
-                <artifactId>revapi-java</artifactId>
-                <version>0.19.0</version>
-              </dependency>
-            </dependencies>
-            <configuration>
-              <checkDependencies>false</checkDependencies>
-              <failBuildOnProblemsFound>false</failBuildOnProblemsFound>
-              <reportSeverity>breaking</reportSeverity>
             </configuration>
           </plugin>
         </plugins>

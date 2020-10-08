@@ -157,6 +157,7 @@ public final class Property {
     public static final int MIN_WIDTH = 80;
     public static final int NO_SOFT_WRAP_INLINE = 118;
 
+    public static final int OBJECT_FIT = 125;
     public static final int OPACITY = 92;
     public static final int ORPHANS_CONTROL = 121;
     public static final int OUTLINE = 106;
@@ -221,7 +222,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 124;
+    private static final int MAX_INHERITED_PROPERTY_ID = 125;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];

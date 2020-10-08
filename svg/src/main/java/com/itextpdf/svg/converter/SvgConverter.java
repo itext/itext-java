@@ -72,15 +72,17 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.PdfRootSvgNodeRenderer;
 import com.itextpdf.svg.utils.SvgCssUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is the main container class for static methods that do high-level
@@ -547,38 +549,22 @@ public final class SvgConverter {
      * @throws IOException when the one of the streams cannot be read correctly
      */
     public static void createPdf(InputStream svgStream, OutputStream pdfDest, ISvgConverterProperties props, WriterProperties writerProps) throws IOException {
-
-        //create doc
+        // Create doc
         if (writerProps == null) {
             writerProps = new WriterProperties();
         }
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(pdfDest, writerProps));
-        //process
+        // Process
         ISvgProcessorResult processorResult = process(parse(svgStream, props), props);
         ISvgNodeRenderer topSvgRenderer = processorResult.getRootRenderer();
 
-        String baseUri = tryToExtractBaseUri(props);
-        ResourceResolver resourceResolver = null;
-
-        if (processorResult instanceof SvgProcessorResult) {
-            //TODO DEVSIX-3814 add assert after 7.2 cause now be have a null pointer on deprecated constructor
-            SvgProcessorContext context = ((SvgProcessorResult) processorResult).getContext();
-            if (context != null) {
-                resourceResolver = context.getResourceResolver();
-            }
-        }
-        //TODO DEVSIX-3814 remove the clause when the deprecated  constructor SvgProcessorResult(Map<String, ISvgNodeRenderer>,
-        // ISvgNodeRenderer, FontProvider, FontSet) is removed
-        if (resourceResolver == null) {
-            resourceResolver = new ResourceResolver(baseUri);
-        }
-        SvgDrawContext drawContext =
-                new SvgDrawContext(resourceResolver, processorResult.getFontProvider(), processorResult.getRootRenderer());
+        ResourceResolver resourceResolver = SvgConverter.getResourceResolver(processorResult, props);
+        SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider(), processorResult.getRootRenderer());
 
         drawContext.addNamedObjects(processorResult.getNamedObjects());
-        //Add temp fonts
+        // Add temp fonts
         drawContext.setTempFonts(processorResult.getTempFonts());
-        //Extract topmost dimensions
+        // Extract topmost dimensions
         checkNull(topSvgRenderer);
         checkNull(pdfDocument);
         float width, height;
@@ -587,13 +573,13 @@ public final class SvgConverter {
         width = wh[0];
         height = wh[1];
 
-        //adjust pagesize and create new page
+        // Adjust pagesize and create new page
         pdfDocument.setDefaultPageSize(new PageSize(width, height));
         PdfPage page = pdfDocument.addNewPage();
         PdfCanvas pageCanvas = new PdfCanvas(page);
-        //Add to the first page
+        // Add to the first page
         PdfFormXObject xObject = convertToXObject(topSvgRenderer, pdfDocument, drawContext);
-        //Draw
+        // Draw
         draw(xObject, pageCanvas);
         pdfDocument.close();
     }
@@ -682,7 +668,7 @@ public final class SvgConverter {
     //Private converter for unification
     private static PdfFormXObject convertToXObject(ISvgProcessorResult processorResult, PdfDocument document,
             ISvgConverterProperties props) {
-        ResourceResolver resourceResolver = getResourceResolver(processorResult, props);
+        ResourceResolver resourceResolver = SvgConverter.getResourceResolver(processorResult, props);
         SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider(),
                 processorResult.getRootRenderer());
         drawContext.setTempFonts(processorResult.getTempFonts());
@@ -867,8 +853,13 @@ public final class SvgConverter {
      */
     public static ISvgProcessorResult parseAndProcess(InputStream svgStream, ISvgConverterProperties props) throws IOException {
         IXmlParser parser = new JsoupXmlParser();
-        String charset = tryToExtractCharset(props);
-        INode nodeTree = parser.parse(svgStream, charset);
+        String charset = SvgConverter.tryToExtractCharset(props);
+        INode nodeTree;
+        try {
+            nodeTree = parser.parse(svgStream, charset);
+        } catch (Exception e) {
+            throw new SvgProcessingException(SvgLogMessageConstant.FAILED_TO_PARSE_INPUTSTREAM, e);
+        }
         return new DefaultSvgProcessor().process(nodeTree, props);
     }
 
@@ -939,7 +930,7 @@ public final class SvgConverter {
     public static INode parse(InputStream stream, ISvgConverterProperties props) throws IOException {
         checkNull(stream); // props is allowed to be null
         IXmlParser xmlParser = new JsoupXmlParser();
-        return xmlParser.parse(stream, tryToExtractCharset(props));
+        return xmlParser.parse(stream, SvgConverter.tryToExtractCharset(props));
     }
 
     /**
@@ -1009,42 +1000,35 @@ public final class SvgConverter {
             if (context != null) {
                 resourceResolver = context.getResourceResolver();
             }
-
         }
         //TODO DEVSIX-3814 remove the clause when the deprecated  constructor SvgProcessorResult(Map<String, ISvgNodeRenderer>,
         // ISvgNodeRenderer, FontProvider, FontSet) is removed
         if (resourceResolver == null) {
-            String baseUri = "";
-            if (props != null) {
-                baseUri = props.getBaseUri();
-            }
-            resourceResolver = new ResourceResolver(baseUri);
+            resourceResolver = SvgConverter.createResourceResolver(props);
         }
-       return  resourceResolver;
+       return resourceResolver;
     }
 
     /**
      * Tries to extract charset from {@link ISvgConverterProperties}.
      *
      * @param props converter properties
-     * @return charset  | null
+     * @return charset | null
      */
     private static String tryToExtractCharset(final ISvgConverterProperties props) {
         return props != null ? props.getCharset() : null;
     }
 
-    /**
-     * Tries to extract baseUri from {@link ISvgConverterProperties}.
-     *
-     * @param props converter properties
-     * @return baseUrl  | null
-     */
-    private static String tryToExtractBaseUri(final ISvgConverterProperties props) {
-        if (props == null || props.getBaseUri() == null) {
-            return null;
+    private static ResourceResolver createResourceResolver(final ISvgConverterProperties props) {
+        if (props == null) {
+            return new ResourceResolver(null);
         }
-        String baseUrl = props.getBaseUri().trim();
-        return baseUrl.isEmpty() ? null : baseUrl;
+        // TODO DEVSIX-3814 change the clause if-else to return new ResourceResolver(props.getBaseUri(),
+        //  props.getResourceRetriever()) when the ISvgConverterProperties#getResourceRetriever() is added
+        if (props instanceof SvgConverterProperties) {
+            return new ResourceResolver(props.getBaseUri(), ((SvgConverterProperties) props).getResourceRetriever());
+        } else {
+            return new ResourceResolver(props.getBaseUri(), null);
+        }
     }
-
 }

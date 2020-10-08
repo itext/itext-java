@@ -45,6 +45,7 @@ package com.itextpdf.styledxmlparser.css.resolve.shorthand;
 
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BackgroundPositionShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BackgroundShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderBottomShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderColorShorthandResolver;
@@ -75,6 +76,7 @@ public class ShorthandResolverFactory {
     static {
         shorthandResolvers = new HashMap<>();
         shorthandResolvers.put(CommonCssConstants.BACKGROUND, new BackgroundShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.BACKGROUND_POSITION, new BackgroundPositionShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.BORDER, new BorderShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.BORDER_BOTTOM, new BorderBottomShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.BORDER_COLOR, new BorderColorShorthandResolver());

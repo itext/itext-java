@@ -60,7 +60,10 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-class PdfXrefTable implements Serializable {
+/**
+ * A representation of a cross-referenced table of a PDF document.
+ */
+public class PdfXrefTable implements Serializable {
 
     private static final long serialVersionUID = 4171655392492002944L;
 
@@ -98,6 +101,7 @@ class PdfXrefTable implements Serializable {
      * Adds indirect reference to list of indirect objects.
      *
      * @param reference indirect reference to add.
+     * @return reference from param
      */
     public PdfIndirectReference add(PdfIndirectReference reference) {
         if (reference == null) {
@@ -110,10 +114,38 @@ class PdfXrefTable implements Serializable {
         return reference;
     }
 
+    /**
+     * Get size of cross-reference table.
+     *
+     * @return amount of lines including zero-object
+     */
     public int size() {
         return count + 1;
     }
 
+    /**
+     * Calculates a number of stored references to indirect objects.
+     *
+     * @return number of indirect objects
+     */
+    public int getCountOfIndirectObjects() {
+        int countOfIndirectObjects = 0;
+
+        for (final PdfIndirectReference ref: xref) {
+            if (ref != null && ! ref.isFree()) {
+                countOfIndirectObjects++;
+            }
+        }
+
+        return countOfIndirectObjects;
+    }
+
+    /**
+     * Get appropriate reference to indirect object.
+     *
+     * @param index is the index of required object
+     * @return reference to object with the provided index
+     */
     public PdfIndirectReference get(int index) {
         if (index > count) {
             return null;
@@ -121,14 +153,28 @@ class PdfXrefTable implements Serializable {
         return xref[index];
     }
 
+    /**
+     * Change the state of the cross-reference table to mark that reading of the document
+     * was completed.
+     */
     void markReadingCompleted() {
         readingCompleted = true;
     }
 
+    /**
+     * Check if reading of the document was completed.
+     *
+     * @return true if reading was completed and false otherwise
+     */
     boolean isReadingCompleted() {
         return readingCompleted;
     }
 
+    /**
+     * Set up appropriate state for the free references list.
+     *
+     * @param pdfDocument is the current {@link PdfDocument document}
+     */
     void initFreeReferencesList(PdfDocument pdfDocument) {
         freeReferencesLinkedList.clear();
 
@@ -180,7 +226,12 @@ class PdfXrefTable implements Serializable {
         freeReferencesLinkedList.put(0, prevFreeRef);
     }
 
-    //For Object streams
+    /**
+     * Method is used for object streams to avoid reuse existed references.
+     *
+     * @param document is the current {@link PdfDocument document}
+     * @return created indirect reference to the object stream
+     */
     PdfIndirectReference createNewIndirectReference(PdfDocument document) {
         PdfIndirectReference reference = new PdfIndirectReference(document, ++count);
         add(reference);
@@ -190,6 +241,7 @@ class PdfXrefTable implements Serializable {
     /**
      * Creates next available indirect reference.
      *
+     * @param document is the current {@link PdfDocument document}
      * @return created indirect reference.
      */
     protected PdfIndirectReference createNextIndirectReference(PdfDocument document) {
@@ -198,6 +250,11 @@ class PdfXrefTable implements Serializable {
         return (PdfIndirectReference) reference.setState(PdfObject.MODIFIED);
     }
 
+    /**
+     * Set the reference to free state.
+     *
+     * @param reference is a reference to be updated.
+     */
     protected void freeReference(PdfIndirectReference reference) {
         if (reference.isFree()) {
             return;
@@ -223,6 +280,11 @@ class PdfXrefTable implements Serializable {
 
     }
 
+    /**
+     * Increase capacity of the array of indirect references.
+     *
+     * @param capacity is a new capacity to set
+     */
     protected void setCapacity(int capacity) {
         if (capacity > xref.length) {
             extendXref(capacity);
@@ -232,7 +294,10 @@ class PdfXrefTable implements Serializable {
     /**
      * Writes cross reference table and trailer to PDF.
      *
-     * @throws IOException
+     * @param document is the current {@link PdfDocument document}
+     * @param fileId   field id
+     * @param crypto   pdf encryption
+     * @throws IOException if any I/O error occurs
      */
     protected void writeXrefTableAndTrailer(PdfDocument document, PdfObject fileId, PdfObject crypto) throws IOException {
         PdfWriter writer = document.getWriter();
@@ -262,6 +327,8 @@ class PdfXrefTable implements Serializable {
             xref = null;
             return;
         }
+
+        document.checkIsoConformance(this, IsoKey.XREF_TABLE);
 
         long startxref = writer.getCurrentPos();
         long xRefStmPos = -1;
@@ -373,6 +440,9 @@ class PdfXrefTable implements Serializable {
         freeReferencesLinkedList.clear();
     }
 
+    /**
+     * Clear the state of the cross-reference table.
+     */
     void clear() {
         for (int i = 1; i <= count; i++) {
             if (xref[i] != null && xref[i].isFree()) {

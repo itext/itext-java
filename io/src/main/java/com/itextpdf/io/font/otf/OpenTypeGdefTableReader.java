@@ -49,10 +49,11 @@ import java.io.Serializable;
 
 public class OpenTypeGdefTableReader implements Serializable{
 
+    static final int FLAG_IGNORE_BASE = 2;
+    static final int FLAG_IGNORE_LIGATURE = 4;
+    static final int FLAG_IGNORE_MARK = 8;
+
     private static final long serialVersionUID = 1564505797329158035L;
-    private final int FLAG_IGNORE_BASE = 2;
-    private final int FLAG_IGNORE_LIGATURE = 4;
-    private final int FLAG_IGNORE_MARK = 8;
     
     private final int tableLocation;
     private final RandomAccessFileOrArray rf;
@@ -97,8 +98,16 @@ public class OpenTypeGdefTableReader implements Serializable{
                 return true;
             }
         }
-        if (markAttachmentClass != null && markAttachmentClass.getOtfClass(glyph) > 0 && (flag >> 8) > 0) {
-            return markAttachmentClass.getOtfClass(glyph) != (flag >> 8);
+        int markAttachmentType = (flag >> 8);
+        // If MarkAttachmentType is non-zero, then mark attachment classes must be defined in the
+        // Mark Attachment Class Definition Table in the GDEF table. When processing glyph sequences,
+        // a lookup must ignore any mark glyphs that are not in the specified mark attachment class;
+        // only marks of the specified type are processed.
+        if (markAttachmentType != 0 && glyphClass != null) {
+            int currentGlyphClass = glyphClass.getOtfClass(glyph);
+            // Will be 0 in case the class is not defined for this particular glyph
+            int glyphMarkAttachmentClass = markAttachmentClass != null ? markAttachmentClass.getOtfClass(glyph) : 0;
+            return currentGlyphClass == OtfClass.GLYPH_MARK && glyphMarkAttachmentClass != markAttachmentType;
         }
         return false;
     }

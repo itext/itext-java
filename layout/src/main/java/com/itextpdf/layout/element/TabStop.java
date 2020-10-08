@@ -56,6 +56,7 @@ import com.itextpdf.layout.property.TabAlignment;
  */
 public class TabStop {
 
+    // tabPosition here is absolute value
     private float tabPosition;
     private TabAlignment tabAlignment;
     private Character tabAnchor;
@@ -63,7 +64,7 @@ public class TabStop {
 
     /**
      * Creates a TabStop at the appropriate position.
-     * @param tabPosition a <code>float</code>, measured in points
+     * @param tabPosition a <code>float</code>, measured in absolute points
      */
     public TabStop(float tabPosition) {
         this(tabPosition, TabAlignment.LEFT);
@@ -74,7 +75,7 @@ public class TabStop {
      * alignment. A tab alignment defines the way the textual content should be
      * positioned with regards to this tab stop.
      * 
-     * @param tabPosition a <code>float</code>, measured in points
+     * @param tabPosition a <code>float</code>, measured in absolute points
      * @param tabAlignment a {@link TabAlignment} value
      */
     public TabStop(float tabPosition, TabAlignment tabAlignment) {
@@ -88,7 +89,7 @@ public class TabStop {
      * stop. The line pattern defines a pattern that should be repeated until
      * the TabStop is reached. If null, the space leading up to the TabStop will
      * be empty.
-     * @param tabPosition a <code>float</code>, measured in points
+     * @param tabPosition a <code>float</code>, measured in absolute points
      * @param tabAlignment a {@link TabAlignment} value
      * @param tabLeader the {@link ILineDrawer} value, a pattern drawing object
      */

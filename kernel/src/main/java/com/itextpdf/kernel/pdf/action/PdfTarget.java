@@ -81,6 +81,7 @@ public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
      * Creates a new {@link PdfTarget} object by the underlying dictionary.
      *
      * @param pdfObject the underlying dictionary object
+     * @return a new {@link PdfTarget} object by the underlying dictionary
      */
     public static PdfTarget create(PdfDictionary pdfObject) {
         return new PdfTarget(pdfObject);
@@ -188,8 +189,17 @@ public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
         if (null == page) {
             throw new PdfException(PdfException.AnnotationShallHaveReferenceToPage);
         } else {
-            put(PdfName.P, new PdfNumber(pdfDocument.getPageNumber(page)));
-            put(PdfName.A, new PdfNumber(page.getAnnotations().indexOf(pdfAnnotation)));
+            put(PdfName.P, new PdfNumber(pdfDocument.getPageNumber(page) - 1));
+            int indexOfAnnotation = -1;
+            final List<PdfAnnotation> annots = page.getAnnotations();
+            for (int i = 0; i < annots.size(); i++) {
+                if (annots.get(i) != null &&
+                        pdfAnnotation.getPdfObject().equals(annots.get(i).getPdfObject())) {
+                    indexOfAnnotation = i;
+                    break;
+                }
+            }
+            put(PdfName.A, new PdfNumber(indexOfAnnotation));
         }
         return this;
     }

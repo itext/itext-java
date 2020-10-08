@@ -247,7 +247,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
     /**
      * Closes the underlying source.
      *
-     * @throws java.io.IOException
+     * @throws java.io.IOException in case of any I/O error.
      */
     public void close() throws java.io.IOException {
         isBack = false;
@@ -259,7 +259,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * Gets the total amount of bytes in the source.
      *
      * @return source's size.
-     * @throws java.io.IOException
+     * @throws java.io.IOException in case of any I/O error.
      */
     public long length() throws java.io.IOException {
         return byteSource.length();
@@ -269,7 +269,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * Sets the current position in the source to the specified index.
      *
      * @param pos the position to set
-     * @throws java.io.IOException
+     * @throws java.io.IOException in case of any I/O error.
      */
     public void seek(long pos) throws java.io.IOException {
         byteSourcePosition = pos;

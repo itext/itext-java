@@ -42,7 +42,6 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;

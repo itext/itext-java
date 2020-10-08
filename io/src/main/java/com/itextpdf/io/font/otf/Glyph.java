@@ -270,11 +270,12 @@ public class Glyph implements Serializable {
     }
 
     public boolean hasOffsets() {
-        return xPlacement != 0 || yPlacement != 0 || xAdvance != 0 || yAdvance != 0;
+        return hasAdvance() || hasPlacement();
     }
 
+    // In case some of placement values are not zero we always expect anchorDelta to be non-zero
     public boolean hasPlacement() {
-        return xPlacement != 0 || yPlacement != 0;
+        return anchorDelta != 0;
     }
 
     public boolean hasAdvance() {

@@ -225,6 +225,8 @@ public class IOException extends RuntimeException {
 
     /**
      * Gets additional params for Exception message.
+     *
+     * @return params for exception message.
      */
     protected Object[] getMessageParams() {
         Object[] parameters = new Object[messageParams.size()];

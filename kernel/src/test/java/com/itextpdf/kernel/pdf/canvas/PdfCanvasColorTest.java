@@ -74,11 +74,15 @@ import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+
 import java.nio.charset.StandardCharsets;
+
 import java.util.ArrayList;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -88,20 +92,20 @@ import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfCanvasColorTest extends ExtendedITextTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasColorTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/canvas/PdfCanvasColorTest/";
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasColorTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/canvas/PdfCanvasColorTest/";
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void colorTest01() throws Exception {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "colorTest01.pdf"));
+        PdfDocument document = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "colorTest01.pdf"));
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
@@ -117,12 +121,13 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest01.pdf", sourceFolder + "cmp_colorTest01.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest01.pdf",
+                SOURCE_FOLDER + "cmp_colorTest01.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void colorTest02() throws Exception {
-        PdfWriter writer = new PdfWriter(destinationFolder + "colorTest02.pdf");
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "colorTest02.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
@@ -150,12 +155,13 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest02.pdf", sourceFolder + "cmp_colorTest02.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest02.pdf",
+                SOURCE_FOLDER + "cmp_colorTest02.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void colorTest03() throws Exception {
-        PdfWriter writer = new PdfWriter(destinationFolder + "colorTest03.pdf");
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "colorTest03.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
@@ -182,7 +188,8 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest03.pdf", sourceFolder + "cmp_colorTest03.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest03.pdf",
+                SOURCE_FOLDER + "cmp_colorTest03.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -194,9 +201,9 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
-        FileInputStream streamGray = new FileInputStream(sourceFolder + "BlackWhite.icc");
-        FileInputStream streamRgb = new FileInputStream(sourceFolder + "CIERGB.icc");
-        FileInputStream streamCmyk = new FileInputStream(sourceFolder + "USWebUncoated.icc");
+        FileInputStream streamGray = new FileInputStream(SOURCE_FOLDER + "BlackWhite.icc");
+        FileInputStream streamRgb = new FileInputStream(SOURCE_FOLDER + "CIERGB.icc");
+        FileInputStream streamCmyk = new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc");
         IccBased gray = new IccBased(streamGray, new float[]{0.5f});
         IccBased rgb = new IccBased(streamRgb, new float[]{1.0f, 0.5f, 0f});
         IccBased cmyk = new IccBased(streamCmyk, new float[]{1.0f, 0.5f, 0f, 0f});
@@ -211,22 +218,23 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         byte[] bytes = baos.toByteArray();
         com.itextpdf.kernel.pdf.PdfReader reader = new com.itextpdf.kernel.pdf.PdfReader(new ByteArrayInputStream(bytes));
         document = new PdfDocument(reader);
-        writer = new PdfWriter(destinationFolder + "colorTest04.pdf");
+        writer = new PdfWriter(DESTINATION_FOLDER + "colorTest04.pdf");
         PdfDocument newDocument = new PdfDocument(writer);
         newDocument.addPage(document.getPage(1).copyTo(newDocument));
         newDocument.close();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest04.pdf", sourceFolder + "cmp_colorTest04.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest04.pdf",
+                SOURCE_FOLDER + "cmp_colorTest04.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void colorTest05() throws Exception {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "colorTest05.pdf"));
+        PdfDocument document = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "colorTest05.pdf"));
         PdfPage page = document.addNewPage();
-        FileInputStream streamGray = new FileInputStream(sourceFolder + "BlackWhite.icc");
-        FileInputStream streamRgb = new FileInputStream(sourceFolder + "CIERGB.icc");
-        FileInputStream streamCmyk = new FileInputStream(sourceFolder + "USWebUncoated.icc");
+        FileInputStream streamGray = new FileInputStream(SOURCE_FOLDER + "BlackWhite.icc");
+        FileInputStream streamRgb = new FileInputStream(SOURCE_FOLDER + "CIERGB.icc");
+        FileInputStream streamCmyk = new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc");
         PdfCieBasedCs.IccBased gray = (PdfCieBasedCs.IccBased) new IccBased(streamGray).getColorSpace();
         PdfCieBasedCs.IccBased rgb = (PdfCieBasedCs.IccBased) new IccBased(streamRgb).getColorSpace();
         PdfCieBasedCs.IccBased cmyk = (PdfCieBasedCs.IccBased) new IccBased(streamCmyk).getColorSpace();
@@ -241,7 +249,8 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest05.pdf", sourceFolder + "cmp_colorTest05.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest05.pdf",
+                SOURCE_FOLDER + "cmp_colorTest05.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -254,7 +263,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
             bytes[k++] = (byte) i;
         }
 
-        PdfWriter writer = new PdfWriter(destinationFolder + "colorTest06.pdf");
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "colorTest06.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
@@ -267,13 +276,13 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest06.pdf", sourceFolder + "cmp_colorTest06.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest06.pdf",
+                SOURCE_FOLDER + "cmp_colorTest06.pdf", DESTINATION_FOLDER, "diff_"));
     }
-
-
+    
     @Test
     public void colorTest07() throws Exception {
-        PdfWriter writer = new PdfWriter(destinationFolder + "colorTest07.pdf");
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "colorTest07.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
@@ -288,12 +297,13 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest07.pdf", sourceFolder + "cmp_colorTest07.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest07.pdf",
+                SOURCE_FOLDER + "cmp_colorTest07.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void colorTest08() throws Exception {
-        PdfWriter writer = new PdfWriter(destinationFolder + "colorTest08.pdf");
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "colorTest08.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
@@ -312,7 +322,8 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest08.pdf", sourceFolder + "cmp_colorTest08.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest08.pdf",
+                SOURCE_FOLDER + "cmp_colorTest08.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -326,8 +337,8 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
     }
 
     private void setColorSameColorSpacesTest(String pdfName, boolean pattern) throws IOException, InterruptedException {
-        String cmpFile = sourceFolder + "cmp_" + pdfName;
-        String destFile = destinationFolder + pdfName;
+        String cmpFile = SOURCE_FOLDER + "cmp_" + pdfName;
+        String destFile = DESTINATION_FOLDER + pdfName;
 
         PdfDocument document = new PdfDocument(new PdfWriter(destFile));
 
@@ -372,13 +383,35 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void makePatternColorTest() throws IOException, InterruptedException {
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "makePatternColorTest.pdf");
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        PdfSpecialCs.Pattern pattern = new PdfSpecialCs.UncoloredTilingPattern(new PdfDeviceCs.Rgb());
+        Color greenPattern = Color.makeColor(pattern, new float[]{0, 1,0});
+
+        PdfPattern.Tiling circle = new PdfPattern.Tiling(10, 10, 12, 12, false);
+        new PdfPatternCanvas(circle, document).circle(5f, 5f, 5f).fill().release();
+        canvas.setColor(greenPattern.getColorSpace(), greenPattern.getColorValue(), circle, true).rectangle(50, 600, 50, 50).fill();
+
+        canvas.release();
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "makePatternColorTest.pdf",
+                SOURCE_FOLDER + "cmp_makePatternColorTest.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void patternColorColoredAxialPatternTest() throws Exception {
         String name = "patternColorColoredAxialPatternTest.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + name);
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + name);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
@@ -398,13 +431,14 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + name, sourceFolder + "cmp_" + name, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
+                SOURCE_FOLDER + "cmp_" + name, DESTINATION_FOLDER));
     }
 
     @Test
     public void patternColorColoredRadialPatternTest() throws Exception {
         String name = "patternColorColoredRadialPatternTest.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + name);
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + name);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
@@ -423,13 +457,14 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + name, sourceFolder + "cmp_" + name, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
+                SOURCE_FOLDER + "cmp_" + name, DESTINATION_FOLDER));
     }
 
     @Test
     public void patternColorUncoloredCircleRgbTest() throws Exception {
         String name = "patternColorUncoloredCircleRgbTest.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + name);
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + name);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
@@ -450,13 +485,14 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + name, sourceFolder + "cmp_" + name, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
+                SOURCE_FOLDER + "cmp_" + name, DESTINATION_FOLDER));
     }
 
     @Test
     public void patternColorUncoloredLineGrayTest() throws Exception {
         String name = "patternColorUncoloredLineGrayTest.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + name);
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + name);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
@@ -472,13 +508,14 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + name, sourceFolder + "cmp_" + name, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
+                SOURCE_FOLDER + "cmp_" + name, DESTINATION_FOLDER));
     }
 
     @Test
     public void patternColorColoredSetTwiceTest() throws Exception {
         String name = "patternColorColoredSetTwiceTest.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + name);
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + name);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
@@ -519,13 +556,14 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         int p2Count = countSubstringOccurrences(contentStreamString, "/P2 scn");
         Assert.assertEquals(1, p1Count);
         Assert.assertEquals(1, p2Count);
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + name, sourceFolder + "cmp_" + name, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
+                SOURCE_FOLDER + "cmp_" + name, DESTINATION_FOLDER));
     }
 
     @Test
     public void patternColorUncoloredSetTwiceTest() throws Exception {
         String name = "patternColorUncoloredSetTwiceTest.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + name);
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + name);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
@@ -572,7 +610,8 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         int p2Count = countSubstringOccurrences(contentStreamString, "/P2 scn");
         Assert.assertEquals(3, p1Count);
         Assert.assertEquals(2, p2Count);
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + name, sourceFolder + "cmp_" + name, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
+                SOURCE_FOLDER + "cmp_" + name, DESTINATION_FOLDER));
     }
 
     @Test

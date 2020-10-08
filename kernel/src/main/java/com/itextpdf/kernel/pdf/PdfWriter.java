@@ -552,6 +552,10 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * This method is invoked while deserialization
+     *
+     * @param in {@link java.io.ObjectInputStream} inputStream that is read during deserialization
+     * @throws IOException if I/O errors occur while writing to the underlying output stream
+     * @throws ClassNotFoundException if the class of a serialized object could not be found.
      */
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
         in.defaultReadObject();
@@ -562,6 +566,9 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * This method is invoked while serialization
+     *
+     * @param out {@link java.io.ObjectOutputStream} output stream to write object into
+     * @throws IOException if I/O errors occur while writing to the underlying output stream
      */
     private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
         if (duplicateStream == null) {

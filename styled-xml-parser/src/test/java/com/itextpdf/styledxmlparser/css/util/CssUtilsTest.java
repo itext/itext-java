@@ -43,17 +43,26 @@
 package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.layout.property.BlendMode;
+import com.itextpdf.styledxmlparser.CommonAttributeConstants;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
+import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
+import java.util.Set;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -352,5 +361,74 @@ public class CssUtilsTest extends ExtendedITextTest {
         junitExpectedException.expectMessage(LogMessageConstant.INCORRECT_RESOLUTION_UNIT_VALUE);
 
         CssUtils.parseResolution("10incorrectUnit");
+    }
+
+    @Test
+    public void elementNodeIsStyleSheetLink() {
+        Element element = new Element(Tag.valueOf("link"), "");
+        element.attr(CommonAttributeConstants.REL, CommonAttributeConstants.STYLESHEET);
+        JsoupElementNode elementNode = new JsoupElementNode(element);
+
+        Assert.assertTrue(CssUtils.isStyleSheetLink(elementNode));
+    }
+
+    @Test
+    public void elementNodeIsNotLink() {
+        Element element = new Element(Tag.valueOf("p"), "");
+        element.attr(CommonAttributeConstants.REL, CommonAttributeConstants.STYLESHEET);
+        JsoupElementNode elementNode = new JsoupElementNode(element);
+
+        Assert.assertFalse(CssUtils.isStyleSheetLink(elementNode));
+    }
+
+    @Test
+    public void elementNodeAttributeIsNotStylesheet() {
+        Element element = new Element(Tag.valueOf("link"), "");
+        element.attr(CommonAttributeConstants.REL, "");
+        JsoupElementNode elementNode = new JsoupElementNode(element);
+
+        Assert.assertFalse(CssUtils.isStyleSheetLink(elementNode));
+    }
+
+    @Test
+    public void splitStringWithCommaTest() {
+        Assert.assertEquals(new ArrayList<String>(), CssUtils.splitStringWithComma(null));
+        Assert.assertEquals(Arrays.asList("value1", "value2", "value3"),
+                CssUtils.splitStringWithComma("value1,value2,value3"));
+        Assert.assertEquals(Arrays.asList("value1", " value2", " value3"),
+                CssUtils.splitStringWithComma("value1, value2, value3"));
+        Assert.assertEquals(Arrays.asList("value1", "(value,with,comma)", "value3"),
+                CssUtils.splitStringWithComma("value1,(value,with,comma),value3"));
+        Assert.assertEquals(Arrays.asList("value1", "(val(ue,with,comma),value3"),
+                CssUtils.splitStringWithComma("value1,(val(ue,with,comma),value3"));
+        Assert.assertEquals(Arrays.asList("value1", "(value,with)", "comma)", "value3"),
+                CssUtils.splitStringWithComma("value1,(value,with),comma),value3"));
+        Assert.assertEquals(Arrays.asList("value1", "( v2,v3)", "(v4, v5)", "value3"),
+                CssUtils.splitStringWithComma("value1,( v2,v3),(v4, v5),value3"));
+        Assert.assertEquals(Arrays.asList("v.al*ue1\"", "( v2,v3)", "\"(v4,v5;);", "value3"),
+                CssUtils.splitStringWithComma("v.al*ue1\",( v2,v3),\"(v4,v5;);,value3"));
+    }
+
+    @Test
+    public void parseBlendModeTest() {
+        Assert.assertEquals(BlendMode.NORMAL, CssUtils.parseBlendMode(null));
+        Assert.assertEquals(BlendMode.NORMAL, CssUtils.parseBlendMode(CommonCssConstants.NORMAL));
+        Assert.assertEquals(BlendMode.MULTIPLY, CssUtils.parseBlendMode(CommonCssConstants.MULTIPLY));
+        Assert.assertEquals(BlendMode.SCREEN, CssUtils.parseBlendMode(CommonCssConstants.SCREEN));
+        Assert.assertEquals(BlendMode.OVERLAY, CssUtils.parseBlendMode(CommonCssConstants.OVERLAY));
+        Assert.assertEquals(BlendMode.DARKEN, CssUtils.parseBlendMode(CommonCssConstants.DARKEN));
+        Assert.assertEquals(BlendMode.LIGHTEN, CssUtils.parseBlendMode(CommonCssConstants.LIGHTEN));
+        Assert.assertEquals(BlendMode.COLOR_DODGE, CssUtils.parseBlendMode(CommonCssConstants.COLOR_DODGE));
+        Assert.assertEquals(BlendMode.COLOR_BURN, CssUtils.parseBlendMode(CommonCssConstants.COLOR_BURN));
+        Assert.assertEquals(BlendMode.HARD_LIGHT, CssUtils.parseBlendMode(CommonCssConstants.HARD_LIGHT));
+        Assert.assertEquals(BlendMode.SOFT_LIGHT, CssUtils.parseBlendMode(CommonCssConstants.SOFT_LIGHT));
+        Assert.assertEquals(BlendMode.DIFFERENCE, CssUtils.parseBlendMode(CommonCssConstants.DIFFERENCE));
+        Assert.assertEquals(BlendMode.EXCLUSION, CssUtils.parseBlendMode(CommonCssConstants.EXCLUSION));
+        Assert.assertEquals(BlendMode.HUE, CssUtils.parseBlendMode(CommonCssConstants.HUE));
+        Assert.assertEquals(BlendMode.SATURATION, CssUtils.parseBlendMode(CommonCssConstants.SATURATION));
+        Assert.assertEquals(BlendMode.COLOR, CssUtils.parseBlendMode(CommonCssConstants.COLOR));
+        Assert.assertEquals(BlendMode.LUMINOSITY, CssUtils.parseBlendMode(CommonCssConstants.LUMINOSITY));
+        Assert.assertEquals(BlendMode.NORMAL, CssUtils.parseBlendMode("invalid"));
+        Assert.assertEquals(BlendMode.NORMAL, CssUtils.parseBlendMode("SCREEN"));
     }
 }

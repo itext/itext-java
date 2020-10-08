@@ -113,6 +113,16 @@ public class BarcodeMSI extends Barcode1D {
     private static final int BARS_PER_CHARACTER = 12;
 
     /**
+     * The number of individual bars either drawn or not drawn for the start character in the BarcodeMSI.
+     */
+    private static final int BARS_FOR_START = 3;
+
+    /**
+     * The number of individual bars either drawn or not drawn for the stop character in the BarcodeMSI.
+     */
+    private static final int BARS_FOR_STOP = 4;
+
+    /**
      * Creates a new BarcodeMSI.
      * To generate the font the {@link PdfDocument#getDefaultFont()} will be implicitly called.
      * If you want to use this barcode in PDF/A documents, please consider using {@link #BarcodeMSI(PdfDocument, PdfFont)}.
@@ -162,12 +172,12 @@ public class BarcodeMSI extends Barcode1D {
             fontX = this.font.getWidth(this.altText != null ? this.altText : fullCode, this.size);
         }
 
-        int len = fCode.length() + 2;
+        int len = fCode.length();
         if (this.generateChecksum) {
             ++len;
         }
 
-        float fullWidth = (float) len * (6.0f * this.x + 3.0f * this.x * this.n) + (float) (len - 1) * this.x;
+        float fullWidth = (len * BARS_PER_CHARACTER + BARS_FOR_START + BARS_FOR_STOP) * x;
         fullWidth = Math.max(fullWidth, fontX);
         float fullHeight = this.barHeight + fontY;
         return new Rectangle(fullWidth, fullHeight);
@@ -232,7 +242,7 @@ public class BarcodeMSI extends Barcode1D {
         }
         int idx;
         idx = bCode.length();
-        float fullWidth = (float) ((idx + 2) * 11) * this.x + 2.0f * this.x;
+        final float fullWidth = (idx * BARS_PER_CHARACTER + BARS_FOR_START + BARS_FOR_STOP) * this.x;
         float barStartX = 0.0f;
         float textStartX = 0.0f;
         switch (this.textAlignment) {
