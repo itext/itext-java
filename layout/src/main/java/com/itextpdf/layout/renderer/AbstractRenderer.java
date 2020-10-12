@@ -98,6 +98,7 @@ import com.itextpdf.layout.property.UnitValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -2526,6 +2527,124 @@ public abstract class AbstractRenderer implements IRenderer {
     protected void endTransformationIfApplied(PdfCanvas canvas) {
         if (this.<Transform>getProperty(Property.TRANSFORM) != null) {
             canvas.restoreState();
+        }
+    }
+
+    /**
+     * Add the specified {@link IRenderer renderer} to the end of children list and update its
+     * parent link to {@code this}.
+     *
+     * @param child the {@link IRenderer child renderer} to be add
+     */
+    void addChildRenderer(IRenderer child) {
+        child.setParent(this);
+        this.childRenderers.add(child);
+    }
+
+    /**
+     * Add the specified collection of {@link IRenderer renderers} to the end of children list and
+     * update their parent links to {@code this}.
+     *
+     * @param children the collection of {@link IRenderer child renderers} to be add
+     */
+    void addAllChildRenderers(List<IRenderer> children) {
+        if (children == null) {
+            return;
+        }
+        setThisAsParent(children);
+        this.childRenderers.addAll(children);
+    }
+
+    /**
+     * Inserts the specified collection of {@link IRenderer renderers} at the specified space of
+     * children list and update their parent links to {@code this}.
+     *
+     * @param index index at which to insert the first element from the specified collection
+     * @param children the collection of {@link IRenderer child renderers} to be add
+     */
+    void addAllChildRenderers(int index, List<IRenderer> children) {
+        setThisAsParent(children);
+        this.childRenderers.addAll(index, children);
+    }
+
+    /**
+     * Set the specified collection of {@link IRenderer renderers} as the children for {@code this}
+     * element. That meant that the old collection would be cleaned, all parent links in old
+     * children to {@code this} would be erased (i.e. set to {@code null}) and then the specified
+     * list of children would be added similar to {@link AbstractRenderer#addAllChildRenderers(List)}.
+     *
+     *
+     * @param children the collection of children {@link IRenderer renderers} to be set
+     */
+    void setChildRenderers(List<IRenderer> children) {
+        removeThisFromParents(this.childRenderers);
+        this.childRenderers.clear();
+        addAllChildRenderers(children);
+    }
+
+    /**
+     * Remove the child {@link IRenderer renderer} at the specified place. If the removed renderer has
+     * the parent link set to {@code this} and it would not present in the children list after
+     * removal, then the parent link of the removed renderer would be erased (i.e. set to {@code null}.
+     *
+     * @param index the index of the renderer to be removed
+     * @return the removed renderer
+     */
+    IRenderer removeChildRenderer(int index) {
+        final IRenderer removed = this.childRenderers.remove(index);
+        removeThisFromParent(removed);
+        return removed;
+    }
+
+    /**
+     * Remove the children {@link IRenderer renderers} which are contains in the specified collection.
+     * If some of the removed renderers has the parent link set to {@code this}, then
+     * the parent link of the removed renderer would be erased (i.e. set to {@code null}.
+     *
+     * @param children the collections of renderers to be removed from children list
+     * @return {@code true} if the children list has been changed
+     */
+    boolean removeAllChildRenderers(Collection<IRenderer> children) {
+        removeThisFromParents(children);
+        return this.childRenderers.removeAll(children);
+    }
+
+    /**
+     * Update the child {@link IRenderer renderer} at the specified place with the specified one.
+     * If the removed renderer has the parent link set to {@code this}, then it would be erased
+     * (i.e. set to {@code null}).
+     *
+     * @param index the index of the renderer to be updated
+     * @param child the renderer to be set
+     * @return the removed renderer
+     */
+    IRenderer setChildRenderer(int index, IRenderer child) {
+        if (child != null) {
+            child.setParent(this);
+        }
+        final IRenderer removedElement = this.childRenderers.set(index, child);
+        removeThisFromParent(removedElement);
+        return removedElement;
+    }
+
+    private void setThisAsParent(Collection<IRenderer> children) {
+        for (final IRenderer child : children) {
+            child.setParent(this);
+        }
+    }
+
+    private void removeThisFromParent(IRenderer toRemove) {
+        // we need to be sure that the removed element has no other entries in child renderers list
+        if (toRemove != null && this == toRemove.getParent() && !this.childRenderers.contains(toRemove)) {
+            toRemove.setParent(null);
+        }
+    }
+
+    private void removeThisFromParents(Collection<IRenderer> children) {
+        for (final IRenderer child : children) {
+            if (child != null && this == child.getParent()) {
+                child.setParent(null);
+            }
         }
     }
 
