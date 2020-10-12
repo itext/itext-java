@@ -178,8 +178,7 @@ public class MemoryLimitsAwareHandler {
         if (considerCurrentPdfStream && memoryUsedForCurrentPdfStreamDecompression < numOfOccupiedBytes) {
             memoryUsedForCurrentPdfStreamDecompression = numOfOccupiedBytes;
             if (memoryUsedForCurrentPdfStreamDecompression > maxSizeOfSingleDecompressedPdfStream) {
-                throw new MemoryLimitsAwareException(
-                        PdfException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed);
+                throw new MemoryLimitsAwareException(PdfException.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED);
             }
         }
         return this;
@@ -206,8 +205,7 @@ public class MemoryLimitsAwareHandler {
     MemoryLimitsAwareHandler endDecompressedPdfStreamProcessing() {
         allMemoryUsedForDecompression += memoryUsedForCurrentPdfStreamDecompression;
         if (allMemoryUsedForDecompression > maxSizeOfDecompressedPdfStreamsSum) {
-            throw new MemoryLimitsAwareException(
-                    PdfException.DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed);
+            throw new MemoryLimitsAwareException(PdfException.DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED);
         }
         ensureCurrentStreamIsReset();
         considerCurrentPdfStream = false;

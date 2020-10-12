@@ -113,7 +113,7 @@ public class PdfCollectionItem extends PdfObjectWrapper<PdfDictionary> {
         PdfName fieldName = new PdfName(key);
         PdfObject obj = getPdfObject().get(fieldName);
         if (obj == null) {
-            throw new PdfException(PdfException.YouMustSetAValueBeforeAddingAPrefix);
+            throw new PdfException(PdfException.YOU_MUST_SET_A_VALUE_BEFORE_ADDING_A_PREFIX);
         }
         PdfDictionary subItem = new PdfDictionary();
         subItem.put(PdfName.D, obj);

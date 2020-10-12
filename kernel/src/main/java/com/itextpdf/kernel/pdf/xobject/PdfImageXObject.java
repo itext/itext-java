@@ -544,7 +544,7 @@ public class PdfImageXObject extends PdfXObject {
 
     private static ImageData checkImageType(ImageData image) {
         if (image instanceof WmfImageData) {
-            throw new PdfException(PdfException.CannotCreatePdfImageXObjectByWmfImage);
+            throw new PdfException(PdfException.CANNOT_CREATE_PDF_IMAGE_XOBJECT_BY_WMF_IMAGE);
         }
         return image;
     }

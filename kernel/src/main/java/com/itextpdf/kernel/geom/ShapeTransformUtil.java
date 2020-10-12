@@ -116,7 +116,7 @@ public final class ShapeTransformUtil {
             t.transform(points, 0, newPoints, 0, points.length);
             return newPoints;
         } catch (NoninvertibleTransformException e) {
-            throw new PdfException(PdfException.NoninvertibleMatrixCannotBeProcessed, e);
+            throw new PdfException(PdfException.NONINVERTIBLE_MATRIX_CANNOT_BE_PROCESSED, e);
         }
     }
 }

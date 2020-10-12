@@ -110,7 +110,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
                 md.update(new byte[]{(byte) 255, (byte) 255, (byte) 255,
                         (byte) 255});
         } catch (Exception e) {
-            throw new PdfException(PdfException.PdfEncryption, e);
+            throw new PdfException(PdfException.PDF_ENCRYPTION, e);
         }
 
         return md.digest();
@@ -144,7 +144,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
             }
             encryptionKey = md.digest();
         } catch (Exception f) {
-            throw new PdfException(PdfException.PdfDecryption, f);
+            throw new PdfException(PdfException.PDF_DECRYPTION, f);
         }
         return encryptionKey;
     }
@@ -162,7 +162,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         try {
             recipients = getEncodedRecipients();
         } catch (Exception e) {
-            throw new PdfException(PdfException.PdfEncryption, e);
+            throw new PdfException(PdfException.PDF_ENCRYPTION, e);
         }
         return recipients;
     }

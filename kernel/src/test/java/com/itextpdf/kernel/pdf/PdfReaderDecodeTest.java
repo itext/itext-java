@@ -151,7 +151,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(MemoryLimitsAwareException.class,
                     () -> PdfReader.decodeBytes(b, stream)
             );
-            Assert.assertEquals(PdfException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed, e.getMessage());
+            Assert.assertEquals(PdfException.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED, e.getMessage());
         }
     }
 
@@ -214,7 +214,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(MemoryLimitsAwareException.class,
                     () -> PdfReader.decodeBytes(b, stream)
             );
-            Assert.assertEquals(PdfException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed, e.getMessage());
+            Assert.assertEquals(PdfException.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED, e.getMessage());
         }
     }
 
@@ -288,7 +288,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(MemoryLimitsAwareException.class,
                     () -> PdfReader.decodeBytes(b, stream)
             );
-            Assert.assertEquals(PdfException.DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed, e.getMessage());
+            Assert.assertEquals(PdfException.DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED, e.getMessage());
         }
     }
 
@@ -309,7 +309,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(MemoryLimitsAwareException.class,
                     () -> pdfDocument.getFirstPage().getContentBytes()
             );
-            Assert.assertEquals(PdfException.DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed, e.getMessage());
+            Assert.assertEquals(PdfException.DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED, e.getMessage());
         }
     }
 
@@ -330,7 +330,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(MemoryLimitsAwareException.class,
                     () -> pdfDocument.getFirstPage().getContentBytes()
             );
-            Assert.assertEquals(PdfException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed, e.getMessage());
+            Assert.assertEquals(PdfException.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED, e.getMessage());
         }
     }
 }

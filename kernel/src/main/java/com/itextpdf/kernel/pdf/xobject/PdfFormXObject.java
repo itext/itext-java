@@ -131,7 +131,7 @@ public class PdfFormXObject extends PdfXObject {
     public static Rectangle calculateBBoxMultipliedByMatrix(PdfFormXObject form) {
         PdfArray pdfArrayBBox = form.getPdfObject().getAsArray(PdfName.BBox);
         if (pdfArrayBBox == null) {
-            throw new PdfException(PdfException.PdfFormXobjectHasInvalidBbox);
+            throw new PdfException(PdfException.PDF_FORM_XOBJECT_HAS_INVALID_BBOX);
         }
         float[] bBoxArray = pdfArrayBBox.toFloatArray();
         PdfArray pdfArrayMatrix = form.getPdfObject().getAsArray(PdfName.Matrix);
@@ -234,7 +234,7 @@ public class PdfFormXObject extends PdfXObject {
     public void flush() {
         resources = null;
         if (getPdfObject().get(PdfName.BBox) == null) {
-            throw new PdfException(PdfException.FormXObjectMustHaveBbox);
+            throw new PdfException(PdfException.FORM_XOBJECT_MUST_HAVE_BBOX);
         }
         super.flush();
     }

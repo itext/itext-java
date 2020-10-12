@@ -538,7 +538,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      */
     protected PdfStream getPdfFontStream(byte[] fontStreamBytes, int[] fontStreamLengths) {
         if (fontStreamBytes == null) {
-            throw new PdfException(PdfException.FontEmbeddingIssue);
+            throw new PdfException(PdfException.FONT_EMBEDDING_ISSUE);
         }
         PdfStream fontStream = new PdfStream(fontStreamBytes);
         makeObjectIndirect(fontStream);

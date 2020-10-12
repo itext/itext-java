@@ -207,7 +207,7 @@ public class FontProviderTest extends ExtendedITextTest {
                     .setFontFamily("ABRACADABRA_NO_FONT_PROVIDER_ANYWAY");
 
             Exception e = Assert.assertThrows(IllegalStateException.class, () -> doc.add(paragraph));
-            Assert.assertEquals(PdfException.FontProviderNotSetFontFamilyNotResolved, e.getMessage());
+            Assert.assertEquals(PdfException.FONT_PROVIDER_NOT_SET_FONT_FAMILY_NOT_RESOLVED, e.getMessage());
         }
     }
 }

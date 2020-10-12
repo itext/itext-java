@@ -101,7 +101,7 @@ class PdfObjectStream extends PdfStream {
      */
     public void addObject(PdfObject object) {
         if (size.intValue() == MAX_OBJ_STREAM_SIZE) {
-            throw new PdfException(PdfException.PdfObjectStreamReachMaxSize);
+            throw new PdfException(PdfException.PDF_OBJECT_STREAM_REACH_MAX_SIZE);
         }
         PdfOutputStream outputStream = getOutputStream();
         indexStream.writeInteger(object.getIndirectReference().getObjNumber()).

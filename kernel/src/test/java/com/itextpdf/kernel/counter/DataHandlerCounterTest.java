@@ -80,7 +80,7 @@ public class DataHandlerCounterTest extends ExtendedITextTest {
         counter.close();
 
         Exception e = Assert.assertThrows(IllegalStateException.class, () -> counter.onEvent(testEvent, null));
-        Assert.assertEquals(PdfException.DataHandlerCounterHasBeenDisabled, e.getMessage());
+        Assert.assertEquals(PdfException.DATA_HANDLER_COUNTER_HAS_BEEN_DISABLED, e.getMessage());
     }
 
     @Test

@@ -570,7 +570,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             mediaBox = (PdfArray) getInheritedValue(PdfName.MediaBox, PdfObject.ARRAY);
         }
         if (mediaBox == null) {
-            throw new PdfException(PdfException.CannotRetrieveMediaBoxAttribute);
+            throw new PdfException(PdfException.CANNOT_RETRIEVE_MEDIA_BOX_ATTRIBUTE);
         }
         int mediaBoxSize;
         if ((mediaBoxSize = mediaBox.size()) != 4) {
@@ -591,7 +591,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         PdfNumber urx = mediaBox.getAsNumber(2);
         PdfNumber ury = mediaBox.getAsNumber(3);
         if (llx == null || lly == null || urx == null || ury == null) {
-            throw new PdfException(PdfException.InvalidMediaBoxValue);
+            throw new PdfException(PdfException.INVALID_MEDIA_BOX_VALUE);
         }
         return new Rectangle(Math.min(llx.floatValue(), urx.floatValue()),
                 Math.min(lly.floatValue(), ury.floatValue()),
@@ -751,7 +751,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             }
             return baos.toByteArray();
         } catch (IOException ioe) {
-            throw new PdfException(PdfException.CannotGetContentBytes, ioe, this);
+            throw new PdfException(PdfException.CANNOT_GET_CONTENT_BYTES, ioe, this);
         }
     }
 
@@ -774,7 +774,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public int getNextMcid() {
         if (!getDocument().isTagged()) {
-            throw new PdfException(PdfException.MustBeATaggedDocument);
+            throw new PdfException(PdfException.MUST_BE_A_TAGGED_DOCUMENT);
         }
         if (mcid == -1) {
             PdfStructTreeRoot structTreeRoot = getDocument().getStructTreeRoot();
@@ -1010,7 +1010,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfPage setPageLabel(PageLabelNumberingStyle numberingStyle, String labelPrefix, int firstPage) {
         if (firstPage < 1)
-            throw new PdfException(PdfException.InAPageLabelThePageNumbersMustBeGreaterOrEqualTo1);
+            throw new PdfException(PdfException.IN_A_PAGE_LABEL_THE_PAGE_NUMBERS_MUST_BE_GREATER_OR_EQUAL_TO_1);
         PdfDictionary pageLabel = new PdfDictionary();
         if (numberingStyle != null) {
             switch (numberingStyle) {
@@ -1217,7 +1217,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             }
             getDocument().getStructTreeRoot().savePageStructParentIndexIfNeeded(this);
         } catch (Exception ex) {
-            throw new PdfException(PdfException.TagStructureFlushingFailedItMightBeCorrupted, ex);
+            throw new PdfException(PdfException.TAG_STRUCTURE_FLUSHING_FAILED_IT_MIGHT_BE_CORRUPTED, ex);
         }
     }
 

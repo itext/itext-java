@@ -381,7 +381,7 @@ public class PositioningTest extends ExtendedITextTest {
                     () -> doc.showTextAligned(new Paragraph("Hello Bruno on page 1!"), 36, 36, pageNumberToDrawTextOn,
                             TextAlignment.LEFT, VerticalAlignment.TOP, 0)
             );
-            Assert.assertEquals(PdfException.CannotDrawElementsOnAlreadyFlushedPages, e.getMessage());
+            Assert.assertEquals(PdfException.CANNOT_DRAW_ELEMENTS_ON_ALREADY_FLUSHED_PAGES, e.getMessage());
         }
     }
 

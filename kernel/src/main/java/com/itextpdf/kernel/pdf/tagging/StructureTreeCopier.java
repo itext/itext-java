@@ -156,7 +156,7 @@ class StructureTreeCopier {
                 PdfDictionary top = getTopmostParent(mcr);
                 if (top != null) {
                     if (top.isFlushed()) {
-                        throw new PdfException(PdfException.CannotMoveFlushedTag);
+                        throw new PdfException(PdfException.CANNOT_MOVE_FLUSHED_TAG);
                     }
                     topsToMove.add(top);
                 }
@@ -207,7 +207,7 @@ class StructureTreeCopier {
                     firstPartElems.add(mcr.getPdfObject());
                     PdfDictionary top = addAllParentsToSet(mcr, firstPartElems);
                     if (top != null && top.isFlushed()) {
-                        throw new PdfException(PdfException.TagFromTheExistingTagStructureIsFlushedCannotAddCopiedPageTags);
+                        throw new PdfException(PdfException.TAG_FROM_THE_EXISTING_TAG_STRUCTURE_IS_FLUSHED_CANNOT_ADD_COPIED_PAGE_TAGS);
                     }
                 }
             }
@@ -316,7 +316,7 @@ class StructureTreeCopier {
                     PdfDictionary top = addAllParentsToSet(mcr, objectsToCopy);
                     if (top != null) {
                         if (top.isFlushed()) {
-                            throw new PdfException(PdfException.CannotCopyFlushedTag);
+                            throw new PdfException(PdfException.CANNOT_COPY_FLUSHED_TAG);
                         }
                         if (!topsToFirstDestPage.containsKey(top)) {
                             topsToFirstDestPage.put(top, page.getValue().getPdfObject());
@@ -525,7 +525,7 @@ class StructureTreeCopier {
                         separateKids((PdfDictionary) kid, firstPartElems, lastCloned, document);
                     } else {
                         if (dictKid.isFlushed()) {
-                            throw new PdfException(PdfException.TagFromTheExistingTagStructureIsFlushedCannotAddCopiedPageTags);
+                            throw new PdfException(PdfException.TAG_FROM_THE_EXISTING_TAG_STRUCTURE_IS_FLUSHED_CANNOT_ADD_COPIED_PAGE_TAGS);
                         }
 
                         // elems with no kids will not be marked as from the first part,

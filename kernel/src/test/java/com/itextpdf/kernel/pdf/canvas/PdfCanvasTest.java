@@ -1163,7 +1163,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
         canvas.release();
         document.close();
-        Assert.assertEquals(PdfException.UnbalancedBeginEndMarkedContentOperators, message);
+        Assert.assertEquals(PdfException.UNBALANCED_BEGIN_END_MARKED_CONTENT_OPERATORS, message);
     }
 
     @Test

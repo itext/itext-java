@@ -63,7 +63,7 @@ public class CCITTFaxDecodeFilter implements IFilterHandler {
         PdfNumber wn = streamDictionary.getAsNumber(PdfName.Width);
         PdfNumber hn = streamDictionary.getAsNumber(PdfName.Height);
         if (wn == null || hn == null) {
-            throw new PdfException(PdfException.FilterCcittfaxdecodeIsOnlySupportedForImages);
+            throw new PdfException(PdfException.FILTER_CCITTFAXDECODE_IS_ONLY_SUPPORTED_FOR_IMAGES);
         }
         int width = wn.intValue();
         int height = hn.intValue();

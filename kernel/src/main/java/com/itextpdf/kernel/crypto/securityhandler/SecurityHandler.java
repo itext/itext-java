@@ -110,7 +110,7 @@ public abstract class SecurityHandler {
         try {
             md5 = MessageDigest.getInstance("MD5");
         } catch (Exception e) {
-            throw new PdfException(PdfException.PdfEncryption, e);
+            throw new PdfException(PdfException.PDF_ENCRYPTION, e);
         }
     }
 }

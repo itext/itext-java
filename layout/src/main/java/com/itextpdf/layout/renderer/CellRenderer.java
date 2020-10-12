@@ -123,7 +123,7 @@ public class CellRenderer extends BlockRenderer {
             try {
                 transform = transform.createInverse();
             } catch (NoninvertibleTransformException e) {
-                throw new PdfException(PdfException.NoninvertibleMatrixCannotBeProcessed, e);
+                throw new PdfException(PdfException.NONINVERTIBLE_MATRIX_CANNOT_BE_PROCESSED, e);
             }
             transform.concatenate(new AffineTransform());
             canvas.concatMatrix(transform);

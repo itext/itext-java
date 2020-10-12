@@ -98,7 +98,7 @@ public class ASCIIHexDecodeFilter extends MemoryLimitsAwareFilter {
             }
             int n = ByteBuffer.getHex(ch);
             if (n == -1) {
-                throw new PdfException(PdfException.IllegalCharacterInAsciihexdecode);
+                throw new PdfException(PdfException.ILLEGAL_CHARACTER_IN_ASCIIHEXDECODE);
             }
             if (first) {
                 n1 = n;

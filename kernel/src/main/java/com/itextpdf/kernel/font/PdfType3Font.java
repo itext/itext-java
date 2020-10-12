@@ -510,7 +510,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
     private void flushFontData() {
         if (((Type3Font) getFontProgram()).getNumberOfGlyphs() < 1) {
-            throw new PdfException(PdfException.NoGlyphsDefinedForType3Font);
+            throw new PdfException(PdfException.NO_GLYPHS_DEFINED_FOR_TYPE_3_FONT);
         }
         PdfDictionary charProcs = new PdfDictionary();
         for (int i = 0; i <= PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE; i++) {

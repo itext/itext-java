@@ -228,7 +228,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> pdfDoc.addPage(1, page)
         );
-        Assert.assertEquals(PdfException.FlushedPageCannotBeAddedOrInserted, e.getMessage());
+        Assert.assertEquals(PdfException.FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED, e.getMessage());
     }
 
     @Test
@@ -245,7 +245,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> pdfDoc.addPage(page)
         );
-        Assert.assertEquals(PdfException.FlushedPageCannotBeAddedOrInserted, e.getMessage());
+        Assert.assertEquals(PdfException.FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED, e.getMessage());
     }
 
     @Test

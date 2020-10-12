@@ -116,7 +116,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     protected PdfCatalog(PdfDictionary pdfObject) {
         super(pdfObject);
         if (pdfObject == null) {
-            throw new PdfException(PdfException.DocumentHasNoPdfCatalogObject);
+            throw new PdfException(PdfException.DOCUMENT_HAS_NO_PDF_CATALOG_OBJECT);
         }
         ensureObjectIsAddedToDocument(pdfObject);
         getPdfObject().put(PdfName.Type, PdfName.Catalog);

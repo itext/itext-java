@@ -167,19 +167,19 @@ public class BarcodeCodabar extends Barcode1D {
         text = text.toUpperCase();
         int len = text.length();
         if (len < 2) {
-            throw new IllegalArgumentException(PdfException.CodabarMustHaveAtLeastStartAndStopCharacter);
+            throw new IllegalArgumentException(PdfException.CODABAR_MUST_HAVE_AT_LEAST_START_AND_STOP_CHARACTER);
         }
         if (CHARS.indexOf(text.charAt(0)) < START_STOP_IDX || CHARS.indexOf(text.charAt(len - 1)) < START_STOP_IDX) {
-            throw new IllegalArgumentException(PdfException.CodabarMustHaveOneAbcdAsStartStopCharacter);
+            throw new IllegalArgumentException(PdfException.CODABAR_MUST_HAVE_ONE_ABCD_AS_START_STOP_CHARACTER);
         }
         byte[] bars = new byte[text.length() * 8 - 1];
         for (int k = 0; k < len; ++k) {
             int idx = CHARS.indexOf(text.charAt(k));
             if (idx >= START_STOP_IDX && k > 0 && k < len - 1) {
-                throw new IllegalArgumentException(PdfException.InCodabarStartStopCharactersAreOnlyAllowedAtTheExtremes);
+                throw new IllegalArgumentException(PdfException.IN_CODABAR_START_STOP_CHARACTERS_ARE_ONLY_ALLOWED_AT_THE_EXTREMES);
             }
             if (idx < 0) {
-                throw new IllegalArgumentException(PdfException.IllegalCharacterInCodabarBarcode);
+                throw new IllegalArgumentException(PdfException.ILLEGAL_CHARACTER_IN_CODABAR_BARCODE);
             }
             System.arraycopy(BARS[idx], 0, bars, k * 8, 7);
         }

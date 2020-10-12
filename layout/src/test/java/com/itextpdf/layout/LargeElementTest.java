@@ -1061,7 +1061,7 @@ public class LargeElementTest extends ExtendedITextTest {
             }
             doc.add(table);
         } catch (PdfException e) {
-            if (!e.getMessage().equals(PdfException.CannotAddCellToCompletedLargeTable)) {
+            if (!e.getMessage().equals(PdfException.CANNOT_ADD_CELL_TO_COMPLETED_LARGE_TABLE)) {
                 throw e;
             }
         }

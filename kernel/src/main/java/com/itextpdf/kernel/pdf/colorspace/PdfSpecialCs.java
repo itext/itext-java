@@ -125,7 +125,7 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
         public Separation(String name, PdfColorSpace alternateSpace, PdfFunction tintTransform) {
             this(new PdfName(name), alternateSpace.getPdfObject(), tintTransform.getPdfObject());
             if (!tintTransform.checkCompatibilityWithColorSpace(alternateSpace)) {
-                throw new PdfException(PdfException.FunctionIsNotCompatibleWitColorSpace, this);
+                throw new PdfException(PdfException.FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE, this);
             }
         }
 
@@ -170,7 +170,7 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
         public DeviceN(List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform) {
             this(new PdfArray(names, true), alternateSpace.getPdfObject(), tintTransform.getPdfObject());
             if (tintTransform.getInputSize() != getNumberOfComponents() || tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
-                throw new PdfException(PdfException.FunctionIsNotCompatibleWitColorSpace, this);
+                throw new PdfException(PdfException.FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE, this);
             }
         }
 
@@ -212,7 +212,7 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
         public NChannel(List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform, PdfDictionary attributes) {
             this(new PdfArray(names, true), alternateSpace.getPdfObject(), tintTransform.getPdfObject(), attributes);
             if (tintTransform.getInputSize() != 1 || tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
-                throw new PdfException(PdfException.FunctionIsNotCompatibleWitColorSpace, this);
+                throw new PdfException(PdfException.FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE, this);
             }
         }
 

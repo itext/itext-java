@@ -53,7 +53,7 @@ public class PdfFontFactoryTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> PdfFontFactory.createFont(fontProgram, PdfEncodings.UTF8, EmbeddingStrategy.FORCE_EMBEDDED)
         );
-        Assert.assertEquals(PdfException.CannotEmbedStandardFont, e.getMessage());
+        Assert.assertEquals(PdfException.CANNOT_EMBED_STANDARD_FONT, e.getMessage());
     }
 
     @Test
@@ -244,7 +244,7 @@ public class PdfFontFactoryTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> PdfFontFactory.createFont(fontProgram, PdfEncodings.IDENTITY_H, EmbeddingStrategy.FORCE_NOT_EMBEDDED)
         );
-        Assert.assertEquals(PdfException.CannotCreateType0FontWithTrueTypeFontProgramWithoutEmbedding, e.getMessage());
+        Assert.assertEquals(PdfException.CANNOT_CREATE_TYPE_0_FONT_WITH_TRUE_TYPE_FONT_PROGRAM_WITHOUT_EMBEDDING_IT, e.getMessage());
     }
 
     @Test
@@ -307,7 +307,7 @@ public class PdfFontFactoryTest extends ExtendedITextTest {
         PdfDictionary dictionary = null;
 
         Exception e = Assert.assertThrows(PdfException.class, () -> PdfFontFactory.createFont(dictionary));
-        Assert.assertEquals(PdfException.CannotCreateFontFromNullFontDictionary, e.getMessage());
+        Assert.assertEquals(PdfException.CANNOT_CREATE_FONT_FROM_NULL_PDF_DICTIONARY, e.getMessage());
     }
 
     @Test

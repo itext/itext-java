@@ -598,7 +598,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     public void movePage(int pageNumber, int insertBefore) {
         checkClosingStatus();
         if (insertBefore < 1 || insertBefore > getNumberOfPages() + 1) {
-            throw new IndexOutOfBoundsException(MessageFormatUtil.format(PdfException.RequestedPageNumberIsOutOfBounds, insertBefore));
+            throw new IndexOutOfBoundsException(MessageFormatUtil.format(PdfException.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, insertBefore));
         }
         PdfPage page = getPage(pageNumber);
         if (isTagged()) {
@@ -838,7 +838,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         try {
             if (writer != null) {
                 if (catalog.isFlushed()) {
-                    throw new PdfException(PdfException.CannotCloseDocumentWithAlreadyFlushedPdfCatalog);
+                    throw new PdfException(PdfException.CANNOT_CLOSE_DOCUMENT_WITH_ALREADY_FLUSHED_PDF_CATALOG);
                 }
                 updateProducerInInfoDictionary();
                 updateXmpMetadata();
@@ -996,7 +996,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             catalog.getPageTree().clearPageRefs();
             removeAllHandlers();
         } catch (IOException e) {
-            throw new PdfException(PdfException.CannotCloseDocument, e, this);
+            throw new PdfException(PdfException.CANNOT_CLOSE_DOCUMENT, e, this);
         } finally {
             if (writer != null && isCloseWriter()) {
                 try {
@@ -1090,7 +1090,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         checkClosingStatus();
         if (tagStructureContext == null) {
             if (!isTagged()) {
-                throw new PdfException(PdfException.MustBeATaggedDocument);
+                throw new PdfException(PdfException.MUST_BE_A_TAGGED_DOCUMENT);
             }
 
             initTagStructureContext();
@@ -1292,7 +1292,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     }
                     toDocument.getTagStructureContext().normalizeDocumentRootTag();
                 } catch (Exception ex) {
-                    throw new PdfException(PdfException.TagStructureCopyingFailedItMightBeCorruptedInOneOfTheDocuments, ex);
+                    throw new PdfException(PdfException.TAG_STRUCTURE_COPYING_FAILED_IT_MIGHT_BE_CORRUPTED_IN_ONE_OF_THE_DOCUMENTS, ex);
                 }
             } else {
                 Logger logger = LoggerFactory.getLogger(PdfDocument.class);
@@ -1627,17 +1627,17 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     public void setEncryptedPayload(PdfFileSpec fs) {
         if (getWriter() == null) {
-            throw new PdfException(PdfException.CannotSetEncryptedPayloadToDocumentOpenedInReadingMode);
+            throw new PdfException(PdfException.CANNOT_SET_ENCRYPTED_PAYLOAD_TO_DOCUMENT_OPENED_IN_READING_MODE);
         }
         if (writerHasEncryption()) {
-            throw new PdfException(PdfException.CannotSetEncryptedPayloadToEncryptedDocument);
+            throw new PdfException(PdfException.CANNOT_SET_ENCRYPTED_PAYLOAD_TO_ENCRYPTED_DOCUMENT);
         }
         if (!PdfName.EncryptedPayload.equals(((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship))) {
             LoggerFactory.getLogger(getClass()).error(LogMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_AFRELATIONSHIP_FILED_EQUAL_TO_ENCRYPTED_PAYLOAD);
         }
         PdfEncryptedPayload encryptedPayload = PdfEncryptedPayload.extractFrom(fs);
         if (encryptedPayload == null) {
-            throw new PdfException(PdfException.EncryptedPayloadFileSpecDoesntHaveEncryptedPayloadDictionary);
+            throw new PdfException(PdfException.ENCRYPTED_PAYLOAD_FILE_SPEC_DOES_NOT_HAVE_ENCRYPTED_PAYLOAD_DICTIONARY);
         }
         PdfCollection collection = getCatalog().getCollection();
         if (collection != null) {
@@ -1904,7 +1904,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             boolean embeddedStreamsSavedOnReading = false;
             if (reader != null) {
                 if (reader.pdfDocument != null) {
-                    throw new PdfException(PdfException.PdfReaderHasBeenAlreadyUtilized);
+                    throw new PdfException(PdfException.PDF_READER_HAS_BEEN_ALREADY_UTILIZED);
                 }
                 reader.pdfDocument = this;
                 memoryLimitsAwareHandler = reader.properties.memoryLimitsAwareHandler;
@@ -1939,7 +1939,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     tryInitTagStructure(str);
                 }
                 if (properties.appendMode && (reader.hasRebuiltXref() || reader.hasFixedXref()))
-                    throw new PdfException(PdfException.AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible);
+                    throw new PdfException(PdfException.APPEND_MODE_REQUIRES_A_DOCUMENT_WITHOUT_ERRORS_EVEN_IF_RECOVERY_WAS_POSSIBLE);
             }
             xref.initFreeReferencesList(this);
             if (writer != null) {
@@ -2054,7 +2054,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 }
             }
         } catch (IOException e) {
-            throw new PdfException(PdfException.CannotOpenDocument, e, this);
+            throw new PdfException(PdfException.CANNOT_OPEN_DOCUMENT, e, this);
         }
     }
 
@@ -2133,10 +2133,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     protected void checkAndAddPage(int index, PdfPage page) {
         if (page.isFlushed()) {
-            throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted, page);
+            throw new PdfException(PdfException.FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED, page);
         }
         if (page.getDocument() != null && this != page.getDocument()) {
-            throw new PdfException(PdfException.Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3).setMessageParams(page, this, page.getDocument());
+            throw new PdfException(PdfException.PAGE_1_CANNOT_BE_ADDED_TO_DOCUMENT_2_BECAUSE_IT_BELONGS_TO_DOCUMENT_3).setMessageParams(page, this, page.getDocument());
         }
         catalog.getPageTree().addPage(index, page);
     }
@@ -2148,9 +2148,9 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     protected void checkAndAddPage(PdfPage page) {
         if (page.isFlushed())
-            throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted, page);
+            throw new PdfException(PdfException.FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED, page);
         if (page.getDocument() != null && this != page.getDocument())
-            throw new PdfException(PdfException.Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3).setMessageParams(page, this, page.getDocument());
+            throw new PdfException(PdfException.PAGE_1_CANNOT_BE_ADDED_TO_DOCUMENT_2_BECAUSE_IT_BELONGS_TO_DOCUMENT_3).setMessageParams(page, this, page.getDocument());
         catalog.getPageTree().addPage(page);
     }
 
@@ -2159,7 +2159,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     protected void checkClosingStatus() {
         if (closed) {
-            throw new PdfException(PdfException.DocumentClosedItIsImpossibleToExecuteAction);
+            throw new PdfException(PdfException.DOCUMENT_CLOSED_IT_IS_IMPOSSIBLE_TO_EXECUTE_ACTION);
         }
     }
 
@@ -2236,7 +2236,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 structTreeRoot.flush();
             }
         } catch (Exception ex) {
-            throw new PdfException(PdfException.TagStructureFlushingFailedItMightBeCorrupted, ex);
+            throw new PdfException(PdfException.TAG_STRUCTURE_FLUSHING_FAILED_IT_MIGHT_BE_CORRUPTED, ex);
         }
     }
 

@@ -110,7 +110,7 @@ public final class PdfFontFactory {
      */
     public static PdfFont createFont(PdfDictionary fontDictionary) {
         if (fontDictionary == null) {
-            throw new PdfException(PdfException.CannotCreateFontFromNullFontDictionary);
+            throw new PdfException(PdfException.CANNOT_CREATE_FONT_FROM_NULL_PDF_DICTIONARY);
         }
         PdfObject subtypeObject = fontDictionary.get(PdfName.Subtype);
         if (PdfName.Type1.equals(subtypeObject)) {
@@ -125,7 +125,7 @@ public final class PdfFontFactory {
             // this very rare font type, that's why it was moved to the bottom of the if-else.
             return new PdfType1Font(fontDictionary);
         } else {
-            throw new PdfException(PdfException.DictionaryDoesntHaveSupportedFontData);
+            throw new PdfException(PdfException.DICTIONARY_DOES_NOT_HAVE_SUPPORTED_FONT_DATA);
         }
     }
 
@@ -931,7 +931,7 @@ public final class PdfFontFactory {
         switch (embeddingStrategy) {
             case FORCE_EMBEDDED:
                 if (fontProgram.isBuiltInFont()) {
-                    throw new PdfException(PdfException.CannotEmbedStandardFont);
+                    throw new PdfException(PdfException.CANNOT_EMBED_STANDARD_FONT);
                 }
                 embedded = true;
                 break;
@@ -944,7 +944,7 @@ public final class PdfFontFactory {
                 embedded = false;
                 break;
             default:
-                throw new PdfException(PdfException.UnsupportedFontEmbeddingStrategy);
+                throw new PdfException(PdfException.UNSUPPORTED_FONT_EMBEDDING_STRATEGY);
         }
         return new PdfType1Font(fontProgram, encoding, embedded);
     }
@@ -952,7 +952,7 @@ public final class PdfFontFactory {
     private static PdfType0Font createType0FontFromTrueTypeFontProgram(TrueTypeFont fontProgram, String encoding,
             EmbeddingStrategy embeddingStrategy) {
         if (!fontProgram.getFontNames().allowEmbedding()) {
-            throw new PdfException(PdfException.CannotBeEmbeddedDueToLicensingRestrictions).setMessageParams(
+            throw new PdfException(PdfException.CANNOT_BE_EMBEDDED_DUE_TO_LICENSING_RESTRICTIONS).setMessageParams(
                     fontProgram.getFontNames().getFontName() + fontProgram.getFontNames().getStyle());
         }
         switch (embeddingStrategy) {
@@ -962,9 +962,9 @@ public final class PdfFontFactory {
                 // always embedded
                 return new PdfType0Font(fontProgram, encoding);
             case FORCE_NOT_EMBEDDED:
-                throw new PdfException(PdfException.CannotCreateType0FontWithTrueTypeFontProgramWithoutEmbedding);
+                throw new PdfException(PdfException.CANNOT_CREATE_TYPE_0_FONT_WITH_TRUE_TYPE_FONT_PROGRAM_WITHOUT_EMBEDDING_IT);
             default:
-                throw new PdfException(PdfException.UnsupportedFontEmbeddingStrategy);
+                throw new PdfException(PdfException.UNSUPPORTED_FONT_EMBEDDING_STRATEGY);
         }
     }
 
@@ -974,7 +974,7 @@ public final class PdfFontFactory {
         switch (embeddingStrategy) {
             case FORCE_EMBEDDED:
                 if (!fontProgram.getFontNames().allowEmbedding()) {
-                    throw new PdfException(PdfException.CannotBeEmbeddedDueToLicensingRestrictions).setMessageParams(
+                    throw new PdfException(PdfException.CANNOT_BE_EMBEDDED_DUE_TO_LICENSING_RESTRICTIONS).setMessageParams(
                                     fontProgram.getFontNames().getFontName() + fontProgram.getFontNames().getStyle());
                 }
                 embedded = true;
@@ -987,7 +987,7 @@ public final class PdfFontFactory {
                 embedded = false;
                 break;
             default:
-                throw new PdfException(PdfException.UnsupportedFontEmbeddingStrategy);
+                throw new PdfException(PdfException.UNSUPPORTED_FONT_EMBEDDING_STRATEGY);
         }
         return new PdfTrueTypeFont(fontProgram, encoding, embedded);
     }
@@ -999,14 +999,14 @@ public final class PdfFontFactory {
         }
         switch (embeddingStrategy) {
             case FORCE_EMBEDDED:
-                throw new PdfException(PdfException.CannotEmbedType0FontWithCidFontProgram);
+                throw new PdfException(PdfException.CANNOT_EMBED_TYPE_0_FONT_WITH_CID_FONT_PROGRAM);
             case PREFER_EMBEDDED:
             case PREFER_NOT_EMBEDDED:
             case FORCE_NOT_EMBEDDED:
                 // always not embedded
                 return new PdfType0Font(fontProgram, encoding);
             default:
-                throw new PdfException(PdfException.UnsupportedFontEmbeddingStrategy);
+                throw new PdfException(PdfException.UNSUPPORTED_FONT_EMBEDDING_STRATEGY);
         }
     }
 
@@ -1035,5 +1035,21 @@ public final class PdfFontFactory {
          * Not embedding fonts if possible.
          */
         PREFER_NOT_EMBEDDED
+    }
+
+    /**
+     * Checks if the provided dictionary is a valid font dictionary of the provided font type.
+     *
+     * @return <code>true</code> if the passed dictionary is a valid dictionary, <code>false</code> otherwise
+     */
+    private static boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType, boolean isException) {
+        if (fontDic == null || fontDic.get(PdfName.Subtype) == null
+                || !fontDic.get(PdfName.Subtype).equals(fontType)) {
+            if (isException) {
+                throw new PdfException(PdfException.DICTIONARY_DOES_NOT_HAVE_1_FONT_DATA).setMessageParams(fontType.getValue());
+            }
+            return false;
+        }
+        return true;
     }
 }

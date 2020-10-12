@@ -131,7 +131,7 @@ public abstract class PdfObjectWrapper<T extends PdfObject> {
 
     protected void ensureUnderlyingObjectHasIndirectReference() {
         if (getPdfObject().getIndirectReference() == null) {
-            throw new PdfException(PdfException.ToFlushThisWrapperUnderlyingObjectMustBeAddedToDocument);
+            throw new PdfException(PdfException.TO_FLUSH_THIS_WRAPPER_UNDERLYING_OBJECT_MUST_BE_ADDED_TO_DOCUMENT);
         }
     }
 
@@ -153,7 +153,7 @@ public abstract class PdfObjectWrapper<T extends PdfObject> {
      */
     protected static void ensureObjectIsAddedToDocument(PdfObject object) {
         if (object.getIndirectReference() == null) {
-            throw new PdfException(PdfException.ObjectMustBeIndirectToWorkWithThisWrapper);
+            throw new PdfException(PdfException.OBJECT_MUST_BE_INDIRECT_TO_WORK_WITH_THIS_WRAPPER);
         }
     }
 

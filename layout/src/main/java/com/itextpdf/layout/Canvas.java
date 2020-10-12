@@ -290,7 +290,7 @@ public class Canvas extends RootElement<Canvas> {
 
     private static PdfCanvas initPdfCanvasOrThrowIfPageIsFlushed(PdfPage page) {
         if (page.isFlushed()) {
-            throw new PdfException(PdfException.CannotDrawElementsOnAlreadyFlushedPages);
+            throw new PdfException(PdfException.CANNOT_DRAW_ELEMENTS_ON_ALREADY_FLUSHED_PAGES);
         }
         return new PdfCanvas(page);
     }

@@ -192,7 +192,7 @@ public class LtvVerification {
      */
     public boolean addVerification(String signatureName, IOcspClient ocsp, ICrlClient crl, CertificateOption certOption, Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
         if (used)
-            throw new IllegalStateException(PdfException.VerificationAlreadyOutput);
+            throw new IllegalStateException(PdfException.VERIFICATION_ALREADY_OUTPUT);
         PdfPKCS7 pk = sgnUtil.readSignatureData(signatureName, securityProviderCode);
         LOGGER.info("Adding verification for " + signatureName);
         Certificate[] xc = pk.getCertificates();
@@ -279,7 +279,7 @@ public class LtvVerification {
      */
     public boolean addVerification(String signatureName, Collection<byte[]> ocsps, Collection<byte[]> crls, Collection<byte[]> certs) throws IOException, GeneralSecurityException {
         if (used)
-            throw new IllegalStateException(PdfException.VerificationAlreadyOutput);
+            throw new IllegalStateException(PdfException.VERIFICATION_ALREADY_OUTPUT);
         ValidationData vd = new ValidationData();
         if (ocsps != null) {
             for (byte[] ocsp : ocsps) {

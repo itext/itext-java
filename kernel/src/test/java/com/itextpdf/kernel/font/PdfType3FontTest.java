@@ -182,7 +182,7 @@ public class PdfType3FontTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> type3Font.flush()
         );
-        Assert.assertEquals(PdfException.NoGlyphsDefinedForType3Font, e.getMessage());
+        Assert.assertEquals(PdfException.NO_GLYPHS_DEFINED_FOR_TYPE_3_FONT, e.getMessage());
     }
 
     @Test

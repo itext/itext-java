@@ -341,7 +341,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> document.add(customRolePara)
             );
-            Assert.assertEquals(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole,
+            Assert.assertEquals(MessageFormat.format(PdfException.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
                     "p", "http://iso.org/pdf/ssn"), e.getMessage());
         }
     }
@@ -365,7 +365,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> document.add(customRolePara)
             );
-            Assert.assertEquals(MessageFormat.format(PdfException.RoleIsNotMappedToAnyStandardRole, "p"),
+            Assert.assertEquals(MessageFormat.format(PdfException.ROLE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE, "p"),
                     e.getMessage());
         }
     }
@@ -382,7 +382,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
             customRolePara.getAccessibilityProperties().setRole(HtmlRoles.p);
 
             Exception e = Assert.assertThrows(PdfException.class, () -> document.add(customRolePara));
-            Assert.assertEquals(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole,
+            Assert.assertEquals(MessageFormat.format(PdfException.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
                     "p", "http://iso.org/pdf2/ssn"), e.getMessage());
         }
     }
@@ -433,7 +433,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
             // not explicitly setting namespace that we've manually created. This will lead to the situation, when
             // /Namespaces entry in StructTreeRoot would have two different namespace dictionaries with the same name.
             Exception e = Assert.assertThrows(PdfException.class, () -> document.add(customRolePara2));
-            Assert.assertEquals(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole,
+            Assert.assertEquals(MessageFormat.format(PdfException.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
                     "p", "http://iso.org/pdf2/ssn"), e.getMessage());
         }
     }
@@ -496,7 +496,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
             customRolePText1.getAccessibilityProperties().setNamespace(stdNs2);
 
             Exception e = Assert.assertThrows(PdfException.class, () -> document.add(new Paragraph(customRolePText1)));
-            Assert.assertEquals(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole,
+            Assert.assertEquals(MessageFormat.format(PdfException.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
                     "span", "http://iso.org/pdf2/ssn"), e.getMessage());
         }
     }
@@ -513,7 +513,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
             h9Para.getAccessibilityProperties().setRole("H9");
 
             Exception e = Assert.assertThrows(PdfException.class, () -> document.add(h9Para));
-            Assert.assertEquals(MessageFormat.format(PdfException.RoleIsNotMappedToAnyStandardRole, "H9"), e.getMessage());
+            Assert.assertEquals(MessageFormat.format(PdfException.ROLE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE, "H9"), e.getMessage());
         }
     }
 

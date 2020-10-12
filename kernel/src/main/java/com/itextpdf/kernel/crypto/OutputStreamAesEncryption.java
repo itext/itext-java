@@ -66,7 +66,7 @@ public class OutputStreamAesEncryption extends OutputStreamEncryption {
         try {
             write(iv);
         } catch (IOException e) {
-            throw new PdfException(PdfException.PdfEncryption, e);
+            throw new PdfException(PdfException.PDF_ENCRYPTION, e);
         }
     }
 
@@ -122,7 +122,7 @@ public class OutputStreamAesEncryption extends OutputStreamEncryption {
             try {
                 out.write(b, 0, b.length);
             } catch (IOException e) {
-                throw new PdfException(PdfException.PdfEncryption, e);
+                throw new PdfException(PdfException.PDF_ENCRYPTION, e);
             }
         }
     }

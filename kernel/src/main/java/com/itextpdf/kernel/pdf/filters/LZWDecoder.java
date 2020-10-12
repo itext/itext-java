@@ -84,7 +84,7 @@ public class LZWDecoder {
     public void decode(byte[] data, OutputStream uncompData) {
 
         if (data[0] == (byte) 0x00 && data[1] == (byte) 0x01) {
-            throw new PdfException(PdfException.LzwFlavourNotSupported);
+            throw new PdfException(PdfException.LZW_FLAVOUR_NOT_SUPPORTED);
         }
 
         initializeStringTable();
@@ -164,7 +164,7 @@ public class LZWDecoder {
         try {
             uncompData.write(string);
         } catch (IOException e) {
-            throw new PdfException(PdfException.LzwDecoderException, e);
+            throw new PdfException(PdfException.LZW_DECODER_EXCEPTION, e);
         }
     }
 

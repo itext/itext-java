@@ -85,7 +85,7 @@ public class PdfObjRef extends PdfMcr {
     private static PdfDocument getDocEnsureIndirect(PdfStructElem structElem) {
         PdfIndirectReference indRef = structElem.getPdfObject().getIndirectReference();
         if (indRef == null) {
-            throw new PdfException(PdfException.StructureElementDictionaryShallBeAnIndirectObjectInOrderToHaveChildren);
+            throw new PdfException(PdfException.STRUCTURE_ELEMENT_DICTIONARY_SHALL_BE_AN_INDIRECT_OBJECT_IN_ORDER_TO_HAVE_CHILDREN);
         }
         return indRef.getDocument();
     }

@@ -84,6 +84,6 @@ public class IccBased extends Color {
     public IccBased(InputStream iccStream, float[] range, float[] value) {
         this(new PdfCieBasedCs.IccBased(iccStream, range), value);
         if (getNumberOfComponents() * 2 != range.length)
-            throw new PdfException(PdfException.InvalidRangeArray, this);
+            throw new PdfException(PdfException.INVALID_RANGE_ARRAY, this);
     }
 }

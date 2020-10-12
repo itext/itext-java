@@ -251,7 +251,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     public void openEncryptedDocWithoutPassword() throws IOException {
         try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithPasswordStandard40.pdf")) {
             Exception e = Assert.assertThrows(BadPasswordException.class, () -> new PdfDocument(reader));
-            Assert.assertEquals(BadPasswordException.BadUserPassword, e.getMessage());
+            Assert.assertEquals(BadPasswordException.BAD_USER_PASSWORD, e.getMessage());
         }
     }
 
@@ -261,7 +261,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                 new ReaderProperties().setPassword("wrong_password".getBytes(StandardCharsets.ISO_8859_1)))) {
 
             Exception e = Assert.assertThrows(BadPasswordException.class, () -> new PdfDocument(reader));
-            Assert.assertEquals(BadPasswordException.BadUserPassword, e.getMessage());
+            Assert.assertEquals(BadPasswordException.BAD_USER_PASSWORD, e.getMessage());
         }
     }
 
@@ -270,7 +270,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf")) {
 
             Exception e = Assert.assertThrows(PdfException.class, () -> new PdfDocument(reader));
-            Assert.assertEquals(PdfException.CertificateIsNotProvidedDocumentIsEncryptedWithPublicKeyCertificate,
+            Assert.assertEquals(PdfException.CERTIFICATE_IS_NOT_PROVIDED_DOCUMENT_IS_ENCRYPTED_WITH_PUBLIC_KEY_CERTIFICATE,
                     e.getMessage());
         }
     }
@@ -288,7 +288,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> new PdfDocument(reader)
             );
-            Assert.assertEquals(PdfException.BadCertificateAndKey, e.getMessage());
+            Assert.assertEquals(PdfException.BAD_CERTIFICATE_AND_KEY, e.getMessage());
         }
     }
 
@@ -305,7 +305,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> new PdfDocument(reader)
             );
-            Assert.assertEquals(PdfException.BadCertificateAndKey, e.getMessage());
+            Assert.assertEquals(PdfException.BAD_CERTIFICATE_AND_KEY, e.getMessage());
         }
     }
 
@@ -322,7 +322,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> new PdfDocument(reader)
             );
-            Assert.assertEquals(PdfException.PdfDecryption, e.getMessage());
+            Assert.assertEquals(PdfException.PDF_DECRYPTION, e.getMessage());
         }
     }
 
@@ -339,7 +339,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> new PdfDocument(reader)
             );
-            Assert.assertEquals(PdfException.BadCertificateAndKey, e.getMessage());
+            Assert.assertEquals(PdfException.BAD_CERTIFICATE_AND_KEY, e.getMessage());
         }
     }
 

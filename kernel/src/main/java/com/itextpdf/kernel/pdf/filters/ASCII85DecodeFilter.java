@@ -105,7 +105,7 @@ public class ASCII85DecodeFilter extends MemoryLimitsAwareFilter {
                 continue;
             }
             if (ch < '!' || ch > 'u') {
-                throw new PdfException(PdfException.IllegalCharacterInAscii85decode);
+                throw new PdfException(PdfException.ILLEGAL_CHARACTER_IN_ASCII85DECODE);
             }
             chn[state] = ch - '!';
             ++state;

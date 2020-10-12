@@ -344,7 +344,7 @@ public class PdfA1Checker extends PdfAChecker {
                     }
                 }
             } catch (IOException e) {
-                throw new PdfException(PdfException.CannotParseContentStream, e);
+                throw new PdfException(PdfException.CANNOT_PARSE_CONTENT_STREAM, e);
             }
         }
     }

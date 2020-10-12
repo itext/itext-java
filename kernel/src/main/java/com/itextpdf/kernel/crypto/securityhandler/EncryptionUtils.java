@@ -100,7 +100,7 @@ final class EncryptionUtils {
         try {
             certHolder = new X509CertificateHolder(certificate.getEncoded());
         } catch (Exception f) {
-            throw new PdfException(PdfException.PdfDecryption, f);
+            throw new PdfException(PdfException.PDF_DECRYPTION, f);
         }
         if (externalDecryptionProcess == null) {
             for (int i = 0; i < recipients.size(); i++) {
@@ -118,7 +118,7 @@ final class EncryptionUtils {
                         }
                     }
                 } catch (Exception f) {
-                    throw new PdfException(PdfException.PdfDecryption, f);
+                    throw new PdfException(PdfException.PDF_DECRYPTION, f);
                 }
             }
         } else {
@@ -133,13 +133,13 @@ final class EncryptionUtils {
                         foundRecipient = true;
                     }
                 } catch (Exception f) {
-                    throw new PdfException(PdfException.PdfDecryption, f);
+                    throw new PdfException(PdfException.PDF_DECRYPTION, f);
                 }
             }
         }
 
         if (!foundRecipient || envelopedData == null) {
-            throw new PdfException(PdfException.BadCertificateAndKey);
+            throw new PdfException(PdfException.BAD_CERTIFICATE_AND_KEY);
         }
         return envelopedData;
     }

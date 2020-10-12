@@ -152,11 +152,11 @@ public class PdfCanvasParser {
         PdfDictionary dic = new PdfDictionary();
         while (true) {
             if (!nextValidToken())
-                throw new PdfException(PdfException.UnexpectedEndOfFile);
+                throw new PdfException(PdfException.UNEXPECTED_END_OF_FILE);
             if (tokeniser.getTokenType() == PdfTokenizer.TokenType.EndDic)
                 break;
             if (tokeniser.getTokenType() != PdfTokenizer.TokenType.Name)
-                tokeniser.throwError(PdfException.DictionaryKey1IsNotAName, tokeniser.getStringValue());
+                tokeniser.throwError(PdfException.DICTIONARY_KEY_1_IS_NOT_A_NAME, tokeniser.getStringValue());
             PdfName name = new PdfName(tokeniser.getStringValue());
             PdfObject obj = readObject();
             dic.put(name, obj);
@@ -176,7 +176,7 @@ public class PdfCanvasParser {
             if (!obj.isArray() && tokeniser.getTokenType() == PdfTokenizer.TokenType.EndArray)
                 break;
             if (tokeniser.getTokenType() == PdfTokenizer.TokenType.EndDic && obj.getType() != PdfObject.DICTIONARY)
-                tokeniser.throwError(PdfException.UnexpectedGtGt);
+                tokeniser.throwError(PdfException.UNEXPECTED_GT_GT);
             array.add(obj);
         }
         return array;

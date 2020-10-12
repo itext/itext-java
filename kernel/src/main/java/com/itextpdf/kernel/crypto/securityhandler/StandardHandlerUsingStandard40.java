@@ -211,7 +211,7 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
             userKey = computeUserKey();
             // computed user key should be equal to uValue
             if (isValidPassword(uValue, userKey)) {
-                throw new BadPasswordException(PdfException.BadUserPassword);
+                throw new BadPasswordException(PdfException.BAD_USER_PASSWORD);
             }
             usedOwnerPassword = false;
         }

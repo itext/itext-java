@@ -213,13 +213,13 @@ class ParentTreeHandler {
             PdfDictionary obj = ((PdfDictionary) mcr.getPdfObject()).getAsDictionary(PdfName.Obj);
             if (obj == null || obj.isFlushed()) {
                 throw new PdfException(
-                        PdfException.WhenAddingObjectReferenceToTheTagTreeItMustBeConnectedToNotFlushedObject);
+                        PdfException.WHEN_ADDING_OBJECT_REFERENCE_TO_THE_TAG_TREE_IT_MUST_BE_CONNECTED_TO_NOT_FLUSHED_OBJECT);
             }
             PdfNumber n = obj.getAsNumber(PdfName.StructParent);
             if (n != null) {
                 pageMcrs.putObjectReferenceMcr(n.intValue(), mcr);
             } else {
-                throw new PdfException(PdfException.StructParentIndexNotFoundInTaggedObject);
+                throw new PdfException(PdfException.STRUCT_PARENT_INDEX_NOT_FOUND_IN_TAGGED_OBJECT);
             }
         } else {
             pageMcrs.putPageContentStreamMcr(mcr.getMcid(), mcr);
@@ -238,7 +238,7 @@ class ParentTreeHandler {
             return;
         }
         if (pageDict.isFlushed()) {
-            throw new PdfException(PdfException.CannotRemoveMarkedContentReferenceBecauseItsPageWasAlreadyFlushed);
+            throw new PdfException(PdfException.CANNOT_REMOVE_MARKED_CONTENT_REFERENCE_BECAUSE_ITS_PAGE_WAS_ALREADY_FLUSHED);
         }
         PageMcrsContainer pageMcrs = pageToPageMcrs.get(pageDict.getIndirectReference());
         if (pageMcrs != null) {

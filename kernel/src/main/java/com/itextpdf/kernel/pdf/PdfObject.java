@@ -182,7 +182,7 @@ public abstract class PdfObject {
                         && getType() != INDIRECT_REFERENCE && getIndirectReference().getGenNumber() == 0);
             }
         } catch (IOException e) {
-            throw new PdfException(PdfException.CannotFlushObject, e, this);
+            throw new PdfException(PdfException.CANNOT_FLUSH_OBJECT, e, this);
         }
     }
 
@@ -225,7 +225,7 @@ public abstract class PdfObject {
             return this;
         }
         if (document.getWriter() == null) {
-            throw new PdfException(PdfException.ThereIsNoAssociatePdfWriterForMakingIndirects);
+            throw new PdfException(PdfException.THERE_IS_NO_ASSOCIATE_PDF_WRITER_FOR_MAKING_INDIRECTS);
         }
         if (reference == null) {
             indirectReference = document.createNextIndirectReference();
@@ -312,12 +312,12 @@ public abstract class PdfObject {
      */
     public PdfObject copyTo(PdfDocument document, boolean allowDuplicating) {
         if (document == null)
-            throw new PdfException(PdfException.DocumentForCopyToCannotBeNull);
+            throw new PdfException(PdfException.DOCUMENT_FOR_COPY_TO_CANNOT_BE_NULL);
 
         if (indirectReference != null) {
             // TODO checkState(MUST_BE_INDIRECT) now is always false, because indirectReference != null. See also DEVSIX-602
             if (indirectReference.getWriter() != null || checkState(MUST_BE_INDIRECT)) {
-                throw new PdfException(PdfException.CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten);
+                throw new PdfException(PdfException.CANNOT_COPY_INDIRECT_OBJECT_FROM_THE_DOCUMENT_THAT_IS_BEING_WRITTEN);
             }
             if (!indirectReference.getReader().isOpenedWithFullPermission()) {
                 throw new BadPasswordException(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);
@@ -528,7 +528,7 @@ public abstract class PdfObject {
      */
     protected void copyContent(PdfObject from, PdfDocument document) {
         if (isFlushed())
-            throw new PdfException(PdfException.CannotCopyFlushedObject, this);
+            throw new PdfException(PdfException.CANNOT_COPY_FLUSHED_OBJECT, this);
     }
 
     /**
@@ -552,7 +552,7 @@ public abstract class PdfObject {
             //copyTo case
             PdfWriter writer = documentTo.getWriter();
             if (writer == null)
-                throw new PdfException(PdfException.CannotCopyToDocumentOpenedInReadingMode);
+                throw new PdfException(PdfException.CANNOT_COPY_TO_DOCUMENT_OPENED_IN_READING_MODE);
             return writer.copyObject(this, documentTo, allowDuplicating);
 
         } else {

@@ -159,7 +159,7 @@ final class SignUtils {
     static InputStream getHttpResponse(URL urlt) throws IOException {
         HttpURLConnection con = (HttpURLConnection)urlt.openConnection();
         if (con.getResponseCode() / 100 != 2) {
-            throw new PdfException(PdfException.InvalidHttpResponse1).setMessageParams(con.getResponseCode());
+            throw new PdfException(PdfException.INVALID_HTTP_RESPONSE_1).setMessageParams(con.getResponseCode());
         }
         return (InputStream) con.getContent();
     }
@@ -196,7 +196,7 @@ final class SignUtils {
         dataOut.flush();
         dataOut.close();
         if (con.getResponseCode() / 100 != 2) {
-            throw new PdfException(PdfException.InvalidHttpResponse1).setMessageParams(con.getResponseCode());
+            throw new PdfException(PdfException.INVALID_HTTP_RESPONSE_1).setMessageParams(con.getResponseCode());
         }
         //Get Response
         return (InputStream) con.getContent();
@@ -263,7 +263,7 @@ final class SignUtils {
             tsaConnection = url.openConnection();
         }
         catch (IOException ioe) {
-            throw new PdfException(PdfException.FailedToGetTsaResponseFrom1).setMessageParams(tsaUrl);
+            throw new PdfException(PdfException.FAILED_TO_GET_TSA_RESPONSE_FROM_1).setMessageParams(tsaUrl);
         }
         tsaConnection.setDoInput(true);
         tsaConnection.setDoOutput(true);

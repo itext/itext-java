@@ -770,7 +770,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     private static ImageData checkImageType(ImageData image) {
         if (image instanceof WmfImageData) {
-            throw new PdfException(PdfException.CannotCreateLayoutImageByWmfImage);
+            throw new PdfException(PdfException.CANNOT_CREATE_LAYOUT_IMAGE_BY_WMF_IMAGE);
         }
         return image;
     }

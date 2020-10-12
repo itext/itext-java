@@ -111,11 +111,11 @@ public class PdfType0Font extends PdfFont {
     PdfType0Font(TrueTypeFont ttf, String cmap) {
         super();
         if (!PdfEncodings.IDENTITY_H.equals(cmap) && !PdfEncodings.IDENTITY_V.equals(cmap)) {
-            throw new PdfException(PdfException.OnlyIdentityCMapsSupportsWithTrueType);
+            throw new PdfException(PdfException.ONLY_IDENTITY_CMAPS_SUPPORTS_WITH_TRUETYPE);
         }
 
         if (!ttf.getFontNames().allowEmbedding()) {
-            throw new PdfException(PdfException.CannotBeEmbeddedDueToLicensingRestrictions)
+            throw new PdfException(PdfException.CANNOT_BE_EMBEDDED_DUE_TO_LICENSING_RESTRICTIONS)
                     .setMessageParams(ttf.getFontNames().getFontName() + ttf.getFontNames().getStyle());
         }
         this.fontProgram = ttf;
@@ -197,7 +197,7 @@ public class PdfType0Font extends PdfFont {
                 }
             }
             if (fontProgram == null) {
-                throw new PdfException(MessageFormatUtil.format(PdfException.CannotRecogniseDocumentFontWithEncoding, cidFontName, cmap));
+                throw new PdfException(MessageFormatUtil.format(PdfException.CANNOT_RECOGNISE_DOCUMENT_FONT_WITH_ENCODING, cidFontName, cmap));
             }
         }
         // DescendantFonts is a one-element array specifying the CIDFont dictionary that is the descendant of this Type 0 font.

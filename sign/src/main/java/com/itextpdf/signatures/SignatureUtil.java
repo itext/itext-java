@@ -507,7 +507,7 @@ public class SignatureUtil {
                     break;
                 }
                 if (tokens.getTokenType() != PdfTokenizer.TokenType.Name) {
-                    tokens.throwError(PdfException.DictionaryKey1IsNotAName, tokens.getStringValue());
+                    tokens.throwError(PdfException.DICTIONARY_KEY_1_IS_NOT_A_NAME, tokens.getStringValue());
                 }
                 PdfName name = readPdfName(true);
                 PdfObject obj;
@@ -534,9 +534,9 @@ public class SignatureUtil {
                 }
                 if (obj == null) {
                     if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
-                        tokens.throwError(PdfException.UnexpectedGtGt);
+                        tokens.throwError(PdfException.UNEXPECTED_GT_GT);
                     if (tokens.getTokenType() == PdfTokenizer.TokenType.EndArray)
-                        tokens.throwError(PdfException.UnexpectedCloseBracket);
+                        tokens.throwError(PdfException.UNEXPECTED_CLOSE_BRACKET);
                 }
                 dic.put(name, obj);
             }

@@ -84,7 +84,7 @@ public abstract class PdfXObject extends PdfObjectWrapper<PdfStream> {
         } else if (PdfName.Image.equals(stream.getAsName(PdfName.Subtype))) {
             return new PdfImageXObject(stream);
         } else {
-            throw new UnsupportedOperationException(PdfException.UnsupportedXObjectType);
+            throw new UnsupportedOperationException(PdfException.UNSUPPORTED_XOBJECT_TYPE);
         }
     }
 

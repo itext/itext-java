@@ -156,7 +156,7 @@ public class DocumentRenderer extends RootRenderer {
             ensureDocumentHasNPages(pageNum, null);
             PdfPage correspondingPage = pdfDocument.getPage(pageNum);
             if (correspondingPage.isFlushed()) {
-                throw new PdfException(PdfException.CannotDrawElementsOnAlreadyFlushedPages);
+                throw new PdfException(PdfException.CANNOT_DRAW_ELEMENTS_ON_ALREADY_FLUSHED_PAGES);
             }
 
             boolean wrapOldContent = pdfDocument.getReader() != null && pdfDocument.getWriter() != null &&

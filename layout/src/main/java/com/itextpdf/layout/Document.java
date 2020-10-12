@@ -360,7 +360,7 @@ public class Document extends RootElement<Document> {
      */
     protected void checkClosingStatus() {
         if (getPdfDocument().isClosed()) {
-            throw new PdfException(PdfException.DocumentClosedItIsImpossibleToExecuteAction);
+            throw new PdfException(PdfException.DOCUMENT_CLOSED_IT_IS_IMPOSSIBLE_TO_EXECUTE_ACTION);
         }
     }
 }

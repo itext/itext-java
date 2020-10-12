@@ -163,7 +163,7 @@ public class BarcodeInter25 extends Barcode1D {
     public static byte[] getBarsInter25(String text) {
         text = keepNumbers(text);
         if ((text.length() & 1) != 0) {
-            throw new PdfException(PdfException.TextMustBeEven);
+            throw new PdfException(PdfException.TEXT_MUST_BE_EVEN);
         }
         byte[] bars = new byte[text.length() * 5 + 7];
         int pb = 0;

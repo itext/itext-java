@@ -63,7 +63,7 @@ public class MemoryLimitsAwareException extends PdfException {
      * @param cause the cause (which is saved for later retrieval by {@link #getCause()} method).
      */
     public MemoryLimitsAwareException(Throwable cause) {
-        this(UnknownPdfException, cause);
+        this(UNKNOWN_PDF_EXCEPTION, cause);
     }
 
     /**

@@ -102,7 +102,7 @@ public class DataHandlerCounter<T, V extends EventData<T>> extends EventCounter 
     @Override
     protected void onEvent(IEvent event, IMetaInfo metaInfo) {
         if (this.closed) {
-            throw new IllegalStateException(PdfException.DataHandlerCounterHasBeenDisabled);
+            throw new IllegalStateException(PdfException.DATA_HANDLER_COUNTER_HAS_BEEN_DISABLED);
         }
         this.dataHandler.register(event, metaInfo);
     }

@@ -106,7 +106,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
             try {
                 fontProgram = FontProgramFactory.createFont(baseFontName.getValue(), true);
             } catch (IOException e) {
-                throw new PdfException(PdfException.IoExceptionWhileCreatingFont, e);
+                throw new PdfException(PdfException.IO_EXCEPTION_WHILE_CREATING_FONT, e);
             }
         } else {
             fontProgram = DocTrueTypeFont.createFontProgram(fontDictionary, fontEncoding, toUnicode);

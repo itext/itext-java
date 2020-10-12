@@ -73,7 +73,7 @@ public class PdfSplitter {
      */
     public PdfSplitter(PdfDocument pdfDocument) {
         if (pdfDocument.getWriter() != null) {
-            throw new PdfException(PdfException.CannotSplitDocumentThatIsBeingWritten);
+            throw new PdfException(PdfException.CANNOT_SPLIT_DOCUMENT_THAT_IS_BEING_WRITTEN);
         }
         this.pdfDocument = pdfDocument;
         this.preserveTagged = true;

@@ -227,7 +227,7 @@ public class Color {
      */
     public void setColorValue(float[] value) {
         if (colorValue.length != value.length) {
-            throw new PdfException(PdfException.IncorrectNumberOfComponents, this);
+            throw new PdfException(PdfException.INCORRECT_NUMBER_OF_COMPONENTS, this);
         }
         colorValue = value;
     }

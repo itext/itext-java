@@ -174,7 +174,7 @@ public class MetaDo {
      */
     public void readAll() throws IOException {
         if (in.readInt() != 0x9AC6CDD7) {
-            throw new PdfException(PdfException.NotAPlaceableWindowsMetafile);
+            throw new PdfException(PdfException.NOT_A_PLACEABLE_WINDOWS_METAFILE);
         }
         in.readWord();
         left = in.readShort();
@@ -745,7 +745,7 @@ public class MetaDo {
      */
     public static byte[] wrapBMP(ImageData image) throws IOException {
         if (image.getOriginalType() != ImageType.BMP) {
-            throw new PdfException(PdfException.OnlyBmpCanBeWrappedInWmf);
+            throw new PdfException(PdfException.ONLY_BMP_CAN_BE_WRAPPED_IN_WMF);
         }
         InputStream imgIn;
         byte data[];

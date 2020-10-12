@@ -62,7 +62,7 @@ public class ASCIIHexDecodeFilterTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> ASCIIHexDecodeFilter.ASCIIHexDecode(bytes)
         );
-        Assert.assertEquals(PdfException.IllegalCharacterInAsciihexdecode, e.getMessage());
+        Assert.assertEquals(PdfException.ILLEGAL_CHARACTER_IN_ASCIIHEXDECODE, e.getMessage());
     }
 
     @Test
