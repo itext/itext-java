@@ -498,7 +498,7 @@ public class PdfReader implements Closeable {
             PdfName filterName = (PdfName) filters.get(j);
             IFilterHandler filterHandler = filterHandlers.get(filterName);
             if (filterHandler == null)
-                throw new PdfException(PdfException.FILTER_1_IS_NOT_SUPPORTED).setMessageParams(filterName);
+                throw new PdfException(PdfException.THIS_FILTER_IS_NOT_SUPPORTED).setMessageParams(filterName);
 
             PdfDictionary decodeParams;
             if (j < dp.size()) {
@@ -508,7 +508,7 @@ public class PdfReader implements Closeable {
                 } else if (dpEntry.getType() == PdfObject.DICTIONARY) {
                     decodeParams = (PdfDictionary) dpEntry;
                 } else {
-                    throw new PdfException(PdfException.DECODE_PARAMETER_TYPE_1_IS_NOT_SUPPORTED).setMessageParams(dpEntry.getClass().toString());
+                    throw new PdfException(PdfException.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED).setMessageParams(dpEntry.getClass().toString());
                 }
             } else {
                 decodeParams = null;
@@ -717,7 +717,7 @@ public class PdfReader implements Closeable {
         try {
             this.headerPdfVersion = PdfVersion.fromString(version);
         } catch (IllegalArgumentException exc) {
-            throw new PdfException(PdfException.PDF_VERSION_NOT_VALID, version);
+            throw new PdfException(PdfException.PDF_VERSION_IS_NOT_VALID, version);
         }
         try {
             readXref();
@@ -821,7 +821,7 @@ public class PdfReader implements Closeable {
                     logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
                     return createPdfNullInstance(readAsDirect);
                 } else {
-                    throw new PdfException(PdfException.INVALID_INDIRECT_REFERENCE_1,
+                    throw new PdfException(PdfException.INVALID_INDIRECT_REFERENCE,
                             MessageFormatUtil.format("{0} {1} R", reference.getObjNumber(), reference.getGenNumber()));
                 }
             }
@@ -921,7 +921,7 @@ public class PdfReader implements Closeable {
             if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
                 break;
             if (tokens.getTokenType() != PdfTokenizer.TokenType.Name)
-                tokens.throwError(PdfException.DICTIONARY_KEY_1_IS_NOT_A_NAME, tokens.getStringValue());
+                tokens.throwError(PdfException.THIS_DICTIONARY_KEY_IS_NOT_A_NAME, tokens.getStringValue());
             PdfName name = readPdfName(true);
             PdfObject obj = readObject(true, objStm);
             if (obj == null) {
@@ -1054,7 +1054,7 @@ public class PdfReader implements Closeable {
 
                 if (tokens.tokenValueEqualsTo(PdfTokenizer.N)) {
                     if (pos == 0) {
-                        tokens.throwError(PdfException.FILE_POSITION_1_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION);
+                        tokens.throwError(PdfException.FILE_POSITION_0_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION);
                     }
                 } else if (tokens.tokenValueEqualsTo(PdfTokenizer.F)) {
                     if (refFirstEncountered) {
@@ -1349,7 +1349,7 @@ public class PdfReader implements Closeable {
                     if (tokens.getTokenType() != PdfTokenizer.TokenType.Obj
                             || tokens.getObjNr() != reference.getObjNumber()
                             || tokens.getGenNr() != reference.getGenNumber()) {
-                        tokens.throwError(PdfException.INVALID_OFFSET_FOR_OBJECT_1, reference.toString());
+                        tokens.throwError(PdfException.INVALID_OFFSET_FOR_THIS_OBJECT, reference.toString());
                     }
                     object = readObject(false);
                 } catch (RuntimeException ex) {

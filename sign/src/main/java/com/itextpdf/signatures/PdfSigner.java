@@ -780,10 +780,10 @@ public class PdfSigner {
         SignatureUtil signatureUtil = new SignatureUtil(document);
         PdfSignature signature = signatureUtil.getSignature(fieldName);
         if (signature == null) {
-            throw new PdfException(PdfException.THERE_IS_NO_FIELD_IN_THE_DOCUMENT_WITH_SUCH_NAME_1).setMessageParams(fieldName);
+            throw new PdfException(PdfException.THERE_IS_NO_FIELD_IN_THE_DOCUMENT_WITH_SUCH_NAME).setMessageParams(fieldName);
         }
         if (!signatureUtil.signatureCoversWholeDocument(fieldName)) {
-            throw new PdfException(PdfException.SIGNATURE_WITH_NAME_1_IS_NOT_THE_LAST_IT_DOESNT_COVER_WHOLE_DOCUMENT).setMessageParams(fieldName);
+            throw new PdfException(PdfException.SIGNATURE_WITH_THIS_NAME_IS_NOT_THE_LAST_IT_DOES_NOT_COVER_WHOLE_DOCUMENT).setMessageParams(fieldName);
         }
 
         PdfArray b = signature.getByteRange();

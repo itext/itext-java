@@ -905,12 +905,12 @@ public class PdfCanvasProcessor {
             PdfName dictionaryName = (PdfName) operands.get(0);
             PdfDictionary extGState = processor.getResources().getResource(PdfName.ExtGState);
             if (extGState == null)
-                throw new PdfException(PdfException.RESOURCES_DO_NOT_CONTAIN_EXTGSTATE_ENTRY_UNABLE_TO_PROCESS_OPERATOR_1).setMessageParams(operator);
+                throw new PdfException(PdfException.RESOURCES_DO_NOT_CONTAIN_EXTGSTATE_ENTRY_UNABLE_TO_PROCESS_THIS_OPERATOR).setMessageParams(operator);
             PdfDictionary gsDic = extGState.getAsDictionary(dictionaryName);
             if (gsDic == null) {
                 gsDic = extGState.getAsStream(dictionaryName);
                 if (gsDic == null)
-                    throw new PdfException(PdfException._1_IS_AN_UNKNOWN_GRAPHICS_STATE_DICTIONARY).setMessageParams(dictionaryName);
+                    throw new PdfException(PdfException.UNKNOWN_GRAPHICS_STATE_DICTIONARY).setMessageParams(dictionaryName);
             }
             PdfArray fontParameter = gsDic.getAsArray(PdfName.Font);
             if (fontParameter != null) {

@@ -1046,7 +1046,7 @@ public final class PdfFontFactory {
         if (fontDic == null || fontDic.get(PdfName.Subtype) == null
                 || !fontDic.get(PdfName.Subtype).equals(fontType)) {
             if (isException) {
-                throw new PdfException(PdfException.DICTIONARY_DOES_NOT_HAVE_1_FONT_DATA).setMessageParams(fontType.getValue());
+                throw new PdfException(PdfException.DICTIONARY_DOES_NOT_HAVE_THIS_FONT_DATA).setMessageParams(fontType.getValue());
             }
             return false;
         }

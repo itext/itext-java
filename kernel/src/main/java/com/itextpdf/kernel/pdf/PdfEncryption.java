@@ -560,7 +560,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 }
                 break;
             default:
-                throw new PdfException(PdfException.UNKNOWN_ENCRYPTION_TYPE_R_EQ_1).setMessageParams(rValue);
+                throw new PdfException(PdfException.UNKNOWN_ENCRYPTION_TYPE_R).setMessageParams(rValue);
         }
 
         revision = setCryptoMode(cryptoMode, length);
@@ -619,7 +619,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 }
                 break;
             default:
-                throw new PdfException(PdfException.UNKNOWN_ENCRYPTION_TYPE_V_EQ_1, vValue);
+                throw new PdfException(PdfException.UNKNOWN_ENCRYPTION_TYPE_V, vValue);
         }
         return setCryptoMode(cryptoMode, length);
     }

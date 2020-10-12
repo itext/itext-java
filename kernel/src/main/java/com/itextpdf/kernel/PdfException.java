@@ -53,12 +53,9 @@ import java.util.List;
  */
 public class PdfException extends RuntimeException {
 
-    public static final String _1_IS_AN_UNKNOWN_GRAPHICS_STATE_DICTIONARY = "{0} is an unknown graphics state dictionary.";
-    public static final String _1_IS_NOT_AN_ACCEPTABLE_VALUE_FOR_THE_FIELD_2 = "{0} is not an acceptable value for the field {1}.";
-    public static final String _1_IS_NOT_A_VALID_PLACEABLE_WINDOWS_METAFILE = "{0} is not a valid placeable windows metafile.";
 
     public static final String ANNOTATION_SHALL_HAVE_REFERENCE_TO_PAGE = "Annotation shall have reference to page.";
-    public static final String APPEND_MODE_REQUIRES_A_DOCUMENT_WITHOUT_ERRORS_EVEN_IF_RECOVERY_WAS_POSSIBLE = "Append mode requires a document without errors, even if recovery is possible.";
+    public static final String APPEND_MODE_REQUIRES_A_DOCUMENT_WITHOUT_ERRORS_EVEN_IF_RECOVERY_IS_POSSIBLE = "Append mode requires a document without errors, even if recovery is possible.";
     public static final String AUTHENTICATED_ATTRIBUTE_IS_MISSING_THE_DIGEST = "Authenticated attribute is missing the digest.";
     public static final String AVAILABLE_SPACE_IS_NOT_ENOUGH_FOR_SIGNATURE = "Available space is not enough for signature.";
     public static final String BAD_CERTIFICATE_AND_KEY = "Bad public key certificate and/or private key.";
@@ -126,8 +123,8 @@ public class PdfException extends RuntimeException {
     public static final String CANNOT_SPLIT_DOCUMENT_THAT_IS_BEING_WRITTEN = "Cannot split document that is being written.";
     public static final String CANNOT_WRITE_TO_PDF_STREAM = "Cannot write to PdfStream.";
     public static final String CANNOT_WRITE_OBJECT_AFTER_IT_WAS_RELEASED = "Cannot write object after it was released. In normal situation the object must be read once again before being written.";
-    public static final String CANNOT_DECODE_PKCS7_SIGNEDDATA_OBJECT = "Cannot decode PKCS#7 SignedData object.";
-    public static final String CANNOT_FIND_SIGNING_CERTIFICATE_WITH_SERIAL_1 = "Cannot find signing certificate with serial {0}.";
+    public static final String CANNOT_DECODE_PKCS7_SIGNED_DATA_OBJECT = "Cannot decode PKCS#7 SignedData object.";
+    public static final String CANNOT_FIND_SIGNING_CERTIFICATE_WITH_THIS_SERIAL = "Cannot find signing certificate with serial {0}.";
     public static final String CERTIFICATE_IS_NOT_PROVIDED_DOCUMENT_IS_ENCRYPTED_WITH_PUBLIC_KEY_CERTIFICATE = "Certificate is not provided. Document is encrypted with public key certificate, it should be passed to PdfReader constructor with properties. See ReaderProperties#setPublicKeySecurityParams() method.";
     public static final String CERTIFICATION_SIGNATURE_CREATION_FAILED_DOC_SHALL_NOT_CONTAIN_SIGS = "Certification signature creation failed. Document shall not contain any certification or approval signatures before signing with certification signature.";
     public static final String CF_NOT_FOUND_ENCRYPTION = "/CF not found (encryption)";
@@ -136,11 +133,11 @@ public class PdfException extends RuntimeException {
     public static final String COLOR_SPACE_NOT_FOUND = "ColorSpace not found.";
     public static final String CONTENT_STREAM_MUST_NOT_INVOKE_OPERATORS_THAT_SPECIFY_COLORS_OR_OTHER_COLOR_RELATED_PARAMETERS = "Content stream must not invoke operators that specify colors or other color related parameters in the graphics state.";
     public static final String DATA_HANDLER_COUNTER_HAS_BEEN_DISABLED = "Data handler counter has been disabled";
-    public static final String DECODE_PARAMETER_TYPE_1_IS_NOT_SUPPORTED = "Decode parameter type {0} is not supported.";
+    public static final String THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED = "Decode parameter type {0} is not supported.";
     public static final String DEFAULT_APPEARANCE_NOT_FOUND = "DefaultAppearance is required but not found";
     public static final String DEFAULT_CRYPT_FILTER_NOT_FOUND_ENCRYPTION = "/DefaultCryptFilter not found (encryption).";
-    public static final String DICTIONARY_KEY_1_IS_NOT_A_NAME = "Dictionary key {0} is not a name.";
-    public static final String DICTIONARY_DOES_NOT_HAVE_1_FONT_DATA = "Dictionary doesn't have {0} font data.";
+    public static final String THIS_DICTIONARY_KEY_IS_NOT_A_NAME = "Dictionary key {0} is not a name.";
+    public static final String DICTIONARY_DOES_NOT_HAVE_THIS_FONT_DATA = "Dictionary doesn't have {0} font data.";
     public static final String DICTIONARY_DOES_NOT_HAVE_SUPPORTED_FONT_DATA = "Dictionary doesn't have supported font data.";
     public static final String DOCUMENT_ALREADY_PRE_CLOSED = "Document has been already pre closed.";
     public static final String DOCUMENT_CLOSED_IT_IS_IMPOSSIBLE_TO_EXECUTE_ACTION = "Document was closed. It is impossible to execute action.";
@@ -164,14 +161,14 @@ public class PdfException extends RuntimeException {
     public static final String ExternalEntityElementFoundInXml =
             "External entity element found in XML. This entity will not be parsed to prevent XML attacks.";
 
-    public static final String FAILED_TO_GET_TSA_RESPONSE_FROM_1 = "Failed to get TSA response from {0}.";
+    public static final String FAILED_TO_GET_TSA_RESPONSE = "Failed to get TSA response from {0}.";
     public static final String FIELD_FLATTENING_IS_NOT_SUPPORTED_IN_APPEND_MODE = "Field flattening is not supported in append mode.";
     public static final String FIELD_ALREADY_SIGNED = "Field has been already signed.";
 
     public static final String FIELD_NAMES_CANNOT_CONTAIN_A_DOT = "Field names cannot contain a dot.";
     public static final String FIELD_TYPE_IS_NOT_A_SIGNATURE_FIELD_TYPE = "Field type is not a signature field type.";
-    public static final String FILTER_1_IS_NOT_SUPPORTED = "Filter {0} is not supported.";
-    public static final String FILE_POSITION_1_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION = "file position {0} cross reference entry in this xref subsection.";
+    public static final String THIS_FILTER_IS_NOT_SUPPORTED = "Filter {0} is not supported.";
+    public static final String FILE_POSITION_0_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION = "file position 0 cross reference entry in this xref subsection.";
     public static final String FILTER_CCITTFAXDECODE_IS_ONLY_SUPPORTED_FOR_IMAGES = "Filter CCITTFaxDecode is only supported for images";
     public static final String FILTER_IS_NOT_A_NAME_OR_ARRAY = "filter is not a name or array.";
     public static final String FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED = "Flushed page cannot be added or inserted.";
@@ -194,17 +191,17 @@ public class PdfException extends RuntimeException {
     public static final String ILLEGAL_V_VALUE = "Illegal V value.";
     public static final String IN_A_PAGE_LABEL_THE_PAGE_NUMBERS_MUST_BE_GREATER_OR_EQUAL_TO_1 = "In a page label the page numbers must be greater or equal to 1.";
     public static final String IN_CODABAR_START_STOP_CHARACTERS_ARE_ONLY_ALLOWED_AT_THE_EXTREMES = "In Codabar, start/stop characters are only allowed at the extremes.";
-    public static final String INVALID_HTTP_RESPONSE_1 = "Invalid http response {0}.";
-    public static final String INVALID_TSA_1_RESPONSE_CODE_2 = "Invalid TSA {0} response code {1}.";
+    public static final String INVALID_HTTP_RESPONSE = "Invalid http response {0}.";
+    public static final String INVALID_TSA_RESPONSE = "Invalid TSA {0} response code {1}.";
     public static final String INCORRECT_NUMBER_OF_COMPONENTS = "Incorrect number of components.";
     public static final String INVALID_CODEWORD_SIZE = "Invalid codeword size.";
     public static final String INVALID_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION = "Invalid cross reference entry in this xref subsection.";
-    public static final String INVALID_INDIRECT_REFERENCE_1 = "Invalid indirect reference {0}.";
+    public static final String INVALID_INDIRECT_REFERENCE = "Invalid indirect reference {0}.";
     public static final String INVALID_MEDIA_BOX_VALUE = "Tne media box object has incorrect values.";
-    public static final String INVALID_PAGE_STRUCTURE_1 = "Invalid page structure {0}.";
+    public static final String INVALID_PAGE_STRUCTURE = "Invalid page structure {0}.";
     public static final String INVALID_PAGE_STRUCTURE_PAGES_MUST_BE_PDF_DICTIONARY = "Invalid page structure. /Pages must be PdfDictionary.";
     public static final String INVALID_RANGE_ARRAY = "Invalid range array.";
-    public static final String INVALID_OFFSET_FOR_OBJECT_1 = "Invalid offset for object {0}.";
+    public static final String INVALID_OFFSET_FOR_THIS_OBJECT = "Invalid offset for object {0}.";
     public static final String INVALID_XREF_STREAM = "Invalid xref stream.";
     public static final String INVALID_XREF_TABLE = "Invalid xref table.";
     public static final String IO_EXCEPTION = "I/O exception.";
@@ -215,6 +212,7 @@ public class PdfException extends RuntimeException {
     public static final String MACRO_SEGMENT_ID_MUST_BE_GT_ZERO = "macroSegmentId must be > 0";
     public static final String MACRO_SEGMENT_ID_MUST_BE_LT_MACRO_SEGMENT_COUNT = "macroSegmentId must be < macroSemgentCount";
     public static final String MUST_BE_A_TAGGED_DOCUMENT = "Must be a tagged document.";
+    public static final String NOT_A_VALID_PLACEABLE_WINDOWS_METAFILE = "{0} is not a valid placeable windows metafile.";
     public static final String NUMBER_OF_ENTRIES_IN_THIS_XREF_SUBSECTION_NOT_FOUND = "Number of entries in this xref subsection not found.";
     public static final String NO_COMPATIBLE_ENCRYPTION_FOUND = "No compatible encryption found.";
     public static final String NO_CRYPTO_DICTIONARY_DEFINED = "No crypto dictionary defined.";
@@ -237,7 +235,7 @@ public class PdfException extends RuntimeException {
     public static final String ONLY_IDENTITY_CMAPS_SUPPORTS_WITH_TRUETYPE = "Only Identity CMaps supports with truetype";
     public static final String ONLY_BMP_CAN_BE_WRAPPED_IN_WMF = "Only BMP can be wrapped in WMF.";
     public static final String OPERATOR_EI_NOT_FOUND_AFTER_END_OF_IMAGE_DATA = "Operator EI not found after the end of image data.";
-    public static final String PAGE_1_CANNOT_BE_ADDED_TO_DOCUMENT_2_BECAUSE_IT_BELONGS_TO_DOCUMENT_3 = "Page {0} cannot be added to document {1}, because it belongs to document {2}.";
+    public static final String PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT = "Page {0} cannot be added to document {1}, because it belongs to document {2}.";
     public static final String PAGE_IS_NOT_SET_FOR_THE_PDF_TAG_STRUCTURE = "Page is not set for the pdf tag structure.";
     public static final String PAGE_ALREADY_FLUSHED = "The page has been already flushed.";
     public static final String PAGE_ALREADY_FLUSHED_USE_ADD_FIELD_APPEARANCE_TO_PAGE_METHOD_BEFORE_PAGE_FLUSHING = "The page has been already flushed. Use PdfAcroForm#addFieldAppearanceToPage() method before page flushing.";
@@ -252,17 +250,17 @@ public class PdfException extends RuntimeException {
     public static final String PDF_STARTXREF_IS_NOT_FOLLOWED_BY_A_NUMBER = "PDF startxref is not followed by a number.";
     public static final String PDF_STARTXREF_NOT_FOUND = "PDF startxref not found.";
     public static final String PDF_INDIRECT_OBJECT_BELONGS_TO_OTHER_PDF_DOCUMENT = "Pdf indirect object belongs to other PDF document. Copy object to current pdf document.";
-    public static final String PDF_VERSION_NOT_VALID = "PDF version is not valid.";
+    public static final String PDF_VERSION_IS_NOT_VALID = "PDF version is not valid.";
     public static final String REF_ARRAY_ITEMS_IN_STRUCTURE_ELEMENT_DICTIONARY_SHALL_BE_INDIRECT_OBJECTS = "Ref array items in structure element dictionary shall be indirect objects.";
     public static final String REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS = "Requested page number {0} is out of bounds.";
     public static final String PNG_FILTER_UNKNOWN = "PNG filter unknown.";
     public static final String PRINT_SCALING_ENFORCE_ENTRY_INVALID = "/PrintScaling shall may appear in the Enforce array only if the corresponding entry in the viewer preferences dictionary specifies a valid value other than AppDefault";
     public static final String RESOURCES_CANNOT_BE_NULL = "Resources cannot be null.";
-    public static final String RESOURCES_DO_NOT_CONTAIN_EXTGSTATE_ENTRY_UNABLE_TO_PROCESS_OPERATOR_1 = "Resources do not contain ExtGState entry. Unable to process operator {0}.";
+    public static final String RESOURCES_DO_NOT_CONTAIN_EXTGSTATE_ENTRY_UNABLE_TO_PROCESS_THIS_OPERATOR = "Resources do not contain ExtGState entry. Unable to process operator {0}.";
     public static final String ROLE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE = "Role \"{0}\" is not mapped to any standard role.";
     public static final String ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE = "Role \"{0}\" in namespace {1} is not mapped to any standard role.";
     public static final String SHADING_TYPE_NOT_FOUND = "Shading type not found.";
-    public static final String SIGNATURE_WITH_NAME_1_IS_NOT_THE_LAST_IT_DOESNT_COVER_WHOLE_DOCUMENT = "Signature with name {0} is not the last. It doesn't cover the whole document.";
+    public static final String SIGNATURE_WITH_THIS_NAME_IS_NOT_THE_LAST_IT_DOES_NOT_COVER_WHOLE_DOCUMENT = "Signature with name {0} is not the last. It doesn't cover the whole document.";
     public static final String STDCF_NOT_FOUND_ENCRYPTION = "/StdCF not found (encryption)";
     public static final String STRUCT_PARENT_INDEX_NOT_FOUND_IN_TAGGED_OBJECT = "StructParent index not found in tagged object.";
     public static final String STRUCTURE_ELEMENT_IN_STRUCTURE_DESTINATION_SHALL_BE_AN_INDIRECT_OBJECT = "Structure element referenced by a structure destination shall be an indirect object.";
@@ -278,32 +276,33 @@ public class PdfException extends RuntimeException {
     public static final String TEXT_IS_TOO_BIG = "Text is too big.";
     public static final String TEXT_MUST_BE_EVEN = "The text length must be even.";
     public static final String TWO_BARCODE_MUST_BE_EXTERNALLY = "The two barcodes must be composed externally.";
-    public static final String THERE_ARE_ILLEGAL_CHARACTERS_FOR_BARCODE_128_IN_1 = "There are illegal characters for barcode 128 in {0}.";
+    public static final String THERE_ARE_ILLEGAL_CHARACTERS_FOR_BARCODE_128 = "There are illegal characters for barcode 128.";
     public static final String THERE_IS_NO_ASSOCIATE_PDF_WRITER_FOR_MAKING_INDIRECTS = "There is no associate PdfWriter for making indirects.";
-    public static final String THERE_IS_NO_FIELD_IN_THE_DOCUMENT_WITH_SUCH_NAME_1 = "There is no field in the document with such name: {0}.";
+    public static final String THERE_IS_NO_FIELD_IN_THE_DOCUMENT_WITH_SUCH_NAME = "There is no field in the document with such name: {0}.";
     public static final String THIS_PKCS7_OBJECT_HAS_MULTIPLE_SIGNERINFOS_ONLY_ONE_IS_SUPPORTED_AT_THIS_TIME = "This PKCS#7 object has multiple SignerInfos. Only one is supported at this time.";
     public static final String THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED = "This instance of PdfSigner has been already closed.";
     public static final String TO_FLUSH_THIS_WRAPPER_UNDERLYING_OBJECT_MUST_BE_ADDED_TO_DOCUMENT = "To manually flush this wrapper, you have to ensure that the object behind this wrapper is added to the document, i.e. it has an indirect reference.";
-    public static final String TSA_1_FAILED_TO_RETURN_TIME_STAMP_TOKEN_2 = "TSA {0} failed to return time stamp token: {1}.";
+    public static final String THIS_TSA_FAILED_TO_RETURN_TIME_STAMP_TOKEN = "TSA {0} failed to return time stamp token: {1}.";
     public static final String TRAILER_NOT_FOUND = "Trailer not found.";
     public static final String TRAILER_PREV_ENTRY_POINTS_TO_ITS_OWN_CROSS_REFERENCE_SECTION = "Trailer prev entry points to its own cross reference section.";
+    public static final String UNACCEPTABLE_FIELD_VALUE = "{0} is not an acceptable value for the field {1}.";
     public static final String UNBALANCED_BEGIN_END_MARKED_CONTENT_OPERATORS = "Unbalanced begin/end marked content operators.";
     public static final String UNBALANCED_LAYER_OPERATORS = "Unbalanced layer operators.";
     public static final String UNBALANCED_SAVE_RESTORE_STATE_OPERATORS = "Unbalanced save restore state operators.";
-    public static final String UNEXPECTED_CHARACTER_1_FOUND_AFTER_ID_IN_INLINE_IMAGE = "Unexpected character {0} found after ID in inline image.";
+    public static final String UNEXPECTED_CHARACTER_FOUND_AFTER_ID_IN_INLINE_IMAGE = "Unexpected character {0} found after ID in inline image.";
     public static final String UNEXPECTED_CLOSE_BRACKET = "Unexpected close bracket.";
-    public static final String UNEXPECTED_COLOR_SPACE_1 = "Unexpected ColorSpace: {0}.";
+    public static final String UNEXPECTED_COLOR_SPACE = "Unexpected ColorSpace: {0}.";
     public static final String UNEXPECTED_END_OF_FILE = "Unexpected end of file.";
     public static final String UNEXPECTED_GT_GT = "unexpected >>.";
     public static final String UNEXPECTED_SHADING_TYPE = "Unexpected shading type.";
-    public static final String UNKNOWN_ENCRYPTION_TYPE_R_EQ_1 = "Unknown encryption type R == {0}.";
-    public static final String UNKNOWN_ENCRYPTION_TYPE_V_EQ_1 = "Unknown encryption type V == {0}.";
+    public static final String UNKNOWN_ENCRYPTION_TYPE_R = "Unknown encryption type R == {0}.";
+    public static final String UNKNOWN_ENCRYPTION_TYPE_V = "Unknown encryption type V == {0}.";
+    public static final String UNKNOWN_GRAPHICS_STATE_DICTIONARY = "{0} is an unknown graphics state dictionary.";
     public static final String UNKNOWN_PDF_EXCEPTION = "Unknown PdfException.";
-    public static final String UNKNOWN_HASH_ALGORITHM_1 = "Unknown hash algorithm: {0}.";
-    public static final String UNKNOWN_KEY_ALGORITHM_1 = "Unknown key algorithm: {0}.";
-    @Deprecated
-    public static final String UNSUPPORTED_DEFAULT_COLOR_SPACE_NAME_1 = "Unsupported default color space name. Was {0}, but should be DefaultCMYK, DefaultGray or DefaultRGB";
+    public static final String UNKNOWN_HASH_ALGORITHM = "Unknown hash algorithm: {0}.";
+    public static final String UNKNOWN_KEY_ALGORITHM = "Unknown key algorithm: {0}.";
     public static final String UNSUPPORTED_FONT_EMBEDDING_STRATEGY = "Unsupported font embedding strategy.";
+    public static final String UNSUPPORTED_DEFAULT_COLOR_SPACE_NAME = "Unsupported default color space name. Was {0}, but should be DefaultCMYK, DefaultGray or DefaultRGB";
     public static final String UNSUPPORTED_XOBJECT_TYPE = "Unsupported XObject type.";
     public static final String VERIFICATION_ALREADY_OUTPUT = "Verification already output.";
     public static final String WHEN_ADDING_OBJECT_REFERENCE_TO_THE_TAG_TREE_IT_MUST_BE_CONNECTED_TO_NOT_FLUSHED_OBJECT = "When adding object reference to the tag tree, it must be connected to not flushed object.";
@@ -315,7 +314,7 @@ public class PdfException extends RuntimeException {
      */
     @Deprecated
     public static final String WRONG_MEDIA_BOX_SIZE_1 = "Wrong media box size: {0}.";
-    public static final String WRONGMEDIABOXSIZETOOFEWARGUMENTS = "Wrong media box size: {0}. Need at least 4 arguments";
+    public static final String WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS = "Wrong media box size: {0}. Need at least 4 arguments";
     public static final String XREF_SUBSECTION_NOT_FOUND = "xref subsection not found.";
     public static final String YOU_HAVE_TO_DEFINE_A_BOOLEAN_ARRAY_FOR_THIS_COLLECTION_SORT_DICTIONARY = "You have to define a boolean array for this collection sort dictionary.";
     public static final String YOU_MUST_SET_A_VALUE_BEFORE_ADDING_A_PREFIX = "You must set a value before adding a prefix.";

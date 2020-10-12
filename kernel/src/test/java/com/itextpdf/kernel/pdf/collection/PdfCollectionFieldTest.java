@@ -214,7 +214,7 @@ public class PdfCollectionFieldTest extends ExtendedITextTest {
         // this line will throw an exception as getValue() method is not
         // supported for subType which differs from S, N and D.
         Exception e = Assert.assertThrows(PdfException.class, () -> field.getValue(stringValue));
-        Assert.assertEquals(MessageFormatUtil.format(PdfException._1_IS_NOT_AN_ACCEPTABLE_VALUE_FOR_THE_FIELD_2,
+        Assert.assertEquals(MessageFormatUtil.format(PdfException.UNACCEPTABLE_FIELD_VALUE,
                 stringValue, fieldName), e.getMessage());
     }
 

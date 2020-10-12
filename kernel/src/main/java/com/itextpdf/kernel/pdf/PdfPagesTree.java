@@ -337,7 +337,7 @@ class PdfPagesTree {
         PdfPages parent = parents.get(parentIndex);
         PdfArray kids = parent.getKids();
         if (kids == null) {
-            throw new PdfException(PdfException.INVALID_PAGE_STRUCTURE_1).setMessageParams(pageNum + 1);
+            throw new PdfException(PdfException.INVALID_PAGE_STRUCTURE).setMessageParams(pageNum + 1);
         }
         int kidsCount = parent.getCount();
 
@@ -351,7 +351,7 @@ class PdfPagesTree {
 
             // null values not allowed in pages tree.
             if (page == null) {
-                throw new PdfException(PdfException.INVALID_PAGE_STRUCTURE_1).setMessageParams(pageNum + 1);
+                throw new PdfException(PdfException.INVALID_PAGE_STRUCTURE).setMessageParams(pageNum + 1);
             }
             PdfObject pageKids = page.get(PdfName.Kids);
             if (pageKids != null) {
@@ -359,7 +359,7 @@ class PdfPagesTree {
                     findPdfPages = true;
                 } else {
                     // kids must be of type array
-                    throw new PdfException(PdfException.INVALID_PAGE_STRUCTURE_1).setMessageParams(pageNum + 1);
+                    throw new PdfException(PdfException.INVALID_PAGE_STRUCTURE).setMessageParams(pageNum + 1);
                 }
             }
             if (document.getReader().isMemorySavingMode() && !findPdfPages && parent.getFrom() + i != pageNum) {

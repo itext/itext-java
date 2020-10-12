@@ -557,7 +557,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         PdfPage pageOne = pdfDoc.getPage(1);
 
         Exception e = Assert.assertThrows(PdfException.class, () -> pageOne.getPageSize());
-        Assert.assertEquals(MessageFormatUtil.format(PdfException.WRONGMEDIABOXSIZETOOFEWARGUMENTS, 3), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil.format(PdfException.WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS, 3), e.getMessage());
     }
 
     @Test

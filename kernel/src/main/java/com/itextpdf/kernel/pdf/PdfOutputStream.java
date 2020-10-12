@@ -450,7 +450,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 } else if (decodeParms instanceof PdfArray) {
                     ((PdfArray) decodeParms).add(0, new PdfNull());
                 } else {
-                    throw new PdfException(PdfException.DECODE_PARAMETER_TYPE_1_IS_NOT_SUPPORTED).setMessageParams(decodeParms.getClass().toString());
+                    throw new PdfException(PdfException.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED).setMessageParams(decodeParms.getClass().toString());
                 }
             }
             pdfStream.put(PdfName.Filter, filters);
@@ -490,7 +490,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             decodeParamsArray = (PdfArray) decodeParamsObject;
             decodeParams = decodeParamsArray.getAsDictionary(0);
         } else {
-            throw new PdfException(PdfException.DECODE_PARAMETER_TYPE_1_IS_NOT_SUPPORTED).setMessageParams(decodeParamsObject.getClass().toString());
+            throw new PdfException(PdfException.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED).setMessageParams(decodeParamsObject.getClass().toString());
         }
 
         // decode

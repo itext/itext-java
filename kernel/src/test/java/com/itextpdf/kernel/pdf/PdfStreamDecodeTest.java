@@ -84,7 +84,7 @@ public class PdfStreamDecodeTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> pdfStream.getBytes(true)
         );
-        Assert.assertEquals(MessageFormatUtil.format(PdfException.FILTER_1_IS_NOT_SUPPORTED, PdfName.JBIG2Decode), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil.format(PdfException.THIS_FILTER_IS_NOT_SUPPORTED, PdfName.JBIG2Decode), e.getMessage());
     }
 
     @Test

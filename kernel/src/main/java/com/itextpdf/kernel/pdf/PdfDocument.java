@@ -1939,7 +1939,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     tryInitTagStructure(str);
                 }
                 if (properties.appendMode && (reader.hasRebuiltXref() || reader.hasFixedXref()))
-                    throw new PdfException(PdfException.APPEND_MODE_REQUIRES_A_DOCUMENT_WITHOUT_ERRORS_EVEN_IF_RECOVERY_WAS_POSSIBLE);
+                    throw new PdfException(PdfException.APPEND_MODE_REQUIRES_A_DOCUMENT_WITHOUT_ERRORS_EVEN_IF_RECOVERY_IS_POSSIBLE);
             }
             xref.initFreeReferencesList(this);
             if (writer != null) {
@@ -2136,7 +2136,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             throw new PdfException(PdfException.FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED, page);
         }
         if (page.getDocument() != null && this != page.getDocument()) {
-            throw new PdfException(PdfException.PAGE_1_CANNOT_BE_ADDED_TO_DOCUMENT_2_BECAUSE_IT_BELONGS_TO_DOCUMENT_3).setMessageParams(page, this, page.getDocument());
+            throw new PdfException(PdfException.PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT).setMessageParams(page, this, page.getDocument());
         }
         catalog.getPageTree().addPage(index, page);
     }
@@ -2150,7 +2150,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         if (page.isFlushed())
             throw new PdfException(PdfException.FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED, page);
         if (page.getDocument() != null && this != page.getDocument())
-            throw new PdfException(PdfException.PAGE_1_CANNOT_BE_ADDED_TO_DOCUMENT_2_BECAUSE_IT_BELONGS_TO_DOCUMENT_3).setMessageParams(page, this, page.getDocument());
+            throw new PdfException(PdfException.PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT).setMessageParams(page, this, page.getDocument());
         catalog.getPageTree().addPage(page);
     }
 

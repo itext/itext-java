@@ -582,7 +582,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
             if (mediaBoxSize < 4) {
-                throw new PdfException(PdfException.WRONGMEDIABOXSIZETOOFEWARGUMENTS).setMessageParams(mediaBox.size());
+                throw new PdfException(PdfException.WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS).setMessageParams(mediaBox.size());
             }
         }
 

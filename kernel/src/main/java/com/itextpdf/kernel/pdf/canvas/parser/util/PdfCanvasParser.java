@@ -156,7 +156,7 @@ public class PdfCanvasParser {
             if (tokeniser.getTokenType() == PdfTokenizer.TokenType.EndDic)
                 break;
             if (tokeniser.getTokenType() != PdfTokenizer.TokenType.Name)
-                tokeniser.throwError(PdfException.DICTIONARY_KEY_1_IS_NOT_A_NAME, tokeniser.getStringValue());
+                tokeniser.throwError(PdfException.THIS_DICTIONARY_KEY_IS_NOT_A_NAME, tokeniser.getStringValue());
             PdfName name = new PdfName(tokeniser.getStringValue());
             PdfObject obj = readObject();
             dic.put(name, obj);

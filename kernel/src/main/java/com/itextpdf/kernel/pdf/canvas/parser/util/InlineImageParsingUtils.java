@@ -194,7 +194,7 @@ public final class InlineImageParsingUtils {
             }
         }
 
-        throw new InlineImageParseException(PdfException.UNEXPECTED_COLOR_SPACE_1).setMessageParams(colorSpaceName);
+        throw new InlineImageParseException(PdfException.UNEXPECTED_COLOR_SPACE).setMessageParams(colorSpaceName);
     }
 
     /**
@@ -220,7 +220,7 @@ public final class InlineImageParsingUtils {
 
         int ch = ps.getTokeniser().read();
         if (!PdfTokenizer.isWhitespace(ch))
-            throw new InlineImageParseException(PdfException.UNEXPECTED_CHARACTER_1_FOUND_AFTER_ID_IN_INLINE_IMAGE).setMessageParams(ch);
+            throw new InlineImageParseException(PdfException.UNEXPECTED_CHARACTER_FOUND_AFTER_ID_IN_INLINE_IMAGE).setMessageParams(ch);
 
         return dict;
     }
