@@ -63,13 +63,6 @@ public class PdfException extends RuntimeException {
 
     public static final String CANNOT_ADD_CELL_TO_COMPLETED_LARGE_TABLE = "The large table was completed. It's prohibited to use it anymore. Created different Table instance instead.";
     public static final String CANNOT_ADD_KID_TO_THE_FLUSHED_ELEMENT = "Cannot add kid to the flushed element.";
-    @Deprecated
-    public static final String CANNOT_ADD_NON_DICTIONARY_EXTGSTATE_TO_RESOURCES_1 = "Cannot add graphic state to resources. The PdfObject type is {0}, but should be PdfDictionary.";
-    public static final String CANNOT_ADD_NON_DICTIONARY_PATTERN_TO_RESOURCES_1 = "Cannot add pattern to resources. The PdfObject type is {0}, but should be PdfDictionary or PdfStream.";
-    public static final String CANNOT_ADD_NON_DICTIONARY_PROPERTIES_TO_RESOURCES_1 = "Cannot add properties to resources. The PdfObject type is {0}, but should be PdfDictionary.";
-    public static final String CANNOT_ADD_NON_DICTIONARY_SHADING_TO_RESOURCES_1 = "Cannot add shading to resources. The PdfObject type is {0}, but should be PdfDictionary or PdfStream.";
-    public static final String CANNOT_ADD_NON_STREAM_FORM_TO_RESOURCES_1 = "Cannot add form to resources. The PdfObject type is {0}, but should be PdfStream.";
-    public static final String CANNOT_ADD_NON_STREAM_IMAGE_TO_RESOURCES_1 = "Cannot add image to resources. The PdfObject type is {0}, but should be PdfStream.";
     public static final String CANNOT_BE_EMBEDDED_DUE_TO_LICENSING_RESTRICTIONS = "{0} cannot be embedded due to licensing restrictions.";
     public static final String CANNOT_CLOSE_DOCUMENT = "Cannot close document.";
     public static final String CANNOT_CLOSE_DOCUMENT_WITH_ALREADY_FLUSHED_PDF_CATALOG = "Cannot close document with already flushed PDF Catalog.";
@@ -115,8 +108,6 @@ public class PdfException extends RuntimeException {
     public static final String CANNOT_REMOVE_DOCUMENT_ROOT_TAG = "Cannot remove document root tag.";
     public static final String CANNOT_REMOVE_MARKED_CONTENT_REFERENCE_BECAUSE_ITS_PAGE_WAS_ALREADY_FLUSHED = "Cannot remove marked content reference, because its page has been already flushed.";
     public static final String CANNOT_REMOVE_TAG_BECAUSE_ITS_PARENT_IS_FLUSHED = "Cannot remove tag, because its parent is flushed.";
-    @Deprecated
-    public static final String CANNOT_SET_DATA_TO_PDFSTREAM_WHICH_WAS_CREATED_BY_INPUT_STREAM = "Cannot set data to PdfStream which was created by InputStream.";
     public static final String CANNOT_SET_DATA_TO_PDF_STREAM_WHICH_WAS_CREATED_BY_INPUT_STREAM = "Cannot set data to PdfStream which was created by InputStream.";
     public static final String CANNOT_SET_ENCRYPTED_PAYLOAD_TO_DOCUMENT_OPENED_IN_READING_MODE = "Cannot set encrypted payload to a document opened in read only mode.";
     public static final String CANNOT_SET_ENCRYPTED_PAYLOAD_TO_ENCRYPTED_DOCUMENT = "Cannot set encrypted payload to an encrypted document.";
@@ -177,12 +168,8 @@ public class PdfException extends RuntimeException {
     public static final String FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT = "Font and size must be set before writing any text.";
     public static final String FONT_EMBEDDING_ISSUE = "Font embedding issue.";
     public static final String FONT_PROVIDER_NOT_SET_FONT_FAMILY_NOT_RESOLVED = "FontProvider and FontSet are empty. Cannot resolve font family name (see ElementPropertyContainer#setFontFamily) without initialized FontProvider (see RootElement#setFontProvider).";
-    @Deprecated
-    public static final String FONT_SIZE_IS_TOO_SMALL = "Font size is too small.";
     public static final String FORM_XOBJECT_MUST_HAVE_BBOX = "Form XObject must have BBox.";
     public static final String FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE = "Function is not compatible with ColorSpace.";
-    @Deprecated
-    public static final String GIVEN_ACCESSIBLE_ELEMENT_IS_NOT_CONNECTED_TO_ANY_TAG = "Given accessible element is not connected to any tag.";
     public static final String ILLEGAL_CHARACTER_IN_ASCIIHEXDECODE = "illegal character in ASCIIHexDecode.";
     public static final String ILLEGAL_CHARACTER_IN_ASCII85DECODE = "Illegal character in ASCII85Decode.";
     public static final String ILLEGAL_CHARACTER_IN_CODABAR_BARCODE = "Illegal character in Codabar Barcode.";
@@ -218,11 +205,6 @@ public class PdfException extends RuntimeException {
     public static final String NO_CRYPTO_DICTIONARY_DEFINED = "No crypto dictionary defined.";
     public static final String NO_GLYPHS_DEFINED_FOR_TYPE_3_FONT = "No glyphs defined for type3 font.";
     public static final String NO_KID_WITH_SUCH_ROLE = "No kid with such role.";
-    /**
-     * @deprecated Now we log a warning rather than throw an exception.
-     */
-    @Deprecated
-    public static final String NO_MAX_LEN_PRESENT = "No /MaxLen has been set even though the Comb flag has been set.";
     public static final String NONINVERTIBLE_MATRIX_CANNOT_BE_PROCESSED = "A noninvertible matrix has been parsed. The behaviour is unpredictable.";
     public static final String NOT_A_PLACEABLE_WINDOWS_METAFILE = "Not a placeable windows metafile.";
     public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_A_SEQUENCE = "Not a valid PKCS#7 object - not a sequence";
@@ -239,7 +221,6 @@ public class PdfException extends RuntimeException {
     public static final String PAGE_IS_NOT_SET_FOR_THE_PDF_TAG_STRUCTURE = "Page is not set for the pdf tag structure.";
     public static final String PAGE_ALREADY_FLUSHED = "The page has been already flushed.";
     public static final String PAGE_ALREADY_FLUSHED_USE_ADD_FIELD_APPEARANCE_TO_PAGE_METHOD_BEFORE_PAGE_FLUSHING = "The page has been already flushed. Use PdfAcroForm#addFieldAppearanceToPage() method before page flushing.";
-    public static final String PDF_ENCODINGS = "PdfEncodings exception.";
     public static final String PDF_ENCRYPTION = "PdfEncryption exception.";
     public static final String PDF_DECRYPTION = "Exception occurred with PDF document decryption. One of the possible reasons is wrong password or wrong public key certificate and private key.";
     public static final String PDF_DOCUMENT_MUST_BE_OPENED_IN_STAMPING_MODE = "PdfDocument must be opened in stamping mode.";
@@ -302,18 +283,12 @@ public class PdfException extends RuntimeException {
     public static final String UNKNOWN_HASH_ALGORITHM = "Unknown hash algorithm: {0}.";
     public static final String UNKNOWN_KEY_ALGORITHM = "Unknown key algorithm: {0}.";
     public static final String UNSUPPORTED_FONT_EMBEDDING_STRATEGY = "Unsupported font embedding strategy.";
-    public static final String UNSUPPORTED_DEFAULT_COLOR_SPACE_NAME = "Unsupported default color space name. Was {0}, but should be DefaultCMYK, DefaultGray or DefaultRGB";
     public static final String UNSUPPORTED_XOBJECT_TYPE = "Unsupported XObject type.";
     public static final String VERIFICATION_ALREADY_OUTPUT = "Verification already output.";
     public static final String WHEN_ADDING_OBJECT_REFERENCE_TO_THE_TAG_TREE_IT_MUST_BE_CONNECTED_TO_NOT_FLUSHED_OBJECT = "When adding object reference to the tag tree, it must be connected to not flushed object.";
     public static final String WHITE_POINT_IS_INCORRECTLY_SPECIFIED = "White point is incorrectly specified.";
     public static final String WMF_IMAGE_EXCEPTION = "WMF image exception.";
     public static final String WRONG_FORM_FIELD_ADD_ANNOTATION_TO_THE_FIELD = "Wrong form field. Add annotation to the field.";
-    /**
-     * @deprecated in favour of more informative named constant
-     */
-    @Deprecated
-    public static final String WRONG_MEDIA_BOX_SIZE_1 = "Wrong media box size: {0}.";
     public static final String WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS = "Wrong media box size: {0}. Need at least 4 arguments";
     public static final String XREF_SUBSECTION_NOT_FOUND = "xref subsection not found.";
     public static final String YOU_HAVE_TO_DEFINE_A_BOOLEAN_ARRAY_FOR_THIS_COLLECTION_SORT_DICTIONARY = "You have to define a boolean array for this collection sort dictionary.";
