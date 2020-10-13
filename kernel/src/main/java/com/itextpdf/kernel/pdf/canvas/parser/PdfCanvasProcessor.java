@@ -474,10 +474,11 @@ public class PdfCanvasProcessor {
     }
 
     /**
-     * Creates a {@link PdfFont} object by a font dictionary. The font may have been cached in case it is an indirect object.
+     * Creates a {@link PdfFont} object by a font dictionary. The font may have been cached in case
+     * it is an indirect object.
      *
-     * @param fontDict
-     * @return the font
+     * @param fontDict the {@link PdfDictionary font dictionary} to create the font from
+     * @return the created font
      */
     protected PdfFont getFont(PdfDictionary fontDict) {
         if (fontDict.getIndirectReference() == null) {
