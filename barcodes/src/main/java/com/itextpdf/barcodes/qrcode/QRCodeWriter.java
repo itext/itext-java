@@ -60,7 +60,7 @@ public final class QRCodeWriter {
      * @param width width of the QR-code
      * @param height height of the QR-code
      * @return 2D Greyscale map containing the visual representation of the QR-code, stored as a Bytematrix
-     * @throws WriterException
+     * @throws WriterException exception is thrown in case an error occurs when encoding a barcode using the Writer framework
      */
     public ByteMatrix encode(String contents, int width, int height)
             throws WriterException {
@@ -76,7 +76,7 @@ public final class QRCodeWriter {
      * @param height height of the QR-code
      * @param hints Map containing suggestions for error-correction level and version
      * @return 2D Greyscale map containing the visual representation of the QR-code, stored as a Bytematrix
-     * @throws WriterException
+     * @throws WriterException exception is thrown in case an error occurs when encoding a barcode using the Writer framework
      */
     public ByteMatrix encode(String contents, int width, int height,
                              Map<EncodeHintType,Object> hints) throws WriterException {

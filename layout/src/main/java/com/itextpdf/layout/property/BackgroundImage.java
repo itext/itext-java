@@ -316,6 +316,8 @@ public class BackgroundImage {
 
     /**
      * Gets initial image width.
+     *
+     * @return the initial image width
      */
     public float getImageWidth() {
         return (float) image.getWidth();
@@ -323,6 +325,8 @@ public class BackgroundImage {
 
     /**
      * Gets initial image height.
+     *
+     * @return the initial image height
      */
     public float getImageHeight() {
         return (float) image.getHeight();
@@ -331,6 +335,7 @@ public class BackgroundImage {
     /**
      * Gets initial image width.
      *
+     * @return the initial image width
      * @deprecated To be removed in 7.2. Use {@link BackgroundImage#getImageWidth()} instead.
      */
     @Deprecated
@@ -341,6 +346,7 @@ public class BackgroundImage {
     /**
      * Gets initial image height.
      *
+     * @return the initial image height
      * @deprecated To be removed in 7.2. Use {@link BackgroundImage#getImageHeight()} instead.
      */
     @Deprecated

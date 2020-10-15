@@ -102,6 +102,7 @@ public class BackgroundRepeat {
      *
      * @param imageRectangle the image rectangle which will be changed
      * @param backgroundArea the background available area
+     * @param backgroundSize the image background size property
      * @return the necessary whitespace between backgrounds
      */
     public Point prepareRectangleToDrawingAndGetWhitespace(final Rectangle imageRectangle,
