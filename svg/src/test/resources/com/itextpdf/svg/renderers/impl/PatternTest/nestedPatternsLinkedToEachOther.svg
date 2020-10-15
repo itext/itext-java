@@ -1,0 +1,14 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+     <pattern id="inner" width="10" height="10">
+      <circle cx="10" cy="10" r="20" stroke="green" stroke-width="4px" fill="url(#outer)" />
+    </pattern>
+
+    <pattern id="outer" x="0" y="0" width="30%" height="30%">
+      <rect x="0" y="0" width="50" height="50" fill="url(#inner)"/>
+    </pattern>
+	
+  </defs>
+
+  <rect fill="url(#outer)" stroke="black" width="200" height="200"/>
+</svg>

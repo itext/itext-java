@@ -1,0 +1,22 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient x1="20%" y1="20%" x2="80%" y2="80%" id="Gradient1">
+            <stop offset="0" stop-color="#ffcc00"/>
+            <stop offset="0.5" stop-color="#cc6699"/>
+            <stop offset="1" stop-color="#66cc99"/>
+        </linearGradient>
+        <linearGradient x1="80%" y1="80%" x2="20%" y2="20%" id="Gradient2">
+            <stop offset="0" stop-color="#ffcc00"/>
+            <stop offset="0.5" stop-color="magenta"/>
+            <stop offset="1" stop-color="#66cc99"/>
+        </linearGradient>
+
+    <pattern id="Pattern" x="0" y="0" width=".25" height=".25">
+      <rect x="0" y="0" width="50" height="50" fill="white"/>
+	  <circle cx="25" cy="25" r="10" fill="url(#Gradient2)"/>
+      <rect x="25" y="25" width="25" height="25" fill="url(#Gradient1)" fill-opacity="0.8"/>
+    </pattern>
+  </defs>
+
+  <rect fill="url(#Pattern)" stroke="black" width="200" height="200"/>
+</svg>

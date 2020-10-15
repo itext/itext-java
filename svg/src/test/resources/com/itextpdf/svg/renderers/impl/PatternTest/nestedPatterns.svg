@@ -1,0 +1,15 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+     <pattern id="inner" width="13" height="13" patternUnits="userSpaceOnUse">
+      <polygon points="0,0 2,5 0,10 5,8 10,10 8,5 10,0 5,2"/>
+	  <polygon  fill="cyan" points="3,3 5,8 3,13 8,11 13,13 11,8 13,3 8,5"/>
+    </pattern>
+
+    <pattern id="outer" x="13" y="13" width="50" height="50" patternUnits="userSpaceOnUse">
+      <circle cx="22" cy="22" r="20" stroke="salmon" stroke-width="4px" fill="url(#inner)" />
+    </pattern>
+	
+  </defs>
+
+  <rect fill="url(#outer)" stroke="black" width="200" height="200"/>
+</svg>
