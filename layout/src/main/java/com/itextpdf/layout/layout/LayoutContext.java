@@ -53,7 +53,7 @@ import java.util.List;
  * Represents the context for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
  */
 public class LayoutContext {
-    
+
     /**
      * The {@link LayoutArea area} the content to be placed on.
      */

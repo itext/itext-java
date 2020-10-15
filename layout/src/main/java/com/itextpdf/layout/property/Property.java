@@ -52,9 +52,6 @@ import com.itextpdf.layout.IPropertyContainer;
  */
 public final class Property {
 
-    private Property() {
-    }
-
     public static final int ACTION = 1;
     public static final int APPEARANCE_STREAM_LAYOUT = 82;
     public static final int AREA_BREAK_TYPE = 2;
@@ -128,6 +125,7 @@ public final class Property {
      **/
     public static final int HORIZONTAL_SCALING = 29;
     public static final int HYPHENATION = 30;
+    public static final int ID = 126;
     public static final int IGNORE_FOOTER = 96;
     public static final int IGNORE_HEADER = 97;
     public static final int ITALIC_SIMULATION = 31;
@@ -264,6 +262,9 @@ public final class Property {
         INHERITED_PROPERTIES[Property.TYPOGRAPHY_CONFIG] = true;
         INHERITED_PROPERTIES[Property.RENDERING_MODE] = true;
         INHERITED_PROPERTIES[Property.LINE_HEIGHT] = true;
+    }
+
+    private Property() {
     }
 
     /**

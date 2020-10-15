@@ -66,6 +66,7 @@ public class DocumentRenderer extends RootRenderer {
 
     protected Document document;
     protected List<Integer> wrappedContentPage = new ArrayList<>();
+    protected TargetCounterHandler targetCounterHandler = new TargetCounterHandler();
 
     public DocumentRenderer(Document document) {
         this(document, true);
@@ -75,6 +76,24 @@ public class DocumentRenderer extends RootRenderer {
         this.document = document;
         this.immediateFlush = immediateFlush;
         this.modelElement = document;
+    }
+
+    /**
+     * Get handler for target-counters.
+     *
+     * @return the {@link TargetCounterHandler} instance
+     */
+    public TargetCounterHandler getTargetCounterHandler() {
+        return targetCounterHandler;
+    }
+
+    /**
+     * Indicates if relayout is required for targetCounterHandler.
+     *
+     * @return true if relayout is required, false otherwise
+     */
+    public boolean isRelayoutRequired() {
+        return targetCounterHandler.isRelayoutRequired();
     }
 
     @Override

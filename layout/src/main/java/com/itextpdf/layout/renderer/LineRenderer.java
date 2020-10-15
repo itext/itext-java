@@ -130,6 +130,8 @@ public class LineRenderer extends AbstractRenderer {
 
         updateChildrenParent();
 
+        TargetCounterHandler.addPageByID(this);
+
         float curWidth = 0;
         if (RenderingMode.HTML_MODE.equals(this.<RenderingMode>getProperty(Property.RENDERING_MODE))
                 && hasChildRendererInHtmlMode()) {

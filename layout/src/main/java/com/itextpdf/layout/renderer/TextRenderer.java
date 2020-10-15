@@ -77,7 +77,6 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.FontKerning;
@@ -203,6 +202,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
 
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
+
+        TargetCounterHandler.addPageByID(this);
 
         boolean anythingPlaced = false;
 

@@ -152,6 +152,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         }
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
+        TargetCounterHandler.addPageByID(this);
+
         float imageContainerWidth = (float) width;
         float imageContainerHeight = (float) height;
 
