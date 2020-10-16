@@ -61,7 +61,6 @@ import com.itextpdf.kernel.pdf.PdfStream;
  */
 public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = -6771280634868639993L;
 
     /**
      * Wraps the passed {@link PdfDictionary}.
@@ -139,7 +138,6 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
      */
     public static class Tiling extends PdfPattern {
 
-        private static final long serialVersionUID = 1450379837955897673L;
 		
         private PdfResources resources = null;
 
@@ -436,7 +434,6 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
      */
     public static class Shading extends PdfPattern {
 
-        private static final long serialVersionUID = -4289411438737403786L;
 
         /**
          * Creates new instance from the {@link PdfStream} object.

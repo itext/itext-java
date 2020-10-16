@@ -58,7 +58,6 @@ import java.util.List;
 
 public abstract class PdfSpecialCs extends PdfColorSpace {
 
-    private static final long serialVersionUID = -2725455900398492836L;
 
     protected PdfSpecialCs(PdfArray pdfObject) {
         super(pdfObject);
@@ -83,7 +82,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
 
     public static class Indexed extends PdfSpecialCs {
         
-    	private static final long serialVersionUID = -1155418938167317916L;
 
 		public Indexed(PdfArray pdfObject) {
             super(pdfObject);
@@ -115,7 +113,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
 
     public static class Separation extends PdfSpecialCs {
         
-		private static final long serialVersionUID = 4259327393838350842L;
 
 		public Separation(PdfArray pdfObject) {
             super(pdfObject);
@@ -158,7 +155,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
 
     public static class DeviceN extends PdfSpecialCs {
 
-        private static final long serialVersionUID = 4051693146595260270L;
 		
         protected int numOfComponents = 0;
 
@@ -204,7 +200,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
 
     public static class NChannel extends DeviceN {
         
-    	private static final long serialVersionUID = 5352964946869757972L;
 
 		public NChannel(PdfArray pdfObject) {
             super(pdfObject);
@@ -231,7 +226,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
 
     public static class Pattern extends PdfColorSpace {
 
-        private static final long serialVersionUID = 8057478102447278706L;
 
 		@Override
         protected boolean isWrappedObjectMustBeIndirect() {
@@ -254,7 +248,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
 
     public static class UncoloredTilingPattern extends Pattern {
 
-        private static final long serialVersionUID = -9030226298201261021L;
 
         /**
          * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure

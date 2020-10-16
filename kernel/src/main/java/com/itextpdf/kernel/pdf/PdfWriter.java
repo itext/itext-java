@@ -55,7 +55,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.OutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -64,9 +63,8 @@ import java.util.Set;
 
 import static com.itextpdf.io.source.ByteUtils.getIsoBytes;
 
-public class PdfWriter extends PdfOutputStream implements Serializable {
+public class PdfWriter extends PdfOutputStream {
 
-    private static final long serialVersionUID = -6875544505477707103L;
 
     private static final byte[] obj = getIsoBytes(" obj\n");
     private static final byte[] endobj = getIsoBytes("\nendobj\n");
@@ -543,35 +541,4 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     private static boolean checkTypeOfPdfDictionary(PdfObject dictionary, PdfName expectedType) {
         return dictionary.isDictionary() && expectedType.equals(((PdfDictionary) dictionary).getAsName(PdfName.Type));
     }
-
-    /**
-     * This method is invoked while deserialization
-     *
-     * @param in {@link java.io.ObjectInputStream} inputStream that is read during deserialization
-     * @throws IOException if I/O errors occur while writing to the underlying output stream
-     * @throws ClassNotFoundException if the class of a serialized object could not be found.
-     */
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        if (outputStream == null) {
-            outputStream = new ByteArrayOutputStream().assignBytes(getDebugBytes());
-        }
-    }
-
-    /**
-     * This method is invoked while serialization
-     *
-     * @param out {@link java.io.ObjectOutputStream} output stream to write object into
-     * @throws IOException if I/O errors occur while writing to the underlying output stream
-     */
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-        if (duplicateStream == null) {
-            throw new NotSerializableException(this.getClass().getName() + ": debug mode is disabled!");
-        }
-        OutputStream tempOutputStream = outputStream;
-        outputStream = null;
-        out.defaultWriteObject();
-        outputStream = tempOutputStream;
-    }
-
 }

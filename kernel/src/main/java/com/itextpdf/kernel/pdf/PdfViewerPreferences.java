@@ -47,7 +47,6 @@ import com.itextpdf.kernel.PdfException;
 
 public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = -6885879361985241602L;
 
 	public enum PdfViewerPreferencesConstants {
         /**

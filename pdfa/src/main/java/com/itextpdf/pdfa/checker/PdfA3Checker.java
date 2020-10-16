@@ -74,7 +74,6 @@ public class PdfA3Checker extends PdfA2Checker{
                     PdfName.Alternative,
                     PdfName.Supplement,
                     PdfName.Unspecified)));
-    private static final long serialVersionUID = 6280825718658124941L;
 
     /**
      * Creates a PdfA3Checker with the required conformance level

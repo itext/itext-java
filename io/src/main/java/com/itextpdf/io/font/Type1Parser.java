@@ -53,11 +53,9 @@ import com.itextpdf.io.util.ResourceUtil;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.InputStream;
-import java.io.Serializable;
 
-class Type1Parser implements Serializable {
+class Type1Parser {
 
-    private static final long serialVersionUID = -8484541242371901414L;
 
     private static final String AFM_HEADER = "StartFontMetrics";
 

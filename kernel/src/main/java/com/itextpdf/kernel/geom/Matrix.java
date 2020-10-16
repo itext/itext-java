@@ -43,14 +43,13 @@
  */
 package com.itextpdf.kernel.geom;
 
-import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * Keeps all the values of a 3 by 3 matrix and allows you to
  * do some math with matrices.
  */
-public class Matrix implements Serializable {
+public class Matrix {
 
     /** the row=1, col=1 position ('a') in the matrix. */
     public static final int I11 = 0;
@@ -70,7 +69,6 @@ public class Matrix implements Serializable {
     public static final int I32 = 7;
     /** the row=3, col=3 position (always 1 for 2-D) in the matrix. */
     public static final int I33 = 8;
-    private static final long serialVersionUID = 7434885566068528477L;
 
     /**
      * The values inside the matrix (the identity matrix by default).

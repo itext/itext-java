@@ -17,7 +17,6 @@
 
 package com.itextpdf.layout.hyphenation;
 
-import java.io.Serializable;
 
 /**
  * This class represents a hyphen. A 'full' hyphen is made of 3 parts:
@@ -35,9 +34,8 @@ import java.io.Serializable;
 /**
  * Represents a hyphen.
  */
-public class Hyphen implements Serializable {
+public class Hyphen {
 
-    private static final long serialVersionUID = 8989909741110279085L;
 
     /** pre break string */
     public String preBreak;

@@ -43,16 +43,14 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import java.io.Serializable;
 import java.security.SecureRandom;
 import java.security.cert.Certificate;
 
 /**
  * Allows configuration of output PDF encryption.
  */
-public class EncryptionProperties implements Serializable {
+public class EncryptionProperties {
 
-    private static final long serialVersionUID = 3926570647944137843L;
 
     protected int encryptionAlgorithm;
 

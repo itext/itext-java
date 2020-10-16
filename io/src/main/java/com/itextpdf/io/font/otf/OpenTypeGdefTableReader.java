@@ -45,16 +45,13 @@ package com.itextpdf.io.font.otf;
 
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 
-import java.io.Serializable;
 
-public class OpenTypeGdefTableReader implements Serializable{
+public class OpenTypeGdefTableReader {
 
     static final int FLAG_IGNORE_BASE = 2;
     static final int FLAG_IGNORE_LIGATURE = 4;
     static final int FLAG_IGNORE_MARK = 8;
 
-    private static final long serialVersionUID = 1564505797329158035L;
-    
     private final int tableLocation;
     private final RandomAccessFileOrArray rf;
     private OtfClass glyphClass;

@@ -56,7 +56,6 @@ import java.util.Map;
  * Contextual Substitution Subtable: Simple context glyph substitution
  */
 public class SubTableLookup5Format1 extends ContextualSubTable {
-    private static final long serialVersionUID = -6061489236592337747L;
     private Map<Integer, List<ContextualSubstRule>> substMap;
 
     public SubTableLookup5Format1(OpenTypeFontTableReader openReader, int lookupFlag, Map<Integer, List<ContextualSubstRule>> substMap) {
@@ -73,7 +72,6 @@ public class SubTableLookup5Format1 extends ContextualSubTable {
     }
 
     public static class SubstRuleFormat1 extends ContextualSubstRule {
-        private static final long serialVersionUID = -540799242670887211L;
         // inputGlyphIds array omits the first glyph in the sequence,
         // the first glyph is defined by corresponding coverage glyph
         private int[] inputGlyphIds;

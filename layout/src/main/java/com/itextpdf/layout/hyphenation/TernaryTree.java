@@ -21,7 +21,6 @@
 
 package com.itextpdf.layout.hyphenation;
 
-import java.io.Serializable;
 import java.util.Enumeration;
 
 /**
@@ -66,7 +65,7 @@ import java.util.Enumeration;
  * This work was authored by Carlos Villegas (cav@uniscope.co.jp).
  */
 
-public class TernaryTree implements Serializable {
+public class TernaryTree {
 
     /**
      * We use 4 arrays to represent a node. I guess I should have created
@@ -76,7 +75,6 @@ public class TernaryTree implements Serializable {
      * if it ain't broken, don't fix it.
      */
 
-    private static final long serialVersionUID = 3175412271203716160L;
 
     /**
      * Pointer to low branch and to rest of the key when it is

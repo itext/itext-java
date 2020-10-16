@@ -53,7 +53,6 @@ import java.security.Key;
 import java.security.cert.Certificate;
 
 public class PubSecHandlerUsingStandard128 extends PubSecHandlerUsingStandard40  {
-    private static final long serialVersionUID = 4243832116977499452L;
 
     public PubSecHandlerUsingStandard128(PdfDictionary encryptionDictionary, Certificate[] certs, int[] permissions,
                                          boolean encryptMetadata, boolean embeddedFilesOnly) {

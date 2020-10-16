@@ -78,7 +78,6 @@ public class DeviceRgb extends Color {
      */
     public static final Color BLUE = new DeviceRgb(0, 0, 255);
 
-    private static final long serialVersionUID = 7172400358137528030L;
 
     /**
      * Creates DeviceRgb color by intensities of red, green and blue colorants.

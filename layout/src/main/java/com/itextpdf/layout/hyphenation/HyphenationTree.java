@@ -19,9 +19,7 @@ package com.itextpdf.layout.hyphenation;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,7 +35,6 @@ import java.util.Map;
  */
 public class HyphenationTree extends TernaryTree implements IPatternConsumer {
 
-    private static final long serialVersionUID = -7842107987915665573L;
 
     /**
      * value space: stores the interletter values
@@ -67,10 +64,6 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
 
         // this reserves index 0, which we don't use
         vspace.alloc(1);
-    }
-
-    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        ois.defaultReadObject();
     }
 
     /**

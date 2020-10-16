@@ -43,14 +43,12 @@
  */
 package com.itextpdf.io.source;
 
-import java.io.Serializable;
 
 /**
  * A RandomAccessSource that wraps another RandomAccessSource and provides a window of it at a specific offset and over
  * a specific length.  Position 0 becomes the offset position in the underlying source.
  */
-public class WindowRandomAccessSource implements IRandomAccessSource, Serializable {
-    private static final long serialVersionUID = -8539987600466289182L;
+public class WindowRandomAccessSource implements IRandomAccessSource {
     /**
      * The source
      */

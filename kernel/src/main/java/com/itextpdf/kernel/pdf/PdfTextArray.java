@@ -60,7 +60,6 @@ import java.util.Collection;
  */
 public class PdfTextArray extends PdfArray {
 
-    private static final long serialVersionUID = 2555632135770071680L;
 
     private float lastNumber = Float.NaN;
     private StringBuilder lastString;

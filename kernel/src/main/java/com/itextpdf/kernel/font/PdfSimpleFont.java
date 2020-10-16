@@ -72,7 +72,6 @@ import org.slf4j.LoggerFactory;
 
 public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
-    private static final long serialVersionUID = -4942318223894676176L;
 
     protected FontEncoding fontEncoding;
 

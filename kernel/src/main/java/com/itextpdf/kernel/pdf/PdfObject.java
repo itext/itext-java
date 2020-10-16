@@ -50,11 +50,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.Serializable;
 
-public abstract class PdfObject implements Serializable {
+public abstract class PdfObject {
 
-    private static final long serialVersionUID = -3852543867469424720L;
 
     public static final byte ARRAY = 1;
     public static final byte BOOLEAN = 2;

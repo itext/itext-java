@@ -50,17 +50,15 @@ import java.util.LinkedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class PdfNameTree implements Serializable {
+public class PdfNameTree {
 
     private static final int NODE_SIZE = 40;
-    private static final long serialVersionUID = 8153711383828989907L;
 
     private PdfCatalog catalog;
     private Map<String, PdfObject> items = new LinkedHashMap<>();

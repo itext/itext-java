@@ -45,15 +45,13 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.PdfEncodings;
 
-import java.io.Serializable;
 import java.util.Map;
 
-public class PdfDocumentInfo implements Serializable {
+public class PdfDocumentInfo {
 
     static final PdfName PDF20_DEPRECATED_KEYS[] = new PdfName[] {PdfName.Title, PdfName.Author, PdfName.Subject, PdfName.Keywords,
             PdfName.Creator, PdfName.Producer, PdfName.Trapped};
 
-    private static final long serialVersionUID = -21957940280527125L;
 
     private PdfDictionary infoDictionary;
 

@@ -45,16 +45,14 @@ package com.itextpdf.io.font.cmap;
 
 import com.itextpdf.io.font.PdfEncodings;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author psoares
  */
-public abstract class AbstractCMap implements Serializable {
+public abstract class AbstractCMap {
 
-    private static final long serialVersionUID = -9057458889624600915L;
 
     private String cmapName;
     private String registry;

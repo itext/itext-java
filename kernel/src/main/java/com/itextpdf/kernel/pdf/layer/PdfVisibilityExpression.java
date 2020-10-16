@@ -53,7 +53,6 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
  */
 public class PdfVisibilityExpression extends PdfObjectWrapper<PdfArray> {
 
-    private static final long serialVersionUID = 4152369893262322542L;
 
 	/**
      * Constructs a new PdfVisibilityExpression instance by its raw PdfArray.

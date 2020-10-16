@@ -52,7 +52,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,9 +62,8 @@ import java.util.TreeSet;
 /**
  * A representation of a cross-referenced table of a PDF document.
  */
-public class PdfXrefTable implements Serializable {
+public class PdfXrefTable {
 
-    private static final long serialVersionUID = 4171655392492002944L;
 
     private static final int INITIAL_CAPACITY = 32;
     private static final int MAX_GENERATION = 65535;

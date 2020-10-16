@@ -33,8 +33,6 @@ import java.util.List;
 import java.util.Set;
 
 public class PosTableLookup7Format2 extends ContextualPositionTable {
-    private static final long serialVersionUID = 2542153457480614040L;
-
     private Set<Integer> posCoverageGlyphIds;
     private List<List<ContextualPositionRule>> subClassSets;
     private OtfClass classDefinition;
@@ -61,7 +59,6 @@ public class PosTableLookup7Format2 extends ContextualPositionTable {
     }
 
     public static class PosRuleFormat2 extends ContextualPositionRule {
-        private static final long serialVersionUID = 652574134066355802L;
         // inputClassIds array omits the first class in the sequence,
         // the first class is defined by corresponding index of subClassSet array
         private int[] inputClassIds;

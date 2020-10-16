@@ -87,7 +87,6 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 
-import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -102,7 +101,7 @@ import java.util.Stack;
  * Make sure to call PdfCanvas.release() after you finished writing to the canvas.
  * It will save some memory.
  */
-public class PdfCanvas implements Serializable {
+public class PdfCanvas {
 
     private static final byte[] B = ByteUtils.getIsoBytes("B\n");
     private static final byte[] b = ByteUtils.getIsoBytes("b\n");
@@ -171,7 +170,6 @@ public class PdfCanvas implements Serializable {
     private static final PdfDeviceCs.Rgb rgb = new PdfDeviceCs.Rgb();
     private static final PdfDeviceCs.Cmyk cmyk = new PdfDeviceCs.Cmyk();
     private static final PdfSpecialCs.Pattern pattern = new PdfSpecialCs.Pattern();
-    private static final long serialVersionUID = -4706222391732334562L;
 
     private static final float IDENTITY_MATRIX_EPS = 1e-4f;
 

@@ -43,14 +43,12 @@
  */
 package com.itextpdf.io.source;
 
-import java.io.Serializable;
 import com.itextpdf.io.util.MessageFormatUtil;
 
-public class ByteBuffer implements Serializable {
+public class ByteBuffer {
 
     private static final byte[] bytes = new byte[]{48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102};
 
-    private static final long serialVersionUID = -4380712536267312975L;
 
     protected int count;
     private byte[] buffer;

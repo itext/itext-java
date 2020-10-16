@@ -57,7 +57,6 @@ import com.itextpdf.io.util.MessageFormatUtil;
  */
 public class PdfRendition extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = -726500192326824100L;
 
     /**
      * Creates a new wrapper around an existing {@link PdfDictionary}

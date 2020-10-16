@@ -46,14 +46,12 @@ package com.itextpdf.io.source;
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.EOFException;
-import java.io.Serializable;
 
 /**
  * Class that is used to unify reading from random access files and arrays.
  */
-public class RandomAccessFileOrArray implements DataInput, Serializable {
+public class RandomAccessFileOrArray implements DataInput {
 
-    private static final long serialVersionUID = -169314546265954851L;
 
 
     /**

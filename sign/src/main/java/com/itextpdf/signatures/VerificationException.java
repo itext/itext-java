@@ -53,7 +53,6 @@ import com.itextpdf.io.util.MessageFormatUtil;
  */
 public class VerificationException extends GeneralSecurityException {
 
-    private static final long serialVersionUID = 2978604513926438256L;
 
     /**
      * Creates a VerificationException

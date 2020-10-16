@@ -43,11 +43,8 @@
  */
 package com.itextpdf.kernel;
 
-import java.io.Serializable;
+public class VersionInfo {
 
-public class VersionInfo implements Serializable {
-
-    private static final long serialVersionUID = 1514128839876564529L;
 
     private final String productName;
     private final String releaseNumber;

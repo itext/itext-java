@@ -45,11 +45,9 @@ package com.itextpdf.io.source;
 
 import com.itextpdf.io.IOException;
 
-import java.io.Serializable;
 
-public class OutputStream<T extends java.io.OutputStream> extends java.io.OutputStream implements Serializable {
+public class OutputStream<T extends java.io.OutputStream> extends java.io.OutputStream {
 
-    private static final long serialVersionUID = -5337390096148526418L;
 
     //long=19 + max frac=6 => 26 => round to 32.
     private final ByteBuffer numBuffer = new ByteBuffer(32);
@@ -236,29 +234,4 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
         } else
             throw new IOException(IOException.BytesCanBeResetInByteArrayOutputStreamOnly);
     }
-
-    /**
-     * This method is invoked while deserialization
-     *
-     * @param in given ObjectInputStream
-     * @throws java.io.IOException occurs in cases of producing failed or interrupted I/O operations
-     * @throws java.lang.ClassNotFoundException thrown when an application could not find the desired class
-     */
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-    }
-
-    /**
-     * This method is invoked while serialization
-     *
-     * @param out given ObjectOutputStream
-     * @throws java.io.IOException occurs in cases of producing failed or interrupted I/O operations
-     */
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-        java.io.OutputStream tempOutputStream = outputStream;
-        outputStream = null;
-        out.defaultWriteObject();
-        outputStream = tempOutputStream;
-    }
-
 }

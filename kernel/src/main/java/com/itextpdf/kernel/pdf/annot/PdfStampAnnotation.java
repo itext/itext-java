@@ -50,7 +50,6 @@ import com.itextpdf.kernel.pdf.PdfObject;
 
 public class PdfStampAnnotation extends  PdfMarkupAnnotation {
 
-    private static final long serialVersionUID = -8834372239248292352L;
 
 	public PdfStampAnnotation(Rectangle rect) {
         super(rect);

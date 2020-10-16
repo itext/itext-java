@@ -45,13 +45,11 @@ package com.itextpdf.io.font.otf;
 
 import com.itextpdf.io.util.TextUtil;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class GlyphLine implements Serializable {
-    private static final long serialVersionUID = 4689818013371677649L;
+public class GlyphLine {
     public int start;
     public int end;
     public int idx;
@@ -455,8 +453,7 @@ public class GlyphLine implements Serializable {
         }
     }
 
-    protected static class ActualText implements Serializable {
-        private static final long serialVersionUID = 5109920013485372966L;
+    protected static class ActualText {
         public String value;
 
         public ActualText(String value) {

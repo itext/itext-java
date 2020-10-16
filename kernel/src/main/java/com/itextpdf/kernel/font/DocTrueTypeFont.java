@@ -60,7 +60,6 @@ import org.slf4j.LoggerFactory;
 
 public class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
 
-    private static final long serialVersionUID = 4611535787920619829L;
 
     private PdfStream fontFile;
     private PdfName fontFileName;

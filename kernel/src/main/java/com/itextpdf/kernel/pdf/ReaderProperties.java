@@ -45,13 +45,11 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.security.IExternalDecryptionProcess;
 
-import java.io.Serializable;
 import java.security.Key;
 import java.security.cert.Certificate;
 
-public class ReaderProperties implements Serializable {
+public class ReaderProperties {
 
-    private static final long serialVersionUID = 5569118801793215916L;
 
     //added by ujihara for decryption
     protected byte[] password;

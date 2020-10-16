@@ -53,7 +53,6 @@ import java.util.Map;
  * @author psoares
  */
 public class GsubLookupType4 extends OpenTableLookup {
-    private static final long serialVersionUID = -8106254947137506056L;
     /**
      * The key is the first character. The first element in the int array is the
      * output ligature

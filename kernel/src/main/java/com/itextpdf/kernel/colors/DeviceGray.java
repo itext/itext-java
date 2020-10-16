@@ -66,7 +66,6 @@ public class DeviceGray extends Color {
      */
     public static final DeviceGray BLACK = new DeviceGray();
 
-    private static final long serialVersionUID = 8307729543359242834L;
 
     /**
      * Creates DeviceGray color by given grayscale.

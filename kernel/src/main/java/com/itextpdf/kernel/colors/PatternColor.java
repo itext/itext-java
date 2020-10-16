@@ -49,7 +49,6 @@ import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 
 public class PatternColor extends Color {
 
-    private static final long serialVersionUID = -2405470180325720440L;
     private PdfPattern pattern;
     // The underlying color for uncolored patterns. Will be null for colored ones.
     private Color underlyingColor;

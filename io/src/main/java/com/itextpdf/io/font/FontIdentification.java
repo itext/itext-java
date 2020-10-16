@@ -43,11 +43,8 @@
  */
 package com.itextpdf.io.font;
 
-import java.io.Serializable;
+public class FontIdentification {
 
-public class FontIdentification implements Serializable {
-
-    private static final long serialVersionUID = -6017656004487895604L;
 
     // name ID 5
     private String ttfVersion;

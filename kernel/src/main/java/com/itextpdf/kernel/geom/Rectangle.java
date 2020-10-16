@@ -47,7 +47,6 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfPage;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,11 +55,10 @@ import java.util.List;
 /**
  * Class that represent rectangle object.
  */
-public class Rectangle implements Cloneable, Serializable {
+public class Rectangle implements Cloneable {
 
     static float EPS = 1e-4f;
 
-    private static final long serialVersionUID = 8025677415569233446L;
 
     protected float x;
     protected float y;

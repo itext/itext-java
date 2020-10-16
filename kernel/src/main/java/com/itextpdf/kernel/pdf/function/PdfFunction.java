@@ -57,7 +57,6 @@ import java.util.List;
 
 public class PdfFunction extends PdfObjectWrapper<PdfObject> {
 
-    private static final long serialVersionUID = -4689848231547125520L;
 
 	public PdfFunction(PdfObject pdfObject) {
         super(pdfObject);
@@ -99,7 +98,6 @@ public class PdfFunction extends PdfObjectWrapper<PdfObject> {
 
     public static class Type0 extends PdfFunction {
 
-        private static final long serialVersionUID = 72188160295017639L;
 
 		public Type0(PdfStream pdfObject) {
             super(pdfObject);
@@ -137,7 +135,6 @@ public class PdfFunction extends PdfObjectWrapper<PdfObject> {
 
     public static class Type2 extends PdfFunction {
 
-       private static final long serialVersionUID = -4680660755798263091L;
 
 		public Type2(PdfDictionary pdfObject) {
             super(pdfObject);
@@ -168,7 +165,6 @@ public class PdfFunction extends PdfObjectWrapper<PdfObject> {
 
     public static class Type3 extends PdfFunction {
 
-		private static final long serialVersionUID = 3257795209767645155L;
 
 		public Type3(PdfDictionary pdfObject) {
             super(pdfObject);
@@ -205,7 +201,6 @@ public class PdfFunction extends PdfObjectWrapper<PdfObject> {
 
     public static class Type4 extends PdfFunction {
 
-        private static final long serialVersionUID = -5415624427845744618L;
 		
 		public Type4(PdfStream pdfObject) {
             super(pdfObject);

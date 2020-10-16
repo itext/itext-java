@@ -26,7 +26,6 @@ import java.io.Serializable;
 import java.util.List;
 
 public abstract class ContextualTable<T extends ContextualRule> implements Serializable {
-    private static final long serialVersionUID = 6482616632143439036L;
 
     protected OpenTypeFontTableReader openReader;
     protected int lookupFlag;

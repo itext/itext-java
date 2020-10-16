@@ -43,10 +43,8 @@
  */
 package com.itextpdf.io.font.otf;
 
-import java.io.Serializable;
 
-public class GposAnchor implements Serializable {
-    private static final long serialVersionUID = 7153858421411686094L;
+public class GposAnchor {
     public int XCoordinate;
     public int YCoordinate;
     

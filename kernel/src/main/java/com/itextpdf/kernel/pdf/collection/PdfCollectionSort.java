@@ -55,7 +55,6 @@ import java.util.Arrays;
 
 public class PdfCollectionSort extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = -3871923275239410475L;
 
     public PdfCollectionSort(PdfDictionary pdfObject) {
         super(pdfObject);

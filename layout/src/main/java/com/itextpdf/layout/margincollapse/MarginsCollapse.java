@@ -42,9 +42,7 @@
  */
 package com.itextpdf.layout.margincollapse;
 
-import java.io.Serializable;
-
-class MarginsCollapse implements Cloneable, Serializable {
+class MarginsCollapse implements Cloneable {
     private float maxPositiveMargin = 0;
     private float minNegativeMargin = 0;
 

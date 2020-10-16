@@ -62,7 +62,6 @@ import com.itextpdf.kernel.pdf.PdfXrefTable;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -86,9 +85,8 @@ import java.util.Set;
  * standard and its derivates will get their own implementation in the
  * iText 7 - pdfa project.
  */
-public abstract class PdfAChecker implements Serializable {
+public abstract class PdfAChecker {
 
-    private static final long serialVersionUID = -9138950508285715228L;
 
     /**
      * The Red-Green-Blue color profile as defined by the International Color

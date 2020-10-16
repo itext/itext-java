@@ -72,7 +72,6 @@ import java.util.Set;
 public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfCatalog.class);
 
-    private static final long serialVersionUID = -1354567597112193418L;
 
     final private PdfPagesTree pageTree;
 

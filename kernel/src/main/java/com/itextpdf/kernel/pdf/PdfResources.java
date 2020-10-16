@@ -51,7 +51,6 @@ import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,7 +64,6 @@ import static java.util.Collections.emptySet;
  */
 public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = 7160318458835945391L;
 
     private static final String F = "F";
     private static final String Im = "Im";
@@ -556,9 +554,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
      * the names of already existing resources thus providing us a unique name.
      * The name consists of the following parts: prefix (literal) and number.
      */
-    static class ResourceNameGenerator implements Serializable {
+    static class ResourceNameGenerator {
 
-        private static final long serialVersionUID = 1729961083476558303L;
 
         private PdfName resourceType;
         private int counter;

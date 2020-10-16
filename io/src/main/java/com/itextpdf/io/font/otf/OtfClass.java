@@ -51,14 +51,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.Serializable;
 
-public class OtfClass implements Serializable {
+public class OtfClass {
 
     public static final int GLYPH_BASE = 1;
     public static final int GLYPH_LIGATURE = 2;
     public static final int GLYPH_MARK = 3;
-    private static final long serialVersionUID = -7584495836452964728L;
 
     //key is glyph, value is class inside all 2
     private IntHashtable mapClass = new IntHashtable();

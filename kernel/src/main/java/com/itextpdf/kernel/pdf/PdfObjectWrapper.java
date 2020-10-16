@@ -45,11 +45,9 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.PdfException;
 
-import java.io.Serializable;
 
-public abstract class PdfObjectWrapper<T extends PdfObject> implements Serializable {
+public abstract class PdfObjectWrapper<T extends PdfObject> {
 
-    private static final long serialVersionUID = 3516473712028588356L;
 
     private T pdfObject = null;
 

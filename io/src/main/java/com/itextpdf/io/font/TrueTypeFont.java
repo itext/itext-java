@@ -66,7 +66,6 @@ import java.util.SortedSet;
 
 public class TrueTypeFont extends FontProgram {
 
-    private static final long serialVersionUID = -2232044646577669268L;
 
 	private OpenTypeParser fontParser;
 

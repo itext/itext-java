@@ -49,15 +49,13 @@ import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 
-import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * Represents a color
  */
-public class Color implements Serializable {
+public class Color {
 
-    private static final long serialVersionUID = -6639782922289701126L;
 
     /**
      * The color space of the color

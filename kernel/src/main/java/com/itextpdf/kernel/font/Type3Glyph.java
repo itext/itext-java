@@ -62,7 +62,6 @@ public final class Type3Glyph extends PdfCanvas {
     private static final String D_1_STR = "d1\n";
     private static final byte[] d0 = ByteUtils.getIsoBytes(D_0_STR);
     private static final byte[] d1 = ByteUtils.getIsoBytes(D_1_STR);
-    private static final long serialVersionUID = 5811604071799271336L;
 
     private float wx;
     private float llx;

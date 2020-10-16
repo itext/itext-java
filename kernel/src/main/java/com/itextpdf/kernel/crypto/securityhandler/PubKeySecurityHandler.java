@@ -85,7 +85,6 @@ import java.util.List;
 public abstract class PubKeySecurityHandler extends SecurityHandler {
 
     private static final int SEED_LENGTH = 20;
-    private static final long serialVersionUID = -6093031394871440268L;
 
     private List<PublicKeyRecipient> recipients = null;
 

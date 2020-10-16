@@ -25,12 +25,10 @@ package com.itextpdf.kernel.geom;
 
 import com.itextpdf.io.util.HashCode;
 
-import java.io.Serializable;
 import com.itextpdf.io.util.MessageFormatUtil;
 
-public class Point implements Serializable, Cloneable {
+public class Point implements Cloneable {
 
-    private static final long serialVersionUID = -5276940640259749850L;
 
     public double x;
     public double y;

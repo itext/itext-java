@@ -25,7 +25,6 @@ package com.itextpdf.io.font.otf;
 import java.io.Serializable;
 
 public abstract class ContextualRule implements Serializable {
-    private static final long serialVersionUID = -9013175115747848532L;
 
     /**
      * Gets the length of the context glyph sequence defined by this rule

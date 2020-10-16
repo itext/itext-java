@@ -49,7 +49,6 @@ package com.itextpdf.io.font.otf;
  */
 public class FontReadingException extends java.io.IOException {
 
-    private static final long serialVersionUID = -7058811479423740467L;
 
     public FontReadingException(String message) {
         super(message);

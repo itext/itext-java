@@ -48,7 +48,6 @@ import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,8 +55,7 @@ import java.util.List;
  * Document outline object
  * See ISO-320001, 12.3.3 Document Outline.
  */
-public class PdfOutline implements Serializable {
-    private static final long serialVersionUID = 5730874960685950376L;
+public class PdfOutline {
     /**
      * A flag for displaying the outline item’s text with italic font.
      */

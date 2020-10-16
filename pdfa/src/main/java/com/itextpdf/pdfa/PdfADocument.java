@@ -92,7 +92,6 @@ import java.io.IOException;
  */
 public class PdfADocument extends PdfDocument {
 
-    private static final long serialVersionUID = -5908390625367471894L;
 
     private static IPdfPageFactory pdfAPageFactory = new PdfAPageFactory();
 

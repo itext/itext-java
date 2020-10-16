@@ -71,7 +71,6 @@ import java.util.Map;
  */
 public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = -5814265943827690509L;
 
     private PdfTarget(PdfDictionary pdfObject) {
         super(pdfObject);

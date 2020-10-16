@@ -45,7 +45,6 @@ package com.itextpdf.kernel.pdf;
 
 class PdfPages extends PdfObjectWrapper<PdfDictionary> {
 
-	private static final long serialVersionUID = 404629033132277362L;
 	private int from;
     private PdfNumber count;
     private final PdfArray kids;

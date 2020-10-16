@@ -55,7 +55,6 @@ import com.itextpdf.kernel.pdf.PdfString;
 
 public class PdfCollectionItem extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = -6471103872805179766L;
 	private PdfCollectionSchema schema;
 
     public PdfCollectionItem(PdfCollectionSchema schema) {

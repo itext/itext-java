@@ -59,7 +59,6 @@ import com.itextpdf.kernel.pdf.canvas.parser.clipper.PolyTree;
  * clipping path state and changes.
  */
 public class ParserGraphicsState extends CanvasGraphicsState {
-    private static final long serialVersionUID = 5402909016194922120L;
     // NOTE: From the spec default value of this field should be the boundary of the entire imageable portion of the output page.
     private Path clippingPath;
 

@@ -55,7 +55,6 @@ import java.util.HashSet;
 
 public class PdfWidgetAnnotation extends PdfAnnotation {
 
-    private static final long serialVersionUID = 9013938639824707088L;
     public static final int HIDDEN = 1;
     public static final int VISIBLE_BUT_DOES_NOT_PRINT = 2;
     public static final int HIDDEN_BUT_PRINTABLE = 3;

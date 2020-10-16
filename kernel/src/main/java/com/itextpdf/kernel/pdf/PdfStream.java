@@ -43,22 +43,18 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.PdfException;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
 /**
  * Representation of a stream as described in the PDF Specification.
  */
 public class PdfStream extends PdfDictionary {
 
-    private static final long serialVersionUID = -8259929152054328141L;
 
     protected int compressionLevel;
     // Output stream associated with PDF stream.
@@ -396,17 +392,5 @@ public class PdfStream extends PdfDictionary {
 
     protected InputStream getInputStream() {
         return inputStream;
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        if (inputStream == null || inputStream instanceof Serializable) {
-            out.defaultWriteObject();
-        } else {
-            InputStream backup = inputStream;
-            inputStream = null;
-            LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.INPUT_STREAM_CONTENT_IS_LOST_ON_PDFSTREAM_SERIALIZATION);
-            inputStream = backup;
-        }
-
     }
 }

@@ -25,8 +25,6 @@ package com.itextpdf.io.font.otf;
 import java.io.Serializable;
 
 public class PosLookupRecord implements Serializable {
-    private static final long serialVersionUID = 7085939485491870210L;
-
     int sequenceIndex;
     int lookupListIndex;
 }

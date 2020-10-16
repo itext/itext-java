@@ -43,7 +43,6 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import java.io.Serializable;
 import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,9 +50,8 @@ import java.util.List;
 /**
  * This class represents all official PDF versions.
  */
-public class PdfVersion implements Comparable<PdfVersion>, Serializable {
+public class PdfVersion implements Comparable<PdfVersion> {
 
-    private static final long serialVersionUID = 6168855906667968169L;
 
     private static final List<PdfVersion> values = new ArrayList<>();
 

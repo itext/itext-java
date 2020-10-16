@@ -47,7 +47,6 @@ import com.itextpdf.io.source.ByteUtils;
 
 public class PdfBoolean extends PdfPrimitiveObject {
 
-    private static final long serialVersionUID = -1363839858135046832L;
 
     public static final PdfBoolean TRUE = new PdfBoolean(true, true);
     public static final PdfBoolean FALSE = new PdfBoolean(false, true);

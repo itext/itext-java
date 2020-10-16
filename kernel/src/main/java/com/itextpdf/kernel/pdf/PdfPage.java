@@ -72,7 +72,6 @@ import java.util.List;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = -952395541908379500L;
     private PdfResources resources = null;
     private int mcid = -1;
     PdfPages parentPages;

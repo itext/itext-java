@@ -61,7 +61,6 @@ import com.itextpdf.kernel.pdf.function.PdfFunction;
  */
 public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = 5205219918362853395L;
     /**
      * Standard separable blend mode. See ISO-320001, table 136
      */

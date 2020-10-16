@@ -51,7 +51,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
-import java.io.Serializable;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import com.itextpdf.io.util.MessageFormatUtil;
@@ -59,9 +58,8 @@ import com.itextpdf.io.util.MessageFormatUtil;
 /**
  * Factory to create {@link IRandomAccessSource} objects based on various types of sources
  */
-public final class RandomAccessSourceFactory implements Serializable {
+public final class RandomAccessSourceFactory {
 
-    private static final long serialVersionUID = -8958482579413233761L;
 
     /**
      * Whether the full content of the source should be read into memory at construction

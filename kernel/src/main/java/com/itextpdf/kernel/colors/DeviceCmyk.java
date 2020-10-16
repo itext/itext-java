@@ -70,7 +70,6 @@ public class DeviceCmyk extends Color {
      */
     public static final DeviceCmyk BLACK = new DeviceCmyk(0, 0, 0, 100);
 
-    private static final long serialVersionUID = 5466518014595706050L;
 
     /**
      * Creates DeviceCmyk color with all colorants intensities initialised as zeroes.

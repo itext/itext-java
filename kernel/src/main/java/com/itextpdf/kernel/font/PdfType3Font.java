@@ -101,7 +101,6 @@ import java.util.Map;
  */
 public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
-    private static final long serialVersionUID = 4940119184993066859L;
 
     private static final int FONT_BBOX_LLX = 0;
     private static final int FONT_BBOX_LLY = 1;

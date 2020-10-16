@@ -90,7 +90,6 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfImageXObject extends PdfXObject {
 
-    private static final long serialVersionUID = -205889576153966580L;
 
     private float width;
     private float height;

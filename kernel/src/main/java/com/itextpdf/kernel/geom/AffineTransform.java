@@ -43,12 +43,10 @@
  */
 package com.itextpdf.kernel.geom;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-public class AffineTransform implements Cloneable, Serializable {
+public class AffineTransform implements Cloneable {
 
-    private static final long serialVersionUID = 1330973210523860834L;
 
     /**
      * The type of affine transformation. See {@link AffineTransform#getType()}.

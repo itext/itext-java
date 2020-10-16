@@ -23,7 +23,6 @@
 package com.itextpdf.io.font.otf;
 
 public abstract class ContextualPositionRule extends ContextualRule {
-    private static final long serialVersionUID = 1629646447219066484L;
 
     /**
      * Retrieves the position lookup records. Each record specifies a position in the context glyph

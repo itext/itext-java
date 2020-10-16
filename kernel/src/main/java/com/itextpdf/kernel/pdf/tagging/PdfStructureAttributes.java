@@ -51,7 +51,6 @@ import com.itextpdf.kernel.pdf.PdfString;
 
 public class PdfStructureAttributes extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = 3972284224659975750L;
 
     public PdfStructureAttributes(PdfDictionary attributesDict) {
         super(attributesDict);

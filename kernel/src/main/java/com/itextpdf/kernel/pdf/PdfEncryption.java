@@ -73,7 +73,6 @@ import java.security.cert.Certificate;
  */
 public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
 
-	private static final long serialVersionUID = -6864863940808467156L;
 
 	private static final int STANDARD_ENCRYPTION_40 = 2;
     private static final int STANDARD_ENCRYPTION_128 = 3;

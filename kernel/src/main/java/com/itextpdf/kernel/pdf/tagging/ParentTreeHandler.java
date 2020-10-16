@@ -69,16 +69,13 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
-
 
 /**
  * Internal helper class which is used to effectively build parent tree and also find marked content references:
  * for specified page, by MCID or by struct parent index.
  */
-class ParentTreeHandler implements Serializable {
+class ParentTreeHandler {
 
-    private static final long serialVersionUID = 1593883864288316473L;
 
     private PdfStructTreeRoot structTreeRoot;
 
@@ -407,9 +404,8 @@ class ParentTreeHandler implements Serializable {
         return null;
     }
 
-    static class PageMcrsContainer implements Serializable {
+    static class PageMcrsContainer {
 
-        private static final long serialVersionUID = 8739394375814645643L;
 
         Map<Integer, PdfMcr> objRefs;
         NavigableMap<Integer, PdfMcr> pageContentStreams;

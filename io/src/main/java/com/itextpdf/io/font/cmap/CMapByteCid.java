@@ -53,7 +53,6 @@ import java.util.List;
  */
 public class CMapByteCid extends AbstractCMap {
 
-    private static final long serialVersionUID = 8843696844192313477L;
 
     protected static class Cursor {
 

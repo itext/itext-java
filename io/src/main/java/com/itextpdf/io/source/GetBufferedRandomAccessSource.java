@@ -43,11 +43,9 @@
  */
 package com.itextpdf.io.source;
 
-import java.io.Serializable;
 
-public class GetBufferedRandomAccessSource implements IRandomAccessSource, Serializable {
+public class GetBufferedRandomAccessSource implements IRandomAccessSource {
 
-    private static final long serialVersionUID = -8922625738755763494L;
     private final IRandomAccessSource source;
 
     private final byte[] getBuffer;

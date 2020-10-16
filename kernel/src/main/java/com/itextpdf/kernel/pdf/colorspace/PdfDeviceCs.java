@@ -47,7 +47,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 
 public abstract class PdfDeviceCs extends PdfColorSpace {
 
-    private static final long serialVersionUID = 6884911248656287064L;
 
 	@Override
     protected boolean isWrappedObjectMustBeIndirect() {
@@ -60,7 +59,6 @@ public abstract class PdfDeviceCs extends PdfColorSpace {
 
     public static class Gray extends PdfDeviceCs {
 
-        private static final long serialVersionUID = 2722906212276665191L;
 
 		public Gray() {
             super(PdfName.DeviceGray);
@@ -74,7 +72,6 @@ public abstract class PdfDeviceCs extends PdfColorSpace {
 
     public static class Rgb extends PdfDeviceCs {
 
-        private static final long serialVersionUID = -1605044540582561428L;
 
 		public Rgb() {
             super(PdfName.DeviceRGB);
@@ -88,7 +85,6 @@ public abstract class PdfDeviceCs extends PdfColorSpace {
 
     public static class Cmyk extends PdfDeviceCs {
 
-        private static final long serialVersionUID = 2615036909699704719L;
 
 		public Cmyk() {
             super(PdfName.DeviceCMYK);

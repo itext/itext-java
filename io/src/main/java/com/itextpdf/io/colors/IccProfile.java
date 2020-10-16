@@ -48,7 +48,6 @@ import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 
 import java.io.InputStream;
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,8 +56,7 @@ import java.util.Map;
 /**
  * Class used to represented the International Color Consortium profile
  */
-public class IccProfile implements Serializable {
-    private static final long serialVersionUID = -7466035855770591929L;
+public class IccProfile {
     protected byte[] data;
     protected int numComponents;
     private static Map<String, Integer> cstags = new HashMap<>();

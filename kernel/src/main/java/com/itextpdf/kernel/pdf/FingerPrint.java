@@ -45,7 +45,6 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.ProductInfo;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -55,8 +54,7 @@ import java.util.Set;
  * was involved in the creation of a certain PDF file. This information can then be used to log to the
  * logger or to the file.
  */
-public class FingerPrint implements Serializable {
-    private static final long serialVersionUID = 1378019250639368423L;
+public class FingerPrint {
 
     private Set<ProductInfo> productInfoSet;
 

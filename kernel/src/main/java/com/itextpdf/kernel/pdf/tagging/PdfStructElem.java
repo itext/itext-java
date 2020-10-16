@@ -77,7 +77,6 @@ import java.util.List;
  */
 public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IStructureNode {
 
-    private static final long serialVersionUID = 7204356181229674005L;
 
     public PdfStructElem(PdfDictionary pdfObject) {
         super(pdfObject);

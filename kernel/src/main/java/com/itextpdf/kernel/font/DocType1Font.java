@@ -60,7 +60,6 @@ import org.slf4j.LoggerFactory;
 
 class DocType1Font extends Type1Font implements IDocFontProgram {
 
-    private static final long serialVersionUID = 6260280563455951912L;
 
     private PdfStream fontFile;
     private PdfName fontFileName;

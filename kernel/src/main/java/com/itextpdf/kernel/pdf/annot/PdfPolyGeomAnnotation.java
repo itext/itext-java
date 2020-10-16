@@ -57,7 +57,6 @@ import com.itextpdf.kernel.pdf.PdfObject;
 
 public abstract class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
 
-    private static final long serialVersionUID = -9038993253308315792L;
 
 	/**
      * @deprecated , use {@link PdfName#Polygon} instead.

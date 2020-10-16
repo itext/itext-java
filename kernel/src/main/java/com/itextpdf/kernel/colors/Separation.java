@@ -49,7 +49,6 @@ import com.itextpdf.kernel.pdf.function.PdfFunction;
 
 public class Separation extends Color {
 
-    private static final long serialVersionUID = 5995354549050682283L;
 
     public Separation(PdfSpecialCs.Separation cs) {
         this(cs, 1f);

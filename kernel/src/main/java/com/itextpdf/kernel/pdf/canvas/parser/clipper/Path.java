@@ -282,7 +282,6 @@ public class Path extends ArrayList<Point.LongPoint> {
     /**
      *
      */
-    private static final long serialVersionUID = -7120161578077546673L;
 
     public Path() {
         super();

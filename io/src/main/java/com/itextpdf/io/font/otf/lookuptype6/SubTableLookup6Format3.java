@@ -55,7 +55,6 @@ import java.util.Set;
  * Chaining Contextual Substitution Subtable: Coverage-based Chaining Context Glyph Substitution
  */
 public class SubTableLookup6Format3 extends SubTableLookup6 {
-    private static final long serialVersionUID = 764166925472080146L;
     ContextualSubstRule substitutionRule;
 
     public SubTableLookup6Format3(OpenTypeFontTableReader openReader, int lookupFlag, SubstRuleFormat3 rule) {
@@ -73,7 +72,6 @@ public class SubTableLookup6Format3 extends SubTableLookup6 {
     }
 
     public static class SubstRuleFormat3 extends ContextualSubstRule {
-        private static final long serialVersionUID = -8817891790304481782L;
         List<Set<Integer>> backtrackCoverages;
         List<Set<Integer>> inputCoverages;
         List<Set<Integer>> lookaheadCoverages;

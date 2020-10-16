@@ -65,7 +65,6 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
             (byte) 0x64, (byte) 0x53, (byte) 0x69, (byte) 0x7A};
     protected static final byte[] metadataPad = {(byte) 255, (byte) 255,
             (byte) 255, (byte) 255};
-    private static final long serialVersionUID = -7951837491441953183L;
 
     protected byte[] documentId;
     // stores key length of the main key

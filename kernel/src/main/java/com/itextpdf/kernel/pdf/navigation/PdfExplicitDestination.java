@@ -63,7 +63,6 @@ import java.util.Map;
  */
 public class PdfExplicitDestination extends PdfDestination {
 
-    private static final long serialVersionUID = -1515785642472963298L;
 
 	public PdfExplicitDestination() {
         this(new PdfArray());

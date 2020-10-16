@@ -87,10 +87,7 @@ import com.itextpdf.kernel.xmp.options.SerializeOptions;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -109,9 +106,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Main enter point to work with PDF document.
  */
-public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
+public class PdfDocument implements IEventDispatcher, Closeable {
 
-    private static final long serialVersionUID = -7041578979319799646L;
 
     private static IPdfPageFactory pdfPageFactory = new PdfPageFactory();
 
@@ -2433,24 +2429,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        if (tagStructureContext != null) {
-            LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.TAG_STRUCTURE_CONTEXT_WILL_BE_REINITIALIZED_ON_SERIALIZATION);
-        }
-        out.defaultWriteObject();
-    }
-
     private boolean writerHasEncryption() {
         return writer.properties.isStandardEncryptionUsed() || writer.properties.isPublicKeyEncryptionUsed();
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        if (versionInfo == null) {
-            versionInfo = Version.getInstance().getInfo();
-        }
-
-        eventDispatcher = new EventDispatcher();
     }
 
     private String addModifiedPostfix(String producer) {

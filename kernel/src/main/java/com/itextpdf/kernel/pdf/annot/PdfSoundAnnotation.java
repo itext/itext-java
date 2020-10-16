@@ -57,7 +57,6 @@ import java.io.InputStream;
 
 public class PdfSoundAnnotation extends PdfMarkupAnnotation {
 
-    private static final long serialVersionUID = -2319779211858842136L;
 
     /**
      * Creates a new Sound annotation.

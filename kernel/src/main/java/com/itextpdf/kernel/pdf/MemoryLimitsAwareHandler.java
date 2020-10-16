@@ -44,7 +44,6 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.PdfException;
 
-import java.io.Serializable;
 import java.util.HashSet;
 
 /**
@@ -56,9 +55,8 @@ import java.util.HashSet;
  *
  * @see ReaderProperties#setMemoryLimitsAwareHandler(MemoryLimitsAwareHandler)
  */
-public class MemoryLimitsAwareHandler implements Serializable {
+public class MemoryLimitsAwareHandler {
 
-    private static final long serialVersionUID = 2499046471291214639L;
 
     private static final int SINGLE_SCALE_COEFFICIENT = 100;
     private static final int SUM_SCALE_COEFFICIENT = 500;

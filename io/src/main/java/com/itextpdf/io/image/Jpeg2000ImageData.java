@@ -63,7 +63,6 @@ public class Jpeg2000ImageData extends ImageData {
 
     public static class ColorSpecBox extends ArrayList<Integer> {
         
-		private static final long serialVersionUID = -6008490897027025733L;
 		
 		private byte[] colorProfile;
 

@@ -45,8 +45,6 @@ package com.itextpdf.io.font.otf;
 
 public abstract class ContextualSubTable extends ContextualTable<ContextualSubstRule> {
 
-    private static final long serialVersionUID = 1802216575331243298L;
-
     protected ContextualSubTable(OpenTypeFontTableReader openReader, int lookupFlag) {
         super(openReader, lookupFlag);
     }

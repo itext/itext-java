@@ -73,7 +73,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = -6555705164241587799L;
 
     /**
      * Annotation flag.

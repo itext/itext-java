@@ -52,7 +52,6 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 
 public class PdfTransparencyGroup extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = 753843601750097627L;
 
 	public PdfTransparencyGroup() {
         super(new PdfDictionary());

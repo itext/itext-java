@@ -70,7 +70,6 @@ public class Paths extends ArrayList<Path> {
     /**
      *
      */
-    private static final long serialVersionUID = 1910552127810480852L;
 
     public Paths() {
         super();

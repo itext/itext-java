@@ -73,7 +73,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implements IStructureNode {
 
-    private static final long serialVersionUID = 2168384302241193868L;
 
     private PdfDocument document;
     private ParentTreeHandler parentTreeHandler;

@@ -51,7 +51,6 @@ import java.util.Arrays;
 
 public abstract class PdfPrimitiveObject extends PdfObject {
 
-    private static final long serialVersionUID = -1788064882121987538L;
 	
     protected byte[] content = null;
     protected boolean directOnly;

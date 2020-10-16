@@ -43,10 +43,7 @@
  */
 package com.itextpdf.io.font.otf;
 
-import java.io.Serializable;
-
-public class ScriptRecord implements Serializable {
-    private static final long serialVersionUID = 1670929244968728679L;
+public class ScriptRecord {
     public String tag;
     public LanguageRecord defaultLanguage;
     public LanguageRecord[] languages;

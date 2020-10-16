@@ -53,16 +53,14 @@ import com.itextpdf.io.util.IntHashtable;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class CMapEncoding implements Serializable {
+public class CMapEncoding {
 
     private static final List<byte[]> IDENTITY_H_V_CODESPACE_RANGES = Arrays.asList(new byte[] {0, 0}, new byte[] {(byte)0xff, (byte)0xff});
 
-    private static final long serialVersionUID = 2418291066110642993L;
     private String cmap;
     private String uniMap;
 

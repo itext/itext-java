@@ -129,7 +129,6 @@ public class PdfA1Checker extends PdfAChecker {
                     PdfName.Perceptual,
                     PdfName.Saturation)));
     private static final int MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS = 8;
-    private static final long serialVersionUID = 5103027349795298132L;
 
     /**
      * Creates a PdfA1Checker with the required conformance level

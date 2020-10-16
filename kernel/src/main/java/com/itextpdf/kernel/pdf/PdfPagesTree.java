@@ -49,16 +49,14 @@ import com.itextpdf.kernel.PdfException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Algorithm for construction {@link PdfPages} tree
  */
-class PdfPagesTree implements Serializable {
+class PdfPagesTree {
 
-    private static final long serialVersionUID = 4189501363348296036L;
 
     private final int leafSize = 10;
 

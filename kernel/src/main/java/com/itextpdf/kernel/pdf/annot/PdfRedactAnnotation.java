@@ -60,7 +60,6 @@ import com.itextpdf.kernel.pdf.annot.da.AnnotationDefaultAppearance;
 
 public class PdfRedactAnnotation extends PdfMarkupAnnotation {
 
-	private static final long serialVersionUID = 8488431772407790511L;
 
 	public PdfRedactAnnotation(Rectangle rect) {
         super(rect);

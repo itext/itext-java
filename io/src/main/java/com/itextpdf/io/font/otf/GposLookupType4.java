@@ -43,7 +43,6 @@
  */
 package com.itextpdf.io.font.otf;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +54,6 @@ import java.util.Map;
  */
 public class GposLookupType4 extends OpenTableLookup {
 
-    private static final long serialVersionUID = 8820454200196341970L;
     private final List<MarkToBase> marksbases;
 
     public GposLookupType4(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
@@ -146,8 +144,7 @@ public class GposLookupType4 extends OpenTableLookup {
         marksbases.add(markToBase);
     }
 
-    public static class MarkToBase implements Serializable {
-        private static final long serialVersionUID = 1518537209432079627L;
+    public static class MarkToBase {
         public final Map<Integer, OtfMarkRecord> marks = new HashMap<>();
         public final Map<Integer, GposAnchor[]> bases = new HashMap<>();
     }

@@ -50,7 +50,6 @@ import java.io.InputStream;
 
 public class IccBased extends Color {
 
-    private static final long serialVersionUID = -2204252409856288615L;
 
     public IccBased(PdfCieBasedCs.IccBased cs) {
         this(cs, new float[cs.getNumberOfComponents()]);

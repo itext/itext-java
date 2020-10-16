@@ -53,7 +53,6 @@ import java.util.List;
  */
 public class GsubLookupType1 extends OpenTableLookup {
 
-    private static final long serialVersionUID = 1047931810962199937L;
     private IntHashtable substMap;
 
     public GsubLookupType1(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {

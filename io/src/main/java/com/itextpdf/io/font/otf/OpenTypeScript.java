@@ -43,13 +43,11 @@
  */
 package com.itextpdf.io.font.otf;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OpenTypeScript implements Serializable {
+public class OpenTypeScript {
 
-    private static final long serialVersionUID = 381398146861429491L;
     public final String DEFAULT_SCRIPT = "DFLT";
     
     private OpenTypeFontTableReader openTypeReader;

@@ -45,7 +45,6 @@
  */
 package com.itextpdf.io.codec;
 
-import java.io.Serializable;
 
 /**
  * A class representing a field in a TIFF 6.0 Image File Directory.
@@ -63,9 +62,8 @@ import java.io.Serializable;
  *
  * @see TIFFDirectory
  */
-public class TIFFField implements Comparable<TIFFField>, Serializable {
+public class TIFFField implements Comparable<TIFFField> {
 
-    private static final long serialVersionUID = 9088332901412823834L;
 
     /** Flag for 8 bit unsigned integers. */
     public static final int TIFF_BYTE      =  1;

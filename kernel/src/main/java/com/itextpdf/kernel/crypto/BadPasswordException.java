@@ -50,7 +50,6 @@ import com.itextpdf.kernel.PdfException;
  */
 public class BadPasswordException extends PdfException {
 
-    private static final long serialVersionUID = -2278753672963132724L;
 
     public static final String PdfReaderNotOpenedWithOwnerPassword = "PdfReader is not opened with owner password";
 

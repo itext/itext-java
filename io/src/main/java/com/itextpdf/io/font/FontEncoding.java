@@ -47,13 +47,11 @@ import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.util.TextUtil;
 
-import java.io.Serializable;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
-public class FontEncoding implements Serializable {
+public class FontEncoding {
 
-    private static final long serialVersionUID = -684967385759439083L;
 
     private static final byte[] emptyBytes = new byte[0];
 

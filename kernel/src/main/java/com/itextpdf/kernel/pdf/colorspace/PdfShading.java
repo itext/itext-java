@@ -59,7 +59,6 @@ import com.itextpdf.kernel.pdf.function.PdfFunction;
  */
 public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = 4781809723744243508L;
 
     /**
      * constants of shading type (see ISO-320001 Table 78)
@@ -244,7 +243,6 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      */
     public static class FunctionBased extends PdfShading {
 
-        private static final long serialVersionUID = -4459197498902558052L;
 
         /**
          * Creates the new instance of the class from the existing {@link PdfDictionary}.
@@ -355,7 +353,6 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      */
     public static class Axial extends PdfShading {
 
-        private static final long serialVersionUID = 5504688740677023792L;
 
         /**
          * Creates the new instance of the class from the existing {@link PdfDictionary}.
@@ -562,7 +559,6 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      */
     public static class Radial extends PdfShading {
 
-        private static final long serialVersionUID = -5012819396006804845L;
 
         /**
          * Creates the new instance of the class from the existing {@link PdfDictionary}.
@@ -791,7 +787,6 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      */
     public static class FreeFormGouraudShadedTriangleMesh extends PdfShading {
 
-        private static final long serialVersionUID = -2690557760051875972L;
 
         /**
          * Creates the new instance of the class from the existing {@link PdfStream}.
@@ -964,7 +959,6 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      */
     public static class LatticeFormGouraudShadedTriangleMesh extends PdfShading {
 
-        private static final long serialVersionUID = -8776232978423888214L;
 
         /**
          * Creates the new instance of the class from the existing {@link PdfStream}.
@@ -1140,7 +1134,6 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      */
     public static class CoonsPatchMesh extends PdfShading {
 
-        private static final long serialVersionUID = 7296891352801419708L;
 
             /**
              * Creates the new instance of the class from the existing {@link PdfStream}.
@@ -1309,7 +1302,6 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      */
     public static class TensorProductPatchMesh extends PdfShading {
 
-        private static final long serialVersionUID = -2750695839303504742L;
 
         /**
          * Creates the new instance of the class from the existing {@link PdfStream}.

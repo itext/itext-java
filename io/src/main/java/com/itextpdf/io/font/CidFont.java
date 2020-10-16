@@ -55,7 +55,6 @@ import java.util.StringTokenizer;
 
 public class CidFont extends FontProgram {
 
-    private static final long serialVersionUID = 5444988003799502179L;
 
     private String fontName;
 	private int pdfFontFlags;

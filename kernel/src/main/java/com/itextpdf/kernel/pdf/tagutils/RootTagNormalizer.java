@@ -50,15 +50,13 @@ import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class RootTagNormalizer implements Serializable {
+class RootTagNormalizer {
 
-    private static final long serialVersionUID = -4392164598496387910L;
 
     private TagStructureContext context;
     private PdfStructElem rootTagElement;

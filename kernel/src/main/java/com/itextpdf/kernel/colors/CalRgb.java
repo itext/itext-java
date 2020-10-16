@@ -47,7 +47,6 @@ import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 
 public class CalRgb extends Color {
 
-    private static final long serialVersionUID = 3916506066056271822L;
 
     public CalRgb(PdfCieBasedCs.CalRgb cs) {
         this(cs, new float[cs.getNumberOfComponents()]);

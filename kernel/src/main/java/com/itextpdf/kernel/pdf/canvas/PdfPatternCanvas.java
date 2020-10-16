@@ -55,7 +55,6 @@ import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
  */
 public class PdfPatternCanvas extends PdfCanvas {
 
-    private static final long serialVersionUID = -8325687042148621178L;
     private final PdfPattern.Tiling tilingPattern;
 
     /**

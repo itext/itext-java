@@ -72,8 +72,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      */
     public static final int SIMPLE_FONT_MAX_CHAR_CODE_VALUE = 255;
 
-    private static final long serialVersionUID = -7661159455613720321L;
-
     protected FontProgram fontProgram;
 
     protected static final byte[] EMPTY_BYTES = new byte[0];

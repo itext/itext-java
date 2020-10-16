@@ -51,7 +51,6 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
 public class PdfPrinterMarkAnnotation extends PdfAnnotation {
 
-    private static final long serialVersionUID = -7709626622860134020L;
 
 	public PdfPrinterMarkAnnotation(Rectangle rect, PdfFormXObject appearanceStream) {
         super(rect);

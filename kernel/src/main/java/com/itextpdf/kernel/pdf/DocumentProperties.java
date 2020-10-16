@@ -45,11 +45,8 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.counter.event.IMetaInfo;
 
-import java.io.Serializable;
+public class DocumentProperties {
 
-public class DocumentProperties implements Serializable {
-
-    private static final long serialVersionUID = -6625621282242153134L;
 
     protected IMetaInfo metaInfo = null;
 

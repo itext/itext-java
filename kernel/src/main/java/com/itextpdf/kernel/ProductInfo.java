@@ -43,14 +43,12 @@
  */
 package com.itextpdf.kernel;
 
-import java.io.Serializable;
 
 /**
  * Describes an iText 7 add on. An add on should register itself to a PdfDocument object if it
  * wants to be included in the debugging information.
  */
-public class ProductInfo implements Serializable {
-    private static final long serialVersionUID = 2410734474798313936L;
+public class ProductInfo {
 
     private String name;
     private int major;

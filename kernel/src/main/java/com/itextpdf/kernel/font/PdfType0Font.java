@@ -85,7 +85,6 @@ import org.slf4j.LoggerFactory;
 
 public class PdfType0Font extends PdfFont {
 
-    private static final long serialVersionUID = -8033620300884193397L;
 
     /**
      * The code length shall not be greater than 4.

@@ -43,7 +43,6 @@
  */
 package com.itextpdf.io.util;
 
-import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -59,9 +58,8 @@ import java.util.Arrays;
  * @author Bruno Lowagie (change Objects as keys into int values)
  * @author Paulo Soares (added extra methods)
  */
-public class IntHashtable implements Cloneable, Serializable {
+public class IntHashtable implements Cloneable {
 
-    private static final long serialVersionUID = 7354463962269093965L;
 
     /***
      * The total number of entries in the hash table.
@@ -382,8 +380,7 @@ public class IntHashtable implements Cloneable, Serializable {
      * Innerclass that acts as a datastructure to create a new entry in the
      * table.
      */
-    public static class Entry implements Serializable {
-        private static final long serialVersionUID = 8057670534065316193L;
+    public static class Entry {
         int key;
         int value;
         //ArrayList<Integer> values = new ArrayList<Integer>();

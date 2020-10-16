@@ -62,7 +62,6 @@ import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.Map;
 
 import com.itextpdf.kernel.xmp.XMPException;
@@ -73,14 +72,12 @@ import org.slf4j.LoggerFactory;
 /**
  * Reads a PDF document.
  */
-public class PdfReader implements Closeable, Serializable {
+public class PdfReader implements Closeable {
 
     /**
      * The default {@link StrictnessLevel} to be used.
      */
     public static final StrictnessLevel DEFAULT_STRICTNESS_LEVEL = StrictnessLevel.LENIENT;
-
-    private static final long serialVersionUID = -3584187443691964939L;
 
     private static final String endstream1 = "endstream";
     private static final String endstream2 = "\nendstream";
@@ -1439,37 +1436,6 @@ public class PdfReader implements Closeable, Serializable {
             return PdfNull.PDF_NULL;
         } else {
             return new PdfNull();
-        }
-    }
-
-    /**
-     * This method is invoked while deserialization
-     *
-     * @param in {@link java.io.ObjectInputStream} inputStream that is read during deserialization
-     * @throws IOException if I/O errors occur while writing to the underlying output stream
-     * @throws ClassNotFoundException if the class of a serialized object could not be found.
-     */
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        if (sourcePath != null && tokens == null) {
-            tokens = getOffsetTokeniser(new RandomAccessSourceFactory().setForceRead(false).createBestSource(sourcePath));
-        }
-    }
-
-    /**
-     * This method is invoked while serialization
-     *
-     * @param out {@link java.io.ObjectOutputStream} output stream to write object into
-     * @throws IOException if I/O errors occur while writing to the underlying output stream
-     */
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-        if (sourcePath != null) {
-            PdfTokenizer tempTokens = tokens;
-            tokens = null;
-            out.defaultWriteObject();
-            tokens = tempTokens;
-        } else {
-            out.defaultWriteObject();
         }
     }
 

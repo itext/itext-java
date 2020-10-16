@@ -49,7 +49,6 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 
 class PdfObjectStream extends PdfStream {
 
-    private static final long serialVersionUID = -3513488307665597642L;
 
     /**
      * Max number of objects in object stream.

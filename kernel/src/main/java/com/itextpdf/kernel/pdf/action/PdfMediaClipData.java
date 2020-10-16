@@ -57,7 +57,6 @@ import com.itextpdf.io.util.MessageFormatUtil;
  */
 public class PdfMediaClipData extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = -7030377585169961523L;
     private static final PdfString TEMPACCESS = new PdfString("TEMPACCESS");
 
     /**

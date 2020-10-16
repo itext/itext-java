@@ -43,11 +43,8 @@
  */
 package com.itextpdf.kernel.geom;
 
-import java.io.Serializable;
+public class PageSize extends Rectangle implements Cloneable {
 
-public class PageSize extends Rectangle implements Cloneable, Serializable {
-
-    private static final long serialVersionUID = 485375591249386160L;
 
     public static PageSize A0 = new PageSize(2384, 3370);
     public static PageSize A1 = new PageSize(1684, 2384);

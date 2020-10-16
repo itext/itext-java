@@ -43,12 +43,10 @@
  */
 package com.itextpdf.io.font.otf;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OpenTypeFeature implements Serializable {
-    private static final long serialVersionUID = 1484564408822091202L;
+public class OpenTypeFeature {
     private OpenTypeFontTableReader openTypeReader;
     private List<FeatureRecord> records;
     

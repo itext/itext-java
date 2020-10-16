@@ -43,12 +43,10 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import java.io.Serializable;
 import java.security.cert.Certificate;
 
-public class WriterProperties implements Serializable {
+public class WriterProperties {
 
-    private static final long serialVersionUID = -8692165914703604764L;
 
     protected int compressionLevel;
 

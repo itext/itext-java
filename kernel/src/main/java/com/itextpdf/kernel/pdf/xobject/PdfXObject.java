@@ -66,7 +66,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class PdfXObject extends PdfObjectWrapper<PdfStream> {
 
-    private static final long serialVersionUID = -480702872582809954L;
 
     protected PdfXObject(PdfStream pdfObject) {
         super(pdfObject);

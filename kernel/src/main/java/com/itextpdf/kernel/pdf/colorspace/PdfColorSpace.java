@@ -62,7 +62,6 @@ public abstract class PdfColorSpace extends PdfObjectWrapper<PdfObject> {
     public static final Set<PdfName> directColorSpaces = Collections.unmodifiableSet(new HashSet<>(
             Arrays.asList(PdfName.DeviceGray, PdfName.DeviceRGB, PdfName.DeviceCMYK, PdfName.Pattern)));
 
-    private static final long serialVersionUID = 2553991039779429813L;
 
     protected PdfColorSpace(PdfObject pdfObject) {
         super(pdfObject);

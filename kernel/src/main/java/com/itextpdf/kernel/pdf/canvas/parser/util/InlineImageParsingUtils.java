@@ -59,7 +59,6 @@ import com.itextpdf.kernel.pdf.filters.FlateDecodeStrictFilter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,9 +76,8 @@ public final class InlineImageParsingUtils {
      * Simple class in case users need to differentiate an exception from processing
      * inline images vs other exceptions
      */
-    public static class InlineImageParseException extends PdfException implements Serializable {
+    public static class InlineImageParseException extends PdfException {
 
-        private static final long serialVersionUID = 233760879000268548L;
 
         public InlineImageParseException(String message) {
             super(message);

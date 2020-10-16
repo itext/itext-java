@@ -58,7 +58,6 @@ import java.util.ArrayList;
 
 public abstract class PdfCieBasedCs extends PdfColorSpace {
 
-    private static final long serialVersionUID = 7803780450619297557L;
 
     /**
      * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure
@@ -83,7 +82,6 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
 
     public static class CalGray extends PdfCieBasedCs {
         
-    	private static final long serialVersionUID = -3974274460820215173L;
 
 		public CalGray(PdfArray pdfObject) {
             super(pdfObject);
@@ -121,7 +119,6 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
 
     public static class CalRgb extends PdfCieBasedCs {
         
-    	private static final long serialVersionUID = -2926074370411556426L;
 
 		public CalRgb(PdfArray pdfObject) {
             super(pdfObject);
@@ -161,7 +158,6 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
 
     public static class Lab extends PdfCieBasedCs {
         
-    	private static final long serialVersionUID = 7067722970343880433L;
 
 		public Lab(PdfArray pdfObject) {
             super(pdfObject);
@@ -199,7 +195,6 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
 
     public static class IccBased extends PdfCieBasedCs {
         
-    	private static final long serialVersionUID = 3265273715107224067L;
 
 		public IccBased(PdfArray pdfObject) {
             super(pdfObject);

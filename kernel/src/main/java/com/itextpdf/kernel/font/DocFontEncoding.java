@@ -65,7 +65,6 @@ import org.slf4j.LoggerFactory;
  */
 class DocFontEncoding extends FontEncoding {
 
-    private static final long serialVersionUID = -4248206280861742148L;
 
     protected DocFontEncoding() {
     }

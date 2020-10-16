@@ -59,7 +59,6 @@ import com.itextpdf.io.util.MessageFormatUtil;
 
 public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
-    private static final long serialVersionUID = -548180479472231600L;
 
     private static final byte[] stream = ByteUtils.getIsoBytes("stream\n");
     private static final byte[] endstream = ByteUtils.getIsoBytes("\nendstream");
@@ -535,37 +534,5 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         }
 
         return bytes;
-    }
-
-    /**
-     * This method is invoked while deserialization
-     *
-     * @param in {@link java.io.ObjectInputStream} inputStream that is read during deserialization
-     * @throws IOException if I/O errors occur while writing to the underlying output stream
-     * @throws ClassNotFoundException if the class of a serialized object could not be found.
-     */
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        if (outputStream == null && duplicateContentBuffer != null) {
-            outputStream = new ByteArrayOutputStream();
-            write(duplicateContentBuffer);
-            duplicateContentBuffer = null;
-        }
-    }
-
-    /**
-     * This method is invoked while serialization
-     *
-     * @param out {@link java.io.ObjectOutputStream} output stream to write object into
-     * @throws IOException if I/O errors occur while writing to the underlying output stream
-     */
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-        java.io.OutputStream tempOutputStream = outputStream;
-        if (outputStream instanceof java.io.ByteArrayOutputStream) {
-            duplicateContentBuffer = ((java.io.ByteArrayOutputStream) outputStream).toByteArray();
-        }
-        outputStream = null;
-        out.defaultWriteObject();
-        outputStream = tempOutputStream;
     }
 }

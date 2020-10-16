@@ -60,8 +60,6 @@ import java.util.Map;
  */
 public class Type3Font extends FontProgram {
 
-    private static final long serialVersionUID = 1027076515537536993L;
-
     private final Map<Integer, Type3Glyph> type3Glyphs = new HashMap<>();
     /**
      * Stores glyphs without associated unicode.

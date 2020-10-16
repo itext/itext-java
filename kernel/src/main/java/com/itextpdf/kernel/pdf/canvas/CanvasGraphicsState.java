@@ -55,16 +55,14 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 
-import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * This class is designed for internal usage. <br>
  * Use <code>PdfExtGState</code> class and <code>PdfCanvas#setExtGState()</code> method for setting extended graphics properties.
  */
-public class CanvasGraphicsState implements Serializable {
+public class CanvasGraphicsState {
 
-    private static final long serialVersionUID = -9151840268986283292L;
     /**
      * The current transformation matrix, which maps positions from user coordinates to device coordinates.
      * <p>

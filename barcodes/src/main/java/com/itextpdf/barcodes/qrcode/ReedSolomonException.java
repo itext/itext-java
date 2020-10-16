@@ -51,7 +51,6 @@ package com.itextpdf.barcodes.qrcode;
  */
 final class ReedSolomonException extends Exception {
 
-    private static final long serialVersionUID = 2168232776886684292L;
 
     /**
      * Creates a ReedSolomonException with a message.

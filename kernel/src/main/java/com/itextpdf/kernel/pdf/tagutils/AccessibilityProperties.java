@@ -44,11 +44,11 @@ package com.itextpdf.kernel.pdf.tagutils;
 
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
-import java.io.Serializable;
+
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AccessibilityProperties implements Serializable {
+public abstract class AccessibilityProperties {
     public String getRole() {
         return null;
     }

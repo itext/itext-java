@@ -51,24 +51,21 @@ import com.itextpdf.io.util.IntHashtable;
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-class OpenTypeParser implements Serializable, Closeable {
+class OpenTypeParser implements Closeable {
 
-    private static final long serialVersionUID = 3399061674525229738L;
 
     private static final int HEAD_LOCA_FORMAT_OFFSET = 51;
 
     /**
      * The components of table 'head'.
      */
-    static class HeaderTable implements Serializable {
-        private static final long serialVersionUID = 5849907401352439751L;
+    static class HeaderTable {
         int flags;
         int unitsPerEm;
         short xMin;
@@ -81,8 +78,7 @@ class OpenTypeParser implements Serializable, Closeable {
     /**
      * The components of table 'hhea'.
      */
-    static class HorizontalHeader implements Serializable {
-        private static final long serialVersionUID = -6857266170153679811L;
+    static class HorizontalHeader {
         short Ascender;
         short Descender;
         short LineGap;
@@ -98,8 +94,7 @@ class OpenTypeParser implements Serializable, Closeable {
     /**
      * The components of table 'OS/2'.
      */
-    static class WindowsMetrics implements Serializable{
-        private static final long serialVersionUID = -9117114979326346658L;
+    static class WindowsMetrics {
         short xAvgCharWidth;
         int usWeightClass;
         int usWidthClass;
@@ -131,8 +126,7 @@ class OpenTypeParser implements Serializable, Closeable {
         int sCapHeight;
     }
 
-    static class PostTable implements Serializable {
-        private static final long serialVersionUID = 5735677308357646890L;
+    static class PostTable {
         /**
          * The italic angle. It is usually extracted from the 'post' table or in it's
          * absence with the code:
@@ -149,8 +143,7 @@ class OpenTypeParser implements Serializable, Closeable {
         boolean isFixedPitch;
     }
 
-    static class CmapTable implements Serializable {
-        private static final long serialVersionUID = 8923883989692194983L;
+    static class CmapTable {
         /**
          * The map containing the code information for the table 'cmap', encoding 1.0.
          * The key is the code and the value is an {@code int[2]} where position 0

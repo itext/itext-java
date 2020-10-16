@@ -47,14 +47,10 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.security.MessageDigest;
 
-public abstract class SecurityHandler implements Serializable {
+public abstract class SecurityHandler {
 
-    private static final long serialVersionUID = 7980424575363686173L;
     /**
      * The global encryption key
      */
@@ -116,10 +112,5 @@ public abstract class SecurityHandler implements Serializable {
         } catch (Exception e) {
             throw new PdfException(PdfException.PdfEncryption, e);
         }
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        safeInitMessageDigest();
     }
 }
