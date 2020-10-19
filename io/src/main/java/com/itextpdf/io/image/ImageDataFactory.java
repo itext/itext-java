@@ -181,6 +181,7 @@ public final class ImageDataFactory {
         return image;
     }
 
+    // Android-Excise-Start
     /**
      * Gets an instance of an Image from a java.awt.Image
      *
@@ -205,6 +206,7 @@ public final class ImageDataFactory {
     public static ImageData create(java.awt.Image image, java.awt.Color color, boolean forceBW) throws java.io.IOException {
         return AwtImageDataFactory.create(image, color, forceBW);
     }
+    // Android-Excise-End
 
     /**
      * Get a bitmap ImageData instance from the specified url.
@@ -565,5 +567,4 @@ public final class ImageDataFactory {
                     " image expected. Detected image type: " + detectedType.name());
         }
     }
-
 }

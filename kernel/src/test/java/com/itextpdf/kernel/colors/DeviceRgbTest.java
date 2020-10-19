@@ -51,8 +51,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.awt.Color;
-
 @Category(UnitTest.class)
 public class DeviceRgbTest extends ExtendedITextTest {
 
@@ -82,10 +80,11 @@ public class DeviceRgbTest extends ExtendedITextTest {
         Assert.assertEquals(multiplier * (150f / 255), darkerRgbColor.getColorValue()[2], 0.0001);
     }
 
+    // Android-Excise-Start
     @Test
     public void colorByAWTColorConstantTest() {
         // RED
-        DeviceRgb rgbColor = new DeviceRgb(Color.RED);
+        DeviceRgb rgbColor = new DeviceRgb(java.awt.Color.RED);
         float[] rgbColorValue = rgbColor.getColorValue();
 
         Assert.assertEquals(1, rgbColorValue[0], 0.0001);
@@ -93,7 +92,7 @@ public class DeviceRgbTest extends ExtendedITextTest {
         Assert.assertEquals(0, rgbColorValue[2], 0.0001);
 
         // GREEN
-        rgbColor = new DeviceRgb(Color.GREEN);
+        rgbColor = new DeviceRgb(java.awt.Color.GREEN);
         rgbColorValue = rgbColor.getColorValue();
 
         Assert.assertEquals(0, rgbColorValue[0], 0.0001);
@@ -101,7 +100,7 @@ public class DeviceRgbTest extends ExtendedITextTest {
         Assert.assertEquals(0, rgbColorValue[2], 0.0001);
 
         // BLUE
-        rgbColor = new DeviceRgb(Color.BLUE);
+        rgbColor = new DeviceRgb(java.awt.Color.BLUE);
         rgbColorValue = rgbColor.getColorValue();
 
         Assert.assertEquals(0, rgbColorValue[0], 0.0001);
@@ -111,13 +110,14 @@ public class DeviceRgbTest extends ExtendedITextTest {
 
     @Test
     public void colorByAWTColorTest() {
-        Color color = new Color(50, 100, 150);
+        java.awt.Color color = new java.awt.Color(50, 100, 150);
         DeviceRgb rgbColor = new DeviceRgb(color);
         float[] rgbColorValue = rgbColor.getColorValue();
         Assert.assertEquals(50f / 255, rgbColorValue[0], 0.0001);
         Assert.assertEquals(100f / 255, rgbColorValue[1], 0.0001);
         Assert.assertEquals(150f / 255, rgbColorValue[2], 0.0001);
     }
+    // Android-Excise-End
 
     @Test
     @LogMessages(messages = {

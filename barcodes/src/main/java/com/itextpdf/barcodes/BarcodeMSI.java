@@ -48,8 +48,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
-import java.awt.Image;
-
 /**
  * Implements the MSI Barcode.
  * The <CODE>code</CODE> may only contain numeric characters.
@@ -297,6 +295,7 @@ public class BarcodeMSI extends Barcode1D {
         return this.getBarcodeSize();
     }
 
+    // Android-Excise-Start
     /**
      * Creates a <CODE>java.awt.Image</CODE>. This image only
      * contains the bars without any text.
@@ -306,7 +305,7 @@ public class BarcodeMSI extends Barcode1D {
      * @return the image
      */
     @Override
-    public Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
+    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
         int foregroundColor = (foreground == null) ? DEFAULT_BAR_FOREGROUND_COLOR.getRGB() : foreground.getRGB();
         int backgroundColor = (background == null) ? DEFAULT_BAR_BACKGROUND_COLOR.getRGB() : background.getRGB();
         java.awt.Canvas canvas = new java.awt.Canvas();
@@ -329,6 +328,7 @@ public class BarcodeMSI extends Barcode1D {
         }
         return canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, fullHeight, pix, 0, fullWidth));
     }
+    // Android-Excise-End
 
     /**
      * Creates the bars.

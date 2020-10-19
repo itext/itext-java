@@ -223,6 +223,7 @@ public class BarcodeQRCode extends Barcode2D {
         return xObject;
     }
 
+    // AWT related method (remove this if you port to Android / GAE)
     /**
      * Creates a <CODE>java.awt.Image</CODE>.
      *

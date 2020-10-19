@@ -265,6 +265,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         Assert.assertNull(signer.temporaryOS);
     }
 
+    // Android-Excise-Start
     @Test
     public void initPdfaDocumentTest() throws IOException {
         PdfSigner signer = new PdfSigner(
@@ -382,6 +383,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         signer.setFieldLockDict(fieldLock);
         Assert.assertEquals(fieldLock, signer.getFieldLockDict());
     }
+    // Android-Excise-End
 
     @Test
     public void setFieldNameNullForDefaultSignerTest() throws IOException {
@@ -499,6 +501,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         return outputStream.toByteArray();
     }
 
+    // Android-Excise-Start
     private static byte[] createSimplePdfaDocument() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(outputStream);
@@ -515,6 +518,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
 
         return outputStream.toByteArray();
     }
+    // Android-Excise-End
 
     static class ExtendedPdfSignatureFormField extends PdfSignatureFormField {
         public ExtendedPdfSignatureFormField(PdfWidgetAnnotation widgetAnnotation, PdfDocument document) {
