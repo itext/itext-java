@@ -70,7 +70,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.awt.Toolkit;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1346,6 +1345,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                 DESTINATION_FOLDER, "diff_"));
     }
 
+    // Android-Excise-Start
     @Test
     public void awtImagesTest01() throws IOException, InterruptedException {
         String filename = "awtImagesTest01.pdf";
@@ -1358,7 +1358,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         int y = 700;
         int width = 100;
         for (String image : RESOURCES) {
-            java.awt.Image awtImage = Toolkit.getDefaultToolkit().createImage(SOURCE_FOLDER + image);
+            java.awt.Image awtImage = java.awt.Toolkit.getDefaultToolkit().createImage(SOURCE_FOLDER + image);
             ImageData imageData = ImageDataFactory.create(awtImage, null);
             canvas.addImageFittedIntoRectangle(imageData, new Rectangle(x, y, width, (width / imageData.getWidth()) * imageData.getHeight()), false);
             y -= 150;
@@ -1369,6 +1369,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
                 DESTINATION_FOLDER, "diff_"));
     }
+    // Android-Excise-End
 
     @Test
     public void canvasInitializationPageNoContentsKey() throws IOException, InterruptedException {

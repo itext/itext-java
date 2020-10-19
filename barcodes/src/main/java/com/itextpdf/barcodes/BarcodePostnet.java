@@ -49,8 +49,6 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
-import java.awt.Image;
-
 public class BarcodePostnet extends Barcode1D {
 
     public static int TYPE_POSTNET = 1;
@@ -142,8 +140,9 @@ public class BarcodePostnet extends Barcode1D {
         return getBarcodeSize();
     }
 
+    // AWT related methods (remove this if you port to Android / GAE)
     @Override
-    public Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
+    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
         int f = (foreground == null) ? DEFAULT_BAR_FOREGROUND_COLOR.getRGB() : foreground.getRGB();
         int g = (background == null) ? DEFAULT_BAR_BACKGROUND_COLOR.getRGB() : background.getRGB();
         java.awt.Canvas canvas = new java.awt.Canvas();

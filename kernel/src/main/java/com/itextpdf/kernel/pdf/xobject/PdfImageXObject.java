@@ -82,8 +82,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-
 import org.slf4j.LoggerFactory;
 
 /**
@@ -178,6 +176,7 @@ public class PdfImageXObject extends PdfXObject {
         return image;
     }
 
+    // Android-Excise-Start
     /**
      * Gets image bytes, wrapped with buffered image.
      *
@@ -186,8 +185,9 @@ public class PdfImageXObject extends PdfXObject {
      */
     public java.awt.image.BufferedImage getBufferedImage() throws IOException {
         byte[] img = getImageBytes();
-        return ImageIO.read(new ByteArrayInputStream(img));
+        return javax.imageio.ImageIO.read(new ByteArrayInputStream(img));
     }
+    // Android-Excise-End
 
     /**
      * Gets decoded image bytes.
