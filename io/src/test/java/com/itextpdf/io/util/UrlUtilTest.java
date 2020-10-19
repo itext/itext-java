@@ -122,7 +122,7 @@ public class UrlUtilTest extends ExtendedITextTest {
     @Test
     public void getBaseUriTest() throws IOException {
         String absolutePathRoot = Paths.get("").toAbsolutePath().toUri().toURL().toExternalForm();
-        String expected = absolutePathRoot + destinationFolder;
+        String expected = absolutePathRoot + destinationFolder; // Android-Replace: String expected = absolutePathRoot + destinationFolder.substring(1);
         File tempFile = FileUtil.createTempFile(destinationFolder);
         Assert.assertEquals(expected, FileUtil.getParentDirectoryUri(tempFile));
     }

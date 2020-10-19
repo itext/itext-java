@@ -144,6 +144,7 @@ public class SystemUtilTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore
     public void runProcessAndWaitWithWorkingDirectoryTest() throws IOException, InterruptedException {
         String imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
         if (imageMagickPath == null) {
