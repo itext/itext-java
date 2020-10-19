@@ -57,8 +57,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.awt.Color;
-import java.awt.Image;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.Assert;
@@ -191,6 +189,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         Assert.assertEquals(0.5, barcode.getAspectRatio(), 0);
     }
 
+    // Android-Excise-Start
     @Test
     public void barcode417CreateAWTImageTest() throws IOException, InterruptedException {
         String filename = "barcode417CreateAWTImageTest.pdf";
@@ -208,8 +207,8 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         BarcodePDF417 barcode = new BarcodePDF417();
         barcode.setCode(text);
 
-        Image image = barcode.createAwtImage(Color.MAGENTA, Color.ORANGE);
-        ImageData imageData = ImageDataFactory.create(image, Color.BLACK);
+        java.awt.Image image = barcode.createAwtImage(java.awt.Color.MAGENTA, java.awt.Color.ORANGE);
+        ImageData imageData = ImageDataFactory.create(image, java.awt.Color.BLACK);
 
         canvas.addImageAt(imageData, 10, 650, false);
 
@@ -244,6 +243,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
                 SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER));
     }
+    // Android-Excise-End
 
     @Test
     public void barcode417YHeightTest() {

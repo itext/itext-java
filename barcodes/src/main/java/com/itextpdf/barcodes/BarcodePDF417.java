@@ -862,6 +862,7 @@ public class BarcodePDF417 extends Barcode2D {
         return xObject;
     }
 
+    // Android-Excise-Start
     /**
      * Creates a <CODE>java.awt.Image</CODE>.
      *
@@ -895,6 +896,7 @@ public class BarcodePDF417 extends Barcode2D {
         java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(bitColumns, codeRows * h, pix, 0, bitColumns));
         return img;
     }
+    // Android-Excise-End
 
     /**
      * Gets the raw image bits of the barcode. The image will have to

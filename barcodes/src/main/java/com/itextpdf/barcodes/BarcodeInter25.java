@@ -51,8 +51,6 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
-import java.awt.Image;
-
 
 /**
  * Implements the code interleaved 2 of 5. The text can include
@@ -341,7 +339,7 @@ public class BarcodeInter25 extends Barcode1D {
      * @return the image
      */
     @Override
-    public Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
+    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
         int f = (foreground == null) ? DEFAULT_BAR_FOREGROUND_COLOR.getRGB() : foreground.getRGB();
         int g = (background == null) ? DEFAULT_BAR_BACKGROUND_COLOR.getRGB() : background.getRGB();
         java.awt.Canvas canvas = new java.awt.Canvas();
