@@ -271,12 +271,12 @@ public class PdfSigner {
     }
 
     protected PdfDocument initDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
-        PdfAConformanceLevel conformanceLevel = reader.getPdfAConformanceLevel();
-        if (null == conformanceLevel) {
+        PdfAConformanceLevel conformanceLevel = reader.getPdfAConformanceLevel(); // Android-Skip
+        if (null == conformanceLevel) { // Android-Skip
             return new PdfDocument(reader, writer, properties);
-        } else {
-            return new PdfADocument(reader, writer, properties);
-        }
+        } else { // Android-Skip
+            return new PdfADocument(reader, writer, properties); // Android-Skip
+        } // Android-Skip
     }
 
     /**
