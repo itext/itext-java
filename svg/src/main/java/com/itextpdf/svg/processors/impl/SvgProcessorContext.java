@@ -136,9 +136,10 @@ public class SvgProcessorContext {
     /**
      * Add temporary font from @font-face.
      *
-     * @param fontProgram the font program
-     * @param encoding    the encoding
-     * @param alias       the alias
+     * @param fontProgram  the font program
+     * @param encoding     the encoding
+     * @param alias        the alias
+     * @param unicodeRange the specific range of characters to be used from the font
      */
     public void addTemporaryFont(FontProgram fontProgram, String encoding, String alias,
             Range unicodeRange) {

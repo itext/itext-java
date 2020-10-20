@@ -113,6 +113,7 @@ public class SvgStyleResolver implements ICssResolver {
      * Creates a {@link SvgStyleResolver} with a given default CSS.
      *
      * @param defaultCssStream the default CSS
+     * @throws IOException if any input/output issue occurs
      * @deprecated will be removed in next major release, use
      * {@link SvgStyleResolver#SvgStyleResolver(InputStream, SvgProcessorContext)} instead
      */
@@ -137,6 +138,7 @@ public class SvgStyleResolver implements ICssResolver {
      *
      * @param defaultCssStream the default CSS
      * @param context the processor context
+     * @throws IOException if any input/output issue occurs
      */
     public SvgStyleResolver(InputStream defaultCssStream, SvgProcessorContext context) throws IOException {
         this.css = CssStyleSheetParser.parse(defaultCssStream);

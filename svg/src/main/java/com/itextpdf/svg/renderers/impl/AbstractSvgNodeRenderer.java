@@ -232,8 +232,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
 
     /**
-     * Evaluate the current object bounding box
+     * Evaluate the current object bounding box.
      *
+     * @param context the object that knows the place to draw this element and maintains its state
      * @return the {@link Rectangle} representing the current object's bounding box
      */
     @Deprecated

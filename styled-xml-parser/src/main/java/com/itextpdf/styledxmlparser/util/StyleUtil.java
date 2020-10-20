@@ -52,14 +52,17 @@ public final class StyleUtil {
     /**
      * Merge parent CSS declarations.
      *
-     * @param styles          the styles map
-     * @param styleProperty     the CSS property
-     * @param parentPropValue the parent properties value
-     * @param inheritanceRules set of inheritance rules
+     * @param styles               the styles map
+     * @param styleProperty        the CSS property
+     * @param parentPropValue      the parent properties value
+     * @param parentFontSizeString is a font size of parent element
+     * @param inheritanceRules     set of inheritance rules
      *
      * @return a map of updated styles after merging parent and child style declarations
      */
-    public static  Map<String, String> mergeParentStyleDeclaration(Map<String, String> styles, String styleProperty, String parentPropValue, String parentFontSizeString, Set<IStyleInheritance> inheritanceRules) {
+    public static Map<String, String> mergeParentStyleDeclaration(Map<String, String> styles,
+            String styleProperty, String parentPropValue, String parentFontSizeString,
+            Set<IStyleInheritance> inheritanceRules) {
         String childPropValue = styles.get(styleProperty);
         if ((childPropValue == null && checkInheritance(styleProperty, inheritanceRules)) || CommonCssConstants.INHERIT.equals(childPropValue)) {
             if (valueIsOfMeasurement(parentPropValue, CommonCssConstants.EM)
