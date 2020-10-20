@@ -28,21 +28,29 @@ import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class TextDecorationShorthandResolver implements IShorthandResolver {
 
-    private static final Set<String> TEXT_DECORATION_LINE_VALUES = new HashSet<>(Arrays.asList(
-            CommonCssConstants.UNDERLINE, CommonCssConstants.OVERLINE, CommonCssConstants.LINE_THROUGH,
-            CommonCssConstants.BLINK
-    ));
+    private static final Set<String> TEXT_DECORATION_LINE_VALUES = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    CommonCssConstants.UNDERLINE,
+                    CommonCssConstants.OVERLINE,
+                    CommonCssConstants.LINE_THROUGH,
+                    CommonCssConstants.BLINK
+    )));
 
-    private static final Set<String> TEXT_DECORATION_STYLE_VALUES = new HashSet<>(Arrays.asList(
-            CommonCssConstants.SOLID, CommonCssConstants.DOUBLE, CommonCssConstants.DOTTED,
-            CommonCssConstants.DASHED, CommonCssConstants.WAVY
-    ));
+    private static final Set<String> TEXT_DECORATION_STYLE_VALUES = Collections.
+            unmodifiableSet(new HashSet<>(Arrays.asList(
+                    CommonCssConstants.SOLID,
+                    CommonCssConstants.DOUBLE,
+                    CommonCssConstants.DOTTED,
+                    CommonCssConstants.DASHED,
+                    CommonCssConstants.WAVY
+    )));
 
     @Override
     public List<CssDeclaration> resolveShorthand(String shorthandExpression) {

@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -87,8 +88,8 @@ public class XMPSerializerRDF
 	/** */
 	private static final String RDF_EMPTY_STRUCT  = "<rdf:Description/>";
 	/** a set of all rdf attribute qualifier */
-	static final Set<String> RDF_ATTR_QUALIFIER = new HashSet<>(Arrays.asList(new String[] {
-			XMPConst.XML_LANG, "rdf:resource", "rdf:ID", "rdf:bagID", "rdf:nodeID" }));
+	static final Set<String> RDF_ATTR_QUALIFIER = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+			XMPConst.XML_LANG, "rdf:resource", "rdf:ID", "rdf:bagID", "rdf:nodeID" )));
 	
 	/** the metadata object to be serialized. */ 
 	private XMPMetaImpl xmp; 

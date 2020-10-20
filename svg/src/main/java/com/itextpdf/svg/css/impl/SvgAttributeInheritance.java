@@ -46,6 +46,7 @@ import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
 import com.itextpdf.svg.SvgConstants;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -59,7 +60,7 @@ public class SvgAttributeInheritance implements IStyleInheritance {
      * in accordance with "http://www.w3schools.com/cssref/"
      * and "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference"
      */
-    private static final Set<String> inheritableProperties = new HashSet<>(Arrays.asList(
+    private static final Set<String> inheritableProperties = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
 
             //Stroke
             SvgConstants.Attributes.STROKE,
@@ -76,7 +77,7 @@ public class SvgAttributeInheritance implements IStyleInheritance {
             //text-anchor
             SvgConstants.Attributes.TEXT_ANCHOR
 
-    ));
+    )));
 
     @Override
     public  boolean isInheritable(String cssProperty) {

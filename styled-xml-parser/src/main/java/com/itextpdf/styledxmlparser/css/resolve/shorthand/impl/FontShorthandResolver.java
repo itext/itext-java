@@ -47,6 +47,8 @@ import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+
+import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,22 +65,38 @@ import java.util.Set;
 public class FontShorthandResolver implements IShorthandResolver {
 
     /** Unsupported shorthand values. */
-    private static final Set<String> UNSUPPORTED_VALUES_OF_FONT_SHORTHAND = new HashSet<>(Arrays.asList(
-            CommonCssConstants.CAPTION, CommonCssConstants.ICON, CommonCssConstants.MENU, CommonCssConstants.MESSAGE_BOX,
-            CommonCssConstants.SMALL_CAPTION, CommonCssConstants.STATUS_BAR
-    ));
+    private static final Set<String> UNSUPPORTED_VALUES_OF_FONT_SHORTHAND = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    CommonCssConstants.CAPTION,
+                    CommonCssConstants.ICON,
+                    CommonCssConstants.MENU,
+                    CommonCssConstants.MESSAGE_BOX,
+                    CommonCssConstants.SMALL_CAPTION,
+                    CommonCssConstants.STATUS_BAR
+    )));
 
     /** Font weight values. */
-    private static final Set<String> FONT_WEIGHT_NOT_DEFAULT_VALUES = new HashSet<>(Arrays.asList(
-            CommonCssConstants.BOLD, CommonCssConstants.BOLDER, CommonCssConstants.LIGHTER,
+    private static final Set<String> FONT_WEIGHT_NOT_DEFAULT_VALUES = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    CommonCssConstants.BOLD,
+                    CommonCssConstants.BOLDER,
+                    CommonCssConstants.LIGHTER,
             "100", "200", "300", "400", "500", "600", "700", "800", "900"
-    ));
+    )));
 
     /** Font size values. */
-    private static final Set<String> FONT_SIZE_VALUES = new HashSet<>(Arrays.asList(
-            CommonCssConstants.MEDIUM, CommonCssConstants.XX_SMALL, CommonCssConstants.X_SMALL, CommonCssConstants.SMALL, CommonCssConstants.LARGE,
-            CommonCssConstants.X_LARGE, CommonCssConstants.XX_LARGE, CommonCssConstants.SMALLER, CommonCssConstants.LARGER
-    ));
+    private static final Set<String> FONT_SIZE_VALUES = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    CommonCssConstants.MEDIUM,
+                    CommonCssConstants.XX_SMALL,
+                    CommonCssConstants.X_SMALL,
+                    CommonCssConstants.SMALL,
+                    CommonCssConstants.LARGE,
+                    CommonCssConstants.X_LARGE,
+                    CommonCssConstants.XX_LARGE,
+                    CommonCssConstants.SMALLER,
+                    CommonCssConstants.LARGER
+    )));
 
     /* (non-Javadoc)
      * @see com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver#resolveShorthand(java.lang.String)

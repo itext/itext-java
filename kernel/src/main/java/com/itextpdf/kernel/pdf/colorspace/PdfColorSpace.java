@@ -50,6 +50,7 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -58,7 +59,8 @@ import java.util.Set;
  */
 public abstract class PdfColorSpace extends PdfObjectWrapper<PdfObject> {
 
-    public static final Set<PdfName> directColorSpaces = new HashSet<>(Arrays.asList(PdfName.DeviceGray, PdfName.DeviceRGB, PdfName.DeviceCMYK, PdfName.Pattern));
+    public static final Set<PdfName> directColorSpaces = Collections.unmodifiableSet(new HashSet<>(
+            Arrays.asList(PdfName.DeviceGray, PdfName.DeviceRGB, PdfName.DeviceCMYK, PdfName.Pattern)));
 
     private static final long serialVersionUID = 2553991039779429813L;
 

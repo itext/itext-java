@@ -44,6 +44,7 @@ package com.itextpdf.styledxmlparser.css.resolve;
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -57,7 +58,7 @@ public class CssInheritance implements IStyleInheritance {
      * in accordance with "http://www.w3schools.com/cssref/"
      * and "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference"
      */
-    private static final Set<String> inheritableProperties = new HashSet<>(Arrays.asList(
+    private static final Set<String> INHERITABLE_PROPERTIES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
 
             // Color Properties
             CommonCssConstants.COLOR,
@@ -130,7 +131,7 @@ public class CssInheritance implements IStyleInheritance {
 
             CommonCssConstants.ORPHANS,
             CommonCssConstants.WIDOWS
-    ));
+    )));
 
     /**
      * Checks if a property is inheritable.
@@ -140,6 +141,6 @@ public class CssInheritance implements IStyleInheritance {
      */
     @Override
     public boolean isInheritable(String cssProperty) {
-        return inheritableProperties.contains(cssProperty);
+        return INHERITABLE_PROPERTIES.contains(cssProperty);
     }
 }

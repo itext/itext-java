@@ -50,6 +50,7 @@ import com.itextpdf.styledxmlparser.css.util.CssUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,18 +61,35 @@ import java.util.Set;
 public class ListStyleShorthandResolver implements IShorthandResolver {
     
     /** The list style types (disc, decimal,...). */
-    private static final Set<String> LIST_STYLE_TYPE_VALUES = new HashSet<>(Arrays.asList(
-            CommonCssConstants.DISC, CommonCssConstants.ARMENIAN, CommonCssConstants.CIRCLE, CommonCssConstants.CJK_IDEOGRAPHIC,
-            CommonCssConstants.DECIMAL, CommonCssConstants.DECIMAL_LEADING_ZERO, CommonCssConstants.GEORGIAN, CommonCssConstants.HEBREW,
-            CommonCssConstants.HIRAGANA, CommonCssConstants.HIRAGANA_IROHA, CommonCssConstants.LOWER_ALPHA, CommonCssConstants.LOWER_GREEK,
-            CommonCssConstants.LOWER_LATIN, CommonCssConstants.LOWER_ROMAN, CommonCssConstants.NONE, CommonCssConstants.SQUARE,
-            CommonCssConstants.UPPER_ALPHA, CommonCssConstants.UPPER_LATIN, CommonCssConstants.UPPER_ROMAN
-    ));
+    private static final Set<String> LIST_STYLE_TYPE_VALUES = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    CommonCssConstants.DISC,
+                    CommonCssConstants.ARMENIAN,
+                    CommonCssConstants.CIRCLE,
+                    CommonCssConstants.CJK_IDEOGRAPHIC,
+                    CommonCssConstants.DECIMAL,
+                    CommonCssConstants.DECIMAL_LEADING_ZERO,
+                    CommonCssConstants.GEORGIAN,
+                    CommonCssConstants.HEBREW,
+                    CommonCssConstants.HIRAGANA,
+                    CommonCssConstants.HIRAGANA_IROHA,
+                    CommonCssConstants.LOWER_ALPHA,
+                    CommonCssConstants.LOWER_GREEK,
+                    CommonCssConstants.LOWER_LATIN,
+                    CommonCssConstants.LOWER_ROMAN,
+                    CommonCssConstants.NONE,
+                    CommonCssConstants.SQUARE,
+                    CommonCssConstants.UPPER_ALPHA,
+                    CommonCssConstants.UPPER_LATIN,
+                    CommonCssConstants.UPPER_ROMAN
+    )));
     
     /** The list style positions (inside, outside). */
-    private static final Set<String> LIST_STYLE_POSITION_VALUES = new HashSet<>(Arrays.asList(
-            CommonCssConstants.INSIDE, CommonCssConstants.OUTSIDE
-    ));
+    private static final Set<String> LIST_STYLE_POSITION_VALUES = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    CommonCssConstants.INSIDE,
+                    CommonCssConstants.OUTSIDE
+    )));
 
     /* (non-Javadoc)
      * @see com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver#resolveShorthand(java.lang.String)

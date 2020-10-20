@@ -55,6 +55,7 @@ import com.itextpdf.styledxmlparser.css.selector.item.ICssSelectorItem;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -68,12 +69,15 @@ public final class CssSelectorParser {
     /**
      * Set of legacy pseudo elements (first-line, first-letter, before, after).
      */
-    private static final Set<String> legacyPseudoElements = new HashSet<>();
+    private static final Set<String> LEGACY_PSEUDO_ELEMENTS;
     static {
-        legacyPseudoElements.add("first-line");
-        legacyPseudoElements.add("first-letter");
-        legacyPseudoElements.add("before");
-        legacyPseudoElements.add("after");
+        // HashSet is required in order to autoport correctly in .Net
+        HashSet<String> tempSet = new HashSet<>();
+        tempSet.add("first-line");
+        tempSet.add("first-letter");
+        tempSet.add("before");
+        tempSet.add("after");
+        LEGACY_PSEUDO_ELEMENTS = Collections.unmodifiableSet(tempSet);
     }
 
     /**
@@ -205,7 +209,7 @@ public final class CssSelectorParser {
          */
         if (pseudoSelector.startsWith("::")) {
             selectorItems.add(new CssPseudoElementSelectorItem(pseudoSelector.substring(2)));
-        } else if (pseudoSelector.startsWith(":") && legacyPseudoElements.contains(pseudoSelector.substring(1))) {
+        } else if (pseudoSelector.startsWith(":") && LEGACY_PSEUDO_ELEMENTS.contains(pseudoSelector.substring(1))) {
             selectorItems.add(new CssPseudoElementSelectorItem(pseudoSelector.substring(1)));
         } else {
             ICssSelectorItem pseudoClassSelectorItem = CssPseudoClassSelectorItem.create(pseudoSelector.substring(1));
