@@ -61,6 +61,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.property.ClearPropertyValue;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.Property;
@@ -239,6 +240,71 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.add(div);
         doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void keepTogetherDivWithInnerClearDiv() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_keepTogetherDivWithInnerClearDiv.pdf";
+        String outFile = destinationFolder + "keepTogetherDivWithInnerClearDiv.pdf";
+
+        try (PdfWriter pdfWriter = new PdfWriter(outFile);
+                PdfDocument pdfDoc = new PdfDocument(pdfWriter);
+                Document doc = new Document(pdfDoc)) {
+
+            Div keepTogetherDiv = new Div();
+            keepTogetherDiv.setKeepTogether(true);
+            keepTogetherDiv.setBackgroundColor(ColorConstants.BLUE);
+
+            Div shortFloat = new Div();
+            shortFloat.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+            shortFloat.setWidth(UnitValue.createPercentValue(30));
+            shortFloat.setBackgroundColor(ColorConstants.GREEN);
+            shortFloat.add(new Paragraph("Short text"));
+            keepTogetherDiv.add(shortFloat);
+
+            Div longFloat = new Div();
+            longFloat.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+            longFloat.setWidth(UnitValue.createPercentValue(70));
+            longFloat.setBackgroundColor(ColorConstants.ORANGE);
+            longFloat.add(new Paragraph("Lorem ipsum dolor sit amet, consetetur sadipscing "
+                    + "elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna "
+                    + "aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo "
+                    + "dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est "
+                    + "Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur "
+                    + "sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et "
+                    + "dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et "
+                    + "justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata "
+                    + "sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, "
+                    + "consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut "
+                    + "labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et "
+                    + "accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea "
+                    + "takimata sanctus est Lorem ipsum dolor sit amet.\n"
+                    + "Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse "
+                    + "molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero "
+                    + "eros et accumsan et iusto odio dignissim qui blandit praesent luptatum "
+                    + "zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum "
+                    + "dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod "
+                    + "tincidunt ut laoreet dolore magna aliquam erat volutpat.\n"
+                    + "Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper "
+                    + "suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel "
+                    + "eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, "
+                    + "vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et "
+                    + "iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis "
+                    + "dolore te feugait nulla facilisi."));
+            keepTogetherDiv.add(longFloat);
+
+            Div clearDiv = new Div();
+            clearDiv.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
+            keepTogetherDiv.add(clearDiv);
+
+            // on first add we could see how the div should be rendered when it fits the page area
+            doc.add(keepTogetherDiv);
+            // on second add the div should not fit the left space and, since we have keep together
+            // property set, should be fully placed on the second page with the same appearance
+            // as the first add
+            doc.add(keepTogetherDiv);
+        }
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
     }
 
