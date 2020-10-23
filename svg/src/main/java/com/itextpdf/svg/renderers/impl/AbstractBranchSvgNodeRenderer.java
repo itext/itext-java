@@ -58,7 +58,7 @@ import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Values;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;

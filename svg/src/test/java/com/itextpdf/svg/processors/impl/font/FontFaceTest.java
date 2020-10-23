@@ -48,7 +48,7 @@ import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.media.MediaType;
 import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;

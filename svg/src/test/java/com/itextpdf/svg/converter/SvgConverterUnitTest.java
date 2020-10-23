@@ -58,7 +58,7 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.dummy.processors.impl.DummySvgConverterProperties;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
@@ -320,7 +320,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(SvgProcessingException.class,
                 () -> SvgConverter.drawOnDocument("test",null,1)
         );
-        Assert.assertEquals(SvgLogMessageConstant.PARAMETER_CANNOT_BE_NULL, e.getMessage());
+        Assert.assertEquals(SvgExceptionMessageConstant.PARAMETER_CANNOT_BE_NULL, e.getMessage());
     }
 
     @Test

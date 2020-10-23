@@ -51,7 +51,7 @@ import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.css.SvgCssContext;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 
 import java.util.Deque;
@@ -196,11 +196,11 @@ public class SvgDrawContext {
      */
     public void addNamedObject(String name, ISvgNodeRenderer namedObject) {
         if (namedObject == null) {
-            throw new SvgProcessingException(SvgLogMessageConstant.NAMED_OBJECT_NULL);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.NAMED_OBJECT_NULL);
         }
 
         if (name == null || name.isEmpty()) {
-            throw new SvgProcessingException(SvgLogMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY);
         }
 
         if (!this.namedObjects.containsKey(name)) {

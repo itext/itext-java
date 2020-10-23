@@ -29,7 +29,7 @@ import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;

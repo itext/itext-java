@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
@@ -78,7 +78,7 @@ public class AnimationSvgTest extends SvgIntegrationTest {
 
   @Test
   @LogMessages(messages = {
-          @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
+          @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG),
   })
   public void animation() throws IOException, InterruptedException {
     //TODO: update when DEVSIX-2282 fixed

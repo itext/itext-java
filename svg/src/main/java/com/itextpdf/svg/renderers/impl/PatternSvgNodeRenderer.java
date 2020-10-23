@@ -54,7 +54,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.SvgConstants.Values;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgPaintServer;
 import com.itextpdf.svg.renderers.SvgDrawContext;

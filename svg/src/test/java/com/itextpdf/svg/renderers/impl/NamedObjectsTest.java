@@ -45,7 +45,6 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.svg.converter.SvgConverter;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;

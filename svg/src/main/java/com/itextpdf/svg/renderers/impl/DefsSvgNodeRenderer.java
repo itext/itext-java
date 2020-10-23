@@ -22,7 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.renderers.INoDrawSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -30,7 +30,7 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 public class DefsSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implements INoDrawSvgNodeRenderer {
     @Override
     protected void doDraw(SvgDrawContext context) {
-        throw new UnsupportedOperationException(SvgLogMessageConstant.DRAW_NO_DRAW);
+        throw new UnsupportedOperationException(SvgExceptionMessageConstant.DRAW_NO_DRAW);
     }
 
     @Override

@@ -27,7 +27,8 @@ import com.itextpdf.kernel.colors.gradients.GradientSpreadMethod;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.SvgConstants.Values;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgPaintServer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -46,7 +47,7 @@ public abstract class AbstractGradientSvgNodeRenderer extends NoDrawOperationSvg
 
     @Override
     protected void doDraw(SvgDrawContext context) {
-        throw new UnsupportedOperationException(SvgLogMessageConstant.DRAW_NO_DRAW);
+        throw new UnsupportedOperationException(SvgExceptionMessageConstant.DRAW_NO_DRAW);
     }
 
     /**

@@ -49,7 +49,6 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -203,7 +202,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
         int argumentCount = SvgPathShapeFactory.getArgumentCount(pathProperties[0]);
         if (argumentCount == 0) { // closePath operator
             if (previousShape == null) {
-                throw new SvgProcessingException(SvgLogMessageConstant.INVALID_CLOSEPATH_OPERATOR_USE);
+                throw new SvgProcessingException(SvgExceptionMessageConstant.INVALID_CLOSEPATH_OPERATOR_USE);
             }
             shapes.add(zOperator);
             return shapes;
@@ -301,7 +300,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
             throw new SvgProcessingException(SvgExceptionMessageConstant.PATH_OBJECT_MUST_HAVE_D_ATTRIBUTE);
         }
         if (containsInvalidAttributes(attributes)) {
-            throw new SvgProcessingException(SvgLogMessageConstant.INVALID_PATH_D_ATTRIBUTE_OPERATORS)
+            throw new SvgProcessingException(SvgExceptionMessageConstant.INVALID_PATH_D_ATTRIBUTE_OPERATORS)
                     .setMessageParams(attributes);
         }
 

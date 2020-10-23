@@ -54,7 +54,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
 import com.itextpdf.svg.converter.SvgConverter;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.svg.utils.TestUtils;

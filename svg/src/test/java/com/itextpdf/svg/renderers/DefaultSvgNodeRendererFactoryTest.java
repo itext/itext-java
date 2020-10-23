@@ -49,7 +49,7 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.svg.dummy.factories.DummySvgNodeMapper;
 import com.itextpdf.svg.dummy.renderers.impl.DummyProcessableSvgNodeRenderer;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
@@ -81,7 +81,7 @@ public class DefaultSvgNodeRendererFactoryTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG)
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG)
     })
     public void nonExistingTagTest() {
         Element nonExistingElement = new Element(Tag.valueOf("notAnExistingTag"), "");

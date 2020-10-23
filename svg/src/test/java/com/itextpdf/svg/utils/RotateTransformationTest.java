@@ -44,7 +44,8 @@ package com.itextpdf.svg.utils;
 
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -70,7 +71,7 @@ public class RotateTransformationTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("rotate()")
         );
-        Assert.assertEquals(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
+        Assert.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test
@@ -86,7 +87,7 @@ public class RotateTransformationTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("rotate(23,58)")
         );
-        Assert.assertEquals(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
+        Assert.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test
@@ -103,7 +104,7 @@ public class RotateTransformationTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("rotate(1 2 3 4)")
         );
-        Assert.assertEquals(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
+        Assert.assertEquals(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test

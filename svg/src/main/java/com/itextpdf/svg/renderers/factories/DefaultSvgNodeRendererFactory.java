@@ -44,7 +44,8 @@ package com.itextpdf.svg.renderers.factories;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.node.IElementNode;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.INoDrawSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -101,7 +102,7 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
         ISvgNodeRenderer result;
 
         if (tag == null) {
-            throw new SvgProcessingException(SvgLogMessageConstant.TAGPARAMETERNULL);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.TAG_PARAMETER_NULL);
         }
 
         try {
@@ -109,13 +110,13 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
 
             if (clazz == null) {
                 Logger logger = LoggerFactory.getLogger(this.getClass());
-                logger.warn(MessageFormatUtil.format(SvgLogMessageConstant.UNMAPPEDTAG, tag.name()));
+                logger.warn(MessageFormatUtil.format(SvgLogMessageConstant.UNMAPPED_TAG, tag.name()));
                 return null;
             }
 
             result = (ISvgNodeRenderer) rendererMap.get(tag.name()).newInstance();
         } catch (ReflectiveOperationException ex) {
-            throw new SvgProcessingException(SvgLogMessageConstant.COULDNOTINSTANTIATE, ex).setMessageParams(tag.name());
+            throw new SvgProcessingException(SvgExceptionMessageConstant.COULD_NOT_INSTANTIATE, ex).setMessageParams(tag.name());
         }
 
         // DefsSvgNodeRenderer should not have parental relationship with any renderer, it only serves as a storage

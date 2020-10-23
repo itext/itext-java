@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
@@ -144,7 +144,7 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG),
     })
     //TODO: update cmp-file after DEVSIX-2255
     public void text_path_Test() throws IOException, InterruptedException {
@@ -153,7 +153,7 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG),
     })
     public void textPathExample() throws IOException, InterruptedException {
         //TODO: update when DEVSIX-2255 implemented

@@ -43,7 +43,7 @@
 package com.itextpdf.svg.utils;
 
 import com.itextpdf.kernel.geom.AffineTransform;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -60,7 +60,7 @@ public class TransformUtilsTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform(null)
         );
-        Assert.assertEquals(SvgLogMessageConstant.TRANSFORM_NULL, e.getMessage());
+        Assert.assertEquals(SvgExceptionMessageConstant.TRANSFORM_NULL, e.getMessage());
     }
 
     @Test
@@ -68,7 +68,7 @@ public class TransformUtilsTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("")
         );
-        Assert.assertEquals(SvgLogMessageConstant.TRANSFORM_EMPTY, e.getMessage());
+        Assert.assertEquals(SvgExceptionMessageConstant.TRANSFORM_EMPTY, e.getMessage());
     }
 
     @Test
@@ -76,7 +76,7 @@ public class TransformUtilsTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("Lorem ipsum")
         );
-        Assert.assertEquals(SvgLogMessageConstant.INVALID_TRANSFORM_DECLARATION, e.getMessage());
+        Assert.assertEquals(SvgExceptionMessageConstant.INVALID_TRANSFORM_DECLARATION, e.getMessage());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class TransformUtilsTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("(((())))")
         );
-        Assert.assertEquals(SvgLogMessageConstant.INVALID_TRANSFORM_DECLARATION, e.getMessage());
+        Assert.assertEquals(SvgExceptionMessageConstant.INVALID_TRANSFORM_DECLARATION, e.getMessage());
     }
 
     @Test
@@ -177,7 +177,7 @@ public class TransformUtilsTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(SvgProcessingException.class,
                 () -> TransformUtils.parseTransform("unknown(1 2 3)")
         );
-        Assert.assertEquals(SvgLogMessageConstant.UNKNOWN_TRANSFORMATION_TYPE, e.getMessage());
+        Assert.assertEquals(SvgExceptionMessageConstant.UNKNOWN_TRANSFORMATION_TYPE, e.getMessage());
     }
 
     @Test

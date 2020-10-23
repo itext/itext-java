@@ -46,7 +46,7 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -213,14 +213,14 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
 
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, logLevel = LogLevelConstants.WARN))
+    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, logLevel = LogLevelConstants.WARN))
     // TODO DEVSIX-4275 investigate why fill style not processed
     public void externalStyleSheetWithFillStyleTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "externalStyleSheetWithFillStyleTest");
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, logLevel = LogLevelConstants.WARN))
+    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, logLevel = LogLevelConstants.WARN))
     public void externalStyleSheetWithStrokeStyleTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "externalStyleSheetWithStrokeStyleTest");
     }

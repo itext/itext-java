@@ -58,7 +58,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.svg.dummy.sdk.ExceptionInputStream;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
@@ -148,7 +148,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG),
     })
     public void nonExistingTagIntegrationTest() {
         String contents = "<svg width='100pt' height='100pt'> <nonExistingTag/> </svg>";
@@ -165,7 +165,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
      */
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 31),
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 31),
     })
     public void convertFileWithAllIgnoredTags() throws IOException, InterruptedException {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "ignored_tags");
@@ -182,7 +182,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, count = 12),
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 12),
     })
     public void caseSensitiveTagTest() {
         String contents = "<svg width='100pt' height='100pt'>" +

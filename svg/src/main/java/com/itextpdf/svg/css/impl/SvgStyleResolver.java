@@ -74,8 +74,8 @@ import com.itextpdf.styledxmlparser.util.StyleUtil;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Tags;
 import com.itextpdf.svg.css.SvgCssContext;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 

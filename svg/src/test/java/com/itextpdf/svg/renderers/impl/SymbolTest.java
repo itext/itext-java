@@ -23,6 +23,7 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;

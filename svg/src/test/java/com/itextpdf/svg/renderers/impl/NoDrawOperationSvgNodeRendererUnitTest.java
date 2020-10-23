@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -60,6 +60,6 @@ public class NoDrawOperationSvgNodeRendererUnitTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(UnsupportedOperationException.class,
                 () -> renderer.doDraw(null)
         );
-        Assert.assertEquals(SvgLogMessageConstant.DRAW_NO_DRAW, e.getMessage());
+        Assert.assertEquals(SvgExceptionMessageConstant.DRAW_NO_DRAW, e.getMessage());
     }
 }

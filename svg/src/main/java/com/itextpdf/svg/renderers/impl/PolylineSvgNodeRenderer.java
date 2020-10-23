@@ -50,7 +50,7 @@ import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -90,7 +90,7 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
 
         List<String> points = SvgCssUtils.splitValueList(pointsAttribute);
         if (points.size() % 2 != 0) {
-            throw new SvgProcessingException(SvgLogMessageConstant.POINTS_ATTRIBUTE_INVALID_LIST)
+            throw new SvgProcessingException(SvgExceptionMessageConstant.POINTS_ATTRIBUTE_INVALID_LIST)
                     .setMessageParams(pointsAttribute);
         }
 

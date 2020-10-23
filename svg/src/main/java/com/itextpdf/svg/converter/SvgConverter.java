@@ -58,7 +58,8 @@ import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessor;
@@ -100,7 +101,7 @@ public final class SvgConverter {
 
     private static void checkNull(Object o) {
         if (o == null) {
-            throw new SvgProcessingException(SvgLogMessageConstant.PARAMETER_CANNOT_BE_NULL);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.PARAMETER_CANNOT_BE_NULL);
         }
     }
 
@@ -856,7 +857,7 @@ public final class SvgConverter {
         try {
             nodeTree = parser.parse(svgStream, charset);
         } catch (Exception e) {
-            throw new SvgProcessingException(SvgLogMessageConstant.FAILED_TO_PARSE_INPUTSTREAM, e);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.FAILED_TO_PARSE_INPUTSTREAM, e);
         }
         return new DefaultSvgProcessor().process(nodeTree, props);
     }

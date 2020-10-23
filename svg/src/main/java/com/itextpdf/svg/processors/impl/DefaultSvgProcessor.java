@@ -52,7 +52,7 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Tags;
 import com.itextpdf.svg.css.impl.SvgStyleResolver;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessor;
@@ -97,7 +97,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     @Override
     public ISvgProcessorResult process(INode root, ISvgConverterProperties converterProps) throws SvgProcessingException {
         if (root == null) {
-            throw new SvgProcessingException(SvgLogMessageConstant.INODEROOTISNULL);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.I_NODE_ROOT_IS_NULL);
         }
         if (converterProps == null) {
             converterProps = new SvgConverterProperties();
@@ -114,7 +114,7 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             ISvgNodeRenderer rootSvgRenderer = createResultAndClean();
             return new SvgProcessorResult(namedObjects, rootSvgRenderer, context);
         } else {
-            throw new SvgProcessingException(SvgLogMessageConstant.NOROOT);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.NO_ROOT);
         }
     }
 
