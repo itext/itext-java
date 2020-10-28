@@ -44,7 +44,6 @@
 package com.itextpdf.layout.borders;
 
 import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
 /**
@@ -103,7 +102,8 @@ public class DashedBorder extends Border {
      * {@inheritDoc}
      */
     @Override
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, Side defaultSide, float borderWidthBefore, float borderWidthAfter) {
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, Side defaultSide,
+            float borderWidthBefore, float borderWidthAfter) {
         float initialGap = width * GAP_MODIFIER;
         float dash = width * DASH_MODIFIER;
         float dx = x2 - x1;
@@ -114,23 +114,27 @@ public class DashedBorder extends Border {
         if (adjustedGap > dash) {
             adjustedGap -= dash;
         }
-        float[] startingPoints = getStartingPointsForBorderSide(x1, y1, x2, y2, defaultSide);
 
-        x1 = startingPoints[0];
-        y1 = startingPoints[1];
-        x2 = startingPoints[2];
-        y2 = startingPoints[3];
+        new FixedDashedBorder(getColor(), width, getOpacity(), dash, adjustedGap, dash + adjustedGap / 2)
+                .draw(canvas, x1, y1, x2, y2, defaultSide, borderWidthBefore, borderWidthAfter);
+    }
 
-        canvas
-                .saveState()
-                .setLineWidth(width)
-                .setStrokeColor(transparentColor.getColor());
-        transparentColor.applyStrokeTransparency(canvas);
-        canvas
-                .setLineDash(dash, adjustedGap, dash + adjustedGap / 2)
-                .moveTo(x1, y1).lineTo(x2, y2)
-                .stroke()
-                .restoreState();
+    @Override
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float horizontalRadius1,
+            float verticalRadius1, float horizontalRadius2, float verticalRadius2, Side defaultSide,
+            float borderWidthBefore, float borderWidthAfter) {
+        float initialGap = width * GAP_MODIFIER;
+        float dash = width * DASH_MODIFIER;
+        float dx = x2 - x1;
+        float dy = y2 - y1;
+        double borderLength = Math.sqrt(dx * dx + dy * dy);
+        float adjustedGap = super.getDotsGap(borderLength, initialGap + dash);
+        if (adjustedGap > dash) {
+            adjustedGap -= dash;
+        }
+        new FixedDashedBorder(getColor(), width, getOpacity(), dash, adjustedGap, dash + adjustedGap / 2)
+                .draw(canvas, x1, y1, x2, y2, horizontalRadius1, verticalRadius1, horizontalRadius2, verticalRadius2,
+                        defaultSide, borderWidthBefore, borderWidthAfter);
     }
 
     /**
@@ -149,43 +153,8 @@ public class DashedBorder extends Border {
             adjustedGap -= dash;
         }
 
-        canvas.
-                saveState().
-                setStrokeColor(transparentColor.getColor());
-        transparentColor.applyStrokeTransparency(canvas);
-        canvas.
-                setLineDash(dash, adjustedGap, dash + adjustedGap / 2).
-                setLineWidth(width).
-                moveTo(x1, y1).
-                lineTo(x2, y2).
-                stroke().
-                restoreState();
-    }
-
-
-    @Override
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float horizontalRadius1, float verticalRadius1, float horizontalRadius2, float verticalRadius2, Side defaultSide, float borderWidthBefore, float borderWidthAfter) {
-        float initialGap = width * GAP_MODIFIER;
-        float dash = width * DASH_MODIFIER;
-        float dx = x2 - x1;
-        float dy = y2 - y1;
-        double borderLength = Math.sqrt(dx * dx + dy * dy);
-        float adjustedGap = super.getDotsGap(borderLength, initialGap + dash);
-        if (adjustedGap > dash) {
-            adjustedGap -= dash;
-        }
-        canvas
-                .saveState()
-                .setLineWidth(width)
-                .setStrokeColor(transparentColor.getColor());
-        transparentColor.applyStrokeTransparency(canvas);
-        canvas.setLineDash(dash, adjustedGap, dash + adjustedGap / 2);
-
-        Rectangle boundingRectangle = new Rectangle(x1, y1, x2 - x1, y2 - y1);
-        float[] horizontalRadii = new float[]{horizontalRadius1, horizontalRadius2};
-        float[] verticalRadii = new float[]{verticalRadius1, verticalRadius2};
-
-        drawDiscontinuousBorders(canvas, boundingRectangle, horizontalRadii, verticalRadii, defaultSide, borderWidthBefore, borderWidthAfter);
+        new FixedDashedBorder(getColor(), width, getOpacity(), dash, adjustedGap, dash + adjustedGap / 2)
+                .drawCellBorder(canvas, x1, y1, x2, y2, defaultSide);
     }
 
     /**
