@@ -146,11 +146,13 @@ public class XmlDomWriter {
                 }
                 String internalSubset = doctype.getInternalSubset();
                 if (internalSubset != null) {
-                    fOut.println(" [");
+                    fOut.print(" [");
+                    fOut.print('\n');
                     fOut.print(internalSubset);
                     fOut.print(']');
                 }
-                fOut.println('>');
+                fOut.print('>');
+                fOut.print('\n');
                 break;
             }
 
