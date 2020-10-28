@@ -78,7 +78,7 @@
     <hsqldb.version>2.3.3</hsqldb.version>
     <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>
     <jacoco.version>0.8.4</jacoco.version>
-    <java.version>1.7</java.version>
+    <java.version>1.8</java.version>
     <javadoc-additionalOptions/>
     <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
     <javadoc.version>3.0.1</javadoc.version>
@@ -86,8 +86,8 @@
     <junit.version>4.12</junit.version>
     <junitparams.version>1.0.4</junitparams.version>
     <logback.version>1.2.3</logback.version>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <maven.jar.version>3.1.0</maven.jar.version>
     <maven.source.version>3.0.1</maven.source.version>
     <performancetests>com.itextpdf.test.annotations.type.PerformanceTest</performancetests>
