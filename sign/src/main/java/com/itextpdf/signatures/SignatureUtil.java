@@ -62,6 +62,7 @@ import com.itextpdf.kernel.pdf.PdfNull;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -507,7 +508,7 @@ public class SignatureUtil {
                     break;
                 }
                 if (tokens.getTokenType() != PdfTokenizer.TokenType.Name) {
-                    tokens.throwError(PdfException.THIS_DICTIONARY_KEY_IS_NOT_A_NAME, tokens.getStringValue());
+                    tokens.throwError(SignExceptionMessageConstant.DICTIONARY_THIS_KEY_IS_NOT_A_NAME, tokens.getStringValue());
                 }
                 PdfName name = readPdfName(true);
                 PdfObject obj;
@@ -534,9 +535,9 @@ public class SignatureUtil {
                 }
                 if (obj == null) {
                     if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
-                        tokens.throwError(PdfException.UNEXPECTED_GT_GT);
+                        tokens.throwError(SignExceptionMessageConstant.UNEXPECTED_GT_GT);
                     if (tokens.getTokenType() == PdfTokenizer.TokenType.EndArray)
-                        tokens.throwError(PdfException.UNEXPECTED_CLOSE_BRACKET);
+                        tokens.throwError(SignExceptionMessageConstant.UNEXPECTED_CLOSE_BRACKET);
                 }
                 dic.put(name, obj);
             }

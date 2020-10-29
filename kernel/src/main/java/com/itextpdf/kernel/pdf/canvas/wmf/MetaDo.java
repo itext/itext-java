@@ -50,6 +50,7 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Point;
@@ -174,7 +175,7 @@ public class MetaDo {
      */
     public void readAll() throws IOException {
         if (in.readInt() != 0x9AC6CDD7) {
-            throw new PdfException(PdfException.NOT_A_PLACEABLE_WINDOWS_METAFILE);
+            throw new PdfException(KernelExceptionMessageConstant.NOT_A_PLACEABLE_WINDOWS_METAFILE);
         }
         in.readWord();
         left = in.readShort();
@@ -745,7 +746,7 @@ public class MetaDo {
      */
     public static byte[] wrapBMP(ImageData image) throws IOException {
         if (image.getOriginalType() != ImageType.BMP) {
-            throw new PdfException(PdfException.ONLY_BMP_CAN_BE_WRAPPED_IN_WMF);
+            throw new PdfException(KernelExceptionMessageConstant.ONLY_BMP_CAN_BE_WRAPPED_IN_WMF);
         }
         InputStream imgIn;
         byte data[];

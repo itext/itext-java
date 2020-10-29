@@ -54,6 +54,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -538,7 +539,7 @@ public class FontProvider {
                 // Even though softening of checked exceptions can be handled at higher levels in order to let
                 // the caller of this method know that font creation failed, we prefer to avoid bloating highlevel API
                 // and avoid making higher level code depend on low-level code because of the exceptions handling.
-                throw new PdfException(PdfException.IO_EXCEPTION_WHILE_CREATING_FONT, e);
+                throw new PdfException(LayoutExceptionMessageConstant.IO_EXCEPTION_WHILE_CREATING_FONT, e);
             }
 
             pdfFonts.put(fontInfo, pdfFont);

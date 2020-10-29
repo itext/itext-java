@@ -26,6 +26,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -182,7 +183,7 @@ public class PdfType3FontTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> type3Font.flush()
         );
-        Assert.assertEquals(PdfException.NO_GLYPHS_DEFINED_FOR_TYPE_3_FONT, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.NO_GLYPHS_DEFINED_FOR_TYPE_3_FONT, e.getMessage());
     }
 
     @Test
@@ -254,7 +255,7 @@ public class PdfType3FontTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> new PdfType3Font(dictionary)
         );
-        Assert.assertEquals(MessageFormatUtil.format(PdfException.MissingRequiredFieldInFontDictionary, PdfName.FontMatrix), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY, PdfName.FontMatrix), e.getMessage());
     }
 
     @Test
@@ -268,7 +269,7 @@ public class PdfType3FontTest extends ExtendedITextTest {
                 () -> new PdfType3Font(dictionary)
         );
         Assert.assertEquals(MessageFormatUtil.format(
-                PdfException.MissingRequiredFieldInFontDictionary, PdfName.Widths), e.getMessage());
+                KernelExceptionMessageConstant.MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY, PdfName.Widths), e.getMessage());
     }
 
     @Test

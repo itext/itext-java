@@ -43,6 +43,7 @@
 package com.itextpdf.kernel.colors;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -87,7 +88,7 @@ public class ColorTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> color.setColorValue(new float[]{0.1f, 0.2f})
         );
-        Assert.assertEquals(PdfException.IncorrectNumberOfComponents, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.INCORRECT_NUMBER_OF_COMPONENTS, e.getMessage());
     }
 
     @Test

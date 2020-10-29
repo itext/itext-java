@@ -54,6 +54,7 @@ import com.itextpdf.io.font.constants.FontStretches;
 import com.itextpdf.io.font.constants.FontWeights;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -510,7 +511,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
     private void flushFontData() {
         if (((Type3Font) getFontProgram()).getNumberOfGlyphs() < 1) {
-            throw new PdfException(PdfException.NO_GLYPHS_DEFINED_FOR_TYPE_3_FONT);
+            throw new PdfException(KernelExceptionMessageConstant.NO_GLYPHS_DEFINED_FOR_TYPE_3_FONT);
         }
         PdfDictionary charProcs = new PdfDictionary();
         for (int i = 0; i <= PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE; i++) {
@@ -549,7 +550,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     private double[] readWidths(PdfDictionary fontDictionary) {
         PdfArray pdfWidths = fontDictionary.getAsArray(PdfName.Widths);
         if (pdfWidths == null) {
-            throw new PdfException(PdfException.MissingRequiredFieldInFontDictionary).setMessageParams(PdfName.Widths);
+            throw new PdfException(KernelExceptionMessageConstant.MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY).setMessageParams(PdfName.Widths);
         }
 
         double[] widths = new double[pdfWidths.size()];
@@ -588,7 +589,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     private double[] readFontMatrix() {
         PdfArray fontMatrixArray = getPdfObject().getAsArray(PdfName.FontMatrix);
         if (fontMatrixArray == null) {
-            throw new PdfException(PdfException.MissingRequiredFieldInFontDictionary)
+            throw new PdfException(KernelExceptionMessageConstant.MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY)
                     .setMessageParams(PdfName.FontMatrix);
         }
         double[] fontMatrix = new double[6];

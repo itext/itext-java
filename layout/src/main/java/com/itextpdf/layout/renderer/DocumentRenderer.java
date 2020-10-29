@@ -51,6 +51,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.RootLayoutArea;
@@ -156,7 +157,7 @@ public class DocumentRenderer extends RootRenderer {
             ensureDocumentHasNPages(pageNum, null);
             PdfPage correspondingPage = pdfDocument.getPage(pageNum);
             if (correspondingPage.isFlushed()) {
-                throw new PdfException(PdfException.CANNOT_DRAW_ELEMENTS_ON_ALREADY_FLUSHED_PAGES);
+                throw new PdfException(LayoutExceptionMessageConstant.CANNOT_DRAW_ELEMENTS_ON_ALREADY_FLUSHED_PAGES);
             }
 
             boolean wrapOldContent = pdfDocument.getReader() != null && pdfDocument.getWriter() != null &&

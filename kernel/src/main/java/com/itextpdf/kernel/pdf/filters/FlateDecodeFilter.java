@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf.filters;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.MemoryLimitsAwareException;
 import com.itextpdf.kernel.pdf.MemoryLimitsAwareFilter;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -213,7 +214,7 @@ public class FlateDecodeFilter extends MemoryLimitsAwareFilter {
                     break;
                 default:
                     // Error -- unknown filter type
-                    throw new PdfException(PdfException.PNG_FILTER_UNKNOWN);
+                    throw new PdfException(KernelExceptionMessageConstant.PNG_FILTER_UNKNOWN);
             }
             try {
                 fout.write(curr);

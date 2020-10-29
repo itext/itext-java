@@ -44,6 +44,7 @@ package com.itextpdf.kernel.pdf.filespec;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfEncryptedPayload;
@@ -181,17 +182,17 @@ public class PdfEncryptedPayloadFileSpecFactory {
         }
         PdfDictionary ef = dictionary.getAsDictionary(PdfName.EF);
         if (ef == null || (ef.getAsStream(PdfName.F) == null) && (ef.getAsStream(PdfName.UF) == null)) {
-            throw new PdfException(PdfException.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_EF_DICTIONARY);
+            throw new PdfException(KernelExceptionMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_EF_DICTIONARY);
         }
         if (!PdfName.Filespec.equals(dictionary.getAsName(PdfName.Type))) {
-            throw new PdfException(PdfException.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_TYPE_EQUAL_TO_FILESPEC);
+            throw new PdfException(KernelExceptionMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_TYPE_EQUAL_TO_FILESPEC);
         }
         if (!dictionary.isIndirect()) {
-            throw new PdfException(PdfException.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_BE_INDIRECT);
+            throw new PdfException(KernelExceptionMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_BE_INDIRECT);
         }
         PdfFileSpec fileSpec = PdfFileSpec.wrapFileSpecObject(dictionary);
         if (PdfEncryptedPayload.extractFrom(fileSpec) == null) {
-            throw new PdfException(PdfException.ENCRYPTED_PAYLOAD_FILE_SPEC_DOES_NOT_HAVE_ENCRYPTED_PAYLOAD_DICTIONARY);
+            throw new PdfException(KernelExceptionMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_DOES_NOT_HAVE_ENCRYPTED_PAYLOAD_DICTIONARY);
         }
         return fileSpec;
     }

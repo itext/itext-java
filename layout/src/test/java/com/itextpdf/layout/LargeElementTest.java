@@ -57,6 +57,7 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -1061,7 +1062,7 @@ public class LargeElementTest extends ExtendedITextTest {
             }
             doc.add(table);
         } catch (PdfException e) {
-            if (!e.getMessage().equals(PdfException.CANNOT_ADD_CELL_TO_COMPLETED_LARGE_TABLE)) {
+            if (!e.getMessage().equals(LayoutExceptionMessageConstant.CANNOT_ADD_CELL_TO_COMPLETED_LARGE_TABLE)) {
                 throw e;
             }
         }

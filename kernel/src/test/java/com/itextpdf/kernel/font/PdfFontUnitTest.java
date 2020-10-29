@@ -46,6 +46,7 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -567,7 +568,7 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> font.getPdfFontStream(null, null)
         );
-        Assert.assertEquals(PdfException.FontEmbeddingIssue, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE, e.getMessage());
     }
 
     @Test

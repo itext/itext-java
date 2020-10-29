@@ -46,6 +46,7 @@ package com.itextpdf.signatures;
 import com.itextpdf.io.codec.Base64;
 import com.itextpdf.io.util.SystemUtil;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.tsp.TSPException;
@@ -239,7 +240,7 @@ public class TSAClientBouncyCastle implements ITSAClient {
         int value = (failure == null) ? 0 : failure.intValue();
         if (value != 0) {
             // @todo: Translate value of 15 error codes defined by PKIFailureInfo to string
-            throw new PdfException(PdfException.INVALID_TSA_RESPONSE).setMessageParams(tsaURL, String.valueOf(value));
+            throw new PdfException(SignExceptionMessageConstant.INVALID_TSA_RESPONSE).setMessageParams(tsaURL, String.valueOf(value));
         }
         // @todo: validate the time stap certificate chain (if we want
         //        assure we do not sign using an invalid timestamp).
@@ -247,7 +248,7 @@ public class TSAClientBouncyCastle implements ITSAClient {
         // extract just the time stamp token (removes communication status info)
         TimeStampToken tsToken = response.getTimeStampToken();
         if (tsToken == null) {
-            throw new PdfException(PdfException.THIS_TSA_FAILED_TO_RETURN_TIME_STAMP_TOKEN).setMessageParams(tsaURL, response.getStatusString());
+            throw new PdfException(SignExceptionMessageConstant.THIS_TSA_FAILED_TO_RETURN_TIME_STAMP_TOKEN).setMessageParams(tsaURL, response.getStatusString());
         }
         TimeStampTokenInfo tsTokenInfo = tsToken.getTimeStampInfo(); // to view details
         byte[] encoded = tsToken.getEncoded();

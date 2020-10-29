@@ -50,6 +50,7 @@ import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.io.source.OutputStream;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.filters.FlateDecodeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +102,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             pdfObject = pdfObject.getIndirectReference();
         }
         if (pdfObject.checkState(PdfObject.READ_ONLY)) {
-            throw new PdfException(PdfException.CANNOT_WRITE_OBJECT_AFTER_IT_WAS_RELEASED);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_WRITE_OBJECT_AFTER_IT_WAS_RELEASED);
         }
         switch (pdfObject.getType()) {
             case PdfObject.ARRAY:
@@ -212,7 +213,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
     private void write(PdfIndirectReference indirectReference) {
         if (document != null && !indirectReference.getDocument().equals(document)) {
-            throw new PdfException(PdfException.PDF_INDIRECT_OBJECT_BELONGS_TO_OTHER_PDF_DOCUMENT);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_INDIRECT_OBJECT_BELONGS_TO_OTHER_PDF_DOCUMENT);
         }
         if (indirectReference.isFree()) {
             Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
@@ -374,7 +375,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                         byteArrayStream = encodedStream;
                     }
                 } catch (IOException ioe) {
-                    throw new PdfException(PdfException.IO_EXCEPTION, ioe);
+                    throw new PdfException(KernelExceptionMessageConstant.IO_EXCEPTION, ioe);
                 }
                 pdfStream.put(PdfName.Length, new PdfNumber(byteArrayStream.size()));
                 pdfStream.updateLength((int) byteArrayStream.size());
@@ -385,7 +386,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 writeBytes(PdfOutputStream.endstream);
             }
         } catch (IOException e) {
-            throw new PdfException(PdfException.CANNOT_WRITE_TO_PDF_STREAM, e, pdfStream);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_WRITE_TO_PDF_STREAM, e, pdfStream);
         }
     }
 
@@ -422,7 +423,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 if (((PdfArray) filter).contains(PdfName.FlateDecode))
                     return true;
             } else {
-                throw new PdfException(PdfException.FILTER_IS_NOT_A_NAME_OR_ARRAY);
+                throw new PdfException(KernelExceptionMessageConstant.FILTER_IS_NOT_A_NAME_OR_ARRAY);
             }
         }
         return false;
@@ -450,7 +451,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 } else if (decodeParms instanceof PdfArray) {
                     ((PdfArray) decodeParms).add(0, new PdfNull());
                 } else {
-                    throw new PdfException(PdfException.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED).setMessageParams(decodeParms.getClass().toString());
+                    throw new PdfException(KernelExceptionMessageConstant.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED).setMessageParams(decodeParms.getClass().toString());
                 }
             }
             pdfStream.put(PdfName.Filter, filters);
@@ -471,7 +472,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             filtersArray = (PdfArray) filterObject;
             filterName = filtersArray.getAsName(0);
         } else {
-            throw new PdfException(PdfException.FILTER_IS_NOT_A_NAME_OR_ARRAY);
+            throw new PdfException(KernelExceptionMessageConstant.FILTER_IS_NOT_A_NAME_OR_ARRAY);
         }
 
         if (!PdfName.FlateDecode.equals(filterName)) {
@@ -490,7 +491,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             decodeParamsArray = (PdfArray) decodeParamsObject;
             decodeParams = decodeParamsArray.getAsDictionary(0);
         } else {
-            throw new PdfException(PdfException.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED).setMessageParams(decodeParamsObject.getClass().toString());
+            throw new PdfException(KernelExceptionMessageConstant.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED).setMessageParams(decodeParamsObject.getClass().toString());
         }
 
         // decode

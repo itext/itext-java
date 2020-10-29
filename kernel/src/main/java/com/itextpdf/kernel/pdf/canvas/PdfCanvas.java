@@ -54,6 +54,7 @@ import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.geom.AffineTransform;
@@ -339,7 +340,7 @@ public class PdfCanvas {
     public PdfCanvas restoreState() {
         document.checkIsoConformance('Q', IsoKey.CANVAS_STACK);
         if (gsStack.isEmpty()) {
-            throw new PdfException(PdfException.UNBALANCED_SAVE_RESTORE_STATE_OPERATORS);
+            throw new PdfException(KernelExceptionMessageConstant.UNBALANCED_SAVE_RESTORE_STATE_OPERATORS);
         }
         currentGs = gsStack.pop();
         contentStream.getOutputStream().writeBytes(Q);
@@ -728,7 +729,7 @@ public class PdfCanvas {
         document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
         PdfFont font;
         if ((font = currentGs.getFont()) == null) {
-            throw new PdfException(PdfException.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
+            throw new PdfException(KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
         }
         float fontSize = currentGs.getFontSize() / 1000f;
         float charSpacing = currentGs.getCharSpacing();
@@ -898,7 +899,7 @@ public class PdfCanvas {
     public PdfCanvas showText(PdfArray textArray) {
         document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
         if (currentGs.getFont() == null)
-            throw new PdfException(PdfException.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
+            throw new PdfException(KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
         contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("["));
         for (PdfObject obj : textArray) {
             if (obj.isString()) {
@@ -1860,7 +1861,7 @@ public class PdfCanvas {
             num = (int) layerDepth.get(layerDepth.size() - 1);
             layerDepth.remove(layerDepth.size() - 1);
         } else {
-            throw new PdfException(PdfException.UNBALANCED_LAYER_OPERATORS);
+            throw new PdfException(KernelExceptionMessageConstant.UNBALANCED_LAYER_OPERATORS);
         }
         while (num-- > 0)
             contentStream.getOutputStream().writeBytes(EMC).writeNewLine();
@@ -2393,7 +2394,7 @@ public class PdfCanvas {
      */
     public PdfCanvas endMarkedContent() {
         if (--mcDepth < 0)
-            throw new PdfException(PdfException.UNBALANCED_BEGIN_END_MARKED_CONTENT_OPERATORS);
+            throw new PdfException(KernelExceptionMessageConstant.UNBALANCED_BEGIN_END_MARKED_CONTENT_OPERATORS);
         contentStream.getOutputStream().writeBytes(EMC);
         return this;
     }
@@ -2614,7 +2615,7 @@ public class PdfCanvas {
     private PdfCanvas addForm(PdfFormXObject form, float x, float y, float width) {
         PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
         if (bbox == null)
-            throw new PdfException(PdfException.PDF_FORM_XOBJECT_HAS_INVALID_BBOX);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_FORM_XOBJECT_HAS_INVALID_BBOX);
         float formWidth = Math.abs(bbox.getAsNumber(2).floatValue() - bbox.getAsNumber(0).floatValue());
         float formHeight = Math.abs(bbox.getAsNumber(3).floatValue() - bbox.getAsNumber(1).floatValue());
         return addForm(form, width, 0, 0, width / formWidth * formHeight, x, y);
@@ -2636,7 +2637,7 @@ public class PdfCanvas {
     private PdfCanvas addForm(PdfFormXObject form, float x, float y, float height, boolean dummy) {
         PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
         if (bbox == null)
-            throw new PdfException(PdfException.PDF_FORM_XOBJECT_HAS_INVALID_BBOX);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_FORM_XOBJECT_HAS_INVALID_BBOX);
         float formWidth = Math.abs(bbox.getAsNumber(2).floatValue() - bbox.getAsNumber(0).floatValue());
         float formHeight = Math.abs(bbox.getAsNumber(3).floatValue() - bbox.getAsNumber(1).floatValue());
         return addForm(form, height / formHeight * formWidth, 0, 0, height, x, y);
@@ -2744,7 +2745,7 @@ public class PdfCanvas {
     private void showTextInt(String text) {
         document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
         if (currentGs.getFont() == null)
-            throw new PdfException(PdfException.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
+            throw new PdfException(KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
         currentGs.getFont().writeText(text, contentStream.getOutputStream());
     }
 

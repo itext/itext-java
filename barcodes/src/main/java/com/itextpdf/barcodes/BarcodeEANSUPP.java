@@ -44,7 +44,7 @@
 package com.itextpdf.barcodes;
 
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.barcodes.exceptions.BarcodeExceptionMessageConstant;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -159,6 +159,6 @@ public class BarcodeEANSUPP extends Barcode1D {
      */
     @Override
     public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
-        throw new UnsupportedOperationException(PdfException.TWO_BARCODE_MUST_BE_EXTERNALLY);
+        throw new UnsupportedOperationException(BarcodeExceptionMessageConstant.TWO_BARCODE_MUST_BE_EXTERNALLY);
     }
 }

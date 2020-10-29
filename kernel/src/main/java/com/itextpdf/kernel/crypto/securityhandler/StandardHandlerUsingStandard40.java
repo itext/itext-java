@@ -43,13 +43,13 @@
  */
 package com.itextpdf.kernel.crypto.securityhandler;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.ARCFOUREncryption;
 import com.itextpdf.kernel.crypto.BadPasswordException;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.crypto.OutputStreamStandardEncryption;
 import com.itextpdf.kernel.crypto.StandardDecryptor;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
@@ -211,7 +211,7 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
             userKey = computeUserKey();
             // computed user key should be equal to uValue
             if (isValidPassword(uValue, userKey)) {
-                throw new BadPasswordException(PdfException.BAD_USER_PASSWORD);
+                throw new BadPasswordException(KernelExceptionMessageConstant.BAD_USER_PASSWORD);
             }
             usedOwnerPassword = false;
         }

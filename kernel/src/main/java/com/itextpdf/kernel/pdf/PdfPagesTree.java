@@ -46,6 +46,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +83,7 @@ class PdfPagesTree {
         if (pdfCatalog.getPdfObject().containsKey(PdfName.Pages)) {
             PdfDictionary pages = pdfCatalog.getPdfObject().getAsDictionary(PdfName.Pages);
             if (pages == null)
-                throw new PdfException(PdfException.INVALID_PAGE_STRUCTURE_PAGES_MUST_BE_PDF_DICTIONARY);
+                throw new PdfException(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE_PAGES_MUST_BE_PDF_DICTIONARY);
             this.root = new PdfPages(0, Integer.MAX_VALUE, pages, null);
             parents.add(this.root);
             for (int i = 0; i < this.root.getCount(); i++) {
@@ -105,7 +106,7 @@ class PdfPagesTree {
      */
     public PdfPage getPage(int pageNum) {
         if (pageNum < 1 || pageNum > getNumberOfPages()) {
-            throw new IndexOutOfBoundsException(MessageFormatUtil.format(PdfException.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, pageNum));
+            throw new IndexOutOfBoundsException(MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, pageNum));
         }
         --pageNum;
         PdfPage pdfPage = pages.get(pageNum);
@@ -275,9 +276,9 @@ class PdfPagesTree {
      */
     protected PdfObject generateTree() {
         if (pageRefs.size() == 0)
-            throw new PdfException(PdfException.DOCUMENT_HAS_NO_PAGES);
+            throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NO_PAGES);
         if (generated)
-            throw new PdfException(PdfException.PDF_PAGES_TREE_COULD_BE_GENERATED_ONLY_ONCE);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_PAGES_TREE_COULD_BE_GENERATED_ONLY_ONCE);
 
         if (root == null) {
             while (parents.size() != 1) {
@@ -337,7 +338,7 @@ class PdfPagesTree {
         PdfPages parent = parents.get(parentIndex);
         PdfArray kids = parent.getKids();
         if (kids == null) {
-            throw new PdfException(PdfException.INVALID_PAGE_STRUCTURE).setMessageParams(pageNum + 1);
+            throw new PdfException(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE).setMessageParams(pageNum + 1);
         }
         int kidsCount = parent.getCount();
 
@@ -351,7 +352,7 @@ class PdfPagesTree {
 
             // null values not allowed in pages tree.
             if (page == null) {
-                throw new PdfException(PdfException.INVALID_PAGE_STRUCTURE).setMessageParams(pageNum + 1);
+                throw new PdfException(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE).setMessageParams(pageNum + 1);
             }
             PdfObject pageKids = page.get(PdfName.Kids);
             if (pageKids != null) {
@@ -359,7 +360,7 @@ class PdfPagesTree {
                     findPdfPages = true;
                 } else {
                     // kids must be of type array
-                    throw new PdfException(PdfException.INVALID_PAGE_STRUCTURE).setMessageParams(pageNum + 1);
+                    throw new PdfException(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE).setMessageParams(pageNum + 1);
                 }
             }
             if (document.getReader().isMemorySavingMode() && !findPdfPages && parent.getFrom() + i != pageNum) {

@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.colors;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
@@ -227,7 +228,7 @@ public class Color {
      */
     public void setColorValue(float[] value) {
         if (colorValue.length != value.length) {
-            throw new PdfException(PdfException.INCORRECT_NUMBER_OF_COMPONENTS, this);
+            throw new PdfException(KernelExceptionMessageConstant.INCORRECT_NUMBER_OF_COMPONENTS, this);
         }
         colorValue = value;
     }

@@ -48,6 +48,7 @@ import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
@@ -228,7 +229,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> pdfDoc.addPage(1, page)
         );
-        Assert.assertEquals(PdfException.FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED, e.getMessage());
     }
 
     @Test
@@ -245,7 +246,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> pdfDoc.addPage(page)
         );
-        Assert.assertEquals(PdfException.FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED, e.getMessage());
     }
 
     @Test
@@ -286,7 +287,7 @@ public class PdfPagesTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> pdfDocument.removePage(1)
             );
-            Assert.assertEquals(PdfException.FLUSHED_PAGE_CANNOT_BE_REMOVED, e.getMessage());
+            Assert.assertEquals(KernelExceptionMessageConstant.FLUSHED_PAGE_CANNOT_BE_REMOVED, e.getMessage());
         }
     }
 
@@ -300,7 +301,7 @@ public class PdfPagesTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> pdfDocument.removePage(1)
             );
-            Assert.assertEquals(PdfException.FLUSHED_PAGE_CANNOT_BE_REMOVED, e.getMessage());
+            Assert.assertEquals(KernelExceptionMessageConstant.FLUSHED_PAGE_CANNOT_BE_REMOVED, e.getMessage());
         }
     }
 
@@ -557,7 +558,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         PdfPage pageOne = pdfDoc.getPage(1);
 
         Exception e = Assert.assertThrows(PdfException.class, () -> pageOne.getPageSize());
-        Assert.assertEquals(MessageFormatUtil.format(PdfException.WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS, 3), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS, 3), e.getMessage());
     }
 
     @Test

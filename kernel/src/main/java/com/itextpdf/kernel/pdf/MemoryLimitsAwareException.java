@@ -43,6 +43,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 /**
  * Exception class for exceptions occurred during decompressed pdf streams processing.
@@ -63,7 +64,7 @@ public class MemoryLimitsAwareException extends PdfException {
      * @param cause the cause (which is saved for later retrieval by {@link #getCause()} method).
      */
     public MemoryLimitsAwareException(Throwable cause) {
-        this(UNKNOWN_PDF_EXCEPTION, cause);
+        this(KernelExceptionMessageConstant.UNKNOWN_PDF_EXCEPTION, cause);
     }
 
     /**

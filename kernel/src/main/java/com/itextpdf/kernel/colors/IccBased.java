@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.colors;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 
 import java.io.InputStream;
@@ -84,6 +85,6 @@ public class IccBased extends Color {
     public IccBased(InputStream iccStream, float[] range, float[] value) {
         this(new PdfCieBasedCs.IccBased(iccStream, range), value);
         if (getNumberOfComponents() * 2 != range.length)
-            throw new PdfException(PdfException.INVALID_RANGE_ARRAY, this);
+            throw new PdfException(KernelExceptionMessageConstant.INVALID_RANGE_ARRAY, this);
     }
 }

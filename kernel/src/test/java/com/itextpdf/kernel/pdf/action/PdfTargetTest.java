@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf.action;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -216,7 +217,7 @@ public class PdfTargetTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> target.setAnnotation(annotation, document)
             );
-            Assert.assertEquals(PdfException.AnnotationShallHaveReferenceToPage, e.getMessage());
+            Assert.assertEquals(KernelExceptionMessageConstant.ANNOTATION_SHALL_HAVE_REFERENCE_TO_PAGE, e.getMessage());
         }
     }
 

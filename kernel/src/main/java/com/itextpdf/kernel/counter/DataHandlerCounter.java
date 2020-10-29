@@ -51,6 +51,7 @@ import com.itextpdf.kernel.counter.data.EventDataHandlerUtil;
 import com.itextpdf.kernel.counter.data.EventData;
 import com.itextpdf.kernel.counter.event.IEvent;
 import com.itextpdf.kernel.counter.event.IMetaInfo;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 import java.io.Closeable;
 
@@ -102,7 +103,7 @@ public class DataHandlerCounter<T, V extends EventData<T>> extends EventCounter 
     @Override
     protected void onEvent(IEvent event, IMetaInfo metaInfo) {
         if (this.closed) {
-            throw new IllegalStateException(PdfException.DATA_HANDLER_COUNTER_HAS_BEEN_DISABLED);
+            throw new IllegalStateException(KernelExceptionMessageConstant.DATA_HANDLER_COUNTER_HAS_BEEN_DISABLED);
         }
         this.dataHandler.register(event, metaInfo);
     }

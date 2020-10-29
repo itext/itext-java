@@ -43,7 +43,8 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.KernelLogMessageConstant;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -186,7 +187,7 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
         }
 
         public InputSource resolveEntity(String publicId, String systemId) {
-            throw new PdfException(PdfException.ExternalEntityElementFoundInXml);
+            throw new PdfException(KernelExceptionMessageConstant.EXTERNAL_ENTITY_ELEMENT_FOUND_IN_XML);
         }
     }
 }

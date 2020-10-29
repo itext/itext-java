@@ -22,7 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.KernelLogMessageConstant;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;

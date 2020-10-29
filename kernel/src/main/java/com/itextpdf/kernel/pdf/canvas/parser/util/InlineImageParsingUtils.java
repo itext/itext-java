@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf.canvas.parser.util;
 
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -194,7 +195,7 @@ public final class InlineImageParsingUtils {
             }
         }
 
-        throw new InlineImageParseException(PdfException.UNEXPECTED_COLOR_SPACE).setMessageParams(colorSpaceName);
+        throw new InlineImageParseException(KernelExceptionMessageConstant.UNEXPECTED_COLOR_SPACE).setMessageParams(colorSpaceName);
     }
 
     /**
@@ -220,7 +221,7 @@ public final class InlineImageParsingUtils {
 
         int ch = ps.getTokeniser().read();
         if (!PdfTokenizer.isWhitespace(ch))
-            throw new InlineImageParseException(PdfException.UNEXPECTED_CHARACTER_FOUND_AFTER_ID_IN_INLINE_IMAGE).setMessageParams(ch);
+            throw new InlineImageParseException(KernelExceptionMessageConstant.UNEXPECTED_CHARACTER_FOUND_AFTER_ID_IN_INLINE_IMAGE).setMessageParams(ch);
 
         return dict;
     }
@@ -312,7 +313,7 @@ public final class InlineImageParsingUtils {
         for (int i = startIndex; i < bytesToRead; i++) {
             int ch = tokeniser.read();
             if (ch == -1)
-                throw new InlineImageParseException(PdfException.END_OF_CONTENT_STREAM_REACHED_BEFORE_END_OF_IMAGE_DATA);
+                throw new InlineImageParseException(KernelExceptionMessageConstant.END_OF_CONTENT_STREAM_REACHED_BEFORE_END_OF_IMAGE_DATA);
 
             bytes[i] = (byte) ch;
         }
@@ -322,7 +323,7 @@ public final class InlineImageParsingUtils {
             // Let's try to handle that case here.
             PdfObject ei2 = ps.readObject();
             if (!"EI".equals(ei2.toString()))
-                throw new InlineImageParseException(PdfException.OPERATOR_EI_NOT_FOUND_AFTER_END_OF_IMAGE_DATA);
+                throw new InlineImageParseException(KernelExceptionMessageConstant.OPERATOR_EI_NOT_FOUND_AFTER_END_OF_IMAGE_DATA);
         }
         return bytes;
     }
@@ -375,7 +376,7 @@ public final class InlineImageParsingUtils {
             }
 
         }
-        throw new InlineImageParseException(PdfException.CANNOT_FIND_IMAGE_DATA_OR_EI);
+        throw new InlineImageParseException(KernelExceptionMessageConstant.CANNOT_FIND_IMAGE_DATA_OR_EI);
     }
 
     private static boolean imageColorSpaceIsKnown(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic) {

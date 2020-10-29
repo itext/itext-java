@@ -45,7 +45,6 @@ package com.itextpdf.layout;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFontFamilies;
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfType3Font;
@@ -55,6 +54,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontInfo;
 import com.itextpdf.layout.font.FontProvider;
@@ -207,7 +207,7 @@ public class FontProviderTest extends ExtendedITextTest {
                     .setFontFamily("ABRACADABRA_NO_FONT_PROVIDER_ANYWAY");
 
             Exception e = Assert.assertThrows(IllegalStateException.class, () -> doc.add(paragraph));
-            Assert.assertEquals(PdfException.FONT_PROVIDER_NOT_SET_FONT_FAMILY_NOT_RESOLVED, e.getMessage());
+            Assert.assertEquals(LayoutExceptionMessageConstant.FONT_PROVIDER_NOT_SET_FONT_FAMILY_NOT_RESOLVED, e.getMessage());
         }
     }
 }

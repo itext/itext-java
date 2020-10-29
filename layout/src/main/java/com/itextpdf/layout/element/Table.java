@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.property.BorderCollapsePropertyValue;
 import com.itextpdf.layout.property.CaptionSide;
 import com.itextpdf.layout.property.Property;
@@ -587,7 +588,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      */
     public Table addCell(Cell cell) {
         if (isComplete && null != lastAddedRow) {
-            throw new PdfException(PdfException.CANNOT_ADD_CELL_TO_COMPLETED_LARGE_TABLE);
+            throw new PdfException(LayoutExceptionMessageConstant.CANNOT_ADD_CELL_TO_COMPLETED_LARGE_TABLE);
         }
         // Try to find first empty slot in table.
         // We shall not use colspan or rowspan, 1x1 will be enough.

@@ -42,8 +42,8 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import java.util.Arrays;
@@ -157,7 +157,7 @@ public class PageFlushingHelper {
      */
     public void unsafeFlushDeep(int pageNum) {
         if (pdfDoc.getWriter() == null) {
-            throw new IllegalArgumentException(PdfException.FLUSHING_HELPER_FLUSHING_MODE_IS_NOT_FOR_DOC_READING_MODE);
+            throw new IllegalArgumentException(KernelExceptionMessageConstant.FLUSHING_HELPER_FLUSHING_MODE_IS_NOT_FOR_DOC_READING_MODE);
         }
         release = false;
         flushPage(pageNum);
@@ -212,7 +212,7 @@ public class PageFlushingHelper {
      */
     public void appendModeFlush(int pageNum) {
         if (pdfDoc.getWriter() == null) {
-            throw new IllegalArgumentException(PdfException.FLUSHING_HELPER_FLUSHING_MODE_IS_NOT_FOR_DOC_READING_MODE);
+            throw new IllegalArgumentException(KernelExceptionMessageConstant.FLUSHING_HELPER_FLUSHING_MODE_IS_NOT_FOR_DOC_READING_MODE);
         }
 
         PdfPage page = pdfDoc.getPage(pageNum);

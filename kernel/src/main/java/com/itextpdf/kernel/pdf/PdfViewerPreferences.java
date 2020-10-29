@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
 
@@ -384,7 +385,7 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
                 // the viewer preferences dictionary specifies a valid value other than AppDefault
                 PdfName curPrintScaling = getPdfObject().getAsName(PdfName.PrintScaling);
                 if (curPrintScaling == null || PdfName.AppDefault.equals(curPrintScaling)) {
-                    throw new PdfException(PdfException.PRINT_SCALING_ENFORCE_ENTRY_INVALID);
+                    throw new PdfException(KernelExceptionMessageConstant.PRINT_SCALING_ENFORCE_ENTRY_INVALID);
                 }
             }
         }

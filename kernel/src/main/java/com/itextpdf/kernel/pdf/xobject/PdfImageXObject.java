@@ -54,6 +54,7 @@ import com.itextpdf.io.image.PngImageData;
 import com.itextpdf.io.image.RawImageData;
 import com.itextpdf.io.image.RawImageHelper;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -544,7 +545,7 @@ public class PdfImageXObject extends PdfXObject {
 
     private static ImageData checkImageType(ImageData image) {
         if (image instanceof WmfImageData) {
-            throw new PdfException(PdfException.CANNOT_CREATE_PDF_IMAGE_XOBJECT_BY_WMF_IMAGE);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_CREATE_PDF_IMAGE_XOBJECT_BY_WMF_IMAGE);
         }
         return image;
     }

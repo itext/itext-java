@@ -45,6 +45,7 @@ package com.itextpdf.kernel.crypto.securityhandler;
 
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfLiteral;
@@ -110,7 +111,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
                 md.update(new byte[]{(byte) 255, (byte) 255, (byte) 255,
                         (byte) 255});
         } catch (Exception e) {
-            throw new PdfException(PdfException.PDF_ENCRYPTION, e);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
         }
 
         return md.digest();
@@ -144,7 +145,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
             }
             encryptionKey = md.digest();
         } catch (Exception f) {
-            throw new PdfException(PdfException.PDF_DECRYPTION, f);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_DECRYPTION, f);
         }
         return encryptionKey;
     }
@@ -162,7 +163,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         try {
             recipients = getEncodedRecipients();
         } catch (Exception e) {
-            throw new PdfException(PdfException.PDF_ENCRYPTION, e);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
         }
         return recipients;
     }

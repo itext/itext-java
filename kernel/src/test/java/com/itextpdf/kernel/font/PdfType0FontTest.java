@@ -26,6 +26,7 @@ import com.itextpdf.io.font.CMapEncoding;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -68,7 +69,7 @@ public class PdfType0FontTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> new PdfType0Font(ttf, PdfEncodings.WINANSI)
         );
-        Assert.assertEquals(PdfException.OnlyIdentityCMapsSupportsWithTrueType, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.ONLY_IDENTITY_CMAPS_SUPPORTS_WITH_TRUETYPE, e.getMessage());
     }
 
     @Test

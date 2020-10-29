@@ -45,6 +45,7 @@ package com.itextpdf.forms.fields;
 
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.borders.FormBorderFactory;
+import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.codec.Base64;
@@ -2323,7 +2324,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (rect == null) {
             PdfArray kids = field.getAsArray(PdfName.Kids);
             if (kids == null) {
-                throw new PdfException(PdfException.WRONG_FORM_FIELD_ADD_ANNOTATION_TO_THE_FIELD);
+                throw new PdfException(FormsExceptionMessageConstant.WRONG_FORM_FIELD_ADD_ANNOTATION_TO_THE_FIELD);
             }
             rect = ((PdfDictionary) kids.get(0)).getAsArray(PdfName.Rect);
         }

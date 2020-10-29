@@ -44,6 +44,7 @@ package com.itextpdf.kernel.pdf.collection;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
@@ -214,7 +215,7 @@ public class PdfCollectionFieldTest extends ExtendedITextTest {
         // this line will throw an exception as getValue() method is not
         // supported for subType which differs from S, N and D.
         Exception e = Assert.assertThrows(PdfException.class, () -> field.getValue(stringValue));
-        Assert.assertEquals(MessageFormatUtil.format(PdfException.UNACCEPTABLE_FIELD_VALUE,
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNACCEPTABLE_FIELD_VALUE,
                 stringValue, fieldName), e.getMessage());
     }
 

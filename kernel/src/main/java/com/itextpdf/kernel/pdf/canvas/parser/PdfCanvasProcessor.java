@@ -48,7 +48,7 @@ import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.KernelLogMessageConstant;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.CalGray;
 import com.itextpdf.kernel.colors.CalRgb;
@@ -62,6 +62,7 @@ import com.itextpdf.kernel.colors.Indexed;
 import com.itextpdf.kernel.colors.Lab;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.colors.Separation;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Matrix;
@@ -269,7 +270,7 @@ public class PdfCanvasProcessor {
      */
     public void processContent(byte[] contentBytes, PdfResources resources) {
         if (resources == null) {
-            throw new PdfException(PdfException.RESOURCES_CANNOT_BE_NULL);
+            throw new PdfException(KernelExceptionMessageConstant.RESOURCES_CANNOT_BE_NULL);
         }
         this.resourcesStack.push(resources);
         PdfTokenizer tokeniser = new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(contentBytes)));
@@ -281,7 +282,7 @@ public class PdfCanvasProcessor {
                 invokeOperator(operator, operands);
             }
         } catch (IOException e) {
-            throw new PdfException(PdfException.CANNOT_PARSE_CONTENT_STREAM, e);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_PARSE_CONTENT_STREAM, e);
         }
 
         this.resourcesStack.pop();
@@ -905,12 +906,12 @@ public class PdfCanvasProcessor {
             PdfName dictionaryName = (PdfName) operands.get(0);
             PdfDictionary extGState = processor.getResources().getResource(PdfName.ExtGState);
             if (extGState == null)
-                throw new PdfException(PdfException.RESOURCES_DO_NOT_CONTAIN_EXTGSTATE_ENTRY_UNABLE_TO_PROCESS_THIS_OPERATOR).setMessageParams(operator);
+                throw new PdfException(KernelExceptionMessageConstant.RESOURCES_DO_NOT_CONTAIN_EXTGSTATE_ENTRY_UNABLE_TO_PROCESS_THIS_OPERATOR).setMessageParams(operator);
             PdfDictionary gsDic = extGState.getAsDictionary(dictionaryName);
             if (gsDic == null) {
                 gsDic = extGState.getAsStream(dictionaryName);
                 if (gsDic == null)
-                    throw new PdfException(PdfException.UNKNOWN_GRAPHICS_STATE_DICTIONARY).setMessageParams(dictionaryName);
+                    throw new PdfException(KernelExceptionMessageConstant.UNKNOWN_GRAPHICS_STATE_DICTIONARY).setMessageParams(dictionaryName);
             }
             PdfArray fontParameter = gsDic.getAsArray(PdfName.Font);
             if (fontParameter != null) {

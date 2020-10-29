@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf.tagutils;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -136,7 +137,7 @@ public class TagStructureContext {
     public TagStructureContext(PdfDocument document, PdfVersion tagStructureTargetVersion) {
         this.document = document;
         if (!document.isTagged()) {
-            throw new PdfException(PdfException.MUST_BE_A_TAGGED_DOCUMENT);
+            throw new PdfException(KernelExceptionMessageConstant.MUST_BE_A_TAGGED_DOCUMENT);
         }
         waitingTagsManager = new WaitingTagsManager();
         namespaces = new LinkedHashSet<>();
@@ -598,7 +599,7 @@ public class TagStructureContext {
 
     private String composeInvalidRoleException(String role, PdfNamespace namespace) {
         return composeExceptionBasedOnNamespacePresence(role, namespace,
-                PdfException.ROLE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE, PdfException.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE);
+                KernelExceptionMessageConstant.ROLE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE, KernelExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE);
     }
 
     private String composeTooMuchTransitiveMappingsException(String role, PdfNamespace namespace) {
@@ -650,7 +651,7 @@ public class TagStructureContext {
                 }
             } else {
                 if (pageTag instanceof PdfMcr) {
-                    throw new PdfException(PdfException.CANNOT_REMOVE_TAG_BECAUSE_ITS_PARENT_IS_FLUSHED);
+                    throw new PdfException(KernelExceptionMessageConstant.CANNOT_REMOVE_TAG_BECAUSE_ITS_PARENT_IS_FLUSHED);
                 }
             }
         } else {

@@ -46,6 +46,7 @@ package com.itextpdf.kernel.utils;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.counter.event.IMetaInfo;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -73,7 +74,7 @@ public class PdfSplitter {
      */
     public PdfSplitter(PdfDocument pdfDocument) {
         if (pdfDocument.getWriter() != null) {
-            throw new PdfException(PdfException.CANNOT_SPLIT_DOCUMENT_THAT_IS_BEING_WRITTEN);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_SPLIT_DOCUMENT_THAT_IS_BEING_WRITTEN);
         }
         this.pdfDocument = pdfDocument;
         this.preserveTagged = true;

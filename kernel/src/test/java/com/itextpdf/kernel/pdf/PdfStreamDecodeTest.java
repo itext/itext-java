@@ -23,8 +23,9 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.KernelLogMessageConstant;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
@@ -84,7 +85,7 @@ public class PdfStreamDecodeTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> pdfStream.getBytes(true)
         );
-        Assert.assertEquals(MessageFormatUtil.format(PdfException.THIS_FILTER_IS_NOT_SUPPORTED, PdfName.JBIG2Decode), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.THIS_FILTER_IS_NOT_SUPPORTED, PdfName.JBIG2Decode), e.getMessage());
     }
 
     @Test

@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf.tagging;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -92,7 +93,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
     public PdfStructElem(PdfDocument document, PdfName role, PdfAnnotation annot) {
         this(document, role);
         if (annot.getPage() == null)
-            throw new PdfException(PdfException.ANNOTATION_SHALL_HAVE_REFERENCE_TO_PAGE);
+            throw new PdfException(KernelExceptionMessageConstant.ANNOTATION_SHALL_HAVE_REFERENCE_TO_PAGE);
         // Explicitly using object indirect reference here in order to correctly process released objects.
         getPdfObject().put(PdfName.Pg, annot.getPage().getPdfObject().getIndirectReference());
     }
@@ -330,7 +331,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
      */
     public void addRef(PdfStructElem ref) {
         if (!ref.getPdfObject().isIndirect()) {
-            throw new PdfException(PdfException.REF_ARRAY_ITEMS_IN_STRUCTURE_ELEMENT_DICTIONARY_SHALL_BE_INDIRECT_OBJECTS);
+            throw new PdfException(KernelExceptionMessageConstant.REF_ARRAY_ITEMS_IN_STRUCTURE_ELEMENT_DICTIONARY_SHALL_BE_INDIRECT_OBJECTS);
         }
         VersionConforming.validatePdfVersionForDictEntry(getDocument(), PdfVersion.PDF_2_0, PdfName.Ref, PdfName.StructElem);
         PdfArray refsArray = getPdfObject().getAsArray(PdfName.Ref);
@@ -508,10 +509,10 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
 
     static void addKidObject(PdfDictionary parent, int index, PdfObject kid) {
         if (parent.isFlushed()) {
-            throw new PdfException(PdfException.CANNOT_ADD_KID_TO_THE_FLUSHED_ELEMENT);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_ADD_KID_TO_THE_FLUSHED_ELEMENT);
         }
         if (!parent.containsKey(PdfName.P)) {
-            throw new PdfException(PdfException.STRUCTURE_ELEMENT_SHALL_CONTAIN_PARENT_OBJECT, parent);
+            throw new PdfException(KernelExceptionMessageConstant.STRUCTURE_ELEMENT_SHALL_CONTAIN_PARENT_OBJECT, parent);
         }
         PdfObject k = parent.get(PdfName.K);
         if (k == null) {
@@ -534,7 +535,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
         parent.setModified();
         if (kid instanceof PdfDictionary && isStructElem((PdfDictionary) kid)) {
             if (!parent.isIndirect()) {
-                throw new PdfException(PdfException.STRUCTURE_ELEMENT_DICTIONARY_SHALL_BE_AN_INDIRECT_OBJECT_IN_ORDER_TO_HAVE_CHILDREN);
+                throw new PdfException(KernelExceptionMessageConstant.STRUCTURE_ELEMENT_DICTIONARY_SHALL_BE_AN_INDIRECT_OBJECT_IN_ORDER_TO_HAVE_CHILDREN);
             }
             ((PdfDictionary) kid).put(PdfName.P, parent);
             kid.setModified();
@@ -560,7 +561,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
     private PdfDocument getDocEnsureIndirectForKids() {
         PdfDocument doc = getDocument();
         if (doc == null) {
-            throw new PdfException(PdfException.STRUCTURE_ELEMENT_DICTIONARY_SHALL_BE_AN_INDIRECT_OBJECT_IN_ORDER_TO_HAVE_CHILDREN);
+            throw new PdfException(KernelExceptionMessageConstant.STRUCTURE_ELEMENT_DICTIONARY_SHALL_BE_AN_INDIRECT_OBJECT_IN_ORDER_TO_HAVE_CHILDREN);
         }
         return doc;
     }

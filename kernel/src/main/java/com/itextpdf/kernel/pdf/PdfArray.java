@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 
 import java.util.ArrayList;
@@ -495,7 +496,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
              
             return new Rectangle(llx, lly, urx - llx, ury - lly);
         } catch (Exception e) {
-            throw new PdfException(PdfException.CANNOT_CONVERT_PDF_ARRAY_TO_RECTANGLE, e, this);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_RECTANGLE, e, this);
         }
     }
 
@@ -513,7 +514,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
             }
             return rslt;
         } catch (Exception e) {
-            throw new PdfException(PdfException.CANNOT_CONVERT_PDF_ARRAY_TO_FLOAT_ARRAY, e, this);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_FLOAT_ARRAY, e, this);
         }
     }
 
@@ -531,7 +532,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
             }
             return rslt;
         } catch (Exception e) {
-            throw new PdfException(PdfException.CANNOT_CONVERT_PDF_ARRAY_TO_DOUBLE_ARRAY, e, this);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_DOUBLE_ARRAY, e, this);
         }
     }
 
@@ -549,7 +550,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
             }
             return rslt;
         } catch (Exception e) {
-            throw new PdfException(PdfException.CANNOT_CONVERT_PDF_ARRAY_TO_LONG_ARRAY, e, this);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_LONG_ARRAY, e, this);
         }
     }
 
@@ -567,7 +568,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
             }
             return rslt;
         } catch (Exception e) {
-            throw new PdfException(PdfException.CANNOT_CONVERT_PDF_ARRAY_TO_INT_ARRAY, e, this);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_INT_ARRAY, e, this);
         }
     }
 
@@ -583,7 +584,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         for (int k = 0; k < rslt.length; ++ k) {
             tmp = getAsBoolean(k);
             if (tmp == null) {
-                throw new PdfException(PdfException.CANNOT_CONVERT_PDF_ARRAY_TO_AN_ARRAY_OF_BOOLEANS, this);
+                throw new PdfException(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_AN_ARRAY_OF_BOOLEANS, this);
             }
             rslt[k] = tmp.getValue();
         }

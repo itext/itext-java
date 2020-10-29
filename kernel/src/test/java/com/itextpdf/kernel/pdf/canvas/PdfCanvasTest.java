@@ -50,6 +50,7 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -1163,7 +1164,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
         canvas.release();
         document.close();
-        Assert.assertEquals(PdfException.UNBALANCED_BEGIN_END_MARKED_CONTENT_OPERATORS, message);
+        Assert.assertEquals(KernelExceptionMessageConstant.UNBALANCED_BEGIN_END_MARKED_CONTENT_OPERATORS, message);
     }
 
     @Test

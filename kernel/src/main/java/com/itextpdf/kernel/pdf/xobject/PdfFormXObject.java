@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf.xobject;
 
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Matrix;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -131,7 +132,7 @@ public class PdfFormXObject extends PdfXObject {
     public static Rectangle calculateBBoxMultipliedByMatrix(PdfFormXObject form) {
         PdfArray pdfArrayBBox = form.getPdfObject().getAsArray(PdfName.BBox);
         if (pdfArrayBBox == null) {
-            throw new PdfException(PdfException.PDF_FORM_XOBJECT_HAS_INVALID_BBOX);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_FORM_XOBJECT_HAS_INVALID_BBOX);
         }
         float[] bBoxArray = pdfArrayBBox.toFloatArray();
         PdfArray pdfArrayMatrix = form.getPdfObject().getAsArray(PdfName.Matrix);
@@ -234,7 +235,7 @@ public class PdfFormXObject extends PdfXObject {
     public void flush() {
         resources = null;
         if (getPdfObject().get(PdfName.BBox) == null) {
-            throw new PdfException(PdfException.FORM_XOBJECT_MUST_HAVE_BBOX);
+            throw new PdfException(KernelExceptionMessageConstant.FORM_XOBJECT_MUST_HAVE_BBOX);
         }
         super.flush();
     }

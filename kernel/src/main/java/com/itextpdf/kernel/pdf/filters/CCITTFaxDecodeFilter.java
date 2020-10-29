@@ -47,6 +47,7 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.codec.TIFFConstants;
 import com.itextpdf.io.codec.TIFFFaxDecoder;
 import com.itextpdf.io.codec.TIFFFaxDecompressor;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -63,7 +64,7 @@ public class CCITTFaxDecodeFilter implements IFilterHandler {
         PdfNumber wn = streamDictionary.getAsNumber(PdfName.Width);
         PdfNumber hn = streamDictionary.getAsNumber(PdfName.Height);
         if (wn == null || hn == null) {
-            throw new PdfException(PdfException.FILTER_CCITTFAXDECODE_IS_ONLY_SUPPORTED_FOR_IMAGES);
+            throw new PdfException(KernelExceptionMessageConstant.FILTER_CCITTFAXDECODE_IS_ONLY_SUPPORTED_FOR_IMAGES);
         }
         int width = wn.intValue();
         int height = hn.intValue();

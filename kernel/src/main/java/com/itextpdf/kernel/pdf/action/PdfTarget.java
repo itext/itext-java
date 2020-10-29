@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf.action;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -186,7 +187,7 @@ public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
     public PdfTarget setAnnotation(PdfFileAttachmentAnnotation pdfAnnotation, PdfDocument pdfDocument) {
         PdfPage page = pdfAnnotation.getPage();
         if (null == page) {
-            throw new PdfException(PdfException.ANNOTATION_SHALL_HAVE_REFERENCE_TO_PAGE);
+            throw new PdfException(KernelExceptionMessageConstant.ANNOTATION_SHALL_HAVE_REFERENCE_TO_PAGE);
         } else {
             put(PdfName.P, new PdfNumber(pdfDocument.getPageNumber(page) - 1));
             int indexOfAnnotation = -1;

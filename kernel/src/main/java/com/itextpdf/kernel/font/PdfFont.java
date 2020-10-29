@@ -48,6 +48,7 @@ import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -538,7 +539,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      */
     protected PdfStream getPdfFontStream(byte[] fontStreamBytes, int[] fontStreamLengths) {
         if (fontStreamBytes == null) {
-            throw new PdfException(PdfException.FONT_EMBEDDING_ISSUE);
+            throw new PdfException(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE);
         }
         PdfStream fontStream = new PdfStream(fontStreamBytes);
         makeObjectIndirect(fontStream);

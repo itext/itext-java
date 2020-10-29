@@ -43,6 +43,7 @@
 package com.itextpdf.kernel.pdf.navigation;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -135,7 +136,7 @@ public class PdfStructureDestination extends PdfDestination {
 
     private PdfStructureDestination add(PdfStructElem elem) {
         if (elem.getPdfObject().getIndirectReference() == null) {
-            throw new PdfException(PdfException.STRUCTURE_ELEMENT_IN_STRUCTURE_DESTINATION_SHALL_BE_AN_INDIRECT_OBJECT);
+            throw new PdfException(KernelExceptionMessageConstant.STRUCTURE_ELEMENT_IN_STRUCTURE_DESTINATION_SHALL_BE_AN_INDIRECT_OBJECT);
         }
         ((PdfArray)getPdfObject()).add(elem.getPdfObject());
         return this;

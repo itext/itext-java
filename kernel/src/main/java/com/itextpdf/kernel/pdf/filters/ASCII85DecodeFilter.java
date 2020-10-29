@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf.filters;
 
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.MemoryLimitsAwareFilter;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -105,7 +106,7 @@ public class ASCII85DecodeFilter extends MemoryLimitsAwareFilter {
                 continue;
             }
             if (ch < '!' || ch > 'u') {
-                throw new PdfException(PdfException.ILLEGAL_CHARACTER_IN_ASCII85DECODE);
+                throw new PdfException(KernelExceptionMessageConstant.ILLEGAL_CHARACTER_IN_ASCII85DECODE);
             }
             chn[state] = ch - '!';
             ++state;

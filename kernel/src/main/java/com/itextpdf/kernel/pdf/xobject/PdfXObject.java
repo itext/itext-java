@@ -47,6 +47,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -84,7 +85,7 @@ public abstract class PdfXObject extends PdfObjectWrapper<PdfStream> {
         } else if (PdfName.Image.equals(stream.getAsName(PdfName.Subtype))) {
             return new PdfImageXObject(stream);
         } else {
-            throw new UnsupportedOperationException(PdfException.UNSUPPORTED_XOBJECT_TYPE);
+            throw new UnsupportedOperationException(KernelExceptionMessageConstant.UNSUPPORTED_XOBJECT_TYPE);
         }
     }
 

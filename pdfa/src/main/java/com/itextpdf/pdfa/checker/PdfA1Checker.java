@@ -81,6 +81,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.itextpdf.pdfa.PdfAConformanceLogMessageConstant;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -344,7 +345,7 @@ public class PdfA1Checker extends PdfAChecker {
                     }
                 }
             } catch (IOException e) {
-                throw new PdfException(PdfException.CANNOT_PARSE_CONTENT_STREAM, e);
+                throw new PdfException(PdfaExceptionMessageConstant.CANNOT_PARSE_CONTENT_STREAM, e);
             }
         }
     }

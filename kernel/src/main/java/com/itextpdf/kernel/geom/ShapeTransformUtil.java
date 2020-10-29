@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.geom;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 import java.util.Arrays;
 import java.util.List;
@@ -116,7 +117,7 @@ public final class ShapeTransformUtil {
             t.transform(points, 0, newPoints, 0, points.length);
             return newPoints;
         } catch (NoninvertibleTransformException e) {
-            throw new PdfException(PdfException.NONINVERTIBLE_MATRIX_CANNOT_BE_PROCESSED, e);
+            throw new PdfException(KernelExceptionMessageConstant.NONINVERTIBLE_MATRIX_CANNOT_BE_PROCESSED, e);
         }
     }
 }

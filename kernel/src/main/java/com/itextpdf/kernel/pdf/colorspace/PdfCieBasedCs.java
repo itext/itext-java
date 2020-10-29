@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf.colorspace;
 
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.colors.IccProfile;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -90,7 +91,7 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         public CalGray(float[] whitePoint) {
             this(getInitialPdfArray());
             if (whitePoint == null || whitePoint.length != 3)
-                throw new PdfException(PdfException.WHITE_POINT_IS_INCORRECTLY_SPECIFIED, this);
+                throw new PdfException(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED, this);
             PdfDictionary d = ((PdfArray)getPdfObject()).getAsDictionary(1);
             d.put(PdfName.WhitePoint, new PdfArray(whitePoint));
         }
@@ -127,7 +128,7 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         public CalRgb(float[] whitePoint) {
             this(getInitialPdfArray());
             if (whitePoint == null || whitePoint.length != 3)
-                throw new PdfException(PdfException.WHITE_POINT_IS_INCORRECTLY_SPECIFIED, this);
+                throw new PdfException(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED, this);
             PdfDictionary d = ((PdfArray)getPdfObject()).getAsDictionary(1);
             d.put(PdfName.WhitePoint, new PdfArray(whitePoint));
         }
@@ -166,7 +167,7 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         public Lab(float[] whitePoint) {
             this(getInitialPdfArray());
             if (whitePoint == null || whitePoint.length != 3)
-                throw new PdfException(PdfException.WHITE_POINT_IS_INCORRECTLY_SPECIFIED, this);
+                throw new PdfException(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED, this);
             PdfDictionary d = ((PdfArray)getPdfObject()).getAsDictionary(1);
             d.put(PdfName.WhitePoint, new PdfArray(whitePoint));
         }

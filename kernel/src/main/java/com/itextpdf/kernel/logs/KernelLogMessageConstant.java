@@ -41,7 +41,7 @@
     address: sales@itextpdf.com
  */
 
-package com.itextpdf.kernel;
+package com.itextpdf.kernel.logs;
 
 /**
  * Class that bundles all the error message templates as constants.

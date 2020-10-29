@@ -30,6 +30,7 @@ import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -53,7 +54,7 @@ public class PdfFontFactoryTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> PdfFontFactory.createFont(fontProgram, PdfEncodings.UTF8, EmbeddingStrategy.FORCE_EMBEDDED)
         );
-        Assert.assertEquals(PdfException.CANNOT_EMBED_STANDARD_FONT, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_EMBED_STANDARD_FONT, e.getMessage());
     }
 
     @Test
@@ -173,7 +174,7 @@ public class PdfFontFactoryTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> PdfFontFactory.createFont(fontProgram, PdfEncodings.UTF8, EmbeddingStrategy.FORCE_EMBEDDED)
         );
-        Assert.assertEquals(MessageFormatUtil.format(PdfException.CannotBeEmbeddedDueToLicensingRestrictions, "CustomNameCustomStyle"),
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.CANNOT_BE_EMBEDDED_DUE_TO_LICENSING_RESTRICTIONS, "CustomNameCustomStyle"),
                 e.getMessage());
     }
 
@@ -244,7 +245,7 @@ public class PdfFontFactoryTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> PdfFontFactory.createFont(fontProgram, PdfEncodings.IDENTITY_H, EmbeddingStrategy.FORCE_NOT_EMBEDDED)
         );
-        Assert.assertEquals(PdfException.CANNOT_CREATE_TYPE_0_FONT_WITH_TRUE_TYPE_FONT_PROGRAM_WITHOUT_EMBEDDING_IT, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_CREATE_TYPE_0_FONT_WITH_TRUE_TYPE_FONT_PROGRAM_WITHOUT_EMBEDDING_IT, e.getMessage());
     }
 
     @Test
@@ -254,7 +255,7 @@ public class PdfFontFactoryTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> PdfFontFactory.createFont(fontProgram, PdfEncodings.IDENTITY_H, EmbeddingStrategy.FORCE_EMBEDDED)
         );
-        Assert.assertEquals(MessageFormatUtil.format(PdfException.CannotBeEmbeddedDueToLicensingRestrictions,
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.CANNOT_BE_EMBEDDED_DUE_TO_LICENSING_RESTRICTIONS,
                 "CustomNameCustomStyle"), e.getMessage());
     }
 
@@ -265,7 +266,7 @@ public class PdfFontFactoryTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> PdfFontFactory.createFont(fontProgram, PdfEncodings.IDENTITY_H, EmbeddingStrategy.PREFER_EMBEDDED)
         );
-        Assert.assertEquals(MessageFormatUtil.format(PdfException.CannotBeEmbeddedDueToLicensingRestrictions,
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.CANNOT_BE_EMBEDDED_DUE_TO_LICENSING_RESTRICTIONS,
                 "CustomNameCustomStyle"), e.getMessage());
     }
 
@@ -276,7 +277,7 @@ public class PdfFontFactoryTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> PdfFontFactory.createFont(fontProgram, PdfEncodings.IDENTITY_H, EmbeddingStrategy.PREFER_NOT_EMBEDDED)
         );
-        Assert.assertEquals(MessageFormatUtil.format(PdfException.CannotBeEmbeddedDueToLicensingRestrictions,
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.CANNOT_BE_EMBEDDED_DUE_TO_LICENSING_RESTRICTIONS,
                 "CustomNameCustomStyle"), e.getMessage());
     }
 
@@ -287,7 +288,7 @@ public class PdfFontFactoryTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> PdfFontFactory.createFont(fontProgram, PdfEncodings.IDENTITY_H, EmbeddingStrategy.FORCE_NOT_EMBEDDED)
         );
-        Assert.assertEquals(MessageFormatUtil.format(PdfException.CannotBeEmbeddedDueToLicensingRestrictions,
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.CANNOT_BE_EMBEDDED_DUE_TO_LICENSING_RESTRICTIONS,
                 "CustomNameCustomStyle"), e.getMessage());
     }
 
@@ -307,7 +308,7 @@ public class PdfFontFactoryTest extends ExtendedITextTest {
         PdfDictionary dictionary = null;
 
         Exception e = Assert.assertThrows(PdfException.class, () -> PdfFontFactory.createFont(dictionary));
-        Assert.assertEquals(PdfException.CANNOT_CREATE_FONT_FROM_NULL_PDF_DICTIONARY, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_CREATE_FONT_FROM_NULL_PDF_DICTIONARY, e.getMessage());
     }
 
     @Test
@@ -315,7 +316,7 @@ public class PdfFontFactoryTest extends ExtendedITextTest {
         PdfDictionary dictionary = new PdfDictionary();
 
         Exception e = Assert.assertThrows(PdfException.class, () -> PdfFontFactory.createFont(dictionary));
-        Assert.assertEquals(PdfException.DictionaryDoesntHaveSupportedFontData, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.DICTIONARY_DOES_NOT_HAVE_SUPPORTED_FONT_DATA, e.getMessage());
     }
 
     @Test

@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -503,7 +504,7 @@ public class PdfWriterTest extends ExtendedITextTest {
             pdfDoc2.close();
         }
 
-        Assert.assertEquals(exceptionMessage, PdfException.CANNOT_COPY_INDIRECT_OBJECT_FROM_THE_DOCUMENT_THAT_IS_BEING_WRITTEN);
+        Assert.assertEquals(exceptionMessage, KernelExceptionMessageConstant.CANNOT_COPY_INDIRECT_OBJECT_FROM_THE_DOCUMENT_THAT_IS_BEING_WRITTEN);
     }
 
     /**
@@ -531,7 +532,7 @@ public class PdfWriterTest extends ExtendedITextTest {
             pdfDoc.close();
         }
 
-        Assert.assertEquals(exceptionMessage, PdfException.DOCUMENT_FOR_COPY_TO_CANNOT_BE_NULL);
+        Assert.assertEquals(exceptionMessage, KernelExceptionMessageConstant.DOCUMENT_FOR_COPY_TO_CANNOT_BE_NULL);
     }
 
     @Test

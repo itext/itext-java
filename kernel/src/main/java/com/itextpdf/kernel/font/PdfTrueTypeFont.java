@@ -51,6 +51,7 @@ import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
@@ -106,7 +107,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
             try {
                 fontProgram = FontProgramFactory.createFont(baseFontName.getValue(), true);
             } catch (IOException e) {
-                throw new PdfException(PdfException.IO_EXCEPTION_WHILE_CREATING_FONT, e);
+                throw new PdfException(KernelExceptionMessageConstant.IO_EXCEPTION_WHILE_CREATING_FONT, e);
             }
         } else {
             fontProgram = DocTrueTypeFont.createFontProgram(fontDictionary, fontEncoding, toUnicode);

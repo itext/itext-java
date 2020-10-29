@@ -31,6 +31,7 @@ import com.itextpdf.kernel.counter.data.EventDataHandlerUtil;
 import com.itextpdf.kernel.counter.data.IEventDataFactory;
 import com.itextpdf.kernel.counter.event.IEvent;
 import com.itextpdf.kernel.counter.event.IMetaInfo;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
@@ -80,7 +81,7 @@ public class DataHandlerCounterTest extends ExtendedITextTest {
         counter.close();
 
         Exception e = Assert.assertThrows(IllegalStateException.class, () -> counter.onEvent(testEvent, null));
-        Assert.assertEquals(PdfException.DATA_HANDLER_COUNTER_HAS_BEEN_DISABLED, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.DATA_HANDLER_COUNTER_HAS_BEEN_DISABLED, e.getMessage());
     }
 
     @Test

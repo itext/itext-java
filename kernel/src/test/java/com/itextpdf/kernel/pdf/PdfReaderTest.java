@@ -48,6 +48,7 @@ import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -750,18 +751,18 @@ public class PdfReaderTest extends ExtendedITextTest {
         try {
             document.getPage(-30);
         } catch (IndexOutOfBoundsException e) {
-            Assert.assertEquals(MessageFormatUtil.format(PdfException.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, -30), e.getMessage());
+            Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, -30), e.getMessage());
         }
         try {
             document.getPage(0);
         } catch (IndexOutOfBoundsException e) {
-            Assert.assertEquals(MessageFormatUtil.format(PdfException.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, 0), e.getMessage());
+            Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, 0), e.getMessage());
         }
         document.getPage(1);
         try {
             document.getPage(25);
         } catch (IndexOutOfBoundsException e) {
-            Assert.assertEquals(MessageFormatUtil.format(PdfException.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, 25), e.getMessage());
+            Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, 25), e.getMessage());
         }
         document.close();
     }
@@ -833,7 +834,7 @@ public class PdfReaderTest extends ExtendedITextTest {
             PdfDocument document = new PdfDocument(reader);
             Assert.fail("Expect exception");
         } catch (PdfException e) {
-            Assert.assertEquals( PdfException.INVALID_PAGE_STRUCTURE_PAGES_MUST_BE_PDF_DICTIONARY, e.getMessage());
+            Assert.assertEquals(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE_PAGES_MUST_BE_PDF_DICTIONARY, e.getMessage());
         } finally {
             reader.close();
         }
@@ -1677,7 +1678,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> new PdfDocument(reader)
         );
-        Assert.assertEquals(PdfException.PDF_READER_HAS_BEEN_ALREADY_UTILIZED, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.PDF_READER_HAS_BEEN_ALREADY_UTILIZED, e.getMessage());
     }
 
     @Test
@@ -1731,7 +1732,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader hasRebuiltXrefReader = pdfDocumentNotReadTestInit();
 
         Exception e = Assert.assertThrows(PdfException.class, () -> hasRebuiltXrefReader.hasRebuiltXref());
-        Assert.assertEquals(PdfException.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1754,7 +1755,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader hasHybridXrefPdfReader = pdfDocumentNotReadTestInit();
 
         Exception e = Assert.assertThrows(PdfException.class, () -> hasHybridXrefPdfReader.hasHybridXref());
-        Assert.assertEquals(PdfException.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1777,7 +1778,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader hasXrefStmReader = pdfDocumentNotReadTestInit();
 
         Exception e = Assert.assertThrows(PdfException.class, () -> hasXrefStmReader.hasXrefStm());
-        Assert.assertEquals(PdfException.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1800,7 +1801,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader hasFixedXrefReader = pdfDocumentNotReadTestInit();
 
         Exception e = Assert.assertThrows(PdfException.class, () -> hasFixedXrefReader.hasFixedXref());
-        Assert.assertEquals(PdfException.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1823,7 +1824,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader getLastXrefReader = pdfDocumentNotReadTestInit();
 
         Exception e = Assert.assertThrows(PdfException.class, () -> getLastXrefReader.getLastXref());
-        Assert.assertEquals(PdfException.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1846,7 +1847,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader getPermissionsReader = pdfDocumentNotReadTestInit();
 
         Exception e = Assert.assertThrows(PdfException.class, () -> getPermissionsReader.getPermissions());
-        Assert.assertEquals(PdfException.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1871,7 +1872,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> isOpenedWithFullPReader.isOpenedWithFullPermission()
         );
-        Assert.assertEquals(PdfException.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1894,7 +1895,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader getCryptoModeReader = pdfDocumentNotReadTestInit();
 
         Exception e = Assert.assertThrows(PdfException.class, () -> getCryptoModeReader.getCryptoMode());
-        Assert.assertEquals(PdfException.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1919,7 +1920,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> computeUserPasswordReader.computeUserPassword()
         );
-        Assert.assertEquals(PdfException.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1942,7 +1943,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader getOriginalFileIdReader = pdfDocumentNotReadTestInit();
 
         Exception e = Assert.assertThrows(PdfException.class, () -> getOriginalFileIdReader.getOriginalFileId());
-        Assert.assertEquals(PdfException.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1965,7 +1966,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader getModifiedFileIdReader = pdfDocumentNotReadTestInit();
 
         Exception e = Assert.assertThrows(PdfException.class, () -> getModifiedFileIdReader.getModifiedFileId());
-        Assert.assertEquals(PdfException.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -1988,7 +1989,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         PdfReader isEncryptedReader = pdfDocumentNotReadTestInit();
 
         Exception e = Assert.assertThrows(PdfException.class, () -> isEncryptedReader.isEncrypted());
-        Assert.assertEquals(PdfException.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     @Test
@@ -2020,7 +2021,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     private void readingNotCompletedTest(PdfReader reader) {
         Exception e = Assert.assertThrows(PdfException.class, () -> new PdfDocument(reader));
-        Assert.assertEquals(PdfException.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
     }
 
     /**

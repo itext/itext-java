@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 
 class PdfObjectStream extends PdfStream {
@@ -101,7 +102,7 @@ class PdfObjectStream extends PdfStream {
      */
     public void addObject(PdfObject object) {
         if (size.intValue() == MAX_OBJ_STREAM_SIZE) {
-            throw new PdfException(PdfException.PDF_OBJECT_STREAM_REACH_MAX_SIZE);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_OBJECT_STREAM_REACH_MAX_SIZE);
         }
         PdfOutputStream outputStream = getOutputStream();
         indexStream.writeInteger(object.getIndirectReference().getObjNumber()).

@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf.collection;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -113,7 +114,7 @@ public class PdfCollectionItem extends PdfObjectWrapper<PdfDictionary> {
         PdfName fieldName = new PdfName(key);
         PdfObject obj = getPdfObject().get(fieldName);
         if (obj == null) {
-            throw new PdfException(PdfException.YOU_MUST_SET_A_VALUE_BEFORE_ADDING_A_PREFIX);
+            throw new PdfException(KernelExceptionMessageConstant.YOU_MUST_SET_A_VALUE_BEFORE_ADDING_A_PREFIX);
         }
         PdfDictionary subItem = new PdfDictionary();
         subItem.put(PdfName.D, obj);

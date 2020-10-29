@@ -23,6 +23,7 @@
 package com.itextpdf.signatures.sign;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.StampingProperties;
@@ -106,7 +107,8 @@ public class EncryptedSigningTest extends ExtendedITextTest {
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         //TODO DEVSIX-5637 Improve SignaturesCompareTool#compareSignatures to check encrypted pdf
-        Assert.assertEquals(PdfException.BadUserPassword, SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+        Assert.assertEquals(
+                KernelExceptionMessageConstant.BAD_USER_PASSWORD, SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
     }
 
     @Test
@@ -126,7 +128,7 @@ public class EncryptedSigningTest extends ExtendedITextTest {
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         //TODO DEVSIX-5637 Improve SignaturesCompareTool#compareSignatures to check encrypted pdf
-        Assert.assertEquals(PdfException.CertificateIsNotProvidedDocumentIsEncryptedWithPublicKeyCertificate,
+        Assert.assertEquals(KernelExceptionMessageConstant.CERTIFICATE_IS_NOT_PROVIDED_DOCUMENT_IS_ENCRYPTED_WITH_PUBLIC_KEY_CERTIFICATE,
                 SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
     }
 }

@@ -37,6 +37,7 @@ import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -118,7 +119,7 @@ public class Pdf20SigningTest extends ExtendedITextTest {
                 () -> sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.RIPEMD160,
                         PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true,
                         PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED, null));
-        Assert.assertEquals(PdfException.CertificationSignatureCreationFailedDocShallNotContainSigs, e.getMessage());
+        Assert.assertEquals(SignExceptionMessageConstant.CERTIFICATION_SIGNATURE_CREATION_FAILED_DOC_SHALL_NOT_CONTAIN_SIGS, e.getMessage());
     }
 
     @Test
