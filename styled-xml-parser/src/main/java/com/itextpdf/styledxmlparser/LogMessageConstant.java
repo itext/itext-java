@@ -79,6 +79,10 @@ public final class LogMessageConstant {
     public static final String QUOTE_IS_NOT_CLOSED_IN_CSS_EXPRESSION = "The quote is not closed in css expression: {0}";
     /** The Constant INVALID_CSS_PROPERTY_DECLARATION. */
     public static final String INVALID_CSS_PROPERTY_DECLARATION = "Invalid css property declaration: {0}";
+    /**
+     * The Constant INCORRECT_CHARACTER_SEQUENCE.
+     */
+    public static final String INCORRECT_CHARACTER_SEQUENCE = "Incorrect character sequence.";
     public static final String INCORRECT_RESOLUTION_UNIT_VALUE = "Resolution value unit should be either dpi, dppx or dpcm!";
     /** The Constant RULE_IS_NOT_SUPPORTED. */
     public static final String RULE_IS_NOT_SUPPORTED = "The rule @{0} is unsupported. All selectors in this rule will be ignored.";

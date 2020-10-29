@@ -86,26 +86,39 @@ public class CssUtils {
      * @return the {@link List} of split result
      */
     public static List<String> splitStringWithComma(final String value) {
+        return splitString(value, ',', new EscapeGroup('(', ')'));
+    }
+
+    /**
+     * Splits the provided {@link String} by split character with respect of escape characters.
+     *
+     * @param value value to split
+     * @param splitChar character to split the String
+     * @param escapeCharacters escape characters
+     * @return the {@link List} of split result
+     */
+    public static List<String> splitString(String value, char splitChar, EscapeGroup... escapeCharacters) {
         if (value == null) {
             return new ArrayList<>();
         }
         final List<String> resultList = new ArrayList<>();
-        int lastComma = 0;
-        int notClosedBrackets = 0;
+        int lastSplitChar = 0;
         for (int i = 0; i < value.length(); ++i) {
-            if (value.charAt(i) == ',' && notClosedBrackets == 0) {
-                resultList.add(value.substring(lastComma, i));
-                lastComma = i + 1;
+            final char currentChar = value.charAt(i);
+            boolean isEscaped = false;
+            for (final EscapeGroup character : escapeCharacters) {
+                if (currentChar == splitChar) {
+                    isEscaped = isEscaped || character.isEscaped();
+                } else {
+                    character.processCharacter(currentChar);
+                }
             }
-            if (value.charAt(i) == '(') {
-                ++notClosedBrackets;
-            }
-            if (value.charAt(i) == ')') {
-                --notClosedBrackets;
-                notClosedBrackets = Math.max(notClosedBrackets, 0);
+            if (currentChar == splitChar && !isEscaped) {
+                resultList.add(value.substring(lastSplitChar, i));
+                lastSplitChar = i + 1;
             }
         }
-        final String lastToken = value.substring(lastComma);
+        final String lastToken = value.substring(lastSplitChar);
         if (!lastToken.isEmpty()) {
             resultList.add(lastToken);
         }

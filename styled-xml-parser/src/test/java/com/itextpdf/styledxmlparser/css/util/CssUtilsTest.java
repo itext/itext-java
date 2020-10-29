@@ -387,6 +387,7 @@ public class CssUtilsTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INCORRECT_CHARACTER_SEQUENCE))
     public void splitStringWithCommaTest() {
         Assert.assertEquals(new ArrayList<String>(), CssUtils.splitStringWithComma(null));
         Assert.assertEquals(Arrays.asList("value1", "value2", "value3"),
@@ -403,6 +404,25 @@ public class CssUtilsTest extends ExtendedITextTest {
                 CssUtils.splitStringWithComma("value1,( v2,v3),(v4, v5),value3"));
         Assert.assertEquals(Arrays.asList("v.al*ue1\"", "( v2,v3)", "\"(v4,v5;);", "value3"),
                 CssUtils.splitStringWithComma("v.al*ue1\",( v2,v3),\"(v4,v5;);,value3"));
+    }
+
+    @Test
+    public void splitStringTest() {
+        Assert.assertEquals(new ArrayList<String>(), CssUtils.splitString(null, ','));
+        Assert.assertEquals(Arrays.asList("value1", "(value,with,comma)", "value3"),
+                CssUtils.splitString("value1,(value,with,comma),value3", ',', new EscapeGroup('(', ')')));
+        Assert.assertEquals(Arrays.asList("value1 ", " (val(ue,with,comma),value3"),
+                CssUtils.splitString("value1 , (val(ue,with,comma),value3", ',', new EscapeGroup('(', ')')));
+        Assert.assertEquals(Arrays.asList("some text", " (some", " text in", " brackets)", " \"some, text, in quotes,\""),
+                CssUtils.splitString("some text, (some, text in, brackets), \"some, text, in quotes,\"", ',',
+                        new EscapeGroup('\"')));
+        Assert.assertEquals(Arrays.asList("some text", " (some. text in. brackets)", " \"some. text. in quotes.\""),
+                CssUtils.splitString("some text. (some. text in. brackets). \"some. text. in quotes.\"", '.',
+                        new EscapeGroup('\"'), new EscapeGroup('(', ')')));
+        Assert.assertEquals(Arrays.asList("value1", "(value", "with" ,"comma)", "value3"),
+                CssUtils.splitString("value1,(value,with,comma),value3", ','));
+        Assert.assertEquals(Arrays.asList("value1", "value", "with" ,"comma", "value3"),
+                CssUtils.splitString("value1,value,with,comma,value3", ',', new EscapeGroup(',')));
     }
 
     @Test
