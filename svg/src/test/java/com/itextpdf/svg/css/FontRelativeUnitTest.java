@@ -36,9 +36,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class FontRelativeUnitsTest extends SvgIntegrationTest {
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/FontRelativeUnitsTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/css/FontRelativeUnitsTest/";
+public class FontRelativeUnitTest extends SvgIntegrationTest {
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/FontRelativeUnitTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/css/FontRelativeUnitTest/";
 
     @BeforeClass
     public static void beforeClass() {
