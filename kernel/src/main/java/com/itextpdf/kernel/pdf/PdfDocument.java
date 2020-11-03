@@ -2399,36 +2399,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         names.setModified();
     }
 
-    @SuppressWarnings("unused")
-    private byte[] getSerializedBytes() {
-        ByteArrayOutputStream bos = null;
-        ObjectOutputStream oos = null;
-        try {
-            bos = new ByteArrayOutputStream();
-            oos = new ObjectOutputStream(bos);
-            oos.writeObject(this);
-            oos.flush();
-            return bos.toByteArray();
-        } catch (Exception e) {
-            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.warn(LogMessageConstant.DOCUMENT_SERIALIZATION_EXCEPTION_RAISED, e);
-            return null;
-        } finally {
-            if (oos != null) {
-                try {
-                    oos.close();
-                } catch (IOException ignored) {
-                }
-            }
-            if (bos != null) {
-                try {
-                    bos.close();
-                } catch (IOException ignored) {
-                }
-            }
-        }
-    }
-
     private boolean writerHasEncryption() {
         return writer.properties.isStandardEncryptionUsed() || writer.properties.isPublicKeyEncryptionUsed();
     }
