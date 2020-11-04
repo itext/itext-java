@@ -183,6 +183,7 @@ public class HyphenateTest extends ExtendedITextTest {
 
     @Test
     public void runTest() {
+    	// This test can't be sped up because it uses of a lot of input data
         for (TestParams param : params) {
             tryHyphenate(param.lang, param.testWorld, param.shouldPass);
         }

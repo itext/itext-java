@@ -58,6 +58,12 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -67,12 +73,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfPagesTest extends ExtendedITextTest {
@@ -180,7 +180,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     @Test
     public void randomNumberPagesTest() throws IOException {
         String filename = "randomNumberPagesTest.pdf";
-        int pageCount = 3000;
+        int pageCount = 1000;
         int[] indexes = new int[pageCount];
         for (int i = 0; i < indexes.length; i++) {
             indexes[i] = i + 1;
