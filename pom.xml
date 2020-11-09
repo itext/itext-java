@@ -97,7 +97,7 @@
     <sampletests>com.itextpdf.test.annotations.type.SampleTest</sampletests>
     <sb-contrib.version>7.4.7</sb-contrib.version>
     <skipTests>true</skipTests>
-    <slf4j.version>1.7.13</slf4j.version>
+    <slf4j.version>1.7.30</slf4j.version>
     <slowtests>com.itextpdf.test.annotations.type.SlowTest</slowtests>
     <sonar.dependencyCheck.htmlReportPath>target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
     <sonar.dependencyCheck.reportPath>target/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
