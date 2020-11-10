@@ -30,7 +30,8 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.colors.gradients.GradientColorStop;
 import com.itextpdf.kernel.colors.gradients.LinearGradientBuilder;
 import com.itextpdf.layout.property.UnitValue;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.renderers.INoDrawSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -159,13 +160,13 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
     private double getCoordinateForObjectBoundingBox(String attributeName, double defaultValue) {
         String attributeValue = getAttribute(attributeName);
         double absoluteValue = defaultValue;
-        if (CssUtils.isPercentageValue(attributeValue)) {
-           absoluteValue = CssUtils.parseRelativeValue(attributeValue, 1);
-        } else if (CssUtils.isNumericValue(attributeValue)
-                || CssUtils.isMetricValue(attributeValue)
-                || CssUtils.isRelativeValue(attributeValue)) {
+        if (CssTypesValidationUtils.isPercentageValue(attributeValue)) {
+           absoluteValue = CssDimensionParsingUtils.parseRelativeValue(attributeValue, 1);
+        } else if (CssTypesValidationUtils.isNumericValue(attributeValue)
+                || CssTypesValidationUtils.isMetricValue(attributeValue)
+                || CssTypesValidationUtils.isRelativeValue(attributeValue)) {
             // if there is incorrect value metric, then we do not need to parse the value
-            int unitsPosition = CssUtils.determinePositionBetweenValueAndUnit(attributeValue);
+            int unitsPosition = CssDimensionParsingUtils.determinePositionBetweenValueAndUnit(attributeValue);
             if (unitsPosition > 0) {
                 // We want to ignore the unit type. From the svg specification:
                 // "the normal of the linear gradient is perpendicular to the gradient vector in
@@ -177,7 +178,7 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
                 // i.e. for value '0.5cm' the top/left of the object bounding box would be (1cm, 1cm),
                 // for value '0.5em' the top/left of the object bounding box would be (1em, 1em) and etc.
                 // no null pointer should be thrown as determine
-                absoluteValue = CssUtils.parseDouble(attributeValue.substring(0, unitsPosition)).doubleValue();
+                absoluteValue = CssDimensionParsingUtils.parseDouble(attributeValue.substring(0, unitsPosition)).doubleValue();
             }
         }
 
@@ -191,7 +192,7 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
             double start, double length, float em, float rem) {
         String attributeValue = getAttribute(attributeName);
         double absoluteValue;
-        UnitValue unitValue = CssUtils.parseLengthValueToPt(attributeValue, em, rem);
+        UnitValue unitValue = CssDimensionParsingUtils.parseLengthValueToPt(attributeValue, em, rem);
         if (unitValue == null) {
             absoluteValue = defaultValue;
         } else if (unitValue.getUnitType() == UnitValue.PERCENT) {

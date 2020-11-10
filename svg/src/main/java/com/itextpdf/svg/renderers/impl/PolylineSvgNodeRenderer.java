@@ -46,6 +46,7 @@ import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
@@ -96,8 +97,8 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
         this.points.clear();
         float x, y;
         for (int i = 0; i < points.size(); i = i + 2) {
-            x = CssUtils.parseAbsoluteLength(points.get(i));
-            y = CssUtils.parseAbsoluteLength(points.get(i + 1));
+            x = CssDimensionParsingUtils.parseAbsoluteLength(points.get(i));
+            y = CssDimensionParsingUtils.parseAbsoluteLength(points.get(i + 1));
             this.points.add(new Point(x, y));
         }
     }

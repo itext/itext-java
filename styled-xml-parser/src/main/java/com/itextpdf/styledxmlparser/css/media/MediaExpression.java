@@ -42,7 +42,10 @@
  */
 package com.itextpdf.styledxmlparser.css.media;
 
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+
 import java.util.Objects;
 
 /**
@@ -108,7 +111,7 @@ public class MediaExpression {
     public boolean matches(MediaDeviceDescription deviceDescription) {
         switch (feature) {
             case MediaFeature.COLOR: {
-                Integer val = CssUtils.parseInteger(value);
+                Integer val = CssDimensionParsingUtils.parseInteger(value);
                 if (minPrefix) {
                     return val != null && deviceDescription.getBitsPerComponent() >= val;
                 } else if (maxPrefix) {
@@ -118,7 +121,7 @@ public class MediaExpression {
                 }
             }
             case MediaFeature.COLOR_INDEX: {
-                Integer val = CssUtils.parseInteger(value);
+                Integer val = CssDimensionParsingUtils.parseInteger(value);
                 if (minPrefix) {
                     return val != null && deviceDescription.getColorIndex() >= val;
                 } else if (maxPrefix) {
@@ -128,7 +131,7 @@ public class MediaExpression {
                 }
             }
             case MediaFeature.ASPECT_RATIO: {
-                int[] aspectRatio = CssUtils.parseAspectRatio(value);
+                int[] aspectRatio = CssDimensionParsingUtils.parseAspectRatio(value);
                 if (minPrefix) {
                     return aspectRatio != null && aspectRatio[0] * deviceDescription.getHeight() >= aspectRatio[1] * deviceDescription.getWidth();
                 } else if (maxPrefix) {
@@ -138,7 +141,7 @@ public class MediaExpression {
                 }
             }
             case MediaFeature.GRID: {
-                Integer val = CssUtils.parseInteger(value);
+                Integer val = CssDimensionParsingUtils.parseInteger(value);
                 return val != null && val == 0 && !deviceDescription.isGrid() || deviceDescription.isGrid();
             }
             case MediaFeature.SCAN: {
@@ -148,7 +151,7 @@ public class MediaExpression {
                 return Objects.equals(value, deviceDescription.getOrientation());
             }
             case MediaFeature.MONOCHROME: {
-                Integer val = CssUtils.parseInteger(value);
+                Integer val = CssDimensionParsingUtils.parseInteger(value);
                 if (minPrefix) {
                     return val != null && deviceDescription.getMonochrome() >= val;
                 } else if (maxPrefix) {
@@ -178,7 +181,7 @@ public class MediaExpression {
                 }
             }
             case MediaFeature.RESOLUTION: {
-                float val = CssUtils.parseResolution(value);
+                float val = CssDimensionParsingUtils.parseResolution(value);
                 if (minPrefix) {
                     return deviceDescription.getResolution() >= val;
                 } else if (maxPrefix) {
@@ -199,11 +202,11 @@ public class MediaExpression {
      * @return the absolute length as a {@code float} value
      */
     private static float parseAbsoluteLength(String value) {
-        if (CssUtils.isRelativeValue(value)) {
+        if (CssTypesValidationUtils.isRelativeValue(value)) {
             // TODO here should be used default font size of the browser, it probably should be fetched from the more generic place than private class constant
-            return CssUtils.parseRelativeValue(value, DEFAULT_FONT_SIZE);
+            return CssDimensionParsingUtils.parseRelativeValue(value, DEFAULT_FONT_SIZE);
         } else {
-            return CssUtils.parseAbsoluteLength(value);
+            return CssDimensionParsingUtils.parseAbsoluteLength(value);
         }
     }
 }

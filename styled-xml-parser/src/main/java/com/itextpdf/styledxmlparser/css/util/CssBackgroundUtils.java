@@ -22,14 +22,38 @@
  */
 package com.itextpdf.styledxmlparser.css.util;
 
+import com.itextpdf.layout.property.BackgroundRepeat.BackgroundRepeatValue;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 
+/**
+ * Utilities class for CSS background parsing.
+ */
 public final class CssBackgroundUtils {
 
     /**
      * Creates a new {@link CssBackgroundUtils} instance.
      */
     private CssBackgroundUtils() {
+    }
+
+    /**
+     * Parses the background repeat string value.
+     *
+     * @param value the string which stores the background repeat value
+     * @return the background repeat as a {@link BackgroundRepeatValue} instance
+     */
+    public static BackgroundRepeatValue parseBackgroundRepeat(String value) {
+        switch (value) {
+            case CommonCssConstants.NO_REPEAT:
+                return BackgroundRepeatValue.NO_REPEAT;
+            case CommonCssConstants.ROUND:
+                return BackgroundRepeatValue.ROUND;
+            case CommonCssConstants.SPACE:
+                return BackgroundRepeatValue.SPACE;
+            case CommonCssConstants.REPEAT:
+            default:
+                return BackgroundRepeatValue.REPEAT;
+        }
     }
 
     /**
@@ -97,14 +121,14 @@ public final class CssBackgroundUtils {
         if (CommonCssConstants.CENTER.equals(value)) {
             return BackgroundPropertyType.BACKGROUND_POSITION;
         }
-        if (((Integer) 0).equals(CssUtils.parseInteger(value))
-                || CssUtils.isMetricValue(value) || CssUtils.isRelativeValue(value)) {
+        if (((Integer) 0).equals(CssDimensionParsingUtils.parseInteger(value))
+                || CssTypesValidationUtils.isMetricValue(value) || CssTypesValidationUtils.isRelativeValue(value)) {
             return BackgroundPropertyType.BACKGROUND_POSITION_OR_SIZE;
         }
         if (CommonCssConstants.BACKGROUND_SIZE_VALUES.contains(value)) {
             return BackgroundPropertyType.BACKGROUND_SIZE;
         }
-        if (CssUtils.isColorProperty(value)) {
+        if (CssTypesValidationUtils.isColorProperty(value)) {
             return BackgroundPropertyType.BACKGROUND_COLOR;
         }
         if (CommonCssConstants.BACKGROUND_ORIGIN_OR_CLIP_VALUES.contains(value)) {

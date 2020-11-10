@@ -26,7 +26,8 @@ import com.itextpdf.io.util.DecimalFormatUtil;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.resolve.CssPropertyMerger;
 import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,10 +70,11 @@ public final class StyleUtil {
                     || valueIsOfMeasurement(parentPropValue, CommonCssConstants.EX)
                     || valueIsOfMeasurement(parentPropValue, CommonCssConstants.PERCENTAGE)
                     && fontSizeDependentPercentage.contains(styleProperty)) {
-                float absoluteParentFontSize = CssUtils.parseAbsoluteLength(parentFontSizeString);
+                float absoluteParentFontSize = CssDimensionParsingUtils.parseAbsoluteLength(parentFontSizeString);
                 // Format to 4 decimal places to prevent differences between Java and C#
                 styles.put(styleProperty, DecimalFormatUtil
-                        .formatNumber(CssUtils.parseRelativeValue(parentPropValue, absoluteParentFontSize),
+                        .formatNumber(
+                                CssDimensionParsingUtils.parseRelativeValue(parentPropValue, absoluteParentFontSize),
                                 "0.####") + CommonCssConstants.PT);
             } else {
                 styles.put(styleProperty, parentPropValue);
@@ -119,7 +121,7 @@ public final class StyleUtil {
         if (value == null) {
             return false;
         }
-        return value.endsWith(measurement) && CssUtils
+        return value.endsWith(measurement) && CssTypesValidationUtils
                 .isNumericValue(value.substring(0, value.length() - measurement.length()).trim());
     }
 }

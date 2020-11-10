@@ -53,7 +53,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.styledxmlparser.IXmlParser;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
@@ -959,7 +959,7 @@ public final class SvgConverter {
             List<String> valueStrings = SvgCssUtils.splitValueList(vbString);
             values = new float[valueStrings.size()];
             for (int i = 0; i < values.length; i++) {
-                values[i] = CssUtils.parseAbsoluteLength(valueStrings.get(i));
+                values[i] = CssDimensionParsingUtils.parseAbsoluteLength(valueStrings.get(i));
             }
             viewBoxPresent = true;
         }
@@ -973,10 +973,10 @@ public final class SvgConverter {
                 //Log Warning
                 LOGGER.warn(SvgLogMessageConstant.MISSING_WIDTH);
                 //Set to browser default
-                width = CssUtils.parseAbsoluteLength("300px");
+                width = CssDimensionParsingUtils.parseAbsoluteLength("300px");
             }
         } else {
-            width = CssUtils.parseAbsoluteLength(wString);
+            width = CssDimensionParsingUtils.parseAbsoluteLength(wString);
         }
         hString = topSvgRenderer.getAttribute(SvgConstants.Attributes.HEIGHT);
         if (hString == null) {
@@ -986,10 +986,10 @@ public final class SvgConverter {
                 //Log Warning
                 LOGGER.warn(SvgLogMessageConstant.MISSING_HEIGHT);
                 //Set to browser default
-                height = CssUtils.parseAbsoluteLength("150px");
+                height = CssDimensionParsingUtils.parseAbsoluteLength("150px");
             }
         } else {
-            height = CssUtils.parseAbsoluteLength(hString);
+            height = CssDimensionParsingUtils.parseAbsoluteLength(hString);
         }
 
         res[0] = width;

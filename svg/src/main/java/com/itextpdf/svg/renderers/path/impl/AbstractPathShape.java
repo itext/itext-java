@@ -44,6 +44,7 @@ package com.itextpdf.svg.renderers.path.impl;
 
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.renderers.path.IPathShape;
 
@@ -86,7 +87,7 @@ public abstract class AbstractPathShape implements IPathShape {
     }
 
     protected Point createPoint(String coordX, String coordY) {
-        return new Point((double) CssUtils.parseDouble(coordX), (double) CssUtils.parseDouble(coordY));
+        return new Point((double) CssDimensionParsingUtils.parseDouble(coordX), (double) CssDimensionParsingUtils.parseDouble(coordY));
     }
 
     @Override

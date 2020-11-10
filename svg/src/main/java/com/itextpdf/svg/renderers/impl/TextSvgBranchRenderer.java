@@ -53,6 +53,7 @@ import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontInfo;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
@@ -285,11 +286,11 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
             yMove = 0f;
 
             if (!xValuesList.isEmpty()) {
-                xMove = CssUtils.parseAbsoluteLength(xValuesList.get(0));
+                xMove = CssDimensionParsingUtils.parseAbsoluteLength(xValuesList.get(0));
             }
 
             if (!yValuesList.isEmpty()) {
-                yMove = CssUtils.parseAbsoluteLength(yValuesList.get(0));
+                yMove = CssDimensionParsingUtils.parseAbsoluteLength(yValuesList.get(0));
             }
             moveResolved = true;
         }
@@ -362,7 +363,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         if (!valuesList.isEmpty()) {
             result = new float[valuesList.size()];
             for (int i = 0; i < valuesList.size(); i++) {
-                result[i] = CssUtils.parseAbsoluteLength(valuesList.get(i));
+                result[i] = CssDimensionParsingUtils.parseAbsoluteLength(valuesList.get(i));
             }
         }
 

@@ -59,6 +59,8 @@ import com.itextpdf.styledxmlparser.css.resolve.AbstractCssContext;
 import com.itextpdf.styledxmlparser.css.resolve.CssDefaults;
 import com.itextpdf.styledxmlparser.css.resolve.CssInheritance;
 import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.node.IAttribute;
 import com.itextpdf.styledxmlparser.node.IDataNode;
@@ -103,7 +105,7 @@ public class SvgStyleResolver implements ICssResolver {
     public static final Set<IStyleInheritance> INHERITANCE_RULES = Collections.unmodifiableSet(new HashSet<>(
             Arrays.asList((IStyleInheritance) new CssInheritance(), (IStyleInheritance) new SvgAttributeInheritance())));
 
-    private static final float DEFAULT_FONT_SIZE = CssUtils.parseAbsoluteFontSize(
+    private static final float DEFAULT_FONT_SIZE = CssDimensionParsingUtils.parseAbsoluteFontSize(
             CssDefaults.getDefaultValue(SvgConstants.Attributes.FONT_SIZE));
     private static final Logger LOGGER = LoggerFactory.getLogger(SvgStyleResolver.class);
 
@@ -195,29 +197,29 @@ public class SvgStyleResolver implements ICssResolver {
     public static void resolveFontSizeStyle(Map<String, String> styles, SvgCssContext cssContext, String parentFontSizeStr) {
         String elementFontSize = styles.get(SvgConstants.Attributes.FONT_SIZE);
         String resolvedFontSize;
-        if (CssUtils.isNegativeValue(elementFontSize)) {
+        if (CssTypesValidationUtils.isNegativeValue(elementFontSize)) {
             elementFontSize = parentFontSizeStr;
         }
 
-        if (CssUtils.isRelativeValue(elementFontSize) || CommonCssConstants.LARGER.equals(elementFontSize)
+        if (CssTypesValidationUtils.isRelativeValue(elementFontSize) || CommonCssConstants.LARGER.equals(elementFontSize)
                 || CommonCssConstants.SMALLER.equals(elementFontSize)) {
             float baseFontSize;
-            if (CssUtils.isRemValue(elementFontSize)) {
+            if (CssTypesValidationUtils.isRemValue(elementFontSize)) {
                 baseFontSize = cssContext == null ? DEFAULT_FONT_SIZE : cssContext.getRootFontSize();
             } else if (parentFontSizeStr == null) {
-                baseFontSize = CssUtils.parseAbsoluteFontSize(
+                baseFontSize = CssDimensionParsingUtils.parseAbsoluteFontSize(
                         CssDefaults.getDefaultValue(SvgConstants.Attributes.FONT_SIZE));
             } else {
-                baseFontSize = CssUtils.parseAbsoluteLength(parentFontSizeStr);
+                baseFontSize = CssDimensionParsingUtils.parseAbsoluteLength(parentFontSizeStr);
             }
 
-            final float absoluteFontSize = CssUtils.parseRelativeFontSize(elementFontSize, baseFontSize);
+            final float absoluteFontSize = CssDimensionParsingUtils.parseRelativeFontSize(elementFontSize, baseFontSize);
             // Format to 4 decimal places to prevent differences between Java and C#
             resolvedFontSize = DecimalFormatUtil.formatNumber(absoluteFontSize, "0.####");
         } else if (elementFontSize == null){
             resolvedFontSize = DecimalFormatUtil.formatNumber(DEFAULT_FONT_SIZE, "0.####");
         } else {
-            resolvedFontSize = DecimalFormatUtil.formatNumber(CssUtils.parseAbsoluteFontSize(elementFontSize), "0.####");
+            resolvedFontSize = DecimalFormatUtil.formatNumber(CssDimensionParsingUtils.parseAbsoluteFontSize(elementFontSize), "0.####");
         }
         styles.put(SvgConstants.Attributes.FONT_SIZE, resolvedFontSize + CommonCssConstants.PT);
     }

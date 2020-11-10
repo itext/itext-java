@@ -45,6 +45,7 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.css.impl.SvgNodeRendererInheritanceResolver;
@@ -87,11 +88,11 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
                         float y = 0f;
 
                         if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.X)) {
-                            x = CssUtils.parseAbsoluteLength(this.attributesAndStyles.get(SvgConstants.Attributes.X));
+                            x = CssDimensionParsingUtils.parseAbsoluteLength(this.attributesAndStyles.get(SvgConstants.Attributes.X));
                         }
 
                         if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.Y)) {
-                            y = CssUtils.parseAbsoluteLength(this.attributesAndStyles.get(SvgConstants.Attributes.Y));
+                            y = CssDimensionParsingUtils.parseAbsoluteLength(this.attributesAndStyles.get(SvgConstants.Attributes.Y));
                         }
                         AffineTransform inverseMatrix = null;
                         if (!CssUtils.compareFloats(x,0) || !CssUtils.compareFloats(y,0)) {

@@ -46,12 +46,12 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 
-import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -137,8 +137,8 @@ public class FontShorthandResolver implements IShorthandResolver {
             } else if (slashSymbolIndex > 0) {
                 fontSizeValue = value.substring(0, slashSymbolIndex);
                 lineHeightValue = value.substring(slashSymbolIndex + 1, value.length());
-            } else if (FONT_SIZE_VALUES.contains(value) || CssUtils.isMetricValue(value)
-                    || CssUtils.isNumericValue(value) || CssUtils.isRelativeValue(value)) {
+            } else if (FONT_SIZE_VALUES.contains(value) || CssTypesValidationUtils.isMetricValue(value)
+                    || CssTypesValidationUtils.isNumericValue(value) || CssTypesValidationUtils.isRelativeValue(value)) {
                 fontSizeValue = value;
             } else {
                 fontFamilyValue = value;

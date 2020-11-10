@@ -54,7 +54,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Values;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
@@ -225,12 +225,12 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
 
         // if x attribute of svg is present, then x value of current viewport should be set according to it
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.X)) {
-            x = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.X));
+            x = CssDimensionParsingUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.X));
         }
 
         // if y attribute of svg is present, then y value of current viewport should be set according to it
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.Y)) {
-            y = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.Y));
+            y = CssDimensionParsingUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.Y));
         }
 
         if (!(this instanceof MarkerSvgNodeRenderer)) {
@@ -399,7 +399,7 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
         List<String> valueStrings = SvgCssUtils.splitValueList(viewBoxValues);
         float[] values = new float[valueStrings.size()];
         for (int i = 0; i < values.length; i++) {
-            values[i] = CssUtils.parseAbsoluteLength(valueStrings.get(i));
+            values[i] = CssDimensionParsingUtils.parseAbsoluteLength(valueStrings.get(i));
         }
         return values;
     }

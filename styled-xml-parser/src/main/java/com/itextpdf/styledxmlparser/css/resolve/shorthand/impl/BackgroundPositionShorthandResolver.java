@@ -27,8 +27,10 @@ import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.css.validate.CssDeclarationValidationMaster;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +53,7 @@ public class BackgroundPositionShorthandResolver implements IShorthandResolver {
      */
     @Override
     public List<CssDeclaration> resolveShorthand(String shorthandExpression) {
-        if (CssUtils.isInitialOrInheritOrUnset(shorthandExpression)) {
+        if (CssTypesValidationUtils.isInitialOrInheritOrUnset(shorthandExpression)) {
             return Arrays.asList(
                     new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION_X, shorthandExpression),
                     new CssDeclaration(CommonCssConstants.BACKGROUND_POSITION_Y, shorthandExpression)

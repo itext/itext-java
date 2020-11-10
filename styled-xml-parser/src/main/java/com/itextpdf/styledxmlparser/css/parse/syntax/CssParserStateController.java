@@ -53,8 +53,9 @@ import com.itextpdf.styledxmlparser.css.CssSemicolonAtRule;
 import com.itextpdf.styledxmlparser.css.CssStyleSheet;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
 import com.itextpdf.styledxmlparser.css.parse.CssRuleSetParser;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.resolver.resource.UriResolver;
+
 import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
@@ -433,7 +434,7 @@ public final class CssParserStateController {
                     if (token.getType() == CssDeclarationValueTokenizer.TokenType.FUNCTION && token.getValue().startsWith("url(")) {
                         String url = token.getValue().trim();
                         url = url.substring(4, url.length() - 1).trim();
-                        if (CssUtils.isBase64Data(url)) {
+                        if (CssTypesValidationUtils.isBase64Data(url)) {
                             strToAppend = token.getValue().trim();
                         } else {
                             if (url.startsWith("'") && url.endsWith("'") || url.startsWith("\"") && url.endsWith("\"")) {

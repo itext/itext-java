@@ -58,11 +58,8 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
-import java.util.Set;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -71,8 +68,7 @@ import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class CssUtilsTest extends ExtendedITextTest {
-
-    public static float EPS = 0.0001f;
+    private static float EPS = 0.0001f;
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -320,10 +316,10 @@ public class CssUtilsTest extends ExtendedITextTest {
 
     @Test
     public void testIsAngleCorrectValues() {
-       Assert.assertTrue(CssUtils.isAngleValue("10deg"));
-       Assert.assertTrue(CssUtils.isAngleValue("-20grad"));
-       Assert.assertTrue(CssUtils.isAngleValue("30.5rad"));
-       Assert.assertTrue(CssUtils.isAngleValue("0rad"));
+        Assert.assertTrue(CssUtils.isAngleValue("10deg"));
+        Assert.assertTrue(CssUtils.isAngleValue("-20grad"));
+        Assert.assertTrue(CssUtils.isAngleValue("30.5rad"));
+        Assert.assertTrue(CssUtils.isAngleValue("0rad"));
     }
 
     @Test
@@ -434,7 +430,7 @@ public class CssUtilsTest extends ExtendedITextTest {
 
     @Test
     public void isNegativeValueTest() {
-         // Invalid values
+        // Invalid values
         Assert.assertFalse(CssUtils.isNegativeValue(null));
         Assert.assertFalse(CssUtils.isNegativeValue("-..23"));
         Assert.assertFalse(CssUtils.isNegativeValue("12 34"));

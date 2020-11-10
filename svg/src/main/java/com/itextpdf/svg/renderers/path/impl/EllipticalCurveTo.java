@@ -47,6 +47,7 @@ import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
@@ -107,8 +108,8 @@ public class EllipticalCurveTo extends AbstractPathShape {
     @Override
     public void draw(PdfCanvas canvas) {
         Point start = new Point(startPoint.x * .75, startPoint.y * .75); // pixels to points
-        double rx = Math.abs(CssUtils.parseAbsoluteLength(coordinates[0]));
-        double ry = Math.abs(CssUtils.parseAbsoluteLength(coordinates[1]));
+        double rx = Math.abs(CssDimensionParsingUtils.parseAbsoluteLength(coordinates[0]));
+        double ry = Math.abs(CssDimensionParsingUtils.parseAbsoluteLength(coordinates[1]));
 
         // φ is taken mod 360 degrees.
         double rotation = Double.parseDouble(coordinates[2]) % 360.0;
@@ -116,10 +117,10 @@ public class EllipticalCurveTo extends AbstractPathShape {
         rotation = Math.toRadians(rotation);
 
         // binary flags (Value correction: any nonzero value for either of the flags fA or fS is taken to mean the value 1.)
-        boolean largeArc = !CssUtils.compareFloats((float) CssUtils.parseFloat(coordinates[3]), 0);
-        boolean sweep = !CssUtils.compareFloats((float) CssUtils.parseFloat(coordinates[4]), 0);
+        boolean largeArc = !CssUtils.compareFloats((float) CssDimensionParsingUtils.parseFloat(coordinates[3]), 0);
+        boolean sweep = !CssUtils.compareFloats((float) CssDimensionParsingUtils.parseFloat(coordinates[4]), 0);
 
-        Point end = new Point(CssUtils.parseAbsoluteLength(coordinates[5]), CssUtils.parseAbsoluteLength(coordinates[6]));
+        Point end = new Point(CssDimensionParsingUtils.parseAbsoluteLength(coordinates[5]), CssDimensionParsingUtils.parseAbsoluteLength(coordinates[6]));
 
         if (CssUtils.compareFloats(start.x, end.x) && CssUtils.compareFloats(start.y, end.y)) {
             /* edge case: If the endpoints (x1, y1) and (x2, y2) are identical,
@@ -382,7 +383,7 @@ public class EllipticalCurveTo extends AbstractPathShape {
 
     private double getCoordinate(int index) {
         // casting to double fot porting compatibility
-        return (double) CssUtils.parseDouble(coordinates[index]);
+        return (double) CssDimensionParsingUtils.parseDouble(coordinates[index]);
     }
 
     /**

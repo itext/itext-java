@@ -46,7 +46,8 @@ import com.itextpdf.io.util.DecimalFormatUtil;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.resolve.CssPropertyMerger;
 import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.util.StyleUtil;
 import com.itextpdf.svg.SvgConstants;
 
@@ -87,9 +88,10 @@ public class StyleResolverUtil {
                     || valueIsOfMeasurement(parentPropValue, CommonCssConstants.EX)
                     || (valueIsOfMeasurement(parentPropValue, CommonCssConstants.PERCENTAGE) && fontSizeDependentPercentage.contains(styleProperty))
                     ) {
-                float absoluteParentFontSize = CssUtils.parseAbsoluteLength(parentFontSizeString);
+                float absoluteParentFontSize = CssDimensionParsingUtils.parseAbsoluteLength(parentFontSizeString);
                 // Format to 4 decimal places to prevent differences between Java and C#
-                styles.put(styleProperty, DecimalFormatUtil.formatNumber(CssUtils.parseRelativeValue(parentPropValue, absoluteParentFontSize),
+                styles.put(styleProperty, DecimalFormatUtil.formatNumber(
+                        CssDimensionParsingUtils.parseRelativeValue(parentPropValue, absoluteParentFontSize),
                         "0.####") + CommonCssConstants.PT);
             } else {
                 //Property is inherited, add to element style declarations
@@ -132,7 +134,8 @@ public class StyleResolverUtil {
     private static boolean valueIsOfMeasurement(String value, String measurement) {
         if (value == null)
             return false;
-        if (value.endsWith(measurement) && CssUtils.isNumericValue(value.substring(0, value.length() - measurement.length()).trim()))
+        if (value.endsWith(measurement) && CssTypesValidationUtils
+                .isNumericValue(value.substring(0, value.length() - measurement.length()).trim()))
             return true;
         return false;
     }

@@ -23,7 +23,7 @@
 package com.itextpdf.styledxmlparser.css.validate.impl.datatype;
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.validate.ICssDataTypeValidator;
 
 /**
@@ -60,10 +60,10 @@ public class CssNumericValueValidator implements ICssDataTypeValidator {
         if (CommonCssConstants.NORMAL.equals(objectString)) {
             return this.allowedNormal;
         }
-        if (!CssUtils.isValidNumericValue(objectString)) {
+        if (!CssTypesValidationUtils.isValidNumericValue(objectString)) {
             return false;
         }
-        if (CssUtils.isPercentageValue(objectString)) {
+        if (CssTypesValidationUtils.isPercentageValue(objectString)) {
             return this.allowedPercent;
         }
         return true;

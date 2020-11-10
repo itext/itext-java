@@ -45,7 +45,7 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.IMarkerCapable;
@@ -98,7 +98,7 @@ public class LineSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
     float getAttribute(Map<String, String> attributes, String key) {
         String value = attributes.get(key);
         if (value != null && !value.isEmpty()) {
-            return CssUtils.parseAbsoluteLength(attributes.get(key));
+            return CssDimensionParsingUtils.parseAbsoluteLength(attributes.get(key));
         }
         return 0;
     }

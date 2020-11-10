@@ -42,10 +42,9 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -130,20 +129,20 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     private void setParameters() {
         if(getAttribute(SvgConstants.Attributes.X)!=null) {
-            x = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.X));
+            x = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.X));
         }
         if(getAttribute(SvgConstants.Attributes.Y)!=null) {
-            y = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.Y));
+            y = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.Y));
         }
-        width = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.WIDTH));
-        height = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.HEIGHT));
+        width = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.WIDTH));
+        height = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.HEIGHT));
 
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.RX)) {
-            rx = checkRadius(CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RX)), width);
+            rx = checkRadius(CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RX)), width);
             rxPresent = true;
         }
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.RY)) {
-            ry = checkRadius(CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RY)), height);
+            ry = checkRadius(CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RY)), height);
             ryPresent = true;
         }
     }

@@ -42,7 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.integration;
 
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
@@ -228,7 +228,7 @@ public class ParseTest extends ExtendedITextTest {
     @Test
     public void parseDoubleIntegerValueTest(){
         Double expectedString = 5.0;
-        Double actualString = CssUtils.parseDouble("5");
+        Double actualString = CssDimensionParsingUtils.parseDouble("5");
 
         Assert.assertEquals(expectedString, actualString);
     }
@@ -236,7 +236,7 @@ public class ParseTest extends ExtendedITextTest {
     @Test
     public void parseDoubleManyCharsAfterDotTest(){
         Double expectedString = 5.123456789;
-        Double actualString = CssUtils.parseDouble("5.123456789");
+        Double actualString = CssDimensionParsingUtils.parseDouble("5.123456789");
 
         Assert.assertEquals(expectedString, actualString);
     }
@@ -244,7 +244,7 @@ public class ParseTest extends ExtendedITextTest {
     @Test
     public void parseDoubleManyCharsAfterDotNegativeTest(){
         Double expectedString = -5.123456789;
-        Double actualString = CssUtils.parseDouble("-5.123456789");
+        Double actualString = CssDimensionParsingUtils.parseDouble("-5.123456789");
 
         Assert.assertEquals(expectedString, actualString);
     }
@@ -252,7 +252,7 @@ public class ParseTest extends ExtendedITextTest {
     @Test
     public void parseDoubleNullValueTest(){
         Double expectedString = null;
-        Double actualString = CssUtils.parseDouble(null);
+        Double actualString = CssDimensionParsingUtils.parseDouble(null);
 
         Assert.assertEquals(expectedString, actualString);
     }
@@ -260,7 +260,7 @@ public class ParseTest extends ExtendedITextTest {
     @Test
     public void parseDoubleNegativeTextTest(){
         Double expectedString = null;
-        Double actualString = CssUtils.parseDouble("text");
+        Double actualString = CssDimensionParsingUtils.parseDouble("text");
 
         Assert.assertEquals(expectedString, actualString);
     }

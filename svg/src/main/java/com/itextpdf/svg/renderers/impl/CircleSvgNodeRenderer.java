@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.SvgConstants;
 
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -58,15 +58,15 @@ public class CircleSvgNodeRenderer extends EllipseSvgNodeRenderer {
         cx = 0;
         cy = 0;
         if(getAttribute(SvgConstants.Attributes.CX) != null){
-            cx = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.CX));
+            cx = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.CX));
         }
         if(getAttribute(SvgConstants.Attributes.CY) != null){
-            cy = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.CY));
+            cy = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.CY));
         }
 
         if(getAttribute(SvgConstants.Attributes.R) != null
-                && CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.R)) >0){
-            rx = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.R));
+                && CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.R)) >0){
+            rx = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.R));
             ry=rx;
         }else{
             return false; //No drawing if rx is absent

@@ -53,6 +53,8 @@ import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
@@ -202,7 +204,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      * @return absolute value of font-size
      */
     public float getCurrentFontSize() {
-        return CssUtils.parseAbsoluteFontSize(getAttribute(SvgConstants.Attributes.FONT_SIZE));
+        return CssDimensionParsingUtils.parseAbsoluteFontSize(getAttribute(SvgConstants.Attributes.FONT_SIZE));
     }
 
     /**
@@ -378,7 +380,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                         float strokeWidth = 0.75f;
 
                         if (strokeWidthRawValue != null) {
-                            strokeWidth = CssUtils.parseAbsoluteLength(strokeWidthRawValue);
+                            strokeWidth = CssDimensionParsingUtils.parseAbsoluteLength(strokeWidthRawValue);
                         }
 
                         float strokeOpacity = getOpacityByAttributeName(SvgConstants.Attributes.STROKE_OPACITY,
@@ -426,12 +428,12 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      */
     protected float parseAbsoluteLength(String length, float percentRelativeValue, float defaultValue,
             SvgDrawContext context) {
-        if (CssUtils.isPercentageValue(length)) {
-            return CssUtils.parseRelativeValue(length, percentRelativeValue);
+        if (CssTypesValidationUtils.isPercentageValue(length)) {
+            return CssDimensionParsingUtils.parseRelativeValue(length, percentRelativeValue);
         } else {
             final float em = getCurrentFontSize();
             final float rem = context.getCssContext().getRootFontSize();
-            UnitValue unitValue = CssUtils.parseLengthValueToPt(length, em, rem);
+            UnitValue unitValue = CssDimensionParsingUtils.parseLengthValueToPt(length, em, rem);
             if (unitValue != null && unitValue.isPointValue()) {
                 return unitValue.getValue();
             } else {
