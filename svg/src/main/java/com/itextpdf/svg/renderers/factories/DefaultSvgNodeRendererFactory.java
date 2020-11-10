@@ -116,7 +116,8 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
 
             result = (ISvgNodeRenderer) rendererMap.get(tag.name()).newInstance();
         } catch (ReflectiveOperationException ex) {
-            throw new SvgProcessingException(SvgExceptionMessageConstant.COULD_NOT_INSTANTIATE, ex).setMessageParams(tag.name());
+            throw new SvgProcessingException(SvgExceptionMessageConstant.COULD_NOT_INSTANTIATE, ex)
+                    .setMessageParams(tag.name());
         }
 
         // DefsSvgNodeRenderer should not have parental relationship with any renderer, it only serves as a storage

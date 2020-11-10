@@ -26,11 +26,16 @@ package com.itextpdf.signatures.exceptions;
  * Class that bundles all the error message templates as constants.
  */
 public final class SignExceptionMessageConstant {
-    public static final String AUTHENTICATED_ATTRIBUTE_IS_MISSING_THE_DIGEST = "Authenticated attribute is missing the digest.";
-    public static final String AVAILABLE_SPACE_IS_NOT_ENOUGH_FOR_SIGNATURE = "Available space is not enough for signature.";
+    public static final String AUTHENTICATED_ATTRIBUTE_IS_MISSING_THE_DIGEST = "Authenticated attribute is missing "
+            + "the digest.";
+    public static final String AVAILABLE_SPACE_IS_NOT_ENOUGH_FOR_SIGNATURE = "Available space is not enough for "
+            + "signature.";
     public static final String CANNOT_DECODE_PKCS7_SIGNED_DATA_OBJECT = "Cannot decode PKCS#7 SignedData object.";
-    public static final String CANNOT_FIND_SIGNING_CERTIFICATE_WITH_THIS_SERIAL = "Cannot find signing certificate with serial {0}.";
-    public static final String CERTIFICATION_SIGNATURE_CREATION_FAILED_DOC_SHALL_NOT_CONTAIN_SIGS = "Certification signature creation failed. Document shall not contain any certification or approval signatures before signing with certification signature.";
+    public static final String CANNOT_FIND_SIGNING_CERTIFICATE_WITH_THIS_SERIAL = "Cannot find signing certificate "
+            + "with serial {0}.";
+    public static final String CERTIFICATION_SIGNATURE_CREATION_FAILED_DOC_SHALL_NOT_CONTAIN_SIGS = "Certification "
+            + "signature creation failed. Document shall not contain any certification or approval signatures before "
+            + "signing with certification signature.";
     public static final String DICTIONARY_THIS_KEY_IS_NOT_A_NAME = "Dictionary key {0} is not a name.";
     public static final String DOCUMENT_ALREADY_PRE_CLOSED = "Document has been already pre closed.";
     public static final String DOCUMENT_MUST_BE_PRE_CLOSED = "Document must be preClosed.";
@@ -42,15 +47,23 @@ public final class SignExceptionMessageConstant {
     public static final String INVALID_TSA_RESPONSE = "Invalid TSA {0} response code {1}.";
     public static final String NO_CRYPTO_DICTIONARY_DEFINED = "No crypto dictionary defined.";
     public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_A_SEQUENCE = "Not a valid PKCS#7 object - not a sequence";
-    public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_SIGNED_DATA = "Not a valid PKCS#7 object - not signed data.";
-    public static final String SIGNATURE_WITH_THIS_NAME_IS_NOT_THE_LAST_IT_DOES_NOT_COVER_WHOLE_DOCUMENT = "Signature with name {0} is not the last. It doesn't cover the whole document.";
-    public static final String THERE_IS_NO_FIELD_IN_THE_DOCUMENT_WITH_SUCH_NAME = "There is no field in the document with such name: {0}.";
-    public static final String THIS_PKCS7_OBJECT_HAS_MULTIPLE_SIGNERINFOS_ONLY_ONE_IS_SUPPORTED_AT_THIS_TIME = "This PKCS#7 object has multiple SignerInfos. Only one is supported at this time.";
-    public static final String THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED = "This instance of PdfSigner has been already closed.";
-    public static final String THIS_TSA_FAILED_TO_RETURN_TIME_STAMP_TOKEN = "TSA {0} failed to return time stamp token: {1}.";
+    public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_SIGNED_DATA = "Not a valid PKCS#7 object - not signed "
+            + "data.";
+    public static final String SIGNATURE_WITH_THIS_NAME_IS_NOT_THE_LAST_IT_DOES_NOT_COVER_WHOLE_DOCUMENT = "Signature "
+            + "with name {0} is not the last. It doesn't cover the whole document.";
+    public static final String THERE_IS_NO_FIELD_IN_THE_DOCUMENT_WITH_SUCH_NAME = "There is no field in the document "
+            + "with such name: {0}.";
+    public static final String THIS_PKCS7_OBJECT_HAS_MULTIPLE_SIGNERINFOS_ONLY_ONE_IS_SUPPORTED_AT_THIS_TIME = "This "
+            + "PKCS#7 object has multiple SignerInfos. Only one is supported at this time.";
+    public static final String THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED = "This instance of PdfSigner has been "
+            + "already closed.";
+    public static final String THIS_TSA_FAILED_TO_RETURN_TIME_STAMP_TOKEN = "TSA {0} failed to return time stamp "
+            + "token: {1}.";
     public static final String UNEXPECTED_CLOSE_BRACKET = "Unexpected close bracket.";
     public static final String UNEXPECTED_GT_GT = "unexpected >>.";
     public static final String UNKNOWN_HASH_ALGORITHM = "Unknown hash algorithm: {0}.";
     public static final String UNKNOWN_KEY_ALGORITHM = "Unknown key algorithm: {0}.";
     public static final String VERIFICATION_ALREADY_OUTPUT = "Verification already output.";
+
+    private SignExceptionMessageConstant(){}
 }

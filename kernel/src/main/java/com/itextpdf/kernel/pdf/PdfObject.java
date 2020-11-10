@@ -227,7 +227,8 @@ public abstract class PdfObject {
             return this;
         }
         if (document.getWriter() == null) {
-            throw new PdfException(KernelExceptionMessageConstant.THERE_IS_NO_ASSOCIATE_PDF_WRITER_FOR_MAKING_INDIRECTS);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.THERE_IS_NO_ASSOCIATE_PDF_WRITER_FOR_MAKING_INDIRECTS);
         }
         if (reference == null) {
             indirectReference = document.createNextIndirectReference();
@@ -319,7 +320,8 @@ public abstract class PdfObject {
         if (indirectReference != null) {
             // TODO checkState(MUST_BE_INDIRECT) now is always false, because indirectReference != null. See also DEVSIX-602
             if (indirectReference.getWriter() != null || checkState(MUST_BE_INDIRECT)) {
-                throw new PdfException(KernelExceptionMessageConstant.CANNOT_COPY_INDIRECT_OBJECT_FROM_THE_DOCUMENT_THAT_IS_BEING_WRITTEN);
+                throw new PdfException(
+                        KernelExceptionMessageConstant.CANNOT_COPY_INDIRECT_OBJECT_FROM_THE_DOCUMENT_THAT_IS_BEING_WRITTEN);
             }
             if (!indirectReference.getReader().isOpenedWithFullPermission()) {
                 throw new BadPasswordException(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);

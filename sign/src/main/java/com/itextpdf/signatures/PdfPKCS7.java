@@ -169,7 +169,8 @@ public class PdfPKCS7 {
         // message digest
         digestAlgorithmOid = DigestAlgorithms.getAllowedDigest(hashAlgorithm);
         if (digestAlgorithmOid == null)
-            throw new PdfException(SignExceptionMessageConstant.UNKNOWN_HASH_ALGORITHM).setMessageParams(hashAlgorithm);
+            throw new PdfException(SignExceptionMessageConstant.UNKNOWN_HASH_ALGORITHM)
+                    .setMessageParams(hashAlgorithm);
 
         // Copy the certificates
         signCert = (X509Certificate) certChain[0];
@@ -190,7 +191,8 @@ public class PdfPKCS7 {
             } else if (digestEncryptionAlgorithmOid.equals("DSA")) {
                 digestEncryptionAlgorithmOid = SecurityIDs.ID_DSA;
             } else {
-                throw new PdfException(SignExceptionMessageConstant.UNKNOWN_KEY_ALGORITHM).setMessageParams(digestEncryptionAlgorithmOid);
+                throw new PdfException(
+                        SignExceptionMessageConstant.UNKNOWN_KEY_ALGORITHM).setMessageParams(digestEncryptionAlgorithmOid);
             }
         }
 
@@ -262,15 +264,18 @@ public class PdfPKCS7 {
             try {
                 pkcs = din.readObject();
             } catch (IOException e) {
-                throw new IllegalArgumentException(SignExceptionMessageConstant.CANNOT_DECODE_PKCS7_SIGNED_DATA_OBJECT);
+                throw new IllegalArgumentException(
+                        SignExceptionMessageConstant.CANNOT_DECODE_PKCS7_SIGNED_DATA_OBJECT);
             }
             if (!(pkcs instanceof ASN1Sequence)) {
-                throw new IllegalArgumentException(SignExceptionMessageConstant.NOT_A_VALID_PKCS7_OBJECT_NOT_A_SEQUENCE);
+                throw new IllegalArgumentException(
+                        SignExceptionMessageConstant.NOT_A_VALID_PKCS7_OBJECT_NOT_A_SEQUENCE);
             }
             ASN1Sequence signedData = (ASN1Sequence) pkcs;
             ASN1ObjectIdentifier objId = (ASN1ObjectIdentifier) signedData.getObjectAt(0);
             if (!objId.getId().equals(SecurityIDs.ID_PKCS7_SIGNED_DATA))
-                throw new IllegalArgumentException(SignExceptionMessageConstant.NOT_A_VALID_PKCS7_OBJECT_NOT_SIGNED_DATA);
+                throw new IllegalArgumentException(
+                        SignExceptionMessageConstant.NOT_A_VALID_PKCS7_OBJECT_NOT_SIGNED_DATA);
             ASN1Sequence content = (ASN1Sequence) ((ASN1TaggedObject) signedData.getObjectAt(1)).getObject();
             // the positions that we care are:
             //     0 - version
@@ -344,7 +349,8 @@ public class PdfPKCS7 {
             // the signerInfos
             ASN1Set signerInfos = (ASN1Set) content.getObjectAt(next);
             if (signerInfos.size() != 1)
-                throw new IllegalArgumentException(SignExceptionMessageConstant.THIS_PKCS7_OBJECT_HAS_MULTIPLE_SIGNERINFOS_ONLY_ONE_IS_SUPPORTED_AT_THIS_TIME);
+                throw new IllegalArgumentException(
+                        SignExceptionMessageConstant.THIS_PKCS7_OBJECT_HAS_MULTIPLE_SIGNERINFOS_ONLY_ONE_IS_SUPPORTED_AT_THIS_TIME);
             ASN1Sequence signerInfo = (ASN1Sequence) signerInfos.getObjectAt(0);
             // the positions that we care are
             //     0 - version
@@ -429,7 +435,8 @@ public class PdfPKCS7 {
                     }
                 }
                 if (digestAttr == null)
-                    throw new IllegalArgumentException(SignExceptionMessageConstant.AUTHENTICATED_ATTRIBUTE_IS_MISSING_THE_DIGEST);
+                    throw new IllegalArgumentException(
+                            SignExceptionMessageConstant.AUTHENTICATED_ATTRIBUTE_IS_MISSING_THE_DIGEST);
                 ++next;
             }
             if (isCades && !foundCades)
@@ -692,8 +699,10 @@ public class PdfPKCS7 {
                 this.digestEncryptionAlgorithmOid = SecurityIDs.ID_DSA;
             } else if (digestEncryptionAlgorithm.equals("ECDSA")) {
                 this.digestEncryptionAlgorithmOid = SecurityIDs.ID_ECDSA;
-            } else
-                throw new PdfException(SignExceptionMessageConstant.UNKNOWN_KEY_ALGORITHM).setMessageParams(digestEncryptionAlgorithm);
+            } else {
+                throw new PdfException(SignExceptionMessageConstant.UNKNOWN_KEY_ALGORITHM)
+                        .setMessageParams(digestEncryptionAlgorithm);
+            }
         }
     }
 

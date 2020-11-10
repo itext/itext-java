@@ -561,7 +561,8 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 }
                 break;
             default:
-                throw new PdfException(KernelExceptionMessageConstant.UNKNOWN_ENCRYPTION_TYPE_R).setMessageParams(rValue);
+                throw new PdfException(KernelExceptionMessageConstant.UNKNOWN_ENCRYPTION_TYPE_R)
+                        .setMessageParams(rValue);
         }
 
         revision = setCryptoMode(cryptoMode, length);

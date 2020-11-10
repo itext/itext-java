@@ -157,7 +157,8 @@ public class PageFlushingHelper {
      */
     public void unsafeFlushDeep(int pageNum) {
         if (pdfDoc.getWriter() == null) {
-            throw new IllegalArgumentException(KernelExceptionMessageConstant.FLUSHING_HELPER_FLUSHING_MODE_IS_NOT_FOR_DOC_READING_MODE);
+            throw new IllegalArgumentException(
+                    KernelExceptionMessageConstant.FLUSHING_HELPER_FLUSHING_MODE_IS_NOT_FOR_DOC_READING_MODE);
         }
         release = false;
         flushPage(pageNum);
@@ -212,7 +213,8 @@ public class PageFlushingHelper {
      */
     public void appendModeFlush(int pageNum) {
         if (pdfDoc.getWriter() == null) {
-            throw new IllegalArgumentException(KernelExceptionMessageConstant.FLUSHING_HELPER_FLUSHING_MODE_IS_NOT_FOR_DOC_READING_MODE);
+            throw new IllegalArgumentException(
+                    KernelExceptionMessageConstant.FLUSHING_HELPER_FLUSHING_MODE_IS_NOT_FOR_DOC_READING_MODE);
         }
 
         PdfPage page = pdfDoc.getPage(pageNum);

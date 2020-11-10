@@ -198,7 +198,8 @@ public class PdfType0Font extends PdfFont {
                 }
             }
             if (fontProgram == null) {
-                throw new PdfException(MessageFormatUtil.format(KernelExceptionMessageConstant.CANNOT_RECOGNISE_DOCUMENT_FONT_WITH_ENCODING, cidFontName, cmap));
+                throw new PdfException(MessageFormatUtil.format(
+                        KernelExceptionMessageConstant.CANNOT_RECOGNISE_DOCUMENT_FONT_WITH_ENCODING, cidFontName, cmap));
             }
         }
         // DescendantFonts is a one-element array specifying the CIDFont dictionary that is the descendant of this Type 0 font.

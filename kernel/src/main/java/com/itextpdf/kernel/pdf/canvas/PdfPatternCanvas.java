@@ -88,7 +88,8 @@ public class PdfPatternCanvas extends PdfCanvas {
 
     private void checkNoColor() {
         if (!tilingPattern.isColored()) {
-            throw new PdfException(KernelExceptionMessageConstant.CONTENT_STREAM_MUST_NOT_INVOKE_OPERATORS_THAT_SPECIFY_COLORS_OR_OTHER_COLOR_RELATED_PARAMETERS);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.CONTENT_STREAM_MUST_NOT_INVOKE_OPERATORS_THAT_SPECIFY_COLORS_OR_OTHER_COLOR_RELATED_PARAMETERS);
         }
     }
 }

@@ -448,7 +448,8 @@ public class PdfSigner {
                 PdfFormField field = acroForm.getField(fieldName);
 
                 if (!PdfName.Sig.equals(field.getFormType())) {
-                    throw new IllegalArgumentException(SignExceptionMessageConstant.FIELD_TYPE_IS_NOT_A_SIGNATURE_FIELD_TYPE);
+                    throw new IllegalArgumentException(
+                            SignExceptionMessageConstant.FIELD_TYPE_IS_NOT_A_SIGNATURE_FIELD_TYPE);
                 }
 
                 if (field.getValue() != null) {
@@ -588,7 +589,8 @@ public class PdfSigner {
 
         if (certificationLevel > 0 && isDocumentPdf2()) {
             if (documentContainsCertificationOrApprovalSignatures()) {
-                throw new PdfException(SignExceptionMessageConstant.CERTIFICATION_SIGNATURE_CREATION_FAILED_DOC_SHALL_NOT_CONTAIN_SIGS);
+                throw new PdfException(
+                        SignExceptionMessageConstant.CERTIFICATION_SIGNATURE_CREATION_FAILED_DOC_SHALL_NOT_CONTAIN_SIGS);
             }
         }
 
@@ -781,10 +783,13 @@ public class PdfSigner {
         SignatureUtil signatureUtil = new SignatureUtil(document);
         PdfSignature signature = signatureUtil.getSignature(fieldName);
         if (signature == null) {
-            throw new PdfException(SignExceptionMessageConstant.THERE_IS_NO_FIELD_IN_THE_DOCUMENT_WITH_SUCH_NAME).setMessageParams(fieldName);
+            throw new PdfException(SignExceptionMessageConstant.THERE_IS_NO_FIELD_IN_THE_DOCUMENT_WITH_SUCH_NAME)
+                    .setMessageParams(fieldName);
         }
         if (!signatureUtil.signatureCoversWholeDocument(fieldName)) {
-            throw new PdfException(SignExceptionMessageConstant.SIGNATURE_WITH_THIS_NAME_IS_NOT_THE_LAST_IT_DOES_NOT_COVER_WHOLE_DOCUMENT).setMessageParams(fieldName);
+            throw new PdfException(
+                    SignExceptionMessageConstant.SIGNATURE_WITH_THIS_NAME_IS_NOT_THE_LAST_IT_DOES_NOT_COVER_WHOLE_DOCUMENT
+            ).setMessageParams(fieldName);
         }
 
         PdfArray b = signature.getByteRange();

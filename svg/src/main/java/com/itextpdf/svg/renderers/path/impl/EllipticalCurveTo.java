@@ -89,7 +89,10 @@ public class EllipticalCurveTo extends AbstractPathShape {
     public void setCoordinates(String[] inputCoordinates, Point previous) {
         startPoint = previous;
         if (inputCoordinates.length < ARGUMENT_SIZE) {
-            throw new IllegalArgumentException(MessageFormatUtil.format(SvgExceptionMessageConstant.ARC_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0, Arrays.toString(inputCoordinates)));
+            throw new IllegalArgumentException(
+                    MessageFormatUtil.format(
+                            SvgExceptionMessageConstant.ARC_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0,
+                            Arrays.toString(inputCoordinates)));
         }
         coordinates = new String[ARGUMENT_SIZE];
         System.arraycopy(inputCoordinates, 0, coordinates, 0, ARGUMENT_SIZE);

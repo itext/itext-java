@@ -583,7 +583,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
             if (mediaBoxSize < 4) {
-                throw new PdfException(KernelExceptionMessageConstant.WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS).setMessageParams(mediaBox.size());
+                throw new PdfException(KernelExceptionMessageConstant. WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS)
+                        .setMessageParams(mediaBox.size());
             }
         }
 
@@ -1011,7 +1012,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfPage setPageLabel(PageLabelNumberingStyle numberingStyle, String labelPrefix, int firstPage) {
         if (firstPage < 1)
-            throw new PdfException(KernelExceptionMessageConstant.IN_A_PAGE_LABEL_THE_PAGE_NUMBERS_MUST_BE_GREATER_OR_EQUAL_TO_1);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.IN_A_PAGE_LABEL_THE_PAGE_NUMBERS_MUST_BE_GREATER_OR_EQUAL_TO_1);
         PdfDictionary pageLabel = new PdfDictionary();
         if (numberingStyle != null) {
             switch (numberingStyle) {
@@ -1218,7 +1220,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             }
             getDocument().getStructTreeRoot().savePageStructParentIndexIfNeeded(this);
         } catch (Exception ex) {
-            throw new PdfException(KernelExceptionMessageConstant.TAG_STRUCTURE_FLUSHING_FAILED_IT_MIGHT_BE_CORRUPTED, ex);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.TAG_STRUCTURE_FLUSHING_FAILED_IT_MIGHT_BE_CORRUPTED, ex);
         }
     }
 

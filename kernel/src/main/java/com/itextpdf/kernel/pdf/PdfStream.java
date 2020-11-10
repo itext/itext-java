@@ -112,7 +112,8 @@ public class PdfStream extends PdfDictionary {
     public PdfStream(PdfDocument doc, InputStream inputStream, int compressionLevel) {
         super();
         if (doc == null) {
-            throw new PdfException(KernelExceptionMessageConstant.CANNOT_CREATE_PDFSTREAM_BY_INPUT_STREAM_WITHOUT_PDF_DOCUMENT);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.CANNOT_CREATE_PDFSTREAM_BY_INPUT_STREAM_WITHOUT_PDF_DOCUMENT);
         }
         makeIndirect(doc);
         if (inputStream == null) {
@@ -299,7 +300,8 @@ public class PdfStream extends PdfDictionary {
             throw new PdfException(KernelExceptionMessageConstant.CANNOT_OPERATE_WITH_FLUSHED_PDF_STREAM);
         }
         if (inputStream != null) {
-            throw new PdfException(KernelExceptionMessageConstant.CANNOT_SET_DATA_TO_PDF_STREAM_WHICH_WAS_CREATED_BY_INPUT_STREAM);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.CANNOT_SET_DATA_TO_PDF_STREAM_WHICH_WAS_CREATED_BY_INPUT_STREAM);
         }
 
         boolean outputStreamIsUninitialized = outputStream == null;
@@ -317,7 +319,8 @@ public class PdfStream extends PdfDictionary {
                 try {
                     oldBytes = getBytes();
                 } catch (PdfException ex) {
-                    throw new PdfException(KernelExceptionMessageConstant.CANNOT_READ_A_STREAM_IN_ORDER_TO_APPEND_NEW_BYTES, ex);
+                    throw new PdfException(
+                            KernelExceptionMessageConstant.CANNOT_READ_A_STREAM_IN_ORDER_TO_APPEND_NEW_BYTES, ex);
                 }
                 outputStream.assignBytes(oldBytes, oldBytes.length);
             }

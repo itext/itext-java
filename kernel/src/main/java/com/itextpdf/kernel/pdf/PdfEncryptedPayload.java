@@ -69,7 +69,8 @@ public class PdfEncryptedPayload extends PdfObjectWrapper<PdfDictionary> {
     public static PdfEncryptedPayload wrap(PdfDictionary dictionary) {
         PdfName type = dictionary.getAsName(PdfName.Type);
         if (type != null && !type.equals(PdfName.EncryptedPayload)) {
-            throw new PdfException(KernelExceptionMessageConstant.ENCRYPTED_PAYLOAD_SHALL_HAVE_TYPE_EQUALS_TO_ENCRYPTED_PAYLOAD_IF_PRESENT);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.ENCRYPTED_PAYLOAD_SHALL_HAVE_TYPE_EQUALS_TO_ENCRYPTED_PAYLOAD_IF_PRESENT);
         }
         if (dictionary.getAsName(PdfName.Subtype) == null) {
             throw new PdfException(KernelExceptionMessageConstant.ENCRYPTED_PAYLOAD_SHALL_HAVE_SUBTYPE);

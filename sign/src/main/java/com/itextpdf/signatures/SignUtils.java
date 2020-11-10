@@ -160,7 +160,8 @@ final class SignUtils {
     static InputStream getHttpResponse(URL urlt) throws IOException {
         HttpURLConnection con = (HttpURLConnection)urlt.openConnection();
         if (con.getResponseCode() / 100 != 2) {
-            throw new PdfException(SignExceptionMessageConstant.INVALID_HTTP_RESPONSE).setMessageParams(con.getResponseCode());
+            throw new PdfException(SignExceptionMessageConstant.INVALID_HTTP_RESPONSE)
+                    .setMessageParams(con.getResponseCode());
         }
         return (InputStream) con.getContent();
     }
@@ -197,7 +198,8 @@ final class SignUtils {
         dataOut.flush();
         dataOut.close();
         if (con.getResponseCode() / 100 != 2) {
-            throw new PdfException(SignExceptionMessageConstant.INVALID_HTTP_RESPONSE).setMessageParams(con.getResponseCode());
+            throw new PdfException(SignExceptionMessageConstant.INVALID_HTTP_RESPONSE)
+                    .setMessageParams(con.getResponseCode());
         }
         //Get Response
         return (InputStream) con.getContent();

@@ -83,7 +83,8 @@ class PdfPagesTree {
         if (pdfCatalog.getPdfObject().containsKey(PdfName.Pages)) {
             PdfDictionary pages = pdfCatalog.getPdfObject().getAsDictionary(PdfName.Pages);
             if (pages == null)
-                throw new PdfException(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE_PAGES_MUST_BE_PDF_DICTIONARY);
+                throw new PdfException(
+                        KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE_PAGES_MUST_BE_PDF_DICTIONARY);
             this.root = new PdfPages(0, Integer.MAX_VALUE, pages, null);
             parents.add(this.root);
             for (int i = 0; i < this.root.getCount(); i++) {
@@ -106,7 +107,8 @@ class PdfPagesTree {
      */
     public PdfPage getPage(int pageNum) {
         if (pageNum < 1 || pageNum > getNumberOfPages()) {
-            throw new IndexOutOfBoundsException(MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, pageNum));
+            throw new IndexOutOfBoundsException(MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, pageNum));
         }
         --pageNum;
         PdfPage pdfPage = pages.get(pageNum);
@@ -352,7 +354,8 @@ class PdfPagesTree {
 
             // null values not allowed in pages tree.
             if (page == null) {
-                throw new PdfException(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE).setMessageParams(pageNum + 1);
+                throw new PdfException(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE)
+                        .setMessageParams(pageNum + 1);
             }
             PdfObject pageKids = page.get(PdfName.Kids);
             if (pageKids != null) {
@@ -360,7 +363,8 @@ class PdfPagesTree {
                     findPdfPages = true;
                 } else {
                     // kids must be of type array
-                    throw new PdfException(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE).setMessageParams(pageNum + 1);
+                    throw new PdfException(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE)
+                            .setMessageParams(pageNum + 1);
                 }
             }
             if (document.getReader().isMemorySavingMode() && !findPdfPages && parent.getFrom() + i != pageNum) {

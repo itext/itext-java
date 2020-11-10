@@ -238,7 +238,8 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
             case NUMBER:
                 return new PdfNumber(Double.parseDouble(value.trim()));
         }
-        throw new PdfException(KernelExceptionMessageConstant.UNACCEPTABLE_FIELD_VALUE).setMessageParams(value, getPdfObject().getAsString(PdfName.N).getValue());
+        throw new PdfException(KernelExceptionMessageConstant.UNACCEPTABLE_FIELD_VALUE)
+                .setMessageParams(value, getPdfObject().getAsString(PdfName.N).getValue());
     }
 
     @Override

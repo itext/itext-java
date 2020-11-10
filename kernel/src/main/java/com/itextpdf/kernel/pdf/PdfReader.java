@@ -499,7 +499,8 @@ public class PdfReader implements Closeable {
             PdfName filterName = (PdfName) filters.get(j);
             IFilterHandler filterHandler = filterHandlers.get(filterName);
             if (filterHandler == null)
-                throw new PdfException(KernelExceptionMessageConstant.THIS_FILTER_IS_NOT_SUPPORTED).setMessageParams(filterName);
+                throw new PdfException(KernelExceptionMessageConstant.THIS_FILTER_IS_NOT_SUPPORTED)
+                        .setMessageParams(filterName);
 
             PdfDictionary decodeParams;
             if (j < dp.size()) {
@@ -509,7 +510,8 @@ public class PdfReader implements Closeable {
                 } else if (dpEntry.getType() == PdfObject.DICTIONARY) {
                     decodeParams = (PdfDictionary) dpEntry;
                 } else {
-                    throw new PdfException(KernelExceptionMessageConstant.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED).setMessageParams(dpEntry.getClass().toString());
+                    throw new PdfException(KernelExceptionMessageConstant.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED)
+                            .setMessageParams(dpEntry.getClass().toString());
                 }
             } else {
                 decodeParams = null;
@@ -922,7 +924,8 @@ public class PdfReader implements Closeable {
             if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
                 break;
             if (tokens.getTokenType() != PdfTokenizer.TokenType.Name)
-                tokens.throwError(KernelExceptionMessageConstant.THIS_DICTIONARY_KEY_IS_NOT_A_NAME, tokens.getStringValue());
+                tokens.throwError(
+                        KernelExceptionMessageConstant.THIS_DICTIONARY_KEY_IS_NOT_A_NAME, tokens.getStringValue());
             PdfName name = readPdfName(true);
             PdfObject obj = readObject(true, objStm);
             if (obj == null) {
@@ -985,7 +988,8 @@ public class PdfReader implements Closeable {
             if (prev == null)
                 break;
             if (prev.longValue() == startxref)
-                throw new PdfException(KernelExceptionMessageConstant.TRAILER_PREV_ENTRY_POINTS_TO_ITS_OWN_CROSS_REFERENCE_SECTION);
+                throw new PdfException(KernelExceptionMessageConstant.
+                        TRAILER_PREV_ENTRY_POINTS_TO_ITS_OWN_CROSS_REFERENCE_SECTION);
             startxref = prev.longValue();
             tokens.seek(startxref);
             trailer2 = readXrefSection();
@@ -1008,7 +1012,8 @@ public class PdfReader implements Closeable {
                 break;
             }
             if (tokens.getTokenType() != PdfTokenizer.TokenType.Number) {
-                tokens.throwError(KernelExceptionMessageConstant.OBJECT_NUMBER_OF_THE_FIRST_OBJECT_IN_THIS_XREF_SUBSECTION_NOT_FOUND);
+                tokens.throwError(
+                        KernelExceptionMessageConstant.OBJECT_NUMBER_OF_THE_FIRST_OBJECT_IN_THIS_XREF_SUBSECTION_NOT_FOUND);
             }
             int start = tokens.getIntValue();
             tokens.nextValidToken();
@@ -1055,14 +1060,16 @@ public class PdfReader implements Closeable {
 
                 if (tokens.tokenValueEqualsTo(PdfTokenizer.N)) {
                     if (pos == 0) {
-                        tokens.throwError(KernelExceptionMessageConstant.FILE_POSITION_0_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION);
+                        tokens.throwError(
+                                KernelExceptionMessageConstant.FILE_POSITION_0_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION);
                     }
                 } else if (tokens.tokenValueEqualsTo(PdfTokenizer.F)) {
                     if (refFirstEncountered) {
                         reference.setState(PdfObject.FREE);
                     }
                 } else {
-                    tokens.throwError(KernelExceptionMessageConstant.INVALID_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION);
+                    tokens.throwError(
+                            KernelExceptionMessageConstant.INVALID_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION);
                 }
 
                 if (refFirstEncountered) {
@@ -1290,7 +1297,8 @@ public class PdfReader implements Closeable {
         PdfName filter = enc.getAsName(PdfName.Filter);
         if (PdfName.Adobe_PubSec.equals(filter)) {
             if (properties.certificate == null) {
-                throw new PdfException(KernelExceptionMessageConstant.CERTIFICATE_IS_NOT_PROVIDED_DOCUMENT_IS_ENCRYPTED_WITH_PUBLIC_KEY_CERTIFICATE);
+                throw new PdfException(
+                        KernelExceptionMessageConstant.CERTIFICATE_IS_NOT_PROVIDED_DOCUMENT_IS_ENCRYPTED_WITH_PUBLIC_KEY_CERTIFICATE);
             }
             decrypt = new PdfEncryption(enc, properties.certificateKey, properties.certificate,
                     properties.certificateKeyProvider, properties.externalDecryptionProcess);
@@ -1350,7 +1358,8 @@ public class PdfReader implements Closeable {
                     if (tokens.getTokenType() != PdfTokenizer.TokenType.Obj
                             || tokens.getObjNr() != reference.getObjNumber()
                             || tokens.getGenNr() != reference.getGenNumber()) {
-                        tokens.throwError(KernelExceptionMessageConstant.INVALID_OFFSET_FOR_THIS_OBJECT, reference.toString());
+                        tokens.throwError(
+                                KernelExceptionMessageConstant.INVALID_OFFSET_FOR_THIS_OBJECT, reference.toString());
                     }
                     object = readObject(false);
                 } catch (RuntimeException ex) {

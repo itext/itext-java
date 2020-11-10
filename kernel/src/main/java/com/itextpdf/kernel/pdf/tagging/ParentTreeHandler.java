@@ -239,7 +239,8 @@ class ParentTreeHandler {
             return;
         }
         if (pageDict.isFlushed()) {
-            throw new PdfException(KernelExceptionMessageConstant.CANNOT_REMOVE_MARKED_CONTENT_REFERENCE_BECAUSE_ITS_PAGE_WAS_ALREADY_FLUSHED);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.CANNOT_REMOVE_MARKED_CONTENT_REFERENCE_BECAUSE_ITS_PAGE_WAS_ALREADY_FLUSHED);
         }
         PageMcrsContainer pageMcrs = pageToPageMcrs.get(pageDict.getIndirectReference());
         if (pageMcrs != null) {

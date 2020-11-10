@@ -599,7 +599,8 @@ public class TagStructureContext {
 
     private String composeInvalidRoleException(String role, PdfNamespace namespace) {
         return composeExceptionBasedOnNamespacePresence(role, namespace,
-                KernelExceptionMessageConstant.ROLE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE, KernelExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE);
+                KernelExceptionMessageConstant.ROLE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
+                KernelExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE);
     }
 
     private String composeTooMuchTransitiveMappingsException(String role, PdfNamespace namespace) {
@@ -651,7 +652,8 @@ public class TagStructureContext {
                 }
             } else {
                 if (pageTag instanceof PdfMcr) {
-                    throw new PdfException(KernelExceptionMessageConstant.CANNOT_REMOVE_TAG_BECAUSE_ITS_PARENT_IS_FLUSHED);
+                    throw new PdfException(
+                            KernelExceptionMessageConstant.CANNOT_REMOVE_TAG_BECAUSE_ITS_PARENT_IS_FLUSHED);
                 }
             }
         } else {

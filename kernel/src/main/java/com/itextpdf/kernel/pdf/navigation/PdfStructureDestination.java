@@ -136,7 +136,8 @@ public class PdfStructureDestination extends PdfDestination {
 
     private PdfStructureDestination add(PdfStructElem elem) {
         if (elem.getPdfObject().getIndirectReference() == null) {
-            throw new PdfException(KernelExceptionMessageConstant.STRUCTURE_ELEMENT_IN_STRUCTURE_DESTINATION_SHALL_BE_AN_INDIRECT_OBJECT);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.STRUCTURE_ELEMENT_IN_STRUCTURE_DESTINATION_SHALL_BE_AN_INDIRECT_OBJECT);
         }
         ((PdfArray)getPdfObject()).add(elem.getPdfObject());
         return this;

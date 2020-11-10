@@ -729,7 +729,8 @@ public class PdfCanvas {
         document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
         PdfFont font;
         if ((font = currentGs.getFont()) == null) {
-            throw new PdfException(KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
         }
         float fontSize = currentGs.getFontSize() / 1000f;
         float charSpacing = currentGs.getCharSpacing();
@@ -899,7 +900,8 @@ public class PdfCanvas {
     public PdfCanvas showText(PdfArray textArray) {
         document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
         if (currentGs.getFont() == null)
-            throw new PdfException(KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
         contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("["));
         for (PdfObject obj : textArray) {
             if (obj.isString()) {
@@ -2745,7 +2747,8 @@ public class PdfCanvas {
     private void showTextInt(String text) {
         document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
         if (currentGs.getFont() == null)
-            throw new PdfException(KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
         currentGs.getFont().writeText(text, contentStream.getOutputStream());
     }
 

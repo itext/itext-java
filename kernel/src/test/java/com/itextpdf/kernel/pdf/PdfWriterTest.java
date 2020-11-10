@@ -504,7 +504,8 @@ public class PdfWriterTest extends ExtendedITextTest {
             pdfDoc2.close();
         }
 
-        Assert.assertEquals(exceptionMessage, KernelExceptionMessageConstant.CANNOT_COPY_INDIRECT_OBJECT_FROM_THE_DOCUMENT_THAT_IS_BEING_WRITTEN);
+        Assert.assertEquals(
+                KernelExceptionMessageConstant.CANNOT_COPY_INDIRECT_OBJECT_FROM_THE_DOCUMENT_THAT_IS_BEING_WRITTEN, exceptionMessage);
     }
 
     /**
@@ -532,7 +533,8 @@ public class PdfWriterTest extends ExtendedITextTest {
             pdfDoc.close();
         }
 
-        Assert.assertEquals(exceptionMessage, KernelExceptionMessageConstant.DOCUMENT_FOR_COPY_TO_CANNOT_BE_NULL);
+        Assert.assertEquals(
+                KernelExceptionMessageConstant.DOCUMENT_FOR_COPY_TO_CANNOT_BE_NULL, exceptionMessage);
     }
 
     @Test

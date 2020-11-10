@@ -584,7 +584,8 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         for (int k = 0; k < rslt.length; ++ k) {
             tmp = getAsBoolean(k);
             if (tmp == null) {
-                throw new PdfException(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_AN_ARRAY_OF_BOOLEANS, this);
+                throw new PdfException(
+                        KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_AN_ARRAY_OF_BOOLEANS, this);
             }
             rslt[k] = tmp.getValue();
         }

@@ -185,14 +185,16 @@ public class PdfEncryptedPayloadFileSpecFactory {
             throw new PdfException(KernelExceptionMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_EF_DICTIONARY);
         }
         if (!PdfName.Filespec.equals(dictionary.getAsName(PdfName.Type))) {
-            throw new PdfException(KernelExceptionMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_TYPE_EQUAL_TO_FILESPEC);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_TYPE_EQUAL_TO_FILESPEC);
         }
         if (!dictionary.isIndirect()) {
             throw new PdfException(KernelExceptionMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_BE_INDIRECT);
         }
         PdfFileSpec fileSpec = PdfFileSpec.wrapFileSpecObject(dictionary);
         if (PdfEncryptedPayload.extractFrom(fileSpec) == null) {
-            throw new PdfException(KernelExceptionMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_DOES_NOT_HAVE_ENCRYPTED_PAYLOAD_DICTIONARY);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_DOES_NOT_HAVE_ENCRYPTED_PAYLOAD_DICTIONARY);
         }
         return fileSpec;
     }

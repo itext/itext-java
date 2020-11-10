@@ -508,7 +508,8 @@ public class SignatureUtil {
                     break;
                 }
                 if (tokens.getTokenType() != PdfTokenizer.TokenType.Name) {
-                    tokens.throwError(SignExceptionMessageConstant.DICTIONARY_THIS_KEY_IS_NOT_A_NAME, tokens.getStringValue());
+                    tokens.throwError(
+                            SignExceptionMessageConstant.DICTIONARY_THIS_KEY_IS_NOT_A_NAME, tokens.getStringValue());
                 }
                 PdfName name = readPdfName(true);
                 PdfObject obj;

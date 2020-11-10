@@ -66,7 +66,8 @@ public final class KernelLogMessageConstant {
     public static final String JPXDECODE_FILTER_DECODING = "JPXDecode filter decoding into the "
             + "bit map is not supported. The stream data would be left in JPEG2000 format";
 
-    public static final String UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE = "Unable to parse color {0} within {1} color space";
+    public static final String UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE = "Unable to parse color {0} within {1} "
+            + "color space";
 
     private KernelLogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly

@@ -397,7 +397,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     public void move(PdfPage fromPage, int insertBeforePage) {
         for (int i = 1; i <= getDocument().getNumberOfPages(); ++i) {
             if (getDocument().getPage(i).isFlushed()) {
-                throw new PdfException(MessageFormatUtil.format(KernelExceptionMessageConstant.CANNOT_MOVE_PAGES_IN_PARTLY_FLUSHED_DOCUMENT, i));
+                throw new PdfException(MessageFormatUtil.format(
+                        KernelExceptionMessageConstant.CANNOT_MOVE_PAGES_IN_PARTLY_FLUSHED_DOCUMENT, i));
             }
         }
         StructureTreeCopier.move(getDocument(), fromPage, insertBeforePage);
@@ -486,7 +487,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
         if (PdfStructElem.isStructElem(structElem)) {
             if (getPdfObject().getIndirectReference() == null) {
-                throw new PdfException(KernelExceptionMessageConstant.STRUCTURE_ELEMENT_DICTIONARY_SHALL_BE_AN_INDIRECT_OBJECT_IN_ORDER_TO_HAVE_CHILDREN);
+                throw new PdfException(
+                        KernelExceptionMessageConstant.STRUCTURE_ELEMENT_DICTIONARY_SHALL_BE_AN_INDIRECT_OBJECT_IN_ORDER_TO_HAVE_CHILDREN);
             }
             structElem.put(PdfName.P, getPdfObject());
         }

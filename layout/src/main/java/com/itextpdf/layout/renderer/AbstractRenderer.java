@@ -2467,11 +2467,13 @@ public abstract class AbstractRenderer implements IRenderer {
             }
             FontProvider provider = this.<FontProvider>getProperty(Property.FONT_PROVIDER);
             if (provider == null) {
-                throw new IllegalStateException(LayoutExceptionMessageConstant.FONT_PROVIDER_NOT_SET_FONT_FAMILY_NOT_RESOLVED);
+                throw new IllegalStateException(
+                        LayoutExceptionMessageConstant.FONT_PROVIDER_NOT_SET_FONT_FAMILY_NOT_RESOLVED);
             }
             FontSet fontSet = this.<FontSet>getProperty(Property.FONT_SET);
             if (provider.getFontSet().isEmpty() && (fontSet == null || fontSet.isEmpty())) {
-                throw new IllegalStateException(LayoutExceptionMessageConstant.FONT_PROVIDER_NOT_SET_FONT_FAMILY_NOT_RESOLVED);
+                throw new IllegalStateException(
+                        LayoutExceptionMessageConstant.FONT_PROVIDER_NOT_SET_FONT_FAMILY_NOT_RESOLVED);
             }
             FontCharacteristics fc = createFontCharacteristics();
             return resolveFirstPdfFont((String[]) font, provider, fc, fontSet);

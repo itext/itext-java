@@ -388,7 +388,8 @@ public class TagTreePointer {
      */
     public TagTreePointer relocateKid(int kidIndex, TagTreePointer pointerToNewParent) {
         if (getDocument() != pointerToNewParent.getDocument()) {
-            throw new PdfException(KernelExceptionMessageConstant.TAG_CANNOT_BE_MOVED_TO_THE_ANOTHER_DOCUMENTS_TAG_STRUCTURE);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.TAG_CANNOT_BE_MOVED_TO_THE_ANOTHER_DOCUMENTS_TAG_STRUCTURE);
         }
         if (getCurrentStructElem().isFlushed()) {
             throw new PdfException(KernelExceptionMessageConstant.CANNOT_RELOCATE_TAG_WHICH_PARENT_IS_ALREADY_FLUSHED);
@@ -590,7 +591,8 @@ public class TagTreePointer {
      */
     public TagTreePointer flushTag() {
         if (getCurrentStructElem().getPdfObject() == tagStructureContext.getRootTag().getPdfObject()) {
-            throw new PdfException(KernelExceptionMessageConstant.CANNOT_FLUSH_DOCUMENT_ROOT_TAG_BEFORE_DOCUMENT_IS_CLOSED);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.CANNOT_FLUSH_DOCUMENT_ROOT_TAG_BEFORE_DOCUMENT_IS_CLOSED);
         }
         IStructureNode parent = tagStructureContext.getWaitingTagsManager().flushTag(getCurrentStructElem());
         if (parent != null) {
@@ -726,14 +728,16 @@ public class TagTreePointer {
 
     PdfStructElem getCurrentStructElem() {
         if (currentStructElem.isFlushed()) {
-            throw new PdfException(KernelExceptionMessageConstant.TAG_TREE_POINTER_IS_IN_INVALID_STATE_IT_POINTS_AT_FLUSHED_ELEMENT_USE_MOVE_TO_ROOT);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.TAG_TREE_POINTER_IS_IN_INVALID_STATE_IT_POINTS_AT_FLUSHED_ELEMENT_USE_MOVE_TO_ROOT);
         }
 
         PdfIndirectReference indRef = currentStructElem.getPdfObject().getIndirectReference();
         if (indRef != null && indRef.isFree()) {
             // is removed
 
-            throw new PdfException(KernelExceptionMessageConstant.TAG_TREE_POINTER_IS_IN_INVALID_STATE_IT_POINTS_AT_REMOVED_ELEMENT_USE_MOVE_TO_ROOT);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.TAG_TREE_POINTER_IS_IN_INVALID_STATE_IT_POINTS_AT_REMOVED_ELEMENT_USE_MOVE_TO_ROOT);
         }
 
         return currentStructElem;

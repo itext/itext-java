@@ -43,7 +43,6 @@
  */
 package com.itextpdf.barcodes;
 
-
 import com.itextpdf.barcodes.exceptions.BarcodeExceptionMessageConstant;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.kernel.geom.Rectangle;
