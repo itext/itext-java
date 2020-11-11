@@ -75,14 +75,12 @@
     <checkstyle.version>3.1.0</checkstyle.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
     <findsecbugs.version>1.8.0</findsecbugs.version>
-    <hsqldb.version>2.3.3</hsqldb.version>
     <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>
     <jacoco.version>0.8.4</jacoco.version>
     <java.version>1.8</java.version>
     <javadoc-additionalOptions/>
     <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
     <javadoc.version>3.0.1</javadoc.version>
-    <jfreechart.version>1.0.19</jfreechart.version>
     <junit.version>4.12</junit.version>
     <junitparams.version>1.0.4</junitparams.version>
     <logback.version>1.2.3</logback.version>
@@ -97,7 +95,7 @@
     <sampletests>com.itextpdf.test.annotations.type.SampleTest</sampletests>
     <sb-contrib.version>7.4.7</sb-contrib.version>
     <skipTests>true</skipTests>
-    <slf4j.version>1.7.13</slf4j.version>
+    <slf4j.version>1.7.30</slf4j.version>
     <slowtests>com.itextpdf.test.annotations.type.SlowTest</slowtests>
     <sonar.dependencyCheck.htmlReportPath>target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
     <sonar.dependencyCheck.reportPath>target/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
