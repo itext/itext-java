@@ -78,11 +78,9 @@ public class CssBackgroundValidator implements ICssDataTypeValidator {
         if (isPropertyValueCorrespondsPropertyType(propertyValues.get(index))) {
             if (propertyValues.size() == MAX_AMOUNT_OF_VALUES) {
                 if (isMultiValueAllowedForThisType() && isMultiValueAllowedForThisValue(propertyValues.get(index))) {
-                    // TODO DEVSIX-2106 Some extra validations for currently not supported properties.
                     return checkMultiValuePositionXY(propertyValues, index);
-                } else {
-                    return false;
                 }
+                return false;
             }
             return true;
         }
