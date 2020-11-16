@@ -57,6 +57,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -67,12 +68,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfReaderTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfReaderTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfReaderTest/";
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     static final String author = "Alexander Chingarev";
     static final String creator = "iText 6";
@@ -2011,6 +2016,33 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void pdf11VersionValidTest() throws IOException {
         String fileName = sourceFolder + "pdf11Version.pdf";
         new PdfDocument(new PdfReader(fileName));
+    }
+
+    @Test
+    public void noPdfVersionTest() throws IOException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(KernelExceptionMessageConstant.PDF_VERSION_IS_NOT_VALID);
+
+        PdfReader pdfReader = new PdfReader(sourceFolder + "noPdfVersion.pdf");
+        pdfReader.readPdf();
+    }
+
+    @Test
+    public void startxrefIsNotFollowedByANumberTest() throws IOException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(KernelExceptionMessageConstant.PDF_STARTXREF_IS_NOT_FOLLOWED_BY_A_NUMBER);
+
+        PdfReader pdfReader = new PdfReader(sourceFolder + "startxrefIsNotFollowedByANumber.pdf");
+        pdfReader.readXref();
+    }
+
+    @Test
+    public void startxrefNotFoundTest() throws IOException {
+        junitExpectedException.expect(com.itextpdf.io.IOException.class);
+        junitExpectedException.expectMessage(KernelExceptionMessageConstant.PDF_STARTXREF_NOT_FOUND);
+
+        PdfReader pdfReader = new PdfReader(sourceFolder + "startxrefNotFound.pdf");
+        pdfReader.readXref();
     }
 
     private PdfReader pdfDocumentNotReadTestInit() throws IOException {

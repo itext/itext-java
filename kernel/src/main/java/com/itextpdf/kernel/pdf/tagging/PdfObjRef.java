@@ -43,11 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
@@ -81,14 +77,5 @@ public class PdfObjRef extends PdfMcr {
 
     public PdfDictionary getReferencedObject() {
         return ((PdfDictionary) getPdfObject()).getAsDictionary(PdfName.Obj);
-    }
-
-    private static PdfDocument getDocEnsureIndirect(PdfStructElem structElem) {
-        PdfIndirectReference indRef = structElem.getPdfObject().getIndirectReference();
-        if (indRef == null) {
-            throw new PdfException(KernelExceptionMessageConstant.
-                    STRUCTURE_ELEMENT_DICTIONARY_SHALL_BE_AN_INDIRECT_OBJECT_IN_ORDER_TO_HAVE_CHILDREN);
-        }
-        return indRef.getDocument();
     }
 }

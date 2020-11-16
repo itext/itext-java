@@ -63,11 +63,16 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfTargetTest extends ExtendedITextTest {
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void createInstanceTest() {
@@ -320,5 +325,15 @@ public class PdfTargetTest extends ExtendedITextTest {
         PdfTarget target = PdfTarget.create(pdfObject);
 
         Assert.assertFalse(target.isWrappedObjectMustBeIndirect());
+    }
+
+    @Test
+    public void noAnnotationPageReferenceTest() {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(KernelExceptionMessageConstant.ANNOTATION_SHALL_HAVE_REFERENCE_TO_PAGE);
+
+        PdfFileAttachmentAnnotation pdfAnnotation = new PdfFileAttachmentAnnotation(new Rectangle(100, 100));
+        PdfTarget pdfTarget = PdfTarget.create(new PdfDictionary());
+        pdfTarget.setAnnotation(pdfAnnotation, null);
     }
 }

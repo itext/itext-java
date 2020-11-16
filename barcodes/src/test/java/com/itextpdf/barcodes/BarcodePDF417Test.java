@@ -44,6 +44,7 @@ package com.itextpdf.barcodes;
 
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.barcodes.exceptions.BarcodeExceptionMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -62,14 +63,19 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class BarcodePDF417Test extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
     public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodePDF417/";
 
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
+    
     @BeforeClass
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
@@ -450,6 +456,40 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         );
         Assert.assertEquals("Invalid codeword size.", e.getMessage());
         Assert.assertEquals(64, barcode.getOptions());
+    }
+
+    @Test
+    public void lenCodewordsIsNotEnoughTest() {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(BarcodeExceptionMessageConstant.INVALID_CODEWORD_SIZE);
+
+        BarcodePDF417 barcodePDF417 = new BarcodePDF417();
+        barcodePDF417.setOptions(BarcodePDF417.PDF417_USE_RAW_CODEWORDS);
+        barcodePDF417.paintCode();
+    }
+
+    @Test
+    public void lenCodewordsIsTooSmallTest() {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(BarcodeExceptionMessageConstant.INVALID_CODEWORD_SIZE);
+
+        BarcodePDF417 barcodePDF417 = new BarcodePDF417();
+        barcodePDF417.setOptions(BarcodePDF417.PDF417_USE_RAW_CODEWORDS);
+        // lenCodeWords should be bigger than 1
+        barcodePDF417.setLenCodewords(0);
+        barcodePDF417.paintCode();
+    }
+
+    @Test
+    public void lenCodewordsMoreThanMaxDataCodewordsTest() {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(BarcodeExceptionMessageConstant.INVALID_CODEWORD_SIZE);
+
+        BarcodePDF417 barcodePDF417 = new BarcodePDF417();
+        barcodePDF417.setOptions(BarcodePDF417.PDF417_USE_RAW_CODEWORDS);
+        // lenCodeWords should be smaller than MAX_DATA_CODEWORDS
+        barcodePDF417.setLenCodewords(927);
+        barcodePDF417.paintCode();
     }
 
     private PdfFormXObject createMacroBarcodePart(PdfDocument document, String text, float mh, float mw, int segmentId) {
