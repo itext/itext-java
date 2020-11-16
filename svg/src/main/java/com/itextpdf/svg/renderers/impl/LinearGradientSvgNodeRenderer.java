@@ -23,19 +23,18 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.gradients.GradientColorStop;
 import com.itextpdf.kernel.colors.gradients.GradientColorStop.OffsetType;
+import com.itextpdf.kernel.colors.gradients.LinearGradientBuilder;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.colors.gradients.GradientColorStop;
-import com.itextpdf.kernel.colors.gradients.LinearGradientBuilder;
-import com.itextpdf.layout.property.UnitValue;
-import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.svg.SvgConstants.Attributes;
-import com.itextpdf.svg.renderers.INoDrawSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.utils.SvgCoordinateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +42,7 @@ import java.util.List;
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;linearGradient&gt; tag.
  */
-public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRenderer implements INoDrawSvgNodeRenderer {
+public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRenderer {
 
     @Override
     public Color createColor(SvgDrawContext context, Rectangle objectBoundingBox, float objectBoundingBoxMargin,
@@ -148,10 +147,16 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
             double height = currentViewPort.getHeight();
             float em = getCurrentFontSize();
             float rem = context.getCssContext().getRootFontSize();
-            start = new Point(getCoordinateForUserSpaceOnUse(Attributes.X1, x, x, width, em, rem),
-                    getCoordinateForUserSpaceOnUse(Attributes.Y1, y, y, height, em, rem));
-            end = new Point(getCoordinateForUserSpaceOnUse(Attributes.X2, x + width, x, width, em, rem),
-                    getCoordinateForUserSpaceOnUse(Attributes.Y2, y, y, height, em, rem));
+            start = new Point(
+                    SvgCoordinateUtils.getCoordinateForUserSpaceOnUse(
+                            getAttribute(Attributes.X1), x, x, width, em, rem),
+                    SvgCoordinateUtils.getCoordinateForUserSpaceOnUse(
+                            getAttribute(Attributes.Y1), y, y, height, em, rem));
+            end = new Point(
+                    SvgCoordinateUtils.getCoordinateForUserSpaceOnUse(
+                            getAttribute(Attributes.X2), x + width, x, width, em, rem),
+                    SvgCoordinateUtils.getCoordinateForUserSpaceOnUse(
+                            getAttribute(Attributes.Y2), y, y, height, em, rem));
         }
 
         return new Point[] {start, end};
@@ -186,20 +191,5 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
         // would be transformed into (0.75, 0.75) point instead of (1, 1). The reason described
         // as a comment inside the method constructing the gradient transformation
         return absoluteValue * 0.75;
-    }
-
-    private double getCoordinateForUserSpaceOnUse(String attributeName, double defaultValue,
-            double start, double length, float em, float rem) {
-        String attributeValue = getAttribute(attributeName);
-        double absoluteValue;
-        UnitValue unitValue = CssDimensionParsingUtils.parseLengthValueToPt(attributeValue, em, rem);
-        if (unitValue == null) {
-            absoluteValue = defaultValue;
-        } else if (unitValue.getUnitType() == UnitValue.PERCENT) {
-            absoluteValue = start + (length * unitValue.getValue() / 100);
-        } else {
-            absoluteValue = unitValue.getValue();
-        }
-        return absoluteValue;
     }
 }

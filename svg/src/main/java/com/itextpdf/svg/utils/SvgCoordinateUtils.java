@@ -43,6 +43,8 @@
 package com.itextpdf.svg.utils;
 
 import com.itextpdf.kernel.geom.Vector;
+import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 
 public class SvgCoordinateUtils {
@@ -86,4 +88,28 @@ public class SvgCoordinateUtils {
         return Math.acos((double) vectorA.dot(vectorB) / ((double) vectorA.length() * (double) vectorB.length()));
     }
 
+    /**
+     * Returns absolute value for attribute in userSpaceOnUse coordinate system.
+     *
+     * @param attributeValue value of attribute.
+     * @param defaultValue default value.
+     * @param start start border for calculating percent value.
+     * @param length length for calculating percent value.
+     * @param em em value.
+     * @param rem rem value.
+     * @return absolute value in the userSpaceOnUse coordinate system.
+     */
+    public static double getCoordinateForUserSpaceOnUse(String attributeValue, double defaultValue,
+            double start, double length, float em, float rem) {
+        double absoluteValue;
+        final UnitValue unitValue = CssUtils.parseLengthValueToPt(attributeValue, em, rem);
+        if (unitValue == null) {
+            absoluteValue = defaultValue;
+        } else if (unitValue.getUnitType() == UnitValue.PERCENT) {
+            absoluteValue = start + (length * unitValue.getValue() / 100);
+        } else {
+            absoluteValue = unitValue.getValue();
+        }
+        return absoluteValue;
+    }
 }

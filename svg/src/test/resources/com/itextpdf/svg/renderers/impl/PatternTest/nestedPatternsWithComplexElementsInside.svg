@@ -1,4 +1,5 @@
-<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
   <defs>
     <linearGradient x1="2%" y1="2%" x2="8%" y2="8%" id="Gradient1"  gradientUnits="userSpaceOnUse">
             <stop offset="0" stop-color="#ffcc00"/>
@@ -18,7 +19,7 @@
 	
     <pattern id="Pattern" x="0" y="0" width="0.3" height="0.3">
       <rect x="0" y="0" width="85" height="85" fill="url(#inner)"/>
-	  <image x="15" y="15" href="image.png" width="20" height="20"/>
+	  <image x="15" y="15" xlink:href="image.png" width="20" height="20"/>
 	  <circle cx="40" cy="40" r="10" fill="url(#Gradient2)" stroke="blue" stroke-width="1"/>
      
     </pattern>

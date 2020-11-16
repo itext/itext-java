@@ -113,7 +113,7 @@ public class GoogleChartsTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO update cmp file after DEVSIX-3347 will be fixed
+    //TODO DEVSIX-4782 Support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
     public void calendarChart() throws IOException, java.io.IOException, InterruptedException {
         PageSize pageSize = PageSize.A4;
         TestUtils.convertSVGtoPDF(destinationFolder + "calendarChart.pdf",

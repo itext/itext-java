@@ -654,6 +654,19 @@ public final class SvgConstants {
          */
         public static final String ORIENT = "orient";
 
+
+        /**
+         * Attribute defining the coordinate system for attributes x, y, width , and height in pattern.
+         */
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        public static final String PATTERN_UNITS = "patternUnits".toLowerCase();
+
+        /**
+         * Attribute defining the coordinate system for the pattern content.
+         */
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        public static final String PATTERN_CONTENT_UNITS = "patternContentUnits".toLowerCase();
+
         /**
          * Close Path Operator.
          */
@@ -965,13 +978,21 @@ public final class SvgConstants {
 
         /**
          * Value representing the gradient units relation "objectBoundingBox".
+         *
+         * @deprecated it will be removed in the 7.2 update.
+         * Use {@link SvgConstants.Values#OBJECT_BOUNDING_BOX} instead.
          */
-        public static final String GRADIENT_UNITS_OBJECT_BOUNDING_BOX = "objectBoundingBox";
+        @Deprecated
+        public static final String GRADIENT_UNITS_OBJECT_BOUNDING_BOX = Values.OBJECT_BOUNDING_BOX;
 
         /**
          * Value representing the gradient units relation "userSpaceOnUse".
+         *
+         * @deprecated it will be removed in the 7.2 update.
+         * Use {@link SvgConstants.Values#USER_SPACE_ON_USE} instead.
          */
-        public static final String GRADIENT_UNITS_USER_SPACE_ON_USE = "userSpaceOnUse";
+        @Deprecated
+        public static final String GRADIENT_UNITS_USER_SPACE_ON_USE = Values.USER_SPACE_ON_USE;
 
         /**
          * Value representing the meet for preserve aspect ratio calculations.
@@ -982,6 +1003,11 @@ public final class SvgConstants {
          * Value representing the "none" value".
          */
         public static final String NONE = "none";
+
+        /**
+         * Value representing the units relation "objectBoundingBox".
+         */
+        public static final String OBJECT_BOUNDING_BOX = "objectBoundingBox";
 
         /**
          * The value representing slice for the preserve aspect ratio calculations;
@@ -1028,6 +1054,11 @@ public final class SvgConstants {
          * The value for markerUnits that represent values in a coordinate system which has a single unit equal the size in user units of the current stroke width.
          */
         public static final String STROKEWIDTH = "strokeWidth";
+
+        /**
+         * Value representing the units relation "userSpaceOnUse".
+         */
+        public static final String USER_SPACE_ON_USE = "userSpaceOnUse";
 
         /**
          * Value representing how to align when scaling.

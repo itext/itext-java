@@ -1,31 +1,32 @@
-<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
   <defs>
     <pattern id="cm" viewBox="0 0 10 10" width="100%" height="100%">
-	   <image href="image.png" width="0.3cm" height="0.3cm"/>
+	   <image xlink:href="image.png" width="0.3cm" height="0.3cm"/>
     </pattern>
 	
 	<pattern id="mm" viewBox="0 0 10 10" width="100%" height="100%">
-      <image href="image.png" width="3mm" height="3mm"/>
+      <image xlink:href="image.png" width="3mm" height="3mm"/>
     </pattern>
 	
 	<pattern id="pt" viewBox="0 0 10 10" width="100%" height="100%">
-      <image href="image.png" width="10pt" height="10pt"/>
+      <image xlink:href="image.png" width="10pt" height="10pt"/>
     </pattern>
 	
 	<pattern id="px" viewBox="0 0 10 10" width="100%" height="100%">
-       <image href="image.png" width="10px" height="10px"/>		
+       <image xlink:href="image.png" width="10px" height="10px"/>
     </pattern>
 	
 	<pattern id="ex" viewBox="0 0 10 10" width="100%" height="100%">
-      <image href="image.png" width="2ex" height="2ex"/>
+      <image xlink:href="image.png" width="2ex" height="2ex"/>
     </pattern>
 	
 	<pattern id="em" viewBox="0 0 10 10" width="100%" height="100%">
-      <image href="image.png" width="0.8em" height="0.8em"/>
+      <image xlink:href="image.png" width="0.8em" height="0.8em"/>
     </pattern>
 	
 	<pattern id="in" viewBox="0 0 10 10" width="100%" height="100%">
-       <image href="image.png" width="0.15in" height="0.15in"/>
+       <image xlink:href="image.png" width="0.15in" height="0.15in"/>
     </pattern>
   </defs>
   

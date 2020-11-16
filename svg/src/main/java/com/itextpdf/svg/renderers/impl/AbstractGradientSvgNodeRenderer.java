@@ -23,49 +23,31 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.geom.AffineTransform;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.colors.gradients.GradientSpreadMethod;
+import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.SvgConstants.Values;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.svg.renderers.ISvgPaintServer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.TransformUtils;
 
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link ISvgNodeRenderer} abstract implementation for gradient tags
  * (&lt;linearGradient&gt;, &lt;radialGradient&gt;).
  */
-public abstract class AbstractGradientSvgNodeRenderer extends NoDrawOperationSvgNodeRenderer {
+public abstract class AbstractGradientSvgNodeRenderer extends NoDrawOperationSvgNodeRenderer implements
+        ISvgPaintServer {
 
     @Override
     protected void doDraw(SvgDrawContext context) {
         throw new UnsupportedOperationException(SvgLogMessageConstant.DRAW_NO_DRAW);
     }
-
-    /**
-     * Creates the {@link Color} that represents the corresponding gradient for specified object box
-     *
-     * @param context                 the current svg draw context
-     * @param objectBoundingBox       the coloring object bounding box without any adjustments
-     *                                (additional stroke width or others)
-     * @param objectBoundingBoxMargin the objectBoundingBoxMargin of the object bounding box
-     *                                to be colored (for example - the part of stroke width
-     *                                that exceeds the object bounding box, i.e. the half of stroke
-     *                                width value)
-     * @param parentOpacity           current parent opacity modifier
-     * @return the created color
-     */
-    public abstract Color createColor(SvgDrawContext context, Rectangle objectBoundingBox,
-            float objectBoundingBoxMargin,
-            float parentOpacity);
 
     /**
      * Checks whether the gradient units values are on user space on use or object bounding box
@@ -75,9 +57,9 @@ public abstract class AbstractGradientSvgNodeRenderer extends NoDrawOperationSvg
      */
     protected boolean isObjectBoundingBoxUnits() {
         String gradientUnits = getAttribute(Attributes.GRADIENT_UNITS);
-        if (Values.GRADIENT_UNITS_USER_SPACE_ON_USE.equals(gradientUnits)) {
+        if (Values.USER_SPACE_ON_USE.equals(gradientUnits)) {
             return false;
-        } else if (gradientUnits != null && !Values.GRADIENT_UNITS_OBJECT_BOUNDING_BOX.equals(gradientUnits)) {
+        } else if (gradientUnits != null && !Values.OBJECT_BOUNDING_BOX.equals(gradientUnits)) {
             LoggerFactory.getLogger(this.getClass()).warn(MessageFormatUtil.format(
                     SvgLogMessageConstant.GRADIENT_INVALID_GRADIENT_UNITS_LOG, gradientUnits));
         }

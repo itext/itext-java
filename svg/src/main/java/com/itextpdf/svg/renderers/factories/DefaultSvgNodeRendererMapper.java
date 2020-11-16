@@ -44,16 +44,17 @@ package com.itextpdf.svg.renderers.factories;
 
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.ClipPathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.DefsSvgNodeRenderer;
-import com.itextpdf.svg.renderers.impl.GroupSvgNodeRenderer;
-import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.EllipseSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.GroupSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.ImageSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.LineSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.LinearGradientSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.MarkerSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.PatternSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PolygonSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PolylineSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.RectangleSvgNodeRenderer;
@@ -97,6 +98,7 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
         result.put(SvgConstants.Tags.LINE, LineSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.LINEAR_GRADIENT, LinearGradientSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.MARKER, MarkerSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.PATTERN, PatternSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.PATH, PathSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.POLYGON, PolygonSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.POLYLINE, PolylineSvgNodeRenderer.class);
@@ -166,8 +168,6 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
         ignored.add(SvgConstants.Tags.MASK);
         ignored.add(SvgConstants.Tags.METADATA);
         ignored.add(SvgConstants.Tags.MISSING_GLYPH);
-
-        ignored.add(SvgConstants.Tags.PATTERN);
 
         ignored.add(SvgConstants.Tags.RADIAL_GRADIENT);
 

@@ -1,31 +1,32 @@
-<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
   <defs>
     <pattern id="cm" patternContentUnits="objectBoundingBox" width="50%" height="50%">
-	   <image href="image.png" width="0.02cm" height="0.02cm"/>
+	   <image xlink:href="image.png" width="0.02cm" height="0.02cm"/>
     </pattern>
 	
 	<pattern id="mm" patternContentUnits="objectBoundingBox" width="50%" height="50%">
-      <image href="image.png" width="0.2mm" height="0.2mm"/>
+      <image xlink:href="image.png" width="0.2mm" height="0.2mm"/>
     </pattern>
 	
 	<pattern id="pt" patternContentUnits="objectBoundingBox" width="50%" height="50%">
-      <image href="image.png" width="0.5pt" height="0.5pt"/>
+      <image xlink:href="image.png" width="0.5pt" height="0.5pt"/>
     </pattern>
 	
 	<pattern id="px" patternContentUnits="objectBoundingBox" width="50%" height="50%">
-       <image href="image.png" width="0.5px" height="0.5px"/>		
+       <image xlink:href="image.png" width="0.5px" height="0.5px"/>
     </pattern>
 	
 	<pattern id="ex" patternContentUnits="objectBoundingBox" width="50%" height="50%">
-      <image href="image.png" width="0.09ex" height="0.09ex"/>
+      <image xlink:href="image.png" width="0.09ex" height="0.09ex"/>
     </pattern>
 	
 	<pattern id="em" patternContentUnits="objectBoundingBox" width="50%" height="50%">
-      <image href="image.png" width="0.05em" height="0.05em"/>
+      <image xlink:href="image.png" width="0.05em" height="0.05em"/>
     </pattern>
 	
 	<pattern id="in" patternContentUnits="objectBoundingBox" width="50%" height="50%">
-       <image href="image.png" width="0.01in" height="0.01in"/>
+       <image xlink:href="image.png" width="0.01in" height="0.01in"/>
     </pattern>
   </defs>
   

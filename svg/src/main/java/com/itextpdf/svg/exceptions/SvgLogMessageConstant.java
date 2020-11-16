@@ -80,6 +80,8 @@ public final class SvgLogMessageConstant {
     public static final String NAMED_OBJECT_NULL = "A named object can't be null.";
     public static final String NONINVERTIBLE_TRANSFORMATION_MATRIX_USED_IN_CLIP_PATH = "Non-invertible transformation matrix was used in a clipping path context. Clipped elements may show undefined behavior.";
     public static final String NOROOT = "No root found";
+    public static final String PATTERN_INVALID_PATTERN_UNITS_LOG = "Could not recognize patternUnits value {0}";
+    public static final String PATTERN_INVALID_PATTERN_CONTENT_UNITS_LOG = "Could not recognize patternContentUnits value {0}";
     public static final String PATH_WRONG_NUMBER_OF_ARGUMENTS = "Path operator {0} has received {1} arguments, but expects between {2} and {3} arguments. \n Resulting SVG will be incorrect.";
     public static final String PARAMETER_CANNOT_BE_NULL = "Parameters for this method cannot be null.";
     public static final String POINTS_ATTRIBUTE_INVALID_LIST = "Points attribute {0} on polyline tag does not contain a valid set of points";

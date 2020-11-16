@@ -53,14 +53,15 @@ import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;
-import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.css.impl.SvgNodeRendererInheritanceResolver;
 import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.svg.renderers.ISvgPaintServer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.TransformUtils;
 
@@ -345,7 +346,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                     this.doFill = !SvgConstants.Values.NONE.equalsIgnoreCase(fillRawValue);
 
                     if (doFill && canElementFill()) {
-
                         float fillOpacity = getOpacityByAttributeName(
                                 SvgConstants.Attributes.FILL_OPACITY, generalOpacity);
 
@@ -388,7 +388,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
                         Color strokeColor = null;
                         TransparentColor transparentColor = getColorFromAttributeValue(
-                                context, strokeRawValue, strokeWidth / 2, strokeOpacity);
+                                context, strokeRawValue, (float) ((double) strokeWidth / 2.0), strokeOpacity);
                         if (transparentColor != null) {
                             strokeColor = transparentColor.getColor();
                             strokeOpacity = transparentColor.getOpacity();
@@ -457,14 +457,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             Color resolvedColor = null;
             float resolvedOpacity = 1;
             final String normalizedName = tokenValue.substring(5, tokenValue.length() - 1).trim();
-            final ISvgNodeRenderer template = context.getNamedObject(normalizedName);
-            // Clone template
-            final ISvgNodeRenderer colorRenderer = template == null ? null : template.createDeepCopy();
-            // Resolve parent inheritance
-            SvgNodeRendererInheritanceResolver.applyInheritanceToSubTree(this, colorRenderer, context.getCssContext());
-
-            if (colorRenderer instanceof AbstractGradientSvgNodeRenderer) {
-                resolvedColor = ((AbstractGradientSvgNodeRenderer) colorRenderer).createColor(
+            final ISvgNodeRenderer colorRenderer = context.getNamedObject(normalizedName);
+            if (colorRenderer instanceof ISvgPaintServer) {
+                resolvedColor = ((ISvgPaintServer) colorRenderer).createColor(
                         context, getObjectBoundingBox(context), objectBoundingBoxMargin, parentOpacity);
             }
             if (resolvedColor != null) {

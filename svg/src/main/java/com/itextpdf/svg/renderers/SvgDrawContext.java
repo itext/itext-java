@@ -70,6 +70,7 @@ public class SvgDrawContext {
     private final Deque<PdfCanvas> canvases = new LinkedList<>();
     private final Deque<Rectangle> viewports = new LinkedList<>();
     private final Stack<String> useIds = new Stack<>();
+    private final Stack<String> patternIds = new Stack<>();
     private final ResourceResolver resourceResolver;
     private final FontProvider fontProvider;
     private FontSet tempFonts;
@@ -375,5 +376,28 @@ public class SvgDrawContext {
      */
     public void setCssContext(SvgCssContext cssContext) {
         this.cssContext = cssContext;
+    }
+
+    /**
+     * Add pattern id to stack. Check if the id is already in the stack.
+     * If it is, then return {@code false} and not add, if it is not - add and return {@code true}.
+     *
+     * @param patternId pattern id
+     * @return {@code true} if pattern id was not on the stack and was pushed; {@code false} if it is on the stack
+     */
+    public boolean pushPatternId(String patternId) {
+        if (this.patternIds.contains(patternId)) {
+            return false;
+        } else {
+            this.patternIds.push(patternId);
+            return true;
+        }
+    }
+
+    /**
+     * Pops the last template id from the stack.
+     */
+    public void popPatternId() {
+        this.patternIds.pop();
     }
 }

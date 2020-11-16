@@ -105,8 +105,12 @@ public class SvgStyleResolver implements ICssResolver {
     public static final Set<IStyleInheritance> INHERITANCE_RULES = Collections.unmodifiableSet(new HashSet<>(
             Arrays.asList((IStyleInheritance) new CssInheritance(), (IStyleInheritance) new SvgAttributeInheritance())));
 
+    private static final String[] ELEMENTS_INHERITING_PARENT_STYLES = new String[] {Tags.MARKER, Tags.LINEAR_GRADIENT,
+            Tags.PATTERN};
+
     private static final float DEFAULT_FONT_SIZE = CssDimensionParsingUtils.parseAbsoluteFontSize(
             CssDefaults.getDefaultValue(SvgConstants.Attributes.FONT_SIZE));
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SvgStyleResolver.class);
 
     private CssStyleSheet css;
@@ -274,11 +278,11 @@ public class SvgStyleResolver implements ICssResolver {
     }
 
     private static boolean onlyNativeStylesShouldBeResolved(IElementNode element) {
-        if (Tags.MARKER.equals(element.name()) || SvgStyleResolver.isElementNested(element, Tags.MARKER)) {
-            return false;
-        }
-        if (Tags.LINEAR_GRADIENT.equals(element.name())) {
-            return false;
+        for (final String elementInheritingParentStyles : ELEMENTS_INHERITING_PARENT_STYLES) {
+            if (elementInheritingParentStyles.equals(element.name())
+                    || SvgStyleResolver.isElementNested(element, elementInheritingParentStyles)) {
+                return false;
+            }
         }
         return SvgStyleResolver.isElementNested(element, Tags.DEFS);
     }
