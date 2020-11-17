@@ -52,6 +52,7 @@ import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignaturePolicyInfo;
 import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -120,7 +121,6 @@ public class PadesSigTest extends ExtendedITextTest {
 
     @Test
     public void padesEpesProfileTest01() throws IOException, GeneralSecurityException {
-
         String notExistingSignaturePolicyOid = "2.16.724.631.3.1.124.2.29.9";
         ASN1ObjectIdentifier asn1PolicyOid = ASN1ObjectIdentifier.getInstance(new ASN1ObjectIdentifier(notExistingSignaturePolicyOid));
         AlgorithmIdentifier hashAlg = new AlgorithmIdentifier(new ASN1ObjectIdentifier(DigestAlgorithms.getAllowedDigest("SHA1")));
@@ -137,16 +137,39 @@ public class PadesSigTest extends ExtendedITextTest {
         basicCheckSignedDoc(destinationFolder + "padesEpesProfileTest01.pdf", "Signature1");
     }
 
-    private void signApproval(String signCertFileName, String outFileName) throws IOException, GeneralSecurityException {
-        signApproval(signCertFileName, outFileName, null);
+    @Test
+    public void signaturePolicyInfoUnavailableUrlTest() throws IOException, GeneralSecurityException {
+        String signedFileName = destinationFolder + "signaturePolicyInfoUnavailableUrl_signed.pdf";
+
+        SignaturePolicyInfo spi = new SignaturePolicyInfo("1.2.3.4.5.6.7.8.9.10",
+                "aVRleHQ0TGlmZVJhbmRvbVRleHQ=", "SHA-1",
+                "https://signature-policy.org/not-available");
+
+        signApproval(certsSrc + "signCertRsa01.p12", signedFileName, spi);
+
+        basicCheckSignedDoc(signedFileName, "Signature1");
     }
 
-    private void signApproval(String signCertFileName, String outFileName, SignaturePolicyIdentifier sigPolicyInfo) throws IOException, GeneralSecurityException {
+    private void signApproval(String signCertFileName, String outFileName) throws IOException, GeneralSecurityException {
+        signApproval(signCertFileName, outFileName, null, null);
+    }
+
+    private void signApproval(String signCertFileName, String outFileName, SignaturePolicyInfo signaturePolicyInfo)
+            throws IOException, GeneralSecurityException {
+        signApproval(signCertFileName, outFileName, null, signaturePolicyInfo);
+    }
+
+    private void signApproval(String signCertFileName, String outFileName, SignaturePolicyIdentifier signaturePolicyId)
+            throws IOException, GeneralSecurityException {
+        signApproval(signCertFileName, outFileName, signaturePolicyId, null);
+    }
+
+    private void signApproval(String signCertFileName, String outFileName, SignaturePolicyIdentifier sigPolicyIdentifier,
+                              SignaturePolicyInfo sigPolicyInfo) throws IOException, GeneralSecurityException {
         String srcFileName = sourceFolder + "helloWorldDoc.pdf";
         Certificate[] signChain = Pkcs12FileHelper.readFirstChain(signCertFileName, password);
         PrivateKey signPrivateKey = Pkcs12FileHelper.readFirstKey(signCertFileName, password, password);
         IExternalSignature pks = new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
-
 
         PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(outFileName), new StampingProperties());
         signer.setFieldName("Signature1");
@@ -156,10 +179,15 @@ public class PadesSigTest extends ExtendedITextTest {
                 .setLocation("TestCity")
                 .setLayer2Text("Approval test signature.\nCreated by iText7.");
 
-        if (sigPolicyInfo == null) {
-            signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+        if (sigPolicyIdentifier != null) {
+            signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0,
+                    PdfSigner.CryptoStandard.CADES, sigPolicyIdentifier);
+        } else if (sigPolicyInfo != null) {
+            signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0,
+                    PdfSigner.CryptoStandard.CADES, sigPolicyInfo);
         } else {
-            signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0, PdfSigner.CryptoStandard.CADES, sigPolicyInfo);
+            signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0,
+                    PdfSigner.CryptoStandard.CADES);
         }
     }
 
