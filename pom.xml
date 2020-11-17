@@ -81,7 +81,7 @@
     <javadoc-additionalOptions/>
     <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
     <javadoc.version>3.0.1</javadoc.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
     <junitparams.version>1.0.4</junitparams.version>
     <logback.version>1.2.3</logback.version>
     <maven.compiler.source>1.8</maven.compiler.source>
