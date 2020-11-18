@@ -37,10 +37,7 @@ public class TargetCounterHandler {
      */
     private Map<String, Integer> renderersPages = new HashMap<>();
 
-    /**
-     * Indicates if relayout is required.
-     */
-    private boolean isRelayoutRequired = false;
+    private Map<String, Integer> previousRenderersPages = new HashMap<>();
 
     /**
      * Creates a copy of the given {@link TargetCounterHandler} instance.
@@ -49,6 +46,7 @@ public class TargetCounterHandler {
      */
     public TargetCounterHandler(TargetCounterHandler targetCounterHandler) {
         this.renderersPages = targetCounterHandler.renderersPages;
+        this.previousRenderersPages = targetCounterHandler.previousRenderersPages;
     }
 
     /**
@@ -66,12 +64,8 @@ public class TargetCounterHandler {
         if (id != null) {
             final TargetCounterHandler targetCounterHandler = getTargetCounterHandler(renderer);
             if (targetCounterHandler != null && renderer.getOccupiedArea() != null) {
-                final Integer prevPageNumber = targetCounterHandler.renderersPages.get(id);
                 final int currentPageNumber = renderer.getOccupiedArea().getPageNumber();
-                if (prevPageNumber == null || currentPageNumber > prevPageNumber) {
-                    targetCounterHandler.renderersPages.put(id, currentPageNumber);
-                    targetCounterHandler.isRelayoutRequired = true;
-                }
+                targetCounterHandler.renderersPages.put(id, currentPageNumber);
             }
         }
     }
@@ -85,7 +79,7 @@ public class TargetCounterHandler {
      */
     public static Integer getPageByID(IRenderer renderer, String id) {
         final TargetCounterHandler targetCounterHandler = getTargetCounterHandler(renderer);
-        return targetCounterHandler == null ? null : targetCounterHandler.renderersPages.get(id);
+        return targetCounterHandler == null ? null : targetCounterHandler.previousRenderersPages.get(id);
     }
 
     /**
@@ -95,7 +89,7 @@ public class TargetCounterHandler {
      * @param id target id
      * @return true if value is defined for this id, false otherwise
      */
-    public static boolean isValueDefinedForThisID(IRenderer renderer, String id) {
+    public static boolean isValueDefinedForThisId(IRenderer renderer, String id) {
         final TargetCounterHandler targetCounterHandler = getTargetCounterHandler(renderer);
         return targetCounterHandler != null && targetCounterHandler.renderersPages.containsKey(id);
     }
@@ -106,7 +100,19 @@ public class TargetCounterHandler {
      * @return true if relayout is required, false otherwise
      */
     public boolean isRelayoutRequired() {
-        return isRelayoutRequired;
+        for (Map.Entry<String, Integer> rendererPage : renderersPages.entrySet()) {
+            if (!rendererPage.getValue().equals(previousRenderersPages.get(rendererPage.getKey()))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Prepares handler to relayout.
+     */
+    public void prepareHandlerToRelayout() {
+        previousRenderersPages = new HashMap<>(renderersPages);
     }
 
     private static TargetCounterHandler getTargetCounterHandler(IRenderer renderer) {

@@ -48,18 +48,21 @@ public class TargetCounterHandlerTest extends ExtendedITextTest {
 
     @Test
     public void BlockRendererAddByIDTest() {
+        DocumentRenderer documentRenderer = new DocumentRenderer(null);
         DivRenderer divRenderer = new DivRenderer(new Div());
-        divRenderer.setParent(new DocumentRenderer(null));
+        divRenderer.setParent(documentRenderer);
         String id = "id5";
         divRenderer.setProperty(Property.ID, id);
         LayoutContext layoutContext = new LayoutContext(new LayoutArea(4, new Rectangle(50, 50)));
         divRenderer.layout(layoutContext);
 
+        documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
         Assert.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(divRenderer, id));
     }
 
     @Test
     public void TextRendererAddByIDTest() throws IOException {
+        DocumentRenderer documentRenderer = new DocumentRenderer(null);
         TextRenderer textRenderer = new TextRenderer(new Text("a"));
 
         textRenderer.setProperty(Property.TEXT_RISE, 20F);
@@ -68,57 +71,69 @@ public class TargetCounterHandlerTest extends ExtendedITextTest {
         textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(StandardFonts.HELVETICA));
         textRenderer.setProperty(Property.FONT_SIZE, new UnitValue(UnitValue.POINT, 20));
 
-        textRenderer.setParent(new DocumentRenderer(null));
+        textRenderer.setParent(documentRenderer);
         String id = "id7";
         textRenderer.setProperty(Property.ID, id);
         LayoutContext layoutContext = new LayoutContext(new LayoutArea(4, new Rectangle(50, 50)));
         textRenderer.layout(layoutContext);
 
+        documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
         Assert.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(textRenderer, id));
     }
 
     @Test
     public void TableRendererAddByIDTest() {
+        DocumentRenderer documentRenderer = new DocumentRenderer(null);
         TableRenderer tableRenderer = new TableRenderer(new Table(5));
-        tableRenderer.setParent(new DocumentRenderer(null));
+        tableRenderer.setParent(documentRenderer);
         String id = "id5";
         tableRenderer.setProperty(Property.ID, id);
         LayoutContext layoutContext = new LayoutContext(new LayoutArea(4, new Rectangle(50, 50)));
         tableRenderer.layout(layoutContext);
 
+        documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
         Assert.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(tableRenderer, id));
     }
 
     @Test
     public void ParagraphRendererAddByIDTest() {
+        DocumentRenderer documentRenderer = new DocumentRenderer(null);
         ParagraphRenderer paragraphRenderer = new ParagraphRenderer(new Paragraph());
-        paragraphRenderer.setParent(new DocumentRenderer(null));
+        paragraphRenderer.setParent(documentRenderer);
         String id = "id5";
         paragraphRenderer.setProperty(Property.ID, id);
         LayoutContext layoutContext = new LayoutContext(new LayoutArea(4, new Rectangle(50, 50)));
         paragraphRenderer.layout(layoutContext);
+
+        documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
         Assert.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(paragraphRenderer, id));
     }
 
     @Test
     public void ImageRendererAddByIDTest() {
+        DocumentRenderer documentRenderer = new DocumentRenderer(null);
         ImageRenderer imageRenderer = new ImageRenderer(new Image(ImageDataFactory.createRawImage(new byte[]{50, 21})));
-        imageRenderer.setParent(new DocumentRenderer(null));
+        imageRenderer.setParent(documentRenderer);
         String id = "id6";
         imageRenderer.setProperty(Property.ID, id);
         LayoutContext layoutContext = new LayoutContext(new LayoutArea(4, new Rectangle(50, 50)));
         imageRenderer.layout(layoutContext);
+
+        documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
         Assert.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(imageRenderer, id));
     }
 
     @Test
     public void LineRendererAddByIDTest() {
+        DocumentRenderer documentRenderer = new DocumentRenderer(null);
         LineRenderer lineRenderer = new LineRenderer();
-        lineRenderer.setParent(new DocumentRenderer(null));
+        lineRenderer.setParent(documentRenderer);
         String id = "id6";
         lineRenderer.setProperty(Property.ID, id);
         LayoutContext layoutContext = new LayoutContext(new LayoutArea(4, new Rectangle(50, 50)));
         lineRenderer.layout(layoutContext);
+
+        documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
         Assert.assertEquals((Integer) 4, TargetCounterHandler.getPageByID(lineRenderer, id));
     }
 }

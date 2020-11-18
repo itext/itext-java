@@ -72,6 +72,38 @@ public class TargetCounterHandlerUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    public void isValueDefinedForThisIdNotDocumentRendererTest() {
+        RootRenderer documentRenderer = new RootRenderer() {
+
+            @Override
+            public IRenderer getNextRenderer() {
+                return null;
+            }
+
+            @Override
+            protected void flushSingleRenderer(IRenderer resultRenderer) {
+            }
+
+            @Override
+            protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
+                return null;
+            }
+        };
+        final String id = "id";
+
+        IRenderer renderer = new TextRenderer(new Text("renderer")) {
+            @Override
+            public LayoutArea getOccupiedArea() {
+                return null;
+            }
+        };
+        renderer.setParent(documentRenderer);
+        renderer.setProperty(Property.ID, id);
+
+        Assert.assertFalse(TargetCounterHandler.isValueDefinedForThisId(renderer, id));
+    }
+
+    @Test
     public void addAndGetPageByDestinationNullOccupiedAreaTest() {
         DocumentRenderer documentRenderer = new DocumentRenderer(null);
         String id = "id";
@@ -107,6 +139,7 @@ public class TargetCounterHandlerUnitTest extends ExtendedITextTest {
         TargetCounterHandler.addPageByID(renderer);
         TargetCounterHandler.addPageByID(renderer);
 
+        documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
         Integer page = TargetCounterHandler.getPageByID(renderer, id);
         Assert.assertEquals((Integer) 8, page);
     }
@@ -128,8 +161,9 @@ public class TargetCounterHandlerUnitTest extends ExtendedITextTest {
         TargetCounterHandler.addPageByID(renderer);
         TargetCounterHandler.addPageByID(renderer);
 
+        documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
         Integer page = TargetCounterHandler.getPageByID(renderer, id);
-        Assert.assertEquals((Integer) 4, page);
+        Assert.assertEquals((Integer) 2, page);
     }
 
     @Test
@@ -148,6 +182,7 @@ public class TargetCounterHandlerUnitTest extends ExtendedITextTest {
         renderer.setProperty(Property.ID, id);
         TargetCounterHandler.addPageByID(renderer);
 
+        documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
         Integer page = TargetCounterHandler.getPageByID(renderer, id);
         Assert.assertEquals((Integer) expectedPage, page);
 
@@ -172,7 +207,51 @@ public class TargetCounterHandlerUnitTest extends ExtendedITextTest {
         };
         renderer.setParent(documentRenderer);
         renderer.setProperty(Property.ID, id);
+        Assert.assertFalse(documentRenderer.isRelayoutRequired());
         TargetCounterHandler.addPageByID(renderer);
         Assert.assertTrue(documentRenderer.isRelayoutRequired());
+        documentRenderer.getTargetCounterHandler().prepareHandlerToRelayout();
+        Assert.assertFalse(documentRenderer.isRelayoutRequired());
+    }
+
+    @Test
+    public void copyConstructorTest() {
+        DocumentRenderer documentRenderer = new DocumentRenderer(null);
+        String id = "id";
+
+        IRenderer renderer = new TextRenderer(new Text("renderer")) {
+
+            @Override
+            public LayoutArea getOccupiedArea() {
+                int page = 4;
+                return new LayoutArea(page, new Rectangle(50, 50));
+            }
+        };
+        renderer.setParent(documentRenderer);
+        renderer.setProperty(Property.ID, id);
+        TargetCounterHandler.addPageByID(renderer);
+        TargetCounterHandler copy = new TargetCounterHandler(documentRenderer.getTargetCounterHandler());
+        Assert.assertTrue(copy.isRelayoutRequired());
+    }
+
+    @Test
+    public void isValueDefinedForThisId() {
+        DocumentRenderer documentRenderer = new DocumentRenderer(null);
+        String id = "id";
+        String notAddedId = "not added id";
+
+        IRenderer renderer = new TextRenderer(new Text("renderer")) {
+
+            @Override
+            public LayoutArea getOccupiedArea() {
+                int page = 4;
+                return new LayoutArea(page, new Rectangle(50, 50));
+            }
+        };
+        renderer.setParent(documentRenderer);
+        renderer.setProperty(Property.ID, id);
+        TargetCounterHandler.addPageByID(renderer);
+        Assert.assertTrue(TargetCounterHandler.isValueDefinedForThisId(renderer, id));
+        Assert.assertFalse(TargetCounterHandler.isValueDefinedForThisId(renderer, notAddedId));
     }
 }

@@ -42,7 +42,6 @@
  */
 package com.itextpdf.kernel.numbering;
 
-import com.itextpdf.kernel.numbering.GreekAlphabetNumbering;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
@@ -90,5 +89,10 @@ public class GreekAlphabetNumberingTest extends ExtendedITextTest {
         }
         // Symbol font use regular WinAnsi codes for greek letters.
         Assert.assertEquals("abgdezhqiklmnxoprstufcywaa", builder.toString());
+    }
+
+    @Test
+    public void intIsNotEnoughForInternalCalculationsTest() {
+        Assert.assertEquals("ζλαββωσ", GreekAlphabetNumbering.toGreekAlphabetNumberLowerCase(1234567890));
     }
 }
