@@ -1918,9 +1918,12 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 if (catalog.getPdfObject().containsKey(PdfName.Version)) {
                     // The version of the PDF specification to which the document conforms (for example, 1.4)
                     // if later than the version specified in the file's header
-                    PdfVersion catalogVersion = PdfVersion.fromPdfName(catalog.getPdfObject().getAsName(PdfName.Version));
-                    if (catalogVersion.compareTo(pdfVersion) > 0) {
-                        pdfVersion = catalogVersion;
+                    try {
+                        PdfVersion catalogVersion = PdfVersion.fromPdfName(catalog.getPdfObject().getAsName(PdfName.Version));
+                        if (catalogVersion.compareTo(pdfVersion) > 0) {
+                            pdfVersion = catalogVersion;
+                        }
+                    } catch (IllegalArgumentException ignored){
                     }
                 }
                 PdfStream xmpMetadataStream = catalog.getPdfObject().getAsStream(PdfName.Metadata);

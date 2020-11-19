@@ -451,6 +451,14 @@ public class PdfDocumentTest extends ExtendedITextTest {
         ignoreTagStructureDocument.close();
     }
 
+    @Test
+    public void openDocumentWithInvalidCatalogVersionTest() throws IOException {
+        PdfReader reader = new PdfReader(sourceFolder + "sample-with-invalid-catalog-version.pdf");
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertNotNull(pdfDocument);
+    }
+
+
     private static class IgnoreTagStructurePdfDocument extends PdfDocument {
 
         IgnoreTagStructurePdfDocument(PdfReader reader) {
