@@ -524,6 +524,14 @@ public class PdfDocumentTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(destination, cmp, DESTINATION_FOLDER, "diff_"));
     }
 
+    @Test
+    public void openDocumentWithInvalidCatalogVersionTest() throws IOException {
+        PdfReader reader = new PdfReader(SOURCE_FOLDER + "sample-with-invalid-catalog-version.pdf");
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertNotNull(pdfDocument);
+    }
+
+
     private static class IgnoreTagStructurePdfDocument extends PdfDocument {
 
         IgnoreTagStructurePdfDocument(PdfReader reader) {
