@@ -68,8 +68,7 @@ Before you submit your pull request consider the following guidelines:
 * Verify that your proposed change hasn't already been addressed in the develop branch.
 * Don't send a separate pull request for every single file you change.  
 * Please sign the [iText Contributor License Agreement (iCLA)](#cla) before sending pull
-  requests for any change of more than 20 significant lines of code (we're not counting curly braces and other syntactical sugar).
-  We cannot accept code without this agreement.
+  requests. We cannot accept code without this agreement.
 * Fork the iText repository on GitHub.
 * Clone your iText fork to your local machine.
 * Make your changes, **including appropriate test cases**.
@@ -100,8 +99,7 @@ To ensure consistency throughout the source code, keep these rules in mind as yo
 
 * We develop in Java first, and then port to .NET, so code submissions in Java are preferred.
   Nevertheless this shouldn't stop you from making a good pull request to the .NET port.
-* All Java code **must** be Java 7. Sorry, no lambda expressions or other Java 8 language features.
-* All features or bug fixes **must be tested** by one or more [unit tests][unit-testing].
+* All features or bug fixes **must be tested** by one or more unit tests.
 * All public API methods **must be documented** with JavaDoc. To see how we document our APIs, please check
   out the existing [javadocs][javadocs].
 * We follow the rules contained in
@@ -151,8 +149,7 @@ reference JIRA or GitHub issues that this commit **Closes**.
 
 ## <a name="cla">Signing the iCLA</a>
 
-Please sign the **iText Contributor License Agreement (iCLA)** before sending pull requests. For any larger code
-changes (more than 20 lines of significant code) to be accepted, the iCLA must be signed. It's a quick process, we promise!
+Please sign the [**iText Contributor License Agreement (iCLA)**][cla] before sending pull requests. For any code changes to be accepted, the iCLA must be signed. It's a quick process, we promise!
 
 We'll need you to [(digitally) sign and then email, fax or mail the form][cla].
 
@@ -165,18 +162,17 @@ We use the [Stack Exchange][stackoverflow] network for free support and [GitHub]
 * StackExchange: [http://stackexchange.com/legal](http://stackexchange.com/legal)
 * Github: [https://help.github.com/articles/github-terms-of-service/](https://help.github.com/articles/github-terms-of-service/)
 
-[cla]: http://itextpdf.com/policy
+[cla]: https://itextpdf.com/en/how-buy/legal/itext-contributor-license-agreement
 [coc]: CODE_OF_CONDUCT.md
 [github]: https://github.com/itext/itext7
-[java-style-guide]: http://www.oracle.com/technetwork/java/codeconvtoc-136057.html
-[javadocs]: http://itextpdf.com/api
+[java-style-guide]: https://www.oracle.com/technetwork/java/codeconvtoc-136057.html
+[javadocs]: https://itextpdf.com/api
 [pull]: https://github.com/itext/itext7/pulls
 [sscce]: http://sscce.org/
-[stackoverflow]: http://stackoverflow.com/questions/tagged/itext7
-[good-questions]: http://stackoverflow.com/help/how-to-ask
-[mcve]: http://stackoverflow.com/help/mcve
-[support]: http://itextpdf.com/support
-[unit-testing]: http://junit.org/
+[stackoverflow]: https://stackoverflow.com/questions/tagged/itext7
+[good-questions]: https://stackoverflow.com/help/how-to-ask
+[mcve]: https://stackoverflow.com/help/mcve
+[support]: https://itextpdf.com/support
 [git-commit]: https://chris.beams.io/posts/git-commit/
 [git-commit-separate]: https://chris.beams.io/posts/git-commit/#separate
 [git-commit-limit-50]: https://chris.beams.io/posts/git-commit/#limit-50
