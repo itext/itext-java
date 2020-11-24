@@ -46,8 +46,11 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Text;
@@ -63,8 +66,10 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -304,5 +309,42 @@ public class LineRendererUnitTest extends RendererUnitTest {
         Rectangle bboxLineHeightNotSet = layoutResLineHeightNotSet.getOccupiedArea().getBBox();
         Rectangle bboxLineHeightNormal = layoutResLineHeightNormal.getOccupiedArea().getBBox();
         Assert.assertTrue(bboxLineHeightNotSet.equalsWithEpsilon(bboxLineHeightNormal));
+    }
+
+    @Test
+    public void minMaxWidthEqualsActualMarginsBordersPaddings() {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document document = new Document(pdfDocument);
+
+        Text ranText = new Text("ran");
+        ranText.setProperty(Property.MARGIN_LEFT, new UnitValue(UnitValue.POINT, 8f));
+
+        ranText.setProperty(Property.MARGIN_RIGHT, new UnitValue(UnitValue.POINT, 10f));
+        ranText.setProperty(Property.BORDER_RIGHT, new SolidBorder(3));
+        ranText.setProperty(Property.PADDING_RIGHT, new UnitValue(UnitValue.POINT, 13f));
+
+        TextRenderer ran = new TextRenderer(ranText);
+
+        Text domText = new Text("dom");
+        domText.setProperty(Property.MARGIN_LEFT, new UnitValue(UnitValue.POINT, 17f));
+        domText.setProperty(Property.BORDER_LEFT, new SolidBorder(4));
+        domText.setProperty(Property.PADDING_LEFT, new UnitValue(UnitValue.POINT, 12f));
+
+        domText.setProperty(Property.MARGIN_RIGHT, new UnitValue(UnitValue.POINT, 2f));
+
+        TextRenderer dom = new TextRenderer(domText);
+
+        LayoutArea layoutArea = new LayoutArea(1,
+                new Rectangle(AbstractRenderer.INF, AbstractRenderer.INF));
+
+        LineRenderer lineRenderer = new LineRenderer();
+        lineRenderer.setParent(document.getRenderer());
+        lineRenderer.addChild(ran);
+        lineRenderer.addChild(dom);
+
+        float countedMinWidth = lineRenderer.getMinMaxWidth().getMinWidth();
+        LayoutResult result = lineRenderer.layout(new LayoutContext(layoutArea));
+
+        Assert.assertEquals(result.getOccupiedArea().getBBox().getWidth(), countedMinWidth, 0.0001);
     }
 }

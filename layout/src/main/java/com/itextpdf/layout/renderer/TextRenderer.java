@@ -210,6 +210,11 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             widthHandler = new MaxSumWidthHandler(countedMinMaxWidth);
         }
 
+        float leftMinWidth = -1f;
+        float[] leftMarginBorderPadding = {margins[3].getValue(), borders[3] == null ? 0.0f : borders[3].getWidth(), paddings[3].getValue()};
+        float rightMinWidth = -1f;
+        float[] rightMarginBorderPadding = {margins[1].getValue(), borders[1] == null ? 0.0f : borders[1].getWidth(), paddings[1].getValue()};
+
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         TargetCounterHandler.addPageByID(this);
@@ -418,8 +423,14 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 }
 
                 if (OverflowWrapPropertyValue.ANYWHERE == overflowWrap) {
-                    widthHandler.updateMinChildWidth((float) ((double) glyphWidth + (double) xAdvance
-                            + (double) italicSkewAddition + (double) boldSimulationAddition));
+                    float childMinWidth = (float) ((double) glyphWidth + (double) xAdvance + (double) italicSkewAddition
+                            + (double) boldSimulationAddition);
+                    if (leftMinWidth == -1f) {
+                        leftMinWidth = childMinWidth;
+                    } else {
+                        rightMinWidth = childMinWidth;
+                    }
+                    widthHandler.updateMinChildWidth(childMinWidth);
                     widthHandler.updateMaxChildWidth((float) ((double) glyphWidth + (double) xAdvance));
                 }
 
@@ -462,12 +473,15 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     widthHandler.updateMaxChildWidth((float) ((double) italicSkewAddition
                             + (double) boldSimulationAddition));
                 } else {
-                    widthHandler.updateMinChildWidth(
-                            (float) ((double) nonBreakablePartWidthWhichDoesNotExceedAllowedWidth
-                                    + (double) italicSkewAddition + (double) boldSimulationAddition));
-                    widthHandler.updateMaxChildWidth(
-                            (float) ((double) nonBreakablePartWidthWhichDoesNotExceedAllowedWidth
-                                    + (double) italicSkewAddition + (double) boldSimulationAddition));
+                    float childMinWidth = (float) ((double) nonBreakablePartWidthWhichDoesNotExceedAllowedWidth
+                            + (double) italicSkewAddition + (double) boldSimulationAddition);
+                    if (leftMinWidth == -1f) {
+                        leftMinWidth = childMinWidth;
+                    } else {
+                        rightMinWidth = childMinWidth;
+                    }
+                    widthHandler.updateMinChildWidth(childMinWidth);
+                    widthHandler.updateMaxChildWidth(childMinWidth);
                 }
                 anythingPlaced = true;
             } else {
@@ -584,12 +598,16 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                                 widthHandler.updateMaxChildWidth((float) ((double) italicSkewAddition
                                         + (double) boldSimulationAddition));
                             } else {
-                                widthHandler.updateMinChildWidth(
+                                float childMinWidth =
                                         (float) ((double) nonBreakablePartWidthWhichDoesNotExceedAllowedWidth
-                                                + (double) italicSkewAddition + (double) boldSimulationAddition));
-                                widthHandler.updateMaxChildWidth(
-                                        (float) ((double) nonBreakablePartWidthWhichDoesNotExceedAllowedWidth
-                                                + (double) italicSkewAddition + (double) boldSimulationAddition));
+                                                + (double) italicSkewAddition + (double) boldSimulationAddition);
+                                if (leftMinWidth == -1f) {
+                                    leftMinWidth = childMinWidth;
+                                } else {
+                                    rightMinWidth = childMinWidth;
+                                }
+                                widthHandler.updateMinChildWidth(childMinWidth);
+                                widthHandler.updateMaxChildWidth(childMinWidth);
                             }
                         } else {
                             // process empty line (e.g. '\n')
@@ -689,6 +707,23 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
 
         result.setMinMaxWidth(countedMinMaxWidth);
+        if (!noSoftWrap) {
+            for (float dimension : leftMarginBorderPadding) {
+                leftMinWidth += dimension;
+            }
+            for (float dimension : rightMarginBorderPadding) {
+                if (rightMinWidth < 0) {
+                    leftMinWidth += dimension;
+                } else {
+                    rightMinWidth += dimension;
+                }
+            }
+            result.setLeftMinWidth(leftMinWidth);
+            result.setRightMinWidth(rightMinWidth);
+        } else {
+            result.setLeftMinWidth(countedMinMaxWidth.getMinWidth());
+            result.setRightMinWidth(-1f);
+        }
         boolean[] startsEnds = isLineStartsWithWhiteSpaceAndEndsWithSplitCharacter(splitCharacters);
         result.setLineStartsWithWhiteSpace(startsEnds[0])
               .setLineEndsWithSplitCharacterOrWhiteSpace(startsEnds[1]);
@@ -1714,7 +1749,14 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 && TextUtil.isSpaceOrWhitespace(text.get(line.start));
         boolean endsWithBreak = line.start < line.end
                 && splitCharacters.isSplitCharacter(text, line.end - 1);
-        return new boolean[] {startsWithBreak, endsWithBreak};
+        if (specialScriptsWordBreakPoints == null || specialScriptsWordBreakPoints.isEmpty()) {
+            return new boolean[]{startsWithBreak, endsWithBreak};
+        } else {
+            if (!endsWithBreak) {
+                endsWithBreak = specialScriptsWordBreakPoints.contains(line.end);
+            }
+            return new boolean[]{startsWithBreak, endsWithBreak};
+        }
     }
 
     static boolean codePointIsOfSpecialScript(int codePoint) {

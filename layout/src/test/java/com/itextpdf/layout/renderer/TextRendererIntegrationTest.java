@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -34,16 +35,21 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.ColumnDocumentRenderer;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.RenderingMode;
 import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
@@ -479,6 +485,50 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         paragraph.setProperty(Property.RENDERING_MODE, RenderingMode.DEFAULT_LAYOUT_MODE);
 
         doc.add(paragraph);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)
+    })
+    public void minMaxWidthWordSplitAcrossMultipleTextRenderers() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "minMaxWidthWordSplitAcrossMultipleTextRenderers.pdf";
+        String cmpFileName = sourceFolder + "cmp_minMaxWidthWordSplitAcrossMultipleTextRenderers.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        doc.setFontSize(20);
+
+        Text wissen = new Text("Wissen")
+                .setFontColor(ColorConstants.PINK)
+                .setBackgroundColor(ColorConstants.YELLOW);
+        Text schaft = new Text("schaft")
+                .setFontColor(ColorConstants.MAGENTA)
+                .setBackgroundColor(ColorConstants.YELLOW);
+        Text ler = new Text("ler is a long German word!")
+                .setFontColor(ColorConstants.RED)
+                .setBackgroundColor(ColorConstants.YELLOW);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "bulb.gif"));
+        image.setWidth(30);
+        Paragraph text = new Paragraph()
+                .add(wissen)
+                .add(schaft)
+                .add(ler);
+
+        float[] colWidth = {10, 20, 30, 40, 50};
+
+        Table table = new Table(UnitValue.createPercentArray(colWidth));
+        for (int i = 0; i < colWidth.length; i++) {
+            table.addCell(new Cell().add(text));
+        }
+
+        doc.add(table);
 
         doc.close();
 

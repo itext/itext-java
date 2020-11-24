@@ -194,6 +194,8 @@ public class LineRenderer extends AbstractRenderer {
         Map<Integer, float[]> textRendererSequenceAscentDescent = new HashMap<>();
         float[] ascentDescentTextAscentTextDescentBeforeTextRendererSequence = null;
 
+        MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper = null;
+
         while (childPos < childRenderers.size()) {
             IRenderer childRenderer = childRenderers.get(childPos);
             LayoutResult childResult = null;
@@ -402,8 +404,10 @@ public class LineRenderer extends AbstractRenderer {
                 shouldBreakLayouting = textRendererMoveForwardsPostProcessing(moveForwardsSpecialScriptsOverflowX,
                         moveForwardsTextRenderer, childPos, childRenderer, childResult, wasXOverflowChanged);
 
-                updateTextRendererLayoutResults(textRendererLayoutResults, childRenderer, childPos, childResult);
-                updateSpecialScriptLayoutResults(specialScriptLayoutResults, childRenderer, childPos, childResult);
+                updateTextRendererLayoutResults(textRendererLayoutResults, childRenderer, childPos, childResult,
+                        minMaxWidthOfTextRendererSequenceHelper, noSoftWrap, widthHandler);
+                updateSpecialScriptLayoutResults(specialScriptLayoutResults, childRenderer, childPos, childResult,
+                        minMaxWidthOfTextRendererSequenceHelper, noSoftWrap, widthHandler);
 
                 // it means that we've already increased layout area by MIN_MAX_WIDTH_CORRECTION_EPS
                 if (childResult instanceof MinMaxWidthLayoutResult && null != childBlockMinMaxWidth) {
@@ -440,6 +444,10 @@ public class LineRenderer extends AbstractRenderer {
             ascentDescentTextAscentTextDescentBeforeTextRendererSequence = updateTextRendererSequenceAscentDescent(
                     textRendererSequenceAscentDescent, childPos, childAscentDescent,
                     ascentDescentTextAscentTextDescentBeforeTextRendererSequence);
+
+            minMaxWidthOfTextRendererSequenceHelper = updateTextRendererSequenceMinMaxWidth(widthHandler, childPos,
+                    minMaxWidthOfTextRendererSequenceHelper, anythingPlaced, textRendererLayoutResults,
+                    specialScriptLayoutResults, lineLayoutContext.getTextIndent());
 
             boolean newLineOccurred = (childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isSplitForcedByNewline());
             if (!shouldBreakLayouting) {
@@ -482,6 +490,10 @@ public class LineRenderer extends AbstractRenderer {
                                 lastFittingChildRendererData.childIndex, specialScriptLayoutResults);
                         childPos = lastFittingChildRendererData.childIndex;
                         childResult = lastFittingChildRendererData.childLayoutResult;
+                        minChildWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth().getMinWidth();
+                        updateMinMaxWidthOfLineRendererAfterTextRendererSequenceProcessing(
+                                noSoftWrap, childPos, childResult, widthHandler,
+                                minMaxWidthOfTextRendererSequenceHelper, specialScriptLayoutResults);
                     }
                 } else if (enableSpanWrapping) {
                     boolean isOverflowFit = wasXOverflowChanged
@@ -509,6 +521,10 @@ public class LineRenderer extends AbstractRenderer {
 
                         childPos = lastFittingChildRendererData.childIndex;
                         childResult = lastFittingChildRendererData.childLayoutResult;
+                        minChildWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth().getMinWidth();
+                        updateMinMaxWidthOfLineRendererAfterTextRendererSequenceProcessing(
+                                noSoftWrap, childPos, childResult, widthHandler,
+                                minMaxWidthOfTextRendererSequenceHelper, textRendererLayoutResults);
                     }
                 }
             }
@@ -621,6 +637,27 @@ public class LineRenderer extends AbstractRenderer {
                     anythingPlaced = true;
                     childPos++;
                 }
+            }
+
+            if (childPos == childRenderers.size()
+                    && (!specialScriptLayoutResults.isEmpty() || !textRendererLayoutResults.isEmpty())) {
+                int lastTextRenderer = childPos;
+                boolean nonSpecialScripts = specialScriptLayoutResults.isEmpty();
+                while (lastTextRenderer >= 0) {
+                    if (nonSpecialScripts
+                            ? textRendererLayoutResults.get(lastTextRenderer) != null
+                            : specialScriptLayoutResults.get(lastTextRenderer) != null) {
+                        break;
+                    } else {
+                        lastTextRenderer--;
+                    }
+                }
+                LayoutResult lastTextLayoutResult = nonSpecialScripts
+                        ? textRendererLayoutResults.get(lastTextRenderer)
+                        : specialScriptLayoutResults.get(lastTextRenderer);
+                updateMinMaxWidthOfLineRendererAfterTextRendererSequenceProcessing(noSoftWrap, lastTextRenderer,
+                        lastTextLayoutResult, widthHandler, minMaxWidthOfTextRendererSequenceHelper,
+                        nonSpecialScripts ? textRendererLayoutResults : specialScriptLayoutResults);
             }
         }
 
@@ -1304,22 +1341,46 @@ public class LineRenderer extends AbstractRenderer {
                 && FloatingHelper.isRendererFloating(childRenderer, kidFloatPropertyVal);
     }
 
-    static void updateSpecialScriptLayoutResults(Map<Integer, LayoutResult> specialScriptLayoutResults,
-                                          IRenderer childRenderer, int childPos, LayoutResult childResult) {
+    void updateSpecialScriptLayoutResults(
+            Map<Integer, LayoutResult> specialScriptLayoutResults, IRenderer childRenderer, int childPos,
+            LayoutResult childResult, MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper,
+            boolean noSoftWrap, AbstractWidthHandler widthHandler) {
         if ((childRenderer instanceof TextRenderer && ((TextRenderer) childRenderer)
                 .textContainsSpecialScriptGlyphs(true))) {
             specialScriptLayoutResults.put(childPos, childResult);
         } else if (!specialScriptLayoutResults.isEmpty() && !isChildFloating(childRenderer)) {
+            while (childPos >= 0) {
+                if (specialScriptLayoutResults.get(childPos) != null) {
+                    break;
+                } else {
+                    childPos--;
+                }
+            }
+            childResult = specialScriptLayoutResults.get(childPos);
+            updateMinMaxWidthOfLineRendererAfterTextRendererSequenceProcessing(noSoftWrap, childPos, childResult,
+                    widthHandler, minMaxWidthOfTextRendererSequenceHelper, specialScriptLayoutResults);
             specialScriptLayoutResults.clear();
         }
     }
 
-    static void updateTextRendererLayoutResults(Map<Integer, LayoutResult> textRendererLayoutResults,
-                                                 IRenderer childRenderer, int childPos, LayoutResult childResult) {
+    void updateTextRendererLayoutResults(
+            Map<Integer, LayoutResult> textRendererLayoutResults, IRenderer childRenderer, int childPos,
+            LayoutResult childResult, MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper,
+            boolean noSoftWrap, AbstractWidthHandler widthHandler) {
         if (childRenderer instanceof TextRenderer && !((TextRenderer) childRenderer)
                 .textContainsSpecialScriptGlyphs(true)) {
             textRendererLayoutResults.put(childPos, childResult);
         } else if (!textRendererLayoutResults.isEmpty() && !isChildFloating(childRenderer)) {
+            while (childPos >= 0) {
+                if (textRendererLayoutResults.get(childPos) != null) {
+                    break;
+                } else {
+                    childPos--;
+                }
+            }
+            childResult = textRendererLayoutResults.get(childPos);
+            updateMinMaxWidthOfLineRendererAfterTextRendererSequenceProcessing(noSoftWrap, childPos, childResult,
+                    widthHandler, minMaxWidthOfTextRendererSequenceHelper, textRendererLayoutResults);
             textRendererLayoutResults.clear();
         }
     }
@@ -1549,6 +1610,82 @@ public class LineRenderer extends AbstractRenderer {
             preTextSequenceAscentDescent = null;
         }
         return preTextSequenceAscentDescent;
+    }
+
+    MinMaxWidthOfTextRendererSequenceHelper updateTextRendererSequenceMinMaxWidth(
+            AbstractWidthHandler widthHandler, int childPos,
+            MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper, boolean anythingPlaced,
+            Map<Integer, LayoutResult> textRendererLayoutResults,
+            Map<Integer, LayoutResult> specialScriptLayoutResults, float textIndent) {
+        IRenderer childRenderer = childRenderers.get(childPos);
+        if (isChildFloating(childRenderer)) {
+            return minMaxWidthOfTextRendererSequenceHelper;
+        } else if (childRenderer instanceof TextRenderer) {
+            boolean firstTextRendererWithSpecialScripts =
+                    ((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(true)
+                    && specialScriptLayoutResults.size() == 1;
+            boolean firstTextRendererWithoutSpecialScripts =
+                    !((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(true)
+                    && textRendererLayoutResults.size() == 1;
+            if (firstTextRendererWithoutSpecialScripts || firstTextRendererWithSpecialScripts) {
+                minMaxWidthOfTextRendererSequenceHelper = new MinMaxWidthOfTextRendererSequenceHelper(
+                        widthHandler.minMaxWidth.getChildrenMinWidth(), textIndent, anythingPlaced);
+                }
+            return minMaxWidthOfTextRendererSequenceHelper;
+        } else {
+            return null;
+        }
+    }
+
+    void updateMinMaxWidthOfLineRendererAfterTextRendererSequenceProcessing(
+            boolean noSoftWrap, int childPos, LayoutResult layoutResult, AbstractWidthHandler widthHandler,
+            MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper,
+            Map<Integer, LayoutResult> textRendererLayoutResults) {
+        if (noSoftWrap) {
+            return;
+        }
+        TextLayoutResult currLayoutResult = (TextLayoutResult) layoutResult;
+        float leftMinWidthCurrRenderer = currLayoutResult.getLeftMinWidth();
+        float generalMinWidthCurrRenderer = currLayoutResult.getMinMaxWidth().getMinWidth();
+        float widthOfUnbreakableChunkSplitAcrossRenderers = leftMinWidthCurrRenderer;
+        float minWidthOfTextRendererSequence = generalMinWidthCurrRenderer;
+
+        for (int prevRendererIndex = childPos - 1; prevRendererIndex >= 0; prevRendererIndex--) {
+            if (textRendererLayoutResults.get(prevRendererIndex) != null) {
+                TextLayoutResult prevLayoutResult = (TextLayoutResult) textRendererLayoutResults.get(prevRendererIndex);
+                float leftMinWidthPrevRenderer = prevLayoutResult.getLeftMinWidth();
+                float generalMinWidthPrevRenderer = prevLayoutResult.getMinMaxWidth().getMinWidth();
+                float rightMinWidthPrevRenderer = prevLayoutResult.getRightMinWidth();
+                minWidthOfTextRendererSequence = Math.max(minWidthOfTextRendererSequence, generalMinWidthPrevRenderer);
+
+                if (!prevLayoutResult.isLineEndsWithSplitCharacterOrWhiteSpace()
+                        && !currLayoutResult.isLineStartsWithWhiteSpace()) {
+                    if (rightMinWidthPrevRenderer > -1f) {
+                        widthOfUnbreakableChunkSplitAcrossRenderers += rightMinWidthPrevRenderer;
+                    } else {
+                        widthOfUnbreakableChunkSplitAcrossRenderers += leftMinWidthPrevRenderer;
+                    }
+                    minWidthOfTextRendererSequence = Math.max(minWidthOfTextRendererSequence,
+                            widthOfUnbreakableChunkSplitAcrossRenderers);
+                    if (rightMinWidthPrevRenderer > -1f) {
+                        widthOfUnbreakableChunkSplitAcrossRenderers = leftMinWidthPrevRenderer;
+                    }
+                } else {
+                    widthOfUnbreakableChunkSplitAcrossRenderers = leftMinWidthPrevRenderer;
+                }
+                currLayoutResult = prevLayoutResult;
+            }
+        }
+
+        if (!minMaxWidthOfTextRendererSequenceHelper.anythingPlacedBeforeTextRendererSequence) {
+            widthOfUnbreakableChunkSplitAcrossRenderers += minMaxWidthOfTextRendererSequenceHelper.textIndent;
+            minWidthOfTextRendererSequence = Math.max(minWidthOfTextRendererSequence,
+                    widthOfUnbreakableChunkSplitAcrossRenderers);
+        }
+
+        float lineMinWidth = Math.max(minWidthOfTextRendererSequence,
+                minMaxWidthOfTextRendererSequenceHelper.minWidthPreSequence);
+        widthHandler.minMaxWidth.setChildrenMinWidth(lineMinWidth);
     }
 
     static float getCurWidthSpecialScriptsDecrement(int childPos, int newChildPos,
@@ -2082,6 +2219,20 @@ public class LineRenderer extends AbstractRenderer {
             this.childIndex = childIndex;
             this.childLayoutResult = childLayoutResult;
         }
+    }
+
+    static class MinMaxWidthOfTextRendererSequenceHelper {
+        public float minWidthPreSequence;
+        public float textIndent;
+        public boolean anythingPlacedBeforeTextRendererSequence;
+
+        public MinMaxWidthOfTextRendererSequenceHelper(float minWidthPreSequence, float textIndent,
+                                                       boolean anythingPlacedBeforeTextRendererSequence) {
+            this.minWidthPreSequence = minWidthPreSequence;
+            this.textIndent = textIndent;
+            this.anythingPlacedBeforeTextRendererSequence = anythingPlacedBeforeTextRendererSequence;
+        }
+
     }
 
     static enum SpecialScriptsContainingSequenceStatus {

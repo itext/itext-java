@@ -65,6 +65,10 @@ public class TextLayoutResult extends MinMaxWidthLayoutResult {
 
     protected boolean lineEndsWithSplitCharacterOrWhiteSpace = false;
 
+    protected float leftMinWidth;
+
+    protected float rightMinWidth;
+
     /**
      * Creates the {@link LayoutResult result of {@link com.itextpdf.layout.renderer.TextRenderer#layout(LayoutContext) layouting}}.
      * The {@link LayoutResult#causeOfNothing} will be set as null.
@@ -199,5 +203,55 @@ public class TextLayoutResult extends MinMaxWidthLayoutResult {
      */
     public boolean isLineEndsWithSplitCharacterOrWhiteSpace() {
         return lineEndsWithSplitCharacterOrWhiteSpace;
+    }
+
+    /**
+     * Sets min width of the leftmost unbreakable part of the TextRenderer#line after layout.
+     * This value includes left-side additional width, i.e. left margin, border and padding widths.
+     * In case when entire TextRenderer#line is unbreakable, leftMinWidth also includes right-side additional width.
+     *
+     * @param leftMinWidth min width of the leftmost unbreakable part of the TextRenderer#line after layout.
+     * @return {@link com.itextpdf.layout.layout.TextLayoutResult this layout result} the setting was applied on.
+     */
+    public TextLayoutResult setLeftMinWidth(float leftMinWidth) {
+        this.leftMinWidth = leftMinWidth;
+        return this;
+    }
+
+    /**
+     * Gets min width of the leftmost unbreakable part of the TextRenderer#line after layout.
+     * This value leftMinWidth includes left-side additional width, i.e. left margin, border and padding widths.
+     * In case when entire TextRenderer#line is unbreakable, leftMinWidth also includes right-side additional width.
+     *
+     * @return min width of the leftmost unbreakable part of the TextRenderer#line after layout.
+     */
+    public float getLeftMinWidth() {
+        return leftMinWidth;
+    }
+
+    /**
+     * Sets min width of the rightmost unbreakable part of the TextRenderer#line after layout.
+     * This value includes right-side additional width, i.e. right margin, border and padding widths.
+     * In case when entire TextRenderer#line is unbreakable, this value must be -1
+     * and right-side additional width must be included in leftMinWidth.
+     *
+     * @param rightMinWidth min width of the rightmost unbreakable part of the TextRenderer#line after layout.
+     * @return {@link com.itextpdf.layout.layout.TextLayoutResult this layout result} the setting was applied on.
+     */
+    public TextLayoutResult setRightMinWidth(float rightMinWidth) {
+        this.rightMinWidth = rightMinWidth;
+        return this;
+    }
+
+    /**
+     * Gets min width of the rightmost unbreakable part of the TextRenderer#line after layout.
+     * This value includes right-side additional width, i.e. right margin, border and padding widths.
+     * In case when entire TextRenderer#line is unbreakable, this value must be -1
+     * and right-side additional width must be included in leftMinWidth.
+     *
+     * @return min width of the leftmost unbreakable part of the TextRenderer#line after layout.
+     */
+    public float getRightMinWidth() {
+        return rightMinWidth;
     }
 }
