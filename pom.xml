@@ -73,6 +73,7 @@
     <argLine>-Xmx1024m</argLine>
     <bouncycastle.version>1.66</bouncycastle.version>
     <checkstyle.version>3.1.0</checkstyle.version>
+    <dependencyCheck.version>6.0.3</dependencyCheck.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
     <findsecbugs.version>1.8.0</findsecbugs.version>
     <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>
@@ -637,7 +638,22 @@
           <plugin>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
-            <version>5.3.1</version>
+            <version>${dependencyCheck.version}</version>
+            <dependencies>
+              <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.22</version>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <autoUpdate>false</autoUpdate>
+              <connectionString/>
+              <databaseDriverName>com.mysql.cj.jdbc.Driver</databaseDriverName>
+              <databasePassword/>
+              <databaseUser/>
+              <format>ALL</format>
+            </configuration>
             <executions>
               <execution>
                 <goals>
@@ -645,11 +661,6 @@
                 </goals>
               </execution>
             </executions>
-            <configuration>
-              <format>ALL</format>
-              <dataDirectory>${user.home}/security/owasp-nvd/</dataDirectory>
-              <autoUpdate>false</autoUpdate>
-            </configuration>
           </plugin>
         </plugins>
       </build>
