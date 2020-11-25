@@ -88,6 +88,7 @@ import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.splitting.ISplitCharacters;
+import com.itextpdf.layout.splitting.BreakAllSplitCharacters;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.util.ArrayList;
@@ -1298,6 +1299,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         if (analyzeSpecialScriptsWordBreakPointsOnly) {
             return false;
+        }
+
+        ISplitCharacters splitCharacters = this.<ISplitCharacters>getProperty(Property.SPLIT_CHARACTERS);
+
+        if (splitCharacters instanceof BreakAllSplitCharacters) {
+            specialScriptsWordBreakPoints = new ArrayList<>();
         }
 
         for (int i = text.start; i < text.end; i++) {

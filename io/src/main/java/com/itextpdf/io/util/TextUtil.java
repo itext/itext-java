@@ -290,6 +290,17 @@ public final class TextUtil {
         return Character.isWhitespace(code) || isNonPrintable(code);
     }
 
+    public static boolean isLetterOrDigit(Glyph glyph) {
+        return Character.isLetterOrDigit(glyph.getUnicode());
+    }
+
+    public static boolean isMark(Glyph glyph) {
+        int unicode = glyph.getUnicode();
+        return ((((1 << Character.NON_SPACING_MARK) |
+                (1 << Character.COMBINING_SPACING_MARK) |
+                (1 << Character.ENCLOSING_MARK)) >> Character.getType(unicode)) & 1) != 0;
+    }
+
     public static boolean charsetIsSupported(String charsetName) {
         try {
             return Charset.isSupported(charsetName);

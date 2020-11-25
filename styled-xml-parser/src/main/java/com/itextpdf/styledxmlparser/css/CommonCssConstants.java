@@ -275,6 +275,11 @@ public class CommonCssConstants {
     public static final String BOX_SHADOW = "box-shadow";
 
     /**
+     * The Constant BREAK_ALL.
+     */
+    public static final String BREAK_ALL = "break-all";
+
+    /**
      * The Constant CAPTION_SIDE.
      */
     public static final String CAPTION_SIDE = "caption-side";
@@ -442,6 +447,11 @@ public class CommonCssConstants {
      * The Constant INLINE-BLOCK
      */
     public static final String INLINE_BLOCK = "inline-block";
+
+    /**
+     * The Constant KEEP_ALL.
+     */
+    public static final String KEEP_ALL = "keep-all";
 
     /**
      * The Constant LETTER_SPACING.

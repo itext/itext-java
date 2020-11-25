@@ -132,6 +132,10 @@ public class CssDeclarationValidationMaster {
                 new CssEnumValidator(CommonCssConstants.NORMAL, CommonCssConstants.ANYWHERE,
                         CommonCssConstants.BREAK_WORD, CommonCssConstants.INHERIT, CommonCssConstants.INITIAL,
                         CommonCssConstants.UNSET)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.WORD_BREAK, new SingleTypeDeclarationValidator(
+                new CssEnumValidator(CommonCssConstants.NORMAL, CommonCssConstants.BREAK_ALL,
+                        CommonCssConstants.KEEP_ALL, CommonCssConstants.BREAK_WORD, CommonCssConstants.INHERIT,
+                        CommonCssConstants.INITIAL, CommonCssConstants.UNSET)));
     }
 
     /**
