@@ -75,15 +75,14 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Map;
 
 
 @Category(IntegrationTest.class)
@@ -1134,20 +1133,22 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String srcPdf = sourceFolder + testName;
         ByteArrayOutputStream outPdf = new ByteArrayOutputStream();
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf),
-                new StampingProperties().useAppendMode());
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
-        PdfFormField field = form.getField("magenta");
-        field.setDefaultAppearance("/F1 25 Tf");
-        int objectNumer = field.getPdfObject().getIndirectReference().getObjNumber();
+        int objectNumber;
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf),
+                new StampingProperties().useAppendMode())) {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+            PdfFormField field = form.getField("magenta");
+            field.setFontSize(35);
+            field.updateDefaultAppearance();
+            objectNumber = field.getPdfObject().getIndirectReference().getObjNumber();
+        }
 
-        pdfDoc.close();
+        PdfString da;
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(outPdf.toByteArray())))) {
+            da = ((PdfDictionary) pdfDoc.getPdfObject(objectNumber)).getAsString(PdfName.DA);
+        }
 
-        pdfDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(outPdf.toByteArray())));
-        PdfString da = ((PdfDictionary) pdfDoc.getPdfObject(objectNumer)).getAsString(PdfName.DA);
-        pdfDoc.close();
-
-        Assert.assertEquals("/F1 25 Tf", da.toString());
+        Assert.assertEquals("/F1 35 Tf 1 0 1 rg", da.toString());
     }
 
     @Test

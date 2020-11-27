@@ -482,7 +482,6 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param appearance a String containing a sequence of valid PDF syntax
      * @return current AcroForm
-     * @see PdfFormField#setDefaultAppearance(java.lang.String)
      */
     public PdfAcroForm setDefaultAppearance(String appearance) {
         return put(PdfName.DA, new PdfString(appearance));
