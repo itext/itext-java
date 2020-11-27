@@ -44,6 +44,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.io.util.StreamUtil;
 import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
@@ -111,7 +112,7 @@ public class OcspClientBouncyCastle implements IOcspClient {
             }
             BasicOCSPResp basicResponse = (BasicOCSPResp) ocspResponse.getResponseObject();
             if (verifier != null) {
-                verifier.isValidResponse(basicResponse, rootCert);
+                verifier.isValidResponse(basicResponse, rootCert, DateTimeUtil.getCurrentTimeDate());
             }
             return basicResponse;
         } catch (Exception ex) {

@@ -789,7 +789,7 @@ public class PdfPKCS7 {
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7() {
-        return getEncodedPKCS7(null, null, null, null, PdfSigner.CryptoStandard.CMS);
+        return getEncodedPKCS7(null, PdfSigner.CryptoStandard.CMS, null, null, null);
     }
 
     /**
@@ -800,43 +800,13 @@ public class PdfPKCS7 {
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7(byte[] secondDigest) {
-        return getEncodedPKCS7(secondDigest, null, null, null, PdfSigner.CryptoStandard.CMS);
+        return getEncodedPKCS7(secondDigest, PdfSigner.CryptoStandard.CMS, null, null, null);
     }
 
     /**
      * Gets the bytes for the PKCS7SignedData object. Optionally the authenticatedAttributes
      * in the signerInfo can also be set, and/or a time-stamp-authority client
      * may be provided.
-     *
-     * <p>
-     *     Note: do not pass in the full DER-encoded OCSPResponse object obtained from the responder,
-     *     only the DER-encoded BasicOCSPResponse value contained in the response data.
-     *
-     * @param secondDigest the digest in the authenticatedAttributes
-     * @param tsaClient    TSAClient - null or an optional time stamp authority client
-     * @param ocsp DER-encoded BasicOCSPResponse for the first certificate in the signature certificates chain,
-     *             or null if OCSP revocation data is not to be added.
-     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain,
-     *                 or null if CRL revocation data is not to be added.
-     * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere:
-     *                either basic CMS or CAdES
-     * @return byte[] the bytes for the PKCS7SignedData object
-     * @see <a href="https://datatracker.ietf.org/doc/html/rfc6960#section-4.2.1">RFC 6960 § 4.2.1</a>
-     * @deprecated This overload is deprecated, use {@link #getEncodedPKCS7(byte[], PdfSigner.CryptoStandard, ITSAClient, Collection, Collection)} instead.
-     */
-    @Deprecated
-    public byte[] getEncodedPKCS7(byte[] secondDigest, ITSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
-        return getEncodedPKCS7(secondDigest, sigtype, tsaClient, ocsp != null ? Collections.singleton(ocsp) : null, crlBytes);
-    }
-
-    /**
-     * Gets the bytes for the PKCS7SignedData object. Optionally the authenticatedAttributes
-     * in the signerInfo can also be set, and/or a time-stamp-authority client
-     * may be provided.
-     *
-     * <p>
-     *     Note: do not pass in the full DER-encoded OCSPResponse object obtained from the responder,
-     *     only the DER-encoded BasicOCSPResponse value contained in the response data.
      *
      * @param secondDigest the digest in the authenticatedAttributes
      * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere: either basic CMS or CAdES
@@ -1008,51 +978,6 @@ public class PdfPKCS7 {
      *     Note: do not pass in the full DER-encoded OCSPResponse object obtained from the responder,
      *     only the DER-encoded BasicOCSPResponse value contained in the response data.
      *
-     *
-     * <p>
-     * A simple example:
-     * <pre>
-     * Calendar cal = Calendar.getInstance();
-     * PdfPKCS7 pk7 = new PdfPKCS7(key, chain, null, "SHA1", null, false);
-     * MessageDigest messageDigest = MessageDigest.getInstance("SHA1");
-     * byte[] buf = new byte[8192];
-     * int n;
-     * InputStream inp = sap.getRangeStream();
-     * while ((n = inp.read(buf)) &gt; 0) {
-     *    messageDigest.update(buf, 0, n);
-     * }
-     * byte[] hash = messageDigest.digest();
-     * byte[] sh = pk7.getAuthenticatedAttributeBytes(hash, cal);
-     * pk7.update(sh, 0, sh.length);
-     * byte[] sg = pk7.getEncodedPKCS7(hash, cal);
-     * </pre>
-     *
-     * @param secondDigest the content digest
-     * @param ocsp collection of DER-encoded BasicOCSPResponses for the  certificate in the signature certificates
-     *             chain, or null if OCSP revocation data is not to be added.
-     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain,
-     *                 or null if CRL revocation data is not to be added.
-     * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere:
-     *                either basic CMS or CAdES
-     * @return the byte array representation of the authenticatedAttributes ready to be signed
-     * @see <a href="https://datatracker.ietf.org/doc/html/rfc6960#section-4.2.1">RFC 6960 § 4.2.1</a>
-     * @deprecated This method overload is deprecated. Please use {@link #getAuthenticatedAttributeBytes(byte[], PdfSigner.CryptoStandard, Collection, Collection)}
-     */
-    @Deprecated
-    public byte[] getAuthenticatedAttributeBytes(byte[] secondDigest, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
-        return getAuthenticatedAttributeBytes(secondDigest, sigtype, ocsp != null ? Collections.singleton(ocsp) : null, crlBytes);
-    }
-
-    /**
-     * When using authenticatedAttributes the authentication process is different.
-     * The document digest is generated and put inside the attribute. The signing is done over the DER encoded
-     * authenticatedAttributes. This method provides that encoding and the parameters must be
-     * exactly the same as in {@link #getEncodedPKCS7(byte[])}.
-     *
-     * <p>
-     *     Note: do not pass in the full DER-encoded OCSPResponse object obtained from the responder,
-     *     only the DER-encoded BasicOCSPResponse value contained in the response data.
-     *
      * <p>
      * A simple example:
      * <pre>
@@ -1207,21 +1132,6 @@ public class PdfPKCS7 {
 
 
     // verification
-
-    /**
-     * Verify the digest.
-     *
-     * @return <CODE>true</CODE> if the signature checks out, <CODE>false</CODE> otherwise
-     * @throws java.security.GeneralSecurityException if this signature object is not initialized properly,
-     * the passed-in signature is improperly encoded or of the wrong type, if this signature algorithm is unable to
-     * process the input data provided, if the public key is invalid or if security provider or signature algorithm
-     * are not recognized, etc.
-     * @deprecated This method will be removed in future versions. Please use {@link #verifySignatureIntegrityAndAuthenticity()} instead.
-     */
-    @Deprecated
-    public boolean verify() throws GeneralSecurityException {
-        return verifySignatureIntegrityAndAuthenticity();
-    }
 
     /**
      * Verifies that signature integrity is intact (or in other words that signed data wasn't modified)

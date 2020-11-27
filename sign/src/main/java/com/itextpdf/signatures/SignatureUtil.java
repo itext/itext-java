@@ -86,24 +86,6 @@ public class SignatureUtil {
     private int totalRevisions;
 
     /**
-     * Converts a {@link com.itextpdf.kernel.pdf.PdfArray} to an array of longs
-     *
-     * @param pdfArray PdfArray to be converted
-     * @return long[] containing the PdfArray values
-     * @deprecated Will be removed in 7.2. Use {@link PdfArray#toLongArray()} instead
-     */
-    @Deprecated
-    public static long[] asLongArray(PdfArray pdfArray) {
-        long[] rslt = new long[pdfArray.size()];
-
-        for (int k = 0; k < rslt.length; ++k) {
-            rslt[k] = pdfArray.getAsNumber(k).longValue();
-        }
-
-        return rslt;
-    }
-
-    /**
      * Creates a SignatureUtil instance. Sets the acroForm field to the acroForm in the PdfDocument.
      * iText will create a new AcroForm if the PdfDocument doesn't contain one.
      *
@@ -114,52 +96,7 @@ public class SignatureUtil {
         // Only create new AcroForm if there is a writer
         this.acroForm = PdfAcroForm.getAcroForm(document, document.getWriter() != null);
     }
-
-    /**
-     * Prepares an {@link PdfPKCS7} instance for the given signature.
-     * This method handles signature parsing and might throw an exception if
-     * signature is malformed.
-     * <p>
-     * The returned {@link PdfPKCS7} can be used to fetch additional info about the signature
-     * and also to perform integrity check of data signed by the given signature field.
-     * <p>
-     * In order to check that given signature covers the current PdfDocument revision please
-     * use {@link #signatureCoversWholeDocument(String)} method.
-     *
-     * @param name     the signature field name
-     * @return a {@link PdfPKCS7} instance which can be used to fetch additional info about the signature
-     * and also to perform integrity check of data signed by the given signature field.
-     * @deprecated This method is deprecated and will be removed in future versions.
-     * Please use {@link #readSignatureData(String)} instead.
-     */
-    @Deprecated
-    public PdfPKCS7 verifySignature(String name) {
-        return readSignatureData(name, null);
-    }
-
-    /**
-     * Prepares an {@link PdfPKCS7} instance for the given signature.
-     * This method handles signature parsing and might throw an exception if
-     * signature is malformed.
-     * <p>
-     * The returned {@link PdfPKCS7} can be used to fetch additional info about the signature
-     * and also to perform integrity check of data signed by the given signature field.
-     * <p>
-     * In order to check that given signature covers the current PdfDocument revision please
-     * use {@link #signatureCoversWholeDocument(String)} method.
-     *
-     * @param name     the signature field name
-     * @param provider the security provider or null for the default provider
-     * @return a {@link PdfPKCS7} instance which can be used to fetch additional info about the signature
-     * and also to perform integrity check of data signed by the given signature field.
-     * @deprecated This method is deprecated and will be removed in future versions.
-     * Please use {@link #readSignatureData(String, String)} instead.
-     */
-    @Deprecated
-    public PdfPKCS7 verifySignature(String name, String provider) {
-        return readSignatureData(name, provider);
-    }
-
+    
     /**
      * Prepares an {@link PdfPKCS7} instance for the given signature.
      * This method handles signature parsing and might throw an exception if

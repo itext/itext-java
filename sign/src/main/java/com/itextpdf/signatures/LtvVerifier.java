@@ -257,7 +257,8 @@ public class LtvVerifier extends RootStoreVerifier {
      * @throws GeneralSecurityException if some problems with signature or security occurred
      * @see com.itextpdf.signatures.RootStoreVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate, java.util.Date)
      */
-    public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException, IOException {
+    public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
+            throws GeneralSecurityException {
         // we'll verify agains the rootstore (if present)
         RootStoreVerifier rootStoreVerifier = new RootStoreVerifier(verifier);
         rootStoreVerifier.setRootStore(rootStore);
@@ -332,7 +333,7 @@ public class LtvVerifier extends RootStoreVerifier {
      * @return	a list of BasicOCSPResp objects
      * @throws GeneralSecurityException if OCSP response failed
      */
-    public List<BasicOCSPResp> getOCSPResponsesFromDSS() throws IOException, GeneralSecurityException {
+    public List<BasicOCSPResp> getOCSPResponsesFromDSS() throws GeneralSecurityException {
         List<BasicOCSPResp> ocsps = new ArrayList<>();
         if (dss == null)
             return ocsps;
@@ -341,7 +342,12 @@ public class LtvVerifier extends RootStoreVerifier {
             return ocsps;
         for (int i = 0; i < ocsparray.size(); i++) {
             PdfStream stream = ocsparray.getAsStream(i);
-            OCSPResp ocspResponse = new OCSPResp(stream.getBytes());
+            OCSPResp ocspResponse;
+            try {
+                ocspResponse = new OCSPResp(stream.getBytes());
+            } catch (IOException e) {
+                throw new GeneralSecurityException(e.getMessage());
+            }
             if (ocspResponse.getStatus() == 0)
                 try {
                     ocsps.add((BasicOCSPResp) ocspResponse.getResponseObject());

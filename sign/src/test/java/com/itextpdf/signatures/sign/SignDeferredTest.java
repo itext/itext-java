@@ -61,10 +61,16 @@ import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.signutils.Pkcs12FileHelper;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -74,11 +80,6 @@ import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class SignDeferredTest extends ExtendedITextTest {
@@ -234,13 +235,13 @@ public class SignDeferredTest extends ExtendedITextTest {
         try {
             PdfPKCS7 pkcs7 = new PdfPKCS7(null, chain, HASH_ALGORITHM, null, new BouncyCastleDigest(), false);
 
-            byte[] attributes = pkcs7.getAuthenticatedAttributeBytes(docBytesHash, null, null, PdfSigner.CryptoStandard.CMS);
+            byte[] attributes = pkcs7.getAuthenticatedAttributeBytes(docBytesHash, PdfSigner.CryptoStandard.CMS, null, null);
 
             PrivateKeySignature signature = new PrivateKeySignature(pk, HASH_ALGORITHM, BouncyCastleProvider.PROVIDER_NAME);
             byte[] attrSign = signature.sign(attributes);
 
             pkcs7.setExternalDigest(attrSign, null, signature.getEncryptionAlgorithm());
-            signatureContent = pkcs7.getEncodedPKCS7(docBytesHash, null, null, null, PdfSigner.CryptoStandard.CMS);
+            signatureContent = pkcs7.getEncodedPKCS7(docBytesHash);
         } catch (GeneralSecurityException e) {
             // dummy catch clause
         }

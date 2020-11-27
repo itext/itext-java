@@ -233,37 +233,6 @@ public class PdfSigner {
      *
      * @param reader       PdfReader that reads the PDF file
      * @param outputStream OutputStream to write the signed PDF file
-     * @param append       boolean to indicate whether the signing should happen in append mode or not
-     * @throws IOException if some I/O problem occurs
-     * @deprecated         will be removed in next major release.
-     *                     Use {@link #PdfSigner(PdfReader, OutputStream, StampingProperties)} instead.
-     */
-    @Deprecated
-    public PdfSigner(PdfReader reader, OutputStream outputStream, boolean append) throws IOException {
-        this(reader, outputStream, null, append);
-    }
-
-    /**
-     * Creates a PdfSigner instance. Uses a {@link java.io.ByteArrayOutputStream} instead of a temporary file.
-     *
-     * @param reader       PdfReader that reads the PDF file
-     * @param outputStream OutputStream to write the signed PDF file
-     * @param path         File to which the output is temporarily written
-     * @param append       boolean to indicate whether the signing should happen in append mode or not
-     * @throws IOException if some I/O problem occurs
-     * @deprecated         will be removed in next major release.
-     *                     Use {@link #PdfSigner(PdfReader, OutputStream, String, StampingProperties)} instead.
-     */
-    @Deprecated
-    public PdfSigner(PdfReader reader, OutputStream outputStream, String path, boolean append) throws IOException {
-        this(reader, outputStream, path, initStampingProperties(append));
-    }
-
-    /**
-     * Creates a PdfSigner instance. Uses a {@link java.io.ByteArrayOutputStream} instead of a temporary file.
-     *
-     * @param reader       PdfReader that reads the PDF file
-     * @param outputStream OutputStream to write the signed PDF file
      * @param properties   {@link StampingProperties} for the signing document. Note that encryption will be
      *                     preserved regardless of what is set in properties.
      * @throws IOException if some I/O problem occurs

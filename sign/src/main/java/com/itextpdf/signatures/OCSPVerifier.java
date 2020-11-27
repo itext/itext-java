@@ -43,7 +43,6 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.io.util.MessageFormatUtil;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
@@ -101,7 +100,7 @@ public class OCSPVerifier extends RootStoreVerifier {
      */
     public List<VerificationOK> verify(X509Certificate signCert,
                                        X509Certificate issuerCert, Date signDate)
-            throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException {
         List<VerificationOK> result = new ArrayList<>();
         int validOCSPsFound = 0;
         // first check in the list of OCSP responses that was provided
@@ -139,9 +138,9 @@ public class OCSPVerifier extends RootStoreVerifier {
      *
      * @return {@code true}, in case successful check, otherwise false.
      * @throws GeneralSecurityException if OCSP response verification cannot be done or failed
-     * @throws IOException if issuer certificate is corrupted or has an incorrect structure
      */
-    public boolean verify(BasicOCSPResp ocspResp, X509Certificate signCert, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException, IOException {
+    public boolean verify(BasicOCSPResp ocspResp, X509Certificate signCert, X509Certificate issuerCert, Date signDate)
+            throws GeneralSecurityException {
         if (ocspResp == null)
             return false;
         // Getting the responses
@@ -158,6 +157,8 @@ public class OCSPVerifier extends RootStoreVerifier {
                     LOGGER.info("OCSP: Issuers doesn't match.");
                     continue;
                 }
+            } catch (IOException e) {
+                throw new GeneralSecurityException(e.getMessage());
             } catch (OCSPException e) {
                 continue;
             }
@@ -184,20 +185,6 @@ public class OCSPVerifier extends RootStoreVerifier {
             }
         }
         return false;
-    }
-
-    /**
-     * Verifies if an OCSP response is genuine
-     * If it doesn't verify against the issuer certificate and response's certificates, it may verify
-     * using a trusted anchor or cert.
-     * @param ocspResp the OCSP response
-     * @param issuerCert the issuer certificate. This certificate is considered trusted and valid by this method.
-     * @throws GeneralSecurityException if OCSP response verification cannot be done or failed
-     * @deprecated Will be removed in iText 7.2. Use {@link #isValidResponse(BasicOCSPResp, X509Certificate, Date)} instead
-     */
-    @Deprecated
-    public void isValidResponse(BasicOCSPResp ocspResp, X509Certificate issuerCert) throws GeneralSecurityException {
-        isValidResponse(ocspResp, issuerCert, DateTimeUtil.getCurrentTimeDate());
     }
 
     /**
