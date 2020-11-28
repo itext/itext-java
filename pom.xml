@@ -71,7 +71,7 @@
 
   <properties>
     <argLine>-Xmx1024m</argLine>
-    <bouncycastle.version>1.66</bouncycastle.version>
+    <bouncycastle.version>1.67</bouncycastle.version>
     <checkstyle.version>3.1.0</checkstyle.version>
     <dependencyCheck.version>6.0.3</dependencyCheck.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
