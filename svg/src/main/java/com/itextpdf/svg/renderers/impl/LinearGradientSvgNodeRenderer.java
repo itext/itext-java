@@ -29,8 +29,6 @@ import com.itextpdf.kernel.colors.gradients.LinearGradientBuilder;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
-import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -43,6 +41,9 @@ import java.util.List;
  * {@link ISvgNodeRenderer} implementation for the &lt;linearGradient&gt; tag.
  */
 public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRenderer {
+
+
+    private static final double CONVERT_COEFF = 0.75;
 
     @Override
     public Color createColor(SvgDrawContext context, Rectangle objectBoundingBox, float objectBoundingBoxMargin,
@@ -121,7 +122,8 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
             // as we parse translate(1, 1) to translation(0.75, 0.75) the bounding box in
             // the gradient vector space should be 0.75x0.75 in order for such translation
             // to shift by the complete size of bounding box.
-            gradientTransform.scale(objectBoundingBox.getWidth() / 0.75, objectBoundingBox.getHeight() / 0.75);
+            gradientTransform
+                    .scale(objectBoundingBox.getWidth() / CONVERT_COEFF, objectBoundingBox.getHeight() / CONVERT_COEFF);
         }
 
         AffineTransform svgGradientTransformation = getGradientTransform();
@@ -135,10 +137,17 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
         Point start;
         Point end;
         if (isObjectBoundingBox) {
-            start = new Point(getCoordinateForObjectBoundingBox(Attributes.X1, 0),
-                    getCoordinateForObjectBoundingBox(Attributes.Y1, 0));
-            end = new Point(getCoordinateForObjectBoundingBox(Attributes.X2, 1),
-                    getCoordinateForObjectBoundingBox(Attributes.Y2, 0));
+            // need to multiply by 0.75 as further the (top, right) coordinates of the object bbox
+            // would be transformed into (0.75, 0.75) point instead of (1, 1). The reason described
+            // as a comment inside the method constructing the gradient transformation
+            start = new Point(SvgCoordinateUtils.getCoordinateForObjectBoundingBox(
+                    getAttribute(Attributes.X1), 0) * CONVERT_COEFF,
+                    SvgCoordinateUtils.getCoordinateForObjectBoundingBox(
+                            getAttribute(Attributes.Y1), 0) * CONVERT_COEFF);
+            end = new Point(SvgCoordinateUtils.getCoordinateForObjectBoundingBox(
+                    getAttribute(Attributes.X2), 1) * CONVERT_COEFF,
+                    SvgCoordinateUtils.getCoordinateForObjectBoundingBox(
+                            getAttribute(Attributes.Y2), 0) * CONVERT_COEFF);
         } else {
             Rectangle currentViewPort = context.getCurrentViewPort();
             double x = currentViewPort.getX();
@@ -160,36 +169,5 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
         }
 
         return new Point[] {start, end};
-    }
-
-    private double getCoordinateForObjectBoundingBox(String attributeName, double defaultValue) {
-        String attributeValue = getAttribute(attributeName);
-        double absoluteValue = defaultValue;
-        if (CssTypesValidationUtils.isPercentageValue(attributeValue)) {
-           absoluteValue = CssDimensionParsingUtils.parseRelativeValue(attributeValue, 1);
-        } else if (CssTypesValidationUtils.isNumericValue(attributeValue)
-                || CssTypesValidationUtils.isMetricValue(attributeValue)
-                || CssTypesValidationUtils.isRelativeValue(attributeValue)) {
-            // if there is incorrect value metric, then we do not need to parse the value
-            int unitsPosition = CssDimensionParsingUtils.determinePositionBetweenValueAndUnit(attributeValue);
-            if (unitsPosition > 0) {
-                // We want to ignore the unit type. From the svg specification:
-                // "the normal of the linear gradient is perpendicular to the gradient vector in
-                // object bounding box space (i.e., the abstract coordinate system where (0,0)
-                // is at the top/left of the object bounding box and (1,1) is at the bottom/right
-                // of the object bounding box)".
-                // Different browsers treats this differently. We chose the "Google Chrome" approach
-                // which treats the "abstract coordinate system" in the coordinate metric measure,
-                // i.e. for value '0.5cm' the top/left of the object bounding box would be (1cm, 1cm),
-                // for value '0.5em' the top/left of the object bounding box would be (1em, 1em) and etc.
-                // no null pointer should be thrown as determine
-                absoluteValue = CssDimensionParsingUtils.parseDouble(attributeValue.substring(0, unitsPosition)).doubleValue();
-            }
-        }
-
-        // need to multiply by 0.75 as further the (top, right) coordinates of the object bbox
-        // would be transformed into (0.75, 0.75) point instead of (1, 1). The reason described
-        // as a comment inside the method constructing the gradient transformation
-        return absoluteValue * 0.75;
     }
 }

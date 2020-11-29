@@ -44,6 +44,8 @@ package com.itextpdf.svg.utils;
 
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 
@@ -92,11 +94,11 @@ public class SvgCoordinateUtils {
      * Returns absolute value for attribute in userSpaceOnUse coordinate system.
      *
      * @param attributeValue value of attribute.
-     * @param defaultValue default value.
-     * @param start start border for calculating percent value.
-     * @param length length for calculating percent value.
-     * @param em em value.
-     * @param rem rem value.
+     * @param defaultValue   default value.
+     * @param start          start border for calculating percent value.
+     * @param length         length for calculating percent value.
+     * @param em             em value.
+     * @param rem            rem value.
      * @return absolute value in the userSpaceOnUse coordinate system.
      */
     public static double getCoordinateForUserSpaceOnUse(String attributeValue, double defaultValue,
@@ -111,5 +113,35 @@ public class SvgCoordinateUtils {
             absoluteValue = unitValue.getValue();
         }
         return absoluteValue;
+    }
+
+    /**
+     * Returns a value relative to the object bounding box.
+     * We should only call this method for attributes with coordinates relative to the object bounding rectangle.
+     *
+     * @param attributeValue attribute value to parse
+     * @param defaultValue   this value will be returned if an error occurs while parsing the attribute value
+     * @return if {@code attributeValue} is a percentage value, the given percentage of 1 will be returned.
+     * And if it's a valid value with a number, the number will be extracted from that value.
+     */
+    public static double getCoordinateForObjectBoundingBox(String attributeValue, double defaultValue) {
+        if (CssTypesValidationUtils.isPercentageValue(attributeValue)) {
+            return CssDimensionParsingUtils.parseRelativeValue(attributeValue, 1);
+        } else if (CssTypesValidationUtils.isNumericValue(attributeValue)
+                || CssTypesValidationUtils.isMetricValue(attributeValue)
+                || CssTypesValidationUtils.isRelativeValue(attributeValue)) {
+            // if there is incorrect value metric, then we do not need to parse the value
+            int unitsPosition = CssDimensionParsingUtils.determinePositionBetweenValueAndUnit(attributeValue);
+            if (unitsPosition > 0) {
+                // We want to ignore the unit type how this is done in the "Google Chrome" approach
+                // which treats the "abstract coordinate system" in the coordinate metric measure,
+                // i.e. for value '0.5cm' the top/left of the object bounding box would be (1cm, 1cm),
+                // for value '0.5em' the top/left of the object bounding box would be (1em, 1em) and etc.
+                // no null pointer should be thrown as determine
+                return CssDimensionParsingUtils.parseDouble(attributeValue.substring(0, unitsPosition))
+                        .doubleValue();
+            }
+        }
+        return defaultValue;
     }
 }

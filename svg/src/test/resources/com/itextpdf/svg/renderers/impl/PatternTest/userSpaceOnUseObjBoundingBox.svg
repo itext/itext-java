@@ -1,0 +1,12 @@
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <pattern id="star" x=".1" y=".08" width=".14" height=".14"
+                 patternContentUnits="userSpaceOnUse"
+                 patternUnits="objectBoundingBox">
+            <rect fill="red" x="2" y="2" width="10" height="10"/>
+            <rect fill="none" stroke-width="1" stroke="blue" x="0" y="0" width="14" height="14"/>
+        </pattern>
+    </defs>
+
+    <rect x="50" y="50" width="100" height="100" fill="orange" stroke-width="30" stroke="url(#star)"/>
+</svg>

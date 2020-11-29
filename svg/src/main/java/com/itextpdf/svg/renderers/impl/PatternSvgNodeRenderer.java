@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implements ISvgPaintServer {
 
-    private static final double ZERO = 1E-10;
+    private static final double CONVERT_COEFF = 0.75;
 
     @Override
     public ISvgNodeRenderer createDeepCopy() {
@@ -84,7 +84,7 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
             return null;
         }
         try {
-            PdfPattern.Tiling tilingPattern = createTilingPattern(context);
+            PdfPattern.Tiling tilingPattern = createTilingPattern(context, objectBoundingBox);
             drawPatternContent(context, tilingPattern);
             return (tilingPattern == null) ? null : new PatternColor(tilingPattern);
         } finally {
@@ -92,36 +92,58 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
         }
     }
 
-    private PdfPattern.Tiling createTilingPattern(SvgDrawContext context) {
+    private PdfPattern.Tiling createTilingPattern(SvgDrawContext context,
+            Rectangle objectBoundingBox) {
         final boolean isObjectBoundingBoxInPatternUnits = isObjectBoundingBoxInPatternUnits();
         final boolean isObjectBoundingBoxInPatternContentUnits = isObjectBoundingBoxInPatternContentUnits();
         final boolean isViewBoxExist = getAttribute(Attributes.VIEWBOX) != null;
+
+        // evaluate pattern rectangle on target pattern units
+        Rectangle originalPatternRectangle = calculateOriginalPatternRectangle(
+                context, isObjectBoundingBoxInPatternUnits);
+
+        // get xStep and yStep on target pattern units
+        double xStep = originalPatternRectangle.getWidth();
+        double yStep = originalPatternRectangle.getHeight();
+
+        if (xStep == 0 || yStep == 0) {
+            return null;
+        }
+
+        // transform user space to target pattern rectangle origin and scale
         final AffineTransform patternAffineTransform = new AffineTransform();
-        double xOffset, yOffset, xStep, yStep;
-        Rectangle bbox;
-        if (isObjectBoundingBoxInPatternUnits || isViewBoxExist || isObjectBoundingBoxInPatternContentUnits) {
+        if (isObjectBoundingBoxInPatternUnits) {
+            patternAffineTransform.concatenate(getTransformToUserSpaceOnUse(objectBoundingBox));
+        }
+        patternAffineTransform.translate(originalPatternRectangle.getX(), originalPatternRectangle.getY());
+
+        double bboxWidth, bboxHeight;
+        if (isViewBoxExist) {
+            // TODO: DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
             return null;
         } else {
-            final Rectangle currentViewPort = context.getCurrentViewPort();
-            final double viewPortX = currentViewPort.getX();
-            final double viewPortY = currentViewPort.getY();
-            final double viewPortWidth = currentViewPort.getWidth();
-            final double viewPortHeight = currentViewPort.getHeight();
-            final float em = getCurrentFontSize();
-            final float rem = context.getCssContext().getRootFontSize();
-            xOffset = SvgCoordinateUtils.getCoordinateForUserSpaceOnUse(
-                    getAttribute(Attributes.X), viewPortX, viewPortX, viewPortWidth, em, rem);
-            yOffset = SvgCoordinateUtils.getCoordinateForUserSpaceOnUse(
-                    getAttribute(Attributes.Y), viewPortY, viewPortY, viewPortHeight, em, rem);
-            xStep = SvgCoordinateUtils.getCoordinateForUserSpaceOnUse(
-                    getAttribute(Attributes.WIDTH), viewPortX, viewPortX, viewPortWidth, em, rem);
-            yStep = SvgCoordinateUtils.getCoordinateForUserSpaceOnUse(
-                    getAttribute(Attributes.HEIGHT), viewPortX, viewPortX, viewPortHeight, em, rem);
-            bbox = new Rectangle(0F, 0F, (float) xStep, (float) yStep);
-            if (!isZero(xOffset, ZERO) || !isZero(yOffset, ZERO)) {
-                patternAffineTransform.translate(xOffset, yOffset);
+            if (isObjectBoundingBoxInPatternUnits != isObjectBoundingBoxInPatternContentUnits) {
+                // If pattern units are not the same as pattern content units, then we need to scale
+                // the resulted space into a space to draw pattern content. The pattern rectangle origin
+                // is already in place, but measures should be adjusted.
+                double scaleX, scaleY;
+                if (isObjectBoundingBoxInPatternContentUnits) {
+                    scaleX = objectBoundingBox.getWidth() / CONVERT_COEFF;
+                    scaleY = objectBoundingBox.getHeight() / CONVERT_COEFF;
+                } else {
+                    scaleX = CONVERT_COEFF / objectBoundingBox.getWidth();
+                    scaleY = CONVERT_COEFF / objectBoundingBox.getHeight();
+                }
+                patternAffineTransform.concatenate(AffineTransform.getScaleInstance(scaleX, scaleY));
+                xStep /= scaleX;
+                yStep /= scaleY;
             }
+            bboxWidth = xStep;
+            bboxHeight = yStep;
         }
+
+        Rectangle bbox = new Rectangle(0F, 0F, (float) bboxWidth, (float) bboxHeight);
+
         return createColoredTilingPatternInstance(patternAffineTransform, bbox, xStep, yStep);
     }
 
@@ -157,6 +179,39 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
         }
     }
 
+    private Rectangle calculateOriginalPatternRectangle(SvgDrawContext context,
+            boolean isObjectBoundingBoxInPatternUnits) {
+        double xOffset, yOffset, xStep, yStep;
+        if (isObjectBoundingBoxInPatternUnits) {
+            xOffset = SvgCoordinateUtils.getCoordinateForObjectBoundingBox(
+                    getAttribute(Attributes.X), 0) * CONVERT_COEFF;
+            yOffset = SvgCoordinateUtils.getCoordinateForObjectBoundingBox(
+                    getAttribute(Attributes.Y), 0) * CONVERT_COEFF;
+            xStep = SvgCoordinateUtils.getCoordinateForObjectBoundingBox(
+                    getAttribute(Attributes.WIDTH), 0) * CONVERT_COEFF;
+            yStep = SvgCoordinateUtils.getCoordinateForObjectBoundingBox(
+                    getAttribute(Attributes.HEIGHT), 0) * CONVERT_COEFF;
+        } else {
+            final Rectangle currentViewPort = context.getCurrentViewPort();
+            final double viewPortX = currentViewPort.getX();
+            final double viewPortY = currentViewPort.getY();
+            final double viewPortWidth = currentViewPort.getWidth();
+            final double viewPortHeight = currentViewPort.getHeight();
+            final float em = getCurrentFontSize();
+            final float rem = context.getCssContext().getRootFontSize();
+            // get pattern coordinates in userSpaceOnUse coordinate system
+            xOffset = SvgCoordinateUtils.getCoordinateForUserSpaceOnUse(
+                    getAttribute(Attributes.X), viewPortX, viewPortX, viewPortWidth, em, rem);
+            yOffset = SvgCoordinateUtils.getCoordinateForUserSpaceOnUse(
+                    getAttribute(Attributes.Y), viewPortY, viewPortY, viewPortHeight, em, rem);
+            xStep = SvgCoordinateUtils.getCoordinateForUserSpaceOnUse(
+                    getAttribute(Attributes.WIDTH), viewPortX, viewPortX, viewPortWidth, em, rem);
+            yStep = SvgCoordinateUtils.getCoordinateForUserSpaceOnUse(
+                    getAttribute(Attributes.HEIGHT), viewPortY, viewPortY, viewPortHeight, em, rem);
+        }
+        return new Rectangle((float) xOffset, (float) yOffset, (float) xStep, (float) yStep);
+    }
+
     private boolean isObjectBoundingBoxInPatternUnits() {
         final String patternUnits = getAttribute(Attributes.PATTERN_UNITS);
         if (Values.USER_SPACE_ON_USE.equals(patternUnits)) {
@@ -180,7 +235,11 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
         return false;
     }
 
-    private static boolean isZero(double val, double delta) {
-        return -delta < val && val < delta;
+    private AffineTransform getTransformToUserSpaceOnUse(Rectangle objectBoundingBox) {
+        AffineTransform transform = new AffineTransform();
+        transform.translate(objectBoundingBox.getX(), objectBoundingBox.getY());
+        transform.scale(objectBoundingBox.getWidth() / CONVERT_COEFF,
+                objectBoundingBox.getHeight() / CONVERT_COEFF);
+        return transform;
     }
 }

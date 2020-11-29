@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20201022105317+03'00')/ModDate(D:20201022105317+03'00')/Producer(iText® 7.1.14-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20201129192644+03'00')/ModDate(D:20201129192644+03'00')/Producer(iText® 7.1.14-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +36,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 450 450]/Length 434/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 450]/Length 467/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 9 0 R/P2 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 450 450 re
 W
 n
@@ -55,7 +55,9 @@ ET
 f
 Q
 q
-0 0 0 rg
+/Pattern cs
+
+/P1 scn
 0 0.50196 0 RG
 0.75 w
 % rect
@@ -64,6 +66,9 @@ B
 Q
 q
 0 0.50196 0 rg
+/Pattern CS
+
+/P2 SCN
 7.5 w
 % rect
 90 26.25 45 45 re
@@ -101,8 +106,42 @@ Q
 
 endstream
 endobj
+9 0 obj
+<</BBox[0 0 0.075 0.075]/Length 100/Matrix[80 0 0 80 7.5 15]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 0.075/YStep 0.075>>stream
+0 0 0 rg
+% polyline
+0 0 m
+1.5 3.75 l
+0 7.5 l
+3.75 6 l
+7.5 7.5 l
+6 3.75 l
+7.5 0 l
+3.75 1.5 l
+0 0 l
+f
+
+endstream
+endobj
+10 0 obj
+<</BBox[0 0 0.075 0.075]/Length 100/Matrix[60 0 0 60 90 26.25]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 0.075/YStep 0.075>>stream
+0 0 0 rg
+% polyline
+0 0 m
+1.5 3.75 l
+0 7.5 l
+3.75 6 l
+7.5 7.5 l
+6 3.75 l
+7.5 0 l
+3.75 1.5 l
+0 0 l
+f
+
+endstream
+endobj
 xref
-0 9
+0 11
 0000000000 65535 f 
 0000000226 00000 n 
 0000000528 00000 n 
@@ -112,9 +151,11 @@ xref
 0000000438 00000 n 
 0000000579 00000 n 
 0000000762 00000 n 
+0000001384 00000 n 
+0000001669 00000 n 
 trailer
-<</ID [<00c5ca331b4425cc429e20736bb8fc07><00c5ca331b4425cc429e20736bb8fc07>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<56c5ca26fb3fed0ee4be6673218c9c20><56c5ca26fb3fed0ee4be6673218c9c20>]/Info 3 0 R/Root 1 0 R/Size 11>>
 %iText-7.1.14-SNAPSHOT
 startxref
-1320
+1957
 %%EOF

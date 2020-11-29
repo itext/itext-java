@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20201016135629+03'00')/ModDate(D:20201016135629+03'00')/Producer(iText® 7.1.14-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20201201123505+03'00')/ModDate(D:20201201123505+03'00')/Producer(iText® 7.1.14-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +36,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 450 450]/Length 434/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 450]/Length 467/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 9 0 R/P2 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 450 450 re
 W
 n
@@ -55,7 +55,9 @@ ET
 f
 Q
 q
-0 0 0 rg
+/Pattern cs
+
+/P1 scn
 0 0.50196 0 RG
 0.75 w
 % rect
@@ -64,6 +66,9 @@ B
 Q
 q
 0 0.50196 0 rg
+/Pattern CS
+
+/P2 SCN
 7.5 w
 % rect
 90 26.25 45 45 re
@@ -101,8 +106,66 @@ Q
 
 endstream
 endobj
+9 0 obj
+<</BBox[0 0 18 18]/Length 214/Matrix[1 0 0 1 7.5 15]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 18/YStep 18>>stream
+0 0 1 rg
+% polyline
+0 0 m
+1.5 3.75 l
+0 7.5 l
+3.75 6 l
+7.5 7.5 l
+6 3.75 l
+7.5 0 l
+3.75 1.5 l
+0 0 l
+f
+0 0 0 rg
+% polyline
+7.5 7.5 m
+9 11.25 l
+7.5 15 l
+11.25 13.5 l
+15 15 l
+13.5 11.25 l
+15 7.5 l
+11.25 9 l
+7.5 7.5 l
+f
+
+endstream
+endobj
+10 0 obj
+<</BBox[0 0 13.5 13.5]/Length 214/Matrix[1 0 0 1 90 26.25]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 13.5/YStep 13.5>>stream
+0 0 1 rg
+% polyline
+0 0 m
+1.5 3.75 l
+0 7.5 l
+3.75 6 l
+7.5 7.5 l
+6 3.75 l
+7.5 0 l
+3.75 1.5 l
+0 0 l
+f
+0 0 0 rg
+% polyline
+7.5 7.5 m
+9 11.25 l
+7.5 15 l
+11.25 13.5 l
+15 15 l
+13.5 11.25 l
+15 7.5 l
+11.25 9 l
+7.5 7.5 l
+f
+
+endstream
+endobj
 xref
-0 9
+0 11
 0000000000 65535 f 
 0000000226 00000 n 
 0000000528 00000 n 
@@ -112,9 +175,11 @@ xref
 0000000438 00000 n 
 0000000579 00000 n 
 0000000762 00000 n 
+0000001384 00000 n 
+0000001769 00000 n 
 trailer
-<</ID [<9cf523eb475918022ddf62ffb233762a><9cf523eb475918022ddf62ffb233762a>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<16bb1e29bf5f5d0f053ea8d52d7444ec><16bb1e29bf5f5d0f053ea8d52d7444ec>]/Info 3 0 R/Root 1 0 R/Size 11>>
 %iText-7.1.14-SNAPSHOT
 startxref
-1320
+2165
 %%EOF

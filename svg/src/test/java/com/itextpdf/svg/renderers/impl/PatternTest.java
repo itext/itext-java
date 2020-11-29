@@ -22,8 +22,11 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
@@ -43,77 +46,66 @@ public class PatternTest extends SvgIntegrationTest {
 
     @Test
     //TODO: DEVSIX-4782 support 'viewbox'
-    //TODO: DEVSIX-4781 Support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void widthHeightXYInCmUnitDiffPatternUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYInCmUnitDiffPatternUnits");
     }
 
     @Test
     //TODO: DEVSIX-4782 support 'viewbox'
-    //TODO: DEVSIX-4781 Support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void widthHeightXYInInchUnitDiffPatternUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYInInchUnitDiffPatternUnits");
     }
 
     @Test
     //TODO: DEVSIX-4782 support 'viewbox'
-    //TODO: DEVSIX-4781 Support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void widthHeightXYInEmUnitDiffPatternUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYInEmUnitDiffPatternUnits");
     }
 
     @Test
     //TODO: DEVSIX-4782 support 'viewbox'
-    //TODO: DEVSIX-4781 Support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void widthHeightXYInExUnitDiffPatternUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYInExUnitDiffPatternUnits");
     }
 
     @Test
     //TODO: DEVSIX-4782 support viewbox
-    //TODO: DEVSIX-4781 Support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void widthHeightXYInPercentsDiffPatternUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYInPercentsDiffPatternUnits");
     }
 
     @Test
     //TODO: DEVSIX-4782 support viewbox
-    //TODO: DEVSIX-4781 Support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void widthHeightXYInPxUnitDiffPatternUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYInPxUnitDiffPatternUnits");
     }
 
     @Test
     //TODO: DEVSIX-4782 support 'viewbox'
-    //TODO: DEVSIX-4781 Support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void widthHeightXYInMmUnitDiffPatternUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYInMmUnitDiffPatternUnits");
     }
 
     @Test
     //TODO: DEVSIX-4782 support viewbox
-    //TODO: DEVSIX-4781 Support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void widthHeightXYInPtUnitDiffPatternUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYInPtUnitDiffPatternUnits");
     }
 
     @Test
     //TODO: DEVSIX-4782 support viewbox
-    //TODO: DEVSIX-4781 Support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void widthHeightXYNoMeasureUnitTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYNoMeasureUnit");
     }
 
     @Test
     //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
-    //TODO DEVSIX-4781 support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void hrefAttributeTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hrefAttribute");
     }
 
     @Test
     //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
-    //TODO DEVSIX-4781 support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void patternUnitsObjectBoundingBoxTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternUnitsObjectBoundingBox");
     }
@@ -125,34 +117,32 @@ public class PatternTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-4781 support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void patternContentUnitsUserSpaceOnUseTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternContentUnitsUserSpaceOnUse");
     }
 
     @Test
     //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
-    //TODO DEVSIX-4781 support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void patternContentUnitsObjBoundBoxTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternContentUnitsObjBoundBox");
     }
 
     @Test
-    //TODO DEVSIX-4781 support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 8)})
+    // TODO DEVSIX-4834 support relative units in attributes of svg elements
     public void patternContentUnitsObjBoundBoxAbsoluteCoordTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternContentUnitsObjBoundBoxAbsoluteCoord");
     }
 
     @Test
     //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
-    //TODO DEVSIX-4781 support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void viewBoxAndAbsoluteCoordinatesTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxAndAbsoluteCoordinates");
     }
 
     @Test
     //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
-    //TODO DEVSIX-4781 support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     //TODO DEVSIX-4811 support 'patternTransform' attribute for SVG pattern element
     public void patternTransformSimpleTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternTransformSimple");
@@ -160,7 +150,6 @@ public class PatternTest extends SvgIntegrationTest {
 
     @Test
     //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
-    //TODO DEVSIX-4781 support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     //TODO DEVSIX-4811 support 'patternTransform' attribute for SVG pattern element
     public void patternTransformUnitsObjectBoundingBoxTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternTransformUnitsObjectBoundingBox");
@@ -175,7 +164,6 @@ public class PatternTest extends SvgIntegrationTest {
 
     @Test
     //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
-    //TODO DEVSIX-4781 support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void preserveAspectRatioXMaxYMidMeetTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "preserveAspectRatioXMaxYMidMeet");
     }
@@ -183,7 +171,6 @@ public class PatternTest extends SvgIntegrationTest {
     @Test
 
     //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
-    //TODO DEVSIX-4781 support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void preserveAspectRatioXMaxYMidSliceTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "preserveAspectRatioXMaxYMidSlice");
     }
@@ -191,7 +178,6 @@ public class PatternTest extends SvgIntegrationTest {
     @Test
 
     //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
-    //TODO DEVSIX-4781 support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void preserveAspectRatioXMidYMaxMeetTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "preserveAspectRatioXMidYMaxMeet");
     }
@@ -199,27 +185,23 @@ public class PatternTest extends SvgIntegrationTest {
     @Test
 
     //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
-    //TODO DEVSIX-4781 support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void preserveAspectRatioXMidYMaxSliceTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "preserveAspectRatioXMidYMaxSlice");
     }
 
     @Test
     //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
-    //TODO DEVSIX-4781 support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void relativeUnitsResolveFromDefsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "relativeUnitsResolveFromDefs");
     }
 
     @Test
     //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
-    //TODO DEVSIX-4781 support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void relativeUnitsResolveFromPatternTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "relativeUnitsResolveFromPattern");
     }
 
     @Test
-    //TODO DEVSIX-4781 support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
     public void linearGradientInsidePatternTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradientInsidePattern");
     }
@@ -230,25 +212,27 @@ public class PatternTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-4781 support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 2)})
+    // TODO DEVSIX-4834 support relative units in attributes of svg elements
     public void severalComplexElementsInsidePatternTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "severalComplexElementsInsidePattern");
     }
 
     @Test
-    //TODO DEVSIX-4781 support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
+    //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
     public void nestedPatternsWithComplexElementsInsideTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "nestedPatternsWithComplexElementsInside");
     }
 
     @Test
-    // Behavior differs from browser. We use default color for element with cycled pattern.
+    // Behavior differs from browser. In our implementation we use default color for element with cycled pattern.
     public void patternUseItselfTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternUseItself");
     }
 
     @Test
-    // TODO DEVSIX-4781 Support 'objectBoundingBox' value for SVG pattern element 'patternContentUnits' and 'patternUnits'
+    // Behavior differs from browser. In our implementation we use default color for element with cycled pattern.
     public void nestedPatternsLinkedToEachOtherTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "nestedPatternsLinkedToEachOther");
     }
@@ -279,7 +263,6 @@ public class PatternTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-4781 Support 'objectBoundingBox' value
     public void patternContentUnitsObjectBoundingBoxTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternContentUnitsObjectBoundingBox");
     }
@@ -288,5 +271,32 @@ public class PatternTest extends SvgIntegrationTest {
     // Behavior differs from browser. We use default color instead cycled pattern.
     public void cycledPatternsUserSpaceOnUseTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "cycledPatternsUserSpaceOnUse");
+    }
+
+    @Test
+    public void objBoundingBoxWithMarginsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objBoundingBoxWithMargins");
+    }
+
+    @Test
+    public void objBoundingBoxUserSpaceOnUseTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objBoundingBoxUserSpaceOnUse");
+    }
+
+    @Test
+    public void userSpaceOnUseObjBoundingBoxTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "userSpaceOnUseObjBoundingBox");
+    }
+
+    @Test
+    // we print the default color that is black
+    public void patternDefaultWidthTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternDefaultWidth");
+    }
+
+    @Test
+    // we print the default color that is black
+    public void patternDefaultHeightTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternDefaultHeight");
     }
 }
