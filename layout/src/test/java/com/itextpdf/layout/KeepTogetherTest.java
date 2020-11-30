@@ -45,6 +45,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
@@ -97,6 +98,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
     private static final String MEDIUM_TEXT = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr"
             + " sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
             + " At vero eos et accusam et justo duo dolores et ea rebum.\n ";
+    private static final String SMALL_TEXT = "Short text";
 
 
     @BeforeClass
@@ -1121,6 +1123,43 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
                 canvas.add(main);
             }
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    //TODO: DEVSIX-4720 (invalid positioning of child element)
+    public void keepTogetherInDivWithKidsFloatTest() throws IOException, InterruptedException {
+        String filename = "keepTogetherInDivWithKidsFloat.pdf";
+        String outFile = destinationFolder + filename;
+        String cmpFileName = sourceFolder + "cmp_" + filename;
+
+        try (Document doc = new Document(new PdfDocument(new PdfWriter(outFile)))) {
+            doc.getPdfDocument().addNewPage(PageSize.A5.rotate());
+
+            Div main = new Div().setKeepTogether(true);
+            main.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+
+            Div child1 = createChildDivWithText(main, SMALL_TEXT);
+            child1
+                    .setBackgroundColor(ColorConstants.YELLOW)
+                    .setWidth(UnitValue.createPercentValue(30))
+                    .setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+            Div child2 = createChildDivWithText(main, BIG_TEXT);
+            child2
+                    .setBackgroundColor(ColorConstants.GREEN)
+                    .setWidth(UnitValue.createPercentValue(70))
+                    .setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+            Div child3 = createChildDivWithText(main, "Test");
+            child3.setBackgroundColor(ColorConstants.ORANGE);
+
+            Div child4 = createChildDivWithText(main, MEDIUM_TEXT);
+            child4.setBackgroundColor(ColorConstants.ORANGE);
+
+            doc.add(main);
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
