@@ -45,14 +45,11 @@ package com.itextpdf.signatures;
 import com.itextpdf.io.codec.Base64;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERIA5String;
-import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.esf.OtherHashAlgAndValue;
 import org.bouncycastle.asn1.esf.SigPolicyQualifierInfo;
-import org.bouncycastle.asn1.esf.SigPolicyQualifiers;
 import org.bouncycastle.asn1.esf.SignaturePolicyId;
 import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -167,9 +164,9 @@ public class SignaturePolicyInfoTest extends ExtendedITextTest {
         AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(
                 asn1ObjectIdentifier);
         OtherHashAlgAndValue otherHashAlgAndValue = new OtherHashAlgAndValue(algorithmIdentifier, derOctetString);
-        DERObjectIdentifier derObjectIdentifier = new DERObjectIdentifier(POLICY_IDENTIFIER);
-        ASN1ObjectIdentifier derObjectIdentifierInstance = DERObjectIdentifier.getInstance(derObjectIdentifier);
-        SignaturePolicyId signaturePolicyId = new SignaturePolicyId(derObjectIdentifierInstance, otherHashAlgAndValue,
+        ASN1ObjectIdentifier objectIdentifier = new ASN1ObjectIdentifier(POLICY_IDENTIFIER);
+        ASN1ObjectIdentifier objectIdentifierInstance = ASN1ObjectIdentifier.getInstance(objectIdentifier);
+        SignaturePolicyId signaturePolicyId = new SignaturePolicyId(objectIdentifierInstance, otherHashAlgAndValue,
                 SignUtils.createSigPolicyQualifiers(sigPolicyQualifierInfo));
 
         SignaturePolicyIdentifier expected = new SignaturePolicyIdentifier(signaturePolicyId);
