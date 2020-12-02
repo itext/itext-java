@@ -144,7 +144,7 @@ public class PdfAConformanceException extends PdfException {
     public static final String THE_NUMBER_OF_COLOUR_CHANNELS_IN_THE_JPEG2000_DATA_SHALL_BE_1_3_OR_4 = "The number of colour channels in the jpeg2000 data shall be 1, 3 or 4";
     public static final String THE_PAGE_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY = "The page dictionary shall not contain aa entry";
     public static final String THE_PAGE_DICTIONARY_SHALL_NOT_CONTAIN_PRESSTEPS_ENTRY = "The page dictionary shall not contain pressteps entry";
-    public static final String THE_PAGE_LESS_3_UNITS_NO_GREATER_14400_IN_EITHER_DIRECTION = "The page less 3 units no greater 14400 in either direction";
+    public static final String THE_PAGE_LESS_3_UNITS_NO_GREATER_14400_IN_EITHER_DIRECTION = "The page is less than 3 units or greater than 14400 in either direction";
     public static final String THE_SMASK_KEY_IS_NOT_ALLOWED_IN_EXTGSTATE = "The smask key is not allowed in extgstate";
     public static final String THE_SMASK_KEY_IS_NOT_ALLOWED_IN_XOBJECTS = "The smask key is not allowed in xobjects";
     public static final String THE_VALUE_OF_INTERPOLATE_KEY_SHALL_BE_FALSE = "The value of interpolate key shall not be true";
