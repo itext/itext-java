@@ -515,4 +515,219 @@ public class MatcherTest extends ExtendedITextTest {
         Assert.assertTrue(matcher.find());
         Assert.assertFalse(matcher.find());
     }
+
+    @Test
+    public void regionTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbabbbbbbbbbbbbbbb");
+        matcher.region(6, 13);
+
+        // abbbbbb [6, 13)
+        Assert.assertTrue(matcher.find());
+        Assert.assertFalse(matcher.find());
+        Assert.assertTrue(matcher.matches());
+    }
+
+    @Test
+    public void regionSeveralMatchesTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbabababbbbbbbbbbb");
+        matcher.region(6, 13);
+        // ab [6, 8)
+        Assert.assertTrue(matcher.find());
+        // ab [8, 10)
+        Assert.assertTrue(matcher.find());
+        // abb [10, 13)
+        Assert.assertTrue(matcher.find());
+        Assert.assertFalse(matcher.find());
+        Assert.assertFalse(matcher.matches());
+    }
+
+    @Test
+    public void stringMatchesButRegionDoesNotMatchTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
+        Assert.assertTrue(matcher.matches());
+        matcher.region(6, 13);
+        Assert.assertFalse(matcher.matches());
+    }
+
+    @Test
+    public void negativeStartOfRegionTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
+        matcher.region(-1, 10);
+    }
+
+    @Test
+    public void tooLargeStartOfRegionTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
+        matcher.region(24, 24);
+    }
+
+    @Test
+    public void negativeEndOfRegionTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
+        matcher.region(1, -1);
+    }
+
+    @Test
+    public void tooLargeEndOfRegionTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
+        matcher.region(1, 24);
+    }
+
+    @Test
+    public void endGreaterThenStartRegionTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
+        matcher.region(10, 9);
+    }
+
+    @Test
+    public void startAndEndEqualRegionTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
+        matcher.region(9, 9);
+        // *empty string* [9, 9)
+        Assert.assertFalse(matcher.matches());
+    }
+
+    @Test
+    public void startAndEndEqualRegionMatchTest() {
+        Pattern patternAcceptingEmptyString = Pattern.compile("(a+)?");
+        Matcher matcher = patternAcceptingEmptyString.matcher("abbbbbbbbbbbbbbbbbbbbb");
+        matcher.region(9, 9);
+        // *empty string* [9, 9)
+        Assert.assertTrue(matcher.matches());
+    }
+
+    @Test
+    public void severalRegionCallsTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbabababbbbbbbbbbb");
+        matcher.region(6, 13);
+        // abababb [6, 13)
+        Assert.assertFalse(matcher.matches());
+        matcher.region(0, 3);
+        // abb [0, 3)
+        Assert.assertTrue(matcher.matches());
+        matcher.region(0, 4);
+        // abbb [0, 4)
+        Assert.assertTrue(matcher.matches());
+        matcher.region(0, 7);
+        // abbbbba [0, 7)
+        Assert.assertFalse(matcher.matches());
+    }
+
+    @Test
+    public void startEndFullRegionMatchesTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbabbbbbbbbbbbbbbb");
+        matcher.region(6, 13);
+        // ab [6, 13)
+        Assert.assertTrue(matcher.find());
+        Assert.assertEquals(6, matcher.start());
+        Assert.assertEquals(13, matcher.end());
+    }
+
+    @Test
+    public void startEndPartiallyRegionMatchesTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbbbbabbabbbbbbbbb");
+        matcher.region(6, 13);
+        // abb [9, 12)
+        Assert.assertTrue(matcher.find());
+        Assert.assertEquals(9, matcher.start());
+        Assert.assertEquals(12, matcher.end());
+    }
+
+    @Test
+    public void startRegionDoesNotMatchesTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
+        matcher.region(6, 13);
+
+        Assert.assertFalse(matcher.find());
+        junitExpectedException.expect(IllegalStateException.class);
+        matcher.start();
+    }
+
+    @Test
+    public void endRegionDoesNotMatchesTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
+        matcher.region(6, 13);
+
+        Assert.assertFalse(matcher.find());
+        junitExpectedException.expect(IllegalStateException.class);
+        matcher.end();
+    }
+
+    @Test
+    public void groupsAndRegionTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbabababbbbbbbbbbb");
+        matcher.region(6, 8);
+        // ab [6, 8)
+        Assert.assertTrue(matcher.find());
+        Assert.assertEquals("ab", matcher.group());
+        Assert.assertEquals("ab", matcher.group(0));
+        Assert.assertEquals("a", matcher.group(1));
+        Assert.assertEquals("b", matcher.group(2));
+    }
+
+    @Test
+    public void regionResetsSearchTest() {
+        Matcher matcher = PATTERN.matcher("bbbbbbabbbbbbbbbabbbbb");
+        // abbbbbbbbb [6, 16)
+        Assert.assertTrue(matcher.find());
+        Assert.assertEquals(6, matcher.start());
+        Assert.assertEquals(16, matcher.end());
+        // abbbbb [16, 22)
+        Assert.assertTrue(matcher.find());
+        Assert.assertEquals(16, matcher.start());
+        Assert.assertEquals(22, matcher.end());
+        matcher.region(6, 13);
+        // abbbbbb [6, 16)
+        Assert.assertTrue(matcher.find());
+        Assert.assertEquals(6, matcher.start());
+        Assert.assertEquals(13, matcher.end());
+    }
+
+    @Test
+    public void findWithParamResetsRegionTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
+        matcher.region(6, 13);
+        // bbbbbbb [6, 13)
+        Assert.assertFalse(matcher.find());
+        Assert.assertTrue(matcher.find(0));
+        Assert.assertEquals("abbbbbbbbbbbbbbbbbbbbb", matcher.group());
+        Assert.assertEquals(0, matcher.start());
+        Assert.assertEquals(22, matcher.end());
+    }
+
+    @Test
+    public void startAfterRegionThrowsExceptionTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
+        matcher.find();
+        matcher.region(6, 13);
+
+        junitExpectedException.expect(IllegalStateException.class);
+        matcher.start();
+    }
+
+    @Test
+    public void endAfterRegionThrowsExceptionTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
+        matcher.find();
+        matcher.region(6, 13);
+
+        junitExpectedException.expect(IllegalStateException.class);
+        matcher.end();
+    }
+
+    @Test
+    public void groupAfterRegionThrowsExceptionTest() {
+        Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
+        matcher.find();
+        matcher.region(6, 13);
+
+        junitExpectedException.expect(IllegalStateException.class);
+        matcher.group();
+    }
+
 }

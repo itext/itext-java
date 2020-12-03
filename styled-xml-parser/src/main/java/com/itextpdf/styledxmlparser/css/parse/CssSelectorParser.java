@@ -59,6 +59,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -105,32 +106,28 @@ public final class CssSelectorParser {
      */
     public static List<ICssSelectorItem> parseSelectorItems(String selector) {
         List<ICssSelectorItem> selectorItems = new ArrayList<>();
-        CssSelectorParserMatch match = new CssSelectorParserMatch(selector, selectorPattern);
+        Matcher match = selectorPattern.matcher(selector);
         boolean tagSelectorDescription = false;
-        while (match.success()) {
-            String selectorItem = match.getValue();
+        while (match.find()) {
+            String selectorItem = match.group(0);
             char firstChar = selectorItem.charAt(0);
             switch (firstChar) {
                 case '#':
-                    match.next();
                     selectorItems.add(new CssIdSelectorItem(selectorItem.substring(1)));
                     break;
                 case '.':
-                    match.next();
                     selectorItems.add(new CssClassSelectorItem(selectorItem.substring(1)));
                     break;
                 case '[':
-                    match.next();
                     selectorItems.add(new CssAttributeSelectorItem(selectorItem));
                     break;
                 case ':':
-                    appendPseudoSelector(selectorItems, selectorItem, match);
+                    appendPseudoSelector(selectorItems, selectorItem, match, selector);
                     break;
                 case ' ':
                 case '+':
                 case '>':
                 case '~':
-                    match.next();
                     if (selectorItems.size() == 0) {
                         throw new IllegalArgumentException(MessageFormatUtil.format("Invalid token detected in the start of the selector string: {0}", firstChar));
                     }
@@ -150,7 +147,6 @@ public final class CssSelectorParser {
                     }
                     break;
                 default: //and case '*':
-                    match.next();
                     if (tagSelectorDescription) {
                         throw new IllegalStateException("Invalid selector string");
                     }
@@ -168,38 +164,18 @@ public final class CssSelectorParser {
     }
 
     /**
-     * Resolves a pseudo selector, appends it to list and updates {@link CssSelectorParserMatch} in process.
+     * Resolves a pseudo selector and appends it to list.
      *
      * @param selectorItems list of items to which new selector will be added to
      * @param pseudoSelector the pseudo selector
-     * @param match the corresponding {@link CssSelectorParserMatch} that will be updated.
+     * @param match the corresponding {@link Matcher}.
+     * @param source is the original source
      */
-    private static void appendPseudoSelector(List<ICssSelectorItem> selectorItems, String pseudoSelector, CssSelectorParserMatch match) {
+    private static void appendPseudoSelector(List<ICssSelectorItem> selectorItems, String pseudoSelector,
+            Matcher match, String source) {
         pseudoSelector = pseudoSelector.toLowerCase();
-        int start = match.getIndex() + pseudoSelector.length();
-        String source = match.getSource();
-        if (start < source.length() && source.charAt(start) == '(') {
-            int bracketDepth = 1;
-            int curr = start + 1;
-            while(bracketDepth > 0 && curr < source.length()) {
-                if (source.charAt(curr) == '(') {
-                    ++bracketDepth;
-                } else if (source.charAt(curr) == ')') {
-                    --bracketDepth;
-                } else if (source.charAt(curr) == '"' || source.charAt(curr) == '\'') {
-                    curr = CssUtils.findNextUnescapedChar(source, source.charAt(curr), curr + 1);
-                }
-                ++curr;
-            }
-            if (bracketDepth == 0) {
-                match.next(curr);
-                pseudoSelector += source.substring(start, curr);
-            } else {
-                match.next();
-            }
-        } else {
-            match.next();
-        }
+        pseudoSelector = handleBracketsOfPseudoSelector(pseudoSelector, match, source);
+
         /*
             This :: notation is introduced by the current document in order to establish a discrimination between
             pseudo-classes and pseudo-elements.
@@ -218,5 +194,36 @@ public final class CssSelectorParser {
             }
             selectorItems.add(pseudoClassSelectorItem);
         }
+    }
+
+    /**
+     * Resolves a pseudo selector if it contains brackets. Updates internal state of
+     * {@link Matcher} if necessary.
+     *
+     * @param pseudoSelector the pseudo selector
+     * @param match the corresponding {@link Matcher}.
+     * @param source is the original source
+     */
+    private static String handleBracketsOfPseudoSelector(String pseudoSelector, Matcher match, String source) {
+        int start = match.start() + pseudoSelector.length();
+        if (start < source.length() && source.charAt(start) == '(') {
+            int bracketDepth = 1;
+            int curr = start + 1;
+            while(bracketDepth > 0 && curr < source.length()) {
+                if (source.charAt(curr) == '(') {
+                    ++bracketDepth;
+                } else if (source.charAt(curr) == ')') {
+                    --bracketDepth;
+                } else if (source.charAt(curr) == '"' || source.charAt(curr) == '\'') {
+                    curr = CssUtils.findNextUnescapedChar(source, source.charAt(curr), curr + 1);
+                }
+                ++curr;
+            }
+            if (bracketDepth == 0) {
+                match.region(curr, source.length());
+                pseudoSelector += source.substring(start, curr);
+            }
+        }
+        return pseudoSelector;
     }
 }
