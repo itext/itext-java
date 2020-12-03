@@ -192,8 +192,13 @@ public class ResourceResolver {
                 return imageXObject;
             }
         }
-        logger.error(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI,
-                uriResolver.getBaseUri(), src));
+        if (isDataSrc(src)) {
+            logger.error(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_DATA_URI,
+                    src));
+        } else {
+            logger.error(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI,
+                    uriResolver.getBaseUri(), src));
+        }
         return null;
     }
 
@@ -283,7 +288,7 @@ public class ResourceResolver {
      * @return true if source is under data URI scheme
      */
     public boolean isDataSrc(String src) {
-        return src.startsWith(DATA_SCHEMA_PREFIX) && src.contains(",");
+        return src != null && src.toLowerCase().startsWith(DATA_SCHEMA_PREFIX) && src.contains(",");
     }
 
     /**
