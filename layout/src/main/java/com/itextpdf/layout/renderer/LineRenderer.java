@@ -1694,7 +1694,7 @@ public class LineRenderer extends AbstractRenderer {
                     }
                     if (textLayoutResult.isContainsPossibleBreak()
                             && textLayoutResult.getStatus() != LayoutResult.NOTHING) {
-                        textRenderer.setLayoutUntilTheLastPossibleBreak(true);
+                        textRenderer.setFirstIndexExceedingAvailableWidth(textRenderer.line.end);
                         // todo ? relayout in original bBox rather than occupied on the first layout area
                         LayoutArea layoutArea = textRenderer.getOccupiedArea().clone();
                         layoutArea.getBBox()
@@ -1702,7 +1702,7 @@ public class LineRenderer extends AbstractRenderer {
                                 .increaseWidth(0.0001F);
                         LayoutResult newChildLayoutResult = textRenderer
                                 .layout(new LayoutContext(layoutArea, wasParentsHeightClipped));
-                        textRenderer.setLayoutUntilTheLastPossibleBreak(false);
+                        textRenderer.setFirstIndexExceedingAvailableWidth(-1);
                         if (newChildLayoutResult.getStatus() == LayoutResult.FULL) {
                             lastAnalyzedTextLayoutResult = new TextLayoutResult(LayoutResult.NOTHING, null,
                                     null, childRenderers.get(lastAnalyzedTextRenderer));

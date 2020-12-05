@@ -134,7 +134,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     private int specialScriptFirstNotFittingIndex = -1;
 
-    private boolean layoutUntilTheLastPossibleBreak = false;
+    private int firstIndexExceedingAvailableWidth = -1;
 
     /**
      * Creates a TextRenderer from its corresponding layout object.
@@ -343,8 +343,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                             && RenderingMode.HTML_MODE == mode) {
                         containsPossibleBreak = true;
                     }
-                    if (ind + 1 == text.end || nextGlyphIsSpaceOrWhiteSpace) {
-                        if (ind + 1 == text.end && layoutUntilTheLastPossibleBreak) {
+                    if (ind + 1 == text.end || nextGlyphIsSpaceOrWhiteSpace
+                            || (ind + 1 >= firstIndexExceedingAvailableWidth
+                            && firstIndexExceedingAvailableWidth != -1)) {
+                        if (ind + 1 >= firstIndexExceedingAvailableWidth && firstIndexExceedingAvailableWidth != -1) {
                             firstCharacterWhichExceedsAllowedWidth = currentTextPos;
                             break;
                         } else {
@@ -434,8 +436,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 }
                 if (ind + 1 == text.end
                         || endOfNonBreakablePartCausedBySplitCharacter
-                        || endOfWordBelongingToSpecialScripts) {
-                    if (ind + 1 == text.end && layoutUntilTheLastPossibleBreak
+                        || endOfWordBelongingToSpecialScripts
+                        || (ind + 1 >= firstIndexExceedingAvailableWidth && firstIndexExceedingAvailableWidth != -1)) {
+                    if (ind + 1 >= firstIndexExceedingAvailableWidth && firstIndexExceedingAvailableWidth != -1
                             && !endOfNonBreakablePartCausedBySplitCharacter) {
                         firstCharacterWhichExceedsAllowedWidth = currentTextPos;
                     }
@@ -493,7 +496,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     boolean wordSplit = false;
                     boolean hyphenationApplied = false;
 
-                    if (hyphenationConfig != null && !layoutUntilTheLastPossibleBreak) {
+                    if (hyphenationConfig != null && firstIndexExceedingAvailableWidth == -1) {
                         if (-1 == nonBreakingHyphenRelatedChunkStart) {
                             int[] wordBounds = getWordBoundsForHyphenation(text, currentTextPos, text.end, Math.max(currentTextPos, firstCharacterWhichExceedsAllowedWidth - 1));
                             if (wordBounds != null) {
@@ -1303,8 +1306,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         return specialScriptFirstNotFittingIndex;
     }
 
-    void setLayoutUntilTheLastPossibleBreak(boolean layoutUntilTheLastPossibleBreak) {
-        this.layoutUntilTheLastPossibleBreak = layoutUntilTheLastPossibleBreak;
+    void setFirstIndexExceedingAvailableWidth(int firstIndexExceedingAvailableWidth) {
+        this.firstIndexExceedingAvailableWidth = firstIndexExceedingAvailableWidth;
     }
 
     @Override
