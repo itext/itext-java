@@ -31,6 +31,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Tab;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
@@ -45,6 +46,8 @@ import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
+import java.util.Collections;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -628,13 +631,12 @@ public class WordWrapUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    public void updateSpecialScriptLayoutResultsNonTextRenderer() {
-        Map<Integer, LayoutResult> specialScriptLayoutResults = new HashMap<Integer, LayoutResult>();
+    public void resetTextSequenceLayoutResultsBecauseOfNonTextRenderer() {
+        Map<Integer, LayoutResult> textRendererLayoutResults = new HashMap<Integer, LayoutResult>();
         TextLayoutResult res = new TextLayoutResult(LayoutResult.NOTHING,
                 new LayoutArea(0, new Rectangle(0, 0, 10, 10)), null, null, null);
 
-        specialScriptLayoutResults.put(0,  res);
-        Assert.assertFalse(specialScriptLayoutResults.isEmpty());
+        textRendererLayoutResults.put(0,  res);
 
         TabRenderer tabRenderer = new TabRenderer(new Tab());
 
@@ -642,74 +644,108 @@ public class WordWrapUnitTest extends ExtendedITextTest {
                 new LineRenderer.MinMaxWidthOfTextRendererSequenceHelper(0f, 0f, false);
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(new MinMaxWidth());
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        Document document = new Document(pdfDocument);
-
         LineRenderer lineRenderer = new LineRenderer();
-        lineRenderer.setParent(document.getRenderer());
-        lineRenderer.addChild(tabRenderer);
 
-        lineRenderer.updateSpecialScriptLayoutResults(specialScriptLayoutResults, tabRenderer, 1, res,
-                minMaxWidthOfTextRendererSequenceHelper, false, widthHandler);
-        Assert.assertTrue(specialScriptLayoutResults.isEmpty());
+        lineRenderer.resetTextSequenceIfItEnded(textRendererLayoutResults, false, tabRenderer, 1, minMaxWidthOfTextRendererSequenceHelper, false, widthHandler);
+        Assert.assertTrue(textRendererLayoutResults.isEmpty());
     }
 
     @Test
-    public void updateSpecialScriptLayoutResultsFloatingRenderer() {
-        Map<Integer, LayoutResult> specialScriptLayoutResults = new HashMap<Integer, LayoutResult>();
+    public void resetTextSequenceLayoutResultsBecauseOfFloatingRenderer() {
+        Map<Integer, LayoutResult> textRendererLayoutResults = new HashMap<Integer, LayoutResult>();
         TextLayoutResult res = new TextLayoutResult(LayoutResult.NOTHING,
                 new LayoutArea(0, new Rectangle(0, 0, 10, 10)), null, null, null);
 
-        int childPosToRemain = 0;
-        specialScriptLayoutResults.put(childPosToRemain,  res);
-        Assert.assertFalse(specialScriptLayoutResults.isEmpty());
+        int childPosAlreadyAdded = 0;
+        textRendererLayoutResults.put(childPosAlreadyAdded,  res);
 
-        Tab tab = new Tab();
-        tab.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
-        TabRenderer tabRenderer = new TabRenderer(tab);
+        Text text = new Text("float");
+        text.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        TextRenderer tabRenderer = new TextRenderer(text);
 
         LineRenderer.MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper =
                 new LineRenderer.MinMaxWidthOfTextRendererSequenceHelper(0f, 0f, false);
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(new MinMaxWidth());
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        Document document = new Document(pdfDocument);
+        LineRenderer lineRenderer = new LineRenderer();
+
+        int childPosDuringResetAttempt = 1;
+        lineRenderer.resetTextSequenceIfItEnded(textRendererLayoutResults, false, tabRenderer, childPosDuringResetAttempt,
+                minMaxWidthOfTextRendererSequenceHelper, true, widthHandler);
+        Assert.assertTrue(textRendererLayoutResults.isEmpty());
+    }
+
+    @Test
+    public void updateSpecialScriptLayoutResultsNonTextRenderer() {
+        Map<Integer, LayoutResult> textRendererLayoutResults = new HashMap<Integer, LayoutResult>();
+
+        Tab tab = new Tab();
+        TabRenderer tabRenderer = new TabRenderer(tab);
 
         LineRenderer lineRenderer = new LineRenderer();
-        lineRenderer.setParent(document.getRenderer());
-        lineRenderer.addChild(tabRenderer);
 
         int childPosNotToBeAdded = 1;
-        lineRenderer.updateSpecialScriptLayoutResults(specialScriptLayoutResults, tabRenderer, childPosNotToBeAdded,
-                res, minMaxWidthOfTextRendererSequenceHelper, false, widthHandler);
-        Assert.assertTrue(specialScriptLayoutResults.containsKey(childPosToRemain));
-        Assert.assertFalse(specialScriptLayoutResults.containsKey(childPosNotToBeAdded));
+        lineRenderer.updateSpecialScriptLayoutResults(textRendererLayoutResults, tabRenderer, childPosNotToBeAdded,
+                new LayoutResult(LayoutResult.FULL, new LayoutArea(1, new Rectangle(10, 10)), null, null, null));
+        Assert.assertTrue(textRendererLayoutResults.isEmpty());
+    }
+
+    @Test
+    public void resetSpecialScriptTextSequenceBecauseOfTextRendererWithNoSpecialScripts() {
+        Map<Integer, LayoutResult> specialScriptLayoutResults = new HashMap<Integer, LayoutResult>();
+        LayoutResult res = new LayoutResult(LayoutResult.NOTHING,
+                new LayoutArea(0, new Rectangle(0, 0, 10, 10)), null, null);
+        specialScriptLayoutResults.put(0,  res);
+
+        TextRenderer textRenderer = new TextRenderer(new Text("whatever"));
+
+        LineRenderer lineRenderer = new LineRenderer();
+
+        LineRenderer.MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper =
+                new LineRenderer.MinMaxWidthOfTextRendererSequenceHelper(0f, 0f, false);
+        AbstractWidthHandler widthHandler = new MaxSumWidthHandler(new MinMaxWidth());
+
+        lineRenderer.resetTextSequenceIfItEnded(specialScriptLayoutResults, true, textRenderer, 1,
+                minMaxWidthOfTextRendererSequenceHelper, true, widthHandler);
+        Assert.assertTrue(specialScriptLayoutResults.isEmpty());
     }
 
     @Test
     public void updateSpecialScriptLayoutResultsTextRendererWithNoSpecialScripts() {
         Map<Integer, LayoutResult> specialScriptLayoutResults = new HashMap<Integer, LayoutResult>();
-        LayoutResult res = new LayoutResult(LayoutResult.NOTHING,
-                new LayoutArea(0, new Rectangle(0, 0, 10, 10)), null, null);
-        specialScriptLayoutResults.put(0,  res);
-        Assert.assertFalse(specialScriptLayoutResults.isEmpty());
 
         TextRenderer textRenderer = new TextRenderer(new Text("whatever"));
-
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        Document document = new Document(pdfDocument);
+        LayoutResult res = new LayoutResult(LayoutResult.NOTHING,
+                new LayoutArea(0, new Rectangle(0, 0, 10, 10)), null, null);
 
         LineRenderer lineRenderer = new LineRenderer();
-        lineRenderer.setParent(document.getRenderer());
-        lineRenderer.addChild(textRenderer);
+
+        lineRenderer.updateSpecialScriptLayoutResults(specialScriptLayoutResults, textRenderer, 1, res);
+        Assert.assertTrue(specialScriptLayoutResults.isEmpty());
+    }
+
+    @Test
+    public void notResetSpecialScriptTextSequenceBecauseOfTextRendererWithSpecialScripts() {
+        Map<Integer, LayoutResult> specialScriptLayoutResults = new HashMap<Integer, LayoutResult>();
+        LayoutResult res = new LayoutResult(LayoutResult.NOTHING,
+                new LayoutArea(0, new Rectangle(0, 0, 10, 10)), null, null);
+        int firstKey = 0;
+        specialScriptLayoutResults.put(firstKey,  res);
+
+        TextRenderer textRenderer = new TextRenderer(new Text("whatever"));
+        textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Collections.singletonList(-1)));
+
+        LineRenderer lineRenderer = new LineRenderer();
 
         LineRenderer.MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper =
                 new LineRenderer.MinMaxWidthOfTextRendererSequenceHelper(0f, 0f, false);
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(new MinMaxWidth());
 
-        lineRenderer.updateSpecialScriptLayoutResults(specialScriptLayoutResults, textRenderer, 1, res,
+        int secondKey = firstKey + 1;
+        lineRenderer.resetTextSequenceIfItEnded(specialScriptLayoutResults, true, textRenderer, secondKey,
                 minMaxWidthOfTextRendererSequenceHelper, true, widthHandler);
-        Assert.assertTrue(specialScriptLayoutResults.isEmpty());
+        Assert.assertEquals(1, specialScriptLayoutResults.size());
+        Assert.assertTrue(specialScriptLayoutResults.containsKey(firstKey));
     }
 
     @Test
@@ -717,29 +753,19 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         Map<Integer, LayoutResult> specialScriptLayoutResults = new HashMap<Integer, LayoutResult>();
         LayoutResult res = new LayoutResult(LayoutResult.NOTHING,
                 new LayoutArea(0, new Rectangle(0, 0, 10, 10)), null, null);
-        int firstKey = -1;
+        int firstKey = 0;
         specialScriptLayoutResults.put(firstKey,  res);
-        Assert.assertFalse(specialScriptLayoutResults.isEmpty());
 
         TextRenderer textRenderer = new TextRenderer(new Text("whatever"));
-        textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(-1)));
-
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        Document document = new Document(pdfDocument);
+        textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Collections.singletonList(-1)));
 
         LineRenderer lineRenderer = new LineRenderer();
-        lineRenderer.setParent(document.getRenderer());
-        lineRenderer.addChild(textRenderer);
-
-        LineRenderer.MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper =
-                new LineRenderer.MinMaxWidthOfTextRendererSequenceHelper(0f, 0f, false);
-        AbstractWidthHandler widthHandler = new MaxSumWidthHandler(new MinMaxWidth());
 
         int secondKey = firstKey + 1;
-        lineRenderer.updateSpecialScriptLayoutResults(specialScriptLayoutResults, textRenderer, secondKey, res,
-                minMaxWidthOfTextRendererSequenceHelper, true, widthHandler);
+        lineRenderer.updateSpecialScriptLayoutResults(specialScriptLayoutResults, textRenderer, secondKey, res);
         Assert.assertTrue(specialScriptLayoutResults.containsKey(firstKey));
         Assert.assertTrue(specialScriptLayoutResults.containsKey(secondKey));
+        Assert.assertEquals(2, specialScriptLayoutResults.size());
     }
 
     @Test

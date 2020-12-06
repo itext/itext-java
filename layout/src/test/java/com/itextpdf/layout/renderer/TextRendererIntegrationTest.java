@@ -34,6 +34,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.ColumnDocumentRenderer;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
@@ -656,6 +657,44 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH))
+    public void minWidthForWordInMultipleTextRenderersFollowedByFloatTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "minWidthForSpanningWordFollowedByFloat.pdf";
+        String cmpFileName = sourceFolder + "cmp_minWidthForSpanningWordFollowedByFloat.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+        doc.setFontSize(40);
+
+        // add elements to the table in narrow parent div, so table width would be completely based on min-width
+        Div narrowDivWithTable = new Div()
+                .setBorder(new DashedBorder(ColorConstants.DARK_GRAY, 3))
+                .setWidth(10);
+        Table table = new Table(1);
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
+
+        Div floatingDiv = new Div();
+        floatingDiv.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+        floatingDiv.setWidth(40).setHeight(20).setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        Paragraph paragraph = new Paragraph()
+                .add(new Text("s"))
+                .add(new Text("i"))
+                .add(new Text("n"))
+                .add(new Text("g"))
+                .add(new Text("l"))
+                .add(new Text("e"))
+                .add(floatingDiv)
+                .setBorder(new SolidBorder(1));
+        paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        paragraph.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
+        table.addCell(paragraph);
+        narrowDivWithTable.add(table);
+        doc.add(narrowDivWithTable);
+        doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
