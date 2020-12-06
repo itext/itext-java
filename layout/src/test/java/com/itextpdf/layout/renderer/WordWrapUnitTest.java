@@ -332,7 +332,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
 
         LineRenderer.LastFittingChildRendererData lastFittingChildRendererData = lineRenderer
                 .getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts(THAI_WORD.length() + 1,
-                        specialScriptLayoutResults, false, new ArrayList<IRenderer>(), true);
+                        specialScriptLayoutResults, false, true);
 
         Assert.assertEquals(5, lastFittingChildRendererData.childIndex);
         Assert.assertEquals(LayoutResult.NOTHING, lastFittingChildRendererData.childLayoutResult.getStatus());
@@ -367,7 +367,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
 
         LineRenderer.LastFittingChildRendererData lastFittingChildRendererData = lineRenderer
                 .getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts(indexOfThaiRenderer,
-                        specialScriptLayoutResults, false, new ArrayList<IRenderer>(), true);
+                        specialScriptLayoutResults, false, true);
 
         Assert.assertEquals(indexOfThaiRenderer, lastFittingChildRendererData.childIndex);
         Assert.assertEquals(LayoutResult.NOTHING, lastFittingChildRendererData.childLayoutResult.getStatus());
@@ -407,7 +407,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
 
         LineRenderer.LastFittingChildRendererData lastFittingChildRendererData = lineRenderer
                 .getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts(THAI_WORD.length() - 1,
-                        specialScriptLayoutResults, false, new ArrayList<IRenderer>(), true);
+                        specialScriptLayoutResults, false, true);
 
         Assert.assertEquals(THAI_WORD.length() - 1, lastFittingChildRendererData.childIndex);
         Assert.assertEquals(specialScriptLayoutResults.get(THAI_WORD.length() - 1), lastFittingChildRendererData.childLayoutResult);
@@ -782,35 +782,6 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         specialScriptLayoutResults.put(2, simpleDecrement);
         float decrement = LineRenderer.getCurWidthSpecialScriptsDecrement(3, 0, specialScriptLayoutResults);
         Assert.assertEquals(widthOfNewPartialResult + simpleWidth, decrement, 0.00001);
-    }
-
-    @Test
-    public void updateFloatsOverflowedToNextLine() {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        Document document = new Document(pdfDocument);
-
-        LineRenderer lineRenderer = new LineRenderer();
-        lineRenderer.setParent(document.getRenderer());
-
-        List<IRenderer> floatsOverflowedToNextLineIRenderers = new ArrayList<IRenderer>();
-        Set<Integer> indicesOfFloats = new HashSet<Integer>();
-
-        IRenderer onlyFloatToRemain;
-
-        for (int i = 0; i < 6; i++) {
-            TextRenderer textRenderer = new TextRenderer(new Text("text"));
-            if (i % 2 == 0) {
-                floatsOverflowedToNextLineIRenderers.add(textRenderer);
-                indicesOfFloats.add(i);
-            }
-            lineRenderer.addChild(textRenderer);
-        }
-
-        onlyFloatToRemain = lineRenderer.getChildRenderers().get(0);
-
-        lineRenderer.updateFloatsOverflowedToNextLine(floatsOverflowedToNextLineIRenderers, indicesOfFloats,1);
-        Assert.assertEquals(1, floatsOverflowedToNextLineIRenderers.size());
-        Assert.assertEquals(onlyFloatToRemain, floatsOverflowedToNextLineIRenderers.get(0));
     }
 
     @Test

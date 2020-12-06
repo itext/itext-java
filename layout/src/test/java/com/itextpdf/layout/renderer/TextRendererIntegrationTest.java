@@ -361,59 +361,50 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
     }
 
     @Test
-    public void wordSplitAcrossMutipleTextRenderersWithinFloatingContainer() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "wordSplitAcrossMutipleTextRenderersWithinFloatingContainer.pdf";
-        String cmpFileName = sourceFolder + "cmp_wordSplitAcrossMutipleTextRenderersWithinFloatingContainer.pdf";
+    public void wordSplitRenderersWithFittingFloatingElementInBetween() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "wordSplitRenderersWithFittingFloatingElementInBetween.pdf";
+        String cmpFileName = sourceFolder + "cmp_wordSplitRenderersWithFittingFloatingElementInBetween.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         doc.setFontSize(20);
 
-        Text oooooooooover = new Text("oooooooooover")
-                .setFontColor(ColorConstants.LIGHT_GRAY);
-        Text flooooo = new Text("flooooo")
-                .setFontColor(ColorConstants.GRAY);
-        Text ooooowNextWords = new Text("ooooow next words")
-                .setFontColor(ColorConstants.DARK_GRAY);
+        Text reg = new Text("reg").setFontColor(ColorConstants.LIGHT_GRAY);
+        Text ul = new Text("ul").setFontColor(ColorConstants.DARK_GRAY);
+        Text aaaaaaaaaaaaaaaaaaaaaaati = new Text("aaaaaaaaaaaaaaaaaaaaaaati").setFontColor(ColorConstants.GRAY);
+        Text ngAndRestOfText = new Text("ng overflow text renderers with floating elements between them")
+                .setFontColor(ColorConstants.RED);
 
-        Paragraph floatingParagraph = new Paragraph()
-                .add(oooooooooover)
-                .add(flooooo)
-                .add(ooooowNextWords)
+
+        Div floatDiv = new Div().setWidth(20).setHeight(60)
+                .setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setBorder(new SolidBorder(2));
+        floatDiv.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        Paragraph p = new Paragraph()
+                .add(reg)
+                .add(ul)
+                .add(floatDiv)
+                .add(aaaaaaaaaaaaaaaaaaaaaaati)
+                .add(ngAndRestOfText)
                 .setBackgroundColor(ColorConstants.CYAN)
                 .setWidth(150)
                 .setBorder(new SolidBorder(1));
-        // TODO DEVSIX-1438 bring reviewer's attention: if overflow is set on the div, then forced split occurs.
-        // is it expected?
-        floatingParagraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
-        floatingParagraph.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
 
-        Text regularText = new Text("regular words regular words regular words regular words regular words regular " +
-                "words regular words regular words regular words");
-        Paragraph regularParagraph = new Paragraph(regularText)
-                .setBackgroundColor(ColorConstants.MAGENTA);
+        p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        doc.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
 
-        Div div = new Div()
-                .add(floatingParagraph)
-                .add(regularParagraph)
-                .setMaxWidth(300)
-                .setHeight(300)
-                .setBackgroundColor(ColorConstants.YELLOW);
-
-        div.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-
-        doc.add(div);
-
+        doc.add(p);
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     @Test
-    public void wordSplitRenderersWithFloatingElementInsertedInBetween() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "wordSplitRenderersWithFloatingElementInsertedInBetween.pdf";
-        String cmpFileName = sourceFolder + "cmp_wordSplitRenderersWithFloatingElementInsertedInBetween.pdf";
+    public void wordSplitRenderersWithNotFittingFloatingElementInBetween() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "wordSplitRenderersWithNotFittingFloatingElementInBetween.pdf";
+        String cmpFileName = sourceFolder + "cmp_wordSplitRenderersWithNotFittingFloatingElementInBetween.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
@@ -437,11 +428,143 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
                 .setWidth(150)
                 .setBorder(new SolidBorder(1));
 
-        // todo mention that it's crucial to set both overflow and rendering_mode!!!
         paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
         paragraph.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
 
         doc.add(paragraph);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void wordSplitRenderersWithFittingFloatingInBetweenInSecondWord() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "wordSplitRenderersWithFittingFloatingInBetweenInSecondWord.pdf";
+        String cmpFileName = sourceFolder + "cmp_wordSplitRenderersWithFittingFloatingInBetweenInSecondWord.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        doc.setFontSize(20);
+
+        Text itsAndSpace = new Text("It's ");
+        Text reg = new Text("reg").setFontColor(ColorConstants.LIGHT_GRAY);
+        Text ul = new Text("ul").setFontColor(ColorConstants.DARK_GRAY);
+        Text aaaaaaaaaaaaaaaaaaaaaaati = new Text("aaaaaaaaaaaaaaaaaaaaaaati").setFontColor(ColorConstants.GRAY);
+        Text ngAndRestOfText = new Text("ng overflow text renderers with floating elements between them")
+                .setFontColor(ColorConstants.RED);
+
+
+        Div floatDiv = new Div().setWidth(20).setHeight(60)
+                .setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setBorder(new SolidBorder(2));
+        floatDiv.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        Paragraph p = new Paragraph()
+                .add(itsAndSpace)
+                .add(reg)
+                .add(ul)
+                .add(floatDiv)
+                .add(aaaaaaaaaaaaaaaaaaaaaaati)
+                .add(ngAndRestOfText)
+                .setBackgroundColor(ColorConstants.CYAN)
+                .setWidth(150)
+                .setBorder(new SolidBorder(1));
+
+        p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        doc.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
+        doc.add(p);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void wordSplitRenderersWithOverflowedFloatingElementInBetween() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "wordSplitRenderersWithOverflowedFloatingElementInBetween.pdf";
+        String cmpFileName = sourceFolder + "cmp_wordSplitRenderersWithOverflowedFloatingElementInBetween.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        doc.setFontSize(20);
+
+        Text reg = new Text("reg").setFontColor(ColorConstants.LIGHT_GRAY);
+        Text ul = new Text("ul").setFontColor(ColorConstants.DARK_GRAY);
+        Text aaaaaaaaaaaaaaaaaaaaaaati = new Text("aaaaaaaaaaaaaaaaaaaaaaati").setFontColor(ColorConstants.GRAY);
+        Text ngAndRestOfText = new Text("ng overflow text renderers with floating elements between them")
+                .setFontColor(ColorConstants.RED);
+
+
+        Div floatDiv = new Div().setWidth(20).setHeight(60)
+                .setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setBorder(new SolidBorder(2));
+        floatDiv.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        Paragraph p = new Paragraph()
+                .add(reg)
+                .add(ul)
+                .add(aaaaaaaaaaaaaaaaaaaaaaati)
+                .add(floatDiv)
+                .add(ngAndRestOfText)
+                .setBackgroundColor(ColorConstants.CYAN)
+                .setWidth(150)
+                .setBorder(new SolidBorder(1));
+
+        p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        doc.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
+        doc.add(p);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void wordSplitAcrossMutipleTextRenderersWithinFloatingContainer() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "wordSplitAcrossMutipleTextRenderersWithinFloatingContainer.pdf";
+        String cmpFileName = sourceFolder + "cmp_wordSplitAcrossMutipleTextRenderersWithinFloatingContainer.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        doc.setFontSize(20);
+
+        Text oooooooooover = new Text("oooooooooover")
+                .setFontColor(ColorConstants.LIGHT_GRAY);
+        Text flooooo = new Text("flooooo")
+                .setFontColor(ColorConstants.GRAY);
+        Text ooooowNextWords = new Text("ooooow next words")
+                .setFontColor(ColorConstants.DARK_GRAY);
+
+        Paragraph floatingParagraph = new Paragraph()
+                .add(oooooooooover)
+                .add(flooooo)
+                .add(ooooowNextWords)
+                .setBackgroundColor(ColorConstants.CYAN)
+                .setWidth(150)
+                .setBorder(new SolidBorder(1));
+        floatingParagraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        floatingParagraph.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        Text regularText = new Text("regular words regular words regular words regular words regular words regular " +
+                "words regular words regular words regular words");
+        Paragraph regularParagraph = new Paragraph(regularText)
+                .setBackgroundColor(ColorConstants.MAGENTA);
+
+        Div div = new Div()
+                .add(floatingParagraph)
+                .add(regularParagraph)
+                .setMaxWidth(300)
+                .setHeight(300)
+                .setBackgroundColor(ColorConstants.YELLOW);
+
+        div.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
+        doc.add(div);
 
         doc.close();
 

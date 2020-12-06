@@ -478,7 +478,7 @@ public class LineRenderer extends AbstractRenderer {
                             : isOverflowFit(this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X));
                     LastFittingChildRendererData lastFittingChildRendererData =
                             getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts(childPos,
-                                    specialScriptLayoutResults, wasParentsHeightClipped, floatsOverflowedToNextLine,
+                                    specialScriptLayoutResults, wasParentsHeightClipped,
                                     isOverflowFit);
 
                     if (lastFittingChildRendererData == null) {
@@ -501,7 +501,7 @@ public class LineRenderer extends AbstractRenderer {
                             : isOverflowFit(this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X));
                     LastFittingChildRendererData lastFittingChildRendererData =
                             getIndexAndLayoutResultOfTheLastTextRendererWithNoSpecialScripts(childPos,
-                                    textRendererLayoutResults, wasParentsHeightClipped, floatsOverflowedToNextLine,
+                                    textRendererLayoutResults, wasParentsHeightClipped,
                                     isOverflowFit, floatsPlaced, oldFloats);
                     if (lastFittingChildRendererData == null) {
                         moveForwardsTextRenderer = true;
@@ -1345,10 +1345,11 @@ public class LineRenderer extends AbstractRenderer {
             Map<Integer, LayoutResult> specialScriptLayoutResults, IRenderer childRenderer, int childPos,
             LayoutResult childResult, MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper,
             boolean noSoftWrap, AbstractWidthHandler widthHandler) {
-        if ((childRenderer instanceof TextRenderer && ((TextRenderer) childRenderer)
-                .textContainsSpecialScriptGlyphs(true))) {
+        if ((childRenderer instanceof TextRenderer
+                && ((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(true))) {
             specialScriptLayoutResults.put(childPos, childResult);
-        } else if (!specialScriptLayoutResults.isEmpty() && !isChildFloating(childRenderer)) {
+        } else
+            if (!specialScriptLayoutResults.isEmpty()) {
             while (childPos >= 0) {
                 if (specialScriptLayoutResults.get(childPos) != null) {
                     break;
@@ -1367,10 +1368,10 @@ public class LineRenderer extends AbstractRenderer {
             Map<Integer, LayoutResult> textRendererLayoutResults, IRenderer childRenderer, int childPos,
             LayoutResult childResult, MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper,
             boolean noSoftWrap, AbstractWidthHandler widthHandler) {
-        if (childRenderer instanceof TextRenderer && !((TextRenderer) childRenderer)
-                .textContainsSpecialScriptGlyphs(true)) {
+        if (childRenderer instanceof TextRenderer
+                && !((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(true)) {
             textRendererLayoutResults.put(childPos, childResult);
-        } else if (!textRendererLayoutResults.isEmpty() && !isChildFloating(childRenderer)) {
+        } else if (!textRendererLayoutResults.isEmpty()) {
             while (childPos >= 0) {
                 if (textRendererLayoutResults.get(childPos) != null) {
                     break;
@@ -1460,11 +1461,19 @@ public class LineRenderer extends AbstractRenderer {
             boolean moveForwardsSpecialScriptsOverflowX, boolean moveForwardsTextRenderer, int childPos,
             IRenderer childRenderer, LayoutResult childResult, boolean wasXOverflowChanged) {
         boolean shouldBreakLayouting = false;
+        boolean lastElemOfTextSequence = childPos + 1 == childRenderers.size()
+                || isChildFloating(childRenderers.get(childPos + 1))
+                || !(childRenderers.get(childPos + 1) instanceof TextRenderer);
+
         if (moveForwardsSpecialScriptsOverflowX) {
-            if (((TextRenderer) childRenderer).getSpecialScriptFirstNotFittingIndex() > 0) {
+            if (!(childRenderer instanceof TextRenderer)
+                    || ((TextRenderer) childRenderer).getSpecialScriptFirstNotFittingIndex() > 0
+                    || lastElemOfTextSequence) {
                 shouldBreakLayouting = true;
             }
-            ((TextRenderer) childRenderer).setSpecialScriptFirstNotFittingIndex(-1);
+            if (childRenderer instanceof TextRenderer) {
+                ((TextRenderer) childRenderer).setSpecialScriptFirstNotFittingIndex(-1);
+            }
             if (wasXOverflowChanged) {
                 setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
             }
@@ -1472,8 +1481,7 @@ public class LineRenderer extends AbstractRenderer {
 
         if (moveForwardsTextRenderer) {
             if ((childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isContainsPossibleBreak())
-                    || childPos + 1 == childRenderers.size()
-                    || !(childRenderers.get(childPos + 1) instanceof TextRenderer)) {
+                    || lastElemOfTextSequence) {
                 shouldBreakLayouting = true;
             }
             if (wasXOverflowChanged) {
@@ -1535,7 +1543,7 @@ public class LineRenderer extends AbstractRenderer {
      *                                          and float arrays consisting of maxAscent, maxDescent, maxTextAscent,
      *                                          maxTextDescent of the corresponding {@link TextRenderer} children.
      * @return a two-element float array where first element is a new {@link LineRenderer}'s ascender
-     * and second element is a new {@link LineRenderer}'s descender 
+     * and second element is a new {@link LineRenderer}'s descender
      */
     float[] updateAscentDescentAfterTextRendererSequenceProcessing(
             int newChildPos, float[] ascentDescentTextAscentTextDescentBeforeTextRendererSequence,
@@ -1570,8 +1578,8 @@ public class LineRenderer extends AbstractRenderer {
      * Update {@link LineRenderer#maxAscent}, {@link LineRenderer#maxDescent}, {@link LineRenderer#maxTextAscent},
      * {@link LineRenderer#maxTextDescent}, {@link LineRenderer#maxBlockAscent} and {@link LineRenderer#maxBlockDescent}
      * after child's layout.
-     * 
-     * @param childAscentDescent a two-element float array where first element is ascender of a layouted child 
+     *
+     * @param childAscentDescent a two-element float array where first element is ascender of a layouted child
      *                           and second element is descender of a layouted child
      * @param childRenderer the layouted {@link IRenderer childRenderer} of current {@link LineRenderer}
      * @param isChildFloating true if {@link #isChildFloating(IRenderer)}
@@ -1598,14 +1606,14 @@ public class LineRenderer extends AbstractRenderer {
                                                     int childPos, float[] childAscentDescent,
                                                     float[] preTextSequenceAscentDescent) {
         IRenderer childRenderer = childRenderers.get(childPos);
-        if (childRenderer instanceof TextRenderer && !((TextRenderer) childRenderer)
-                .textContainsSpecialScriptGlyphs(true)) {
+        if (childRenderer instanceof TextRenderer
+                && !((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(true)) {
             if (textRendererSequenceAscentDescent.isEmpty()) {
                 preTextSequenceAscentDescent = new float[] {this.maxAscent, this.maxDescent,
                         this.maxTextAscent, this.maxTextDescent};
             }
             textRendererSequenceAscentDescent.put(childPos, childAscentDescent);
-        } else if (!textRendererSequenceAscentDescent.isEmpty() && !isChildFloating(childRenderer)) {
+        } else if (!textRendererSequenceAscentDescent.isEmpty()) {
             textRendererSequenceAscentDescent.clear();
             preTextSequenceAscentDescent = null;
         }
@@ -1618,9 +1626,7 @@ public class LineRenderer extends AbstractRenderer {
             Map<Integer, LayoutResult> textRendererLayoutResults,
             Map<Integer, LayoutResult> specialScriptLayoutResults, float textIndent) {
         IRenderer childRenderer = childRenderers.get(childPos);
-        if (isChildFloating(childRenderer)) {
-            return minMaxWidthOfTextRendererSequenceHelper;
-        } else if (childRenderer instanceof TextRenderer) {
+        if (childRenderer instanceof TextRenderer) {
             boolean firstTextRendererWithSpecialScripts =
                     ((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(true)
                     && specialScriptLayoutResults.size() == 1;
@@ -1710,6 +1716,8 @@ public class LineRenderer extends AbstractRenderer {
      * In this method we preprocess a sequence containing special scripts only,
      * skipping floating renderers as they're not part of a regular layout flow,
      * and breaking the prelayout processing once a non-special script containing renderer occurs.
+     * Note! Even though floats are skipped during calculating correct word boundaries,
+     * floats themselves are considered as soft-wrap opportunities.
      *
      * Prelayout processing includes the following steps:
      * - {@link #getSpecialScriptsContainingTextRendererSequenceInfo(int)}: determine boundaries of the sequence
@@ -1796,8 +1804,7 @@ public class LineRenderer extends AbstractRenderer {
 
     LastFittingChildRendererData getIndexAndLayoutResultOfTheLastTextRendererWithNoSpecialScripts(
             int childPos, Map<Integer, LayoutResult> textSequenceLayoutResults, boolean wasParentsHeightClipped,
-            List<IRenderer> floatsOverflowedToNextLine, boolean isOverflowFit, boolean floatsPlaced,
-            boolean oldFloats) {
+            boolean isOverflowFit, boolean floatsPlaced, boolean oldFloats) {
 
         LayoutResult lastAnalyzedTextLayoutResult = textSequenceLayoutResults.get(childPos);
         if (lastAnalyzedTextLayoutResult.getStatus() == LayoutResult.PARTIAL
@@ -1809,12 +1816,8 @@ public class LineRenderer extends AbstractRenderer {
         lastAnalyzedTextLayoutResult = null;
         int lastAnalyzedTextRenderer = childPos;
 
-        Set<Integer> indicesOfFloats = new HashSet<Integer>();
         for (int i = childPos; i >= 0; i--) {
-            if (isChildFloating(childRenderers.get(i))) {
-                // floating elements are out of regular flow so simply skip it
-                indicesOfFloats.add(i);
-            } else if (childRenderers.get(i) instanceof TextRenderer) {
+            if (childRenderers.get(i) instanceof TextRenderer && !isChildFloating(childRenderers.get(i))) {
                 TextRenderer textRenderer = (TextRenderer) childRenderers.get(i);
                 if (!textRenderer.textContainsSpecialScriptGlyphs(true)) {
                     TextLayoutResult textLayoutResult = (TextLayoutResult) textSequenceLayoutResults.get(i);
@@ -1856,7 +1859,9 @@ public class LineRenderer extends AbstractRenderer {
                     break;
                 }
 
-            } else if (childRenderers.get(i) instanceof ImageRenderer || isInlineBlockChild(childRenderers.get(i))) {
+            } else if (isChildFloating(childRenderers.get(i))
+                    || childRenderers.get(i) instanceof ImageRenderer
+                    || isInlineBlockChild(childRenderers.get(i))) {
                 lastAnalyzedTextLayoutResult = new TextLayoutResult(LayoutResult.NOTHING, null, null,
                         childRenderers.get(lastAnalyzedTextRenderer));
                 break;
@@ -1882,7 +1887,6 @@ public class LineRenderer extends AbstractRenderer {
         }
 
         if (lastAnalyzedTextLayoutResult != null) {
-            updateFloatsOverflowedToNextLine(floatsOverflowedToNextLine, indicesOfFloats, lastAnalyzedTextRenderer);
             return new LastFittingChildRendererData(lastAnalyzedTextRenderer, lastAnalyzedTextLayoutResult);
         } else {
             return null;
@@ -1890,14 +1894,13 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     LastFittingChildRendererData getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts
-            (int childPos, Map<Integer, LayoutResult> specialScriptLayoutResults, boolean wasParentsHeightClipped,
-             List<IRenderer> floatsOverflowedToNextLine, boolean isOverflowFit) {
+            (int childPos, Map<Integer, LayoutResult> specialScriptLayoutResults,
+                    boolean wasParentsHeightClipped, boolean isOverflowFit) {
         int indexOfRendererContainingLastFullyFittingWord = childPos;
         int splitPosition = 0;
         boolean needToSplitRendererContainingLastFullyFittingWord = false;
         int fittingLengthWithTrailingRightSideSpaces = 0;
         int amountOfTrailingRightSideSpaces = 0;
-        Set<Integer> indicesOfFloats = new HashSet<Integer>();
         LayoutResult childPosLayoutResult = specialScriptLayoutResults.get(childPos);
         LayoutResult returnLayoutResult = null;
         for (int analyzedTextRendererIndex = childPos; analyzedTextRendererIndex >= 0; analyzedTextRendererIndex--) {
@@ -1930,24 +1933,11 @@ public class LineRenderer extends AbstractRenderer {
                         needToSplitRendererContainingLastFullyFittingWord = splitPosition != textRenderer.text.end;
                         if (!needToSplitRendererContainingLastFullyFittingWord) {
                             analyzedTextRendererIndex++;
-                            while (analyzedTextRendererIndex <= childPos
-                                    && isChildFloating(childRenderers.get(analyzedTextRendererIndex))) {
-                                analyzedTextRendererIndex++;
-                            }
                         }
                         indexOfRendererContainingLastFullyFittingWord = analyzedTextRendererIndex;
                         break;
                     }
                 }
-            }
-
-            int amountOfFloating = 0;
-
-            while (analyzedTextRendererIndex - 1 >= 0
-                    && isChildFloating(childRenderers.get(analyzedTextRendererIndex - 1))) {
-                indicesOfFloats.add(analyzedTextRendererIndex - 1);
-                analyzedTextRendererIndex--;
-                amountOfFloating++;
             }
 
             SpecialScriptsContainingSequenceStatus status =
@@ -1978,13 +1968,10 @@ public class LineRenderer extends AbstractRenderer {
             // move the entire renderer on the next line
             if (status ==
                     SpecialScriptsContainingSequenceStatus.MOVE_SEQUENCE_CONTAINING_SPECIAL_SCRIPTS_ON_NEXT_LINE) {
-                indexOfRendererContainingLastFullyFittingWord = analyzedTextRendererIndex + amountOfFloating;
+                indexOfRendererContainingLastFullyFittingWord = analyzedTextRendererIndex;
                 break;
             }
         }
-
-        updateFloatsOverflowedToNextLine(floatsOverflowedToNextLine, indicesOfFloats,
-                indexOfRendererContainingLastFullyFittingWord);
 
         if (returnLayoutResult == null) {
             returnLayoutResult = childPosLayoutResult;
@@ -2008,21 +1995,11 @@ public class LineRenderer extends AbstractRenderer {
         return new LastFittingChildRendererData(indexOfRendererContainingLastFullyFittingWord, returnLayoutResult);
     }
 
-    void updateFloatsOverflowedToNextLine(List<IRenderer> floatsOverflowedToNextLine, Set<Integer> indicesOfFloats,
-                                             int indexOfRendererContainingLastFullyFittingWord) {
-        for (int index : indicesOfFloats) {
-            if (index > indexOfRendererContainingLastFullyFittingWord) {
-                floatsOverflowedToNextLine.remove(childRenderers.get(index));
-            }
-        }
-    }
-
     /**
      * This method defines how to proceed with a {@link TextRenderer} within which possible breaks haven't been found.
      * Possible scenarios are:
      * - Preceding renderer is also an instance of {@link TextRenderer} and does contain special scripts:
-     * {@link LineRenderer#getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts(int, Map, boolean, List,
-     * boolean)}
+     * {@link LineRenderer#getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts(int, Map, boolean, boolean)}
      * will proceed to analyze the preceding {@link TextRenderer} on the subject of possible breaks;
      * - Preceding renderer is either an instance of {@link TextRenderer} which does not contain special scripts,
      * or an instance of {@link ImageRenderer} or is an inlineBlock child: in this case the entire subsequence of
@@ -2038,19 +2015,21 @@ public class LineRenderer extends AbstractRenderer {
 
         if (analyzedTextRendererIndex > 0) {
             IRenderer prevChildRenderer = childRenderers.get(analyzedTextRendererIndex - 1);
-            if (prevChildRenderer instanceof TextRenderer) {
+            if (prevChildRenderer instanceof TextRenderer && !isChildFloating(prevChildRenderer)) {
                 if (((TextRenderer) prevChildRenderer).textContainsSpecialScriptGlyphs(true)) {
                     moveToPreviousTextRendererContainingSpecialScripts = true;
                 } else {
                     moveSequenceContainingSpecialScriptsOnNextLine = true;
                 }
-            } else if (prevChildRenderer instanceof ImageRenderer || isInlineBlockChild(prevChildRenderer)) {
+            } else if (isChildFloating(prevChildRenderer)
+                    || prevChildRenderer instanceof ImageRenderer
+                    || isInlineBlockChild(prevChildRenderer)) {
                 moveSequenceContainingSpecialScriptsOnNextLine = true;
             }
         }
 
-        boolean forcedSplit = !(moveToPreviousTextRendererContainingSpecialScripts
-                || moveSequenceContainingSpecialScriptsOnNextLine);
+        boolean forcedSplit = !moveToPreviousTextRendererContainingSpecialScripts
+                && !moveSequenceContainingSpecialScriptsOnNextLine;
 
         if (moveSequenceContainingSpecialScriptsOnNextLine) {
             return SpecialScriptsContainingSequenceStatus.MOVE_SEQUENCE_CONTAINING_SPECIAL_SCRIPTS_ON_NEXT_LINE;
