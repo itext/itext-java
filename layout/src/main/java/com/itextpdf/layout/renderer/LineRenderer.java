@@ -1871,10 +1871,12 @@ public class LineRenderer extends AbstractRenderer {
         }
 
         if (lastAnalyzedTextLayoutResult == null) {
-            OverflowWrapPropertyValue overflowWrapPropertyValue =
+            OverflowWrapPropertyValue overflowWrapValue =
                     childRenderers.get(childPos).<OverflowWrapPropertyValue>getProperty(Property.OVERFLOW_WRAP);
-            if (overflowWrapPropertyValue == OverflowWrapPropertyValue.ANYWHERE
-                    || overflowWrapPropertyValue == OverflowWrapPropertyValue.BREAK_WORD
+            boolean overflowWrapNotNormal = overflowWrapValue == OverflowWrapPropertyValue.ANYWHERE
+                    || overflowWrapValue == OverflowWrapPropertyValue.BREAK_WORD;
+            if (overflowWrapNotNormal
+                        && textSequenceLayoutResults.get(lastAnalyzedTextRenderer).getStatus() != LayoutResult.NOTHING
                     || isOverflowFit) {
                 lastAnalyzedTextRenderer = childPos;
                 lastAnalyzedTextLayoutResult = textSequenceLayoutResults.get(lastAnalyzedTextRenderer);
@@ -1949,10 +1951,11 @@ public class LineRenderer extends AbstractRenderer {
             // otherwise return null as a flag to move forward across this.childRenderers
             // till the end of the unbreakable word
             if (status == SpecialScriptsContainingSequenceStatus.FORCED_SPLIT) {
-                OverflowWrapPropertyValue overflowWrapPropertyValue =
+                OverflowWrapPropertyValue overflowWrapValue =
                         childRenderers.get(childPos).<OverflowWrapPropertyValue>getProperty(Property.OVERFLOW_WRAP);
-                if (overflowWrapPropertyValue == OverflowWrapPropertyValue.ANYWHERE
-                        || overflowWrapPropertyValue == OverflowWrapPropertyValue.BREAK_WORD
+                boolean overflowWrapNotNormal = overflowWrapValue == OverflowWrapPropertyValue.ANYWHERE
+                        || overflowWrapValue == OverflowWrapPropertyValue.BREAK_WORD;
+                if (overflowWrapNotNormal && childPosLayoutResult.getStatus() != LayoutResult.NOTHING
                         || isOverflowFit) {
                     if (childPosLayoutResult.getStatus() != LayoutResult.NOTHING) {
                         returnLayoutResult = childPosLayoutResult;

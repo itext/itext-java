@@ -183,8 +183,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
 
         OverflowWrapPropertyValue overflowWrap = this.<OverflowWrapPropertyValue>getProperty(Property.OVERFLOW_WRAP);
-        if (overflowWrap == OverflowWrapPropertyValue.ANYWHERE
-                || overflowWrap == OverflowWrapPropertyValue.BREAK_WORD) {
+        boolean overflowWrapNotNormal = overflowWrap == OverflowWrapPropertyValue.ANYWHERE
+                || overflowWrap == OverflowWrapPropertyValue.BREAK_WORD;
+        if (overflowWrapNotNormal) {
             overflowX = OverflowPropertyValue.FIT;
         }
 
@@ -378,9 +379,13 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         && firstCharacterWhichExceedsAllowedWidth == -1
                         || ind == specialScriptFirstNotFittingIndex) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
-                    if (TextUtil.isSpaceOrWhitespace(text.get(ind))) {
-                        containsPossibleBreak = true;
-                        wordBreakGlyphAtLineEnding = currentGlyph;
+                    boolean spaceOrWhitespace = TextUtil.isSpaceOrWhitespace(text.get(ind));
+                    OverflowPropertyValue parentOverflowX = parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
+                    if (spaceOrWhitespace || overflowWrapNotNormal && !isOverflowFit(parentOverflowX)) {
+                        if (spaceOrWhitespace) {
+                            containsPossibleBreak = true;
+                            wordBreakGlyphAtLineEnding = currentGlyph;
+                        }
                         if (ind == firstPrintPos) {
                             forcePartialSplitOnFirstChar = true;
                             firstCharacterWhichExceedsAllowedWidth = ind + 1;
@@ -1242,7 +1247,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
         return new float[] {ascender, descender};
     }
-    
+
     List<int[]> getReversedRanges() {
         return reversedRanges;
     }

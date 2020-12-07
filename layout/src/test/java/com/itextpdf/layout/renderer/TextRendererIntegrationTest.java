@@ -43,6 +43,7 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.OverflowPropertyValue;
+import com.itextpdf.layout.property.OverflowWrapPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.RenderingMode;
 import com.itextpdf.layout.property.TextAlignment;
@@ -655,6 +656,27 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
         doc.close();
 
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void overflowWrapBreakWordWithOverflowXTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "overflowWrapBreakWordWithOverflowXTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_overflowWrapBreakWordWithOverflowXTest.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+        doc.setFontSize(40);
+        Text text = new Text("wow");
+        Paragraph paragraph = new Paragraph()
+                .add(text)
+                .setBackgroundColor(ColorConstants.YELLOW)
+                .setWidth(10)
+                .setBorder(new SolidBorder(1));
+        paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        paragraph.setProperty(Property.OVERFLOW_WRAP, OverflowWrapPropertyValue.BREAK_WORD);
+        paragraph.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        doc.add(paragraph);
+        doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 }
