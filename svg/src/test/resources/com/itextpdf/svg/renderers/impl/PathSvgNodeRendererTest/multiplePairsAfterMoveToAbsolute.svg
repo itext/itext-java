@@ -1,0 +1,12 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="14cm" height="14cm"  viewBox="100 100 200 200"  xmlns="http://www.w3.org/2000/svg" version="1.1">
+     <text x="150" y="120"  font-size="2">
+          There is No line command
+     </text>
+     <path d="M 157.09 134.48 157.88 130.48 H 158.88 C 159.88 130.48 160.56 131.01 160.56 131.98 A 2.45 2.45 0 0 1 158.09 134.53 Z" fill="blue"/>
+     <text x="115" y="120"  font-size="2">
+          There is line command
+     </text>
+     <path d="M 127.09 134.48 L127.88 130.48 H 128.88 C 129.88 130.48 130.56 131.01 130.56 131.98 A 2.45 2.45 0 0 1 128.09 134.53 Z" fill="red"/>
+</svg>

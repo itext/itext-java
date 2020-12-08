@@ -410,4 +410,27 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         convertAndCompare(sourceFolder, destinationFolder, "eofillUnsuportedPathTest");
     }
 
+    @Test
+    //TODO: update cmp-file after DEVSIX-4701 will be fixed
+    public void multiplePairsAfterMoveToRelativeTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "multiplePairsAfterMoveToRelative");
+    }
+
+    @Test
+    //TODO: update cmp-file after DEVSIX-4701 will be fixed
+    public void multiplePairsAfterMoveToAbsoluteTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "multiplePairsAfterMoveToAbsolute");
+    }
+
+    @Test
+    //TODO: update cmp-file after DEVSIX-4701 will be fixed
+    public void pathHOperatorAbsoluteAfterMultiplePairsTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "pathHOperatorAbsoluteAfterMultiplePairs");
+    }
+
+    @Test
+    //TODO: update cmp-file after DEVSIX-4701 will be fixed
+    public void pathHOperatorRelativeAfterMultiplePairsTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "pathHOperatorRelativeAfterMultiplePairs");
+    }
 }
