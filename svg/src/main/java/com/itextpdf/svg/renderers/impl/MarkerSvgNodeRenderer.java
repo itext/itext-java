@@ -206,11 +206,8 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
     private void applyCoordinatesTranslation(SvgDrawContext context) {
         float xScale = 1;
         float yScale = 1;
-        if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.VIEWBOX)) {
-            //Parse viewbox parameters stuff
-            String viewBoxValues = attributesAndStyles.get(SvgConstants.Attributes.VIEWBOX);
-            List<String> valueStrings = SvgCssUtils.splitValueList(viewBoxValues);
-            float[] viewBox = getViewBoxValues();
+        float[] viewBox = getViewBoxValues();
+        if (viewBox.length == VIEWBOX_VALUES_NUMBER) {
             xScale = context.getCurrentViewPort().getWidth() / viewBox[2];
             yScale = context.getCurrentViewPort().getHeight() / viewBox[3];
         }
@@ -234,19 +231,14 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
     }
 
     private float[] getViewBoxValues(float defaultWidth, float defaultHeight) {
-        float[] values;
-        if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.VIEWBOX)) {
-            //Parse viewbox parameters stuff
-            values = super.getViewBoxValues();
+        float[] values = super.getViewBoxValues();
+        if (values.length < VIEWBOX_VALUES_NUMBER) {
+            //If viewBox is not specified or incorrect, it's width and height are the same as passed defaults
+            return new float[] {0, 0, defaultWidth, defaultHeight};
+
         } else {
-            //If viewbox is not specified, it's width and height are the same as passed defaults
-            values = new float[4];
-            values[0] = 0;
-            values[1] = 0;
-            values[2] = defaultWidth;
-            values[3] = defaultHeight;
+            return values;
         }
-        return values;
     }
 }
 

@@ -42,6 +42,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
@@ -67,7 +68,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +77,14 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer implements IBranchSvgNodeRenderer {
 
+    /**
+     * The number of viewBox values.
+     */
+    protected final static int VIEWBOX_VALUES_NUMBER = 4;
+
     private final List<ISvgNodeRenderer> children = new ArrayList<>();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractBranchSvgNodeRenderer.class);
 
     /**
      * Method that will set properties to be inherited by this branch renderer's
@@ -142,14 +149,14 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
      * @param context current svg draw context
      */
     void applyViewBox(SvgDrawContext context) {
-        if (this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgConstants.Attributes.VIEWBOX)) {
-            float[] values = getViewBoxValues();
-            Rectangle currentViewPort = context.getCurrentViewPort();
-            calculateAndApplyViewBox(context, values, currentViewPort);
-        } else {
+        float[] viewBoxValues = getViewBoxValues();
+        if (viewBoxValues.length < VIEWBOX_VALUES_NUMBER) {
             float[] values = {0, 0, context.getCurrentViewPort().getWidth(), context.getCurrentViewPort().getHeight()};
             Rectangle currentViewPort = context.getCurrentViewPort();
             calculateAndApplyViewBox(context, values, currentViewPort);
+        } else {
+            Rectangle currentViewPort = context.getCurrentViewPort();
+            calculateAndApplyViewBox(context, viewBoxValues, currentViewPort);
         }
     }
 
@@ -349,6 +356,7 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
     }
 
     void calculateAndApplyViewBox(SvgDrawContext context, float[] values, Rectangle currentViewPort) {
+        // TODO DEVSIX-4861 change this method with using of SvgCoordinateUtils#applyViewBox
         String[] alignAndMeet = retrieveAlignAndMeet();
         String align = alignAndMeet[0];
         String meetOrSlice = alignAndMeet[1];
@@ -395,11 +403,34 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
     }
 
     float[] getViewBoxValues() {
+        if (this.attributesAndStyles == null) {
+            return new float[]{};
+        }
         String viewBoxValues = attributesAndStyles.get(SvgConstants.Attributes.VIEWBOX);
+        if (viewBoxValues == null) {
+            return new float[]{};
+        }
         List<String> valueStrings = SvgCssUtils.splitValueList(viewBoxValues);
         float[] values = new float[valueStrings.size()];
         for (int i = 0; i < values.length; i++) {
             values[i] = CssDimensionParsingUtils.parseAbsoluteLength(valueStrings.get(i));
+        }
+        // the value for viewBox should be 4 numbers according to the viewBox documentation
+        if (values.length != VIEWBOX_VALUES_NUMBER) {
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn(MessageFormatUtil.format(
+                        SvgLogMessageConstant.VIEWBOX_VALUE_MUST_BE_FOUR_NUMBERS, viewBoxValues));
+            }
+            return new float[]{};
+        }
+        // case when viewBox width or height is negative value is an error and
+        // invalidates the ‘viewBox’ attribute (according to the viewBox documentation)
+        if (values[2] < 0 || values[3] < 0) {
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn(MessageFormatUtil.format(
+                        SvgLogMessageConstant.VIEWBOX_WIDTH_AND_HEIGHT_CANNOT_BE_NEGATIVE, viewBoxValues));
+            }
+            return new float[]{};
         }
         return values;
     }

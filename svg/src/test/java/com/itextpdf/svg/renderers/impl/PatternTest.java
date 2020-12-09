@@ -22,7 +22,9 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -45,75 +47,148 @@ public class PatternTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: DEVSIX-4782 support 'viewbox'
     public void widthHeightXYInCmUnitDiffPatternUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYInCmUnitDiffPatternUnits");
     }
 
     @Test
-    //TODO: DEVSIX-4782 support 'viewbox'
     public void widthHeightXYInInchUnitDiffPatternUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYInInchUnitDiffPatternUnits");
     }
 
     @Test
-    //TODO: DEVSIX-4782 support 'viewbox'
     public void widthHeightXYInEmUnitDiffPatternUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYInEmUnitDiffPatternUnits");
     }
 
     @Test
-    //TODO: DEVSIX-4782 support 'viewbox'
     public void widthHeightXYInExUnitDiffPatternUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYInExUnitDiffPatternUnits");
     }
 
     @Test
-    //TODO: DEVSIX-4782 support viewbox
     public void widthHeightXYInPercentsDiffPatternUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYInPercentsDiffPatternUnits");
     }
 
     @Test
-    //TODO: DEVSIX-4782 support viewbox
     public void widthHeightXYInPxUnitDiffPatternUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYInPxUnitDiffPatternUnits");
     }
 
     @Test
-    //TODO: DEVSIX-4782 support 'viewbox'
     public void widthHeightXYInMmUnitDiffPatternUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYInMmUnitDiffPatternUnits");
     }
 
     @Test
-    //TODO: DEVSIX-4782 support viewbox
     public void widthHeightXYInPtUnitDiffPatternUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYInPtUnitDiffPatternUnits");
     }
 
     @Test
-    //TODO: DEVSIX-4782 support viewbox
     public void widthHeightXYNoMeasureUnitTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightXYNoMeasureUnit");
     }
 
     @Test
-    //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
     public void hrefAttributeTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hrefAttribute");
     }
 
     @Test
-    //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
     public void patternUnitsObjectBoundingBoxTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternUnitsObjectBoundingBox");
     }
 
     @Test
-    //TODO: DEVSIX-4782 Support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
     public void patternUnitsUserSpaceOnUseTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternUnitsUserSpaceOnUse");
+    }
+
+    @Test
+    public void preserveAspectRatioObjBoundingBoxTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "preserveAspectRatioObjBoundingBox", PageSize.A8);
+    }
+
+    @Test
+    public void preserveAspectRatioUserSpaceOnUseTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "preserveAspectRatioUserSpaceOnUse", PageSize.A8);
+    }
+
+    @Test
+    public void objectBoundingBoxXMinYMidMeetTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxXMinYMidMeet", PageSize.A8);
+    }
+
+    @Test
+    public void objectBoundingBoxXMidYMidMeetTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxXMidYMidMeet", PageSize.A10);
+    }
+
+    @Test
+    public void objectBoundingBoxXMaxYMidMeetTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxXMaxYMidMeet", PageSize.A10);
+    }
+
+    @Test
+    public void objectBoundingBoxXMidYMinMeetTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxXMidYMinMeet", PageSize.A10);
+    }
+
+    @Test
+    public void objectBoundingBoxXMidYMaxMeetTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxXMidYMaxMeet", PageSize.A10);
+    }
+
+    @Test
+    public void objectBoundingBoxXMidYMidMeetVerticalTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxXMidYMidMeetVertical", PageSize.A10);
+    }
+
+    @Test
+    public void objectBoundingBoxXMinYMinMeetTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxXMinYMinMeet", PageSize.A10);
+    }
+
+    @Test
+    public void objectBoundingBoxXMinYMinMeetVerticalTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxXMinYMinMeetVertical", PageSize.A10);
+    }
+
+    @Test
+    public void objectBoundingBoxXMinYMaxMeetVerticalTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxXMinYMaxMeetVertical", PageSize.A10);
+    }
+
+    @Test
+    public void objectBoundingBoxXMinYMaxMeetTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxXMinYMaxMeet", PageSize.A10);
+    }
+
+    @Test
+    public void objectBoundingBoxXMaxYMinMeetTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxXMaxYMinMeet", PageSize.A10);
+    }
+
+    @Test
+    public void objectBoundingBoxXMaxYMinMeetVerticalTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxXMaxYMinMeetVertical", PageSize.A10);
+    }
+
+    @Test
+    public void objectBoundingBoxXMaxYMaxMeetTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxXMaxYMaxMeet", PageSize.A10);
+    }
+
+    @Test
+    public void objectBoundingBoxXMaxYMaxMeetVerticalTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxXMaxYMaxMeetVertical", PageSize.A10);
+    }
+
+    @Test
+    public void objectBoundingBoxNoneTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxNone", PageSize.A10);
     }
 
     @Test
@@ -122,7 +197,6 @@ public class PatternTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
     public void patternContentUnitsObjBoundBoxTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternContentUnitsObjBoundBox");
     }
@@ -136,67 +210,57 @@ public class PatternTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
+    //TODO DEVSIX-4834 support relative units in attributes of svg elements
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 8)})
     public void viewBoxAndAbsoluteCoordinatesTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxAndAbsoluteCoordinates");
     }
 
     @Test
-    //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
     //TODO DEVSIX-4811 support 'patternTransform' attribute for SVG pattern element
     public void patternTransformSimpleTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternTransformSimple");
     }
 
     @Test
-    //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
     //TODO DEVSIX-4811 support 'patternTransform' attribute for SVG pattern element
     public void patternTransformUnitsObjectBoundingBoxTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternTransformUnitsObjectBoundingBox");
     }
 
     @Test
-    //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
     //TODO DEVSIX-4811 support 'patternTransform' attribute for SVG pattern element
     public void patternTransformUnitsUserSpaceOnUseTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternTransformUnitsUserSpaceOnUse");
     }
 
     @Test
-    //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
     public void preserveAspectRatioXMaxYMidMeetTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "preserveAspectRatioXMaxYMidMeet");
     }
 
     @Test
-
-    //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
     public void preserveAspectRatioXMaxYMidSliceTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "preserveAspectRatioXMaxYMidSlice");
     }
 
     @Test
-
-    //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
     public void preserveAspectRatioXMidYMaxMeetTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "preserveAspectRatioXMidYMaxMeet");
     }
 
     @Test
-
-    //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
     public void preserveAspectRatioXMidYMaxSliceTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "preserveAspectRatioXMidYMaxSlice");
     }
 
     @Test
-    //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
     public void relativeUnitsResolveFromDefsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "relativeUnitsResolveFromDefs");
     }
 
     @Test
-    //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
     public void relativeUnitsResolveFromPatternTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "relativeUnitsResolveFromPattern");
     }
@@ -220,7 +284,6 @@ public class PatternTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-4782 support 'viewbox' and `preserveAspectRatio' attribute for SVG pattern element
     public void nestedPatternsWithComplexElementsInsideTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "nestedPatternsWithComplexElementsInside");
     }
@@ -289,14 +352,87 @@ public class PatternTest extends SvgIntegrationTest {
     }
 
     @Test
-    // we print the default color that is black
     public void patternDefaultWidthTest() throws IOException, InterruptedException {
+        // we print the default color that is black
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternDefaultWidth");
     }
 
     @Test
-    // we print the default color that is black
     public void patternDefaultHeightTest() throws IOException, InterruptedException {
+        // we print the default color that is black
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternDefaultHeight");
+    }
+
+    @Test
+    public void viewBoxPatternXYTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxPatternXY");
+    }
+
+    @Test
+    public void viewBoxClippedTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxClipped");
+    }
+
+    @Test
+    public void coordSystemTransformUserSpaceOnUseTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "coordSystemTransformUserSpaceOnUse");
+    }
+
+    @Test
+    public void coordSystemTransformObjBoundingBoxTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "coordSystemTransformObjBoundingBox");
+    }
+
+    @Test
+    public void coordSystemTransformMixed1Test() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "coordSystemTransformMixed1");
+    }
+
+    @Test
+    public void coordSystemTransformMixed2Test() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "coordSystemTransformMixed2");
+    }
+
+    @Test
+    public void coordSystemTransform() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "coordSystemTransform");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.VIEWBOX_VALUE_MUST_BE_FOUR_NUMBERS, count = 1)})
+    public void incorrectViewBoxValuesNumberTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "incorrectViewBoxValuesNumber");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.VIEWBOX_WIDTH_AND_HEIGHT_CANNOT_BE_NEGATIVE)})
+    public void incorrectViewBoxNegativeWidthTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "incorrectViewBoxNegativeWidth");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.VIEWBOX_WIDTH_AND_HEIGHT_CANNOT_BE_NEGATIVE)})
+    public void incorrectViewBoxNegativeHeightTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "incorrectViewBoxNegativeHeight");
+    }
+
+    @Test
+    public void viewBoxZeroWidthTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxZeroWidth");
+    }
+
+    @Test
+    public void viewBoxZeroHeightTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxZeroHeight");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.PATTERN_WIDTH_OR_HEIGHT_IS_NEGATIVE)})
+    public void patternNegativeWidthTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternNegativeWidth");
     }
 }

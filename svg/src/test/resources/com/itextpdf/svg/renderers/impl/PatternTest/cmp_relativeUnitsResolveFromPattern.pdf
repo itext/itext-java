@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20201021180745+03'00')/ModDate(D:20201021180745+03'00')/Producer(iText® 7.1.14-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20201209133357+03'00')/ModDate(D:20201209133357+03'00')/Producer(iText® 7.1.14-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,12 +36,14 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 450 450]/Length 178/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 450]/Length 202/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 9 0 R/P2 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 450 450 re
 W
 n
 q
-0 0 0 rg
+/Pattern cs
+
+/P1 scn
 1 0.64706 0 RG
 0.75 w
 BT
@@ -57,7 +59,9 @@ ET
 B
 Q
 q
-0 0 0 rg
+/Pattern cs
+
+/P2 scn
 1 0.64706 0 RG
 0.75 w
 % rect
@@ -67,8 +71,42 @@ Q
 
 endstream
 endobj
+9 0 obj
+<</BBox[0 -10.35 75 11.1]/Length 82/Matrix[0.30216 0 0 0.30216 0 103.95]/PaintType 1/PatternType 1/Resources<</Font<</F1 6 0 R>>>>/TilingType 1/Type/Pattern/XStep 75/YStep 21.45>>stream
+0 0 1 rg
+BT
+1 0 0 -1 0 0 Tm
+0 Tr
+/F1 18 Tf
+q
+0 0 Td
+(TextTextTextText)Tj
+n
+Q
+ET
+f
+
+endstream
+endobj
+10 0 obj
+<</BBox[0 -12.13 75 12.88]/Length 82/Matrix[0.3 0 0 0.3 0 168.64]/PaintType 1/PatternType 1/Resources<</Font<</F1 6 0 R>>>>/TilingType 1/Type/Pattern/XStep 75/YStep 25>>stream
+0 0 1 rg
+BT
+1 0 0 -1 0 0 Tm
+0 Tr
+/F1 18 Tf
+q
+0 0 Td
+(TextTextTextText)Tj
+n
+Q
+ET
+f
+
+endstream
+endobj
 xref
-0 9
+0 11
 0000000000 65535 f 
 0000000226 00000 n 
 0000000528 00000 n 
@@ -78,9 +116,11 @@ xref
 0000000438 00000 n 
 0000000579 00000 n 
 0000000762 00000 n 
+0000001119 00000 n 
+0000001413 00000 n 
 trailer
-<</ID [<a4339c5cee62c4809c3c080bb1f4a6af><a4339c5cee62c4809c3c080bb1f4a6af>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<13e1c3093be5cd505c6b338fbdecb4f8><13e1c3093be5cd505c6b338fbdecb4f8>]/Info 3 0 R/Root 1 0 R/Size 11>>
 %iText-7.1.14-SNAPSHOT
 startxref
-1064
+1698
 %%EOF
