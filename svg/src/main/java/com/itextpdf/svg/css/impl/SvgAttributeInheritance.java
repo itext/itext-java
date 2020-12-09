@@ -62,19 +62,22 @@ public class SvgAttributeInheritance implements IStyleInheritance {
      */
     private static final Set<String> inheritableProperties = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
 
-            //Stroke
-            SvgConstants.Attributes.STROKE,
-
-            //Fill
-            SvgConstants.Attributes.FILL,
-
-            //Fill
-            SvgConstants.Attributes.FILL_RULE,
-
-            //clip-rule
+            // clip-rule
             SvgConstants.Attributes.CLIP_RULE,
 
-            //text-anchor
+            // fill
+            SvgConstants.Attributes.FILL,
+
+            // fill-rule
+            SvgConstants.Attributes.FILL_RULE,
+
+            // stroke
+            SvgConstants.Attributes.STROKE,
+
+            // stroke-width
+            SvgConstants.Attributes.STROKE_WIDTH,
+
+            // text-anchor
             SvgConstants.Attributes.TEXT_ANCHOR
 
     )));

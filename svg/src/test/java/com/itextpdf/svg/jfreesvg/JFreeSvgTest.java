@@ -42,12 +42,8 @@
  */
 package com.itextpdf.svg.jfreesvg;
 
-
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
