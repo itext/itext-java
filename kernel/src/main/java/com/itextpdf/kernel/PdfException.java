@@ -212,6 +212,7 @@ public class PdfException extends RuntimeException {
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "Number of entries in this xref subsection not found.";
     public static final String NoCompatibleEncryptionFound = "No compatible encryption found.";
     public static final String NoCryptoDictionaryDefined = "No crypto dictionary defined.";
+    public static final String NoGlyphsDefinedForType3Font = "No glyphs defined for type3 font.";
     public static final String NoKidWithSuchRole = "No kid with such role.";
     /**
      * @deprecated Now we log a warning rather than throw an exception.

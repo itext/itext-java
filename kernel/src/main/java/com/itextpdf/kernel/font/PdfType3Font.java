@@ -135,76 +135,15 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         fontProgram = new Type3Font(false);
         fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUnicode);
         PdfDictionary charProcsDic = getPdfObject().getAsDictionary(PdfName.CharProcs);
-        PdfArray fontMatrixArray = getPdfObject().getAsArray(PdfName.FontMatrix);
+        calculateAndSetFontMatrix();
 
-        double[] fontMatrix = new double[6];
-        for (int i = 0; i < fontMatrixArray.size(); i++) {
-            fontMatrix[i] = ((PdfNumber) fontMatrixArray.get(i)).getValue();
-        }
-        setDimensionsMultiplier(fontMatrix[0] * 1000);
-        for (int i = 0; i < 6; i++) {
-            fontMatrix[i] /= getDimensionsMultiplier();
-        }
-        setFontMatrix(fontMatrix);
+        calculateAndSetBBox();
+        int firstChar = calculateShortTag(fontDictionary);
 
+        int[] widths = calculateWidth(fontDictionary, firstChar);
 
-        if (getPdfObject().containsKey(PdfName.FontBBox)) {
-            PdfArray fontBBox = getPdfObject().getAsArray(PdfName.FontBBox);
-            fontProgram.getFontMetrics().setBbox((int)(fontBBox.getAsNumber(0).doubleValue() * getDimensionsMultiplier()),
-                    (int)(fontBBox.getAsNumber(1).doubleValue() * getDimensionsMultiplier()),
-                    (int)(fontBBox.getAsNumber(2).doubleValue() * getDimensionsMultiplier()),
-                    (int)(fontBBox.getAsNumber(3).doubleValue() * getDimensionsMultiplier()));
-        } else {
-            fontProgram.getFontMetrics().setBbox(0, 0, 0, 0);
-        }
-        int firstChar = normalizeFirstLastChar(fontDictionary.getAsNumber(PdfName.FirstChar), 0);
-        int lastChar = normalizeFirstLastChar(fontDictionary.getAsNumber(PdfName.LastChar),
-                PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE);
-        for (int i = firstChar; i <= lastChar; i++) {
-            shortTag[i] = 1;
-        }
-
-        PdfArray pdfWidths = fontDictionary.getAsArray(PdfName.Widths);
-
-        double[] multipliedWidths = new double[pdfWidths.size()];
-        for (int i = 0; i < pdfWidths.size(); i++) {
-            multipliedWidths[i] = pdfWidths.getAsNumber(i).doubleValue() * getDimensionsMultiplier();
-        }
-        PdfArray multipliedPdfWidths = new PdfArray(multipliedWidths);
-
-        int[] widths = FontUtil.convertSimpleWidthsArray(multipliedPdfWidths, firstChar, 0);
-
-        if (toUnicode != null && toUnicode.hasByteMappings() && fontEncoding.hasDifferences()) {
-            for (int i = 0; i <= PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE; i++) {
-                int unicode = fontEncoding.getUnicode(i);
-                PdfName glyphName = new PdfName(fontEncoding.getDifference(i));
-                if (unicode != -1
-                        && !FontEncoding.NOTDEF.equals(glyphName.getValue())
-                        && charProcsDic.containsKey(glyphName)) {
-                    ((Type3Font) getFontProgram()).addGlyph(i, unicode, widths[i], null, new Type3Glyph(charProcsDic.getAsStream(glyphName), getDocument()));
-                }
-            }
-        }
-
-
-        Map<Integer, Integer> unicodeToCode = null;
-        if (toUnicode != null) {
-            try { unicodeToCode = toUnicode.createReverseMapping(); } catch (Exception ignored){}
-        }
-
-        for (PdfName glyphName : charProcsDic.keySet()) {
-            int unicode = AdobeGlyphList.nameToUnicode(glyphName.getValue());
-            int code = -1;
-            if (fontEncoding.canEncode(unicode)) {
-                code = fontEncoding.convertToByte(unicode);
-            } else if (unicodeToCode != null && unicodeToCode.containsKey(unicode)) {
-                code = (int) unicodeToCode.get(unicode);
-            }
-            if (code != -1 && getFontProgram().getGlyphByCode(code) == null) {
-                ((Type3Font) getFontProgram()).addGlyph(code, unicode, widths[code],
-                        null, new Type3Glyph(charProcsDic.getAsStream(glyphName), getDocument()));
-            }
-        }
+        addSimpleFontGlyphs(charProcsDic, widths);
+        addGlyphsFromCharProcs(charProcsDic, widths);
 
         fillFontDescriptor(fontDictionary.getAsDictionary(PdfName.FontDescriptor));
     }
@@ -322,7 +261,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         int code = getFirstEmptyCode();
         glyph = new Type3Glyph(getDocument(), wx, llx, lly, urx, ury, ((Type3Font) getFontProgram()).isColorized());
         ((Type3Font) getFontProgram()).addGlyph(code, c, wx, new int[]{llx, lly, urx, ury}, glyph);
-        fontEncoding.addSymbol((byte) code, c);
+        fontEncoding.addSymbol(code, c);
 
         if (!((Type3Font) getFontProgram()).isColorized()) {
             if (fontProgram.countOfGlyphs() == 0) {
@@ -365,7 +304,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         if (isFlushed()) return;
         ensureUnderlyingObjectHasIndirectReference();
         if (((Type3Font) getFontProgram()).getNumberOfGlyphs() < 1) {
-            throw new PdfException("No glyphs defined for type3 font.");
+            throw new PdfException(PdfException.NoGlyphsDefinedForType3Font);
         }
 
         PdfDictionary charProcs = new PdfDictionary();
@@ -468,6 +407,88 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
             }
         }
         return -1;
+    }
+
+    private void addGlyphsFromCharProcs(PdfDictionary charProcsDic, int[] widths) {
+        Map<Integer, Integer> unicodeToCode = null;
+        if (toUnicode != null) {
+            try { unicodeToCode = toUnicode.createReverseMapping(); } catch (Exception ignored){}
+        }
+
+        for (PdfName glyphName : charProcsDic.keySet()) {
+            int unicode = AdobeGlyphList.nameToUnicode(glyphName.getValue());
+            int code = -1;
+            if (fontEncoding.canEncode(unicode)) {
+                code = fontEncoding.convertToByte(unicode);
+            } else if (unicodeToCode != null && unicodeToCode.containsKey(unicode)) {
+                code = (int) unicodeToCode.get(unicode);
+            }
+            if (code != -1 && getFontProgram().getGlyphByCode(code) == null) {
+                ((Type3Font) getFontProgram()).addGlyph(code, unicode, widths[code],
+                        null, new Type3Glyph(charProcsDic.getAsStream(glyphName), getDocument()));
+            }
+        }
+    }
+
+    private void addSimpleFontGlyphs(PdfDictionary charProcsDic, int[] widths) {
+        if (toUnicode != null && toUnicode.hasByteMappings() && fontEncoding.hasDifferences()) {
+            for (int i = 0; i <= PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE; i++) {
+                int unicode = fontEncoding.getUnicode(i);
+                PdfName glyphName = new PdfName(fontEncoding.getDifference(i));
+                if (unicode != -1
+                        && !FontEncoding.NOTDEF.equals(glyphName.getValue())
+                        && charProcsDic.containsKey(glyphName)) {
+                    ((Type3Font) getFontProgram()).addGlyph(i, unicode, widths[i], null, new Type3Glyph(charProcsDic.getAsStream(glyphName), getDocument()));
+                }
+            }
+        }
+    }
+
+    private int[] calculateWidth(PdfDictionary fontDictionary, int firstChar) {
+        PdfArray pdfWidths = fontDictionary.getAsArray(PdfName.Widths);
+
+        double[] multipliedWidths = new double[pdfWidths.size()];
+        for (int i = 0; i < pdfWidths.size(); i++) {
+            multipliedWidths[i] = pdfWidths.getAsNumber(i).doubleValue() * getDimensionsMultiplier();
+        }
+        PdfArray multipliedPdfWidths = new PdfArray(multipliedWidths);
+
+        return FontUtil.convertSimpleWidthsArray(multipliedPdfWidths, firstChar, 0);
+    }
+
+    private int calculateShortTag(PdfDictionary fontDictionary) {
+        int firstChar = normalizeFirstLastChar(fontDictionary.getAsNumber(PdfName.FirstChar), 0);
+        int lastChar = normalizeFirstLastChar(fontDictionary.getAsNumber(PdfName.LastChar),
+                PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE);
+        for (int i = firstChar; i <= lastChar; i++) {
+            shortTag[i] = 1;
+        }
+        return firstChar;
+    }
+
+    private void calculateAndSetBBox() {
+        if (getPdfObject().containsKey(PdfName.FontBBox)) {
+            PdfArray fontBBox = getPdfObject().getAsArray(PdfName.FontBBox);
+            fontProgram.getFontMetrics().setBbox((int)(fontBBox.getAsNumber(0).doubleValue() * getDimensionsMultiplier()),
+                    (int)(fontBBox.getAsNumber(1).doubleValue() * getDimensionsMultiplier()),
+                    (int)(fontBBox.getAsNumber(2).doubleValue() * getDimensionsMultiplier()),
+                    (int)(fontBBox.getAsNumber(3).doubleValue() * getDimensionsMultiplier()));
+        } else {
+            fontProgram.getFontMetrics().setBbox(0, 0, 0, 0);
+        }
+    }
+
+    private void calculateAndSetFontMatrix() {
+        PdfArray fontMatrixArray = getPdfObject().getAsArray(PdfName.FontMatrix);
+        double[] fontMatrix = new double[6];
+        for (int i = 0; i < fontMatrixArray.size(); i++) {
+            fontMatrix[i] = ((PdfNumber) fontMatrixArray.get(i)).getValue();
+        }
+        setDimensionsMultiplier(fontMatrix[0] * 1000);
+        for (int i = 0; i < 6; i++) {
+            fontMatrix[i] /= getDimensionsMultiplier();
+        }
+        setFontMatrix(fontMatrix);
     }
 
     private void fillFontDescriptor(PdfDictionary fontDesc) {
