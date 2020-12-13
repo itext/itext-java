@@ -31,7 +31,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Tab;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
@@ -44,23 +43,24 @@ import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.renderer.TextSequenceWordWrapping.LastFittingChildRendererData;
+import com.itextpdf.layout.renderer.TextSequenceWordWrapping.MinMaxWidthOfTextRendererSequenceHelper;
+import com.itextpdf.layout.renderer.TextSequenceWordWrapping.SpecialScriptsContainingSequenceStatus;
+import com.itextpdf.layout.renderer.TextSequenceWordWrapping.SpecialScriptsContainingTextRendererSequenceInfo;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-
-import java.util.Collections;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class WordWrapUnitTest extends ExtendedITextTest {
@@ -82,7 +82,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         TextRenderer textRenderer = new TextRenderer(new Text(THAI_TEXT));
         textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
         textRenderer.setText(THAI_TEXT);
-        Assert.assertTrue(LineRenderer.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(textRenderer));
+        Assert.assertTrue(TextSequenceWordWrapping.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(textRenderer));
     }
 
     @Test
@@ -91,13 +91,13 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
         textRenderer.setText(THAI_TEXT);
         textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>());
-        Assert.assertFalse(LineRenderer.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(textRenderer));
+        Assert.assertFalse(TextSequenceWordWrapping.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(textRenderer));
     }
 
     @Test
     public void isNotTextRenderer() {
         TabRenderer tabRenderer = new TabRenderer(new Tab());
-        Assert.assertFalse(LineRenderer.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(tabRenderer));
+        Assert.assertFalse(TextSequenceWordWrapping.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(tabRenderer));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(REGULAR_FONT, PdfEncodings.IDENTITY_H));
         textRenderer.setText(nonSpecialScriptText);
         Assert.assertNull(textRenderer.getSpecialScriptsWordBreakPoints());
-        LineRenderer.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(textRenderer);
+        TextSequenceWordWrapping.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(textRenderer);
         Assert.assertNotNull(textRenderer.getSpecialScriptsWordBreakPoints());
         Assert.assertTrue(textRenderer.getSpecialScriptsWordBreakPoints().isEmpty());
 
@@ -204,8 +204,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         lineRenderer.addChild(textRendererSecondPart);
         lineRenderer.addChild(regularNonTextRenderer);
 
-        LineRenderer.SpecialScriptsContainingTextRendererSequenceInfo info = lineRenderer
-                .getSpecialScriptsContainingTextRendererSequenceInfo(0);
+        SpecialScriptsContainingTextRendererSequenceInfo info = TextSequenceWordWrapping
+                .getSpecialScriptsContainingTextRendererSequenceInfo(lineRenderer, 0);
         int numberOfSequentialTextRenderers = info.numberOfSequentialTextRenderers;
         String sequentialTextContent = info.sequentialTextContent;
         List<Integer> indicesOfFloating = info.indicesOfFloating;
@@ -216,8 +216,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         Assert.assertEquals(1, (int) indicesOfFloating.get(0));
 
         List<Integer> possibleBreaks = new ArrayList<Integer>(Arrays.asList(3, 8, 10, 12, 15, 20, 23, 26, 28, 30, 36));
-        lineRenderer.distributePossibleBreakPointsOverSequentialTextRenderers(
-                0, numberOfSequentialTextRenderers, possibleBreaks, indicesOfFloating);
+        TextSequenceWordWrapping.distributePossibleBreakPointsOverSequentialTextRenderers(
+                lineRenderer, 0, numberOfSequentialTextRenderers, possibleBreaks, indicesOfFloating);
 
         List<Integer> possibleBreaksFirstPart = textRendererFirstPart.getSpecialScriptsWordBreakPoints();
         Assert.assertNotNull(possibleBreaksFirstPart);
@@ -258,8 +258,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         lineRenderer.addChild(specialScriptRenderer);
         lineRenderer.addChild(nonSpecialScriptRenderer);
 
-        LineRenderer.SpecialScriptsContainingTextRendererSequenceInfo info = lineRenderer
-                .getSpecialScriptsContainingTextRendererSequenceInfo(0);
+        SpecialScriptsContainingTextRendererSequenceInfo info = TextSequenceWordWrapping
+                .getSpecialScriptsContainingTextRendererSequenceInfo(lineRenderer, 0);
         Assert.assertEquals(1, info.numberOfSequentialTextRenderers);
         Assert.assertEquals(THAI_TEXT, info.sequentialTextContent);
         Assert.assertTrue(info.indicesOfFloating.isEmpty());
@@ -285,7 +285,9 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         List<Integer> possibleBreaks = new ArrayList<>(1);
         possibleBreaks.add(THAI_WORD.length());
 
-        lineRenderer.distributePossibleBreakPointsOverSequentialTextRenderers(0, THAI_WORD.length(), possibleBreaks, new ArrayList<Integer>());
+        TextSequenceWordWrapping
+                .distributePossibleBreakPointsOverSequentialTextRenderers(lineRenderer, 0, THAI_WORD.length(),
+                        possibleBreaks, new ArrayList<Integer>());
 
         List<IRenderer> childRenderers = lineRenderer.getChildRenderers();
         for (int i = 0; i < THAI_WORD.length(); i++) {
@@ -333,8 +335,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
             }
         }
 
-        LineRenderer.LastFittingChildRendererData lastFittingChildRendererData = lineRenderer
-                .getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts(THAI_WORD.length() + 1,
+        LastFittingChildRendererData lastFittingChildRendererData = TextSequenceWordWrapping
+                .getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts(lineRenderer, THAI_WORD.length() + 1,
                         specialScriptLayoutResults, false, true);
 
         Assert.assertEquals(5, lastFittingChildRendererData.childIndex);
@@ -368,8 +370,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         specialScriptLayoutResults.put(indexOfThaiRenderer,
                 new LayoutResult(LayoutResult.NOTHING, layoutArea, null, null));
 
-        LineRenderer.LastFittingChildRendererData lastFittingChildRendererData = lineRenderer
-                .getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts(indexOfThaiRenderer,
+        LastFittingChildRendererData lastFittingChildRendererData = TextSequenceWordWrapping
+                .getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts(lineRenderer, indexOfThaiRenderer,
                         specialScriptLayoutResults, false, true);
 
         Assert.assertEquals(indexOfThaiRenderer, lastFittingChildRendererData.childIndex);
@@ -408,8 +410,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
             }
         }
 
-        LineRenderer.LastFittingChildRendererData lastFittingChildRendererData = lineRenderer
-                .getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts(THAI_WORD.length() - 1,
+        LastFittingChildRendererData lastFittingChildRendererData = TextSequenceWordWrapping
+                .getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts(lineRenderer, THAI_WORD.length() - 1,
                         specialScriptLayoutResults, false, true);
 
         Assert.assertEquals(THAI_WORD.length() - 1, lastFittingChildRendererData.childIndex);
@@ -640,13 +642,12 @@ public class WordWrapUnitTest extends ExtendedITextTest {
 
         TabRenderer tabRenderer = new TabRenderer(new Tab());
 
-        LineRenderer.MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper =
-                new LineRenderer.MinMaxWidthOfTextRendererSequenceHelper(0f, 0f, false);
+        MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper =
+                new MinMaxWidthOfTextRendererSequenceHelper(0f, 0f, false);
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(new MinMaxWidth());
 
-        LineRenderer lineRenderer = new LineRenderer();
-
-        lineRenderer.resetTextSequenceIfItEnded(textRendererLayoutResults, false, tabRenderer, 1, minMaxWidthOfTextRendererSequenceHelper, false, widthHandler);
+        TextSequenceWordWrapping.resetTextSequenceIfItEnded(textRendererLayoutResults, false, tabRenderer, 1,
+                minMaxWidthOfTextRendererSequenceHelper, false, widthHandler);
         Assert.assertTrue(textRendererLayoutResults.isEmpty());
     }
 
@@ -663,14 +664,13 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         text.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
         TextRenderer tabRenderer = new TextRenderer(text);
 
-        LineRenderer.MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper =
-                new LineRenderer.MinMaxWidthOfTextRendererSequenceHelper(0f, 0f, false);
+        MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper =
+                new MinMaxWidthOfTextRendererSequenceHelper(0f, 0f, false);
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(new MinMaxWidth());
 
-        LineRenderer lineRenderer = new LineRenderer();
-
         int childPosDuringResetAttempt = 1;
-        lineRenderer.resetTextSequenceIfItEnded(textRendererLayoutResults, false, tabRenderer, childPosDuringResetAttempt,
+        TextSequenceWordWrapping
+                .resetTextSequenceIfItEnded(textRendererLayoutResults, false, tabRenderer, childPosDuringResetAttempt,
                 minMaxWidthOfTextRendererSequenceHelper, true, widthHandler);
         Assert.assertTrue(textRendererLayoutResults.isEmpty());
     }
@@ -682,10 +682,9 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         Tab tab = new Tab();
         TabRenderer tabRenderer = new TabRenderer(tab);
 
-        LineRenderer lineRenderer = new LineRenderer();
-
         int childPosNotToBeAdded = 1;
-        lineRenderer.updateSpecialScriptLayoutResults(textRendererLayoutResults, tabRenderer, childPosNotToBeAdded,
+        TextSequenceWordWrapping
+                .updateTextSequenceLayoutResults(textRendererLayoutResults, true, tabRenderer, childPosNotToBeAdded,
                 new LayoutResult(LayoutResult.FULL, new LayoutArea(1, new Rectangle(10, 10)), null, null, null));
         Assert.assertTrue(textRendererLayoutResults.isEmpty());
     }
@@ -699,13 +698,11 @@ public class WordWrapUnitTest extends ExtendedITextTest {
 
         TextRenderer textRenderer = new TextRenderer(new Text("whatever"));
 
-        LineRenderer lineRenderer = new LineRenderer();
-
-        LineRenderer.MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper =
-                new LineRenderer.MinMaxWidthOfTextRendererSequenceHelper(0f, 0f, false);
+        MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper =
+                new MinMaxWidthOfTextRendererSequenceHelper(0f, 0f, false);
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(new MinMaxWidth());
 
-        lineRenderer.resetTextSequenceIfItEnded(specialScriptLayoutResults, true, textRenderer, 1,
+        TextSequenceWordWrapping.resetTextSequenceIfItEnded(specialScriptLayoutResults, true, textRenderer, 1,
                 minMaxWidthOfTextRendererSequenceHelper, true, widthHandler);
         Assert.assertTrue(specialScriptLayoutResults.isEmpty());
     }
@@ -718,9 +715,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         LayoutResult res = new LayoutResult(LayoutResult.NOTHING,
                 new LayoutArea(0, new Rectangle(0, 0, 10, 10)), null, null);
 
-        LineRenderer lineRenderer = new LineRenderer();
-
-        lineRenderer.updateSpecialScriptLayoutResults(specialScriptLayoutResults, textRenderer, 1, res);
+        TextSequenceWordWrapping.updateTextSequenceLayoutResults(specialScriptLayoutResults, true, textRenderer, 1, res);
         Assert.assertTrue(specialScriptLayoutResults.isEmpty());
     }
 
@@ -735,14 +730,12 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         TextRenderer textRenderer = new TextRenderer(new Text("whatever"));
         textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Collections.singletonList(-1)));
 
-        LineRenderer lineRenderer = new LineRenderer();
-
-        LineRenderer.MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper =
-                new LineRenderer.MinMaxWidthOfTextRendererSequenceHelper(0f, 0f, false);
+        MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper =
+                new MinMaxWidthOfTextRendererSequenceHelper(0f, 0f, false);
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(new MinMaxWidth());
 
         int secondKey = firstKey + 1;
-        lineRenderer.resetTextSequenceIfItEnded(specialScriptLayoutResults, true, textRenderer, secondKey,
+        TextSequenceWordWrapping.resetTextSequenceIfItEnded(specialScriptLayoutResults, true, textRenderer, secondKey,
                 minMaxWidthOfTextRendererSequenceHelper, true, widthHandler);
         Assert.assertEquals(1, specialScriptLayoutResults.size());
         Assert.assertTrue(specialScriptLayoutResults.containsKey(firstKey));
@@ -759,10 +752,9 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         TextRenderer textRenderer = new TextRenderer(new Text("whatever"));
         textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Collections.singletonList(-1)));
 
-        LineRenderer lineRenderer = new LineRenderer();
-
         int secondKey = firstKey + 1;
-        lineRenderer.updateSpecialScriptLayoutResults(specialScriptLayoutResults, textRenderer, secondKey, res);
+        TextSequenceWordWrapping
+                .updateTextSequenceLayoutResults(specialScriptLayoutResults, true, textRenderer, secondKey, res);
         Assert.assertTrue(specialScriptLayoutResults.containsKey(firstKey));
         Assert.assertTrue(specialScriptLayoutResults.containsKey(secondKey));
         Assert.assertEquals(2, specialScriptLayoutResults.size());
@@ -771,7 +763,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
     @Test
     public void curWidthZeroDecrement() {
         int oldNewChildPos = 1;
-        float decrement = LineRenderer.getCurWidthSpecialScriptsDecrement(oldNewChildPos, oldNewChildPos,
+        float decrement = TextSequenceWordWrapping
+                .getCurWidthRelayoutedTextSequenceDecrement(oldNewChildPos, oldNewChildPos,
                 new HashMap<Integer, LayoutResult>());
         Assert.assertEquals(0.0f, decrement, 0.0001);
     }
@@ -789,7 +782,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         specialScriptLayoutResults.put(0, oldResult);
         // leave specialScriptLayoutResults.get(1) null, as if childRenderers.get(1) is floating
         specialScriptLayoutResults.put(2, simpleDecrement);
-        float decrement = LineRenderer.getCurWidthSpecialScriptsDecrement(3, 0, specialScriptLayoutResults);
+        float decrement = TextSequenceWordWrapping
+                .getCurWidthRelayoutedTextSequenceDecrement(3, 0, specialScriptLayoutResults);
         Assert.assertEquals(widthOfNewNothingResult + simpleWidth, decrement, 0.00001);
     }
 
@@ -806,7 +800,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         specialScriptLayoutResults.put(0, oldResult);
         // leave specialScriptLayoutResults.get(1) null, as if childRenderers.get(1) is floating
         specialScriptLayoutResults.put(2, simpleDecrement);
-        float decrement = LineRenderer.getCurWidthSpecialScriptsDecrement(3, 0, specialScriptLayoutResults);
+        float decrement = TextSequenceWordWrapping
+                .getCurWidthRelayoutedTextSequenceDecrement(3, 0, specialScriptLayoutResults);
         Assert.assertEquals(widthOfNewPartialResult + simpleWidth, decrement, 0.00001);
     }
 
@@ -835,8 +830,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
 
         lineRenderer.addChild(textRenderer);
         List<Integer> possibleBreakPoints = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7));
-        lineRenderer.distributePossibleBreakPointsOverSequentialTextRenderers(
-                0, 1, possibleBreakPoints, new ArrayList<Integer>());
+        TextSequenceWordWrapping.distributePossibleBreakPointsOverSequentialTextRenderers(
+                lineRenderer, 0, 1, possibleBreakPoints, new ArrayList<Integer>());
         List<Integer> distributed = ((TextRenderer) lineRenderer.getChildRenderers().get(0))
                 .getSpecialScriptsWordBreakPoints();
         Assert.assertEquals(new ArrayList<Integer>(Arrays.asList(3, 6)), distributed);
@@ -883,9 +878,9 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         lineRenderer.addChild(nonThaiTextRenderer);
         lineRenderer.addChild(thaiTextRenderer);
 
-        LineRenderer.SpecialScriptsContainingSequenceStatus status =
-                lineRenderer.getSpecialScriptsContainingSequenceStatus(1);
-        Assert.assertEquals(LineRenderer.SpecialScriptsContainingSequenceStatus
+        SpecialScriptsContainingSequenceStatus status =
+                TextSequenceWordWrapping.getSpecialScriptsContainingSequenceStatus(lineRenderer, 1);
+        Assert.assertEquals(TextSequenceWordWrapping.SpecialScriptsContainingSequenceStatus
                 .MOVE_SEQUENCE_CONTAINING_SPECIAL_SCRIPTS_ON_NEXT_LINE, status);
     }
 
@@ -906,9 +901,9 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         lineRenderer.addChild(inlineBlock);
         lineRenderer.addChild(thaiTextRenderer);
 
-        LineRenderer.SpecialScriptsContainingSequenceStatus status =
-                lineRenderer.getSpecialScriptsContainingSequenceStatus(1);
-        Assert.assertEquals(LineRenderer.SpecialScriptsContainingSequenceStatus
+        SpecialScriptsContainingSequenceStatus status =
+                TextSequenceWordWrapping.getSpecialScriptsContainingSequenceStatus(lineRenderer, 1);
+        Assert.assertEquals(TextSequenceWordWrapping.SpecialScriptsContainingSequenceStatus
                 .MOVE_SEQUENCE_CONTAINING_SPECIAL_SCRIPTS_ON_NEXT_LINE, status);
     }
 
@@ -926,9 +921,9 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         lineRenderer.setParent(document.getRenderer());
         lineRenderer.addChild(thaiTextRenderer);
 
-        LineRenderer.SpecialScriptsContainingSequenceStatus status =
-                lineRenderer.getSpecialScriptsContainingSequenceStatus(0);
-        Assert.assertEquals(LineRenderer.SpecialScriptsContainingSequenceStatus.FORCED_SPLIT, status);
+        SpecialScriptsContainingSequenceStatus status =
+                TextSequenceWordWrapping.getSpecialScriptsContainingSequenceStatus(lineRenderer, 0);
+        Assert.assertEquals(TextSequenceWordWrapping.SpecialScriptsContainingSequenceStatus.FORCED_SPLIT, status);
     }
 
     @Test

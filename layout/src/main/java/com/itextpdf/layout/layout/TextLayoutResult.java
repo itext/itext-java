@@ -61,9 +61,9 @@ public class TextLayoutResult extends MinMaxWidthLayoutResult {
 
     protected boolean containsPossibleBreak = false;
 
-    protected boolean lineStartsWithWhiteSpace = false;
+    protected boolean startsWithSplitCharacterWhiteSpace = false;
 
-    protected boolean lineEndsWithSplitCharacterOrWhiteSpace = false;
+    protected boolean endsWithSplitCharacter = false;
 
     protected float leftMinWidth;
 
@@ -163,14 +163,15 @@ public class TextLayoutResult extends MinMaxWidthLayoutResult {
     }
 
     /**
-     * Sets {@link #isLineStartsWithWhiteSpace()}.
+     * Sets {@link #isStartsWithSplitCharacterWhiteSpace()}.
      *
-     * @param lineStartsWithWhiteSpace indicates if TextRenderer#line starts with a whitespace.
+     * @param startsWithSplitCharacterWhiteSpace indicates if TextRenderer#line starts with a split character that is
+     *                                           also a whitespace.
      * @return {@link com.itextpdf.layout.layout.TextLayoutResult this layout result} the setting was applied on.
-     * @see #isLineStartsWithWhiteSpace
+     * @see #isStartsWithSplitCharacterWhiteSpace
      */
-    public TextLayoutResult setLineStartsWithWhiteSpace(boolean lineStartsWithWhiteSpace) {
-        this.lineStartsWithWhiteSpace = lineStartsWithWhiteSpace;
+    public TextLayoutResult setStartsWithSplitCharacterWhiteSpace(boolean startsWithSplitCharacterWhiteSpace) {
+        this.startsWithSplitCharacterWhiteSpace = startsWithSplitCharacterWhiteSpace;
         return this;
     }
 
@@ -179,19 +180,19 @@ public class TextLayoutResult extends MinMaxWidthLayoutResult {
      *
      * @return true if TextRenderer#line starts with a whitespace.
      */
-    public boolean isLineStartsWithWhiteSpace() {
-        return lineStartsWithWhiteSpace;
+    public boolean isStartsWithSplitCharacterWhiteSpace() {
+        return startsWithSplitCharacterWhiteSpace;
     }
 
     /**
-     * Sets {@link #isLineEndsWithSplitCharacterOrWhiteSpace()}.
+     * Sets {@link #isEndsWithSplitCharacter()}.
      *
-     * @param lineEndsWithSplitCharacterOrWhiteSpace indicates if TextRenderer#line ends with a splitCharacter.
+     * @param endsWithSplitCharacter indicates if TextRenderer#line ends with a splitCharacter.
      * @return {@link com.itextpdf.layout.layout.TextLayoutResult this layout result} the setting was applied on.
-     * @see #isLineEndsWithSplitCharacterOrWhiteSpace
+     * @see #isEndsWithSplitCharacter
      */
-    public TextLayoutResult setLineEndsWithSplitCharacterOrWhiteSpace(boolean lineEndsWithSplitCharacterOrWhiteSpace) {
-        this.lineEndsWithSplitCharacterOrWhiteSpace = lineEndsWithSplitCharacterOrWhiteSpace;
+    public TextLayoutResult setEndsWithSplitCharacter(boolean endsWithSplitCharacter) {
+        this.endsWithSplitCharacter = endsWithSplitCharacter;
         return this;
     }
 
@@ -201,8 +202,8 @@ public class TextLayoutResult extends MinMaxWidthLayoutResult {
      * @return true if TextRenderer#line ends with a splitCharacter.
      * @see com.itextpdf.layout.splitting.ISplitCharacters
      */
-    public boolean isLineEndsWithSplitCharacterOrWhiteSpace() {
-        return lineEndsWithSplitCharacterOrWhiteSpace;
+    public boolean isEndsWithSplitCharacter() {
+        return endsWithSplitCharacter;
     }
 
     /**
