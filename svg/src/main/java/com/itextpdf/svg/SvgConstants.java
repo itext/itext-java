@@ -654,19 +654,6 @@ public final class SvgConstants {
          */
         public static final String ORIENT = "orient";
 
-
-        /**
-         * Attribute defining the coordinate system for attributes x, y, width , and height in pattern.
-         */
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        public static final String PATTERN_UNITS = "patternUnits".toLowerCase();
-
-        /**
-         * Attribute defining the coordinate system for the pattern content.
-         */
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        public static final String PATTERN_CONTENT_UNITS = "patternContentUnits".toLowerCase();
-
         /**
          * Close Path Operator.
          */
@@ -779,6 +766,24 @@ public final class SvgConstants {
          * Relative Quadratic CurveTo Path Operator.
          */
         public static final String PATH_DATA_REL_QUAD_CURVE_TO = "q";
+
+        /**
+         * Attribute defining the coordinate system for the pattern content.
+         */
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        public static final String PATTERN_CONTENT_UNITS = "patternContentUnits".toLowerCase();
+
+        /**
+         * Attribute defining list of transform definitions for the pattern element.
+         */
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        public static final String PATTERN_TRANSFORM = "patternTransform".toLowerCase();
+
+        /**
+         * Attribute defining the coordinate system for attributes x, y, width , and height in pattern.
+         */
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        public static final String PATTERN_UNITS = "patternUnits".toLowerCase();
 
         /**
          * Attribute defining the points of a polyline or polygon.

@@ -51,6 +51,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfPatternCanvas;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.SvgConstants.Values;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
@@ -58,6 +59,7 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgPaintServer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCoordinateUtils;
+import com.itextpdf.svg.utils.TransformUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,12 +114,16 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
             return null;
         }
 
-        // transform user space to target pattern rectangle origin and scale
-        final AffineTransform patternAffineTransform = context.getCurrentCanvasTransform();
+        // we have to consider transforming an element that use pattern in corresponding  with SVG logic
+        final AffineTransform patternMatrixTransform = context.getCurrentCanvasTransform();
+
+        patternMatrixTransform.concatenate(getPatternTransform());
+
         if (isObjectBoundingBoxInPatternUnits) {
-            patternAffineTransform.concatenate(getTransformToUserSpaceOnUse(objectBoundingBox));
+            patternMatrixTransform.concatenate(getTransformToUserSpaceOnUse(objectBoundingBox));
         }
-        patternAffineTransform.translate(originalPatternRectangle.getX(), originalPatternRectangle.getY());
+
+        patternMatrixTransform.translate(originalPatternRectangle.getX(), originalPatternRectangle.getY());
 
         final float[] viewBoxValues = getViewBoxValues();
         Rectangle bbox;
@@ -134,7 +140,7 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
                     scaleX = CONVERT_COEFF / objectBoundingBox.getWidth();
                     scaleY = CONVERT_COEFF / objectBoundingBox.getHeight();
                 }
-                patternAffineTransform.scale(scaleX, scaleY);
+                patternMatrixTransform.scale(scaleX, scaleY);
                 xStep /= scaleX;
                 yStep /= scaleY;
             }
@@ -149,7 +155,7 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
             if (isObjectBoundingBoxInPatternUnits) {
                 double scaleX = CONVERT_COEFF / objectBoundingBox.getWidth();
                 double scaleY = CONVERT_COEFF / objectBoundingBox.getHeight();
-                patternAffineTransform.scale(scaleX, scaleY);
+                patternMatrixTransform.scale(scaleX, scaleY);
                 xStep /= scaleX;
                 yStep /= scaleY;
             }
@@ -157,22 +163,22 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
             Rectangle viewBox = new Rectangle(viewBoxValues[0], viewBoxValues[1], viewBoxValues[2], viewBoxValues[3]);
             Rectangle appliedViewBox = calculateAppliedViewBox(viewBox, xStep, yStep);
 
-            patternAffineTransform.translate(appliedViewBox.getX(), appliedViewBox.getY());
+            patternMatrixTransform.translate(appliedViewBox.getX(), appliedViewBox.getY());
 
             double scaleX = (double) appliedViewBox.getWidth() / (double) viewBox.getWidth();
             double scaleY = (double) appliedViewBox.getHeight() / (double) viewBox.getHeight();
-            patternAffineTransform.scale(scaleX, scaleY);
+            patternMatrixTransform.scale(scaleX, scaleY);
             xStep /= scaleX;
             yStep /= scaleY;
 
-            patternAffineTransform.translate(-viewBox.getX(), -viewBox.getY());
+            patternMatrixTransform.translate(-viewBox.getX(), -viewBox.getY());
 
             double bboxXOriginal = viewBox.getX() - appliedViewBox.getX() / scaleX;
             double bboxYOriginal = viewBox.getY() - appliedViewBox.getY() / scaleY;
             bbox = new Rectangle((float) bboxXOriginal, (float) bboxYOriginal, (float) xStep, (float) yStep);
         }
 
-        return createColoredTilingPatternInstance(patternAffineTransform, bbox, xStep, yStep);
+        return createColoredTilingPatternInstance(patternMatrixTransform, bbox, xStep, yStep);
     }
 
     private Rectangle calculateAppliedViewBox(Rectangle viewBox, double xStep, double yStep) {
@@ -307,5 +313,13 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
         } else {
             return false;
         }
+    }
+
+    private AffineTransform getPatternTransform() {
+        String patternTransform = getAttribute(SvgConstants.Attributes.PATTERN_TRANSFORM);
+        if (patternTransform != null && !patternTransform.isEmpty()) {
+            return TransformUtils.parseTransform(patternTransform);
+        }
+        return new AffineTransform();
     }
 }

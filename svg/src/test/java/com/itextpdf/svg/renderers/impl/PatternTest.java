@@ -218,21 +218,58 @@ public class PatternTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-4811 support 'patternTransform' attribute for SVG pattern element
     public void patternTransformSimpleTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternTransformSimple");
     }
 
     @Test
-    //TODO DEVSIX-4811 support 'patternTransform' attribute for SVG pattern element
     public void patternTransformUnitsObjectBoundingBoxTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternTransformUnitsObjectBoundingBox");
     }
 
     @Test
-    //TODO DEVSIX-4811 support 'patternTransform' attribute for SVG pattern element
     public void patternTransformUnitsUserSpaceOnUseTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternTransformUnitsUserSpaceOnUse");
+    }
+
+    @Test
+    public void patternTransformObjBoundingBoxTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternTransformObjBoundingBox");
+    }
+
+    @Test
+    public void patternTransformUserSpaceOnUseTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternTransformUserSpaceOnUse");
+    }
+
+    @Test
+    public void patternTransformMixed1Test() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternTransformMixed1");
+    }
+
+    @Test
+    public void patternTransformMixed2Test() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternTransformMixed2");
+    }
+
+    @Test
+    public void patternTransformViewBoxUsrSpaceOnUseTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternTransformViewBoxUsrSpaceOnUse");
+    }
+
+    @Test
+    public void patternTransformViewBoxObjBoundBoxTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternTransformViewBoxObjBoundBox");
+    }
+
+    @Test
+    public void patternTransformElementTransformTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternTransformElementTransform", PageSize.A8);
+    }
+
+    @Test
+    public void patternTransformTranslateTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternTransformTranslate");
     }
 
     @Test
