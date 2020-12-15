@@ -57,8 +57,9 @@ public class SvgExceptionMessageConstant {
 
     public static final String COULD_NOT_DETERMINE_MIDDLE_POINT_OF_ELLIPTICAL_ARC = "Could not determine the middle point of the ellipse traced by this elliptical arc";
 
-    public static final String VIEWBOX_APPLYING_COULD_NOT_BE_PROCESSED =
-            "The viewBox or the current viewport is null. The viewBox applying could not be processed.";
+    public static final String CURRENT_VIEWPORT_IS_NULL =
+            "The current viewport is null. The viewBox applying could not be processed.";
 
-
+    public static final String VIEWBOX_IS_INCORRECT =
+            "The viewBox is incorrect. The viewBox applying could not be processed.";
 }

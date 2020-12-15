@@ -106,7 +106,6 @@ public class SvgCoordinateUtils {
      */
     public static double getCoordinateForUserSpaceOnUse(String attributeValue, double defaultValue,
             double start, double length, float em, float rem) {
-        // TODO DEVSIX-4867 add tests for this method
         double absoluteValue;
         final UnitValue unitValue = CssUtils.parseLengthValueToPt(attributeValue, em, rem);
         if (unitValue == null) {
@@ -129,7 +128,6 @@ public class SvgCoordinateUtils {
      * And if it's a valid value with a number, the number will be extracted from that value.
      */
     public static double getCoordinateForObjectBoundingBox(String attributeValue, double defaultValue) {
-        // TODO DEVSIX-4867 add tests for this method
         if (CssTypesValidationUtils.isPercentageValue(attributeValue)) {
             return CssDimensionParsingUtils.parseRelativeValue(attributeValue, 1);
         } else if (CssTypesValidationUtils.isNumericValue(attributeValue)
@@ -168,10 +166,12 @@ public class SvgCoordinateUtils {
      */
     public static Rectangle applyViewBox(Rectangle viewBox, Rectangle currentViewPort, String align,
             String meetOrSlice) {
-        // TODO DEVSIX-4867 add tests for this method
+        if (currentViewPort == null) {
+            throw new IllegalArgumentException(SvgExceptionMessageConstant.CURRENT_VIEWPORT_IS_NULL);
+        }
 
-        if (viewBox == null || currentViewPort == null) {
-            throw new IllegalArgumentException(SvgExceptionMessageConstant.VIEWBOX_APPLYING_COULD_NOT_BE_PROCESSED);
+        if (viewBox == null || viewBox.getWidth() <= 0 || viewBox.getHeight() <= 0) {
+            throw new IllegalArgumentException(SvgExceptionMessageConstant.VIEWBOX_IS_INCORRECT);
         }
 
         if (align == null || (
