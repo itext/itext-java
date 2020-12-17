@@ -64,7 +64,6 @@ import com.itextpdf.svg.renderers.path.impl.QuadraticSmoothCurveTo;
 import com.itextpdf.svg.renderers.path.impl.SmoothSCurveTo;
 import com.itextpdf.svg.utils.SvgCoordinateUtils;
 import com.itextpdf.svg.utils.SvgCssUtils;
-import com.itextpdf.svg.utils.SvgRegexUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -301,7 +300,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
 
 
     boolean containsInvalidAttributes(String attributes) {
-        return SvgRegexUtils.containsAtLeastOneMatch(invalidRegexPattern, attributes);
+        return invalidRegexPattern.matcher(attributes).find();
     }
 
     Collection<String> parsePathOperations() {

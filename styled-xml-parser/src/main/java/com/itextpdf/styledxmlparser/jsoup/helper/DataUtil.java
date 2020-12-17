@@ -241,7 +241,7 @@ public final class DataUtil {
     static String getCharsetFromContentType(String contentType) {
         if (contentType == null) return null;
         Matcher m = charsetPattern.matcher(contentType);
-        if (PortUtil.isSuccessful(m)) {
+        if (m.find()) {
             String charset = m.group(1).trim();
             charset = charset.replace("charset=", "");
             return validateCharset(charset);
