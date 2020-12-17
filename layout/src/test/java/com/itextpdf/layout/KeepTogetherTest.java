@@ -45,7 +45,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
@@ -59,6 +59,7 @@ import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
@@ -1162,6 +1163,124 @@ public class KeepTogetherTest extends ExtendedITextTest {
             doc.add(main);
         }
 
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    //TODO: update cmp file when DEVSIX-4681 will be fixed
+    public void floatingElementsInDivAndKeepTogetherElemTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatingElementsInDivAndKeepTogetherElem.pdf";
+        String outFile = destinationFolder + "floatingElementsInDivAndKeepTogetherElem.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        pdfDoc.addNewPage();
+
+        Document doc = new Document(pdfDoc);
+
+        Div mainDiv = new Div();
+
+        Image first = new Image(ImageDataFactory.create(sourceFolder + "1.png"));
+        first.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        first.setHeight(350);
+
+        Image second = new Image(ImageDataFactory.create(sourceFolder + "2.png"));
+        second.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        second.setHeight(350);
+
+        mainDiv.add(first);
+        mainDiv.add(second);
+
+        doc.add(mainDiv);
+        doc.add(new Paragraph("Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! ")
+                .setKeepTogether(true).setFontSize(24));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    //TODO: update cmp file when DEVSIX-4681 will be fixed
+    public void floatingEmptyElementsInDivAndKeepTogetherElemTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatingEmptyElementsInDivAndKeepTogetherElem.pdf";
+        String outFile = destinationFolder + "floatingEmptyElementsInDivAndKeepTogetherElem.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        pdfDoc.addNewPage(PageSize.A5.rotate());
+
+        Document doc = new Document(pdfDoc);
+
+        Div mainDiv = new Div();
+
+        Paragraph p1 = new Paragraph();
+        p1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        Paragraph p2 = new Paragraph();
+        p2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        Paragraph ktp = new Paragraph("Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+        ).setKeepTogether(true).setFontSize(20);
+
+        mainDiv.add(p1);
+        mainDiv.add(p2);
+
+        doc.add(mainDiv);
+        doc.add(ktp);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void floatingEmptyElementsAndKeepTogetherElemTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatingEmptyElementsAndKeepTogetherElem.pdf";
+        String outFile = destinationFolder + "floatingEmptyElementsAndKeepTogetherElem.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        pdfDoc.addNewPage(PageSize.A5.rotate());
+
+        Document doc = new Document(pdfDoc);
+
+        Paragraph p1 = new Paragraph();
+        p1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        Paragraph p2 = new Paragraph();
+        p2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        Paragraph ktp = new Paragraph("Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+        ).setKeepTogether(true).setFontSize(20);
+
+        doc.add(p1);
+        doc.add(p2);
+        doc.add(ktp);
+
+        doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
     }
 
