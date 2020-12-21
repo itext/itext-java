@@ -74,16 +74,14 @@ public class TaggedPdfReaderToolTest extends ExtendedITextTest{
         String cmpXmlPath = sourceFolder + "cmpXml01.xml";
 
         PdfReader reader = new PdfReader(sourceFolder + filename);
-        PdfDocument document = new PdfDocument(reader);
 
-        FileOutputStream outXml = new FileOutputStream(outXmlPath);
+        try (FileOutputStream outXml = new FileOutputStream(outXmlPath);
+             PdfDocument document = new PdfDocument(reader)) {
 
-        TaggedPdfReaderTool tool = new TaggedPdfReaderTool(document);
-        tool.setRootTag("root");
-        tool.convertToXml(outXml);
-        outXml.close();
-
-        document.close();
+            TaggedPdfReaderTool tool = new TaggedPdfReaderTool(document);
+            tool.setRootTag("root");
+            tool.convertToXml(outXml);
+        }
 
         CompareTool compareTool = new CompareTool();
         if (!compareTool.compareXmls(outXmlPath, cmpXmlPath)) {
