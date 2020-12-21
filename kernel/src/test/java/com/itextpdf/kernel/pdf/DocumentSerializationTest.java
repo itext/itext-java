@@ -48,7 +48,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-//TODO: DEVSIX-3987 remove this class at all
 public class DocumentSerializationTest extends ExtendedITextTest {
 
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/DocumentSerializationTest/";
