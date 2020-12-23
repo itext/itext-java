@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.1.14-SNAPSHOT</version>
+  <version>7.1.14</version>
   <packaging>pom</packaging>
   <name>iText 7</name>
   <description>A Free Java-PDF library</description>
@@ -79,7 +79,7 @@
     <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>
     <jacoco.version>0.8.4</jacoco.version>
     <java.version>1.8</java.version>
-    <javadoc-additionalOptions/>
+    <javadoc-additionalOptions />
     <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
     <javadoc.version>3.0.1</javadoc.version>
     <junit.version>4.12</junit.version>
@@ -558,7 +558,7 @@
             <executions>
               <execution>
                 <id>bundle-manifest</id>
-                <phase/>
+                <phase />
               </execution>
             </executions>
           </plugin>
@@ -614,11 +614,11 @@
             <executions>
               <execution>
                 <id>default-resources</id>
-                <phase/>
+                <phase />
               </execution>
               <execution>
                 <id>default-testResources</id>
-                <phase/>
+                <phase />
               </execution>
             </executions>
           </plugin>
@@ -648,10 +648,10 @@
             </dependencies>
             <configuration>
               <autoUpdate>false</autoUpdate>
-              <connectionString/>
+              <connectionString />
               <databaseDriverName>com.mysql.cj.jdbc.Driver</databaseDriverName>
-              <databasePassword/>
-              <databaseUser/>
+              <databasePassword />
+              <databaseUser />
               <format>ALL</format>
             </configuration>
             <executions>
