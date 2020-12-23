@@ -172,7 +172,6 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-4140 update cmp
     public void markerRefXYTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerRefXYTest");
     }
@@ -199,7 +198,7 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO: update when DEVSIX-3432 and DEVSIX-4140 will be fixed
+    // TODO DEVSIX-3432 relative values doesn't support correctly for stroke-width attribute
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 3))
     public void testMarkerUnitsStrokeWidthWhenParentStrokeWidthIsFontRelativeValues() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "testMarkerUnitsStrokeWidthWhenParentStrokeWidthIsFontRelativeValues");
@@ -211,7 +210,7 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO: update when DEVSIX-3432 will be fixed
+    // TODO DEVSIX-3432 relative values doesn't support correctly for stroke-width attribute
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 3))
     public void testMarkerUnitsStrokeWidthWhenParentStrokeWidthIsPercentageValues() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "testMarkerUnitsStrokeWidthWhenParentStrokeWidthIsPercentageValues");
@@ -249,7 +248,6 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-4140 update cmp
     public void fontRelativeValueInRefXDefault() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "fontRelativeValueInRefXDefault");
     }

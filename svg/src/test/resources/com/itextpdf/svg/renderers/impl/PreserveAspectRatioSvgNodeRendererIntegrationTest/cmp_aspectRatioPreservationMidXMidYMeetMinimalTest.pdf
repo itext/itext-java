@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191112171915+03'00')/ModDate(D:20191112171915+03'00')/Producer(iText® 7.1.9-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20201209101940+03'00')/ModDate(D:20201209101940+03'00')/Producer(iText® 7.1.14-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +36,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 225 150]/Length 3741/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm2 10 0 R/Fm3 11 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 225 150]/Length 3699/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm2 10 0 R/Fm3 11 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 225 150 re
 W
 n
@@ -219,14 +219,12 @@ q
 S
 Q
 q
-0.75 w
 % line
 -1.5 -1.5 m
 1.5 1.5 l
 S
 Q
 q
-0.75 w
 % line
 1.5 -1.5 m
 -1.5 1.5 l
@@ -325,14 +323,12 @@ q
 S
 Q
 q
-0.75 w
 % line
 -1.5 -1.5 m
 1.5 1.5 l
 S
 Q
 q
-0.75 w
 % line
 1.5 -1.5 m
 -1.5 1.5 l
@@ -427,14 +423,12 @@ q
 S
 Q
 q
-0.75 w
 % line
 -1.5 -1.5 m
 1.5 1.5 l
 S
 Q
 q
-0.75 w
 % line
 1.5 -1.5 m
 -1.5 1.5 l
@@ -740,19 +734,19 @@ xref
 0 12
 0000000000 65535 f 
 0000000226 00000 n 
-0000000527 00000 n 
+0000000528 00000 n 
 0000000271 00000 n 
 0000000089 00000 n 
 0000000015 00000 n 
-0000000437 00000 n 
-0000000578 00000 n 
-0000000761 00000 n 
-0000004671 00000 n 
-0000005557 00000 n 
-0000006457 00000 n 
+0000000438 00000 n 
+0000000579 00000 n 
+0000000762 00000 n 
+0000004630 00000 n 
+0000005516 00000 n 
+0000006416 00000 n 
 trailer
-<</ID [<4ab17bdace208ede41c9932b6cb0afc9><4ab17bdace208ede41c9932b6cb0afc9>]/Info 3 0 R/Root 1 0 R/Size 12>>
-%iText-7.1.9-SNAPSHOT
+<</ID [<4c09ea3c5ab1b0c703b6b3858497552f><4c09ea3c5ab1b0c703b6b3858497552f>]/Info 3 0 R/Root 1 0 R/Size 12>>
+%iText-7.1.14-SNAPSHOT
 startxref
-7354
+7313
 %%EOF

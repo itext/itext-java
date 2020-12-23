@@ -172,16 +172,27 @@ public abstract class OpenTypeFontTableReader implements Serializable {
     }
 
     public LanguageRecord getLanguageRecord(String otfScriptTag) {
-        LanguageRecord languageRecord = null;
-        if (otfScriptTag != null) {
-            for (ScriptRecord record : getScriptRecords()) {
-                if (otfScriptTag.equals(record.tag)) {
-                    languageRecord = record.defaultLanguage;
-                    break;
+        return getLanguageRecord(otfScriptTag, null);
+    }
+
+    public LanguageRecord getLanguageRecord(String otfScriptTag, String langTag) {
+        if (otfScriptTag == null) {
+            return null;
+        }
+        for (final ScriptRecord record : getScriptRecords()) {
+            if (!otfScriptTag.equals(record.tag)) {
+                continue;
+            }
+            if (langTag == null) {
+                return record.defaultLanguage;
+            }
+            for (final LanguageRecord lang : record.languages) {
+                if (langTag.equals(lang.tag)) {
+                    return lang;
                 }
             }
         }
-        return languageRecord;
+        return null;
     }
 
 	protected abstract OpenTableLookup readLookupTable(int lookupType, int lookupFlag, int[] subTableLocations)

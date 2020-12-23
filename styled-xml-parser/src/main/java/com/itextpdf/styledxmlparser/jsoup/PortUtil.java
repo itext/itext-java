@@ -54,6 +54,10 @@ public class PortUtil {
     public static final String escapedSingleBracket = "''";
     public static final String signedNumberFormat = ",number,+#;-#";
 
+    /**
+     * @deprecated use {@link Matcher#find()} instead
+     * */
+    @Deprecated
     public static boolean hasMatch(Pattern pattern, String input) {
         return pattern.matcher(input).find();
     }
@@ -70,6 +74,10 @@ public class PortUtil {
         return new RandomAccessFile(file, "r");
     }
 
+    /**
+     * @deprecated use {@link Matcher#find()} instead
+     * */
+    @Deprecated
     public static boolean isSuccessful(Matcher m) {
         return m.find();
     }

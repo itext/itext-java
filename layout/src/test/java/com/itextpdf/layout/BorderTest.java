@@ -48,8 +48,11 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.DottedBorder;
@@ -127,6 +130,29 @@ public class BorderTest extends ExtendedITextTest {
         doc.add(list);
 
         closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void drawBordersByRectangleTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "drawBordersByRectangle.pdf";
+        String cmpPdf = sourceFolder + "cmp_drawBordersByRectangle.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outPdf))) {
+            PdfPage page = pdfDocument.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+
+            new SolidBorder(DeviceRgb.GREEN, 5).draw(canvas, new Rectangle(50, 700, 100, 100));
+            new DashedBorder(DeviceRgb.GREEN, 5).draw(canvas, new Rectangle(200, 700, 100, 100));
+            new DottedBorder(DeviceRgb.GREEN, 5).draw(canvas, new Rectangle(350, 700, 100, 100));
+            new DoubleBorder(DeviceRgb.GREEN, 5).draw(canvas, new Rectangle(50, 550, 100, 100));
+            new GrooveBorder(new DeviceRgb(0, 255, 0), 5).draw(canvas, new Rectangle(200, 550, 100, 100));
+            new InsetBorder(new DeviceRgb(0, 255, 0), 5).draw(canvas, new Rectangle(350, 550, 100, 100));
+            new OutsetBorder(new DeviceRgb(0, 255, 0), 5).draw(canvas, new Rectangle(50, 400, 100, 100));
+            new RidgeBorder(new DeviceRgb(0, 255, 0), 5).draw(canvas, new Rectangle(200, 400, 100, 100));
+            new RoundDotsBorder(DeviceRgb.GREEN, 5).draw(canvas, new Rectangle(350, 400, 100, 100));
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
 
     @Test

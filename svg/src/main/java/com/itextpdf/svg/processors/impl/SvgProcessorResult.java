@@ -55,21 +55,21 @@ import java.util.Map;
  */
 public class SvgProcessorResult implements ISvgProcessorResult {
 
-    private Map<String, ISvgNodeRenderer> namedObjects;
-    private ISvgNodeRenderer root;
+    private final Map<String, ISvgNodeRenderer> namedObjects;
+    private final ISvgNodeRenderer root;
 
     /**
      * @deprecated  Will be removed in 7.2.
      */
     @Deprecated
-    private FontProvider fontProvider;
+    private final FontProvider fontProvider;
 
     /**
      * @deprecated  Will be removed in 7.2.
      */
     @Deprecated
-    private FontSet tempFonts;
-    private SvgProcessorContext context;
+    private final FontSet tempFonts;
+    private final SvgProcessorContext context;
 
     /**
      * Creates new {@link SvgProcessorResult} entity.
@@ -88,6 +88,7 @@ public class SvgProcessorResult implements ISvgProcessorResult {
         this.root = root;
         this.fontProvider = fontProvider;
         this.tempFonts = tempFonts;
+        this.context = new SvgProcessorContext(new SvgConverterProperties());
     }
 
     /**
@@ -100,9 +101,9 @@ public class SvgProcessorResult implements ISvgProcessorResult {
     public SvgProcessorResult(Map<String, ISvgNodeRenderer> namedObjects, ISvgNodeRenderer root, SvgProcessorContext context) {
         this.namedObjects = namedObjects;
         this.root = root;
+        this.context = context;
         this.fontProvider = context.getFontProvider();
         this.tempFonts = context.getTempFonts();
-        this.context = context;
     }
 
     @Override

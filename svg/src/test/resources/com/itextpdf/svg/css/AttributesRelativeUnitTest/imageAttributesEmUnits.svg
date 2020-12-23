@@ -1,0 +1,7 @@
+<svg viewBox="0 0 200 200"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <!--    rectangle with absolute values-->
+  <rect x="0" y="0" width="100px" height="100px" fill="none" stroke="red" stroke-width="2"/>
+
+  <image xlink:href="image.png" x="0.3em" y="0.8em" width="5em" height="4em"/>
+</svg>

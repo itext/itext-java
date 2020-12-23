@@ -640,6 +640,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         root.setAttribute("version", "1.1");
         root.setAttribute("width", "500");
         root.setAttribute("height", "400");
+        root.setAttribute("font-size", "12pt");
 
         ISvgProcessorResult expected = new SvgProcessorResult(map, root, new FontProvider(), new FontSet());
 

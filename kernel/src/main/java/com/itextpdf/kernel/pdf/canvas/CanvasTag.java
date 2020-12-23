@@ -196,6 +196,10 @@ public class CanvasTag {
         return properties;
     }
 
+    /**
+     * Gets value of /ActualText property.
+     * @return actual text value or {@code null} if actual text is not defined
+     */
     public String getActualText() {
         return getPropertyAsString(PdfName.ActualText);
     }
@@ -205,7 +209,10 @@ public class CanvasTag {
     }
 
     private String getPropertyAsString(PdfName name) {
-        PdfString text = properties.getAsString(name);
+        PdfString text = null;
+        if (properties != null) {
+            text = properties.getAsString(name);
+        }
         String result = null;
         if (text != null) {
             result = text.toUnicodeString();

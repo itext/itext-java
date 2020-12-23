@@ -42,11 +42,11 @@
  */
 package com.itextpdf.svg.css.impl;
 
-
 import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
 import com.itextpdf.svg.SvgConstants;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -60,24 +60,27 @@ public class SvgAttributeInheritance implements IStyleInheritance {
      * in accordance with "http://www.w3schools.com/cssref/"
      * and "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference"
      */
-    private static final Set<String> inheritableProperties = new HashSet<>(Arrays.asList(
+    private static final Set<String> inheritableProperties = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
 
-            //Stroke
-            SvgConstants.Attributes.STROKE,
-
-            //Fill
-            SvgConstants.Attributes.FILL,
-
-            //Fill
-            SvgConstants.Attributes.FILL_RULE,
-
-            //clip-rule
+            // clip-rule
             SvgConstants.Attributes.CLIP_RULE,
 
-            //text-anchor
+            // fill
+            SvgConstants.Attributes.FILL,
+
+            // fill-rule
+            SvgConstants.Attributes.FILL_RULE,
+
+            // stroke
+            SvgConstants.Attributes.STROKE,
+
+            // stroke-width
+            SvgConstants.Attributes.STROKE_WIDTH,
+
+            // text-anchor
             SvgConstants.Attributes.TEXT_ANCHOR
 
-    ));
+    )));
 
     @Override
     public  boolean isInheritable(String cssProperty) {

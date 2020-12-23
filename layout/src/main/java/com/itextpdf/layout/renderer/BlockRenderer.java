@@ -153,6 +153,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         occupiedArea = new LayoutArea(pageNumber, new Rectangle(parentBBox.getX(), parentBBox.getY() + parentBBox.getHeight(), parentBBox.getWidth(), 0));
         shrinkOccupiedAreaForAbsolutePosition();
+
+        TargetCounterHandler.addPageByID(this);
+
         int currentAreaPos = 0;
 
         Rectangle layoutBox = areas.get(0).clone();
@@ -190,11 +193,18 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
 
                 result = new LayoutResult(LayoutResult.NOTHING, null, null, childRenderer);
-                int layoutResult = anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING;
+                boolean isKeepTogether = isKeepTogether();
+                int layoutResult = anythingPlaced && !isKeepTogether ? LayoutResult.PARTIAL : LayoutResult.NOTHING;
                 AbstractRenderer[] splitAndOverflowRenderers = createSplitAndOverflowRenderers(childPos, layoutResult, result, waitingFloatsSplitRenderers, waitingOverflowFloatRenderers);
 
                 AbstractRenderer splitRenderer = splitAndOverflowRenderers[0];
                 AbstractRenderer overflowRenderer = splitAndOverflowRenderers[1];
+
+                if (isKeepTogether) {
+                    splitRenderer = null;
+                    overflowRenderer.childRenderers.clear();
+                    overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
+                }
 
                 updateHeightsOnSplit(wasHeightClipped, splitRenderer, overflowRenderer);
                 applyPaddings(occupiedArea.getBBox(), paddings, true);

@@ -51,6 +51,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Link;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
@@ -61,8 +62,10 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class CanvasTest extends ExtendedITextTest {
@@ -74,6 +77,9 @@ public class CanvasTest extends ExtendedITextTest {
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN))
@@ -189,6 +195,87 @@ public class CanvasTest extends ExtendedITextTest {
                                 .setFontColor(ColorConstants.BLUE)));
         canvas.close();
         pdf.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(out, cmp, destinationFolder));
+    }
+
+    @Test
+    public void elementWithAbsolutePositioningInCanvasTest() throws IOException, InterruptedException {
+        String testName = "elementWithAbsolutePositioningInCanvas";
+        String out = destinationFolder + testName + ".pdf";
+        String cmp = sourceFolder + "cmp_" + testName + ".pdf";
+
+        try (PdfDocument pdf = new PdfDocument(new PdfWriter(out))) {
+            pdf.addNewPage();
+            Canvas canvas = new Canvas(new PdfCanvas(pdf.getFirstPage()),
+                    new Rectangle(120, 650, 60, 80));
+
+            Div notFittingDiv = new Div().setWidth(100)
+                    .add(new Paragraph("Paragraph in Div with Not set position"));
+            canvas.add(notFittingDiv);
+
+            Div divWithPosition = new Div().setFixedPosition(120, 300, 80);
+            divWithPosition.add(new Paragraph("Paragraph in Div with set position"));
+            canvas.add(divWithPosition);
+
+            canvas.close();
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(out, cmp, destinationFolder));
+    }
+
+    @Test
+    //TODO: DEVSIX-4820 (discuss the displaying of element with absolute position)
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CANVAS_ALREADY_FULL_ELEMENT_WILL_BE_SKIPPED)})
+    public void parentElemWithAbsolPositionKidNotSuitCanvasTest() throws IOException, InterruptedException {
+        String testName = "parentElemWithAbsolPositionKidNotSuitCanvas";
+        String out = destinationFolder + testName + ".pdf";
+        String cmp = sourceFolder + "cmp_" + testName + ".pdf";
+
+        try (PdfDocument pdf = new PdfDocument(new PdfWriter(out))) {
+            pdf.addNewPage();
+
+            Canvas canvas = new Canvas(new PdfCanvas(pdf.getFirstPage()),
+                    new Rectangle(120, 650, 55, 80));
+
+            Div notFittingDiv = new Div().setWidth(100).add(new Paragraph("Paragraph in Div with Not set position"));
+            canvas.add(notFittingDiv);
+
+            Div divWithPosition = new Div().setFixedPosition(120, 300, 80);
+            divWithPosition.add(new Paragraph("Paragraph in Div with set position"));
+            canvas.add(divWithPosition);
+
+            canvas.close();
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(out, cmp, destinationFolder));
+    }
+
+    @Test
+    //TODO: DEVSIX-4820 (NullPointerException on processing absolutely positioned elements in small canvas area)
+    public void nestedElementWithAbsolutePositioningInCanvasTest() throws IOException, InterruptedException {
+        junitExpectedException.expect(NullPointerException.class);
+
+        String testName = "nestedElementWithAbsolutePositioningInCanvas";
+        String out = destinationFolder + testName + ".pdf";
+        String cmp = sourceFolder + "cmp_" + testName + ".pdf";
+
+        try (PdfDocument pdf = new PdfDocument(new PdfWriter(out))) {
+            pdf.addNewPage();
+
+            Canvas canvas = new Canvas(new PdfCanvas(pdf.getFirstPage()),
+                    new Rectangle(120, 650, 55, 80));
+
+            Div notFittingDiv = new Div().setWidth(100).add(new Paragraph("Paragraph in Div with Not set position"));
+
+            Div divWithPosition = new Div().setFixedPosition(50, 20, 80);
+            divWithPosition.add(new Paragraph("Paragraph in Div with set position"));
+
+            notFittingDiv.add(divWithPosition);
+            canvas.add(notFittingDiv);
+            
+            canvas.close();
+        }
 
         Assert.assertNull(new CompareTool().compareByContent(out, cmp, destinationFolder));
     }

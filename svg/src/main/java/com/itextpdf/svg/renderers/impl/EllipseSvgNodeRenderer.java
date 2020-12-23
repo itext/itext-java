@@ -44,7 +44,7 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -88,22 +88,22 @@ public class EllipseSvgNodeRenderer extends AbstractSvgNodeRenderer {
         cx = 0;
         cy = 0;
         if (getAttribute(SvgConstants.Attributes.CX) != null) {
-            cx = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.CX));
+            cx = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.CX));
         }
         if (getAttribute(SvgConstants.Attributes.CY) != null) {
-            cy = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.CY));
+            cy = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.CY));
         }
 
         if (getAttribute(SvgConstants.Attributes.RX) != null
-                && CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RX)) > 0) {
-            rx = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RX));
+                && CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RX)) > 0) {
+            rx = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RX));
         } else {
             //No drawing if rx is absent
             return false;
         }
         if (getAttribute(SvgConstants.Attributes.RY) != null
-                && CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RY)) > 0) {
-            ry = CssUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RY));
+                && CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RY)) > 0) {
+            ry = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RY));
         } else {
             //No drawing if ry is absent
             return false;

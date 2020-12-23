@@ -47,7 +47,8 @@ import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,12 +106,12 @@ public abstract class AbstractBorderShorthandResolver implements IShorthandResol
                 logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, shorthandExpression));
                 return Collections.<CssDeclaration>emptyList();
             }
-            if (CommonCssConstants.BORDER_WIDTH_VALUES.contains(value) || CssUtils.isNumericValue(value)
-                    || CssUtils.isMetricValue(value) || CssUtils.isRelativeValue(value)) {
+            if (CommonCssConstants.BORDER_WIDTH_VALUES.contains(value) || CssTypesValidationUtils.isNumericValue(value)
+                    || CssTypesValidationUtils.isMetricValue(value) || CssTypesValidationUtils.isRelativeValue(value)) {
                 borderWidthValue = value;
             } else if (CommonCssConstants.BORDER_STYLE_VALUES.contains(value) || value.equals(CommonCssConstants.AUTO)) { // AUTO property value is needed for outline property only
                 borderStyleValue = value;
-            } else if (CssUtils.isColorProperty(value)) {
+            } else if (CssTypesValidationUtils.isColorProperty(value)) {
                 borderColorValue = value;
             }
         }

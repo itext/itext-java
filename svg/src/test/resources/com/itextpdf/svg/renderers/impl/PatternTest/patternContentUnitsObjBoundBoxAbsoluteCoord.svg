@@ -1,0 +1,60 @@
+<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <pattern id="cm" patternContentUnits="objectBoundingBox" width="50%" height="50%">
+	   <image xlink:href="image.png" width="0.02cm" height="0.02cm"/>
+    </pattern>
+	
+	<pattern id="mm" patternContentUnits="objectBoundingBox" width="50%" height="50%">
+      <image xlink:href="image.png" width="0.2mm" height="0.2mm"/>
+    </pattern>
+	
+	<pattern id="pt" patternContentUnits="objectBoundingBox" width="50%" height="50%">
+      <image xlink:href="image.png" width="0.5pt" height="0.5pt"/>
+    </pattern>
+	
+	<pattern id="px" patternContentUnits="objectBoundingBox" width="50%" height="50%">
+       <image xlink:href="image.png" width="0.5px" height="0.5px"/>
+    </pattern>
+	
+	<pattern id="ex" patternContentUnits="objectBoundingBox" width="50%" height="50%">
+      <image xlink:href="image.png" width="0.09ex" height="0.09ex"/>
+    </pattern>
+	
+	<pattern id="em" patternContentUnits="objectBoundingBox" width="50%" height="50%">
+      <image xlink:href="image.png" width="0.05em" height="0.05em"/>
+    </pattern>
+	
+	<pattern id="in" patternContentUnits="objectBoundingBox" width="50%" height="50%">
+       <image xlink:href="image.png" width="0.01in" height="0.01in"/>
+    </pattern>
+  </defs>
+  
+  <text x="8" y='15'>Cm</text>
+  <rect x='10' y='25' width='80' height='80' stroke="green" fill ="url(#cm)"/>
+  <rect x='120' y='35' width='60' height='60' stroke="url(#cm)" stroke-width="20" fill ="green"/>
+  
+  <text x="8" y='116'> Mm</text>
+  <rect x='10' y='125' width='80' height='80' stroke="green" fill ="url(#mm)"/>
+  <rect x='120' y='135' width='60' height='60' stroke="url(#mm)" stroke-width="20" fill ="green"/>
+  
+  <text x="8" y='216'> Pt</text>
+  <rect x='10' y='225' width='80' height='80' stroke="green" fill ="url(#pt)"/>
+  <rect x='120' y='235' width='60' height='60' stroke="url(#pt)" stroke-width="20" fill ="green"/>
+  
+  <text x="8" y='316'> Px</text>
+  <rect x='10' y='325' width='80' height='80' stroke="green" fill ="url(#px)"/>
+  <rect x='120' y='335' width='60' height='60' stroke="url(#px)" stroke-width="20" fill ="green"/>
+  
+  <text x="8" y='416'> Ex</text>
+  <rect x='10' y='425' width='80' height='80' stroke="green" fill ="url(#ex)"/>
+  <rect x='120' y='435' width='60' height='60' stroke="url(#ex)" stroke-width="20" fill ="green"/>
+  
+  <text x="8" y='516'> Em</text>
+  <rect x='10' y='525' width='80' height='80' stroke="green" fill ="url(#em)"/>
+  <rect x='120' y='535' width='60' height='60' stroke="url(#em)" stroke-width="20" fill ="green"/>
+  
+  <text x="218" y='516'> In</text>
+  <rect x='210' y='525' width='80' height='80' stroke="green" fill ="url(#in)"/>
+  <rect x='310' y='535' width='60' height='60' stroke="url(#in)" stroke-width="20" fill ="green"/>
+</svg>

@@ -58,11 +58,8 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
-import java.util.Set;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -71,8 +68,7 @@ import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class CssUtilsTest extends ExtendedITextTest {
-
-    public static float EPS = 0.0001f;
+    private static float EPS = 0.0001f;
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -320,10 +316,10 @@ public class CssUtilsTest extends ExtendedITextTest {
 
     @Test
     public void testIsAngleCorrectValues() {
-       Assert.assertTrue(CssUtils.isAngleValue("10deg"));
-       Assert.assertTrue(CssUtils.isAngleValue("-20grad"));
-       Assert.assertTrue(CssUtils.isAngleValue("30.5rad"));
-       Assert.assertTrue(CssUtils.isAngleValue("0rad"));
+        Assert.assertTrue(CssUtils.isAngleValue("10deg"));
+        Assert.assertTrue(CssUtils.isAngleValue("-20grad"));
+        Assert.assertTrue(CssUtils.isAngleValue("30.5rad"));
+        Assert.assertTrue(CssUtils.isAngleValue("0rad"));
     }
 
     @Test
@@ -391,6 +387,7 @@ public class CssUtilsTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INCORRECT_CHARACTER_SEQUENCE))
     public void splitStringWithCommaTest() {
         Assert.assertEquals(new ArrayList<String>(), CssUtils.splitStringWithComma(null));
         Assert.assertEquals(Arrays.asList("value1", "value2", "value3"),
@@ -407,6 +404,25 @@ public class CssUtilsTest extends ExtendedITextTest {
                 CssUtils.splitStringWithComma("value1,( v2,v3),(v4, v5),value3"));
         Assert.assertEquals(Arrays.asList("v.al*ue1\"", "( v2,v3)", "\"(v4,v5;);", "value3"),
                 CssUtils.splitStringWithComma("v.al*ue1\",( v2,v3),\"(v4,v5;);,value3"));
+    }
+
+    @Test
+    public void splitStringTest() {
+        Assert.assertEquals(new ArrayList<String>(), CssUtils.splitString(null, ','));
+        Assert.assertEquals(Arrays.asList("value1", "(value,with,comma)", "value3"),
+                CssUtils.splitString("value1,(value,with,comma),value3", ',', new EscapeGroup('(', ')')));
+        Assert.assertEquals(Arrays.asList("value1 ", " (val(ue,with,comma),value3"),
+                CssUtils.splitString("value1 , (val(ue,with,comma),value3", ',', new EscapeGroup('(', ')')));
+        Assert.assertEquals(Arrays.asList("some text", " (some", " text in", " brackets)", " \"some, text, in quotes,\""),
+                CssUtils.splitString("some text, (some, text in, brackets), \"some, text, in quotes,\"", ',',
+                        new EscapeGroup('\"')));
+        Assert.assertEquals(Arrays.asList("some text", " (some. text in. brackets)", " \"some. text. in quotes.\""),
+                CssUtils.splitString("some text. (some. text in. brackets). \"some. text. in quotes.\"", '.',
+                        new EscapeGroup('\"'), new EscapeGroup('(', ')')));
+        Assert.assertEquals(Arrays.asList("value1", "(value", "with" ,"comma)", "value3"),
+                CssUtils.splitString("value1,(value,with,comma),value3", ','));
+        Assert.assertEquals(Arrays.asList("value1", "value", "with" ,"comma", "value3"),
+                CssUtils.splitString("value1,value,with,comma,value3", ',', new EscapeGroup(',')));
     }
 
     @Test
@@ -430,5 +446,27 @@ public class CssUtilsTest extends ExtendedITextTest {
         Assert.assertEquals(BlendMode.LUMINOSITY, CssUtils.parseBlendMode(CommonCssConstants.LUMINOSITY));
         Assert.assertEquals(BlendMode.NORMAL, CssUtils.parseBlendMode("invalid"));
         Assert.assertEquals(BlendMode.NORMAL, CssUtils.parseBlendMode("SCREEN"));
+    }
+
+    @Test
+    public void isNegativeValueTest() {
+        // Invalid values
+        Assert.assertFalse(CssUtils.isNegativeValue(null));
+        Assert.assertFalse(CssUtils.isNegativeValue("-..23"));
+        Assert.assertFalse(CssUtils.isNegativeValue("12 34"));
+        Assert.assertFalse(CssUtils.isNegativeValue("12reeem"));
+
+        // Valid not negative values
+        Assert.assertFalse(CssUtils.isNegativeValue(".23"));
+        Assert.assertFalse(CssUtils.isNegativeValue("+123"));
+        Assert.assertFalse(CssUtils.isNegativeValue("57%"));
+        Assert.assertFalse(CssUtils.isNegativeValue("3.7em"));
+
+        // Valid negative values
+        Assert.assertTrue(CssUtils.isNegativeValue("-1.7rem"));
+        Assert.assertTrue(CssUtils.isNegativeValue("-43.56%"));
+        Assert.assertTrue(CssUtils.isNegativeValue("-12"));
+        Assert.assertTrue(CssUtils.isNegativeValue("-0.123"));
+        Assert.assertTrue(CssUtils.isNegativeValue("-.34"));
     }
 }

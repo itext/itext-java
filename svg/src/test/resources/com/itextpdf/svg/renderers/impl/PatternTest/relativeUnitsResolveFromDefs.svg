@@ -1,0 +1,9 @@
+<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+  <defs font-size="18">
+    <pattern id="text" viewBox="0 0 100 1" width="10%" height="10%">
+      <text x="0" y="0" font-size="2em" fill="blue">TextTextText</text>
+    </pattern>
+  </defs>
+  <text x='0' y='200' font-size="80" stroke="orange" fill ="url(#text)">OQWBA</text>
+  <rect x='0' y='220' width="300" height="100" font-size="80" stroke="orange" fill ="url(#text)"/>  
+</svg>

@@ -1,0 +1,14 @@
+<svg viewBox="0 0 162 92" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <pattern id="pattern1" preserveAspectRatio="xMidYMax meet" viewBox="20 20 80 70"
+                 width="50%" height="50%">
+            <circle cx="50" cy="50" r="50" id="smiley" fill="yellow"/>
+            <rect x="0" y="0" width="100" height="100" fill="none" stroke="red" stroke-width="5"></rect>
+        </pattern>
+    </defs>
+
+    <!-- (width>height) meet -->
+    <rect x="20" y="20" width="10" height="25"></rect>
+    <rect x="20" y="20" width="10" height="25" fill="url(#pattern1)"></rect>
+
+</svg>

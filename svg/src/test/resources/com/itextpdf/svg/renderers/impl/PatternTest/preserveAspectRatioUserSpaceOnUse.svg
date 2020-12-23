@@ -1,0 +1,125 @@
+<svg viewBox="0 0 162 92" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <pattern id="pattern1" preserveAspectRatio="xMidYMid meet" viewBox="0 0 100 100"
+                 width="10" height="5"
+                 patternUnits="userSpaceOnUse">
+            <circle cx="50" cy="50" r="50" id="smiley" fill="yellow"/>
+        </pattern>
+
+        <pattern id="pattern2" preserveAspectRatio="xMinYMid meet"
+                 viewBox="0 0 100 100" width="5" height="2.5"
+                 patternUnits="userSpaceOnUse">
+            <circle cx="50" cy="50" r="50" id="smiley" fill="yellow"/>
+        </pattern>
+
+        <pattern id="pattern3" preserveAspectRatio="xMaxYMid meet"
+                 viewBox="0 0 100 100" width="10" height="5"
+                 patternUnits="userSpaceOnUse">
+            <circle cx="50" cy="50" r="50" id="smiley" fill="yellow"/>
+        </pattern>
+
+        <pattern id="pattern4" preserveAspectRatio="xMidYMin slice"
+                 viewBox="0 0 100 100" width="10" height="5"
+                 patternUnits="userSpaceOnUse">
+            <circle cx="50" cy="50" r="50" id="smiley" fill="yellow"/>
+        </pattern>
+
+        <pattern id="pattern5" preserveAspectRatio="xMidYMid slice"
+                 viewBox="0 0 100 100" width="10" height="5"
+                 patternUnits="userSpaceOnUse">
+            <circle cx="50" cy="50" r="50" id="smiley" fill="yellow"/>
+        </pattern>
+
+        <pattern id="pattern6" preserveAspectRatio="xMidYMax slice"
+                 viewBox="0 0 100 100" width="10" height="5"
+                 patternUnits="userSpaceOnUse">
+            <circle cx="50" cy="50" r="50" id="smiley" fill="yellow"/>
+        </pattern>
+
+        <pattern id="pattern7" preserveAspectRatio="xMidYMin meet"
+                 viewBox="0 0 100 100" width="5" height="12.5"
+                 patternUnits="userSpaceOnUse">
+            <circle cx="50" cy="50" r="50" id="smiley" fill="yellow"/>
+        </pattern>
+
+        <pattern id="pattern8" preserveAspectRatio="xMidYMid meet"
+                 viewBox="0 0 100 100" width="5" height="12.5"
+                 patternUnits="userSpaceOnUse">
+            <circle cx="50" cy="50" r="50" id="smiley" fill="yellow"/>
+        </pattern>
+
+        <pattern id="pattern9" preserveAspectRatio="xMidYMax meet"
+                 viewBox="0 0 100 100" width="5" height="12.5"
+                 patternUnits="userSpaceOnUse">
+            <circle cx="50" cy="50" r="50" id="smiley" fill="yellow"/>
+        </pattern>
+
+        <pattern id="pattern10" preserveAspectRatio="xMinYMid slice"
+                 viewBox="0 0 100 100" width="5" height="12.5"
+                 patternUnits="userSpaceOnUse">
+            <circle cx="50" cy="50" r="50" id="smiley" fill="yellow"/>
+        </pattern>
+
+        <pattern id="pattern11" preserveAspectRatio="xMidYMid slice"
+                 viewBox="0 0 100 100" width="5" height="12.5"
+                 patternUnits="userSpaceOnUse">
+            <circle cx="50" cy="50" r="50" id="smiley" fill="yellow"/>
+        </pattern>
+
+        <pattern id="pattern12" preserveAspectRatio="xMaxYMid slice"
+                 viewBox="0 0 100 100" width="5" height="12.5"
+                 patternUnits="userSpaceOnUse">
+            <circle cx="50" cy="50" r="50" id="smiley" fill="yellow"/>
+        </pattern>
+
+        <pattern id="pattern13" preserveAspectRatio="none"
+                 viewBox="0 0 100 100" width="80" height="30"
+                 patternUnits="userSpaceOnUse">
+            <circle cx="50" cy="50" r="50" id="smiley" fill="yellow"/>
+        </pattern>
+    </defs>
+
+    <!-- (width>height) meet -->
+    <rect x="0" y="0" width="20" height="10"></rect>
+    <rect x="0" y="0" width="20" height="10" fill="url(#pattern1)"></rect>
+
+    <rect x="25" y="0" width="20" height="10"></rect>
+    <rect x="25" y="0" width="20" height="10" fill="url(#pattern2)"></rect>
+
+    <rect x="50" y="0" width="20" height="10"></rect>
+    <rect x="50" y="0" width="20" height="10" fill="url(#pattern3)"></rect>
+
+    <!-- (width>height) slice -->
+    <rect x="0" y="15" width="20" height="10"></rect>
+    <rect x="0" y="15" width="20" height="10" fill="url(#pattern4)"></rect>
+
+    <rect x="25" y="15" width="20" height="10"></rect>
+    <rect x="25" y="15" width="20" height="10" fill="url(#pattern5)"></rect>
+
+    <rect x="50" y="15" width="20" height="10"></rect>
+    <rect x="50" y="15" width="20" height="10" fill="url(#pattern6)"></rect>
+
+    <!-- (width<height) meet -->
+    <rect x="75" y="0" width="10" height="25"></rect>
+    <rect x="75" y="0" width="10" height="25" fill="url(#pattern7)"></rect>
+
+    <rect x="90" y="0" width="10" height="25"></rect>
+    <rect x="90" y="0" width="10" height="25" fill="url(#pattern8)"></rect>
+
+    <rect x="105" y="0" width="10" height="25"></rect>
+    <rect x="105" y="0" width="10" height="25" fill="url(#pattern9)"></rect>
+
+    <!-- (width<height) slice -->
+    <rect x="120" y="0" width="10" height="25"></rect>
+    <rect x="120" y="0" width="10" height="25" fill="url(#pattern10)"></rect>
+
+    <rect x="135" y="0" width="10" height="25"></rect>
+    <rect x="135" y="0" width="10" height="25" fill="url(#pattern11)"></rect>
+
+    <rect x="150" y="0" width="10" height="25"></rect>
+    <rect x="150" y="0" width="10" height="25" fill="url(#pattern12)"></rect>
+
+    <!-- none -->
+    <rect x="0" y="30" width="160" height="60"></rect>
+    <rect x="0" y="30" width="160" height="60" fill="url(#pattern13)"></rect>
+</svg>

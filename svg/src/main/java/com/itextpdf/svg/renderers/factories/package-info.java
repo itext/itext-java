@@ -1,1 +1,0 @@
-package com.itextpdf.svg.renderers.factories;

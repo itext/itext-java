@@ -75,6 +75,8 @@ import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.pdfa.PdfAConformanceException;
 import com.itextpdf.pdfa.PdfAConformanceLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+
+import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,14 +97,44 @@ import java.util.Set;
  */
 public class PdfA2Checker extends PdfA1Checker {
 
-    protected static final Set<PdfName> forbiddenAnnotations = new HashSet<>(Arrays.asList(PdfName._3D, PdfName.Sound, PdfName.Screen, PdfName.Movie));
-    protected static final Set<PdfName> forbiddenActions = new HashSet<>(Arrays.asList(PdfName.Launch, PdfName.Sound, PdfName.Movie,
-            PdfName.ResetForm, PdfName.ImportData, PdfName.JavaScript, PdfName.Hide, PdfName.SetOCGState, PdfName.Rendition, PdfName.Trans, PdfName.GoTo3DView));
-    protected static final Set<PdfName> allowedBlendModes = new HashSet<>(Arrays.asList(PdfName.Normal,
-            PdfName.Compatible, PdfName.Multiply, PdfName.Screen, PdfName.Overlay,
-            PdfName.Darken, PdfName.Lighten, PdfName.ColorDodge, PdfName.ColorBurn,
-            PdfName.HardLight, PdfName.SoftLight, PdfName.Difference, PdfName.Exclusion,
-            PdfName.Hue, PdfName.Saturation, PdfName.Color, PdfName.Luminosity));
+    protected static final Set<PdfName> forbiddenAnnotations = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    PdfName._3D,
+                    PdfName.Sound,
+                    PdfName.Screen,
+                    PdfName.Movie)));
+    protected static final Set<PdfName> forbiddenActions = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    PdfName.Launch,
+                    PdfName.Sound,
+                    PdfName.Movie,
+                    PdfName.ResetForm,
+                    PdfName.ImportData,
+                    PdfName.JavaScript,
+                    PdfName.Hide,
+                    PdfName.SetOCGState,
+                    PdfName.Rendition,
+                    PdfName.Trans,
+                    PdfName.GoTo3DView)));
+    protected static final Set<PdfName> allowedBlendModes = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    PdfName.Normal,
+                    PdfName.Compatible,
+                    PdfName.Multiply,
+                    PdfName.Screen,
+                    PdfName.Overlay,
+                    PdfName.Darken,
+                    PdfName.Lighten,
+                    PdfName.ColorDodge,
+                    PdfName.ColorBurn,
+                    PdfName.HardLight,
+                    PdfName.SoftLight,
+                    PdfName.Difference,
+                    PdfName.Exclusion,
+                    PdfName.Hue,
+                    PdfName.Saturation,
+                    PdfName.Color,
+                    PdfName.Luminosity)));
 
     static final int MAX_PAGE_SIZE = 14400;
     static final int MIN_PAGE_SIZE = 3;

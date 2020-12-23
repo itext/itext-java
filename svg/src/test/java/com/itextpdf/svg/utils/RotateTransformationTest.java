@@ -43,7 +43,7 @@
 package com.itextpdf.svg.utils;
 
 import com.itextpdf.kernel.geom.AffineTransform;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.ExtendedITextTest;
@@ -62,7 +62,8 @@ public class RotateTransformationTest extends ExtendedITextTest {
 
     @Test
     public void normalRotateTest() {
-        AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(10), CssUtils.parseAbsoluteLength("5"), CssUtils.parseAbsoluteLength("10"));
+        AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(10), CssDimensionParsingUtils.parseAbsoluteLength("5"), CssDimensionParsingUtils
+                .parseAbsoluteLength("10"));
         AffineTransform actual = TransformUtils.parseTransform("rotate(10, 5, 10)");
 
         Assert.assertEquals(expected, actual);
@@ -94,7 +95,8 @@ public class RotateTransformationTest extends ExtendedITextTest {
 
     @Test
     public void threeRotateValuesTest() {
-        AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(23), CssUtils.parseAbsoluteLength("58"), CssUtils.parseAbsoluteLength("57"));
+        AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(23), CssDimensionParsingUtils.parseAbsoluteLength("58"), CssDimensionParsingUtils
+                .parseAbsoluteLength("57"));
         AffineTransform actual = TransformUtils.parseTransform("rotate(23, 58, 57)");
 
         Assert.assertEquals(expected, actual);
@@ -110,7 +112,8 @@ public class RotateTransformationTest extends ExtendedITextTest {
 
     @Test
     public void negativeRotateValuesTest() {
-        AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(-23), CssUtils.parseAbsoluteLength("-58"), CssUtils.parseAbsoluteLength("-1"));
+        AffineTransform expected = AffineTransform.getRotateInstance(Math.toRadians(-23), CssDimensionParsingUtils.parseAbsoluteLength("-58"), CssDimensionParsingUtils
+                .parseAbsoluteLength("-1"));
         AffineTransform actual = TransformUtils.parseTransform("rotate(-23,-58,-1)");
 
         Assert.assertEquals(expected, actual);

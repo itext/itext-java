@@ -48,6 +48,7 @@ import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import com.itextpdf.svg.dummy.sdk.ExceptionInputStream;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
@@ -76,7 +77,7 @@ public class DefaultStylesTest extends ExtendedITextTest {
         ICssResolver styleResolver = new SvgStyleResolver(new SvgProcessorContext(new SvgConverterProperties()));
         Element svg = new Element(Tag.valueOf("svg"), "");
         INode svgNode = new JsoupElementNode(svg);
-        Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
+        Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, new SvgCssContext());
 
         Assert.assertEquals("1", resolvedStyles.get(SvgConstants.Attributes.STROKE_OPACITY));
         Assert.assertEquals("1px", resolvedStyles.get(SvgConstants.Attributes.STROKE_WIDTH));
@@ -92,7 +93,7 @@ public class DefaultStylesTest extends ExtendedITextTest {
         ICssResolver styleResolver = new SvgStyleResolver(new SvgProcessorContext(new SvgConverterProperties()));
         Element svg = new Element(Tag.valueOf("svg"), "");
         INode svgNode = new JsoupElementNode(svg);
-        Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
+        Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, new SvgCssContext());
 
         Assert.assertEquals("black", resolvedStyles.get(SvgConstants.Attributes.FILL));
         Assert.assertEquals(SvgConstants.Values.FILL_RULE_NONZERO, resolvedStyles.get(SvgConstants.Attributes.FILL_RULE));
@@ -104,10 +105,10 @@ public class DefaultStylesTest extends ExtendedITextTest {
         ICssResolver styleResolver = new SvgStyleResolver(new SvgProcessorContext(new SvgConverterProperties()));
         Element svg = new Element(Tag.valueOf("svg"), "");
         INode svgNode = new JsoupElementNode(svg);
-        Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
+        Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, new SvgCssContext());
 
         Assert.assertEquals("helvetica", resolvedStyles.get(SvgConstants.Attributes.FONT_FAMILY));
-        Assert.assertEquals("12px", resolvedStyles.get(SvgConstants.Attributes.FONT_SIZE));
+        Assert.assertEquals("9pt", resolvedStyles.get(SvgConstants.Attributes.FONT_SIZE));
     }
 
     @Test
@@ -116,9 +117,10 @@ public class DefaultStylesTest extends ExtendedITextTest {
                 new SvgProcessorContext(new SvgConverterProperties()));
         Element svg = new Element(Tag.valueOf("svg"), "");
         INode svgNode = new JsoupElementNode(svg);
-        Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, null);
+        Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, new SvgCssContext());
 
-        Assert.assertEquals(0, resolvedStyles.size());
+        Assert.assertEquals(1, resolvedStyles.size());
+        Assert.assertEquals("12pt", resolvedStyles.get(Attributes.FONT_SIZE));
     }
 
     @Test

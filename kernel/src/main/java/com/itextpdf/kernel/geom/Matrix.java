@@ -72,11 +72,14 @@ public class Matrix implements Serializable {
     public static final int I33 = 8;
     private static final long serialVersionUID = 7434885566068528477L;
 
-    /** the values inside the matrix (the identity matrix by default).
-     * <p>For reference, the indeces are as follows:<p>
-     * I11 I12 I13<p>
-     * I21 I22 I23<p>
-     * I31 I32 I33<p>
+    /**
+     * The values inside the matrix (the identity matrix by default).
+     *
+     * <p>
+     * For reference, the indeces are as follows:
+     * <br>I11 I12 I13
+     * <br>I21 I22 I23
+     * <br>I31 I32 I33
      */
     private final float[] vals = new float[]{
             1,0,0,
@@ -91,7 +94,8 @@ public class Matrix implements Serializable {
     }
 
     /**
-     * Constructs a matrix that represents translation
+     * Constructs a matrix that represents translation.
+     *
      * @param tx x-axis translation
      * @param ty y-axis translation
      */
@@ -101,7 +105,8 @@ public class Matrix implements Serializable {
     }
 
     /**
-     * Creates a Matrix with 9 specified entries
+     * Creates a Matrix with 9 specified entries.
+     *
      * @param e11 element at position (1,1)
      * @param e12 element at position (1,2)
      * @param e13 element at position (1,3)
@@ -125,9 +130,10 @@ public class Matrix implements Serializable {
     }
 
     /**
-     * Creates a Matrix with 6 specified entries
+     * Creates a Matrix with 6 specified entries.
      * The third column will always be [0 0 1]
      * (row, column)
+     *
      * @param a element at (1,1)
      * @param b element at (1,2)
      * @param c element at (2,1)
@@ -150,23 +156,25 @@ public class Matrix implements Serializable {
     /**
      * Gets a specific value inside the matrix.
      *
-     * <p>For reference, the indeces are as follows:<p>
-     * I11 I12 I13<p>
-     * I21 I22 I23<p>
-     * I31 I32 I33<p>
+     * <p>
+     * For reference, the indeces are as follows:
+     * <br>I11 I12 I13
+     * <br>I21 I22 I23
+     * <br>I31 I32 I33
      *
-     * @param	index	an array index corresponding with a value inside the matrix
-     * @return	the value at that specific position.
+     * @param index an array index corresponding with a value inside the matrix
+     * @return the value at that specific position.
      */
     public float get(int index){
         return vals[index];
     }
 
     /**
-     * multiplies this matrix by 'b' and returns the result
+     * multiplies this matrix by 'b' and returns the result.
      * See http://en.wikipedia.org/wiki/Matrix_multiplication
+     *
      * @param by The matrix to multiply by
-     * @return	the resulting matrix
+     * @return the resulting matrix
      */
     public Matrix multiply(Matrix by){
         Matrix rslt = new Matrix();
@@ -189,7 +197,8 @@ public class Matrix implements Serializable {
     }
 
     /**
-     * adds a matrix from this matrix and returns the results
+     * Adds a matrix from this matrix and returns the results.
+     *
      * @param arg the matrix to subtract from this matrix
      * @return a Matrix object
      */
@@ -215,7 +224,8 @@ public class Matrix implements Serializable {
     }
 
     /**
-     * Subtracts a matrix from this matrix and returns the results
+     * Subtracts a matrix from this matrix and returns the results.
+     *
      * @param arg the matrix to subtract from this matrix
      * @return a Matrix object
      */
@@ -241,6 +251,7 @@ public class Matrix implements Serializable {
 
     /**
      * Computes the determinant of the matrix.
+     *
      * @return the determinant of the matrix
      */
     public float getDeterminant(){
@@ -257,8 +268,9 @@ public class Matrix implements Serializable {
 
     /**
      * Checks equality of matrices.
-     * @param obj	the other Matrix that needs to be compared with this matrix.
-     * @return	true if both matrices are equal
+     *
+     * @param obj the other Matrix that needs to be compared with this matrix.
+     * @return true if both matrices are equal
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -271,6 +283,7 @@ public class Matrix implements Serializable {
 
     /**
      * Generates a hash code for this object.
+     *
      * @return	the hash code of this object
      * @see java.lang.Object#hashCode()
      */
@@ -281,6 +294,7 @@ public class Matrix implements Serializable {
 
     /**
      * Generates a String representation of the matrix.
+     *
      * @return	the values, delimited with tabs and newlines.
      * @see java.lang.Object#toString()
      */

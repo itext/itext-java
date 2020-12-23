@@ -48,6 +48,7 @@ import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.CssRuleSet;
 import com.itextpdf.styledxmlparser.css.selector.CssSelector;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -43,11 +43,12 @@
 package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.layout.property.BackgroundRepeat.BackgroundRepeatValue;
-import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 
 /**
  * Utilities class for CSS mapping operations.
+ * @deprecated will be removed in 7.2, use {@link CssBackgroundUtils} instead
  */
+@Deprecated
 public final class CssMappingUtils {
     /**
      * Creates a new {@link CssMappingUtils} instance.
@@ -60,18 +61,10 @@ public final class CssMappingUtils {
      *
      * @param value the string which stores the background repeat value
      * @return the background repeat as a {@link BackgroundRepeatValue} instance
+     * @deprecated will be removed in 7.2, use {@link CssBackgroundUtils#parseBackgroundRepeat(String)} instead
      */
+    @Deprecated
     public static BackgroundRepeatValue parseBackgroundRepeat(String value) {
-        switch (value) {
-            case CommonCssConstants.NO_REPEAT:
-                return BackgroundRepeatValue.NO_REPEAT;
-            case CommonCssConstants.ROUND:
-                return BackgroundRepeatValue.ROUND;
-            case CommonCssConstants.SPACE:
-                return BackgroundRepeatValue.SPACE;
-            case CommonCssConstants.REPEAT:
-            default:
-                return BackgroundRepeatValue.REPEAT;
-        }
+        return CssBackgroundUtils.parseBackgroundRepeat(value);
     }
 }

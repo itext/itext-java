@@ -1,0 +1,7 @@
+<svg viewBox="0 0 220 100" xmlns="http://www.w3.org/2000/svg">
+    <!--    rectangle with absolute values-->
+    <rect x="0" y="0" width="100px" height="100px" fill="none" stroke="red" stroke-width="2"/>
+
+    <!--    rectangle with relative values-->
+    <rect x="0.7ex" y="2ex" width="10ex" height="8ex" />
+</svg>

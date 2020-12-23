@@ -44,6 +44,7 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.borders.FormBorderFactory;
 import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.codec.Base64;
@@ -89,6 +90,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Style;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
@@ -2058,13 +2060,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfFormField setBorderStyle(PdfDictionary style) {
-        //PdfDictionary bs = getWidgets().get(0).getBorderStyle();
         getWidgets().get(0).setBorderStyle(style);
-//        if (bs == null) {
-//            bs = new PdfDictionary();
-//            put(PdfName.BS, bs);
-//        }
-//        bs.put(PdfName.S, style);
         regenerateField();
         return this;
     }
@@ -2670,29 +2666,27 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
 
         if (backgroundColor != null) {
-            canvas.
-                    setFillColor(backgroundColor).
-                    rectangle(0, 0, width, height).
-                    fill();
+            canvas
+                    .setFillColor(backgroundColor)
+                    .rectangle(0, 0, width, height)
+                    .fill();
         }
 
         if (borderWidth > 0 && borderColor != null) {
             borderWidth = Math.max(1, borderWidth);
-            canvas.
-                    setStrokeColor(borderColor).
-                    setLineWidth(borderWidth);
-            if (bs != null) {
-                PdfName borderType = bs.getAsName(PdfName.S);
-                if (borderType != null && borderType.equals(PdfName.D)) {
-                    PdfArray dashArray = bs.getAsArray(PdfName.D);
-                    int unitsOn = dashArray != null ? (dashArray.size() > 0 ? (dashArray.getAsNumber(0) != null ? dashArray.getAsNumber(0).intValue() : 3) : 3) : 3;
-                    int unitsOff = dashArray != null ? (dashArray.size() > 1 ? (dashArray.getAsNumber(1) != null ? dashArray.getAsNumber(1).intValue() : unitsOn) : unitsOn) : unitsOn;
-                    canvas.setLineDash(unitsOn, unitsOff, 0);
-                }
+            canvas
+                    .setStrokeColor(borderColor)
+                    .setLineWidth(borderWidth);
+            Border border = FormBorderFactory.getBorder(bs, borderWidth, borderColor, backgroundColor);
+            if (border != null) {
+                float borderWidthX2 = borderWidth + borderWidth;
+                border.draw(canvas, new Rectangle(borderWidth, borderWidth,
+                        width - borderWidthX2, height - borderWidthX2));
+            } else {
+                canvas
+                        .rectangle(0, 0, width, height)
+                        .stroke();
             }
-            canvas.
-                    rectangle(0, 0, width, height).
-                    stroke();
         }
 
         applyRotation(xObject, height, width);

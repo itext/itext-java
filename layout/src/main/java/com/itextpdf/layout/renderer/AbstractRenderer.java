@@ -124,6 +124,30 @@ public abstract class AbstractRenderer implements IRenderer {
      */
     protected static final float INF = 1e6f;
 
+    /**
+     * The common ordering index of top side in arrays of four elements which define top, right, bottom,
+     * left sides values (e.g. margins, borders, paddings).
+     */
+    static final int TOP_SIDE = 0;
+
+    /**
+     * The common ordering index of right side in arrays of four elements which define top, right, bottom,
+     * left sides values (e.g. margins, borders, paddings).
+     */
+    static final int RIGHT_SIDE = 1;
+
+    /**
+     * The common ordering index of bottom side in arrays of four elements which define top, right, bottom,
+     * left sides values (e.g. margins, borders, paddings).
+     */
+    static final int BOTTOM_SIDE = 2;
+
+    /**
+     * The common ordering index of left side in arrays of four elements which define top, right, bottom,
+     * left sides values (e.g. margins, borders, paddings).
+     */
+    static final int LEFT_SIDE = 3;
+
     // TODO linkedList?
     protected List<IRenderer> childRenderers = new ArrayList<>();
     protected List<IRenderer> positionedRenderers = new ArrayList<>();
@@ -1682,23 +1706,27 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link Rectangle border box} of the renderer
      */
     protected Rectangle applyMargins(Rectangle rect, UnitValue[] margins, boolean reverse) {
-        if (!margins[0].isPointValue()) {
+        if (!margins[TOP_SIDE].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
             logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_TOP));
         }
-        if (!margins[1].isPointValue()) {
+        if (!margins[RIGHT_SIDE].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
             logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
         }
-        if (!margins[2].isPointValue()) {
+        if (!margins[BOTTOM_SIDE].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
             logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_BOTTOM));
         }
-        if (!margins[3].isPointValue()) {
+        if (!margins[LEFT_SIDE].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
             logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
         }
-        return rect.applyMargins(margins[0].getValue(), margins[1].getValue(), margins[2].getValue(), margins[3].getValue(), reverse);
+        return rect.applyMargins(
+                margins[TOP_SIDE].getValue(),
+                margins[RIGHT_SIDE].getValue(),
+                margins[BOTTOM_SIDE].getValue(),
+                margins[LEFT_SIDE].getValue(), reverse);
     }
 
     /**

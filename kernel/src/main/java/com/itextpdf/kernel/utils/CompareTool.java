@@ -126,8 +126,9 @@ import org.xml.sax.SAXException;
  * for the content of the cmpDoc and "but was" part stands for the content of the outDoc.
  */
 public class CompareTool {
+    private static final String FILE_PROTOCOL = "file://";
     private static final String UNEXPECTED_NUMBER_OF_PAGES = "Unexpected number of pages for <filename>.";
-    private static final String DIFFERENT_PAGES = "File file:///<filename> differs on page <pagenumber>.";
+    private static final String DIFFERENT_PAGES = "File " + FILE_PROTOCOL + "<filename> differs on page <pagenumber>.";
     private static final String IGNORED_AREAS_PREFIX = "ignored_areas_";
 
     private static final String VERSION_REGEXP = "(iText\u00ae( pdfX(FA|fa)| DITO)?|iTextSharp\u2122) (\\d+\\.)+\\d+(-SNAPSHOT)?";
@@ -1057,7 +1058,8 @@ public class CompareTool {
                     if (!imageMagickHelper.runImageMagickImageCompare(imageFiles[i].getAbsolutePath(),
                             cmpImageFiles[i].getAbsolutePath(), diffName)) {
                         File diffFile = new File(diffName);
-                        differentPagesFail += "\nPlease, examine " + "file:///" + UrlUtil.toNormalizedURI(diffFile).getPath() + " for more details.";
+                        differentPagesFail += "\nPlease, examine " + FILE_PROTOCOL
+                                + UrlUtil.toNormalizedURI(diffFile).getPath() + " for more details.";
                     }
                 }
                 System.out.println(differentPagesFail);
@@ -1150,8 +1152,10 @@ public class CompareTool {
     }
 
     private void printOutCmpDirectories() {
-        System.out.println("Out file folder: file://" + UrlUtil.toNormalizedURI(new File(outPdf).getParentFile()).getPath());
-        System.out.println("Cmp file folder: file://" + UrlUtil.toNormalizedURI(new File(cmpPdf).getParentFile()).getPath());
+        System.out.println("Out file folder: " + FILE_PROTOCOL
+                + UrlUtil.toNormalizedURI(new File(outPdf).getParentFile()).getPath());
+        System.out.println("Cmp file folder: " + FILE_PROTOCOL
+                + UrlUtil.toNormalizedURI(new File(cmpPdf).getParentFile()).getPath());
     }
 
     private String compareByContent(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {

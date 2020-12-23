@@ -47,7 +47,6 @@ package com.itextpdf.signatures;
 import com.itextpdf.io.codec.Base64;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERIA5String;
-import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.esf.OtherHashAlgAndValue;
 import org.bouncycastle.asn1.esf.SigPolicyQualifierInfo;
@@ -135,8 +134,10 @@ public class SignaturePolicyInfo {
             spqi = new SigPolicyQualifierInfo(PKCSObjectIdentifiers.id_spq_ets_uri, new DERIA5String(this.policyUri));
         }
 
-        signaturePolicyIdentifier = new SignaturePolicyIdentifier(new SignaturePolicyId(DERObjectIdentifier.getInstance(new DERObjectIdentifier(this.policyIdentifier.replace("urn:oid:", ""))),
-                new OtherHashAlgAndValue(new AlgorithmIdentifier(new ASN1ObjectIdentifier(algId)), new DEROctetString(this.policyHash)), SignUtils.createSigPolicyQualifiers(spqi)));
+        signaturePolicyIdentifier = new SignaturePolicyIdentifier(new SignaturePolicyId(ASN1ObjectIdentifier
+                .getInstance(new ASN1ObjectIdentifier(this.policyIdentifier.replace("urn:oid:", ""))),
+                new OtherHashAlgAndValue(new AlgorithmIdentifier(new ASN1ObjectIdentifier(algId)),
+                        new DEROctetString(this.policyHash)), SignUtils.createSigPolicyQualifiers(spqi)));
 
         return signaturePolicyIdentifier;
     }

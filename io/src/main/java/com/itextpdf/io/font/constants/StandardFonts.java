@@ -42,6 +42,7 @@
  */
 package com.itextpdf.io.font.constants;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -50,23 +51,26 @@ public final class StandardFonts {
     private StandardFonts() {
     }
 
-    private static final Set<String> BUILTIN_FONTS = new HashSet<>();
+    private static final Set<String> BUILTIN_FONTS;
 
     static {
-        BUILTIN_FONTS.add(StandardFonts.COURIER);
-        BUILTIN_FONTS.add(StandardFonts.COURIER_BOLD);
-        BUILTIN_FONTS.add(StandardFonts.COURIER_BOLDOBLIQUE);
-        BUILTIN_FONTS.add(StandardFonts.COURIER_OBLIQUE);
-        BUILTIN_FONTS.add(StandardFonts.HELVETICA);
-        BUILTIN_FONTS.add(StandardFonts.HELVETICA_BOLD);
-        BUILTIN_FONTS.add(StandardFonts.HELVETICA_BOLDOBLIQUE);
-        BUILTIN_FONTS.add(StandardFonts.HELVETICA_OBLIQUE);
-        BUILTIN_FONTS.add(StandardFonts.SYMBOL);
-        BUILTIN_FONTS.add(StandardFonts.TIMES_ROMAN);
-        BUILTIN_FONTS.add(StandardFonts.TIMES_BOLD);
-        BUILTIN_FONTS.add(StandardFonts.TIMES_BOLDITALIC);
-        BUILTIN_FONTS.add(StandardFonts.TIMES_ITALIC);
-        BUILTIN_FONTS.add(StandardFonts.ZAPFDINGBATS);
+        // HashSet is required in order to autoport correctly in .Net
+        HashSet<String> tempSet = new HashSet<>();
+        tempSet.add(StandardFonts.COURIER);
+        tempSet.add(StandardFonts.COURIER_BOLD);
+        tempSet.add(StandardFonts.COURIER_BOLDOBLIQUE);
+        tempSet.add(StandardFonts.COURIER_OBLIQUE);
+        tempSet.add(StandardFonts.HELVETICA);
+        tempSet.add(StandardFonts.HELVETICA_BOLD);
+        tempSet.add(StandardFonts.HELVETICA_BOLDOBLIQUE);
+        tempSet.add(StandardFonts.HELVETICA_OBLIQUE);
+        tempSet.add(StandardFonts.SYMBOL);
+        tempSet.add(StandardFonts.TIMES_ROMAN);
+        tempSet.add(StandardFonts.TIMES_BOLD);
+        tempSet.add(StandardFonts.TIMES_BOLDITALIC);
+        tempSet.add(StandardFonts.TIMES_ITALIC);
+        tempSet.add(StandardFonts.ZAPFDINGBATS);
+        BUILTIN_FONTS = Collections.unmodifiableSet(tempSet);
     }
 
     public static boolean isStandardFont(String fontName) {

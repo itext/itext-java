@@ -43,10 +43,34 @@
 package com.itextpdf.svg.css;
 
 import com.itextpdf.styledxmlparser.css.resolve.AbstractCssContext;
+import com.itextpdf.styledxmlparser.css.resolve.CssDefaults;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
+import com.itextpdf.svg.SvgConstants;
 
 /**
  * Context necessary for evaluating certain Css statements whose final values depends on other statements
  * e.g. relative font-size statements.
  */
 public class SvgCssContext extends AbstractCssContext {
+    /** The root font size value in pt. */
+    private float rootFontSize = CssDimensionParsingUtils.parseAbsoluteFontSize(
+            CssDefaults.getDefaultValue(SvgConstants.Attributes.FONT_SIZE));
+
+    /**
+     * Gets the root font size.
+     *
+     * @return the root font size in pt
+     */
+    public float getRootFontSize() {
+        return rootFontSize;
+    }
+
+    /**
+     * Sets the root font size.
+     *
+     * @param fontSizeStr the new root font size
+     */
+    public void setRootFontSize(String fontSizeStr) {
+        this.rootFontSize = CssDimensionParsingUtils.parseAbsoluteFontSize(fontSizeStr);
+    }
 }

@@ -53,16 +53,16 @@ import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;
-import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.TokenType;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.SvgConstants.Values;
+import com.itextpdf.svg.css.impl.SvgNodeRendererInheritanceResolver;
 import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.svg.renderers.ISvgPaintServer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
-import com.itextpdf.svg.utils.SvgCssUtils;
-import com.itextpdf.svg.utils.SvgTextUtil;
 import com.itextpdf.svg.utils.TransformUtils;
 
 import java.util.HashMap;
@@ -78,7 +78,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             MarkerVertexType.MARKER_END};
 
     /**
-     * Map that contains attributes and styles used for drawing operations
+     * Map that contains attributes and styles used for drawing operations.
      */
     protected Map<String, String> attributesAndStyles;
 
@@ -205,8 +205,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      * @return absolute value of font-size
      */
     public float getCurrentFontSize() {
-        // TODO DEVSIX-4140 check work of this method with relative unit
-        return CssUtils.parseAbsoluteFontSize(getAttribute(SvgConstants.Attributes.FONT_SIZE));
+        return CssDimensionParsingUtils.parseAbsoluteFontSize(getAttribute(SvgConstants.Attributes.FONT_SIZE));
     }
 
     /**
@@ -232,8 +231,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
 
     /**
-     * Evaluate the current object bounding box
+     * Evaluate the current object bounding box.
      *
+     * @param context the object that knows the place to draw this element and maintains its state
      * @return the {@link Rectangle} representing the current object's bounding box
      */
     @Deprecated
@@ -346,7 +346,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                     this.doFill = !SvgConstants.Values.NONE.equalsIgnoreCase(fillRawValue);
 
                     if (doFill && canElementFill()) {
-
                         float fillOpacity = getOpacityByAttributeName(
                                 SvgConstants.Attributes.FILL_OPACITY, generalOpacity);
 
@@ -381,7 +380,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                         float strokeWidth = 0.75f;
 
                         if (strokeWidthRawValue != null) {
-                            strokeWidth = CssUtils.parseAbsoluteLength(strokeWidthRawValue);
+                            strokeWidth = CssDimensionParsingUtils.parseAbsoluteLength(strokeWidthRawValue);
                         }
 
                         float strokeOpacity = getOpacityByAttributeName(SvgConstants.Attributes.STROKE_OPACITY,
@@ -389,7 +388,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
                         Color strokeColor = null;
                         TransparentColor transparentColor = getColorFromAttributeValue(
-                                context, strokeRawValue, strokeWidth / 2, strokeOpacity);
+                                context, strokeRawValue, (float) ((double) strokeWidth / 2.0), strokeOpacity);
                         if (transparentColor != null) {
                             strokeColor = transparentColor.getColor();
                             strokeOpacity = transparentColor.getOpacity();
@@ -429,12 +428,12 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      */
     protected float parseAbsoluteLength(String length, float percentRelativeValue, float defaultValue,
             SvgDrawContext context) {
-        if (CssUtils.isPercentageValue(length)) {
-            return CssUtils.parseRelativeValue(length, percentRelativeValue);
+        if (CssTypesValidationUtils.isPercentageValue(length)) {
+            return CssDimensionParsingUtils.parseRelativeValue(length, percentRelativeValue);
         } else {
-            float em = getCurrentFontSize();
-            float rem = context.getRemValue();
-            UnitValue unitValue = CssUtils.parseLengthValueToPt(length, em, rem);
+            final float em = getCurrentFontSize();
+            final float rem = context.getCssContext().getRootFontSize();
+            UnitValue unitValue = CssDimensionParsingUtils.parseLengthValueToPt(length, em, rem);
             if (unitValue != null && unitValue.isPointValue()) {
                 return unitValue.getValue();
             } else {
@@ -457,10 +456,10 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         if (tokenValue.startsWith("url(#") && tokenValue.endsWith(")")) {
             Color resolvedColor = null;
             float resolvedOpacity = 1;
-            String normalizedName = tokenValue.substring(5, tokenValue.length() - 1).trim();
-            ISvgNodeRenderer colorRenderer = context.getNamedObject(normalizedName);
-            if (colorRenderer instanceof AbstractGradientSvgNodeRenderer) {
-                resolvedColor = ((AbstractGradientSvgNodeRenderer) colorRenderer).createColor(
+            final String normalizedName = tokenValue.substring(5, tokenValue.length() - 1).trim();
+            final ISvgNodeRenderer colorRenderer = context.getNamedObject(normalizedName);
+            if (colorRenderer instanceof ISvgPaintServer) {
+                resolvedColor = ((ISvgPaintServer) colorRenderer).createColor(
                         context, getObjectBoundingBox(context), objectBoundingBoxMargin, parentOpacity);
             }
             if (resolvedColor != null) {
@@ -496,6 +495,8 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             //Clone template to avoid muddying the state
             if (template instanceof ClipPathSvgNodeRenderer) {
                 ClipPathSvgNodeRenderer clipPath = (ClipPathSvgNodeRenderer) template.createDeepCopy();
+                // Resolve parent inheritance
+                SvgNodeRendererInheritanceResolver.applyInheritanceToSubTree(this, clipPath, context.getCssContext());
                 clipPath.setClippedRenderer(this);
                 clipPath.draw(context);
                 return !clipPath.getChildren().isEmpty();

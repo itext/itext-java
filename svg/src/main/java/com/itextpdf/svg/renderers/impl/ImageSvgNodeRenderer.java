@@ -44,13 +44,11 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.SvgConstants.Values;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
-
 
 /**
  * Responsible for drawing Images to the canvas.
@@ -82,24 +80,24 @@ public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
         float x = 0;
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.X)) {
-            x = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.X));
+            x = CssDimensionParsingUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.X));
         }
 
         float y = 0;
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.Y)) {
-            y = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.Y));
+            y = CssDimensionParsingUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.Y));
         }
 
         float width = 0;
 
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.WIDTH)) {
-            width = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.WIDTH));
+            width = CssDimensionParsingUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.WIDTH));
         }
 
         float height = 0;
 
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.HEIGHT)) {
-            height = CssUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.HEIGHT));
+            height = CssDimensionParsingUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.HEIGHT));
         }
 
         String preserveAspectRatio = "";

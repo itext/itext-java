@@ -1,0 +1,13 @@
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <pattern id="star" x="2" y="2" width="14" height="14"
+                 patternContentUnits="userSpaceOnUse"
+                 patternUnits="userSpaceOnUse">
+            <rect fill="none" stroke-width="0.4" stroke="orange" x="0" y="0" width="14" height="14"/>
+            <rect fill="none" stroke-width="0.4" stroke="blue" x="0" y="0" width="10" height="10"/>
+            <polygon stroke="none" fill="red" points="0,0 2,5 0,10 5,8 10,10 8,5 10,0 5,2"/>
+        </pattern>
+    </defs>
+
+    <rect x="0" y="0" width="100" height="100" fill="url(#star)" stroke-width="0.8" stroke="black"/>
+</svg>

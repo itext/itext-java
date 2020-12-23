@@ -53,6 +53,7 @@ import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontInfo;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
@@ -64,6 +65,7 @@ import com.itextpdf.svg.utils.SvgTextUtil;
 import com.itextpdf.svg.utils.TextRectangle;
 
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -79,15 +81,9 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
      */
     protected final static AffineTransform TEXTFLIP = new AffineTransform(1, 0, 0, -1, 0, 0);
 
-    /**
-     * Placeholder default font-size until DEVSIX-2607 is resolved
-     */
-    private final static float DEFAULT_FONT_SIZE = 12f;
-
     private final List<ISvgTextNodeRenderer> children = new ArrayList<>();
     protected boolean performRootTransformations;
     private PdfFont font;
-    private float fontSize;
 
     private boolean moveResolved;
     private float xMove;
@@ -114,20 +110,20 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
     }
 
     public final void addChild(ISvgTextNodeRenderer child) {
-        // final method, in order to disallow adding null
+        // Final method, in order to disallow adding null
         if (child != null) {
             children.add(child);
         }
     }
 
     public final List<ISvgTextNodeRenderer> getChildren() {
-        // final method, in order to disallow modifying the List
+        // Final method, in order to disallow modifying the List
         return Collections.unmodifiableList(children);
     }
 
     @Override
     public float getTextContentLength(float parentFontSize, PdfFont font) {
-        return 0.0f; //Branch renderers do not contain any text themselves and do not contribute to the text length
+        return 0.0f; // Branch renderers do not contain any text themselves and do not contribute to the text length
     }
 
     @Override
@@ -162,7 +158,6 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
     @Override
     public TextRectangle getTextRectangle(SvgDrawContext context, Point basePoint) {
         if (this.attributesAndStyles != null) {
-            resolveFontSize();
             resolveFont(context);
             double x = 0, y = 0;
             if (getAbsolutePositionChanges()[0] != null) {
@@ -212,7 +207,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
             PdfCanvas currentCanvas = context.getCurrentCanvas();
             if (performRootTransformations) {
                 currentCanvas.beginText();
-                //Current transformation matrix results in the character glyphs being mirrored, correct with inverse tf
+                // Current transformation matrix results in the character glyphs being mirrored, correct with inverse tf
                 AffineTransform rootTf;
                 if (this.containsAbsolutePositionChange()) {
                     rootTf = getTextTransform(this.getAbsolutePositionChanges(), context);
@@ -220,14 +215,14 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
                     rootTf = new AffineTransform(TEXTFLIP);
                 }
                 currentCanvas.setTextMatrix(rootTf);
-                //Reset context of text move
+                // Reset context of text move
                 context.resetTextMove();
-                //Apply relative move
+                // Apply relative move
                 if (this.containsRelativeMove()) {
                     float[] rootMove = this.getRelativeTranslation();
                     context.addTextMove(rootMove[0], -rootMove[1]); //-y to account for the text-matrix transform we do in the text root to account for the coordinates
                 }
-                //handle white-spaces
+                // Handle white-spaces
                 if (!whiteSpaceProcessed) {
                     SvgTextUtil.processWhiteSpace(this, true);
                 }
@@ -235,29 +230,28 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
             applyTextRenderingMode(currentCanvas);
 
             if (this.attributesAndStyles != null) {
-                resolveFontSize();
                 resolveFont(context);
-                currentCanvas.setFontAndSize(font, fontSize);
+                currentCanvas.setFontAndSize(font, getCurrentFontSize());
                 for (ISvgTextNodeRenderer c : children) {
-                    float childLength = c.getTextContentLength(fontSize, font);
+                    final float childLength = c.getTextContentLength(getCurrentFontSize(), font);
                     if (c.containsAbsolutePositionChange()) {
-                        //TODO: DEVSIX-2507 support rotate and other attributes
+                        // TODO: DEVSIX-2507 support rotate and other attributes
                         float[][] absolutePositions = c.getAbsolutePositionChanges();
                         AffineTransform newTransform = getTextTransform(absolutePositions, context);
-                        //overwrite the last transformation stored in the context
+                        // Overwrite the last transformation stored in the context
                         context.setLastTextTransform(newTransform);
-                        //Apply transformation
+                        // Apply transformation
                         currentCanvas.setTextMatrix(newTransform);
-                        //Absolute position changes requires resetting the current text move in the context
+                        // Absolute position changes requires resetting the current text move in the context
                         context.resetTextMove();
                     }
 
-                    //Handle Text-Anchor declarations
+                    // Handle Text-Anchor declarations
                     float textAnchorCorrection = getTextAnchorAlignmentCorrection(childLength);
                     if (!CssUtils.compareFloats(0f, textAnchorCorrection)) {
                         context.addTextMove(textAnchorCorrection, 0);
                     }
-                    //Move needs to happen before the saving of the state in order for it to cascade beyond
+                    // Move needs to happen before the saving of the state in order for it to cascade beyond
                     if (c.containsRelativeMove()) {
                         float[] childMove = c.getRelativeTranslation();
                         context.addTextMove(childMove[0], -childMove[1]); //-y to account for the text-matrix transform we do in the text root to account for the coordinates
@@ -267,7 +261,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
 
                     context.addTextMove(childLength, 0);
                     currentCanvas.restoreState();
-                    //Restore transformation matrix
+                    // Restore transformation matrix
                     if (!context.getLastTextTransform().isIdentity()) {
                         currentCanvas.setTextMatrix(context.getLastTextTransform());
                     }
@@ -292,11 +286,11 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
             yMove = 0f;
 
             if (!xValuesList.isEmpty()) {
-                xMove = CssUtils.parseAbsoluteLength(xValuesList.get(0));
+                xMove = CssDimensionParsingUtils.parseAbsoluteLength(xValuesList.get(0));
             }
 
             if (!yValuesList.isEmpty()) {
-                yMove = CssUtils.parseAbsoluteLength(yValuesList.get(0));
+                yMove = CssDimensionParsingUtils.parseAbsoluteLength(yValuesList.get(0));
             }
             moveResolved = true;
         }
@@ -304,8 +298,8 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
 
     private FontInfo resolveFontName(String fontFamily, String fontWeight, String fontStyle,
                                      FontProvider provider, FontSet tempFonts) {
-        boolean isBold = fontWeight != null && SvgConstants.Attributes.BOLD.equalsIgnoreCase(fontWeight);
-        boolean isItalic = fontStyle != null && SvgConstants.Attributes.ITALIC.equalsIgnoreCase(fontStyle);
+        final boolean isBold = SvgConstants.Attributes.BOLD.equalsIgnoreCase(fontWeight);
+        final boolean isItalic = SvgConstants.Attributes.ITALIC.equalsIgnoreCase(fontStyle);
 
         FontCharacteristics fontCharacteristics = new FontCharacteristics();
         List<String> stringArrayList = new ArrayList<>();
@@ -341,11 +335,6 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         }
     }
 
-    void resolveFontSize() {
-        //TODO: DEVSIX-2607 (re)move static variable
-        fontSize = (float) SvgTextUtil.resolveFontSize(this, DEFAULT_FONT_SIZE);
-    }
-
     /**
      * Return the font used in this text element.
      * Note that font should already be resolved with {@link TextSvgBranchRenderer#resolveFont}.
@@ -354,16 +343,6 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
      */
     PdfFont getFont() {
         return font;
-    }
-
-    /**
-     * Return the font size of this text element.
-     * Note that font size should already be resolved with {@link TextSvgBranchRenderer#resolveFontSize()}.
-     *
-     * @return font size of current text element.
-     */
-    float getFontSize() {
-        return fontSize;
     }
 
     private void resolveTextPosition() {
@@ -384,7 +363,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         if (!valuesList.isEmpty()) {
             result = new float[valuesList.size()];
             for (int i = 0; i < valuesList.size(); i++) {
-                result[i] = CssUtils.parseAbsoluteLength(valuesList.get(i));
+                result[i] = CssDimensionParsingUtils.parseAbsoluteLength(valuesList.get(i));
             }
         }
 
@@ -393,11 +372,11 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
 
     private static AffineTransform getTextTransform(float[][] absolutePositions, SvgDrawContext context) {
         AffineTransform tf = new AffineTransform();
-        //If x is not specified, but y is, we need to correct for preceding text.
+        // If x is not specified, but y is, we need to correct for preceding text.
         if (absolutePositions[0] == null && absolutePositions[1] != null) {
             absolutePositions[0] = new float[]{context.getTextMove()[0]};
         }
-        //If y is not present, we can replace it with a neutral transformation (0.0f)
+        // If y is not present, we can replace it with a neutral transformation (0.0f)
         if (absolutePositions[1] == null) {
             absolutePositions[1] = new float[]{0.0f};
         }
@@ -408,7 +387,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
     }
 
     private void applyTextRenderingMode(PdfCanvas currentCanvas) {
-        //Fill only is the default for text operation in PDF
+        // Fill only is the default for text operation in PDF
         if (doStroke && doFill) {
             currentCanvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL_STROKE); //Default for SVG
         } else {
@@ -430,17 +409,17 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
 
     private float getTextAnchorAlignmentCorrection(float childContentLength) {
         // Resolve text anchor
-        //TODO DEVSIX-2631 properly resolve text-anchor by taking entire line into account, not only children of the current TextSvgBranchRenderer
+        // TODO DEVSIX-2631 properly resolve text-anchor by taking entire line into account, not only children of the current TextSvgBranchRenderer
         float textAnchorXCorrection = 0.0f;
         if (this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_ANCHOR)) {
             String textAnchorValue = this.getAttribute(SvgConstants.Attributes.TEXT_ANCHOR);
-            //Middle
+            // Middle
             if (SvgConstants.Values.TEXT_ANCHOR_MIDDLE.equals(textAnchorValue)) {
                 if (xPos != null && xPos.length > 0) {
                     textAnchorXCorrection -= childContentLength / 2;
                 }
             }
-            //End
+            // End
             if (SvgConstants.Values.TEXT_ANCHOR_END.equals(textAnchorValue)) {
                 if (xPos != null && xPos.length > 0) {
                     textAnchorXCorrection -= childContentLength;

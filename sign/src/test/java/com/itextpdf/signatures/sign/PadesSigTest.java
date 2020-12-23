@@ -57,7 +57,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.esf.OtherHashAlgAndValue;
 import org.bouncycastle.asn1.esf.SignaturePolicyId;
@@ -123,7 +122,7 @@ public class PadesSigTest extends ExtendedITextTest {
     public void padesEpesProfileTest01() throws IOException, GeneralSecurityException {
 
         String notExistingSignaturePolicyOid = "2.16.724.631.3.1.124.2.29.9";
-        ASN1ObjectIdentifier asn1PolicyOid = DERObjectIdentifier.getInstance(new DERObjectIdentifier(notExistingSignaturePolicyOid));
+        ASN1ObjectIdentifier asn1PolicyOid = ASN1ObjectIdentifier.getInstance(new ASN1ObjectIdentifier(notExistingSignaturePolicyOid));
         AlgorithmIdentifier hashAlg = new AlgorithmIdentifier(new ASN1ObjectIdentifier(DigestAlgorithms.getAllowedDigest("SHA1")));
 
         // indicate that the policy hash value is not known; see ETSI TS 101 733 V2.2.1, 5.8.1

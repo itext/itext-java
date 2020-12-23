@@ -1,0 +1,17 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN">
+<svg width="14cm" height="14cm" viewBox="0 0 100 100"  xmlns="http://www.w3.org/2000/svg" version="1.1">
+
+    <text x="40" y="43"  font-size="2">
+        No line command
+    </text>
+     <path d="M50,53
+              m-4.43-.44.79-4h1c1,0,1.68.53,1.68,1.5a2.45,2.45,0,0,1-2.47,2.55Z
+			  m-.56.44h1.67a2.9,2.9,0,0,0,2.91-3c0-1.23-.81-1.92-2.13-1.92h-1.5Z" fill="blue"/>
+    <text x="0" y="43"  font-size="2">
+        There is line command
+    </text>
+	 <path d="M10,53
+	          m-4.43-.44 l.79-4h1c1,0,1.68.53,1.68,1.5a2.45,2.45,0,0,1-2.47,2.55Z
+              m-.56.44h1.67a2.9,2.9,0,0,0,2.91-3c0-1.23-.81-1.92-2.13-1.92h-1.5Z" fill="red"/>
+</svg>

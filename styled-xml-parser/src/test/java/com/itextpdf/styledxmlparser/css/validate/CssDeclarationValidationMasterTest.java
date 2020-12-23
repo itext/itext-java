@@ -282,4 +282,51 @@ public class CssDeclarationValidationMasterTest extends ExtendedITextTest {
         Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
                 new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE, "initial,url(img.jpg)")));
     }
+
+    @Test
+    public void overflowWrapTest() {
+        String[] overflowWrapOrWordWrap = new String[] {CommonCssConstants.OVERFLOW_WRAP, CommonCssConstants.WORDWRAP};
+        
+        for (String overflowWrap : overflowWrapOrWordWrap) {
+            Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                    new CssDeclaration(overflowWrap, "normal")));
+            Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                    new CssDeclaration(overflowWrap, "anywhere")));
+            Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                    new CssDeclaration(overflowWrap, "break-word")));
+            Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                    new CssDeclaration(overflowWrap, "inherit")));
+            Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                    new CssDeclaration(overflowWrap, "unset")));
+            Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                    new CssDeclaration(overflowWrap, "initial")));
+            Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                    new CssDeclaration(overflowWrap, "auto")));
+            Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                    new CssDeclaration(overflowWrap, "norm")));
+        }
+    }
+
+    @Test
+    public void wordWrapTest() {
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.WORD_BREAK, "normal")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.WORD_BREAK, "break-all")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.WORD_BREAK, "keep-all")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.WORD_BREAK, "break-word")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.WORD_BREAK, "inherit")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.WORD_BREAK, "unset")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.WORD_BREAK, "initial")));
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.WORD_BREAK, "auto")));
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.WORD_BREAK, "norm")));
+
+    }
 }

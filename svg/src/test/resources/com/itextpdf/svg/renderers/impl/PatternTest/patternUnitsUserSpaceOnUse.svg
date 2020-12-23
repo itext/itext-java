@@ -1,0 +1,11 @@
+<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <pattern id="star" viewBox="0 0 10 10" patternUnits="userSpaceOnUse" width="10" height="10">
+      <image xlink:href="image.png" width="10" height="10"/>
+    </pattern>
+  </defs>
+  <rect x='10' y='10' width='80' height='80' stroke="green" fill ="url(#star)"/>
+  <rect x='120' y='20' width='60' height='60' stroke="url(#star)" stroke-width="10" fill ="green"/>
+  
+</svg>

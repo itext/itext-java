@@ -48,14 +48,11 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
-import com.itextpdf.styledxmlparser.css.CommonCssConstants;
-import com.itextpdf.styledxmlparser.css.resolve.CssDefaults;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
+import com.itextpdf.svg.css.SvgCssContext;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
-import com.itextpdf.svg.renderers.impl.AbstractSvgNodeRenderer;
 
 import java.util.Deque;
 import java.util.HashMap;
@@ -73,14 +70,14 @@ public class SvgDrawContext {
     private final Deque<PdfCanvas> canvases = new LinkedList<>();
     private final Deque<Rectangle> viewports = new LinkedList<>();
     private final Stack<String> useIds = new Stack<>();
-    private ResourceResolver resourceResolver;
-    private FontProvider fontProvider;
+    private final Stack<String> patternIds = new Stack<>();
+    private final ResourceResolver resourceResolver;
+    private final FontProvider fontProvider;
     private FontSet tempFonts;
-    // value of root element font-size in points
-    private float remValue;
+    private SvgCssContext cssContext;
 
     private AffineTransform lastTextTransform = new AffineTransform();
-    private float textMove[] = new float[]{0.0f, 0.0f};
+    private float[] textMove = new float[]{0.0f, 0.0f};
 
     /**
      * Create an instance of the context that is used to store information when converting SVG.
@@ -89,17 +86,6 @@ public class SvgDrawContext {
      * @param fontProvider instance of {@link FontProvider}
      */
     public SvgDrawContext(ResourceResolver resourceResolver, FontProvider fontProvider) {
-        this (resourceResolver, fontProvider, null);
-    }
-
-    /**
-     * Create an instance of the context that is used to store information when converting SVG.
-     *
-     * @param resourceResolver instance of {@link ResourceResolver}
-     * @param fontProvider instance of {@link FontProvider}
-     * @param svgRootRenderer svg element that is root for current file
-     */
-    public SvgDrawContext(ResourceResolver resourceResolver, FontProvider fontProvider, ISvgNodeRenderer svgRootRenderer) {
         if (resourceResolver == null) {
             resourceResolver = new ResourceResolver(null);
         }
@@ -108,12 +94,20 @@ public class SvgDrawContext {
             fontProvider = new BasicFontProvider();
         }
         this.fontProvider = fontProvider;
-        if (svgRootRenderer instanceof AbstractSvgNodeRenderer) {
-            remValue =  ((AbstractSvgNodeRenderer) svgRootRenderer).getCurrentFontSize();
-        } else {
-            // default font-size value
-            remValue = CssUtils.parseAbsoluteFontSize(CssDefaults.getDefaultValue(CommonCssConstants.FONT_SIZE));
-        }
+        cssContext = new SvgCssContext();
+    }
+
+    /**
+     * Create an instance of the context that is used to store information when converting SVG.
+     *
+     * @param resourceResolver instance of {@link ResourceResolver}
+     * @param fontProvider instance of {@link FontProvider}
+     * @param svgRootRenderer svg element that is root for current file
+     * @deprecated will be removed in 7.2, use {@link #SvgDrawContext(ResourceResolver, FontProvider)} instead
+     */
+    @Deprecated
+    public SvgDrawContext(ResourceResolver resourceResolver, FontProvider fontProvider, ISvgNodeRenderer svgRootRenderer) {
+        this(resourceResolver, fontProvider);
     }
 
     /**
@@ -358,8 +352,52 @@ public class SvgDrawContext {
      * Return the value of root svg element font-size
      *
      * @return rem value
+     * @deprecated will be removed in 7.2, use {@link #getCssContext()} and
+     * {@link SvgCssContext#getRootFontSize()} instead
      */
+    @Deprecated
     public float getRemValue() {
-        return remValue;
+        return cssContext.getRootFontSize();
+    }
+
+    /**
+     * Gets the SVG CSS context.
+     *
+     * @return the SVG CSS context
+     */
+    public SvgCssContext getCssContext() {
+        return cssContext;
+    }
+
+    /**
+     * Sets the SVG CSS context.
+     *
+     * @param cssContext the SVG CSS context
+     */
+    public void setCssContext(SvgCssContext cssContext) {
+        this.cssContext = cssContext;
+    }
+
+    /**
+     * Add pattern id to stack. Check if the id is already in the stack.
+     * If it is, then return {@code false} and not add, if it is not - add and return {@code true}.
+     *
+     * @param patternId pattern id
+     * @return {@code true} if pattern id was not on the stack and was pushed; {@code false} if it is on the stack
+     */
+    public boolean pushPatternId(String patternId) {
+        if (this.patternIds.contains(patternId)) {
+            return false;
+        } else {
+            this.patternIds.push(patternId);
+            return true;
+        }
+    }
+
+    /**
+     * Pops the last template id from the stack.
+     */
+    public void popPatternId() {
+        this.patternIds.pop();
     }
 }

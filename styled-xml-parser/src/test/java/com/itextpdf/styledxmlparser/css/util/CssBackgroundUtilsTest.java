@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.util;
 
+import com.itextpdf.layout.property.BackgroundRepeat.BackgroundRepeatValue;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -31,6 +32,22 @@ import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class CssBackgroundUtilsTest extends ExtendedITextTest {
+    @Test
+    public void parseBackgroundRepeatTest() {
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, CssBackgroundUtils.parseBackgroundRepeat("repeat"));
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, CssBackgroundUtils.parseBackgroundRepeat("RePeAt"));
+
+        Assert.assertEquals(BackgroundRepeatValue.NO_REPEAT, CssBackgroundUtils.parseBackgroundRepeat("no-repeat"));
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, CssBackgroundUtils.parseBackgroundRepeat("no- repeat"));
+
+        Assert.assertEquals(BackgroundRepeatValue.ROUND, CssBackgroundUtils.parseBackgroundRepeat("round"));
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, CssBackgroundUtils.parseBackgroundRepeat("ro!und"));
+
+        Assert.assertEquals(BackgroundRepeatValue.SPACE, CssBackgroundUtils.parseBackgroundRepeat("space"));
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, CssBackgroundUtils.parseBackgroundRepeat(" space "));
+
+        Assert.assertEquals(BackgroundRepeatValue.REPEAT, CssBackgroundUtils.parseBackgroundRepeat("something"));
+    }
 
     @Test
     public void resolveBackgroundPropertyTypeTest() {

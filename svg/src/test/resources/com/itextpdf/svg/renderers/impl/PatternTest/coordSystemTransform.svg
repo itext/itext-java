@@ -1,0 +1,15 @@
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <pattern id="ptrn" patternUnits="userSpaceOnUse"
+                 width="6" height="6" patternContentUnits="userSpaceOnUse">
+            <rect x="0" y="0" width="6" height="6" fill="none" stroke="green"/>
+        </pattern>
+    </defs>
+
+    <rect width="50" height="50" x="50" y="0"
+          fill="url(#ptrn)" stroke-width="1" stroke="orange"/>
+
+    <rect width="50" height="50" transform="translate(50, 50) rotate(-10 50 100) scale(1 0.5) skewX(40)"
+          fill="url(#ptrn)" stroke-width="1" stroke="blue" />
+</svg>

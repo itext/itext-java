@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 150 200" font-size="60">
+
+	<defs font-size="20">
+		<marker id="myMarker" markerWidth="20" markerHeight="20" refX="2em" refY="10" orient="auto">
+			<circle cx="10" cy="10" r="10"/>
+		</marker>
+	</defs>
+
+	<path d="M10,10 L10,150" style="stroke: #6666ff; stroke-width: 1px; fill: none; marker-end: url(#myMarker);"/>
+
+	<svg font-size="30">
+		<path d="M50,10 L50,150" style="stroke: #6666ff; stroke-width: 1px; fill: none; marker-end: url(#myMarker);"/>
+	</svg>
+
+</svg>

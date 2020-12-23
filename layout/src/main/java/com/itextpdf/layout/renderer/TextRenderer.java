@@ -77,16 +77,17 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.FontKerning;
 import com.itextpdf.layout.property.OverflowPropertyValue;
+import com.itextpdf.layout.property.OverflowWrapPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.RenderingMode;
 import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.splitting.BreakAllSplitCharacters;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
@@ -107,6 +108,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     protected static final float TEXT_SPACE_COEFF = FontProgram.UNITS_NORMALIZATION;
     static final float TYPO_ASCENDER_SCALE_COEFF = 1.2f;
+    static final int UNDEFINED_FIRST_CHAR_TO_FORCE_OVERFLOW = Integer.MAX_VALUE;
+
     private static final float ITALIC_ANGLE = 0.21256f;
     private static final float BOLD_SIMULATION_STROKE_COEFF = 1 / 30f;
 
@@ -131,8 +134,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     // Must remain ArrayList: once an instance is formed and filled prior to layouting on split of this TextRenderer,
     // it's used to get element by index or passed to List.subList()
     private List<Integer> specialScriptsWordBreakPoints;
-
     private int specialScriptFirstNotFittingIndex = -1;
+    private int indexOfFirstCharacterToBeForcedToOverflow = UNDEFINED_FIRST_CHAR_TO_FORCE_OVERFLOW;
 
     /**
      * Creates a TextRenderer from its corresponding layout object.
@@ -179,6 +182,13 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         OverflowPropertyValue overflowX = this.parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
 
+        OverflowWrapPropertyValue overflowWrap = this.<OverflowWrapPropertyValue>getProperty(Property.OVERFLOW_WRAP);
+        boolean overflowWrapNotNormal = overflowWrap == OverflowWrapPropertyValue.ANYWHERE
+                || overflowWrap == OverflowWrapPropertyValue.BREAK_WORD;
+        if (overflowWrapNotNormal) {
+            overflowX = OverflowPropertyValue.FIT;
+        }
+
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
 
@@ -202,7 +212,18 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             widthHandler = new MaxSumWidthHandler(countedMinMaxWidth);
         }
 
+        float leftMinWidth = -1f;
+        float[] leftMarginBorderPadding = {margins[LEFT_SIDE].getValue(),
+                borders[LEFT_SIDE] == null ? 0.0f : borders[LEFT_SIDE].getWidth(),
+                paddings[LEFT_SIDE].getValue()};
+        float rightMinWidth = -1f;
+        float[] rightMarginBorderPadding = {margins[RIGHT_SIDE].getValue(),
+                borders[RIGHT_SIDE] == null ? 0.0f : borders[RIGHT_SIDE].getWidth(),
+                paddings[RIGHT_SIDE].getValue()};
+
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
+
+        TargetCounterHandler.addPageByID(this);
 
         boolean anythingPlaced = false;
 
@@ -263,6 +284,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         // true when \r\n are found
         boolean crlf = false;
 
+        boolean containsPossibleBreak = false;
+
         HyphenationConfig hyphenationConfig = this.<HyphenationConfig>getProperty(Property.HYPHENATION);
 
         // For example, if a first character is a RTL mark (U+200F), and the second is a newline, we need to break anyway
@@ -295,6 +318,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
             for (int ind = currentTextPos; ind < text.end; ind++) {
                 if (TextUtil.isNewLine(text.get(ind))) {
+                    containsPossibleBreak = true;
                     wordBreakGlyphAtLineEnding = text.get(ind);
                     isSplitForcedByNewLine = true;
                     firstCharacterWhichExceedsAllowedWidth = ind + 1;
@@ -321,11 +345,21 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
                 Glyph currentGlyph = text.get(ind);
                 if (noPrint(currentGlyph)) {
-                    if (ind + 1 == text.end ||
-                            splitCharacters.isSplitCharacter(text, ind + 1) &&
-                                    TextUtil.isSpaceOrWhitespace(text.get(ind + 1))) {
-                        nonBreakablePartEnd = ind;
-                        break;
+                    boolean nextGlyphIsSpaceOrWhiteSpace = ind + 1 < text.end
+                            && (splitCharacters.isSplitCharacter(text, ind + 1)
+                            && TextUtil.isSpaceOrWhitespace(text.get(ind + 1)));
+                    if (nextGlyphIsSpaceOrWhiteSpace && firstCharacterWhichExceedsAllowedWidth == -1) {
+                        containsPossibleBreak = true;
+                    }
+                    if (ind + 1 == text.end || nextGlyphIsSpaceOrWhiteSpace
+                            || (ind + 1 >= indexOfFirstCharacterToBeForcedToOverflow)) {
+                        if (ind + 1 >= indexOfFirstCharacterToBeForcedToOverflow) {
+                            firstCharacterWhichExceedsAllowedWidth = currentTextPos;
+                            break;
+                        } else {
+                            nonBreakablePartEnd = ind;
+                            break;
+                        }
                     }
                     continue;
                 }
@@ -345,9 +379,14 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         && firstCharacterWhichExceedsAllowedWidth == -1
                         || ind == specialScriptFirstNotFittingIndex) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
-                    if (TextUtil.isSpaceOrWhitespace(text.get(ind))) {
-                        wordBreakGlyphAtLineEnding = currentGlyph;
+                    boolean spaceOrWhitespace = TextUtil.isSpaceOrWhitespace(text.get(ind));
+                    OverflowPropertyValue parentOverflowX = parent.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
+                    if (spaceOrWhitespace || overflowWrapNotNormal && !isOverflowFit(parentOverflowX)) {
+                        if (spaceOrWhitespace) {
+                            wordBreakGlyphAtLineEnding = currentGlyph;
+                        }
                         if (ind == firstPrintPos) {
+                            containsPossibleBreak = true;
                             forcePartialSplitOnFirstChar = true;
                             firstCharacterWhichExceedsAllowedWidth = ind + 1;
                             break;
@@ -368,7 +407,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         nonBreakingHyphenRelatedChunkWidth = 0;
                     }
                 }
-                if (firstCharacterWhichExceedsAllowedWidth == -1) {
+                if (firstCharacterWhichExceedsAllowedWidth == -1 || !isOverflowFit(overflowX)) {
                     nonBreakablePartWidthWhichDoesNotExceedAllowedWidth += glyphWidth + xAdvance;
                 }
                 nonBreakablePartFullWidth += glyphWidth + xAdvance;
@@ -389,12 +428,36 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     }
                 }
 
+                if (OverflowWrapPropertyValue.ANYWHERE == overflowWrap) {
+                    float childMinWidth = (float) ((double) glyphWidth + (double) xAdvance + (double) italicSkewAddition
+                            + (double) boldSimulationAddition);
+                    if (leftMinWidth == -1f) {
+                        leftMinWidth = childMinWidth;
+                    } else {
+                        rightMinWidth = childMinWidth;
+                    }
+                    widthHandler.updateMinChildWidth(childMinWidth);
+                    widthHandler.updateMaxChildWidth((float) ((double) glyphWidth + (double) xAdvance));
+                }
+
                 boolean endOfWordBelongingToSpecialScripts = textContainsSpecialScriptGlyphs(true)
                         && findPossibleBreaksSplitPosition(specialScriptsWordBreakPoints,
                         ind + 1, true) >= 0;
-                if (ind + 1 == text.end || splitCharacters.isSplitCharacter(text, ind) ||
-                        splitCharacters.isSplitCharacter(text, ind + 1) &&
-                                TextUtil.isSpaceOrWhitespace(text.get(ind + 1)) || endOfWordBelongingToSpecialScripts) {
+                boolean endOfNonBreakablePartCausedBySplitCharacter = splitCharacters.isSplitCharacter(text, ind)
+                        || (ind + 1 < text.end
+                        && (splitCharacters.isSplitCharacter(text, ind + 1)
+                        && TextUtil.isSpaceOrWhitespace(text.get(ind + 1))));
+                if (endOfNonBreakablePartCausedBySplitCharacter && firstCharacterWhichExceedsAllowedWidth == -1) {
+                    containsPossibleBreak = true;
+                }
+                if (ind + 1 == text.end
+                        || endOfNonBreakablePartCausedBySplitCharacter
+                        || endOfWordBelongingToSpecialScripts
+                        || (ind + 1 >= indexOfFirstCharacterToBeForcedToOverflow)) {
+                    if (ind + 1 >= indexOfFirstCharacterToBeForcedToOverflow
+                            && !endOfNonBreakablePartCausedBySplitCharacter) {
+                        firstCharacterWhichExceedsAllowedWidth = currentTextPos;
+                    }
                     nonBreakablePartEnd = ind;
                     break;
                 }
@@ -411,8 +474,20 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
                 currentTextPos = nonBreakablePartEnd + 1;
                 currentLineWidth += nonBreakablePartFullWidth;
-                widthHandler.updateMinChildWidth(nonBreakablePartWidthWhichDoesNotExceedAllowedWidth + italicSkewAddition + boldSimulationAddition);
-                widthHandler.updateMaxChildWidth(nonBreakablePartWidthWhichDoesNotExceedAllowedWidth + italicSkewAddition + boldSimulationAddition);
+                if (OverflowWrapPropertyValue.ANYWHERE == overflowWrap) {
+                    widthHandler.updateMaxChildWidth((float) ((double) italicSkewAddition
+                            + (double) boldSimulationAddition));
+                } else {
+                    float childMinWidth = (float) ((double) nonBreakablePartWidthWhichDoesNotExceedAllowedWidth
+                            + (double) italicSkewAddition + (double) boldSimulationAddition);
+                    if (leftMinWidth == -1f) {
+                        leftMinWidth = childMinWidth;
+                    } else {
+                        rightMinWidth = childMinWidth;
+                    }
+                    widthHandler.updateMinChildWidth(childMinWidth);
+                    widthHandler.updateMaxChildWidth(childMinWidth);
+                }
                 anythingPlaced = true;
             } else {
                 // check if line height exceeds the allowed height
@@ -427,14 +502,20 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth);
                     // the line does not fit because of height - full overflow
                     TextRenderer[] splitResult = split(initialLineTextPos);
-                    return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1], this);
+
+                    boolean[] startsEnds = isStartsWithSplitCharWhiteSpaceAndEndsWithSplitChar(splitCharacters);
+                    return new TextLayoutResult(
+                            LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1], this)
+                            .setContainsPossibleBreak(containsPossibleBreak)
+                            .setStartsWithSplitCharacterWhiteSpace(startsEnds[0])
+                            .setEndsWithSplitCharacter(startsEnds[1]);
                 } else {
                     // cannot fit a word as a whole
 
                     boolean wordSplit = false;
                     boolean hyphenationApplied = false;
 
-                    if (hyphenationConfig != null) {
+                    if (hyphenationConfig != null && indexOfFirstCharacterToBeForcedToOverflow == UNDEFINED_FIRST_CHAR_TO_FORCE_OVERFLOW) {
                         if (-1 == nonBreakingHyphenRelatedChunkStart) {
                             int[] wordBounds = getWordBoundsForHyphenation(text, currentTextPos, text.end, Math.max(currentTextPos, firstCharacterWhichExceedsAllowedWidth - 1));
                             if (wordBounds != null) {
@@ -464,9 +545,19 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                                             currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
 
                                             currentLineWidth += currentHyphenationChoicePreTextWidth;
-                                            widthHandler.updateMinChildWidth(currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition);
-                                            widthHandler.updateMaxChildWidth(currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition);
-
+                                            if (OverflowWrapPropertyValue.ANYWHERE == overflowWrap) {
+                                                widthHandler.updateMaxChildWidth((float) ((double) italicSkewAddition
+                                                        + (double) boldSimulationAddition));
+                                            } else {
+                                                widthHandler.updateMinChildWidth(
+                                                        (float) ((double) currentHyphenationChoicePreTextWidth
+                                                                + (double) italicSkewAddition
+                                                                + (double) boldSimulationAddition));
+                                                widthHandler.updateMaxChildWidth(
+                                                        (float) ((double) currentHyphenationChoicePreTextWidth
+                                                                + (double) italicSkewAddition
+                                                                + (double) boldSimulationAddition));
+                                            }
                                             currentTextPos = wordBounds[0] + pre.length();
                                             break;
                                         }
@@ -487,7 +578,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     }
 
                     boolean specialScriptWordSplit = textContainsSpecialScriptGlyphs(true)
-                            && !isSplitForcedByNewLine;
+                            && !isSplitForcedByNewLine && isOverflowFit(overflowX);
                     if ((nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied)
                             || forcePartialSplitOnFirstChar
                             || -1 != nonBreakingHyphenRelatedChunkStart
@@ -508,8 +599,21 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                             currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
                             currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
                             currentLineWidth += nonBreakablePartWidthWhichDoesNotExceedAllowedWidth;
-                            widthHandler.updateMinChildWidth(nonBreakablePartWidthWhichDoesNotExceedAllowedWidth + italicSkewAddition + boldSimulationAddition);
-                            widthHandler.updateMaxChildWidth(nonBreakablePartWidthWhichDoesNotExceedAllowedWidth + italicSkewAddition + boldSimulationAddition);
+                            if (OverflowWrapPropertyValue.ANYWHERE == overflowWrap) {
+                                widthHandler.updateMaxChildWidth((float) ((double) italicSkewAddition
+                                        + (double) boldSimulationAddition));
+                            } else {
+                                float childMinWidth =
+                                        (float) ((double) nonBreakablePartWidthWhichDoesNotExceedAllowedWidth
+                                                + (double) italicSkewAddition + (double) boldSimulationAddition);
+                                if (leftMinWidth == -1f) {
+                                    leftMinWidth = childMinWidth;
+                                } else {
+                                    rightMinWidth = childMinWidth;
+                                }
+                                widthHandler.updateMinChildWidth(childMinWidth);
+                                widthHandler.updateMaxChildWidth(childMinWidth);
+                            }
                         } else {
                             // process empty line (e.g. '\n')
                             currentLineAscender = ascender;
@@ -519,9 +623,17 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         }
                     }
                     if (line.end <= line.start) {
-                        return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
+                        boolean[] startsEnds = isStartsWithSplitCharWhiteSpaceAndEndsWithSplitChar(splitCharacters);
+                        return new TextLayoutResult(
+                                LayoutResult.NOTHING, occupiedArea, null, this, this)
+                                .setContainsPossibleBreak(containsPossibleBreak)
+                                .setStartsWithSplitCharacterWhiteSpace(startsEnds[0])
+                                .setEndsWithSplitCharacter(startsEnds[1]);
                     } else {
-                        result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, null, null).setWordHasBeenSplit(wordSplit);
+                        result = new TextLayoutResult(
+                                LayoutResult.PARTIAL, occupiedArea, null, null)
+                                .setWordHasBeenSplit(wordSplit)
+                                .setContainsPossibleBreak(containsPossibleBreak);
                     }
 
                     break;
@@ -535,7 +647,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 applyPaddings(occupiedArea.getBBox(), paddings, true);
                 applyBorderBox(occupiedArea.getBBox(), borders, true);
                 applyMargins(occupiedArea.getBBox(), margins, true);
-                return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
+                boolean[] startsEnds = isStartsWithSplitCharWhiteSpaceAndEndsWithSplitChar(splitCharacters);
+                return new TextLayoutResult(
+                        LayoutResult.NOTHING, occupiedArea, null, this, this)
+                        .setContainsPossibleBreak(containsPossibleBreak)
+                        .setStartsWithSplitCharacterWhiteSpace(startsEnds[0])
+                        .setEndsWithSplitCharacter(startsEnds[1]);
             } else {
                 isPlacingForcedWhileNothing = true;
             }
@@ -558,7 +675,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         increaseYLineOffset(paddings, borders, margins);
 
         if (result == null) {
-            result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null, isPlacingForcedWhileNothing ? this : null);
+            result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null,
+                    isPlacingForcedWhileNothing ? this : null)
+                    .setContainsPossibleBreak(containsPossibleBreak);
         } else {
             TextRenderer[] split;
             if (ignoreNewLineSymbol || crlf) {
@@ -593,6 +712,26 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
 
         result.setMinMaxWidth(countedMinMaxWidth);
+        if (!noSoftWrap) {
+            for (float dimension : leftMarginBorderPadding) {
+                leftMinWidth += dimension;
+            }
+            for (float dimension : rightMarginBorderPadding) {
+                if (rightMinWidth < 0) {
+                    leftMinWidth += dimension;
+                } else {
+                    rightMinWidth += dimension;
+                }
+            }
+            result.setLeftMinWidth(leftMinWidth);
+            result.setRightMinWidth(rightMinWidth);
+        } else {
+            result.setLeftMinWidth(countedMinMaxWidth.getMinWidth());
+            result.setRightMinWidth(-1f);
+        }
+        boolean[] startsEnds = isStartsWithSplitCharWhiteSpaceAndEndsWithSplitChar(splitCharacters);
+        result.setStartsWithSplitCharacterWhiteSpace(startsEnds[0])
+              .setEndsWithSplitCharacter(startsEnds[1]);
         return result;
     }
 
@@ -1107,7 +1246,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
         return new float[] {ascender, descender};
     }
-    
+
     List<int[]> getReversedRanges() {
         return reversedRanges;
     }
@@ -1166,6 +1305,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             return false;
         }
 
+        ISplitCharacters splitCharacters = this.<ISplitCharacters>getProperty(Property.SPLIT_CHARACTERS);
+
+        if (splitCharacters instanceof BreakAllSplitCharacters) {
+            specialScriptsWordBreakPoints = new ArrayList<>();
+        }
+
         for (int i = text.start; i < text.end; i++) {
             int unicode = text.get(i).getUnicode();
             if (unicode > -1) {
@@ -1201,6 +1346,14 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     void setSpecialScriptFirstNotFittingIndex(int lastFittingIndex) {
         this.specialScriptFirstNotFittingIndex = lastFittingIndex;
+    }
+
+    int getSpecialScriptFirstNotFittingIndex() {
+        return specialScriptFirstNotFittingIndex;
+    }
+
+    void setIndexOfFirstCharacterToBeForcedToOverflow(int indexOfFirstCharacterToBeForcedToOverflow) {
+        this.indexOfFirstCharacterToBeForcedToOverflow = indexOfFirstCharacterToBeForcedToOverflow;
     }
 
     @Override
@@ -1438,6 +1591,40 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         shift = numberOfElementsLessThanOrEqual(removedIds, range[1]);
         range[1] -= shift;
     }
+    // if amongPresentOnly is true,
+    // returns the index of lists's element which equals textStartBasedInitialOverflowTextPos
+    // or -1 if textStartBasedInitialOverflowTextPos wasn't found in the list.
+    // if amongPresentOnly is false, returns the index of list's element
+    // that is not greater than textStartBasedInitialOverflowTextPos
+    // if there's no such element in the list, -1 is returned
+    static int findPossibleBreaksSplitPosition(List<Integer> list, int textStartBasedInitialOverflowTextPos,
+            boolean amongPresentOnly) {
+        int low = 0;
+        int high = list.size() - 1;
+
+        while (low <= high) {
+            int middle = (low + high) >>> 1;
+            if (list.get(middle).compareTo(textStartBasedInitialOverflowTextPos) < 0) {
+                low = middle + 1;
+            } else if (list.get(middle).compareTo(textStartBasedInitialOverflowTextPos) > 0) {
+                high = middle - 1;
+            } else {
+                return middle;
+            }
+        }
+        if (!amongPresentOnly && low > 0) {
+            return low - 1;
+        }
+        return -1;
+    }
+
+    static boolean codePointIsOfSpecialScript(int codePoint) {
+        Character.UnicodeScript glyphScript = Character.UnicodeScript.of(codePoint);
+        return Character.UnicodeScript.THAI == glyphScript
+                || Character.UnicodeScript.KHMER == glyphScript
+                || Character.UnicodeScript.LAO == glyphScript
+                || Character.UnicodeScript.MYANMAR == glyphScript;
+    }
 
     @Override
     PdfFont resolveFirstPdfFont(String[] font, FontProvider provider, FontCharacteristics fc, FontSet additionalFonts) {
@@ -1457,34 +1644,33 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         return super.resolveFirstPdfFont(font, provider, fc, additionalFonts);
     }
 
-    private static int numberOfElementsLessThan(ArrayList<Integer> numbers, int n) {
-        int x = Collections.binarySearch(numbers, n);
-        if (x >= 0) {
-            return x;
+    /**
+     * Identifies two properties for the layouted text renderer text: start and end break possibilities.
+     * First - if it ends with split character, second - if it starts with the split character
+     * which is at the same time is a whitespace character. These properties will later be used for identifying
+     * if we can consider this and previous/next text renderers chunks to be a part of a single word spanning across
+     * the text renderers boundaries. In the start of the text renderer we only care about split characters, which are
+     * white spaces, because only such will allow soft-breaks before them: normally split characters allow breaks only
+     * after them.
+     *
+     * @param splitCharacters current renderer {@link ISplitCharacters} property value
+     * @return a boolean array of two elements, where first element identifies start break possibility, and second - end
+     *         break possibility.
+     */
+    boolean[] isStartsWithSplitCharWhiteSpaceAndEndsWithSplitChar(ISplitCharacters splitCharacters) {
+        boolean startsWithBreak = line.start < line.end
+                && splitCharacters.isSplitCharacter(text, line.start)
+                && TextUtil.isSpaceOrWhitespace(text.get(line.start));
+        boolean endsWithBreak = line.start < line.end
+                && splitCharacters.isSplitCharacter(text, line.end - 1);
+        if (specialScriptsWordBreakPoints == null || specialScriptsWordBreakPoints.isEmpty()) {
+            return new boolean[]{startsWithBreak, endsWithBreak};
         } else {
-            return -x - 1;
+            if (!endsWithBreak) {
+                endsWithBreak = specialScriptsWordBreakPoints.contains(line.end);
+            }
+            return new boolean[]{startsWithBreak, endsWithBreak};
         }
-    }
-
-    private static int numberOfElementsLessThanOrEqual(ArrayList<Integer> numbers, int n) {
-        int x = Collections.binarySearch(numbers, n);
-        if (x >= 0) {
-            return x + 1;
-        } else {
-            return -x - 1;
-        }
-    }
-
-    private static boolean noPrint(Glyph g) {
-        if (!g.hasValidUnicode()) {
-            return false;
-        }
-        int c = g.getUnicode();
-        return TextUtil.isNonPrintable(c);
-    }
-
-    private static boolean glyphBelongsToNonBreakingHyphenRelatedChunk(GlyphLine text, int ind) {
-        return TextUtil.isNonBreakingHyphen(text.get(ind)) || (ind + 1 < text.end && TextUtil.isNonBreakingHyphen(text.get(ind + 1))) || ind - 1 >= text.start && TextUtil.isNonBreakingHyphen(text.get(ind - 1));
     }
 
     private float getCharWidth(Glyph g, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {
@@ -1574,39 +1760,35 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             savedWordBreakAtLineEnding = new GlyphLine(Collections.<Glyph>singletonList(wordBreak));
         }
     }
-    // if amongPresentOnly is true,
-    // returns the index of lists's element which equals textStartBasedInitialOverflowTextPos
-    // or -1 if textStartBasedInitialOverflowTextPos wasn't found in the list.
-    // if amongPresentOnly is false, returns the index of list's element
-    // that is not greater than textStartBasedInitialOverflowTextPos
-    // if there's no such element in the list, -1 is returned
-    static int findPossibleBreaksSplitPosition(List<Integer> list, int textStartBasedInitialOverflowTextPos,
-                                               boolean amongPresentOnly) {
-        int low = 0;
-        int high = list.size() - 1;
 
-        while (low <= high) {
-            int middle = (low + high) >>> 1;
-            if (list.get(middle).compareTo(textStartBasedInitialOverflowTextPos) < 0) {
-                low = middle + 1;
-            } else if (list.get(middle).compareTo(textStartBasedInitialOverflowTextPos) > 0) {
-                high = middle - 1;
-            } else {
-                return middle;
-            }
+    private static int numberOfElementsLessThan(ArrayList<Integer> numbers, int n) {
+        int x = Collections.binarySearch(numbers, n);
+        if (x >= 0) {
+            return x;
+        } else {
+            return -x - 1;
         }
-        if (!amongPresentOnly && low > 0) {
-            return low - 1;
-        }
-        return -1;
     }
 
-    static boolean codePointIsOfSpecialScript(int codePoint) {
-        Character.UnicodeScript glyphScript = Character.UnicodeScript.of(codePoint);
-        return Character.UnicodeScript.THAI == glyphScript
-                || Character.UnicodeScript.KHMER == glyphScript
-                || Character.UnicodeScript.LAO == glyphScript
-                || Character.UnicodeScript.MYANMAR == glyphScript;
+    private static int numberOfElementsLessThanOrEqual(ArrayList<Integer> numbers, int n) {
+        int x = Collections.binarySearch(numbers, n);
+        if (x >= 0) {
+            return x + 1;
+        } else {
+            return -x - 1;
+        }
+    }
+
+    private static boolean noPrint(Glyph g) {
+        if (!g.hasValidUnicode()) {
+            return false;
+        }
+        int c = g.getUnicode();
+        return TextUtil.isNonPrintable(c);
+    }
+
+    private static boolean glyphBelongsToNonBreakingHyphenRelatedChunk(GlyphLine text, int ind) {
+        return TextUtil.isNonBreakingHyphen(text.get(ind)) || (ind + 1 < text.end && TextUtil.isNonBreakingHyphen(text.get(ind + 1))) || ind - 1 >= text.start && TextUtil.isNonBreakingHyphen(text.get(ind - 1));
     }
 
     private static class ReversedCharsIterator implements Iterator<GlyphLine.GlyphLinePart> {

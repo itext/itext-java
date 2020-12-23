@@ -1,0 +1,9 @@
+<svg x="0" y="0" width="700" height="400" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <text x="100" y="300" font-size="24">
+        Text with font-size="24"
+		<tspan x="200" y="200">
+		Tspan with not set font-size;
+		<tspan>"nested" font-size</tspan>
+		</tspan>
+    </text>
+</svg>

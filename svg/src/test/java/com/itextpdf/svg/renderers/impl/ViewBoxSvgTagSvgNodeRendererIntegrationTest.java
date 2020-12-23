@@ -55,7 +55,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
-public class ViewBoxSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTest{
+public class ViewBoxSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
@@ -134,5 +134,11 @@ public class ViewBoxSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationT
     //TODO (DEVSIX-3493) change cmp files after fix
     public void viewBoxXYValuesPreserveAspectRatioXMaxYMaxSliceValues() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"viewBoxXYValuesPreserveAspectRatioXMaxYMaxSliceValues");
+    }
+
+    @Test
+    //TODO DEVSIX-4861 change cmp after fix
+    public void preserveAspectRationAllOptionsTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"preserveAspectRationAllOptions");
     }
 }

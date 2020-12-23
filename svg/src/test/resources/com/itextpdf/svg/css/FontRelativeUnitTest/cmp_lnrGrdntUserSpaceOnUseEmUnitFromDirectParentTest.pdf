@@ -1,0 +1,142 @@
+%PDF-1.7
+%‚„œ”
+5 0 obj
+<</Length 27>>stream
+q
+1 0 0 1 0 0 cm
+/Fm1 Do
+Q
+
+endstream
+endobj
+4 0 obj
+<</Contents 5 0 R/MediaBox[0 0 525 300]/Parent 2 0 R/Resources<</XObject<</Fm1 7 0 R>>>>/TrimBox[0 0 525 300]/Type/Page>>
+endobj
+1 0 obj
+<</Pages 2 0 R/Type/Catalog>>
+endobj
+3 0 obj
+<</CreationDate(D:20201007145037+03'00')/ModDate(D:20201007145037+03'00')/Producer(iTextÆ 7.1.13-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
+endobj
+6 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+2 0 obj
+<</Count 1/Kids[4 0 R]/Type/Pages>>
+endobj
+7 0 obj
+<</BBox[0 0 525 300]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+1 0 0 -1 0 300 cm
+% svg root
+q
+1 0 0 1 0 0 cm
+/Fm1 Do
+Q
+
+endstream
+endobj
+8 0 obj
+<</BBox[0 0 525 300]/Length 244/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
+0 0 525 300 re
+W
+n
+q
+0 0 0 RG
+0.75 w
+% rect
+7.5 30 146.25 26.25 re
+S
+Q
+q
+q
+1 0 0 1 0 0 cm
+/Fm1 Do
+Q
+Q
+q
+0 0 0 rg
+BT
+1 0 0 -1 7.5 75 Tm
+0 Tr
+/F1 15 Tf
+q
+0 0 Td
+(The test passes when the gradient starts at character "m" of the text)Tj
+n
+Q
+ET
+f
+Q
+
+endstream
+endobj
+9 0 obj
+<</BBox[0 0 525 300]/Length 117/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
+0 0 525 300 re
+W
+n
+q
+/Pattern cs
+
+/P1 scn
+BT
+1 0 0 -1 7.5 52.5 Tm
+0 Tr
+/F1 37.5 Tf
+q
+0 0 Td
+(some text)Tj
+n
+Q
+ET
+f
+Q
+
+endstream
+endobj
+10 0 obj
+<</PatternType 2/Shading 11 0 R/Type/Pattern>>
+endobj
+11 0 obj
+<</ColorSpace/DeviceRGB/Coords[7.5 0 152.29 0]/Domain[-1.6 6.12]/Function 12 0 R/ShadingType 2>>
+endobj
+12 0 obj
+<</Bounds[0 0.2 1]/Domain[-1.6 6.12]/Encode[0 1 0 1 0 1 0 1]/FunctionType 3/Functions[13 0 R 14 0 R 15 0 R 16 0 R]>>
+endobj
+13 0 obj
+<</C0[1 0 0]/C1[1 0 0]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+14 0 obj
+<</C0[1 0 0]/C1[0 0.50196 0]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+15 0 obj
+<</C0[0 0.50196 0]/C1[0 0 1]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+16 0 obj
+<</C0[0 0 1]/C1[0 0 1]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+xref
+0 17
+0000000000 65535 f 
+0000000226 00000 n 
+0000000528 00000 n 
+0000000271 00000 n 
+0000000089 00000 n 
+0000000015 00000 n 
+0000000438 00000 n 
+0000000579 00000 n 
+0000000762 00000 n 
+0000001152 00000 n 
+0000001415 00000 n 
+0000001478 00000 n 
+0000001591 00000 n 
+0000001724 00000 n 
+0000001796 00000 n 
+0000001874 00000 n 
+0000001952 00000 n 
+trailer
+<</ID [<2df8ead66e4196ab4d434f5061628888><2df8ead66e4196ab4d434f5061628888>]/Info 3 0 R/Root 1 0 R/Size 17>>
+%iText-7.1.13-SNAPSHOT
+startxref
+2024
+%%EOF

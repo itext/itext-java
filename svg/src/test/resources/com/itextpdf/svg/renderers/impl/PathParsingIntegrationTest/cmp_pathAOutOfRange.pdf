@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191219150356+03'00')/ModDate(D:20191219150356+03'00')/Producer(iText® 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20201209101704+03'00')/ModDate(D:20201209101704+03'00')/Producer(iText® 7.1.14-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -42,7 +42,7 @@ n
 q
 q
 1 0 0 RG
-0.75 w
+2.25 w
 % path
 37.5 225 m
 37.25 252.21 79.01 282.66 130.79 293.01 c
@@ -52,7 +52,7 @@ S
 Q
 q
 1 0.64706 0 RG
-0.75 w
+2.25 w
 % path
 37.5 225 m
 62.83 202.3 104.18 184.89 145.97 179.34 c
@@ -63,7 +63,7 @@ S
 Q
 q
 1 1 0 RG
-0.75 w
+2.25 w
 % path
 37.5 225 m
 21.03 186.56 49.66 163.95 101.44 174.52 c
@@ -73,7 +73,7 @@ S
 Q
 q
 0 0.50196 0 RG
-0.75 w
+2.25 w
 % path
 37.5 225 m
 37.91 197.77 -3.81 167.22 -55.69 156.76 c
@@ -83,7 +83,7 @@ S
 Q
 q
 0.67843 0.84706 0.90196 RG
-0.75 w
+2.25 w
 % path
 37.5 225 m
 37.83 207.38 56.06 194.74 85.31 191.82 c
@@ -94,7 +94,7 @@ S
 Q
 q
 0 0 1 RG
-0.75 w
+2.25 w
 % path
 37.5 225 m
 37.75 197.79 -4.01 167.34 -55.79 156.99 c
@@ -104,7 +104,7 @@ S
 Q
 q
 0 0 0.5451 RG
-0.75 w
+2.25 w
 % path
 37.5 225 m
 37.34 242.6 19.32 255.29 -9.77 258.29 c
@@ -240,8 +240,8 @@ xref
 0000000501 00000 n 
 0000000740 00000 n 
 trailer
-<</ID [<afd02d2f653513824afe73e40c89d410><afd02d2f653513824afe73e40c89d410>]/Info 3 0 R/Root 1 0 R/Size 8>>
-%iText-7.1.10-SNAPSHOT
+<</ID [<bcea4890063b1f7bb1785ef9141e4333><bcea4890063b1f7bb1785ef9141e4333>]/Info 3 0 R/Root 1 0 R/Size 8>>
+%iText-7.1.14-SNAPSHOT
 startxref
 2575
 %%EOF

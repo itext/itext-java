@@ -43,6 +43,7 @@
 package com.itextpdf.kernel.pdf.tagging;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -71,7 +72,7 @@ public final class StandardNamespaces {
     public static final String PDF_2_0 = "http://iso.org/pdf2/ssn";
 
     static {
-        STD_STRUCT_NAMESPACE_1_7_TYPES = new HashSet<>(Arrays.asList(
+        STD_STRUCT_NAMESPACE_1_7_TYPES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
                 StandardRoles.DOCUMENT,
                 StandardRoles.PART,
                 StandardRoles.DIV,
@@ -122,10 +123,10 @@ public final class StandardNamespaces {
                 StandardRoles.REFERENCE,
                 StandardRoles.BIBENTRY,
                 StandardRoles.CODE
-        ));
+        )));
 
 
-        STD_STRUCT_NAMESPACE_2_0_TYPES = new HashSet<>(Arrays.asList(
+        STD_STRUCT_NAMESPACE_2_0_TYPES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
                 StandardRoles.DOCUMENT,
                 StandardRoles.DOCUMENTFRAGMENT,
                 StandardRoles.PART,
@@ -166,7 +167,7 @@ public final class StandardNamespaces {
                 StandardRoles.FORMULA,
                 StandardRoles.ARTIFACT
 
-        ));
+        )));
     }
 
     /**

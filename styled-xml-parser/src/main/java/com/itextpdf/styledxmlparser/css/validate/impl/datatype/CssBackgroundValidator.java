@@ -24,6 +24,7 @@ package com.itextpdf.styledxmlparser.css.validate.impl.datatype;
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.util.CssBackgroundUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.css.validate.ICssDataTypeValidator;
 
@@ -56,7 +57,7 @@ public class CssBackgroundValidator implements ICssDataTypeValidator {
         if (objectString == null) {
             return false;
         }
-        if (CssUtils.isInitialOrInheritOrUnset(objectString)) {
+        if (CssTypesValidationUtils.isInitialOrInheritOrUnset(objectString)) {
             return true;
         }
         // Actually it's not shorthand but extractShorthandProperties method works exactly as needed in this case
@@ -78,11 +79,9 @@ public class CssBackgroundValidator implements ICssDataTypeValidator {
         if (isPropertyValueCorrespondsPropertyType(propertyValues.get(index))) {
             if (propertyValues.size() == MAX_AMOUNT_OF_VALUES) {
                 if (isMultiValueAllowedForThisType() && isMultiValueAllowedForThisValue(propertyValues.get(index))) {
-                    // TODO DEVSIX-2106 Some extra validations for currently not supported properties.
                     return checkMultiValuePositionXY(propertyValues, index);
-                } else {
-                    return false;
                 }
+                return false;
             }
             return true;
         }

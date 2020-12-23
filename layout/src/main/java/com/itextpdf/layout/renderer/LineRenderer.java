@@ -44,7 +44,6 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.font.otf.ActualTextIterator;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
@@ -69,16 +68,16 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.RenderingMode;
 import com.itextpdf.layout.property.TabAlignment;
 import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.renderer.TextSequenceWordWrapping.LastFittingChildRendererData;
+import com.itextpdf.layout.renderer.TextSequenceWordWrapping.MinMaxWidthOfTextRendererSequenceHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,26 +90,36 @@ public class LineRenderer extends AbstractRenderer {
 
     protected float maxAscent;
     protected float maxDescent;
+
     // bidi levels
     protected byte[] levels;
-    private float maxTextAscent;
-    private float maxTextDescent;
+
+    float maxTextAscent;
+    float maxTextDescent;
     private float maxBlockAscent;
     private float maxBlockDescent;
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
+        boolean textSequenceOverflowXProcessing = false;
+        int firstChildToRelayout = -1;
+
         Rectangle layoutBox = layoutContext.getArea().getBBox().clone();
         boolean wasParentsHeightClipped = layoutContext.isClippedHeight();
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
 
         OverflowPropertyValue oldXOverflow = null;
         boolean wasXOverflowChanged = false;
+        boolean floatsPlacedBeforeLine = false;
 
         if (floatRendererAreas != null) {
             float layoutWidth = layoutBox.getWidth();
+            float layoutHeight = layoutBox.getHeight();
+            // consider returning some value to check if layoutBox has been changed due to floats,
+            // than reuse on non-float layout: kind of not first piece of content on the line
             FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, layoutBox);
-            if (layoutWidth > layoutBox.getWidth()) {
+            if (layoutWidth > layoutBox.getWidth() || layoutHeight > layoutBox.getHeight()) {
+                floatsPlacedBeforeLine = true;
                 oldXOverflow = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
                 wasXOverflowChanged = true;
                 setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
@@ -129,6 +138,8 @@ public class LineRenderer extends AbstractRenderer {
         occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox.clone().moveUp(layoutBox.getHeight()).setHeight(0).setWidth(0));
 
         updateChildrenParent();
+
+        TargetCounterHandler.addPageByID(this);
 
         float curWidth = 0;
         if (RenderingMode.HTML_MODE.equals(this.<RenderingMode>getProperty(Property.RENDERING_MODE))
@@ -167,18 +178,37 @@ public class LineRenderer extends AbstractRenderer {
         TabStop hangingTabStop = null;
         LineLayoutResult result = null;
 
-        boolean floatsPlaced = false;
+        boolean floatsPlacedInLine = false;
         Map<Integer, IRenderer> floatsToNextPageSplitRenderers = new LinkedHashMap<>();
         List<IRenderer> floatsToNextPageOverflowRenderers = new ArrayList<>();
         List<IRenderer> floatsOverflowedToNextLine = new ArrayList<>();
         int lastTabIndex = 0;
 
         Map<Integer, LayoutResult> specialScriptLayoutResults = new HashMap<>();
+        Map<Integer, LayoutResult> textRendererLayoutResults = new HashMap<>();
+
+        Map<Integer, float[]> textRendererSequenceAscentDescent = new HashMap<>();
+        LineAscentDescentState lineAscentDescentStateBeforeTextRendererSequence = null;
+
+        MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper = null;
 
         while (childPos < childRenderers.size()) {
             IRenderer childRenderer = childRenderers.get(childPos);
             LayoutResult childResult = null;
             Rectangle bbox = new Rectangle(layoutBox.getX() + curWidth, layoutBox.getY(), layoutBox.getWidth() - curWidth, layoutBox.getHeight());
+
+            RenderingMode childRenderingMode = childRenderer.<RenderingMode>getProperty(Property.RENDERING_MODE);
+
+            if (TextSequenceWordWrapping.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(childRenderer)
+                    && TypographyUtils.isPdfCalligraphAvailable()) {
+                TextSequenceWordWrapping.processSpecialScriptPreLayout(this, childPos);
+            }
+            TextSequenceWordWrapping.resetTextSequenceIfItEnded(
+                    specialScriptLayoutResults, true, childRenderer, childPos,
+                    minMaxWidthOfTextRendererSequenceHelper, noSoftWrap, widthHandler);
+            TextSequenceWordWrapping.resetTextSequenceIfItEnded(
+                    textRendererLayoutResults, false, childRenderer, childPos,
+                    minMaxWidthOfTextRendererSequenceHelper, noSoftWrap, widthHandler);
 
             if (childRenderer instanceof TextRenderer) {
                 // Delete these properties in case of relayout. We might have applied them during justify().
@@ -271,7 +301,7 @@ public class LineRenderer extends AbstractRenderer {
                     floatsToNextPageOverflowRenderers.add(childRenderer);
                     lineLayoutContext.setFloatOverflowedToNextPageWithNothing(true);
                 } else if (childResult.getStatus() == LayoutResult.PARTIAL) {
-                    floatsPlaced = true;
+                    floatsPlacedInLine = true;
 
                     if (childRenderer instanceof TextRenderer) {
                         // This code is specifically for floating inline text elements:
@@ -296,7 +326,7 @@ public class LineRenderer extends AbstractRenderer {
                         adjustLineOnFloatPlaced(layoutBox, childPos, kidFloatPropertyVal, childResult.getSplitRenderer().getOccupiedArea().getBBox());
                     }
                 } else {
-                    floatsPlaced = true;
+                    floatsPlacedInLine = true;
 
                     if (childRenderer instanceof TextRenderer) {
                         ((TextRenderer) childRenderer).trimFirst();
@@ -349,21 +379,38 @@ public class LineRenderer extends AbstractRenderer {
                 }
             }
 
+
+            boolean shouldBreakLayouting = false;
+
             if (childResult == null) {
-                if (!wasXOverflowChanged && childPos > 0) {
+                boolean setOverflowFitCausedBySpecialScripts = childRenderer instanceof TextRenderer
+                        && ((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(true);
+
+                boolean setOverflowFitCausedByTextRendererInHtmlMode = RenderingMode.HTML_MODE == childRenderingMode
+                        && childRenderer instanceof TextRenderer
+                        && !((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(true);
+
+                if (!wasXOverflowChanged
+                        && (childPos > 0 || setOverflowFitCausedBySpecialScripts || setOverflowFitCausedByTextRendererInHtmlMode)
+                        && !textSequenceOverflowXProcessing) {
                     oldXOverflow = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
                     wasXOverflowChanged = true;
                     setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
                 }
 
-                if (TypographyUtils.isPdfCalligraphAvailable()
-                        && isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(childRenderer)) {
-                    specialScriptPreLayoutProcessing(childPos);
-                }
+                TextSequenceWordWrapping.preprocessTextSequenceOverflowX(this, textSequenceOverflowXProcessing,
+                        childRenderer, wasXOverflowChanged, oldXOverflow);
 
                 childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox), wasParentsHeightClipped));
 
-                updateSpecialScriptLayoutResults(specialScriptLayoutResults, childRenderer, childPos, childResult);
+                shouldBreakLayouting = TextSequenceWordWrapping.postprocessTextSequenceOverflowX(
+                        this, textSequenceOverflowXProcessing,
+                        childPos, childRenderer, childResult, wasXOverflowChanged);
+
+                TextSequenceWordWrapping.updateTextSequenceLayoutResults(
+                        textRendererLayoutResults, false, childRenderer, childPos, childResult);
+                TextSequenceWordWrapping.updateTextSequenceLayoutResults(
+                        specialScriptLayoutResults, true, childRenderer, childPos, childResult);
 
                 // it means that we've already increased layout area by MIN_MAX_WIDTH_CORRECTION_EPS
                 if (childResult instanceof MinMaxWidthLayoutResult && null != childBlockMinMaxWidth) {
@@ -394,125 +441,153 @@ public class LineRenderer extends AbstractRenderer {
                 maxChildWidth = childBlockMinMaxWidth.getMaxWidth();
             }
 
-            float childAscent = 0;
-            float childDescent = 0;
-            if (childRenderer instanceof ILeafElementRenderer
-                    && childResult.getStatus() != LayoutResult.NOTHING) {
-                if (RenderingMode.HTML_MODE.equals(childRenderer.<RenderingMode>getProperty(Property.RENDERING_MODE))
-                        && childRenderer instanceof TextRenderer) {
-                    float[] ascenderDescender = LineHeightHelper.getActualAscenderDescender((TextRenderer) childRenderer);
-                    childAscent = ascenderDescender[0];
-                    childDescent = ascenderDescender[1];
-                } else {
-                    childAscent = ((ILeafElementRenderer) childRenderer).getAscent();
-                    childDescent = ((ILeafElementRenderer) childRenderer).getDescent();
-                }
-            } else if (isInlineBlockChild && childResult.getStatus() != LayoutResult.NOTHING) {
-                if (childRenderer instanceof AbstractRenderer) {
-                    Float yLine = ((AbstractRenderer) childRenderer).getLastYLineRecursively();
-                    if (yLine == null) {
-                        childAscent = childRenderer.getOccupiedArea().getBBox().getHeight();
-                    } else {
-                        childAscent = childRenderer.getOccupiedArea().getBBox().getTop() - (float) yLine;
-                        childDescent = -((float) yLine - childRenderer.getOccupiedArea().getBBox().getBottom());
-                    }
-                } else {
-                    childAscent = childRenderer.getOccupiedArea().getBBox().getHeight();
-                }
-            }
+            float[] childAscentDescent = getAscentDescentOfLayoutedChildRenderer(childRenderer, childResult,
+                    childRenderingMode, isInlineBlockChild);
+
+            lineAscentDescentStateBeforeTextRendererSequence =
+                    TextSequenceWordWrapping.updateTextRendererSequenceAscentDescent(
+                            this, textRendererSequenceAscentDescent, childPos, childAscentDescent,
+                            lineAscentDescentStateBeforeTextRendererSequence);
+
+            minMaxWidthOfTextRendererSequenceHelper =
+                    TextSequenceWordWrapping.updateTextRendererSequenceMinMaxWidth(
+                            this, widthHandler, childPos,
+                            minMaxWidthOfTextRendererSequenceHelper, anythingPlaced, textRendererLayoutResults,
+                            specialScriptLayoutResults, lineLayoutContext.getTextIndent());
 
             boolean newLineOccurred = (childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isSplitForcedByNewline());
-            boolean shouldBreakLayouting = childResult.getStatus() != LayoutResult.FULL || newLineOccurred;
-
-            boolean wordWasSplitAndItWillFitOntoNextLine = false;
-
-            // if childRenderer contains scripts which require word wrapping,
-            // we don't need to attempt to relayout it and see if the split word could fit the next line
-            // word wrapping is handled on shouldBreakLayouting
-            if (shouldBreakLayouting && childResult instanceof TextLayoutResult
-                    && ((TextLayoutResult) childResult).isWordHasBeenSplit()
-                    && !((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(true)) {
-                if (wasXOverflowChanged) {
-                    setProperty(Property.OVERFLOW_X, oldXOverflow);
-                }
-                LayoutResult newLayoutResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox), wasParentsHeightClipped));
-                if (wasXOverflowChanged) {
-                    setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
-                }
-                if (newLayoutResult instanceof TextLayoutResult && !((TextLayoutResult) newLayoutResult).isWordHasBeenSplit()) {
-                    wordWasSplitAndItWillFitOntoNextLine = true;
-                }
-            } else if (shouldBreakLayouting && !newLineOccurred && childRenderers.get(childPos) instanceof TextRenderer
-                        && ((TextRenderer) childRenderers.get(childPos)).textContainsSpecialScriptGlyphs(true)) {
-                LastFittingChildRendererData lastFittingChildRendererData =
-                        getIndexAndLayoutResultOfTheLastRendererToRemainOnTheLine
-                                (childPos, specialScriptLayoutResults, wasParentsHeightClipped, floatsOverflowedToNextLine);
-
-                curWidth -= getCurWidthSpecialScriptsDecrement(childPos, lastFittingChildRendererData.childIndex,
-                        specialScriptLayoutResults);
-
-                childPos = lastFittingChildRendererData.childIndex;
-                childResult = lastFittingChildRendererData.childLayoutResult;
+            if (!shouldBreakLayouting) {
+                shouldBreakLayouting = childResult.getStatus() != LayoutResult.FULL || newLineOccurred;
             }
 
-            if (!wordWasSplitAndItWillFitOntoNextLine) {
-                maxAscent = Math.max(maxAscent, childAscent);
-                if (childRenderer instanceof TextRenderer) {
-                    maxTextAscent = Math.max(maxTextAscent, childAscent);
-                } else if (!isChildFloating) {
-                    maxBlockAscent = Math.max(maxBlockAscent, childAscent);
-                }
-                maxDescent = Math.min(maxDescent, childDescent);
-                if (childRenderer instanceof TextRenderer) {
-                    maxTextDescent = Math.min(maxTextDescent, childDescent);
-                } else if (!isChildFloating) {
-                    maxBlockDescent = Math.min(maxBlockDescent, childDescent);
+            boolean shouldBreakLayoutingOnTextRenderer = shouldBreakLayouting
+                    && childResult instanceof TextLayoutResult;
+            boolean forceOverflowForTextRendererPartialResult = false;
+
+            if (shouldBreakLayoutingOnTextRenderer) {
+                boolean isWordHasBeenSplitLayoutRenderingMode = ((TextLayoutResult) childResult).isWordHasBeenSplit()
+                        && RenderingMode.HTML_MODE != childRenderingMode
+                        && !((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(true);
+                boolean enableSpecialScriptsWrapping = ((TextRenderer) childRenderers.get(childPos))
+                        .textContainsSpecialScriptGlyphs(true)
+                        && !textSequenceOverflowXProcessing && !newLineOccurred;
+                boolean enableTextSequenceWrapping = RenderingMode.HTML_MODE == childRenderingMode && !newLineOccurred
+                        && !textSequenceOverflowXProcessing;
+
+                if (isWordHasBeenSplitLayoutRenderingMode) {
+                    forceOverflowForTextRendererPartialResult = isForceOverflowForTextRendererPartialResult(
+                            childRenderer, wasXOverflowChanged, oldXOverflow, layoutContext, layoutBox,
+                            wasParentsHeightClipped);
+                } else if (enableSpecialScriptsWrapping) {
+                    boolean isOverflowFit = wasXOverflowChanged
+                            ? (oldXOverflow == OverflowPropertyValue.FIT)
+                            : isOverflowFit(this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X));
+                    LastFittingChildRendererData lastFittingChildRendererData =
+                            TextSequenceWordWrapping.getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts(
+                                    this, childPos,
+                                    specialScriptLayoutResults, wasParentsHeightClipped,
+                                    isOverflowFit);
+
+                    if (lastFittingChildRendererData == null) {
+                        textSequenceOverflowXProcessing = true;
+                        shouldBreakLayouting = false;
+                        firstChildToRelayout = childPos;
+                    } else {
+                        curWidth -= TextSequenceWordWrapping.getCurWidthRelayoutedTextSequenceDecrement(childPos,
+                                lastFittingChildRendererData.childIndex, specialScriptLayoutResults);
+                        childPos = lastFittingChildRendererData.childIndex;
+                        childResult = lastFittingChildRendererData.childLayoutResult;
+                        specialScriptLayoutResults.put(childPos, childResult);
+
+                        MinMaxWidth textSequenceElemminMaxWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth();
+                        minChildWidth = textSequenceElemminMaxWidth.getMinWidth();
+                        maxChildWidth = textSequenceElemminMaxWidth.getMaxWidth();
+                    }
+                } else if (enableTextSequenceWrapping) {
+                    boolean isOverflowFit = wasXOverflowChanged
+                            ? (oldXOverflow == OverflowPropertyValue.FIT)
+                            : isOverflowFit(this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X));
+                    LastFittingChildRendererData lastFittingChildRendererData =
+                            TextSequenceWordWrapping.getIndexAndLayoutResultOfTheLastTextRendererWithNoSpecialScripts(
+                                    this, childPos,
+                                    textRendererLayoutResults, wasParentsHeightClipped,
+                                    isOverflowFit, floatsPlacedInLine || floatsPlacedBeforeLine);
+                    if (lastFittingChildRendererData == null) {
+                        textSequenceOverflowXProcessing = true;
+                        shouldBreakLayouting = false;
+                        firstChildToRelayout = childPos;
+                    } else {
+                        curWidth -= TextSequenceWordWrapping.getCurWidthRelayoutedTextSequenceDecrement(childPos,
+                                lastFittingChildRendererData.childIndex, textRendererLayoutResults);
+                        childAscentDescent =
+                                updateAscentDescentAfterTextRendererSequenceProcessing(
+                                        (lastFittingChildRendererData.childLayoutResult.getStatus()
+                                                == LayoutResult.NOTHING)
+                                                ? (lastFittingChildRendererData.childIndex - 1)
+                                                : lastFittingChildRendererData.childIndex,
+                                        lineAscentDescentStateBeforeTextRendererSequence,
+                                        textRendererSequenceAscentDescent);
+
+                        childPos = lastFittingChildRendererData.childIndex;
+                        childResult = lastFittingChildRendererData.childLayoutResult;
+                        textRendererLayoutResults.put(childPos, childResult);
+
+                        MinMaxWidth textSequenceElemminMaxWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth();
+                        minChildWidth = textSequenceElemminMaxWidth.getMinWidth();
+                        maxChildWidth = textSequenceElemminMaxWidth.getMaxWidth();
+                    }
                 }
             }
-            float maxHeight = maxAscent - maxDescent;
 
-            float currChildTextIndent = anythingPlaced ? 0 : lineLayoutContext.getTextIndent();
-            if (hangingTabStop != null
-                    && (TabAlignment.LEFT == hangingTabStop.getTabAlignment() || shouldBreakLayouting || childRenderers.size() - 1 == childPos || childRenderers.get(childPos + 1) instanceof TabRenderer)) {
-                IRenderer tabRenderer = childRenderers.get(lastTabIndex);
-                List<IRenderer> affectedRenderers = new ArrayList<>();
-                affectedRenderers.addAll(childRenderers.subList(lastTabIndex + 1, childPos + 1));
-                float tabWidth = calculateTab(layoutBox, curWidth, hangingTabStop, affectedRenderers, tabRenderer);
+            if (childPos != firstChildToRelayout) {
+                if (!forceOverflowForTextRendererPartialResult) {
+                    updateAscentDescentAfterChildLayout(childAscentDescent, childRenderer, isChildFloating);
+                }
+                float maxHeight = maxAscent - maxDescent;
 
-                tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox), wasParentsHeightClipped));
-                float sumOfAffectedRendererWidths = 0;
-                for (IRenderer renderer : affectedRenderers) {
-                    renderer.move(tabWidth + sumOfAffectedRendererWidths, 0);
-                    sumOfAffectedRendererWidths += renderer.getOccupiedArea().getBBox().getWidth();
+                float currChildTextIndent = anythingPlaced ? 0 : lineLayoutContext.getTextIndent();
+                if (hangingTabStop != null
+                        && (TabAlignment.LEFT == hangingTabStop.getTabAlignment() || shouldBreakLayouting || childRenderers.size() - 1 == childPos || childRenderers.get(childPos + 1) instanceof TabRenderer)) {
+                    IRenderer tabRenderer = childRenderers.get(lastTabIndex);
+                    List<IRenderer> affectedRenderers = new ArrayList<>();
+                    affectedRenderers.addAll(childRenderers.subList(lastTabIndex + 1, childPos + 1));
+                    float tabWidth = calculateTab(layoutBox, curWidth, hangingTabStop, affectedRenderers, tabRenderer);
+
+                    tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox), wasParentsHeightClipped));
+                    float sumOfAffectedRendererWidths = 0;
+                    for (IRenderer renderer : affectedRenderers) {
+                        renderer.move(tabWidth + sumOfAffectedRendererWidths, 0);
+                        sumOfAffectedRendererWidths += renderer.getOccupiedArea().getBBox().getWidth();
+                    }
+                    if (childResult.getSplitRenderer() != null) {
+                        childResult.getSplitRenderer().move(tabWidth + sumOfAffectedRendererWidths - childResult.getSplitRenderer().getOccupiedArea().getBBox().getWidth(), 0);
+                    }
+                    float tabAndNextElemWidth = tabWidth + childResult.getOccupiedArea().getBBox().getWidth();
+                    if (hangingTabStop.getTabAlignment() == TabAlignment.RIGHT && curWidth + tabAndNextElemWidth < hangingTabStop.getTabPosition()) {
+                        curWidth = hangingTabStop.getTabPosition();
+                    } else {
+                        curWidth += tabAndNextElemWidth;
+                    }
+                    widthHandler.updateMinChildWidth(minChildWidth + currChildTextIndent);
+                    widthHandler.updateMaxChildWidth(tabWidth + maxChildWidth + currChildTextIndent);
+                    hangingTabStop = null;
+                } else if (null == hangingTabStop) {
+                    if (childResult.getOccupiedArea() != null && childResult.getOccupiedArea().getBBox() != null) {
+                        curWidth += childResult.getOccupiedArea().getBBox().getWidth();
+                    }
+                    widthHandler.updateMinChildWidth(minChildWidth + currChildTextIndent);
+                    widthHandler.updateMaxChildWidth(maxChildWidth + currChildTextIndent);
                 }
-                if (childResult.getSplitRenderer() != null) {
-                    childResult.getSplitRenderer().move(tabWidth + sumOfAffectedRendererWidths - childResult.getSplitRenderer().getOccupiedArea().getBBox().getWidth(), 0);
+                if (!forceOverflowForTextRendererPartialResult) {
+                    occupiedArea.setBBox(new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight, curWidth, maxHeight));
                 }
-                float tabAndNextElemWidth = tabWidth + childResult.getOccupiedArea().getBBox().getWidth();
-                if (hangingTabStop.getTabAlignment() == TabAlignment.RIGHT && curWidth + tabAndNextElemWidth < hangingTabStop.getTabPosition()) {
-                    curWidth = hangingTabStop.getTabPosition();
-                } else {
-                    curWidth += tabAndNextElemWidth;
-                }
-                widthHandler.updateMinChildWidth(minChildWidth + currChildTextIndent);
-                widthHandler.updateMaxChildWidth(tabWidth + maxChildWidth + currChildTextIndent);
-                hangingTabStop = null;
-            } else if (null == hangingTabStop) {
-                if (childResult.getOccupiedArea() != null && childResult.getOccupiedArea().getBBox() != null) {
-                    curWidth += childResult.getOccupiedArea().getBBox().getWidth();
-                }
-                widthHandler.updateMinChildWidth(minChildWidth + currChildTextIndent);
-                widthHandler.updateMaxChildWidth(maxChildWidth + currChildTextIndent);
-            }
-            if (!wordWasSplitAndItWillFitOntoNextLine) {
-                occupiedArea.setBBox(new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight, curWidth, maxHeight));
             }
 
             if (shouldBreakLayouting) {
                 LineRenderer[] split = split();
                 split[0].childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
 
-                if (wordWasSplitAndItWillFitOntoNextLine) {
+                if (forceOverflowForTextRendererPartialResult) {
                     split[1].childRenderers.add(childRenderer);
                     split[1].childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                 } else {
@@ -553,7 +628,7 @@ public class LineRenderer extends AbstractRenderer {
                 if (split[1] == null) {
                     result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, split[0], split[1], causeOfNothing);
                 } else {
-                    if (anythingPlaced || floatsPlaced) {
+                    if (anythingPlaced || floatsPlacedInLine) {
                         result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], causeOfNothing);
                     } else {
                         result = new LineLayoutResult(LayoutResult.NOTHING, null, split[0], split[1], null);
@@ -566,21 +641,30 @@ public class LineRenderer extends AbstractRenderer {
 
                 break;
             } else {
-                anythingPlaced = true;
-                childPos++;
+                if (childPos == firstChildToRelayout) {
+                    firstChildToRelayout = -1;
+                } else {
+                    anythingPlaced = true;
+                    childPos++;
+                }
             }
         }
 
+        TextSequenceWordWrapping.resetTextSequenceIfItEnded(specialScriptLayoutResults, true, null, childPos,
+                minMaxWidthOfTextRendererSequenceHelper, noSoftWrap, widthHandler);
+        TextSequenceWordWrapping.resetTextSequenceIfItEnded(textRendererLayoutResults, false, null, childPos,
+                minMaxWidthOfTextRendererSequenceHelper, noSoftWrap, widthHandler);
+
         if (result == null) {
             boolean noOverflowedFloats = floatsOverflowedToNextLine.isEmpty() && floatsToNextPageOverflowRenderers.isEmpty();
-            if ((anythingPlaced || floatsPlaced) && noOverflowedFloats || 0 == childRenderers.size()) {
+            if ((anythingPlaced || floatsPlacedInLine) && noOverflowedFloats || 0 == childRenderers.size()) {
                 result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
             } else {
                 if (noOverflowedFloats) {
                     // all kids were some non-image and non-text kids (tab-stops?),
                     // but in this case, it should be okay to return FULL, as there is nothing to be placed
                     result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
-                } else if (anythingPlaced || floatsPlaced) {
+                } else if (anythingPlaced || floatsPlacedInLine) {
                     LineRenderer[] split = split();
                     split[0].childRenderers.addAll(childRenderers.subList(0, childPos));
                     replaceSplitRendererKidFloats(floatsToNextPageSplitRenderers, split[0]);
@@ -718,7 +802,7 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
         LineRenderer processed = result.getStatus() == LayoutResult.FULL ? this : (LineRenderer) result.getSplitRenderer();
-        if (anythingPlaced || floatsPlaced) {
+        if (anythingPlaced || floatsPlacedInLine) {
             processed.adjustChildrenYLine().trimLast();
             result.setMinMaxWidth(minMaxWidth);
         }
@@ -1239,291 +1323,152 @@ public class LineRenderer extends AbstractRenderer {
         return baseDirection;
     }
 
-    static boolean isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(IRenderer childRenderer) {
-        return childRenderer instanceof TextRenderer
-                && ((TextRenderer) childRenderer).getSpecialScriptsWordBreakPoints() == null
-                && ((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(false);
-    }
-
     static boolean isChildFloating(IRenderer childRenderer) {
         FloatPropertyValue kidFloatPropertyVal = childRenderer.<FloatPropertyValue>getProperty(Property.FLOAT);
         return childRenderer instanceof AbstractRenderer
                 && FloatingHelper.isRendererFloating(childRenderer, kidFloatPropertyVal);
     }
 
-    static void updateSpecialScriptLayoutResults(Map<Integer, LayoutResult> specialScriptLayoutResults,
-                                          IRenderer childRenderer, int childPos, LayoutResult childResult) {
-        if ((childRenderer instanceof TextRenderer && ((TextRenderer) childRenderer)
-                .textContainsSpecialScriptGlyphs(true))) {
-            specialScriptLayoutResults.put(childPos, childResult);
-        } else if (!specialScriptLayoutResults.isEmpty() && !isChildFloating(childRenderer)) {
-            specialScriptLayoutResults.clear();
-        }
-    }
-
-    static float getCurWidthSpecialScriptsDecrement(int childPos, int newChildPos,
-                                                    Map<Integer, LayoutResult> specialScriptLayoutResults) {
-        float decrement = 0.0f;
-        // if childPos == newChildPos, curWidth doesn't include width of the current childRenderer yet, so no decrement is needed
-        if (childPos != newChildPos) {
-            for (int i = childPos - 1; i >= newChildPos; i--) {
-                if (specialScriptLayoutResults.get(i) != null) {
-                    decrement += specialScriptLayoutResults.get(i).getOccupiedArea().getBBox().getWidth();
-                }
-            }
-        }
-
-        return decrement;
+    static boolean isInlineBlockChild(IRenderer child) {
+        return child instanceof BlockRenderer || child instanceof TableRenderer;
     }
 
     /**
-     * Preprocess a continuous sequence of TextRenderer containing special scripts
-     * prior to layouting the first TextRenderer in the sequence.
+     * Checks if the word that's been split when has been layouted on this line can fit the next line without splitting.
      *
-     * In this method we preprocess a sequence containing special scripts only,
-     * skipping floating renderers as they're not part of a regular layout flow,
-     * and breaking the prelayout processing once a non-special script containing renderer occurs.
-     *
-     * Prelayout processing includes the following steps:
-     * - {@link #getSpecialScriptsContainingTextRendererSequenceInfo(int)}: determine boundaries of the sequence
-     * and concatenate its TextRenderer#text fields converted to a String representation;
-     * - get the String analyzed with WordWrapper#getPossibleBreaks and
-     * receive a zero-based array of points where the String is allowed to got broken in lines;
-     * - {@link #distributePossibleBreakPointsOverSequentialTextRenderers(int, int, List, List)}:
-     * distribute the list over the TextRenderer#specialScriptsWordBreakPoints, preliminarily having the points shifted,
-     * so that each TextRenderer#specialScriptsWordBreakPoints is based on the first element of TextRenderer#text.
-     *
-     * @param childPos index of the childRenderer in LineRenderer#childRenderers
-     *                 from which the a continuous sequence of TextRenderer containing special scripts starts
+     * @param childRenderer the childRenderer containing the split word
+     * @param wasXOverflowChanged true if {@link Property#OVERFLOW_X} has been changed
+     *                            during layouting of {@link LineRenderer}
+     * @param oldXOverflow the value of {@link Property#OVERFLOW_X} before it's been changed
+     *                     during layouting of {@link LineRenderer}
+     *                     or null if {@link Property#OVERFLOW_X} hasn't been changed
+     * @param layoutContext {@link LayoutContext}
+     * @param layoutBox current layoutBox
+     * @param wasParentsHeightClipped true if layoutBox's height has been clipped
+     * @return true if the split word can fit the next line without splitting
      */
-    void specialScriptPreLayoutProcessing(int childPos) {
-        SpecialScriptsContainingTextRendererSequenceInfo info =
-                getSpecialScriptsContainingTextRendererSequenceInfo(childPos);
-        int numberOfSequentialTextRenderers = info.numberOfSequentialTextRenderers;
-        String sequentialTextContent = info.sequentialTextContent;
-        List<Integer> indicesOfFloating = info.indicesOfFloating;
-        List<Integer> possibleBreakPointsGlobal = TypographyUtils.getPossibleBreaks(sequentialTextContent);
-
-        distributePossibleBreakPointsOverSequentialTextRenderers(childPos, numberOfSequentialTextRenderers,
-                possibleBreakPointsGlobal, indicesOfFloating);
-    }
-
-    SpecialScriptsContainingTextRendererSequenceInfo getSpecialScriptsContainingTextRendererSequenceInfo(int childPos) {
-        StringBuilder sequentialTextContentBuilder = new StringBuilder();
-        int numberOfSequentialTextRenderers = 0;
-        List<Integer> indicesOfFloating = new ArrayList<>();
-        for (int i = childPos; i < childRenderers.size(); i++) {
-            if (isChildFloating(childRenderers.get(i))) {
-                numberOfSequentialTextRenderers++;
-                indicesOfFloating.add(i);
-            } else {
-                if (childRenderers.get(i) instanceof TextRenderer
-                        && ((TextRenderer) childRenderers.get(i))
-                        .textContainsSpecialScriptGlyphs(false)) {
-                    sequentialTextContentBuilder.append(((TextRenderer) childRenderers.get(i)).text.toString());
-                    numberOfSequentialTextRenderers++;
-                } else {
-                    break;
-                }
-            }
+    boolean isForceOverflowForTextRendererPartialResult(IRenderer childRenderer, boolean wasXOverflowChanged,
+                                                        OverflowPropertyValue oldXOverflow, LayoutContext layoutContext,
+                                                        Rectangle layoutBox, boolean wasParentsHeightClipped) {
+        if (wasXOverflowChanged) {
+            setProperty(Property.OVERFLOW_X, oldXOverflow);
         }
-        return new SpecialScriptsContainingTextRendererSequenceInfo(numberOfSequentialTextRenderers,
-                sequentialTextContentBuilder.toString(), indicesOfFloating);
-    }
-
-    void distributePossibleBreakPointsOverSequentialTextRenderers(
-            int childPos, int numberOfSequentialTextRenderers, List<Integer> possibleBreakPointsGlobal,
-            List<Integer> indicesOfFloating) {
-        int alreadyProcessedNumberOfCharsWithinGlyphLines = 0;
-        int indexToBeginWith = 0;
-        for (int i = 0; i < numberOfSequentialTextRenderers; i++) {
-            if (!indicesOfFloating.contains(i)) {
-                TextRenderer childTextRenderer = (TextRenderer) childRenderers.get(childPos + i);
-                List<Integer> amountOfCharsBetweenTextStartAndActualTextChunk = new ArrayList<>();
-                List<Integer> glyphLineBasedIndicesOfActualTextChunkEnds = new ArrayList<>();
-
-                fillActualTextChunkRelatedLists(childTextRenderer.getText(),
-                        amountOfCharsBetweenTextStartAndActualTextChunk, glyphLineBasedIndicesOfActualTextChunkEnds);
-
-                List<Integer> possibleBreakPoints = new ArrayList<Integer>();
-                for (int j = indexToBeginWith; j < possibleBreakPointsGlobal.size(); j++) {
-                    int shiftedBreakPoint = possibleBreakPointsGlobal.get(j)
-                            - alreadyProcessedNumberOfCharsWithinGlyphLines;
-                    int amountOfCharsBetweenTextStartAndTextEnd = amountOfCharsBetweenTextStartAndActualTextChunk
-                            .get(amountOfCharsBetweenTextStartAndActualTextChunk.size() - 1);
-                    if (shiftedBreakPoint > amountOfCharsBetweenTextStartAndTextEnd) {
-                        indexToBeginWith = j;
-                        alreadyProcessedNumberOfCharsWithinGlyphLines += amountOfCharsBetweenTextStartAndTextEnd;
-                        break;
-                    }
-                    possibleBreakPoints.add(shiftedBreakPoint);
-                }
-
-                List<Integer> glyphLineBasedPossibleBreakPoints = convertPossibleBreakPointsToGlyphLineBased(
-                        possibleBreakPoints, amountOfCharsBetweenTextStartAndActualTextChunk,
-                        glyphLineBasedIndicesOfActualTextChunkEnds);
-                childTextRenderer.setSpecialScriptsWordBreakPoints(glyphLineBasedPossibleBreakPoints);
-            }
+        LayoutResult newLayoutResult = childRenderer.layout(
+                new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox),
+                        wasParentsHeightClipped));
+        if (wasXOverflowChanged) {
+            setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
         }
-    }
-
-    LastFittingChildRendererData getIndexAndLayoutResultOfTheLastRendererToRemainOnTheLine
-            (int childPos, Map<Integer, LayoutResult> specialScriptLayoutResults, boolean wasParentsHeightClipped,
-             List<IRenderer> floatsOverflowedToNextLine) {
-        int indexOfRendererContainingLastFullyFittingWord = childPos;
-        int splitPosition = 0;
-        boolean needToSplitRendererContainingLastFullyFittingWord = false;
-        int fittingLengthWithTrailingRightSideSpaces = 0;
-        int amountOfTrailingRightSideSpaces = 0;
-        Set<Integer> indicesOfFloats = new HashSet<Integer>();
-        LayoutResult childPosLayoutResult = specialScriptLayoutResults.get(childPos);
-        LayoutResult returnLayoutResult = null;
-        for (int analyzedTextRendererIndex = childPos; analyzedTextRendererIndex >= 0; analyzedTextRendererIndex--) {
-            // get the number of fitting glyphs in the renderer being analyzed
-            TextRenderer textRenderer = (TextRenderer) childRenderers.get(analyzedTextRendererIndex);
-            if (analyzedTextRendererIndex != childPos) {
-                fittingLengthWithTrailingRightSideSpaces = textRenderer.length();
-            } else if (childPosLayoutResult.getSplitRenderer() != null) {
-                TextRenderer splitTextRenderer = (TextRenderer) childPosLayoutResult.getSplitRenderer();
-                GlyphLine splitText = splitTextRenderer.text;
-                if (splitTextRenderer.length() > 0) {
-                    fittingLengthWithTrailingRightSideSpaces = splitTextRenderer.length();
-                    while (splitText.end + amountOfTrailingRightSideSpaces < splitText.size()
-                            && TextUtil.isWhitespace(splitText.get(splitText.end + amountOfTrailingRightSideSpaces))) {
-                        fittingLengthWithTrailingRightSideSpaces++;
-                        amountOfTrailingRightSideSpaces++;
-                    }
-                }
-            }
-
-            // check if line break can happen in this renderer relying on its specialScriptsWordBreakPoints list
-            if (fittingLengthWithTrailingRightSideSpaces > 0) {
-                List<Integer> breakPoints = textRenderer.getSpecialScriptsWordBreakPoints();
-                if (breakPoints != null && breakPoints.size() > 0 && breakPoints.get(0) != -1) {
-                    int possibleBreakPointPosition = TextRenderer.findPossibleBreaksSplitPosition(
-                            textRenderer.getSpecialScriptsWordBreakPoints(),
-                            fittingLengthWithTrailingRightSideSpaces + textRenderer.text.start, false);
-                    if (possibleBreakPointPosition > -1) {
-                        splitPosition = breakPoints.get(possibleBreakPointPosition) - amountOfTrailingRightSideSpaces;
-                        needToSplitRendererContainingLastFullyFittingWord = splitPosition != textRenderer.text.end;
-                        if (!needToSplitRendererContainingLastFullyFittingWord) {
-                            analyzedTextRendererIndex++;
-                            while (analyzedTextRendererIndex <= childPos
-                                    && isChildFloating(childRenderers.get(analyzedTextRendererIndex))) {
-                                analyzedTextRendererIndex++;
-                            }
-                        }
-                        indexOfRendererContainingLastFullyFittingWord = analyzedTextRendererIndex;
-                        break;
-                    }
-                }
-            }
-
-            int amountOfFloating = 0;
-
-            while (analyzedTextRendererIndex - 1 >= 0
-                    && isChildFloating(childRenderers.get(analyzedTextRendererIndex - 1))) {
-                indicesOfFloats.add(analyzedTextRendererIndex - 1);
-                analyzedTextRendererIndex--;
-                amountOfFloating++;
-            }
-
-            SpecialScriptsContainingSequenceStatus status =
-                    getSpecialScriptsContainingSequenceStatus(analyzedTextRendererIndex);
-
-            // possible breaks haven't been found, can't move back
-            // forced split on the latter renderer having either Full or Partial result
-            if (status == SpecialScriptsContainingSequenceStatus.FORCED_SPLIT) {
-                if (childPosLayoutResult.getStatus() != LayoutResult.NOTHING) {
-                    returnLayoutResult = childPosLayoutResult;
-                }
-                indexOfRendererContainingLastFullyFittingWord = childPos;
-                break;
-            }
-
-            // possible breaks haven't been found, can't move back
-            // move the entire renderer on the next line
-            if (status ==
-                    SpecialScriptsContainingSequenceStatus.MOVE_SEQUENCE_CONTAINING_SPECIAL_SCRIPTS_ON_NEXT_LINE) {
-                indexOfRendererContainingLastFullyFittingWord = analyzedTextRendererIndex + amountOfFloating;
-                break;
-            }
-        }
-
-        updateFloatsOverflowedToNextLine(floatsOverflowedToNextLine, indicesOfFloats,
-                indexOfRendererContainingLastFullyFittingWord);
-
-        if (returnLayoutResult == null) {
-            returnLayoutResult = childPosLayoutResult;
-
-            TextRenderer childRenderer = (TextRenderer) childRenderers.get(indexOfRendererContainingLastFullyFittingWord);
-
-            if (needToSplitRendererContainingLastFullyFittingWord) {
-                int amountOfFitOnTheFirstLayout = fittingLengthWithTrailingRightSideSpaces - amountOfTrailingRightSideSpaces
-                        + childRenderer.text.start;
-                if (amountOfFitOnTheFirstLayout != splitPosition) {
-                    LayoutArea layoutArea = childRenderer.getOccupiedArea();
-                    childRenderer.setSpecialScriptFirstNotFittingIndex(splitPosition);
-                    returnLayoutResult = childRenderer.layout(new LayoutContext(layoutArea, wasParentsHeightClipped));
-                    childRenderer.setSpecialScriptFirstNotFittingIndex(-1);
-                }
-            } else {
-                returnLayoutResult = new TextLayoutResult(LayoutResult.NOTHING, null, null, childRenderer);
-            }
-        }
-
-        return new LastFittingChildRendererData(indexOfRendererContainingLastFullyFittingWord, returnLayoutResult);
-    }
-
-    void updateFloatsOverflowedToNextLine(List<IRenderer> floatsOverflowedToNextLine, Set<Integer> indicesOfFloats,
-                                             int indexOfRendererContainingLastFullyFittingWord) {
-        for (int index : indicesOfFloats) {
-            if (index > indexOfRendererContainingLastFullyFittingWord) {
-                floatsOverflowedToNextLine.remove(childRenderers.get(index));
-            }
-        }
+        return newLayoutResult instanceof TextLayoutResult
+                && !((TextLayoutResult) newLayoutResult).isWordHasBeenSplit();
     }
 
     /**
-     * This method defines how to proceed with a {@link TextRenderer} within which possible breaks haven't been found.
-     * Possible scenarios are:
-     * - Preceding renderer is also an instance of {@link TextRenderer} and does contain special scripts:
-     * {@link LineRenderer#getIndexAndLayoutResultOfTheLastRendererToRemainOnTheLine(int, Map, boolean, List)} will
-     * proceed to analyze the preceding {@link TextRenderer} on the subject of possible breaks;
-     * - Preceding renderer is either an instance of {@link TextRenderer} which does not contain special scripts,
-     * or an instance of {@link ImageRenderer} or is an inlineBlock child: in this case the entire subsequence of
-     * {@link TextRenderer}-s containing special scripts is to be moved to the next line;
-     * - Otherwise a forced split is to happen.
-     * @param analyzedTextRendererIndex index of the latter child
-     *                                  that has been analyzed on the subject of possible breaks
-     * @return {@link SpecialScriptsContainingSequenceStatus} instance standing for the strategy to proceed with.
+     * Extracts ascender and descender of an already layouted {@link IRenderer childRenderer}.
+     *
+     * @param childRenderer an already layouted child who's ascender and descender are to be extracted
+     * @param childResult {@link LayoutResult} of the childRenderer based on which ascender and descender are defined
+     * @param childRenderingMode {@link RenderingMode rendering mode}
+     * @param isInlineBlockChild true if childRenderer {@link #isInlineBlockChild(IRenderer)}
+     * @return a two-element float array where first element is ascender value and second element is descender value
      */
-    SpecialScriptsContainingSequenceStatus getSpecialScriptsContainingSequenceStatus(int analyzedTextRendererIndex) {
-        boolean moveSequenceContainingSpecialScriptsOnNextLine = false;
-        boolean moveToPreviousTextRendererContainingSpecialScripts = false;
-
-        if (analyzedTextRendererIndex > 0) {
-            IRenderer prevChildRenderer = childRenderers.get(analyzedTextRendererIndex - 1);
-            if (prevChildRenderer instanceof TextRenderer) {
-                if (((TextRenderer) prevChildRenderer).textContainsSpecialScriptGlyphs(true)) {
-                    moveToPreviousTextRendererContainingSpecialScripts = true;
+    float[] getAscentDescentOfLayoutedChildRenderer(IRenderer childRenderer, LayoutResult childResult,
+                                                    RenderingMode childRenderingMode, boolean isInlineBlockChild) {
+        float childAscent = 0;
+        float childDescent = 0;
+        if (childRenderer instanceof ILeafElementRenderer
+                && childResult.getStatus() != LayoutResult.NOTHING) {
+            if (RenderingMode.HTML_MODE == childRenderingMode && childRenderer instanceof TextRenderer) {
+                return LineHeightHelper.getActualAscenderDescender((TextRenderer) childRenderer);
+            } else {
+                childAscent = ((ILeafElementRenderer) childRenderer).getAscent();
+                childDescent = ((ILeafElementRenderer) childRenderer).getDescent();
+            }
+        } else if (isInlineBlockChild && childResult.getStatus() != LayoutResult.NOTHING) {
+            if (childRenderer instanceof AbstractRenderer) {
+                Float yLine = ((AbstractRenderer) childRenderer).getLastYLineRecursively();
+                if (yLine == null) {
+                    childAscent = childRenderer.getOccupiedArea().getBBox().getHeight();
                 } else {
-                    moveSequenceContainingSpecialScriptsOnNextLine = true;
+                    childAscent = childRenderer.getOccupiedArea().getBBox().getTop() - (float) yLine;
+                    childDescent = -((float) yLine - childRenderer.getOccupiedArea().getBBox().getBottom());
                 }
-            } else if (prevChildRenderer instanceof ImageRenderer || isInlineBlockChild(prevChildRenderer)) {
-                moveSequenceContainingSpecialScriptsOnNextLine = true;
+            } else {
+                childAscent = childRenderer.getOccupiedArea().getBBox().getHeight();
             }
         }
 
-        boolean forcedSplit = !(moveToPreviousTextRendererContainingSpecialScripts
-                || moveSequenceContainingSpecialScriptsOnNextLine);
+        return new float[] {childAscent, childDescent};
+    }
 
-        if (moveSequenceContainingSpecialScriptsOnNextLine) {
-            return SpecialScriptsContainingSequenceStatus.MOVE_SEQUENCE_CONTAINING_SPECIAL_SCRIPTS_ON_NEXT_LINE;
-        } else if (forcedSplit) {
-            return SpecialScriptsContainingSequenceStatus.FORCED_SPLIT;
-        } else {
-            return SpecialScriptsContainingSequenceStatus.MOVE_TO_PREVIOUS_TEXT_RENDERER_CONTAINING_SPECIAL_SCRIPTS;
+    /**
+     * Updates {@link LineRenderer#maxAscent}, {@link LineRenderer#maxDescent}, {@link LineRenderer#maxTextAscent} and
+     * {@link LineRenderer#maxTextDescent} after a {@link TextRenderer} sequence has been fully processed.
+     *
+     * @param newChildPos                                      position of the last {@link TextRenderer} child of the
+     *                                                         sequence to remain on the line
+     * @param lineAscentDescentStateBeforeTextRendererSequence a {@link LineAscentDescentState} containing
+     *                                                         {@link LineRenderer}'s maxAscent, maxDescent,
+     *                                                         maxTextAscent, maxTextDescent before
+     *                                                         {@link TextRenderer} sequence start
+     * @param textRendererSequenceAscentDescent                a {@link Map} with {@link TextRenderer} children's
+     *                                                         positions as keys
+     *                                                         and float arrays consisting of maxAscent, maxDescent,
+     *                                                         maxTextAscent,
+     *                                                         maxTextDescent of the corresponding {@link TextRenderer}
+     *                                                         children.
+     * @return a two-element float array where first element is a new {@link LineRenderer}'s ascender
+     *         and second element is a new {@link LineRenderer}'s descender
+     */
+    float[] updateAscentDescentAfterTextRendererSequenceProcessing(
+            int newChildPos, LineAscentDescentState lineAscentDescentStateBeforeTextRendererSequence,
+            Map<Integer, float[]> textRendererSequenceAscentDescent) {
+        float maxAscentUpdated = lineAscentDescentStateBeforeTextRendererSequence.maxAscent;
+        float maxDescentUpdated = lineAscentDescentStateBeforeTextRendererSequence.maxDescent;
+        float maxTextAscentUpdated = lineAscentDescentStateBeforeTextRendererSequence.maxTextAscent;
+        float maxTextDescentUpdated = lineAscentDescentStateBeforeTextRendererSequence.maxTextDescent;
+        for (Map.Entry<Integer, float[]> childAscentDescent : textRendererSequenceAscentDescent.entrySet()) {
+            if (childAscentDescent.getKey() <= newChildPos) {
+                maxAscentUpdated = Math.max(maxAscentUpdated, childAscentDescent.getValue()[0]);
+                maxDescentUpdated = Math.min(maxDescentUpdated, childAscentDescent.getValue()[1]);
+                maxTextAscentUpdated = Math.max(maxTextAscentUpdated, childAscentDescent.getValue()[0]);
+                maxTextDescentUpdated = Math.min(maxTextDescentUpdated, childAscentDescent.getValue()[1]);
+            }
+        }
+
+        this.maxAscent = maxAscentUpdated;
+        this.maxDescent = maxDescentUpdated;
+        this.maxTextAscent = maxTextAscentUpdated;
+        this.maxTextDescent = maxTextDescentUpdated;
+
+        return new float[] {this.maxAscent, this.maxDescent};
+    }
+
+    /**
+     * Update {@link LineRenderer#maxAscent}, {@link LineRenderer#maxDescent}, {@link LineRenderer#maxTextAscent},
+     * {@link LineRenderer#maxTextDescent}, {@link LineRenderer#maxBlockAscent} and {@link LineRenderer#maxBlockDescent}
+     * after child's layout.
+     *
+     * @param childAscentDescent a two-element float array where first element is ascender of a layouted child
+     *                           and second element is descender of a layouted child
+     * @param childRenderer the layouted {@link IRenderer childRenderer} of current {@link LineRenderer}
+     * @param isChildFloating true if {@link #isChildFloating(IRenderer)}
+     */
+    void updateAscentDescentAfterChildLayout(float[] childAscentDescent, IRenderer childRenderer,
+                                             boolean isChildFloating) {
+        float childAscent = childAscentDescent[0];
+        float childDescent = childAscentDescent[1];
+        this.maxAscent = Math.max(this.maxAscent, childAscent);
+        if (childRenderer instanceof TextRenderer) {
+            this.maxTextAscent = Math.max(this.maxTextAscent, childAscent);
+        } else if (!isChildFloating) {
+            this.maxBlockAscent = Math.max(this.maxBlockAscent, childAscent);
+        }
+        this.maxDescent = Math.min(this.maxDescent, childDescent);
+        if (childRenderer instanceof TextRenderer) {
+            this.maxTextDescent = Math.min(this.maxTextDescent, childDescent);
+        } else if (!isChildFloating) {
+            this.maxBlockDescent = Math.min(this.maxBlockDescent, childDescent);
         }
     }
 
@@ -1597,59 +1542,6 @@ public class LineRenderer extends AbstractRenderer {
         return normalizedChildWidth;
     }
 
-    private boolean isInlineBlockChild(IRenderer child) {
-        return child instanceof BlockRenderer || child instanceof TableRenderer;
-    }
-
-    // ActualTextChunk is either an ActualText or a single independent glyph
-    private static void fillActualTextChunkRelatedLists(
-            GlyphLine glyphLine, List<Integer> amountOfCharsBetweenTextStartAndActualTextChunk,
-            List<Integer> glyphLineBasedIndicesOfActualTextChunkEnds) {
-        ActualTextIterator actualTextIterator = new ActualTextIterator(glyphLine);
-
-        int amountOfCharsBetweenTextStartAndCurrentActualTextStartOrGlyph = 0;
-        while (actualTextIterator.hasNext()) {
-            GlyphLine.GlyphLinePart part = actualTextIterator.next();
-            int amountOfCharsWithinCurrentActualTextOrGlyph = 0;
-            if (part.actualText != null) {
-                amountOfCharsWithinCurrentActualTextOrGlyph = part.actualText.length();
-                int nextAmountOfChars = amountOfCharsWithinCurrentActualTextOrGlyph
-                        + amountOfCharsBetweenTextStartAndCurrentActualTextStartOrGlyph;
-                amountOfCharsBetweenTextStartAndActualTextChunk.add(nextAmountOfChars);
-                glyphLineBasedIndicesOfActualTextChunkEnds.add(part.end);
-                amountOfCharsBetweenTextStartAndCurrentActualTextStartOrGlyph = nextAmountOfChars;
-            } else {
-                for (int j = part.start; j < part.end; j++) {
-                    char[] chars = glyphLine.get(j).getChars();
-                    amountOfCharsWithinCurrentActualTextOrGlyph = chars != null ? chars.length : 0;
-                    int nextAmountOfChars = amountOfCharsWithinCurrentActualTextOrGlyph
-                            + amountOfCharsBetweenTextStartAndCurrentActualTextStartOrGlyph;
-                    amountOfCharsBetweenTextStartAndActualTextChunk.add(nextAmountOfChars);
-                    glyphLineBasedIndicesOfActualTextChunkEnds.add(j + 1);
-                    amountOfCharsBetweenTextStartAndCurrentActualTextStartOrGlyph = nextAmountOfChars;
-                }
-            }
-        }
-    }
-
-    private static List<Integer> convertPossibleBreakPointsToGlyphLineBased(
-            List<Integer> possibleBreakPoints, List<Integer> amountOfChars, List<Integer> indices) {
-        if (possibleBreakPoints.isEmpty()) {
-            possibleBreakPoints.add(-1);
-            return possibleBreakPoints;
-        } else {
-            List<Integer> glyphLineBased = new ArrayList<>();
-
-            for (int j : possibleBreakPoints) {
-                int found = TextRenderer.findPossibleBreaksSplitPosition(amountOfChars, j, true);
-                if (found >= 0) {
-                    glyphLineBased.add(indices.get(found));
-                }
-            }
-            return glyphLineBased;
-        }
-    }
-
     static class RendererGlyph {
         public Glyph glyph;
         public TextRenderer renderer;
@@ -1660,36 +1552,18 @@ public class LineRenderer extends AbstractRenderer {
         }
     }
 
-    // numberOfSequentialTextRenderers - number of sequential TextRenderers containing special scripts,
-    // plus number of ignored floating renderers occurring amidst the sequence;
-    // sequentialTextContent - converted to String and concatenated TextRenderer#text-s;
-    // indicesOfFloating - indices of ignored floating child renderers of this LineRenderer
-    class SpecialScriptsContainingTextRendererSequenceInfo {
-        public int numberOfSequentialTextRenderers;
-        public String sequentialTextContent;
-        List<Integer> indicesOfFloating;
+    static class LineAscentDescentState {
+        float maxAscent;
+        float maxDescent;
+        float maxTextAscent;
+        float maxTextDescent;
 
-        public SpecialScriptsContainingTextRendererSequenceInfo
-                (int numberOfSequentialTextRenderers, String sequentialTextContent, List<Integer> indicesOfFloating) {
-            this.numberOfSequentialTextRenderers = numberOfSequentialTextRenderers;
-            this.sequentialTextContent = sequentialTextContent;
-            this.indicesOfFloating = indicesOfFloating;
+        LineAscentDescentState(float maxAscent, float maxDescent, float maxTextAscent, float maxTextDescent) {
+            this.maxAscent = maxAscent;
+            this.maxDescent = maxDescent;
+            this.maxTextAscent = maxTextAscent;
+            this.maxTextDescent = maxTextDescent;
         }
     }
 
-    class LastFittingChildRendererData {
-        public int childIndex;
-        public LayoutResult childLayoutResult;
-
-        public LastFittingChildRendererData(int childIndex, LayoutResult childLayoutResult) {
-            this.childIndex = childIndex;
-            this.childLayoutResult = childLayoutResult;
-        }
-    }
-
-    static enum SpecialScriptsContainingSequenceStatus {
-        MOVE_SEQUENCE_CONTAINING_SPECIAL_SCRIPTS_ON_NEXT_LINE,
-        MOVE_TO_PREVIOUS_TEXT_RENDERER_CONTAINING_SPECIAL_SCRIPTS,
-        FORCED_SPLIT
-    }
 }

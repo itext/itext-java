@@ -65,6 +65,7 @@ public final class LogMessageConstant {
     public static final String CANNOT_REPLACE_FINISHED_HINT = "Layout tagging hints modification failed: cannot replace a kid hint that is already marked as finished.";
     public static final String CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS = "Cannot resolve \"{0}\" role in {1} namespace mapping to standard role, because of the too much transitive mappings.";
     public static final String CANNOT_RESOLVE_ROLE_TOO_MUCH_TRANSITIVE_MAPPINGS = "Cannot resolve \"{0}\" role mapping to standard role, because of the too much transitive mappings.";
+    public static final String CANVAS_ALREADY_FULL_ELEMENT_WILL_BE_SKIPPED = "Canvas is already full. Element will be skipped.";
     public static final String CHARACTER_DIRECTION_HAS_NOT_BEEN_DETECTED = "The direction for this character has not been detected: code point {0}. The Other Neutrals algorithm will be used.";
     public static final String CLIP_ELEMENT = "Element content was clipped because some height properties are set.";
     public static final String COLLECTION_DICTIONARY_ALREADY_EXISTS_IT_WILL_BE_MODIFIED = "Collection dictionary already exists. It will be modified.";

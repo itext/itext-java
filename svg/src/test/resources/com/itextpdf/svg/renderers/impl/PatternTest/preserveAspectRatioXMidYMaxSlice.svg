@@ -1,0 +1,12 @@
+<svg viewBox="0 0 600 600" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <pattern id="pattern" height="70%" width="50%"
+          viewBox="0 0 100 100"
+         preserveAspectRatio="xMidYMax slice">
+           <image xlink:href="image.png" width="100" height="100"/>
+        </pattern>
+    </defs>
+	
+    <rect x='10' y='20' width='100' height='80' stroke="green" stroke-width="3" fill ="url(#pattern)"/>
+</svg>

@@ -1,0 +1,20 @@
+<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="star1" viewBox="0 0 13 13"  x="0.5mm" y="0.5mm" patternUnits="objectBoundingBox" width="0.3mm" height="0.3mm">
+      <polygon points="0,0 2,5 0,10 5,8 10,10 8,5 10,0 5,2"/>
+	  <polygon  fill="red" points="3,3 5,8 3,13 8,11 13,13 11,8 13,3 8,5"/>
+    </pattern>
+	
+	<pattern id="star2" viewBox="0 0 13 13"  x="1mm" y="1mm" patternUnits="userSpaceOnUse" width="4mm" height="4mm">
+      <polygon points="0,0 2,5 0,10 5,8 10,10 8,5 10,0 5,2"/>
+	  <polygon  fill="blue" points="3,3 5,8 3,13 8,11 13,13 11,8 13,3 8,5"/>
+    </pattern>
+  </defs>
+  
+  <rect x='10' y='10' width='80' height='80' stroke="green" fill ="url(#star1)"/>
+  <rect x='120' y='20' width='60' height='60' stroke="url(#star1)" stroke-width="10" fill ="green"/>
+  
+  <rect x='10' y='120' width='80' height='80' stroke="green" fill ="url(#star2)"/>
+  <rect x='120' y='130' width='60' height='60' stroke="url(#star2)" stroke-width="10" fill ="green"/>
+  
+</svg>

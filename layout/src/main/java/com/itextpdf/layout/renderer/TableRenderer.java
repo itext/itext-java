@@ -373,6 +373,8 @@ public class TableRenderer extends AbstractRenderer {
 
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), (float) tableWidth, 0));
 
+        TargetCounterHandler.addPageByID(this);
+
         if (footerRenderer != null) {
             // apply the difference to set footer and table left/right margins identical
             prepareFooterOrHeaderRendererForLayout(footerRenderer, layoutBox.getWidth());

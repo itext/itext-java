@@ -42,6 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.util;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -50,12 +51,15 @@ import java.util.Set;
  */
 public class WhiteSpaceUtil {
 
-    private static final Set<Character> EM_SPACES = new HashSet<>();
+    private static final Set<Character> EM_SPACES;
 
     static {
-        EM_SPACES.add((char) 0x2002);
-        EM_SPACES.add((char) 0x2003);
-        EM_SPACES.add((char) 0x2009);
+        // HashSet is required in order to autoport correctly in .Net
+        HashSet<Character> tempSet = new HashSet<>();
+        tempSet.add((char) 0x2002);
+        tempSet.add((char) 0x2003);
+        tempSet.add((char) 0x2009);
+        EM_SPACES = Collections.unmodifiableSet(tempSet);
     }
 
     /**

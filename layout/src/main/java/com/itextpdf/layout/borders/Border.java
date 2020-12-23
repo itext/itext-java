@@ -122,6 +122,12 @@ public abstract class Border {
      * @see RidgeBorder
      */
     public static final int _3D_RIDGE = 8;
+    /**
+     * The fixed dashed border.
+     *
+     * @see FixedDashedBorder
+     */
+    public static final int DASHED_FIXED = 9;
 
     /**
      * The color of the border.
@@ -199,6 +205,23 @@ public abstract class Border {
      * @param borderWidthAfter  defines width of the border that is after the current one
      */
     public abstract void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, Side defaultSide, float borderWidthBefore, float borderWidthAfter);
+
+     /**
+     * Draw borders around the target rectangle.
+     *
+     * @param canvas    PdfCanvas to be written to
+     * @param rectangle border positions rectangle
+     */
+    public void draw(PdfCanvas canvas, Rectangle rectangle) {
+        float left = rectangle.getX();
+        float bottom = rectangle.getY();
+        float right = rectangle.getX() + rectangle.getWidth();
+        float top = rectangle.getY() + rectangle.getHeight();
+        draw(canvas, left, top, right, top, Side.TOP, width, width);
+        draw(canvas, right, top, right, bottom, Side.RIGHT, width, width);
+        draw(canvas, right, bottom, left, bottom, Side.BOTTOM, width, width);
+        draw(canvas, left, bottom, left, top, Side.LEFT, width, width);
+    }
 
     /**
      * All borders are supposed to be drawn in such way, that inner content of the element is on the right from the

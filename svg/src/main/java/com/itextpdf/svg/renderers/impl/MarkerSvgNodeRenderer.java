@@ -24,6 +24,8 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
@@ -35,6 +37,7 @@ import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.utils.SvgTextUtil;
 
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,8 +74,8 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
         float markerHeight = markerWidthHeight[1];
         String xAttribute = this.getAttribute(SvgConstants.Attributes.X);
         String yAttribute = this.getAttribute(SvgConstants.Attributes.Y);
-        float x = xAttribute != null ? CssUtils.parseAbsoluteLength(xAttribute) : 0f;
-        float y = yAttribute != null ? CssUtils.parseAbsoluteLength(yAttribute) : 0f;
+        float x = xAttribute != null ? CssDimensionParsingUtils.parseAbsoluteLength(xAttribute) : 0f;
+        float y = yAttribute != null ? CssDimensionParsingUtils.parseAbsoluteLength(yAttribute) : 0f;
         Rectangle markerViewport = new Rectangle(x, y, markerWidth, markerHeight);
         context.addViewPort(markerViewport);
     }
@@ -120,12 +123,12 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
         float markerWidth = DEFAULT_MARKER_WIDTH;
         if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.MARKER_WIDTH)) {
             String markerWidthRawValue = attributesAndStyles.get(SvgConstants.Attributes.MARKER_WIDTH);
-            markerWidth = CssUtils.parseAbsoluteLength(markerWidthRawValue);
+            markerWidth = CssDimensionParsingUtils.parseAbsoluteLength(markerWidthRawValue);
         }
         float markerHeight = DEFAULT_MARKER_HEIGHT;
         if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.MARKER_HEIGHT)) {
             String markerHeightRawValue = attributesAndStyles.get(SvgConstants.Attributes.MARKER_HEIGHT);
-            markerHeight = CssUtils.parseAbsoluteLength(markerHeightRawValue);
+            markerHeight = CssDimensionParsingUtils.parseAbsoluteLength(markerHeightRawValue);
         }
         return new float[] {markerWidth, markerHeight};
     }
@@ -136,7 +139,7 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
         String markerHeight = namedObject.getAttribute(SvgConstants.Attributes.MARKER_HEIGHT);
         boolean isCorrect = true;
         if (markerWidth != null) {
-            float absoluteMarkerWidthValue = CssUtils.parseAbsoluteLength(markerWidth);
+            float absoluteMarkerWidthValue = CssDimensionParsingUtils.parseAbsoluteLength(markerWidth);
             if (absoluteMarkerWidthValue == 0) {
                 log.warn(SvgLogMessageConstant.MARKER_WIDTH_IS_ZERO_VALUE);
                 isCorrect = false;
@@ -146,7 +149,7 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
             }
         }
         if (markerHeight != null) {
-            float absoluteMarkerHeightValue = CssUtils.parseAbsoluteLength(markerHeight);
+            float absoluteMarkerHeightValue = CssDimensionParsingUtils.parseAbsoluteLength(markerHeight);
             if (absoluteMarkerHeightValue == 0) {
                 log.warn(SvgLogMessageConstant.MARKER_HEIGHT_IS_ZERO_VALUE);
                 isCorrect = false;
@@ -172,8 +175,8 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
             } else if (SvgConstants.Values.AUTO_START_REVERSE.equals(orient) && SvgConstants.Attributes.MARKER_START
                     .equals(this.attributesAndStyles.get(SvgConstants.Tags.MARKER))) {
                 rotAngle = ((IMarkerCapable) getParent()).getAutoOrientAngle(this, true);
-            } else if (CssUtils.isAngleValue(orient) || CssUtils.isNumericValue(orient)) {
-                rotAngle = CssUtils.parseAngle(this.attributesAndStyles.get(SvgConstants.Attributes.ORIENT));
+            } else if (CssTypesValidationUtils.isAngleValue(orient) || CssTypesValidationUtils.isNumericValue(orient)) {
+                rotAngle = CssDimensionParsingUtils.parseAngle(this.attributesAndStyles.get(SvgConstants.Attributes.ORIENT));
             }
             if (!Double.isNaN(rotAngle)) {
                 context.getCurrentCanvas().concatMatrix(AffineTransform.getRotateInstance(rotAngle));
@@ -203,11 +206,8 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
     private void applyCoordinatesTranslation(SvgDrawContext context) {
         float xScale = 1;
         float yScale = 1;
-        if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.VIEWBOX)) {
-            //Parse viewbox parameters stuff
-            String viewBoxValues = attributesAndStyles.get(SvgConstants.Attributes.VIEWBOX);
-            List<String> valueStrings = SvgCssUtils.splitValueList(viewBoxValues);
-            float[] viewBox = getViewBoxValues();
+        float[] viewBox = getViewBoxValues();
+        if (viewBox.length == VIEWBOX_VALUES_NUMBER) {
             xScale = context.getCurrentViewPort().getWidth() / viewBox[2];
             yScale = context.getCurrentViewPort().getHeight() / viewBox[3];
         }
@@ -231,19 +231,14 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
     }
 
     private float[] getViewBoxValues(float defaultWidth, float defaultHeight) {
-        float[] values;
-        if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.VIEWBOX)) {
-            //Parse viewbox parameters stuff
-            values = super.getViewBoxValues();
+        float[] values = super.getViewBoxValues();
+        if (values.length < VIEWBOX_VALUES_NUMBER) {
+            //If viewBox is not specified or incorrect, it's width and height are the same as passed defaults
+            return new float[] {0, 0, defaultWidth, defaultHeight};
+
         } else {
-            //If viewbox is not specified, it's width and height are the same as passed defaults
-            values = new float[4];
-            values[0] = 0;
-            values[1] = 0;
-            values[2] = defaultWidth;
-            values[3] = defaultHeight;
+            return values;
         }
-        return values;
     }
 }
 

@@ -67,6 +67,7 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -86,14 +87,17 @@ import org.slf4j.LoggerFactory;
  */
 public class TagStructureContext {
 
-    private static final Set<String> allowedRootTagRoles = new HashSet<>();
+    private static final Set<String> ALLOWED_ROOT_TAG_ROLES;
 
     static {
-        allowedRootTagRoles.add(StandardRoles.DOCUMENT);
-        allowedRootTagRoles.add(StandardRoles.PART);
-        allowedRootTagRoles.add(StandardRoles.ART);
-        allowedRootTagRoles.add(StandardRoles.SECT);
-        allowedRootTagRoles.add(StandardRoles.DIV);
+        // HashSet is required in order to autoport correctly in .Net
+        HashSet<String> tempSet = new HashSet<>();
+        tempSet.add(StandardRoles.DOCUMENT);
+        tempSet.add(StandardRoles.PART);
+        tempSet.add(StandardRoles.ART);
+        tempSet.add(StandardRoles.SECT);
+        tempSet.add(StandardRoles.DIV);
+        ALLOWED_ROOT_TAG_ROLES = Collections.unmodifiableSet(tempSet);
     }
 
     private PdfDocument document;
@@ -564,7 +568,7 @@ public class TagStructureContext {
         if (targetTagStructureVersionIs2()) {
             return StandardRoles.DOCUMENT.equals(role);
         } else {
-            return allowedRootTagRoles.contains(role);
+            return ALLOWED_ROOT_TAG_ROLES.contains(role);
         }
     }
 

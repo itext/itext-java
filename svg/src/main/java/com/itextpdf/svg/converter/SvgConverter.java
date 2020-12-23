@@ -53,7 +53,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.styledxmlparser.IXmlParser;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
@@ -556,14 +556,18 @@ public final class SvgConverter {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(pdfDest, writerProps));
         // Process
         ISvgProcessorResult processorResult = process(parse(svgStream, props), props);
-        ISvgNodeRenderer topSvgRenderer = processorResult.getRootRenderer();
 
         ResourceResolver resourceResolver = SvgConverter.getResourceResolver(processorResult, props);
-        SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider(), processorResult.getRootRenderer());
+        SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider());
+        if (processorResult instanceof SvgProcessorResult) {
+            drawContext.setCssContext(((SvgProcessorResult) processorResult).getContext().getCssContext());
+        }
 
         drawContext.addNamedObjects(processorResult.getNamedObjects());
         // Add temp fonts
         drawContext.setTempFonts(processorResult.getTempFonts());
+
+        ISvgNodeRenderer topSvgRenderer = processorResult.getRootRenderer();
         // Extract topmost dimensions
         checkNull(topSvgRenderer);
         checkNull(pdfDocument);
@@ -669,8 +673,10 @@ public final class SvgConverter {
     private static PdfFormXObject convertToXObject(ISvgProcessorResult processorResult, PdfDocument document,
             ISvgConverterProperties props) {
         ResourceResolver resourceResolver = SvgConverter.getResourceResolver(processorResult, props);
-        SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider(),
-                processorResult.getRootRenderer());
+        final SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider());
+        if (processorResult instanceof SvgProcessorResult) {
+            drawContext.setCssContext(((SvgProcessorResult) processorResult).getContext().getCssContext());
+        }
         drawContext.setTempFonts(processorResult.getTempFonts());
         drawContext.addNamedObjects(processorResult.getNamedObjects());
         return convertToXObject(processorResult.getRootRenderer(), document, drawContext);
@@ -938,7 +944,8 @@ public final class SvgConverter {
      * defaulting to respective viewbox values if either one is not present or
      * to browser default if viewbox is missing as well
      *
-     * @param topSvgRenderer
+     * @param topSvgRenderer the {@link ISvgNodeRenderer} instance that contains
+     *                       the renderer tree
      * @return float[2], width is in position 0, height in position 1
      */
     public static float[] extractWidthAndHeight(ISvgNodeRenderer topSvgRenderer) {
@@ -952,7 +959,7 @@ public final class SvgConverter {
             List<String> valueStrings = SvgCssUtils.splitValueList(vbString);
             values = new float[valueStrings.size()];
             for (int i = 0; i < values.length; i++) {
-                values[i] = CssUtils.parseAbsoluteLength(valueStrings.get(i));
+                values[i] = CssDimensionParsingUtils.parseAbsoluteLength(valueStrings.get(i));
             }
             viewBoxPresent = true;
         }
@@ -966,10 +973,10 @@ public final class SvgConverter {
                 //Log Warning
                 LOGGER.warn(SvgLogMessageConstant.MISSING_WIDTH);
                 //Set to browser default
-                width = CssUtils.parseAbsoluteLength("300px");
+                width = CssDimensionParsingUtils.parseAbsoluteLength("300px");
             }
         } else {
-            width = CssUtils.parseAbsoluteLength(wString);
+            width = CssDimensionParsingUtils.parseAbsoluteLength(wString);
         }
         hString = topSvgRenderer.getAttribute(SvgConstants.Attributes.HEIGHT);
         if (hString == null) {
@@ -979,10 +986,10 @@ public final class SvgConverter {
                 //Log Warning
                 LOGGER.warn(SvgLogMessageConstant.MISSING_HEIGHT);
                 //Set to browser default
-                height = CssUtils.parseAbsoluteLength("150px");
+                height = CssDimensionParsingUtils.parseAbsoluteLength("150px");
             }
         } else {
-            height = CssUtils.parseAbsoluteLength(hString);
+            height = CssDimensionParsingUtils.parseAbsoluteLength(hString);
         }
 
         res[0] = width;

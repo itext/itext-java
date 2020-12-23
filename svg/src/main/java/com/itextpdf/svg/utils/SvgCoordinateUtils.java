@@ -42,7 +42,14 @@
  */
 package com.itextpdf.svg.utils;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
+import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.SvgConstants.Values;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 
 public class SvgCoordinateUtils {
@@ -86,4 +93,187 @@ public class SvgCoordinateUtils {
         return Math.acos((double) vectorA.dot(vectorB) / ((double) vectorA.length() * (double) vectorB.length()));
     }
 
+    /**
+     * Returns absolute value for attribute in userSpaceOnUse coordinate system.
+     *
+     * @param attributeValue value of attribute.
+     * @param defaultValue   default value.
+     * @param start          start border for calculating percent value.
+     * @param length         length for calculating percent value.
+     * @param em             em value.
+     * @param rem            rem value.
+     * @return absolute value in the userSpaceOnUse coordinate system.
+     */
+    public static double getCoordinateForUserSpaceOnUse(String attributeValue, double defaultValue,
+            double start, double length, float em, float rem) {
+        double absoluteValue;
+        final UnitValue unitValue = CssUtils.parseLengthValueToPt(attributeValue, em, rem);
+        if (unitValue == null) {
+            absoluteValue = defaultValue;
+        } else if (unitValue.getUnitType() == UnitValue.PERCENT) {
+            absoluteValue = start + (length * unitValue.getValue() / 100);
+        } else {
+            absoluteValue = unitValue.getValue();
+        }
+        return absoluteValue;
+    }
+
+    /**
+     * Returns a value relative to the object bounding box.
+     * We should only call this method for attributes with coordinates relative to the object bounding rectangle.
+     *
+     * @param attributeValue attribute value to parse
+     * @param defaultValue   this value will be returned if an error occurs while parsing the attribute value
+     * @return if {@code attributeValue} is a percentage value, the given percentage of 1 will be returned.
+     * And if it's a valid value with a number, the number will be extracted from that value.
+     */
+    public static double getCoordinateForObjectBoundingBox(String attributeValue, double defaultValue) {
+        if (CssTypesValidationUtils.isPercentageValue(attributeValue)) {
+            return CssDimensionParsingUtils.parseRelativeValue(attributeValue, 1);
+        } else if (CssTypesValidationUtils.isNumericValue(attributeValue)
+                || CssTypesValidationUtils.isMetricValue(attributeValue)
+                || CssTypesValidationUtils.isRelativeValue(attributeValue)) {
+            // if there is incorrect value metric, then we do not need to parse the value
+            int unitsPosition = CssDimensionParsingUtils.determinePositionBetweenValueAndUnit(attributeValue);
+            if (unitsPosition > 0) {
+                // We want to ignore the unit type how this is done in the "Google Chrome" approach
+                // which treats the "abstract coordinate system" in the coordinate metric measure,
+                // i.e. for value '0.5cm' the top/left of the object bounding box would be (1cm, 1cm),
+                // for value '0.5em' the top/left of the object bounding box would be (1em, 1em) and etc.
+                // no null pointer should be thrown as determine
+                return CssDimensionParsingUtils.parseDouble(attributeValue.substring(0, unitsPosition))
+                        .doubleValue();
+            }
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Returns the viewBox received after scaling and displacement given preserveAspectRatio.
+     *
+     * @param viewBox         parsed viewBox rectangle. It should be a valid {@link Rectangle}
+     * @param currentViewPort current element view port. It should be a valid {@link Rectangle}
+     * @param align           the alignment value that indicates whether to force uniform scaling
+     *                        and, if so, the alignment method to use in case the aspect ratio of
+     *                        the viewBox doesn't match the aspect ratio of the viewport. If align
+     *                        is {@code null} or align is invalid (i.e. not in the predefined list),
+     *                        then the default logic with align = "xMidYMid", and meetOrSlice = "meet" would be used
+     * @param meetOrSlice     the way to scale the viewBox. If meetOrSlice is not {@code null} and invalid,
+     *                        then the default logic with align = "xMidYMid"
+     *                        and meetOrSlice = "meet" would be used, if meetOrSlice is {@code null}
+     *                        then default "meet" value would be used with the specified align
+     * @return the applied viewBox {@link Rectangle}
+     */
+    public static Rectangle applyViewBox(Rectangle viewBox, Rectangle currentViewPort, String align,
+            String meetOrSlice) {
+        if (currentViewPort == null) {
+            throw new IllegalArgumentException(SvgExceptionMessageConstant.CURRENT_VIEWPORT_IS_NULL);
+        }
+
+        if (viewBox == null || viewBox.getWidth() <= 0 || viewBox.getHeight() <= 0) {
+            throw new IllegalArgumentException(SvgExceptionMessageConstant.VIEWBOX_IS_INCORRECT);
+        }
+
+        if (align == null || (
+                meetOrSlice != null && !Values.MEET.equals(meetOrSlice) && !Values.SLICE.equals(meetOrSlice)
+        )) {
+            return applyViewBox(viewBox, currentViewPort, Values.XMID_YMID, Values.MEET);
+        }
+
+        double scaleWidth;
+        double scaleHeight;
+        if (Values.NONE.equalsIgnoreCase(align)) {
+            scaleWidth = (double) currentViewPort.getWidth() / (double) viewBox.getWidth();
+            scaleHeight = (double) currentViewPort.getHeight() / (double) viewBox.getHeight();
+        } else {
+            double scale = getScaleWidthHeight(viewBox, currentViewPort, meetOrSlice);
+            scaleWidth = scale;
+            scaleHeight = scale;
+        }
+
+        // apply scale
+        Rectangle appliedViewBox = new Rectangle(viewBox.getX(), viewBox.getY(),
+                (float) ((double) viewBox.getWidth() * scaleWidth),
+                (float) ((double) viewBox.getHeight() * scaleHeight));
+
+        double minXOffset = (double) currentViewPort.getX() - (double) appliedViewBox.getX();
+        double minYOffset = (double) currentViewPort.getY() - (double) appliedViewBox.getY();
+
+        double midXOffset = (double) currentViewPort.getX() + ((double) currentViewPort.getWidth() / 2)
+                - ((double) appliedViewBox.getX() + ((double) appliedViewBox.getWidth() / 2));
+        double midYOffset = (double) currentViewPort.getY() + ((double) currentViewPort.getHeight() / 2)
+                - ((double) appliedViewBox.getY() + ((double) appliedViewBox.getHeight() / 2));
+
+        double maxXOffset = (double) currentViewPort.getX() + (double) currentViewPort.getWidth()
+                - ((double) appliedViewBox.getX() + (double) appliedViewBox.getWidth());
+        double maxYOffset = (double) currentViewPort.getY() + (double) currentViewPort.getHeight()
+                - ((double) appliedViewBox.getY() + (double) appliedViewBox.getHeight());
+        
+        double xOffset;
+        double yOffset;
+
+        switch (align.toLowerCase()) {
+            case SvgConstants.Values.NONE:
+            case SvgConstants.Values.XMIN_YMIN:
+                xOffset = minXOffset;
+                yOffset = minYOffset;
+                break;
+            case SvgConstants.Values.XMIN_YMID:
+                xOffset = minXOffset;
+                yOffset = midYOffset;
+                break;
+            case SvgConstants.Values.XMIN_YMAX:
+                xOffset = minXOffset;
+                yOffset = maxYOffset;
+                break;
+            case SvgConstants.Values.XMID_YMIN:
+                xOffset = midXOffset;
+                yOffset = minYOffset;
+                break;
+            case SvgConstants.Values.XMID_YMAX:
+                xOffset = midXOffset;
+                yOffset = maxYOffset;
+                break;
+            case SvgConstants.Values.XMAX_YMIN:
+                xOffset = maxXOffset;
+                yOffset = minYOffset;
+                break;
+            case SvgConstants.Values.XMAX_YMID:
+                xOffset = maxXOffset;
+                yOffset = midYOffset;
+                break;
+            case SvgConstants.Values.XMAX_YMAX:
+                xOffset = maxXOffset;
+                yOffset = maxYOffset;
+                break;
+            case SvgConstants.Values.XMID_YMID:
+                xOffset = midXOffset;
+                yOffset = midYOffset;
+                break;
+            default:
+                return applyViewBox(viewBox, currentViewPort, Values.XMID_YMID, Values.MEET);
+        }
+
+        // apply offset
+        appliedViewBox.moveRight((float) xOffset);
+        appliedViewBox.moveUp((float) yOffset);
+
+        return appliedViewBox;
+    }
+
+    private static double getScaleWidthHeight(Rectangle viewBox, Rectangle currentViewPort,
+            String meetOrSlice) {
+        double scaleWidth = (double) currentViewPort.getWidth() / (double) viewBox.getWidth();
+        double scaleHeight = (double) currentViewPort.getHeight() / (double) viewBox.getHeight();
+        if (Values.SLICE.equalsIgnoreCase(meetOrSlice)) {
+            return Math.max(scaleWidth, scaleHeight);
+        } else if (Values.MEET.equalsIgnoreCase(meetOrSlice) || meetOrSlice == null) {
+            return Math.min(scaleWidth, scaleHeight);
+        } else {
+            // This code should be unreachable. We check for incorrect cases
+            // in the applyViewBox method and instead use the default implementation (xMidYMid meet).
+            throw new IllegalStateException(
+                    SvgExceptionMessageConstant.MEET_OR_SLICE_ARGUMENT_IS_INCORRECT);
+        }
+    }
 }

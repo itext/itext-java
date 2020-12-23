@@ -59,6 +59,10 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.layout.TextLayoutResult;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.property.OverflowPropertyValue;
+import com.itextpdf.layout.property.OverflowWrapPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.RenderingMode;
 import com.itextpdf.layout.property.UnitValue;
@@ -279,5 +283,134 @@ public class TextRendererTest extends RendererUnitTest {
     public void cyrillicCharacterDoesntBelongToSpecificScripts() {
         // u0433 Cyrillic Small Letter U
         Assert.assertFalse(TextRenderer.codePointIsOfSpecialScript(1091));
+    }
+    
+    @Test
+    public void overflowWrapAnywhereProperty() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        pdfDoc.addNewPage();
+        Document doc = new Document(pdfDoc);
+        RootRenderer documentRenderer = doc.getRenderer();
+
+        Text text = new Text("wow");
+        text.setProperty(Property.OVERFLOW_WRAP, OverflowWrapPropertyValue.ANYWHERE);
+
+        TextRenderer textRenderer = (TextRenderer) text.getRenderer();
+        textRenderer.setParent(documentRenderer);
+
+        MinMaxWidth minMaxWidth = textRenderer.getMinMaxWidth();
+
+        Assert.assertTrue(minMaxWidth.getMinWidth() < minMaxWidth.getMaxWidth());
+    }
+
+    @Test
+    public void overflowWrapBreakWordProperty() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        pdfDoc.addNewPage();
+        Document doc = new Document(pdfDoc);
+        RootRenderer documentRenderer = doc.getRenderer();
+
+        Text text = new Text("wooow");
+
+        TextRenderer textRenderer = (TextRenderer) text.getRenderer();
+        textRenderer.setParent(documentRenderer);
+        // overflow is set here to mock LineRenderer#layout behavior
+        documentRenderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+
+        float fullWordWidth = textRenderer.getMinMaxWidth().getMaxWidth();
+
+        LayoutArea layoutArea = new LayoutArea(1,
+                new Rectangle(fullWordWidth / 2, AbstractRenderer.INF));
+
+        TextLayoutResult result = (TextLayoutResult) textRenderer.layout(new LayoutContext(layoutArea));
+        Assert.assertFalse(result.isWordHasBeenSplit());
+
+        textRenderer.setProperty(Property.OVERFLOW_WRAP, OverflowWrapPropertyValue.BREAK_WORD);
+        result = (TextLayoutResult) textRenderer.layout(new LayoutContext(layoutArea));
+        Assert.assertTrue(result.isWordHasBeenSplit());
+    }
+
+    @Test
+    public void overflowWrapAnywhereBoldSimulationMaxWidth() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        pdfDoc.addNewPage();
+        Document doc = new Document(pdfDoc);
+        RootRenderer documentRenderer = doc.getRenderer();
+
+        Text text = new Text("wow");
+        text.setBold();
+
+        TextRenderer textRenderer = (TextRenderer) text.getRenderer();
+        textRenderer.setParent(documentRenderer);
+
+        float maxWidthNoOverflowWrap = textRenderer.getMinMaxWidth().getMaxWidth();
+
+        text.setProperty(Property.OVERFLOW_WRAP, OverflowWrapPropertyValue.ANYWHERE);
+        float maxWidthAndOverflowWrap = textRenderer.getMinMaxWidth().getMaxWidth();
+
+        Assert.assertEquals(maxWidthAndOverflowWrap, maxWidthNoOverflowWrap, 0.0001);
+    }
+
+    @Test
+    public void overflowWrapAnywhereItalicSimulationMaxWidth() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        pdfDoc.addNewPage();
+        Document doc = new Document(pdfDoc);
+        RootRenderer documentRenderer = doc.getRenderer();
+
+        Text text = new Text("wow");
+        text.setItalic();
+
+        TextRenderer textRenderer = (TextRenderer) text.getRenderer();
+        textRenderer.setParent(documentRenderer);
+
+        float maxWidthNoOverflowWrap = textRenderer.getMinMaxWidth().getMaxWidth();
+
+        text.setProperty(Property.OVERFLOW_WRAP, OverflowWrapPropertyValue.ANYWHERE);
+        float maxWidthAndOverflowWrap = textRenderer.getMinMaxWidth().getMaxWidth();
+
+        Assert.assertEquals(maxWidthAndOverflowWrap, maxWidthNoOverflowWrap, 0.0001);
+    }
+
+    @Test
+    public void overflowWrapAnywhereBoldSimulationMinWidth() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        pdfDoc.addNewPage();
+        Document doc = new Document(pdfDoc);
+        RootRenderer documentRenderer = doc.getRenderer();
+
+        Text text = new Text("wow");
+        text.setProperty(Property.OVERFLOW_WRAP, OverflowWrapPropertyValue.ANYWHERE);
+
+        TextRenderer textRenderer = (TextRenderer) text.getRenderer();
+        textRenderer.setParent(documentRenderer);
+
+        float minWidthNoBoldSimulation = textRenderer.getMinMaxWidth().getMinWidth();
+
+        text.setBold();
+        float minWidthAndBoldSimulation = textRenderer.getMinMaxWidth().getMinWidth();
+
+        Assert.assertTrue(minWidthAndBoldSimulation > minWidthNoBoldSimulation);
+    }
+
+    @Test
+    public void overflowWrapAnywhereItalicSimulationMinWidth() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        pdfDoc.addNewPage();
+        Document doc = new Document(pdfDoc);
+        RootRenderer documentRenderer = doc.getRenderer();
+
+        Text text = new Text("wow");
+        text.setProperty(Property.OVERFLOW_WRAP, OverflowWrapPropertyValue.ANYWHERE);
+
+        TextRenderer textRenderer = (TextRenderer) text.getRenderer();
+        textRenderer.setParent(documentRenderer);
+
+        float minWidthNoItalicSimulation = textRenderer.getMinMaxWidth().getMinWidth();
+
+        text.setItalic();
+        float minWidthAndItalicSimulation = textRenderer.getMinMaxWidth().getMinWidth();
+
+        Assert.assertTrue(minWidthAndItalicSimulation > minWidthNoItalicSimulation);
     }
 }

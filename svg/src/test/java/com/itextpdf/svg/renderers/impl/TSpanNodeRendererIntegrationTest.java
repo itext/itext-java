@@ -214,4 +214,18 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "text_decoration");
     }
 
+    @Test
+    public void tspanDefaultFontSizeTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanDefaultFontSize");
+    }
+
+    @Test
+    public void tspanInheritTextFontSizeTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanInheritTextFontSize");
+    }
+
+    @Test
+    public void tspanInheritAncestorsTspanFontSizeTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanInheritAncestorsTspanFontSize");
+    }
 }

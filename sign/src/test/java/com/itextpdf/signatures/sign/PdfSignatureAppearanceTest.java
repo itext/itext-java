@@ -267,6 +267,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         new PdfDocument(new PdfReader(dest)).close();
 
         try {
+            // TODO DEVSIX-864 compareVisually() should be changed to compareByContent() because it slows down the test
             String testResult = new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_");
             if (null != testResult) {
                 assertionResults.append(testResult);

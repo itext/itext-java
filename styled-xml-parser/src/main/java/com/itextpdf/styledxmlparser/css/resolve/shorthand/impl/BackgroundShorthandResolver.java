@@ -51,9 +51,10 @@ import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.ShorthandResolverFactory;
 import com.itextpdf.styledxmlparser.css.util.CssBackgroundUtils;
 import com.itextpdf.styledxmlparser.css.util.CssBackgroundUtils.BackgroundPropertyType;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-
 import com.itextpdf.styledxmlparser.css.validate.CssDeclarationValidationMaster;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +82,7 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
      */
     @Override
     public List<CssDeclaration> resolveShorthand(final String shorthandExpression) {
-        if (CssUtils.isInitialOrInheritOrUnset(shorthandExpression)) {
+        if (CssTypesValidationUtils.isInitialOrInheritOrUnset(shorthandExpression)) {
             return Arrays.asList(
                     new CssDeclaration(CommonCssConstants.BACKGROUND_COLOR, shorthandExpression),
                     new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE, shorthandExpression),

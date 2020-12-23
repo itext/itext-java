@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.1.13</version>
+  <version>7.1.14</version>
   <packaging>pom</packaging>
   <name>iText 7</name>
   <description>A Free Java-PDF library</description>
@@ -71,24 +71,22 @@
 
   <properties>
     <argLine>-Xmx1024m</argLine>
-    <bouncycastle.version>1.64</bouncycastle.version>
+    <bouncycastle.version>1.67</bouncycastle.version>
     <checkstyle.version>3.1.0</checkstyle.version>
+    <dependencyCheck.version>6.0.3</dependencyCheck.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
     <findsecbugs.version>1.8.0</findsecbugs.version>
-    <hsqldb.version>2.3.3</hsqldb.version>
     <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>
-    <itext.legacy.version>5.5.13.1</itext.legacy.version>
     <jacoco.version>0.8.4</jacoco.version>
-    <java.version>1.7</java.version>
-    <javadoc-additionalOptions/>
+    <java.version>1.8</java.version>
+    <javadoc-additionalOptions />
     <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
     <javadoc.version>3.0.1</javadoc.version>
-    <jfreechart.version>1.0.19</jfreechart.version>
     <junit.version>4.12</junit.version>
     <junitparams.version>1.0.4</junitparams.version>
     <logback.version>1.2.3</logback.version>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <maven.jar.version>3.1.0</maven.jar.version>
     <maven.source.version>3.0.1</maven.source.version>
     <performancetests>com.itextpdf.test.annotations.type.PerformanceTest</performancetests>
@@ -98,7 +96,7 @@
     <sampletests>com.itextpdf.test.annotations.type.SampleTest</sampletests>
     <sb-contrib.version>7.4.7</sb-contrib.version>
     <skipTests>true</skipTests>
-    <slf4j.version>1.7.13</slf4j.version>
+    <slf4j.version>1.7.30</slf4j.version>
     <slowtests>com.itextpdf.test.annotations.type.SlowTest</slowtests>
     <sonar.dependencyCheck.htmlReportPath>target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
     <sonar.dependencyCheck.reportPath>target/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
@@ -506,7 +504,7 @@
           <plugin>
             <groupId>com.github.siom79.japicmp</groupId>
             <artifactId>japicmp-maven-plugin</artifactId>
-            <version>0.14.1</version>
+            <version>0.14.4</version>
             <executions>
               <execution>
                 <phase>verify</phase>
@@ -560,7 +558,7 @@
             <executions>
               <execution>
                 <id>bundle-manifest</id>
-                <phase/>
+                <phase />
               </execution>
             </executions>
           </plugin>
@@ -616,11 +614,11 @@
             <executions>
               <execution>
                 <id>default-resources</id>
-                <phase/>
+                <phase />
               </execution>
               <execution>
                 <id>default-testResources</id>
-                <phase/>
+                <phase />
               </execution>
             </executions>
           </plugin>
@@ -640,7 +638,22 @@
           <plugin>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
-            <version>5.3.1</version>
+            <version>${dependencyCheck.version}</version>
+            <dependencies>
+              <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.22</version>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <autoUpdate>false</autoUpdate>
+              <connectionString />
+              <databaseDriverName>com.mysql.cj.jdbc.Driver</databaseDriverName>
+              <databasePassword />
+              <databaseUser />
+              <format>ALL</format>
+            </configuration>
             <executions>
               <execution>
                 <goals>
@@ -648,11 +661,6 @@
                 </goals>
               </execution>
             </executions>
-            <configuration>
-              <format>ALL</format>
-              <dataDirectory>${user.home}/security/owasp-nvd/</dataDirectory>
-              <autoUpdate>false</autoUpdate>
-            </configuration>
           </plugin>
         </plugins>
       </build>

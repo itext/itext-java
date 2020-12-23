@@ -26,7 +26,8 @@ import com.itextpdf.io.util.DecimalFormatUtil;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.resolve.CssPropertyMerger;
 import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,23 +53,28 @@ public final class StyleUtil {
     /**
      * Merge parent CSS declarations.
      *
-     * @param styles          the styles map
-     * @param styleProperty     the CSS property
-     * @param parentPropValue the parent properties value
-     * @param inheritanceRules set of inheritance rules
+     * @param styles               the styles map
+     * @param styleProperty        the CSS property
+     * @param parentPropValue      the parent properties value
+     * @param parentFontSizeString is a font size of parent element
+     * @param inheritanceRules     set of inheritance rules
      *
      * @return a map of updated styles after merging parent and child style declarations
      */
-    public static  Map<String, String> mergeParentStyleDeclaration(Map<String, String> styles, String styleProperty, String parentPropValue, String parentFontSizeString, Set<IStyleInheritance> inheritanceRules) {
+    public static Map<String, String> mergeParentStyleDeclaration(Map<String, String> styles,
+            String styleProperty, String parentPropValue, String parentFontSizeString,
+            Set<IStyleInheritance> inheritanceRules) {
         String childPropValue = styles.get(styleProperty);
         if ((childPropValue == null && checkInheritance(styleProperty, inheritanceRules)) || CommonCssConstants.INHERIT.equals(childPropValue)) {
             if (valueIsOfMeasurement(parentPropValue, CommonCssConstants.EM)
                     || valueIsOfMeasurement(parentPropValue, CommonCssConstants.EX)
-                    || valueIsOfMeasurement(parentPropValue, CommonCssConstants.PERCENTAGE) && fontSizeDependentPercentage.contains(styleProperty)) {
-                float absoluteParentFontSize = CssUtils.parseAbsoluteLength(parentFontSizeString);
+                    || valueIsOfMeasurement(parentPropValue, CommonCssConstants.PERCENTAGE)
+                    && fontSizeDependentPercentage.contains(styleProperty)) {
+                float absoluteParentFontSize = CssDimensionParsingUtils.parseAbsoluteLength(parentFontSizeString);
                 // Format to 4 decimal places to prevent differences between Java and C#
                 styles.put(styleProperty, DecimalFormatUtil
-                        .formatNumber(CssUtils.parseRelativeValue(parentPropValue, absoluteParentFontSize),
+                        .formatNumber(
+                                CssDimensionParsingUtils.parseRelativeValue(parentPropValue, absoluteParentFontSize),
                                 "0.####") + CommonCssConstants.PT);
             } else {
                 styles.put(styleProperty, parentPropValue);
@@ -115,7 +121,7 @@ public final class StyleUtil {
         if (value == null) {
             return false;
         }
-        return value.endsWith(measurement) && CssUtils
+        return value.endsWith(measurement) && CssTypesValidationUtils
                 .isNumericValue(value.substring(0, value.length() - measurement.length()).trim());
     }
 }

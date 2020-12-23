@@ -36,6 +36,7 @@ public interface IResourceRetriever {
      *
      * @param url the source URL
      * @return the input stream or null if the retrieving failed
+     * @throws IOException if any input/output issue occurs
      */
     InputStream getInputStreamByUrl(URL url) throws IOException;
 
@@ -44,6 +45,7 @@ public interface IResourceRetriever {
      *
      * @param url the source URL
      * @return the byte array or null if the retrieving failed
+     * @throws IOException if any input/output issue occurs
      */
     byte[] getByteArrayByUrl(URL url) throws IOException;
 }

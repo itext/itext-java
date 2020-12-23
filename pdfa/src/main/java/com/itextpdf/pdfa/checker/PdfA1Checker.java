@@ -75,6 +75,7 @@ import com.itextpdf.pdfa.PdfAConformanceException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -91,15 +92,42 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfA1Checker extends PdfAChecker {
 
-    protected static final Set<PdfName> forbiddenAnnotations = new HashSet<>(Arrays.asList(PdfName.Sound, PdfName.Movie, PdfName.FileAttachment));
-    protected static final Set<PdfName> contentAnnotations = new HashSet<>(Arrays.asList(PdfName.Text,
-            PdfName.FreeText, PdfName.Line, PdfName.Square, PdfName.Circle, PdfName.Stamp, PdfName.Ink, PdfName.Popup));
-    protected static final Set<PdfName> forbiddenActions = new HashSet<>(Arrays.asList(PdfName.Launch, PdfName.Sound, PdfName.Movie,
-            PdfName.ResetForm, PdfName.ImportData, PdfName.JavaScript, PdfName.Hide));
-    protected static final Set<PdfName> allowedNamedActions = new HashSet<>(Arrays.asList(PdfName.NextPage,
-            PdfName.PrevPage, PdfName.FirstPage, PdfName.LastPage));
-    protected static final Set<PdfName> allowedRenderingIntents = new HashSet<>(Arrays.asList(PdfName.RelativeColorimetric,
-            PdfName.AbsoluteColorimetric, PdfName.Perceptual, PdfName.Saturation));
+    protected static final Set<PdfName> forbiddenAnnotations = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    PdfName.Sound,
+                    PdfName.Movie,
+                    PdfName.FileAttachment)));
+    protected static final Set<PdfName> contentAnnotations = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    PdfName.Text,
+                    PdfName.FreeText,
+                    PdfName.Line,
+                    PdfName.Square,
+                    PdfName.Circle,
+                    PdfName.Stamp,
+                    PdfName.Ink,
+                    PdfName.Popup)));
+    protected static final Set<PdfName> forbiddenActions = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    PdfName.Launch,
+                    PdfName.Sound,
+                    PdfName.Movie,
+                    PdfName.ResetForm,
+                    PdfName.ImportData,
+                    PdfName.JavaScript,
+                    PdfName.Hide)));
+    protected static final Set<PdfName> allowedNamedActions = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    PdfName.NextPage,
+                    PdfName.PrevPage,
+                    PdfName.FirstPage,
+                    PdfName.LastPage)));
+    protected static final Set<PdfName> allowedRenderingIntents = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    PdfName.RelativeColorimetric,
+                    PdfName.AbsoluteColorimetric,
+                    PdfName.Perceptual,
+                    PdfName.Saturation)));
     private static final int MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS = 8;
     private static final long serialVersionUID = 5103027349795298132L;
 

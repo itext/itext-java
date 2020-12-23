@@ -76,6 +76,8 @@ public class TabRenderer extends AbstractRenderer {
         occupiedArea = new LayoutArea(area.getPageNumber(),
                 new Rectangle(area.getBBox().getX(), area.getBBox().getY() + area.getBBox().getHeight(),(float)  width, (float) height.getValue()));
 
+        TargetCounterHandler.addPageByID(this);
+
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 

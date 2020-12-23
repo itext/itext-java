@@ -361,6 +361,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets encryption algorithm and access permissions.
      *
+     * @return the crypto mode value
      * @see EncryptionConstants
      */
     public int getCryptoMode() {

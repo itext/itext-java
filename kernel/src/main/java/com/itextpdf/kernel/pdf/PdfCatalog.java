@@ -51,6 +51,7 @@ import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,13 +80,13 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     //This flag determines if Outline tree of the document has been built via calling getOutlines method. If this flag is false all outline operations will be ignored
     private boolean outlineMode;
 
-    private static final Set<PdfName> PAGE_MODES = new HashSet<>(
+    private static final Set<PdfName> PAGE_MODES = Collections.unmodifiableSet(new HashSet<>(
             Arrays.asList(PdfName.UseNone, PdfName.UseOutlines, PdfName.UseThumbs,
-            PdfName.FullScreen, PdfName.UseOC, PdfName.UseAttachments));
+            PdfName.FullScreen, PdfName.UseOC, PdfName.UseAttachments)));
 
-    private static final Set<PdfName> PAGE_LAYOUTS = new HashSet<>(
+    private static final Set<PdfName> PAGE_LAYOUTS = Collections.unmodifiableSet(new HashSet<>(
             Arrays.asList(PdfName.SinglePage, PdfName.OneColumn, PdfName.TwoColumnLeft,
-            PdfName.TwoColumnRight, PdfName.TwoPageLeft, PdfName.TwoPageRight));
+            PdfName.TwoColumnRight, PdfName.TwoPageLeft, PdfName.TwoPageRight)));
 
     protected PdfCatalog(PdfDictionary pdfObject) {
         super(pdfObject);

@@ -113,9 +113,9 @@ public class ParagraphTest extends ExtendedITextTest {
     }
 
     @Test
-    public void wordWasSplitAndItWillFitOntoNextLineTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "wordWasSplitAndItWillFitOntoNextLineTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_wordWasSplitAndItWillFitOntoNextLineTest01.pdf";
+    public void forceOverflowForTextRendererPartialResult01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "forceOverflowForTextRendererPartialResult01.pdf";
+        String cmpFileName = sourceFolder + "cmp_forceOverflowForTextRendererPartialResult01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);

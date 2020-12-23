@@ -128,7 +128,6 @@ public class InlineBlockTest extends ExtendedITextTest {
         Color[] colors = new Color[]{ColorConstants.BLUE, ColorConstants.RED, ColorConstants.LIGHT_GRAY, ColorConstants.ORANGE};
         int w = 60;
         int n = 6;
-
         Paragraph p = new Paragraph("hello world").setWidth(w);
         for (int i = 0; i < n; ++i) {
             Paragraph currP = new Paragraph().setWidth(i == 0 ? w * 1.1f * 3 : 450 + 5 * i);

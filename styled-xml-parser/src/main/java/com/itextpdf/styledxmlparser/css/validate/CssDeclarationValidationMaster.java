@@ -128,6 +128,14 @@ public class CssDeclarationValidationMaster {
                 new CssBackgroundValidator(CommonCssConstants.BACKGROUND_ORIGIN)));
         DEFAULT_VALIDATORS.put(CommonCssConstants.BACKGROUND_BLEND_MODE, new SingleTypeDeclarationValidator(
                 new ArrayDataTypeValidator(new CssBlendModeValidator())));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.OVERFLOW_WRAP, new SingleTypeDeclarationValidator(
+                new CssEnumValidator(CommonCssConstants.NORMAL, CommonCssConstants.ANYWHERE,
+                        CommonCssConstants.BREAK_WORD, CommonCssConstants.INHERIT, CommonCssConstants.INITIAL,
+                        CommonCssConstants.UNSET)));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.WORD_BREAK, new SingleTypeDeclarationValidator(
+                new CssEnumValidator(CommonCssConstants.NORMAL, CommonCssConstants.BREAK_ALL,
+                        CommonCssConstants.KEEP_ALL, CommonCssConstants.BREAK_WORD, CommonCssConstants.INHERIT,
+                        CommonCssConstants.INITIAL, CommonCssConstants.UNSET)));
     }
 
     /**

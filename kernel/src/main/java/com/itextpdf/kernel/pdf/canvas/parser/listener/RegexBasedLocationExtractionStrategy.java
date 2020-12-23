@@ -89,7 +89,7 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
             Integer startIndex = getStartIndex(txt.indexMap, mat.start(), txt.text);
             Integer endIndex = getEndIndex(txt.indexMap, mat.end() - 1);
             if (startIndex != null && endIndex != null && startIndex <= endIndex) {
-                for (Rectangle r : toRectangles(parseResult.subList(startIndex, endIndex + 1))) {
+                for (Rectangle r : toRectangles(parseResult.subList(startIndex.intValue(), endIndex.intValue() + 1))) {
                     retval.add(new DefaultPdfTextLocation(0, r, mat.group(0)));
                 }
             }

@@ -44,6 +44,7 @@ package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -69,5 +70,4 @@ public class CssPropertyNormalizerTest extends ExtendedITextTest {
         String result = CssPropertyNormalizer.normalize(input);
         Assert.assertEquals(expectedOutput, result);
     }
-
 }

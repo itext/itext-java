@@ -23,7 +23,8 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.colors.WebColors;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.SvgConstants.Tags;
@@ -45,10 +46,10 @@ public class StopSvgNodeRenderer extends NoDrawOperationSvgNodeRenderer implemen
     public double getOffset() {
         Double offset = null;
         String offsetAttribute = getAttribute(Attributes.OFFSET);
-        if (CssUtils.isPercentageValue(offsetAttribute)) {
-            offset = (double) CssUtils.parseRelativeValue(offsetAttribute, 1);
-        } else if (CssUtils.isNumericValue(offsetAttribute)) {
-            offset = CssUtils.parseDouble(offsetAttribute);
+        if (CssTypesValidationUtils.isPercentageValue(offsetAttribute)) {
+            offset = (double) CssDimensionParsingUtils.parseRelativeValue(offsetAttribute, 1);
+        } else if (CssTypesValidationUtils.isNumericValue(offsetAttribute)) {
+            offset = CssDimensionParsingUtils.parseDouble(offsetAttribute);
         }
         double result = offset != null ? offset.doubleValue() : 0d;
         return result > 1d ? 1d : result > 0d ? result : 0d;
@@ -81,7 +82,7 @@ public class StopSvgNodeRenderer extends NoDrawOperationSvgNodeRenderer implemen
         Float result = null;
         String opacityValue = getAttribute(Tags.STOP_OPACITY);
         if (opacityValue != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityValue)) {
-            result = CssUtils.parseFloat(opacityValue);
+            result = CssDimensionParsingUtils.parseFloat(opacityValue);
         }
         return result != null ? result.floatValue() : 1f;
     }

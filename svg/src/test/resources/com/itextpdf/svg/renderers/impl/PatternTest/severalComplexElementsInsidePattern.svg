@@ -1,0 +1,28 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient x1="20%" y1="20%" x2="80%" y2="80%" id="Gradient1">
+            <stop offset="0" stop-color="#ffcc00"/>
+            <stop offset="0.5" stop-color="#cc6699"/>
+            <stop offset="1" stop-color="#66cc99"/>
+    </linearGradient>
+	
+	<linearGradient x1="0" y1="0" x2="0" y2="1" id="Gradient2">
+            <stop offset="0" stop-color="grey"/>
+            <stop offset="0.5" stop-color="blue"/>
+    </linearGradient>
+        
+	<pattern id="star" width="0.1" height="0.1" >
+       <rect x="0" y="0" width="25" height="25" fill="url(#Gradient2)"/>
+    </pattern>
+	
+    <pattern id="Pattern" x="0" y="0" width=".25" height=".25">
+      <rect x="0" y="0" width="70" height="70" fill="url(#star)"/>
+	  <image xlink:href="image.png" width="10%" height="10%"/>
+	  <circle cx="20" cy="20" r="10" fill="url(#Gradient1)"/>
+     
+    </pattern>
+  </defs>
+
+  <rect fill="url(#Pattern)" stroke="black" width="200" height="200"/>
+</svg>

@@ -51,6 +51,7 @@ import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
 import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
+import com.itextpdf.svg.css.SvgCssContext;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 
 /**
@@ -66,11 +67,16 @@ public class SvgProcessorContext {
      */
     private FontSet tempFonts;
 
-    private ResourceResolver resourceResolver;
+    private final ResourceResolver resourceResolver;
     /**
      * The device description.
      */
     private MediaDeviceDescription deviceDescription;
+
+    /**
+     * The SVG CSS context.
+     */
+    private final SvgCssContext cssContext;
 
     /**
      * Instantiates a new {@link SvgProcessorContext} instance.
@@ -95,6 +101,8 @@ public class SvgProcessorContext {
             retriever = ((SvgConverterProperties) converterProperties).getResourceRetriever();
         }
         resourceResolver = new ResourceResolver(converterProperties.getBaseUri(), retriever);
+
+        cssContext = new SvgCssContext();
     }
 
     /**
@@ -134,11 +142,21 @@ public class SvgProcessorContext {
     }
 
     /**
+     * Gets the SVG CSS context.
+     *
+     * @return the SVG CSS context
+     */
+    public SvgCssContext getCssContext() {
+        return cssContext;
+    }
+
+    /**
      * Add temporary font from @font-face.
      *
-     * @param fontProgram the font program
-     * @param encoding    the encoding
-     * @param alias       the alias
+     * @param fontProgram  the font program
+     * @param encoding     the encoding
+     * @param alias        the alias
+     * @param unicodeRange the specific range of characters to be used from the font
      */
     public void addTemporaryFont(FontProgram fontProgram, String encoding, String alias,
             Range unicodeRange) {

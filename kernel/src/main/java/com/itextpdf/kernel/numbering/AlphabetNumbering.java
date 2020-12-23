@@ -69,8 +69,8 @@ public class AlphabetNumbering {
 
         number--;
         int bytes = 1;
-        int start = 0;
-        int symbols = cardinality;
+        long start = 0;
+        long symbols = cardinality;
 
         while (number >= symbols + start) {
             bytes++;
@@ -78,10 +78,10 @@ public class AlphabetNumbering {
             symbols *= cardinality;
         }
 
-        int c = number - start;
+        long c = number - start;
         char[] value = new char[bytes];
         while (bytes > 0) {
-            value[--bytes] = alphabet[c % cardinality];
+            value[--bytes] = alphabet[(int) (c % cardinality)];
             c /= cardinality;
         }
 

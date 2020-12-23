@@ -79,6 +79,10 @@ public final class LogMessageConstant {
     public static final String QUOTE_IS_NOT_CLOSED_IN_CSS_EXPRESSION = "The quote is not closed in css expression: {0}";
     /** The Constant INVALID_CSS_PROPERTY_DECLARATION. */
     public static final String INVALID_CSS_PROPERTY_DECLARATION = "Invalid css property declaration: {0}";
+    /**
+     * The Constant INCORRECT_CHARACTER_SEQUENCE.
+     */
+    public static final String INCORRECT_CHARACTER_SEQUENCE = "Incorrect character sequence.";
     public static final String INCORRECT_RESOLUTION_UNIT_VALUE = "Resolution value unit should be either dpi, dppx or dpcm!";
     /** The Constant RULE_IS_NOT_SUPPORTED. */
     public static final String RULE_IS_NOT_SUPPORTED = "The rule @{0} is unsupported. All selectors in this rule will be ignored.";
@@ -89,6 +93,9 @@ public final class LogMessageConstant {
     public static final String NAN = "The passed value (@{0}) is not a number";
     /** The Constant RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT. */
     public static final String RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT = "Resource with given URL ({0}) was filtered out.";
+    /** The Constant UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_DATA_URI. */
+    public static final String UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_DATA_URI =
+            "Unable to retrieve image with data URI {0}";
     /** The Constant UNABLE_TO_RETRIEVE_RESOURCE_WITH_GIVEN_RESOURCE_SIZE_BYTE_LIMIT. */
     public static final String UNABLE_TO_RETRIEVE_RESOURCE_WITH_GIVEN_RESOURCE_SIZE_BYTE_LIMIT = "Unable to retrieve resource with given URL ({0}) and resource size byte limit ({1}).";
     /** The Constant UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI. */

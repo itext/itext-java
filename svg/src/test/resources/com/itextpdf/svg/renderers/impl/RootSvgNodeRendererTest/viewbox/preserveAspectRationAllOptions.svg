@@ -1,0 +1,75 @@
+<svg viewBox="-1 -1 162 92" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <circle cx="50" cy="50" r="50" id="smiley" fill="yellow"/>
+    </defs>
+
+    <!-- (width>height) meet -->
+    <rect x="0" y="0" width="20" height="10"></rect>
+    <svg preserveAspectRatio="xMidYMid meet" x="0" y="0" viewBox="0 0 100 100" width="20" height="10">
+        <use href="#smiley"/>
+    </svg>
+
+    <rect x="25" y="0" width="20" height="10"></rect>
+    <svg preserveAspectRatio="xMinYMid meet" x="25" y="0" viewBox="0 0 100 100" width="20" height="10">
+        <use href="#smiley"/>
+    </svg>
+
+    <rect x="50" y="0" width="20" height="10"></rect>
+    <svg preserveAspectRatio="xMaxYMid meet" x="50" y="0" viewBox="0 0 100 100" width="20" height="10">
+        <use href="#smiley"/>
+    </svg>
+
+    <!-- (width>height) slice -->
+    <rect x="0" y="15" width="20" height="10"></rect>
+    <svg preserveAspectRatio="xMidYMin slice" x="0" y="15" viewBox="0 0 100 100" width="20" height="10">
+        <use href="#smiley"/>
+    </svg>
+
+    <rect x="25" y="15" width="20" height="10"></rect>
+    <svg preserveAspectRatio="xMidYMid slice" x="25" y="15" viewBox="0 0 100 100" width="20" height="10">
+        <use href="#smiley"/>
+    </svg>
+
+    <rect x="50" y="15" width="20" height="10"></rect>
+    <svg preserveAspectRatio="xMidYMax slice" x="50" y="15" viewBox="0 0 100 100" width="20" height="10">
+        <use href="#smiley"/>
+    </svg>
+
+    <!-- (width<height) meet -->
+    <rect x="75" y="0" width="10" height="25"></rect>
+    <svg preserveAspectRatio="xMidYMin meet" x="75" y="0" viewBox="0 0 100 100" width="10" height="25">
+        <use href="#smiley"/>
+    </svg>
+
+    <rect x="90" y="0" width="10" height="25"></rect>
+    <svg preserveAspectRatio="xMidYMid meet" x="90" y="0" viewBox="0 0 100 100" width="10" height="25">
+        <use href="#smiley"/>
+    </svg>
+
+    <rect x="105" y="0" width="10" height="25"></rect>
+    <svg preserveAspectRatio="xMidYMax meet" x="105" y="0" viewBox="0 0 100 100" width="10" height="25">
+        <use href="#smiley"/>
+    </svg>
+
+    <!-- (width<height) slice -->
+    <rect x="120" y="0" width="10" height="25"></rect>
+    <svg preserveAspectRatio="xMinYMid slice" x="120" y="0" viewBox="0 0 100 100" width="10" height="25">
+        <use href="#smiley"/>
+    </svg>
+
+    <rect x="135" y="0" width="10" height="25"></rect>
+    <svg preserveAspectRatio="xMidYMid slice" x="135" y="0" viewBox="0 0 100 100" width="10" height="25">
+        <use href="#smiley"/>
+    </svg>
+
+    <rect x="150" y="0" width="10" height="25"></rect>
+    <svg preserveAspectRatio="xMaxYMid slice" x="150" y="0" viewBox="0 0 100 100" width="10" height="25">
+        <use href="#smiley"/>
+    </svg>
+
+    <!-- none -->
+    <rect x="0" y="30" width="160" height="60"></rect>
+    <svg preserveAspectRatio="none" x="0" y="30" viewBox="0 0 100 100" width="160" height="60">
+        <use href="#smiley"/>
+    </svg>
+</svg>

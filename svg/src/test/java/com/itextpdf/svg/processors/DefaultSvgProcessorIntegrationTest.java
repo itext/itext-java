@@ -80,7 +80,7 @@ public class DefaultSvgProcessorIntegrationTest extends SvgIntegrationTest {
         //Attribute comparison from the known RedCircle.svg
         Map<String, String> attrs = actual.getChildren().get(0).getAttributeMapCopy();
 
-        Assert.assertEquals("Number of parsed attributes is wrong", 11, attrs.keySet().size());
+        Assert.assertEquals("Number of parsed attributes is wrong", 12, attrs.keySet().size());
 
         Assert.assertEquals("The stroke-opacity attribute doesn't correspond it's value", "1", attrs.get("stroke-opacity"));
         Assert.assertEquals("The stroke-width attribute doesn't correspond it's value", "1.76388889", attrs.get("stroke-width"));

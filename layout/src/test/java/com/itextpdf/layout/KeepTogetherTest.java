@@ -45,20 +45,25 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.property.ClearPropertyValue;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.Property;
@@ -81,6 +86,21 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/KeepTogetherTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/KeepTogetherTest/";
+
+    private static final String BIG_TEXT = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr,\n"
+            + " sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,\n"
+            + " sed diam voluptua.\n\n At vero eos et accusam et justo duo dolores et ea rebum.\n\n "
+            + " Lorem ipsum dolor sit amet, consetetur sadipscing elitr,\n"
+            + " sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,\n"
+            + " sed diam voluptua.\n\n At vero eos et accusam et justo duo dolores et ea rebum.\n\n "
+            + "Lorem ipsum dolor sit amet, consetetur sadipscing elitr,\n sed diam nonumy eirmod tempor"
+            + " invidunt ut labore et dolore magna aliquyam erat,\n sed diam voluptua.\n\n"
+            + " At vero eos et accusam et justo duo dolores et ea rebum.\n\n ";
+    private static final String MEDIUM_TEXT = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr"
+            + " sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
+            + " At vero eos et accusam et justo duo dolores et ea rebum.\n ";
+    private static final String SMALL_TEXT = "Short text";
+
 
     @BeforeClass
     public static void beforeClass() {
@@ -237,6 +257,71 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
         doc.add(div);
         doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void keepTogetherDivWithInnerClearDiv() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_keepTogetherDivWithInnerClearDiv.pdf";
+        String outFile = destinationFolder + "keepTogetherDivWithInnerClearDiv.pdf";
+
+        try (PdfWriter pdfWriter = new PdfWriter(outFile);
+                PdfDocument pdfDoc = new PdfDocument(pdfWriter);
+                Document doc = new Document(pdfDoc)) {
+
+            Div keepTogetherDiv = new Div();
+            keepTogetherDiv.setKeepTogether(true);
+            keepTogetherDiv.setBackgroundColor(ColorConstants.BLUE);
+
+            Div shortFloat = new Div();
+            shortFloat.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+            shortFloat.setWidth(UnitValue.createPercentValue(30));
+            shortFloat.setBackgroundColor(ColorConstants.GREEN);
+            shortFloat.add(new Paragraph("Short text"));
+            keepTogetherDiv.add(shortFloat);
+
+            Div longFloat = new Div();
+            longFloat.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+            longFloat.setWidth(UnitValue.createPercentValue(70));
+            longFloat.setBackgroundColor(ColorConstants.ORANGE);
+            longFloat.add(new Paragraph("Lorem ipsum dolor sit amet, consetetur sadipscing "
+                    + "elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna "
+                    + "aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo "
+                    + "dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est "
+                    + "Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur "
+                    + "sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et "
+                    + "dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et "
+                    + "justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata "
+                    + "sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, "
+                    + "consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut "
+                    + "labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et "
+                    + "accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea "
+                    + "takimata sanctus est Lorem ipsum dolor sit amet.\n"
+                    + "Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse "
+                    + "molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero "
+                    + "eros et accumsan et iusto odio dignissim qui blandit praesent luptatum "
+                    + "zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum "
+                    + "dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod "
+                    + "tincidunt ut laoreet dolore magna aliquam erat volutpat.\n"
+                    + "Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper "
+                    + "suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel "
+                    + "eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, "
+                    + "vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et "
+                    + "iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis "
+                    + "dolore te feugait nulla facilisi."));
+            keepTogetherDiv.add(longFloat);
+
+            Div clearDiv = new Div();
+            clearDiv.setProperty(Property.CLEAR, ClearPropertyValue.BOTH);
+            keepTogetherDiv.add(clearDiv);
+
+            // on first add we could see how the div should be rendered when it fits the page area
+            doc.add(keepTogetherDiv);
+            // on second add the div should not fit the left space and, since we have keep together
+            // property set, should be fully placed on the second page with the same appearance
+            // as the first add
+            doc.add(keepTogetherDiv);
+        }
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
     }
 
@@ -941,6 +1026,273 @@ public class KeepTogetherTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+    })
+    public void contentOverlappingInDivWithKeepTogetherTest() throws IOException, InterruptedException {
+        String filename = "contentOverlappingInDivWithKeepTogether.pdf";
+        String outFile = destinationFolder + filename;
+        String cmpFileName = sourceFolder + "cmp_" + filename;
+
+        try (Document doc = new Document(new PdfDocument(new PdfWriter(outFile)))) {
+            doc.getPdfDocument().addNewPage(PageSize.A5.rotate());
+
+            Div main = new Div();
+
+            Div child1 = createChildDivWithText(main, null).setKeepTogether(true);
+            createChildDivWithText(child1, BIG_TEXT).setKeepTogether(true);
+
+            Div div1_2 = createChildDivWithText(child1, null).setKeepTogether(true);
+            createChildDivWithText(div1_2, "Section A");
+            createChildDivWithText(div1_2, null).add(new Paragraph(MEDIUM_TEXT).setFirstLineIndent(20));
+
+            Div child2 = createChildDivWithText(main, null).setKeepTogether(true);
+            createChildDivWithText(child2, "Section B");
+            createChildDivWithText(child2, null);
+            createChildDivWithText(child2, "Lorem ipsum dolor sit amet!");
+
+            doc.add(main);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+    })
+    public void missContentAndOverlappingInDivNoKeepTogetherTest() throws IOException, InterruptedException {
+        String filename = "missContentAndOverlappingInDivNoKeepTogether.pdf";
+        String outFile = destinationFolder + filename;
+        String cmpFileName = sourceFolder + "cmp_" + filename;
+
+        try (Document doc = new Document(new PdfDocument(new PdfWriter(outFile)))) {
+            doc.getPdfDocument().addNewPage(PageSize.A5.rotate());
+
+            Div main = new Div();
+
+            Div child1 = createChildDivWithText(main, null).setKeepTogether(true);
+            createChildDivWithText(child1, BIG_TEXT);
+
+            Div div1_2 = createChildDivWithText(child1, null).setKeepTogether(true);
+            createChildDivWithText(div1_2, "Section A");
+
+            createChildDivWithText(div1_2, null).add(new Paragraph(MEDIUM_TEXT).setFirstLineIndent(20));
+
+            // KEEP_TOGETHER is not set here
+            Div child2 = createChildDivWithText(main, null);
+            createChildDivWithText(child2, "Section B");
+            createChildDivWithText(child2, null);
+            createChildDivWithText(child2, "Lorem ipsum dolor sit amet!");
+
+            doc.add(main);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+    })
+    public void contentOverlappingDivKeepTogetherInRectTest() throws IOException, InterruptedException {
+        String filename = "contentOverlappingDivKeepTogetherInRect.pdf";
+        String outFile = destinationFolder + filename;
+        String cmpFileName = sourceFolder + "cmp_" + filename;
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile))) {
+            PdfPage page = pdfDoc.addNewPage(PageSize.A5.rotate());
+            Rectangle rectangle = new Rectangle(10, 10, 500, 350);
+            PdfCanvas pdfCanvas = new PdfCanvas(page);
+
+            try (Canvas canvas = new Canvas(pdfCanvas, rectangle)) {
+                Div main = new Div();
+
+                Div child1 = createChildDivWithText(main, null).setKeepTogether(true);
+
+                createChildDivWithText(child1, BIG_TEXT).setKeepTogether(true);
+                createChildDivWithText(child1, "Section A")
+                        .setKeepTogether(true)
+                        .add(new Paragraph(MEDIUM_TEXT).setFirstLineIndent(20));
+
+                Div child2 = createChildDivWithText(main, null).setKeepTogether(true);
+
+                createChildDivWithText(child2, "Section B");
+                createChildDivWithText(child2, null);
+                createChildDivWithText(child2, "Lorem ipsum dolor sit amet!");
+
+                canvas.add(main);
+            }
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    //TODO: DEVSIX-4720 (invalid positioning of child element)
+    public void keepTogetherInDivWithKidsFloatTest() throws IOException, InterruptedException {
+        String filename = "keepTogetherInDivWithKidsFloat.pdf";
+        String outFile = destinationFolder + filename;
+        String cmpFileName = sourceFolder + "cmp_" + filename;
+
+        try (Document doc = new Document(new PdfDocument(new PdfWriter(outFile)))) {
+            doc.getPdfDocument().addNewPage(PageSize.A5.rotate());
+
+            Div main = new Div().setKeepTogether(true);
+            main.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+
+            Div child1 = createChildDivWithText(main, SMALL_TEXT);
+            child1
+                    .setBackgroundColor(ColorConstants.YELLOW)
+                    .setWidth(UnitValue.createPercentValue(30))
+                    .setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+            Div child2 = createChildDivWithText(main, BIG_TEXT);
+            child2
+                    .setBackgroundColor(ColorConstants.GREEN)
+                    .setWidth(UnitValue.createPercentValue(70))
+                    .setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+
+            Div child3 = createChildDivWithText(main, "Test");
+            child3.setBackgroundColor(ColorConstants.ORANGE);
+
+            Div child4 = createChildDivWithText(main, MEDIUM_TEXT);
+            child4.setBackgroundColor(ColorConstants.ORANGE);
+
+            doc.add(main);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    //TODO: update cmp file when DEVSIX-4681 will be fixed
+    public void floatingElementsInDivAndKeepTogetherElemTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatingElementsInDivAndKeepTogetherElem.pdf";
+        String outFile = destinationFolder + "floatingElementsInDivAndKeepTogetherElem.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        pdfDoc.addNewPage();
+
+        Document doc = new Document(pdfDoc);
+
+        Div mainDiv = new Div();
+
+        Image first = new Image(ImageDataFactory.create(sourceFolder + "1.png"));
+        first.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        first.setHeight(350);
+
+        Image second = new Image(ImageDataFactory.create(sourceFolder + "2.png"));
+        second.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+        second.setHeight(350);
+
+        mainDiv.add(first);
+        mainDiv.add(second);
+
+        doc.add(mainDiv);
+        doc.add(new Paragraph("Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! ")
+                .setKeepTogether(true).setFontSize(24));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    //TODO: update cmp file when DEVSIX-4681 will be fixed
+    public void floatingEmptyElementsInDivAndKeepTogetherElemTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatingEmptyElementsInDivAndKeepTogetherElem.pdf";
+        String outFile = destinationFolder + "floatingEmptyElementsInDivAndKeepTogetherElem.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        pdfDoc.addNewPage(PageSize.A5.rotate());
+
+        Document doc = new Document(pdfDoc);
+
+        Div mainDiv = new Div();
+
+        Paragraph p1 = new Paragraph();
+        p1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        Paragraph p2 = new Paragraph();
+        p2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        Paragraph ktp = new Paragraph("Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+        ).setKeepTogether(true).setFontSize(20);
+
+        mainDiv.add(p1);
+        mainDiv.add(p2);
+
+        doc.add(mainDiv);
+        doc.add(ktp);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void floatingEmptyElementsAndKeepTogetherElemTest() throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + "cmp_floatingEmptyElementsAndKeepTogetherElem.pdf";
+        String outFile = destinationFolder + "floatingEmptyElementsAndKeepTogetherElem.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        pdfDoc.addNewPage(PageSize.A5.rotate());
+
+        Document doc = new Document(pdfDoc);
+
+        Paragraph p1 = new Paragraph();
+        p1.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        Paragraph p2 = new Paragraph();
+        p2.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        Paragraph ktp = new Paragraph("Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+        ).setKeepTogether(true).setFontSize(20);
+
+        doc.add(p1);
+        doc.add(p2);
+        doc.add(ktp);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    private Div createChildDivWithText(Div parent, String text) {
+        Div child = new Div();
+        if (text != null) {
+            child.add(new Paragraph(text));
+        }
+        parent.add(child);
+
+        return child;
+    }
 
     private static Div createKeptTogetherDivWithSmallFloat(int divHeight) {
         // test keep-together processing on height-only overflow for blocks

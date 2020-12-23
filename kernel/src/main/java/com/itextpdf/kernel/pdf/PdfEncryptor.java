@@ -196,13 +196,17 @@ public final class PdfEncryptor {
 
     /**
      * Gets the content from a recipient.
+     *
+     * @param recipientInfo          recipient information
+     * @param certificateKey         private certificate key
+     * @param certificateKeyProvider the name of the certificate key provider
+     * @return content from a recipient info
+     * @throws CMSException if the content cannot be recovered.
      */
     public static byte[] getContent(RecipientInformation recipientInfo, PrivateKey certificateKey, String certificateKeyProvider) throws CMSException {
         Recipient jceKeyTransRecipient = new JceKeyTransEnvelopedRecipient(certificateKey).setProvider(certificateKeyProvider);
         return recipientInfo.getContent(jceKeyTransRecipient);
     }
-
-
 
     /**
      * Sets the {@link IMetaInfo} that will be used during {@link PdfDocument} creation.

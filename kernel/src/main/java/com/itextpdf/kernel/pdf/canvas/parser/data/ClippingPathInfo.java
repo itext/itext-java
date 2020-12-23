@@ -47,13 +47,19 @@ import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Path;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 
+/**
+ * Represents the clipping path data.
+ */
 public class ClippingPathInfo extends AbstractRenderInfo {
     private Path path;
     private Matrix ctm;
 
     /**
-     * @param path The path to be rendered.
-     * @param ctm  The path to be rendered.
+     * Creates a new {@link ClippingPathInfo} instance.
+     *
+     * @param gs   the {@link CanvasGraphicsState canvas graphics state}
+     * @param path the {@link Path} which represents current clipping path
+     * @param ctm  the current {@link Matrix transformation matrix}
      */
     public ClippingPathInfo(CanvasGraphicsState gs, Path path, Matrix ctm) {
         super(gs);
@@ -62,14 +68,18 @@ public class ClippingPathInfo extends AbstractRenderInfo {
     }
 
     /**
-     * @return The {@link Path} which represents current clipping path.
+     * Gets the {@link Path} which represents current clipping path.
+     *
+     * @return the {@link Path} which represents current clipping path
      */
     public Path getClippingPath() {
         return path;
     }
 
     /**
-     * @return Current transformation matrix.
+     * Gets the current {@link Matrix transformation matrix}.
+     *
+     * @return the current {@link Matrix transformation matrix}
      */
     public Matrix getCtm() {
         return ctm;

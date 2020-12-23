@@ -76,7 +76,6 @@ import java.util.Map;
 /**
  * Utility class that provides several convenience methods concerning digital signatures.
  */
-// TODO: REFACTOR. At this moment this serves as storage for some signature-related methods from iText 5 AcroFields
 public class SignatureUtil {
 
     private PdfDocument document;
@@ -421,7 +420,8 @@ public class SignatureUtil {
                 else
                     totalRevisions = sorter.size() + 1;
             } catch (IOException e) {
-                // TODO: add exception handling (at least some logger)
+                // TODO DEVSIX-3458: remove this catch since RandomAccessFileOrArray#length will not throw
+                //  IOException anymore and therefore PdfReader#getFileLength will not do so either
             }
             for (int k = 0; k < sorter.size(); ++k) {
                 Object[] objs = sorter.get(k);

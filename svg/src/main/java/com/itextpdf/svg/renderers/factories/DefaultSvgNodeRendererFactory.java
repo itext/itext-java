@@ -82,7 +82,7 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
      * back to the {@link DefaultSvgNodeRendererMapper}
      * @deprecated Will be removed in 7.2. The user should use the custom
      * {@link ISvgNodeRendererFactory} implementation (or the custom
-     * @link DefaultSvgNodeRendererFactory} extension) to create extensions of the factory.
+     * {@link DefaultSvgNodeRendererFactory} extension) to create extensions of the factory.
      */
     @Deprecated
     public DefaultSvgNodeRendererFactory(ISvgNodeRendererMapper mapper) {

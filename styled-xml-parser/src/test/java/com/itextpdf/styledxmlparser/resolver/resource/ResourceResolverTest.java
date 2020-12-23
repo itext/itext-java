@@ -198,7 +198,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_DATA_URI))
     public void retrieveImageExtendedIncorrectBase64Test() {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         PdfXObject image = resourceResolver.retrieveImageExtended(bLogoCorruptedData);
@@ -206,7 +206,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_DATA_URI, logLevel = LogLevelConstants.ERROR))
     public void retrieveImageExtendedCorruptedDataBase64Test() {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         PdfXObject image = resourceResolver.retrieveImageExtended(bLogoCorruptedData);

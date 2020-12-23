@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Utilities class for CSS gradient functions parsing
+ * Utilities class for CSS gradient functions parsing.
  */
 public final class CssGradientUtil {
 
@@ -135,8 +135,8 @@ public final class CssGradientUtil {
 
         int colorStopListStartIndex;
         String firstArgument = argumentsList.get(0);
-        if (CssUtils.isAngleValue(firstArgument)) {
-            double radAngle = CssUtils.parseAngle(firstArgument);
+        if (CssTypesValidationUtils.isAngleValue(firstArgument)) {
+            double radAngle = CssDimensionParsingUtils.parseAngle(firstArgument);
             // we need to negate the angle as css specifies the clockwise rotation angle
             builder.setGradientDirectionAsCentralRotationAngle(-radAngle);
             colorStopListStartIndex = 1;
@@ -172,8 +172,8 @@ public final class CssGradientUtil {
                 throw new StyledXMLParserException(
                         MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, argument));
             }
-            if (CssUtils.isColorProperty(elementsList.get(0))) {
-                float[] rgba = CssUtils.parseRgbaColor(elementsList.get(0));
+            if (CssTypesValidationUtils.isColorProperty(elementsList.get(0))) {
+                float[] rgba = CssDimensionParsingUtils.parseRgbaColor(elementsList.get(0));
                 if (elementsList.size() == 1) {
                     UnitValue offset = i == stopsStartIndex
                             ? new UnitValue(UnitValue.PERCENT, 0f)
@@ -184,13 +184,14 @@ public final class CssGradientUtil {
                     builder.addColorStop(lastCreatedStopColor);
                 } else {
                     for (int j = 1; j < elementsList.size(); ++j) {
-                        if (CssUtils.isNumericValue(elementsList.get(j))) {
+                        if (CssTypesValidationUtils.isNumericValue(elementsList.get(j))) {
                             // the numeric value is invalid in linear gradient function.
                             // So check it here as parsing method will use the default pt metric
                             throw new StyledXMLParserException(MessageFormatUtil
                                     .format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, argument));
                         }
-                        UnitValue offset = CssUtils.parseLengthValueToPt(elementsList.get(j), emValue, remValue);
+                        UnitValue offset = CssDimensionParsingUtils
+                                .parseLengthValueToPt(elementsList.get(j), emValue, remValue);
                         if (offset == null) {
                             throw new StyledXMLParserException(MessageFormatUtil
                                     .format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, argument));
@@ -210,7 +211,7 @@ public final class CssGradientUtil {
                     throw new StyledXMLParserException(MessageFormatUtil
                             .format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, argument));
                 }
-                UnitValue hint = CssUtils.parseLengthValueToPt(elementsList.get(0), emValue, remValue);
+                UnitValue hint = CssDimensionParsingUtils.parseLengthValueToPt(elementsList.get(0), emValue, remValue);
                 if (hint == null) {
                     throw new StyledXMLParserException(MessageFormatUtil
                             .format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, argument));

@@ -1,0 +1,29 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient x1="2%" y1="2%" x2="8%" y2="8%" id="Gradient1"  gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#ffcc00"/>
+            <stop offset="0.5" stop-color="#cc6699"/>
+            <stop offset="1" stop-color="#66cc99"/>
+    </linearGradient>
+	
+	<linearGradient x1="0" y1="0" x2="0" y2="1.5" id="Gradient2">
+            <stop offset="0" stop-color="yellow"/>
+            <stop offset="0.5" stop-color="blue"/>
+    </linearGradient>
+        
+	<pattern id="inner" viewBox="0 0 30 30" width="70%" height="70%" patternContentUnits="userSpaceOnUse">
+       <rect x="0" y="0" width="30" height="30" fill="url(#Gradient1)"/>
+	   <polygon points="0,0 2,5 0,10 5,8 10,10 8,5 10,0 5,2"/>
+    </pattern>
+	
+    <pattern id="Pattern" x="0" y="0" width="0.3" height="0.3">
+      <rect x="0" y="0" width="85" height="85" fill="url(#inner)"/>
+	  <image x="15" y="15" xlink:href="image.png" width="20" height="20"/>
+	  <circle cx="40" cy="40" r="10" fill="url(#Gradient2)" stroke="blue" stroke-width="1"/>
+     
+    </pattern>
+  </defs>
+
+  <rect fill="url(#Pattern)" stroke="black" width="200" height="200"/>
+</svg>

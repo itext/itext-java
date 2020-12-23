@@ -230,19 +230,16 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO (DEVSIX-3636) Change cmp after fixing
     public void textFontSizeEmUnitsTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textFontSizeEmUnitsTest");
     }
 
     @Test
-    // TODO (DEVSIX-3636) Change cmp after fixing
     public void textFontSizeRemUnitsTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textFontSizeRemUnitsTest");
     }
 
     @Test
-    // TODO (DEVSIX-3636) Change cmp after fixing
     public void textFontSizeExUnitsTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textFontSizeExUnitsTest");
     }
