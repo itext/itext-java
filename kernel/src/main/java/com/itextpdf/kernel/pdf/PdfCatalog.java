@@ -43,6 +43,8 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.collection.PdfCollection;
@@ -51,11 +53,11 @@ import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -65,6 +67,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfCatalog.class);
 
     private static final long serialVersionUID = -1354567597112193418L;
 
@@ -533,8 +536,18 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     private void addOutlineToPage(PdfOutline outline, Map<String, PdfObject> names) {
         PdfObject pageObj = outline.getDestination().getDestinationPage(names);
-        if (pageObj instanceof PdfNumber)
-            pageObj = getDocument().getPage(((PdfNumber) pageObj).intValue() + 1).getPdfObject();
+        if (pageObj instanceof PdfNumber) {
+            final int pageNumber = ((PdfNumber) pageObj).intValue() + 1;
+            try {
+                pageObj = getDocument().getPage(pageNumber).getPdfObject();
+            } catch (IndexOutOfBoundsException ex) {
+                pageObj = null;
+                LOGGER.warn(MessageFormatUtil.format(
+                        LogMessageConstant.OUTLINE_DESTINATION_PAGE_NUMBER_IS_OUT_OF_BOUNDS, pageNumber)
+                );
+            }
+        }
+
         if (pageObj != null) {
             List<PdfOutline> outs = pagesWithOutlines.get(pageObj);
             if (outs == null) {

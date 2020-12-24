@@ -629,8 +629,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             throw new PdfException(PdfException.FLUSHED_PAGE_CANNOT_BE_REMOVED);
         }
 
-        catalog.getPageTree().removePage(pageNum);
-
         if (removedPage != null) {
             catalog.removeOutlines(removedPage);
             removeUnusedWidgetsFromFields(removedPage);
@@ -644,6 +642,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
             dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.REMOVE_PAGE, removedPage));
         }
+
+        catalog.getPageTree().removePage(pageNum);
     }
 
     /**
