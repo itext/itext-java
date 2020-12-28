@@ -68,9 +68,6 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     private static final byte[] endIndirect = ByteUtils.getIsoBytes(" R");
     private static final byte[] endIndirectWithZeroGenNr = ByteUtils.getIsoBytes(" 0 R");
 
-    // For internal usage only
-    private byte[] duplicateContentBuffer = null;
-
     /**
      * Document associated with PdfOutputStream.
      */

@@ -108,7 +108,7 @@ public final class TrailerPath extends ObjectPath {
         baseNode.setAttribute("cmp", "trailer");
         baseNode.setAttribute("out", "trailer");
         element.appendChild(baseNode);
-        for (LocalPathItem pathItem : path) {
+        for (final LocalPathItem pathItem : path) {
             element.appendChild(pathItem.toXmlNode(document));
         }
         return element;
@@ -123,7 +123,7 @@ public final class TrailerPath extends ObjectPath {
     public String toString() {
         final StringBuilder sb = new StringBuilder(INITIAL_LINE.length());
         sb.append(INITIAL_LINE);
-        for (LocalPathItem pathItem : path) {
+        for (final LocalPathItem pathItem : path) {
             sb.append('\n');
             sb.append(pathItem.toString());
         }
@@ -138,7 +138,7 @@ public final class TrailerPath extends ObjectPath {
     @Override
     public int hashCode() {
         int hashCode = outDocument.hashCode() * 31 + cmpDocument.hashCode();
-        for (LocalPathItem pathItem : path) {
+        for (final LocalPathItem pathItem : path) {
             hashCode *= 31;
             hashCode += pathItem.hashCode();
         }

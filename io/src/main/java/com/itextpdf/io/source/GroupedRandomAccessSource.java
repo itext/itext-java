@@ -45,7 +45,6 @@ package com.itextpdf.io.source;
 
 import com.itextpdf.io.LogMessageConstant;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

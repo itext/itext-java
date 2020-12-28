@@ -98,9 +98,6 @@ public class PdfReader implements Closeable {
     //indicate nearest first Indirect reference object which includes current reading the object, using for PdfString decrypt
     private PdfIndirectReference currentIndirectReference;
 
-    // For internal usage only
-    private String sourcePath;
-
     protected PdfTokenizer tokens;
     protected PdfEncryption decrypt;
 
@@ -180,7 +177,6 @@ public class PdfReader implements Closeable {
                         .createBestSource(filename),
                 properties
         );
-        this.sourcePath = filename;
     }
 
     /**

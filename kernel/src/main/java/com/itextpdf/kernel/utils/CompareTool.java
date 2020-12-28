@@ -1924,7 +1924,7 @@ public class CompareTool {
          *                                      an unrecoverable error occurs during the course of the transformation.
          */
         public void writeReportToXml(OutputStream stream) throws ParserConfigurationException, TransformerException {
-            Document xmlReport = XmlUtil.initNewXmlDocument();
+            final Document xmlReport = XmlUtil.initNewXmlDocument();
             Element root = xmlReport.createElement("report");
             Element errors = xmlReport.createElement("errors");
             errors.setAttribute("count", String.valueOf(differences.size()));

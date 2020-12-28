@@ -54,7 +54,7 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
     /**
      * Temporary map to store interletter values on pattern loading.
      */
-    private transient TernaryTree ivalues;
+    private TernaryTree ivalues;
 
     /** Default constructor. */
     public HyphenationTree() {

@@ -58,10 +58,9 @@ import java.util.Set;
  * Represents the most common properties of color spaces.
  */
 public abstract class PdfColorSpace extends PdfObjectWrapper<PdfObject> {
-
-    public static final Set<PdfName> directColorSpaces = Collections.unmodifiableSet(new HashSet<>(
-            Arrays.asList(PdfName.DeviceGray, PdfName.DeviceRGB, PdfName.DeviceCMYK, PdfName.Pattern)));
-
+    public static final Set<PdfName> DIRECT_COLOR_SPACES = Collections.unmodifiableSet(new HashSet<>(
+            Arrays.asList(PdfName.DeviceGray, PdfName.DeviceRGB, PdfName.DeviceCMYK, PdfName.Pattern)
+    ));
 
     protected PdfColorSpace(PdfObject pdfObject) {
         super(pdfObject);

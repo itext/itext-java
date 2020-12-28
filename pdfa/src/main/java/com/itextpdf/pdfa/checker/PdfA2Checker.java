@@ -926,7 +926,7 @@ public class PdfA2Checker extends PdfA1Checker {
         } else {
             checkedObjects.add(ap);
         }
-        for (PdfObject val : ap.values()) {
+        for (final PdfObject val : ap.values()) {
             if (this.transparencyObjects.contains(val)) {
                 throw new PdfAConformanceException(PdfAConformanceException.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE);
             } else if (val.isDictionary()) {

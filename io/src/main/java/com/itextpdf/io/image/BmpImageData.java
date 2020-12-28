@@ -47,7 +47,7 @@ import java.net.URL;
 
 public class BmpImageData extends RawImageData {
 
-    private boolean noHeader;
+    private final boolean noHeader;
 
     /**
      * Creates instance of {@link BmpImageData}

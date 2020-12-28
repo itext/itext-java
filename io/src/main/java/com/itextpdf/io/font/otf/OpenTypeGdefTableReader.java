@@ -47,7 +47,6 @@ import com.itextpdf.io.source.RandomAccessFileOrArray;
 
 
 public class OpenTypeGdefTableReader {
-
     static final int FLAG_IGNORE_BASE = 2;
     static final int FLAG_IGNORE_LIGATURE = 4;
     static final int FLAG_IGNORE_MARK = 8;

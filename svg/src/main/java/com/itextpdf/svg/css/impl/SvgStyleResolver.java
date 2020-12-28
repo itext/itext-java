@@ -379,8 +379,8 @@ public class SvgStyleResolver implements ICssResolver {
                             styleData = ((ITextNode) currentNode.childNodes().get(0)).wholeText();
                         }
                         CssStyleSheet styleSheet = CssStyleSheetParser.parse(styleData);
-                        //TODO (DEVSIX-2263): media query wrap
-                        //styleSheet = wrapStyleSheetInMediaQueryIfNecessary(headChildElement, styleSheet);
+                        // TODO (DEVSIX-2263): media query wrap
+                        // styleSheet = wrapStyleSheetInMediaQueryIfNecessary(headChildElement, styleSheet);
                         this.css.appendCssStyleSheet(styleSheet);
                     }
 

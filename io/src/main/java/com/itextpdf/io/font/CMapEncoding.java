@@ -236,13 +236,4 @@ public class CMapEncoding {
         }
         return false;
     }
-
-    private static int toInteger(byte[] bytes) {
-        int result = 0;
-        for (byte b : bytes) {
-            result <<= 8;
-            result += b & 0xff;
-        }
-        return result;
-    }
 }

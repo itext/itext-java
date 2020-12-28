@@ -74,8 +74,8 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
         float markerHeight = markerWidthHeight[1];
         String xAttribute = this.getAttribute(SvgConstants.Attributes.X);
         String yAttribute = this.getAttribute(SvgConstants.Attributes.Y);
-        float x = xAttribute != null ? CssDimensionParsingUtils.parseAbsoluteLength(xAttribute) : 0f;
-        float y = yAttribute != null ? CssDimensionParsingUtils.parseAbsoluteLength(yAttribute) : 0f;
+        float x = xAttribute == null ? 0f : CssDimensionParsingUtils.parseAbsoluteLength(xAttribute);
+        float y = yAttribute == null ? 0f : CssDimensionParsingUtils.parseAbsoluteLength(yAttribute);
         Rectangle markerViewport = new Rectangle(x, y, markerWidth, markerHeight);
         context.addViewPort(markerViewport);
     }

@@ -44,14 +44,14 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.kernel.PdfException;
+
 import java.security.MessageDigest;
+
 import java.util.HashMap;
 import java.util.Map;
 
 class SmartModePdfObjectsSerializer {
-
-
-    private transient MessageDigest md5;
+    private MessageDigest md5;
     private HashMap<SerializedObjectContent, PdfIndirectReference> serializedContentToObj = new HashMap<>();
 
     SmartModePdfObjectsSerializer() {

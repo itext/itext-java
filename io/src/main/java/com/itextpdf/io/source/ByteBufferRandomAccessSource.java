@@ -61,8 +61,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource {
     /**
      * Internal cache of memory mapped buffers
      */
-    private transient java.nio.ByteBuffer byteBuffer;
-    private byte[] bufferMirror;
+    private final java.nio.ByteBuffer byteBuffer;
 
     /**
      * Constructs a new {@link ByteBufferRandomAccessSource} based on the specified ByteBuffer

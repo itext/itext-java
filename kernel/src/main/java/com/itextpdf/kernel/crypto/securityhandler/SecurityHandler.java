@@ -69,7 +69,7 @@ public abstract class SecurityHandler {
     protected int nextObjectKeySize;
 
 
-    protected transient MessageDigest md5;
+    protected MessageDigest md5;
     /**
      * Work area to prepare the object/generation bytes
      */

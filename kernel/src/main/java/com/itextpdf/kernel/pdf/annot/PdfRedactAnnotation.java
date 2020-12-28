@@ -60,7 +60,6 @@ import com.itextpdf.kernel.pdf.annot.da.AnnotationDefaultAppearance;
 
 public class PdfRedactAnnotation extends PdfMarkupAnnotation {
 
-
 	public PdfRedactAnnotation(Rectangle rect) {
         super(rect);
     }

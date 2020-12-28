@@ -46,8 +46,10 @@ package com.itextpdf.kernel.pdf;
 /**
  * Encryption constants for {@link WriterProperties#setStandardEncryption(byte[], byte[], int, int)}.
  */
-public class EncryptionConstants {
-
+public final class EncryptionConstants {
+    private EncryptionConstants() {
+        // Empty constructor
+    }
 
     /**
      * Type of encryption. RC4 encryption algorithm will be used with the key length of 40 bits.

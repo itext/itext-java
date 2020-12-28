@@ -215,7 +215,7 @@ public final class ImageDataFactory {
      */
     public static ImageData createBmp(URL url, boolean noHeader) {
         validateImageType(url, ImageType.BMP);
-        ImageData image = new BmpImageData(url, noHeader);
+        final ImageData image = new BmpImageData(url, noHeader);
         BmpImageHelper.processImage(image);
         return image;
     }

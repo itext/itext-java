@@ -53,20 +53,16 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.itextpdf.io.source.ByteUtils.getIsoBytes;
-
 public class PdfWriter extends PdfOutputStream {
-
-
-    private static final byte[] obj = getIsoBytes(" obj\n");
-    private static final byte[] endobj = getIsoBytes("\nendobj\n");
+    private static final byte[] obj = ByteUtils.getIsoBytes(" obj\n");
+    private static final byte[] endobj = ByteUtils.getIsoBytes("\nendobj\n");
 
     // For internal usage only
     private PdfOutputStream duplicateStream = null;
@@ -119,7 +115,7 @@ public class PdfWriter extends PdfOutputStream {
         super(FileUtil.wrapWithBufferedOutputStream(os));
         this.properties = properties;
         if (properties.debugMode) {
-            setDebugMode();
+            duplicateStream = new PdfOutputStream(new ByteArrayOutputStream());
         }
     }
 
@@ -520,20 +516,6 @@ public class PdfWriter extends PdfOutputStream {
                     markDictionaryContentToFlush((PdfDictionary) pdfObject);
                 }
             }
-        }
-    }
-
-    private PdfWriter setDebugMode() {
-        duplicateStream = new PdfOutputStream(new ByteArrayOutputStream());
-        return this;
-    }
-
-    private byte[] getDebugBytes() throws IOException {
-        if (duplicateStream != null) {
-            duplicateStream.flush();
-            return ((ByteArrayOutputStream) (duplicateStream.getOutputStream())).toByteArray();
-        } else {
-            return null;
         }
     }
 

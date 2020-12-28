@@ -50,6 +50,6 @@ public class StandardOutputEventCounterFactory implements IEventCounterFactory {
 
     @Override
     public EventCounter getCounter(Class<?> cls) {
-        return cls != null ? new StandardOutputEventCounter(cls) : new StandardOutputEventCounter();
+        return cls == null ? new StandardOutputEventCounter() : new StandardOutputEventCounter(cls);
     }
 }

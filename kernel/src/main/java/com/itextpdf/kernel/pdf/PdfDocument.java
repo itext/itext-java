@@ -88,7 +88,7 @@ import com.itextpdf.kernel.xmp.options.SerializeOptions;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -118,7 +118,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     protected PageSize defaultPageSize = PageSize.Default;
 
-    protected transient EventDispatcher eventDispatcher = new EventDispatcher();
+    protected EventDispatcher eventDispatcher = new EventDispatcher();
 
     /**
      * PdfWriter associated with the document.
@@ -194,7 +194,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     private Map<PdfIndirectReference, PdfFont> documentFonts = new HashMap<>();
     private PdfFont defaultFont = null;
 
-    protected transient TagStructureContext tagStructureContext;
+    protected TagStructureContext tagStructureContext;
 
     private static final AtomicLong lastDocumentId = new AtomicLong();
 

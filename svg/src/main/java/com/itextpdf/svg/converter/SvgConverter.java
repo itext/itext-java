@@ -553,7 +553,7 @@ public final class SvgConverter {
             ISvgProcessorResult processorResult = process(parse(svgStream, props), props);
 
             ResourceResolver resourceResolver = SvgConverter.getResourceResolver(processorResult, props);
-            SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider());
+            final SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider());
             if (processorResult instanceof SvgProcessorResult) {
                 drawContext.setCssContext(((SvgProcessorResult) processorResult).getContext().getCssContext());
             }

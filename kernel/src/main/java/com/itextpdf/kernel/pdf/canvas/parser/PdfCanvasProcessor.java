@@ -81,6 +81,7 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.FillingRule;
 import com.itextpdf.kernel.pdf.canvas.parser.data.AbstractRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ClippingPathInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
@@ -93,16 +94,14 @@ import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
-
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.*;
-
-import static com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.FillingRule;
 
 /**
  * Processor for a PDF content stream.
@@ -1164,8 +1163,8 @@ public class PdfCanvasProcessor {
         }
 
         static PdfColorSpace determineColorSpace(PdfName colorSpace, PdfCanvasProcessor processor) {
-            PdfColorSpace pdfColorSpace = null;
-            if (PdfColorSpace.directColorSpaces.contains(colorSpace)) {
+            PdfColorSpace pdfColorSpace;
+            if (PdfColorSpace.DIRECT_COLOR_SPACES.contains(colorSpace)) {
                 pdfColorSpace = PdfColorSpace.makeColorSpace(colorSpace);
             } else {
                 PdfResources pdfResources = processor.getResources();

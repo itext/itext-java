@@ -255,7 +255,7 @@ public class Color {
      */
     @Override
     public int hashCode() {
-        int result = colorSpace != null ? colorSpace.getPdfObject().hashCode() : 0;
+        int result = colorSpace == null ? 0 : colorSpace.getPdfObject().hashCode();
         result = 31 * result + (colorValue != null ? Arrays.hashCode(colorValue) : 0);
         return result;
     }

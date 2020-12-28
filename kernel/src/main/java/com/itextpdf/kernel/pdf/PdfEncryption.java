@@ -73,9 +73,7 @@ import java.security.cert.Certificate;
  * @author Kazuya Ujihara
  */
 public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
-
-
-	private static final int STANDARD_ENCRYPTION_40 = 2;
+    private static final int STANDARD_ENCRYPTION_40 = 2;
     private static final int STANDARD_ENCRYPTION_128 = 3;
     private static final int AES_128 = 4;
     private static final int AES_256 = 5;
