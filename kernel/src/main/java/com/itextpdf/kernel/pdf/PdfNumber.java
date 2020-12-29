@@ -43,10 +43,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 
@@ -56,7 +53,6 @@ public class PdfNumber extends PdfPrimitiveObject {
 
     private double value;
     private boolean isDouble;
-    private boolean changed = false;
 
     public PdfNumber(double value) {
         super();
@@ -109,7 +105,6 @@ public class PdfNumber extends PdfPrimitiveObject {
         this.value = value;
         this.isDouble = false;
         this.content = null;
-        this.changed = true;
     }
 
     public void setValue(double value) {
@@ -139,8 +134,13 @@ public class PdfNumber extends PdfPrimitiveObject {
 
     @Override
     public boolean equals(Object o) {
-        return this == o ||
-                o != null && getClass() == o.getClass() && Double.compare(((PdfNumber) o).value, value) == 0;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        return Double.compare(((PdfNumber) o).getValue(), getValue()) == 0;
     }
 
     /**
@@ -153,13 +153,7 @@ public class PdfNumber extends PdfPrimitiveObject {
 
     @Override
     public int hashCode() {
-        if (changed) {
-            //if the instance was modified, hashCode also will be changed, it may cause inconsistency.
-            Logger logger = LoggerFactory.getLogger(PdfReader.class);
-            logger.warn(LogMessageConstant.CALCULATE_HASHCODE_FOR_MODIFIED_PDFNUMBER);
-            changed = false;
-        }
-        long hash = Double.doubleToLongBits(value);
+        long hash = Double.doubleToLongBits(getValue());
         return (int) (hash ^ (hash >>> 32));
     }
 
