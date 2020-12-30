@@ -56,11 +56,15 @@ import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderShorthandRe
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderStyleShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderTopShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderWidthShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FlexFlowShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FlexShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FontShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.GapShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.ListStyleShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.MarginShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.OutlineShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.PaddingShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.PlaceItemsShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.TextDecorationShorthandResolver;
 
 import java.util.HashMap;
@@ -92,6 +96,10 @@ public class ShorthandResolverFactory {
         shorthandResolvers.put(CommonCssConstants.OUTLINE, new OutlineShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.PADDING, new PaddingShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.TEXT_DECORATION, new TextDecorationShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.FLEX, new FlexShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.FLEX_FLOW, new FlexFlowShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.GAP, new GapShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.PLACE_ITEMS, new PlaceItemsShorthandResolver());
     }
 
     /**

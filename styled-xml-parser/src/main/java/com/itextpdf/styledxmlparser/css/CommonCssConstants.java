@@ -70,6 +70,11 @@ public class CommonCssConstants {
     // properties
 
     /**
+     * The Constant ALIGN_ITEMS.
+     */
+    public static final String ALIGN_ITEMS = "align-items";
+
+    /**
      * The Constant BACKGROUND.
      */
     public static final String BACKGROUND = "background";
@@ -300,6 +305,11 @@ public class CommonCssConstants {
     public static final String COLOR_BURN = "color-burn";
 
     /**
+     * The Constant COLUMN_GAP.
+     */
+    public static final String COLUMN_GAP = "column-gap";
+
+    /**
      * The Constant DARKEN.
      */
     public static final String DARKEN = "darken";
@@ -328,6 +338,41 @@ public class CommonCssConstants {
      * The Constant EXCLUSION.
      */
     public static final String EXCLUSION = "exclusion";
+
+    /**
+     * The Constant FLEX.
+     */
+    public static final String FLEX = "flex";
+
+    /**
+     * The Constant FLEX_BASIS.
+     */
+    public static final String FLEX_BASIS = "flex-basis";
+
+    /**
+     * The Constant FLEX_DIRECTION.
+     */
+    public static final String FLEX_DIRECTION = "flex-direction";
+
+    /**
+     * The Constant FLEX_GROW.
+     */
+    public static final String FLEX_GROW = "flex-grow";
+
+    /**
+     * The Constant FLEX_FLOW.
+     */
+    public static final String FLEX_FLOW = "flex-flow";
+
+    /**
+     * The Constant FLEX_SHRINK.
+     */
+    public static final String FLEX_SHRINK = "flex-shrink";
+
+    /**
+     * The Constant FLEX_WRAP.
+     */
+    public static final String FLEX_WRAP = "flex-wrap";
 
     /**
      * The Constant FLOAT.
@@ -425,6 +470,11 @@ public class CommonCssConstants {
     public static final String FONT_WEIGHT = "font-weight";
 
     /**
+     * The Constant GAP.
+     */
+    public static final String GAP = "gap";
+
+    /**
      * The Constant HANGING_PUNCTUATION.
      */
     public static final String HANGING_PUNCTUATION = "hanging-punctuation";
@@ -443,10 +493,16 @@ public class CommonCssConstants {
      * The Constant HYPHENS.
      */
     public static final String HYPHENS = "hyphens";
+
     /**
      * The Constant INLINE-BLOCK
      */
     public static final String INLINE_BLOCK = "inline-block";
+
+    /**
+     * The Constant JUSTIFY_ITEMS.
+     */
+    public static final String JUSTIFY_ITEMS = "justify-items";
 
     /**
      * The Constant KEEP_ALL.
@@ -597,6 +653,11 @@ public class CommonCssConstants {
      * The Constant PAGE_BREAK_INSIDE.
      */
     public static final String PAGE_BREAK_INSIDE = "page-break-inside";
+
+    /**
+     * The Constant PLACE_ITEMS.
+     */
+    public static final String PLACE_ITEMS = "place-items";
 
     /**
      * The Constant POSITION.
@@ -1018,6 +1079,11 @@ public class CommonCssConstants {
     public static final String MESSAGE_BOX = "message-box";
 
     /**
+     * The Constant NOWRAP.
+     */
+    public static final String NOWRAP = "nowrap";
+
+    /**
      * The Constant NO_OPEN_QUOTE.
      */
     public static final String NO_OPEN_QUOTE = "no-open-quote";
@@ -1116,6 +1182,16 @@ public class CommonCssConstants {
      * The Constant ROUND.
      */
     public static final String ROUND = "round";
+
+    /**
+     * The Constant ROW.
+     */
+    public static final String ROW = "row";
+
+    /**
+     * The Constant ROW_GAP.
+     */
+    public static final String ROW_GAP = "row-gap";
 
     /**
      * The Constant SATURATION.

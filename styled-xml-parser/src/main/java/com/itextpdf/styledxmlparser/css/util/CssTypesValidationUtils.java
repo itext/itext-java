@@ -217,6 +217,21 @@ public final class CssTypesValidationUtils {
     }
 
     /**
+     * Checks if value contains initial, inherit or unset.
+     *
+     * @param value value to check
+     * @return true if value contains initial, inherit or unset. False otherwise
+     */
+    public static boolean containsInitialOrInheritOrUnset(String value) {
+        if (value == null) {
+            return false;
+        }
+        return value.contains(CommonCssConstants.INITIAL) ||
+                value.contains(CommonCssConstants.INHERIT) ||
+                value.contains(CommonCssConstants.UNSET);
+    }
+
+    /**
      * Creates a new {@link CssTypesValidationUtils} instance.
      */
     private CssTypesValidationUtils() {
