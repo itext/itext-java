@@ -2176,6 +2176,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return pdfPageFactory;
     }
 
+    long getDocumentId() {
+        return documentId;
+    }
+
     /**
      * Gets iText version info.
      *
@@ -2416,10 +2420,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
     }
 
-    private long getDocumentId() {
-        return documentId;
-    }
-
     private void writeObject(ObjectOutputStream out) throws IOException {
         if (tagStructureContext != null) {
             LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.TAG_STRUCTURE_CONTEXT_WILL_BE_REINITIALIZED_ON_SERIALIZATION);
@@ -2429,42 +2429,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     private boolean writerHasEncryption() {
         return writer.properties.isStandardEncryptionUsed() || writer.properties.isPublicKeyEncryptionUsed();
-    }
-
-    /**
-     * A structure storing documentId, object number and generation number. This structure is using to calculate
-     * an unique object key during the copy process.
-     */
-    static class IndirectRefDescription {
-        final long docId;
-        final int objNr;
-        final int genNr;
-
-        IndirectRefDescription(PdfIndirectReference reference) {
-            this.docId = reference.getDocument().getDocumentId();
-            this.objNr = reference.getObjNumber();
-            this.genNr = reference.getGenNumber();
-        }
-
-        @Override
-        public int hashCode() {
-            int result = (int) docId;
-            result *= 31;
-            result += objNr;
-            result *= 31;
-            result += genNr;
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            IndirectRefDescription that = (IndirectRefDescription) o;
-
-            return docId == that.docId && objNr == that.objNr && genNr == that.genNr;
-        }
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
