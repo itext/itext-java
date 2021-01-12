@@ -22,13 +22,10 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-class EncryptedEmbeddedStreamsHandler implements Serializable {
-
-    private static final long serialVersionUID = -4542644924377740467L;
+class EncryptedEmbeddedStreamsHandler {
 
     private final PdfDocument document;
 

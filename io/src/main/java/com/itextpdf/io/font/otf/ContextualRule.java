@@ -22,9 +22,7 @@
  */
 package com.itextpdf.io.font.otf;
 
-import java.io.Serializable;
-
-public abstract class ContextualRule implements Serializable {
+public abstract class ContextualRule {
 
     /**
      * Gets the length of the context glyph sequence defined by this rule

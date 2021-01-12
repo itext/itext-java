@@ -43,10 +43,8 @@
  */
 package com.itextpdf.kernel.counter.event;
 
-import java.io.Serializable;
-
 /**
  * The meta info that can holds information about instance that throws the event
  */
-public interface IMetaInfo extends Serializable {
+public interface IMetaInfo {
 }

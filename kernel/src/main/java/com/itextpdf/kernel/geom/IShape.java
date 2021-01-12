@@ -43,13 +43,12 @@
  */
 package com.itextpdf.kernel.geom;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * Represents segment from a PDF path.
  */
-public interface IShape extends Serializable {
+public interface IShape {
 
     /**
      * Treat base points as the points which are enough to construct a shape.

@@ -60,8 +60,6 @@ import com.itextpdf.kernel.pdf.PdfString;
  */
 public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = 8367728573140319531L;
-
     /**
      * Creates new PdfSignature.
      */

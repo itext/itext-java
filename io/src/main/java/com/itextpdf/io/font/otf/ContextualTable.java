@@ -22,10 +22,9 @@
  */
 package com.itextpdf.io.font.otf;
 
-import java.io.Serializable;
 import java.util.List;
 
-public abstract class ContextualTable<T extends ContextualRule> implements Serializable {
+public abstract class ContextualTable<T extends ContextualRule> {
 
     protected OpenTypeFontTableReader openReader;
     protected int lookupFlag;

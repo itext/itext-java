@@ -22,9 +22,7 @@
  */
 package com.itextpdf.io.font.otf;
 
-import java.io.Serializable;
-
-public class PosLookupRecord implements Serializable {
+public class PosLookupRecord {
     int sequenceIndex;
     int lookupListIndex;
 }
