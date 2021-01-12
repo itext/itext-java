@@ -194,6 +194,8 @@ public final class LogMessageConstant {
     public static final String TOUNICODE_CMAP_MORE_THAN_2_BYTES_NOT_SUPPORTED = "ToUnicode CMap more than 2 bytes not supported.";
     public static final String TYPE3_FONT_CANNOT_BE_ADDED = "Type 3 font cannot be added to FontSet. Custom FontProvider class may be created for this purpose.";
     public static final String TYPE3_FONT_ISSUE_TAGGED_PDF = "Type 3 font issue. Font Descriptor is required for tagged PDF. FontName shall be specified.";
+    public static final String TYPOGRAPHY_NOT_FOUND = "Cannot find pdfCalligraph module, which was implicitly " +
+            "required by one of the layout properties";
     public static final String UNABLE_TO_INVERT_GRADIENT_TRANSFORMATION = "Unable to invert gradient transformation, ignoring it";
     public static final String UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN = "Unable to apply page dependent property, because the page on which element is drawn is unknown. Usually this means that element was added to the Canvas instance that was created not with constructor taking PdfPage as argument. Not processed property: {0}";
     public static final String UNABLE_TO_REGISTER_EVENT_DATA_HANDLER_SHUTDOWN_HOOK = "Unable to register event data handler shutdown hook because of security reasons.";
