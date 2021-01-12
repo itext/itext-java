@@ -136,56 +136,56 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void encryptWithPasswordStandard128() throws IOException, XMPException, InterruptedException {
+    public void encryptWithPasswordStandard128() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordStandard128.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_128;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordStandard40() throws IOException, XMPException, InterruptedException {
+    public void encryptWithPasswordStandard40() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordStandard40.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_40;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordStandard128NoCompression() throws IOException, XMPException, InterruptedException {
+    public void encryptWithPasswordStandard128NoCompression() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordStandard128NoCompression.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_128;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordStandard40NoCompression() throws IOException, XMPException, InterruptedException {
+    public void encryptWithPasswordStandard40NoCompression() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordStandard40NoCompression.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_40;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordAes128() throws IOException, XMPException, InterruptedException {
+    public void encryptWithPasswordAes128() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordAes128.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordAes256() throws IOException, XMPException, InterruptedException {
+    public void encryptWithPasswordAes256() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordAes256.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordAes128NoCompression() throws IOException, XMPException, InterruptedException {
+    public void encryptWithPasswordAes128NoCompression() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordAes128NoCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordAes256NoCompression() throws IOException, XMPException, InterruptedException {
+    public void encryptWithPasswordAes256NoCompression() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordAes256NoCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
@@ -431,7 +431,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void encryptAes256Pdf2NotEncryptMetadata() throws InterruptedException, IOException, XMPException {
+    public void encryptAes256Pdf2NotEncryptMetadata() throws InterruptedException, IOException {
         String filename = "encryptAes256Pdf2NotEncryptMetadata.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256 | EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);

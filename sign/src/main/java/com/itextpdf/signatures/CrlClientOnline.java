@@ -51,7 +51,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -116,13 +115,9 @@ public class CrlClientOnline implements ICrlClient {
             X509Certificate cert = (X509Certificate) chain[i];
             LOGGER.info("Checking certificate: " + cert.getSubjectDN());
             String url = null;
-            try {
-                url = CertificateUtil.getCRLURL(cert);
-                if (url != null) {
-                    addUrl(url);
-                }
-            } catch (CertificateParsingException e) {
-                LOGGER.info("Skipped CRL url (certificate could not be parsed)");
+            url = CertificateUtil.getCRLURL(cert);
+            if (url != null) {
+                addUrl(url);
             }
         }
     }

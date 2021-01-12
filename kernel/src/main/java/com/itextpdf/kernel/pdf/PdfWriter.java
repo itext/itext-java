@@ -299,9 +299,8 @@ public class PdfWriter extends PdfOutputStream {
      *
      * @param pdfObject     object to flush.
      * @param canBeInObjStm indicates whether object can be placed into object stream.
-     * @throws IOException on error.
      */
-    protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
+    protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) {
         PdfIndirectReference indirectReference = pdfObject.getIndirectReference();
         if (isFullCompression() && canBeInObjStm) {
             PdfObjectStream objectStream = getObjectStream();
@@ -385,9 +384,8 @@ public class PdfWriter extends PdfOutputStream {
      * Writes object to body of PDF document.
      *
      * @param pdfObj object to write.
-     * @throws IOException obsolete. {@code throws} declaration would be removed in 7.2
      */
-    protected void writeToBody(PdfObject pdfObj) throws IOException {
+    protected void writeToBody(PdfObject pdfObj) {
         if (crypto != null) {
             crypto.setHashKeyForNextObject(pdfObj.getIndirectReference().getObjNumber(), pdfObj.getIndirectReference().getGenNumber());
         }

@@ -49,7 +49,6 @@ import java.net.URL;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -93,10 +92,8 @@ public class CertificateUtil {
      * Gets the URL of the Certificate Revocation List for a Certificate
      * @param certificate	the Certificate
      * @return	the String where you can check if the certificate was revoked
-     * @throws CertificateParsingException throws if invalid DER-encoded certificate is parsed or
-     * unsupported DER features are found in the certificate
      */
-    public static String getCRLURL(X509Certificate certificate) throws CertificateParsingException {
+    public static String getCRLURL(X509Certificate certificate) {
         ASN1Primitive obj;
         try {
             obj = getExtensionValue(certificate, Extension.cRLDistributionPoints.getId());

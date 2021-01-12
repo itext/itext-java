@@ -410,7 +410,7 @@ public class IntHashtable implements Cloneable {
         }
 
         @Override
-        protected Object clone() throws CloneNotSupportedException {
+        protected Object clone() {
             return new Entry(key, value, next != null ? (Entry)next.clone() : null);
         }
 
@@ -455,20 +455,15 @@ public class IntHashtable implements Cloneable {
     }
 
     @Override
-    public Object clone() throws CloneNotSupportedException {
-        try {
-            IntHashtable t = new IntHashtable(this);
-            t.table = new Entry[table.length];
-            for (int i = table.length ; i-- > 0 ; ) {
-                t.table[i] = table[i] != null
-                        ? (Entry)table[i].clone() : null;
-            }
-            t.count = count;
-            return t;
-        } catch (CloneNotSupportedException e) {
-            // this shouldn't happen, since we are Cloneable
-            throw new InternalError();
+    public Object clone() {
+        IntHashtable t = new IntHashtable(this);
+        t.table = new Entry[table.length];
+        for (int i = table.length ; i-- > 0 ; ) {
+            t.table[i] = table[i] != null
+                    ? (Entry)table[i].clone() : null;
         }
+        t.count = count;
+        return t;
     }
 }
 

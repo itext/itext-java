@@ -204,9 +204,8 @@ public class RandomAccessFileOrArray implements DataInput {
      *
      * @param n the number of bytes to skip
      * @return the actual number of bytes skipped
-     * @throws java.io.IOException in case of any I/O error
      */
-    public long skip(long n) throws java.io.IOException {
+    public long skip(long n) {
         if (n <= 0) {
             return 0;
         }
@@ -238,7 +237,7 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * {@inheritDoc}
      */
-    public int skipBytes(int n) throws java.io.IOException {
+    public int skipBytes(int n) {
         return (int) skip(n);
     }
 
@@ -257,9 +256,8 @@ public class RandomAccessFileOrArray implements DataInput {
      * Gets the total amount of bytes in the source.
      *
      * @return source's size.
-     * @throws java.io.IOException in case of any I/O error.
      */
-    public long length() throws java.io.IOException {
+    public long length() {
         return byteSource.length();
     }
 
@@ -267,9 +265,8 @@ public class RandomAccessFileOrArray implements DataInput {
      * Sets the current position in the source to the specified index.
      *
      * @param pos the position to set
-     * @throws java.io.IOException in case of any I/O error.
      */
-    public void seek(long pos) throws java.io.IOException {
+    public void seek(long pos) {
         byteSourcePosition = pos;
         isBack = false;
     }
@@ -279,9 +276,8 @@ public class RandomAccessFileOrArray implements DataInput {
      *
      * @return the index of last read byte in the source in
      * or the index of last read byte in source - 1 in case byte was pushed.
-     * @throws java.io.IOException in case of any I/O error.
      */
-    public long getPosition() throws java.io.IOException {
+    public long getPosition() {
         return byteSourcePosition - (isBack ? 1 : 0);
     }
 

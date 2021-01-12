@@ -646,7 +646,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void parseAndProcessIOExceptionTest() throws IOException {
+    public void parseAndProcessIOExceptionTest() {
         InputStream fis = new ExceptionInputStream();
 
         Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.parseAndProcess(fis));

@@ -156,7 +156,7 @@ public class GposLookupType2 extends OpenTableLookup {
         }
 
         @Override
-        protected void readSubTable(int subTableLocation) throws java.io.IOException {
+        protected void readSubTable(int subTableLocation) {
             //never called here
         }
     }
@@ -225,7 +225,7 @@ public class GposLookupType2 extends OpenTableLookup {
         }
 
         @Override
-        protected void readSubTable(int subTableLocation) throws java.io.IOException {
+        protected void readSubTable(int subTableLocation) {
             //never called here
         }
     }

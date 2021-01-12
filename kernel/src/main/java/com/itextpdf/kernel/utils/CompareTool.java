@@ -188,10 +188,9 @@ public class CompareTool {
      * @param outDocument a {@link PdfDocument} corresponding to the output file, which is to be compared with cmp-file.
      * @param cmpDocument a {@link PdfDocument} corresponding to the cmp-file, which is to be compared with output file.
      * @return the report on comparison of two files in the form of the custom class {@link CompareResult} instance.
-     * @throws IOException obsolete. Would be removed in 7.2.
      * @see CompareResult
      */
-    public CompareResult compareByCatalog(PdfDocument outDocument, PdfDocument cmpDocument) throws IOException {
+    public CompareResult compareByCatalog(PdfDocument outDocument, PdfDocument cmpDocument) {
         CompareResult compareResult = null;
         compareResult = new CompareResult(compareByContentErrorsLimit);
         ObjectPath catalogPath = new ObjectPath(cmpDocument.getCatalog().getPdfObject().getIndirectReference(),
@@ -542,9 +541,8 @@ public class CompareTool {
      * @param outDict dictionary to compare.
      * @param cmpDict dictionary to compare.
      * @return true if dictionaries are equal by content, otherwise false.
-     * @throws IOException obsolete. Would be removed in 7.2.
      */
-    public boolean compareDictionaries(PdfDictionary outDict, PdfDictionary cmpDict) throws IOException {
+    public boolean compareDictionaries(PdfDictionary outDict, PdfDictionary cmpDict) {
         return compareDictionariesExtended(outDict, cmpDict, null, null);
     }
 
@@ -636,9 +634,8 @@ public class CompareTool {
      * @param outStream stream to compare.
      * @param cmpStream stream to compare.
      * @return true if stream are equal by content, otherwise false.
-     * @throws IOException obsolete. Would be removed in 7.2.
      */
-    public boolean compareStreams(PdfStream outStream, PdfStream cmpStream) throws IOException {
+    public boolean compareStreams(PdfStream outStream, PdfStream cmpStream) {
         return compareStreamsExtended(outStream, cmpStream, null, null);
     }
 
@@ -649,9 +646,8 @@ public class CompareTool {
      * @param outArray array to compare.
      * @param cmpArray array to compare.
      * @return true if arrays are equal by content, otherwise false.
-     * @throws IOException obsolete. Would be removed in 7.2.
      */
-    public boolean compareArrays(PdfArray outArray, PdfArray cmpArray) throws IOException {
+    public boolean compareArrays(PdfArray outArray, PdfArray cmpArray) {
         return compareArraysExtended(outArray, cmpArray, null, null);
     }
 

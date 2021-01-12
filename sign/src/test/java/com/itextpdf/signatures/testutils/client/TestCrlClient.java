@@ -57,7 +57,7 @@ public class TestCrlClient implements ICrlClient {
     private final TestCrlBuilder crlBuilder;
     private final PrivateKey caPrivateKey;
 
-    public TestCrlClient(TestCrlBuilder crlBuilder, PrivateKey caPrivateKey) throws CertificateEncodingException {
+    public TestCrlClient(TestCrlBuilder crlBuilder, PrivateKey caPrivateKey) {
         this.crlBuilder = crlBuilder;
         this.caPrivateKey = caPrivateKey;
     }

@@ -94,7 +94,7 @@ public final class Pkcs12FileHelper {
         return pk;
     }
 
-    public static KeyStore initStore(String p12FileName, char[] ksPass) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, NoSuchProviderException {
+    public static KeyStore initStore(String p12FileName, char[] ksPass) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, NoSuchProviderException {
         KeyStore p12 = KeyStore.getInstance("PKCS12", "BC");
         p12.load(new FileInputStream(p12FileName), ksPass);
         return p12;

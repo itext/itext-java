@@ -82,7 +82,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     }
 
     @Test
-    public void validCertificateChain01() throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, UnrecoverableKeyException, NoSuchProviderException {
+    public void validCertificateChain01() throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, NoSuchProviderException {
         Certificate[] certChain = Pkcs12FileHelper.readFirstChain(certsSrc + "signCertRsaWithChain.p12", password);
 
         String caCertFileName = certsSrc + "rootRsa.p12";

@@ -136,7 +136,7 @@ public class PdfTokenizer implements Closeable {
         this.outBuf = new ByteBuffer();
     }
 
-    public void seek(long pos) throws java.io.IOException {
+    public void seek(long pos) {
         file.seek(pos);
     }
 
@@ -144,7 +144,7 @@ public class PdfTokenizer implements Closeable {
         file.readFully(bytes);
     }
 
-    public long getPosition() throws java.io.IOException {
+    public long getPosition() {
         return file.getPosition();
     }
 
@@ -153,7 +153,7 @@ public class PdfTokenizer implements Closeable {
             file.close();
     }
 
-    public long length() throws java.io.IOException {
+    public long length() {
         return file.length();
     }
 
@@ -682,13 +682,8 @@ public class PdfTokenizer implements Closeable {
      * @throws IOException wrap error message into {@code PdfRuntimeException} and add position in file.
      */
     public void throwError(String error, Object... messageParams) {
-        try {
-            throw new IOException(IOException.ErrorAtFilePointer1, new IOException(error).setMessageParams(messageParams))
-                    .setMessageParams(file.getPosition());
-        } catch (java.io.IOException e) {
-            throw new IOException(IOException.ErrorAtFilePointer1, new IOException(error).setMessageParams(messageParams))
-                    .setMessageParams(error, "no position");
-        }
+        throw new IOException(IOException.ErrorAtFilePointer1, new IOException(error).setMessageParams(messageParams))
+                .setMessageParams(file.getPosition());
     }
 
     /**

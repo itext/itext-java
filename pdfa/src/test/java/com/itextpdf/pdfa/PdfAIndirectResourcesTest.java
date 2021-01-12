@@ -72,14 +72,14 @@ public class PdfAIndirectResourcesTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = PdfAConformanceLogMessageConstant.CATALOG_SHOULD_CONTAIN_LANG_ENTRY)
     })
-    public void indirectResources01Test() throws IOException, XMPException, InterruptedException {
+    public void indirectResources01Test() throws IOException {
         String fileName = destinationFolder + "indirectResources01Test.pdf";
         PdfADocument pdfDoc = new PdfADocument(new PdfReader(sourceFolder + "indirectResources01.pdf"), new PdfWriter(fileName));
         pdfDoc.close();
     }
 
     @Test
-    public void indirectResources02Test() throws IOException, XMPException, InterruptedException {
+    public void indirectResources02Test() throws IOException {
         String fileName = destinationFolder + "indirectResources02Test.pdf";
 
         PdfWriter writer = new CustomPdfWriter(fileName, 19);

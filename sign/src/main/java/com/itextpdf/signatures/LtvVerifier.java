@@ -255,7 +255,6 @@ public class LtvVerifier extends RootStoreVerifier {
      * @return a list of <code>VerificationOK</code> objects.
      * The list will be empty if the certificate couldn't be verified.
      * @throws GeneralSecurityException if some problems with signature or security occurred
-     * @throws IOException signals that an I/O exception has occurred
      * @see com.itextpdf.signatures.RootStoreVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate, java.util.Date)
      */
     public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException, IOException {
@@ -313,9 +312,8 @@ public class LtvVerifier extends RootStoreVerifier {
      * @return	a list of CRLs
      * @throws GeneralSecurityException when requested cryptographic algorithm or security provider
      * is not available
-     * @throws IOException signals that an I/O exception has occurred
      */
-    public List<X509CRL> getCRLsFromDSS() throws GeneralSecurityException, IOException {
+    public List<X509CRL> getCRLsFromDSS() throws GeneralSecurityException {
         List<X509CRL> crls = new ArrayList<>();
         if (dss == null)
             return crls;
@@ -332,7 +330,6 @@ public class LtvVerifier extends RootStoreVerifier {
     /**
      * Gets OCSP responses from the Document Security Store.
      * @return	a list of BasicOCSPResp objects
-     * @throws IOException signals that an I/O exception has occurred
      * @throws GeneralSecurityException if OCSP response failed
      */
     public List<BasicOCSPResp> getOCSPResponsesFromDSS() throws IOException, GeneralSecurityException {

@@ -79,7 +79,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource {
      *
      * @param position the position to read the byte from - must be less than Integer.MAX_VALUE
      */
-    public int get(long position) throws java.io.IOException {
+    public int get(long position) {
         if (position > Integer.MAX_VALUE)
             throw new IllegalArgumentException("Position must be less than Integer.MAX_VALUE");
         try {
@@ -101,7 +101,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource {
      *
      * @param position the position to read the byte from - must be less than Integer.MAX_VALUE
      */
-    public int get(long position, byte[] bytes, int off, int len) throws java.io.IOException {
+    public int get(long position, byte[] bytes, int off, int len) {
         if (position > Integer.MAX_VALUE)
             throw new IllegalArgumentException("Position must be less than Integer.MAX_VALUE");
 

@@ -193,11 +193,10 @@ public class OCSPVerifier extends RootStoreVerifier {
      * @param ocspResp the OCSP response
      * @param issuerCert the issuer certificate. This certificate is considered trusted and valid by this method.
      * @throws GeneralSecurityException if OCSP response verification cannot be done or failed
-     * @throws IOException is not expected here. Will be removed in further releases
      * @deprecated Will be removed in iText 7.2. Use {@link #isValidResponse(BasicOCSPResp, X509Certificate, Date)} instead
      */
     @Deprecated
-    public void isValidResponse(BasicOCSPResp ocspResp, X509Certificate issuerCert) throws GeneralSecurityException, IOException {
+    public void isValidResponse(BasicOCSPResp ocspResp, X509Certificate issuerCert) throws GeneralSecurityException {
         isValidResponse(ocspResp, issuerCert, DateTimeUtil.getCurrentTimeDate());
     }
 

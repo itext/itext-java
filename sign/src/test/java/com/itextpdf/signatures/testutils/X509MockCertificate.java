@@ -77,12 +77,12 @@ public class X509MockCertificate extends X509Certificate {
     }
 
     @Override
-    public void checkValidity() throws CertificateExpiredException, CertificateNotYetValidException {
+    public void checkValidity() {
 
     }
 
     @Override
-    public void checkValidity(Date date) throws CertificateExpiredException, CertificateNotYetValidException {
+    public void checkValidity(Date date) {
 
     }
 
@@ -117,7 +117,7 @@ public class X509MockCertificate extends X509Certificate {
     }
 
     @Override
-    public byte[] getTBSCertificate() throws CertificateEncodingException {
+    public byte[] getTBSCertificate() {
         return new byte[0];
     }
 
@@ -167,17 +167,17 @@ public class X509MockCertificate extends X509Certificate {
     }
 
     @Override
-    public byte[] getEncoded() throws CertificateEncodingException {
+    public byte[] getEncoded() {
         return new byte[0];
     }
 
     @Override
-    public void verify(PublicKey key) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
+    public void verify(PublicKey key) {
 
     }
 
     @Override
-    public void verify(PublicKey key, String sigProvider) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
+    public void verify(PublicKey key, String sigProvider) {
 
     }
 
@@ -227,7 +227,7 @@ public class X509MockCertificate extends X509Certificate {
     }
 
     @Override
-    public List<String> getExtendedKeyUsage() throws CertificateParsingException {
+    public List<String> getExtendedKeyUsage() {
         return this.extendedKeyUsage;
     }
 }

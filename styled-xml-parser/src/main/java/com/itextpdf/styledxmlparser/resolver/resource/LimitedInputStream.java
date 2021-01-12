@@ -151,7 +151,7 @@ class LimitedInputStream extends InputStream {
     }
 
     @Override
-    public synchronized void reset() throws IOException {
+    public synchronized void reset() {
         // The body of the method is empty, because markSupported method always returns false
     }
 

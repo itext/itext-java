@@ -70,7 +70,7 @@ public abstract class OpenTypeFontTableReader {
     private final int unitsPerEm;
 
 	protected OpenTypeFontTableReader(RandomAccessFileOrArray rf, int tableLocation, OpenTypeGdefTableReader gdef,
-                                   Map<Integer, Glyph> indexGlyphMap, int unitsPerEm) throws java.io.IOException {
+                                   Map<Integer, Glyph> indexGlyphMap, int unitsPerEm) {
 		this.rf = rf;
 		this.tableLocation = tableLocation;
         this.indexGlyphMap = indexGlyphMap;
@@ -196,7 +196,7 @@ public abstract class OpenTypeFontTableReader {
 	protected abstract OpenTableLookup readLookupTable(int lookupType, int lookupFlag, int[] subTableLocations)
 			throws java.io.IOException;
 
-    protected final OtfClass readClassDefinition(int classLocation) throws java.io.IOException {
+    protected final OtfClass readClassDefinition(int classLocation) {
         return OtfClass.create(rf, classLocation);
     }
 

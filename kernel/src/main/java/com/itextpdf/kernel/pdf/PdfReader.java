@@ -537,9 +537,8 @@ public class PdfReader implements Closeable {
      * Provides the size of the opened file.
      *
      * @return The size of the opened file.
-     * @throws IOException on error.
      */
-    public long getFileLength() throws IOException {
+    public long getFileLength() {
         return tokens.getSafeFile().length();
     }
 
@@ -1480,7 +1479,7 @@ public class PdfReader implements Closeable {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             buffer = null;
         }
     }

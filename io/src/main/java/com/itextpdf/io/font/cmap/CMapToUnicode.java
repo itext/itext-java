@@ -139,7 +139,7 @@ public class CMapToUnicode extends AbstractCMap {
         return result;
     }
 
-    public Map<Integer, Integer> createReverseMapping() throws java.io.IOException {
+    public Map<Integer, Integer> createReverseMapping() {
         Map<Integer, Integer> result = new HashMap<>();
         for (Map.Entry<Integer, char[]> entry : byteMappings.entrySet()) {
             if (entry.getValue().length == 1) {

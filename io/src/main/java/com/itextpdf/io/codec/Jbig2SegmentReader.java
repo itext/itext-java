@@ -213,7 +213,7 @@ public class Jbig2SegmentReader {
 
     }
 
-    public Jbig2SegmentReader(RandomAccessFileOrArray ra) throws java.io.IOException {
+    public Jbig2SegmentReader(RandomAccessFileOrArray ra) {
         this.ra = ra;
     }
 

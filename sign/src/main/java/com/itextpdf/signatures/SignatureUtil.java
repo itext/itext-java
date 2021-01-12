@@ -414,12 +414,10 @@ public class SignatureUtil {
         }
         Collections.sort(sorter, new SorterComparator());
         if (sorter.size() > 0) {
-            try {
-                if (((int[]) sorter.get(sorter.size() - 1)[1])[0] == document.getReader().getFileLength())
-                    totalRevisions = sorter.size();
-                else
-                    totalRevisions = sorter.size() + 1;
-            } catch (IOException e) {
+            if (((int[]) sorter.get(sorter.size() - 1)[1])[0] == document.getReader().getFileLength()) {
+                totalRevisions = sorter.size();
+            } else {
+                totalRevisions = sorter.size() + 1;
             }
             for (int k = 0; k < sorter.size(); ++k) {
                 Object[] objs = sorter.get(k);
@@ -461,12 +459,7 @@ public class SignatureUtil {
             rangeIsCorrect = false;
             PdfDictionary signature = (PdfDictionary) signatureField.getValue();
             int[] byteRange = ((PdfArray) signature.get(PdfName.ByteRange)).toIntArray();
-            try {
-                if (4 != byteRange.length || 0 != byteRange[0] || tokens.getSafeFile().length() != byteRange[2] + byteRange[3]) {
-                    return false;
-                }
-            } catch (IOException e) {
-                // That's not expected because if the signature is invalid, it should have already failed
+            if (4 != byteRange.length || 0 != byteRange[0] || tokens.getSafeFile().length() != byteRange[2] + byteRange[3]) {
                 return false;
             }
 

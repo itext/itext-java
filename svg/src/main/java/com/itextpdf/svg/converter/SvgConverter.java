@@ -836,9 +836,8 @@ public final class SvgConverter {
      *
      * @param svgStream {@link InputStream Stream} containing the SVG to parse and process
      * @return {@link ISvgProcessorResult} containing the root renderer and metadata of the svg
-     * @throws IOException when the Stream cannot be read correctly
      */
-    public static ISvgProcessorResult parseAndProcess(InputStream svgStream) throws IOException {
+    public static ISvgProcessorResult parseAndProcess(InputStream svgStream) {
         return parseAndProcess(svgStream, null);
     }
 
@@ -848,9 +847,8 @@ public final class SvgConverter {
      * @param svgStream {@link InputStream Stream} containing the SVG to parse and process
      * @param props     {@link ISvgConverterProperties} an instance for extra properties to customize the behavior
      * @return {@link ISvgProcessorResult} containing the root renderer and metadata of the svg
-     * @throws IOException when the Stream cannot be read correctly
      */
-    public static ISvgProcessorResult parseAndProcess(InputStream svgStream, ISvgConverterProperties props) throws IOException {
+    public static ISvgProcessorResult parseAndProcess(InputStream svgStream, ISvgConverterProperties props) {
         IXmlParser parser = new JsoupXmlParser();
         String charset = SvgConverter.tryToExtractCharset(props);
         INode nodeTree;
