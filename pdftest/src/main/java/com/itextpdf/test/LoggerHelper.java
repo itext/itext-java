@@ -47,16 +47,15 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.runner.Description;
-
+import java.util.regex.Pattern;
 import java.lang.annotation.Annotation;
 import java.text.MessageFormat;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.junit.Assert;
+import org.junit.runner.Description;
 import org.slf4j.LoggerFactory;
 
 public class LoggerHelper {

@@ -133,9 +133,9 @@ public class PdfPagesTest extends ExtendedITextTest {
             pdfDoc.movePage(i, n + 1);
         }
         pdfDoc.close();
-        new CompareTool()
+        Assert.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder,
-                        "diff");
+                        "diff"));
     }
 
     @Test
@@ -441,9 +441,9 @@ public class PdfPagesTest extends ExtendedITextTest {
                 .setThumbnailImage(new PdfImageXObject(ImageDataFactory.create(sourceFolder + imageSrc)));
         new PdfCanvas(page).setFillColor(ColorConstants.RED).rectangle(100, 100, 400, 400).fill();
         pdfDoc.close();
-        new CompareTool()
+        Assert.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder,
-                        "diff");
+                        "diff"));
     }
 
     @Test

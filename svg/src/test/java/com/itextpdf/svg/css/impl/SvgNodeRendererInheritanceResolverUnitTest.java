@@ -78,9 +78,4 @@ public class SvgNodeRendererInheritanceResolverUnitTest extends ExtendedITextTes
         Assert.assertEquals(expectedFillAttribute,rect.getAttribute(SvgConstants.Attributes.FILL));
         Assert.assertEquals(expectedFillAttribute,circle.getAttribute(SvgConstants.Attributes.FILL));
     }
-
-    @Test
-    public void applyInheritanceToSubTreeFillDoNotOverwriteTest(){
-
-    }
 }

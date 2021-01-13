@@ -43,7 +43,6 @@
  */
 package com.itextpdf.test;
 
-
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -64,7 +63,6 @@ import org.junit.runner.Description;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.SubstituteLoggerFactory;
-
 
 public class LogListener extends TestWatcher {
 

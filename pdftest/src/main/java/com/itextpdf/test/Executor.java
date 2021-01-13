@@ -1,7 +1,8 @@
 /*
+
     This file is part of the iText (R) project.
     Copyright (c) 1998-2021 iText Group NV
-    Authors: iText Software.
+    Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -40,45 +41,15 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.styledxmlparser.jsoup.nodes;
-
-import com.itextpdf.test.AssertUtil;
-import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+package com.itextpdf.test;
 
 /**
- * Tests for the DocumentType node
- *
- * @author Jonathan Hedley, http://jonathanhedley.com/
+ * This class define a functional interface which executes some code and return nothing.
  */
-@Category(UnitTest.class)
-public class DocumentTypeTest extends ExtendedITextTest {
-    @Test
-    public void constructorValidationOkWithBlankName() {
-        AssertUtil.doesNotThrow(() -> new DocumentType("","", "", ""));
-    }
-
-    @Test
-    public void constructorValidationOkWithBlankPublicAndSystemIds() {
-        AssertUtil.doesNotThrow(() -> new DocumentType("html","", "",""));
-    }
-
-    @Test
-    public void outerHtmlGeneration() {
-        DocumentType html5 = new DocumentType("html", "", "", "");
-        Assert.assertEquals("<!doctype html>", html5.outerHtml());
-
-        DocumentType publicDocType = new DocumentType("html", "-//IETF//DTD HTML//", "", "");
-        Assert.assertEquals("<!DOCTYPE html PUBLIC \"-//IETF//DTD HTML//\">", publicDocType.outerHtml());
-
-        DocumentType systemDocType = new DocumentType("html", "", "http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd", "");
-        Assert.assertEquals("<!DOCTYPE html \"http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd\">", systemDocType.outerHtml());
-
-        DocumentType combo = new DocumentType("notHtml", "--public", "--system", "");
-        Assert.assertEquals("<!DOCTYPE notHtml PUBLIC \"--public\" \"--system\">", combo.outerHtml());
-    }
+@FunctionalInterface
+public interface Executor {
+    /**
+     * Executes some code.
+     */
+    void execute() throws Exception;
 }
