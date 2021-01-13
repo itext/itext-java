@@ -22,10 +22,10 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
     public void emptyShorthandTest() {
         String emptyShorthand = "";
         IShorthandResolver resolver = new FlexShorthandResolver();
-        Assert.assertEquals(Collections.emptyList(), resolver.resolveShorthand(emptyShorthand));
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(emptyShorthand));
 
         String shorthandWithSpaces = "    ";
-        Assert.assertEquals(Collections.emptyList(), resolver.resolveShorthand(shorthandWithSpaces));
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(shorthandWithSpaces));
     }
 
     @Test
@@ -106,18 +106,18 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY, count = 3))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 3))
     public void containsInitialOrInheritOrUnsetShorthandTest() {
         IShorthandResolver resolver = new FlexShorthandResolver();
 
         String containsInitialShorthand = "1 initial 50px";
-        Assert.assertEquals(Collections.emptyList(), resolver.resolveShorthand(containsInitialShorthand));
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInitialShorthand));
 
         String containsInheritShorthand = "inherit 2 50px";
-        Assert.assertEquals(Collections.emptyList(), resolver.resolveShorthand(containsInheritShorthand));
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInheritShorthand));
 
         String containsUnsetShorthand = "0 2 unset";
-        Assert.assertEquals(Collections.emptyList(), resolver.resolveShorthand(containsUnsetShorthand));
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsUnsetShorthand));
     }
 
     @Test
@@ -143,31 +143,24 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 flex-basis value shall be "5px" and flex-grow value shall be "0"
         Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
+        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(0).getProperty());
         Assert.assertEquals("5px", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("1", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("auto", resolvedShorthand.get(2).getExpression());
+        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(1).getProperty());
+        Assert.assertEquals("0", resolvedShorthand.get(1).getExpression());
+        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(2).getProperty());
+        Assert.assertEquals("1", resolvedShorthand.get(2).getExpression());
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithOneInvalidValueTest() {
         IShorthandResolver resolver = new FlexShorthandResolver();
 
         String shorthand = "5pixels";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting list shall be empty
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("5pixels", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("1", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("auto", resolvedShorthand.get(2).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -193,14 +186,13 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5 7px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 flex-shrink value shall be "1" and flex-basis shall be "7px"
         Assert.assertEquals(3, resolvedShorthand.size());
         Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
         Assert.assertEquals("5", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
+        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(1).getProperty());
         Assert.assertEquals("7px", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("auto", resolvedShorthand.get(2).getExpression());
+        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(2).getProperty());
+        Assert.assertEquals("1", resolvedShorthand.get(2).getExpression());
     }
 
     @Test
@@ -210,65 +202,46 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "5px 7";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 flex-grow value shall be "7", flex-shrink shall be "1" and flex-basis shall be "5px"
         Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
+        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(0).getProperty());
         Assert.assertEquals("5px", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
+        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(1).getProperty());
         Assert.assertEquals("7", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("auto", resolvedShorthand.get(2).getExpression());
+        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(2).getProperty());
+        Assert.assertEquals("1", resolvedShorthand.get(2).getExpression());
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithTwoUnitValuesTest() {
         IShorthandResolver resolver = new FlexShorthandResolver();
 
         String shorthand = "5px 7px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting list shall be empty
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("5px", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("7px", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("auto", resolvedShorthand.get(2).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithOneUnitlessAndOneInvalidValuesTest() {
         IShorthandResolver resolver = new FlexShorthandResolver();
 
         String shorthand = "5 invalid";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting list shall be empty
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("5", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("invalid", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("auto", resolvedShorthand.get(2).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithTwoValuesAndFirstIsInvalidTest() {
         IShorthandResolver resolver = new FlexShorthandResolver();
 
         String shorthand = "invalid 5px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting list shall be empty
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("invalid", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("5px", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("auto", resolvedShorthand.get(2).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -288,115 +261,79 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithOneUnitAndTwoUnitlessValuesTest() {
         IShorthandResolver resolver = new FlexShorthandResolver();
 
         String shorthand = "5px 7 10";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 flex-grow value shall be "7", flex-shrink shall be "10" and flex-basis shall be "5px"
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("5px", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("7", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("10", resolvedShorthand.get(2).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithThreeUnitlessValuesTest() {
         IShorthandResolver resolver = new FlexShorthandResolver();
 
         String shorthand = "5 7 10";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting list shall be empty
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("5", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("7", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("10", resolvedShorthand.get(2).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithOneUnitlessOneUnitAndOneUnitlessValuesTest() {
         IShorthandResolver resolver = new FlexShorthandResolver();
 
         String shorthand = "5 7px 10";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting list shall be empty
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("5", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("7px", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("10", resolvedShorthand.get(2).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithThreeUnitValuesTest() {
         IShorthandResolver resolver = new FlexShorthandResolver();
 
         String shorthand = "5px 7px 10px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting list shall be empty
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("5px", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("7px", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("10px", resolvedShorthand.get(2).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithOneUnitOneUnitlessAndOneUnitValuesTest() {
         IShorthandResolver resolver = new FlexShorthandResolver();
 
         String shorthand = "5px 7 10px";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting list shall be empty
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("5px", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("7", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("10px", resolvedShorthand.get(2).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithThreeValuesAndFirstIsInvalidTest() {
         IShorthandResolver resolver = new FlexShorthandResolver();
 
         String shorthand = "invalid 7 10";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting list shall be empty
-        Assert.assertEquals(3, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("invalid", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("7", resolvedShorthand.get(1).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("10", resolvedShorthand.get(2).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithFourValuesTest() {
         IShorthandResolver resolver = new FlexShorthandResolver();
 
         String shorthand = "5 7 10 13";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(Collections.emptyList(), resolvedShorthand);
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolvedShorthand);
     }
 }

@@ -60,18 +60,18 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY, count = 3))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 3))
     public void containsInitialOrInheritOrUnsetShorthandTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
         String containsInitialShorthand = "start initial ";
-        Assert.assertEquals(Collections.emptyList(), resolver.resolveShorthand(containsInitialShorthand));
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInitialShorthand));
 
         String containsInheritShorthand = "inherit safe end";
-        Assert.assertEquals(Collections.emptyList(), resolver.resolveShorthand(containsInheritShorthand));
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInheritShorthand));
 
         String containsUnsetShorthand = "baseline unset";
-        Assert.assertEquals(Collections.emptyList(), resolver.resolveShorthand(containsUnsetShorthand));
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsUnsetShorthand));
     }
 
     @Test
@@ -79,10 +79,10 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
     public void emptyShorthandTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
         String emptyShorthand = "";
-        Assert.assertEquals(Collections.emptyList(), resolver.resolveShorthand(emptyShorthand));
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(emptyShorthand));
 
         String shorthandWithSpaces = "    ";
-        Assert.assertEquals(Collections.emptyList(), resolver.resolveShorthand(shorthandWithSpaces));
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(shorthandWithSpaces));
     }
 
     @Test
@@ -100,33 +100,25 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithOneInvalidAlignItemsWordTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
         String shorthand = "legacy";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting List shall be empty
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.ALIGN_ITEMS, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("legacy", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.JUSTIFY_ITEMS, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("legacy", resolvedShorthand.get(1).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithOneInvalidWordTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
         String shorthand = "invalid";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting List shall be empty
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.ALIGN_ITEMS, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("invalid", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.JUSTIFY_ITEMS, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("invalid", resolvedShorthand.get(1).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -136,56 +128,47 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "unsafe start";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 align-items and justify-items shall be "unsafe start"
         Assert.assertEquals(2, resolvedShorthand.size());
         Assert.assertEquals(CommonCssConstants.ALIGN_ITEMS, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("unsafe", resolvedShorthand.get(0).getExpression());
+        Assert.assertEquals("unsafe start", resolvedShorthand.get(0).getExpression());
         Assert.assertEquals(CommonCssConstants.JUSTIFY_ITEMS, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("start", resolvedShorthand.get(1).getExpression());
+        Assert.assertEquals("unsafe start", resolvedShorthand.get(1).getExpression());
     }
 
     @Test
     public void shorthandWithOneWordAlignItemsAndOneWordJustifyItemsTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
-        String shorthand = "center legacy";
+        String shorthand = CommonCssConstants.CENTER + " " + CommonCssConstants.LEGACY + " " + CommonCssConstants.RIGHT;
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
         Assert.assertEquals(2, resolvedShorthand.size());
         Assert.assertEquals(CommonCssConstants.ALIGN_ITEMS, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("center", resolvedShorthand.get(0).getExpression());
+        Assert.assertEquals(CommonCssConstants.CENTER, resolvedShorthand.get(0).getExpression());
         Assert.assertEquals(CommonCssConstants.JUSTIFY_ITEMS, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("legacy", resolvedShorthand.get(1).getExpression());
+        Assert.assertEquals(CommonCssConstants.LEGACY + " " + CommonCssConstants.RIGHT, resolvedShorthand.get(1).getExpression());
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithTwoWordsAndFirstWordIsInvalidTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
         String shorthand = "invalid self-end";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting List shall be empty
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.ALIGN_ITEMS, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("invalid", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.JUSTIFY_ITEMS, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("self-end", resolvedShorthand.get(1).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithTwoWordsAndSecondWordIsInvalidTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
         String shorthand = "flex-start invalid";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting List shall be empty
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.ALIGN_ITEMS, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("flex-start", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.JUSTIFY_ITEMS, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("invalid", resolvedShorthand.get(1).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -203,18 +186,14 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithOneWordAlignItemsAndInvalidTwoWordsJustifyItemsTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
         String shorthand = "flex-start legacy invalid";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting List shall be empty
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.ALIGN_ITEMS, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("flex-start", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.JUSTIFY_ITEMS, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("legacy invalid", resolvedShorthand.get(1).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -224,42 +203,33 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
         String shorthand = "unsafe flex-start normal";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 align-items shall be "unsafe flex-start" and justify-items shall be "normal"
         Assert.assertEquals(2, resolvedShorthand.size());
         Assert.assertEquals(CommonCssConstants.ALIGN_ITEMS, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("unsafe", resolvedShorthand.get(0).getExpression());
+        Assert.assertEquals("unsafe flex-start", resolvedShorthand.get(0).getExpression());
         Assert.assertEquals(CommonCssConstants.JUSTIFY_ITEMS, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("flex-start normal", resolvedShorthand.get(1).getExpression());
+        Assert.assertEquals("normal", resolvedShorthand.get(1).getExpression());
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithTwoWordsAlignItemsAndInvalidOneWordJustifyItemsTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
         String shorthand = "unsafe flex-start invalid";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting List shall be empty
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.ALIGN_ITEMS, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("unsafe", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.JUSTIFY_ITEMS, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("flex-start invalid", resolvedShorthand.get(1).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithThreeWordsAndInvalidAlignItemsTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
         String shorthand = "invalid safe self-end";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting List shall be empty
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.ALIGN_ITEMS, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("invalid", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.JUSTIFY_ITEMS, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("safe self-end", resolvedShorthand.get(1).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
@@ -277,43 +247,35 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithTwoWordsAlignItemsAndInvalidTwoWordsJustifyItemsTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
         String shorthand = "first baseline invalid center";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting List shall be empty
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.ALIGN_ITEMS, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("first baseline", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.JUSTIFY_ITEMS, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("invalid center", resolvedShorthand.get(1).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithInvalidTwoWordsAlignItemsAndTwoWordsJustifyItemsTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
         String shorthand = "invalid baseline legacy left";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting List shall be empty
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.ALIGN_ITEMS, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("invalid baseline", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.JUSTIFY_ITEMS, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("legacy left", resolvedShorthand.get(1).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithFiveWordsTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
         String shorthand = "last baseline unsafe safe center";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(Collections.emptyList(), resolvedShorthand);
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolvedShorthand);
     }
 }

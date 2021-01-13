@@ -60,18 +60,18 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY, count = 3))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 3))
     public void containsInitialOrInheritOrUnsetShorthandTest() {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
 
         String containsInitialShorthand = "row initial ";
-        Assert.assertEquals(Collections.emptyList(), resolver.resolveShorthand(containsInitialShorthand));
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInitialShorthand));
 
         String containsInheritShorthand = "inherit wrap";
-        Assert.assertEquals(Collections.emptyList(), resolver.resolveShorthand(containsInheritShorthand));
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsInheritShorthand));
 
         String containsUnsetShorthand = "wrap unset";
-        Assert.assertEquals(Collections.emptyList(), resolver.resolveShorthand(containsUnsetShorthand));
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(containsUnsetShorthand));
     }
 
     @Test
@@ -79,10 +79,10 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
     public void emptyShorthandTest() {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
         String emptyShorthand = "";
-        Assert.assertEquals(Collections.emptyList(), resolver.resolveShorthand(emptyShorthand));
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(emptyShorthand));
 
         String shorthandWithSpaces = "    ";
-        Assert.assertEquals(Collections.emptyList(), resolver.resolveShorthand(shorthandWithSpaces));
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolver.resolveShorthand(shorthandWithSpaces));
     }
 
     @Test
@@ -103,86 +103,81 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
     public void shorthandWithOneWrapValueTest() {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
 
-        String shorthand = "wrap-reverse";
+        String shorthand = CommonCssConstants.WRAP_REVERSE;
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 flex-direction shall be "row" and flex-wrap shall be "wrap-reverse"
         Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("wrap-reverse", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("nowrap", resolvedShorthand.get(1).getExpression());
+        Assert.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(0).getProperty());
+        Assert.assertEquals(CommonCssConstants.WRAP_REVERSE, resolvedShorthand.get(0).getExpression());
+        Assert.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(1).getProperty());
+        Assert.assertEquals(CommonCssConstants.ROW, resolvedShorthand.get(1).getExpression());
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 1))
     public void shorthandWithOneInvalidValueTest() {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
 
         String shorthand = "invalid";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 resulting List shall be empty
-        Assert.assertEquals(2, resolvedShorthand.size());
-        Assert.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
-        Assert.assertEquals("invalid", resolvedShorthand.get(0).getExpression());
-        Assert.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
-        Assert.assertEquals("nowrap", resolvedShorthand.get(1).getExpression());
+        Assert.assertEquals(0, resolvedShorthand.size());
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY))
     public void shorthandWithDirectionAndWrapValuesTest() {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
 
-        String shorthand = "row-reverse wrap";
+        String shorthand = CommonCssConstants.ROW_REVERSE + " " + CommonCssConstants.WRAP;
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 flex-direction shall be "row-reverse" and flex-wrap shall be "wrap"
-        Assert.assertEquals(Collections.emptyList(), resolvedShorthand);
+        Assert.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
+        Assert.assertEquals(CommonCssConstants.ROW_REVERSE, resolvedShorthand.get(0).getExpression());
+        Assert.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
+        Assert.assertEquals(CommonCssConstants.WRAP, resolvedShorthand.get(1).getExpression());
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithWrapAndDirectionValuesTest() {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
 
         String shorthand = "wrap-reverse column";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        // TODO DEVSIX-4933 flex-direction shall be "column" and flex-wrap shall be "wrap-reverse"
         Assert.assertEquals(Collections.emptyList(), resolvedShorthand);
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithTwoDirectionValuesTest() {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
 
         String shorthand = "column-reverse row";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(Collections.emptyList(), resolvedShorthand);
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolvedShorthand);
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithTwoWrapValuesTest() {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
 
         String shorthand = "nowrap wrap-reverse";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(Collections.emptyList(), resolvedShorthand);
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolvedShorthand);
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY))
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithTwoValuesAndSecondIsInvalidTest() {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
 
         String shorthand = "column-reverse invalid";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(Collections.emptyList(), resolvedShorthand);
+        Assert.assertEquals(Collections.<CssDeclaration>emptyList(), resolvedShorthand);
     }
 }

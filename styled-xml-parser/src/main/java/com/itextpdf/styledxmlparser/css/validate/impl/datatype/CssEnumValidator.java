@@ -68,6 +68,22 @@ public class CssEnumValidator implements ICssDataTypeValidator {
     }
 
     /**
+     * Creates a new {@link CssEnumValidator} instance.
+     *
+     * @param allowedValues the allowed values
+     * @param allowedModificators the allowed prefixes
+     */
+    public CssEnumValidator(List<String> allowedValues, List<String> allowedModificators) {
+        this.allowedValues = new ArrayList<>();
+        this.allowedValues.addAll(allowedValues);
+        for (String prefix : allowedModificators) {
+            for (String value : allowedValues) {
+                this.allowedValues.add(prefix + " " + value);
+            }
+        }
+    }
+
+    /**
      * Adds new allowed values to the allowedValues.
      *
      * @param allowedValues the allowed values
