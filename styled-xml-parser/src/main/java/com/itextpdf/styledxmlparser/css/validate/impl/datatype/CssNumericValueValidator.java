@@ -28,7 +28,11 @@ import com.itextpdf.styledxmlparser.css.validate.ICssDataTypeValidator;
 
 /**
  * {@link ICssDataTypeValidator} implementation for numeric elements.
+ *
+ * @deprecated Use {@link CssLengthValueValidator}, {@link CssPercentageValueValidator}
+ * or {@link CssNumberValueValidator} instead
  */
+@Deprecated
 public class CssNumericValueValidator implements ICssDataTypeValidator {
 
     private final boolean allowedPercent;

@@ -60,7 +60,7 @@ public class BackgroundPositionShorthandResolver implements IShorthandResolver {
             );
         }
         if (shorthandExpression.trim().isEmpty()) {
-            LOGGER.error(MessageFormatUtil.format(
+            LOGGER.warn(MessageFormatUtil.format(
                     LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, CommonCssConstants.BACKGROUND_POSITION));
             return new ArrayList<>();
         }
@@ -71,12 +71,12 @@ public class BackgroundPositionShorthandResolver implements IShorthandResolver {
         final Map<String, String> values = new HashMap<>();
         for (final List<String> props : propsList) {
             if (props.isEmpty()) {
-                LOGGER.error(MessageFormatUtil.format(
+                LOGGER.warn(MessageFormatUtil.format(
                         LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, CommonCssConstants.BACKGROUND_POSITION));
                 return new ArrayList<>();
             }
             if (!parsePositionShorthand(props, values)) {
-                LOGGER.error(MessageFormatUtil.format(
+                LOGGER.warn(MessageFormatUtil.format(
                         LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, shorthandExpression));
                 return new ArrayList<>();
             }
@@ -100,7 +100,7 @@ public class BackgroundPositionShorthandResolver implements IShorthandResolver {
 
     private static boolean checkProperty(Map<String, String> resolvedProps, String key) {
         if (!CssDeclarationValidationMaster.checkDeclaration(new CssDeclaration(key, resolvedProps.get(key)))) {
-            LOGGER.error(MessageFormatUtil.format(
+            LOGGER.warn(MessageFormatUtil.format(
                     LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, resolvedProps.get(key)));
             return false;
         }

@@ -261,14 +261,19 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithOneUnitAndTwoUnitlessValuesTest() {
         IShorthandResolver resolver = new FlexShorthandResolver();
 
         String shorthand = "5px 7 10";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(0, resolvedShorthand.size());
+        Assert.assertEquals(3, resolvedShorthand.size());
+        Assert.assertEquals(CommonCssConstants.FLEX_GROW, resolvedShorthand.get(0).getProperty());
+        Assert.assertEquals("7", resolvedShorthand.get(0).getExpression());
+        Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
+        Assert.assertEquals("10", resolvedShorthand.get(1).getExpression());
+        Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
+        Assert.assertEquals("5px", resolvedShorthand.get(2).getExpression());
     }
 
     @Test

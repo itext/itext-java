@@ -42,8 +42,11 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
@@ -129,6 +132,7 @@ public class RectangleSvgNodeRendererIntegrationTest extends SvgIntegrationTest 
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 1))
     public void noFillRectangleTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder,destinationFolder,"noFillRectangle");
     }

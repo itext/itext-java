@@ -138,14 +138,16 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithWrapAndDirectionValuesTest() {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
 
         String shorthand = "wrap-reverse column";
         List<CssDeclaration> resolvedShorthand = resolver.resolveShorthand(shorthand);
 
-        Assert.assertEquals(Collections.emptyList(), resolvedShorthand);
+        Assert.assertEquals(CommonCssConstants.FLEX_DIRECTION, resolvedShorthand.get(0).getProperty());
+        Assert.assertEquals(CommonCssConstants.COLUMN, resolvedShorthand.get(0).getExpression());
+        Assert.assertEquals(CommonCssConstants.FLEX_WRAP, resolvedShorthand.get(1).getProperty());
+        Assert.assertEquals(CommonCssConstants.WRAP_REVERSE, resolvedShorthand.get(1).getExpression());
     }
 
     @Test

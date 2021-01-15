@@ -29,19 +29,18 @@ import com.itextpdf.styledxmlparser.css.validate.ICssDataTypeValidator;
 /**
  * {@link ICssDataTypeValidator} implementation for numeric elements.
  */
-public class CssLengthValueValidator implements ICssDataTypeValidator {
+public class CssPercentageValueValidator implements ICssDataTypeValidator {
 
     private final boolean allowedNegative;
 
     /**
-     * Creates a new {@link CssLengthValueValidator} instance.
+     * Creates a new {@link CssPercentageValueValidator} instance.
      *
      * @param allowedNegative is negative value allowed
      */
-    public CssLengthValueValidator(boolean allowedNegative) {
+    public CssPercentageValueValidator(boolean allowedNegative) {
         this.allowedNegative = allowedNegative;
     }
-
 
     /**
      * {@inheritDoc}
@@ -55,10 +54,7 @@ public class CssLengthValueValidator implements ICssDataTypeValidator {
                 || CommonCssConstants.UNSET.equals(objectString)) {
             return true;
         }
-        if (!CssTypesValidationUtils.isMetricValue(objectString)
-                && (!CssTypesValidationUtils.isRelativeValue(objectString)
-                || CssTypesValidationUtils.isPercentageValue(objectString))
-                && !CssTypesValidationUtils.isZero(objectString)) {
+        if (!CssTypesValidationUtils.isPercentageValue(objectString)) {
             return false;
         }
         if (CssTypesValidationUtils.isNegativeValue(objectString) && !CssTypesValidationUtils.isZero(objectString)) {

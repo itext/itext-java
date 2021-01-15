@@ -41,7 +41,7 @@ public class CssBackgroundValidator implements ICssDataTypeValidator {
     private final String backgroundProperty;
 
     /**
-     * Creates a new {@link CssNumericValueValidator} instance.
+     * Creates a new {@link CssBackgroundValidator} instance.
      *
      * @param backgroundProperty is background property corresponding to current validator
      */

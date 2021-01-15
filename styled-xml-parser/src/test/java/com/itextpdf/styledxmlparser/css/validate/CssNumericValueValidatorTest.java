@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
+@Deprecated
 public class CssNumericValueValidatorTest extends ExtendedITextTest {
 
     @Test

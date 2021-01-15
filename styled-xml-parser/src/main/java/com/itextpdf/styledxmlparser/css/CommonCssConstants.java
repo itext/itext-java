@@ -948,19 +948,29 @@ public class CommonCssConstants {
     public static final String DOUBLE = "double";
 
     /**
+     * The Constant EACH_LINE.
+     */
+    public static final String EACH_LINE = "each-line";
+
+    /**
      * The Constant END.
      */
     public static final String END = "end";
 
     /**
-     * The Constant FIXED.
-     */
-    public static final String FIXED = "fixed";
-
-    /**
      * The Constant FIRST.
      */
     public static final String FIRST = "first";
+
+    /**
+     * The Constant FIT_CONTENT.
+     */
+    public static final String FIT_CONTENT = "fit-content";
+
+    /**
+     * The Constant FIXED.
+     */
+    public static final String FIXED = "fixed";
 
     /**
      * The Constant FLEX_END.
@@ -982,6 +992,11 @@ public class CommonCssConstants {
 
     /** The Constant GROOVE. */
     public static final String GROOVE = "groove";
+
+    /**
+     * The Constant HANGING.
+     */
+    public static final String HANGING = "hanging";
 
     /**
      * The Constant HEBREW.
@@ -1122,6 +1137,16 @@ public class CommonCssConstants {
      * The Constant MENU.
      */
     public static final String MENU = "menu";
+
+    /**
+     * The Constant MAX_CONTENT.
+     */
+    public static final String MAX_CONTENT = "max-content";
+
+    /**
+     * The Constant MIN_CONTENT.
+     */
+    public static final String MIN_CONTENT = "min-content";
 
     /**
      * The Constant MESSAGE_BOX.

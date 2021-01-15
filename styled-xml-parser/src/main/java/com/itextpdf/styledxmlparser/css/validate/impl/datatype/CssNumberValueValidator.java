@@ -54,8 +54,11 @@ public class CssNumberValueValidator implements ICssDataTypeValidator {
                 || CommonCssConstants.UNSET.equals(objectString)) {
             return true;
         }
-        if (!CssTypesValidationUtils.isNumericValue(objectString) || CssTypesValidationUtils.isNegativeValue(objectString)) {
+        if (!CssTypesValidationUtils.isNumericValue(objectString)) {
             return false;
+        }
+        if (CssTypesValidationUtils.isNegativeValue(objectString) && !CssTypesValidationUtils.isZero(objectString)) {
+            return this.allowedNegative;
         }
         return true;
     }

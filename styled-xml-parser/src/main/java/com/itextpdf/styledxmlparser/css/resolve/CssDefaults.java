@@ -46,6 +46,8 @@ package com.itextpdf.styledxmlparser.css.resolve;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.styledxmlparser.css.CssDeclaration;
+
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -97,6 +99,12 @@ public class CssDefaults {
         defaultValues.put(CommonCssConstants.BORDER_TOP_RIGHT_RADIUS, "0");
 
         defaultValues.put(CommonCssConstants.BOX_SHADOW, CommonCssConstants.NONE);
+
+        defaultValues.put(CommonCssConstants.FLEX_BASIS, CommonCssConstants.AUTO);
+        defaultValues.put(CommonCssConstants.FLEX_DIRECTION, CommonCssConstants.ROW);
+        defaultValues.put(CommonCssConstants.FLEX_GROW, "0");
+        defaultValues.put(CommonCssConstants.FLEX_SHRINK, "1");
+        defaultValues.put(CommonCssConstants.FLEX_WRAP, CommonCssConstants.NOWRAP);
 
         defaultValues.put(CommonCssConstants.FLOAT, CommonCssConstants.NONE);
         defaultValues.put(CommonCssConstants.FONT_FAMILY, "times");
