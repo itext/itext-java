@@ -45,13 +45,15 @@ public final class CssTypesValidationUtils {
      * @param value the string that needs to be checked
      * @return boolean true if value contains an allowed angle value
      */
-    public static boolean isAngleValue(final String value) {
+    public static boolean isAngleValue(String value) {
         if (value == null) {
             return false;
+        } else {
+            value = value.trim();
         }
         for (String metricPostfix : ANGLE_MEASUREMENTS_VALUES) {
             if (value.endsWith(metricPostfix) && isNumericValue(
-                    value.substring(0, value.length() - metricPostfix.length()).trim())) {
+                    value.substring(0, value.length() - metricPostfix.length()))) {
                 return true;
             }
         }
@@ -85,9 +87,14 @@ public final class CssTypesValidationUtils {
      * @param value the string that needs to be checked
      * @return boolean true if value contains a em value
      */
-    public static boolean isEmValue(final String value) {
-        return value != null && value.endsWith(CommonCssConstants.EM) && isNumericValue(
-                value.substring(0, value.length() - CommonCssConstants.EM.length()).trim());
+    public static boolean isEmValue(String value) {
+        if (value == null) {
+            return false;
+        } else {
+            value = value.trim();
+        }
+        return value.endsWith(CommonCssConstants.EM) && isNumericValue(
+                value.substring(0, value.length() - CommonCssConstants.EM.length()));
     }
 
     /**
@@ -96,9 +103,14 @@ public final class CssTypesValidationUtils {
      * @param value the string that needs to be checked
      * @return boolean true if value contains a ex value
      */
-    public static boolean isExValue(final String value) {
+    public static boolean isExValue(String value) {
+        if (value == null) {
+            return false;
+        } else {
+            value = value.trim();
+        }
         return value != null && value.endsWith(CommonCssConstants.EX) && isNumericValue(
-                value.substring(0, value.length() - CommonCssConstants.EX.length()).trim());
+                value.substring(0, value.length() - CommonCssConstants.EX.length()));
     }
 
     /**
@@ -107,13 +119,15 @@ public final class CssTypesValidationUtils {
      * @param value the string that needs to be checked
      * @return boolean true if value contains an allowed metric value
      */
-    public static boolean isMetricValue(final String value) {
+    public static boolean isMetricValue(String value) {
         if (value == null) {
             return false;
+        } else {
+            value = value.trim();
         }
         for (String metricPostfix : CommonCssConstants.METRIC_MEASUREMENTS_VALUES) {
             if (value.endsWith(metricPostfix) && isNumericValue(
-                    value.substring(0, value.length() - metricPostfix.length()).trim())) {
+                    value.substring(0, value.length() - metricPostfix.length()))) {
                 return true;
             }
         }
@@ -156,9 +170,14 @@ public final class CssTypesValidationUtils {
      * @param value the string that needs to be checked
      * @return boolean true if value contains an allowed percentage value
      */
-    public static boolean isPercentageValue(final String value) {
-        return value != null && value.endsWith(CommonCssConstants.PERCENTAGE) && isNumericValue(
-                value.substring(0, value.length() - CommonCssConstants.PERCENTAGE.length()).trim());
+    public static boolean isPercentageValue(String value) {
+        if (value == null) {
+            return false;
+        } else {
+            value = value.trim();
+        }
+        return value.endsWith(CommonCssConstants.PERCENTAGE) && isNumericValue(
+                value.substring(0, value.length() - CommonCssConstants.PERCENTAGE.length()));
     }
 
     /**
@@ -167,13 +186,15 @@ public final class CssTypesValidationUtils {
      * @param value the string that needs to be checked
      * @return boolean true if value contains an allowed metric value
      */
-    public static boolean isRelativeValue(final String value) {
+    public static boolean isRelativeValue(String value) {
         if (value == null) {
             return false;
+        } else {
+            value = value.trim();
         }
         for (String relativePostfix : RELATIVE_MEASUREMENTS_VALUES) {
             if (value.endsWith(relativePostfix) && isNumericValue(
-                    value.substring(0, value.length() - relativePostfix.length()).trim())) {
+                    value.substring(0, value.length() - relativePostfix.length()))) {
                 return true;
             }
         }
@@ -186,9 +207,14 @@ public final class CssTypesValidationUtils {
      * @param value the string that needs to be checked
      * @return boolean true if value contains a rem value
      */
-    public static boolean isRemValue(final String value) {
+    public static boolean isRemValue(String value) {
+        if (value == null) {
+            return false;
+        } else {
+            value = value.trim();
+        }
         return value != null && value.endsWith(CommonCssConstants.REM) && isNumericValue(
-                value.substring(0, value.length() - CommonCssConstants.REM.length()).trim());
+                value.substring(0, value.length() - CommonCssConstants.REM.length()));
     }
 
     /**
