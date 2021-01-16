@@ -64,14 +64,14 @@ public class IntHashtable implements Cloneable, Serializable {
     private static final long serialVersionUID = 7354463962269093965L;
 
     /***
+     * The total number of entries in the hash table.
+     */
+    int count;
+
+    /***
      * The hash table data.
      */
     private Entry[] table;
-
-    /***
-     * The total number of entries in the hash table.
-     */
-    private int count;
 
     /***
      * The table is rehashed when its size exceeds this threshold.  (The
@@ -466,6 +466,7 @@ public class IntHashtable implements Cloneable, Serializable {
                 t.table[i] = table[i] != null
                         ? (Entry)table[i].clone() : null;
             }
+            t.count = count;
             return t;
         } catch (CloneNotSupportedException e) {
             // this shouldn't happen, since we are Cloneable
