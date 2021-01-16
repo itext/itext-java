@@ -146,6 +146,8 @@ public class XfdfObject {
 
     /**
      * Gets the annots element, a child of the xfdf element and is the container for annot elements.
+     *
+     * @return the annots element
      */
     public AnnotsObject getAnnots() {
         return annots;
@@ -153,6 +155,8 @@ public class XfdfObject {
 
     /**
      * Sets the annots element, a child of the xfdf element and is the container for annot elements.
+     *
+     * @param annots element
      */
     public void setAnnots(AnnotsObject annots) {
         this.annots = annots;
@@ -160,6 +164,8 @@ public class XfdfObject {
 
     /**
      * Gets the list of attributes of xfdf object.
+     *
+     * @return the list of attributes
      */
     public List<AttributeObject> getAttributes() {
         return attributes;
@@ -167,6 +173,8 @@ public class XfdfObject {
 
     /**
      * Sets the list of attributes of xfdf object.
+     *
+     * @param attributes list of attributes objects
      */
     public void setAttributes(List<AttributeObject> attributes) {
         this.attributes = attributes;

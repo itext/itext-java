@@ -174,7 +174,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      *
      * @param b the destination buffer
      * @return the number of bytes actually read
-     * @throws java.io.IOException in
+     * @throws java.io.IOException in case of any I/O error
      */
     public int read(byte b[]) throws java.io.IOException {
         return read(b, 0, b.length);
