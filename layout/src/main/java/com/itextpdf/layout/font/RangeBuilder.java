@@ -155,6 +155,11 @@ public class RangeBuilder {
     }
 
 
+    /**
+     * Creates a {@link Range} instance based on added ranges.
+     *
+     * @return the {@link Range} instance based on added ranges
+     */
     public Range create() {
         return new Range(ranges);
     }
