@@ -173,7 +173,21 @@ public class OcspClientBouncyCastle implements IOcspClient {
         return SignUtils.generateOcspRequestWithNonce(id);
     }
 
-    private OCSPResp getOcspResponse(X509Certificate checkCert, X509Certificate rootCert, String url) throws GeneralSecurityException, OCSPException, IOException, OperatorException {
+    /**
+     * Gets an OCSP response object using BouncyCastle.
+     *
+     * @param checkCert to certificate to check
+     * @param rootCert  the parent certificate
+     * @param url       to get the verification. It it's null it will be taken
+     *                  from the check cert or from other implementation specific source
+     * @return an OCSP response
+     * @throws GeneralSecurityException if any execution errors occur
+     * @throws OCSPException if any errors occur while handling OCSP requests/responses
+     * @throws IOException if any I/O execution errors occur
+     * @throws OperatorException if any BC execution errors occur
+     */
+    OCSPResp getOcspResponse(X509Certificate checkCert, X509Certificate rootCert, String url)
+            throws GeneralSecurityException, OCSPException, IOException, OperatorException {
         if (checkCert == null || rootCert == null)
             return null;
         if (url == null) {
