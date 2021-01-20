@@ -1,8 +1,7 @@
 /*
-
     This file is part of the iText (R) project.
     Copyright (c) 1998-2021 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -41,34 +40,46 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.counter.context;
+package com.itextpdf.kernel.counter.event;
 
-import com.itextpdf.kernel.actions.ITextEvent;
-import com.itextpdf.kernel.counter.event.IEvent;
+import com.itextpdf.kernel.actions.ProductNameConstant;
+import com.itextpdf.kernel.actions.ecosystem.TestMetaInfo;
+import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
 
-/**
- * The class that determines weather event should be processed or not.
- * Is calculated by the {@link com.itextpdf.kernel.counter.ContextManager}
- */
-public interface IContext {
+import java.io.IOException;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
-    /**
-     * Determines weather event should be processed or not.
-     *
-     * @param event is an event to test
-     *
-     * @return true if event is allowed by the actual context
-     * @deprecated will be replaced with the following method
-     */
-    @Deprecated
-    boolean allow(IEvent event);
+@Category(UnitTest.class)
+public class ITextCoreEventTest extends ExtendedITextTest {
 
-    /**
-     * Determines weather event should be processed or not.
-     *
-     * @param event is an event to test
-     *
-     * @return true if event is allowed by the actual context and false otherwise
-     */
-    boolean isAllowed(ITextEvent event);
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/actions/";
+
+    @Test
+    public void sequenceIdEventCreationTest() {
+        SequenceId sequenceId = new SequenceId();
+        ITextCoreEvent event = new ITextCoreEvent(sequenceId, new TestMetaInfo("meta data"), "test event");
+
+        Assert.assertEquals("test event", event.getEventType());
+        Assert.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
+        Assert.assertEquals("meta data", ((TestMetaInfo)event.getMetaInfo()).getMetaData());
+        Assert.assertEquals(sequenceId, event.getSequenceId());
+    }
+
+    @Test
+    public void documentEventCreationTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
+            ITextCoreEvent event = new ITextCoreEvent(document, new TestMetaInfo("meta data"), "test event");
+
+            Assert.assertEquals("test event", event.getEventType());
+            Assert.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
+            Assert.assertEquals("meta data", ((TestMetaInfo) event.getMetaInfo()).getMetaData());
+            Assert.assertEquals(document.getDocumentIdWrapper(), event.getSequenceId());
+        }
+    }
 }

@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.counter;
 
+import com.itextpdf.kernel.actions.ProductNameConstant;
 import com.itextpdf.kernel.counter.context.GenericContext;
 import com.itextpdf.kernel.counter.context.IContext;
 
@@ -63,7 +64,7 @@ public class ContextManager {
     private final SortedMap<String, IContext> contextMappings = new TreeMap<>(new LengthComparator());
 
     private ContextManager() {
-        registerGenericContext(Arrays.asList(
+        registerGenericContextForProducts(Arrays.asList(
                 NamespaceConstant.CORE_IO,
                 NamespaceConstant.CORE_KERNEL,
                 NamespaceConstant.CORE_LAYOUT,
@@ -72,18 +73,33 @@ public class ContextManager {
                 NamespaceConstant.CORE_SIGN,
                 NamespaceConstant.CORE_FORMS,
                 NamespaceConstant.CORE_SXP,
-                NamespaceConstant.CORE_SVG), Collections.singletonList(NamespaceConstant.ITEXT));
-        registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_DEBUG),
-                Collections.singletonList(NamespaceConstant.PDF_DEBUG));
-        registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_HTML),
-                Collections.singletonList(NamespaceConstant.PDF_HTML));
-        registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_INVOICE),
-                Collections.singletonList(NamespaceConstant.PDF_INVOICE));
-        registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_SWEEP),
-                Collections.singletonList(NamespaceConstant.PDF_SWEEP));
-        registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_OCR_TESSERACT4),
-                Collections.singletonList(NamespaceConstant.PDF_OCR_TESSERACT4));
-        registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_OCR), Collections.<String>emptyList());
+                NamespaceConstant.CORE_SVG),
+                Collections.singletonList(NamespaceConstant.ITEXT),
+                Collections.singleton(ProductNameConstant.ITEXT_CORE));
+
+        registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_DEBUG),
+                Collections.singletonList(NamespaceConstant.PDF_DEBUG),
+                Collections.<String>emptyList());
+
+        registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_HTML),
+                Collections.singletonList(NamespaceConstant.PDF_HTML),
+                Collections.singleton(ProductNameConstant.PDF_HTML));
+
+        registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_INVOICE),
+                Collections.singletonList(NamespaceConstant.PDF_INVOICE),
+                Collections.<String>emptyList());
+
+        registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_SWEEP),
+                Collections.singletonList(NamespaceConstant.PDF_SWEEP),
+                Collections.singleton(ProductNameConstant.PDF_SWEEP));
+
+        registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_OCR_TESSERACT4),
+                Collections.singletonList(NamespaceConstant.PDF_OCR_TESSERACT4),
+                Collections.singleton(ProductNameConstant.PDF_OCR_TESSERACT4));
+
+        registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_OCR),
+                Collections.<String>emptyList(),
+                Collections.singleton(ProductNameConstant.PDF_OCR));
     }
 
     /**
@@ -140,7 +156,12 @@ public class ContextManager {
     }
 
     private void registerGenericContext(Collection<String> namespaces, Collection<String> eventIds) {
-        GenericContext context = new GenericContext(eventIds);
+        registerGenericContextForProducts(namespaces, eventIds, Collections.<String>emptyList());
+    }
+
+    private void registerGenericContextForProducts(Collection<String> namespaces, Collection<String> eventIds,
+            Collection<String> products) {
+        final GenericContext context = new GenericContext(eventIds, products);
         for (String namespace : namespaces) {
             //Conversion to lowercase is done to be compatible with possible changes in case of packages/namespaces
             registerContext(namespace.toLowerCase(), context);

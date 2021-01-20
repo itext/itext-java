@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.counter.context;
 
+import com.itextpdf.kernel.actions.ITextEvent;
 import com.itextpdf.kernel.counter.event.IEvent;
 import com.itextpdf.kernel.counter.event.IGenericEvent;
 
@@ -55,11 +56,27 @@ import java.util.Set;
  */
 public class GenericContext implements IContext {
 
-    private final Set<String> supported;
+    private final Set<String> supported = new HashSet<>();
+    private final Set<String> supportedProducts = new HashSet<>();
 
+    /**
+     * Creates a Generic Context instance with support of provided namespaces and products.
+     *
+     * @param supported is a collection of supported namespaces
+     */
     public GenericContext(Collection<String> supported) {
-        this.supported = new HashSet<>();
         this.supported.addAll(supported);
+    }
+
+    /**
+     * Creates a Generic Context instance with support of provided namespaces and products.
+     *
+     * @param supported is a collection of supported namespaces
+     * @param supportedProducts is a collection of supported products
+     */
+    public GenericContext(Collection<String> supported, Collection<String> supportedProducts) {
+        this.supported.addAll(supported);
+        this.supportedProducts.addAll(supportedProducts);
     }
 
     @Override
@@ -68,5 +85,17 @@ public class GenericContext implements IContext {
             return supported.contains(((IGenericEvent) event).getOriginId());
         }
         return false;
+    }
+
+    /**
+     * Checks if the source product of the event is supported by the context.
+     *
+     * @param event {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public boolean isAllowed(ITextEvent event) {
+        return supportedProducts.contains(event.getProductName());
     }
 }

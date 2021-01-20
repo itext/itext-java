@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.counter.context;
 
+import com.itextpdf.kernel.actions.ITextEvent;
 import com.itextpdf.kernel.counter.event.IEvent;
 
 /**
@@ -67,6 +68,19 @@ public class UnknownContext implements IContext {
 
     @Override
     public boolean allow(IEvent event) {
+        return allowEvents;
+    }
+
+    /**
+     * Depending on its internal state allows or rejects all event.
+     * Behaviour is defined via constructor {@link UnknownContext#UnknownContext(boolean)}
+     *
+     * @param event {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public boolean isAllowed(ITextEvent event) {
         return allowEvents;
     }
 }

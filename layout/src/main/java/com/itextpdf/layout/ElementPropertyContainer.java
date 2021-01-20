@@ -44,6 +44,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.actions.sequence.AbstractIdentifiableElement;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.layout.borders.Border;
@@ -74,7 +75,8 @@ import java.util.Map;
  *
  * @param <T> this type
  */
-public abstract class ElementPropertyContainer<T extends IPropertyContainer> implements IPropertyContainer {
+public abstract class ElementPropertyContainer<T extends IPropertyContainer> extends AbstractIdentifiableElement
+        implements IPropertyContainer {
 
     protected Map<Integer, Object> properties = new HashMap<>();
 

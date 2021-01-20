@@ -54,8 +54,12 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.VersionInfo;
+import com.itextpdf.kernel.actions.EventManager;
+import com.itextpdf.kernel.actions.events.ClosePdfDocumentEvent;
+import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.counter.EventCounterHandler;
 import com.itextpdf.kernel.counter.event.CoreEvent;
+import com.itextpdf.kernel.counter.event.ITextCoreEvent;
 import com.itextpdf.kernel.crypto.BadPasswordException;
 import com.itextpdf.kernel.events.EventDispatcher;
 import com.itextpdf.kernel.events.IEventDispatcher;
@@ -99,8 +103,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -196,9 +198,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     protected TagStructureContext tagStructureContext;
 
-    private static final AtomicLong lastDocumentId = new AtomicLong();
-
-    private long documentId;
+    private SequenceId documentId;
     private VersionInfo versionInfo = Version.getInstance().getInfo();
 
     /**
@@ -239,7 +239,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         if (reader == null) {
             throw new IllegalArgumentException("The reader in PdfDocument constructor can not be null.");
         }
-        documentId = lastDocumentId.incrementAndGet();
+        documentId = new SequenceId();
         this.reader = reader;
         // default values of the StampingProperties doesn't affect anything
         this.properties = new StampingProperties();
@@ -268,7 +268,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         if (writer == null) {
             throw new IllegalArgumentException("The writer in PdfDocument constructor can not be null.");
         }
-        documentId = lastDocumentId.incrementAndGet();
+        documentId = new SequenceId();
         this.writer = writer;
         // default values of the StampingProperties doesn't affect anything
         this.properties = new StampingProperties();
@@ -301,7 +301,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         if (writer == null) {
             throw new IllegalArgumentException("The writer in PdfDocument constructor can not be null.");
         }
-        documentId = lastDocumentId.incrementAndGet();
+        documentId = new SequenceId();
         this.reader = reader;
         this.writer = writer;
         this.properties = properties;
@@ -838,13 +838,13 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             return;
         }
         isClosing = true;
+        EventManager.getInstance().onEvent(new ClosePdfDocumentEvent(this));
         try {
             if (writer != null) {
                 if (catalog.isFlushed()) {
                     throw new PdfException(
                             KernelExceptionMessageConstant.CANNOT_CLOSE_DOCUMENT_WITH_ALREADY_FLUSHED_PDF_CATALOG);
                 }
-                updateProducerInInfoDictionary();
                 updateXmpMetadata();
                 // In PDF 2.0, all the values except CreationDate and ModDate are deprecated. Remove them now
                 if (pdfVersion.compareTo(PdfVersion.PDF_2_0) >= 0) {
@@ -1839,6 +1839,44 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     /**
+     * Obtains numeric document id.
+     *
+     * @return document id
+     */
+    public long getDocumentId() {
+        return documentId.getId();
+    }
+
+    /**
+     * Obtains document id as a {@link SequenceId}.
+     *
+     * @return document id
+     */
+    public SequenceId getDocumentIdWrapper() {
+        return documentId;
+    }
+
+    /**
+     * Updates producer line of the document.
+     *
+     * TODO: DEVSIX-5054 should be removed when new producer line building logic is implemented
+     */
+    public void updateProducerInInfoDictionary() {
+        String producer = null;
+        if (reader == null) {
+            producer = versionInfo.getVersion();
+        } else {
+            if (info.getPdfObject().containsKey(PdfName.Producer)) {
+                final PdfString producerPdfStr = info.getPdfObject().getAsString(PdfName.Producer);
+                producer = producerPdfStr == null ? null : producerPdfStr.toUnicodeString();
+            }
+            producer = addModifiedPostfix(producer);
+        }
+        info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
+    }
+
+
+    /**
      * Gets list of indirect references.
      *
      * @return list of indirect references.
@@ -1913,6 +1951,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         this.encryptedEmbeddedStreamsHandler = new EncryptedEmbeddedStreamsHandler(this);
 
         try {
+            EventManager.getInstance().onEvent(new ITextCoreEvent(this, null,
+                    ITextCoreEvent.OPEN_DOCUMENT));
             EventCounterHandler.getInstance().onEvent(CoreEvent.PROCESS, properties.metaInfo, getClass());
             boolean embeddedStreamsSavedOnReading = false;
             if (reader != null) {
@@ -1971,7 +2011,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     catalog = new PdfCatalog(this);
                     info = new PdfDocumentInfo(this).addCreationDate();
                 }
-                updateProducerInInfoDictionary();
                 getDocumentInfo().addModDate();
                 trailer = new PdfDictionary();
                 trailer.put(PdfName.Root, catalog.getPdfObject().getIndirectReference());
@@ -2190,10 +2229,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         return pdfPageFactory;
     }
 
-    long getDocumentId() {
-        return documentId;
-    }
-
     boolean doesStreamBelongToEmbeddedFile(PdfStream stream) {
         return encryptedEmbeddedStreamsHandler.isStreamStoredAsEmbedded(stream);
     }
@@ -2209,22 +2244,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     boolean hasAcroForm() {
         return getCatalog().getPdfObject().containsKey(PdfName.AcroForm);
-    }
-
-    private void updateProducerInInfoDictionary() {
-        String producer = null;
-        PdfDictionary documentInfoObject = getDocumentInfo().getPdfObject();
-        if (reader == null) {
-            producer = versionInfo.getVersion();
-        } else {
-            if (documentInfoObject.containsKey(PdfName.Producer)) {
-                final PdfString producerPdfStr = documentInfoObject.getAsString(PdfName.Producer);
-                producer = producerPdfStr == null ? null : producerPdfStr.toUnicodeString();
-            }
-            producer = addModifiedPostfix(producer);
-        }
-
-        documentInfoObject.put(PdfName.Producer, new PdfString(producer, PdfEncodings.UNICODE_BIG));
     }
 
     /**
