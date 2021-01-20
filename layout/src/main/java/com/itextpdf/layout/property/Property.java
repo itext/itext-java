@@ -53,6 +53,8 @@ import com.itextpdf.layout.IPropertyContainer;
 public final class Property {
 
     public static final int ACTION = 1;
+    public static final int ALIGN_CONTENT = 130;
+    public static final int ALIGN_SELF = 129;
     public static final int APPEARANCE_STREAM_LAYOUT = 82;
     public static final int AREA_BREAK_TYPE = 2;
     public static final int AUTO_SCALE = 3;
@@ -84,6 +86,7 @@ public final class Property {
     public static final int FILL_AVAILABLE_AREA = 86;
     public static final int FILL_AVAILABLE_AREA_ON_SPLIT = 87;
     public static final int FIRST_LINE_INDENT = 18;
+    public static final int FLEX_WRAP = 128;
     public static final int FLOAT = 99;
     public static final int FLUSH_ON_DRAW = 19;
 

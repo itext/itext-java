@@ -66,6 +66,16 @@ public class StylesTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
+    public void copyConstructorTest() {
+        Style myStyle = new Style();
+        myStyle.setFontColor(ColorConstants.RED);
+
+        Style copiedStyle = new Style(myStyle);
+        Assert.assertEquals(ColorConstants.RED,
+                copiedStyle.<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
+    }
+
+    @Test
     public void addingStyleBeforeSettingPropertyTest() {
         Style myStyle = new Style();
         myStyle.setFontColor(ColorConstants.RED);

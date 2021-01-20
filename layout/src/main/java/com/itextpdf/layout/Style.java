@@ -60,6 +60,13 @@ import com.itextpdf.layout.property.VerticalAlignment;
  */
 public class Style extends ElementPropertyContainer<Style> {
 
+    public Style() {
+    }
+
+    public Style(Style style) {
+        properties.putAll(style.properties);
+    }
+
     /**
      * Gets the current left margin width of the element.
      *
