@@ -420,8 +420,6 @@ public class SignatureUtil {
                 else
                     totalRevisions = sorter.size() + 1;
             } catch (IOException e) {
-                // TODO DEVSIX-3458: remove this catch since RandomAccessFileOrArray#length will not throw
-                //  IOException anymore and therefore PdfReader#getFileLength will not do so either
             }
             for (int k = 0; k < sorter.size(); ++k) {
                 Object[] objs = sorter.get(k);
