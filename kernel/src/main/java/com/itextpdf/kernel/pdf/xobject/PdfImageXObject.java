@@ -361,9 +361,6 @@ public class PdfImageXObject extends PdfXObject {
         if (image.getFilter() != null) {
             stream.put(PdfName.Filter, new PdfName(image.getFilter()));
         }
-//TODO: return to this later
-//        if (image.getLayer() != null)
-//            put(PdfName.OC, image.getLayer().getRef());
 
         if (image.getColorSpace() == -1) {
             stream.remove(PdfName.ColorSpace);
@@ -541,7 +538,6 @@ public class PdfImageXObject extends PdfXObject {
             } else if (obj instanceof Object[]) {
                 array.add(createArray(stream, (Object[]) obj));
             } else {
-                //TODO instance of was removed due to autoport
                 array.add(createDictionaryFromMap(stream, (Map<String, Object>) obj));
             }
         }
