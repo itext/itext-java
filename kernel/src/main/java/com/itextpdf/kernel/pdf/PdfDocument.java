@@ -336,10 +336,21 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         this.xmpMetadata = xmpMetadata;
     }
 
+    /**
+     * Sets the XMP Metadata.
+     *
+     * @param xmpMeta the xmpMetadata to set
+     * @param serializeOptions serialization options
+     */
     public void setXmpMetadata(XMPMeta xmpMeta, SerializeOptions serializeOptions) throws XMPException {
         setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
     }
 
+    /**
+     * Sets the XMP Metadata.
+     *
+     * @param xmpMeta the xmpMetadata to set
+     */
     public void setXmpMetadata(XMPMeta xmpMeta) throws XMPException {
         SerializeOptions serializeOptions = new SerializeOptions();
         serializeOptions.setPadding(2000);
@@ -1801,6 +1812,14 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return fingerPrint;
     }
 
+    /**
+     * Find {@link PdfFont} from loaded fonts with corresponding fontProgram and encoding or CMAP.
+     *
+     * @param fontProgram a font name or path to a font program
+     * @param encoding an encoding or CMAP
+     *
+     * @return the font instance, or null if font wasn't found
+     */
     public PdfFont findFont(String fontProgram, String encoding) {
         for (PdfFont font : documentFonts.values()) {
             if (!font.isFlushed() && font.isBuiltWith(fontProgram, encoding))
@@ -2106,6 +2125,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return documentFonts.values();
     }
 
+    /**
+     * Flushes all newly added or loaded fonts.
+     */
     protected void flushFonts() {
         if (properties.appendMode) {
             for (PdfFont font : getDocumentFonts()) {
@@ -2206,6 +2228,12 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
     }
 
+    /**
+     * Initializes the new instance of document's structure tree root {@link PdfStructTreeRoot}.
+     * See ISO 32000-1, section 14.7.2 Structure Hierarchy.
+     *
+     * @param str dictionary to create structure tree root
+     */
     protected void tryInitTagStructure(PdfDictionary str) {
         try {
             structTreeRoot = new PdfStructTreeRoot(str, this);
