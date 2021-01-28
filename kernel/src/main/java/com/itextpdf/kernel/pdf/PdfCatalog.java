@@ -66,20 +66,38 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * The root of a document’s object hierarchy.
+ */
 public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfCatalog.class);
 
     private static final long serialVersionUID = -1354567597112193418L;
 
     final private PdfPagesTree pageTree;
+
+    /**
+     * Map of the {@link PdfNameTree}. Used for creation {@code name tree}  dictionary.
+     */
     protected Map<PdfName, PdfNameTree> nameTrees = new LinkedHashMap<>();
+
+    /**
+     * Defining the page labelling for the document.
+     */
     protected PdfNumTree pageLabels;
+
+    /**
+     * The document’s optional content properties dictionary.
+     */
     protected PdfOCProperties ocProperties;
 
     private static final String OutlineRoot = "Outlines";
+
     private PdfOutline outlines;
+
     //This HashMap contents all pages of the document and outlines associated to them
     private Map<PdfObject, List<PdfOutline>> pagesWithOutlines = new HashMap<>();
+
     //This flag determines if Outline tree of the document has been built via calling getOutlines method. If this flag is false all outline operations will be ignored
     private boolean outlineMode;
 
@@ -91,6 +109,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             Arrays.asList(PdfName.SinglePage, PdfName.OneColumn, PdfName.TwoColumnLeft,
             PdfName.TwoColumnRight, PdfName.TwoPageLeft, PdfName.TwoPageRight)));
 
+    /**
+     * Create {@link PdfCatalog} dictionary.
+     *
+     * @param pdfObject the dictionary to be wrapped
+     */
     protected PdfCatalog(PdfDictionary pdfObject) {
         super(pdfObject);
         if (pdfObject == null) {
@@ -102,15 +125,21 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         pageTree = new PdfPagesTree(this);
     }
 
+    /**
+     * Create {@link PdfCatalog} to {@link PdfDocument}.
+     *
+     * @param pdfDocument A {@link PdfDocument} object representing the document
+     *                    to which redaction applies
+     */
     protected PdfCatalog(PdfDocument pdfDocument) {
         this((PdfDictionary) new PdfDictionary().makeIndirect(pdfDocument));
     }
 
     /**
      * Use this method to get the <B>Optional Content Properties Dictionary</B>.
-     * Note that if you call this method, then the PdfDictionary with OCProperties will be
-     * generated from PdfOCProperties object right before closing the PdfDocument,
-     * so if you want to make low-level changes in Pdf structures themselves (PdfArray, PdfDictionary, etc),
+     * Note that if you call this method, then the {@link PdfDictionary} with OCProperties will be
+     * generated from {@link PdfOCProperties} object right before closing the {@link PdfDocument},
+     * so if you want to make low-level changes in Pdf structures themselves ({@link PdfArray}, {@link PdfDictionary}, etc),
      * then you should address directly those objects, e.g.:
      * <CODE>
      * PdfCatalog pdfCatalog = pdfDoc.getCatalog();
@@ -142,6 +171,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return ocProperties;
     }
 
+    /**
+     * Get {@link PdfDocument} with indirect reference associated with the object.
+     *
+     * @return the resultant dictionary
+     */
     public PdfDocument getDocument() {
         return getPdfObject().getIndirectReference().getDocument();
     }
@@ -155,14 +189,36 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         logger.warn("PdfCatalog cannot be flushed manually");
     }
 
+    /**
+     * A value specifying a destination that shall be displayed when the document is opened.
+     * See ISO 32000-1, Table 28 – Entries in the catalog dictionary.
+     *
+     * @param destination instance of {@link PdfDestination}.
+     * @return destination
+     */
     public PdfCatalog setOpenAction(PdfDestination destination) {
         return put(PdfName.OpenAction, destination.getPdfObject());
     }
 
+    /**
+     * A value specifying an action that shall be performed when the document is opened.
+     * See ISO 32000-1, Table 28 – Entries in the catalog dictionary.
+     *
+     * @param action instance of {@link PdfAction}.
+     * @return action
+     */
     public PdfCatalog setOpenAction(PdfAction action) {
         return put(PdfName.OpenAction, action.getPdfObject());
     }
 
+    /**
+     * The actions that shall be taken in response to various trigger events affecting the document as a whole.
+     * See ISO 32000-1, Table 28 – Entries in the catalog dictionary.
+     *
+     * @param key the key of which the associated value needs to be returned
+     * @param action instance of {@link PdfAction}.
+     * @return additional action
+     */
     public PdfCatalog setAdditionalAction(PdfName key, PdfAction action) {
         PdfAction.setAdditionalAction(this, key, action);
         return this;
@@ -184,6 +240,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    /**
+     * Get page mode of the document.
+     *
+     * @return current instance of {@link PdfCatalog}
+     */
     public PdfName getPageMode() {
         return getPdfObject().getAsName(PdfName.PageMode);
     }
@@ -201,6 +262,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    /**
+     * Get page layout of the document.
+     *
+     * @return name object of page layout that shall be used when document is opened
+     */
     public PdfName getPageLayout() {
         return getPdfObject().getAsName(PdfName.PageLayout);
     }
@@ -216,6 +282,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.ViewerPreferences, preferences.getPdfObject());
     }
 
+    /**
+     * Get viewer preferences of the document.
+     *
+     * @return dictionary of viewer preferences
+     */
     public PdfViewerPreferences getViewerPreferences() {
         PdfDictionary viewerPreferences = getPdfObject().getAsDictionary(PdfName.ViewerPreferences);
         if (viewerPreferences != null) {
@@ -267,10 +338,23 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         put(PdfName.Lang, lang);
     }
 
+    /**
+     * Get natural language.
+     *
+     * @return natural language
+     */
     public PdfString getLang() {
         return getPdfObject().getAsString(PdfName.Lang);
     }
 
+    /**
+     * Add an extensions dictionary containing developer prefix identification and version
+     * numbers for developer extensions that occur in this document.
+     * See ISO 32000-1, Table 28 – Entries in the catalog dictionary.
+     *
+     * @param extension enables developers to identify their own extension
+     *                  relative to a base version of PDF
+     */
     public void addDeveloperExtension(PdfDeveloperExtension extension) {
         PdfDictionary extensions = getPdfObject().getAsDictionary(PdfName.Extensions);
 
@@ -318,12 +402,25 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    /**
+     * Add key and value to {@link PdfCatalog} dictionary.
+     *
+     * @param key the dictionary key corresponding with the PDF object
+     * @param value the value of key
+     * @return the key and value
+     */
     public PdfCatalog put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
         setModified();
         return this;
     }
 
+    /**
+     * Remove key from catalog dictionary.
+     *
+     * @param key the dictionary key corresponding with the PDF object
+     * @return the key
+     */
     public PdfCatalog remove(PdfName key) {
         getPdfObject().remove(key);
         setModified();
@@ -432,7 +529,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This method removes all outlines associated with a given page
      *
-     * @param page
+     * @param page the page to remove outlines
      */
     void removeOutlines(PdfPage page) {
         if (getDocument().getWriter() == null) {
@@ -453,7 +550,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This method sets the root outline element in the catalog.
      *
-     * @param outline
+     * @param outline the outline dictionary that shall be the root of the document’s outline hierarchy
      */
     void addRootOutline(PdfOutline outline) {
         if (!outlineMode)
