@@ -1749,9 +1749,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * until it will be added to {@link com.itextpdf.kernel.pdf.canvas.PdfCanvas} or {@link PdfResources}.
      */
     public PdfFont getFont(PdfDictionary dictionary) {
-        assert dictionary.getIndirectReference() != null;
-        if (documentFonts.containsKey(dictionary.getIndirectReference())) {
-            return documentFonts.get(dictionary.getIndirectReference());
+        PdfIndirectReference indirectReference = dictionary.getIndirectReference();
+        if (indirectReference != null && documentFonts.containsKey(indirectReference)) {
+            return documentFonts.get(indirectReference);
         } else {
             return addFont(PdfFontFactory.createFont(dictionary));
         }

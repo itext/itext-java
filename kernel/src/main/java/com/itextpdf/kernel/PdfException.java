@@ -208,6 +208,7 @@ public class PdfException extends RuntimeException {
     public static final String MacroSegmentIdMustBeGtOrEqZero = "macroSegmentId must be >= 0";
     public static final String MacroSegmentIdMustBeGtZero = "macroSegmentId must be > 0";
     public static final String MacroSegmentIdMustBeLtMacroSegmentCount = "macroSegmentId must be < macroSemgentCount";
+    public static final String MissingRequiredFieldInFontDictionary = "Missing required field {0} in font dictionary.";
     public static final String MustBeATaggedDocument = "Must be a tagged document.";
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "Number of entries in this xref subsection not found.";
     public static final String NoCompatibleEncryptionFound = "No compatible encryption found.";

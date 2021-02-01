@@ -467,12 +467,16 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         getPdfObject().put(PdfName.FontBBox, normalizeBBox(fontProgram.getFontMetrics().getBbox()));
         String fontName = fontProgram.getFontNames().getFontName();
         super.flushFontData(fontName, PdfName.Type3);
+        makeObjectIndirect(getPdfObject().get(PdfName.Widths));
         //BaseFont is not listed as key in Type 3 font specification.
         getPdfObject().remove(PdfName.BaseFont);
     }
 
     private int[] calculateWidth(PdfDictionary fontDictionary, int firstChar) {
         PdfArray pdfWidths = fontDictionary.getAsArray(PdfName.Widths);
+        if (pdfWidths == null) {
+            throw new PdfException(PdfException.MissingRequiredFieldInFontDictionary).setMessageParams(PdfName.Widths);
+        }
 
         double[] multipliedWidths = new double[pdfWidths.size()];
         for (int i = 0; i < pdfWidths.size(); i++) {
@@ -507,6 +511,10 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
     private void calculateAndSetFontMatrix() {
         PdfArray fontMatrixArray = getPdfObject().getAsArray(PdfName.FontMatrix);
+        if (fontMatrixArray == null) {
+            throw new PdfException(PdfException.MissingRequiredFieldInFontDictionary)
+                    .setMessageParams(PdfName.FontMatrix);
+        }
         double[] fontMatrix = new double[6];
         for (int i = 0; i < fontMatrixArray.size(); i++) {
             fontMatrix[i] = ((PdfNumber) fontMatrixArray.get(i)).getValue();

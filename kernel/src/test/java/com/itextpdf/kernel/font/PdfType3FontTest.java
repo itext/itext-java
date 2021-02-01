@@ -24,6 +24,7 @@ package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -244,6 +245,34 @@ public class PdfType3FontTest extends ExtendedITextTest {
         dictionary.put(PdfName.Encoding, encoding);
 
         AssertUtil.doesNotThrow(() -> new PdfType3Font(dictionary));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)})
+    public void missingFontMatrixTest() {
+        PdfDictionary dictionary = new PdfDictionary();
+        dictionary.put(PdfName.Widths, new PdfArray());
+        dictionary.put(PdfName.ToUnicode, PdfName.IdentityH);
+        dictionary.put(PdfName.Encoding, new PdfName("zapfdingbatsencoding"));
+
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(MessageFormatUtil.format(
+                PdfException.MissingRequiredFieldInFontDictionary, PdfName.FontMatrix));
+        new PdfType3Font(dictionary);
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)})
+    public void missingWidthsTest() {
+        PdfDictionary dictionary = new PdfDictionary();
+        dictionary.put(PdfName.FontMatrix, new PdfArray());
+        dictionary.put(PdfName.ToUnicode, PdfName.IdentityH);
+        dictionary.put(PdfName.Encoding, new PdfName("zapfdingbatsencoding"));
+
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(MessageFormatUtil.format(
+                PdfException.MissingRequiredFieldInFontDictionary, PdfName.Widths));
+        new PdfType3Font(dictionary);
     }
 
     @Test

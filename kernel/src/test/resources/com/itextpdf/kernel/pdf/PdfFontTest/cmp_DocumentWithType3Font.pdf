@@ -18,13 +18,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</Author(Alexander Chingarev)/CreationDate(D:20160204110335-03'00')/Creator(iText 6)/ModDate(D:20160204110335-03'00')/Producer(iText® 7.0.0-SNAPSHOT ©2000-2016 iText Group NV \(AGPL-version\))/Title(Type3 font iText 6 Document)>>
-endobj
-4 0 obj
-<</CharProcs<</A 5 0 R/E 7 0 R/asciitilde 8 0 R/eacute 9 0 R/space 6 0 R>>/Encoding<</Differences[1 /A /space /E /asciitilde /eacute]/Type/Encoding>>/FirstChar 1/FontBBox[0 0 600 700]/FontMatrix[0.001 0 0 0.001 0 0]/LastChar 5/Subtype/Type3/Type/Font/Widths[600 600 600 600 600]>>
-endobj
-2 0 obj
-<</Count 1/Kids[10 0 R]/Type/Pages>>
+<</Author(Alexander Chingarev)/CreationDate(D:20210202103521+03'00')/Creator(iText 7)/ModDate(D:20210202103521+03'00')/Producer(iText® 7.1.15-SNAPSHOT ©2000-2021 iText Group NV \(AGPL-version\))/Title(Type3 font iText 7 Document)>>
 endobj
 5 0 obj
 <</Length 53>>stream
@@ -78,22 +72,33 @@ S
 
 endstream
 endobj
+4 0 obj
+<</CharProcs<</A 5 0 R/E 7 0 R/asciitilde 8 0 R/eacute 9 0 R/space 6 0 R>>/Encoding<</Differences[1 /A /space /E /asciitilde /eacute]/Type/Encoding>>/FirstChar 1/FontBBox[0 0 600 700]/FontMatrix[0.001 0 0 0.001 0 0]/LastChar 5/Subtype/Type3/Type/Font/Widths 12 0 R>>
+endobj
+2 0 obj
+<</Count 1/Kids[10 0 R]/Type/Pages>>
+endobj
+12 0 obj
+[600 600 600 600 600]
+endobj
 xref
-0 12
+0 13
 0000000000 65535 f 
 0000000300 00000 n 
-0000000887 00000 n 
+0000001349 00000 n 
 0000000345 00000 n 
-0000000591 00000 n 
-0000000939 00000 n 
-0000001039 00000 n 
-0000001114 00000 n 
-0000001232 00000 n 
-0000001322 00000 n 
+0000001067 00000 n 
+0000000592 00000 n 
+0000000692 00000 n 
+0000000767 00000 n 
+0000000885 00000 n 
+0000000975 00000 n 
 0000000165 00000 n 
 0000000015 00000 n 
+0000001401 00000 n 
 trailer
-<</ID [<79d74ae5d395cae668683762f3df4356><79d74ae5d395cae668683762f3df4356>]/Info 3 0 R/Root 1 0 R/Size 12>>
+<</ID [<4166805cbd02d529cbd210786749cb7d><4166805cbd02d529cbd210786749cb7d>]/Info 3 0 R/Root 1 0 R/Size 13>>
+%iText-7.1.15-SNAPSHOT
 startxref
-1414
+1439
 %%EOF
