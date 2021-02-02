@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #main {
+            width: 400px;
+            height: 100px;
+            background-color: black;
+            border: 1px solid black;
+            display: flex;
+        }
+
+        #main div {
+            flex-grow: 1;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div id="main">
+    <div style="background-color:white; flex-basis: 50px;">1</div>
+    <div style="background-color:red; flex-basis: 80px; margin: 10px; border: 15px solid black; padding: 5px">2</div>
+    <div style="background-color:white; flex-basis: 100px;">3</div>
+</div>
+
+</body>
+</html>

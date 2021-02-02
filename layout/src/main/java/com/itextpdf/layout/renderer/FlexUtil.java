@@ -79,10 +79,7 @@ final class FlexUtil {
     public static List<List<FlexItemInfo>> calculateChildrenRectangles(Rectangle flexContainerBBox,
             FlexContainerRenderer flexContainerRenderer, List<FlexItemCalculationInfo> flexItemCalculationInfos) {
         Rectangle layoutBox = flexContainerBBox.clone();
-        flexContainerRenderer.applyBordersPaddingsMargins(
-                layoutBox,
-                flexContainerRenderer.getBorders(),
-                flexContainerRenderer.getPaddings());
+        flexContainerRenderer.applyMarginsBordersPaddings(layoutBox, false);
 
         // 9.2. Line Length Determination
 
@@ -146,11 +143,11 @@ final class FlexUtil {
         // TODO DEVSIX-5002 margin: auto is not supported
         // 13. Resolve cross-axis auto margins
 
-        // TODO DEVSIX-4997 14. Align all flex items along the cross-axis
+        // TODO DEVSIX-5040 14. Align all flex items along the cross-axis
 
-        // TODO DEVSIX-4997 15. Determine the flex container’s used cross size:
+        // TODO DEVSIX-5040 15. Determine the flex container’s used cross size:
 
-        // TODO DEVSIX-4997 16. Align all flex lines per align-content.
+        // TODO DEVSIX-5040 16. Align all flex lines per align-content.
 
         List<List<FlexItemInfo>> layoutTable = new ArrayList<>();
         for (List<FlexItemCalculationInfo> line : lines) {
@@ -229,7 +226,7 @@ final class FlexUtil {
         } else {
             float occupiedLineSpace = 0;
             for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
-                occupiedLineSpace += info.getOuterWidth(info.hypotheticalMainSize);
+                occupiedLineSpace += info.getOuterMainSize(info.hypotheticalMainSize);
                 if (occupiedLineSpace > mainSize + EPSILON) {
                     // If the very first uncollected item wouldn’t fit, collect just it into the line.
                     if (currentLineInfos.isEmpty()) {
@@ -263,7 +260,7 @@ final class FlexUtil {
             // 1. Determine the used flex factor.
             float hypotheticalMainSizesSum = 0;
             for (FlexItemCalculationInfo info : line) {
-                hypotheticalMainSizesSum += info.getOuterWidth(info.hypotheticalMainSize);
+                hypotheticalMainSizesSum += info.getOuterMainSize(info.hypotheticalMainSize);
             }
 
             // if the sum is less than the flex container’s inner main size,
@@ -377,15 +374,15 @@ final class FlexUtil {
             // If the remaining free space is positive and at least one main-axis margin on this line is auto,
             // distribute the free space equally among these margins. Otherwise, set all auto margins to zero.
 
-            // TODO DEVSIX-4997 Align the items along the main-axis per justify-content.
+            // TODO DEVSIX-5040 Align the items along the main-axis per justify-content.
         }
     }
 
     static void determineHypotheticalCrossSizeForFlexItems(List<List<FlexItemCalculationInfo>> lines) {
         for (List<FlexItemCalculationInfo> line : lines) {
             for (FlexItemCalculationInfo info : line) {
-                LayoutResult result = info.renderer
-                        .layout(new LayoutContext(new LayoutArea(0, new Rectangle((float) info.mainSize, 100000))));
+                LayoutResult result = info.renderer.layout(new LayoutContext(
+                        new LayoutArea(0, new Rectangle(info.getOuterMainSize((float) info.mainSize), 100000))));
                 // Since main size is clamped with min-width, we do expect the result to be full
                 assert result.getStatus() == LayoutResult.FULL;
                 info.hypotheticalCrossSize = result.getOccupiedArea().getBBox().getHeight();
@@ -417,8 +414,8 @@ final class FlexUtil {
 
                     // 2. Among all the items not collected by the previous step,
                     // find the largest outer hypothetical cross size.
-                    if (largestHypotheticalCrossSize < info.getOuterWidth(info.hypotheticalCrossSize)) {
-                        largestHypotheticalCrossSize = info.getOuterWidth(info.hypotheticalCrossSize);
+                    if (largestHypotheticalCrossSize < info.getOuterMainSize(info.hypotheticalCrossSize)) {
+                        largestHypotheticalCrossSize = info.getOuterMainSize(info.hypotheticalCrossSize);
                     }
                     flexLinesCrossSize = Math.max(0, largestHypotheticalCrossSize);
                 }
@@ -470,9 +467,9 @@ final class FlexUtil {
         for (FlexItemCalculationInfo info : line) {
             if (info.isFrozen) {
                 assert null != info.mainSize;
-                result -= info.getOuterWidth((float) info.mainSize);
+                result -= info.getOuterMainSize((float) info.mainSize);
             } else {
-                result -= info.getOuterWidth(info.flexBaseSize);
+                result -= info.getOuterMainSize(info.flexBaseSize);
             }
         }
         return result;
@@ -543,8 +540,17 @@ final class FlexUtil {
             }
             this.flexGrow = flexGrow;
             // We always need to clamp flex item's sizes with min-width, so this calculation is necessary
+            // We also need to get min-width not based on Property.WIDTH
+            final UnitValue rendererWidth = renderer.<UnitValue>getOwnProperty(Property.WIDTH);
+            final boolean hasOwnWidth = renderer.hasOwnProperty(Property.WIDTH);
+            renderer.setProperty(Property.WIDTH, null);
             MinMaxWidth minMaxWidth = renderer.getMinMaxWidth();
-            this.minContent = minMaxWidth.getMinWidth();
+            if (hasOwnWidth) {
+                renderer.setProperty(Property.WIDTH, rendererWidth);
+            } else {
+                renderer.deleteOwnProperty(Property.WIDTH);
+            }
+            this.minContent = getInnerMainSize(minMaxWidth.getMinWidth());
             boolean isMaxWidthApplied = null != this.renderer.retrieveMaxWidth(areaWidth);
             // As for now we assume that max width should be calculated so
             this.maxContent = isMaxWidthApplied
@@ -552,18 +558,16 @@ final class FlexUtil {
                     : Math.max(minMaxWidth.getMaxWidth(), areaWidth);
         }
 
-
         public Rectangle toRectangle() {
-            return new Rectangle((float) mainSize, (float) crossSize);
+            return new Rectangle(getOuterMainSize((float) mainSize), (float) crossSize);
         }
 
-        float getOuterWidth(float size) {
-            Rectangle tempRect = new Rectangle(size, 0);
-            renderer.applyMargins(tempRect, true);
-            renderer.applyBorderBox(tempRect, true);
-            renderer.applyPaddings(tempRect, true);
+        float getOuterMainSize(float size) {
+            return renderer.applyMarginsBordersPaddings(new Rectangle(size, 0), true).getWidth();
+        }
 
-            return tempRect.getWidth();
+        float getInnerMainSize(float size) {
+            return renderer.applyMarginsBordersPaddings(new Rectangle(size, 0), false).getWidth();
         }
     }
 }

@@ -86,6 +86,9 @@ public final class Property {
     public static final int FILL_AVAILABLE_AREA = 86;
     public static final int FILL_AVAILABLE_AREA_ON_SPLIT = 87;
     public static final int FIRST_LINE_INDENT = 18;
+    public static final int FLEX_BASIS = 131;
+    public static final int FLEX_GROW = 132;
+    public static final int FLEX_SHRINK = 133;
     public static final int FLEX_WRAP = 128;
     public static final int FLOAT = 99;
     public static final int FLUSH_ON_DRAW = 19;

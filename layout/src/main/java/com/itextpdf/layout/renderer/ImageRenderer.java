@@ -196,7 +196,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
 
         // indicates whether the placement is forced
         boolean isPlacingForced = false;
-        if (width > layoutBox.getWidth() || height > layoutBox.getHeight()) {
+        if (width > layoutBox.getWidth() + EPS || height > layoutBox.getHeight() + EPS) {
             if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || (width > layoutBox.getWidth() && processOverflowX) || (height > layoutBox.getHeight() && processOverflowY)) {
                 isPlacingForced = true;
             } else {

@@ -1222,6 +1222,21 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
+     * Applies margins, borders and paddings of the renderer on the given rectangle.
+     *
+     * @param rect    a rectangle margins, borders and paddings will be applied on.
+     * @param reverse indicates whether margins, borders and paddings will be applied
+     *                inside (in case of false) or outside (in case of true) the rectangle.
+     * @return a {@link Rectangle border box} of the renderer
+     */
+    Rectangle applyMarginsBordersPaddings(Rectangle rect, boolean reverse) {
+        applyMargins(rect, reverse);
+        applyBorderBox(rect, reverse);
+        applyPaddings(rect, reverse);
+        return rect;
+    }
+
+    /**
      * Applies margins of the renderer on the given rectangle
      *
      * @param rect    a rectangle margins will be applied on.
@@ -2019,6 +2034,11 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    /**
+     * Calculates min and max width values for current renderer.
+     *
+     * @return instance of {@link MinMaxWidth}
+     */
     public MinMaxWidth getMinMaxWidth() {
         return MinMaxWidthUtils.countDefaultMinMaxWidth(this);
     }

@@ -475,7 +475,7 @@ public class FlexUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    public void differentBasisSumLtWidthGrow1Shrink1Item2Margin20Test01() {
+    public void differentBasisSumLtWidthGrow1Shrink0Item2MarginBorderPadding30Test01() {
         Rectangle bBox = new Rectangle(575, 842);
         List<UnitValue> flexBasisValues = Arrays.<UnitValue>asList(
                 UnitValue.createPointValue(50f),
@@ -518,8 +518,56 @@ public class FlexUtilTest extends ExtendedITextTest {
                         flexItemCalculationInfos);
 
         Assert.assertEquals(86.66667f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
-        Assert.assertEquals(116.66667f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
+        Assert.assertEquals(176.66667f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
         Assert.assertEquals(136.66667f, rectangleTable.get(0).get(2).getRectangle().getWidth(), EPS);
+    }
+
+    @Test
+    public void differentBasisSumLtWidthGrow1Shrink1Item2MarginBorderPadding30Test01() {
+        Rectangle bBox = new Rectangle(575, 842);
+        List<UnitValue> flexBasisValues = Arrays.<UnitValue>asList(
+                UnitValue.createPointValue(50f),
+                UnitValue.createPointValue(80f),
+                UnitValue.createPointValue(100f)
+        );
+
+        List<FlexItemCalculationInfo> flexItemCalculationInfos = new ArrayList<>();
+        Div div = new Div().setWidth(200).setHeight(100);
+
+        DocumentRenderer documentRenderer = new DocumentRenderer(
+                new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
+
+        for (int i = 0; i < flexBasisValues.size(); i++) {
+            Div flexItem = new Div().add(new Paragraph("x"));
+            if (1 == i) {
+                flexItem.setMargin(10).setBorder(new SolidBorder(15)).setPadding(5);
+            }
+            AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
+                    .setParent(documentRenderer);
+            div.add(flexItem);
+            flexItemCalculationInfos.add(new FlexItemCalculationInfo(flexItemRenderer,
+                    flexBasisValues.get(i),
+                    1,
+                    1,
+                    bBox.getWidth()));
+        }
+
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        div.setNextRenderer(flexContainerRenderer);
+
+        // before checks
+        for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
+            Assert.assertNull(info.mainSize);
+            Assert.assertNull(info.crossSize);
+        }
+
+        List<List<FlexItemInfo>> rectangleTable =
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer(),
+                        flexItemCalculationInfos);
+
+        Assert.assertEquals(30.434784f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
+        Assert.assertEquals(108.69565f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
+        Assert.assertEquals(60.869568f, rectangleTable.get(0).get(2).getRectangle().getWidth(), EPS);
     }
 
     @Test
