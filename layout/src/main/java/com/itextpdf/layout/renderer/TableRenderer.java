@@ -537,9 +537,11 @@ public class TableRenderer extends AbstractRenderer {
                     cell.setProperty(Property.WIDTH, UnitValue.createPointValue(cellWidth));
                 }
                 // Apply cell borders
-                float[] cellIndents = bordersHandler.getCellBorderIndents(currentCellInfo.finishRowInd, col, rowspan, colspan);
+                float[] cellIndents = bordersHandler.getCellBorderIndents(currentCellInfo.finishRowInd, col,
+                        rowspan, colspan);
                 if (!(bordersHandler instanceof SeparatedTableBorders)) {
-                    bordersHandler.applyCellIndents(cellArea.getBBox(), cellIndents[0], cellIndents[1], cellIndents[2] + widestRowBottomBorderWidth, cellIndents[3], false);
+                    bordersHandler.applyCellIndents(cellArea.getBBox(), cellIndents[0], cellIndents[1],
+                            cellIndents[2] + widestRowBottomBorderWidth, cellIndents[3], false);
                 }
                 // update cell width
                 cellWidth = cellArea.getBBox().getWidth();
@@ -1575,16 +1577,14 @@ public class TableRenderer extends AbstractRenderer {
                     float height = 0;
                     int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
                     int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
-                    float[] indents = bordersHandler.getCellBorderIndents(bordersHandler instanceof SeparatedTableBorders ? row : targetOverflowRowIndex[col], col, rowspan, colspan);
                     for (int l = heights.size() - 1 - 1; l > targetOverflowRowIndex[col] - rowspan && l >= 0; l--) {
                         height += (float) heights.get(l);
                     }
                     float cellHeightInLastRow;
-                    if (bordersHandler instanceof SeparatedTableBorders) {
-                        cellHeightInLastRow = cell.getOccupiedArea().getBBox().getHeight() - height;
-                    } else {
-                        cellHeightInLastRow = cell.getOccupiedArea().getBBox().getHeight() + indents[0] / 2 + indents[2] / 2 - height;
-                    }
+                    float[] indents = bordersHandler.getCellBorderIndents(bordersHandler instanceof
+                            SeparatedTableBorders ? row : targetOverflowRowIndex[col], col, rowspan, colspan);
+                    cellHeightInLastRow = cell.getOccupiedArea().getBBox().getHeight() - height
+                            + indents[0] / 2 + indents[2] / 2;
                     if (heights.get(heights.size() - 1) < cellHeightInLastRow) {
                         if (bordersHandler instanceof SeparatedTableBorders) {
                             float differenceToConsider = cellHeightInLastRow - heights.get(heights.size() - 1);
@@ -1642,7 +1642,6 @@ public class TableRenderer extends AbstractRenderer {
             int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
             int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
             float rowspanOffset = 0;
-            float[] indents = bordersHandler.getCellBorderIndents(currentRowIndex < row || bordersHandler instanceof SeparatedTableBorders ? currentRowIndex : targetOverflowRowIndex[col], col, rowspan, colspan);
             // process rowspan
             for (int l = (currentRowIndex < row ? currentRowIndex : heights.size() - 1) - 1; l > (currentRowIndex < row ? currentRowIndex : targetOverflowRowIndex[col]) - rowspan && l >= 0; l--) {
                 height += (float) heights.get(l);
@@ -1651,9 +1650,10 @@ public class TableRenderer extends AbstractRenderer {
                 }
             }
             height += (float) heights.get(currentRowIndex < row ? currentRowIndex : heights.size() - 1);
-            if (!(bordersHandler instanceof SeparatedTableBorders)) {
-                height -= indents[0] / 2 + indents[2] / 2;
-            }
+            float[] indents = bordersHandler.getCellBorderIndents(
+                    currentRowIndex < row || bordersHandler instanceof SeparatedTableBorders ?
+                    currentRowIndex : targetOverflowRowIndex[col], col, rowspan, colspan);
+            height -= indents[0] / 2 + indents[2] / 2;
             // Correcting cell bbox only. We don't need #move() here.
             // This is because of BlockRenderer's specificity regarding occupied area.
             float shift = height - cell.getOccupiedArea().getBBox().getHeight();

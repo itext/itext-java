@@ -84,6 +84,7 @@ class CollapsedTableBorders extends TableBorders {
         return bottomBorderCollapseWith;
     }
 
+    @Override
     public float[] getCellBorderIndents(int row, int col, int rowspan, int colspan) {
         float[] indents = new float[4];
         List<Border> borderList;
