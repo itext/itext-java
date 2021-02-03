@@ -499,6 +499,9 @@ public class CommonCssConstants {
      */
     public static final String INLINE_BLOCK = "inline-block";
 
+    /** The Constant JUSTIFY_CONTENT. */
+    public static final String JUSTIFY_CONTENT = "justify-content";
+
     /**
      * The Constant JUSTIFY_ITEMS.
      */

@@ -59,8 +59,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class FlexContainerRenderer extends DivRenderer {
-    private static float FLEX_GROW_DEFAULT_VALUE = 0;
-    private static float FLEX_SHRINK_DEFAULT_VALUE = 1;
 
     private List<List<FlexItemInfo>> lines;
 
@@ -86,21 +84,10 @@ public class FlexContainerRenderer extends DivRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         Rectangle layoutContextRectangle = layoutContext.getArea().getBBox();
-        final List<FlexUtil.FlexItemCalculationInfo> flexItemInfos = new ArrayList<>();
-        // TODO DEVSIX-4996 Change properties FLEX_GROW/FLEX_SHRINK/FLEX_BASIS on the combined one added in this ticket
         for (final IRenderer childRenderer : this.getChildRenderers()) {
             if (childRenderer instanceof AbstractRenderer) {
                 final AbstractRenderer abstractChildRenderer = (AbstractRenderer) childRenderer;
                 abstractChildRenderer.setParent(this);
-                final UnitValue flexBasis = abstractChildRenderer.<UnitValue>getProperty(Property.WIDTH) == null ?
-                        UnitValue.createPointValue(abstractChildRenderer.getMinMaxWidth().getMinWidth()) :
-                        abstractChildRenderer.<UnitValue>getProperty(Property.WIDTH);
-                flexItemInfos.add(new FlexUtil.FlexItemCalculationInfo(
-                        (AbstractRenderer) childRenderer,
-                        childRenderer.<UnitValue>getProperty(Property.FLEX_BASIS, flexBasis),
-                        (float) childRenderer.<Float>getProperty(Property.FLEX_GROW, FLEX_GROW_DEFAULT_VALUE),
-                        (float) childRenderer.<Float>getProperty(Property.FLEX_SHRINK, FLEX_SHRINK_DEFAULT_VALUE),
-                        layoutContextRectangle.getWidth()));
             }
         }
         Float containerWidth = retrieveWidth(layoutContextRectangle.getWidth());
@@ -112,7 +99,7 @@ public class FlexContainerRenderer extends DivRenderer {
             containerHeight = layoutContextRectangle.getHeight();
         }
         lines = FlexUtil.calculateChildrenRectangles(
-                new Rectangle((float) containerWidth, (float) containerHeight), this, flexItemInfos);
+                new Rectangle((float) containerWidth, (float) containerHeight), this);
         final List<UnitValue> previousWidths = new ArrayList<>();
         for (final List<FlexItemInfo> line : lines) {
             for (final FlexItemInfo itemInfo : line) {
@@ -281,6 +268,7 @@ public class FlexContainerRenderer extends DivRenderer {
         // TODO DEVSIX-5086 When flex-wrap will be fully supported we'll find min/max width with respect to the lines
         for (final IRenderer childRenderer : childRenderers) {
             MinMaxWidth childMinMaxWidth;
+            childRenderer.setParent(this);
             if (childRenderer instanceof AbstractRenderer) {
                 childMinMaxWidth = ((AbstractRenderer) childRenderer).getMinMaxWidth();
             } else {

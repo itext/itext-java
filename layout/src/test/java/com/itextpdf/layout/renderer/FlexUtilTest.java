@@ -129,36 +129,27 @@ public class FlexUtilTest extends ExtendedITextTest {
                 UnitValue.createPointValue(50f)
         );
 
-        List<FlexItemCalculationInfo> flexItemCalculationInfos = new ArrayList<>();
         Div div = new Div().setWidth(100).setHeight(100);
 
         DocumentRenderer documentRenderer = new DocumentRenderer(
                 new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
 
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
+
         for (int i = 0; i < flexBasisValues.size(); i++) {
             Div flexItem = new Div().add(new Paragraph("x"));
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
-                    .setParent(documentRenderer);
-            div.add(flexItem);
-            flexItemCalculationInfos.add(new FlexItemCalculationInfo(flexItemRenderer,
-                    flexBasisValues.get(i),
-                    0,
-                    0.1f,
-                    bBox.getWidth()));
-        }
-
-        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
-        div.setNextRenderer(flexContainerRenderer);
-
-        // before checks
-        for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
-            Assert.assertNull(info.mainSize);
-            Assert.assertNull(info.crossSize);
+                    .setParent(flexContainerRenderer);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 0f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 0.1f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+            flexContainerRenderer.addChild(flexItemRenderer);
         }
 
         List<List<FlexItemInfo>> rectangleTable =
-                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer(),
-                        flexItemCalculationInfos);
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
 
         Assert.assertEquals(135f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
         Assert.assertEquals(45f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
@@ -483,11 +474,14 @@ public class FlexUtilTest extends ExtendedITextTest {
                 UnitValue.createPointValue(100f)
         );
 
-        List<FlexItemCalculationInfo> flexItemCalculationInfos = new ArrayList<>();
         Div div = new Div().setWidth(400).setHeight(100);
 
         DocumentRenderer documentRenderer = new DocumentRenderer(
                 new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
+
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
 
         for (int i = 0; i < flexBasisValues.size(); i++) {
             Div flexItem = new Div().add(new Paragraph("x"));
@@ -495,27 +489,16 @@ public class FlexUtilTest extends ExtendedITextTest {
                 flexItem.setMargin(10).setBorder(new SolidBorder(15)).setPadding(5);
             }
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
-                    .setParent(documentRenderer);
+                    .setParent(flexContainerRenderer);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 0f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
             div.add(flexItem);
-            flexItemCalculationInfos.add(new FlexItemCalculationInfo(flexItemRenderer,
-                    flexBasisValues.get(i),
-                    1,
-                    0,
-                    bBox.getWidth()));
-        }
-
-        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
-        div.setNextRenderer(flexContainerRenderer);
-
-        // before checks
-        for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
-            Assert.assertNull(info.mainSize);
-            Assert.assertNull(info.crossSize);
+            flexContainerRenderer.addChild(flexItemRenderer);
         }
 
         List<List<FlexItemInfo>> rectangleTable =
-                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer(),
-                        flexItemCalculationInfos);
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
 
         Assert.assertEquals(86.66667f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
         Assert.assertEquals(176.66667f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
@@ -537,6 +520,10 @@ public class FlexUtilTest extends ExtendedITextTest {
         DocumentRenderer documentRenderer = new DocumentRenderer(
                 new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
 
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
+
         for (int i = 0; i < flexBasisValues.size(); i++) {
             Div flexItem = new Div().add(new Paragraph("x"));
             if (1 == i) {
@@ -544,26 +531,14 @@ public class FlexUtilTest extends ExtendedITextTest {
             }
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
                     .setParent(documentRenderer);
-            div.add(flexItem);
-            flexItemCalculationInfos.add(new FlexItemCalculationInfo(flexItemRenderer,
-                    flexBasisValues.get(i),
-                    1,
-                    1,
-                    bBox.getWidth()));
-        }
-
-        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
-        div.setNextRenderer(flexContainerRenderer);
-
-        // before checks
-        for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
-            Assert.assertNull(info.mainSize);
-            Assert.assertNull(info.crossSize);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+            flexContainerRenderer.addChild(flexItemRenderer);
         }
 
         List<List<FlexItemInfo>> rectangleTable =
-                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer(),
-                        flexItemCalculationInfos);
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
 
         Assert.assertEquals(30.434784f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
         Assert.assertEquals(108.69565f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
@@ -579,7 +554,6 @@ public class FlexUtilTest extends ExtendedITextTest {
                 UnitValue.createPointValue(75f)
         );
 
-        List<FlexItemCalculationInfo> flexItemCalculationInfos = new ArrayList<>();
         Div div = new Div().setWidth(300).setHeight(100);
 
         // We use Courier as a monotype font to ensure that min width calculated by iText
@@ -591,33 +565,25 @@ public class FlexUtilTest extends ExtendedITextTest {
                 new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
         documentRenderer.setProperty(Property.FONT_PROVIDER, provider);
 
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
+
         for (int i = 0; i < flexBasisValues.size(); i++) {
             Div flexItem = new Div().add(new Paragraph(1 == i ? "2222222222222222222222222" : Integer.toString(i)));
             if (1 == i) {
                 flexItem.setFontFamily(StandardFontFamilies.COURIER);
             }
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
-                    .setParent(documentRenderer);
-            div.add(flexItem);
-            flexItemCalculationInfos.add(new FlexItemCalculationInfo(flexItemRenderer,
-                    flexBasisValues.get(i),
-                    1,
-                    1,
-                    bBox.getWidth()));
-        }
-
-        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
-        div.setNextRenderer(flexContainerRenderer);
-
-        // before checks
-        for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
-            Assert.assertNull(info.mainSize);
-            Assert.assertNull(info.crossSize);
+                    .setParent(flexContainerRenderer);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+            flexContainerRenderer.addChild(flexItemRenderer);
         }
 
         List<List<FlexItemInfo>> rectangleTable =
-                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer(),
-                        flexItemCalculationInfos);
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
 
         Assert.assertEquals(41.250023f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
         Assert.assertEquals(179.99995f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
@@ -633,7 +599,6 @@ public class FlexUtilTest extends ExtendedITextTest {
                 UnitValue.createPointValue(75f)
         );
 
-        List<FlexItemCalculationInfo> flexItemCalculationInfos = new ArrayList<>();
         Div div = new Div().setWidth(300).setHeight(100);
 
         // We use Courier as a monotype font to ensure that min width calculated by iText
@@ -645,6 +610,10 @@ public class FlexUtilTest extends ExtendedITextTest {
                 new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
         documentRenderer.setProperty(Property.FONT_PROVIDER, provider);
 
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
+
         for (int i = 0; i < flexBasisValues.size(); i++) {
             Div flexItem = new Div().add(new Paragraph(1 == i ? "2222222222222222222222222" : Integer.toString(i)));
             if (1 == i) {
@@ -653,27 +622,15 @@ public class FlexUtilTest extends ExtendedITextTest {
                         .setMinWidth(37.5f);
             }
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
-                    .setParent(documentRenderer);
-            div.add(flexItem);
-            flexItemCalculationInfos.add(new FlexItemCalculationInfo(flexItemRenderer,
-                    flexBasisValues.get(i),
-                    1,
-                    1,
-                    bBox.getWidth()));
-        }
-
-        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
-        div.setNextRenderer(flexContainerRenderer);
-
-        // before checks
-        for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
-            Assert.assertNull(info.mainSize);
-            Assert.assertNull(info.crossSize);
+                    .setParent(flexContainerRenderer);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+            flexContainerRenderer.addChild(flexItemRenderer);
         }
 
         List<List<FlexItemInfo>> rectangleTable =
-                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer(),
-                        flexItemCalculationInfos);
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
 
         Assert.assertEquals(80f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
         Assert.assertEquals(102.5f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
@@ -689,11 +646,14 @@ public class FlexUtilTest extends ExtendedITextTest {
                 UnitValue.createPointValue(100f)
         );
 
-        List<FlexItemCalculationInfo> flexItemCalculationInfos = new ArrayList<>();
         Div div = new Div().setWidth(400).setHeight(100);
 
         DocumentRenderer documentRenderer = new DocumentRenderer(
                 new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
+
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
 
         for (int i = 0; i < flexBasisValues.size(); i++) {
             Div flexItem = new Div().add(new Paragraph(Integer.toString(i)));
@@ -701,27 +661,16 @@ public class FlexUtilTest extends ExtendedITextTest {
                 flexItem.setMaxWidth(50f);
             }
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
-                    .setParent(documentRenderer);
-            div.add(flexItem);
-            flexItemCalculationInfos.add(new FlexItemCalculationInfo(flexItemRenderer,
-                    flexBasisValues.get(i),
-                    1,
-                    1,
-                    bBox.getWidth()));
-        }
+                    .setParent(flexContainerRenderer);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
 
-        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
-        div.setNextRenderer(flexContainerRenderer);
-
-        // before checks
-        for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
-            Assert.assertNull(info.mainSize);
-            Assert.assertNull(info.crossSize);
+            flexContainerRenderer.addChild(flexItemRenderer);
         }
 
         List<List<FlexItemInfo>> rectangleTable =
-                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer(),
-                        flexItemCalculationInfos);
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
 
         Assert.assertEquals(150f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
         Assert.assertEquals(50f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
@@ -737,11 +686,14 @@ public class FlexUtilTest extends ExtendedITextTest {
                 UnitValue.createPointValue(100f)
         );
 
-        List<FlexItemCalculationInfo> flexItemCalculationInfos = new ArrayList<>();
         Div div = new Div().setWidth(100).setHeight(100);
 
         DocumentRenderer documentRenderer = new DocumentRenderer(
                 new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
+
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
 
         for (int i = 0; i < flexBasisValues.size(); i++) {
             Div flexItem = new Div().add(new Paragraph(Integer.toString(i)));
@@ -750,26 +702,15 @@ public class FlexUtilTest extends ExtendedITextTest {
             }
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
                     .setParent(documentRenderer);
-            div.add(flexItem);
-            flexItemCalculationInfos.add(new FlexItemCalculationInfo(flexItemRenderer,
-                    flexBasisValues.get(i),
-                    1,
-                    1,
-                    bBox.getWidth()));
-        }
-
-        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
-        div.setNextRenderer(flexContainerRenderer);
-
-        // before checks
-        for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
-            Assert.assertNull(info.mainSize);
-            Assert.assertNull(info.crossSize);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+            flexItemRenderer.setParent(flexContainerRenderer);
+            flexContainerRenderer.addChild(flexItemRenderer);
         }
 
         List<List<FlexItemInfo>> rectangleTable =
-                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer(),
-                        flexItemCalculationInfos);
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
 
         Assert.assertEquals(23.333332f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
         Assert.assertEquals(30f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
@@ -785,11 +726,14 @@ public class FlexUtilTest extends ExtendedITextTest {
                 UnitValue.createPointValue(7f)
         );
 
-        List<FlexItemCalculationInfo> flexItemCalculationInfos = new ArrayList<>();
         Div div = new Div().setWidth(100).setHeight(100);
 
         DocumentRenderer documentRenderer = new DocumentRenderer(
                 new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
+
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
 
         for (int i = 0; i < flexBasisValues.size(); i++) {
             Div flexItem = new Div().add(new Paragraph(Integer.toString(i)));
@@ -797,27 +741,15 @@ public class FlexUtilTest extends ExtendedITextTest {
                 flexItem.setMaxWidth(30f);
             }
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
-                    .setParent(documentRenderer);
-            div.add(flexItem);
-            flexItemCalculationInfos.add(new FlexItemCalculationInfo(flexItemRenderer,
-                    flexBasisValues.get(i),
-                    1,
-                    1,
-                    bBox.getWidth()));
-        }
-
-        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
-        div.setNextRenderer(flexContainerRenderer);
-
-        // before checks
-        for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
-            Assert.assertNull(info.mainSize);
-            Assert.assertNull(info.crossSize);
+                    .setParent(flexContainerRenderer);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+            flexContainerRenderer.addChild(flexItemRenderer);
         }
 
         List<List<FlexItemInfo>> rectangleTable =
-                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer(),
-                        flexItemCalculationInfos);
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
 
         Assert.assertEquals(35f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
         Assert.assertEquals(30f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
@@ -833,11 +765,14 @@ public class FlexUtilTest extends ExtendedITextTest {
                 UnitValue.createPointValue(200f)
         );
 
-        List<FlexItemCalculationInfo> flexItemCalculationInfos = new ArrayList<>();
         Div div = new Div().setWidth(400).setHeight(100);
 
         DocumentRenderer documentRenderer = new DocumentRenderer(
                 new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
+
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
 
         for (int i = 0; i < flexBasisValues.size(); i++) {
             Div flexItem = new Div().add(new Paragraph(Integer.toString(i)));
@@ -845,27 +780,16 @@ public class FlexUtilTest extends ExtendedITextTest {
                 flexItem.setMinWidth(150f);
             }
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
-                    .setParent(documentRenderer);
+                    .setParent(flexContainerRenderer);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
             div.add(flexItem);
-            flexItemCalculationInfos.add(new FlexItemCalculationInfo(flexItemRenderer,
-                    flexBasisValues.get(i),
-                    1,
-                    1,
-                    bBox.getWidth()));
-        }
-
-        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
-        div.setNextRenderer(flexContainerRenderer);
-
-        // before checks
-        for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
-            Assert.assertNull(info.mainSize);
-            Assert.assertNull(info.crossSize);
+            flexContainerRenderer.addChild(flexItemRenderer);
         }
 
         List<List<FlexItemInfo>> rectangleTable =
-                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer(),
-                        flexItemCalculationInfos);
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
 
         Assert.assertEquals(150f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
         Assert.assertEquals(107.14285f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
@@ -880,11 +804,14 @@ public class FlexUtilTest extends ExtendedITextTest {
                 UnitValue.createPointValue(30f)
         );
 
-        List<FlexItemCalculationInfo> flexItemCalculationInfos = new ArrayList<>();
         Div div = new Div().setWidth(100).setHeight(100);
 
         DocumentRenderer documentRenderer = new DocumentRenderer(
                 new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
+
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
 
         for (int i = 0; i < flexBasisValues.size(); i++) {
             IElement flexItem = (0 == i)
@@ -897,26 +824,15 @@ public class FlexUtilTest extends ExtendedITextTest {
                 div.add((IBlockElement) flexItem);
             }
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
-                    .setParent(documentRenderer);
-            flexItemCalculationInfos.add(new FlexItemCalculationInfo(flexItemRenderer,
-                    flexBasisValues.get(i),
-                    0,
-                    0,
-                    bBox.getWidth()));
-        }
-
-        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
-        div.setNextRenderer(flexContainerRenderer);
-
-        // before checks
-        for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
-            Assert.assertNull(info.mainSize);
-            Assert.assertNull(info.crossSize);
+                    .setParent(flexContainerRenderer);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 0f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 0f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+            flexContainerRenderer.addChild(flexItemRenderer);
         }
 
         List<List<FlexItemInfo>> rectangleTable =
-                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer(),
-                        flexItemCalculationInfos);
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
 
         Assert.assertEquals(50f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
         Assert.assertEquals(30f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
@@ -931,7 +847,6 @@ public class FlexUtilTest extends ExtendedITextTest {
                 UnitValue.createPointValue(75f)
         );
 
-        List<FlexItemCalculationInfo> flexItemCalculationInfos = new ArrayList<>();
         Div div = new Div().setWidth(300).setHeight(100);
 
         // We use Courier as a monotype font to ensure that min width calculated by iText
@@ -943,6 +858,10 @@ public class FlexUtilTest extends ExtendedITextTest {
                 new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
         documentRenderer.setProperty(Property.FONT_PROVIDER, provider);
 
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
+
         for (int i = 0; i < flexBasisValues.size(); i++) {
             Div flexItem = new Div().add(new Paragraph(1 == i ? "2222222222222222222222222" : Integer.toString(i)));
             if (1 == i) {
@@ -951,27 +870,15 @@ public class FlexUtilTest extends ExtendedITextTest {
                         .setMinWidth(75f);
             }
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
-                    .setParent(documentRenderer);
-            div.add(flexItem);
-            flexItemCalculationInfos.add(new FlexItemCalculationInfo(flexItemRenderer,
-                    flexBasisValues.get(i),
-                    1,
-                    1,
-                    bBox.getWidth()));
-        }
-
-        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
-        div.setNextRenderer(flexContainerRenderer);
-
-        // before checks
-        for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
-            Assert.assertNull(info.mainSize);
-            Assert.assertNull(info.crossSize);
+                    .setParent(flexContainerRenderer);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+            flexContainerRenderer.addChild(flexItemRenderer);
         }
 
         List<List<FlexItemInfo>> rectangleTable =
-                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer(),
-                        flexItemCalculationInfos);
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
 
         Assert.assertEquals(80f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
         Assert.assertEquals(102.5f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
@@ -986,7 +893,6 @@ public class FlexUtilTest extends ExtendedITextTest {
                 UnitValue.createPointValue(30f)
         );
 
-        List<FlexItemCalculationInfo> flexItemCalculationInfos = new ArrayList<>();
         Div div = new Div().setWidth(100).setHeight(100);
 
         // We use Courier as a monotype font to ensure that min width calculated by iText
@@ -998,6 +904,10 @@ public class FlexUtilTest extends ExtendedITextTest {
                 new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
         documentRenderer.setProperty(Property.FONT_PROVIDER, provider);
 
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
+
         for (int i = 0; i < flexBasisValues.size(); i++) {
             Div flexItem = new Div().add(new Paragraph(Integer.toString(i)))
                     .setFontFamily(StandardFontFamilies.COURIER);
@@ -1005,27 +915,16 @@ public class FlexUtilTest extends ExtendedITextTest {
                 flexItem.setFontSize(100f);
             }
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
-                    .setParent(documentRenderer);
+                    .setParent(flexContainerRenderer);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 0f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 0f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
             div.add(flexItem);
-            flexItemCalculationInfos.add(new FlexItemCalculationInfo(flexItemRenderer,
-                    flexBasisValues.get(i),
-                    0,
-                    0,
-                    bBox.getWidth()));
-        }
-
-        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
-        div.setNextRenderer(flexContainerRenderer);
-
-        // before checks
-        for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
-            Assert.assertNull(info.mainSize);
-            Assert.assertNull(info.crossSize);
+            flexContainerRenderer.addChild(flexItemRenderer);
         }
 
         List<List<FlexItemInfo>> rectangleTable =
-                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer(),
-                        flexItemCalculationInfos);
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
 
         Assert.assertEquals(60f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
         Assert.assertEquals(30f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
@@ -1040,7 +939,6 @@ public class FlexUtilTest extends ExtendedITextTest {
                 UnitValue.createPointValue(75f)
         );
 
-        List<FlexItemCalculationInfo> flexItemCalculationInfos = new ArrayList<>();
         Div div = new Div().setWidth(300).setHeight(100);
 
         // We use Courier as a monotype font to ensure that min width calculated by iText
@@ -1052,6 +950,10 @@ public class FlexUtilTest extends ExtendedITextTest {
                 new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
         documentRenderer.setProperty(Property.FONT_PROVIDER, provider);
 
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
+
         for (int i = 0; i < flexBasisValues.size(); i++) {
             Div flexItem = new Div().add(new Paragraph(1 == i ? "2222222222222222222222222" : Integer.toString(i)));
             if (1 == i) {
@@ -1060,27 +962,15 @@ public class FlexUtilTest extends ExtendedITextTest {
                         .setMinWidth(150f);
             }
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
-                    .setParent(documentRenderer);
-            div.add(flexItem);
-            flexItemCalculationInfos.add(new FlexItemCalculationInfo(flexItemRenderer,
-                    flexBasisValues.get(i),
-                    1,
-                    1,
-                    bBox.getWidth()));
-        }
-
-        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
-        div.setNextRenderer(flexContainerRenderer);
-
-        // before checks
-        for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
-            Assert.assertNull(info.mainSize);
-            Assert.assertNull(info.crossSize);
+                    .setParent(flexContainerRenderer);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+            flexContainerRenderer.addChild(flexItemRenderer);
         }
 
         List<List<FlexItemInfo>> rectangleTable =
-                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer(),
-                        flexItemCalculationInfos);
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
 
         Assert.assertEquals(56.25f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
         Assert.assertEquals(150f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
@@ -1096,7 +986,6 @@ public class FlexUtilTest extends ExtendedITextTest {
                 UnitValue.createPointValue(187.5f)
         );
 
-        List<FlexItemCalculationInfo> flexItemCalculationInfos = new ArrayList<>();
         Div div = new Div().setWidth(300).setHeight(100);
 
         // We use Courier as a monotype font to ensure that min width calculated by iText
@@ -1108,6 +997,10 @@ public class FlexUtilTest extends ExtendedITextTest {
                 new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
         documentRenderer.setProperty(Property.FONT_PROVIDER, provider);
 
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
+
         for (int i = 0; i < flexBasisValues.size(); i++) {
             Div flexItem = new Div().add(new Paragraph(1 == i ? "2222222222222222222222222" : Integer.toString(i)));
             if (1 == i) {
@@ -1116,27 +1009,15 @@ public class FlexUtilTest extends ExtendedITextTest {
                         .setMinWidth(150f);
             }
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
-                    .setParent(documentRenderer);
-            div.add(flexItem);
-            flexItemCalculationInfos.add(new FlexItemCalculationInfo(flexItemRenderer,
-                    flexBasisValues.get(i),
-                    1,
-                    1,
-                    bBox.getWidth()));
-        }
-
-        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
-        div.setNextRenderer(flexContainerRenderer);
-
-        // before checks
-        for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
-            Assert.assertNull(info.mainSize);
-            Assert.assertNull(info.crossSize);
+                    .setParent(flexContainerRenderer);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+            flexContainerRenderer.addChild(flexItemRenderer);
         }
 
         List<List<FlexItemInfo>> rectangleTable =
-                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer(),
-                        flexItemCalculationInfos);
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
 
         Assert.assertEquals(56.25f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
         Assert.assertEquals(150f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
@@ -1181,12 +1062,14 @@ public class FlexUtilTest extends ExtendedITextTest {
                 UnitValue.createPointValue(100f)
         );
 
-        List<FlexItemCalculationInfo> flexItemCalculationInfos = new ArrayList<>();
         Div div = new Div().setWidth(400).setHeight(100);
         div.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
 
         DocumentRenderer documentRenderer = new DocumentRenderer(
                 new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
+
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        div.setNextRenderer(flexContainerRenderer);
 
         for (int i = 0; i < flexBasisValues.size(); i++) {
             Div flexItem = new Div();
@@ -1195,26 +1078,15 @@ public class FlexUtilTest extends ExtendedITextTest {
             }
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
                     .setParent(documentRenderer);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
             div.add(flexItem);
-            flexItemCalculationInfos.add(new FlexItemCalculationInfo(flexItemRenderer,
-                    flexBasisValues.get(i),
-                    1,
-                    1,
-                    bBox.getWidth()));
-        }
-
-        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
-        div.setNextRenderer(flexContainerRenderer);
-
-        // before checks
-        for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
-            Assert.assertNull(info.mainSize);
-            Assert.assertNull(info.crossSize);
+            flexContainerRenderer.addChild(flexItemRenderer);
         }
 
         List<List<FlexItemInfo>> rectangleTable =
-                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer(),
-                        flexItemCalculationInfos);
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
 
         Assert.assertEquals(2, rectangleTable.get(0).size());
         Assert.assertEquals(1, rectangleTable.get(1).size());
@@ -2076,36 +1948,32 @@ public class FlexUtilTest extends ExtendedITextTest {
         Rectangle bBox = new Rectangle(PageSize.A4);
         bBox.applyMargins(36f, 36f, 36f, 36f, false);
 
-        List<FlexItemCalculationInfo> flexItemCalculationInfos = new ArrayList<>();
         Div div = new Div();
         div.addStyle(containerStyle);
 
         DocumentRenderer documentRenderer = new DocumentRenderer(
                 new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
 
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
+
         for (int i = 0; i < flexBasisValues.size(); i++) {
             Div flexItem = new Div().add(new Paragraph("x"));
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
-                    .setParent(documentRenderer);
+                    .setParent(flexContainerRenderer);
+
+            UnitValue flexBasis = null == flexBasisValues.get(i) ? UnitValue
+                    .createPointValue(flexItemRenderer.getMinMaxWidth().getMinWidth()) : flexBasisValues.get(i);
+
+            flexItemRenderer.setProperty(Property.FLEX_GROW, flexGrowValues.get(i));
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, flexShrinkValues.get(i));
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasis);
+
             div.add(flexItem);
-            flexItemCalculationInfos.add(new FlexItemCalculationInfo(flexItemRenderer,
-                    null == flexBasisValues.get(i) ? UnitValue
-                            .createPointValue(flexItemRenderer.getMinMaxWidth().getMinWidth()) : flexBasisValues.get(i),
-                    flexGrowValues.get(i),
-                    flexShrinkValues.get(i),
-                    bBox.getWidth()));
+            flexContainerRenderer.addChild(flexItemRenderer);
         }
 
-        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
-        div.setNextRenderer(flexContainerRenderer);
-
-        // before checks
-        for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
-            Assert.assertNull(info.mainSize);
-            Assert.assertNull(info.crossSize);
-        }
-
-        return FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer(),
-                flexItemCalculationInfos);
+        return FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
     }
 }

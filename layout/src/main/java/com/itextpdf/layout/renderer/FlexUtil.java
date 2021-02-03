@@ -58,7 +58,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 final class FlexUtil {
+
     private static final float EPSILON = 0.00001f;
+
+    private static final Float FLEX_GROW_INITIAL_VALUE = 0F;
+
+    private static final Float FLEX_SHRINK_INITIAL_VALUE = 1F;
 
     private FlexUtil() {
         // Do nothing
@@ -73,11 +78,12 @@ final class FlexUtil {
      *
      * @param flexContainerBBox        bounding box in which flex container should be rendered
      * @param flexContainerRenderer    flex container's renderer
-     * @param flexItemCalculationInfos list of flex item descriptions
      * @return list of lines
      */
     public static List<List<FlexItemInfo>> calculateChildrenRectangles(Rectangle flexContainerBBox,
-            FlexContainerRenderer flexContainerRenderer, List<FlexItemCalculationInfo> flexItemCalculationInfos) {
+            FlexContainerRenderer flexContainerRenderer) {
+        final List<FlexItemCalculationInfo> flexItemCalculationInfos = createFlexItemCalculationInfos(
+                flexContainerRenderer, flexContainerBBox);
         Rectangle layoutBox = flexContainerBBox.clone();
         flexContainerRenderer.applyMarginsBordersPaddings(layoutBox, false);
 
@@ -503,6 +509,38 @@ final class FlexUtil {
         return Math.abs(value) < EPSILON;
     }
 
+    private static List<FlexItemCalculationInfo> createFlexItemCalculationInfos(
+            FlexContainerRenderer flexContainerRenderer, Rectangle flexContainerBBox) {
+        final List<IRenderer> childRenderers = flexContainerRenderer.getChildRenderers();
+        final List<FlexItemCalculationInfo> flexItems = new ArrayList<>();
+        for (final IRenderer renderer : childRenderers) {
+            if (renderer instanceof AbstractRenderer) {
+                Float flexGrow = renderer.<Float>getProperty(Property.FLEX_GROW);
+                if (flexGrow == null) {
+                    flexGrow = FLEX_GROW_INITIAL_VALUE;
+                }
+                Float flexShrink = renderer.<Float>getProperty(Property.FLEX_SHRINK);
+                if (flexShrink == null) {
+                    flexShrink = FLEX_SHRINK_INITIAL_VALUE;
+                }
+
+                UnitValue flexBasis = renderer.<UnitValue>getProperty(Property.FLEX_BASIS);
+                if (flexBasis == null) {
+                    // TODO DEVSIX-5091 improve determining of the flex base size when flex-basis: content
+                    flexBasis = UnitValue.createPointValue(
+                            ((AbstractRenderer) renderer).getMinMaxWidth().getMaxWidth());
+                }
+
+                final FlexItemCalculationInfo flexItemInfo = new FlexItemCalculationInfo(
+                        (AbstractRenderer) renderer, flexBasis, (float) flexGrow, (float) flexShrink,
+                        flexContainerBBox.getWidth());
+
+                flexItems.add(flexItemInfo);
+            }
+        }
+        return flexItems;
+    }
+
     static class FlexItemCalculationInfo {
         AbstractRenderer renderer;
         UnitValue flexBasis;
@@ -524,8 +562,8 @@ final class FlexUtil {
         float hypotheticalMainSize;
         float hypotheticalCrossSize;
 
-        public FlexItemCalculationInfo(AbstractRenderer renderer, UnitValue flexBasis, float flexGrow, float flexShrink,
-                float areaWidth) {
+        public FlexItemCalculationInfo(AbstractRenderer renderer, UnitValue flexBasis,
+                float flexGrow, float flexShrink, float areaWidth) {
             this.renderer = renderer;
             if (null == flexBasis) {
                 throw new IllegalArgumentException(LayoutExceptionMessageConstant.FLEX_BASIS_CANNOT_BE_NULL);

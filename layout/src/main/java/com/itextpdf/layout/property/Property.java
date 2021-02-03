@@ -54,6 +54,7 @@ public final class Property {
 
     public static final int ACTION = 1;
     public static final int ALIGN_CONTENT = 130;
+    public static final int ALIGN_ITEMS = 134;
     public static final int ALIGN_SELF = 129;
     public static final int APPEARANCE_STREAM_LAYOUT = 82;
     public static final int AREA_BREAK_TYPE = 2;
@@ -135,6 +136,7 @@ public final class Property {
     public static final int IGNORE_FOOTER = 96;
     public static final int IGNORE_HEADER = 97;
     public static final int ITALIC_SIMULATION = 31;
+    public static final int JUSTIFY_CONTENT = 135;
     public static final int KEEP_TOGETHER = 32;
     public static final int KEEP_WITH_NEXT = 81;
     public static final int LEADING = 33;
