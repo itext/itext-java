@@ -176,7 +176,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         normalizeGlyphSpaceUnitsTo1000Units(fontBBoxRect);
         normalizeGlyphSpaceUnitsTo1000Units(widthsArray);
 
-        int firstChar = initializeShortTag(fontDictionary);
+        int firstChar = initializeUsedGlyphs(fontDictionary);
         fontMatrix = fontMatrixArray;
         initializeFontBBox(fontBBoxRect);
         initializeTypoAscenderDescender(fontBBoxRect);
@@ -413,7 +413,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         double[] widths = new double[lastChar - firstChar + 1];
         for (int k = firstChar; k <= lastChar; ++k) {
             int i = k - firstChar;
-            if (shortTag[k] == 0) {
+            if (usedGlyphs[k] == 0) {
                 widths[i] = 0;
             } else {
                 int uni = getFontEncoding().getUnicode(k);
@@ -562,12 +562,12 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         return widths;
     }
 
-    private int initializeShortTag(PdfDictionary fontDictionary) {
+    private int initializeUsedGlyphs(PdfDictionary fontDictionary) {
         int firstChar = normalizeFirstLastChar(fontDictionary.getAsNumber(PdfName.FirstChar), 0);
         int lastChar = normalizeFirstLastChar(fontDictionary.getAsNumber(PdfName.LastChar),
                 PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE);
         for (int i = firstChar; i <= lastChar; i++) {
-            shortTag[i] = 1;
+            usedGlyphs[i] = 1;
         }
         return firstChar;
     }

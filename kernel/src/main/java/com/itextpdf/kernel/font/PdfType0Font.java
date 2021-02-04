@@ -104,8 +104,7 @@ public class PdfType0Font extends PdfFont {
 
     protected boolean vertical;
     protected CMapEncoding cmapEncoding;
-    //longTag is actually ordered set of usedGlyphs, shall be renamed in 7.2
-    protected Set<Integer> longTag;
+    protected Set<Integer> usedGlyphs;
     protected int cidFontType;
     protected char[] specificUnicodeDifferences;
 
@@ -123,7 +122,7 @@ public class PdfType0Font extends PdfFont {
         this.embedded = true;
         vertical = cmap.endsWith("V");
         cmapEncoding = new CMapEncoding(cmap);
-        longTag = new TreeSet<>();
+        usedGlyphs = new TreeSet<>();
         cidFontType = CID_FONT_TYPE_2;
         if (ttf.isFontSpecific()) {
             specificUnicodeDifferences = new char[256];
@@ -151,7 +150,7 @@ public class PdfType0Font extends PdfFont {
         vertical = cmap.endsWith("V");
         String uniMap = getCompatibleUniMap(fontProgram.getRegistry());
         cmapEncoding = new CMapEncoding(cmap, uniMap);
-        longTag = new TreeSet<>();
+        usedGlyphs = new TreeSet<>();
         cidFontType = CID_FONT_TYPE_0;
     }
 
@@ -213,7 +212,7 @@ public class PdfType0Font extends PdfFont {
         } else {
             LoggerFactory.getLogger(getClass()).error(LogMessageConstant.FAILED_TO_DETERMINE_CID_FONT_SUBTYPE);
         }
-        longTag = new TreeSet<>();
+        usedGlyphs = new TreeSet<>();
         subset = false;
     }
 
@@ -319,7 +318,7 @@ public class PdfType0Font extends PdfFont {
             byte[] bytes = new byte[totalByteCount];
             int offset = 0;
             for (int i = glyphLine.start; i < glyphLine.end; i++) {
-                longTag.add(glyphLine.get(i).getCode());
+                usedGlyphs.add(glyphLine.get(i).getCode());
                 offset = cmapEncoding.fillCmapBytes(glyphLine.get(i).getCode(), bytes, offset);
             }
             return bytes;
@@ -330,7 +329,7 @@ public class PdfType0Font extends PdfFont {
 
     @Override
     public byte[] convertToBytes(Glyph glyph) {
-        longTag.add(glyph.getCode());
+        usedGlyphs.add(glyph.getCode());
         return cmapEncoding.getCmapBytes(glyph.getCode());
     }
 
@@ -673,25 +672,9 @@ public class PdfType0Font extends PdfFont {
         return getCidFont(fontDescriptor, fontName, ttf != null && !ttf.isCff());
     }
 
-    /**
-     * The method will update set of used glyphs with range used in subset or with all glyphs if there is no subset.
-     * This set of used glyphs is required for building width array and ToUnicode CMAP.
-     *
-     * @param ttf a font program of this font instance.
-     * @param longTag a set of integers, which are glyph ids that denote used glyphs.
-     *                This set is updated inside of the method if needed.
-     * @param includeMetrics used to define whether longTag map is populated with glyph metrics.
-     *                       Deprecated and is not used right now.
-     * @deprecated will be removed in 7.2
-     */
-    @Deprecated
-    protected void addRangeUni(TrueTypeFont ttf, Map<Integer, int[]> longTag, boolean includeMetrics) {
-        addRangeUni(ttf, longTag.keySet());
-    }
-
     private void convertToBytes(Glyph glyph, ByteBuffer result) {
         int code = glyph.getCode();
-        longTag.add(code);
+        usedGlyphs.add(code);
         cmapEncoding.fillCmapBytes(code, result);
     }
 
@@ -725,11 +708,11 @@ public class PdfType0Font extends PdfFont {
             PdfDictionary fontDescriptor = getFontDescriptor(fontName);
 
             PdfStream fontStream;
-            ttf.updateUsedGlyphs((SortedSet<Integer>) longTag, subset, subsetRanges);
+            ttf.updateUsedGlyphs((SortedSet<Integer>) usedGlyphs, subset, subsetRanges);
             if (ttf.isCff()) {
                 byte[] cffBytes;
                 if (subset) {
-                    cffBytes = new CFFFontSubset(ttf.getFontStreamBytes(), longTag).Process();
+                    cffBytes = new CFFFontSubset(ttf.getFontStreamBytes(), usedGlyphs).Process();
                 } else {
                     cffBytes = ttf.getFontStreamBytes();
                 }
@@ -744,7 +727,7 @@ public class PdfType0Font extends PdfFont {
                 //getDirectoryOffset() > 0 means ttc, which shall be subsetted anyway.
                 if (subset || ttf.getDirectoryOffset() > 0) {
                     try {
-                        ttfBytes = ttf.getSubset(longTag, subset);
+                        ttfBytes = ttf.getSubset(usedGlyphs, subset);
                     } catch (com.itextpdf.io.IOException e) {
                         Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
                         logger.warn(LogMessageConstant.FONT_SUBSET_ISSUE);
@@ -862,7 +845,7 @@ public class PdfType0Font extends PdfFont {
         stream.writeByte('[');
         int lastNumber = -10;
         boolean firstTime = true;
-        for (int code : longTag) {
+        for (int code : usedGlyphs) {
             Glyph glyph = fontProgram.getGlyphByCode(code);
             if (glyph.getWidth() == FontProgram.DEFAULT_WIDTH) {
                 continue;
@@ -912,7 +895,7 @@ public class PdfType0Font extends PdfFont {
         ArrayList<Glyph> glyphGroup = new ArrayList<>(100);
 
         int bfranges = 0;
-        for (Integer glyphId : longTag) {
+        for (Integer glyphId : usedGlyphs) {
             Glyph glyph = fontProgram.getGlyphByCode((int) glyphId);
             if (glyph.getChars() != null) {
                 glyphGroup.add(glyph);
@@ -956,20 +939,6 @@ public class PdfType0Font extends PdfFont {
     private static String toHex4(char ch) {
         String s = "0000" + Integer.toHexString(ch);
         return s.substring(s.length() - 4);
-    }
-
-    /**
-     * The method will update set of used glyphs with range used in subset or with all glyphs if there is no subset.
-     * This set of used glyphs is required for building width array and ToUnicode CMAP.
-     *
-     * @param ttf a font program of this font instance.
-     * @param longTag a set of integers, which are glyph ids that denote used glyphs.
-     *                This set is updated inside of the method if needed.
-     * @deprecated use {@link TrueTypeFont#updateUsedGlyphs(SortedSet, boolean, List)} instead.
-     */
-    @Deprecated
-    protected void addRangeUni(TrueTypeFont ttf, Set<Integer> longTag) {
-        ttf.updateUsedGlyphs((SortedSet<Integer>) longTag, subset, subsetRanges);
     }
 
     private String getCompatibleUniMap(String registry) {

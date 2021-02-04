@@ -57,8 +57,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.slf4j.Logger;
@@ -163,19 +161,6 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         super.flush();
     }
 
-    /**
-     * The method will update set of used glyphs with range used in subset or with all glyphs if there is no subset.
-     * This set of used glyphs is required for building width array and ToUnicode CMAP.
-     *
-     * @param longTag a set of integers, which are glyph ids that denote used glyphs.
-     *                This set is updated inside of the method if needed.
-     * @deprecated use {@link TrueTypeFont#updateUsedGlyphs(SortedSet, boolean, List)}
-     */
-    @Deprecated
-    protected void addRangeUni(Set<Integer> longTag) {
-        ((TrueTypeFont) getFontProgram()).updateUsedGlyphs((SortedSet<Integer>)longTag, subset, subsetRanges);
-    }
-
     @Override
     protected void addFontStream(PdfDictionary fontDescriptor) {
         if (embedded) {
@@ -198,8 +183,8 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
             } else {
                 fontFileName = PdfName.FontFile2;
                 SortedSet<Integer> glyphs = new TreeSet<>();
-                for (int k = 0; k < shortTag.length; k++) {
-                    if (shortTag[k] != 0) {
+                for (int k = 0; k < usedGlyphs.length; k++) {
+                    if (usedGlyphs[k] != 0) {
                         int uni = fontEncoding.getUnicode(k);
                         Glyph glyph = uni > -1 ? fontProgram.getGlyph(uni) : fontProgram.getGlyphByCode(k);
                         if (glyph != null) {

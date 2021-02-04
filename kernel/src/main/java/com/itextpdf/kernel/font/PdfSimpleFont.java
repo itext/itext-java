@@ -82,7 +82,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     /**
      * The array used with single byte encodings.
      */
-    protected byte[] shortTag = new byte[PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE + 1];
+    protected byte[] usedGlyphs = new byte[PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE + 1];
 
     /**
      * Currently only exists for the fonts that are parsed from the document.
@@ -205,7 +205,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     public byte[] convertToBytes(String text) {
         byte[] bytes = fontEncoding.convertToBytes(text);
         for (byte b : bytes) {
-            shortTag[b & 0xff] = 1;
+            usedGlyphs[b & 0xff] = 1;
         }
         return bytes;
     }
@@ -228,7 +228,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             }
             bytes = ArrayUtil.shortenArray(bytes, ptr);
             for (byte b : bytes) {
-                shortTag[b & 0xff] = 1;
+                usedGlyphs[b & 0xff] = 1;
             }
             return bytes;
         } else {
@@ -248,7 +248,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 return EMPTY_BYTES;
             }
         }
-        shortTag[bytes[0] & 0xff] = 1;
+        usedGlyphs[bytes[0] & 0xff] = 1;
         return bytes;
     }
 
@@ -271,7 +271,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         }
         bytes = ArrayUtil.shortenArray(bytes, ptr);
         for (byte b : bytes) {
-            shortTag[b & 0xff] = 1;
+            usedGlyphs[b & 0xff] = 1;
         }
         StreamUtil.writeEscapedString(stream, bytes);
     }
@@ -374,10 +374,10 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         int firstChar;
         int lastChar;
         for (firstChar = 0; firstChar <= PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE; ++firstChar) {
-            if (shortTag[firstChar] != 0) break;
+            if (usedGlyphs[firstChar] != 0) break;
         }
         for (lastChar = PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE; lastChar >= firstChar; --lastChar) {
-            if (shortTag[lastChar] != 0) break;
+            if (usedGlyphs[lastChar] != 0) break;
         }
         if (firstChar > PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE) {
             firstChar = PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE;
@@ -385,16 +385,16 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         }
         if (!isSubset() || !isEmbedded()) {
             firstChar = 0;
-            lastChar = shortTag.length - 1;
-            for (int k = 0; k < shortTag.length; ++k) {
+            lastChar = usedGlyphs.length - 1;
+            for (int k = 0; k < usedGlyphs.length; ++k) {
                 // remove unsupported by encoding values in case custom encoding.
                 // save widths information in case standard pdf encodings (winansi or macroman)
                 if (fontEncoding.canDecode(k)) {
-                    shortTag[k] = 1;
+                    usedGlyphs[k] = 1;
                 } else if (!fontEncoding.hasDifferences() && fontProgram.getGlyphByCode(k) != null) {
-                    shortTag[k] = 1;
+                    usedGlyphs[k] = 1;
                 } else {
-                    shortTag[k] = 0;
+                    usedGlyphs[k] = 0;
                 }
             }
         }
@@ -417,7 +417,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             PdfArray diff = new PdfArray();
             boolean gap = true;
             for (int k = firstChar; k <= lastChar; ++k) {
-                if (shortTag[k] != 0) {
+                if (usedGlyphs[k] != 0) {
                     if (gap) {
                         diff.add(new PdfNumber(k));
                         gap = false;
@@ -506,7 +506,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     protected PdfArray buildWidthsArray(int firstChar, int lastChar) {
         PdfArray wd = new PdfArray();
         for (int k = firstChar; k <= lastChar; ++k) {
-            if (shortTag[k] == 0) {
+            if (usedGlyphs[k] == 0) {
                 wd.add(new PdfNumber(0));
             } else {
                 int uni = fontEncoding.getUnicode(k);
