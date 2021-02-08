@@ -2186,7 +2186,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             producer = versionInfo.getVersion();
         } else {
             if (info.getPdfObject().containsKey(PdfName.Producer)) {
-                producer = info.getPdfObject().getAsString(PdfName.Producer).toUnicodeString();
+            	PdfString producerPdfStr = info.getPdfObject().getAsString(PdfName.Producer);
+            	producer = producerPdfStr != null ? producerPdfStr.toUnicodeString() : null;
             }
             producer = addModifiedPostfix(producer);
         }
