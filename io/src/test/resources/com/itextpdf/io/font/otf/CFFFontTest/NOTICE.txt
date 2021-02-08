@@ -1,0 +1,5 @@
+Please notice that the following fonts (including their different versions) are published under the following licenses:
+
+* NotoSansCJKjp-Bold - SIL Open Font License v1.1
+
+Please follow the link http://scripts.sil.org/OFL for more information. You can also observe the text of the license within current repository.
