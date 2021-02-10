@@ -89,11 +89,12 @@ public class OCSPVerifier extends RootStoreVerifier {
     }
 
     /**
-     * Verifies if a a valid OCSP response is found for the certificate.
+     * Verifies if a valid OCSP response is found for the certificate.
      * If this method returns false, it doesn't mean the certificate isn't valid.
      * It means we couldn't verify it against any OCSP response that was available.
-     * @param signCert	the certificate that needs to be checked
+     * @param signCert	    the certificate that needs to be checked
      * @param issuerCert	its issuer
+     *
      * @return a list of <code>VerificationOK</code> objects.
      * The list will be empty if the certificate couldn't be verified.
      * @see com.itextpdf.signatures.RootStoreVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate, java.util.Date)
@@ -131,13 +132,14 @@ public class OCSPVerifier extends RootStoreVerifier {
 
     /**
      * Verifies a certificate against a single OCSP response
-     * @param ocspResp the OCSP response
-     * @param signCert the certificate that needs to be checked
+     * @param ocspResp   the OCSP response
+     * @param signCert   the certificate that needs to be checked
      * @param issuerCert the certificate of CA (certificate that issued signCert). This certificate is considered trusted and valid by this method.
-     * @param signDate sign date
+     * @param signDate   sign date
+     *
      * @return {@code true}, in case successful check, otherwise false.
-     * @throws GeneralSecurityException
-     * @throws IOException
+     * @throws GeneralSecurityException if OCSP response verification cannot be done or failed
+     * @throws IOException if issuer certificate is corrupted or has an incorrect structure
      */
     public boolean verify(BasicOCSPResp ocspResp, X509Certificate signCert, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException, IOException {
         if (ocspResp == null)
@@ -190,8 +192,8 @@ public class OCSPVerifier extends RootStoreVerifier {
      * using a trusted anchor or cert.
      * @param ocspResp the OCSP response
      * @param issuerCert the issuer certificate. This certificate is considered trusted and valid by this method.
-     * @throws GeneralSecurityException
-     * @throws IOException
+     * @throws GeneralSecurityException if OCSP response verification cannot be done or failed
+     * @throws IOException is not expected here. Will be removed in further releases
      * @deprecated Will be removed in iText 7.2. Use {@link #isValidResponse(BasicOCSPResp, X509Certificate, Date)} instead
      */
     @Deprecated
@@ -206,7 +208,8 @@ public class OCSPVerifier extends RootStoreVerifier {
      * @param ocspResp the OCSP response
      * @param issuerCert the issuer certificate. This certificate is considered trusted and valid by this method.
      * @param signDate sign date
-     * @throws GeneralSecurityException
+     *
+     * @throws GeneralSecurityException if OCSP response verification cannot be done or failed
      */
     public void isValidResponse(BasicOCSPResp ocspResp, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException {
         // OCSP response might be signed by the issuer certificate or

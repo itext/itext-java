@@ -50,6 +50,8 @@ package com.itextpdf.test;
 public interface Executor {
     /**
      * Executes some code.
+     *
+     * @throws Exception if any issue occurs
      */
     void execute() throws Exception;
 }

@@ -141,10 +141,11 @@ public class TSAClientBouncyCastle implements ITSAClient {
      * size is not likely to change (as long as we call the same TSA using
      * the same imprint length).
      *
-     * @param url           String - Time Stamp Authority URL (i.e. "http://tsatest1.digistamp.com/TSA")
-     * @param username      String - user(account) name
-     * @param password      String - password
-     * @param tokSzEstimate int - estimated size of received time stamp token (DER encoded)
+     * @param url             Time Stamp Authority URL (i.e. "http://tsatest1.digistamp.com/TSA")
+     * @param username        user(account) name
+     * @param password        password
+     * @param tokSzEstimate   estimated size of received time stamp token (DER encoded)
+     * @param digestAlgorithm is a hash algorithm
      */
     public TSAClientBouncyCastle(String url, String username, String password, int tokSzEstimate, String digestAlgorithm) {
         this.tsaURL = url;
@@ -194,6 +195,8 @@ public class TSAClientBouncyCastle implements ITSAClient {
      * Gets the MessageDigest to digest the data imprint
      *
      * @return the digest algorithm name
+     *
+     * @throws GeneralSecurityException if digestAlgorithm doesn't match any known hash algorithm
      */
     @Override
     public MessageDigest getMessageDigest() throws GeneralSecurityException {
@@ -205,9 +208,10 @@ public class TSAClientBouncyCastle implements ITSAClient {
      * Method may return null indicating that timestamp should be skipped.
      *
      * @param imprint data imprint to be time-stamped
+     *
      * @return encoded, TSA signed data of the timeStampToken
-     * @throws IOException
-     * @throws TSPException
+     * @throws IOException if I/O error occurs
+     * @throws TSPException if the TSA response is malformed
      */
     @Override
     public byte[] getTimeStampToken(byte[] imprint) throws IOException, TSPException {
@@ -260,8 +264,10 @@ public class TSAClientBouncyCastle implements ITSAClient {
     /**
      * Get timestamp token - communications layer
      *
+     * @param requestBytes is a byte representation of TSA request
+     *
      * @return - byte[] - TSA response, raw bytes (RFC 3161 encoded)
-     * @throws IOException
+     * @throws IOException if I/O issue occurs
      */
     protected byte[] getTSAResponse(byte[] requestBytes) throws IOException {
         // Setup the TSA connection

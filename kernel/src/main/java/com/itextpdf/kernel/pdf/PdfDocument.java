@@ -341,6 +341,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      *
      * @param xmpMeta the xmpMetadata to set
      * @param serializeOptions serialization options
+     *
+     * @throws XMPException on serialization errors
      */
     public void setXmpMetadata(XMPMeta xmpMeta, SerializeOptions serializeOptions) throws XMPException {
         setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
@@ -350,6 +352,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Sets the XMP Metadata.
      *
      * @param xmpMeta the xmpMetadata to set
+     *
+     * @throws XMPException on serialization errors
      */
     public void setXmpMetadata(XMPMeta xmpMeta) throws XMPException {
         SerializeOptions serializeOptions = new SerializeOptions();
