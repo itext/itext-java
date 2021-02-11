@@ -254,6 +254,11 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         layers.add(layer);
     }
 
+    /**
+     * Gets the {@link PdfDocument} that owns that OCProperties.
+     *
+     * @return the {@link PdfDocument} that owns that OCProperties
+     */
     protected PdfDocument getDocument() {
         return getPdfObject().getIndirectReference().getDocument();
     }

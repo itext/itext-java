@@ -190,6 +190,11 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
         return true;
     }
 
+    /**
+     * Gets the {@link PdfDocument} that owns that layer membership.
+     *
+     * @return the {@link PdfDocument} that owns that layer membership
+     */
     protected PdfDocument getDocument() {
         return getPdfObject().getIndirectReference().getDocument();
     }

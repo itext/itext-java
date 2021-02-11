@@ -446,6 +446,11 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
         return true;
     }
 
+    /**
+     * Gets the {@link PdfDocument} that owns that layer.
+     *
+     * @return the {@link PdfDocument} that owns that layer
+     */
     protected PdfDocument getDocument() {
         return getPdfObject().getIndirectReference().getDocument();
     }
