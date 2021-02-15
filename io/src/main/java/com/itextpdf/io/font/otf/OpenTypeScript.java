@@ -48,7 +48,7 @@ import java.util.List;
 
 public class OpenTypeScript {
 
-    public final String DEFAULT_SCRIPT = "DFLT";
+    public static final String DEFAULT_SCRIPT = "DFLT";
     
     private OpenTypeFontTableReader openTypeReader;
     private List<ScriptRecord> records;

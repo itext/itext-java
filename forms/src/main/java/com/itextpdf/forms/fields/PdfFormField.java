@@ -2708,7 +2708,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
         PdfFormXObject xObjectOn = new PdfFormXObject(rect);
         drawBorder(canvasOn, xObjectOn, width, height);
-        drawCheckBox(canvasOn, width, height, fontSize, true);
+        drawCheckBox(canvasOn, width, height, fontSize);
         xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
         xObjectOn.getResources().addFont(getDocument(), getFont());
 
@@ -2717,7 +2717,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
         PdfFormXObject xObjectOff = new PdfFormXObject(rect);
         drawBorder(canvasOff, xObjectOff, width, height);
-        drawCheckBox(canvasOff, width, height, fontSize, false);
+        drawCheckBox(canvasOff, width, height, fontSize);
         xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
         xObjectOff.getResources().addFont(getDocument(), getFont());
 
@@ -2845,13 +2845,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param width    the width of the button
      * @param height   the width of the button
      * @param fontSize the size of the font
-     * @param on       the boolean value of the checkbox
      */
-    protected void drawCheckBox(PdfCanvas canvas, float width, float height, float fontSize, boolean on) {
-        if (!on) {
-            return;
-        }
-
+    protected void drawCheckBox(PdfCanvas canvas, float width, float height, float fontSize) {
         if (checkType == TYPE_CROSS) {
             DrawingUtil.drawCross(canvas, width, height, borderWidth);
             return;
