@@ -529,7 +529,6 @@ public abstract class AbstractRenderer implements IRenderer {
         final Background background = this.<Background>getProperty(Property.BACKGROUND);
         final Object uncastedBackgroundImage = this.<Object>getProperty(Property.BACKGROUND_IMAGE);
         final List<BackgroundImage> backgroundImagesList;
-        // TODO DEVSIX-3814 support only List<BackgroundImage>.
         if (uncastedBackgroundImage instanceof BackgroundImage) {
             backgroundImagesList = Collections.singletonList((BackgroundImage) uncastedBackgroundImage);
         } else {
@@ -2361,7 +2360,6 @@ public abstract class AbstractRenderer implements IRenderer {
             return (PdfFont) font;
         } else if (font instanceof String || font instanceof String[]) {
             if (font instanceof String) {
-                // TODO DEVSIX-3814 remove this if-clause before 7.2
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                 logger.warn(LogMessageConstant.FONT_PROPERTY_OF_STRING_TYPE_IS_DEPRECATED_USE_STRINGS_ARRAY_INSTEAD);
                 List<String> splitFontFamily = FontFamilySplitter.splitFontFamily((String) font);

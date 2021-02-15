@@ -1529,7 +1529,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             return false;
         } else if (font instanceof String || font instanceof String[]) {
             if (font instanceof String) {
-                // TODO remove this if-clause before 7.2
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                 logger.warn(LogMessageConstant.FONT_PROPERTY_OF_STRING_TYPE_IS_DEPRECATED_USE_STRINGS_ARRAY_INSTEAD);
                 List<String> splitFontFamily = FontFamilySplitter.splitFontFamily((String) font);
