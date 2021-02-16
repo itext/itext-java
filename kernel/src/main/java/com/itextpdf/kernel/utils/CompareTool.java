@@ -140,11 +140,11 @@ public class CompareTool {
 
     private static final String NEW_LINES = "\\r|\\n";
 
-    private String cmpPdf;
     private String cmpPdfName;
+    private String outPdfName;
+    private String cmpPdf;
     private String cmpImage;
     private String outPdf;
-    private String outPdfName;
     private String outImage;
 
     private ReaderProperties outProps;
@@ -1009,8 +1009,8 @@ public class CompareTool {
     }
 
     private String compareImagesOfPdfs(String outPath, String differenceImagePrefix, List<Integer> equalPages) throws IOException, InterruptedException {
-        File[] imageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new PngFileFilter());
-        File[] cmpImageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new CmpPngFileFilter());
+        File[] imageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new PngFileFilter(outPdfName));
+        File[] cmpImageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new CmpPngFileFilter(cmpPdfName));
         boolean bUnexpectedNumberOfPages = false;
         if (imageFiles.length != cmpImageFiles.length) {
             bUnexpectedNumberOfPages = true;
@@ -1131,11 +1131,11 @@ public class CompareTool {
         if (!FileUtil.directoryExists(outPath)) {
             FileUtil.createDirectories(outPath);
         } else {
-            imageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new PngFileFilter());
+            imageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new PngFileFilter(cmpPdfName));
             for (File file : imageFiles) {
                 file.delete();
             }
-            cmpImageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new CmpPngFileFilter());
+            cmpImageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new CmpPngFileFilter(cmpPdfName));
             for (File file : cmpImageFiles) {
                 file.delete();
             }
@@ -1806,26 +1806,37 @@ public class CompareTool {
         throw new IllegalArgumentException("PdfLinkAnnotation comparison: Page not found.");
     }
 
-    private class PngFileFilter implements FileFilter {
+    private static class PngFileFilter implements FileFilter {
+        private String currentOutPdfName;
+
+        public PngFileFilter (String currentOutPdfName) {
+        this.currentOutPdfName = currentOutPdfName;
+        }
 
         public boolean accept(File pathname) {
             String ap = pathname.getName();
             boolean b1 = ap.endsWith(".png");
             boolean b2 = ap.contains("cmp_");
-            return b1 && !b2 && ap.contains(outPdfName);
+            return b1 && !b2 && ap.contains(currentOutPdfName);
         }
     }
 
-    private class CmpPngFileFilter implements FileFilter {
+    private static class CmpPngFileFilter implements FileFilter {
+        private String currentCmpPdfName;
+
+        public CmpPngFileFilter (String currentCmpPdfName) {
+            this.currentCmpPdfName = currentCmpPdfName;
+        }
+
         public boolean accept(File pathname) {
             String ap = pathname.getName();
             boolean b1 = ap.endsWith(".png");
             boolean b2 = ap.contains("cmp_");
-            return b1 && b2 && ap.contains(cmpPdfName);
+            return b1 && b2 && ap.contains(currentCmpPdfName);
         }
     }
 
-    private class DiffPngFileFilter implements FileFilter {
+    private static class DiffPngFileFilter implements FileFilter {
         private String differenceImagePrefix;
 
         public DiffPngFileFilter(String differenceImagePrefix) {
@@ -1840,7 +1851,7 @@ public class CompareTool {
         }
     }
 
-    private class ImageNameComparator implements Comparator<File> {
+    private static class ImageNameComparator implements Comparator<File> {
         public int compare(File f1, File f2) {
             String f1Name = f1.getName();
             String f2Name = f2.getName();
@@ -1851,7 +1862,7 @@ public class CompareTool {
     /**
      * Class containing results of the comparison of two documents.
      */
-    public class CompareResult {
+    public static class CompareResult {
         // LinkedHashMap to retain order. HashMap has different order in Java6/7 and Java8
         protected Map<ObjectPath, String> differences = new LinkedHashMap<>();
         protected int messageLimit = 1;
@@ -1954,7 +1965,7 @@ public class CompareTool {
      * Exceptions thrown when errors occur during generation and comparison of images obtained on the basis of pdf
      * files.
      */
-    public class CompareToolExecutionException extends RuntimeException {
+    public static class CompareToolExecutionException extends RuntimeException {
         /**
          * Creates a new {@link CompareToolExecutionException}.
          *
