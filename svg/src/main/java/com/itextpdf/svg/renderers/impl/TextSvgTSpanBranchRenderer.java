@@ -53,7 +53,6 @@ public class TextSvgTSpanBranchRenderer extends TextSvgBranchRenderer {
 
     @Override
     protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
-        // TODO DEVSIX-3814 change to getParent().getObjectBoundingBox(context) in 7.2 update
         if (getParent() instanceof AbstractSvgNodeRenderer) {
             return ((AbstractSvgNodeRenderer) getParent()).getObjectBoundingBox(context);
         } else {

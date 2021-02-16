@@ -40,6 +40,5 @@ public interface ISvgTextNodeHelper {
      * @param basePoint end point of previous text element
      * @return created instance of {@link TextRectangle}
      */
-    // TODO DEVSIX-3814 This method should be moved to ISvgTextNodeRenderer in 7.2 and this class should be removed
     TextRectangle getTextRectangle(SvgDrawContext context, Point basePoint);
 }

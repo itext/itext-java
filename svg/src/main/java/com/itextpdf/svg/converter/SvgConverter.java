@@ -993,14 +993,11 @@ public final class SvgConverter {
     static ResourceResolver getResourceResolver(ISvgProcessorResult processorResult, ISvgConverterProperties props) {
         ResourceResolver resourceResolver = null;
         if (processorResult instanceof SvgProcessorResult) {
-            //TODO DEVSIX-3814 add assert after 7.2 cause now be have a null pointer on deprecated constructor
             SvgProcessorContext context = ((SvgProcessorResult) processorResult).getContext();
             if (context != null) {
                 resourceResolver = context.getResourceResolver();
             }
         }
-        //TODO DEVSIX-3814 remove the clause when the deprecated  constructor SvgProcessorResult(Map<String, ISvgNodeRenderer>,
-        // ISvgNodeRenderer, FontProvider, FontSet) is removed
         if (resourceResolver == null) {
             resourceResolver = SvgConverter.createResourceResolver(props);
         }
@@ -1021,8 +1018,6 @@ public final class SvgConverter {
         if (props == null) {
             return new ResourceResolver(null);
         }
-        // TODO DEVSIX-3814 change the clause if-else to return new ResourceResolver(props.getBaseUri(),
-        //  props.getResourceRetriever()) when the ISvgConverterProperties#getResourceRetriever() is added
         if (props instanceof SvgConverterProperties) {
             return new ResourceResolver(props.getBaseUri(), ((SvgConverterProperties) props).getResourceRetriever());
         } else {

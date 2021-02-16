@@ -237,7 +237,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      * @return the {@link Rectangle} representing the current object's bounding box
      */
     @Deprecated
-    // TODO DEVSIX-3814 move to ISvgNodeRenderer in 7.2
     protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
         return null;
     }

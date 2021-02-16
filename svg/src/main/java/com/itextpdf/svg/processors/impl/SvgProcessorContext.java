@@ -95,8 +95,6 @@ public class SvgProcessorContext {
         }
 
         IResourceRetriever retriever = null;
-        // TODO DEVSIX-3814 change the clause if block to retriever = new ResourceResolver(props.getBaseUri(),
-        //  converterProperties.getResourceRetriever()) when the ISvgConverterProperties#getResourceRetriever() is added
         if (converterProperties instanceof SvgConverterProperties) {
             retriever = ((SvgConverterProperties) converterProperties).getResourceRetriever();
         }

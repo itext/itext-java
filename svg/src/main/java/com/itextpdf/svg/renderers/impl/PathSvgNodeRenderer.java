@@ -135,7 +135,6 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
             if (lastPoint == null) {
                 lastPoint = item.getEndingPoint();
             }
-            // TODO DEVSIX-3814 - remove this check after moving method getPathShapeRectangle to IPathShape
             if (item instanceof AbstractPathShape) {
                 Rectangle rectangle = ((AbstractPathShape) item).getPathShapeRectangle(lastPoint);
                 commonRectangle = Rectangle.getCommonRectangle(commonRectangle, rectangle);

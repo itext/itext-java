@@ -101,7 +101,6 @@ public abstract class AbstractPathShape implements IPathShape {
      * @param lastPoint start point for this shape
      * @return calculated rectangle
      */
-    // TODO DEVSIX-3814 - add method declaration into IPathShape and remove here in iText 7.2
     public Rectangle getPathShapeRectangle(Point lastPoint) {
         return new Rectangle((float) CssUtils.convertPxToPts(getEndingPoint().getX()),
                 (float) CssUtils.convertPxToPts(getEndingPoint().getY()), 0,

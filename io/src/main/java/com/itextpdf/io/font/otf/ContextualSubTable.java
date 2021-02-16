@@ -52,13 +52,11 @@ public abstract class ContextualSubTable extends ContextualTable<ContextualSubst
     }
 
     @Override
-    // TODO DEVSIX-3814 Remove this dummy override. It's left only for binary backwards compatibility
     public ContextualSubstRule getMatchingContextRule(GlyphLine line) {
         return super.getMatchingContextRule(line);
     }
 
     @Override
-    // TODO DEVSIX-3814 Remove this dummy override. It's left only for binary backwards compatibility
     protected int checkIfContextMatch(GlyphLine line, ContextualSubstRule rule) {
         return super.checkIfContextMatch(line, rule);
     }
