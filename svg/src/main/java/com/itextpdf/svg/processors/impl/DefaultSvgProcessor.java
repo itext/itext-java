@@ -118,11 +118,6 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         }
     }
 
-    @Deprecated
-    public ISvgProcessorResult process(INode root) throws SvgProcessingException {
-        return process(root, null);
-    }
-
     /**
      * Load in configuration, set initial processorState and create/fill-in context of the processor
      *

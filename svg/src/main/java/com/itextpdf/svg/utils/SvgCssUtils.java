@@ -42,9 +42,6 @@
  */
 package com.itextpdf.svg.utils;
 
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.styledxmlparser.node.IElementNode;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -97,44 +94,4 @@ public final class SvgCssUtils {
     public static String convertDoubleToString(double value) {
         return String.valueOf(value);
     }
-
-    /**
-     * Convert given point value to a pixel value. 1 px is 0.75 pts.
-     *
-     * @param pts float value to be converted to pixels
-     * @return float converted value pts/0.75f
-     * @deprecated Will be replaced by the {@link com.itextpdf.styledxmlparser.css.util.CssUtils#convertPtsToPx(float)}
-     * in update 7.2.
-     */
-    @Deprecated
-    public static float convertPtsToPx(float pts) {
-        return pts / 0.75f;
-    }
-
-    /**
-     * Convert given point value to a pixel value. 1 px is 0.75 pts.
-     *
-     * @param pts double value to be converted to pixels
-     * @return double converted value pts/0.75
-     * @deprecated Will be replaced by the {@link com.itextpdf.styledxmlparser.css.util.CssUtils#convertPtsToPx(double)}
-     * in update 7.2.
-     */
-    @Deprecated
-    public static double convertPtsToPx(double pts) {
-        return pts / 0.75;
-    }
-
-    /**
-     * Checks if an {@link IElementNode} represents a style sheet link.
-     *
-     * @param headChildElement the head child element
-     * @return true, if the element node represents a style sheet link
-     * @deprecated Will be replaced by the
-     * {@link CssUtils#isStyleSheetLink(IElementNode)} in update 7.2.
-     */
-    @Deprecated
-    public static boolean isStyleSheetLink(IElementNode headChildElement) {
-        return CssUtils.isStyleSheetLink(headChildElement);
-    }
-
 }

@@ -44,25 +44,20 @@ package com.itextpdf.svg.converter;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.font.FontProvider;
-import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.svg.dummy.sdk.ExceptionInputStream;
-import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
+import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 import com.itextpdf.svg.processors.impl.SvgProcessorResult;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
@@ -78,11 +73,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -623,8 +614,6 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void parseAndProcessSuccessTest() throws IOException {
-        String name = "minimal";
-        FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg");
         Map<String, ISvgNodeRenderer> map = new HashMap<>();
         RectangleSvgNodeRenderer rect = new RectangleSvgNodeRenderer();
         rect.setAttribute("fill", "none");
@@ -637,12 +626,15 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         root.setAttribute("width", "500");
         root.setAttribute("height", "400");
         root.setAttribute("font-size", "12pt");
+        ISvgProcessorResult expected = new SvgProcessorResult(map, root, new SvgProcessorContext(new SvgConverterProperties()));
 
-        ISvgProcessorResult expected = new SvgProcessorResult(map, root, new FontProvider(), new FontSet());
+        String name = "minimal";
+        try (FileInputStream fis = new FileInputStream(sourceFolder + name + ".svg")) {
 
-        ISvgProcessorResult actual = SvgConverter.parseAndProcess(fis);
+            ISvgProcessorResult actual = SvgConverter.parseAndProcess(fis);
 
-        Assert.assertEquals(expected.getRootRenderer().getAttributeMapCopy(), actual.getRootRenderer().getAttributeMapCopy());
+            Assert.assertEquals(expected.getRootRenderer().getAttributeMapCopy(), actual.getRootRenderer().getAttributeMapCopy());
+        }
     }
 
     @Test

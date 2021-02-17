@@ -42,10 +42,12 @@
  */
 package com.itextpdf.svg.renderers;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.renderers.impl.AbstractSvgNodeRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -71,6 +73,11 @@ public class TransformationApplicationTest extends ExtendedITextTest {
             @Override
             public ISvgNodeRenderer createDeepCopy() {
                 return null;
+            }
+
+            @Override
+            public Rectangle getObjectBoundingBox(SvgDrawContext context) {
+                throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
             }
 
             @Override

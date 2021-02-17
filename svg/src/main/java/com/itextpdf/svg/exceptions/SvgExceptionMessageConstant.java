@@ -57,7 +57,7 @@ public final class SvgExceptionMessageConstant {
     public static final String COULD_NOT_INSTANTIATE = "Could not instantiate Renderer for tag {0}";
     public static final String CURVE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0 = "(x1 y1 x2 y2 x y)+ parameters are "
             + "expected for curves. Got: {0}";
-    public static final String DRAW_NO_DRAW = "Can't draw a NoDrawOperationSvgNodeRenderer.";
+    public static final String DRAW_NO_DRAW = "The renderer cannot be drawn.";
     public static final String FAILED_TO_PARSE_INPUTSTREAM = "Failed to parse InputStream.";
     public static final String FONT_NOT_FOUND = "The font wasn't found.";
     public static final String I_NODE_ROOT_IS_NULL = "Input root value is null";
@@ -81,13 +81,14 @@ public final class SvgExceptionMessageConstant {
     public static final String NAMED_OBJECT_NAME_NULL_OR_EMPTY = "The name of the named object can't be null or empty.";
     public static final String NAMED_OBJECT_NULL = "A named object can't be null.";
     public static final String NO_ROOT = "No root found";
-    public static final String PARAMETER_CANNOT_BE_NULL = "Parameters for this method cannot be null.";
+    public static final String PARAMETER_CANNOT_BE_NULL = "Parameters cannot be null.";
     public static final String PATH_OBJECT_MUST_HAVE_D_ATTRIBUTE = "A Path object must have an attribute with "
             + "the name 'd'.";
     public static final String POINTS_ATTRIBUTE_INVALID_LIST = "Points attribute {0} on polyline tag does not contain "
             + "a valid set of points";
     public static final String QUADRATIC_CURVE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0 = "(x1 y1 x y)+ parameters "
             + "are expected for quadratic curves. Got: {0}";
+    public static final String RENDERER_WITHOUT_OBJECT_BOUNDING_BOX = "The renderer has no object bounding box.";
     public static final String ROOT_SVG_NO_BBOX = "The root svg tag needs to have a bounding box defined.";
     public static final String TAG_PARAMETER_NULL = "Tag parameter must not be null";
     public static final String TRANSFORM_EMPTY = "The transformation value is empty.";

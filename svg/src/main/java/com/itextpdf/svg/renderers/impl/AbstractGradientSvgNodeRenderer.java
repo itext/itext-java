@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * {@link ISvgNodeRenderer} abstract implementation for gradient tags
  * (&lt;linearGradient&gt;, &lt;radialGradient&gt;).
  */
-public abstract class AbstractGradientSvgNodeRenderer extends NoDrawOperationSvgNodeRenderer implements
+public abstract class AbstractGradientSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implements
         ISvgPaintServer {
 
     @Override

@@ -30,6 +30,7 @@ import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.svg.SvgConstants.Attributes;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCoordinateUtils;
@@ -83,6 +84,11 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
         deepCopyAttributesAndStyles(copy);
         deepCopyChildren(copy);
         return copy;
+    }
+
+    @Override
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
     }
 
     // TODO: DEVSIX-4136 opacity is not supported now.

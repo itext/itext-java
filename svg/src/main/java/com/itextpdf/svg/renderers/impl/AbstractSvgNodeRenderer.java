@@ -229,18 +229,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      */
     protected abstract void doDraw(SvgDrawContext context);
 
-
-    /**
-     * Evaluate the current object bounding box.
-     *
-     * @param context the object that knows the place to draw this element and maintains its state
-     * @return the {@link Rectangle} representing the current object's bounding box
-     */
-    @Deprecated
-    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
-        return null;
-    }
-
     static float getAlphaFromRGBA(String value) {
         try {
             return WebColors.getRGBAColor(value)[3];

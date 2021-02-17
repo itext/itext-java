@@ -58,6 +58,7 @@ import java.util.Map;
  * and should not deal with the mapping class as it's more of an implementation detail.
  */
 @Deprecated
+// TODO DEVSIX-5081 7.2 svg: Remove deprecated API and refactor tests related to ISvgNodeRendererMapper
 public interface ISvgNodeRendererMapper {
 
     /**

@@ -76,7 +76,6 @@ import com.itextpdf.svg.SvgConstants.Tags;
 import com.itextpdf.svg.css.SvgCssContext;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
-import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 
 import java.io.IOException;
@@ -131,30 +130,6 @@ public class SvgStyleResolver implements ICssResolver {
      * The resource resolver
      */
     private final ResourceResolver resourceResolver;
-
-    /**
-     * Creates a {@link SvgStyleResolver} with a given default CSS.
-     *
-     * @param defaultCssStream the default CSS
-     * @throws IOException if any input/output issue occurs
-     * @deprecated will be removed in next major release, use
-     * {@link SvgStyleResolver#SvgStyleResolver(InputStream, SvgProcessorContext)} instead
-     */
-    @Deprecated
-    public SvgStyleResolver(InputStream defaultCssStream) throws IOException {
-        this(defaultCssStream, new SvgProcessorContext(new SvgConverterProperties()));
-    }
-
-    /**
-     * Creates a {@link SvgStyleResolver}.
-     *
-     * @deprecated will be removed in next major release, use
-     * {@link SvgStyleResolver#SvgStyleResolver(SvgProcessorContext)} instead
-     */
-    @Deprecated
-    public SvgStyleResolver() {
-        this(new SvgProcessorContext(new SvgConverterProperties()));
-    }
 
     /**
      * Creates a {@link SvgStyleResolver} with a given default CSS.

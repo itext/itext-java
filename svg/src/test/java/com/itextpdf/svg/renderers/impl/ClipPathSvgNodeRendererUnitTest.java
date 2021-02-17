@@ -22,27 +22,28 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
-import com.itextpdf.svg.renderers.INoDrawSvgNodeRenderer;
-import com.itextpdf.svg.renderers.ISvgNodeRenderer;
-import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
 
-public class DefsSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implements INoDrawSvgNodeRenderer {
-    @Override
-    protected void doDraw(SvgDrawContext context) {
-        throw new UnsupportedOperationException(SvgExceptionMessageConstant.DRAW_NO_DRAW);
-    }
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
-    @Override
-    public ISvgNodeRenderer createDeepCopy() {
-        DefsSvgNodeRenderer copy = new DefsSvgNodeRenderer();
-        deepCopyAttributesAndStyles(copy);
-        return copy;
-    }
+@Category(UnitTest.class)
+public class ClipPathSvgNodeRendererUnitTest extends ExtendedITextTest {
 
-    @Override
-    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
-        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
+
+    @Test
+    public void noObjectBoundingBoxTest() {
+        ClipPathSvgNodeRenderer renderer = new ClipPathSvgNodeRenderer();
+
+        junitExpectedException.expect(UnsupportedOperationException.class);
+        junitExpectedException.expectMessage(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
+
+        renderer.getObjectBoundingBox(null);
     }
 }

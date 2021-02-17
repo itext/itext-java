@@ -22,27 +22,25 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
-import com.itextpdf.svg.renderers.INoDrawSvgNodeRenderer;
-import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
 
-public class DefsSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implements INoDrawSvgNodeRenderer {
-    @Override
-    protected void doDraw(SvgDrawContext context) {
-        throw new UnsupportedOperationException(SvgExceptionMessageConstant.DRAW_NO_DRAW);
-    }
+import java.util.HashMap;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
-    @Override
-    public ISvgNodeRenderer createDeepCopy() {
-        DefsSvgNodeRenderer copy = new DefsSvgNodeRenderer();
-        deepCopyAttributesAndStyles(copy);
-        return copy;
-    }
+@Category(UnitTest.class)
+public class EllipseSvgNodeRendererUnitTest extends ExtendedITextTest {
 
-    @Override
-    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
-        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
+    @Test
+    public void getObjectBoundingBoxTest() {
+        EllipseSvgNodeRenderer renderer = new EllipseSvgNodeRenderer();
+        SvgDrawContext context = new SvgDrawContext(new ResourceResolver(""), new FontProvider());
+        renderer.setAttributesAndStyles(new HashMap<>());
+        Assert.assertNull(renderer.getObjectBoundingBox(context));
     }
 }

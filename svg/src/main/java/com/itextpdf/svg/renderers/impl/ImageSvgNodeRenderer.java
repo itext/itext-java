@@ -42,11 +42,13 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
@@ -64,6 +66,11 @@ public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
     }
 
     @Override
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
+    }
+
+    @Override
     protected void doDraw(SvgDrawContext context) {
         ResourceResolver resourceResolver = context.getResourceResolver();
 
@@ -71,7 +78,7 @@ public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
             return;
         }
         String uri = this.attributesAndStyles.get(SvgConstants.Attributes.XLINK_HREF);
-        PdfXObject xObject = resourceResolver.retrieveImageExtended(uri);
+        PdfXObject xObject = resourceResolver.retrieveImage(uri);
 
         if (xObject == null) {
             return;

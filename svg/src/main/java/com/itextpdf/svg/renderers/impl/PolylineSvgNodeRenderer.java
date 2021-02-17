@@ -104,7 +104,7 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
     }
 
     @Override
-    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
         setPoints(getAttribute(SvgConstants.Attributes.POINTS));
         if (points.size() > 1) {
             Point firstPoint = points.get(0);
@@ -130,7 +130,7 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
 
             return new Rectangle((float) minX, (float) minY, (float) width, (float) height);
         } else {
-            return super.getObjectBoundingBox(context);
+            return null;
         }
     }
 

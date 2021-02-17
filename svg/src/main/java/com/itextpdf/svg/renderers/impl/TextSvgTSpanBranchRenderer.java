@@ -52,11 +52,7 @@ public class TextSvgTSpanBranchRenderer extends TextSvgBranchRenderer {
     }
 
     @Override
-    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
-        if (getParent() instanceof AbstractSvgNodeRenderer) {
-            return ((AbstractSvgNodeRenderer) getParent()).getObjectBoundingBox(context);
-        } else {
-            return null;
-        }
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        return getParent().getObjectBoundingBox(context);
     }
 }

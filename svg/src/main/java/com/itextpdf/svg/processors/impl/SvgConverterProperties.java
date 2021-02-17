@@ -160,13 +160,7 @@ public class SvgConverterProperties implements ISvgConverterProperties {
         return this;
     }
 
-    /**
-     * Gets the resource retriever.
-     *
-     * The resourceRetriever is used to retrieve data from resources by URL.
-     *
-     * @return the resource retriever
-     */
+    @Override
     public IResourceRetriever getResourceRetriever() {
         return resourceRetriever;
     }

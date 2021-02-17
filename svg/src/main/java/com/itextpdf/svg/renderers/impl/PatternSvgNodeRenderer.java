@@ -54,6 +54,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.SvgConstants.Values;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgPaintServer;
@@ -97,8 +98,13 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
         }
     }
 
+    @Override
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
+    }
+
     private PdfPattern.Tiling createTilingPattern(SvgDrawContext context,
-            Rectangle objectBoundingBox) {
+                                                  Rectangle objectBoundingBox) {
         final boolean isObjectBoundingBoxInPatternUnits = isObjectBoundingBoxInPatternUnits();
         final boolean isObjectBoundingBoxInPatternContentUnits = isObjectBoundingBoxInPatternContentUnits();
 

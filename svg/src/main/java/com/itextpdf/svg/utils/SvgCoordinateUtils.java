@@ -47,7 +47,6 @@ import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Values;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
@@ -107,7 +106,7 @@ public class SvgCoordinateUtils {
     public static double getCoordinateForUserSpaceOnUse(String attributeValue, double defaultValue,
             double start, double length, float em, float rem) {
         double absoluteValue;
-        final UnitValue unitValue = CssUtils.parseLengthValueToPt(attributeValue, em, rem);
+        final UnitValue unitValue = CssDimensionParsingUtils.parseLengthValueToPt(attributeValue, em, rem);
         if (unitValue == null) {
             absoluteValue = defaultValue;
         } else if (unitValue.getUnitType() == UnitValue.PERCENT) {

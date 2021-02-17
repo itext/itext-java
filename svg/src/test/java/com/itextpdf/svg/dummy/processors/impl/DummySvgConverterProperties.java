@@ -44,6 +44,8 @@ package com.itextpdf.svg.dummy.processors.impl;
 
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
+import com.itextpdf.styledxmlparser.resolver.resource.DefaultResourceRetriever;
+import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.dummy.factories.DummySvgNodeFactory;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
@@ -53,13 +55,13 @@ public class DummySvgConverterProperties implements ISvgConverterProperties {
     ISvgNodeRendererFactory rendererFactory;
     String baseUri;
     MediaDeviceDescription mediaDeviceDescription;
-    ResourceResolver resourceResolver;
+    IResourceRetriever resourceRetriever;
 
     public DummySvgConverterProperties(){
         rendererFactory = new DummySvgNodeFactory();
         mediaDeviceDescription = new MediaDeviceDescription( "" );
         baseUri = "";
-        resourceResolver = new ResourceResolver("");
+        resourceRetriever = new DefaultResourceRetriever();
     }
 
     @Override
@@ -89,6 +91,11 @@ public class DummySvgConverterProperties implements ISvgConverterProperties {
     @Override
     public MediaDeviceDescription getMediaDeviceDescription() {
         return mediaDeviceDescription;
+    }
+
+    @Override
+    public IResourceRetriever getResourceRetriever() {
+        return resourceRetriever;
     }
 
     public DummySvgConverterProperties setMediaDeviceDescription(MediaDeviceDescription mediaDeviceDescription) {

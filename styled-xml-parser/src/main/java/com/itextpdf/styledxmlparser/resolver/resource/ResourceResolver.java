@@ -51,7 +51,6 @@ import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import java.net.MalformedURLException;
@@ -70,13 +69,6 @@ public class ResourceResolver {
      * Identifier string used when loading in base64 images.
      */
     public static final String BASE64_IDENTIFIER = "base64";
-
-    /**
-     * Identifier string used when loading in base64 images.
-     * @deprecated This variable will be replaced by {@link #BASE64_IDENTIFIER} in 7.2 release
-     */
-    @Deprecated
-    public static final String BASE64IDENTIFIER = "base64";
 
     /**
      * Identifier string used to detect that the source is under data URI scheme.
@@ -164,29 +156,12 @@ public class ResourceResolver {
     }
 
     /**
-     * Retrieve {@link PdfImageXObject}.
-     *
-     * @param src either link to file or base64 encoded stream
-     * @return PdfImageXObject on success, otherwise null
-     * @deprecated will return {@link PdfXObject in pdfHTML 3.0.0}
-     */
-    @Deprecated
-    public PdfImageXObject retrieveImage(String src) {
-        PdfXObject image = retrieveImageExtended(src);
-        if (image instanceof PdfImageXObject) {
-            return (PdfImageXObject) image;
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * Retrieve image as either {@link PdfImageXObject}, or {@link com.itextpdf.kernel.pdf.xobject.PdfFormXObject}.
      *
      * @param src either link to file or base64 encoded stream
-     * @return PdfImageXObject on success, otherwise null
+     * @return PdfXObject on success, otherwise null
      */
-    public PdfXObject retrieveImageExtended(String src) {
+    public PdfXObject retrieveImage(String src) {
         if (src != null) {
             if (isContains64Mark(src)) {
                 PdfXObject imageXObject = tryResolveBase64ImageSource(src);
@@ -208,40 +183,6 @@ public class ResourceResolver {
                     uriResolver.getBaseUri(), src));
         }
         return null;
-    }
-
-    /**
-     * Open an {@link InputStream} to a style sheet URI.
-     *
-     * @param uri the URI
-     * @return the {@link InputStream}
-     * @throws IOException Signals that an I/O exception has occurred
-     * @deprecated use {@link ResourceResolver#retrieveResourceAsInputStream(String)} instead
-     */
-    @Deprecated
-    public InputStream retrieveStyleSheet(String uri) throws IOException {
-        return retriever.getInputStreamByUrl(uriResolver.resolveAgainstBaseUri(uri));
-    }
-
-    /**
-     * Replaced by retrieveBytesFromResource for the sake of method name clarity.
-     * <p>
-     * Retrieve a resource as a byte array from a source that
-     * can either be a link to a file, or a base64 encoded {@link String}.
-     *
-     * @param src either link to file or base64 encoded stream
-     * @return byte[] on success, otherwise null
-     * @deprecated use {@link #retrieveBytesFromResource(String)} instead
-     */
-    @Deprecated
-    public byte[] retrieveStream(String src) {
-        try {
-            return retrieveBytesFromResource(src);
-        } catch (Exception e) {
-            logger.error(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI,
-                    uriResolver.getBaseUri(), src), e);
-            return null;
-        }
     }
 
     /**
@@ -315,24 +256,6 @@ public class ResourceResolver {
      */
     public void resetCache() {
         imageCache.reset();
-    }
-
-    /**
-     * Check if the type of image located at the passed is supported by the {@link ImageDataFactory}.
-     *
-     * @param src location of the image resource
-     * @return true if the image type is supported, false otherwise
-     * @deprecated there is no need to perform laborious type checking because any resource extraction is wrapped in an try-catch block
-     */
-    @Deprecated
-    public boolean isImageTypeSupportedByImageDataFactory(String src) {
-        try {
-            URL url = uriResolver.resolveAgainstBaseUri(src);
-            url = UrlUtil.getFinalURL(url);
-            return ImageDataFactory.isSupportedType(retriever.getByteArrayByUrl(url));
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     protected PdfXObject tryResolveBase64ImageSource(String src) {

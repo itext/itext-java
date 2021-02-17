@@ -86,6 +86,7 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
      * {@link DefaultSvgNodeRendererFactory} extension) to create extensions of the factory.
      */
     @Deprecated
+    // TODO DEVSIX-5081 7.2 svg: Remove deprecated API and refactor tests related to ISvgNodeRendererMapper
     public DefaultSvgNodeRendererFactory(ISvgNodeRendererMapper mapper) {
         if (mapper != null) {
             rendererMap.putAll(mapper.getMapping());

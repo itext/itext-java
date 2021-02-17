@@ -112,6 +112,11 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
         return null;
     }
 
+    @Override
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
+    }
+
     AffineTransform calculateTransformation(SvgDrawContext context){
         Rectangle viewPort = context.getCurrentViewPort();
         float horizontal = viewPort.getX();

@@ -98,19 +98,6 @@ public class SvgDrawContext {
     }
 
     /**
-     * Create an instance of the context that is used to store information when converting SVG.
-     *
-     * @param resourceResolver instance of {@link ResourceResolver}
-     * @param fontProvider instance of {@link FontProvider}
-     * @param svgRootRenderer svg element that is root for current file
-     * @deprecated will be removed in 7.2, use {@link #SvgDrawContext(ResourceResolver, FontProvider)} instead
-     */
-    @Deprecated
-    public SvgDrawContext(ResourceResolver resourceResolver, FontProvider fontProvider, ISvgNodeRenderer svgRootRenderer) {
-        this(resourceResolver, fontProvider);
-    }
-
-    /**
      * Retrieves the current top of the stack, without modifying the stack.
      *
      * @return the current canvas that can be used for drawing operations.
@@ -346,18 +333,6 @@ public class SvgDrawContext {
                     currentTransform.get(3), currentTransform.get(4), currentTransform.get(6), currentTransform.get(7));
         }
         return new AffineTransform();
-    }
-
-    /**
-     * Return the value of root svg element font-size
-     *
-     * @return rem value
-     * @deprecated will be removed in 7.2, use {@link #getCssContext()} and
-     * {@link SvgCssContext#getRootFontSize()} instead
-     */
-    @Deprecated
-    public float getRemValue() {
-        return cssContext.getRootFontSize();
     }
 
     /**

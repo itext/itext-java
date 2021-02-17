@@ -23,6 +23,7 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.colors.WebColors;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.SvgConstants;
@@ -36,7 +37,7 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 /**
  * {@link ISvgNodeRenderer} implementation for the gradient &lt;stop&gt; tag.
  */
-public class StopSvgNodeRenderer extends NoDrawOperationSvgNodeRenderer implements INoDrawSvgNodeRenderer {
+public class StopSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implements INoDrawSvgNodeRenderer {
 
     /**
      * Evaluates the stop color offset value.
@@ -92,6 +93,11 @@ public class StopSvgNodeRenderer extends NoDrawOperationSvgNodeRenderer implemen
         StopSvgNodeRenderer copy = new StopSvgNodeRenderer();
         deepCopyAttributesAndStyles(copy);
         return copy;
+    }
+
+    @Override
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
     }
 
     @Override

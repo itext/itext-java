@@ -60,7 +60,9 @@ import com.itextpdf.svg.dummy.processors.impl.DummySvgConverterProperties;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 import com.itextpdf.svg.processors.impl.SvgProcessorResult;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
@@ -76,7 +78,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -336,6 +337,12 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    public void createResourceResolverWithoutProcessorResultTest() {
+        ISvgConverterProperties props = new SvgConverterProperties();
+        Assert.assertNotNull(SvgConverter.getResourceResolver(null, props));
+    }
+
+    @Test
     public void resourceResolverInstanceCustomResolverTest() {
         DummySvgConverterProperties properties = new DummySvgConverterProperties();
         TestSvgProcessorResult testSvgProcessorResult = new TestSvgProcessorResult();
@@ -352,7 +359,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
         Assert.assertNotNull(currentResolver);
     }
 
-    class TestSvgProcessorResult implements ISvgProcessorResult {
+    private static class TestSvgProcessorResult implements ISvgProcessorResult {
 
         public TestSvgProcessorResult() {
         }

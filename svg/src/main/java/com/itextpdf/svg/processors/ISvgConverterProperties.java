@@ -44,6 +44,7 @@ package com.itextpdf.svg.processors;
 
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
+import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
 import com.itextpdf.svg.converter.SvgConverter;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 
@@ -95,4 +96,12 @@ public interface ISvgConverterProperties {
      * @return the media device description
      */
     MediaDeviceDescription getMediaDeviceDescription();
+
+    /**
+     * Gets the resource retriever.
+     * The resourceRetriever is used to retrieve data from resources by URL.
+     *
+     * @return the resource retriever
+     */
+    IResourceRetriever getResourceRetriever();
 }

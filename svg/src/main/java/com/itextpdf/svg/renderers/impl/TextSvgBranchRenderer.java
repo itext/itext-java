@@ -73,8 +73,7 @@ import java.util.List;
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;text&gt; and &lt;tspan&gt; tag.
  */
-public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements ISvgTextNodeRenderer,
-        ISvgTextNodeHelper {
+public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements ISvgTextNodeRenderer {
 
     /**
      * Top level transformation to flip the y-axis results in the character glyphs being mirrored, this tf corrects for this behaviour
@@ -174,8 +173,8 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
             basePoint.translate(getRelativeTranslation()[0], getRelativeTranslation()[1]);
             Rectangle commonRect = null;
             for (ISvgTextNodeRenderer child : getChildren()) {
-                if (child instanceof ISvgTextNodeHelper) {
-                    TextRectangle rectangle = ((ISvgTextNodeHelper) child)
+                if (child != null) {
+                    TextRectangle rectangle = child
                             .getTextRectangle(context, basePoint);
                     basePoint = rectangle.getTextBaseLineRightPoint();
                     commonRect = Rectangle.getCommonRectangle(commonRect, rectangle);
@@ -190,7 +189,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
     }
 
     @Override
-    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
         return getTextRectangle(context, null);
     }
 

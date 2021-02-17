@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Utility class for resolving parent-inheritance of style and attribute declarations.
+ */
 public final class StyleUtil {
 
     private StyleUtil() {

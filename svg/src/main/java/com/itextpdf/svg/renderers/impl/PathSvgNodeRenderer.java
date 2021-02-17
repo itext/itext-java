@@ -127,17 +127,16 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
     }
 
     @Override
-    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
         Point lastPoint = null;
         Rectangle commonRectangle = null;
         for (IPathShape item : getShapes()) {
             if (lastPoint == null) {
                 lastPoint = item.getEndingPoint();
             }
-            if (item instanceof AbstractPathShape) {
-                Rectangle rectangle = ((AbstractPathShape) item).getPathShapeRectangle(lastPoint);
-                commonRectangle = Rectangle.getCommonRectangle(commonRectangle, rectangle);
-            }
+            Rectangle rectangle = item.getPathShapeRectangle(lastPoint);
+            commonRectangle = Rectangle.getCommonRectangle(commonRectangle, rectangle);
+
             lastPoint = item.getEndingPoint();
         }
         return commonRectangle;

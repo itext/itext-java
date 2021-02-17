@@ -22,23 +22,28 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.kernel.geom.Point;
-import com.itextpdf.svg.renderers.SvgDrawContext;
-import com.itextpdf.svg.utils.TextRectangle;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
 
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
-/**
- * An interface containing a method to simplify working with SVG text elements.
- * Must be removed in update 7.3 as the methods of this interface will be moved to {@link ISvgTextNodeRenderer}
- */
-@Deprecated
-public interface ISvgTextNodeHelper {
-    /**
-     * Return the bounding rectangle of the text element.
-     *
-     * @param context current {@link SvgDrawContext}
-     * @param basePoint end point of previous text element
-     * @return created instance of {@link TextRectangle}
-     */
-    TextRectangle getTextRectangle(SvgDrawContext context, Point basePoint);
+@Category(UnitTest.class)
+public class PatternSvgNodeRendererUnitTest extends ExtendedITextTest {
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
+
+    @Test
+    public void noObjectBoundingBoxTest() {
+        PatternSvgNodeRenderer renderer = new PatternSvgNodeRenderer();
+
+        junitExpectedException.expect(UnsupportedOperationException.class);
+        junitExpectedException.expectMessage(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
+
+        renderer.getObjectBoundingBox(null);
+    }
 }

@@ -474,11 +474,6 @@ public final class SvgConstants {
         public static final String TITLE = "title";
 
         /**
-         * Deprecated in SVG. Tag defining text that was defined in an SVG document.
-         */
-        public static final String TREF = "tref";
-
-        /**
          * Tag defining a span within a text element.
          */
         public static final String TSPAN = "tspan";
@@ -987,24 +982,6 @@ public final class SvgConstants {
         public static final String FILL_RULE_NONZERO = "nonzero";
 
         /**
-         * Value representing the gradient units relation "objectBoundingBox".
-         *
-         * @deprecated it will be removed in the 7.2 update.
-         * Use {@link SvgConstants.Values#OBJECT_BOUNDING_BOX} instead.
-         */
-        @Deprecated
-        public static final String GRADIENT_UNITS_OBJECT_BOUNDING_BOX = Values.OBJECT_BOUNDING_BOX;
-
-        /**
-         * Value representing the gradient units relation "userSpaceOnUse".
-         *
-         * @deprecated it will be removed in the 7.2 update.
-         * Use {@link SvgConstants.Values#USER_SPACE_ON_USE} instead.
-         */
-        @Deprecated
-        public static final String GRADIENT_UNITS_USER_SPACE_ON_USE = Values.USER_SPACE_ON_USE;
-
-        /**
          * Value representing the meet for preserve aspect ratio calculations.
          */
         public static final String MEET = "meet";
@@ -1023,12 +1000,6 @@ public final class SvgConstants {
          * The value representing slice for the preserve aspect ratio calculations;
          */
         public static final String SLICE = "slice";
-
-        /**
-         * The value corresponding with the namespace url for SVG. Will be removed since version 7.2.
-         */
-        @Deprecated
-        public static final String SVGNAMESPACEURL = "http://www.w3.org/2000/svg";
 
         /**
          * Value representing the text-alignment end for text objects

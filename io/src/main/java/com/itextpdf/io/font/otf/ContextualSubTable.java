@@ -48,14 +48,4 @@ public abstract class ContextualSubTable extends ContextualTable<ContextualSubst
     protected ContextualSubTable(OpenTypeFontTableReader openReader, int lookupFlag) {
         super(openReader, lookupFlag);
     }
-
-    @Override
-    public ContextualSubstRule getMatchingContextRule(GlyphLine line) {
-        return super.getMatchingContextRule(line);
-    }
-
-    @Override
-    protected int checkIfContextMatch(GlyphLine line, ContextualSubstRule rule) {
-        return super.checkIfContextMatch(line, rule);
-    }
 }

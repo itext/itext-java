@@ -302,4 +302,14 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
         );
         Assert.assertEquals(SvgExceptionMessageConstant.DRAW_NO_DRAW, e.getMessage());
     }
+
+    @Test
+    public void noObjectBoundingBoxTest() {
+        StopSvgNodeRenderer renderer = new StopSvgNodeRenderer();
+
+        junitExpectedException.expect(UnsupportedOperationException.class);
+        junitExpectedException.expectMessage(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
+
+        renderer.getObjectBoundingBox(null);
+    }
 }
