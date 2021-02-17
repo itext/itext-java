@@ -85,6 +85,57 @@ public class PdfDocumentTest extends ExtendedITextTest {
     }
 
     @Test
+    public void missingProducerTest() throws IOException {
+        String inputFile = SOURCE_FOLDER + "missingProducer.pdf";
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile))) {
+            PdfDocumentInfo documentInfo = document.getDocumentInfo();
+            Assert.assertNull(documentInfo.getPdfObject().get(PdfName.Producer));
+            Assert.assertNull(documentInfo.getProducer());
+        }
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfDocumentInfo documentInfo = document.getDocumentInfo();
+            Assert.assertNotNull(documentInfo.getPdfObject().get(PdfName.Producer));
+            Assert.assertNotNull(document.getDocumentInfo().getProducer());
+        }
+    }
+
+    @Test
+    public void nullProducerTest() throws IOException {
+        String inputFile = SOURCE_FOLDER + "nullProducer.pdf";
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile))) {
+            PdfDocumentInfo documentInfo = document.getDocumentInfo();
+            Assert.assertEquals(PdfNull.PDF_NULL, documentInfo.getPdfObject().get(PdfName.Producer));
+            Assert.assertNull(documentInfo.getProducer());
+        }
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfDocumentInfo documentInfo = document.getDocumentInfo();
+            Assert.assertNotNull(documentInfo.getPdfObject().get(PdfName.Producer));
+            Assert.assertNotNull(document.getDocumentInfo().getProducer());
+        }
+    }
+
+    @Test
+    public void nameProducerTest() throws IOException {
+        String inputFile = SOURCE_FOLDER + "nameProducer.pdf";
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile))) {
+            PdfDocumentInfo documentInfo = document.getDocumentInfo();
+            Assert.assertEquals(new PdfName("producerAsName"), documentInfo.getPdfObject().get(PdfName.Producer));
+            Assert.assertNull(documentInfo.getProducer());
+        }
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfDocumentInfo documentInfo = document.getDocumentInfo();
+            Assert.assertNotNull(documentInfo.getPdfObject().get(PdfName.Producer));
+            Assert.assertNotNull(document.getDocumentInfo().getProducer());
+        }
+    }
+
+    @Test
     public void writingVersionTest01() throws IOException {
         // There is a possibility to override version in stamping mode
         String out = DESTINATION_FOLDER + "writing_pdf_version.pdf";
