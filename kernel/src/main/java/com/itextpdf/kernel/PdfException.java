@@ -88,10 +88,14 @@ public class PdfException extends RuntimeException {
     public static final String CannotCopyObjectContent = "Cannot copy object content.";
     public static final String CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten = "Cannot copy indirect object from the document that is being written.";
     public static final String CannotCopyToDocumentOpenedInReadingMode = "Cannot copy to document opened in reading mode.";
+    public static final String CannotCreateFontFromNullFontDictionary = "Cannot create font from null pdf dictionary.";
     public static final String CannotCreateLayoutImageByWmfImage = "Cannot create layout image by WmfImage instance. First convert the image into FormXObject and then use the corresponding layout image constructor.";
     public static final String CannotCreatePdfImageXObjectByWmfImage = "Cannot create PdfImageXObject instance by WmfImage. Use PdfFormXObject constructor instead.";
     public static final String CannotCreatePdfStreamByInputStreamWithoutPdfDocument = "Cannot create pdfstream by InputStream without PdfDocument.";
+    public static final String CannotCreateType0FontWithTrueTypeFontProgramWithoutEmbedding = "Cannot create Type0 font with true type font program without embedding it.";
     public static final String CannotDrawElementsOnAlreadyFlushedPages = "Cannot draw elements on already flushed pages.";
+    public static final String CannotEmbedStandardFont = "Standard fonts cannot be embedded.";
+    public static final String CannotEmbedType0FontWithCidFontProgram = "Cannot embed Type0 font with CID font program based on non-generic predefined CMap.";
     public static final String CannotGetContentBytes = "Cannot get content bytes.";
     public static final String CannotGetPdfStreamBytes = "Cannot get PdfStream bytes.";
     public static final String CannotOperateWithFlushedPdfStream = "Cannot operate with the flushed PdfStream.";
@@ -136,6 +140,12 @@ public class PdfException extends RuntimeException {
     public static final String DefaultAppearanceNotFound = "DefaultAppearance is required but not found";
     public static final String DefaultcryptfilterNotFoundEncryption = "/DefaultCryptFilter not found (encryption).";
     public static final String DictionaryKey1IsNotAName = "Dictionary key {0} is not a name.";
+    /**
+     * Exception message in case of dictionary does not have specified font data.
+     *
+     * @deprecated Will be removed in nex major release as there are no usages left.
+     */
+    @Deprecated
     public static final String DictionaryDoesntHave1FontData = "Dictionary doesn't have {0} font data.";
     public static final String DictionaryDoesntHaveSupportedFontData = "Dictionary doesn't have supported font data.";
     public static final String DocumentAlreadyPreClosed = "Document has been already pre closed.";
@@ -298,6 +308,7 @@ public class PdfException extends RuntimeException {
     public static final String UnknownKeyAlgorithm1 = "Unknown key algorithm: {0}.";
     @Deprecated
     public static final String UnsupportedDefaultColorSpaceName1 = "Unsupported default color space name. Was {0}, but should be DefaultCMYK, DefaultGray or DefaultRGB";
+    public static final String UnsupportedFontEmbeddingStrategy = "Unsupported font embedding strategy.";
     public static final String UnsupportedXObjectType = "Unsupported XObject type.";
     public static final String VerificationAlreadyOutput = "Verification already output.";
     public static final String WhenAddingObjectReferenceToTheTagTreeItMustBeConnectedToNotFlushedObject = "When adding object reference to the tag tree, it must be connected to not flushed object.";

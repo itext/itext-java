@@ -51,6 +51,7 @@ import com.itextpdf.io.image.ImageType;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -658,7 +659,8 @@ public class MetaDo {
         textColor = state.getCurrentTextColor();
         cb.setFillColor(textColor);
         cb.beginText();
-        cb.setFontAndSize(PdfFontFactory.createFont(state.getCurrentFont().getFont(), PdfEncodings.CP1252, true), fontSize);
+        cb.setFontAndSize(PdfFontFactory.createFont(state.getCurrentFont().getFont(),
+                PdfEncodings.CP1252, EmbeddingStrategy.PREFER_EMBEDDED), fontSize);
         cb.setTextMatrix(tx, ty);
         cb.showText(text);
         cb.endText();

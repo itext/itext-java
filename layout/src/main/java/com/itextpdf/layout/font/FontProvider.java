@@ -52,6 +52,7 @@ import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.io.IOException;
@@ -522,7 +523,10 @@ public class FontProvider {
                     encoding = getDefaultEncoding(fontProgram);
                 }
 
-                pdfFont = PdfFontFactory.createFont(fontProgram, encoding, getDefaultEmbeddingFlag());
+                EmbeddingStrategy embeddingStrategy = getDefaultEmbeddingFlag()
+                        ? EmbeddingStrategy.PREFER_EMBEDDED
+                        : EmbeddingStrategy.PREFER_NOT_EMBEDDED;
+                pdfFont = PdfFontFactory.createFont(fontProgram, encoding, embeddingStrategy);
 
             } catch (IOException e) {
                 // Converting checked exceptions to unchecked RuntimeException (java-specific comment).

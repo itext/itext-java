@@ -46,6 +46,7 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -94,7 +95,8 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new java.io.ByteArrayOutputStream());
         PdfDocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, null);
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "Identity-H", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page1 = pdfDocument.addNewPage();
 
@@ -131,7 +133,8 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfADocument(new PdfWriter(outPdf), PdfAConformanceLevel.PDF_A_3B, null);
         PdfPage page = pdfDocument.addNewPage();
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "Identity-H", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState();
@@ -228,7 +231,8 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfADocument(new PdfWriter(outPdf), PdfAConformanceLevel.PDF_A_3B, null);
         PdfPage page = pdfDocument.addNewPage();
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "Identity-H", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText()

@@ -47,6 +47,7 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfDocumentInfo;
 import com.itextpdf.kernel.pdf.PdfViewerPreferences;
@@ -143,7 +144,7 @@ public class XMPWriterTest extends ExtendedITextTest {
                 new PdfViewerPreferences().setDisplayDocTitle(true));
         PdfDocumentInfo info = pdfDocument.getDocumentInfo();
         info.setTitle("iText7 PDF/UA test");
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, true);
+        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.PREFER_EMBEDDED);
         Paragraph p = new Paragraph();
         p.setFont(font);
         p.add(new Text("The quick brown "));

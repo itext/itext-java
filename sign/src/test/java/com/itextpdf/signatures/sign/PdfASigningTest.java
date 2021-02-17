@@ -44,6 +44,7 @@ package com.itextpdf.signatures.sign;
 
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
@@ -151,7 +152,7 @@ public class PdfASigningTest extends ExtendedITextTest {
 
         signer.setCertificationLevel(certificationLevel);
 
-        PdfFont font = PdfFontFactory.createFont(FONT, "WinAnsi", true);
+        PdfFont font = PdfFontFactory.createFont(FONT, "WinAnsi", EmbeddingStrategy.PREFER_EMBEDDED);
 
         // Creating the appearance
         PdfSignatureAppearance appearance = signer.getSignatureAppearance()

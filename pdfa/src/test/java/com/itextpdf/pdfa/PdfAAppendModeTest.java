@@ -43,6 +43,7 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
@@ -88,7 +89,8 @@ public class PdfAAppendModeTest extends ExtendedITextTest {
         canvas.saveState()
                 .beginText()
                 .moveText(36, 750)
-                .setFontAndSize(PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true), 16)
+                .setFontAndSize(PdfFontFactory.createFont(
+                        sourceFolder + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED), 16)
                 .showText("This page 2")
                 .endText()
                 .restoreState();
@@ -110,7 +112,8 @@ public class PdfAAppendModeTest extends ExtendedITextTest {
         canvas.saveState()
                 .beginText()
                 .moveText(36, 750)
-                .setFontAndSize(PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true), 16)
+                .setFontAndSize(PdfFontFactory.createFont(
+                        sourceFolder + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED), 16)
                 .showText("This page 1")
                 .endText()
                 .restoreState();

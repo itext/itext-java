@@ -97,7 +97,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "drWithHelv.pdf"),
                 new PdfWriter(destinationFolder + filename));
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSans-Regular.ttf",
-                PdfEncodings.IDENTITY_H, true);
+                PdfEncodings.IDENTITY_H);
         font.setSubset(false);
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
         form.getField("description").setValue(TEXT, font, 12f);
@@ -131,7 +131,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "drWithHelvAndCourier.pdf"),
                 new PdfWriter(destinationFolder + filename));
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSans-Regular.ttf",
-                PdfEncodings.IDENTITY_H, true);
+                PdfEncodings.IDENTITY_H);
         font.setSubset(false);
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
         form.getField("description").setFont(font);

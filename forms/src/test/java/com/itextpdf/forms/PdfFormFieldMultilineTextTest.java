@@ -28,6 +28,7 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -224,8 +225,8 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "formFieldWithStringTest.pdf"));
 
-        PdfFont font = PdfFontFactory
-                .createFont(sourceFolder + "NotoSansCJKtc-Light.otf", PdfEncodings.IDENTITY_H, true);
+        PdfFont font = PdfFontFactory.createFont(
+                sourceFolder + "NotoSansCJKtc-Light.otf", PdfEncodings.IDENTITY_H);
 
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, true);
 

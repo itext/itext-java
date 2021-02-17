@@ -51,6 +51,7 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
@@ -111,7 +112,8 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         PageSize pageSize = PageSize.LETTER;
         Document doc = new Document(pdf, pageSize);
         PdfFontFactory.register(sourceFolder + "FreeSans.ttf", sourceFolder + "FreeSans.ttf");
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true);
+        PdfFont font = PdfFontFactory.createFont(
+                sourceFolder + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
 
         PdfButtonFormField group = PdfFormField.createRadioGroup(pdf, "group", "", PdfAConformanceLevel.PDF_A_1B);
         group.setReadOnly(true);
@@ -251,7 +253,8 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String fileName = destinationFolder + name + ".pdf";
         String cmp = sourceFolder + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1ChoiceField.pdf";
 
-        PdfFont fontFreeSans = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
+        PdfFont fontFreeSans = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
 
         PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
@@ -277,8 +280,8 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String fileName = destinationFolder + name + ".pdf";
         String cmp = sourceFolder + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1ComboBoxField.pdf";
 
-        PdfFont fontCJK = PdfFontFactory
-                .createFont(sourceFolder + "NotoSansCJKtc-Light.otf", PdfEncodings.IDENTITY_H, true);
+        PdfFont fontCJK = PdfFontFactory.createFont(sourceFolder + "NotoSansCJKtc-Light.otf",
+                        PdfEncodings.IDENTITY_H, EmbeddingStrategy.FORCE_EMBEDDED);
 
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
 
@@ -305,7 +308,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String cmp = sourceFolder + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1ListField.pdf";
 
         PdfFont fontFreeSans = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
-                "WinAnsi", true);
+                "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
 
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
 
@@ -337,7 +340,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String cmp = sourceFolder + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1PushButtonField.pdf";
 
         PdfFont fontFreeSans = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
-                "WinAnsi", true);
+                "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
 
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
 
@@ -392,7 +395,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String cmp = sourceFolder + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1TextField.pdf";
 
         PdfFont fontFreeSans = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
-                "WinAnsi", true);
+                "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         fontFreeSans.setSubset(false);
 
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -419,7 +422,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String cmp = sourceFolder + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1SignatureField.pdf";
 
         PdfFont fontFreeSans = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
-                "WinAnsi", true);
+                "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         fontFreeSans.setSubset(false);
 
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");

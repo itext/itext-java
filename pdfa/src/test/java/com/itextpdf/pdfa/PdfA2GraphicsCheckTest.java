@@ -51,6 +51,7 @@ import com.itextpdf.kernel.colors.DeviceN;
 import com.itextpdf.kernel.colors.Separation;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -149,7 +150,8 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
 
         String shortText = "text";
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true);
+        PdfFont font = PdfFontFactory.createFont(
+                sourceFolder + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
         canvas.setFontAndSize(font, 12);
         canvas.setFillColor(ColorConstants.RED).beginText().showText(shortText).endText();
         canvas.setFillColor(DeviceGray.GRAY).beginText().showText(shortText).endText();
@@ -224,7 +226,8 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
 
         String shortText = "text";
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true);
+        PdfFont font = PdfFontFactory.createFont(
+                sourceFolder + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
         canvas.setFontAndSize(font, 12);
         canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.CLIP);
         canvas.setFillColor(ColorConstants.RED).beginText().showText(shortText).endText();
@@ -254,7 +257,8 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
 
         String shortText = "text";
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true);
+        PdfFont font = PdfFontFactory.createFont(
+                sourceFolder + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
         canvas.setFontAndSize(font, 12);
         canvas.setStrokeColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f));
         canvas.setFillColor(ColorConstants.RED);
@@ -282,7 +286,8 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
 
         String shortText = "text";
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true);
+        PdfFont font = PdfFontFactory.createFont(
+                sourceFolder + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
         canvas.setFontAndSize(font, 12);
         canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE);
         canvas.setFillColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f)).beginText().showText(shortText).endText();

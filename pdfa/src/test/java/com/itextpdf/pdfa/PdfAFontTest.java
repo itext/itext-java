@@ -47,6 +47,7 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
@@ -91,7 +92,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .setFillColor(ColorConstants.GREEN)
@@ -136,7 +138,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "Identity-H", false);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "Identity-H", EmbeddingStrategy.PREFER_NOT_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .setFillColor(ColorConstants.GREEN)
@@ -159,7 +162,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
-        PdfFont font = PdfFontFactory.createFont("Helvetica", "WinAnsi", true);
+        PdfFont font = PdfFontFactory.createFont("Helvetica",
+                "WinAnsi", EmbeddingStrategy.PREFER_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .setFillColor(ColorConstants.GREEN)
@@ -205,7 +209,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "Identity-H", false);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "Identity-H", EmbeddingStrategy.PREFER_NOT_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .setFillColor(ColorConstants.GREEN)
@@ -229,7 +234,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "Identity-H", false);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "Identity-H", EmbeddingStrategy.PREFER_NOT_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .setFillColor(ColorConstants.GREEN)
@@ -253,7 +259,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "Identity-H", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .beginText()
@@ -278,7 +285,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "Puritan2.otf", "Identity-H", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "Puritan2.otf",
+                "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .beginText()
@@ -303,7 +311,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSansCJKtc-Light.otf", "Identity-H", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSansCJKtc-Light.otf",
+                "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .beginText()
@@ -362,7 +371,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         PdfDocument doc = new PdfADocument(writer, conformanceLevel, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + fontFileName, encoding, true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + fontFileName,
+                encoding, EmbeddingStrategy.FORCE_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .beginText()
