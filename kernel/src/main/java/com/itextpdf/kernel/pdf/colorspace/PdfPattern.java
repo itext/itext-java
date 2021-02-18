@@ -195,6 +195,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
 
         /**
          * Creates a new Tiling Pattern instance.
+         *
          * <p>
          * By default the pattern will be colored.
          *
@@ -218,6 +219,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
 
         /**
          * Creates a new Tiling instance.
+         *
          * <p>
          * By default the pattern will be colored.
          *
@@ -239,6 +241,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
 
         /**
          * Creates a new Tiling Pattern instance.
+         *
          * <p>
          * By default the pattern will be colored.
          *
@@ -266,6 +269,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
 
         /**
          * Creates a new Tiling instance.
+         *
          * <p>
          * By default the pattern will be colored.
          *
@@ -371,6 +375,8 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
 
         /**
          * Sets the desired horizontal space between pattern cells.
+         *
+         * @param xStep the desired horizontal space between pattern cells
          */
         public void setXStep(float xStep) {
             getPdfObject().put(PdfName.XStep, new PdfNumber(xStep));
@@ -387,7 +393,9 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         }
 
         /**
-         * Sets the desired vertical space between pattern cells
+         * Sets the desired vertical space between pattern cells.
+         *
+         * @param yStep the desired vertical space between pattern cells
          */
         public void setYStep(float yStep) {
             getPdfObject().put(PdfName.YStep, new PdfNumber(yStep));
