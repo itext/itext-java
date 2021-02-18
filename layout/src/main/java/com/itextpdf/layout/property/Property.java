@@ -89,7 +89,7 @@ public final class Property {
     public static final int FIRST_LINE_INDENT = 18;
     public static final int FLEX_BASIS = 131;
     public static final int FLEX_GROW = 132;
-    public static final int FLEX_SHRINK = 133;
+    public static final int FLEX_SHRINK = 127;
     public static final int FLEX_WRAP = 128;
     public static final int FLOAT = 99;
     public static final int FLUSH_ON_DRAW = 19;
@@ -136,7 +136,7 @@ public final class Property {
     public static final int IGNORE_FOOTER = 96;
     public static final int IGNORE_HEADER = 97;
     public static final int ITALIC_SIMULATION = 31;
-    public static final int JUSTIFY_CONTENT = 135;
+    public static final int JUSTIFY_CONTENT = 133;
     public static final int KEEP_TOGETHER = 32;
     public static final int KEEP_WITH_NEXT = 81;
     public static final int LEADING = 33;
@@ -223,7 +223,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 127;
+    private static final int MAX_INHERITED_PROPERTY_ID = 124;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];

@@ -550,7 +550,8 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     private double[] readWidths(PdfDictionary fontDictionary) {
         PdfArray pdfWidths = fontDictionary.getAsArray(PdfName.Widths);
         if (pdfWidths == null) {
-            throw new PdfException(KernelExceptionMessageConstant.MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY).setMessageParams(PdfName.Widths);
+            throw new PdfException(KernelExceptionMessageConstant.MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY)
+                    .setMessageParams(PdfName.Widths);
         }
 
         double[] widths = new double[pdfWidths.size()];

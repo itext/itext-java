@@ -201,7 +201,8 @@ public final class KernelExceptionMessageConstant {
     public static final String IO_EXCEPTION_WHILE_CREATING_FONT = "I/O exception while creating Font";
     public static final String LZW_DECODER_EXCEPTION = "LZW decoder exception.";
     public static final String LZW_FLAVOUR_NOT_SUPPORTED = "LZW flavour not supported.";
-    public static final String MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY = "Missing required field {0} in font dictionary.";
+    public static final String MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY
+            = "Missing required field {0} in font dictionary.";
     public static final String MUST_BE_A_TAGGED_DOCUMENT = "Must be a tagged document.";
     public static final String NOT_A_VALID_PLACEABLE_WINDOWS_METAFILE = "{0} is not a valid placeable windows "
             + "metafile.";
