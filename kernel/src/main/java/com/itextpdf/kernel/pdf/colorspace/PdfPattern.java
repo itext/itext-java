@@ -64,7 +64,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
     private static final long serialVersionUID = -6771280634868639993L;
 
     /**
-     * Wraps the passed {@link PdfDictionary}
+     * Wraps the passed {@link PdfDictionary}.
      *
      * @param pdfObject the {@link PdfDictionary} that represent Pattern
      * @return new wrapper instance.
@@ -195,7 +195,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
 
         /**
          * Creates a new Tiling Pattern instance.
-         *
+         * <p>
          * By default the pattern will be colored.
          *
          * @param width the width of the pattern cell's bounding box
@@ -218,7 +218,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
 
         /**
          * Creates a new Tiling instance.
-         *
+         * <p>
          * By default the pattern will be colored.
          *
          * @param bbox the pattern cell's bounding box
@@ -239,7 +239,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
 
         /**
          * Creates a new Tiling Pattern instance.
-         *
+         * <p>
          * By default the pattern will be colored.
          *
          * @param width the width of the pattern cell's bounding box
@@ -266,7 +266,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
 
         /**
          * Creates a new Tiling instance.
-         *
+         * <p>
          * By default the pattern will be colored.
          *
          * @param bbox the pattern cell's bounding box
@@ -361,7 +361,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         }
 
         /**
-         * Gets the desired horizontal space between pattern cells
+         * Gets the desired horizontal space between pattern cells.
          *
          * @return the desired horizontal space between pattern cells
          */
@@ -370,7 +370,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         }
 
         /**
-         * Sets the desired horizontal space between pattern cells
+         * Sets the desired horizontal space between pattern cells.
          */
         public void setXStep(float xStep) {
             getPdfObject().put(PdfName.XStep, new PdfNumber(xStep));
@@ -378,7 +378,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         }
 
         /**
-         * Gets the desired vertical space between pattern cells
+         * Gets the desired vertical space between pattern cells.
          *
          * @return the desired vertical space between pattern cells
          */
@@ -395,7 +395,8 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         }
 
         /**
-         * Gets the Tiling Pattern's resources
+         * Gets the Tiling Pattern's resources.
+         *
          * @return the Tiling Pattern's resources
          */
         public PdfResources getResources() {
@@ -454,7 +455,8 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         }
 
         /**
-         * Gets the dictionary of the pattern's {@link PdfShading}
+         * Gets the dictionary of the pattern's {@link PdfShading}.
+         *
          * @return the dictionary of the pattern's {@link PdfShading}
          */
         public PdfDictionary getShading() {
@@ -462,7 +464,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         }
 
         /**
-         * Sets the {@link PdfShading} that specifies the details of a particular gradient fill
+         * Sets the {@link PdfShading} that specifies the details of a particular gradient fill.
          *
          * @param shading the {@link PdfShading} that specifies the details of a particular gradient fill
          */
@@ -472,7 +474,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         }
 
         /**
-         * Sets the dictionary which specifies the details of a particular gradient fill
+         * Sets the dictionary which specifies the details of a particular gradient fill.
          *
          * @param shading the dictionary of the pattern's {@link PdfShading}
          */

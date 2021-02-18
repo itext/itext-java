@@ -149,7 +149,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates the {@link PdfShading} object from the existing {@link PdfDictionary},
-     * using provided type and colorspace
+     * using provided type and colorspace.
      *
      * @param pdfObject {@link PdfDictionary} from which the {@link PdfShading} object will be created.
      * @param type type with which this {@link PdfShading} object will be created.
