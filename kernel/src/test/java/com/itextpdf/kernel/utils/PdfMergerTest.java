@@ -60,6 +60,7 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
@@ -398,6 +399,26 @@ public class PdfMergerTest extends ExtendedITextTest {
         mergedDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+    }
+
+    @Test
+    @Ignore ("TODO: DEVSIX-5064 (when doing merge with outlines infinite loop occurs )")
+    public void mergeOutlinesWithWrongStructureTest() throws IOException, InterruptedException {
+        PdfDocument inputDoc = new PdfDocument(new PdfReader(
+                sourceFolder + "infiniteLoopInOutlineStructure.pdf"));
+
+        PdfDocument outputDoc = new PdfDocument(new PdfWriter(
+                destinationFolder + "infiniteLoopInOutlineStructure.pdf"));
+
+        PdfMerger merger = new PdfMerger(outputDoc, false, true);
+        System.out.println("Doing merge");
+        merger.merge(inputDoc, 1, 2);
+        merger.close();
+        System.out.println("Merge done");
+
+        Assert.assertNull(new CompareTool().compareByContent(
+                destinationFolder + "infiniteLoopInOutlineStructure.pdf",
+                sourceFolder + "cmp_infiniteLoopInOutlineStructure.pdf", destinationFolder));
     }
 
     private void mergePdfs(List<File> sources, String destination) throws IOException {
