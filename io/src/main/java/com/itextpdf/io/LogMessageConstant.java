@@ -143,6 +143,7 @@ public final class LogMessageConstant {
     public static final String INDIRECT_REFERENCE_USED_IN_FLUSHED_OBJECT_MADE_FREE = "An attempt is made to free an indirect reference which was already used in the flushed object. Indirect reference wasn't freed.";
     public static final String INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED = "Inline block element does not fit into parent element and will be clipped";
     public static final String INPUT_STREAM_CONTENT_IS_LOST_ON_PDFSTREAM_SERIALIZATION = "PdfStream contains not null input stream. It's content will be lost in serialized object.";
+    public static final String INVALID_DISTRIBUTION_POINT = "Skipped CRL: {0}";
     public static final String INVALID_DESTINATION_TYPE = "When destination's not associated with a Remote or Embedded Go-To action, it shall specify page dictionary instead of page number. Otherwise destination might be considered invalid";
     public static final String INVALID_INDIRECT_REFERENCE = "Invalid indirect reference {0} {1} R";
     public static final String INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE = "Invalid key value: key {0} has null value.";
