@@ -43,12 +43,18 @@
 package com.itextpdf.layout.property;
 
 /**
- * A specialized enum containing potential property values for {@link com.itextpdf.layout.property.Property#ALIGN_SELF}.
+ * A specialized enum containing potential property values for {@link com.itextpdf.layout.property.Property#ALIGN_ITEMS}
+ * and {@link com.itextpdf.layout.property.Property#ALIGN_SELF}.
  */
 public enum AlignmentPropertyValue {
+    CENTER,
+    START,
+    END,
+    SELF_START,
+    SELF_END,
     FLEX_START,
     FLEX_END,
-    CENTER,
     BASELINE,
-    STRETCH
+    STRETCH,
+    NORMAL,
 }

@@ -374,8 +374,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     xAdvance = scaleXAdvance(xAdvance, fontSize.getValue(), hScale) / TEXT_SPACE_COEFF;
                 }
 
-                if (!noSoftWrap
-                        && (nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition) > layoutBox.getWidth() - currentLineWidth
+                float potentialWidth =
+                        nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition;
+                if (!noSoftWrap && (potentialWidth > layoutBox.getWidth() - currentLineWidth + EPS)
                         && firstCharacterWhichExceedsAllowedWidth == -1
                         || ind == specialScriptFirstNotFittingIndex) {
                     firstCharacterWhichExceedsAllowedWidth = ind;

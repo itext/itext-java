@@ -40,9 +40,9 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.property.AlignmentPropertyValue;
 import com.itextpdf.layout.property.FlexWrapPropertyValue;
+import com.itextpdf.layout.property.JustifyContent;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
-import com.itextpdf.layout.renderer.FlexUtil.FlexItemCalculationInfo;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -94,31 +94,9 @@ public class FlexUtilTest extends ExtendedITextTest {
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
                 Assert.assertEquals(400f / 3, flexItemInfo.getRectangle().getWidth(), EPS);
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
-    }
-
-    @Test
-    public void retrieveSizePtTest01() {
-        Div div = new Div().setWidth(UnitValue.createPercentValue(80));
-        float size = FlexUtil.retrieveSize(
-                div.createRendererSubTree(),
-                Property.WIDTH,
-                100);
-
-        Assert.assertEquals(80f, size, EPS);
-    }
-
-    @Test
-    public void retrieveSizeNoSetWidthTest01() {
-        Div div = new Div();
-        float size = FlexUtil.retrieveSize(
-                div.createRendererSubTree(),
-                Property.WIDTH,
-                100);
-
-        Assert.assertEquals(100f, size, EPS);
     }
 
     @Test
@@ -217,7 +195,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
                 Assert.assertEquals(100f, flexItemInfo.getRectangle().getWidth(), EPS);
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
     }
@@ -236,7 +214,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
                 Assert.assertEquals(500f, flexItemInfo.getRectangle().getWidth(), EPS);
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
     }
@@ -255,7 +233,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
                 Assert.assertEquals(400f, flexItemInfo.getRectangle().getWidth(), EPS);
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
     }
@@ -272,7 +250,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         for (int i = 0; i < rectangleTable.size(); i++) {
             FlexItemInfo flexItemInfo = rectangleTable.get(0).get(i);
             Assert.assertEquals(i == 1 ? 197 : 6f, flexItemInfo.getRectangle().getWidth(), EPS);
-            Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+            Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
         }
     }
 
@@ -288,7 +266,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         for (int i = 0; i < rectangleTable.size(); i++) {
             FlexItemInfo flexItemInfo = rectangleTable.get(0).get(i);
             Assert.assertEquals(i == 1 ? 388f : 6f, flexItemInfo.getRectangle().getWidth(), EPS);
-            Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+            Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
         }
     }
 
@@ -304,7 +282,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
                 Assert.assertEquals(400f / 3, flexItemInfo.getRectangle().getWidth(), EPS);
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
     }
@@ -321,7 +299,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
                 Assert.assertEquals(400f / 3, flexItemInfo.getRectangle().getWidth(), EPS);
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
     }
@@ -338,7 +316,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
                 Assert.assertEquals(44.2f, flexItemInfo.getRectangle().getWidth(), EPS);
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
     }
@@ -355,7 +333,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
                 Assert.assertEquals(6f, flexItemInfo.getRectangle().getWidth(), EPS);
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
     }
@@ -372,7 +350,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
                 Assert.assertEquals(6f, flexItemInfo.getRectangle().getWidth(), EPS);
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
     }
@@ -393,7 +371,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
                 Assert.assertEquals(50f, flexItemInfo.getRectangle().getWidth(), EPS);
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
     }
@@ -414,7 +392,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
                 Assert.assertEquals(400f / 3, flexItemInfo.getRectangle().getWidth(), EPS);
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
     }
@@ -434,7 +412,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(50f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -457,7 +435,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(106.66667f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -514,7 +492,6 @@ public class FlexUtilTest extends ExtendedITextTest {
                 UnitValue.createPointValue(100f)
         );
 
-        List<FlexItemCalculationInfo> flexItemCalculationInfos = new ArrayList<>();
         Div div = new Div().setWidth(200).setHeight(100);
 
         DocumentRenderer documentRenderer = new DocumentRenderer(
@@ -543,6 +520,348 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertEquals(30.434784f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
         Assert.assertEquals(108.69565f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
         Assert.assertEquals(60.869568f, rectangleTable.get(0).get(2).getRectangle().getWidth(), EPS);
+    }
+
+    @Test
+    public void ltWidthGrow0Shrink1Item2MarginBorderPadding30Test01() {
+        Rectangle bBox = new Rectangle(575, 842);
+        List<UnitValue> flexBasisValues = Arrays.<UnitValue>asList(
+                UnitValue.createPointValue(50f),
+                UnitValue.createPointValue(50f),
+                UnitValue.createPointValue(50f)
+        );
+
+        Div div = new Div().setWidth(200).setHeight(300);
+
+        DocumentRenderer documentRenderer = new DocumentRenderer(
+                new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
+
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        flexContainerRenderer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
+        div.setNextRenderer(flexContainerRenderer);
+
+        for (int i = 0; i < flexBasisValues.size(); i++) {
+            Div flexItem = new Div().add(new Paragraph("x"));
+            if (1 == i) {
+                flexItem.setMargin(10).setBorder(new SolidBorder(15)).setPadding(5);
+                flexItem.setHeight(50);
+            }
+            AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
+                    .setParent(documentRenderer);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 0f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+            flexContainerRenderer.addChild(flexItemRenderer);
+        }
+
+        List<List<FlexItemInfo>> rectangleTable =
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
+
+        Assert.assertEquals(192.03125f, rectangleTable.get(0).get(0).getRectangle().getHeight(), EPS);
+        Assert.assertEquals(110.0f, rectangleTable.get(0).get(1).getRectangle().getHeight(), EPS);
+        Assert.assertEquals(107.96875f, rectangleTable.get(1).get(0).getRectangle().getHeight(), EPS);
+
+        Assert.assertEquals(50.0f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
+        Assert.assertEquals(110.0f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
+        Assert.assertEquals(50.0f, rectangleTable.get(1).get(0).getRectangle().getWidth(), EPS);
+    }
+
+    @Test
+    public void ltWidthGrow0Shrink1Item2MarginBorderPadding30JustifyContentCenterAlignItemsCenterTest01() {
+        Rectangle bBox = new Rectangle(575, 842);
+        List<UnitValue> flexBasisValues = Arrays.<UnitValue>asList(
+                UnitValue.createPointValue(50f),
+                UnitValue.createPointValue(50f),
+                UnitValue.createPointValue(50f)
+        );
+
+        Div div = new Div().setWidth(200).setHeight(300);
+
+        DocumentRenderer documentRenderer = new DocumentRenderer(
+                new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
+
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        flexContainerRenderer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
+        flexContainerRenderer.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.CENTER);
+        flexContainerRenderer.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.CENTER);
+        div.setNextRenderer(flexContainerRenderer);
+
+        for (int i = 0; i < flexBasisValues.size(); i++) {
+            Div flexItem = new Div().add(new Paragraph("x"));
+            if (1 == i) {
+                flexItem.setMargin(10).setBorder(new SolidBorder(15)).setPadding(5);
+                flexItem.setHeight(50);
+            }
+            AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
+                    .setParent(documentRenderer);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 0f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+            flexContainerRenderer.addChild(flexItemRenderer);
+        }
+
+        List<List<FlexItemInfo>> rectangleTable =
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
+
+        Assert.assertEquals(25.9375f, rectangleTable.get(0).get(0).getRectangle().getHeight(), EPS);
+        Assert.assertEquals(110.0f, rectangleTable.get(0).get(1).getRectangle().getHeight(), EPS);
+        Assert.assertEquals(25.9375f, rectangleTable.get(1).get(0).getRectangle().getHeight(), EPS);
+
+        Assert.assertEquals(50.0f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
+        Assert.assertEquals(110.0f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
+        Assert.assertEquals(50.0f, rectangleTable.get(1).get(0).getRectangle().getWidth(), EPS);
+
+        Assert.assertEquals(20.0f, rectangleTable.get(0).get(0).getRectangle().getX(), EPS);
+        Assert.assertEquals(0f, rectangleTable.get(0).get(1).getRectangle().getX(), EPS);
+        Assert.assertEquals(75.0f, rectangleTable.get(1).get(0).getRectangle().getX(), EPS);
+
+        Assert.assertEquals(83.046875f, rectangleTable.get(0).get(0).getRectangle().getY(), EPS);
+        Assert.assertEquals(41.015625f, rectangleTable.get(0).get(1).getRectangle().getY(), EPS);
+        Assert.assertEquals(41.015625f, rectangleTable.get(1).get(0).getRectangle().getY(), EPS);
+    }
+
+    @Test
+    public void ltWidthGrow0Shrink1Item2MarginBorderPadding30JustifyContentFlexEndAlignItemsFlexEndTest01() {
+        Rectangle bBox = new Rectangle(575, 842);
+        List<UnitValue> flexBasisValues = Arrays.<UnitValue>asList(
+                UnitValue.createPointValue(50f),
+                UnitValue.createPointValue(50f),
+                UnitValue.createPointValue(50f)
+        );
+
+        Div div = new Div().setWidth(200).setHeight(300);
+
+        DocumentRenderer documentRenderer = new DocumentRenderer(
+                new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
+
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        flexContainerRenderer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
+        flexContainerRenderer.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.FLEX_END);
+        flexContainerRenderer.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.FLEX_END);
+        div.setNextRenderer(flexContainerRenderer);
+
+        for (int i = 0; i < flexBasisValues.size(); i++) {
+            Div flexItem = new Div().add(new Paragraph("x"));
+            if (1 == i) {
+                flexItem.setMargin(10).setBorder(new SolidBorder(15)).setPadding(5);
+                flexItem.setHeight(50);
+            }
+            AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
+                    .setParent(documentRenderer);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 0f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 1f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+            flexContainerRenderer.addChild(flexItemRenderer);
+        }
+
+        List<List<FlexItemInfo>> rectangleTable =
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
+
+        Assert.assertEquals(25.9375f, rectangleTable.get(0).get(0).getRectangle().getHeight(), EPS);
+        Assert.assertEquals(110.0f, rectangleTable.get(0).get(1).getRectangle().getHeight(), EPS);
+        Assert.assertEquals(25.9375f, rectangleTable.get(1).get(0).getRectangle().getHeight(), EPS);
+
+        Assert.assertEquals(50.0f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
+        Assert.assertEquals(110.0f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
+        Assert.assertEquals(50.0f, rectangleTable.get(1).get(0).getRectangle().getWidth(), EPS);
+
+        Assert.assertEquals(40.0f, rectangleTable.get(0).get(0).getRectangle().getX(), EPS);
+        Assert.assertEquals(0f, rectangleTable.get(0).get(1).getRectangle().getX(), EPS);
+        Assert.assertEquals(150.0f, rectangleTable.get(1).get(0).getRectangle().getX(), EPS);
+
+        Assert.assertEquals(166.09375f, rectangleTable.get(0).get(0).getRectangle().getY(), EPS);
+        Assert.assertEquals(82.03125f, rectangleTable.get(0).get(1).getRectangle().getY(), EPS);
+        Assert.assertEquals(82.03125f, rectangleTable.get(1).get(0).getRectangle().getY(), EPS);
+    }
+
+    @Test
+    public void ltWidthGrow0Shrink1Item2MarginBorderPadding30JustifyContentFlexStartAndNotValidAlignItemsFlexStartAndNotValidTest01() {
+        JustifyContent[] justifyContentValues = {
+                JustifyContent.NORMAL,
+                JustifyContent.START,
+                JustifyContent.END,
+                JustifyContent.LEFT,
+                JustifyContent.RIGHT,
+                JustifyContent.FLEX_START
+        };
+        AlignmentPropertyValue[] alignItemsValues = {
+                AlignmentPropertyValue.START,
+                AlignmentPropertyValue.END,
+                AlignmentPropertyValue.SELF_START,
+                AlignmentPropertyValue.SELF_END,
+                AlignmentPropertyValue.BASELINE,
+                AlignmentPropertyValue.FLEX_START
+        };
+        for (int j = 0; j < justifyContentValues.length; ++j) {
+            Rectangle bBox = new Rectangle(575, 842);
+            List<UnitValue> flexBasisValues = Arrays.<UnitValue>asList(
+                    UnitValue.createPointValue(50f),
+                    UnitValue.createPointValue(50f),
+                    UnitValue.createPointValue(50f)
+            );
+
+            Div div = new Div().setWidth(200).setHeight(300);
+
+            DocumentRenderer documentRenderer = new DocumentRenderer(
+                    new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
+
+            FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+            flexContainerRenderer.setParent(documentRenderer);
+            flexContainerRenderer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
+            flexContainerRenderer.setProperty(Property.JUSTIFY_CONTENT, justifyContentValues[j]);
+            flexContainerRenderer.setProperty(Property.ALIGN_ITEMS, alignItemsValues[j]);
+            div.setNextRenderer(flexContainerRenderer);
+
+            for (int i = 0; i < flexBasisValues.size(); i++) {
+                Div flexItem = new Div().add(new Paragraph("x"));
+                if (1 == i) {
+                    flexItem.setMargin(10).setBorder(new SolidBorder(15)).setPadding(5);
+                    flexItem.setHeight(50);
+                }
+                AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
+                        .setParent(documentRenderer);
+                flexItemRenderer.setProperty(Property.FLEX_GROW, 0f);
+                flexItemRenderer.setProperty(Property.FLEX_SHRINK, 1f);
+                flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+                flexContainerRenderer.addChild(flexItemRenderer);
+            }
+
+            List<List<FlexItemInfo>> rectangleTable =
+                    FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
+
+            Assert.assertEquals(25.9375f, rectangleTable.get(0).get(0).getRectangle().getHeight(), EPS);
+            Assert.assertEquals(110.0f, rectangleTable.get(0).get(1).getRectangle().getHeight(), EPS);
+            Assert.assertEquals(25.9375f, rectangleTable.get(1).get(0).getRectangle().getHeight(), EPS);
+
+            Assert.assertEquals(50.0f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
+            Assert.assertEquals(110.0f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
+            Assert.assertEquals(50.0f, rectangleTable.get(1).get(0).getRectangle().getWidth(), EPS);
+
+            Assert.assertEquals(0f, rectangleTable.get(0).get(0).getRectangle().getX(), EPS);
+            Assert.assertEquals(0f, rectangleTable.get(0).get(1).getRectangle().getX(), EPS);
+            Assert.assertEquals(0f, rectangleTable.get(1).get(0).getRectangle().getX(), EPS);
+
+            Assert.assertEquals(0f, rectangleTable.get(0).get(0).getRectangle().getY(), EPS);
+            Assert.assertEquals(0f, rectangleTable.get(0).get(1).getRectangle().getY(), EPS);
+            Assert.assertEquals(0f, rectangleTable.get(1).get(0).getRectangle().getY(), EPS);
+        }
+    }
+
+    @Test
+    public void ltWidthGrow0Shrink1Item2MarginBorderPadding30AlignItemsStretchAndNormalTest01() {
+        AlignmentPropertyValue[] alignItemsValues = {
+                AlignmentPropertyValue.STRETCH,
+                AlignmentPropertyValue.NORMAL
+        };
+        for (AlignmentPropertyValue alignItemsValue : alignItemsValues) {
+            Rectangle bBox = new Rectangle(575, 842);
+            List<UnitValue> flexBasisValues = Arrays.<UnitValue>asList(
+                    UnitValue.createPointValue(50f),
+                    UnitValue.createPointValue(50f),
+                    UnitValue.createPointValue(50f)
+            );
+
+            Div div = new Div().setWidth(200).setHeight(300);
+
+            DocumentRenderer documentRenderer = new DocumentRenderer(
+                    new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
+
+            FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+            flexContainerRenderer.setParent(documentRenderer);
+            flexContainerRenderer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
+            flexContainerRenderer.setProperty(Property.ALIGN_ITEMS, alignItemsValue);
+            div.setNextRenderer(flexContainerRenderer);
+
+            for (int i = 0; i < flexBasisValues.size(); i++) {
+                Div flexItem = new Div().add(new Paragraph("x"));
+                if (1 == i) {
+                    flexItem.setMargin(10).setBorder(new SolidBorder(15)).setPadding(5);
+                    flexItem.setHeight(50);
+                }
+                AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
+                        .setParent(documentRenderer);
+                flexItemRenderer.setProperty(Property.FLEX_GROW, 0f);
+                flexItemRenderer.setProperty(Property.FLEX_SHRINK, 1f);
+                flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+                flexContainerRenderer.addChild(flexItemRenderer);
+            }
+
+            List<List<FlexItemInfo>> rectangleTable =
+                    FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
+
+            Assert.assertEquals(192.03125f, rectangleTable.get(0).get(0).getRectangle().getHeight(), EPS);
+            Assert.assertEquals(110.0f, rectangleTable.get(0).get(1).getRectangle().getHeight(), EPS);
+            Assert.assertEquals(107.96875f, rectangleTable.get(1).get(0).getRectangle().getHeight(), EPS);
+
+            Assert.assertEquals(50.0f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
+            Assert.assertEquals(110.0f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
+            Assert.assertEquals(50.0f, rectangleTable.get(1).get(0).getRectangle().getWidth(), EPS);
+
+            Assert.assertEquals(0f, rectangleTable.get(0).get(0).getRectangle().getX(), EPS);
+            Assert.assertEquals(0f, rectangleTable.get(0).get(1).getRectangle().getX(), EPS);
+            Assert.assertEquals(0f, rectangleTable.get(1).get(0).getRectangle().getX(), EPS);
+
+            Assert.assertEquals(0f, rectangleTable.get(0).get(0).getRectangle().getY(), EPS);
+            Assert.assertEquals(0f, rectangleTable.get(0).get(1).getRectangle().getY(), EPS);
+            Assert.assertEquals(0f, rectangleTable.get(1).get(0).getRectangle().getY(), EPS);
+        }
+    }
+
+    @Test
+    public void ltWidthGrow0Shrink0Item2MarginBorderPadding30JustifyContentCenterAlignItemsCenterDontFitTest01() {
+        Rectangle bBox = new Rectangle(575, 842);
+        List<UnitValue> flexBasisValues = Arrays.<UnitValue>asList(
+                UnitValue.createPointValue(100f),
+                UnitValue.createPointValue(100f),
+                UnitValue.createPointValue(100f)
+        );
+
+        Div div = new Div().setWidth(200).setHeight(200);
+
+        DocumentRenderer documentRenderer = new DocumentRenderer(
+                new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
+
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        flexContainerRenderer.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.CENTER);
+        flexContainerRenderer.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.CENTER);
+        div.setNextRenderer(flexContainerRenderer);
+
+        for (int i = 0; i < flexBasisValues.size(); i++) {
+            Div flexItem = new Div().add(new Paragraph("x"));
+            if (1 == i) {
+                flexItem.setMargin(10).setBorder(new SolidBorder(15)).setPadding(5);
+                flexItem.setHeight(220);
+            }
+            AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
+                    .setParent(documentRenderer);
+            flexItemRenderer.setProperty(Property.FLEX_GROW, 0f);
+            flexItemRenderer.setProperty(Property.FLEX_SHRINK, 0f);
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+            flexContainerRenderer.addChild(flexItemRenderer);
+        }
+
+        List<List<FlexItemInfo>> rectangleTable =
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
+
+        Assert.assertEquals(25.9375f, rectangleTable.get(0).get(0).getRectangle().getHeight(), EPS);
+        Assert.assertEquals(280.0f, rectangleTable.get(0).get(1).getRectangle().getHeight(), EPS);
+        Assert.assertEquals(25.9375f, rectangleTable.get(0).get(2).getRectangle().getHeight(), EPS);
+
+        Assert.assertEquals(100.0f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
+        Assert.assertEquals(160.0f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
+        Assert.assertEquals(100.0f, rectangleTable.get(0).get(2).getRectangle().getWidth(), EPS);
+
+        Assert.assertEquals(-80.0f, rectangleTable.get(0).get(0).getRectangle().getX(), EPS);
+        Assert.assertEquals(0f, rectangleTable.get(0).get(1).getRectangle().getX(), EPS);
+        Assert.assertEquals(0f, rectangleTable.get(0).get(2).getRectangle().getX(), EPS);
+
+        Assert.assertEquals(87.03125f, rectangleTable.get(0).get(0).getRectangle().getY(), EPS);
+        Assert.assertEquals(-40.0f, rectangleTable.get(0).get(1).getRectangle().getY(), EPS);
+        Assert.assertEquals(87.03125f, rectangleTable.get(0).get(2).getRectangle().getY(), EPS);
     }
 
     @Test
@@ -1044,7 +1363,7 @@ public class FlexUtilTest extends ExtendedITextTest {
 
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(50.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
 
@@ -1111,7 +1430,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(50f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1134,7 +1453,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(50f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1157,7 +1476,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(106.66667f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1180,7 +1499,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(200f / 3, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1203,7 +1522,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(200f / 3, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1226,7 +1545,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(90f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1249,7 +1568,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(200f / 3, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1272,7 +1591,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(200f / 3, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1295,7 +1614,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(98.69281f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1318,7 +1637,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(88.888885f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1341,7 +1660,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(100f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1364,7 +1683,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(100f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1389,7 +1708,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
                 Assert.assertEquals(250f, flexItemInfo.getRectangle().getWidth(), EPS);
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(33.333332f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
     }
@@ -1410,7 +1729,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(50.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(100f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1434,7 +1753,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(50.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(100f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1458,7 +1777,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(50.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(100f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1482,7 +1801,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(50.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(100f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1506,7 +1825,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(50.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(150f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1530,7 +1849,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(50.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(150f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1554,7 +1873,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(50.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(150f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1578,7 +1897,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(50.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(100f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1602,7 +1921,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(50.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(150f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1625,7 +1944,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(40f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1648,7 +1967,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(93.333336f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1671,7 +1990,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(40f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1694,7 +2013,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(40f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1717,7 +2036,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(93.333336f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1740,7 +2059,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(300f / 3, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1763,7 +2082,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(100f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1786,7 +2105,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(114f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1809,7 +2128,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(300f / 3, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1832,7 +2151,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(300f / 3, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1855,7 +2174,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(119.06615f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1878,7 +2197,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(112.5f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1901,7 +2220,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
         Assert.assertEquals(120f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
@@ -1924,7 +2243,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertFalse(rectangleTable.isEmpty());
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
-                Assert.assertEquals(25.976562f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
 

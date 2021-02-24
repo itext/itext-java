@@ -2650,7 +2650,11 @@ public abstract class AbstractRenderer implements IRenderer {
         return removedElement;
     }
 
-    private void setThisAsParent(Collection<IRenderer> children) {
+    /**
+     * Sets current {@link AbstractRenderer} as parent to renderers in specified collection.
+     * @param children the collection of renderers to set the parent renderer on
+     */
+    void setThisAsParent(Collection<IRenderer> children) {
         for (final IRenderer child : children) {
             child.setParent(this);
         }

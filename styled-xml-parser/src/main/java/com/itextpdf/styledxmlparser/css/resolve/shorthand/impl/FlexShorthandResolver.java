@@ -249,8 +249,8 @@ public class FlexShorthandResolver implements IShorthandResolver {
         }
         if (!resolvedProperties.stream()
                 .anyMatch(property -> property.getProperty().equals(CommonCssConstants.FLEX_BASIS))) {
-            resolvedProperties.add(new CssDeclaration(CommonCssConstants.FLEX_BASIS,
-                    CssDefaults.getDefaultValue(CommonCssConstants.FLEX_BASIS)));
+            // When flex-basis is omitted from the flex shorthand, its specified value is 0.
+            resolvedProperties.add(new CssDeclaration(CommonCssConstants.FLEX_BASIS, "0"));
         }
     }
 

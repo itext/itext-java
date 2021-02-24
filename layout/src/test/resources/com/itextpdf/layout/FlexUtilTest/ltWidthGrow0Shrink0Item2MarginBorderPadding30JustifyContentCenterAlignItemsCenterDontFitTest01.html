@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #main {
+            width: 200px;
+            height: 200px;
+            background-color: gray;
+            border: 1px solid black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #main div {
+            flex-grow: 0;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div id="main">
+    <div style="background-color:green; flex-basis: 100px;">1</div>
+    <div style="background-color:red; flex-basis: 100px; height: 220px; margin: 10px; border: 15px solid black; padding: 5px">2</div>
+    <div style="background-color:blue; flex-basis: 100px;">3</div>
+</div>
+
+</body>
+</html>

@@ -84,29 +84,17 @@ public class FlexContainerRenderer extends DivRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         Rectangle layoutContextRectangle = layoutContext.getArea().getBBox();
-        for (final IRenderer childRenderer : this.getChildRenderers()) {
-            if (childRenderer instanceof AbstractRenderer) {
-                final AbstractRenderer abstractChildRenderer = (AbstractRenderer) childRenderer;
-                abstractChildRenderer.setParent(this);
-            }
-        }
-        Float containerWidth = retrieveWidth(layoutContextRectangle.getWidth());
-        if (containerWidth == null) {
-            containerWidth = layoutContextRectangle.getWidth();
-        }
-        Float containerHeight = retrieveHeight();
-        if (containerHeight == null) {
-            containerHeight = layoutContextRectangle.getHeight();
-        }
-        lines = FlexUtil.calculateChildrenRectangles(
-                new Rectangle((float) containerWidth, (float) containerHeight), this);
+        setThisAsParent(getChildRenderers());
+        lines = FlexUtil.calculateChildrenRectangles(layoutContextRectangle, this);
         final List<UnitValue> previousWidths = new ArrayList<>();
+        final List<UnitValue> previousHeights = new ArrayList<>();
         for (final List<FlexItemInfo> line : lines) {
             for (final FlexItemInfo itemInfo : line) {
                 final Rectangle rectangleWithoutBordersMarginsPaddings =
                         itemInfo.getRenderer().applyMarginsBordersPaddings(itemInfo.getRectangle().clone(), false);
 
                 previousWidths.add(itemInfo.getRenderer().<UnitValue>getProperty(Property.WIDTH));
+                previousHeights.add(itemInfo.getRenderer().<UnitValue>getProperty(Property.HEIGHT));
 
                 itemInfo.getRenderer().setProperty(Property.WIDTH,
                         UnitValue.createPointValue(rectangleWithoutBordersMarginsPaddings.getWidth()));
@@ -123,6 +111,7 @@ public class FlexContainerRenderer extends DivRenderer {
         for (final List<FlexItemInfo> line : lines) {
             for (final FlexItemInfo itemInfo : line) {
                 itemInfo.getRenderer().setProperty(Property.WIDTH, previousWidths.get(counter));
+                itemInfo.getRenderer().setProperty(Property.HEIGHT, previousHeights.get(counter));
                 ++counter;
             }
         }
@@ -171,7 +160,7 @@ public class FlexContainerRenderer extends DivRenderer {
                                                        List<IRenderer> waitingOverflowFloatRenderers) {
         final AbstractRenderer splitRenderer = createSplitRenderer(layoutStatus);
         final AbstractRenderer overflowRenderer = createOverflowRenderer(layoutStatus);
-        final IRenderer childRenderer = childRenderers.get(childPos);
+        final IRenderer childRenderer = getChildRenderers().get(childPos);
         final boolean forcedPlacement = Boolean.TRUE.equals(this.<Boolean>getProperty(Property.FORCED_PLACEMENT));
         boolean metChildRenderer = false;
         for (final List<FlexItemInfo> line : lines) {
@@ -179,11 +168,9 @@ public class FlexContainerRenderer extends DivRenderer {
                     line.stream().anyMatch(flexItem -> flexItem.getRenderer() == childRenderer);
             for (final FlexItemInfo itemInfo : line) {
                 if (metChildRenderer && !forcedPlacement) {
-                    overflowRenderer.childRenderers.add(itemInfo.getRenderer());
-                    itemInfo.getRenderer().setParent(overflowRenderer);
+                    overflowRenderer.addChildRenderer(itemInfo.getRenderer());
                 } else {
-                    splitRenderer.childRenderers.add(itemInfo.getRenderer());
-                    itemInfo.getRenderer().setParent(splitRenderer);
+                    splitRenderer.addChildRenderer(itemInfo.getRenderer());
                 }
             }
         }
@@ -220,8 +207,7 @@ public class FlexContainerRenderer extends DivRenderer {
 
         if (keepTogether) {
             splitRenderer = null;
-            overflowRenderer.childRenderers.clear();
-            overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
+            overflowRenderer.setChildRenderers(getChildRenderers());
         }
 
         correctFixedLayout(layoutBox);
@@ -230,17 +216,14 @@ public class FlexContainerRenderer extends DivRenderer {
 
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || wasHeightClipped) {
             if (splitRenderer != null) {
-                splitRenderer.childRenderers = new ArrayList<>(childRenderers);
-                for (final IRenderer childRenderer : splitRenderer.childRenderers) {
-                    childRenderer.setParent(splitRenderer);
-                }
+                splitRenderer.setChildRenderers(getChildRenderers());
             }
             return new LayoutResult(LayoutResult.FULL, result.getOccupiedArea(), splitRenderer, null, null);
         } else {
             applyPaddings(occupiedArea.getBBox(), paddings, true);
             applyBorderBox(occupiedArea.getBBox(), borders, true);
             applyMargins(occupiedArea.getBBox(), true);
-            if (splitRenderer == null || splitRenderer.childRenderers.isEmpty()) {
+            if (splitRenderer == null || splitRenderer.getChildRenderers().isEmpty()) {
                 return new LayoutResult(LayoutResult.NOTHING, null, null, overflowRenderer,
                         result.getCauseOfNothing()).setAreaBreak(result.getAreaBreak());
             } else {
@@ -256,17 +239,54 @@ public class FlexContainerRenderer extends DivRenderer {
     }
 
     @Override
+    void recalculateOccupiedAreaAfterChildLayout(LayoutResult result) {
+        // TODO DEVSIX-5098 Occupied area shall not be bigger than width or max-width
+        Rectangle recalculatedRectangle =
+                Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox());
+        occupiedArea.getBBox().setY(recalculatedRectangle.getY());
+        occupiedArea.getBBox().setHeight(recalculatedRectangle.getHeight());
+    }
+
+    @Override
     void decreaseLayoutBoxAfterChildPlacement(Rectangle layoutBox, LayoutResult result, IRenderer childRenderer) {
         // TODO DEVSIX-5086 When flex-wrap will be fully supported
         //  we'll need to decrease layout box with respect to the lines
-        layoutBox.decreaseWidth(result.getOccupiedArea().getBBox().getWidth());
-        layoutBox.moveRight(result.getOccupiedArea().getBBox().getWidth());
+        layoutBox.decreaseWidth(result.getOccupiedArea().getBBox().getRight() - layoutBox.getLeft());
+        layoutBox.setX(result.getOccupiedArea().getBBox().getRight());
+    }
+
+    @Override
+    Rectangle recalculateLayoutBoxBeforeChildLayout(Rectangle layoutBox,
+                                                    IRenderer childRenderer, Rectangle initialLayoutBox) {
+        Rectangle layoutBoxCopy = layoutBox.clone();
+        if (childRenderer instanceof AbstractRenderer) {
+            FlexItemInfo childFlexItemInfo = findFlexItemInfo((AbstractRenderer) childRenderer);
+            if (childFlexItemInfo != null) {
+                layoutBoxCopy.decreaseWidth(childFlexItemInfo.getRectangle().getX());
+                layoutBoxCopy.moveRight(childFlexItemInfo.getRectangle().getX());
+
+                layoutBoxCopy.decreaseHeight(childFlexItemInfo.getRectangle().getY());
+            }
+        }
+        return layoutBoxCopy;
+    }
+
+    private FlexItemInfo findFlexItemInfo(AbstractRenderer renderer) {
+        for (List<FlexItemInfo> line : lines) {
+            for (FlexItemInfo itemInfo : line) {
+                if (itemInfo.getRenderer().equals(renderer)) {
+                    return itemInfo;
+                }
+            }
+        }
+        return null;
     }
 
     private void findMinMaxWidthIfCorrespondingPropertiesAreNotSet(MinMaxWidth minMaxWidth,
                                                                    AbstractWidthHandler minMaxWidthHandler) {
         // TODO DEVSIX-5086 When flex-wrap will be fully supported we'll find min/max width with respect to the lines
-        for (final IRenderer childRenderer : childRenderers) {
+        setThisAsParent(getChildRenderers());
+        for (final IRenderer childRenderer : getChildRenderers()) {
             MinMaxWidth childMinMaxWidth;
             childRenderer.setParent(this);
             if (childRenderer instanceof AbstractRenderer) {

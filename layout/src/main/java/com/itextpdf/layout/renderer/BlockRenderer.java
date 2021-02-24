@@ -231,7 +231,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (marginsCollapsingEnabled) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(childRenderer, layoutBox);
             }
-            while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox), childMarginsInfo, floatRendererAreas, wasHeightClipped || wasParentsHeightClipped)))
+            Rectangle changedLayoutBox =
+                    recalculateLayoutBoxBeforeChildLayout(layoutBox, childRenderer, areas.get(0).clone());
+            while ((result = childRenderer.setParent(this).layout(new LayoutContext(
+                    new LayoutArea(pageNumber, changedLayoutBox),
+                    childMarginsInfo,
+                    floatRendererAreas,
+                    wasHeightClipped || wasParentsHeightClipped)))
                     .getStatus() != LayoutResult.FULL) {
 
                 if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))
@@ -319,7 +325,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
             // The second condition check (after &&) is needed only if margins collapsing is enabled
             if (result.getOccupiedArea() != null && (!FloatingHelper.isRendererFloating(childRenderer) || includeFloatsInOccupiedArea)) {
-                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+                recalculateOccupiedAreaAfterChildLayout(result);
                 fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
             }
             if (marginsCollapsingEnabled) {
@@ -576,6 +582,15 @@ public abstract class BlockRenderer extends AbstractRenderer {
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());
         return overflowRenderer;
+    }
+
+    void recalculateOccupiedAreaAfterChildLayout(LayoutResult result) {
+        occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+    }
+
+    Rectangle recalculateLayoutBoxBeforeChildLayout(Rectangle layoutBox,
+                                                    IRenderer childRenderer, Rectangle initialLayoutBox) {
+        return layoutBox;
     }
 
     AbstractRenderer[] createSplitAndOverflowRenderers(int childPos, int layoutStatus, LayoutResult childResult,

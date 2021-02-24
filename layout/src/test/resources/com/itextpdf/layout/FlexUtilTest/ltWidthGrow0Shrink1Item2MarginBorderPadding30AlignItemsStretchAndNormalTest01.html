@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #main {
+            width: 200px;
+            height: 300px;
+            background-color: gray;
+            border: 1px solid black;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: normal;
+            align-items: normal;
+        }
+
+        #main div {
+            flex-grow: 0;
+            flex-shrink: 1;
+        }
+    </style>
+</head>
+<body>
+
+<div id="main">
+    <div style="background-color:green; flex-basis: 50px;">1</div>
+    <div style="background-color:red; flex-basis: 50px; height: 50px; margin: 10px; border: 15px solid black; padding: 5px">2</div>
+    <div style="background-color:blue; flex-basis: 50px;">3</div>
+</div>
+
+</body>
+</html>

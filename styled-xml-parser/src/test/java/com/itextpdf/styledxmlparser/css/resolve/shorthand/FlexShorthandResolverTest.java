@@ -155,7 +155,7 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
         Assert.assertEquals("1", resolvedShorthand.get(1).getExpression());
         Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("auto", resolvedShorthand.get(2).getExpression());
+        Assert.assertEquals("0", resolvedShorthand.get(2).getExpression());
     }
 
     @Test
@@ -198,7 +198,7 @@ public class FlexShorthandResolverTest extends ExtendedITextTest {
         Assert.assertEquals(CommonCssConstants.FLEX_SHRINK, resolvedShorthand.get(1).getProperty());
         Assert.assertEquals("7", resolvedShorthand.get(1).getExpression());
         Assert.assertEquals(CommonCssConstants.FLEX_BASIS, resolvedShorthand.get(2).getProperty());
-        Assert.assertEquals("auto", resolvedShorthand.get(2).getExpression());
+        Assert.assertEquals("0", resolvedShorthand.get(2).getExpression());
     }
 
     @Test
