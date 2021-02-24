@@ -2717,7 +2717,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
         PdfFormXObject xObjectOff = new PdfFormXObject(rect);
         drawBorder(canvasOff, xObjectOff, width, height);
-        drawCheckBox(canvasOff, width, height, fontSize);
         xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
         xObjectOff.getResources().addFont(getDocument(), getFont());
 
