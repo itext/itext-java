@@ -554,7 +554,12 @@ public class TableRenderer extends AbstractRenderer {
                 }
 
                 LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea, null, childFloatRendererAreas, wasHeightClipped || wasParentsHeightClipped));
-
+                if (cellWidthProperty != null && cellWidthProperty.isPercentValue()) {
+                    cell.setProperty(Property.WIDTH, cellWidthProperty);
+                    if (null != cellResult.getOverflowRenderer()) {
+                        cellResult.getOverflowRenderer().setProperty(Property.WIDTH, cellWidthProperty);
+                    }
+                }
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
                 // width of BlockRenderer depends on child areas, while in cell case it is hardly define.
                 if (cellResult.getStatus() != LayoutResult.NOTHING) {

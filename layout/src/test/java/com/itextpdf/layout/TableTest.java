@@ -799,6 +799,28 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
+    public void widthInPercentShouldBeResetAfterOverflow() throws IOException, InterruptedException {
+        String testName = "widthInPercentShouldBeResetAfterOverflow.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        doc.add(new Div().setHeight(730).setWidth(523));
+        Table table = new Table(2).useAllAvailableWidth().setFixedLayout()
+                .addCell(new Cell().add(new Paragraph("Hello")).setWidth(UnitValue.createPercentValue(20)))
+                .addCell(new Cell().add(new Paragraph("World")).setWidth(UnitValue.createPercentValue(80)));
+        // will be added on the first page
+        doc.add(table);
+
+        // will be added on the second page
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     public void bigRowspanTest01() throws IOException, InterruptedException {
         String testName = "bigRowspanTest01.pdf";
         String outFileName = destinationFolder + testName;
