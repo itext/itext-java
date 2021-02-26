@@ -2104,7 +2104,12 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected boolean isKeepTogether() {
-        return Boolean.TRUE.equals(getPropertyAsBoolean(Property.KEEP_TOGETHER));
+        return isKeepTogether(null);
+    }
+
+    boolean isKeepTogether(IRenderer causeOfNothing) {
+        return Boolean.TRUE.equals(getPropertyAsBoolean(Property.KEEP_TOGETHER))
+                && !(causeOfNothing instanceof AreaBreakRenderer);
     }
 
     // Note! The second parameter is here on purpose. Currently occupied area is passed as a value of this parameter in

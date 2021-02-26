@@ -882,8 +882,12 @@ public class TableRenderer extends AbstractRenderer {
                     }
                 }
 
-                if ((isKeepTogether() && 0 == lastFlushedRowBottomBorder.size()) && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, null == firstCauseOfNothing ? this : firstCauseOfNothing);
+                if (isKeepTogether(firstCauseOfNothing)
+                        && 0 == lastFlushedRowBottomBorder.size()
+                        && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, null == firstCauseOfNothing
+                            ? this
+                            : firstCauseOfNothing);
                 } else {
                     int status = ((occupiedArea.getBBox().getHeight()
                             - (null == footerRenderer ? 0 : footerRenderer.getOccupiedArea().getBBox().getHeight())

@@ -311,7 +311,7 @@ public class ParagraphRenderer extends BlockRenderer {
                     lastYLine = layoutBox.getY() + layoutBox.getHeight();
                     firstLineInBox = true;
                 } else {
-                    boolean keepTogether = isKeepTogether();
+                    boolean keepTogether = isKeepTogether(result.getCauseOfNothing());
                     if (keepTogether) {
                         floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
                         return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());

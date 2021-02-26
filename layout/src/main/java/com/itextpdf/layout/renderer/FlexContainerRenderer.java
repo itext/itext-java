@@ -203,7 +203,7 @@ public class FlexContainerRenderer extends DivRenderer {
                                            Set<Rectangle> nonChildFloatingRendererAreas, IRenderer causeOfNothing,
                                            boolean anythingPlaced, int childPos, LayoutResult result) {
 
-        final boolean keepTogether = isKeepTogether();
+        final boolean keepTogether = isKeepTogether(causeOfNothing);
 
         final AbstractRenderer[] splitAndOverflowRenderers = createSplitAndOverflowRenderers(
                 childPos, result.getStatus(), result, waitingFloatsSplitRenderers, waitingOverflowFloatRenderers);

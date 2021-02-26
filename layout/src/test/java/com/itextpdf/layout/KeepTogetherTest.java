@@ -73,6 +73,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.ByteArrayOutputStream;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -129,6 +131,25 @@ public class KeepTogetherTest extends ExtendedITextTest {
         doc.add(p1);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void skipKeepTogetherInCaseOfAreaBreak() throws IOException, InterruptedException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document doc = new Document(pdfDoc);
+
+        Div keptTogetherDiv = new Div();
+        keptTogetherDiv.setKeepTogether(true);
+
+        AreaBreak areaBreak = new AreaBreak();
+        keptTogetherDiv.add(areaBreak);
+
+        doc.add(keptTogetherDiv);
+
+        // If this line is not triggered, then an NPE occurred
+        Assert.assertTrue(true);
+
+        doc.close();
     }
 
     @Test

@@ -196,7 +196,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
 
                 result = new LayoutResult(LayoutResult.NOTHING, null, null, childRenderer);
-                boolean isKeepTogether = isKeepTogether();
+                boolean isKeepTogether = isKeepTogether(childRenderer);
                 int layoutResult = anythingPlaced && !isKeepTogether ? LayoutResult.PARTIAL : LayoutResult.NOTHING;
                 AbstractRenderer[] splitAndOverflowRenderers = createSplitAndOverflowRenderers(childPos, layoutResult, result, waitingFloatsSplitRenderers, waitingOverflowFloatRenderers);
 
@@ -798,7 +798,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 return null;
             }
         } else if (result.getStatus() == LayoutResult.NOTHING) {
-            boolean keepTogether = isKeepTogether();
+            boolean keepTogether = isKeepTogether(causeOfNothing);
             int layoutResult = anythingPlaced && !keepTogether ? LayoutResult.PARTIAL : LayoutResult.NOTHING;
 
             AbstractRenderer[] splitAndOverflowRenderers = createSplitAndOverflowRenderers(childPos, layoutResult,
