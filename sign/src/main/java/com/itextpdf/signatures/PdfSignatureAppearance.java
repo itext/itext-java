@@ -634,8 +634,8 @@ public class PdfSignatureAppearance {
      *
      * @return a top-level signature appearance
      * @throws IOException if font cannot be created
-     * @see <a href="https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/PPKAppearances.pdf">
-     *      Adobe Pdf Digital Signature Appearances</a> for further details
+     * @see <a href="https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/PPKAppearances.pdf">Adobe Pdf Digital
+     * Signature Appearances</a>
      */
     protected PdfFormXObject getAppearance() throws IOException {
         PdfCanvas canvas;

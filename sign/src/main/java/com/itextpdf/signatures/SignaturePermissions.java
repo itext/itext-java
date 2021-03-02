@@ -66,14 +66,30 @@ public class SignaturePermissions {
         PdfName action;
         /** An array of PdfString values with fieldnames */
         PdfArray fields;
-        /** Creates a FieldLock instance */
+
+        /**
+         * Creates a FieldLock instance.
+         *
+         * @param action indicates the set of fields that should be locked
+         * @param fields an array of text strings containing field names
+         */
         public FieldLock(PdfName action, PdfArray fields) {
             this.action = action;
             this.fields = fields;
         }
-        /** Getter for the field lock action. */
+
+        /**
+         * Getter for the field lock action.
+         *
+         * @return the action of field lock dictionary
+         */
         public PdfName getAction() { return action; }
-        /** Getter for the fields involved in the lock action. */
+
+        /**
+         * Getter for the fields involved in the lock action.
+         *
+         * @return the fields of field lock dictionary
+         */
         public PdfArray getFields() { return fields; }
         /** toString method */
         public String toString() {
@@ -94,6 +110,9 @@ public class SignaturePermissions {
      * Creates an object that can inform you about the type of signature
      * in a signature dictionary as well as some of the permissions
      * defined by the signature.
+     *
+     * @param sigDict the signature dictionary
+     * @param previous the signature permissions
      */
     public SignaturePermissions(PdfDictionary sigDict, SignaturePermissions previous) {
         if (previous != null) {
