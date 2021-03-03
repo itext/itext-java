@@ -1036,17 +1036,27 @@ public class PdfCanvas implements Serializable {
      */
     public PdfCanvas arc(double x1, double y1, double x2, double y2,
                          double startAng, double extent) {
-        List<double[]> ar = bezierArc(x1, y1, x2, y2, startAng, extent);
-        if (ar.isEmpty())
-            return this;
-        double[] pt = ar.get(0);
-        moveTo(pt[0], pt[1]);
-        for (int i = 0; i < ar.size(); ++i) {
-            pt = ar.get(i);
-            curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
-        }
+        return drawArc(x1, y1, x2, y2, startAng, extent, false);
+    }
 
-        return this;
+    /**
+     * Draws a partial ellipse with the preceding line to the start of the arc to prevent path
+     * broking. The target arc is inscribed within the rectangle x1,y1,x2,y2, starting
+     * at startAng degrees and covering extent degrees. Angles start with 0 to the right (+x)
+     * and increase counter-clockwise.
+     *
+     * @param x1 a corner of the enclosing rectangle
+     * @param y1 a corner of the enclosing rectangle
+     * @param x2 a corner of the enclosing rectangle
+     * @param y2 a corner of the enclosing rectangle
+     * @param startAng starting angle in degrees
+     * @param extent angle extent in degrees
+     *
+     * @return the current canvas
+     */
+    public PdfCanvas arcContinuous(double x1, double y1, double x2, double y2,
+            double startAng, double extent) {
+        return drawArc(x1, y1, x2, y2, startAng, extent, true);
     }
 
     /**
@@ -2786,6 +2796,26 @@ public class PdfCanvas implements Serializable {
                 concatMatrix(0, -1, 1, 0, 0, rectangle.getRight());
                 break;
         }
+    }
+
+    private PdfCanvas drawArc(double x1, double y1, double x2, double y2,
+            double startAng, double extent, boolean continuous) {
+        List<double[]> ar = bezierArc(x1, y1, x2, y2, startAng, extent);
+        if (ar.isEmpty()) {
+            return this;
+        }
+
+        double[] pt = ar.get(0);
+        if (continuous) {
+            lineTo(pt[0], pt[1]);
+        } else {
+            moveTo(pt[0], pt[1]);
+        }
+        for (int index = 0; index < ar.size(); ++index) {
+            pt = ar.get(index);
+            curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
+        }
+        return this;
     }
 
     private static PdfStream getPageStream(PdfPage page) {
