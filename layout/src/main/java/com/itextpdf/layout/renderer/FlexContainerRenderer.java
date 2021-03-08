@@ -50,6 +50,7 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 
@@ -238,13 +239,25 @@ public class FlexContainerRenderer extends DivRenderer {
         return returnResult.getStatus() != LayoutResult.FULL;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    void recalculateOccupiedAreaAfterChildLayout(LayoutResult result) {
-        // TODO DEVSIX-5098 Occupied area shall not be bigger than width or max-width
-        Rectangle recalculatedRectangle =
-                Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox());
+    void recalculateOccupiedAreaAfterChildLayout(Rectangle resultBBox, Float blockMaxHeight) {
+        final Rectangle oldBBox = occupiedArea.getBBox().clone();
+        final Rectangle recalculatedRectangle = Rectangle.getCommonRectangle(occupiedArea.getBBox(),
+                resultBBox);
         occupiedArea.getBBox().setY(recalculatedRectangle.getY());
         occupiedArea.getBBox().setHeight(recalculatedRectangle.getHeight());
+        if (oldBBox.getTop() < occupiedArea.getBBox().getTop()) {
+            occupiedArea.getBBox().decreaseHeight(occupiedArea.getBBox().getTop() - oldBBox.getTop());
+        }
+        if (null != blockMaxHeight &&
+                occupiedArea.getBBox().getHeight() > ((float) blockMaxHeight)) {
+            occupiedArea.getBBox()
+                    .moveUp(occupiedArea.getBBox().getHeight() - ((float) blockMaxHeight));
+            occupiedArea.getBBox().setHeight((float) blockMaxHeight);
+        }
     }
 
     @Override
@@ -280,6 +293,24 @@ public class FlexContainerRenderer extends DivRenderer {
             }
         }
         return null;
+    }
+
+    @Override
+    void fixOccupiedAreaIfOverflowedX(OverflowPropertyValue overflowX, Rectangle layoutBox) {
+        // TODO DEVSIX-5087 Support overflow visible/hidden property correctly
+        return;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addChild(IRenderer renderer) {
+        // TODO DEVSIX-5087 Since overflow-fit is an internal iText overflow value, we do not need to support if
+        // for html/css objects, such as flex. As for now we will set VISIBLE by default, however, while working
+        // on the ticket one may come to some more satifactory approach
+        renderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        super.addChild(renderer);
     }
 
     private void findMinMaxWidthIfCorrespondingPropertiesAreNotSet(MinMaxWidth minMaxWidth,

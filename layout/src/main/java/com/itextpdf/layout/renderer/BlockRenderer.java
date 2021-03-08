@@ -244,7 +244,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         || Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
                 } else if (result.getOccupiedArea() != null && result.getStatus() != LayoutResult.NOTHING) {
-                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+                    recalculateOccupiedAreaAfterChildLayout(result.getOccupiedArea().getBBox(), blockMaxHeight);
                     fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
                 }
 
@@ -325,7 +325,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
             // The second condition check (after &&) is needed only if margins collapsing is enabled
             if (result.getOccupiedArea() != null && (!FloatingHelper.isRendererFloating(childRenderer) || includeFloatsInOccupiedArea)) {
-                recalculateOccupiedAreaAfterChildLayout(result);
+                recalculateOccupiedAreaAfterChildLayout(result.getOccupiedArea().getBBox(), blockMaxHeight);
                 fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
             }
             if (marginsCollapsingEnabled) {
@@ -584,8 +584,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
         return overflowRenderer;
     }
 
-    void recalculateOccupiedAreaAfterChildLayout(LayoutResult result) {
-        occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+    void recalculateOccupiedAreaAfterChildLayout(Rectangle resultBBox, Float blockMaxHeight) {
+        occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), resultBBox));
     }
 
     Rectangle recalculateLayoutBoxBeforeChildLayout(Rectangle layoutBox,

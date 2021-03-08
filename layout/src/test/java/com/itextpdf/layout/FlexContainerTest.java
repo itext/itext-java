@@ -29,6 +29,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.FlexContainer;
 import com.itextpdf.layout.element.IElement;
@@ -40,6 +41,7 @@ import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.AlignmentPropertyValue;
 import com.itextpdf.layout.property.JustifyContent;
 import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
@@ -77,7 +79,7 @@ public class FlexContainerTest extends ExtendedITextTest {
         this.testNumber = (Integer) testNumber;
     }
 
-    @Parameterized.Parameters(name = "{index}: align-items: {1}; justify-content: {2}")
+    @Parameterized.Parameters(name = "{index}: align-items: {0}; justify-content: {1}")
     public static Iterable<Object[]> alignItemsAndJustifyContentProperties() {
         return Arrays.asList(new Object[][]{
                 {AlignmentPropertyValue.FLEX_START, JustifyContent.FLEX_START, 1},
@@ -792,8 +794,110 @@ public class FlexContainerTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
-    private Div createFlexContainer() {
-        Div flexContainer = new FlexContainer();
+    @Test
+    // TODO DEVSIX-5174 content should overflow bottom
+    public void respectFlexContainersHeightTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "respectFlexContainersHeightTest" + testNumber + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_respectFlexContainersHeightTest" + testNumber + ".pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+        Style containerStyle = new Style()
+                .setWidth(60)
+                .setHeight(50);
+
+        Div flexContainer = getFlexContainer(null, containerStyle);
+        Div flexItem = new Div()
+                .setBackgroundColor(ColorConstants.BLUE)
+                .add(new Paragraph("h"))
+                .add(new Paragraph("e"))
+                .add(new Paragraph("l"))
+                .add(new Paragraph("l"))
+                .add(new Paragraph("o"))
+                .add(new Paragraph("w"))
+                .add(new Paragraph("o"))
+                .add(new Paragraph("r"))
+                .add(new Paragraph("l"))
+                .add(new Paragraph("d"));
+        flexContainer.add(flexItem);
+        flexContainer.add(new Div().setBackgroundColor(ColorConstants.YELLOW).setWidth(10).setHeight(200));
+
+        document.add(flexContainer);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void respectFlexContainersWidthTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "respectFlexContainersWidthTest" + testNumber + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_respectFlexContainersWidthTest" + testNumber + ".pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        // default (overflow fit)
+        OverflowPropertyValue overflowX = null;
+        Style containerStyle = new Style()
+                .setWidth(60)
+                .setHeight(200);
+
+        Style itemStyle = new Style()
+                .setWidth(60f)
+                .setHeight(100f);
+
+        Div flexContainer = getFlexContainer(overflowX, containerStyle);
+        flexContainer
+                .add(getFlexItem(overflowX, itemStyle))
+                .add(getFlexItem(overflowX, itemStyle));
+        document.add(flexContainer);
+
+        document.add(new AreaBreak());
+
+        // default (overflow visible)
+        overflowX = OverflowPropertyValue.VISIBLE;
+        flexContainer = getFlexContainer(overflowX, containerStyle);
+        flexContainer
+                .add(getFlexItem(overflowX, itemStyle))
+                .add(getFlexItem(overflowX, itemStyle));
+        document.add(flexContainer);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    private Div getFlexContainer(OverflowPropertyValue overflowX, Style style) {
+        FlexContainer flexContainer = createFlexContainer();
+        flexContainer
+                .setBackgroundColor(ColorConstants.GREEN)
+                .setBorderRight(new SolidBorder(60));
+        if (null != style) {
+            flexContainer.addStyle(style);
+        }
+        if (null != overflowX) {
+            flexContainer.setProperty(Property.OVERFLOW_X, overflowX);
+        }
+        return flexContainer;
+    }
+
+    private static Div getFlexItem(OverflowPropertyValue overflowX, Style style) {
+        Div flexItem = new Div();
+        flexItem.setProperty(Property.FLEX_GROW, 0f);
+        flexItem.setProperty(Property.FLEX_SHRINK, 0f);
+        if (null != style) {
+            flexItem.addStyle(style);
+        }
+        flexItem.setBackgroundColor(ColorConstants.BLUE);
+        if (null != overflowX) {
+            flexItem.setProperty(Property.OVERFLOW_X, overflowX);
+        }
+        return flexItem;
+    }
+
+    private FlexContainer createFlexContainer() {
+        FlexContainer flexContainer = new FlexContainer();
         flexContainer.setProperty(Property.ALIGN_ITEMS, alignItemsValue);
         flexContainer.setProperty(Property.JUSTIFY_CONTENT, justifyContentValue);
         return flexContainer;
