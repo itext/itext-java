@@ -48,6 +48,8 @@ import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
+import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.OverflowPropertyValue;
@@ -266,6 +268,12 @@ public class FlexContainerRenderer extends DivRenderer {
                     .moveUp(occupiedArea.getBBox().getHeight() - ((float) blockMaxHeight));
             occupiedArea.getBBox().setHeight((float) blockMaxHeight);
         }
+    }
+
+    @Override
+    MarginsCollapseInfo startChildMarginsHandling(IRenderer childRenderer,
+                                                  Rectangle layoutBox, MarginsCollapseHandler marginsCollapseHandler) {
+        return marginsCollapseHandler.startChildMarginsHandling(null, layoutBox);
     }
 
     @Override

@@ -927,6 +927,40 @@ public class FlexContainerTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void collapsingMarginsFlexContainerTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "collapsingMarginsFlexContainerTest" + testNumber + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_collapsingMarginsFlexContainerTest" + testNumber + ".pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+        document.setProperty(Property.COLLAPSING_MARGINS, true);
+
+        Div flexContainer = createFlexContainer();
+        flexContainer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(50));
+        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
+
+        Div child1 = createNewDiv();
+        child1.setBackgroundColor(ColorConstants.CYAN);
+        child1.setMargin(50);
+
+        Div child2 = createNewDiv();
+        child2.setBackgroundColor(ColorConstants.CYAN);
+        child2.setMargin(50);
+
+        flexContainer.add(child1).add(child2);
+
+        Div flexContainersSibling = createNewDiv();
+        flexContainersSibling.setMarginBottom(40);
+
+        document.add(flexContainersSibling).add(flexContainer);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
     private Div getFlexContainer(OverflowPropertyValue overflowX, Style style) {
         FlexContainer flexContainer = createFlexContainer();
         flexContainer

@@ -48,6 +48,7 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.borders.Border;
@@ -229,7 +230,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
 
             if (marginsCollapsingEnabled) {
-                childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(childRenderer, layoutBox);
+                childMarginsInfo = startChildMarginsHandling(childRenderer, layoutBox, marginsCollapseHandler);
             }
             Rectangle changedLayoutBox =
                     recalculateLayoutBoxBeforeChildLayout(layoutBox, childRenderer, areas.get(0).clone());
@@ -465,8 +466,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
     @Override
     public void draw(DrawContext drawContext) {
+        Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
         if (occupiedArea == null) {
-            Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
             logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Drawing won't be performed."));
             return;
         }
@@ -513,7 +514,16 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (pageNumber < 1 || pageNumber > drawContext.getDocument().getNumberOfPages()) {
                 clippedArea = new Rectangle(-INF / 2 , -INF / 2, INF, INF);
             } else {
-                clippedArea = drawContext.getDocument().getPage(pageNumber).getPageSize();
+                PdfPage page = drawContext.getDocument().getPage(pageNumber);
+                // TODO DEVSIX-1655 This check is necessary because, in some cases, our renderer's hierarchy may contain
+                //  a renderer from the different page that was already flushed
+                if (page.isFlushed()) {
+                    logger.error(MessageFormatUtil.format(
+                            LogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED, "area clipping"));
+                    clippedArea = new Rectangle(-INF / 2 , -INF / 2, INF, INF);
+                } else {
+                    clippedArea = page.getPageSize();
+                }
             }
             Rectangle area = getBorderAreaBBox();
             if (overflowXHidden) {
@@ -586,6 +596,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
     void recalculateOccupiedAreaAfterChildLayout(Rectangle resultBBox, Float blockMaxHeight) {
         occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), resultBBox));
+    }
+    
+    MarginsCollapseInfo startChildMarginsHandling(IRenderer childRenderer,
+                                                  Rectangle layoutBox, MarginsCollapseHandler marginsCollapseHandler) {
+        return marginsCollapseHandler.startChildMarginsHandling(childRenderer, layoutBox);
     }
 
     Rectangle recalculateLayoutBoxBeforeChildLayout(Rectangle layoutBox,

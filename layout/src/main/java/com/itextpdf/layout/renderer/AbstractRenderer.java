@@ -1900,11 +1900,11 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void applyLinkAnnotation(PdfDocument document) {
+        Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
         PdfLinkAnnotation linkAnnotation = this.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION);
         if (linkAnnotation != null) {
             int pageNumber = occupiedArea.getPageNumber();
             if (pageNumber < 1 || pageNumber > document.getNumberOfPages()) {
-                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                 String logMessageArg = "Property.LINK_ANNOTATION, which specifies a link associated with this element content area, see com.itextpdf.layout.element.Link.";
                 logger.warn(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN, logMessageArg));
                 return;
@@ -1918,7 +1918,14 @@ public abstract class AbstractRenderer implements IRenderer {
             linkAnnotation.setRectangle(new PdfArray(pdfBBox));
 
             PdfPage page = document.getPage(pageNumber);
-            page.addAnnotation(linkAnnotation);
+            // TODO DEVSIX-1655 This check is necessary because, in some cases, our renderer's hierarchy may contain
+            //  a renderer from the different page that was already flushed
+            if (page.isFlushed()) {
+                logger.error(MessageFormatUtil.format(
+                        LogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED, "link annotation applying"));
+            } else {
+                page.addAnnotation(linkAnnotation);
+            }
         }
     }
 

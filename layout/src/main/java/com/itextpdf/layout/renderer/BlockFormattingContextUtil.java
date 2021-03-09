@@ -68,6 +68,7 @@ public class BlockFormattingContextUtil {
         return (renderer instanceof RootRenderer)
                 || (renderer instanceof CellRenderer)
                 || isInlineBlock(renderer)
+                || renderer.getParent() instanceof FlexContainerRenderer
                 || FloatingHelper.isRendererFloating(renderer)
                 || isAbsolutePosition(renderer)
                 || isFixedPosition(renderer)
