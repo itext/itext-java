@@ -63,9 +63,18 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class FontUtil {
+public class FontUtil {
 
     private static final HashMap<String, CMapToUnicode> uniMaps = new HashMap<>();
+
+    public static String addRandomSubsetPrefixForFontName(final String fontName) {
+        final StringBuilder newFontName = new StringBuilder(fontName.length() + 7);
+        for (int k = 0; k < 6; ++k) {
+            newFontName.append((char) (Math.random() * 26 + 'A'));
+        }
+        newFontName.append('+').append(fontName);
+        return newFontName.toString();
+    }
 
     static CMapToUnicode processToUnicode(PdfObject toUnicode) {
         CMapToUnicode cMapToUnicode = null;

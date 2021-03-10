@@ -492,11 +492,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      */
     protected static String updateSubsetPrefix(String fontName, boolean isSubset, boolean isEmbedded) {
         if (isSubset && isEmbedded) {
-            StringBuilder s = new StringBuilder(fontName.length() + 7);
-            for (int k = 0; k < 6; ++k) {
-                s.append((char) (Math.random() * 26 + 'A'));
-            }
-            return s.append('+').append(fontName).toString();
+            return FontUtil.addRandomSubsetPrefixForFontName(fontName);
         }
         return fontName;
     }
