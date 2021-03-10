@@ -829,7 +829,7 @@ public class PdfType0Font extends PdfFont {
                 cidFont.put(PdfName.W, widthsArray);
             }
         } else {
-            //The implementation should be realized in DEVSIX-2730
+            // TODO DEVSIX-31
             Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
             logger.warn("Vertical writing has not been implemented yet.");
         }
