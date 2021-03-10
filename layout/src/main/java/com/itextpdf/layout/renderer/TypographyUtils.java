@@ -222,16 +222,7 @@ public final class TypographyUtils {
                 }
             }
 
-            // fix anchorDelta
-            for (int i = 0; i < reorderedLine.size(); i++) {
-                Glyph glyph = reorderedLine.get(i).glyph;
-                if (glyph.hasPlacement()) {
-                    int oldAnchor = reorder[i] + glyph.getAnchorDelta();
-                    int newPos = inverseReorder[oldAnchor];
-                    int newAnchorDelta = newPos - i;
-                    glyph.setAnchorDelta((short) newAnchorDelta);
-                }
-            }
+            updateAnchorDeltaForReorderedLineGlyphs(reorder, inverseReorder, reorderedLine);
 
             line.clear();
             line.addAll(reorderedLine);
@@ -260,6 +251,24 @@ public final class TypographyUtils {
 
     static List<Integer> getPossibleBreaks(String str) {
         return (List<Integer>) callMethod(TYPOGRAPHY_PACKAGE + WORD_WRAPPER, GET_POSSIBLE_BREAKS, new Class[] {String.class}, str);
+    }
+
+    static void updateAnchorDeltaForReorderedLineGlyphs(int[] reorder, int[] inverseReorder,
+            List<LineRenderer.RendererGlyph> reorderedLine) {
+        for (int i = 0; i < reorderedLine.size(); i++) {
+            Glyph glyph = reorderedLine.get(i).glyph;
+            if (glyph.hasPlacement()) {
+                int oldAnchor = reorder[i] + glyph.getAnchorDelta();
+                int newPos = inverseReorder[oldAnchor];
+                int newAnchorDelta = newPos - i;
+
+                if (glyph.getAnchorDelta() != newAnchorDelta) {
+                    glyph = new Glyph(glyph);
+                    reorderedLine.get(i).glyph = glyph;
+                    glyph.setAnchorDelta((short) newAnchorDelta);
+                }
+            }
+        }
     }
 
     private static Object callMethod(String className, String methodName, Class[] parameterTypes, Object... args) {
