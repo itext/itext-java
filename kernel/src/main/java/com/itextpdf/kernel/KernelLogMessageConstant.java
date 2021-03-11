@@ -51,6 +51,9 @@ public final class KernelLogMessageConstant {
     public static final String DCTDECODE_FILTER_DECODING = "DCTDecode filter decoding into the "
             + "bit map is not supported. The stream data would be left in JPEG baseline format";
 
+    public static final String FEATURE_IS_NOT_SUPPORTED =
+            "Exception was thrown: {0}. The feature {1} is probably not supported by your XML processor.";
+
     public static final String FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY = "Full compression mode requested "
             + "in append mode but the original document has cross-reference table, not cross-reference stream. "
             + "Falling back to cross-reference table in appended document and switching full compression off";

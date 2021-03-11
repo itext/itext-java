@@ -1,4 +1,5 @@
 /*
+
     This file is part of the iText (R) project.
     Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
@@ -42,50 +43,30 @@
  */
 package com.itextpdf.kernel.utils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
-final class XmlUtils {
-    public static void writeXmlDocToStream(Document xmlReport, OutputStream stream) throws TransformerException {
-        TransformerFactory tFactory = TransformerFactory.newInstance();
-        try {
-            tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
-        } catch (Exception exc) {}
-        Transformer transformer = tFactory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "0");
-        DOMSource source = new DOMSource(xmlReport);
-        StreamResult result = new StreamResult(stream);
-        transformer.transform(source, result);
-    }
+/**
+ * The interface in which methods for creating xml parsers are declared.
+ */
+public interface IXmlParserFactory {
+    /**
+     * Creates the instance of the {@link DocumentBuilder}.
+     *
+     * @param namespaceAware   specifies whether the parser should be namespace aware
+     * @param ignoringComments specifies whether the parser should ignore comments
+     *
+     * @return instance of the {@link DocumentBuilder}
+     */
+    DocumentBuilder createDocumentBuilderInstance(boolean namespaceAware, boolean ignoringComments);
 
-    public static boolean compareXmls(InputStream xml1, InputStream xml2) throws ParserConfigurationException, SAXException, IOException {
-        DocumentBuilder db = XmlProcessorCreator.createSafeDocumentBuilder(true, true);
-
-        Document doc1 = db.parse(xml1);
-        doc1.normalizeDocument();
-
-        Document doc2 = db.parse(xml2);
-        doc2.normalizeDocument();
-
-        return doc2.isEqualNode(doc1);
-    }
-
-    public static Document initNewXmlDocument() throws ParserConfigurationException {
-        DocumentBuilder db = XmlProcessorCreator.createSafeDocumentBuilder(false, false);
-        return db.newDocument();
-    }
+    /**
+     * Creates the instance of the {@link XMLReader}.
+     *
+     * @param namespaceAware specifies whether the parser should be namespace aware
+     * @param validating     specifies whether the parser should validate documents as they are parsed
+     *
+     * @return instance of the {@link XMLReader}
+     */
+    XMLReader createXMLReaderInstance(boolean namespaceAware, boolean validating);
 }

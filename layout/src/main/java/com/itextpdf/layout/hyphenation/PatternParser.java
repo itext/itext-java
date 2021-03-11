@@ -18,23 +18,19 @@
 package com.itextpdf.layout.hyphenation;
 
 import com.itextpdf.io.util.ResourceUtil;
+import com.itextpdf.kernel.utils.XmlProcessorCreator;
 
-import java.io.StringReader;
-import javax.xml.parsers.SAXParser;
-import org.xml.sax.Attributes;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
-
-import javax.xml.parsers.SAXParserFactory;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * A SAX document handler to read and parse hyphenation patterns
@@ -118,14 +114,7 @@ public class PatternParser extends DefaultHandler {
      */
     static XMLReader createParser() {
         try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            factory.setValidating(false);
-            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            SAXParser saxParser = factory.newSAXParser();
-            XMLReader xmlReader = saxParser.getXMLReader();
-            xmlReader.setEntityResolver(new SafeEmptyEntityResolver());
-            return xmlReader;
+            return XmlProcessorCreator.createSafeXMLReader(true, false);
         } catch (Exception e) {
             // Converting checked exceptions to unchecked RuntimeException (java-specific comment).
             //
@@ -436,12 +425,4 @@ public class PatternParser extends DefaultHandler {
         // getLocationString(SAXParseException):String
         return str.toString();
     }
-
-    // Prevents XXE attacks
-    private static class SafeEmptyEntityResolver implements EntityResolver {
-        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-            return new InputSource(new StringReader(""));
-        }
-    }
-
 }

@@ -168,6 +168,8 @@ public class PdfException extends RuntimeException {
     public static final String EncryptedPayloadFileSpecShallHaveTypeEqualToFilespec = "Encrypted payload file spec shall have 'Type' key. The value of such key shall be 'Filespec'.";
     public static final String EncryptedPayloadShallHaveTypeEqualsToEncryptedPayloadIfPresent = "Encrypted payload dictionary shall have field 'Type' equal to 'EncryptedPayload' if present";
     public static final String EncryptedPayloadShallHaveSubtype = "Encrypted payload shall have 'Subtype' field specifying crypto filter";
+    public static final String ExternalEntityElementFoundInXml =
+            "External entity element found in XML. This entity will not be parsed to prevent XML attacks.";
 
     public static final String FailedToGetTsaResponseFrom1 = "Failed to get TSA response from {0}.";
     public static final String FieldFlatteningIsNotSupportedInAppendMode = "Field flattening is not supported in append mode.";
