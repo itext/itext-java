@@ -45,7 +45,7 @@ package com.itextpdf.layout.element;
 import com.itextpdf.layout.renderer.FlexContainerRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 
-public class FlexContainer extends Div {
+class FlexContainer extends Div {
 
     public FlexContainer() {
         super();

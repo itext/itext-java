@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.layout;
+package com.itextpdf.layout.element;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
@@ -28,6 +28,8 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.Style;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Div;
