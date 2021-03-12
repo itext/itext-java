@@ -205,10 +205,12 @@ public final class LogMessageConstant {
     public static final String TYPE3_FONT_INITIALIZATION_ISSUE = "Type 3 font issue. Font cannot be initialized correctly.";
     public static final String TYPOGRAPHY_NOT_FOUND = "Cannot find pdfCalligraph module, which was implicitly " +
             "required by one of the layout properties";
-    public static final String UNABLE_TO_INVERT_GRADIENT_TRANSFORMATION = "Unable to invert gradient transformation, ignoring it";
     public static final String UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN = "Unable to apply page dependent property, because the page on which element is drawn is unknown. Usually this means that element was added to the Canvas instance that was created not with constructor taking PdfPage as argument. Not processed property: {0}";
+    public static final String UNABLE_TO_INTERRUPT_THREAD = "Unable to interrupt a thread";
+    public static final String UNABLE_TO_INVERT_GRADIENT_TRANSFORMATION = "Unable to invert gradient transformation, ignoring it";
     public static final String UNABLE_TO_REGISTER_EVENT_DATA_HANDLER_SHUTDOWN_HOOK = "Unable to register event data handler shutdown hook because of security reasons.";
     public static final String UNABLE_TO_SEARCH_FOR_EVENT_CONTEXT = "It is impossible to retrieve event context because of the security reasons. Event counting may behave in unexpected way";
+    public static final String UNABLE_TO_UNREGISTER_EVENT_DATA_HANDLER_SHUTDOWN_HOOK = "Unable to unregister event data handler shutdown hook because of security permissions";
     public static final String UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING = "Unexpected behaviour during table row collapsing. Calculated rowspan was less then 1.";
     public static final String UNEXPECTED_EVENT_HANDLER_SERVICE_THREAD_EXCEPTION = "Unexpected exception encountered in service thread. Shutting it down.";
     public static final String UNKNOWN_CMAP = "Unknown CMap {0}";
