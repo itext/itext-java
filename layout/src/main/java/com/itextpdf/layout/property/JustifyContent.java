@@ -35,5 +35,6 @@ public enum JustifyContent {
     FLEX_END,
     LEFT,
     RIGHT,
-    NORMAL
+    NORMAL,
+    STRETCH
 }

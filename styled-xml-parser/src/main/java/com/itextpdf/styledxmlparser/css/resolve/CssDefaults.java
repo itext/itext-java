@@ -158,6 +158,9 @@ public class CssDefaults {
         defaultValues.put(CommonCssConstants.ORPHANS, "2");
         defaultValues.put(CommonCssConstants.WIDOWS, "2");
 
+        defaultValues.put(CommonCssConstants.JUSTIFY_CONTENT, CommonCssConstants.FLEX_START);
+        defaultValues.put(CommonCssConstants.ALIGN_ITEMS, CommonCssConstants.STRETCH);
+
         // Other css properties default values will be added as needed
     }
 

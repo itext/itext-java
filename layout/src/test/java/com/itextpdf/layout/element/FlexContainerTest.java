@@ -62,33 +62,38 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     private AlignmentPropertyValue alignItemsValue;
     private JustifyContent justifyContentValue;
-    private Integer testNumber;
+    private Integer comparisonPdfId;
 
     @BeforeClass
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
-    public FlexContainerTest(Object alignItemsValue, Object justifyContentValue, Object testNumber) {
+    public FlexContainerTest(Object alignItemsValue, Object justifyContentValue, Object comparisonPdfId) {
         this.alignItemsValue = (AlignmentPropertyValue) alignItemsValue;
         this.justifyContentValue = (JustifyContent) justifyContentValue;
-        this.testNumber = (Integer) testNumber;
+        this.comparisonPdfId = (Integer) comparisonPdfId;
     }
 
     @Parameterized.Parameters(name = "{index}: align-items: {0}; justify-content: {1}")
     public static Iterable<Object[]> alignItemsAndJustifyContentProperties() {
         return Arrays.asList(new Object[][]{
                 {AlignmentPropertyValue.FLEX_START, JustifyContent.FLEX_START, 1},
-                {AlignmentPropertyValue.FLEX_END, JustifyContent.FLEX_END, 2},
-                {AlignmentPropertyValue.CENTER, JustifyContent.CENTER, 3},
-                {AlignmentPropertyValue.STRETCH, JustifyContent.CENTER, 4}
+                {AlignmentPropertyValue.START, JustifyContent.START, 2},
+                {AlignmentPropertyValue.SELF_START, JustifyContent.SELF_START, 3},
+                {AlignmentPropertyValue.BASELINE, JustifyContent.LEFT, 4},
+                {AlignmentPropertyValue.FLEX_END, JustifyContent.FLEX_END, 5},
+                {AlignmentPropertyValue.END, JustifyContent.END, 6},
+                {AlignmentPropertyValue.SELF_END, JustifyContent.RIGHT, 7},
+                {AlignmentPropertyValue.CENTER, JustifyContent.CENTER, 8},
+                {AlignmentPropertyValue.STRETCH, JustifyContent.CENTER, 9}
         });
     }
 
     @Test
     public void defaultFlexContainerTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "defaultFlexContainerTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_defaultFlexContainerTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "defaultFlexContainerTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_defaultFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -113,8 +118,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void flexContainerFixedHeightWidthTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerFixedHeightWidthTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerFixedHeightWidthTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "flexContainerFixedHeightWidthTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexContainerFixedHeightWidthTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -141,8 +146,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void flexContainerDifferentChildrenTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerDifferentChildrenTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "flexContainerDifferentChildrenTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -178,8 +183,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void flexContainerHeightClippedTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerHeightClippedTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerHeightClippedTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "flexContainerHeightClippedTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexContainerHeightClippedTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -216,8 +221,8 @@ public class FlexContainerTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA), ignore = true)
     // TODO DEVSIX-5042 HEIGHT property is ignored when FORCED_PLACEMENT is true
     public void flexContainerDifferentChildrenDontFitHorizontallyTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerDifferentChildrenDontFitHorizontallyTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenDontFitHorizontallyTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "flexContainerDifferentChildrenDontFitHorizontallyTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenDontFitHorizontallyTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -251,8 +256,8 @@ public class FlexContainerTest extends ExtendedITextTest {
     @Test
     // TODO DEVSIX-5042 HEIGHT property is ignored when FORCED_PLACEMENT is true
     public void flexContainerDifferentChildrenDontFitHorizontallyForcedPlacementTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerDifferentChildrenDontFitHorizontallyForcedPlacementTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenDontFitHorizontallyForcedPlacementTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "flexContainerDifferentChildrenDontFitHorizontallyForcedPlacementTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenDontFitHorizontallyForcedPlacementTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -285,8 +290,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void flexContainerDifferentChildrenDontFitVerticallyTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerDifferentChildrenDontFitVerticallyTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenDontFitVerticallyTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "flexContainerDifferentChildrenDontFitVerticallyTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenDontFitVerticallyTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -324,8 +329,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void flexContainerDifferentChildrenFitContainerDoesNotFitVerticallyTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerDifferentChildrenFitContainerDoesNotFitVerticallyTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenFitContainerDoesNotFitVerticallyTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "flexContainerDifferentChildrenFitContainerDoesNotFitVerticallyTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenFitContainerDoesNotFitVerticallyTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -362,8 +367,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void flexContainerDifferentChildrenWithGrowTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerDifferentChildrenWithGrowTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenWithGrowTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "flexContainerDifferentChildrenWithGrowTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenWithGrowTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -403,8 +408,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void flexContainerDifferentChildrenWithFlexBasisTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerDifferentChildrenWithFlexBasisTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenWithFlexBasisTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "flexContainerDifferentChildrenWithFlexBasisTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenWithFlexBasisTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -439,8 +444,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void flexContainerDifferentChildrenWithFlexShrinkTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerDifferentChildrenWithFlexShrinkTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenWithFlexShrinkTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "flexContainerDifferentChildrenWithFlexShrinkTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenWithFlexShrinkTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -478,8 +483,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void flexContainerInsideFlexContainerTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerInsideFlexContainerTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerInsideFlexContainerTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "flexContainerInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexContainerInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -506,8 +511,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void flexContainerInsideFlexContainerWithHugeBordersTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerInsideFlexContainerWithHugeBordersTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerInsideFlexContainerWithHugeBordersTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "flexContainerInsideFlexContainerWithHugeBordersTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexContainerInsideFlexContainerWithHugeBordersTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -536,8 +541,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void multipleFlexContainersInsideFlexContainerTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "multipleFlexContainersInsideFlexContainerTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_multipleFlexContainersInsideFlexContainerTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "multipleFlexContainersInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_multipleFlexContainersInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -572,8 +577,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void multipleFlexContainersWithPredefinedPointWidthsInsideFlexContainerTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "multipleFlexContainersWithPredefinedPointWidthsInsideFlexContainerTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_multipleFlexContainersWithPredefinedPointWidthsInsideFlexContainerTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "multipleFlexContainersWithPredefinedPointWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_multipleFlexContainersWithPredefinedPointWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -610,8 +615,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void multipleFlexContainersWithPredefinedPercentWidthsInsideFlexContainerTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "multipleFlexContainersWithPredefinedPercentWidthsInsideFlexContainerTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_multipleFlexContainersWithPredefinedPercentWidthsInsideFlexContainerTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "multipleFlexContainersWithPredefinedPercentWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_multipleFlexContainersWithPredefinedPercentWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -649,8 +654,8 @@ public class FlexContainerTest extends ExtendedITextTest {
     @Test
     // TODO DEVSIX-5087 Content should not overflow container by default
     public void multipleFlexContainersWithPredefinedMinWidthsInsideFlexContainerTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "multipleFlexContainersWithPredefinedMinWidthsInsideFlexContainerTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_multipleFlexContainersWithPredefinedMinWidthsInsideFlexContainerTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "multipleFlexContainersWithPredefinedMinWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_multipleFlexContainersWithPredefinedMinWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -687,8 +692,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void multipleFlexContainersWithPredefinedMaxWidthsInsideFlexContainerTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "multipleFlexContainersWithPredefinedMaxWidthsInsideFlexContainerTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_multipleFlexContainersWithPredefinedMaxWidthsInsideFlexContainerTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "multipleFlexContainersWithPredefinedMaxWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_multipleFlexContainersWithPredefinedMaxWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -725,8 +730,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void flexContainerFillAvailableAreaTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerFillAvailableAreaTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerFillAvailableAreaTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "flexContainerFillAvailableAreaTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexContainerFillAvailableAreaTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -760,8 +765,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void flexContainerRotationAngleTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerRotationAngleTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerRotationAngleTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "flexContainerRotationAngleTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexContainerRotationAngleTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -793,8 +798,8 @@ public class FlexContainerTest extends ExtendedITextTest {
     @Test
     // TODO DEVSIX-5174 content should overflow bottom
     public void respectFlexContainersHeightTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "respectFlexContainersHeightTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_respectFlexContainersHeightTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "respectFlexContainersHeightTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_respectFlexContainersHeightTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -827,8 +832,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void respectFlexContainersWidthTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "respectFlexContainersWidthTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_respectFlexContainersWidthTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "respectFlexContainersWidthTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_respectFlexContainersWidthTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -866,8 +871,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void flexItemsMinHeightShouldBeOverriddenTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexItemsMinHeightShouldBeOverriddenTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexItemsMinHeightShouldBeOverriddenTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "flexItemsMinHeightShouldBeOverriddenTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexItemsMinHeightShouldBeOverriddenTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -885,8 +890,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void linesMinHeightShouldBeRespectedTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "linesMinHeightShouldBeRespectedTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_linesMinHeightShouldBeRespectedTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "linesMinHeightShouldBeRespectedTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_linesMinHeightShouldBeRespectedTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -907,8 +912,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void linesMaxHeightShouldBeRespectedTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "linesMaxHeightShouldBeRespectedTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_linesMaxHeightShouldBeRespectedTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "linesMaxHeightShouldBeRespectedTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_linesMaxHeightShouldBeRespectedTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -929,8 +934,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     @Test
     public void collapsingMarginsFlexContainerTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "collapsingMarginsFlexContainerTest" + testNumber + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_collapsingMarginsFlexContainerTest" + testNumber + ".pdf";
+        String outFileName = destinationFolder + "collapsingMarginsFlexContainerTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_collapsingMarginsFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);

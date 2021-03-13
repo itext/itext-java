@@ -525,17 +525,17 @@ final class FlexUtil {
                 float freeSpace = lineCrossSize - itemInfo.getOuterCrossSize(itemInfo.crossSize);
 
                 switch (selfAlignment) {
+                    case SELF_END:
+                    case END:
                     case FLEX_END:
                         itemInfo.yShift = freeSpace;
                         break;
                     case CENTER:
                         itemInfo.yShift = freeSpace / 2;
                         break;
-                    case END:
                     case START:
                     case BASELINE:
                     case SELF_START:
-                    case SELF_END:
                     case STRETCH:
                     case NORMAL:
                     case FLEX_START:
@@ -559,6 +559,9 @@ final class FlexUtil {
             float freeSpace = mainSize - childrenWidth;
 
             switch (justifyContent) {
+                case RIGHT:
+                case END:
+                case SELF_END:
                 case FLEX_END:
                     line.get(0).xShift = freeSpace;
                     break;
@@ -566,10 +569,10 @@ final class FlexUtil {
                     line.get(0).xShift = freeSpace / 2;
                     break;
                 case NORMAL:
+                case STRETCH:
                 case START:
-                case END:
-                case RIGHT:
                 case LEFT:
+                case SELF_START:
                 case FLEX_START:
                 default:
                     // We don't need to do anything in these cases

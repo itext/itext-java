@@ -70,9 +70,19 @@ public class CommonCssConstants {
     // properties
 
     /**
+     * The Constant ALIGN_CONTENT.
+     */
+    public static final String ALIGN_CONTENT = "align-content";
+
+    /**
      * The Constant ALIGN_ITEMS.
      */
     public static final String ALIGN_ITEMS = "align-items";
+
+    /**
+     * The Constant ALIGN_SELF.
+     */
+    public static final String ALIGN_SELF = "align-self";
 
     /**
      * The Constant BACKGROUND.
@@ -581,6 +591,11 @@ public class CommonCssConstants {
      * The Constant OPACITY.
      */
     public static final String OPACITY = "opacity";
+
+    /**
+     * The Constant ORDER.
+     */
+    public static final String ORDER = "order";
 
     /**
      * The Constant OPRPHANS.
@@ -1315,12 +1330,12 @@ public class CommonCssConstants {
     /**
      * The Constant value SELF_END.
      */
-    public static final String SELF_END = "self end";
+    public static final String SELF_END = "self-end";
 
     /**
      * The Constant SELF_START.
      */
-    public static final String SELF_START = "self start";
+    public static final String SELF_START = "self-start";
 
     /**
      * The Constant SKEW.
@@ -1371,6 +1386,21 @@ public class CommonCssConstants {
      * The Constant SPACE.
      */
     public static final String SPACE = "space";
+
+    /**
+     * The Constant SPACE_AROUND.
+     */
+    public static final String SPACE_AROUND = "space-around";
+
+    /**
+     * The Constant SPACE_BETWEEN.
+     */
+    public static final String SPACE_BETWEEN = "space-between";
+
+    /**
+     * The Constant SPACE_EVENLY.
+     */
+    public static final String SPACE_EVENLY = "space-evenly";
 
     /**
      * The Constant SQUARE.
