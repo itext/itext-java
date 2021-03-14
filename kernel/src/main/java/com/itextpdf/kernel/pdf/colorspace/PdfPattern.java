@@ -67,7 +67,6 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
      * Wraps the passed {@link PdfDictionary}.
      *
      * @param pdfObject the {@link PdfDictionary} that represent Pattern
-     * @return new wrapper instance.
      */
 	protected PdfPattern(PdfDictionary pdfObject) {
         super(pdfObject);
