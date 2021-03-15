@@ -31,16 +31,8 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.Style;
 import com.itextpdf.layout.borders.SolidBorder;
-import com.itextpdf.layout.element.AreaBreak;
-import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.FlexContainer;
-import com.itextpdf.layout.element.IElement;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.List;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.AlignmentPropertyValue;
+import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.JustifyContent;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.OverflowPropertyValue;
@@ -50,13 +42,15 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.IOException;
+import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -863,6 +857,69 @@ public class FlexContainerTest extends ExtendedITextTest {
         flexContainer
                 .add(getFlexItem(overflowX, itemStyle))
                 .add(getFlexItem(overflowX, itemStyle));
+        document.add(flexContainer);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void flexItemsMinHeightShouldBeOverriddenTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "flexItemsMinHeightShouldBeOverriddenTest" + testNumber + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexItemsMinHeightShouldBeOverriddenTest" + testNumber + ".pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Div flexContainer = createFlexContainer();
+
+        flexContainer.add(new Div().setWidth(100).setBackgroundColor(ColorConstants.BLUE).setHeight(100));
+        flexContainer.add(new Div().setWidth(100).setBackgroundColor(ColorConstants.YELLOW).setMinHeight(20));
+        document.add(flexContainer);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void linesMinHeightShouldBeRespectedTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "linesMinHeightShouldBeRespectedTest" + testNumber + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_linesMinHeightShouldBeRespectedTest" + testNumber + ".pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Div flexContainer = createFlexContainer();
+        flexContainer.setMinHeight(100);
+
+        Div child = new Div().setWidth(100).setBackgroundColor(ColorConstants.BLUE);
+        child.add(new Paragraph().setWidth(100).setBackgroundColor(ColorConstants.YELLOW));
+        flexContainer.add(child);
+
+        document.add(flexContainer);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void linesMaxHeightShouldBeRespectedTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "linesMaxHeightShouldBeRespectedTest" + testNumber + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_linesMaxHeightShouldBeRespectedTest" + testNumber + ".pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Div flexContainer = createFlexContainer();
+        flexContainer.setMaxHeight(100);
+
+        Div child = new Div().setWidth(100).setBackgroundColor(ColorConstants.BLUE).setHeight(150);
+        child.add(new Paragraph().setWidth(100).setBackgroundColor(ColorConstants.YELLOW));
+        flexContainer.add(child);
+
         document.add(flexContainer);
 
         document.close();

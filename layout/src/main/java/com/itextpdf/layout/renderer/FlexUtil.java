@@ -102,8 +102,9 @@ final class FlexUtil {
             mainSize = layoutBox.getWidth();
         }
         // We need to have crossSize only if its value is definite.
-        // The calculation differs from width calculation because if width isn't definite, parent's width shall be taken
-        Float crossSize = flexContainerRenderer.retrieveMinHeight();
+        Float crossSize = flexContainerRenderer.retrieveHeight();
+        Float minCrossSize = flexContainerRenderer.retrieveMinHeight();
+        Float maxCrossSize = flexContainerRenderer.retrieveMaxHeight();
 
         determineFlexBasisAndHypotheticalMainSizeForFlexItems(flexItemCalculationInfos, (float) mainSize);
 
@@ -130,7 +131,8 @@ final class FlexUtil {
         determineHypotheticalCrossSizeForFlexItems(lines);
 
         // 8. Calculate the cross size of each flex line.
-        List<Float> lineCrossSizes = calculateCrossSizeOfEachFlexLine(lines, isSingleLine, crossSize);
+        List<Float> lineCrossSizes =
+                calculateCrossSizeOfEachFlexLine(lines, isSingleLine, minCrossSize, crossSize, maxCrossSize);
 
         // TODO DEVSIX-5003 min/max height calculations are not supported
         // If the flex container is single-line, then clamp the line’s cross-size to be within
@@ -409,7 +411,7 @@ final class FlexUtil {
     }
 
     static List<Float> calculateCrossSizeOfEachFlexLine(List<List<FlexItemCalculationInfo>> lines,
-                                                        boolean isSingleLine, Float crossSize) {
+            boolean isSingleLine, Float minCrossSize, Float crossSize, Float maxCrossSize) {
         List<Float> lineCrossSizes = new ArrayList<>();
         if (isSingleLine && crossSize != null && !lines.isEmpty()) {
             lineCrossSizes.add((float) crossSize);
@@ -434,6 +436,17 @@ final class FlexUtil {
                         largestHypotheticalCrossSize = info.getOuterCrossSize(info.hypotheticalCrossSize);
                     }
                     flexLinesCrossSize = Math.max(0, largestHypotheticalCrossSize);
+                }
+                
+                // 3. If the flex container is single-line, then clamp the line’s cross-size to be
+                // within the container’s computed min and max cross sizes
+                if (isSingleLine && !lines.isEmpty()) {
+                    if (null != minCrossSize) {
+                        flexLinesCrossSize = Math.max((float) minCrossSize, flexLinesCrossSize);
+                    }
+                    if (null != maxCrossSize) {
+                        flexLinesCrossSize = Math.min((float) maxCrossSize, flexLinesCrossSize);
+                    }
                 }
                 lineCrossSizes.add(flexLinesCrossSize);
             }
