@@ -872,9 +872,6 @@ public class PdfSigner {
         if (preClosed) {
             throw new PdfException(PdfException.DocumentAlreadyPreClosed);
         }
-
-        // TODO: add mergeVerification functionality
-
         preClosed = true;
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
         SignatureUtil sgnUtil = new SignatureUtil(document);
