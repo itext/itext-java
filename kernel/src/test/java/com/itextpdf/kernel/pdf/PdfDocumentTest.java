@@ -525,10 +525,15 @@ public class PdfDocumentTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_VERSION_IN_CATALOG_CORRUPTED,
+                    logLevel = LogLevelConstants.ERROR)
+    })
     public void openDocumentWithInvalidCatalogVersionTest() throws IOException {
-        PdfReader reader = new PdfReader(SOURCE_FOLDER + "sample-with-invalid-catalog-version.pdf");
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertNotNull(pdfDocument);
+        try (PdfReader reader = new PdfReader(SOURCE_FOLDER + "sample-with-invalid-catalog-version.pdf");
+                PdfDocument pdfDocument = new PdfDocument(reader)) {
+            Assert.assertNotNull(pdfDocument);
+        }
     }
 
 

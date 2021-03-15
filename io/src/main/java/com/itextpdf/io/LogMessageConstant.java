@@ -89,6 +89,7 @@ public final class LogMessageConstant {
     public static final String DOCUMENT_HAS_CONFLICTING_OCG_NAMES = "Document has conflicting names for optional content groups. Groups with conflicting names will be renamed";
     public static final String DOCUMENT_IDS_ARE_CORRUPTED = "The document original and/or modified id is corrupted";
     public static final String DOCUMENT_SERIALIZATION_EXCEPTION_RAISED = "Unhandled exception while serialization";
+    public static final String DOCUMENT_VERSION_IN_CATALOG_CORRUPTED = "The document version specified in catalog is corrupted";
     public static final String DURING_CONSTRUCTION_OF_ICC_PROFILE_ERROR_OCCURRED = "During the construction of the ICC profile, the {0} error with message \"{1}\" occurred, the ICC profile will not be installed in the image.";
     public static final String ELEMENT_DOES_NOT_FIT_AREA = "Element does not fit current area. {0}";
     public static final String ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED = "Element was placed in a forced way. Keep with next property will be ignored";
