@@ -72,6 +72,11 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfReader implements Closeable, Serializable {
 
+    /**
+     * The default {@link StrictnessLevel} to be used.
+     */
+    public static final StrictnessLevel DEFAULT_STRICTNESS_LEVEL = StrictnessLevel.LENIENT;
+
     private static final long serialVersionUID = -3584187443691964939L;
 
     private static final String endstream1 = "endstream";
@@ -86,6 +91,8 @@ public class PdfReader implements Closeable, Serializable {
     private boolean unethicalReading;
 
     private boolean memorySavingMode;
+
+    private StrictnessLevel strictnessLevel = DEFAULT_STRICTNESS_LEVEL;
 
     //indicate nearest first Indirect reference object which includes current reading the object, using for PdfString decrypt
     private PdfIndirectReference currentIndirectReference;
@@ -220,6 +227,28 @@ public class PdfReader implements Closeable, Serializable {
      */
     public PdfReader setMemorySavingMode(boolean memorySavingMode) {
         this.memorySavingMode = memorySavingMode;
+        return this;
+    }
+
+    /**
+     * Get the current {@link StrictnessLevel} of the reader.
+     *
+     * @return the current {@link StrictnessLevel}
+     */
+    public StrictnessLevel getStrictnessLevel() {
+        return strictnessLevel;
+    }
+
+    /**
+     * Set the {@link StrictnessLevel} for the reader. If the argument is {@code null}, then
+     * the {@link PdfReader#DEFAULT_STRICTNESS_LEVEL} will be used.
+     *
+     * @param strictnessLevel the {@link StrictnessLevel} to set
+     *
+     * @return this {@link PdfReader} instance
+     */
+    public PdfReader setStrictnessLevel(StrictnessLevel strictnessLevel) {
+        this.strictnessLevel = strictnessLevel == null ? DEFAULT_STRICTNESS_LEVEL : strictnessLevel;
         return this;
     }
 
@@ -1455,6 +1484,41 @@ public class PdfReader implements Closeable, Serializable {
         @Override
         public void close() throws IOException {
             buffer = null;
+        }
+    }
+
+    /**
+     * Enumeration representing the strictness level for reading.
+     */
+    public enum StrictnessLevel {
+        /**
+         * The reading strictness level at which iText fails (throws an exception) in case of
+         * contradiction with PDF specification, but still recovers from mild parsing errors
+         * and ambiguities.
+         */
+        CONSERVATIVE(5000),
+        /**
+         * The reading strictness level at which iText tries to recover from parsing
+         * errors if possible.
+         */
+        LENIENT(3000);
+
+        private final int levelValue;
+
+        StrictnessLevel(int levelValue) {
+            this.levelValue = levelValue;
+        }
+
+        /**
+         * Checks whether the current instance represents more strict reading level than
+         * the provided one. Note that the {@code null} is less strict than any other value.
+         *
+         * @param compareWith the {@link StrictnessLevel} to compare with
+         *
+         * @return {@code true} if the current level is stricter than the provided one
+         */
+        public boolean isStricter(StrictnessLevel compareWith) {
+            return compareWith == null || this.levelValue > compareWith.levelValue;
         }
     }
 }

@@ -45,8 +45,12 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.DeflaterOutputStream;
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
@@ -70,14 +74,19 @@ import java.io.FileOutputStream;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfDocumentTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfDocumentTest/";
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -533,6 +542,17 @@ public class PdfDocumentTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(SOURCE_FOLDER + "sample-with-invalid-catalog-version.pdf");
                 PdfDocument pdfDocument = new PdfDocument(reader)) {
             Assert.assertNotNull(pdfDocument);
+        }
+    }
+
+    @Test
+    public void openDocumentWithInvalidCatalogVersionAndConservativeStrictnessReadingTest() throws IOException {
+        try (PdfReader reader = new PdfReader(SOURCE_FOLDER + "sample-with-invalid-catalog-version.pdf")
+                .setStrictnessLevel(StrictnessLevel.CONSERVATIVE)) {
+
+            junitExpectedException.expect(PdfException.class);
+            junitExpectedException.expectMessage(LogMessageConstant.DOCUMENT_VERSION_IN_CATALOG_CORRUPTED);
+            new PdfDocument(reader);
         }
     }
 

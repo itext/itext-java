@@ -67,6 +67,7 @@ import com.itextpdf.kernel.log.CounterManager;
 import com.itextpdf.kernel.log.ICounter;
 import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
 import com.itextpdf.kernel.numbering.RomanNumbering;
+import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
@@ -1923,34 +1924,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 pdfVersion = reader.headerPdfVersion;
                 trailer = new PdfDictionary(reader.trailer);
 
-                PdfArray id = reader.trailer.getAsArray(PdfName.ID);
-
-                if (id != null) {
-                   if (id.size() == 2) {
-                       originalDocumentId = id.getAsString(0);
-                       modifiedDocumentId = id.getAsString(1);
-                   }
-
-                   if (originalDocumentId == null || modifiedDocumentId == null) {
-                       Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-                       logger.error(LogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED);
-                   }
-                }
+                readDocumentIds();
 
                 catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true));
-                if (catalog.getPdfObject().containsKey(PdfName.Version)) {
-                    // The version of the PDF specification to which the document conforms (for example, 1.4)
-                    // if later than the version specified in the file's header
-                    try {
-                        PdfVersion catalogVersion = PdfVersion.fromPdfName(catalog.getPdfObject().getAsName(PdfName.Version));
-                        if (catalogVersion.compareTo(pdfVersion) > 0) {
-                            pdfVersion = catalogVersion;
-                        }
-                    } catch (IllegalArgumentException e) {
-                        LoggerFactory.getLogger(PdfDocument.class)
-                                .error(LogMessageConstant.DOCUMENT_VERSION_IN_CATALOG_CORRUPTED);
-                    }
-                }
+                updatePdfVersionFromCatalog();
                 PdfStream xmpMetadataStream = catalog.getPdfObject().getAsStream(PdfName.Metadata);
                 if (xmpMetadataStream != null) {
                     xmpMetadata = xmpMetadataStream.getBytes();
@@ -2492,6 +2469,45 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             buf.append("; modified using ");
             buf.append(versionInfo.getVersion());
             return buf.toString();
+        }
+    }
+
+    private void updatePdfVersionFromCatalog() {
+        if (catalog.getPdfObject().containsKey(PdfName.Version)) {
+            // The version of the PDF specification to which the document conforms (for example, 1.4)
+            // if later than the version specified in the file's header
+            try {
+                PdfVersion catalogVersion = PdfVersion.fromPdfName(catalog.getPdfObject().getAsName(PdfName.Version));
+                if (catalogVersion.compareTo(pdfVersion) > 0) {
+                    pdfVersion = catalogVersion;
+                }
+            } catch (IllegalArgumentException e) {
+                processReadingError(LogMessageConstant.DOCUMENT_VERSION_IN_CATALOG_CORRUPTED);
+            }
+        }
+    }
+
+    private void readDocumentIds() {
+        PdfArray id = reader.trailer.getAsArray(PdfName.ID);
+
+        if (id != null) {
+            if (id.size() == 2) {
+                originalDocumentId = id.getAsString(0);
+                modifiedDocumentId = id.getAsString(1);
+            }
+
+            if (originalDocumentId == null || modifiedDocumentId == null) {
+                processReadingError(LogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED);
+            }
+        }
+    }
+
+    private void processReadingError(String errorMessage) {
+        if (StrictnessLevel.CONSERVATIVE.isStricter(reader.getStrictnessLevel())) {
+            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+            logger.error(errorMessage);
+        } else {
+            throw new PdfException(errorMessage);
         }
     }
 
