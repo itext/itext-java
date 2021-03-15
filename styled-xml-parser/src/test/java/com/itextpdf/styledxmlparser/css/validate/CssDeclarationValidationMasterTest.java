@@ -329,4 +329,45 @@ public class CssDeclarationValidationMasterTest extends ExtendedITextTest {
                 new CssDeclaration(CommonCssConstants.WORD_BREAK, "norm")));
 
     }
+
+    @Test
+    public void justifyContentTest() {
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "inherit")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "right")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "normal")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "space-between")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "self-end")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "unsafe self-end")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "stretch")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "space-evenly")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "flex-start")));
+
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "baseline")));
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "safe right")));
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "unsafe normal")));
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "unsafe space-between")));
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "self-center")));
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "self-end unsafe")));
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "safe stretch")));
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "space_evenly")));
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "flex-start left")));
+    }
 }

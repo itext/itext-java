@@ -185,6 +185,18 @@ public class CssDeclarationValidationMaster {
                                 CommonCssConstants.SELF_START, CommonCssConstants.SELF_END),
                         Arrays.asList(CommonCssConstants.SAFE, CommonCssConstants.UNSAFE)),
                 inheritInitialUnsetValidator));
+        DEFAULT_VALIDATORS.put(CommonCssConstants.JUSTIFY_CONTENT, new MultiTypeDeclarationValidator(
+                new CssEnumValidator(Arrays.asList(
+                        CommonCssConstants.SPACE_AROUND, CommonCssConstants.SPACE_BETWEEN,
+                        CommonCssConstants.SPACE_EVENLY, CommonCssConstants.STRETCH, CommonCssConstants.NORMAL,
+                        CommonCssConstants.LEFT, CommonCssConstants.RIGHT)),
+                new CssEnumValidator(Arrays.asList(
+                        CommonCssConstants.CENTER, CommonCssConstants.START, CommonCssConstants.FLEX_START,
+                        CommonCssConstants.SELF_START, CommonCssConstants.END, CommonCssConstants.FLEX_END,
+                        CommonCssConstants.SELF_END),
+                        Arrays.asList(CommonCssConstants.SAFE, CommonCssConstants.UNSAFE)),
+                inheritInitialUnsetValidator
+        ));
         DEFAULT_VALIDATORS.put(CommonCssConstants.JUSTIFY_ITEMS, new MultiTypeDeclarationValidator(
                 normalValidator,
                 new CssEnumValidator(Arrays.asList(CommonCssConstants.BASELINE),
