@@ -118,14 +118,39 @@ public class FontMetrics implements Serializable {
         return glyphWidths;
     }
 
+    /**
+     * Gets typo (a.k.a. sTypo or OS/2) vertical metric corresponding to ascender.
+     *
+     * <p>
+     * Typo vertical metrics are the primary source for iText ascender/descender calculations.
+     *
+     * @return typo ascender value in normalized 1000-units
+     */
     public int getTypoAscender() {
         return typoAscender;
     }
 
+    /**
+     * Gets typo (a.k.a. sTypo or OS/2) vertical metric corresponding to descender.
+     *
+     * <p>
+     * Typo vertical metrics are the primary source for iText ascender/descender calculations.
+     *
+     * @return typo descender value in normalized 1000-units
+     */
     public int getTypoDescender() {
         return typoDescender;
     }
 
+    /**
+     * Gets the capital letters height.
+     *
+     * <p>
+     * This property defines the vertical coordinate of the top of flat capital letters,
+     * measured from the baseline.
+     *
+     * @return cap height in 1000-units
+     */
     public int getCapHeight() {
         return capHeight;
     }
@@ -237,14 +262,39 @@ public class FontMetrics implements Serializable {
         this.glyphWidths = glyphWidths;
     }
 
+    /**
+     * Sets typo (a.k.a. sTypo or OS/2) vertical metric corresponding to ascender.
+     *
+     * <p>
+     * Typo vertical metrics are the primary source for iText ascender/descender calculations.
+     *
+     * @param typoAscender typo ascender value in normalized 1000-units
+     */
     protected void setTypoAscender(int typoAscender) {
         this.typoAscender = (int) (typoAscender * normalizationCoef);
     }
 
-    protected void setTypoDescender(int typoDesctender) {
-        this.typoDescender = (int) (typoDesctender * normalizationCoef);
+    /**
+     * Sets typo (a.k.a. sTypo or OS/2) vertical metric corresponding to descender.
+     *
+     * <p>
+     * Typo vertical metrics are the primary source for iText ascender/descender calculations.
+     *
+     * @param typoDescender typo descender value in normalized 1000-units
+     */
+    protected void setTypoDescender(int typoDescender) {
+        this.typoDescender = (int) (typoDescender * normalizationCoef);
     }
 
+    /**
+     * Sets the capital letters height.
+     *
+     * <p>
+     * This property defines the vertical coordinate of the top of flat capital letters,
+     * measured from the baseline.
+     *
+     * @param capHeight cap height in 1000-units
+     */
     protected void setCapHeight(int capHeight) {
         this.capHeight = (int) (capHeight * normalizationCoef);
     }

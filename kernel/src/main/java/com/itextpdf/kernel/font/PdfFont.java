@@ -77,6 +77,8 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     protected FontProgram fontProgram;
 
     protected static final byte[] EMPTY_BYTES = new byte[0];
+
+    @Deprecated
     protected static final double[] DEFAULT_FONT_MATRIX = {0.001, 0, 0, 0.001, 0, 0};
 
     protected Map<Integer, Glyph> notdefGlyphs = new HashMap<>();
@@ -208,6 +210,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public abstract void writeText(String text, PdfOutputStream stream);
 
+    @Deprecated
     public double[] getFontMatrix() {
         return DEFAULT_FONT_MATRIX;
     }

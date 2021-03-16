@@ -248,7 +248,6 @@ public class PdfType3FontTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)})
     public void missingFontMatrixTest() {
         PdfDictionary dictionary = new PdfDictionary();
         dictionary.put(PdfName.Widths, new PdfArray());
@@ -262,7 +261,6 @@ public class PdfType3FontTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)})
     public void missingWidthsTest() {
         PdfDictionary dictionary = new PdfDictionary();
         dictionary.put(PdfName.FontMatrix, new PdfArray());

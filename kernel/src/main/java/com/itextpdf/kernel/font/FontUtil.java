@@ -58,6 +58,7 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.slf4j.Logger;
@@ -127,9 +128,7 @@ public class FontUtil {
 
     static int[] convertSimpleWidthsArray(PdfArray widthsArray, int first, int missingWidth) {
         int[] res = new int[256];
-        for (int i = 0; i < res.length; i++) {
-            res[i] = missingWidth;
-        }
+        Arrays.fill(res, missingWidth);
         if (widthsArray == null) {
             Logger logger = LoggerFactory.getLogger(FontUtil.class);
             logger.warn(LogMessageConstant.FONT_DICTIONARY_WITH_NO_WIDTHS);

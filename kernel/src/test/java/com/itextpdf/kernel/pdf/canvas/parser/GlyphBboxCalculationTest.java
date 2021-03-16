@@ -22,7 +22,9 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -30,10 +32,13 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -110,6 +115,28 @@ public class GlyphBboxCalculationTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outputPdf, sourceFolder + "cmp_type3FontsWithIdentityFontMatrixAndMultiplier.pdf", destinationFolder, "diff_"));
     }
 
+    @Test
+    public void type3FontCustomFontMatrixAndFontBBoxTest() throws IOException {
+        String inputPdf = sourceFolder + "type3FontCustomFontMatrixAndFontBBox.pdf";
+
+        // Resultant rectangle is expected to be a bounding box over the text on the page.
+        Rectangle expectedRectangle = new Rectangle(10f, 97.84f, 14.400002f, 8.880005f);
+        List<Rectangle> actualRectangles;
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inputPdf))) {
+            TextBBoxEventListener eventListener = new TextBBoxEventListener();
+            PdfCanvasProcessor canvasProcessor = new PdfCanvasProcessor(eventListener);
+
+            PdfPage page = pdfDoc.getPage(1);
+            canvasProcessor.processPageContent(page);
+
+            actualRectangles = eventListener.getRectangles();
+        }
+
+        Assert.assertEquals(1, actualRectangles.size());
+        Assert.assertTrue(expectedRectangle.equalsWithEpsilon(actualRectangles.get(0)));
+    }
+
     private static class CharacterPositionEventListener implements ITextExtractionStrategy {
         float glyphWidth;
         TextRenderInfo firstTextRenderInfo;
@@ -138,6 +165,33 @@ public class GlyphBboxCalculationTest extends ExtendedITextTest {
         @Override
         public Set<EventType> getSupportedEvents() {
             return new LinkedHashSet<>(Collections.singletonList(EventType.RENDER_TEXT));
+        }
+    }
+
+    private static class TextBBoxEventListener implements IEventListener {
+        private final List<Rectangle> rectangles = new ArrayList<>();
+
+        public List<Rectangle> getRectangles() {
+            return rectangles;
+        }
+
+        @Override
+        public void eventOccurred(IEventData data, EventType type) {
+            if (EventType.RENDER_TEXT.equals(type)) {
+                TextRenderInfo renderInfo = (TextRenderInfo) data;
+                Vector startPoint = renderInfo.getDescentLine().getStartPoint();
+                Vector endPoint = renderInfo.getAscentLine().getEndPoint();
+                float x1 = Math.min(startPoint.get(0), endPoint.get(0));
+                float x2 = Math.max(startPoint.get(0), endPoint.get(0));
+                float y1 = Math.min(startPoint.get(1), endPoint.get(1));
+                float y2 = Math.max(startPoint.get(1), endPoint.get(1));
+                rectangles.add(new Rectangle(x1, y1, x2 - x1, y2 - y1));
+            }
+        }
+
+        @Override
+        public Set<EventType> getSupportedEvents() {
+            return null;
         }
     }
 

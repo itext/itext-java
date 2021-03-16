@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.data;
 
+import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
@@ -78,7 +79,6 @@ public class TextRenderInfo extends AbstractRenderInfo {
     private final Matrix textToUserSpaceTransformMatrix;
     private final Matrix textMatrix;
     private float unscaledWidth = Float.NaN;
-    private double[] fontMatrix = null;
 
     /**
      * Hierarchy of nested canvas tags for the text from the most inner (nearest to text) tag to the most outer.
@@ -99,11 +99,10 @@ public class TextRenderInfo extends AbstractRenderInfo {
         this.textToUserSpaceTransformMatrix = textMatrix.multiply(gs.getCtm());
         this.textMatrix = textMatrix;
         this.canvasTagHierarchy = Collections.<CanvasTag>unmodifiableList(new ArrayList<>(canvasTagHierarchy));
-        this.fontMatrix = gs.getFont().getFontMatrix();
     }
 
     /**
-     * Used for creating sub-TextRenderInfos for each individual character
+     * Used for creating sub-TextRenderInfos for each individual character.
      *
      * @param parent           the parent TextRenderInfo
      * @param str              the content of a TextRenderInfo
@@ -116,10 +115,11 @@ public class TextRenderInfo extends AbstractRenderInfo {
         this.textToUserSpaceTransformMatrix = offsetMatrix.multiply(parent.textToUserSpaceTransformMatrix);
         this.textMatrix = offsetMatrix.multiply(parent.textMatrix);
         this.canvasTagHierarchy = parent.canvasTagHierarchy;
-        this.fontMatrix = parent.gs.getFont().getFontMatrix();
     }
 
     /**
+     * Gets the text to be rendered according to canvas operators.
+     *
      * @return the text to render
      */
     public String getText() {
@@ -465,7 +465,7 @@ public class TextRenderInfo extends AbstractRenderInfo {
         if (charWidth == 0) {
             charWidth = gs.getFont().getFontProgram().getAvgWidth();
         }
-        float w = (float) (charWidth * fontMatrix[0]);
+        float w = (float) ((double) charWidth / FontProgram.UNITS_NORMALIZATION);
         return (w * gs.getFontSize() + gs.getCharSpacing() + gs.getWordSpacing()) * gs.getHorizontalScaling() / 100f;
     }
 
@@ -501,7 +501,7 @@ public class TextRenderInfo extends AbstractRenderInfo {
         checkGraphicsState();
         float[] result = new float[2];
 
-        result[0] = (float) ((gs.getFont().getContentWidth(string) * fontMatrix[0]));
+        result[0] = (float) ((double)gs.getFont().getContentWidth(string) / FontProgram.UNITS_NORMALIZATION);
         result[1] = " ".equals(string.getValue()) ? gs.getWordSpacing() : 0;
         return result;
     }
