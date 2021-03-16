@@ -1129,6 +1129,24 @@ public class BlockTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO DEVSIX-1895 if height bigger than min-height is set,
+    // then the element's height should be increased up to height
+    public void heightShouldBeIncreasedUpToSetHeightTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "heightShouldBeIncreasedUpToSetHeightTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_heightShouldBeIncreasedUpToSetHeightTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Div div = new Div().setWidth(100).setMinHeight(100).setHeight(200).setBackgroundColor(ColorConstants.BLUE);
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
     @Ignore("DEVSIX-1897")
     public void paragraphVerticalAlignmentTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "paragraphVerticalAlignmentTest01.pdf";
