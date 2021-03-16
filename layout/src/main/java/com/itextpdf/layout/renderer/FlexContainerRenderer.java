@@ -89,6 +89,7 @@ public class FlexContainerRenderer extends DivRenderer {
         lines = FlexUtil.calculateChildrenRectangles(layoutContextRectangle, this);
         final List<UnitValue> previousWidths = new ArrayList<>();
         final List<UnitValue> previousHeights = new ArrayList<>();
+        final List<UnitValue> previousMinHeights = new ArrayList<>();
         for (final List<FlexItemInfo> line : lines) {
             for (final FlexItemInfo itemInfo : line) {
                 final Rectangle rectangleWithoutBordersMarginsPaddings =
@@ -96,10 +97,16 @@ public class FlexContainerRenderer extends DivRenderer {
 
                 previousWidths.add(itemInfo.getRenderer().<UnitValue>getProperty(Property.WIDTH));
                 previousHeights.add(itemInfo.getRenderer().<UnitValue>getProperty(Property.HEIGHT));
+                previousMinHeights.add(itemInfo.getRenderer().<UnitValue>getProperty(Property.MIN_HEIGHT));
 
                 itemInfo.getRenderer().setProperty(Property.WIDTH,
                         UnitValue.createPointValue(rectangleWithoutBordersMarginsPaddings.getWidth()));
                 itemInfo.getRenderer().setProperty(Property.HEIGHT,
+                        UnitValue.createPointValue(rectangleWithoutBordersMarginsPaddings.getHeight()));
+                // TODO DEVSIX-1895 Once the ticket is closed, there will be no need in setting min-height
+                // In case element takes less vertical space than expected, we need to make sure
+                // it is extended to the height predicted by the algo
+                itemInfo.getRenderer().setProperty(Property.MIN_HEIGHT,
                         UnitValue.createPointValue(rectangleWithoutBordersMarginsPaddings.getHeight()));
             }
         }
@@ -113,6 +120,7 @@ public class FlexContainerRenderer extends DivRenderer {
             for (final FlexItemInfo itemInfo : line) {
                 itemInfo.getRenderer().setProperty(Property.WIDTH, previousWidths.get(counter));
                 itemInfo.getRenderer().setProperty(Property.HEIGHT, previousHeights.get(counter));
+                itemInfo.getRenderer().setProperty(Property.MIN_HEIGHT, previousMinHeights.get(counter));
                 ++counter;
             }
         }
