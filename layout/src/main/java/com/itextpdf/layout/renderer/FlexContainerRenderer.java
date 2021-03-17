@@ -94,8 +94,14 @@ public class FlexContainerRenderer extends DivRenderer {
         final List<UnitValue> previousMinHeights = new ArrayList<>();
         for (final List<FlexItemInfo> line : lines) {
             for (final FlexItemInfo itemInfo : line) {
-                final Rectangle rectangleWithoutBordersMarginsPaddings =
-                        itemInfo.getRenderer().applyMarginsBordersPaddings(itemInfo.getRectangle().clone(), false);
+                final Rectangle rectangleWithoutBordersMarginsPaddings;
+                if (AbstractRenderer.isBorderBoxSizing(itemInfo.getRenderer())) {
+                    rectangleWithoutBordersMarginsPaddings =
+                            itemInfo.getRenderer().applyMargins(itemInfo.getRectangle().clone(), false);
+                } else {
+                    rectangleWithoutBordersMarginsPaddings =
+                            itemInfo.getRenderer().applyMarginsBordersPaddings(itemInfo.getRectangle().clone(), false);
+                }
 
                 previousWidths.add(itemInfo.getRenderer().<UnitValue>getProperty(Property.WIDTH));
                 previousHeights.add(itemInfo.getRenderer().<UnitValue>getProperty(Property.HEIGHT));

@@ -2512,14 +2512,14 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    private static float calculatePaddingBorderWidth(AbstractRenderer renderer) {
+    static float calculatePaddingBorderWidth(AbstractRenderer renderer) {
         Rectangle dummy = new Rectangle(0, 0);
         renderer.applyBorderBox(dummy, true);
         renderer.applyPaddings(dummy, true);
         return dummy.getWidth();
     }
 
-    private static float calculatePaddingBorderHeight(AbstractRenderer renderer) {
+    static float calculatePaddingBorderHeight(AbstractRenderer renderer) {
         Rectangle dummy = new Rectangle(0, 0);
         renderer.applyBorderBox(dummy, true);
         renderer.applyPaddings(dummy, true);

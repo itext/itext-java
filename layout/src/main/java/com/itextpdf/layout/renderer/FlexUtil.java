@@ -86,9 +86,6 @@ final class FlexUtil {
         Rectangle layoutBox = flexContainerBBox.clone();
         flexContainerRenderer.applyMarginsBordersPaddings(layoutBox, false);
 
-        List<FlexItemCalculationInfo> flexItemCalculationInfos =
-                createFlexItemCalculationInfos(flexContainerRenderer, layoutBox);
-
         // 9.2. Line Length Determination
 
         // 2. Determine the available main and cross space for the flex items.
@@ -106,7 +103,10 @@ final class FlexUtil {
         Float minCrossSize = flexContainerRenderer.retrieveMinHeight();
         Float maxCrossSize = flexContainerRenderer.retrieveMaxHeight();
 
-        determineFlexBasisAndHypotheticalMainSizeForFlexItems(flexItemCalculationInfos, (float) mainSize);
+        List<FlexItemCalculationInfo> flexItemCalculationInfos =
+                createFlexItemCalculationInfos(flexContainerRenderer, (float) mainSize);
+
+        determineFlexBasisAndHypotheticalMainSizeForFlexItems(flexItemCalculationInfos);
 
         // 9.3. Main Size Determination
 
@@ -182,17 +182,12 @@ final class FlexUtil {
     }
 
     static void determineFlexBasisAndHypotheticalMainSizeForFlexItems(
-            List<FlexItemCalculationInfo> flexItemCalculationInfos, float mainSize) {
+            List<FlexItemCalculationInfo> flexItemCalculationInfos) {
         for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
             // 3. Determine the flex base size and hypothetical main size of each item:
 
-            // Note: We assume that flex-basis: auto was resolved (set to either width or height) on some upper level
-            assert null != info.flexBasis;
-
             // A. If the item has a definite used flex basis, that’s the flex base size.
-            info.flexBaseSize = info.flexBasis.isPercentValue()
-                    ? (info.flexBasis.getValue() * mainSize / 100)
-                    : info.flexBasis.getValue();
+            info.flexBaseSize = info.flexBasis;
 
             // TODO DEVSIX-5001 content as width are not supported
             // TODO DEVSIX-5004 Implement method to check whether an element has an intrinsic aspect ratio
@@ -607,24 +602,32 @@ final class FlexUtil {
     }
 
     private static List<FlexItemCalculationInfo> createFlexItemCalculationInfos(
-            FlexContainerRenderer flexContainerRenderer, Rectangle flexContainerBBox) {
+            FlexContainerRenderer flexContainerRenderer, float flexContainerWidth) {
         final List<IRenderer> childRenderers = flexContainerRenderer.getChildRenderers();
         final List<FlexItemCalculationInfo> flexItems = new ArrayList<>();
         for (final IRenderer renderer : childRenderers) {
             if (renderer instanceof AbstractRenderer) {
                 AbstractRenderer abstractRenderer = (AbstractRenderer) renderer;
+
+                // TODO DEVSIX-5091 improve determining of the flex base size when flex-basis: content
+                float maxWidth = calculateMaxWidth(abstractRenderer, flexContainerWidth);
+                float flexBasis;
+                if (renderer.<UnitValue>getProperty(Property.FLEX_BASIS) == null) {
+                    flexBasis = maxWidth;
+                } else {
+                    flexBasis = (float) abstractRenderer.retrieveUnitValue(flexContainerWidth, Property.FLEX_BASIS);
+                    if (AbstractRenderer.isBorderBoxSizing(abstractRenderer)) {
+                        flexBasis -= AbstractRenderer.calculatePaddingBorderWidth(abstractRenderer);
+                    }
+                }
+                flexBasis = Math.max(flexBasis, 0);
+
                 float flexGrow = (float) renderer.<Float>getProperty(Property.FLEX_GROW, FLEX_GROW_INITIAL_VALUE);
 
                 float flexShrink = (float) renderer.<Float>getProperty(Property.FLEX_SHRINK, FLEX_SHRINK_INITIAL_VALUE);
 
-                // TODO DEVSIX-5091 improve determining of the flex base size when flex-basis: content
-                float maxWidth = abstractRenderer.getMinMaxWidth().getMaxWidth();
-                maxWidth = abstractRenderer.applyMarginsBordersPaddings(new Rectangle(maxWidth, 0), false).getWidth();
-
-                UnitValue flexBasis = renderer.getProperty(Property.FLEX_BASIS, UnitValue.createPointValue(maxWidth));
-
                 final FlexItemCalculationInfo flexItemInfo = new FlexItemCalculationInfo(
-                        (AbstractRenderer) renderer, flexBasis, flexGrow, flexShrink, flexContainerBBox.getWidth());
+                        (AbstractRenderer) renderer, flexBasis, flexGrow, flexShrink, flexContainerWidth);
 
                 flexItems.add(flexItemInfo);
             }
@@ -632,9 +635,31 @@ final class FlexUtil {
         return flexItems;
     }
 
+    private static float calculateMaxWidth(AbstractRenderer flexItemRenderer, float flexContainerWidth) {
+        Float maxWidth;
+        if (flexItemRenderer instanceof TableRenderer) {
+            // TODO DEVSIX-5214 we can't call TableRenderer#retrieveWidth method as far as it can throw NPE
+            maxWidth = flexItemRenderer.getMinMaxWidth().getMaxWidth();
+            maxWidth = flexItemRenderer.applyMarginsBordersPaddings(
+                    new Rectangle((float) maxWidth, 0), false).getWidth();
+        } else {
+            // We need to retrieve width and max-width manually because this methods take into account box-sizing
+            maxWidth = flexItemRenderer.retrieveWidth(flexContainerWidth);
+            if (maxWidth == null) {
+                maxWidth = flexItemRenderer.retrieveMaxWidth(flexContainerWidth);
+            }
+            if (maxWidth == null) {
+                maxWidth = flexItemRenderer.getMinMaxWidth().getMaxWidth();
+                maxWidth = flexItemRenderer.applyMarginsBordersPaddings(
+                        new Rectangle((float) maxWidth, 0), false).getWidth();
+            }
+        }
+        return (float) maxWidth;
+    }
+
     static class FlexItemCalculationInfo {
         AbstractRenderer renderer;
-        UnitValue flexBasis;
+        float flexBasis;
         float flexShrink;
         float flexGrow;
         float minContent;
@@ -656,12 +681,9 @@ final class FlexUtil {
         float hypotheticalMainSize;
         float hypotheticalCrossSize;
 
-        public FlexItemCalculationInfo(AbstractRenderer renderer, UnitValue flexBasis,
+        public FlexItemCalculationInfo(AbstractRenderer renderer, float flexBasis,
                 float flexGrow, float flexShrink, float areaWidth) {
             this.renderer = renderer;
-            if (null == flexBasis) {
-                throw new IllegalArgumentException(LayoutExceptionMessageConstant.FLEX_BASIS_CANNOT_BE_NULL);
-            }
             this.flexBasis = flexBasis;
             if (flexShrink < 0) {
                 throw new IllegalArgumentException(LayoutExceptionMessageConstant.FLEX_SHRINK_CANNOT_BE_NEGATIVE);

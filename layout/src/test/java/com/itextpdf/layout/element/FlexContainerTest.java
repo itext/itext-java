@@ -33,6 +33,7 @@ import com.itextpdf.layout.Style;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.property.AlignmentPropertyValue;
 import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.BoxSizingPropertyValue;
 import com.itextpdf.layout.property.JustifyContent;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.OverflowPropertyValue;
@@ -961,6 +962,87 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.add(flexContainersSibling).add(flexContainer);
 
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void flexItemBoxSizingTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "flexItemBoxSizingTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexItemBoxSizingTest" + comparisonPdfId + ".pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Div flexContainer = createFlexContainer();
+        flexContainer.setProperty(Property.BORDER, new SolidBorder(ColorConstants.BLUE, 30));
+        flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
+        flexContainer.setWidth(450);
+        flexContainer.setHeight(200);
+
+        Div innerDiv = new Div();
+        innerDiv.setWidth(120);
+        innerDiv.setHeight(120);
+        innerDiv.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+        innerDiv.setProperty(Property.BACKGROUND, new Background(ColorConstants.GREEN));
+        innerDiv.setBorder(new SolidBorder(ColorConstants.RED, 20));
+        innerDiv.setProperty(Property.FLEX_GROW, 0.3F);
+
+        Div innerDiv2 = new Div();
+        innerDiv2.setProperty(Property.FLEX_BASIS, UnitValue.createPointValue(120));
+        innerDiv2.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+        innerDiv2.setProperty(Property.BACKGROUND, new Background(ColorConstants.GREEN));
+        innerDiv2.setBorder(new SolidBorder(ColorConstants.RED, 20));
+        innerDiv2.setProperty(Property.FLEX_GROW, 0.3F);
+
+        Div innerDiv3 = new Div();
+        innerDiv3.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+        innerDiv3.setProperty(Property.BACKGROUND, new Background(ColorConstants.GREEN));
+        innerDiv3.setBorder(new SolidBorder(ColorConstants.RED, 20));
+
+        Div innerDivChild =
+                new Div().setBorder(new SolidBorder(ColorConstants.ORANGE, 10)).setBackgroundColor(ColorConstants.PINK).setWidth(50).setHeight(50);
+        innerDivChild.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+        innerDiv.add(innerDivChild);
+        innerDiv2.add(innerDivChild);
+        innerDiv3.add(innerDivChild);
+
+        Div divToCompare = new Div().setWidth(450).setHeight(100).setBackgroundColor(ColorConstants.MAGENTA).setMarginTop(50);
+
+        flexContainer.add(innerDiv).add(innerDiv2).add(innerDiv3);
+        document.add(flexContainer).add(divToCompare);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void flexContainerBoxSizingTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "flexContainerBoxSizingTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_flexContainerBoxSizingTest" + comparisonPdfId + ".pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Div flexContainer = createFlexContainer();
+        flexContainer.setProperty(Property.BORDER, new SolidBorder(ColorConstants.BLUE, 30));
+        flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
+        flexContainer.setWidth(450);
+        flexContainer.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+
+        Div innerDiv = new Div();
+        innerDiv.setWidth(120);
+        Div innerDivChild =
+                new Div().setBorder(new SolidBorder(ColorConstants.ORANGE, 10)).setBackgroundColor(ColorConstants.PINK).setWidth(100).setHeight(100);
+        innerDiv.add(innerDivChild);
+        innerDiv.setProperty(Property.BACKGROUND, new Background(ColorConstants.GREEN));
+        innerDiv.setBorder(new SolidBorder(ColorConstants.RED, 20));
+
+        Div divToCompare = new Div().setWidth(450).setHeight(100).setBackgroundColor(ColorConstants.MAGENTA).setMarginTop(50);
+
+        flexContainer.add(innerDiv).add(createNewDiv());
+        document.add(flexContainer).add(divToCompare);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
