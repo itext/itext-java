@@ -538,7 +538,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @throws PdfException Method will throw exception if {@code fontStreamBytes} is {@code null}.
      */
     protected PdfStream getPdfFontStream(byte[] fontStreamBytes, int[] fontStreamLengths) {
-        if (fontStreamBytes == null) {
+        if (fontStreamBytes == null || fontStreamLengths == null) {
             throw new PdfException(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE);
         }
         PdfStream fontStream = new PdfStream(fontStreamBytes);

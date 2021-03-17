@@ -647,4 +647,22 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         PdfFont pdfFont = PdfFontFactory.createFont();
         pdfFont.getPdfFontStream(null, new int[] {1});
     }
+
+    @Test
+    public void cannotGetFontStreamForNullLengthsTest() throws IOException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE);
+
+        PdfFont pdfFont = PdfFontFactory.createFont();
+        pdfFont.getPdfFontStream(new byte[] {1}, null);
+    }
+
+    @Test
+    public void cannotGetFontStreamForNullBytesAndLengthsTest() throws IOException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE);
+
+        PdfFont pdfFont = PdfFontFactory.createFont();
+        pdfFont.getPdfFontStream(null, null);
+    }
 }
