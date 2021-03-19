@@ -263,8 +263,8 @@ public class OCSPVerifier extends RootStoreVerifier {
                 if (responderCert.getExtensionValue(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck.getId()) == null) {
                     CRL crl;
                     try {
-                        // TODO should also check for Authority Information Access according to RFC6960 4.2.2.2.1. "Revocation Checking of an Authorized Responder"
-                        // TODO should also respect onlineCheckingAllowed property?
+                        // TODO DEVSIX-5210 Implement a check heck for Authority Information Access according to
+                        // RFC6960 4.2.2.2.1. "Revocation Checking of an Authorized Responder"
                         crl = CertificateUtil.getCRL(responderCert);
                     } catch (Exception ignored) {
                         crl = (CRL) null;
@@ -279,8 +279,8 @@ public class OCSPVerifier extends RootStoreVerifier {
                     } else {
                         Logger logger = LoggerFactory.getLogger(OCSPVerifier.class);
                         logger.error("Authorized OCSP responder certificate revocation status cannot be checked");
-                        // TODO throw exception starting from iText version 7.2, but only after OCSPVerifier would allow explicit setting revocation check end points/provide revocation data
-                        // throw new VerificationException(issuerCert, "Authorized OCSP responder certificate revocation status cannot be checked.");
+                        // TODO DEVSIX-5207 throw exception starting from iText version 7.2, but only after OCSPVerifier
+                        // would allow explicit setting revocation check end points/provide revocation data
                     }
                 }
 
