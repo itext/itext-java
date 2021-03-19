@@ -2152,7 +2152,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         if (page.getDocument() != null && this != page.getDocument()) {
             throw new PdfException(
                     KernelExceptionMessageConstant.PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT
-            ).setMessageParams(page, this, page.getDocument());
+            ).setMessageParams(page.getDocument(), page.getDocument().getPageNumber(page), this);
         }
         catalog.getPageTree().addPage(index, page);
     }
@@ -2168,7 +2168,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         if (page.getDocument() != null && this != page.getDocument())
             throw new PdfException(
                     KernelExceptionMessageConstant.PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT)
-                    .setMessageParams(page, this, page.getDocument());
+                    .setMessageParams(page.getDocument(), page.getDocument().getPageNumber(page), this);
         catalog.getPageTree().addPage(page);
     }
 

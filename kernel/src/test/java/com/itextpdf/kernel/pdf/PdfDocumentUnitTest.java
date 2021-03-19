@@ -415,10 +415,11 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
         pdfDoc1.addNewPage(1);
 
         junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(
-                MessageFormatUtil
-                        .format(KernelExceptionMessageConstant.PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT,
-                                pdfDoc1.getPage(1), pdfDoc2, pdfDoc1));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT,
+                pdfDoc1,
+                1,
+                pdfDoc2));
 
         pdfDoc2.checkAndAddPage(1, pdfDoc1.getPage(1));
     }
@@ -430,10 +431,11 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
         pdfDoc1.addNewPage(1);
 
         junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(
-                MessageFormatUtil
-                        .format(KernelExceptionMessageConstant.PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT,
-                                pdfDoc1.getPage(1), pdfDoc2, pdfDoc1));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT,
+                pdfDoc1,
+                1,
+                pdfDoc2));
 
         pdfDoc2.checkAndAddPage(pdfDoc1.getPage(1));
     }
