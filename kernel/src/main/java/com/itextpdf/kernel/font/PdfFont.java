@@ -175,12 +175,30 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     public abstract String decode(PdfString content);
 
     /**
-     * Decodes a given {@link PdfString} containing encoded string (e.g. from content stream) into a {@link GlyphLine}
+     * Decodes sequence of character codes (e.g. from content stream) into a {@link GlyphLine}
      *
-     * @param content the encoded string
+     * @param characterCodes the string which is interpreted as a sequence of character codes. Note, that {@link
+     *                       PdfString} acts as a storage for char code values specific to given font, therefore
+     *                       individual character codes must not be interpreted as code units of the UTF-16 encoding
+     *
      * @return the {@link GlyphLine} containing the glyphs encoded by the passed string
      */
-    public abstract GlyphLine decodeIntoGlyphLine(PdfString content);
+    public abstract GlyphLine decodeIntoGlyphLine(PdfString characterCodes);
+
+    /**
+     * Decodes sequence of character codes (e.g. from content stream) to sequence of glyphs
+     * and appends them to the passed list.
+     *
+     * @param list           the list to the end of which decoded glyphs are to be added
+     * @param characterCodes the string which is interpreted as a sequence of character codes. Note, that {@link
+     *                       PdfString} acts as a storage for char code values specific to given font, therefore
+     *                       individual character codes must not be interpreted as code units of the UTF-16 encoding
+     *
+     * @return true if all codes where successfully decoded, false otherwise
+     */
+    public boolean appendDecodedCodesToGlyphsList(List<Glyph> list, PdfString characterCodes) {
+        return false;
+    }
 
     public abstract float getContentWidth(PdfString content);
 

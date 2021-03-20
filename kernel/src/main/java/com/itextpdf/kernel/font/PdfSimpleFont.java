@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontMetrics;
 import com.itextpdf.io.font.FontNames;
@@ -53,6 +54,7 @@ import com.itextpdf.io.font.constants.FontDescriptorFlags;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -65,6 +67,8 @@ import com.itextpdf.kernel.pdf.PdfString;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
@@ -189,6 +193,15 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         return fontEncoding;
     }
 
+    /**
+     * Get the mapping of character codes to unicode values based on /ToUnicode entry of font dictionary.
+     *
+     * @return the {@link CMapToUnicode} built based on /ToUnicode, or null if /ToUnicode is not available
+     */
+    public CMapToUnicode getToUnicode() {
+        return toUnicode;
+    }
+
     @Override
     public byte[] convertToBytes(String text) {
         byte[] bytes = fontEncoding.convertToBytes(text);
@@ -279,31 +292,52 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
      */
     @Override
     public GlyphLine decodeIntoGlyphLine(PdfString content) {
-        byte[] contentBytes = content.getValueBytes();
-        List<Glyph> glyphs = new ArrayList<>(contentBytes.length);
+        List<Glyph> glyphs = new ArrayList<>(content.getValue().length());
+        appendDecodedCodesToGlyphsList(glyphs, content);
+        return new GlyphLine(glyphs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean appendDecodedCodesToGlyphsList(List<Glyph> list, PdfString characterCodes) {
+        boolean allCodesDecoded = true;
+
+        FontEncoding enc = getFontEncoding();
+        byte[] contentBytes = characterCodes.getValueBytes();
         for (byte b : contentBytes) {
             int code = b & 0xff;
             Glyph glyph = null;
-            if (toUnicode != null && toUnicode.lookup(code) != null && (glyph = fontProgram.getGlyphByCode(code)) != null) {
-                if (!Arrays.equals(toUnicode.lookup(code), glyph.getChars())) {
+            CMapToUnicode toUnicodeCMap = getToUnicode();
+            if (toUnicodeCMap != null && toUnicodeCMap.lookup(code) != null
+                    && (glyph = getFontProgram().getGlyphByCode(code)) != null) {
+                if (!Arrays.equals(toUnicodeCMap.lookup(code), glyph.getChars())) {
                     // Copy the glyph because the original one may be reused (e.g. standard Helvetica font program)
                     glyph = new Glyph(glyph);
-                    glyph.setChars(toUnicode.lookup(code));
+                    glyph.setChars(toUnicodeCMap.lookup(code));
                 }
             } else {
-                int uni = fontEncoding.getUnicode(code);
+                int uni = enc.getUnicode(code);
                 if (uni > -1) {
                     glyph = getGlyph(uni);
-                } else if (fontEncoding.getBaseEncoding() == null) {
-                    glyph = fontProgram.getGlyphByCode(code);
+                } else if (enc.getBaseEncoding() == null) {
+                    glyph = getFontProgram().getGlyphByCode(code);
                 }
             }
             if (glyph != null) {
-                glyphs.add(glyph);
+                list.add(glyph);
+            } else {
+                Logger logger = LoggerFactory.getLogger(this.getClass());
+                if (logger.isWarnEnabled()) {
+                    logger.warn(MessageFormatUtil.format(LogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, code));
+                }
+                allCodesDecoded = false;
             }
         }
-        return new GlyphLine(glyphs);
+        return allCodesDecoded;
     }
+
 
     @Override
     public float getContentWidth(PdfString content) {

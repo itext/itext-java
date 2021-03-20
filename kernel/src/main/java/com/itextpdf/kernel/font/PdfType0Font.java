@@ -87,6 +87,10 @@ public class PdfType0Font extends PdfFont {
 
     private static final long serialVersionUID = -8033620300884193397L;
 
+    /**
+     * The code length shall not be greater than 4.
+     */
+    private static final int MAX_CID_CODE_LENGTH = 4;
     private static final byte[] rotbits = {(byte) 0x80, (byte) 0x40, (byte) 0x20, (byte) 0x10, (byte) 0x08, (byte) 0x04, (byte) 0x02, (byte) 0x01};
 
     /**
@@ -523,49 +527,66 @@ public class PdfType0Font extends PdfFont {
      * {@inheritDoc}
      */
     @Override
-    public GlyphLine decodeIntoGlyphLine(PdfString content) {
-        //A sequence of one or more bytes shall be extracted from the string and matched against the codespace
-        //ranges in the CMap. That is, the first byte shall be matched against 1-byte codespace ranges; if no match is
-        //found, a second byte shall be extracted, and the 2-byte code shall be matched against 2-byte codespace
-        //ranges. This process continues for successively longer codes until a match is found or all codespace ranges
-        //have been tested. There will be at most one match because codespace ranges shall not overlap.
-        String cids = content.getValue();
+    public GlyphLine decodeIntoGlyphLine(PdfString characterCodes) {
         List<Glyph> glyphs = new ArrayList<>();
-        for (int i = 0; i < cids.length(); i++) {
-            //The code length shall not be greater than 4.
+        appendDecodedCodesToGlyphsList(glyphs, characterCodes);
+        return new GlyphLine(glyphs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean appendDecodedCodesToGlyphsList(List<Glyph> list, PdfString characterCodes) {
+        boolean allCodesDecoded = true;
+
+        String charCodesSequence = characterCodes.getValue();
+        // A sequence of one or more bytes shall be extracted from the string and matched against the codespace
+        // ranges in the CMap. That is, the first byte shall be matched against 1-byte codespace ranges; if no match is
+        // found, a second byte shall be extracted, and the 2-byte code shall be matched against 2-byte codespace
+        // ranges. This process continues for successively longer codes until a match is found or all codespace ranges
+        // have been tested. There will be at most one match because codespace ranges shall not overlap.
+        for (int i = 0; i < charCodesSequence.length(); i++) {
             int code = 0;
             Glyph glyph = null;
             int codeSpaceMatchedLength = 1;
-            for (int codeLength = 1; codeLength <= 4 && i + codeLength <= cids.length(); codeLength++) {
-                code = (code << 8) + cids.charAt(i + codeLength - 1);
-                if (!cmapEncoding.containsCodeInCodeSpaceRange(code, codeLength)) {
+            for (int codeLength = 1; codeLength <= MAX_CID_CODE_LENGTH && i + codeLength <= charCodesSequence.length();
+                    codeLength++) {
+                code = (code << 8) + charCodesSequence.charAt(i + codeLength - 1);
+                if (!getCmap().containsCodeInCodeSpaceRange(code, codeLength)) {
                     continue;
                 } else {
                     codeSpaceMatchedLength = codeLength;
                 }
-                int glyphCode = cmapEncoding.getCidCode(code);
-                glyph = fontProgram.getGlyphByCode(glyphCode);
+                int glyphCode = getCmap().getCidCode(code);
+                glyph = getFontProgram().getGlyphByCode(glyphCode);
                 if (glyph != null) {
                     i += codeLength - 1;
                     break;
                 }
             }
             if (glyph == null) {
-                StringBuilder failedCodes = new StringBuilder();
-                for (int codeLength = 1; codeLength <= 4 && i + codeLength <= cids.length(); codeLength++) {
-                    failedCodes.append((int) cids.charAt(i + codeLength - 1)).append(" ");
-                }
                 Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, failedCodes.toString()));
+                if (logger.isWarnEnabled()) {
+                    StringBuilder failedCodes = new StringBuilder();
+                    for (int codeLength = 1;
+                            codeLength <= MAX_CID_CODE_LENGTH && i + codeLength <= charCodesSequence.length();
+                            codeLength++) {
+                        failedCodes.append((int) charCodesSequence.charAt(i + codeLength - 1)).append(" ");
+                    }
+                    logger.warn(MessageFormatUtil
+                            .format(LogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, failedCodes.toString()));
+                }
                 i += codeSpaceMatchedLength - 1;
             }
             if (glyph != null && glyph.getChars() != null) {
-                glyphs.add(glyph);
+                list.add(glyph);
             } else {
-                glyphs.add(new Glyph(0, fontProgram.getGlyphByCode(0).getWidth(), -1));
+                list.add(new Glyph(0, getFontProgram().getGlyphByCode(0).getWidth(), -1));
+                allCodesDecoded = false;
             }
         }
-        return new GlyphLine(glyphs);
+        return allCodesDecoded;
     }
 
     @Override

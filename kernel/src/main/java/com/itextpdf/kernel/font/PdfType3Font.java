@@ -422,8 +422,8 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
             return;
         }
         Map<Integer, Integer> unicodeToCode = null;
-        if (toUnicode != null) {
-            try { unicodeToCode = toUnicode.createReverseMapping(); } catch (Exception ignored) {}
+        if (getToUnicode() != null) {
+            try { unicodeToCode = getToUnicode().createReverseMapping(); } catch (Exception ignored) {}
         }
 
         for (PdfName glyphName : charProcsDic.keySet()) {
