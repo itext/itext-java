@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.actions.processors;
 
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.actions.events.AbstractITextProductEvent;
 import com.itextpdf.kernel.actions.session.ClosingSession;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -44,6 +45,9 @@ public class DefaultITextProductEventProcessor implements ITextProductEventProce
      * @param productName is a product name
      */
     public DefaultITextProductEventProcessor(String productName) {
+        if (productName == null) {
+            throw new IllegalArgumentException(PdfException.ProductNameCannotBeNull);
+        }
         this.productName = productName;
     }
 
@@ -55,6 +59,16 @@ public class DefaultITextProductEventProcessor implements ITextProductEventProce
     @Override
     public void onEvent(AbstractITextProductEvent event) {
         // TODO: DEVSIX-4964 provide appropriate logic if any
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public String getProductName() {
+        return productName;
     }
 
     /**

@@ -63,8 +63,8 @@ public class ClosePdfDocumentEventTest extends ExtendedITextTest {
                 PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
             List<String> forMessages = new ArrayList<>();
 
-            access.addProcessor("test-product-1", new TestProductEventProcessor("test-product-1", forMessages));
-            access.addProcessor("test-product-2", new TestProductEventProcessor("test-product-2", forMessages));
+            access.addProcessor(new TestProductEventProcessor("test-product-1", forMessages));
+            access.addProcessor(new TestProductEventProcessor("test-product-2", forMessages));
 
             access.addEvent(document.getDocumentIdWrapper(), new ITextTestEvent(document, null, "testing", "test-product-1"));
             access.addEvent(document.getDocumentIdWrapper(), new ITextTestEvent(document, null, "testing", "test-product-1"));
@@ -121,6 +121,11 @@ public class ClosePdfDocumentEventTest extends ExtendedITextTest {
         @Override
         public void onEvent(AbstractITextProductEvent event) {
             // do nothing here
+        }
+
+        @Override
+        public String getProductName() {
+            return processorId;
         }
 
         @Override

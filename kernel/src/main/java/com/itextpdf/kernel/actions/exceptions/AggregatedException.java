@@ -36,14 +36,14 @@ public class AggregatedException extends RuntimeException {
     public static final String ERROR_DURING_EVENT_PROCESSING = "Error during event processing";
 
     private static final String AGGREGATED_MESSAGE = "Aggregated message";
-    private final List<Exception> aggregatedExceptions;
+    private final List<RuntimeException> aggregatedExceptions;
 
     /**
      * Creates an instance of aggregated exception based on the collection of exceptions.
      *
      * @param aggregatedExceptions is a list of aggregated exceptions
      */
-    public AggregatedException(List<Exception> aggregatedExceptions) {
+    public AggregatedException(List<RuntimeException> aggregatedExceptions) {
         super("");
         this.aggregatedExceptions = new ArrayList<>(aggregatedExceptions);
     }
@@ -54,7 +54,7 @@ public class AggregatedException extends RuntimeException {
      * @param message the detail message
      * @param aggregatedExceptions is a list of aggregated exceptions
      */
-    public AggregatedException(String message, List<Exception> aggregatedExceptions) {
+    public AggregatedException(String message, List<RuntimeException> aggregatedExceptions) {
         super(message);
         this.aggregatedExceptions = new ArrayList<>(aggregatedExceptions);
     }

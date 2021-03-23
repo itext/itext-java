@@ -33,8 +33,10 @@ import com.itextpdf.kernel.actions.exceptions.UnknownProductException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -87,8 +89,8 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
         }
     }
 
-    ITextProductEventProcessor addProcessor(String productName, ITextProductEventProcessor processor) {
-        return processors.put(productName, processor);
+    ITextProductEventProcessor addProcessor(ITextProductEventProcessor processor) {
+        return processors.put(processor.getProductName(), processor);
     }
 
     ITextProductEventProcessor removeProcessor(String productName) {
@@ -97,6 +99,10 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
 
     ITextProductEventProcessor getProcessor(String productName) {
         return processors.get(productName);
+    }
+
+    Map<String, ITextProductEventProcessor> getProcessors() {
+        return Collections.unmodifiableMap(new HashMap<>(processors));
     }
 
     List<AbstractITextProductEvent> getEvents(SequenceId id) {

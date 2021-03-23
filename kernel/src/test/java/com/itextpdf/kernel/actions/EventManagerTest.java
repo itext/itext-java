@@ -34,11 +34,16 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class EventManagerTest extends ExtendedITextTest {
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     @LogMessages(messages = {
@@ -53,6 +58,7 @@ public class EventManagerTest extends ExtendedITextTest {
         EventManager eventManager = EventManager.getInstance();
         IBaseEventHandler handler1 = new ThrowArithmeticExpHandler();
         IBaseEventHandler handler2 = new ThrowIllegalArgumentExpHandler();
+
         eventManager.register(handler1);
         eventManager.register(handler2);
 
@@ -69,9 +75,26 @@ public class EventManagerTest extends ExtendedITextTest {
             Assert.assertEquals(2, aggregatedExceptions.size());
             Assert.assertEquals("ThrowArithmeticExpHandler", aggregatedExceptions.get(0).getMessage());
             Assert.assertEquals("ThrowIllegalArgumentExpHandler", aggregatedExceptions.get(1).getMessage());
+        }
+
+        eventManager.unregister(handler1);
+        eventManager.unregister(handler2);
+    }
+
+    @Test
+    public void throwOneUncheckedExceptionsTest() {
+        EventManager eventManager = EventManager.getInstance();
+        IBaseEventHandler handler1 = new ThrowArithmeticExpHandler();
+        eventManager.register(handler1);
+
+        try {
+            SequenceId sequenceId = new SequenceId();
+
+            junitExpectedException.expect(ArithmeticException.class);
+            junitExpectedException.expectMessage("ThrowArithmeticExpHandler");
+            eventManager.onEvent(new ITextTestEvent(sequenceId, null, "test-event", ProductNameConstant.ITEXT_CORE));
         } finally {
             eventManager.unregister(handler1);
-            eventManager.unregister(handler2);
         }
     }
 

@@ -27,6 +27,7 @@ import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class is recommended for internal usage. Represents system configuration events.
@@ -50,14 +51,13 @@ public abstract class AbstractITextConfigurationEvent implements ITextEvent {
 
     /**
      * Add a new {@link ITextProductEventProcessor} for a product.
-     * 
-     * @param productName is a name of the product for which the new processor is defined
+     *
      * @param processor is a new processor
      * 
      * @return a replaced processor for the product
      */
-    protected ITextProductEventProcessor addProcessor(String productName, ITextProductEventProcessor processor) {
-        return ProductEventHandler.INSTANCE.addProcessor(productName, processor);
+    protected ITextProductEventProcessor addProcessor(ITextProductEventProcessor processor) {
+        return ProductEventHandler.INSTANCE.addProcessor(processor);
     }
 
     /**
@@ -80,6 +80,15 @@ public abstract class AbstractITextConfigurationEvent implements ITextEvent {
      */
     protected ITextProductEventProcessor getProcessor(String productName) {
         return ProductEventHandler.INSTANCE.getProcessor(productName);
+    }
+
+    /**
+     * Gets an unmodifiable map of registered processors.
+     *
+     * @return all processors
+     */
+    protected Map<String, ITextProductEventProcessor> getProcessors() {
+        return ProductEventHandler.INSTANCE.getProcessors();
     }
 
     /**

@@ -37,7 +37,7 @@ public class AggregatedExceptionTest extends ExtendedITextTest {
 
     @Test
     public void aggregatedMessageWithGeneralMessageTest() {
-        List<Exception> exceptions = new ArrayList<>();
+        List<RuntimeException> exceptions = new ArrayList<>();
         exceptions.add(new RuntimeException("Message 1"));
         exceptions.add(new RuntimeException("Message 2"));
         exceptions.add(new IOException("Message 3"));
@@ -52,7 +52,7 @@ public class AggregatedExceptionTest extends ExtendedITextTest {
 
     @Test
     public void aggregatedMessageWithoutGeneralMessageTest() {
-        List<Exception> exceptions = new ArrayList<>();
+        List<RuntimeException> exceptions = new ArrayList<>();
         exceptions.add(new RuntimeException("Message 1"));
         exceptions.add(new RuntimeException("Message 2"));
         exceptions.add(new IOException("Message 3"));

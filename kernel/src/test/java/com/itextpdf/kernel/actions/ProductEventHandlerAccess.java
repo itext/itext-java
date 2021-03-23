@@ -30,22 +30,29 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+/**
+ * This class is used for testing purposes to have an access to {@link ProductEventHandler}. Note
+ * that work with it may access further tests because the state of ProductEventHandler is shared
+ * across application. It is strongly recommended to call {@link ProductEventHandlerAccess#close()}
+ * method to return ProductEventHandler to initial state.
+ */
 public class ProductEventHandlerAccess implements Closeable {
     private Set<String> registeredProducts = new HashSet<>();
 
-    public ITextProductEventProcessor addProcessor(String productName, ITextProductEventProcessor processor) {
-        registeredProducts.add(productName);
-        return ProductEventHandler.INSTANCE.addProcessor(productName, processor);
+    public ITextProductEventProcessor addProcessor(ITextProductEventProcessor processor) {
+        registeredProducts.add(processor.getProductName());
+        return ProductEventHandler.INSTANCE.addProcessor(processor);
     }
 
     public ITextProductEventProcessor removeProcessor(String productName) {
         return ProductEventHandler.INSTANCE.removeProcessor(productName);
     }
 
-    public ITextProductEventProcessor getProcessor(String productName) {
-        return ProductEventHandler.INSTANCE.getProcessor(productName);
+    public Map<String, ITextProductEventProcessor> getProcessors() {
+        return ProductEventHandler.INSTANCE.getProcessors();
     }
 
     public List<AbstractITextProductEvent> getEvents(SequenceId id) {
@@ -57,7 +64,7 @@ public class ProductEventHandlerAccess implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         for (String product: registeredProducts) {
             removeProcessor(product);
         }

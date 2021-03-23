@@ -29,7 +29,7 @@ import java.util.List;
 
 /**
  * Entry point for event handling mechanism. Class is a singleton,
- * see {@link EventManager#getInstance()}
+ * see {@link EventManager#getInstance()}.
  */
 public final class EventManager {
     private static final EventManager INSTANCE = new EventManager();
@@ -55,11 +55,11 @@ public final class EventManager {
      * @param event to handle
      */
     public void onEvent(IBaseEvent event) {
-        final List<Exception> caughtExceptions = new ArrayList<>();
+        final List<RuntimeException> caughtExceptions = new ArrayList<>();
         for (final IBaseEventHandler handler : handlers) {
             try {
                 handler.onEvent(event);
-            } catch (Exception ex) {
+            } catch (RuntimeException ex) {
                 caughtExceptions.add(ex);
             }
         }
@@ -67,12 +67,14 @@ public final class EventManager {
             try {
                 final AbstractITextConfigurationEvent itce = (AbstractITextConfigurationEvent) event;
                 itce.doAction();
-            } catch (Exception ex) {
+            } catch (RuntimeException ex) {
                 caughtExceptions.add(ex);
             }
         }
 
-        if (! caughtExceptions.isEmpty()) {
+        if (caughtExceptions.size() == 1) {
+            throw caughtExceptions.get(0);
+        } else if (! caughtExceptions.isEmpty()) {
             throw new AggregatedException(AggregatedException.ERROR_DURING_EVENT_PROCESSING, caughtExceptions);
         }
     }
