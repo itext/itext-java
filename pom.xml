@@ -282,7 +282,7 @@
         <configuration>
           <failOnError>false</failOnError>
           <quiet>true</quiet>
-          <source>7</source>
+          <source>8</source>
           <detectLinks>true</detectLinks>
           <additionalOptions>${javadoc-additionalOptions}</additionalOptions>
           <links>
@@ -438,7 +438,7 @@
         <configuration>
           <failOnError>false</failOnError>
           <quiet>true</quiet>
-          <source>7</source>
+          <source>8</source>
           <additionalOptions>${javadoc-additionalOptions}</additionalOptions>
           <links>
             <link>${javadoc-link}</link>
