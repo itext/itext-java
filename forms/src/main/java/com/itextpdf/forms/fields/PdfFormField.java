@@ -208,7 +208,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     static final int DA_COLOR = 2;
 
-    protected static String[] typeChars = {"4", "l", "8", "u", "n", "H"};
+    private static final String[] CHECKBOX_TYPE_ZAPFDINGBATS_CODE = {"4", "l", "8", "u", "n", "H"};
     
     protected String text;
     protected ImageData img;
@@ -1929,7 +1929,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             checkType = TYPE_CROSS;
         }
         this.checkType = checkType;
-        text = typeChars[checkType - 1];
+        text = CHECKBOX_TYPE_ZAPFDINGBATS_CODE[checkType - 1];
         if (pdfAConformanceLevel != null) {
             return this;
         }
