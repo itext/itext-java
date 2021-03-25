@@ -22,12 +22,17 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -174,6 +179,17 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
 
         Assert.assertEquals(71F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
         Assert.assertEquals(125F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
+    }
+
+
+    @Test
+    public void decreaseLayoutBoxAfterChildPlacementResultsOccupiedAreaNull() {
+        FlexContainerRenderer splitRenderer = new FlexContainerRenderer(new Div());
+        splitRenderer.occupiedArea = new LayoutArea(0, new Rectangle(0, 0));
+
+        LayoutResult nothing = new LayoutResult(LayoutResult.NOTHING, null, splitRenderer, null);
+        Assert.assertNotNull(new FlexContainerRenderer(new Div())
+                .getOccupiedAreaInCaseNothingWasWrappedWithFull(nothing, splitRenderer));
     }
 
     @Test

@@ -46,6 +46,7 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
@@ -235,7 +236,8 @@ public class FlexContainerRenderer extends DivRenderer {
             if (splitRenderer != null) {
                 splitRenderer.setChildRenderers(getChildRenderers());
             }
-            return new LayoutResult(LayoutResult.FULL, result.getOccupiedArea(), splitRenderer, null, null);
+            return new LayoutResult(LayoutResult.FULL,
+                    getOccupiedAreaInCaseNothingWasWrappedWithFull(result, splitRenderer), splitRenderer, null, null);
         } else {
             applyPaddings(occupiedArea.getBBox(), paddings, true);
             applyBorderBox(occupiedArea.getBBox(), borders, true);
@@ -248,6 +250,11 @@ public class FlexContainerRenderer extends DivRenderer {
                         overflowRenderer, null).setAreaBreak(result.getAreaBreak());
             }
         }
+    }
+
+    // TODO DEVSIX-5238 Consider this fix (perhaps it should be improved or unified) while working on the ticket
+    LayoutArea getOccupiedAreaInCaseNothingWasWrappedWithFull(LayoutResult result, IRenderer splitRenderer) {
+        return null != result.getOccupiedArea() ? result.getOccupiedArea() : splitRenderer.getOccupiedArea();
     }
 
     @Override
