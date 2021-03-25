@@ -43,6 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -54,6 +55,8 @@ import com.itextpdf.layout.property.FlexWrapPropertyValue;
 import com.itextpdf.layout.property.JustifyContent;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +68,8 @@ final class FlexUtil {
     private static final float FLEX_GROW_INITIAL_VALUE = 0F;
 
     private static final float FLEX_SHRINK_INITIAL_VALUE = 1F;
+
+    private static Logger logger = LoggerFactory.getLogger(FlexUtil.class);
 
     private FlexUtil() {
         // Do nothing
@@ -186,17 +191,24 @@ final class FlexUtil {
         for (FlexItemCalculationInfo info : flexItemCalculationInfos) {
             // 3. Determine the flex base size and hypothetical main size of each item:
 
-            // A. If the item has a definite used flex basis, that’s the flex base size.
-            info.flexBaseSize = info.flexBasis;
+            AbstractRenderer renderer = info.renderer;
 
             // TODO DEVSIX-5001 content as width are not supported
-            // TODO DEVSIX-5004 Implement method to check whether an element has an intrinsic aspect ratio
             // B. If the flex item has ...
             // an intrinsic aspect ratio,
             // a used flex basis of content, and
             // a definite cross size,
             // then the flex base size is calculated from its inner cross size
             // and the flex item’s intrinsic aspect ratio.
+            Float rendererHeight = renderer.retrieveHeight();
+            if (renderer.hasAspectRatio() &&
+                    info.flexBasisContent && rendererHeight != null) {
+                float aspectRatio = (float) renderer.getAspectRatio();
+                info.flexBaseSize = (float) rendererHeight * aspectRatio;
+            } else {
+                // A. If the item has a definite used flex basis, that’s the flex base size.
+                info.flexBaseSize = info.flexBasis;
+            }
 
             // TODO DEVSIX-5001 content as width is not supported
             // C. If the used flex basis is content or depends on its available space,
@@ -396,11 +408,20 @@ final class FlexUtil {
     static void determineHypotheticalCrossSizeForFlexItems(List<List<FlexItemCalculationInfo>> lines) {
         for (List<FlexItemCalculationInfo> line : lines) {
             for (FlexItemCalculationInfo info : line) {
+                UnitValue prevWidth = info.renderer.<UnitValue>replaceOwnProperty(Property.WIDTH,
+                        UnitValue.createPointValue(info.mainSize));
+                UnitValue prevMinWidth = info.renderer.<UnitValue>replaceOwnProperty(Property.MIN_WIDTH, null);
                 LayoutResult result = info.renderer.layout(new LayoutContext(
-                        new LayoutArea(0, new Rectangle(info.getOuterMainSize(info.mainSize), AbstractRenderer.INF))));
+                        new LayoutArea(0, new Rectangle(AbstractRenderer.INF, AbstractRenderer.INF))));
+                info.renderer.returnBackOwnProperty(Property.MIN_WIDTH, prevMinWidth);
+                info.renderer.returnBackOwnProperty(Property.WIDTH, prevWidth);
                 // Since main size is clamped with min-width, we do expect the result to be full
-                assert result.getStatus() == LayoutResult.FULL;
-                info.hypotheticalCrossSize = info.getInnerCrossSize(result.getOccupiedArea().getBBox().getHeight());
+                if (result.getStatus() == LayoutResult.FULL) {
+                    info.hypotheticalCrossSize = info.getInnerCrossSize(result.getOccupiedArea().getBBox().getHeight());
+                } else {
+                    logger.error(LogMessageConstant.FLEX_ITEM_LAYOUT_RESULT_IS_NOT_FULL);
+                    info.hypotheticalCrossSize = 0;
+                }
             }
         }
     }
@@ -481,12 +502,15 @@ final class FlexUtil {
                 // the used outer cross size is the used cross size of its flex line,
                 // clamped according to the item’s used min and max cross sizes.
                 // Otherwise, the used cross size is the item’s hypothetical cross size.
+                // Note that this step doesn't affect the main size of the flex item, even if it has aspect ratio.
+                // Also note that for some reason browsers do not respect such a rule from the specification
                 AbstractRenderer infoRenderer = info.renderer;
                 AlignmentPropertyValue alignSelf =
                         (AlignmentPropertyValue) infoRenderer.<AlignmentPropertyValue>getProperty(
                                 Property.ALIGN_SELF, alignItems);
                 // TODO DEVSIX-5002 Stretch value shall be ignored if margin auto for cross axis is set
-                if (alignSelf == AlignmentPropertyValue.STRETCH || alignSelf == AlignmentPropertyValue.NORMAL) {
+                if ((alignSelf == AlignmentPropertyValue.STRETCH || alignSelf == AlignmentPropertyValue.NORMAL) &&
+                        info.renderer.<UnitValue>getProperty(Property.HEIGHT) == null) {
                     info.crossSize = info.getInnerCrossSize(lineCrossSizes.get(i));
                     Float maxHeight = infoRenderer.retrieveMaxHeight();
                     if (maxHeight != null) {
@@ -612,8 +636,10 @@ final class FlexUtil {
                 // TODO DEVSIX-5091 improve determining of the flex base size when flex-basis: content
                 float maxWidth = calculateMaxWidth(abstractRenderer, flexContainerWidth);
                 float flexBasis;
+                boolean flexBasisContent = false;
                 if (renderer.<UnitValue>getProperty(Property.FLEX_BASIS) == null) {
                     flexBasis = maxWidth;
+                    flexBasisContent = true;
                 } else {
                     flexBasis = (float) abstractRenderer.retrieveUnitValue(flexContainerWidth, Property.FLEX_BASIS);
                     if (AbstractRenderer.isBorderBoxSizing(abstractRenderer)) {
@@ -626,8 +652,8 @@ final class FlexUtil {
 
                 float flexShrink = (float) renderer.<Float>getProperty(Property.FLEX_SHRINK, FLEX_SHRINK_INITIAL_VALUE);
 
-                final FlexItemCalculationInfo flexItemInfo = new FlexItemCalculationInfo(
-                        (AbstractRenderer) renderer, flexBasis, flexGrow, flexShrink, flexContainerWidth);
+                final FlexItemCalculationInfo flexItemInfo = new FlexItemCalculationInfo((AbstractRenderer) renderer,
+                        flexBasis, flexGrow, flexShrink, flexContainerWidth, flexBasisContent);
 
                 flexItems.add(flexItemInfo);
             }
@@ -649,9 +675,13 @@ final class FlexUtil {
                 maxWidth = flexItemRenderer.retrieveMaxWidth(flexContainerWidth);
             }
             if (maxWidth == null) {
-                maxWidth = flexItemRenderer.getMinMaxWidth().getMaxWidth();
-                maxWidth = flexItemRenderer.applyMarginsBordersPaddings(
-                        new Rectangle((float) maxWidth, 0), false).getWidth();
+                if (flexItemRenderer instanceof ImageRenderer) {
+                    // TODO DEVSIX-5269 getMinMaxWidth doesn't always return the original image width
+                    maxWidth = ((ImageRenderer) flexItemRenderer).getImageWidth();
+                } else {
+                    maxWidth = flexItemRenderer.applyMarginsBordersPaddings(
+                            new Rectangle(flexItemRenderer.getMinMaxWidth().getMaxWidth(), 0), false).getWidth();
+                }
             }
         }
         return (float) maxWidth;
@@ -680,9 +710,11 @@ final class FlexUtil {
         float flexBaseSize;
         float hypotheticalMainSize;
         float hypotheticalCrossSize;
+        boolean flexBasisContent;
 
         public FlexItemCalculationInfo(AbstractRenderer renderer, float flexBasis,
-                float flexGrow, float flexShrink, float areaWidth) {
+                                       float flexGrow, float flexShrink, float areaWidth, boolean flexBasisContent) {
+            this.flexBasisContent = flexBasisContent;
             this.renderer = renderer;
             this.flexBasis = flexBasis;
             if (flexShrink < 0) {
@@ -693,21 +725,13 @@ final class FlexUtil {
                 throw new IllegalArgumentException(LayoutExceptionMessageConstant.FLEX_GROW_CANNOT_BE_NEGATIVE);
             }
             this.flexGrow = flexGrow;
-            // We always need to clamp flex item's sizes with min-width, so this calculation is necessary
-            // We also need to get min-width not based on Property.WIDTH
-            final UnitValue rendererWidth = renderer.<UnitValue>getOwnProperty(Property.WIDTH);
-            final boolean hasOwnWidth = renderer.hasOwnProperty(Property.WIDTH);
-            renderer.setProperty(Property.WIDTH, null);
-            MinMaxWidth minMaxWidth = renderer.getMinMaxWidth();
-            if (hasOwnWidth) {
-                renderer.setProperty(Property.WIDTH, rendererWidth);
-            } else {
-                renderer.deleteOwnProperty(Property.WIDTH);
-            }
-            this.minContent = getInnerMainSize(minMaxWidth.getMinWidth());
-            boolean isMaxWidthApplied = null != this.renderer.retrieveMaxWidth(areaWidth);
+            Float definiteMinContent = renderer.retrieveMinWidth(areaWidth);
+            // null means that min-width property is not set or has auto value. In both cases we should calculate it
+            this.minContent =
+                    definiteMinContent == null ? calculateMinContentAuto(areaWidth) : (float) definiteMinContent;
+            Float maxWidth = this.renderer.retrieveMaxWidth(areaWidth);
             // As for now we assume that max width should be calculated so
-            this.maxContent = isMaxWidthApplied ? minMaxWidth.getMaxWidth() : AbstractRenderer.INF;
+            this.maxContent = maxWidth == null ? AbstractRenderer.INF : (float) maxWidth;
         }
 
         public Rectangle toRectangle() {
@@ -728,6 +752,108 @@ final class FlexUtil {
 
         float getInnerCrossSize(float size) {
             return renderer.applyMarginsBordersPaddings(new Rectangle(0, size), false).getHeight();
+        }
+
+        private float calculateMinContentAuto(float flexContainerWidth) {
+            // Automatic Minimum Size of Flex Items https://www.w3.org/TR/css-flexbox-1/#content-based-minimum-size
+            Float specifiedSizeSuggestion = calculateSpecifiedSizeSuggestion(flexContainerWidth);
+            float contentSizeSuggestion = calculateContentSizeSuggestion(flexContainerWidth);
+            if (renderer.hasAspectRatio() && specifiedSizeSuggestion == null) {
+                // However, if the box has an aspect ratio and no specified size,
+                // its content-based minimum size is the smaller of its content size suggestion
+                // and its transferred size suggestion
+                Float transferredSizeSuggestion = calculateTransferredSizeSuggestion();
+                if (transferredSizeSuggestion == null) {
+                    return contentSizeSuggestion;
+                } else {
+                    return Math.min(contentSizeSuggestion, (float) transferredSizeSuggestion);
+                }
+            } else if (specifiedSizeSuggestion == null) {
+                // If the box has neither a specified size suggestion nor an aspect ratio,
+                // its content-based minimum size is the content size suggestion.
+                return contentSizeSuggestion;
+            } else {
+                // In general, the content-based minimum size of a flex item is the smaller
+                // of its content size suggestion and its specified size suggestion
+                return Math.min(contentSizeSuggestion, (float) specifiedSizeSuggestion);
+            }
+        }
+
+        /**
+         * If the item has an intrinsic aspect ratio and its computed cross size property is definite,
+         * then the transferred size suggestion is that size (clamped by its min and max cross size properties
+         * if they are definite), converted through the aspect ratio. It is otherwise undefined.
+         *
+         * @return transferred size suggestion if it can be calculated, null otherwise
+         */
+        private Float calculateTransferredSizeSuggestion() {
+            Float transferredSizeSuggestion = null;
+            Float height = renderer.retrieveHeight();
+            if (renderer.hasAspectRatio() && height != null) {
+                transferredSizeSuggestion = height * renderer.getAspectRatio();
+
+                transferredSizeSuggestion =
+                        clampValueByCrossSizesConvertedThroughAspectRatio((float) transferredSizeSuggestion);
+            }
+            return transferredSizeSuggestion;
+        }
+
+        /**
+         * If the item’s computed main size property is definite,
+         * then the specified size suggestion is that size (clamped by its max main size property if it’s definite).
+         * It is otherwise undefined.
+         *
+         * @param flexContainerWidth the width of the flex container
+         * @return specified size suggestion if it's definite, null otherwise
+         */
+        private Float calculateSpecifiedSizeSuggestion(float flexContainerWidth) {
+            if (renderer.hasProperty(Property.WIDTH)) {
+                return renderer.retrieveWidth(flexContainerWidth);
+            } else {
+                return null;
+            }
+        }
+
+        /**
+         * The content size suggestion is the min-content size in the main axis, clamped, if it has an aspect ratio,
+         * by any definite min and max cross size properties converted through the aspect ratio,
+         * and then further clamped by the max main size property if that is definite.
+         *
+         * @param flexContainerWidth the width of the flex container
+         * @return content size suggestion
+         */
+        private float calculateContentSizeSuggestion(float flexContainerWidth) {
+            final UnitValue rendererWidth = renderer.<UnitValue>replaceOwnProperty(Property.WIDTH, null);
+            final UnitValue rendererHeight = renderer.<UnitValue>replaceOwnProperty(Property.HEIGHT, null);
+            MinMaxWidth minMaxWidth = renderer.getMinMaxWidth();
+            float minContentSize = getInnerMainSize(minMaxWidth.getMinWidth());
+            renderer.returnBackOwnProperty(Property.HEIGHT, rendererHeight);
+            renderer.returnBackOwnProperty(Property.WIDTH, rendererWidth);
+
+            if (renderer.hasAspectRatio()) {
+                minContentSize = clampValueByCrossSizesConvertedThroughAspectRatio(minContentSize);
+            }
+            Float maxWidth = renderer.retrieveMaxWidth(flexContainerWidth);
+            if (maxWidth == null) {
+                maxWidth = AbstractRenderer.INF;
+            }
+
+            return Math.min(minContentSize, (float) maxWidth);
+        }
+
+        private float clampValueByCrossSizesConvertedThroughAspectRatio(float value) {
+            Float maxHeight = renderer.retrieveMaxHeight();
+            if (maxHeight == null || !renderer.hasProperty(Property.MAX_HEIGHT)) {
+                maxHeight = AbstractRenderer.INF;
+            }
+            Float minHeight = renderer.retrieveMinHeight();
+            if (minHeight == null || !renderer.hasProperty(Property.MIN_HEIGHT)) {
+                minHeight = 0F;
+            }
+
+            return Math.min(
+                    Math.max((float) (minHeight * renderer.getAspectRatio()), value),
+                    (float) (maxHeight * renderer.getAspectRatio()));
         }
     }
 }

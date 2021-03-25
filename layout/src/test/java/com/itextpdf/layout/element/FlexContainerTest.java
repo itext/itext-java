@@ -80,14 +80,9 @@ public class FlexContainerTest extends ExtendedITextTest {
     public static Iterable<Object[]> alignItemsAndJustifyContentProperties() {
         return Arrays.asList(new Object[][]{
                 {AlignmentPropertyValue.FLEX_START, JustifyContent.FLEX_START, 1},
-                {AlignmentPropertyValue.START, JustifyContent.START, 2},
-                {AlignmentPropertyValue.SELF_START, JustifyContent.SELF_START, 3},
-                {AlignmentPropertyValue.BASELINE, JustifyContent.LEFT, 4},
-                {AlignmentPropertyValue.FLEX_END, JustifyContent.FLEX_END, 5},
-                {AlignmentPropertyValue.END, JustifyContent.END, 6},
-                {AlignmentPropertyValue.SELF_END, JustifyContent.RIGHT, 7},
-                {AlignmentPropertyValue.CENTER, JustifyContent.CENTER, 8},
-                {AlignmentPropertyValue.STRETCH, JustifyContent.CENTER, 9}
+                {AlignmentPropertyValue.FLEX_END, JustifyContent.FLEX_END, 2},
+                {AlignmentPropertyValue.CENTER, JustifyContent.CENTER, 3},
+                {AlignmentPropertyValue.STRETCH, JustifyContent.CENTER, 4}
         });
     }
 

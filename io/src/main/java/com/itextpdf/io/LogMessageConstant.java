@@ -110,6 +110,8 @@ public final class LogMessageConstant {
     public static final String FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX = "Failed to process a transformation matrix which is noninvertible. Some content may be placed not as expected.";
     public static final String FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY = "Value \"{0}\" is not contained in /Opt array of field \"{1}\".";
     public static final String FILE_CHANNEL_CLOSING_FAILED = "Closing of the file channel this source is based on failed.";
+    public static final String FLEX_ITEM_LAYOUT_RESULT_IS_NOT_FULL =
+            "Flex item layout result isn't full, but it must be. The cross size of the flex item will be 0.";
     public static final String FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE = "Flushed object contains indirect reference which is free. Null object will be written instead.";
     public static final String FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT = "Flushed object contains indirect reference which doesn't refer to any other object. Null object will be written instead.";
     public static final String FONT_DICTIONARY_WITH_NO_FONT_DESCRIPTOR = "Font dictionary does not contain required /FontDescriptor entry.";

@@ -101,6 +101,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
      */
     public ImageRenderer(Image image) {
         super(image);
+        imageWidth = image.getImageWidth();
+        imageHeight = image.getImageHeight();
     }
 
     @Override
@@ -111,8 +113,6 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         AffineTransform t = new AffineTransform();
         Image modelElement = (Image) (getModelElement());
         PdfXObject xObject = modelElement.getXObject();
-        imageWidth = modelElement.getImageWidth();
-        imageHeight = modelElement.getImageHeight();
 
         calculateImageDimensions(layoutBox, t, xObject);
 
@@ -388,6 +388,40 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         applyMargins(initialOccupiedAreaBBox, true);
         applyBorderBox(initialOccupiedAreaBBox, true);
         return initialOccupiedAreaBBox;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    boolean hasAspectRatio() {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    Float getAspectRatio() {
+        return imageWidth / imageHeight;
+    }
+
+    /**
+     * Gets original width of the image, not the width set by {@link Image#setWidth} method.
+     *
+     * @return original image width
+     */
+    public float getImageWidth() {
+        return imageWidth;
+    }
+
+    /**
+     * Gets original height of the image, not the height set by {@link Image#setHeight} method.
+     *
+     * @return original image height
+     */
+    public float getImageHeight() {
+        return imageHeight;
     }
 
     @Override

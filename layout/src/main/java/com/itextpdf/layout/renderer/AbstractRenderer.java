@@ -1308,6 +1308,55 @@ public abstract class AbstractRenderer implements IRenderer {
         return rendererOverflowProperty == null || OverflowPropertyValue.FIT.equals(rendererOverflowProperty);
     }
 
+    /**
+     * Replaces given property own value with the given value.
+     *
+     * @param property the property to be replaced
+     * @param replacementValue the value with which property will be replaced
+     * @param <T> the type associated with the property
+     * @return previous property value
+     */
+    <T> T replaceOwnProperty(int property, T replacementValue) {
+        T ownProperty = this.<T>getOwnProperty(property);
+        setProperty(property, replacementValue);
+        return ownProperty;
+    }
+
+    /**
+     * Returns back own value of the given property.
+     *
+     * @param property the property to be returned back
+     * @param prevValue the value which will be returned back
+     * @param <T> the type associated with the property
+     */
+    <T> void returnBackOwnProperty(int property, T prevValue) {
+        if (prevValue == null) {
+            deleteOwnProperty(property);
+        } else {
+            setProperty(property, prevValue);
+        }
+    }
+
+    /**
+     * Checks if this renderer has intrinsic aspect ratio.
+     *
+     * @return true, if aspect ratio is defined for this renderer, false otherwise
+     */
+    boolean hasAspectRatio() {
+        // TODO DEVSIX-5255 This method should be changed after we support aspect-ratio property
+        return false;
+    }
+
+    /**
+     * Gets intrinsic aspect ratio for this renderer.
+     *
+     * @return aspect ratio, if it is defined for this renderer, null otherwise
+     */
+    Float getAspectRatio() {
+        // TODO DEVSIX-5255 This method should be changed after we support aspect-ratio property
+        return null;
+    }
+
     static void processWaitingDrawing(IRenderer child, Transform transformProp, List<IRenderer> waitingDrawing) {
         if (FloatingHelper.isRendererFloating(child) || transformProp != null) {
             waitingDrawing.add(child);
