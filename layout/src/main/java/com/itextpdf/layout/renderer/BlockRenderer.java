@@ -977,6 +977,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     /**
+     * Decreases parentBBox to the size of borders, paddings and margins.
+     *
+     * @param parentBBox {@link Rectangle} to be decreased
+     * @param borders the border values to decrease parentBBox
+     * @param paddings the padding values to decrease parentBBox
+     * @return the difference between previous and current parentBBox's
      * @deprecated Need to be removed in next major release.
      */
     @Deprecated
