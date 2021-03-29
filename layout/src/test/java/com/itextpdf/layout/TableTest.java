@@ -3046,6 +3046,117 @@ public class TableTest extends ExtendedITextTest {
                 sourceFolder + "cmp_" + filename, destinationFolder, "diff"));
     }
 
+    @Test
+    // TODO DEVSIX-5250 The first column should be fully red
+    public void bigRowSpanTooFarFullTest() throws IOException, InterruptedException {
+        String filename = "bigRowSpanTooFarFullTest.pdf";
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        Document document = new Document(pdf);
+
+        Table table = new Table(2);
+
+        int bigRowSpan = 5;
+        table.addCell(
+                new Cell(bigRowSpan, 1)
+                        .add(new Paragraph("row span " + bigRowSpan))
+                        .setBackgroundColor(ColorConstants.RED));
+        for (int i = 0; i < bigRowSpan; i++) {
+            table.addCell(
+                    new Cell()
+                            .add(new Paragraph(Integer.toString(i)))
+                            .setHeight(375)
+                            .setBackgroundColor(ColorConstants.BLUE));
+        }
+
+        document.add(table);
+        document.add(new AreaBreak());
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        document.add(table);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
+                sourceFolder + "cmp_" + filename, destinationFolder));
+    }
+
+    @Test
+    // TODO DEVSIX-5250 The first column should be fully red, but on page 2 it is not
+    public void bigRowSpanTooFarPartialTest() throws IOException, InterruptedException {
+        String filename = "bigRowSpanTooFarPartialTest.pdf";
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        Document document = new Document(pdf);
+
+        Table table = new Table(2);
+
+        int bigRowSpan = 5;
+        table.addCell(
+                new Cell(bigRowSpan, 1)
+                        .add(new Paragraph("row span " + bigRowSpan))
+                        .setHeight(800)
+                        .setBackgroundColor(ColorConstants.RED));
+        for (int i = 0; i < bigRowSpan; i++) {
+            table.addCell(
+                    new Cell()
+                            .add(new Paragraph(Integer.toString(i)))
+                            .setHeight(375)
+                            .setBackgroundColor(ColorConstants.BLUE));
+        }
+
+        document.add(table);
+        document.add(new AreaBreak());
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        document.add(table);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
+                sourceFolder + "cmp_" + filename, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+    })
+    // TODO DEVSIX-5250 The first column should be fully red
+    public void bigRowSpanTooFarNothingTest() throws IOException, InterruptedException {
+        String filename = "bigRowSpanTooFarNothingTest.pdf";
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        Document document = new Document(pdf);
+
+        Table table = new Table(2);
+
+        int bigRowSpan = 5;
+        table.addCell(
+                new Cell(bigRowSpan, 1)
+                        .add(new Paragraph("row span " + bigRowSpan))
+                        .setHeight(800)
+                        .setKeepTogether(true)
+                        .setBackgroundColor(ColorConstants.RED));
+        for (int i = 0; i < bigRowSpan; i++) {
+            table.addCell(
+                    new Cell()
+                            .add(new Paragraph(Integer.toString(i)))
+                            .setHeight(375)
+                            .setBackgroundColor(ColorConstants.BLUE));
+        }
+
+        document.add(table);
+        document.add(new AreaBreak());
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        document.add(table);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
+                sourceFolder + "cmp_" + filename, destinationFolder));
+    }
+
     private static class RotatedDocumentRenderer extends DocumentRenderer {
         private final PdfDocument pdfDoc;
 
