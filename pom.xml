@@ -72,10 +72,8 @@
   <properties>
     <argLine>-Xmx1024m</argLine>
     <bouncycastle.version>1.68</bouncycastle.version>
-    <checkstyle.version>3.1.0</checkstyle.version>
     <dependencyCheck.version>6.0.3</dependencyCheck.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
-    <findsecbugs.version>1.8.0</findsecbugs.version>
     <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>
     <jacoco.version>0.8.4</jacoco.version>
     <java.version>1.8</java.version>
@@ -90,17 +88,14 @@
     <maven.jar.version>3.1.0</maven.jar.version>
     <maven.source.version>3.0.1</maven.source.version>
     <performancetests>com.itextpdf.test.annotations.type.PerformanceTest</performancetests>
-    <pmd.version>3.11.0</pmd.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sampletests>com.itextpdf.test.annotations.type.SampleTest</sampletests>
-    <sb-contrib.version>7.4.7</sb-contrib.version>
     <skipTests>true</skipTests>
     <slf4j.version>1.7.30</slf4j.version>
     <slowtests>com.itextpdf.test.annotations.type.SlowTest</slowtests>
     <sonar.dependencyCheck.htmlReportPath>target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
     <sonar.dependencyCheck.reportPath>target/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
-    <spotbugs.version>3.1.11</spotbugs.version>
     <surefire.version>3.0.0-M3</surefire.version>
     <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
   </properties>
@@ -417,20 +412,8 @@
   <reporting>
     <plugins>
       <plugin>
-        <groupId>com.github.spotbugs</groupId>
-        <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>${spotbugs.version}</version>
-      </plugin>
-      <plugin>
         <artifactId>maven-changelog-plugin</artifactId>
         <version>2.3</version>
-      </plugin>
-      <plugin>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${checkstyle.version}</version>
-        <configuration>
-          <linkXref>true</linkXref>
-        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -457,13 +440,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>${pmd.version}</version>
-        <configuration>
-          <linkXref>true</linkXref>
-        </configuration>
-      </plugin>
-      <plugin>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>2.8</version>
       </plugin>
@@ -473,6 +449,7 @@
       </plugin>
     </plugins>
   </reporting>
+
   <profiles>
     <profile>
       <id>java9+</id>
@@ -522,37 +499,6 @@
             </configuration>
           </plugin>
           <plugin>
-            <groupId>com.github.spotbugs</groupId>
-            <artifactId>spotbugs-maven-plugin</artifactId>
-            <version>${spotbugs.version}</version>
-            <executions>
-              <execution>
-                <phase>verify</phase>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <effort>Max</effort>
-              <threshold>High</threshold>
-              <xmlOutput>true</xmlOutput>
-              <failOnError>false</failOnError>
-              <plugins>
-                <plugin>
-                  <groupId>com.mebigfatguy.sb-contrib</groupId>
-                  <artifactId>sb-contrib</artifactId>
-                  <version>${sb-contrib.version}</version>
-                </plugin>
-                <plugin>
-                  <groupId>com.h3xstream.findsecbugs</groupId>
-                  <artifactId>findsecbugs-plugin</artifactId>
-                  <version>${findsecbugs.version}</version>
-                </plugin>
-              </plugins>
-            </configuration>
-          </plugin>
-          <plugin>
             <groupId>org.apache.felix</groupId>
             <artifactId>maven-bundle-plugin</artifactId>
             <executions>
@@ -563,50 +509,10 @@
             </executions>
           </plugin>
           <plugin>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-            <version>${checkstyle.version}</version>
-            <executions>
-              <execution>
-                <id>validate</id>
-                <phase>validate</phase>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-                <configuration>
-                  <consoleOutput>true</consoleOutput>
-                  <logViolationsToConsole>true</logViolationsToConsole>
-                  <failOnViolation>false</failOnViolation>
-                  <failsOnError>false</failsOnError>
-                  <linkXRef>false</linkXRef>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
             <artifactId>maven-javadoc-plugin</artifactId>
             <configuration>
               <skip>true</skip>
             </configuration>
-          </plugin>
-          <plugin>
-            <artifactId>maven-pmd-plugin</artifactId>
-            <version>${pmd.version}</version>
-            <executions>
-              <execution>
-                <id>validate</id>
-                <phase>validate</phase>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-                <configuration>
-                  <consoleOutput>true</consoleOutput>
-                  <printFailingErrors>true</printFailingErrors>
-                  <failOnViolation>false</failOnViolation>
-                  <failsOnError>false</failsOnError>
-                  <linkXRef>false</linkXRef>
-                </configuration>
-              </execution>
-            </executions>
           </plugin>
           <plugin>
             <artifactId>maven-resources-plugin</artifactId>
