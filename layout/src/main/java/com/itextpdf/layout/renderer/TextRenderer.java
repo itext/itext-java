@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -374,8 +374,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     xAdvance = scaleXAdvance(xAdvance, fontSize.getValue(), hScale) / TEXT_SPACE_COEFF;
                 }
 
-                if (!noSoftWrap
-                        && (nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition) > layoutBox.getWidth() - currentLineWidth
+                float potentialWidth =
+                        nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition;
+                if (!noSoftWrap && (potentialWidth > layoutBox.getWidth() - currentLineWidth + EPS)
                         && firstCharacterWhichExceedsAllowedWidth == -1
                         || ind == specialScriptFirstNotFittingIndex) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
@@ -1529,7 +1530,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             return false;
         } else if (font instanceof String || font instanceof String[]) {
             if (font instanceof String) {
-                // TODO remove this if-clause before 7.2
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                 logger.warn(LogMessageConstant.FONT_PROPERTY_OF_STRING_TYPE_IS_DEPRECATED_USE_STRINGS_ARRAY_INSTEAD);
                 List<String> splitFontFamily = FontFamilySplitter.splitFontFamily((String) font);

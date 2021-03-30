@@ -1,0 +1,85 @@
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
+
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.io.font;
+
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
+
+import java.io.IOException;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+@Category(UnitTest.class)
+public class CFFFontTest extends ExtendedITextTest {
+
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/CFFFontTest/";
+
+    @Test
+    public void seekTest() throws IOException {
+        RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory()
+                .createBestSource(SOURCE_FOLDER + "NotoSansCJKjp-Bold.otf"));
+
+        byte[] cff = new byte[16014190];
+        try {
+            raf.seek(283192);
+            raf.readFully(cff);
+        } finally {
+            raf.close();
+        }
+        CFFFont cffFont = new CFFFont(cff);
+
+        cffFont.seek(0);
+        // Get int (bin 0000 0001 0000 0000  0000 0100 0000 0011)
+        Assert.assertEquals(16778243, cffFont.getInt());
+        cffFont.seek(0);
+        // Gets the first short (bin 0000 0001 0000 0000)
+        Assert.assertEquals(256, cffFont.getShort());
+        cffFont.seek(2);
+        // Gets the second short (bin 0000 0100 0000 0011)
+        Assert.assertEquals(1027, cffFont.getShort());
+    }
+
+    @Test
+    public void getPositionTest() throws IOException {
+        RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory()
+                .createBestSource(SOURCE_FOLDER + "NotoSansCJKjp-Bold.otf"));
+
+        byte[] cff = new byte[16014190];
+        try {
+            raf.seek(283192);
+            raf.readFully(cff);
+        } finally {
+            raf.close();
+        }
+        CFFFont cffFont = new CFFFont(cff);
+
+
+        cffFont.seek(0);
+        Assert.assertEquals(0, cffFont.getPosition());
+        cffFont.seek(16);
+        Assert.assertEquals(16, cffFont.getPosition());
+    }
+}

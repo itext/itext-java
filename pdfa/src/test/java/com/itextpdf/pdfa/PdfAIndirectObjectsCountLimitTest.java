@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,7 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -156,7 +157,8 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
 
     private Paragraph buildContent() throws IOException {
         PdfFontFactory.register(sourceFolder + "FreeSans.ttf",sourceFolder + "FreeSans.ttf");
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true);
+        PdfFont font = PdfFontFactory.createFont(
+                sourceFolder + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
         Paragraph p = new Paragraph(UUID.randomUUID().toString());
         p.setMinWidth(1e6f);
         p.setFont(font);

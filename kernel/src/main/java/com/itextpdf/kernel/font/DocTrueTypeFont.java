@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -58,11 +58,11 @@ import com.itextpdf.kernel.pdf.PdfString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
+public class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
 
     private static final long serialVersionUID = 4611535787920619829L;
 
-	private PdfStream fontFile;
+    private PdfStream fontFile;
     private PdfName fontFileName;
     private PdfName subtype;
     private int missingWidth = 0;

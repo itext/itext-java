@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -42,13 +42,13 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.nodes;
 
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import static org.junit.Assert.*;
 
 /**
  * Tests for the DocumentType node
@@ -59,25 +59,26 @@ import static org.junit.Assert.*;
 public class DocumentTypeTest extends ExtendedITextTest {
     @Test
     public void constructorValidationOkWithBlankName() {
-        DocumentType fail = new DocumentType("","", "", "");
+        AssertUtil.doesNotThrow(() -> new DocumentType("","", "", ""));
     }
 
     @Test
     public void constructorValidationOkWithBlankPublicAndSystemIds() {
-        DocumentType fail = new DocumentType("html","", "","");
+        AssertUtil.doesNotThrow(() -> new DocumentType("html","", "",""));
     }
 
-    @Test public void outerHtmlGeneration() {
+    @Test
+    public void outerHtmlGeneration() {
         DocumentType html5 = new DocumentType("html", "", "", "");
-        assertEquals("<!doctype html>", html5.outerHtml());
+        Assert.assertEquals("<!doctype html>", html5.outerHtml());
 
         DocumentType publicDocType = new DocumentType("html", "-//IETF//DTD HTML//", "", "");
-        assertEquals("<!DOCTYPE html PUBLIC \"-//IETF//DTD HTML//\">", publicDocType.outerHtml());
+        Assert.assertEquals("<!DOCTYPE html PUBLIC \"-//IETF//DTD HTML//\">", publicDocType.outerHtml());
 
         DocumentType systemDocType = new DocumentType("html", "", "http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd", "");
-        assertEquals("<!DOCTYPE html \"http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd\">", systemDocType.outerHtml());
+        Assert.assertEquals("<!DOCTYPE html \"http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd\">", systemDocType.outerHtml());
 
         DocumentType combo = new DocumentType("notHtml", "--public", "--system", "");
-        assertEquals("<!DOCTYPE notHtml PUBLIC \"--public\" \"--system\">", combo.outerHtml());
+        Assert.assertEquals("<!DOCTYPE notHtml PUBLIC \"--public\" \"--system\">", combo.outerHtml());
     }
 }

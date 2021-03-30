@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,7 @@ package com.itextpdf.pdfa;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -86,7 +87,8 @@ public class PdfA1LayoutListTest extends ExtendedITextTest {
         Document doc = new Document(pdfDocument);
         pdfDocument.setTagged();
 
-        PdfFont textfont = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", PdfEncodings.WINANSI, true);
+        PdfFont textfont = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
         textfont.setSubset(true);
 
 

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -117,8 +118,7 @@ public class XFAFormTest extends ExtendedITextTest {
     public void readXFAFormTest() throws IOException {
         String inFileName = sourceFolder + "formTemplate.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
-        // Test that exception is not thrown
-        PdfAcroForm.getAcroForm(pdfDocument, true);
+        AssertUtil.doesNotThrow(() -> PdfAcroForm.getAcroForm(pdfDocument, true));
     }
 
     @Test

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -99,5 +99,27 @@ public class CssTypesValidationUtilsTest extends ExtendedITextTest {
         Assert.assertFalse(CssTypesValidationUtils.isNumericValue("12f"));
         Assert.assertFalse(CssTypesValidationUtils.isNumericValue("f1.2"));
         Assert.assertFalse(CssTypesValidationUtils.isNumericValue(".12f"));
+    }
+
+    @Test
+    public void testSpacesBeforeUnitTypes() {
+        Assert.assertFalse(CssTypesValidationUtils.isAngleValue("10 deg"));
+        Assert.assertFalse(CssTypesValidationUtils.isEmValue("10 em"));
+        Assert.assertFalse(CssTypesValidationUtils.isExValue("10 ex"));
+        Assert.assertFalse(CssTypesValidationUtils.isRelativeValue("10 %"));
+        Assert.assertFalse(CssTypesValidationUtils.isRemValue("10 rem"));
+        Assert.assertFalse(CssTypesValidationUtils.isMetricValue("10 px"));
+        Assert.assertFalse(CssTypesValidationUtils.isPercentageValue("10 %"));
+    }
+
+    @Test
+    public void testSpacesAfterUnitTypes() {
+        Assert.assertTrue(CssTypesValidationUtils.isAngleValue("10deg "));
+        Assert.assertTrue(CssTypesValidationUtils.isEmValue("10em "));
+        Assert.assertTrue(CssTypesValidationUtils.isExValue("10ex "));
+        Assert.assertTrue(CssTypesValidationUtils.isRelativeValue("10% "));
+        Assert.assertTrue(CssTypesValidationUtils.isRemValue("10rem "));
+        Assert.assertTrue(CssTypesValidationUtils.isMetricValue("10px "));
+        Assert.assertTrue(CssTypesValidationUtils.isPercentageValue("10% "));
     }
 }

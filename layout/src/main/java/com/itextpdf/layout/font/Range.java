@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Ordered range for {@link FontInfo#getFontUnicodeRange()}.
+ * Class represents ordered list of {@link SubRange}.
+ * This class is used in {@link FontInfo} as internal field and in one of the overloads of
+ * the {@link com.itextpdf.layout.font.FontProvider#addFont(String, String, Range)} method as range
+ * of characters to be used in font.
+ *
+ * <p>
  * To create a custom Range instance {@link RangeBuilder} shall be used.
  */
 public class Range {

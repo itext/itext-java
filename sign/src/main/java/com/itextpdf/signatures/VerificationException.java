@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -57,6 +57,9 @@ public class VerificationException extends GeneralSecurityException {
 
     /**
      * Creates a VerificationException
+     *
+     * @param cert is a failed certificate
+     * @param message is a reason of failure
      */
     public VerificationException(Certificate cert, String message) {
         super(MessageFormatUtil.format("Certificate {0} failed: {1}", cert == null ? "Unknown" : ((X509Certificate) cert).getSubjectDN().getName(), message));

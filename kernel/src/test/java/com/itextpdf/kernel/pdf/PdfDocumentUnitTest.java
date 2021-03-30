@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -44,7 +44,9 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
 import com.itextpdf.test.ExtendedITextTest;
@@ -69,6 +71,36 @@ import org.junit.rules.ExpectedException;
 public class PdfDocumentUnitTest extends ExtendedITextTest {
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)
+    })
+    public void getFontWithDirectFontDictionaryTest() {
+        PdfDictionary initialFontDict = new PdfDictionary();
+        initialFontDict.put(PdfName.Subtype, PdfName.Type3);
+        initialFontDict.put(PdfName.FontMatrix, new PdfArray(new float[]{0.001F, 0, 0, 0.001F, 0, 0}));
+        initialFontDict.put(PdfName.Widths, new PdfArray());
+        PdfDictionary encoding = new PdfDictionary();
+        initialFontDict.put(PdfName.Encoding, encoding);
+        PdfArray differences = new PdfArray();
+        differences.add(new PdfNumber(AdobeGlyphList.nameToUnicode("a")));
+        differences.add(new PdfName("a"));
+        encoding.put(PdfName.Differences, differences);
+
+
+        Assert.assertNull(initialFontDict.getIndirectReference());
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            // prevent no pages exception on close
+            doc.addNewPage();
+
+            PdfType3Font font1 = (PdfType3Font) doc.getFont(initialFontDict);
+            Assert.assertNotNull(font1);
+
+            // prevent no glyphs for type3 font on close
+            font1.addGlyph('a', 0, 0, 0, 0, 0);
+        }
+    }
 
     @Test
     public void copyPagesWithOCGDifferentNames() throws IOException {

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -257,20 +257,41 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.CALCULATE_HASHCODE_FOR_MODIFIED_PDFNUMBER)
-    })
     public void equalNumbers() {
-        PdfNumber num1 = (PdfNumber) new PdfNumber(1).makeIndirect(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
-        PdfNumber num2 = new PdfNumber(2);
+        try (PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            // add a page to avoid exception throwing on close
+            document.addNewPage();
 
-        Assert.assertFalse(num1.equals(num2));
+            PdfNumber num1 = (PdfNumber) new PdfNumber(1).makeIndirect(document);
+            PdfNumber num2 = new PdfNumber(2);
 
-        int hashCode = num1.hashCode();
-        num1.increment();
+            Assert.assertFalse(num1.equals(num2));
 
-        Assert.assertTrue(num1.equals(num2));
-        Assert.assertNotEquals(hashCode, num1.hashCode());
+            int hashCode = num1.hashCode();
+            num1.increment();
+
+            Assert.assertTrue(num1.equals(num2));
+            Assert.assertNotEquals(hashCode, num1.hashCode());
+        }
+
+        PdfNumber a = new PdfNumber(1);
+        PdfNumber aContent = new PdfNumber(a.getInternalContent());
+        PdfNumber b = new PdfNumber(2);
+        PdfNumber bContent = new PdfNumber(b.getInternalContent());
+
+        Assert.assertTrue(a.equals(aContent));
+        Assert.assertEquals(a.hashCode(), aContent.hashCode());
+        Assert.assertTrue(b.equals(bContent));
+        Assert.assertEquals(b.hashCode(), bContent.hashCode());
+        Assert.assertFalse(aContent.equals(bContent));
+        Assert.assertNotEquals(aContent.hashCode(), bContent.hashCode());
+
+        aContent.increment();
+
+        Assert.assertFalse(a.equals(aContent));
+        Assert.assertNotEquals(a.hashCode(), aContent.hashCode());
+        Assert.assertTrue(aContent.equals(bContent));
+        Assert.assertEquals(aContent.hashCode(), bContent.hashCode());
     }
 
     @Test

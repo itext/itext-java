@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,14 +43,45 @@
  */
 package com.itextpdf.kernel.pdf;
 
+/**
+ * Specifying the characteristics of the annotation’s border.
+ * See ISO 32000-1 12.5.2, Table 164 - Entries common to all annotation dictionaries, Key - border.
+ *
+ * <p>
+ * Note (PDF 1.2): The dictionaries for some annotation types  can include the BS (border style) entry.
+ * That entry specifies a border style dictionary that has more settings than this class.
+ * If an annotation has BS entry, then {@link PdfAnnotationBorder} is ignored.
+ */
 public class PdfAnnotationBorder extends PdfObjectWrapper<PdfArray> {
 
+    /**  Serial version UID. */
     private static final long serialVersionUID = -4058970009483489460L;
 
+    /**
+     * Creates a {@link PdfAnnotationBorder} with three numbers defining the horizontal
+     * corner radius, vertical corner radius, and border width, all in default user
+     * space units. If the corner radii are 0, the border has square (not rounded)
+     * corners; if the border width is 0, no border is drawn.
+     *
+     * @param hRadius horizontal corner radius
+     * @param vRadius vertical corner radius
+     * @param width width of the border
+     */
 	public PdfAnnotationBorder(float hRadius, float vRadius, float width) {
         this(hRadius, vRadius, width, null);
     }
 
+    /**
+     * Creates a {@link PdfAnnotationBorder} with three numbers defining the horizontal
+     * corner radius, vertical corner radius, and border width, all in default user
+     * space units and a dash pattern for the border lines. If the corner radii are 0,
+     * the border has square (not rounded) corners; if the border width is 0, no border is drawn.
+     *
+     * @param hRadius horizontal corner radius
+     * @param vRadius vertical corner radius
+     * @param width width of the border
+     * @param dash the dash pattern
+     */
     public PdfAnnotationBorder(float hRadius, float vRadius, float width, PdfDashPattern dash) {
         super(new PdfArray(new float[]{hRadius, vRadius, width}));
         if (dash != null) {

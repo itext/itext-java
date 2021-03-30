@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -46,6 +46,7 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -381,7 +382,8 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
         PdfFormXObject form = new PdfFormXObject(formRect);
 
         PdfCanvas canvas = new PdfCanvas(form, doc);
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         canvas.setFontAndSize(font, 12);
         canvas.beginText().setTextMatrix(200, 50).showText("Hello World").endText();
         return form.getPdfObject();

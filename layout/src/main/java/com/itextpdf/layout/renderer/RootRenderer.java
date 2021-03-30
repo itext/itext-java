@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -168,35 +168,16 @@ public abstract class RootRenderer extends AbstractRenderer {
                         }
                     } else {
                         if (currentArea.isEmptyArea() && result.getAreaBreak() == null) {
-                            if (Boolean.TRUE.equals(result.getOverflowRenderer().getModelElement().<Boolean>getProperty(Property.KEEP_TOGETHER))) {
-                                result.getOverflowRenderer().getModelElement().setProperty(Property.KEEP_TOGETHER, false);
-                                Logger logger = LoggerFactory.getLogger(RootRenderer.class);
-                                logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "KeepTogether property will be ignored."));
-                                if (!rendererIsFloat) {
-                                    rootRendererStateHandler.attemptGoBackToStoredPreviousStateAndStoreNextState(this);
-                                }
-                            } else if (null != result.getCauseOfNothing() && Boolean.TRUE.equals(result.getCauseOfNothing().<Boolean>getProperty(Property.KEEP_TOGETHER))) {
-                                // set KEEP_TOGETHER false on the deepest parent (maybe the element itself) to have KEEP_TOGETHER == true
-                                IRenderer theDeepestKeptTogether = result.getCauseOfNothing();
-                                IRenderer parent;
-                                while (null == theDeepestKeptTogether.getModelElement() || null == theDeepestKeptTogether.getModelElement().<Boolean>getOwnProperty(Property.KEEP_TOGETHER)) {
-                                    parent = ((AbstractRenderer) theDeepestKeptTogether).parent;
-                                    if (parent == null) {
-                                        break;
-                                    }
-                                    theDeepestKeptTogether = parent;
-                                }
-                                theDeepestKeptTogether.getModelElement().setProperty(Property.KEEP_TOGETHER, false);
-                                Logger logger = LoggerFactory.getLogger(RootRenderer.class);
-                                logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "KeepTogether property of inner element will be ignored."));
-                                if (!rendererIsFloat) {
-                                    rootRendererStateHandler.attemptGoBackToStoredPreviousStateAndStoreNextState(this);
-                                }
-                            } else if (!Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
-                                result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
-                                Logger logger = LoggerFactory.getLogger(RootRenderer.class);
-                                logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
-                            } else {
+                            boolean keepTogetherChanged = tryDisableKeepTogether(result,
+                                    rendererIsFloat, rootRendererStateHandler);
+
+                            boolean areKeepTogetherAndForcedPlacementBothNotChanged = !keepTogetherChanged;
+                            if (areKeepTogetherAndForcedPlacementBothNotChanged) {
+                                areKeepTogetherAndForcedPlacementBothNotChanged =
+                                        ! updateForcedPlacement(renderer, result.getOverflowRenderer());
+                            }
+
+                            if (areKeepTogetherAndForcedPlacementBothNotChanged) {
                                 // FORCED_PLACEMENT was already set to the renderer and
                                 // LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA message was logged.
                                 // This else-clause should never be hit, otherwise there is a bug in FORCED_PLACEMENT implementation.
@@ -489,5 +470,52 @@ public abstract class RootRenderer extends AbstractRenderer {
         for (IRenderer renderer : waitingFloatRenderers) {
             addChild(renderer);
         }
+    }
+
+    private boolean updateForcedPlacement(IRenderer currentRenderer, IRenderer overflowRenderer) {
+        if (Boolean.TRUE.equals(currentRenderer.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
+            return false;
+        } else {
+            overflowRenderer.setProperty(Property.FORCED_PLACEMENT, true);
+            Logger logger = LoggerFactory.getLogger(RootRenderer.class);
+            if (logger.isWarnEnabled()) {
+                logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
+            }
+            return true;
+        }
+    }
+
+    private boolean tryDisableKeepTogether(LayoutResult result,
+            boolean rendererIsFloat, RootRendererAreaStateHandler rootRendererStateHandler) {
+        IRenderer toDisableKeepTogether = null;
+
+        // looking for the most outer keep together element
+        IRenderer current = result.getCauseOfNothing();
+        while (current != null) {
+            if (Boolean.TRUE.equals(current.<Boolean>getProperty(Property.KEEP_TOGETHER))) {
+                toDisableKeepTogether = current;
+            }
+            current = current.getParent();
+        }
+
+        if (toDisableKeepTogether == null) {
+            return false;
+        }
+
+        // Ideally the disabling of keep together property should be done on the renderers layer,
+        // but due to the problem with renderers tree (parent links from causeOfNothing
+        // may not lead to overflowRenderer) such approach does not work now. So we
+        // disabling keep together on the models layer.
+        toDisableKeepTogether.getModelElement().setProperty(Property.KEEP_TOGETHER, false);
+        Logger logger = LoggerFactory.getLogger(RootRenderer.class);
+        if (logger.isWarnEnabled()) {
+            logger.warn(MessageFormatUtil.format(
+                    LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
+                    "KeepTogether property will be ignored."));
+        }
+        if (!rendererIsFloat) {
+            rootRendererStateHandler.attemptGoBackToStoredPreviousStateAndStoreNextState(this);
+        }
+        return true;
     }
 }

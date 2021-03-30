@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -42,8 +42,13 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.layout.renderer.LineRenderer.RendererGlyph;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
+import java.util.Arrays;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -54,6 +59,50 @@ public class TypographyUtilsTest extends ExtendedITextTest {
     @Test
     public void verifyPdfCalligraphIsNotAvailable() {
         Assert.assertFalse(TypographyUtils.isPdfCalligraphAvailable());
+    }
+
+    @Test
+    public void updateAnchorDeltaMarkNotReorderedTest() {
+        // original line 'abm', and 'm' is a mark based on 'b'
+        Glyph mGlyph = new Glyph(100, 'm');
+        mGlyph.setAnchorDelta((short) -1);
+        mGlyph.setXAdvance((short) 15);
+        mGlyph.setYAdvance((short) 25);
+
+        RendererGlyph b = new RendererGlyph(new Glyph(100, 'b'), null);
+        RendererGlyph m = new RendererGlyph(mGlyph, null);
+        RendererGlyph a = new RendererGlyph(new Glyph(100, 'a'), null);
+        List<RendererGlyph> reorderedLine = Arrays.asList(b, m, a);
+
+        int[] reorder = new int[] {1, 2, 0};
+        int[] inverseReorder = new int[] {2, 0, 1};
+
+        TypographyUtils.updateAnchorDeltaForReorderedLineGlyphs(reorder, inverseReorder, reorderedLine);
+
+        Assert.assertSame(mGlyph, m.glyph);
+        Assert.assertEquals(-1, m.glyph.getAnchorDelta());
+    }
+
+    @Test
+    public void updateAnchorDeltaMarkReorderedTest() {
+        // original line 'abm', and 'm' is a mark based on 'b'
+        Glyph mGlyph = new Glyph(100, 'm');
+        mGlyph.setAnchorDelta((short) -1);
+        mGlyph.setXAdvance((short) 15);
+        mGlyph.setYAdvance((short) 25);
+
+        RendererGlyph m = new RendererGlyph(mGlyph, null);
+        RendererGlyph b = new RendererGlyph(new Glyph(100, 'b'), null);
+        RendererGlyph a = new RendererGlyph(new Glyph(100, 'a'), null);
+        List<RendererGlyph> reorderedLine = Arrays.asList(m, b, a);
+
+        int[] reorder = new int[] {2, 1, 0};
+        int[] inverseReorder = new int[] {2, 1, 0};
+
+        TypographyUtils.updateAnchorDeltaForReorderedLineGlyphs(reorder, inverseReorder, reorderedLine);
+
+        Assert.assertNotSame(mGlyph, m.glyph);
+        Assert.assertEquals(1, m.glyph.getAnchorDelta());
     }
 
 }

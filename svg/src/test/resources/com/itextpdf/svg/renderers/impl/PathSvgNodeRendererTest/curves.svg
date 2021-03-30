@@ -10,7 +10,7 @@
     .EndPoint { fill:none; stroke:#888888; stroke-width:2 }
     .CtlPoint { fill:#888888; stroke:none }
     .AutoCtlPoint { fill:none; stroke:blue; stroke-width:4 }
-    .Label { font-size:22; font-family:Verdana }
+    .Label { font-size:22px; font-family:Verdana }
   </style>
 
   <rect class="Border" x="1" y="1" width="498" height="398" />

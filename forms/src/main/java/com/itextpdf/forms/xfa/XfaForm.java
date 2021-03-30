@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -167,7 +167,7 @@ public class XfaForm {
      *
      * @param form        the data
      * @param pdfDocument pdfDocument
-     * @throws java.io.IOException on IO error
+     * @throws java.io.IOException if any I/O issue occurs
      */
     public static void setXfaForm(XfaForm form, PdfDocument pdfDocument) throws IOException {
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, true);
@@ -179,7 +179,7 @@ public class XfaForm {
      *
      * @param form     the data
      * @param acroForm an {@link PdfAcroForm} instance
-     * @throws java.io.IOException on IO error
+     * @throws java.io.IOException if any I/O issue occurs
      */
     public static void setXfaForm(XfaForm form, PdfAcroForm acroForm) throws IOException {
         if (form == null || acroForm == null || acroForm.getPdfDocument() == null) {
@@ -263,7 +263,7 @@ public class XfaForm {
      * Write the XfaForm to the provided {@link PdfDocument}.
      *
      * @param document the PdfDocument to write the XFA Form to
-     * @throws IOException
+     * @throws IOException if any I/O issue occurs
      */
     public void write(PdfDocument document) throws IOException {
         setXfaForm(this, document);
@@ -273,7 +273,7 @@ public class XfaForm {
      * Write the XfaForm to the provided {@link PdfAcroForm}.
      *
      * @param acroForm the PdfDocument to write the XFA Form to
-     * @throws IOException
+     * @throws IOException if any I/O issue occurs
      */
     public void write(PdfAcroForm acroForm) throws IOException {
         setXfaForm(this, acroForm);
@@ -434,7 +434,7 @@ public class XfaForm {
      * be modified.
      *
      * @param file the {@link File}
-     * @throws java.io.IOException on IO error on the {@link InputSource}
+     * @throws java.io.IOException if any I/O issue occurs on the {@link InputSource}
      */
     public void fillXfaForm(File file) throws IOException {
         fillXfaForm(file, false);
@@ -446,7 +446,7 @@ public class XfaForm {
      *
      * @param file     the {@link File}
      * @param readOnly whether or not the resulting DOM document may be modified
-     * @throws java.io.IOException on IO error on the {@link InputSource}
+     * @throws java.io.IOException if any I/O issue occurs on the {@link InputSource}
      */
     public void fillXfaForm(File file, boolean readOnly) throws IOException {
         fillXfaForm(new FileInputStream(file), readOnly);
@@ -458,7 +458,7 @@ public class XfaForm {
      * modified.
      *
      * @param is the {@link InputStream}
-     * @throws java.io.IOException on IO error on the {@link InputSource}
+     * @throws java.io.IOException if any I/O issue occurs on the {@link InputSource}
      */
     public void fillXfaForm(InputStream is) throws IOException {
         fillXfaForm(is, false);
@@ -470,7 +470,7 @@ public class XfaForm {
      *
      * @param is       the {@link InputStream}
      * @param readOnly whether or not the resulting DOM document may be modified
-     * @throws java.io.IOException on IO error on the {@link InputSource}
+     * @throws java.io.IOException if any I/O issue occurs on the {@link InputSource}
      */
     public void fillXfaForm(InputStream is, boolean readOnly) throws IOException {
         fillXfaForm(new InputSource(is), readOnly);
@@ -482,7 +482,7 @@ public class XfaForm {
      * document may be modified.
      *
      * @param is the {@link InputSource SAX input source}
-     * @throws java.io.IOException on IO error on the {@link InputSource}
+     * @throws java.io.IOException if any I/O issue occurs on the {@link InputSource}
      */
     public void fillXfaForm(InputSource is) throws IOException {
         fillXfaForm(is, false);
@@ -494,7 +494,7 @@ public class XfaForm {
      *
      * @param is       the {@link InputSource SAX input source}
      * @param readOnly whether or not the resulting DOM document may be modified
-     * @throws java.io.IOException on IO error on the {@link InputSource}
+     * @throws java.io.IOException if any I/O issue occurs on the {@link InputSource}
      */
     public void fillXfaForm(InputSource is, boolean readOnly) throws IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -601,7 +601,7 @@ public class XfaForm {
      *
      * @param n the XML document
      * @return the serialized XML document
-     * @throws java.io.IOException on error
+     * @throws java.io.IOException if any I/O issue occurs
      */
     private static byte[] serializeDocument(Node n) throws IOException {
         XmlDomWriter xw = new XmlDomWriter(false);

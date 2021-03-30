@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -175,12 +175,30 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     public abstract String decode(PdfString content);
 
     /**
-     * Decodes a given {@link PdfString} containing encoded string (e.g. from content stream) into a {@link GlyphLine}
+     * Decodes sequence of character codes (e.g. from content stream) into a {@link GlyphLine}
      *
-     * @param content the encoded string
+     * @param characterCodes the string which is interpreted as a sequence of character codes. Note, that {@link
+     *                       PdfString} acts as a storage for char code values specific to given font, therefore
+     *                       individual character codes must not be interpreted as code units of the UTF-16 encoding
+     *
      * @return the {@link GlyphLine} containing the glyphs encoded by the passed string
      */
-    public abstract GlyphLine decodeIntoGlyphLine(PdfString content);
+    public abstract GlyphLine decodeIntoGlyphLine(PdfString characterCodes);
+
+    /**
+     * Decodes sequence of character codes (e.g. from content stream) to sequence of glyphs
+     * and appends them to the passed list.
+     *
+     * @param list           the list to the end of which decoded glyphs are to be added
+     * @param characterCodes the string which is interpreted as a sequence of character codes. Note, that {@link
+     *                       PdfString} acts as a storage for char code values specific to given font, therefore
+     *                       individual character codes must not be interpreted as code units of the UTF-16 encoding
+     *
+     * @return true if all codes where successfully decoded, false otherwise
+     */
+    public boolean appendDecodedCodesToGlyphsList(List<Glyph> list, PdfString characterCodes) {
+        return false;
+    }
 
     public abstract float getContentWidth(PdfString content);
 
@@ -492,11 +510,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      */
     protected static String updateSubsetPrefix(String fontName, boolean isSubset, boolean isEmbedded) {
         if (isSubset && isEmbedded) {
-            StringBuilder s = new StringBuilder(fontName.length() + 7);
-            for (int k = 0; k < 6; ++k) {
-                s.append((char) (Math.random() * 26 + 'A'));
-            }
-            return s.append('+').append(fontName).toString();
+            return FontUtil.addRandomSubsetPrefixForFontName(fontName);
         }
         return fontName;
     }

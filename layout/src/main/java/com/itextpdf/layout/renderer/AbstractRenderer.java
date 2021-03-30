@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -98,6 +98,7 @@ import com.itextpdf.layout.property.UnitValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -528,7 +529,6 @@ public abstract class AbstractRenderer implements IRenderer {
         final Background background = this.<Background>getProperty(Property.BACKGROUND);
         final Object uncastedBackgroundImage = this.<Object>getProperty(Property.BACKGROUND_IMAGE);
         final List<BackgroundImage> backgroundImagesList;
-        // TODO DEVSIX-3814 support only List<BackgroundImage>.
         if (uncastedBackgroundImage instanceof BackgroundImage) {
             backgroundImagesList = Collections.singletonList((BackgroundImage) uncastedBackgroundImage);
         } else {
@@ -1222,6 +1222,21 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
+     * Applies margins, borders and paddings of the renderer on the given rectangle.
+     *
+     * @param rect    a rectangle margins, borders and paddings will be applied on.
+     * @param reverse indicates whether margins, borders and paddings will be applied
+     *                inside (in case of false) or outside (in case of true) the rectangle.
+     * @return a {@link Rectangle border box} of the renderer
+     */
+    Rectangle applyMarginsBordersPaddings(Rectangle rect, boolean reverse) {
+        applyMargins(rect, reverse);
+        applyBorderBox(rect, reverse);
+        applyPaddings(rect, reverse);
+        return rect;
+    }
+
+    /**
      * Applies margins of the renderer on the given rectangle
      *
      * @param rect    a rectangle margins will be applied on.
@@ -1885,11 +1900,11 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void applyLinkAnnotation(PdfDocument document) {
+        Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
         PdfLinkAnnotation linkAnnotation = this.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION);
         if (linkAnnotation != null) {
             int pageNumber = occupiedArea.getPageNumber();
             if (pageNumber < 1 || pageNumber > document.getNumberOfPages()) {
-                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                 String logMessageArg = "Property.LINK_ANNOTATION, which specifies a link associated with this element content area, see com.itextpdf.layout.element.Link.";
                 logger.warn(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN, logMessageArg));
                 return;
@@ -1903,7 +1918,14 @@ public abstract class AbstractRenderer implements IRenderer {
             linkAnnotation.setRectangle(new PdfArray(pdfBBox));
 
             PdfPage page = document.getPage(pageNumber);
-            page.addAnnotation(linkAnnotation);
+            // TODO DEVSIX-1655 This check is necessary because, in some cases, our renderer's hierarchy may contain
+            //  a renderer from the different page that was already flushed
+            if (page.isFlushed()) {
+                logger.error(MessageFormatUtil.format(
+                        LogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED, "link annotation applying"));
+            } else {
+                page.addAnnotation(linkAnnotation);
+            }
         }
     }
 
@@ -2019,6 +2041,11 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    /**
+     * Calculates min and max width values for current renderer.
+     *
+     * @return instance of {@link MinMaxWidth}
+     */
     public MinMaxWidth getMinMaxWidth() {
         return MinMaxWidthUtils.countDefaultMinMaxWidth(this);
     }
@@ -2084,7 +2111,12 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected boolean isKeepTogether() {
-        return Boolean.TRUE.equals(getPropertyAsBoolean(Property.KEEP_TOGETHER));
+        return isKeepTogether(null);
+    }
+
+    boolean isKeepTogether(IRenderer causeOfNothing) {
+        return Boolean.TRUE.equals(getPropertyAsBoolean(Property.KEEP_TOGETHER))
+                && !(causeOfNothing instanceof AreaBreakRenderer);
     }
 
     // Note! The second parameter is here on purpose. Currently occupied area is passed as a value of this parameter in
@@ -2360,7 +2392,6 @@ public abstract class AbstractRenderer implements IRenderer {
             return (PdfFont) font;
         } else if (font instanceof String || font instanceof String[]) {
             if (font instanceof String) {
-                // TODO DEVSIX-3814 remove this if-clause before 7.2
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                 logger.warn(LogMessageConstant.FONT_PROPERTY_OF_STRING_TYPE_IS_DEPRECATED_USE_STRINGS_ARRAY_INSTEAD);
                 List<String> splitFontFamily = FontFamilySplitter.splitFontFamily((String) font);
@@ -2481,14 +2512,14 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    private static float calculatePaddingBorderWidth(AbstractRenderer renderer) {
+    static float calculatePaddingBorderWidth(AbstractRenderer renderer) {
         Rectangle dummy = new Rectangle(0, 0);
         renderer.applyBorderBox(dummy, true);
         renderer.applyPaddings(dummy, true);
         return dummy.getWidth();
     }
 
-    private static float calculatePaddingBorderHeight(AbstractRenderer renderer) {
+    static float calculatePaddingBorderHeight(AbstractRenderer renderer) {
         Rectangle dummy = new Rectangle(0, 0);
         renderer.applyBorderBox(dummy, true);
         renderer.applyPaddings(dummy, true);
@@ -2526,6 +2557,128 @@ public abstract class AbstractRenderer implements IRenderer {
     protected void endTransformationIfApplied(PdfCanvas canvas) {
         if (this.<Transform>getProperty(Property.TRANSFORM) != null) {
             canvas.restoreState();
+        }
+    }
+
+    /**
+     * Add the specified {@link IRenderer renderer} to the end of children list and update its
+     * parent link to {@code this}.
+     *
+     * @param child the {@link IRenderer child renderer} to be add
+     */
+    void addChildRenderer(IRenderer child) {
+        child.setParent(this);
+        this.childRenderers.add(child);
+    }
+
+    /**
+     * Add the specified collection of {@link IRenderer renderers} to the end of children list and
+     * update their parent links to {@code this}.
+     *
+     * @param children the collection of {@link IRenderer child renderers} to be add
+     */
+    void addAllChildRenderers(List<IRenderer> children) {
+        if (children == null) {
+            return;
+        }
+        setThisAsParent(children);
+        this.childRenderers.addAll(children);
+    }
+
+    /**
+     * Inserts the specified collection of {@link IRenderer renderers} at the specified space of
+     * children list and update their parent links to {@code this}.
+     *
+     * @param index index at which to insert the first element from the specified collection
+     * @param children the collection of {@link IRenderer child renderers} to be add
+     */
+    void addAllChildRenderers(int index, List<IRenderer> children) {
+        setThisAsParent(children);
+        this.childRenderers.addAll(index, children);
+    }
+
+    /**
+     * Set the specified collection of {@link IRenderer renderers} as the children for {@code this}
+     * element. That meant that the old collection would be cleaned, all parent links in old
+     * children to {@code this} would be erased (i.e. set to {@code null}) and then the specified
+     * list of children would be added similar to {@link AbstractRenderer#addAllChildRenderers(List)}.
+     *
+     *
+     * @param children the collection of children {@link IRenderer renderers} to be set
+     */
+    void setChildRenderers(List<IRenderer> children) {
+        removeThisFromParents(this.childRenderers);
+        this.childRenderers.clear();
+        addAllChildRenderers(children);
+    }
+
+    /**
+     * Remove the child {@link IRenderer renderer} at the specified place. If the removed renderer has
+     * the parent link set to {@code this} and it would not present in the children list after
+     * removal, then the parent link of the removed renderer would be erased (i.e. set to {@code null}.
+     *
+     * @param index the index of the renderer to be removed
+     * @return the removed renderer
+     */
+    IRenderer removeChildRenderer(int index) {
+        final IRenderer removed = this.childRenderers.remove(index);
+        removeThisFromParent(removed);
+        return removed;
+    }
+
+    /**
+     * Remove the children {@link IRenderer renderers} which are contains in the specified collection.
+     * If some of the removed renderers has the parent link set to {@code this}, then
+     * the parent link of the removed renderer would be erased (i.e. set to {@code null}.
+     *
+     * @param children the collections of renderers to be removed from children list
+     * @return {@code true} if the children list has been changed
+     */
+    boolean removeAllChildRenderers(Collection<IRenderer> children) {
+        removeThisFromParents(children);
+        return this.childRenderers.removeAll(children);
+    }
+
+    /**
+     * Update the child {@link IRenderer renderer} at the specified place with the specified one.
+     * If the removed renderer has the parent link set to {@code this}, then it would be erased
+     * (i.e. set to {@code null}).
+     *
+     * @param index the index of the renderer to be updated
+     * @param child the renderer to be set
+     * @return the removed renderer
+     */
+    IRenderer setChildRenderer(int index, IRenderer child) {
+        if (child != null) {
+            child.setParent(this);
+        }
+        final IRenderer removedElement = this.childRenderers.set(index, child);
+        removeThisFromParent(removedElement);
+        return removedElement;
+    }
+
+    /**
+     * Sets current {@link AbstractRenderer} as parent to renderers in specified collection.
+     * @param children the collection of renderers to set the parent renderer on
+     */
+    void setThisAsParent(Collection<IRenderer> children) {
+        for (final IRenderer child : children) {
+            child.setParent(this);
+        }
+    }
+
+    private void removeThisFromParent(IRenderer toRemove) {
+        // we need to be sure that the removed element has no other entries in child renderers list
+        if (toRemove != null && this == toRemove.getParent() && !this.childRenderers.contains(toRemove)) {
+            toRemove.setParent(null);
+        }
+    }
+
+    private void removeThisFromParents(Collection<IRenderer> children) {
+        for (final IRenderer child : children) {
+            if (child != null && this == child.getParent()) {
+                child.setParent(null);
+            }
         }
     }
 

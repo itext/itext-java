@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -155,6 +155,11 @@ public class RangeBuilder {
     }
 
 
+    /**
+     * Creates a {@link Range} instance based on added ranges.
+     *
+     * @return the {@link Range} instance based on added ranges
+     */
     public Range create() {
         return new Range(ranges);
     }

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -341,7 +341,6 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-3814: remove in version 7.2
     public void resourceResolverInstanceCustomResolverTest() {
         DummySvgConverterProperties properties = new DummySvgConverterProperties();
         TestSvgProcessorResult testSvgProcessorResult = new TestSvgProcessorResult();
@@ -351,7 +350,6 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-3814: remove in version 7.2
     public void resourceResolverInstanceCustomResolverNullPropsTest() {
         TestSvgProcessorResult testSvgProcessorResult = new TestSvgProcessorResult();
 
@@ -359,7 +357,6 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
         Assert.assertNotNull(currentResolver);
     }
 
-    //TODO DEVSIX-3814: remove in version 7.2
     class TestSvgProcessorResult implements ISvgProcessorResult {
 
         public TestSvgProcessorResult() {

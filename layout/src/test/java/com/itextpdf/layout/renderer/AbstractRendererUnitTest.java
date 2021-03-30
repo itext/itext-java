@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -56,6 +57,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -73,6 +75,8 @@ import com.itextpdf.layout.property.BackgroundRepeat.BackgroundRepeatValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Arrays;
@@ -620,5 +624,23 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                 .setBackgroundOrigin(BackgroundBox.BORDER_BOX).build();
         renderer.setProperty(Property.BACKGROUND_IMAGE, backgroundImage);
         renderer.drawBackground(drawContext);
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED))
+    public void applyLinkAnnotationFlushedPageTest() {
+        AbstractRenderer abstractRenderer = new DivRenderer(new Div());
+        abstractRenderer.occupiedArea = new LayoutArea(1, new Rectangle(100, 100));
+
+        abstractRenderer.setProperty(Property.LINK_ANNOTATION, new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0)));
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        pdfDocument.addNewPage();
+        pdfDocument.getPage(1).flush();
+
+        abstractRenderer.applyLinkAnnotation(pdfDocument);
+
+        // This test checks that there is log message and there is no NPE so assertions are not required
+        Assert.assertTrue(true);
     }
 }

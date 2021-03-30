@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -48,7 +48,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-//TODO: DEVSIX-3987 remove this class at all
 public class DocumentSerializationTest extends ExtendedITextTest {
 
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/DocumentSerializationTest/";

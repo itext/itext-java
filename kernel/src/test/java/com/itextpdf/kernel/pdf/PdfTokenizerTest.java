@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -61,84 +61,6 @@ import java.nio.charset.StandardCharsets;
 @Category(IntegrationTest.class)
 public class PdfTokenizerTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfTokeniserTest/";
-
-    private void checkTokenTypes(String data, PdfTokenizer.TokenType... expectedTypes) throws Exception {
-        RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
-        PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
-
-        for (int i = 0; i < expectedTypes.length; i++) {
-            tok.nextValidToken();
-            //System.out.println(tok.getTokenType() + " -> " + tok.getStringValue());
-            Assert.assertEquals("Position " + i, expectedTypes[i], tok.getTokenType());
-        }
-    }
-
-    private void checkTokenValues(String data, byte[]... expectedValues) throws Exception {
-        RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
-        PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
-
-        for (int i = 0; i < expectedValues.length; i++) {
-            tok.nextValidToken();
-            //System.out.println(tok.getTokenType() + " -> " + tok.getStringValue());
-            Assert.assertArrayEquals("Position " + i, expectedValues[i], tok.getByteContent());
-        }
-    }
-
-    @Test
-    public void testOneNumber() throws Exception {
-        checkTokenTypes(
-                "/Name1 70",
-                PdfTokenizer.TokenType.Name,
-                PdfTokenizer.TokenType.Number,
-                PdfTokenizer.TokenType.EndOfFile
-        );
-    }
-
-    @Test
-    public void testTwoNumbers() throws Exception {
-        checkTokenTypes(
-                "/Name1 70/Name 2",
-                PdfTokenizer.TokenType.Name,
-                PdfTokenizer.TokenType.Number,
-                PdfTokenizer.TokenType.Name,
-                PdfTokenizer.TokenType.Number,
-                PdfTokenizer.TokenType.EndOfFile
-        );
-    }
-
-    @Test
-    public void tokenTypesTest() throws Exception {
-        checkTokenTypes(
-                "<</Size 70/Root 46 0 R/Info 44 0 R/ID[<8C2547D58D4BD2C6F3D32B830BE3259D><8F69587888569A458EB681A4285D5879>]/Prev 116 >>",
-                PdfTokenizer.TokenType.StartDic,
-                PdfTokenizer.TokenType.Name,
-                PdfTokenizer.TokenType.Number,
-                PdfTokenizer.TokenType.Name,
-                PdfTokenizer.TokenType.Ref,
-                PdfTokenizer.TokenType.Name,
-                PdfTokenizer.TokenType.Ref,
-                PdfTokenizer.TokenType.Name,
-                PdfTokenizer.TokenType.StartArray,
-                PdfTokenizer.TokenType.String,
-                PdfTokenizer.TokenType.String,
-                PdfTokenizer.TokenType.EndArray,
-                PdfTokenizer.TokenType.Name,
-                PdfTokenizer.TokenType.Number,
-                PdfTokenizer.TokenType.EndDic,
-                PdfTokenizer.TokenType.EndOfFile
-        );
-    }
-
-    @Test
-    public void numberValueInTheEndTest() throws Exception {
-        checkTokenValues(
-                "123",
-                new byte[]{49, 50, 51},
-
-                //EndOfFile buffer
-                new byte[]{}
-        );
-    }
 
     @Test
     public void encodingTest() throws IOException {
@@ -331,14 +253,5 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         Assert.assertEquals(tok.getTokenType(), PdfTokenizer.TokenType.Number);
         num = new PdfNumber(tok.getByteContent());
         Assert.assertEquals("-116.23", num.toString());
-    }
-
-    @Test
-    public void tokenValueEqualsToTest() throws IOException {
-        String data = "SomeString";
-        RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
-        PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
-        tok.nextToken();
-        Assert.assertTrue(tok.tokenValueEqualsTo(data.getBytes(StandardCharsets.ISO_8859_1)));
     }
 }

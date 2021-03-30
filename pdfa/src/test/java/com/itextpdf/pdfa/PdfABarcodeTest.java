@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -51,6 +51,7 @@ import com.itextpdf.barcodes.BarcodeInter25;
 import com.itextpdf.barcodes.BarcodeMSI;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
@@ -60,7 +61,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -90,7 +90,8 @@ public class PdfABarcodeTest extends ExtendedITextTest {
 
         Document doc = createPdfATaggedDocument(outPdf);
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         font.setSubset(true);
 
         BarcodeMSI codeMSI = new BarcodeMSI(doc.getPdfDocument(), font);
@@ -113,7 +114,8 @@ public class PdfABarcodeTest extends ExtendedITextTest {
 
         Document doc = createPdfATaggedDocument(outPdf);
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         font.setSubset(true);
 
         BarcodeInter25 codeInter25 = new BarcodeInter25(doc.getPdfDocument(), font);
@@ -136,7 +138,8 @@ public class PdfABarcodeTest extends ExtendedITextTest {
 
         Document doc = createPdfATaggedDocument(outPdf);
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         font.setSubset(true);
 
         BarcodeEAN codeEAN = new BarcodeEAN(doc.getPdfDocument(), font);
@@ -159,7 +162,8 @@ public class PdfABarcodeTest extends ExtendedITextTest {
 
         Document doc = createPdfATaggedDocument(outPdf);
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         font.setSubset(true);
 
         BarcodeCodabar codeCodabar = new BarcodeCodabar(doc.getPdfDocument(), font);
@@ -182,7 +186,8 @@ public class PdfABarcodeTest extends ExtendedITextTest {
 
         Document doc = createPdfATaggedDocument(outPdf);
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         font.setSubset(true);
 
         Barcode39 code39 = new Barcode39(doc.getPdfDocument(), font);
@@ -205,7 +210,8 @@ public class PdfABarcodeTest extends ExtendedITextTest {
 
         Document doc = createPdfATaggedDocument(outPdf);
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         font.setSubset(true);
 
         Barcode128 code128 = new Barcode128(doc.getPdfDocument(), font);

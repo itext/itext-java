@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -63,9 +63,18 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class FontUtil {
+public class FontUtil {
 
     private static final HashMap<String, CMapToUnicode> uniMaps = new HashMap<>();
+
+    public static String addRandomSubsetPrefixForFontName(final String fontName) {
+        final StringBuilder newFontName = new StringBuilder(fontName.length() + 7);
+        for (int k = 0; k < 6; ++k) {
+            newFontName.append((char) (Math.random() * 26 + 'A'));
+        }
+        newFontName.append('+').append(fontName);
+        return newFontName.toString();
+    }
 
     static CMapToUnicode processToUnicode(PdfObject toUnicode) {
         CMapToUnicode cMapToUnicode = null;

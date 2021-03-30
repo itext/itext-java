@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.1.14</version>
+  <version>7.1.15</version>
   <packaging>pom</packaging>
   <name>iText 7</name>
   <description>A Free Java-PDF library</description>
@@ -71,7 +71,7 @@
 
   <properties>
     <argLine>-Xmx1024m</argLine>
-    <bouncycastle.version>1.67</bouncycastle.version>
+    <bouncycastle.version>1.68</bouncycastle.version>
     <checkstyle.version>3.1.0</checkstyle.version>
     <dependencyCheck.version>6.0.3</dependencyCheck.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
@@ -82,7 +82,7 @@
     <javadoc-additionalOptions />
     <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
     <javadoc.version>3.0.1</javadoc.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.2</junit.version>
     <junitparams.version>1.0.4</junitparams.version>
     <logback.version>1.2.3</logback.version>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -769,6 +769,11 @@
               <!-- agent -->
               <dataFile>${project.build.directory}/jacoco-integration.exec</dataFile>
               <!-- report -->
+              <jmx>true</jmx>
+              <!-- jmx is set to true as a workaround for the code coverage measurement problem with upgrade
+              to junit 4.13.2. See more in DEVSIX-4761. With the future jacoco/junit upgrades the necessity in
+              setting this parameter might fade. It's not used for anything else but making sure code coverage is
+              measured correctly. -->
             </configuration>
           </plugin>
         </plugins>

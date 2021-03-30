@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.otf.Glyph;
@@ -95,8 +96,6 @@ public final class TypographyUtils {
     private static Map<String, Class<?>> cachedClasses = new HashMap<>();
     private static Map<TypographyMethodSignature, AccessibleObject> cachedMethods = new HashMap<>();
 
-    private static final String typographyNotFoundException = "Cannot find pdfCalligraph module, which was implicitly required by one of the layout properties";
-
     static {
         boolean moduleFound = false;
         try {
@@ -137,7 +136,7 @@ public final class TypographyUtils {
 
     static void applyOtfScript(FontProgram fontProgram, GlyphLine text, Character.UnicodeScript script, Object typographyConfig) {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-            logger.warn(typographyNotFoundException);
+            logger.warn(LogMessageConstant.TYPOGRAPHY_NOT_FOUND);
         } else {
             callMethod(TYPOGRAPHY_PACKAGE + SHAPER, APPLY_OTF_SCRIPT, new Class[]{TrueTypeFont.class, GlyphLine.class, Character.UnicodeScript.class, Object.class},
                     fontProgram, text, script, typographyConfig);
@@ -146,7 +145,7 @@ public final class TypographyUtils {
 
     static void applyKerning(FontProgram fontProgram, GlyphLine text) {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-            logger.warn(typographyNotFoundException);
+            logger.warn(LogMessageConstant.TYPOGRAPHY_NOT_FOUND);
         } else {
             callMethod(TYPOGRAPHY_PACKAGE + SHAPER, APPLY_KERNING, new Class[]{FontProgram.class, GlyphLine.class},
                     fontProgram, text);
@@ -156,7 +155,7 @@ public final class TypographyUtils {
 
     static byte[] getBidiLevels(BaseDirection baseDirection, int[] unicodeIds) {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-            logger.warn(typographyNotFoundException);
+            logger.warn(LogMessageConstant.TYPOGRAPHY_NOT_FOUND);
         } else {
             byte direction;
             switch (baseDirection) {
@@ -194,7 +193,7 @@ public final class TypographyUtils {
 
     static int[] reorderLine(List<LineRenderer.RendererGlyph> line, byte[] lineLevels, byte[] levels) {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-            logger.warn(typographyNotFoundException);
+            logger.warn(LogMessageConstant.TYPOGRAPHY_NOT_FOUND);
         } else {
             if (levels == null) {
                 return null;
@@ -223,16 +222,7 @@ public final class TypographyUtils {
                 }
             }
 
-            // fix anchorDelta
-            for (int i = 0; i < reorderedLine.size(); i++) {
-                Glyph glyph = reorderedLine.get(i).glyph;
-                if (glyph.hasPlacement()) {
-                    int oldAnchor = reorder[i] + glyph.getAnchorDelta();
-                    int newPos = inverseReorder[oldAnchor];
-                    int newAnchorDelta = newPos - i;
-                    glyph.setAnchorDelta((short) newAnchorDelta);
-                }
-            }
+            updateAnchorDeltaForReorderedLineGlyphs(reorder, inverseReorder, reorderedLine);
 
             line.clear();
             line.addAll(reorderedLine);
@@ -243,7 +233,7 @@ public final class TypographyUtils {
 
     static Collection<Character.UnicodeScript> getSupportedScripts() {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-            logger.warn(typographyNotFoundException);
+            logger.warn(LogMessageConstant.TYPOGRAPHY_NOT_FOUND);
             return null;
         } else {
             return SUPPORTED_SCRIPTS;
@@ -252,7 +242,7 @@ public final class TypographyUtils {
 
     static Collection<Character.UnicodeScript> getSupportedScripts(Object typographyConfig) {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-            logger.warn(typographyNotFoundException);
+            logger.warn(LogMessageConstant.TYPOGRAPHY_NOT_FOUND);
             return null;
         } else {
             return (Collection<Character.UnicodeScript>) callMethod(TYPOGRAPHY_PACKAGE + SHAPER, GET_SUPPORTED_SCRIPTS, (Object) null, new Class[] {Object.class}, typographyConfig);
@@ -261,6 +251,24 @@ public final class TypographyUtils {
 
     static List<Integer> getPossibleBreaks(String str) {
         return (List<Integer>) callMethod(TYPOGRAPHY_PACKAGE + WORD_WRAPPER, GET_POSSIBLE_BREAKS, new Class[] {String.class}, str);
+    }
+
+    static void updateAnchorDeltaForReorderedLineGlyphs(int[] reorder, int[] inverseReorder,
+            List<LineRenderer.RendererGlyph> reorderedLine) {
+        for (int i = 0; i < reorderedLine.size(); i++) {
+            Glyph glyph = reorderedLine.get(i).glyph;
+            if (glyph.hasPlacement()) {
+                int oldAnchor = reorder[i] + glyph.getAnchorDelta();
+                int newPos = inverseReorder[oldAnchor];
+                int newAnchorDelta = newPos - i;
+
+                if (glyph.getAnchorDelta() != newAnchorDelta) {
+                    glyph = new Glyph(glyph);
+                    reorderedLine.get(i).glyph = glyph;
+                    glyph.setAnchorDelta((short) newAnchorDelta);
+                }
+            }
+        }
     }
 
     private static Object callMethod(String className, String methodName, Class[] parameterTypes, Object... args) {

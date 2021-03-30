@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.colors.IccProfile;
 
@@ -56,6 +57,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class JpegImageHelper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JpegImageHelper.class);
 
     /**
      * This is a type of marker.
@@ -150,6 +152,31 @@ class JpegImageHelper {
             }
         }
         updateAttributes(image);
+    }
+
+    static void attemptToSetIccProfileToImage(byte[][] icc, ImageData image) {
+        if (icc != null) {
+            int total = 0;
+            for (final byte[] value : icc) {
+                if (value == null) {
+                    return;
+                }
+                total += value.length - 14;
+            }
+            byte[] ficc = new byte[total];
+            total = 0;
+            for (final byte[] bytes : icc) {
+                System.arraycopy(bytes, 14, ficc, total, bytes.length - 14);
+                total += bytes.length - 14;
+            }
+            try {
+                image.setProfile(IccProfile.getInstance(ficc, image.getColorSpace()));
+            } catch (Exception e) {
+                LOGGER.error(MessageFormatUtil.format(
+                        LogMessageConstant.DURING_CONSTRUCTION_OF_ICC_PROFILE_ERROR_OCCURRED,
+                        e.getClass().getSimpleName(), e.getMessage()));
+            }
+        }
     }
 
     private static void updateAttributes(ImageData image) {
@@ -313,8 +340,7 @@ class JpegImageHelper {
                             dx = (unitsx == 2 ? (int) (dx * 2.54f + 0.5f) : dx);
                             // make sure this is consistent with JFIF data
                             if (image.getDpiX() != 0 && image.getDpiX() != dx) {
-                                Logger logger = LoggerFactory.getLogger(JpegImageHelper.class);
-                                logger.debug(MessageFormatUtil.format("Inconsistent metadata (dpiX: {0} vs {1})", image.getDpiX(), dx));
+                                LOGGER.debug(MessageFormatUtil.format("Inconsistent metadata (dpiX: {0} vs {1})", image.getDpiX(), dx));
                             } else {
                                 image.setDpi(dx, image.getDpiY());
                             }
@@ -323,8 +349,7 @@ class JpegImageHelper {
                             dy = (unitsy == 2 ? (int) (dy * 2.54f + 0.5f) : dy);
                             // make sure this is consistent with JFIF data
                             if (image.getDpiY() != 0 && image.getDpiY() != dy) {
-                                Logger logger = LoggerFactory.getLogger(JpegImageHelper.class);
-                                logger.debug(MessageFormatUtil.format("Inconsistent metadata (dpiY: {0} vs {1})", image.getDpiY(), dy));
+                                LOGGER.debug(MessageFormatUtil.format("Inconsistent metadata (dpiY: {0} vs {1})", image.getDpiY(), dy));
                             } else {
                                 image.setDpi(image.getDpiX(), dx);
                             }
@@ -351,27 +376,8 @@ class JpegImageHelper {
                 }
             }
         }
-        if (icc != null) {
-            int total = 0;
-            for (int k = 0; k < icc.length; ++k) {
-                if (icc[k] == null) {
-                    icc = null;
-                    return;
-                }
-                total += icc[k].length - 14;
-            }
-            byte[] ficc = new byte[total];
-            total = 0;
-            for (int k = 0; k < icc.length; ++k) {
-                System.arraycopy(icc[k], 14, ficc, total, icc[k].length - 14);
-                total += icc[k].length - 14;
-            }
-            try {
-                image.setProfile(IccProfile.getInstance(ficc, image.getColorSpace()));
-            } catch (IllegalArgumentException e) {
-                // ignore ICC profile if it's invalid.
-            }
-        }
+
+        attemptToSetIccProfileToImage(icc, image);
     }
 
     /**

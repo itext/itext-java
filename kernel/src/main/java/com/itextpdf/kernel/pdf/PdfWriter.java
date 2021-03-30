@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -87,7 +87,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * It stores hashes of the indirect reference from the source document and the corresponding
      * indirect references of the copied objects from the new document.
      */
-    private Map<PdfDocument.IndirectRefDescription, PdfIndirectReference> copiedObjects = new LinkedHashMap<>();
+    private Map<PdfIndirectReference, PdfIndirectReference> copiedObjects = new LinkedHashMap<>();
 
     /**
      * Is used in smart mode to serialize and store serialized objects content.
@@ -356,14 +356,10 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         }
 
         PdfIndirectReference indirectReference = obj.getIndirectReference();
-
-        PdfDocument.IndirectRefDescription copiedObjectKey = null;
         boolean tryToFindDuplicate = !allowDuplicating && indirectReference != null;
 
         if (tryToFindDuplicate) {
-            copiedObjectKey = new PdfDocument.IndirectRefDescription(indirectReference);
-
-            PdfIndirectReference copiedIndirectReference = copiedObjects.get(copiedObjectKey);
+            PdfIndirectReference copiedIndirectReference = copiedObjects.get(indirectReference);
             if (copiedIndirectReference != null) {
                 return copiedIndirectReference.getRefersTo();
             }
@@ -374,21 +370,18 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             serializedContent = smartModeSerializer.serializeObject(obj);
             PdfIndirectReference objectRef = smartModeSerializer.getSavedSerializedObject(serializedContent);
             if (objectRef != null) {
-                copiedObjects.put(copiedObjectKey, objectRef);
+                copiedObjects.put(indirectReference, objectRef);
                 return objectRef.refersTo;
             }
         }
 
         PdfObject newObject = obj.newInstance();
         if (indirectReference != null) {
-            if (copiedObjectKey == null) {
-                copiedObjectKey = new PdfDocument.IndirectRefDescription(indirectReference);
-            }
             PdfIndirectReference indRef = newObject.makeIndirect(documentTo).getIndirectReference();
             if (serializedContent != null) {
                 smartModeSerializer.saveSerializedObject(serializedContent, indRef);
             }
-            copiedObjects.put(copiedObjectKey, indRef);
+            copiedObjects.put(indirectReference, indRef);
         }
         newObject.copyContent(obj, documentTo);
 
@@ -485,16 +478,17 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * @param docId id of the source document
      */
     void flushCopiedObjects(long docId) {
-        List<PdfDocument.IndirectRefDescription> remove = new ArrayList<>();
-        for (Map.Entry<PdfDocument.IndirectRefDescription, PdfIndirectReference> copiedObject : copiedObjects.entrySet()) {
-            if (copiedObject.getKey().docId == docId) {
+        List<PdfIndirectReference> remove = new ArrayList<>();
+        for (Map.Entry<PdfIndirectReference, PdfIndirectReference> copiedObject : copiedObjects.entrySet()) {
+            PdfDocument document = copiedObject.getKey().getDocument();
+            if (document != null && document.getDocumentId() == docId) {
                 if (copiedObject.getValue().refersTo != null) {
                     copiedObject.getValue().refersTo.flush();
                     remove.add(copiedObject.getKey());
                 }
             }
         }
-        for (PdfDocument.IndirectRefDescription ird : remove) {
+        for (PdfIndirectReference ird : remove) {
             copiedObjects.remove(ird);
         }
     }

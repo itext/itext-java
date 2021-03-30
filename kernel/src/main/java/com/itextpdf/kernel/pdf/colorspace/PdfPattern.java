@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -63,6 +63,11 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -6771280634868639993L;
 
+    /**
+     * Wraps the passed {@link PdfDictionary}.
+     *
+     * @param pdfObject the {@link PdfDictionary} that represent Pattern
+     */
 	protected PdfPattern(PdfDictionary pdfObject) {
         super(pdfObject);
     }
@@ -187,35 +192,102 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
             super(pdfObject);
         }
 
+        /**
+         * Creates a new Tiling Pattern instance.
+         *
+         * <p>
+         * By default the pattern will be colored.
+         *
+         * @param width the width of the pattern cell's bounding box
+         * @param height the height of the pattern cell's bounding box
+         */
         public Tiling(float width, float height) {
             this(width, height, true);
         }
 
+        /**
+         * Creates a new Tiling Pattern instance.
+         *
+         * @param width the width of the pattern cell's bounding box
+         * @param height the height of the pattern cell's bounding box
+         * @param colored defines whether the Tiling Pattern will be colored or not
+         */
         public Tiling(float width, float height, boolean colored) {
             this(new Rectangle(width, height), colored);
         }
 
+        /**
+         * Creates a new Tiling instance.
+         *
+         * <p>
+         * By default the pattern will be colored.
+         *
+         * @param bbox the pattern cell's bounding box
+         */
         public Tiling(Rectangle bbox) {
             this(bbox, true);
         }
 
+        /**
+         * Creates a new Tiling instance.
+         *
+         * @param bbox the pattern cell's bounding box
+         * @param colored defines whether the Tiling Pattern will be colored or not
+         */
         public Tiling(Rectangle bbox, boolean colored) {
             this(bbox, bbox.getWidth(), bbox.getHeight(), colored);
         }
 
+        /**
+         * Creates a new Tiling Pattern instance.
+         *
+         * <p>
+         * By default the pattern will be colored.
+         *
+         * @param width the width of the pattern cell's bounding box
+         * @param height the height of the pattern cell's bounding box
+         * @param xStep the desired horizontal space between pattern cells
+         * @param yStep the desired vertical space between pattern cells
+         */
         public Tiling(float width, float height, float xStep, float yStep) {
             this(width, height, xStep, yStep, true);
         }
 
+        /**
+         * Creates a new Tiling Pattern instance.
+         *
+         * @param width the width of the pattern cell's bounding box
+         * @param height the height of the pattern cell's bounding box
+         * @param xStep the desired horizontal space between pattern cells
+         * @param yStep the desired vertical space between pattern cells
+         * @param colored defines whether the Tiling Pattern will be colored or not
+         */
         public Tiling(float width, float height, float xStep, float yStep, boolean colored) {
             this(new Rectangle(width, height), xStep, yStep, colored);
         }
 
+        /**
+         * Creates a new Tiling instance.
+         *
+         * <p>
+         * By default the pattern will be colored.
+         *
+         * @param bbox the pattern cell's bounding box
+         * @param xStep the desired horizontal space between pattern cells
+         * @param yStep the desired vertical space between pattern cells
+         */
         public Tiling(Rectangle bbox, float xStep, float yStep) {
             this(bbox, xStep, yStep, true);
         }
 
-
+        /**
+         * Creates a new Tiling instance.
+         *
+         * @param bbox the pattern cell's bounding box
+         * @param xStep the desired horizontal space between pattern cells
+         * @param yStep the desired vertical space between pattern cells
+         * @param colored defines whether the Tiling Pattern will be colored or not
+         */
         public Tiling(Rectangle bbox, float xStep, float yStep, boolean colored) {
             super(new PdfStream());
             getPdfObject().put(PdfName.Type, PdfName.Pattern);
@@ -291,24 +363,49 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
             setModified();
         }
 
+        /**
+         * Gets the desired horizontal space between pattern cells.
+         *
+         * @return the desired horizontal space between pattern cells
+         */
         public float getXStep() {
             return getPdfObject().getAsNumber(PdfName.XStep).floatValue();
         }
 
+        /**
+         * Sets the desired horizontal space between pattern cells.
+         *
+         * @param xStep the desired horizontal space between pattern cells
+         */
         public void setXStep(float xStep) {
             getPdfObject().put(PdfName.XStep, new PdfNumber(xStep));
             setModified();
         }
 
+        /**
+         * Gets the desired vertical space between pattern cells.
+         *
+         * @return the desired vertical space between pattern cells
+         */
         public float getYStep() {
             return getPdfObject().getAsNumber(PdfName.YStep).floatValue();
         }
 
+        /**
+         * Sets the desired vertical space between pattern cells.
+         *
+         * @param yStep the desired vertical space between pattern cells
+         */
         public void setYStep(float yStep) {
             getPdfObject().put(PdfName.YStep, new PdfNumber(yStep));
             setModified();
         }
 
+        /**
+         * Gets the Tiling Pattern's resources.
+         *
+         * @return the Tiling Pattern's resources
+         */
         public PdfResources getResources() {
             if (this.resources == null) {
                 PdfDictionary resourcesDict = getPdfObject().getAsDictionary(PdfName.Resources);
@@ -331,14 +428,32 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Shading pattern provides a smooth transition between colors across an area to be painted,
+     * independent of the resolution of any particular output device and without specifying
+     * the number of steps in the color transition. Patterns of this type are described
+     * by pattern dictionaries with a pattern type of 2.
+     */
     public static class Shading extends PdfPattern {
 
         private static final long serialVersionUID = -4289411438737403786L;
 
+        /**
+         * Creates new instance from the {@link PdfStream} object.
+         * This stream should have PatternType equals to 2.
+         *
+         * @param pdfObject the {@link PdfStream} that represents Shading Pattern.
+         */
 		public Shading(PdfDictionary pdfObject) {
             super(pdfObject);
         }
 
+        /**
+         * Creates a new instance of Shading Pattern.
+         *
+         * @param shading the {@link PdfShading} that specifies the details of a particular
+         *                gradient fill
+         */
         public Shading(com.itextpdf.kernel.pdf.colorspace.PdfShading shading) {
             super(new PdfDictionary());
             getPdfObject().put(PdfName.Type, PdfName.Pattern);
@@ -346,15 +461,30 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
             getPdfObject().put(PdfName.Shading, shading.getPdfObject());
         }
 
+        /**
+         * Gets the dictionary of the pattern's {@link PdfShading}.
+         *
+         * @return the dictionary of the pattern's {@link PdfShading}
+         */
         public PdfDictionary getShading() {
             return (PdfDictionary) getPdfObject().get(PdfName.Shading);
         }
 
+        /**
+         * Sets the {@link PdfShading} that specifies the details of a particular gradient fill.
+         *
+         * @param shading the {@link PdfShading} that specifies the details of a particular gradient fill
+         */
         public void setShading(com.itextpdf.kernel.pdf.colorspace.PdfShading shading) {
             getPdfObject().put(PdfName.Shading, shading.getPdfObject());
             setModified();
         }
 
+        /**
+         * Sets the dictionary which specifies the details of a particular gradient fill.
+         *
+         * @param shading the dictionary of the pattern's {@link PdfShading}
+         */
         public void setShading(PdfDictionary shading) {
             getPdfObject().put(PdfName.Shading, shading);
             setModified();

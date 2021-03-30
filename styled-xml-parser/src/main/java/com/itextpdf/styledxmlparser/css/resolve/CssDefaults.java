@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -46,6 +46,8 @@ package com.itextpdf.styledxmlparser.css.resolve;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.styledxmlparser.css.CssDeclaration;
+
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -98,6 +100,12 @@ public class CssDefaults {
 
         defaultValues.put(CommonCssConstants.BOX_SHADOW, CommonCssConstants.NONE);
 
+        defaultValues.put(CommonCssConstants.FLEX_BASIS, CommonCssConstants.AUTO);
+        defaultValues.put(CommonCssConstants.FLEX_DIRECTION, CommonCssConstants.ROW);
+        defaultValues.put(CommonCssConstants.FLEX_GROW, "0");
+        defaultValues.put(CommonCssConstants.FLEX_SHRINK, "1");
+        defaultValues.put(CommonCssConstants.FLEX_WRAP, CommonCssConstants.NOWRAP);
+
         defaultValues.put(CommonCssConstants.FLOAT, CommonCssConstants.NONE);
         defaultValues.put(CommonCssConstants.FONT_FAMILY, "times");
         defaultValues.put(CommonCssConstants.FONT_SIZE, CommonCssConstants.MEDIUM);
@@ -149,6 +157,9 @@ public class CssDefaults {
 
         defaultValues.put(CommonCssConstants.ORPHANS, "2");
         defaultValues.put(CommonCssConstants.WIDOWS, "2");
+
+        defaultValues.put(CommonCssConstants.JUSTIFY_CONTENT, CommonCssConstants.FLEX_START);
+        defaultValues.put(CommonCssConstants.ALIGN_ITEMS, CommonCssConstants.STRETCH);
 
         // Other css properties default values will be added as needed
     }

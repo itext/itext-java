@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -657,10 +657,10 @@ final class TableWidths {
         for (CellInfo cell : cells) {
             cell.setParent(tableRenderer);
             MinMaxWidth minMax = cell.getCell().getMinMaxWidth();
-            float[] indents = getCellBorderIndents(cell);
             if (BorderCollapsePropertyValue.SEPARATE.equals(tableRenderer.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
                 minMax.setAdditionalWidth((float) (minMax.getAdditionalWidth() - horizontalBorderSpacing));
             } else {
+                float[] indents = getCellBorderIndents(cell);
                 minMax.setAdditionalWidth(minMax.getAdditionalWidth() + indents[1] / 2 + indents[3] / 2);
             }
 

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -67,6 +67,7 @@ import com.itextpdf.kernel.log.CounterManager;
 import com.itextpdf.kernel.log.ICounter;
 import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
 import com.itextpdf.kernel.numbering.RomanNumbering;
+import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
@@ -336,10 +337,25 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         this.xmpMetadata = xmpMetadata;
     }
 
+    /**
+     * Sets the XMP Metadata.
+     *
+     * @param xmpMeta the xmpMetadata to set
+     * @param serializeOptions serialization options
+     *
+     * @throws XMPException on serialization errors
+     */
     public void setXmpMetadata(XMPMeta xmpMeta, SerializeOptions serializeOptions) throws XMPException {
         setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
     }
 
+    /**
+     * Sets the XMP Metadata.
+     *
+     * @param xmpMeta the xmpMetadata to set
+     *
+     * @throws XMPException on serialization errors
+     */
     public void setXmpMetadata(XMPMeta xmpMeta) throws XMPException {
         SerializeOptions serializeOptions = new SerializeOptions();
         serializeOptions.setPadding(2000);
@@ -629,8 +645,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             throw new PdfException(PdfException.FLUSHED_PAGE_CANNOT_BE_REMOVED);
         }
 
-        catalog.getPageTree().removePage(pageNum);
-
         if (removedPage != null) {
             catalog.removeOutlines(removedPage);
             removeUnusedWidgetsFromFields(removedPage);
@@ -644,6 +658,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
             dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.REMOVE_PAGE, removedPage));
         }
+
+        catalog.getPageTree().removePage(pageNum);
     }
 
     /**
@@ -1738,9 +1754,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * until it will be added to {@link com.itextpdf.kernel.pdf.canvas.PdfCanvas} or {@link PdfResources}.
      */
     public PdfFont getFont(PdfDictionary dictionary) {
-        assert dictionary.getIndirectReference() != null;
-        if (documentFonts.containsKey(dictionary.getIndirectReference())) {
-            return documentFonts.get(dictionary.getIndirectReference());
+        PdfIndirectReference indirectReference = dictionary.getIndirectReference();
+        if (indirectReference != null && documentFonts.containsKey(indirectReference)) {
+            return documentFonts.get(indirectReference);
         } else {
             return addFont(PdfFontFactory.createFont(dictionary));
         }
@@ -1801,6 +1817,14 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return fingerPrint;
     }
 
+    /**
+     * Find {@link PdfFont} from loaded fonts with corresponding fontProgram and encoding or CMAP.
+     *
+     * @param fontProgram a font name or path to a font program
+     * @param encoding an encoding or CMAP
+     *
+     * @return the font instance, or null if font wasn't found
+     */
     public PdfFont findFont(String fontProgram, String encoding) {
         for (PdfFont font : documentFonts.values()) {
             if (!font.isFlushed() && font.isBuiltWith(fontProgram, encoding))
@@ -1900,29 +1924,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 pdfVersion = reader.headerPdfVersion;
                 trailer = new PdfDictionary(reader.trailer);
 
-                PdfArray id = reader.trailer.getAsArray(PdfName.ID);
-
-                if (id != null) {
-                   if (id.size() == 2) {
-                       originalDocumentId = id.getAsString(0);
-                       modifiedDocumentId = id.getAsString(1);
-                   }
-
-                   if (originalDocumentId == null || modifiedDocumentId == null) {
-                       Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-                       logger.error(LogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED);
-                   }
-                }
+                readDocumentIds();
 
                 catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true));
-                if (catalog.getPdfObject().containsKey(PdfName.Version)) {
-                    // The version of the PDF specification to which the document conforms (for example, 1.4)
-                    // if later than the version specified in the file's header
-                    PdfVersion catalogVersion = PdfVersion.fromPdfName(catalog.getPdfObject().getAsName(PdfName.Version));
-                    if (catalogVersion.compareTo(pdfVersion) > 0) {
-                        pdfVersion = catalogVersion;
-                    }
-                }
+                updatePdfVersionFromCatalog();
                 PdfStream xmpMetadataStream = catalog.getPdfObject().getAsStream(PdfName.Metadata);
                 if (xmpMetadataStream != null) {
                     xmpMetadata = xmpMetadataStream.getBytes();
@@ -2106,6 +2111,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return documentFonts.values();
     }
 
+    /**
+     * Flushes all newly added or loaded fonts.
+     */
     protected void flushFonts() {
         if (properties.appendMode) {
             for (PdfFont font : getDocumentFonts()) {
@@ -2176,6 +2184,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return pdfPageFactory;
     }
 
+    long getDocumentId() {
+        return documentId;
+    }
+
     /**
      * Gets iText version info.
      *
@@ -2195,13 +2207,20 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             producer = versionInfo.getVersion();
         } else {
             if (info.getPdfObject().containsKey(PdfName.Producer)) {
-                producer = info.getPdfObject().getAsString(PdfName.Producer).toUnicodeString();
+                final PdfString producerPdfStr = info.getPdfObject().getAsString(PdfName.Producer);
+                producer = producerPdfStr == null ? null : producerPdfStr.toUnicodeString();
             }
             producer = addModifiedPostfix(producer);
         }
         info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
     }
 
+    /**
+     * Initializes the new instance of document's structure tree root {@link PdfStructTreeRoot}.
+     * See ISO 32000-1, section 14.7.2 Structure Hierarchy.
+     *
+     * @param str dictionary to create structure tree root
+     */
     protected void tryInitTagStructure(PdfDictionary str) {
         try {
             structTreeRoot = new PdfStructTreeRoot(str, this);
@@ -2416,10 +2435,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
     }
 
-    private long getDocumentId() {
-        return documentId;
-    }
-
     private void writeObject(ObjectOutputStream out) throws IOException {
         if (tagStructureContext != null) {
             LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.TAG_STRUCTURE_CONTEXT_WILL_BE_REINITIALIZED_ON_SERIALIZATION);
@@ -2429,42 +2444,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     private boolean writerHasEncryption() {
         return writer.properties.isStandardEncryptionUsed() || writer.properties.isPublicKeyEncryptionUsed();
-    }
-
-    /**
-     * A structure storing documentId, object number and generation number. This structure is using to calculate
-     * an unique object key during the copy process.
-     */
-    static class IndirectRefDescription {
-        final long docId;
-        final int objNr;
-        final int genNr;
-
-        IndirectRefDescription(PdfIndirectReference reference) {
-            this.docId = reference.getDocument().getDocumentId();
-            this.objNr = reference.getObjNumber();
-            this.genNr = reference.getGenNumber();
-        }
-
-        @Override
-        public int hashCode() {
-            int result = (int) docId;
-            result *= 31;
-            result += objNr;
-            result *= 31;
-            result += genNr;
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            IndirectRefDescription that = (IndirectRefDescription) o;
-
-            return docId == that.docId && objNr == that.objNr && genNr == that.genNr;
-        }
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -2490,6 +2469,45 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             buf.append("; modified using ");
             buf.append(versionInfo.getVersion());
             return buf.toString();
+        }
+    }
+
+    private void updatePdfVersionFromCatalog() {
+        if (catalog.getPdfObject().containsKey(PdfName.Version)) {
+            // The version of the PDF specification to which the document conforms (for example, 1.4)
+            // if later than the version specified in the file's header
+            try {
+                PdfVersion catalogVersion = PdfVersion.fromPdfName(catalog.getPdfObject().getAsName(PdfName.Version));
+                if (catalogVersion.compareTo(pdfVersion) > 0) {
+                    pdfVersion = catalogVersion;
+                }
+            } catch (IllegalArgumentException e) {
+                processReadingError(LogMessageConstant.DOCUMENT_VERSION_IN_CATALOG_CORRUPTED);
+            }
+        }
+    }
+
+    private void readDocumentIds() {
+        PdfArray id = reader.trailer.getAsArray(PdfName.ID);
+
+        if (id != null) {
+            if (id.size() == 2) {
+                originalDocumentId = id.getAsString(0);
+                modifiedDocumentId = id.getAsString(1);
+            }
+
+            if (originalDocumentId == null || modifiedDocumentId == null) {
+                processReadingError(LogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED);
+            }
+        }
+    }
+
+    private void processReadingError(String errorMessage) {
+        if (StrictnessLevel.CONSERVATIVE.isStricter(reader.getStrictnessLevel())) {
+            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+            logger.error(errorMessage);
+        } else {
+            throw new PdfException(errorMessage);
         }
     }
 

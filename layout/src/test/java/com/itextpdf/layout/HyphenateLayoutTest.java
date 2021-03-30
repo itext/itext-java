@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -227,7 +227,7 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
                 "Dies ist ein Satz in deutscher Sprache. An hm kann man sehen, ob alle Buchstaben da sind. Und der Umbruch? 99\u2011Tage-Kaiser.\n"
                         + "Dies ist ein Satz in deutscher Sprache. An hm kann man sehen, ob alle Buchstaben da sind. Und der Umbruch? 99\u2011Days-Kaiser.\n"
                         + "Dies ist ein Satz in deutscher Sprache. An hm kann man sehen, ob alle Buchstaben da sind. Und der Umbruch? 99\u2011Frage-Kaiser.\n");
-        PdfFont font = PdfFontFactory.createFont(fontsFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H, true);
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H);
         text.setFont(font);
         text.setFontSize(10);
         Paragraph paragraph = new Paragraph(text);
@@ -250,7 +250,7 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
 
         Div div = new Div();
         div.setHyphenation(new HyphenationConfig("en", "EN", 2, 2));
-        PdfFont font = PdfFontFactory.createFont(fontsFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H, true);
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H);
         div.setFont(font);
         div.setFontSize(12);
 
@@ -275,7 +275,7 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        PdfFont font = PdfFontFactory.createFont(fontsFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H, true);
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H);
         Style style = new Style();
         style.setBorder(new SolidBorder(ColorConstants.BLACK, 1));
         style.setHyphenation(new HyphenationConfig("en", "EN", 2, 2));

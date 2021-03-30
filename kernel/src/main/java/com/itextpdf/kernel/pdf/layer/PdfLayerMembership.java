@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -190,6 +190,11 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
         return true;
     }
 
+    /**
+     * Gets the {@link PdfDocument} that owns that layer membership.
+     *
+     * @return the {@link PdfDocument} that owns that layer membership
+     */
     protected PdfDocument getDocument() {
         return getPdfObject().getIndirectReference().getDocument();
     }

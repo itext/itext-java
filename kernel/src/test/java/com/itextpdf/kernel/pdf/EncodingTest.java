@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -46,6 +46,7 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -99,7 +100,8 @@ public class EncodingTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(writer);
 
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
-                "# simple 1 0020 041c 0456 0440 044a 0050 0065 0061 0063", true);
+                "# simple 1 0020 041c 0456 0440 044a 0050 0065 0061 0063",
+                EmbeddingStrategy.PREFER_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         canvas.
                 saveState().
@@ -176,7 +178,8 @@ public class EncodingTest extends ExtendedITextTest {
         String fileName = "notdefInTrueTypeFontTest.pdf";
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "# simple 32 0020 00C5 1987", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "# simple 32 0020 00C5 1987", EmbeddingStrategy.PREFER_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         canvas.
                 saveState().
@@ -186,7 +189,8 @@ public class EncodingTest extends ExtendedITextTest {
                 showText("\u00C5 \u1987").
                 endText().
                 restoreState();
-        font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", PdfEncodings.WINANSI, true);
+        font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                PdfEncodings.WINANSI, EmbeddingStrategy.PREFER_EMBEDDED);
         canvas.
                 saveState().
                 beginText().
@@ -282,7 +286,7 @@ public class EncodingTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "Symbols1.ttf", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "Symbols1.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         StringBuilder str = new StringBuilder();
         for (int i = 32; i <= 65; i++) {

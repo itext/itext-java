@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -31,6 +31,7 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
@@ -134,8 +135,7 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
     //Here we just check that no exception has been thrown.
     public void deleteOwnProperty() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        areaBreakRenderer.deleteOwnProperty(Property.BORDER);
-        Assert.assertTrue(true);
+        AssertUtil.doesNotThrow(() -> areaBreakRenderer.deleteOwnProperty(Property.BORDER));
     }
 
     @Test

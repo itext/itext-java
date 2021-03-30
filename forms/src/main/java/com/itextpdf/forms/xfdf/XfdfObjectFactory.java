@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -91,7 +91,7 @@ public class XfdfObjectFactory {
     /**
      * Extracts data from pdf document acroform and annotations into XfdfObject.
      * *
-     * @param document   Pdf document for data extraction.
+     * @param document Pdf document for data extraction.
      * @param filename The name od pdf document for data extraction.
      * @return XfdfObject containing data from pdf forms and annotations.
      */
@@ -142,8 +142,12 @@ public class XfdfObjectFactory {
     /**
      * Extracts data from input stream into XfdfObject. Typically input stream is based on .xfdf file
      *
-     * @param xfdfInputStream   The input stream containing xml-styled xfdf data.
+     * @param xfdfInputStream The input stream containing xml-styled xfdf data.
      * @return XfdfObject containing original xfdf data.
+     * @throws ParserConfigurationException if a XfdfObject cannot be created which satisfies the configuration
+     *                                      requested.
+     * @throws IOException                  if any I/O issue occurs.
+     * @throws SAXException                 if any parse errors occurs.
      */
      public XfdfObject createXfdfObject(InputStream xfdfInputStream) throws ParserConfigurationException, IOException, SAXException {
         XfdfObject xfdfObject = new XfdfObject();

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -48,6 +48,7 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.borders.Border;
@@ -86,6 +87,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
         super(modelElement);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         this.isLastRendererForModelElement = true;
@@ -193,7 +197,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
 
                 result = new LayoutResult(LayoutResult.NOTHING, null, null, childRenderer);
-                boolean isKeepTogether = isKeepTogether();
+                boolean isKeepTogether = isKeepTogether(childRenderer);
                 int layoutResult = anythingPlaced && !isKeepTogether ? LayoutResult.PARTIAL : LayoutResult.NOTHING;
                 AbstractRenderer[] splitAndOverflowRenderers = createSplitAndOverflowRenderers(childPos, layoutResult, result, waitingFloatsSplitRenderers, waitingOverflowFloatRenderers);
 
@@ -226,16 +230,22 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
 
             if (marginsCollapsingEnabled) {
-                childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(childRenderer, layoutBox);
+                childMarginsInfo = startChildMarginsHandling(childRenderer, layoutBox, marginsCollapseHandler);
             }
-            while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox), childMarginsInfo, floatRendererAreas, wasHeightClipped || wasParentsHeightClipped)))
+            Rectangle changedLayoutBox =
+                    recalculateLayoutBoxBeforeChildLayout(layoutBox, childRenderer, areas.get(0).clone());
+            while ((result = childRenderer.setParent(this).layout(new LayoutContext(
+                    new LayoutArea(pageNumber, changedLayoutBox),
+                    childMarginsInfo,
+                    floatRendererAreas,
+                    wasHeightClipped || wasParentsHeightClipped)))
                     .getStatus() != LayoutResult.FULL) {
 
                 if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))
                         || Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
                 } else if (result.getOccupiedArea() != null && result.getStatus() != LayoutResult.NOTHING) {
-                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+                    recalculateOccupiedAreaAfterChildLayout(result.getOccupiedArea().getBBox(), blockMaxHeight);
                     fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
                 }
 
@@ -296,92 +306,34 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     layoutBox = areas.get(++currentAreaPos).clone();
                     break;
                 } else {
-                    if (result.getStatus() == LayoutResult.PARTIAL) {
-                        if (currentAreaPos + 1 == areas.size()) {
-
-                            AbstractRenderer[] splitAndOverflowRenderers = createSplitAndOverflowRenderers(childPos,
-                                    LayoutResult.PARTIAL, result, waitingFloatsSplitRenderers, waitingOverflowFloatRenderers);
-
-                            AbstractRenderer splitRenderer = splitAndOverflowRenderers[0];
-                            AbstractRenderer overflowRenderer = splitAndOverflowRenderers[1];
-                            overflowRenderer.deleteOwnProperty(Property.FORCED_PLACEMENT);
-
-                            updateHeightsOnSplit(wasHeightClipped, splitRenderer, overflowRenderer);
-                            applyPaddings(occupiedArea.getBBox(), paddings, true);
-                            applyBorderBox(occupiedArea.getBBox(), borders, true);
-                            applyMargins(occupiedArea.getBBox(), true);
-
-                            correctFixedLayout(layoutBox);
-
-                            LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
-                            if (wasHeightClipped) {
-                                return new LayoutResult(LayoutResult.FULL, editedArea, splitRenderer, null);
-                            } else {
-                                return new LayoutResult(LayoutResult.PARTIAL, editedArea, splitRenderer, overflowRenderer, causeOfNothing);
-                            }
-                        } else {
-                            childRenderers.set(childPos, result.getSplitRenderer());
-                            childRenderers.add(childPos + 1, result.getOverflowRenderer());
-                            layoutBox = areas.get(++currentAreaPos).clone();
-                            break;
-                        }
-                    } else if (result.getStatus() == LayoutResult.NOTHING) {
-                        boolean keepTogether = isKeepTogether();
-                        int layoutResult = anythingPlaced && !keepTogether ? LayoutResult.PARTIAL : LayoutResult.NOTHING;
-
-                        AbstractRenderer[] splitAndOverflowRenderers = createSplitAndOverflowRenderers(childPos, layoutResult,
-                                result, waitingFloatsSplitRenderers, waitingOverflowFloatRenderers);
-
-                        AbstractRenderer splitRenderer = splitAndOverflowRenderers[0];
-                        AbstractRenderer overflowRenderer = splitAndOverflowRenderers[1];
-
-                        if (isRelativePosition() && positionedRenderers.size() > 0) {
-                            overflowRenderer.positionedRenderers = new ArrayList<>(positionedRenderers);
-                        }
-
-                        updateHeightsOnSplit(wasHeightClipped, splitRenderer, overflowRenderer);
-
-                        if (keepTogether) {
-                            splitRenderer = null;
-                            overflowRenderer.childRenderers.clear();
-                            overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
-                        }
-
-                        correctFixedLayout(layoutBox);
-
-                        applyPaddings(occupiedArea.getBBox(), paddings, true);
-                        applyBorderBox(occupiedArea.getBBox(), borders, true);
-                        applyMargins(occupiedArea.getBBox(), true);
-
-                        applyAbsolutePositionIfNeeded(layoutContext);
-
-                        if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || wasHeightClipped) {
-                            LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
-                            return new LayoutResult(LayoutResult.FULL, editedArea, splitRenderer, null, null);
-                        } else {
-                            if (layoutResult != LayoutResult.NOTHING) {
-                                LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
-                                return new LayoutResult(layoutResult, editedArea, splitRenderer, overflowRenderer, null).setAreaBreak(result.getAreaBreak());
-                            } else {
-                                floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
-                                return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing()).setAreaBreak(result.getAreaBreak());
-                            }
-                        }
+                    final LayoutResult layoutResult = processNotFullChildResult(
+                            layoutContext, waitingFloatsSplitRenderers, waitingOverflowFloatRenderers, wasHeightClipped,
+                            floatRendererAreas, marginsCollapsingEnabled, clearHeightCorrection, borders, paddings,
+                            areas, currentAreaPos, layoutBox, nonChildFloatingRendererAreas, causeOfNothing,
+                            anythingPlaced, childPos, result);
+                    if (layoutResult == null) {
+                        layoutBox = areas.get(++currentAreaPos).clone();
+                        break;
                     }
+                    if (stopLayoutingChildrenIfChildResultNotFull(layoutResult)) {
+                        return layoutResult;
+                    }
+                    result = layoutResult;
+                    break;
                 }
             }
             anythingPlaced = anythingPlaced || result.getStatus() != LayoutResult.NOTHING;
 
             // The second condition check (after &&) is needed only if margins collapsing is enabled
             if (result.getOccupiedArea() != null && (!FloatingHelper.isRendererFloating(childRenderer) || includeFloatsInOccupiedArea)) {
-                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+                recalculateOccupiedAreaAfterChildLayout(result.getOccupiedArea().getBBox(), blockMaxHeight);
                 fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
             }
             if (marginsCollapsingEnabled) {
                 marginsCollapseHandler.endChildMarginsHandling(layoutBox);
             }
             if (result.getStatus() == LayoutResult.FULL) {
-                layoutBox.setHeight(result.getOccupiedArea().getBBox().getY() - layoutBox.getY());
+                decreaseLayoutBoxAfterChildPlacement(layoutBox, result, childRenderer);
                 if (childRenderer.getOccupiedArea() != null) {
                     // Use occupied area's bbox width so that for absolutely positioned renderers we do not align using full width
                     // in case when parent box should wrap around child boxes.
@@ -512,28 +464,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
     }
 
-    protected AbstractRenderer createSplitRenderer(int layoutResult) {
-        AbstractRenderer splitRenderer = (AbstractRenderer) getNextRenderer();
-        splitRenderer.parent = parent;
-        splitRenderer.modelElement = modelElement;
-        splitRenderer.occupiedArea = occupiedArea;
-        splitRenderer.isLastRendererForModelElement = false;
-        splitRenderer.addAllProperties(getOwnProperties());
-        return splitRenderer;
-    }
-
-    protected AbstractRenderer createOverflowRenderer(int layoutResult) {
-        AbstractRenderer overflowRenderer = (AbstractRenderer) getNextRenderer();
-        overflowRenderer.parent = parent;
-        overflowRenderer.modelElement = modelElement;
-        overflowRenderer.addAllProperties(getOwnProperties());
-        return overflowRenderer;
-    }
-
     @Override
     public void draw(DrawContext drawContext) {
+        Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
         if (occupiedArea == null) {
-            Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
             logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Drawing won't be performed."));
             return;
         }
@@ -580,7 +514,16 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (pageNumber < 1 || pageNumber > drawContext.getDocument().getNumberOfPages()) {
                 clippedArea = new Rectangle(-INF / 2 , -INF / 2, INF, INF);
             } else {
-                clippedArea = drawContext.getDocument().getPage(pageNumber).getPageSize();
+                PdfPage page = drawContext.getDocument().getPage(pageNumber);
+                // TODO DEVSIX-1655 This check is necessary because, in some cases, our renderer's hierarchy may contain
+                //  a renderer from the different page that was already flushed
+                if (page.isFlushed()) {
+                    logger.error(MessageFormatUtil.format(
+                            LogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED, "area clipping"));
+                    clippedArea = new Rectangle(-INF / 2 , -INF / 2, INF, INF);
+                } else {
+                    clippedArea = page.getPageSize();
+                }
             }
             Rectangle area = getBorderAreaBBox();
             if (overflowXHidden) {
@@ -631,6 +574,68 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
         return bBox;
+    }
+
+    protected AbstractRenderer createSplitRenderer(int layoutResult) {
+        AbstractRenderer splitRenderer = (AbstractRenderer) getNextRenderer();
+        splitRenderer.parent = parent;
+        splitRenderer.modelElement = modelElement;
+        splitRenderer.occupiedArea = occupiedArea;
+        splitRenderer.isLastRendererForModelElement = false;
+        splitRenderer.addAllProperties(getOwnProperties());
+        return splitRenderer;
+    }
+
+    protected AbstractRenderer createOverflowRenderer(int layoutResult) {
+        AbstractRenderer overflowRenderer = (AbstractRenderer) getNextRenderer();
+        overflowRenderer.parent = parent;
+        overflowRenderer.modelElement = modelElement;
+        overflowRenderer.addAllProperties(getOwnProperties());
+        return overflowRenderer;
+    }
+
+    void recalculateOccupiedAreaAfterChildLayout(Rectangle resultBBox, Float blockMaxHeight) {
+        occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), resultBBox));
+    }
+    
+    MarginsCollapseInfo startChildMarginsHandling(IRenderer childRenderer,
+                                                  Rectangle layoutBox, MarginsCollapseHandler marginsCollapseHandler) {
+        return marginsCollapseHandler.startChildMarginsHandling(childRenderer, layoutBox);
+    }
+
+    Rectangle recalculateLayoutBoxBeforeChildLayout(Rectangle layoutBox,
+                                                    IRenderer childRenderer, Rectangle initialLayoutBox) {
+        return layoutBox;
+    }
+
+    AbstractRenderer[] createSplitAndOverflowRenderers(int childPos, int layoutStatus, LayoutResult childResult,
+                                                       Map<Integer, IRenderer> waitingFloatsSplitRenderers,
+                                                       List<IRenderer> waitingOverflowFloatRenderers) {
+        AbstractRenderer splitRenderer = createSplitRenderer(layoutStatus);
+        splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
+        if (childResult.getStatus() == LayoutResult.PARTIAL && childResult.getSplitRenderer() != null) {
+            splitRenderer.childRenderers.add(childResult.getSplitRenderer());
+        }
+
+
+        replaceSplitRendererKidFloats(waitingFloatsSplitRenderers, splitRenderer);
+        for (IRenderer renderer : splitRenderer.childRenderers) {
+            renderer.setParent(splitRenderer);
+        }
+
+        AbstractRenderer overflowRenderer = createOverflowRenderer(layoutStatus);
+        overflowRenderer.childRenderers.addAll(waitingOverflowFloatRenderers);
+        if (childResult.getOverflowRenderer() != null) {
+            overflowRenderer.childRenderers.add(childResult.getOverflowRenderer());
+        }
+        overflowRenderer.childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
+
+        if (childResult.getStatus() == LayoutResult.PARTIAL) {
+            // Apply forced placement only on split renderer
+            overflowRenderer.deleteOwnProperty(Property.FORCED_PLACEMENT);
+        }
+
+        return new AbstractRenderer[]{splitRenderer, overflowRenderer};
     }
 
     protected void applyVerticalAlignment() {
@@ -783,6 +788,95 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
     }
 
+    boolean stopLayoutingChildrenIfChildResultNotFull(LayoutResult returnResult) {
+        return true;
+    }
+
+    LayoutResult processNotFullChildResult(LayoutContext layoutContext,
+                                           Map<Integer, IRenderer> waitingFloatsSplitRenderers,
+                                           List<IRenderer> waitingOverflowFloatRenderers, boolean wasHeightClipped,
+                                           List<Rectangle> floatRendererAreas, boolean marginsCollapsingEnabled,
+                                           float clearHeightCorrection, Border[] borders, UnitValue[] paddings,
+                                           List<Rectangle> areas, int currentAreaPos, Rectangle layoutBox,
+                                           Set<Rectangle> nonChildFloatingRendererAreas, IRenderer causeOfNothing,
+                                           boolean anythingPlaced, int childPos, LayoutResult result) {
+        if (result.getStatus() == LayoutResult.PARTIAL) {
+            if (currentAreaPos + 1 == areas.size()) {
+                AbstractRenderer[] splitAndOverflowRenderers = createSplitAndOverflowRenderers(childPos,
+                        LayoutResult.PARTIAL, result, waitingFloatsSplitRenderers, waitingOverflowFloatRenderers);
+
+                AbstractRenderer splitRenderer = splitAndOverflowRenderers[0];
+                AbstractRenderer overflowRenderer = splitAndOverflowRenderers[1];
+                overflowRenderer.deleteOwnProperty(Property.FORCED_PLACEMENT);
+
+                updateHeightsOnSplit(wasHeightClipped, splitRenderer, overflowRenderer);
+                applyPaddings(occupiedArea.getBBox(), paddings, true);
+                applyBorderBox(occupiedArea.getBBox(), borders, true);
+                applyMargins(occupiedArea.getBBox(), true);
+
+                correctFixedLayout(layoutBox);
+
+                LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+                if (wasHeightClipped) {
+                    return new LayoutResult(LayoutResult.FULL, editedArea, splitRenderer, null);
+                } else {
+                    return new LayoutResult(LayoutResult.PARTIAL, editedArea, splitRenderer, overflowRenderer, causeOfNothing);
+                }
+            } else {
+                childRenderers.set(childPos, result.getSplitRenderer());
+                childRenderers.add(childPos + 1, result.getOverflowRenderer());
+                return null;
+            }
+        } else if (result.getStatus() == LayoutResult.NOTHING) {
+            boolean keepTogether = isKeepTogether(causeOfNothing);
+            int layoutResult = anythingPlaced && !keepTogether ? LayoutResult.PARTIAL : LayoutResult.NOTHING;
+
+            AbstractRenderer[] splitAndOverflowRenderers = createSplitAndOverflowRenderers(childPos, layoutResult,
+                    result, waitingFloatsSplitRenderers, waitingOverflowFloatRenderers);
+
+            AbstractRenderer splitRenderer = splitAndOverflowRenderers[0];
+            AbstractRenderer overflowRenderer = splitAndOverflowRenderers[1];
+
+            if (isRelativePosition() && positionedRenderers.size() > 0) {
+                overflowRenderer.positionedRenderers = new ArrayList<>(positionedRenderers);
+            }
+
+            updateHeightsOnSplit(wasHeightClipped, splitRenderer, overflowRenderer);
+
+            if (keepTogether) {
+                splitRenderer = null;
+                overflowRenderer.childRenderers.clear();
+                overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
+            }
+
+            correctFixedLayout(layoutBox);
+
+            applyPaddings(occupiedArea.getBBox(), paddings, true);
+            applyBorderBox(occupiedArea.getBBox(), borders, true);
+            applyMargins(occupiedArea.getBBox(), true);
+
+            applyAbsolutePositionIfNeeded(layoutContext);
+
+            if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || wasHeightClipped) {
+                LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+                return new LayoutResult(LayoutResult.FULL, editedArea, splitRenderer, null, null);
+            } else {
+                if (layoutResult != LayoutResult.NOTHING) {
+                    LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+                    return new LayoutResult(layoutResult, editedArea, splitRenderer, overflowRenderer, null).setAreaBreak(result.getAreaBreak());
+                } else {
+                    floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
+                    return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing()).setAreaBreak(result.getAreaBreak());
+                }
+            }
+        }
+        return null;
+    }
+
+    void decreaseLayoutBoxAfterChildPlacement(Rectangle layoutBox, LayoutResult result, IRenderer childRenderer) {
+        layoutBox.setHeight(result.getOccupiedArea().getBBox().getY() - layoutBox.getY());
+    }
+
     void correctFixedLayout(Rectangle layoutBox) {
         if (isFixedLayout()) {
             float y = (float) this.getPropertyAsFloat(Property.BOTTOM);
@@ -882,6 +976,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
     }
 
+    /**
+     * @deprecated Need to be removed in next major release.
+     */
+    @Deprecated
     protected float applyBordersPaddingsMargins(Rectangle parentBBox, Border[] borders, UnitValue[] paddings) {
         float parentWidth = parentBBox.getWidth();
 
@@ -894,6 +992,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
         return parentWidth - parentBBox.getWidth();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MinMaxWidth getMinMaxWidth() {
         MinMaxWidth minMaxWidth = new MinMaxWidth(calculateAdditionalWidth(this));
@@ -946,35 +1047,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         return minMaxWidth;
-    }
-
-    private AbstractRenderer[] createSplitAndOverflowRenderers(int childPos, int layoutStatus, LayoutResult childResult, Map<Integer, IRenderer> waitingFloatsSplitRenderers,
-                                                               List<IRenderer> waitingOverflowFloatRenderers) {
-        AbstractRenderer splitRenderer = createSplitRenderer(layoutStatus);
-        splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
-        if (childResult.getStatus() == LayoutResult.PARTIAL && childResult.getSplitRenderer() != null) {
-            splitRenderer.childRenderers.add(childResult.getSplitRenderer());
-        }
-
-
-        replaceSplitRendererKidFloats(waitingFloatsSplitRenderers, splitRenderer);
-        for (IRenderer renderer : splitRenderer.childRenderers) {
-            renderer.setParent(splitRenderer);
-        }
-
-        AbstractRenderer overflowRenderer = createOverflowRenderer(layoutStatus);
-        overflowRenderer.childRenderers.addAll(waitingOverflowFloatRenderers);
-        if (childResult.getOverflowRenderer() != null) {
-            overflowRenderer.childRenderers.add(childResult.getOverflowRenderer());
-        }
-        overflowRenderer.childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
-
-        if (childResult.getStatus() == LayoutResult.PARTIAL) {
-            // Apply forced placement only on split renderer
-            overflowRenderer.deleteOwnProperty(Property.FORCED_PLACEMENT);
-        }
-
-        return new AbstractRenderer[]{splitRenderer, overflowRenderer};
     }
 
     private void replaceSplitRendererKidFloats(Map<Integer, IRenderer> waitingFloatsSplitRenderers, IRenderer splitRenderer) {

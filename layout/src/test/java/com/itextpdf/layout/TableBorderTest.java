@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -94,16 +94,15 @@ public class TableBorderTest extends ExtendedITextTest {
     }
 
     @Test
-    public void cellWithBigRowspanCompletedButRowNotCompletedOnThreePagesTest() throws IOException, InterruptedException {
-        junitExpectedException.expect(NullPointerException.class);
-
-        fileName = "cellWithBigRowspanCompletedButRowNotCompletedOnThreePagesTest.pdf";
+    public void cellWithBigRowspanOnThreePagesTest() throws IOException, InterruptedException {
+        fileName = "cellWithBigRowspanOnThreePagesTest.pdf";
         Document doc = createDocument();
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth()
                 .setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         table.addCell(new Cell(2, 1));
         table.addCell(new Cell(1, 1).setHeight(2000).setBackgroundColor(ColorConstants.RED));
+        table.addCell(new Cell(1, 1));
 
         doc.add(table);
 

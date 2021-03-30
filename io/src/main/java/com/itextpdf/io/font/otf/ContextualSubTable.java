@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -52,13 +52,11 @@ public abstract class ContextualSubTable extends ContextualTable<ContextualSubst
     }
 
     @Override
-    // TODO DEVSIX-3814 Remove this dummy override. It's left only for binary backwards compatibility
     public ContextualSubstRule getMatchingContextRule(GlyphLine line) {
         return super.getMatchingContextRule(line);
     }
 
     @Override
-    // TODO DEVSIX-3814 Remove this dummy override. It's left only for binary backwards compatibility
     protected int checkIfContextMatch(GlyphLine line, ContextualSubstRule rule) {
         return super.checkIfContextMatch(line, rule);
     }

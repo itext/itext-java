@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -487,6 +487,35 @@ public class RotationTest extends ExtendedITextTest {
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    // TODO DEVSIX-5029 Content of the first cell is missing
+    public void cellRotationParagraphIsGone() throws IOException, InterruptedException {
+        String testName = "cellRotationParagraphIsGone.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + cmpPrefix + testName;
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdf);
+
+        Table table = new Table(2);
+        table.setFixedLayout();
+
+        Cell cell = new Cell().add(new Paragraph().add("Hello World"));
+        cell.setRotationAngle(Math.toRadians(90));
+        cell.setBackgroundColor(ColorConstants.RED);
+        table.addCell(cell);
+        cell = new Cell().add(new Paragraph().add("AAAAAAAAAAAAAAAAA aaaaaaaaaaaaaaaaaaaaaaaa "
+                + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
+        cell.setRotationAngle(Math.toRadians(90));
+        cell.setBackgroundColor(ColorConstants.BLUE);
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+
     }
 
     private Table createTable(float height) {

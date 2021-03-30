@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -54,12 +54,14 @@ import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.font.constants.FontStyles;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.font.PdfType1Font;
@@ -72,11 +74,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -144,7 +146,8 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        PdfFont type0Font = PdfFontFactory.createFont("KozMinPro-Regular", "83pv-RKSJ-H", true);
+        PdfFont type0Font = PdfFontFactory.createFont("KozMinPro-Regular",
+                "83pv-RKSJ-H", EmbeddingStrategy.PREFER_EMBEDDED);
         Assert.assertTrue("Type0Font expected", type0Font instanceof PdfType0Font);
         Assert.assertTrue("CidFont expected", type0Font.getFontProgram() instanceof CidFont);
         PdfPage page = pdfDoc.addNewPage();
@@ -364,6 +367,21 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
+    //TODO DEVSIX-4995 This test should be updated when DEVSIX-4995 is resolved
+    public void notReplaceToUnicodeMappingTest() throws IOException {
+        String filename = sourceFolder + "toUnicodeAndDifferenceFor32.pdf";
+
+        try (PdfDocument pdf = new PdfDocument(new PdfReader(filename))) {
+            PdfDictionary pdfType3FontDict = (PdfDictionary) pdf.getPdfObject(112);
+            PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory.createFont(pdfType3FontDict);
+            //should be another glyph defined in ToUnicode mapping
+            Glyph glyph = pdfType3Font.getGlyph(32);
+
+            Assert.assertEquals(0, glyph.getWidth());
+        }
+    }
+
+    @Test
     public void createTaggedDocumentWithType3Font() throws IOException, InterruptedException {
         String filename = destinationFolder + "createTaggedDocumentWithType3Font.pdf";
         String cmpFilename = sourceFolder + "cmp_createTaggedDocumentWithType3Font.pdf";
@@ -580,8 +598,9 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        PdfFont pdfType1Font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(fontsFolder + "cmr10.afm", fontsFolder + "cmr10.pfb"),
-                FontEncoding.FONT_SPECIFIC, true);
+        PdfFont pdfType1Font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(
+                fontsFolder + "cmr10.afm", fontsFolder + "cmr10.pfb"),
+                FontEncoding.FONT_SPECIFIC, EmbeddingStrategy.PREFER_EMBEDDED);
         Assert.assertTrue("PdfType1Font expected", pdfType1Font instanceof PdfType1Font);
 
         new PdfCanvas(pdfDoc.addNewPage())
@@ -596,7 +615,8 @@ public class PdfFontTest extends ExtendedITextTest {
 
         byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
         byte[] pfb = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
-        pdfType1Font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(afm, pfb), FontEncoding.FONT_SPECIFIC, true);
+        pdfType1Font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(afm, pfb),
+                FontEncoding.FONT_SPECIFIC, EmbeddingStrategy.PREFER_EMBEDDED);
         Assert.assertTrue("PdfType1Font expected", pdfType1Font instanceof PdfType1Font);
 
         new PdfCanvas(pdfDoc.addNewPage())
@@ -626,7 +646,9 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        PdfFont pdfType1Font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(fontsFolder + "cmr10.pfm", fontsFolder + "cmr10.pfb"), FontEncoding.FONT_SPECIFIC, true);
+        PdfFont pdfType1Font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(
+                fontsFolder + "cmr10.pfm", fontsFolder + "cmr10.pfb"),
+                FontEncoding.FONT_SPECIFIC, EmbeddingStrategy.PREFER_EMBEDDED);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -658,7 +680,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
         String font = fontsFolder + "abserif4_5.ttf";
-        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, true);
+        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, EmbeddingStrategy.FORCE_EMBEDDED);
         Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
         pdfTrueTypeFont.setSubset(true);
         PdfPage page = pdfDoc.addNewPage();
@@ -675,7 +697,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
 
         byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream(font));
-        pdfTrueTypeFont = PdfFontFactory.createFont(ttf, true);
+        pdfTrueTypeFont = PdfFontFactory.createFont(ttf, EmbeddingStrategy.FORCE_EMBEDDED);
         Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
         pdfTrueTypeFont.setSubset(true);
         page = pdfDoc.addNewPage();
@@ -707,7 +729,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
         String font = fontsFolder + "abserif4_5.ttf";
-        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, false);
+        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, EmbeddingStrategy.FORCE_NOT_EMBEDDED);
         Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
         pdfTrueTypeFont.setSubset(true);
         PdfPage page = pdfDoc.addNewPage();
@@ -724,7 +746,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
 
         byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream(font));
-        pdfTrueTypeFont = PdfFontFactory.createFont(ttf, false);
+        pdfTrueTypeFont = PdfFontFactory.createFont(ttf, EmbeddingStrategy.FORCE_NOT_EMBEDDED);
         Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
         pdfTrueTypeFont.setSubset(true);
         page = pdfDoc.addNewPage();
@@ -759,7 +781,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         String font = fontsFolder + "Puritan2.otf";
 
-        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, true);
+        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, EmbeddingStrategy.FORCE_EMBEDDED);
         Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
         pdfTrueTypeFont.setSubset(true);
         PdfPage page = pdfDoc.addNewPage();
@@ -777,7 +799,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
 
         byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream(font));
-        pdfTrueTypeFont = PdfFontFactory.createFont(ttf, true);
+        pdfTrueTypeFont = PdfFontFactory.createFont(ttf, EmbeddingStrategy.FORCE_EMBEDDED);
         Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
         pdfTrueTypeFont.setSubset(true);
         page = pdfDoc.addNewPage();
@@ -896,39 +918,37 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpOutputFileName = sourceFolder + "cmp_type3Font_update.pdf";
         String title = "Type3 font iText 7 Document";
 
-        PdfReader reader = new PdfReader(inputFileName);
-        PdfWriter writer = new PdfWriter(outputFileName);
-        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
-        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        int numberOfGlyphs = 0;
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inputFileName),
+                new PdfWriter(outputFileName).setCompressionLevel(CompressionConstants.NO_COMPRESSION))) {
 
+            pdfDoc.getDocumentInfo().setAuthor(author).
+                    setCreator(creator).
+                    setTitle(title);
 
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+            PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory
+                    .createFont((PdfDictionary) pdfDoc.getPdfObject(5));
 
-        PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory.createFont((PdfDictionary) pdfDoc.getPdfObject(5));
+            Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
+            newGlyph.setLineWidth(100);
+            newGlyph.moveTo(540, 5);
+            newGlyph.lineTo(5, 840);
+            newGlyph.stroke();
 
-        Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
-        newGlyph.setLineWidth(100);
-        newGlyph.moveTo(540, 5);
-        newGlyph.lineTo(5, 840);
-        newGlyph.stroke();
-
-        PdfPage page = pdfDoc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-        canvas.saveState()
-                .beginText()
-                .setFontAndSize(pdfType3Font, 12)
-                .moveText(50, 800)
-                // A A A A A A E E E E ~ é ö
-                .showText("A A A A A A E E E E ~ \u00E9 \u00F6")
-                .endText()
-                .restoreState();
-        page.flush();
-        pdfDoc.close();
-
-        Assert.assertEquals(6, pdfType3Font.getNumberOfGlyphs());
-
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas.saveState()
+                    .beginText()
+                    .setFontAndSize(pdfType3Font, 12)
+                    .moveText(50, 800)
+                    // A A A A A A E E E E ~ é ö
+                    .showText("A A A A A A E E E E ~ \u00E9 \u00F6")
+                    .endText()
+                    .restoreState();
+            page.flush();
+            numberOfGlyphs = pdfType3Font.getNumberOfGlyphs();
+        }
+        Assert.assertEquals(6, numberOfGlyphs);
         Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
     }
 
@@ -939,41 +959,74 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpOutputFileName = sourceFolder + "cmp_type3Font_new.pdf";
         String title = "Type3 font iText 7 Document";
 
-        PdfReader reader = new PdfReader(inputFileName);
-        PdfWriter pdfWriter = new PdfWriter(outputFileName);
-        pdfWriter.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
-        PdfDocument inputPdfDoc = new PdfDocument(reader);
-        PdfDocument outputPdfDoc = new PdfDocument(pdfWriter);
+        int numberOfGlyphs = 0;
+        try (PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
+                PdfDocument outputPdfDoc = new PdfDocument(new PdfWriter(outputFileName)
+                        .setCompressionLevel(CompressionConstants.NO_COMPRESSION))) {
 
+            outputPdfDoc.getDocumentInfo().setAuthor(author).
+                    setCreator(creator).
+                    setTitle(title);
 
-        outputPdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+            PdfDictionary pdfType3FontDict = (PdfDictionary) inputPdfDoc.getPdfObject(5);
+            PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory
+                    .createFont((PdfDictionary) pdfType3FontDict.copyTo(outputPdfDoc));
 
-        PdfDictionary pdfType3FontDict = (PdfDictionary) inputPdfDoc.getPdfObject(5);
-        PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory.createFont((PdfDictionary) pdfType3FontDict.copyTo(outputPdfDoc));
+            Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
+            newGlyph.setLineWidth(100);
+            newGlyph.moveTo(540, 5);
+            newGlyph.lineTo(5, 840);
+            newGlyph.stroke();
 
-        Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
-        newGlyph.setLineWidth(100);
-        newGlyph.moveTo(540, 5);
-        newGlyph.lineTo(5, 840);
-        newGlyph.stroke();
+            PdfPage page = outputPdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas.saveState()
+                    .beginText()
+                    .setFontAndSize(pdfType3Font, 12)
+                    .moveText(50, 800)
+                    // AAAAAA EEEE ~ é ö
+                    .showText("AAAAAA EEEE ~ \u00E9 \u00F6")
+                    .endText();
+            page.flush();
+            numberOfGlyphs = pdfType3Font.getNumberOfGlyphs();
+        }
 
-        PdfPage page = outputPdfDoc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-        canvas.saveState()
-                .beginText()
-                .setFontAndSize(pdfType3Font, 12)
-                .moveText(50, 800)
-                // AAAAAA EEEE ~ é ö
-                .showText("AAAAAA EEEE ~ \u00E9 \u00F6")
-                .endText();
-        page.flush();
-        outputPdfDoc.close();
-
-        Assert.assertEquals(6, pdfType3Font.getNumberOfGlyphs());
-
+        Assert.assertEquals(6, numberOfGlyphs);
         Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void testAddGlyphToType3FontWithCustomNames() throws IOException {
+        String inputFile = sourceFolder + "type3FontWithCustomNames.pdf";
+
+        int initialGlyphsNumber = 0;
+        int finalGlyphsNumber = 0;
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inputFile), new PdfWriter(new ByteArrayOutputStream()))) {
+
+            PdfDictionary pdfType3FontDict = (PdfDictionary) pdfDoc.getPdfObject(6);
+            PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory.createFont(pdfType3FontDict);
+            initialGlyphsNumber = pdfType3Font.getNumberOfGlyphs();
+
+            Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
+            newGlyph.setLineWidth(100);
+            newGlyph.moveTo(540, 5);
+            newGlyph.lineTo(5, 840);
+            newGlyph.stroke();
+
+            PdfPage page = pdfDoc.getPage(1);
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas.saveState()
+                    .beginText()
+                    .setFontAndSize(pdfType3Font, 12)
+                    .moveText(50, 800)
+                    // AAAAAA EEEE ~ é ö
+                    .showText("AAAAAA EEEE ~ \u00E9 \u00F6")
+                    .endText();
+            page.flush();
+            finalGlyphsNumber = pdfType3Font.getNumberOfGlyphs();
+        }
+
+        Assert.assertEquals(initialGlyphsNumber + 1, finalGlyphsNumber);
     }
 
     @Test
@@ -1474,7 +1527,8 @@ public class PdfFontTest extends ExtendedITextTest {
 
         String font = fontsFolder + "uming.ttc";
 
-        PdfFont pdfTrueTypeFont = PdfFontFactory.createTtcFont(font, 0, PdfEncodings.WINANSI, true, false);
+        PdfFont pdfTrueTypeFont = PdfFontFactory.createTtcFont(font, 0, PdfEncodings.WINANSI,
+                EmbeddingStrategy.FORCE_EMBEDDED, false);
 
         pdfTrueTypeFont.setSubset(true);
         PdfPage page = pdfDoc.addNewPage();
@@ -1492,7 +1546,8 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
 
         byte[] ttc = StreamUtil.inputStreamToArray(new FileInputStream(font));
-        pdfTrueTypeFont = PdfFontFactory.createTtcFont(ttc, 1, PdfEncodings.WINANSI, true, false);
+        pdfTrueTypeFont = PdfFontFactory.createTtcFont(ttc, 1, PdfEncodings.WINANSI,
+                EmbeddingStrategy.FORCE_EMBEDDED, false);
         pdfTrueTypeFont.setSubset(true);
         page = pdfDoc.addNewPage();
         canvas = new PdfCanvas(page);
@@ -1527,7 +1582,8 @@ public class PdfFontTest extends ExtendedITextTest {
 
         String font = fontsFolder + "uming.ttc";
 
-        PdfFont pdfTrueTypeFont = PdfFontFactory.createTtcFont(font, 0, PdfEncodings.WINANSI, false, false);
+        PdfFont pdfTrueTypeFont = PdfFontFactory.createTtcFont(font, 0, PdfEncodings.WINANSI,
+                EmbeddingStrategy.FORCE_NOT_EMBEDDED, false);
 
         pdfTrueTypeFont.setSubset(true);
         PdfPage page = pdfDoc.addNewPage();
@@ -1545,7 +1601,8 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
 
         byte[] ttc = StreamUtil.inputStreamToArray(new FileInputStream(font));
-        pdfTrueTypeFont = PdfFontFactory.createTtcFont(ttc, 1, PdfEncodings.WINANSI, false, false);
+        pdfTrueTypeFont = PdfFontFactory.createTtcFont(ttc, 1, PdfEncodings.WINANSI,
+                EmbeddingStrategy.FORCE_NOT_EMBEDDED, false);
         pdfTrueTypeFont.setSubset(true);
         page = pdfDoc.addNewPage();
         canvas = new PdfCanvas(page);
@@ -1575,7 +1632,8 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(new PdfWriter(filename));
         PdfPage page = doc.addNewPage();
 
-        PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSansCJKjp-Bold.otf", "Identity-H", true);
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSansCJKjp-Bold.otf",
+                "Identity-H", EmbeddingStrategy.PREFER_EMBEDDED);
 
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
@@ -1600,7 +1658,8 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(new PdfWriter(filename));
         PdfPage page = doc.addNewPage();
 
-        PdfFont font = PdfFontFactory.createFont(fontsFolder + "Amaranth-Regular.woff", "Identity-H", true);
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "Amaranth-Regular.woff",
+                "Identity-H", EmbeddingStrategy.PREFER_EMBEDDED);
 
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
@@ -1808,11 +1867,11 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_testFontStyleProcessing.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
-        PdfFont romanDefault = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false);
-        PdfFont romanNormal = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false, FontStyles.NORMAL);
-        PdfFont romanBold = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false, FontStyles.BOLD);
-        PdfFont romanItalic = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false, FontStyles.ITALIC);
-        PdfFont romanBoldItalic = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, false, FontStyles.BOLDITALIC);
+        PdfFont romanDefault = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_NOT_EMBEDDED);
+        PdfFont romanNormal = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_NOT_EMBEDDED, FontStyles.NORMAL);
+        PdfFont romanBold = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_NOT_EMBEDDED, FontStyles.BOLD);
+        PdfFont romanItalic = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_NOT_EMBEDDED, FontStyles.ITALIC);
+        PdfFont romanBoldItalic = PdfFontFactory.createRegisteredFont("Times-Roman", PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_NOT_EMBEDDED, FontStyles.BOLDITALIC);
 
         PdfPage page = pdfDoc.addNewPage(PageSize.A4.rotate());
         PdfCanvas canvas = new PdfCanvas(page);

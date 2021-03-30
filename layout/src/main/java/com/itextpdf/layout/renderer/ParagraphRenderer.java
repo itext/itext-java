@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -107,7 +107,10 @@ public class ParagraphRenderer extends BlockRenderer {
         if (orphansControl != null || widowsControl != null) {
             return OrphansWidowsLayoutHelper.orphansWidowsAwareLayout(this, layoutContext, orphansControl, widowsControl);
         }
-        return directLayout(layoutContext);
+        final LayoutResult layoutResult = directLayout(layoutContext);
+        updateParentLines(this);
+        updateParentLines((ParagraphRenderer) layoutResult.getSplitRenderer());
+        return layoutResult;
     }
 
     protected LayoutResult directLayout(LayoutContext layoutContext) {
@@ -258,11 +261,9 @@ public class ParagraphRenderer extends BlockRenderer {
             widthHandler.updateMinChildWidth(minChildWidth);
             widthHandler.updateMaxChildWidth(maxChildWidth);
 
-            LineRenderer processedRenderer = null;
-            if (result.getStatus() == LayoutResult.FULL) {
+            LineRenderer processedRenderer = (LineRenderer) result.getSplitRenderer();
+            if (processedRenderer == null && result.getStatus() == LayoutResult.FULL) {
                 processedRenderer = currentRenderer;
-            } else if (result.getStatus() == LayoutResult.PARTIAL) {
-                processedRenderer = (LineRenderer) result.getSplitRenderer();
             }
 
             if (onlyOverflowedFloatsLeft) {
@@ -310,7 +311,7 @@ public class ParagraphRenderer extends BlockRenderer {
                     lastYLine = layoutBox.getY() + layoutBox.getHeight();
                     firstLineInBox = true;
                 } else {
-                    boolean keepTogether = isKeepTogether();
+                    boolean keepTogether = isKeepTogether(result.getCauseOfNothing());
                     if (keepTogether) {
                         floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
                         return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
@@ -387,6 +388,10 @@ public class ParagraphRenderer extends BlockRenderer {
                                     IRenderer childNotRendered = result.getCauseOfNothing();
                                     int firstNotRendered = currentRenderer.childRenderers.indexOf(childNotRendered);
                                     currentRenderer.childRenderers.retainAll(currentRenderer.childRenderers.subList(0, firstNotRendered));
+                                    // as we ignore split result here and use current line - we should update parents
+                                    for (final IRenderer child : currentRenderer.getChildRenderers()) {
+                                        child.setParent(currentRenderer);
+                                    }
                                     split[1].childRenderers.removeAll(split[1].childRenderers.subList(0, firstNotRendered));
                                     return new MinMaxWidthLayoutResult(LayoutResult.PARTIAL, editedArea, this, split[1], null).setMinMaxWidth(minMaxWidth);
                                 } else {
@@ -710,6 +715,21 @@ public class ParagraphRenderer extends BlockRenderer {
                         alignStaticKids(processedRenderer, deltaX);
                     }
                     break;
+            }
+        }
+    }
+
+    private static void updateParentLines(ParagraphRenderer re) {
+        if (re == null) {
+            return;
+        }
+        for (final LineRenderer lineRenderer : re.lines) {
+            lineRenderer.setParent(re);
+        }
+        for (final IRenderer childRenderer : re.getChildRenderers()) {
+            final IRenderer line = childRenderer.getParent();
+            if (!(line instanceof LineRenderer && re.lines.contains((LineRenderer) line))) {
+                childRenderer.setParent(null);
             }
         }
     }

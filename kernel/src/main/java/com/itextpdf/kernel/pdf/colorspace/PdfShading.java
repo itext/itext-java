@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -138,10 +138,23 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         return shading;
     }
 
+    /**
+     * Creates the {@link PdfShading} object from the existing {@link PdfDictionary}.
+     *
+     * @param pdfObject {@link PdfDictionary} from which the {@link PdfShading} object will be created.
+     */
     protected PdfShading(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
+    /**
+     * Creates the {@link PdfShading} object from the existing {@link PdfDictionary},
+     * using provided type and colorspace.
+     *
+     * @param pdfObject {@link PdfDictionary} from which the {@link PdfShading} object will be created.
+     * @param type type with which this {@link PdfShading} object will be created.
+     * @param colorSpace {@link PdfColorSpace} with which this {@link PdfShading} object will be created.
+     */
     protected PdfShading(PdfDictionary pdfObject, int type, PdfColorSpace colorSpace) {
         super(pdfObject);
         getPdfObject().put(PdfName.ShadingType, new PdfNumber(type));
@@ -217,6 +230,9 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         super.flush();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;
@@ -230,6 +246,11 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
         private static final long serialVersionUID = -4459197498902558052L;
 
+        /**
+         * Creates the new instance of the class from the existing {@link PdfDictionary}.
+         *
+         * @param pdfDictionary from which this {@link FunctionBased} will be created
+         */
         protected FunctionBased(PdfDictionary pdfDictionary) {
             super(pdfDictionary);
         }
@@ -336,6 +357,11 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
         private static final long serialVersionUID = 5504688740677023792L;
 
+        /**
+         * Creates the new instance of the class from the existing {@link PdfDictionary}.
+         *
+         * @param pdfDictionary from which this {@link Axial} will be created
+         */
         protected Axial(PdfDictionary pdfDictionary) {
             super(pdfDictionary);
         }
@@ -538,6 +564,11 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
         private static final long serialVersionUID = -5012819396006804845L;
 
+        /**
+         * Creates the new instance of the class from the existing {@link PdfDictionary}.
+         *
+         * @param pdfDictionary from which this {@link Radial} will be created
+         */
         protected Radial(PdfDictionary pdfDictionary) {
             super(pdfDictionary);
         }
@@ -762,6 +793,11 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
         private static final long serialVersionUID = -2690557760051875972L;
 
+        /**
+         * Creates the new instance of the class from the existing {@link PdfStream}.
+         *
+         * @param pdfStream from which this {@link FreeFormGouraudShadedTriangleMesh} will be created
+         */
         protected FreeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
@@ -930,6 +966,11 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
         private static final long serialVersionUID = -8776232978423888214L;
 
+        /**
+         * Creates the new instance of the class from the existing {@link PdfStream}.
+         *
+         * @param pdfStream from which this {@link LatticeFormGouraudShadedTriangleMesh} will be created
+         */
         protected LatticeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
@@ -1101,6 +1142,11 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
         private static final long serialVersionUID = 7296891352801419708L;
 
+            /**
+             * Creates the new instance of the class from the existing {@link PdfStream}.
+             *
+             * @param pdfStream from which this {@link CoonsPatchMesh} will be created
+             */
         protected CoonsPatchMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
@@ -1265,6 +1311,11 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
         private static final long serialVersionUID = -2750695839303504742L;
 
+        /**
+         * Creates the new instance of the class from the existing {@link PdfStream}.
+         *
+         * @param pdfStream from which this {@link TensorProductPatchMesh} will be created
+         */
         protected TensorProductPatchMesh(PdfStream pdfStream) {
             super(pdfStream);
         }

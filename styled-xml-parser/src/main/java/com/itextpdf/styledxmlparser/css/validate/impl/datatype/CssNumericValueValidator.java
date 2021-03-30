@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -28,7 +28,11 @@ import com.itextpdf.styledxmlparser.css.validate.ICssDataTypeValidator;
 
 /**
  * {@link ICssDataTypeValidator} implementation for numeric elements.
+ *
+ * @deprecated Use {@link CssLengthValueValidator}, {@link CssPercentageValueValidator}
+ * or {@link CssNumberValueValidator} instead
  */
+@Deprecated
 public class CssNumericValueValidator implements ICssDataTypeValidator {
 
     private final boolean allowedPercent;

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -105,13 +105,6 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
      */
     private static final Pattern SPLIT_PATTERN = Pattern.compile("(?=[mlhvcsqtaz])", Pattern.CASE_INSENSITIVE);
 
-
-    /**
-     * The {@link Point} representing the current point in the path to be used for relative pathing operations.
-     * The original value is the origin, and should be set via a {@link MoveTo} operation before it may be referenced.
-     */
-    private Point currentPoint = new Point(0, 0);
-
     /**
      * The {@link ClosePath} shape keeping track of the initial point set by a {@link MoveTo} operation.
      * The original value is {@code null}, and must be set via a {@link MoveTo} operation before it may be drawn.
@@ -122,7 +115,6 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
     public void doDraw(SvgDrawContext context) {
         PdfCanvas canvas = context.getCurrentCanvas();
         canvas.writeLiteral("% path\n");
-        currentPoint = new Point(0, 0);
         for (IPathShape item : getShapes()) {
             item.draw(canvas);
         }
@@ -143,7 +135,6 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
             if (lastPoint == null) {
                 lastPoint = item.getEndingPoint();
             }
-            // TODO DEVSIX-3814 - remove this check after moving method getPathShapeRectangle to IPathShape
             if (item instanceof AbstractPathShape) {
                 Rectangle rectangle = ((AbstractPathShape) item).getPathShapeRectangle(lastPoint);
                 commonRectangle = Rectangle.getCommonRectangle(commonRectangle, rectangle);
@@ -215,7 +206,6 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
                 throw new SvgProcessingException(SvgLogMessageConstant.INVALID_CLOSEPATH_OPERATOR_USE);
             }
             shapes.add(zOperator);
-            currentPoint = zOperator.getEndingPoint();
             return shapes;
         }
         for (int index = 1; index < pathProperties.length; index += argumentCount) {
@@ -224,7 +214,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
             }
             IPathShape pathShape = SvgPathShapeFactory.createPathShape(pathProperties[0]);
             if (pathShape instanceof MoveTo) {
-                shapes.addAll(addMoveToShapes(pathShape, pathProperties));
+                shapes.addAll(addMoveToShapes(pathShape, pathProperties, previousShape));
                 return shapes;
             }
 
@@ -232,9 +222,8 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
                     Arrays.copyOfRange(pathProperties, index, index + argumentCount));
             if (pathShape != null) {
                 if (shapeCoordinates != null) {
-                    pathShape.setCoordinates(shapeCoordinates, currentPoint);
+                    pathShape.setCoordinates(shapeCoordinates, getCurrentPoint(previousShape));
                 }
-                currentPoint = pathShape.getEndingPoint(); // unsupported operators are ignored.
                 shapes.add(pathShape);
             }
             previousShape = pathShape;
@@ -242,14 +231,16 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
         return shapes;
     }
 
-    private List<IPathShape> addMoveToShapes(IPathShape pathShape, String[] pathProperties) {
+    private List<IPathShape> addMoveToShapes(IPathShape pathShape, String[] pathProperties,
+            IPathShape beforeMoveShape) {
         List<IPathShape> shapes = new ArrayList<>();
         int argumentCount = 2;
-        String[] shapeCoordinates = getShapeCoordinates(pathShape, null, Arrays.copyOfRange(pathProperties, 1, 3));
+        String[] shapeCoordinates = getShapeCoordinates(pathShape, beforeMoveShape,
+                Arrays.copyOfRange(pathProperties, 1, 3));
         zOperator = new ClosePath(pathShape.isRelative());
-        zOperator.setCoordinates(shapeCoordinates, currentPoint);
-        pathShape.setCoordinates(shapeCoordinates, currentPoint);
-        currentPoint = pathShape.getEndingPoint();
+        final Point currentPointBeforeMove = getCurrentPoint(beforeMoveShape);
+        zOperator.setCoordinates(shapeCoordinates, currentPointBeforeMove);
+        pathShape.setCoordinates(shapeCoordinates, currentPointBeforeMove);
         shapes.add(pathShape);
         IPathShape previousShape = pathShape;
         if (pathProperties.length > 3) {
@@ -424,5 +415,9 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
             return v.get(1) >= 0 && !reverse ? rotAngle : rotAngle * -1f;
         }
         return 0;
+    }
+
+    private static Point getCurrentPoint(IPathShape previousShape) {
+        return previousShape == null ? new Point(0, 0) : previousShape.getEndingPoint();
     }
 }

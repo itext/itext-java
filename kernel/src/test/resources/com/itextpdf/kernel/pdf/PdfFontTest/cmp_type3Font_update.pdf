@@ -37,7 +37,7 @@ endobj
 <</MarkInfo<</Marked true>>/Pages 2 0 R/StructTreeRoot 4 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</Author(Alexander Chingarev)/CreationDate(D:20171115180824+03'00')/Creator(iText 7)/ModDate(D:20171115183214+03'00')/Producer(iText® 7.1.0-SNAPSHOT ©2000-2017 iText Group NV \(AGPL-version\); modified using iText® 7.1.0-SNAPSHOT ©2000-2017 iText Group NV \(AGPL-version\))/Title(Type3 font iText 7 Document)>>
+<</Author(Alexander Chingarev)/CreationDate(D:20171115180824+03'00')/Creator(iText 7)/ModDate(D:20210202103520+03'00')/Producer(iText® 7.1.0-SNAPSHOT ©2000-2017 iText Group NV \(AGPL-version\); modified using iText® 7.1.15-SNAPSHOT ©2000-2021 iText Group NV \(AGPL-version\))/Title(Type3 font iText 7 Document)>>
 endobj
 6 0 obj
 <</Length 53>>stream
@@ -105,7 +105,7 @@ endobj
 <</CapHeight 700/Flags 32/FontFamily(T3Font1)/FontName/T3Font1/FontWeight 400/ItalicAngle 0/Type/FontDescriptor>>
 endobj
 5 0 obj
-<</CharProcs<</A 6 0 R/E 8 0 R/asciitilde 9 0 R/eacute 10 0 R/odieresis 15 0 R/space 7 0 R>>/Encoding<</Differences[1 /A /space /E /asciitilde /eacute /odieresis]/Type/Encoding>>/FirstChar 1/FontBBox[0 0 600 700]/FontDescriptor 19 0 R/FontMatrix[0.001 0 0 0.001 0 0]/LastChar 6/Subtype/Type3/Type/Font/Widths[600 600 600 600 600 600]>>
+<</CharProcs<</A 6 0 R/E 8 0 R/asciitilde 9 0 R/eacute 10 0 R/odieresis 15 0 R/space 7 0 R>>/Encoding<</Differences[1 /A /space /E /asciitilde /eacute /odieresis]/Type/Encoding>>/FirstChar 1/FontBBox[0 0 600 700]/FontDescriptor 19 0 R/FontMatrix[0.001 0 0 0.001 0 0]/LastChar 6/Subtype/Type3/Type/Font/Widths 20 0 R>>
 endobj
 2 0 obj
 <</Count 2/Kids[11 0 R 16 0 R]/Type/Pages>>
@@ -113,31 +113,35 @@ endobj
 18 0 obj
 <</Nums[]>>
 endobj
+20 0 obj
+[600 600 600 600 600 600]
+endobj
 xref
-0 20
+0 21
 0000000013 65535 f 
 0000000725 00000 n 
-0000002193 00000 n 
+0000002176 00000 n 
 0000000816 00000 n 
 0000000635 00000 n 
-0000001842 00000 n 
-0000001143 00000 n 
-0000001243 00000 n 
-0000001318 00000 n 
-0000001436 00000 n 
-0000001526 00000 n 
+0000001843 00000 n 
+0000001144 00000 n 
+0000001244 00000 n 
+0000001319 00000 n 
+0000001437 00000 n 
+0000001527 00000 n 
 0000000493 00000 n 
 0000000341 00000 n 
 0000000014 00001 f 
 0000000000 00001 f 
-0000001619 00000 n 
+0000001620 00000 n 
 0000000199 00000 n 
 0000000015 00000 n 
-0000002252 00000 n 
-0000001712 00000 n 
+0000002235 00000 n 
+0000001713 00000 n 
+0000002263 00000 n 
 trailer
-<</ID [<46baf6492e3b891854fe0c196988ce00><cb1b7b7c005fbdc7f61a394021c80496>]/Info 3 0 R/Root 1 0 R/Size 20>>
-%iText-7.1.0-SNAPSHOT
+<</ID [<46baf6492e3b891854fe0c196988ce00><8c6a73f4bdf632305e0f7c8fd4c1b501>]/Info 3 0 R/Root 1 0 R/Size 21>>
+%iText-7.1.15-SNAPSHOT
 startxref
-2280
+2305
 %%EOF

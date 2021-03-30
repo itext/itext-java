@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -794,6 +794,28 @@ public class TableTest extends ExtendedITextTest {
                 .flush();
         table.complete();
 
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void widthInPercentShouldBeResetAfterOverflow() throws IOException, InterruptedException {
+        String testName = "widthInPercentShouldBeResetAfterOverflow.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        doc.add(new Div().setHeight(730).setWidth(523));
+        Table table = new Table(2).useAllAvailableWidth().setFixedLayout()
+                .addCell(new Cell().add(new Paragraph("Hello")).setWidth(UnitValue.createPercentValue(20)))
+                .addCell(new Cell().add(new Paragraph("World")).setWidth(UnitValue.createPercentValue(80)));
+        // will be added on the first page
+        doc.add(table);
+
+        // will be added on the second page
+        doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }

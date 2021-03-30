@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -237,7 +237,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      * @return the {@link Rectangle} representing the current object's bounding box
      */
     @Deprecated
-    // TODO DEVSIX-3814 move to ISvgNodeRenderer in 7.2
     protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
         return null;
     }

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -2153,7 +2153,21 @@ public class CompareTool {
 
         @Override
         public int hashCode() {
-            int hashCode = (baseCmpObject != null ? baseCmpObject.hashCode() : 0) * 31 + (baseOutObject != null ? baseOutObject.hashCode() : 0);
+            // TODO: DEVSIX-4756 indirect reference hashCode should use hashCode method of indirect
+            //  reference. For now we need to write custom logic as some tests rely on sequential
+            //  reopening of the same document which affects with not equal indirect reference
+            //  hashCodes (after the update which starts counting the document in indirect reference
+            //  hashCode)
+            int baseCmpObjectHashCode = 0;
+            if (baseCmpObject != null) {
+                baseCmpObjectHashCode = baseCmpObject.getObjNumber() * 31 + baseCmpObject.getGenNumber();
+            }
+            int baseOutObjectHashCode = 0;
+            if (baseOutObject != null) {
+                baseOutObjectHashCode = baseOutObject.getObjNumber() * 31 + baseOutObject.getGenNumber();
+            }
+
+            int hashCode = baseCmpObjectHashCode * 31 + baseOutObjectHashCode;
             for (LocalPathItem pathItem : path) {
                 hashCode *= 31;
                 hashCode += pathItem.hashCode();
@@ -2163,8 +2177,42 @@ public class CompareTool {
 
         @Override
         public boolean equals(Object obj) {
-            return obj.getClass() == getClass() && baseCmpObject.equals(((ObjectPath) obj).baseCmpObject) && baseOutObject.equals(((ObjectPath) obj).baseOutObject) &&
-                    path.equals(((ObjectPath) obj).path);
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || getClass() != obj.getClass()) {
+                return false;
+            }
+            ObjectPath that = (ObjectPath) obj;
+
+            // TODO: DEVSIX-4756 indirect reference comparing should use equals method of indirect
+            //  reference. For now we need to write custom logic as some tests rely on sequential
+            //  reopening of the same document which affects with not equal indirect references
+            //  (after the update which starts counting the document in indirect reference equality)
+            boolean isBaseCmpObjectEqual;
+            if (baseCmpObject == that.baseCmpObject) {
+                isBaseCmpObjectEqual = true;
+            } else if (baseCmpObject == null
+                    || that.baseCmpObject == null
+                    || baseCmpObject.getClass() != that.baseCmpObject.getClass()) {
+                isBaseCmpObjectEqual = false;
+            } else {
+                isBaseCmpObjectEqual = baseCmpObject.getObjNumber() == that.baseCmpObject.getObjNumber()
+                        && baseCmpObject.getGenNumber() == that.baseCmpObject.getGenNumber();
+            }
+            boolean isBaseOutObjectEqual;
+            if (baseOutObject == that.baseOutObject) {
+                isBaseOutObjectEqual = true;
+            } else if (baseOutObject == null
+                    || that.baseOutObject == null
+                    || baseOutObject.getClass() != that.baseOutObject.getClass()) {
+                isBaseOutObjectEqual = false;
+            } else {
+                isBaseOutObjectEqual = baseOutObject.getObjNumber() == that.baseOutObject.getObjNumber()
+                        && baseOutObject.getGenNumber() == that.baseOutObject.getGenNumber();
+            }
+
+            return isBaseCmpObjectEqual && isBaseOutObjectEqual && path.equals(((ObjectPath) obj).path);
         }
 
         @Override

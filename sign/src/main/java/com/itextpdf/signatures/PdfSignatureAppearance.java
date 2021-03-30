@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -241,6 +241,8 @@ public class PdfSignatureAppearance {
      *
      * @param pageNumber The page number of the signature field which
      *                   this signature appearance is associated with.
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setPageNumber(int pageNumber) {
         this.page = pageNumber;
@@ -265,6 +267,8 @@ public class PdfSignatureAppearance {
      *
      * @param pageRect The rectangle that represents the position and
      *                 dimension of the signature field in the page.
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setPageRect(Rectangle pageRect) {
         this.pageRect = new Rectangle(pageRect);
@@ -313,6 +317,8 @@ public class PdfSignatureAppearance {
      * Sets the rendering mode for this signature.
      *
      * @param renderingMode the rendering mode
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setRenderingMode(RenderingMode renderingMode) {
         this.renderingMode = renderingMode;
@@ -332,6 +338,8 @@ public class PdfSignatureAppearance {
      * Sets the signing reason.
      *
      * @param reason signing reason.
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setReason(String reason) {
         this.reason = reason;
@@ -342,6 +350,8 @@ public class PdfSignatureAppearance {
      * Sets the caption for the signing reason.
      *
      * @param reasonCaption A new signing reason caption
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setReasonCaption(String reasonCaption) {
         this.reasonCaption = reasonCaption;
@@ -361,6 +371,8 @@ public class PdfSignatureAppearance {
      * Sets the signing location.
      *
      * @param location A new signing location
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setLocation(String location) {
         this.location = location;
@@ -371,6 +383,8 @@ public class PdfSignatureAppearance {
      * Sets the caption for the signing location.
      *
      * @param locationCaption A new signing location caption
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setLocationCaption(String locationCaption) {
         this.locationCaption = locationCaption;
@@ -390,6 +404,8 @@ public class PdfSignatureAppearance {
      * Sets the name of the application used to create the signature.
      *
      * @param signatureCreator A new name of the application signing a document
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setSignatureCreator(String signatureCreator){
         this.signatureCreator = signatureCreator;
@@ -409,6 +425,8 @@ public class PdfSignatureAppearance {
      * Sets the signing contact.
      *
      * @param contact A new signing contact
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setContact(String contact) {
         this.contact = contact;
@@ -420,6 +438,8 @@ public class PdfSignatureAppearance {
      * This certificate doesn't take part in the actual signing process.
      *
      * @param signCertificate the certificate
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setCertificate(Certificate signCertificate) {
         this.signCertificate = signCertificate;
@@ -448,6 +468,8 @@ public class PdfSignatureAppearance {
      * Sets the Image object to render when Render is set to RenderingMode.GRAPHIC or RenderingMode.GRAPHIC_AND_DESCRIPTION.
      *
      * @param signatureGraphic image rendered. If null the mode is defaulted to RenderingMode.DESCRIPTION
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setSignatureGraphic(ImageData signatureGraphic) {
         this.signatureGraphic = signatureGraphic;
@@ -457,7 +479,9 @@ public class PdfSignatureAppearance {
     /**
      * Indicates that the existing appearances needs to be reused as layer 0.
      *
-     * @param reuseAppearance
+     * @param reuseAppearance is an appearances reusing flag value to set
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setReuseAppearance(boolean reuseAppearance) {
         this.reuseAppearance = reuseAppearance;
@@ -479,6 +503,8 @@ public class PdfSignatureAppearance {
      * Sets the background image for the layer 2.
      *
      * @param image the background image for the layer 2
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setImage(ImageData image) {
         this.image = image;
@@ -501,6 +527,8 @@ public class PdfSignatureAppearance {
      * In any of the cases the image will always be centered. It's zero by default.
      *
      * @param imageScale the scaling to be applied to the background image
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setImageScale(float imageScale) {
         this.imageScale = imageScale;
@@ -512,6 +540,8 @@ public class PdfSignatureAppearance {
      *
      * @param text the signature text identifying the signer. If null or not set
      * a standard description will be used
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setLayer2Text(String text) {
         layer2Text = text;
@@ -540,6 +570,8 @@ public class PdfSignatureAppearance {
      * Sets the n2 and n4 layer font. If the font size is zero, auto-fit will be used.
      *
      * @param layer2Font the n2 and n4 font
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setLayer2Font(PdfFont layer2Font) {
         this.layer2Font = layer2Font;
@@ -550,6 +582,8 @@ public class PdfSignatureAppearance {
      * Sets the n2 and n4 layer font size.
      *
      * @param fontSize font size
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setLayer2FontSize(float fontSize) {
         this.layer2FontSize = fontSize;
@@ -569,6 +603,8 @@ public class PdfSignatureAppearance {
      * Sets the n2 and n4 layer font color.
      *
      * @param color font color
+     *
+     * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setLayer2FontColor(Color color) {
         this.layer2FontColor = color;
@@ -596,9 +632,10 @@ public class PdfSignatureAppearance {
     /**
      * Constructs appearance (top-level) for a signature.
      *
-     * @see <a href="http://partners.adobe.com/asn/developer/pdfs/tn/PPKAppearances.pdf">PPKAppearances.pdf</a> for further details
      * @return a top-level signature appearance
-     * @throws IOException
+     * @throws IOException if font cannot be created
+     * @see <a href="https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/PPKAppearances.pdf">Adobe Pdf Digital
+     * Signature Appearances</a>
      */
     protected PdfFormXObject getAppearance() throws IOException {
         PdfCanvas canvas;
@@ -865,6 +902,8 @@ public class PdfSignatureAppearance {
      * Sets the signature date.
      *
      * @param signDate A new signature date
+     *
+     * @return this instance to support fluent interface
      */
     protected PdfSignatureAppearance setSignDate(java.util.Calendar signDate) {
         this.signDate = signDate;
@@ -875,6 +914,8 @@ public class PdfSignatureAppearance {
      * Set the field name of the appearance.
      *
      * @param fieldName name of the field
+     *
+     * @return this instance to support fluent interface
      */
     protected PdfSignatureAppearance setFieldName(String fieldName) {
         this.fieldName = fieldName;

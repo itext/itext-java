@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -99,8 +99,8 @@ public class TableRendererTest extends ExtendedITextTest {
 
         MinMaxWidth minMaxWidth = tableRenderer.getMinMaxWidth();
         // TODO DEVSIX-3676: currently margins and paddings are still applied as if they are in points. After the mentioned ticket is fixed, the expected values should be updated.
-        Assert.assertEquals(minMaxWidth.getMaxWidth(), 332.46f, 0.001);
-        Assert.assertEquals(minMaxWidth.getMinWidth(), 332.46f, 0.001);
+        Assert.assertEquals(327.46f, minMaxWidth.getMaxWidth(), 0.001);
+        Assert.assertEquals(327.46f, minMaxWidth.getMinWidth(), 0.001);
     }
 
     @Test

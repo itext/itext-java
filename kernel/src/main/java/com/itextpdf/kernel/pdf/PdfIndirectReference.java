@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -169,26 +169,39 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PdfIndirectReference that = (PdfIndirectReference) o;
+        boolean documentsEquals = pdfDocument == that.pdfDocument;
+        if (!documentsEquals) {
+            documentsEquals = pdfDocument != null
+                    && that.pdfDocument != null
+                    && pdfDocument.getDocumentId() == that.pdfDocument.getDocumentId();
+        }
 
-        return objNr == that.objNr && genNr == that.genNr;
+        return objNr == that.objNr && genNr == that.genNr && documentsEquals;
     }
 
     @Override
     public int hashCode() {
         int result = objNr;
         result = 31 * result + genNr;
+        if (pdfDocument != null) {
+            result = 31 * result + (int) pdfDocument.getDocumentId();
+        }
         return result;
     }
 
     @Override
     public int compareTo(PdfIndirectReference o) {
         if (objNr == o.objNr) {
-            if (genNr == o.genNr)
-                return 0;
+            if (genNr == o.genNr) {
+                return comparePdfDocumentLinks(o);
+            }
             return (genNr > o.genNr) ? 1 : -1;
         }
         return (objNr > o.objNr) ? 1 : -1;
@@ -316,6 +329,23 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     void fixOffset(long offset) {
         if (!isFree()) {
             this.offsetOrIndex = offset;
+        }
+    }
+
+    private int comparePdfDocumentLinks(PdfIndirectReference toCompare) {
+        if (pdfDocument == toCompare.pdfDocument) {
+            return 0;
+        } else if (pdfDocument == null) {
+            return -1;
+        } else if (toCompare.pdfDocument == null) {
+            return 1;
+        } else {
+            long thisDocumentId = pdfDocument.getDocumentId();
+            long documentIdToCompare = toCompare.pdfDocument.getDocumentId();
+            if (thisDocumentId == documentIdToCompare) {
+                return 0;
+            }
+            return (thisDocumentId > documentIdToCompare) ? 1 : -1;
         }
     }
 }

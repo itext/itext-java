@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -189,16 +189,7 @@ class SeparatedTableBorders extends TableBorders {
 
     @Override
     public float[] getCellBorderIndents(int row, int col, int rowspan, int colspan) {
-        float[] indents = new float[4];
-        Border[] borders = rows.get(row + startRow - largeTableIndexOffset)[col].getBorders();
-
-        for (int i = 0; i < 4; i++) {
-            if (null != borders[i]) {
-                indents[i] = borders[i].getWidth();
-            }
-        }
-
-        return indents;
+        return new float[] {0, 0, 0, 0};
     }
 
     protected void buildBordersArrays(CellRenderer cell, int row, int col, int[] rowspansToDeduct) {

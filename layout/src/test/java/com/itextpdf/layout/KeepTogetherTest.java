@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -73,6 +73,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.ByteArrayOutputStream;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -129,6 +131,25 @@ public class KeepTogetherTest extends ExtendedITextTest {
         doc.add(p1);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void skipKeepTogetherInCaseOfAreaBreak() throws IOException, InterruptedException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document doc = new Document(pdfDoc);
+
+        Div keptTogetherDiv = new Div();
+        keptTogetherDiv.setKeepTogether(true);
+
+        AreaBreak areaBreak = new AreaBreak();
+        keptTogetherDiv.add(areaBreak);
+
+        doc.add(keptTogetherDiv);
+
+        // If this line is not triggered, then an NPE occurred
+        Assert.assertTrue(true);
+
+        doc.close();
     }
 
     @Test
@@ -1028,10 +1049,10 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
-    public void contentOverlappingInDivWithKeepTogetherTest() throws IOException, InterruptedException {
-        String filename = "contentOverlappingInDivWithKeepTogether.pdf";
+    public void keepTogetherTreeWithParentNotFitOnDocumentTest() throws IOException, InterruptedException {
+        String filename = "keepTogetherTreeWithParentNotFitOnDocument.pdf";
         String outFile = destinationFolder + filename;
         String cmpFileName = sourceFolder + "cmp_" + filename;
 
@@ -1060,10 +1081,10 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
-    public void missContentAndOverlappingInDivNoKeepTogetherTest() throws IOException, InterruptedException {
-        String filename = "missContentAndOverlappingInDivNoKeepTogether.pdf";
+    public void keepTogetherSubTreeWithParentNotFitOnDocumentTest() throws IOException, InterruptedException {
+        String filename = "keepTogetherSubTreeWithParentNotFitOnDocument.pdf";
         String outFile = destinationFolder + filename;
         String cmpFileName = sourceFolder + "cmp_" + filename;
 
@@ -1094,10 +1115,45 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
-    public void contentOverlappingDivKeepTogetherInRectTest() throws IOException, InterruptedException {
-        String filename = "contentOverlappingDivKeepTogetherInRect.pdf";
+    public void keepTogetherSubTreeWithChildKeepTogetherFalseAndParentNotFitOnDocumentTest()
+            throws IOException, InterruptedException {
+        String filename = "keepTogetherSubTreeWithChildKeepTogetherFalseAndParentNotFitOnDocument.pdf";
+        String outFile = destinationFolder + filename;
+        String cmpFileName = sourceFolder + "cmp_" + filename;
+
+        try (Document doc = new Document(new PdfDocument(new PdfWriter(outFile)))) {
+            doc.getPdfDocument().addNewPage(PageSize.A5.rotate());
+
+            Div main = new Div();
+
+            Div child1 = createChildDivWithText(main, null).setKeepTogether(true);
+            createChildDivWithText(child1, BIG_TEXT);
+
+            Div div1_2 = createChildDivWithText(child1, null).setKeepTogether(false);
+            createChildDivWithText(div1_2, "Section A");
+
+            createChildDivWithText(div1_2, null).add(new Paragraph(MEDIUM_TEXT).setFirstLineIndent(20));
+
+            // KEEP_TOGETHER is not set here
+            Div child2 = createChildDivWithText(main, null);
+            createChildDivWithText(child2, "Section B");
+            createChildDivWithText(child2, null);
+            createChildDivWithText(child2, "Lorem ipsum dolor sit amet!");
+
+            doc.add(main);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void keepTogetherTreeWithParentNotFitOnPageCanvasTest() throws IOException, InterruptedException {
+        String filename = "keepTogetherTreeWithParentNotFitOnPageCanvas.pdf";
         String outFile = destinationFolder + filename;
         String cmpFileName = sourceFolder + "cmp_" + filename;
 

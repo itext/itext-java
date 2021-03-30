@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -141,6 +141,9 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the /Contents entry value.
+     * See ISO 32000-1 12.8.1, Table 252 – Entries in a signature dictionary.
+     *
+     * @return the signature content
      */
     public PdfString getContents() {
         return getPdfObject().getAsString(PdfName.Contents);
@@ -157,6 +160,9 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the /Cert entry value of this signature.
+     * See ISO 32000-1 12.8.1, Table 252 – Entries in a signature dictionary.
+     *
+     * @return the signature cert
      */
     public PdfString getCert() {
         return getPdfObject().getAsString(PdfName.Cert);

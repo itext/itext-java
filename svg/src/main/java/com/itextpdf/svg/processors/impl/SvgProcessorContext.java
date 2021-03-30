@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -95,8 +95,6 @@ public class SvgProcessorContext {
         }
 
         IResourceRetriever retriever = null;
-        // TODO DEVSIX-3814 change the clause if block to retriever = new ResourceResolver(props.getBaseUri(),
-        //  converterProperties.getResourceRetriever()) when the ISvgConverterProperties#getResourceRetriever() is added
         if (converterProperties instanceof SvgConverterProperties) {
             retriever = ((SvgConverterProperties) converterProperties).getResourceRetriever();
         }

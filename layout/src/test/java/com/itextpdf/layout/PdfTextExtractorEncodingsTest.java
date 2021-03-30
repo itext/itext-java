@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -46,6 +46,7 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -96,7 +97,7 @@ public class PdfTextExtractorEncodingsTest extends ExtendedITextTest {
      */
     @Test
     public void testEncodedFont() throws Exception {
-        PdfFont font = getTTFont("ISO-8859-1", true);
+        PdfFont font = getTTFont("ISO-8859-1", EmbeddingStrategy.PREFER_EMBEDDED);
         byte[] pdfBytes = createPdf(font);
         checkPdf(pdfBytes);
     }
@@ -109,7 +110,7 @@ public class PdfTextExtractorEncodingsTest extends ExtendedITextTest {
      */
     @Test
     public void testUnicodeFont() throws Exception {
-        PdfFont font = getTTFont(PdfEncodings.IDENTITY_H, true);
+        PdfFont font = getTTFont(PdfEncodings.IDENTITY_H, EmbeddingStrategy.PREFER_EMBEDDED);
         byte[] pdfBytes = createPdf(font);
         checkPdf(pdfBytes);
     }
@@ -122,8 +123,8 @@ public class PdfTextExtractorEncodingsTest extends ExtendedITextTest {
         Assert.assertEquals(TEXT2, PdfTextExtractor.getTextFromPage(pdfDocument.getPage(2)));
     }
 
-    protected static PdfFont getTTFont(String encoding, boolean embedded) throws IOException {
-        return PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", encoding, embedded);
+    protected static PdfFont getTTFont(String encoding, EmbeddingStrategy embeddingStrategy) throws IOException {
+        return PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", encoding, embeddingStrategy);
     }
 
     private static byte[] createPdf(PdfFont font) {

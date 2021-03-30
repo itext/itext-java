@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -62,6 +63,7 @@ import com.itextpdf.layout.property.LineHeight;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.RenderingMode;
 import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.renderer.LineRenderer.LineSplitIntoGlyphsData;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -70,6 +72,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -346,5 +349,117 @@ public class LineRendererUnitTest extends RendererUnitTest {
         LayoutResult result = lineRenderer.layout(new LayoutContext(layoutArea));
 
         Assert.assertEquals(result.getOccupiedArea().getBBox().getWidth(), countedMinWidth, 0.0001);
+    }
+
+    @Test
+    public void splitLineIntoGlyphsSimpleTest() {
+        Document dummyDocument = createDocument();
+        TextRenderer dummy1 = createLayoutedTextRenderer("hello", dummyDocument);
+        TextRenderer dummy2 = createLayoutedTextRenderer("world", dummyDocument);
+        TextRenderer dummy3 = createLayoutedTextRenderer("!!!", dummyDocument);
+        IRenderer dummyImage1 = createLayoutedImageRenderer(100, 100, dummyDocument);
+        IRenderer dummyImage2 = createLayoutedImageRenderer(100, 100, dummyDocument);
+        IRenderer dummyImage3 = createLayoutedImageRenderer(100, 100, dummyDocument);
+        IRenderer dummyImage4 = createLayoutedImageRenderer(100, 100, dummyDocument);
+        IRenderer dummyImage5 = createLayoutedImageRenderer(100, 100, dummyDocument);
+
+        LineRenderer toSplit = new LineRenderer();
+        toSplit.addChildRenderer(dummyImage1);
+        toSplit.addChildRenderer(dummyImage2);
+        toSplit.addChildRenderer(dummy1);
+        toSplit.addChildRenderer(dummyImage3);
+        toSplit.addChildRenderer(dummy2);
+        toSplit.addChildRenderer(dummy3);
+        toSplit.addChildRenderer(dummyImage4);
+        toSplit.addChildRenderer(dummyImage5);
+
+
+        LineSplitIntoGlyphsData splitIntoGlyphsData = LineRenderer.splitLineIntoGlyphs(toSplit);
+        Assert.assertEquals(Arrays.asList(dummyImage1, dummyImage2), splitIntoGlyphsData.getStarterNonTextRenderers());
+        Assert.assertEquals(Arrays.asList(dummyImage3), splitIntoGlyphsData.getInsertAfterAndRemove(dummy1));
+        Assert.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy1));
+        Assert.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy2));
+        Assert.assertEquals(Arrays.asList(dummyImage4, dummyImage5), splitIntoGlyphsData.getInsertAfterAndRemove(dummy3));
+        Assert.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy3));
+        Assert.assertEquals(13, splitIntoGlyphsData.getLineGlyphs().size());
+    }
+
+    @Test
+    public void splitLineIntoGlyphsWithLineBreakTest() {
+        Document dummyDocument = createDocument();
+        TextRenderer dummy1 = createLayoutedTextRenderer("hello", dummyDocument);
+        TextRenderer dummy2 = createLayoutedTextRenderer("world", dummyDocument);
+        dummy2.line.set(2, new Glyph('\n', 0, '\n'));
+        TextRenderer dummy3 = createLayoutedTextRenderer("!!!", dummyDocument);
+        IRenderer dummyImage1 = createLayoutedImageRenderer(100, 100, dummyDocument);
+        IRenderer dummyImage2 = createLayoutedImageRenderer(100, 100, dummyDocument);
+        IRenderer dummyImage3 = createLayoutedImageRenderer(100, 100, dummyDocument);
+        IRenderer dummyImage4 = createLayoutedImageRenderer(100, 100, dummyDocument);
+        IRenderer dummyImage5 = createLayoutedImageRenderer(100, 100, dummyDocument);
+
+        LineRenderer toSplit = new LineRenderer();
+        toSplit.addChildRenderer(dummyImage1);
+        toSplit.addChildRenderer(dummyImage2);
+        toSplit.addChildRenderer(dummy1);
+        toSplit.addChildRenderer(dummyImage3);
+        toSplit.addChildRenderer(dummy2);
+        toSplit.addChildRenderer(dummy3);
+        toSplit.addChildRenderer(dummyImage4);
+        toSplit.addChildRenderer(dummyImage5);
+
+
+        LineSplitIntoGlyphsData splitIntoGlyphsData = LineRenderer.splitLineIntoGlyphs(toSplit);
+        Assert.assertEquals(Arrays.asList(dummyImage1, dummyImage2), splitIntoGlyphsData.getStarterNonTextRenderers());
+        Assert.assertEquals(Arrays.asList(dummyImage3), splitIntoGlyphsData.getInsertAfterAndRemove(dummy1));
+        Assert.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy1));
+        Assert.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy2));
+        Assert.assertNull(splitIntoGlyphsData.getInsertAfterAndRemove(dummy3));
+        Assert.assertEquals(7, splitIntoGlyphsData.getLineGlyphs().size());
+    }
+
+    @Test
+    public void reorderSimpleTest() {
+        Document dummyDocument = createDocument();
+        IRenderer dummy1 = createLayoutedTextRenderer("hello", dummyDocument);
+        IRenderer dummy2 = createLayoutedTextRenderer("world", dummyDocument);
+        IRenderer dummy3 = createLayoutedTextRenderer("!!!", dummyDocument);
+        IRenderer dummyImage1 = createLayoutedImageRenderer(100, 100, dummyDocument);
+        IRenderer dummyImage2 = createLayoutedImageRenderer(100, 100, dummyDocument);
+        IRenderer dummyImage3 = createLayoutedImageRenderer(100, 100, dummyDocument);
+        IRenderer dummyImage4 = createLayoutedImageRenderer(100, 100, dummyDocument);
+        IRenderer dummyImage5 = createLayoutedImageRenderer(100, 100, dummyDocument);
+
+        LineRenderer toSplit = new LineRenderer();
+        toSplit.addChildRenderer(dummyImage1);
+        toSplit.addChildRenderer(dummyImage2);
+        toSplit.addChildRenderer(dummy1);
+        toSplit.addChildRenderer(dummyImage3);
+        toSplit.addChildRenderer(dummy2);
+        toSplit.addChildRenderer(dummy3);
+        toSplit.addChildRenderer(dummyImage4);
+        toSplit.addChildRenderer(dummyImage5);
+
+
+        LineSplitIntoGlyphsData splitIntoGlyphsData = LineRenderer.splitLineIntoGlyphs(toSplit);
+
+        LineRenderer.reorder(toSplit, splitIntoGlyphsData, new int[]{0, 1, 4, 3, 2, 6, 5, 8, 7, 10, 9, 11, 12});
+        // validate that all non text renderers are in place and all text renderers contains
+        // the right revers ranges
+        List<IRenderer> childRenderers = toSplit.getChildRenderers();
+        Assert.assertEquals(8, childRenderers.size());
+        Assert.assertSame(dummyImage1, childRenderers.get(0));
+        Assert.assertSame(dummyImage2, childRenderers.get(1));
+        List<int[]> firstReverseRanges = ((TextRenderer) childRenderers.get(2)).getReversedRanges();
+        Assert.assertEquals(1, firstReverseRanges.size());
+        Assert.assertArrayEquals(new int[]{2, 4}, firstReverseRanges.get(0));
+        Assert.assertSame(dummyImage3, childRenderers.get(3));
+        List<int[]> secondReverseRanges = ((TextRenderer) childRenderers.get(4)).getReversedRanges();
+        Assert.assertEquals(2, secondReverseRanges.size());
+        Assert.assertArrayEquals(new int[]{0, 1}, secondReverseRanges.get(0));
+        Assert.assertArrayEquals(new int[]{2, 3}, secondReverseRanges.get(1));
+        List<int[]> thirdReverseRanges = ((TextRenderer) childRenderers.get(5)).getReversedRanges();
+        Assert.assertNull(thirdReverseRanges);
+        Assert.assertSame(dummyImage4, childRenderers.get(6));
+        Assert.assertSame(dummyImage5, childRenderers.get(7));
     }
 }

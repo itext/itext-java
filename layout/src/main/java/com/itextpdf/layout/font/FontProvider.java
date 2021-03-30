@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,7 @@ import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.io.IOException;
@@ -88,7 +89,7 @@ public class FontProvider {
     protected final Map<FontInfo, PdfFont> pdfFonts;
 
     /**
-     * Creates a new instance of FontProvider
+     * Creates a new instance of FontProvider.
      *
      * @param fontSet predefined set of fonts, could be null.
      */
@@ -113,7 +114,7 @@ public class FontProvider {
     }
 
     /**
-     * Creates a new instance of FontProvider
+     * Creates a new instance of FontProvider.
      *
      * @param fontSet predefined set of fonts, could be null.
      * @param defaultFontFamily default font family.
@@ -125,46 +126,142 @@ public class FontProvider {
         this.defaultFontFamily = defaultFontFamily;
     }
 
+    /**
+     * Add font to {@link FontSet} cache.
+     *
+     * @param fontProgram the font file which will be added to font cache.
+     *                    The {@link FontProgram} instances are normally created via {@link FontProgramFactory}.
+     * @param encoding font encoding to create {@link com.itextpdf.kernel.font.PdfFont}. Possible values for this
+     *                 argument are the same as for {@link PdfFontFactory#createFont()} family of methods.
+     * @param unicodeRange sets the specific range of characters to be used from the font.
+     *
+     * @return true, if font was successfully added, otherwise false.
+     */
     public boolean addFont(FontProgram fontProgram, String encoding, Range unicodeRange) {
         return fontSet.addFont(fontProgram, encoding, null, unicodeRange);
     }
 
+    /**
+     * Add font to {@link FontSet} cache.
+     *
+     * @param fontProgram the font file which will be added to font cache.
+     *                    The {@link FontProgram} instances are normally created via {@link FontProgramFactory}.
+     * @param encoding font encoding to create {@link com.itextpdf.kernel.font.PdfFont}. Possible values for this
+     *                 argument are the same as for {@link PdfFontFactory#createFont()} family of methods.
+     *
+     * @return true, if font was successfully added, otherwise false.
+     */
     public boolean addFont(FontProgram fontProgram, String encoding) {
         return addFont(fontProgram, encoding, null);
     }
 
+    /**
+     * Add font to {@link FontSet} cache.
+     *
+     * @param fontProgram the font file which will be added to font cache.
+     *                    The {@link FontProgram} instances are normally created via {@link FontProgramFactory}.
+     *
+     * @return true, if font was successfully added, otherwise false.
+     */
     public boolean addFont(FontProgram fontProgram) {
         return addFont(fontProgram, getDefaultEncoding(fontProgram));
     }
 
+    /**
+     * Add font to {@link FontSet} cache.
+     *
+     * @param fontPath path to the font file to add. Can be a path to file or font name,
+     *                 see {@link FontProgramFactory#createFont(String)}.
+     * @param encoding font encoding to create {@link com.itextpdf.kernel.font.PdfFont}. Possible values for this
+     *                 argument are the same as for {@link PdfFontFactory#createFont()} family of methods.
+     * @param unicodeRange sets the specific range of characters to be used from the font.
+     *
+     * @return true, if font was successfully added, otherwise false.
+     */
     public boolean addFont(String fontPath, String encoding, Range unicodeRange) {
         return fontSet.addFont(fontPath, encoding, null, unicodeRange);
     }
 
+    /**
+     * Add font to {@link FontSet} cache.
+     *
+     * @param fontPath path to the font file to add. Can be a path to file or font name,
+     *                 see {@link FontProgramFactory#createFont(String)}.
+     * @param encoding font encoding to create {@link com.itextpdf.kernel.font.PdfFont}. Possible values for this
+     *                 argument are the same as for {@link PdfFontFactory#createFont()} family of methods.
+     *
+     * @return true, if font was successfully added, otherwise false.
+     */
     public boolean addFont(String fontPath, String encoding) {
         return addFont(fontPath, encoding, null);
     }
 
+    /**
+     * Add font to {@link FontSet} cache.
+     *
+     * @param fontPath path to the font file to add. Can be a path to file or font name,
+     *                 see {@link FontProgramFactory#createFont(String)}.
+     *
+     * @return true, if font was successfully added, otherwise false.
+     */
     public boolean addFont(String fontPath) {
         return addFont(fontPath, null);
     }
 
+    /**
+     * Add font to {@link FontSet} cache.
+     *
+     * @param fontData byte content of the font program file.
+     * @param encoding font encoding to create {@link com.itextpdf.kernel.font.PdfFont}. Possible values for this
+     *                 argument are the same as for {@link PdfFontFactory#createFont()} family of methods.
+     * @param unicodeRange sets the specific range of characters to be used from the font.
+     *
+     * @return true, if font was successfully added, otherwise false.
+     */
     public boolean addFont(byte[] fontData, String encoding, Range unicodeRange) {
         return fontSet.addFont(fontData, encoding, null, unicodeRange);
     }
 
+    /**
+     * Add font to {@link FontSet} cache.
+     *
+     * @param fontData byte content of the font program file.
+     * @param encoding font encoding to create {@link com.itextpdf.kernel.font.PdfFont}. Possible values for this
+     *                 argument are the same as for {@link PdfFontFactory#createFont()} family of methods.
+     *
+     * @return true, if font was successfully added, otherwise false.
+     */
     public boolean addFont(byte[] fontData, String encoding) {
         return addFont(fontData, encoding, null);
     }
 
+    /**
+     * Add font to {@link FontSet} cache.
+     *
+     * @param fontData byte content of the font program file.
+     *
+     * @return true, if font was successfully added, otherwise false.
+     */
     public boolean addFont(byte[] fontData) {
         return addFont(fontData, null);
     }
 
+    /**
+     * Add all the fonts from a directory.
+     *
+     * @param dir path to directory.
+     *
+     * @return number of added fonts.
+     */
     public int addDirectory(String dir) {
         return fontSet.addDirectory(dir);
     }
 
+    /**
+     * Add all fonts from system directories to {@link FontSet} cache.
+     *
+     * @return number of added fonts.
+     */
     public int addSystemFonts() {
         int count = 0;
         String[] withSubDirs = {
@@ -190,6 +287,12 @@ public class FontProvider {
         return count;
     }
 
+    /**
+     * Add standard fonts to {@link FontSet} cache.
+     *
+     * @return number of added fonts.
+     * @see com.itextpdf.io.font.constants.StandardFonts
+     */
     public int addStandardPdfFonts() {
         addFont(StandardFonts.COURIER);
         addFont(StandardFonts.COURIER_BOLD);
@@ -210,20 +313,30 @@ public class FontProvider {
 
     /**
      * Gets {@link FontSet}.
-     * @return the fontset
+     *
+     * @return the font set
      */
     public FontSet getFontSet() {
         return fontSet;
     }
 
     /**
-     * Gets the default font-family
+     * Gets the default font-family.
+     *
      * @return the default font-family
      */
     public String getDefaultFontFamily() {
         return defaultFontFamily;
     }
 
+    /**
+     * Gets the default encoding for specific font.
+     *
+     * @param fontProgram to get default encoding
+     *
+     * @return the default encoding
+     * @see com.itextpdf.io.font.PdfEncodings
+     */
     public String getDefaultEncoding(FontProgram fontProgram) {
         if (fontProgram instanceof Type1Font) {
             return PdfEncodings.WINANSI;
@@ -232,22 +345,74 @@ public class FontProvider {
         }
     }
 
+    /**
+     * The method is used to determine whether the font should be cached or not by default.
+     *
+     * <p>
+     * NOTE: This method can be overridden to customize behaviour.
+     *
+     * @return the default cache flag
+     */
     public boolean getDefaultCacheFlag() {
         return true;
     }
 
+    /**
+     * The method is used to determine whether the font should be embedded or not by default.
+     *
+     * <p>
+     * NOTE: This method can be overridden to customize behaviour.
+     *
+     * @return the default embedding flag
+     */
     public boolean getDefaultEmbeddingFlag() {
         return true;
     }
 
+    /**
+     * Gets the {@link FontSelectorStrategy} to split specified text into sequences of glyphs, already tied
+     * to the fonts which contain them. The fonts can be taken from the added fonts to the font provider and
+     * are chosen based on font-families list and desired font characteristics.
+     *
+     * @param text for splitting into sequences of glyphs.
+     * @param fontFamilies target font families to create {@link FontSelector} for sequences of glyphs.
+     * @param fc instance of {@link FontCharacteristics} to create {@link FontSelector} for sequences of glyphs.
+     * @param additionalFonts set which provides fonts additionally to the fonts added to font provider.
+     *                        Combined set of font provider fonts and additional fonts is used when choosing
+     *                        a single font for a sequence of glyphs. Additional fonts will only be used for the given
+     *                        font selector strategy instance and will not be otherwise preserved in font provider.
+     *
+     * @return {@link FontSelectorStrategy} instance.
+     */
     public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, FontCharacteristics fc, FontSet additionalFonts) {
         return new ComplexFontSelectorStrategy(text, getFontSelector(fontFamilies, fc, additionalFonts), this, additionalFonts);
     }
 
+    /**
+     * Gets the {@link FontSelectorStrategy} to split specified text into sequences of glyphs, already tied
+     * to the fonts which contain them. The fonts can be taken from the added fonts to the font provider and
+     * are chosen based on font-families list and desired font characteristics.
+     *
+     * @param text for splitting into sequences of glyphs.
+     * @param fontFamilies target font families to create {@link FontSelector} for sequences of glyphs.
+     * @param fc instance of {@link FontCharacteristics} to create {@link FontSelector} for sequences of glyphs.
+     *
+     * @return {@link FontSelectorStrategy} instance.
+     */
     public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, FontCharacteristics fc) {
         return getStrategy(text, fontFamilies, fc, null);
     }
 
+    /**
+     * Gets the {@link FontSelectorStrategy} to split specified text into sequences of glyphs, already tied
+     * to the fonts which contain them. The fonts can be taken from the added fonts to the font provider and
+     * are chosen based on font-families list and desired font characteristics.
+     *
+     * @param text for splitting into sequences of glyphs.
+     * @param fontFamilies target font families to create {@link FontSelector} for sequences of glyphs.
+     *
+     * @return {@link FontSelectorStrategy} instance.
+     */
     public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies) {
         return getStrategy(text, fontFamilies, null);
     }
@@ -255,8 +420,9 @@ public class FontProvider {
     /**
      * Create {@link FontSelector} or get from cache.
      *
-     * @param fontFamilies target font families
-     * @param fc           instance of {@link FontCharacteristics}.
+     * @param fontFamilies target font families.
+     * @param fc instance of {@link FontCharacteristics}.
+     *
      * @return an instance of {@link FontSelector}.
      * @see #createFontSelector(Collection, List, FontCharacteristics)
      * @see #getFontSelector(List, FontCharacteristics, FontSet)
@@ -274,9 +440,13 @@ public class FontProvider {
     /**
      * Create {@link FontSelector} or get from cache.
      *
-     * @param fontFamilies target font families
-     * @param fc           instance of {@link FontCharacteristics}.
-     * @param additionalFonts    set of additional fonts.
+     * @param fontFamilies target font families.
+     * @param fc instance of {@link FontCharacteristics}.
+     * @param additionalFonts set which provides fonts additionally to the fonts added to font provider.
+     *                        Combined set of font provider fonts and additional fonts is used when choosing
+     *                        a single font for {@link FontSelector}. Additional fonts will only be used for the given
+     *                        font selector strategy instance and will not be otherwise preserved in font provider.
+     *
      * @return an instance of {@link FontSelector}.
      * @see #createFontSelector(Collection, List, FontCharacteristics) }
      */
@@ -297,8 +467,9 @@ public class FontProvider {
      * This method just create a new instance of {@link FontSelector}.
      *
      * @param fonts        Set of all available fonts in current context.
-     * @param fontFamilies target font families
+     * @param fontFamilies target font families.
      * @param fc           instance of {@link FontCharacteristics}.
+     *
      * @return an instance of {@link FontSelector}.
      */
     protected FontSelector createFontSelector(Collection<FontInfo> fonts,
@@ -312,6 +483,7 @@ public class FontProvider {
      * Get from cache or create a new instance of {@link PdfFont}.
      *
      * @param fontInfo font info, to create {@link FontProgram} and {@link PdfFont}.
+     *
      * @return cached or new instance of {@link PdfFont}.
      */
     public PdfFont getPdfFont(FontInfo fontInfo) {
@@ -323,6 +495,7 @@ public class FontProvider {
      *
      * @param fontInfo  font info, to create {@link FontProgram} and {@link PdfFont}.
      * @param additionalFonts set of additional fonts to consider.
+     *
      * @return cached or new instance of {@link PdfFont}.
      */
     public PdfFont getPdfFont(FontInfo fontInfo, FontSet additionalFonts) {
@@ -350,7 +523,10 @@ public class FontProvider {
                     encoding = getDefaultEncoding(fontProgram);
                 }
 
-                pdfFont = PdfFontFactory.createFont(fontProgram, encoding, getDefaultEmbeddingFlag());
+                EmbeddingStrategy embeddingStrategy = getDefaultEmbeddingFlag()
+                        ? EmbeddingStrategy.PREFER_EMBEDDED
+                        : EmbeddingStrategy.PREFER_NOT_EMBEDDED;
+                pdfFont = PdfFontFactory.createFont(fontProgram, encoding, embeddingStrategy);
 
             } catch (IOException e) {
                 // Converting checked exceptions to unchecked RuntimeException (java-specific comment).
@@ -371,7 +547,8 @@ public class FontProvider {
     }
 
     /**
-     * Resets {@link FontProvider#pdfFonts PdfFont cache}. After calling that method {@link FontProvider} can be reused with another {@link PdfDocument}
+     * Resets {@link FontProvider#pdfFonts PdfFont cache}.
+     * After calling that method {@link FontProvider} can be reused with another {@link PdfDocument}
      */
     public void reset() {
         pdfFonts.clear();

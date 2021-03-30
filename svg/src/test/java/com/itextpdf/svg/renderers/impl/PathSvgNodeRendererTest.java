@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -411,25 +411,21 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: update cmp-file after DEVSIX-4701 will be fixed
     public void multiplePairsAfterMoveToRelativeTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "multiplePairsAfterMoveToRelative");
     }
 
     @Test
-    //TODO: update cmp-file after DEVSIX-4701 will be fixed
     public void multiplePairsAfterMoveToAbsoluteTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "multiplePairsAfterMoveToAbsolute");
     }
 
     @Test
-    //TODO: update cmp-file after DEVSIX-4701 will be fixed
     public void pathHOperatorAbsoluteAfterMultiplePairsTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "pathHOperatorAbsoluteAfterMultiplePairs");
     }
 
     @Test
-    //TODO: update cmp-file after DEVSIX-4701 will be fixed
     public void pathHOperatorRelativeAfterMultiplePairsTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "pathHOperatorRelativeAfterMultiplePairs");
     }

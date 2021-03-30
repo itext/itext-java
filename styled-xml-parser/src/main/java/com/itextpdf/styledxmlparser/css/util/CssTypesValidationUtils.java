@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -40,18 +40,28 @@ public final class CssTypesValidationUtils {
             CommonCssConstants.EM, CommonCssConstants.EX, CommonCssConstants.REM};
 
     /**
+     * Creates a new {@link CssTypesValidationUtils} instance.
+     */
+    private CssTypesValidationUtils() {
+        // Empty constructor
+    }
+
+    /**
      * Checks whether a string contains an allowed metric unit in HTML/CSS; rad, deg and grad.
      *
      * @param value the string that needs to be checked
      * @return boolean true if value contains an allowed angle value
      */
-    public static boolean isAngleValue(final String value) {
+    public static boolean isAngleValue(final String valueArgument) {
+        String value = valueArgument;
         if (value == null) {
             return false;
+        } else {
+            value = value.trim();
         }
         for (String metricPostfix : ANGLE_MEASUREMENTS_VALUES) {
             if (value.endsWith(metricPostfix) && isNumericValue(
-                    value.substring(0, value.length() - metricPostfix.length()).trim())) {
+                    value.substring(0, value.length() - metricPostfix.length()))) {
                 return true;
             }
         }
@@ -85,9 +95,15 @@ public final class CssTypesValidationUtils {
      * @param value the string that needs to be checked
      * @return boolean true if value contains a em value
      */
-    public static boolean isEmValue(final String value) {
-        return value != null && value.endsWith(CommonCssConstants.EM) && isNumericValue(
-                value.substring(0, value.length() - CommonCssConstants.EM.length()).trim());
+    public static boolean isEmValue(final String valueArgument) {
+        String value = valueArgument;
+        if (value == null) {
+            return false;
+        } else {
+            value = value.trim();
+        }
+        return value.endsWith(CommonCssConstants.EM) && isNumericValue(
+                value.substring(0, value.length() - CommonCssConstants.EM.length()));
     }
 
     /**
@@ -96,9 +112,15 @@ public final class CssTypesValidationUtils {
      * @param value the string that needs to be checked
      * @return boolean true if value contains a ex value
      */
-    public static boolean isExValue(final String value) {
+    public static boolean isExValue(final String valueArgument) {
+        String value = valueArgument;
+        if (value == null) {
+            return false;
+        } else {
+            value = value.trim();
+        }
         return value != null && value.endsWith(CommonCssConstants.EX) && isNumericValue(
-                value.substring(0, value.length() - CommonCssConstants.EX.length()).trim());
+                value.substring(0, value.length() - CommonCssConstants.EX.length()));
     }
 
     /**
@@ -107,13 +129,16 @@ public final class CssTypesValidationUtils {
      * @param value the string that needs to be checked
      * @return boolean true if value contains an allowed metric value
      */
-    public static boolean isMetricValue(final String value) {
+    public static boolean isMetricValue(final String valueArgument) {
+        String value = valueArgument;
         if (value == null) {
             return false;
+        } else {
+            value = value.trim();
         }
         for (String metricPostfix : CommonCssConstants.METRIC_MEASUREMENTS_VALUES) {
             if (value.endsWith(metricPostfix) && isNumericValue(
-                    value.substring(0, value.length() - metricPostfix.length()).trim())) {
+                    value.substring(0, value.length() - metricPostfix.length()))) {
                 return true;
             }
         }
@@ -131,7 +156,7 @@ public final class CssTypesValidationUtils {
         if (value == null) {
             return false;
         }
-        if (isNumericValue(value) || isRelativeValue(value)) {
+        if (isNumericValue(value) || isRelativeValue(value) || isMetricValue(value)) {
             return value.startsWith("-");
         }
         return false;
@@ -156,9 +181,15 @@ public final class CssTypesValidationUtils {
      * @param value the string that needs to be checked
      * @return boolean true if value contains an allowed percentage value
      */
-    public static boolean isPercentageValue(final String value) {
-        return value != null && value.endsWith(CommonCssConstants.PERCENTAGE) && isNumericValue(
-                value.substring(0, value.length() - CommonCssConstants.PERCENTAGE.length()).trim());
+    public static boolean isPercentageValue(final String valueArgument) {
+        String value = valueArgument;
+        if (value == null) {
+            return false;
+        } else {
+            value = value.trim();
+        }
+        return value.endsWith(CommonCssConstants.PERCENTAGE) && isNumericValue(
+                value.substring(0, value.length() - CommonCssConstants.PERCENTAGE.length()));
     }
 
     /**
@@ -167,13 +198,16 @@ public final class CssTypesValidationUtils {
      * @param value the string that needs to be checked
      * @return boolean true if value contains an allowed metric value
      */
-    public static boolean isRelativeValue(final String value) {
+    public static boolean isRelativeValue(final String valueArgument) {
+        String value = valueArgument;
         if (value == null) {
             return false;
+        } else {
+            value = value.trim();
         }
         for (String relativePostfix : RELATIVE_MEASUREMENTS_VALUES) {
             if (value.endsWith(relativePostfix) && isNumericValue(
-                    value.substring(0, value.length() - relativePostfix.length()).trim())) {
+                    value.substring(0, value.length() - relativePostfix.length()))) {
                 return true;
             }
         }
@@ -186,9 +220,15 @@ public final class CssTypesValidationUtils {
      * @param value the string that needs to be checked
      * @return boolean true if value contains a rem value
      */
-    public static boolean isRemValue(final String value) {
+    public static boolean isRemValue(final String valueArgument) {
+        String value = valueArgument;
+        if (value == null) {
+            return false;
+        } else {
+            value = value.trim();
+        }
         return value != null && value.endsWith(CommonCssConstants.REM) && isNumericValue(
-                value.substring(0, value.length() - CommonCssConstants.REM.length()).trim());
+                value.substring(0, value.length() - CommonCssConstants.REM.length()));
     }
 
     /**
@@ -217,9 +257,64 @@ public final class CssTypesValidationUtils {
     }
 
     /**
-     * Creates a new {@link CssTypesValidationUtils} instance.
+     * Checks if value contains initial, inherit or unset.
+     *
+     * @param value value to check
+     * @return true if value contains initial, inherit or unset. False otherwise
      */
-    private CssTypesValidationUtils() {
-        // Empty constructor
+    public static boolean containsInitialOrInheritOrUnset(String value) {
+        if (value == null) {
+            return false;
+        }
+        return value.contains(CommonCssConstants.INITIAL) ||
+                value.contains(CommonCssConstants.INHERIT) ||
+                value.contains(CommonCssConstants.UNSET);
+    }
+
+    /**
+     * Checks whether a string contains a zero.
+     *
+     * @param value the string that needs to be checked
+     * @return boolean true if value contains a zero
+     */
+    public static boolean isZero(final String value) {
+        return isNumericZeroValue(value) || isMetricZeroValue(value) || isRelativeZeroValue(value);
+    }
+
+    static boolean isMetricZeroValue(final String valueArgument) {
+        String value = valueArgument;
+        if (value == null) {
+            return false;
+        } else {
+            value = value.trim();
+        }
+        for (String metricPostfix : CommonCssConstants.METRIC_MEASUREMENTS_VALUES) {
+            if (value.endsWith(metricPostfix) && isNumericZeroValue(
+                    value.substring(0, value.length() - metricPostfix.length()))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static boolean isNumericZeroValue(final String value) {
+        return value != null && (value.matches("^[-+]?0$")
+                || value.matches("^[-+]?\\.0$"));
+    }
+
+    static boolean isRelativeZeroValue(final String valueArgument) {
+        String value = valueArgument;
+        if (value == null) {
+            return false;
+        } else {
+            value = value.trim();
+        }
+        for (String relativePostfix : RELATIVE_MEASUREMENTS_VALUES) {
+            if (value.endsWith(relativePostfix) && isNumericZeroValue(
+                    value.substring(0, value.length() - relativePostfix.length()))) {
+                return true;
+            }
+        }
+        return false;
     }
 }

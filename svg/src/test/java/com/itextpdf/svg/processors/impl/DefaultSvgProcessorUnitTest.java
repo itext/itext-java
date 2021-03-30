@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -63,6 +63,7 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -270,7 +271,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         ISvgConverterProperties scp = new SvgConverterProperties();
         dsp.performSetup(root, scp);
         // below method must not throw a NullPointerException
-        dsp.executeDepthFirstTraversal(root);
+        AssertUtil.doesNotThrow(() -> dsp.executeDepthFirstTraversal(root));
     }
 
     @Test

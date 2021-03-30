@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -609,7 +609,10 @@ public class PdfPKCS7 {
     private PdfName filterSubtype;
 
     /**
-     * Getter for the ID of the digest algorithm, e.g. "2.16.840.1.101.3.4.2.1"
+     * Getter for the ID of the digest algorithm, e.g. "2.16.840.1.101.3.4.2.1".
+     * See ISO-32000-1, section 12.8.3.3 PKCS#7 Signatures as used in ISO 32000
+     *
+     * @return the ID of the digest algorithm
      */
     public String getDigestAlgorithmOid() {
         return digestAlgorithmOid;
@@ -632,7 +635,10 @@ public class PdfPKCS7 {
     private String digestEncryptionAlgorithmOid;
 
     /**
-     * Getter for the digest encryption algorithm
+     * Getter for the digest encryption algorithm.
+     * See ISO-32000-1, section 12.8.3.3 PKCS#7 Signatures as used in ISO 32000
+     *
+     * @return the encryption algorithm
      */
     public String getDigestEncryptionAlgorithmOid() {
         return digestEncryptionAlgorithmOid;
@@ -640,6 +646,7 @@ public class PdfPKCS7 {
 
     /**
      * Get the algorithm used to calculate the message digest, e.g. "SHA1withRSA".
+     * See ISO-32000-1, section 12.8.3.3 PKCS#7 Signatures as used in ISO 32000
      *
      * @return the algorithm used to calculate the message digest
      */
@@ -973,7 +980,6 @@ public class PdfPKCS7 {
      * exactly the same as in {@link #getEncodedPKCS7(byte[])}.
      * <p>
      * A simple example:
-     * <p>
      * <pre>
      * Calendar cal = Calendar.getInstance();
      * PdfPKCS7 pk7 = new PdfPKCS7(key, chain, null, "SHA1", null, false);
@@ -1009,7 +1015,6 @@ public class PdfPKCS7 {
      * exactly the same as in {@link #getEncodedPKCS7(byte[])}.
      * <p>
      * A simple example:
-     * <p>
      * <pre>
      * Calendar cal = Calendar.getInstance();
      * PdfPKCS7 pk7 = new PdfPKCS7(key, chain, null, "SHA1", null, false);
@@ -1486,7 +1491,9 @@ public class PdfPKCS7 {
     }
 
     /**
-     * Returns the filter subtype.
+     * Getter for the filter subtype.
+     *
+     * @return the filter subtype
      */
     public PdfName getFilterSubtype() {
         return filterSubtype;

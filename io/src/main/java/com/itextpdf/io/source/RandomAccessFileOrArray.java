@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -174,7 +174,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      *
      * @param b the destination buffer
      * @return the number of bytes actually read
-     * @throws java.io.IOException in
+     * @throws java.io.IOException in case of any I/O error
      */
     public int read(byte b[]) throws java.io.IOException {
         return read(b, 0, b.length);

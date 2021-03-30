@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,13 +43,6 @@
 package com.itextpdf.signatures.testutils.builder;
 
 import com.itextpdf.io.util.DateTimeUtil;
-import java.io.IOException;
-import java.security.PrivateKey;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.Calendar;
-import java.util.Date;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.Extension;
@@ -69,6 +62,14 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
+import java.io.IOException;
+import java.security.PrivateKey;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Calendar;
+import java.util.Date;
+
 public class TestOcspResponseBuilder {
 
     private static final String SIGN_ALG = "SHA256withRSA";
@@ -80,7 +81,8 @@ public class TestOcspResponseBuilder {
     private Calendar thisUpdate = DateTimeUtil.getCurrentTimeCalendar();
     private Calendar nextUpdate = DateTimeUtil.getCurrentTimeCalendar();
 
-    public TestOcspResponseBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey) throws CertificateEncodingException {
+    public TestOcspResponseBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey)
+            throws CertificateEncodingException {
         this.issuerCert = issuerCert;
         this.issuerPrivateKey = issuerPrivateKey;
         X500Name subjectDN = new X500Name(PrincipalUtil.getSubjectX509Principal(issuerCert).getName());
@@ -105,7 +107,14 @@ public class TestOcspResponseBuilder {
         this.nextUpdate = nextUpdate;
     }
 
-    public byte[] makeOcspResponse(byte[] requestBytes) throws IOException, CertificateException, OperatorCreationException, OCSPException {
+    public byte[] makeOcspResponse(byte[] requestBytes) throws IOException, CertificateException,
+            OperatorCreationException, OCSPException {
+        BasicOCSPResp ocspResponse = makeOcspResponseObject(requestBytes);
+        return ocspResponse.getEncoded();
+    }
+
+    public BasicOCSPResp makeOcspResponseObject(byte[] requestBytes) throws IOException, CertificateException,
+            OperatorCreationException, OCSPException {
         OCSPReq ocspRequest = new OCSPReq(requestBytes);
         Req[] requestList = ocspRequest.getRequestList();
 
@@ -115,16 +124,15 @@ public class TestOcspResponseBuilder {
         }
 
         for (Req req : requestList) {
-            responseBuilder.addResponse(req.getCertID(), certificateStatus, thisUpdate.getTime(), nextUpdate.getTime(), null);
+            responseBuilder.addResponse(req.getCertID(), certificateStatus, thisUpdate.getTime(),
+                    nextUpdate.getTime(), null);
         }
-
 
         Date time = DateTimeUtil.getCurrentTimeDate();
 
         X509CertificateHolder[] chain = {new JcaX509CertificateHolder(issuerCert)};
-        ContentSigner signer = new JcaContentSignerBuilder(SIGN_ALG).setProvider(BouncyCastleProvider.PROVIDER_NAME).build(issuerPrivateKey);
-        BasicOCSPResp ocspResponse = responseBuilder.build(signer, chain, time);
-//        return new OCSPRespBuilder().build(ocspResult, ocspResponse).getEncoded();
-        return ocspResponse.getEncoded();
+        ContentSigner signer = new JcaContentSignerBuilder(SIGN_ALG).setProvider(BouncyCastleProvider.PROVIDER_NAME)
+                .build(issuerPrivateKey);
+        return responseBuilder.build(signer, chain, time);
     }
 }

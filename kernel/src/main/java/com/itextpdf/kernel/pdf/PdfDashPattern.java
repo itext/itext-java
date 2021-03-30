@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,11 @@
  */
 package com.itextpdf.kernel.pdf;
 
+/**
+ * Represents the line dash pattern. The line dash pattern shall control the pattern
+ * of dashes and gaps used to stroke paths. It shall be specified by a dash, gap and
+ * a dash phase.
+ */
 public class PdfDashPattern {
 
     /** This is the length of a dash. */
@@ -54,31 +59,67 @@ public class PdfDashPattern {
     /** This is the phase. */
     private float phase = -1;
 
+    /**
+     * Creates a new line dash pattern.
+     */
     public PdfDashPattern(){
     }
 
+    /**
+     * Creates a new line dash pattern.
+     *
+     * @param dash length of dash
+     */
     public PdfDashPattern(float dash) {
         this.dash = dash;
     }
 
+    /**
+     * Creates a new line dash pattern.
+     *
+     * @param dash length of dash
+     * @param gap length of gap
+     */
     public PdfDashPattern(float dash, float gap) {
         this.dash = dash;
         this.gap = gap;
     }
 
+    /**
+     * Creates a new line dash pattern.
+     *
+     * @param dash length of dash
+     * @param gap length of gap
+     * @param phase this is the phase
+     */
     public PdfDashPattern(float dash, float gap, float phase) {
         this(dash, gap);
         this.phase = phase;
     }
 
+    /**
+     * Gets dash of PdfDashPattern.
+     *
+     * @return float value.
+     */
     public float getDash() {
         return dash;
     }
 
+    /**
+     * Gets gap of PdfDashPattern.
+     *
+     * @return float value.
+     */
     public float getGap() {
         return gap;
     }
 
+    /**
+     * Gets phase of PdfDashPattern.
+     *
+     * @return float value.
+     */
     public float getPhase() {
         return phase;
     }

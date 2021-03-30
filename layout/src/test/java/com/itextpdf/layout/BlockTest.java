@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -1121,6 +1121,24 @@ public class BlockTest extends ExtendedITextTest {
                 .setBorderLeft(new RoundDotsBorder(ColorConstants.BLUE, 15))
                 .setBorderTop(new RoundDotsBorder(ColorConstants.GREEN, 60))
                 .setBorderRight(new RoundDotsBorder(ColorConstants.YELLOW, 150));
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    // TODO DEVSIX-1895 if height bigger than min-height is set,
+    // then the element's height should be increased up to height
+    public void heightShouldBeIncreasedUpToSetHeightTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "heightShouldBeIncreasedUpToSetHeightTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_heightShouldBeIncreasedUpToSetHeightTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Div div = new Div().setWidth(100).setMinHeight(100).setHeight(200).setBackgroundColor(ColorConstants.BLUE);
         doc.add(div);
 
         doc.close();

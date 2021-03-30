@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -254,6 +254,11 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         layers.add(layer);
     }
 
+    /**
+     * Gets the {@link PdfDocument} that owns that OCProperties.
+     *
+     * @return the {@link PdfDocument} that owns that OCProperties
+     */
     protected PdfDocument getDocument() {
         return getPdfObject().getIndirectReference().getDocument();
     }

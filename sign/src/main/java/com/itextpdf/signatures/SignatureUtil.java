@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -340,7 +340,7 @@ public class SignatureUtil {
      *
      * @param field the signature field name
      * @return an InputStream covering the revision. Returns null if it's not a signature field
-     * @throws IOException
+     * @throws IOException signals that an I/O exception has occurred.
      */
     public InputStream extractRevision(String field) throws IOException {
         getSignatureNames();
@@ -420,8 +420,6 @@ public class SignatureUtil {
                 else
                     totalRevisions = sorter.size() + 1;
             } catch (IOException e) {
-                // TODO DEVSIX-3458: remove this catch since RandomAccessFileOrArray#length will not throw
-                //  IOException anymore and therefore PdfReader#getFileLength will not do so either
             }
             for (int k = 0; k < sorter.size(); ++k) {
                 Object[] objs = sorter.get(k);

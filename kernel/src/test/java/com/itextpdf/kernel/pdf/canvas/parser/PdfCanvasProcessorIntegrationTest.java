@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -60,6 +60,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -144,7 +145,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + fileName));
         PdfCanvasProcessor processor = new PdfCanvasProcessor(new NoOpEventListener());
         // Assert than no exception is thrown when an empty path is handled
-        processor.processPageContent(document.getPage(1));
+        AssertUtil.doesNotThrow(() -> processor.processPageContent(document.getPage(1)));
     }
 
     @Test

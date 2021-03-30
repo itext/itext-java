@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,7 +24,7 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
-import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -35,10 +35,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import static com.itextpdf.svg.SvgNodeRendererIntegrationTestUtil.convertAndCompareSinglePage;
 
 @Category(IntegrationTest.class)
-public class OverflowAttributeTest extends ExtendedITextTest {
+public class OverflowAttributeTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/OverflowAttributeTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/OverflowAttributeTest/";

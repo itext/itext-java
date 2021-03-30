@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
+    Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -42,8 +42,11 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
@@ -129,6 +132,7 @@ public class RectangleSvgNodeRendererIntegrationTest extends SvgIntegrationTest 
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 1))
     public void noFillRectangleTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder,destinationFolder,"noFillRectangle");
     }
