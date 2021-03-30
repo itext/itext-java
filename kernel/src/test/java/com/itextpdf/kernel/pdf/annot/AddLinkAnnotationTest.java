@@ -15,6 +15,9 @@ import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -178,6 +181,58 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, destinationFolder));
+    }
+
+    @Test
+    public void removeLinkAnnotationTaggedAsLinkTest() throws IOException, InterruptedException {
+        String input = sourceFolder + "taggedLinkAnnotationAsLink.pdf";
+        String output = destinationFolder + "removeLinkAnnotationTaggedAsLinkTest.pdf";
+        String cmp =  sourceFolder + "cmp_" + "removeLinkAnnotationTaggedAsLinkTest.pdf";
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(input), new PdfWriter(output))) {
+            PdfPage page = pdfDoc.getPage(1);
+            page.removeAnnotation(page.getAnnotations().get(0));
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
+    }
+
+    @Test
+    public void removeLinkAnnotationTaggedAsAnnotTest() throws IOException, InterruptedException {
+        String input = sourceFolder + "taggedLinkAnnotationAsAnnot.pdf";
+        String output = destinationFolder + "removeLinkAnnotationTaggedAsAnnotTest.pdf";
+        String cmp =  sourceFolder + "cmp_" + "removeLinkAnnotationTaggedAsAnnotTest.pdf";
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(input), new PdfWriter(output))) {
+            PdfPage page = pdfDoc.getPage(1);
+            page.removeAnnotation(page.getAnnotations().get(0));
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
+    }
+
+    @Test
+    public void removeLinkAnnotationTagWithContentTest() throws IOException, InterruptedException {
+        String input = sourceFolder + "taggedLinkAnnotationTagWithContent.pdf";
+        String output = destinationFolder + "removeLinkAnnotationTagWithContentTest.pdf";
+        String cmp =  sourceFolder + "cmp_" + "removeLinkAnnotationTagWithContentTest.pdf";
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(input), new PdfWriter(output))) {
+            PdfPage page = pdfDoc.getPage(1);
+            page.removeAnnotation(page.getAnnotations().get(0));
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
+    }
+
+    @Test
+    public void removeLinkAnnotationWithNoTagTest() throws IOException, InterruptedException {
+        String input = sourceFolder + "taggedInvalidNoLinkAnnotationTag.pdf";
+        String output = destinationFolder + "removeLinkAnnotationWithNoTagTest.pdf";
+        String cmp =  sourceFolder + "cmp_" + "removeLinkAnnotationWithNoTagTest.pdf";
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(input), new PdfWriter(output))) {
+            PdfPage page = pdfDoc.getPage(1);
+            page.removeAnnotation(page.getAnnotations().get(0));
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
     }
 
 }
