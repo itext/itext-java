@@ -32,7 +32,6 @@ public class AddTextMarkupAnnotationTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-
     @Test
     public void textMarkupTest01() throws IOException, InterruptedException {
         String filename = destinationFolder + "textMarkupAnnotation01.pdf";
@@ -63,7 +62,9 @@ public class AddTextMarkupAnnotationTest extends ExtendedITextTest {
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation01.pdf", destinationFolder, "diff_");
+        String errorMessage = compareTool
+                .compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation01.pdf", destinationFolder,
+                        "diff_");
         if (errorMessage != null) {
             Assert.assertNull(errorMessage);
         }
@@ -99,7 +100,9 @@ public class AddTextMarkupAnnotationTest extends ExtendedITextTest {
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation02.pdf", destinationFolder, "diff_");
+        String errorMessage = compareTool
+                .compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation02.pdf", destinationFolder,
+                        "diff_");
         if (errorMessage != null) {
             Assert.assertNull(errorMessage);
         }
@@ -135,7 +138,9 @@ public class AddTextMarkupAnnotationTest extends ExtendedITextTest {
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation03.pdf", destinationFolder, "diff_");
+        String errorMessage = compareTool
+                .compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation03.pdf", destinationFolder,
+                        "diff_");
         if (errorMessage != null) {
             Assert.assertNull(errorMessage);
         }
@@ -171,7 +176,9 @@ public class AddTextMarkupAnnotationTest extends ExtendedITextTest {
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation04.pdf", destinationFolder, "diff_");
+        String errorMessage = compareTool
+                .compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation04.pdf", destinationFolder,
+                        "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }

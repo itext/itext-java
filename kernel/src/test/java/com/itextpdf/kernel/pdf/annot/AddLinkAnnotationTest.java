@@ -56,7 +56,8 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
         canvas.showText("Link to page 2. Click here!");
         canvas.endText();
         canvas.release();
-        page1.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 560, 260, 25)).setDestination(PdfExplicitDestination.createFit(page2)).setBorder(new PdfArray(new float[]{0, 0, 1})));
+        page1.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 560, 260, 25)).setDestination(
+                PdfExplicitDestination.createFit(page2)).setBorder(new PdfArray(new float[] {0, 0, 1})));
         page1.flush();
 
         canvas = new PdfCanvas(page2);
@@ -70,7 +71,9 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "linkAnnotation01.pdf", sourceFolder + "cmp_linkAnnotation01.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool()
+                .compareByContent(destinationFolder + "linkAnnotation01.pdf", sourceFolder + "cmp_linkAnnotation01.pdf",
+                        destinationFolder, "diff_"));
 
     }
 
@@ -90,13 +93,15 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
 
         page.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 590, 300, 25)).
                 setAction(PdfAction.createURI("http://itextpdf.com")).
-                setBorder(new PdfArray(new float[]{0, 0, 1})).
-                setColor(new PdfArray(new float[]{1, 0, 0})));
+                setBorder(new PdfArray(new float[] {0, 0, 1})).
+                setColor(new PdfArray(new float[] {1, 0, 0})));
         page.flush();
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "linkAnnotation02.pdf", sourceFolder + "cmp_linkAnnotation02.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool()
+                .compareByContent(destinationFolder + "linkAnnotation02.pdf", sourceFolder + "cmp_linkAnnotation02.pdf",
+                        destinationFolder, "diff_"));
 
     }
 
@@ -121,21 +126,22 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
         page.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 590, 300, 25)).
                 setAction(PdfAction.createURI("http://itextpdf.com")).
                 setBorder(new PdfArray(borders)).
-                setColor(new PdfArray(new float[]{1, 0, 0})));
+                setColor(new PdfArray(new float[] {1, 0, 0})));
         page.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 540, 300, 25)).
                 setAction(PdfAction.createURI("http://itextpdf.com/node")).
                 setBorder(new PdfArray(borders)).
-                setColor(new PdfArray(new float[]{0, 1, 0})));
+                setColor(new PdfArray(new float[] {0, 1, 0})));
         page.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 490, 300, 25)).
                 setAction(PdfAction.createURI("http://itextpdf.com/salesfaq")).
                 setBorder(new PdfArray(borders)).
-                setColor(new PdfArray(new float[]{0, 0, 1})));
+                setColor(new PdfArray(new float[] {0, 0, 1})));
         page.flush();
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "linkAnnotation03.pdf", sourceFolder + "cmp_linkAnnotation03.pdf", destinationFolder, "diff_"));
-
+        Assert.assertNull(new CompareTool()
+                .compareByContent(destinationFolder + "linkAnnotation03.pdf", sourceFolder + "cmp_linkAnnotation03.pdf",
+                        destinationFolder, "diff_"));
 
         document = new PdfDocument(new PdfReader(destinationFolder + "linkAnnotation03.pdf"));
         page = document.getPage(1);
@@ -148,7 +154,8 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET)})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET)})
     public void linkAnnotationActionDestinationTest() throws IOException, InterruptedException {
         String fileName = "linkAnnotationActionDestinationTest.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + fileName)));
@@ -169,7 +176,8 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool()
+                .compareByContent(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, destinationFolder));
     }
 
 }

@@ -40,7 +40,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf;
+package com.itextpdf.kernel.pdf.annot;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -51,28 +51,20 @@ import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.CompressionConstants;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.action.PdfTarget;
-import com.itextpdf.kernel.pdf.annot.Pdf3DAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfCaretAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfCircleAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfFileAttachmentAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfFixedPrint;
-import com.itextpdf.kernel.pdf.annot.PdfFreeTextAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfInkAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfPopupAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfPrinterMarkAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfRedactAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfScreenAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfSoundAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfSquareAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfStampAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfTextMarkupAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfTrapNetworkAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfWatermarkAnnotation;
 import com.itextpdf.kernel.pdf.annot.da.AnnotationDefaultAppearance;
 import com.itextpdf.kernel.pdf.annot.da.ExtendedAnnotationFont;
 import com.itextpdf.kernel.pdf.annot.da.StandardAnnotationFont;
@@ -80,8 +72,6 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.filespec.PdfStringFS;
-import com.itextpdf.kernel.pdf.navigation.PdfDestination;
-import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfNamedDestination;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -97,23 +87,21 @@ import org.junit.experimental.categories.Category;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 @Category(IntegrationTest.class)
-public class PdfAnnotationTest extends ExtendedITextTest {
+public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfAnnotationTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfAnnotationTest/";
+    public static final String sourceFolder =
+            "./src/test/resources/com/itextpdf/kernel/pdf/annot/AddMiscTypesAnnotationsTest/";
+    public static final String destinationFolder =
+            "./target/test/com/itextpdf/kernel/pdf/annot/AddMiscTypesAnnotationsTest/";
 
     @BeforeClass
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
-
-
 
     @Test
     public void addTextAnnotation01() throws Exception {
