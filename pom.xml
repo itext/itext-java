@@ -319,7 +319,6 @@
 
             <!-- svg -->
             <sourceFileExclude>com/itextpdf/svg/utils/SvgCoordinateUtils.java</sourceFileExclude>
-            <sourceFileExclude>com/itextpdf/svg/utils/SvgRegexUtils.java</sourceFileExclude>
           </sourceFileExcludes>
           <groups>
             <group>
