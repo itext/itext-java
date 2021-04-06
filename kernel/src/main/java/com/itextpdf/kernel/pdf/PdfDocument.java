@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
@@ -2212,7 +2213,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             }
             producer = addModifiedPostfix(producer);
         }
-        info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
+
+        info.getPdfObject().put(PdfName.Producer, new PdfString(producer, PdfEncodings.UNICODE_BIG));
     }
 
     /**
