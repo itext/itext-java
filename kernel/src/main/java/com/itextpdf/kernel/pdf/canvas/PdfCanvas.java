@@ -2069,7 +2069,6 @@ public class PdfCanvas implements Serializable {
     public PdfXObject addImage(ImageData image, float x, float y, float width, boolean asInline) {
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
-            // TODO add matrix parameters
             PdfXObject xObject = wmf.createFormXObject(document);
             addImageWithTransformationMatrix(xObject, width, 0, 0, width, x, y);
             return xObject;
