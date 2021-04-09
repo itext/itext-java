@@ -46,6 +46,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
@@ -69,6 +70,8 @@ import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfDocumentUnitTest extends ExtendedITextTest {
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentUnitTest/";
+
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
 
@@ -233,6 +236,98 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
                 Assert.assertTrue(layer.getPdfObject().isFlushed());
             }
         }
+    }
+
+    @Test
+    public void pdfDocumentInstanceNoWriterInfoAndConformanceLevelInitialization() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "pdfWithMetadata.pdf"));
+
+        Assert.assertNull(pdfDocument.info);
+        Assert.assertNull(pdfDocument.reader.pdfAConformanceLevel);
+
+        pdfDocument.close();
+
+        Assert.assertNull(pdfDocument.info);
+        Assert.assertNull(pdfDocument.reader.pdfAConformanceLevel);
+    }
+
+    @Test
+    public void pdfDocumentInstanceWriterInfoAndConformanceLevelInitialization() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(
+                new PdfReader(sourceFolder + "pdfWithMetadata.pdf"), new PdfWriter(new ByteArrayOutputStream()));
+
+        Assert.assertNotNull(pdfDocument.info);
+        Assert.assertNull(pdfDocument.reader.pdfAConformanceLevel);
+
+        pdfDocument.close();
+
+        Assert.assertNotNull(pdfDocument.info);
+        Assert.assertNull(pdfDocument.reader.pdfAConformanceLevel);
+    }
+
+    @Test
+    public void extendedPdfDocumentNoWriterInfoAndConformanceLevelInitialization() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "pdfWithMetadata.pdf")) {
+            // This class instance extends pdfDocument
+        };
+
+        // TODO DEVSIX-5292 These fields shouldn't be initialized during the document's opening
+        Assert.assertNotNull(pdfDocument.info);
+        Assert.assertNotNull(pdfDocument.reader.pdfAConformanceLevel);
+
+        pdfDocument.close();
+
+        Assert.assertNotNull(pdfDocument.info);
+        Assert.assertNotNull(pdfDocument.reader.pdfAConformanceLevel);
+    }
+
+    @Test
+    public void extendedPdfDocumentWriterInfoAndConformanceLevelInitialization() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(
+                new PdfReader(sourceFolder + "pdfWithMetadata.pdf"), new PdfWriter(new ByteArrayOutputStream())) {
+            // This class instance extends pdfDocument
+        };
+
+        Assert.assertNotNull(pdfDocument.info);
+        // TODO DEVSIX-5292 pdfAConformanceLevel shouldn't be initialized during the document's opening
+        Assert.assertNotNull(pdfDocument.reader.pdfAConformanceLevel);
+
+        pdfDocument.close();
+
+        Assert.assertNotNull(pdfDocument.info);
+        Assert.assertNotNull(pdfDocument.reader.pdfAConformanceLevel);
+    }
+
+    @Test
+    public void getDocumentInfoAlreadyClosedTest() throws IOException {
+        junitExpectedException.expect(PdfException.class);
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "pdfWithMetadata.pdf"));
+        pdfDocument.close();
+
+        pdfDocument.getDocumentInfo();
+
+        Assert.fail();
+    }
+
+    @Test
+    public void getDocumentInfoNotInitializedTest() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "pdfWithMetadata.pdf"));
+
+        Assert.assertNull(pdfDocument.info);
+        Assert.assertNotNull(pdfDocument.getDocumentInfo());
+
+        pdfDocument.close();
+    }
+
+    @Test
+    public void getPdfAConformanceLevelNotInitializedTest() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "pdfWithMetadata.pdf"));
+
+        Assert.assertNull(pdfDocument.reader.pdfAConformanceLevel);
+        Assert.assertNotNull(pdfDocument.reader.getPdfAConformanceLevel());
+
+        pdfDocument.close();
     }
 
     private static void assertLayerNames(PdfDocument outDocument, List<String> layerNames) {

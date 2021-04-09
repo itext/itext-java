@@ -64,6 +64,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Map;
+
+import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -605,13 +608,24 @@ public class PdfReader implements Closeable, Serializable {
     }
 
     /**
-     * Gets the declared Pdf/A conformance level of the source document that is being read.
+     * Gets the declared PDF/A conformance level of the source document that is being read.
      * Note that this information is provided via XMP metadata and is not verified by iText.
+     * {@link PdfReader#pdfAConformanceLevel} is lazy initialized.
+     * It will be initialized during the first call of this method.
      *
-     * @return conformance level of the source document, or {@code null} if no Pdf/A
+     * @return conformance level of the source document, or {@code null} if no PDF/A
      * conformance level information is specified.
      */
     public PdfAConformanceLevel getPdfAConformanceLevel() {
+        if (pdfAConformanceLevel == null) {
+            if (pdfDocument != null && pdfDocument.getXmpMetadata() != null) {
+                try {
+                    pdfAConformanceLevel = PdfAConformanceLevel.getConformanceLevel(
+                            XMPMetaFactory.parseFromBuffer(pdfDocument.getXmpMetadata()));
+                } catch (XMPException ignored) {
+                }
+            }
+        }
         return pdfAConformanceLevel;
     }
 
