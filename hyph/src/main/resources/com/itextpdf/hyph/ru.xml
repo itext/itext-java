@@ -55,7 +55,6 @@ Credits:
 - Conversion of BRHYPHEN.TEX to ru.xml and legal clarifications by
   Jeremias Maerki <jeremias@apache.org>
 -->
-<!DOCTYPE hyphenation-info SYSTEM "hyphenation.dtd">
 <hyphenation-info>
 <classes>
 аА
