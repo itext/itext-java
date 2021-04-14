@@ -82,6 +82,11 @@ public final class LogMessageConstant {
     public static final String COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT = "The Comb flag may be set only if the MaxLen entry is present in the text field dictionary and if the Multiline, Password, and FileSelect flags are clear.";
     public static final String COULD_NOT_FIND_GLYPH_WITH_CODE = "Could not find glyph with the following code: {0}";
     public static final String CREATED_ROOT_TAG_HAS_MAPPING = "Created root tag has role mapping: \"/Document\" role{0} is mapped{1}. Resulting tag structure might have invalid root tag.";
+    public static final String CREATE_COPY_SHOULD_BE_OVERRIDDEN = "While processing an instance of TextRenderer, "
+            + "iText uses createCopy() to create glyph lines of specific fonts, which represent its parts. "
+            + "So if one extends TextRenderer, one should override createCopy, otherwise if FontSelector "
+            + "related logic is triggered, copies of this TextRenderer will have the default behavior "
+            + "rather than the custom one.";
     public static final String DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET = "Destinations are not permitted for link annotations that already have actions. The old action will be removed.";
     public static final String DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT = "DirectOnly object cannot be indirect";
     public static final String DOCFONT_HAS_ILLEGAL_DIFFERENCES = "Document Font has illegal differences array. Entry {0} references a glyph ID over 255 and will be ignored.";

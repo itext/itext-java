@@ -24,6 +24,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
@@ -42,6 +43,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.OverflowWrapPropertyValue;
@@ -54,6 +56,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -717,5 +720,140 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         doc.add(paragraph);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN, count = 3)
+    })
+    public void customTextRendererShouldOverrideGetNextRendererTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "customTextRendererShouldOverrideGetNextRendererTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_customTextRendererShouldOverrideGetNextRendererTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Text text = new Text("If getNextRenderer() is not overridden and text overflows to the next line,"
+                + " then customizations are not applied. ");
+        text.setNextRenderer(new TextRenderer(text) {
+            @Override
+            public void draw(DrawContext drawContext) {
+                drawContext.getCanvas()
+                        .saveState()
+                        .setFillColor(ColorConstants.RED)
+                        .rectangle(occupiedArea.getBBox())
+                        .fill()
+                        .restoreState();
+                super.draw(drawContext);
+            }
+        });
+        doc.add(new Paragraph(text));
+
+        text = new Text("If getNextRenderer() is overridden and text overflows to the next line, "
+                + "then customizations are applied. ");
+        text.setNextRenderer(new TextRenderer(text) {
+            @Override
+            public void draw(DrawContext drawContext) {
+                drawContext.getCanvas()
+                        .saveState()
+                        .setFillColor(ColorConstants.RED)
+                        .rectangle(occupiedArea.getBBox())
+                        .fill()
+                        .restoreState();
+                super.draw(drawContext);
+            }
+
+            @Override
+            public IRenderer getNextRenderer() {
+                return new TextRendererWithOverriddenGetNextRenderer((Text) modelElement);
+            }
+        });
+        doc.add(new Paragraph(text));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.CREATE_COPY_SHOULD_BE_OVERRIDDEN, count = 8)
+    })
+    public void customTextRendererShouldOverrideCreateCopyTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "customTextRendererShouldOverrideCreateCopyTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_customTextRendererShouldOverrideCreateCopyTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        FontProvider fontProvider = new FontProvider();
+        Assert.assertTrue(fontProvider.addFont(fontsFolder + "NotoSans-Regular.ttf"));
+
+        doc.setFontProvider(fontProvider);
+        // To trigger font selector related logic one need to apply some font on a document
+        doc.setProperty(Property.FONT, new String[] {"SomeFont"});
+
+        StringBuilder longTextBuilder = new StringBuilder();
+        for (int i = 0; i < 4; i++) {
+            longTextBuilder.append("Дзень добры, свет! Hallo Welt! ");
+        }
+
+        Text text = new Text(longTextBuilder.toString());
+        text.setNextRenderer(new TextRenderer(text) {
+            @Override
+            public void draw(DrawContext drawContext) {
+                drawContext.getCanvas()
+                        .saveState()
+                        .setFillColor(ColorConstants.RED)
+                        .rectangle(occupiedArea.getBBox())
+                        .fill()
+                        .restoreState();
+                super.draw(drawContext);
+            }
+
+            @Override
+            public IRenderer getNextRenderer() {
+                return new TextRendererWithOverriddenGetNextRenderer((Text) modelElement);
+            }
+        });
+        doc.add(new Paragraph(text));
+
+        text.setNextRenderer(new TextRendererWithOverriddenGetNextRenderer(text));
+        doc.add(new Paragraph(text));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    private static class TextRendererWithOverriddenGetNextRenderer extends TextRenderer {
+        public TextRendererWithOverriddenGetNextRenderer(Text textElement) {
+            super(textElement);
+        }
+
+        protected TextRendererWithOverriddenGetNextRenderer(TextRenderer other) {
+            super(other);
+        }
+
+        @Override
+        public void draw(DrawContext drawContext) {
+            drawContext.getCanvas()
+                    .saveState()
+                    .setFillColor(ColorConstants.RED)
+                    .rectangle(occupiedArea.getBBox())
+                    .fill()
+                    .restoreState();
+            super.draw(drawContext);
+        }
+
+        @Override
+        public IRenderer getNextRenderer() {
+            return new TextRendererWithOverriddenGetNextRenderer((Text) modelElement);
+        }
+
+        @Override
+        protected TextRenderer createCopy(GlyphLine gl, PdfFont font) {
+            TextRenderer copy = new TextRendererWithOverriddenGetNextRenderer(this);
+            copy.setProcessedGlyphLineAndFont(gl, font);
+            return copy;
+        }
     }
 }

@@ -1209,10 +1209,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      * {@link #layout(LayoutContext)} is called more than once.
      *
      * <p>
-     * If a renderer overflows to the next area, iText uses this method to create a renderer
+     * If {@link TextRenderer} overflows to the next line, iText uses this method to create a renderer
      * for the overflow part. So if one wants to extend {@link TextRenderer}, one should override
      * this method: otherwise the default method will be used and thus the default rather than the custom
-     * renderer will be created.
+     * renderer will be created. Another method that should be overridden in case of
+     * {@TextRenderer}'s extension is {@link #createCopy(GlyphLine, PdfFont)}. This method is responsible
+     * for creation of {@TextRenderer}'s copies, which represent its parts of specific font.
      * @return new renderer instance
      */
     @Override
@@ -1591,7 +1593,24 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         setProperty(Property.FONT, font);
     }
 
+    /**
+     * Creates a copy of this {@link TextRenderer}, which corresponds to the passed {@link GlyphLine}
+     * with {@link PdfFont}.
+     * <p>
+     * While processing {@link TextRenderer}, iText uses this method to create {@link GlyphLine glyph lines}
+     * of specific {@link PdfFont fonts}, which represent the {@link TextRenderer}'s parts. If one extends
+     * {@link TextRenderer}, one should override this method, otherwise if {@link com.itextpdf.layout.font.FontSelector}
+     * related logic is triggered, copies of this {@link TextRenderer} will have the default behavior rather than
+     * the custom one.
+     * @param gl a {@link GlyphLine} which represents some of this {@link TextRenderer}'s content
+     * @param font a {@link PdfFont} for this part of the {@link TextRenderer}'s content
+     * @return copy of this {@link TextRenderer}, which correspond to the passed {@link GlyphLine} with {@link PdfFont}
+     */
     protected TextRenderer createCopy(GlyphLine gl, PdfFont font) {
+        if (TextRenderer.class != this.getClass()) {
+            Logger logger = LoggerFactory.getLogger(TextRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.CREATE_COPY_SHOULD_BE_OVERRIDDEN));
+        }
         TextRenderer copy = new TextRenderer(this);
         copy.setProcessedGlyphLineAndFont(gl, font);
         return copy;
