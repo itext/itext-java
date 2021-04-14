@@ -167,6 +167,39 @@ public final class InlineImageParsingUtils {
     }
 
     /**
+     * @param colorSpaceName the name of the color space. If null, a bi-tonal (black and white) color space is assumed.
+     * @return the components per pixel for the specified color space
+     */
+    static int getComponentsPerPixel(PdfName colorSpaceName, PdfDictionary colorSpaceDic) {
+        if (colorSpaceName == null)
+            return 1;
+        if (colorSpaceName.equals(PdfName.DeviceGray))
+            return 1;
+        if (colorSpaceName.equals(PdfName.DeviceRGB))
+            return 3;
+        if (colorSpaceName.equals(PdfName.DeviceCMYK))
+            return 4;
+
+        if (colorSpaceDic != null) {
+            PdfArray colorSpace = colorSpaceDic.getAsArray(colorSpaceName);
+            if (colorSpace != null) {
+                if (PdfName.Indexed.equals(colorSpace.getAsName(0))) {
+                    return 1;
+                } else if (PdfName.ICCBased.equals(colorSpace.getAsName(0))) {
+                    return colorSpace.getAsStream(1).getAsNumber(PdfName.N).intValue();
+                }
+            } else {
+                PdfName tempName = colorSpaceDic.getAsName(colorSpaceName);
+                if (tempName != null) {
+                    return getComponentsPerPixel(tempName, colorSpaceDic);
+                }
+            }
+        }
+
+        throw new InlineImageParseException(PdfException.UnexpectedColorSpace1).setMessageParams(colorSpaceName);
+    }
+
+    /**
      * Parses the next inline image dictionary from the parser.  The parser must be positioned immediately following the BI operator.
      * The parser will be left with position immediately following the whitespace character that follows the ID operator that ends the inline image dictionary.
      *
@@ -224,37 +257,6 @@ public final class InlineImageParsingUtils {
             }
         }
         return value;
-    }
-
-    /**
-     * @param colorSpaceName the name of the color space. If null, a bi-tonal (black and white) color space is assumed.
-     * @return the components per pixel for the specified color space
-     */
-    private static int getComponentsPerPixel(PdfName colorSpaceName, PdfDictionary colorSpaceDic) {
-        if (colorSpaceName == null)
-            return 1;
-        if (colorSpaceName.equals(PdfName.DeviceGray))
-            return 1;
-        if (colorSpaceName.equals(PdfName.DeviceRGB))
-            return 3;
-        if (colorSpaceName.equals(PdfName.DeviceCMYK))
-            return 4;
-
-        if (colorSpaceDic != null) {
-            PdfArray colorSpace = colorSpaceDic.getAsArray(colorSpaceName);
-            if (colorSpace != null) {
-                if (PdfName.Indexed.equals(colorSpace.getAsName(0))) {
-                    return 1;
-                }
-            } else {
-                PdfName tempName = colorSpaceDic.getAsName(colorSpaceName);
-                if (tempName != null) {
-                    return getComponentsPerPixel(tempName, colorSpaceDic);
-                }
-            }
-        }
-
-        throw new InlineImageParseException(PdfException.UnexpectedColorSpace1).setMessageParams(colorSpaceName);
     }
 
     /**
