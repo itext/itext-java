@@ -230,6 +230,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     MemoryLimitsAwareHandler memoryLimitsAwareHandler = null;
 
+    private EncryptedEmbeddedStreamsHandler encryptedEmbeddedStreamsHandler;
+
     /**
      * Open PDF document in reading mode.
      *
@@ -458,6 +460,17 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public PdfPage getLastPage() {
         return getPage(getNumberOfPages());
+    }
+
+    /**
+     * Marks {@link PdfStream} object as embedded file stream. Note that this method is for internal usage.
+     * To add an embedded file to the PDF document please use specialized API for file attachments.
+     * (e.g. {@link PdfDocument#addFileAttachment(String, PdfFileSpec)}, {@link PdfPage#addAnnotation(PdfAnnotation)})
+     *
+     * @param stream to be marked as embedded file stream
+     */
+    public void markStreamAsEmbeddedFile(PdfStream stream) {
+        encryptedEmbeddedStreamsHandler.storeEmbeddedStream(stream);
     }
 
     /**
@@ -1913,9 +1926,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     protected void open(PdfVersion newPdfVersion) {
         this.fingerPrint = new FingerPrint();
+        this.encryptedEmbeddedStreamsHandler = new EncryptedEmbeddedStreamsHandler(this);
 
         try {
             EventCounterHandler.getInstance().onEvent(CoreEvent.PROCESS, properties.metaInfo, getClass());
+            boolean embeddedStreamsSavedOnReading = false;
             if (reader != null) {
                 if (reader.pdfDocument != null) {
                     throw new PdfException(PdfException.PdfReaderHasBeenAlreadyUtilized);
@@ -1926,6 +1941,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     memoryLimitsAwareHandler = new MemoryLimitsAwareHandler(reader.tokens.getSafeFile().length());
                 }
                 reader.readPdf();
+                if (reader.decrypt != null && reader.decrypt.isEmbeddedFilesOnly()) {
+                    encryptedEmbeddedStreamsHandler.storeAllEmbeddedStreams();
+                    embeddedStreamsSavedOnReading = true;
+                }
                 for (ICounter counter : getCounters()) {
                     counter.onDocumentRead(reader.getFileLength());
                 }
@@ -2053,6 +2072,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     writer.initCryptoIfSpecified(pdfVersion);
                 }
                 if (writer.crypto != null) {
+                    if (!embeddedStreamsSavedOnReading && writer.crypto.isEmbeddedFilesOnly()) {
+                        encryptedEmbeddedStreamsHandler.storeAllEmbeddedStreams();
+                    }
                     if (writer.crypto.getCryptoMode() < EncryptionConstants.ENCRYPTION_AES_256) {
                         VersionConforming.validatePdfVersionForDeprecatedFeatureLogWarn(this, PdfVersion.PDF_2_0, VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS);
                     } else if (writer.crypto.getCryptoMode() == EncryptionConstants.ENCRYPTION_AES_256) {
@@ -2193,6 +2215,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     long getDocumentId() {
         return documentId;
+    }
+
+    boolean doesStreamBelongToEmbeddedFile(PdfStream stream) {
+        return encryptedEmbeddedStreamsHandler.isStreamStoredAsEmbedded(stream);
     }
 
     /**

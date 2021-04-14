@@ -390,7 +390,8 @@ public class PdfReader implements Closeable, Serializable {
             file.seek(stream.getOffset());
             bytes = new byte[length];
             file.readFully(bytes);
-            if (decrypt != null && !decrypt.isEmbeddedFilesOnly()) {
+            boolean embeddedStream = pdfDocument.doesStreamBelongToEmbeddedFile(stream);
+            if (decrypt != null && (!decrypt.isEmbeddedFilesOnly() || embeddedStream)) {
                 PdfObject filter = stream.get(PdfName.Filter, true);
                 boolean skip = false;
                 if (filter != null) {

@@ -421,9 +421,9 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         document.close();
 
 
-        //NOTE: Specific crypto filters for EFF StmF and StrF are not supported at the moment. iText don't distinguish objects based on their semantic role
-        //      because of this we can't read streams correctly and corrupt such documents on stamping.
-        boolean ERROR_IS_EXPECTED = true;
+        //TODO DEVSIX-5355 Specific crypto filters for EFF StmF and StrF are not supported at the moment.
+        // However we can read embedded files only mode.
+        boolean ERROR_IS_EXPECTED = false;
         checkDecryptedWithPasswordContent(destinationFolder + filename, OWNER, textContent, ERROR_IS_EXPECTED);
         checkDecryptedWithPasswordContent(destinationFolder + filename, USER, textContent, ERROR_IS_EXPECTED);
     }

@@ -484,7 +484,6 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 revision = STANDARD_ENCRYPTION_40;
                 break;
             case EncryptionConstants.STANDARD_ENCRYPTION_128:
-                embeddedFilesOnly = false;
                 if (length > 0) {
                     setKeyLength(length);
                 } else {
@@ -514,6 +513,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         if (rValue == null)
             throw new PdfException(PdfException.IllegalRValue);
         int revision  = rValue.intValue();
+        boolean embeddedFilesOnlyMode = readEmbeddedFilesOnlyFromEncryptDictionary(encDict);
         switch (revision) {
             case 2:
                 cryptoMode = EncryptionConstants.STANDARD_ENCRYPTION_40;
@@ -545,6 +545,9 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 if (em != null && !em.getValue()) {
                     cryptoMode |= EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
                 }
+                if (embeddedFilesOnlyMode) {
+                    cryptoMode |= EncryptionConstants.EMBEDDED_FILES_ONLY;
+                }
                 break;
             case 5:
             case 6:
@@ -552,6 +555,9 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 PdfBoolean em5 = encDict.getAsBoolean(PdfName.EncryptMetadata);
                 if (em5 != null && !em5.getValue()) {
                     cryptoMode |= EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
+                }
+                if (embeddedFilesOnlyMode) {
+                    cryptoMode |= EncryptionConstants.EMBEDDED_FILES_ONLY;
                 }
                 break;
             default:
@@ -570,6 +576,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         if (vValue == null)
             throw new PdfException(PdfException.IllegalVValue);
         int v = vValue.intValue();
+        boolean embeddedFilesOnlyMode = readEmbeddedFilesOnlyFromEncryptDictionary(encDict);
         switch (v) {
             case 1:
                 cryptoMode = EncryptionConstants.STANDARD_ENCRYPTION_40;
@@ -608,11 +615,31 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 if (em != null && !em.getValue()) {
                     cryptoMode |= EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
                 }
+                if (embeddedFilesOnlyMode) {
+                    cryptoMode |= EncryptionConstants.EMBEDDED_FILES_ONLY;
+                }
                 break;
             default:
                 throw new PdfException(PdfException.UnknownEncryptionTypeVEq1, vValue);
         }
         return setCryptoMode(cryptoMode, length);
+    }
+
+    static boolean readEmbeddedFilesOnlyFromEncryptDictionary(PdfDictionary encDict) {
+        PdfName embeddedFilesFilter = encDict.getAsName(PdfName.EFF);
+        boolean encryptEmbeddedFiles = !PdfName.Identity.equals(embeddedFilesFilter) && embeddedFilesFilter != null;
+        boolean encryptStreams = !PdfName.Identity.equals(encDict.getAsName(PdfName.StmF));
+        boolean encryptStrings = !PdfName.Identity.equals(encDict.getAsName(PdfName.StrF));
+        if (encryptStreams || encryptStrings || !encryptEmbeddedFiles) {
+            return false;
+        }
+
+        PdfDictionary cfDictionary = encDict.getAsDictionary(PdfName.CF);
+        if (cfDictionary != null) {
+            // Here we check if the crypt filter for embedded files and the filter in the CF dictionary are the same
+            return cfDictionary.getAsDictionary(embeddedFilesFilter) != null;
+        }
+        return false;
     }
 
     private int fixAccessibilityPermissionPdf20(int permissions) {

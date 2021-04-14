@@ -387,6 +387,7 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
         ef.put(PdfName.F, stream);
         ef.put(PdfName.UF, stream);
         dict.put(PdfName.EF, ef);
+        doc.markStreamAsEmbeddedFile(stream);
 
         return (PdfFileSpec) new PdfFileSpec(dict).makeIndirect(doc);
     }
