@@ -1825,7 +1825,9 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 1)})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE),
+            @LogMessage(messageTemplate = LogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN)})
     public void tableWithCustomRendererTest01() throws IOException, InterruptedException {
         String testName = "tableWithCustomRendererTest01.pdf";
         String outFileName = destinationFolder + testName;

@@ -52,6 +52,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.property.BorderCollapsePropertyValue;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
@@ -201,10 +202,19 @@ public class CellRenderer extends BlockRenderer {
     }
 
     /**
-     * {@inheritDoc}
+     * Gets a new instance of this class to be used as a next renderer, after this renderer is used, if
+     * {@link #layout(LayoutContext)} is called more than once.
+     *
+     * <p>
+     * If a renderer overflows to the next area, iText uses this method to create a renderer
+     * for the overflow part. So if one wants to extend {@link CellRenderer}, one should override
+     * this method: otherwise the default method will be used and thus the default rather than the custom
+     * renderer will be created.
+     * @return new renderer instance
      */
     @Override
     public IRenderer getNextRenderer() {
+        logWarningIfGetNextRendererNotOverridden(CellRenderer.class, this.getClass());
         return new CellRenderer((Cell) getModelElement());
     }
 }

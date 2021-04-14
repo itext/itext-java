@@ -70,6 +70,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.renderer.DrawContext;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -194,6 +195,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             form.addFieldAppearanceToPage(chk, pdf.getPage(pageNumber));
             //appearance stream was set, while AS has kept as is, i.e. in Off state.
             chk.setAppearance(PdfName.N, "v1".equals(_value) ? _value : "Off", appearance.getPdfObject());
+        }
+
+        @Override
+        public IRenderer getNextRenderer() {
+            return new PdfAButtonFieldTestRenderer((Paragraph) modelElement, _group, _value);
         }
     }
 

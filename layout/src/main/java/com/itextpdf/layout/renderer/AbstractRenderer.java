@@ -2735,6 +2735,16 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    boolean logWarningIfGetNextRendererNotOverridden(Class<?> baseClass, Class<?> rendererClass) {
+        if (baseClass != rendererClass) {
+            final Logger logger = LoggerFactory.getLogger(baseClass);
+            logger.warn(MessageFormatUtil.format(LogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN));
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     private void removeThisFromParent(IRenderer toRemove) {
         // we need to be sure that the removed element has no other entries in child renderers list
         if (toRemove != null && this == toRemove.getParent() && !this.childRenderers.contains(toRemove)) {
