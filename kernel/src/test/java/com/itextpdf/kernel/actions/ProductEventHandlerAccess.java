@@ -22,12 +22,11 @@
  */
 package com.itextpdf.kernel.actions;
 
-import com.itextpdf.kernel.actions.events.AbstractITextProductEvent;
+import com.itextpdf.kernel.actions.events.ITextProductEventWrapper;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -55,11 +54,11 @@ public class ProductEventHandlerAccess implements Closeable {
         return ProductEventHandler.INSTANCE.getProcessors();
     }
 
-    public List<AbstractITextProductEvent> getEvents(SequenceId id) {
+    public List<ITextProductEventWrapper> getEvents(SequenceId id) {
         return ProductEventHandler.INSTANCE.getEvents(id);
     }
 
-    public void addEvent(SequenceId id, AbstractITextProductEvent event) {
+    public void addEvent(SequenceId id, ITextProductEventWrapper event) {
         ProductEventHandler.INSTANCE.addEvent(id, event);
     }
 

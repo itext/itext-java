@@ -54,6 +54,16 @@ import java.util.List;
  */
 public class PdfException extends RuntimeException {
 
+    // Producer representation exceptions
+    public static final String InvalidUsageFormatRequired = "Invalid usage of placeholder \"{0}\": format is required";
+    public static final String InvalidUsageConfigurationForbidden = "Invalid usage of placeholder \"{0}\": any "
+            + "configuration is forbidden";
+    public static final String NoEventsWereRegisteredForTheDocument = "No events were registered for the document!";
+    public static final String PatternContainsOpenQuotation = "Pattern contains open quotation!";
+    public static final String PatternContainsUnexpectedCharacter = "Pattern contains unexpected character {0}";
+    public static final String PatternContainsUnexpectedComponent = "Pattern contains unexpected component {0}";
+
+
     /**
      * Object for more details
      */

@@ -96,6 +96,16 @@ public class PdfDocumentInfo {
         return put(PdfName.Creator, new PdfString(creator, PdfEncodings.UNICODE_BIG));
     }
 
+    /**
+     * Sets a producer line for the {@link PdfDocument} described by this instance.
+     *
+     * @param producer is a new producer line to set
+     * @return this instance
+     */
+    public PdfDocumentInfo setProducer(String producer) {
+        return put(PdfName.Producer, new PdfString(producer, PdfEncodings.UNICODE_BIG));
+    }
+
     public PdfDocumentInfo setTrapped(PdfName trapped) {
         return put(PdfName.Trapped, trapped);
     }

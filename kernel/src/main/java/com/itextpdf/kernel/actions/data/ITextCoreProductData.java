@@ -20,45 +20,30 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.actions.events;
+package com.itextpdf.kernel.actions.data;
 
-import com.itextpdf.kernel.counter.event.IMetaInfo;
+import com.itextpdf.kernel.Version;
+import com.itextpdf.kernel.actions.ProductNameConstant;
 
 /**
- * The event identifies that product usage was started.
+ * Stores an instance of {@link ProductData} related to iText core module.
  */
-public class InitiateEvent extends AbstractITextProductEvent {
-    private static final String INITIATE_TYPE = "initiate-product-session-event";
-    private final String productName;
+public class ITextCoreProductData {
+
+    private static final String CORE_PUBLIC_PRODUCT_NAME = "Core";
+    private static final int CORE_COPYRIGHT_SINCE = 1998;
+    private static final int CORE_COPYRIGHT_TO = 2021;
+
+    private static final ProductData ITEXT_PRODUCT_DATA = new ProductData(CORE_PUBLIC_PRODUCT_NAME,
+            ProductNameConstant.ITEXT_CORE, Version.getInstance().getInfo().getRelease(),
+            CORE_COPYRIGHT_SINCE, CORE_COPYRIGHT_TO);
 
     /**
-     * Creates a new instance of the event.
+     * Getter for an instance of {@link ProductData} related to iText core module.
      *
-     * @param productName is a product name
-     * @param metaInfo is an auxiliary meta data
+     * @return iText core product description
      */
-    public InitiateEvent(String productName, IMetaInfo metaInfo) {
-        super(metaInfo);
-        this.productName = productName;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@inheritDoc}
-     */
-    @Override
-    public String getEventType() {
-        return INITIATE_TYPE;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@inheritDoc}
-     */
-    @Override
-    public String getProductName() {
-        return productName;
+    public static ProductData getInstance() {
+        return ITEXT_PRODUCT_DATA;
     }
 }

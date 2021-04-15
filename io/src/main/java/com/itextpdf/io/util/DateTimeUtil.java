@@ -107,4 +107,8 @@ public final class DateTimeUtil {
             throw new RuntimeException(e);
         }
     }
+
+    public static String formatDate(Date date, String pattern) {
+        return new SimpleDateFormat(pattern).format(date);
+    }
 }

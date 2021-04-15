@@ -25,7 +25,7 @@ package com.itextpdf.kernel.actions;
 /**
  * The interface for an event handler.
  *
- * TODO: DEVSIX-4932 rename it IEventHandler when the oldest mechanism is deleted
+ * TODO: DEVSIX-5311 rename it IEventHandler when the oldest mechanism is deleted
  */
 public interface IBaseEventHandler {
     /**

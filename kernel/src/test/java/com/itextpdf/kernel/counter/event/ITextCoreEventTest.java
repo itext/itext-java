@@ -43,6 +43,7 @@
 package com.itextpdf.kernel.counter.event;
 
 import com.itextpdf.kernel.actions.ProductNameConstant;
+import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.actions.ecosystem.TestMetaInfo;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -69,17 +70,29 @@ public class ITextCoreEventTest extends ExtendedITextTest {
         Assert.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
         Assert.assertEquals("meta data", ((TestMetaInfo)event.getMetaInfo()).getMetaData());
         Assert.assertEquals(sequenceId, event.getSequenceId());
+
+        Assert.assertEquals(ITextCoreProductData.getInstance().getPublicProductName(), event.getProductData().getPublicProductName());
+        Assert.assertEquals(ITextCoreProductData.getInstance().getModuleName(), event.getProductData().getModuleName());
+        Assert.assertEquals(ITextCoreProductData.getInstance().getVersion(), event.getProductData().getVersion());
+        Assert.assertEquals(ITextCoreProductData.getInstance().getSinceCopyrightYear(), event.getProductData().getSinceCopyrightYear());
+        Assert.assertEquals(ITextCoreProductData.getInstance().getToCopyrightYear(), event.getProductData().getToCopyrightYear());
     }
 
     @Test
     public void documentEventCreationTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
-            ITextCoreEvent event = new ITextCoreEvent(document, new TestMetaInfo("meta data"), "test event");
+            ITextCoreEvent event = new ITextCoreEvent(document.getDocumentIdWrapper(), new TestMetaInfo("meta data"), "test event");
 
             Assert.assertEquals("test event", event.getEventType());
             Assert.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
             Assert.assertEquals("meta data", ((TestMetaInfo) event.getMetaInfo()).getMetaData());
             Assert.assertEquals(document.getDocumentIdWrapper(), event.getSequenceId());
+
+            Assert.assertEquals(ITextCoreProductData.getInstance().getPublicProductName(), event.getProductData().getPublicProductName());
+            Assert.assertEquals(ITextCoreProductData.getInstance().getModuleName(), event.getProductData().getModuleName());
+            Assert.assertEquals(ITextCoreProductData.getInstance().getVersion(), event.getProductData().getVersion());
+            Assert.assertEquals(ITextCoreProductData.getInstance().getSinceCopyrightYear(), event.getProductData().getSinceCopyrightYear());
+            Assert.assertEquals(ITextCoreProductData.getInstance().getToCopyrightYear(), event.getProductData().getToCopyrightYear());
         }
     }
 }

@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.actions.events;
 
 import com.itextpdf.kernel.actions.AbstractContextBasedITextEvent;
+import com.itextpdf.kernel.actions.data.ProductData;
 import com.itextpdf.kernel.counter.event.IMetaInfo;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -35,36 +36,29 @@ import java.lang.ref.WeakReference;
  */
 public abstract class AbstractITextProductEvent extends AbstractContextBasedITextEvent {
     private final WeakReference<SequenceId> sequenceId;
-
-    /**
-     * Creates an event associated with {@link PdfDocument}. It may contain auxiliary meta data.
-     *
-     * @param document is a document associated with the event
-     * @param metaInfo is an auxiliary meta info
-     */
-    public AbstractITextProductEvent(PdfDocument document, IMetaInfo metaInfo) {
-        this(document.getDocumentIdWrapper(), metaInfo);
-    }
+    private final ProductData productData;
 
     /**
      * Creates an event associated with {@link SequenceId}. It may contain auxiliary meta data.
      *
      * @param sequenceId is a general identifier for the event
+     * @param productData is a description of the product which has generated an event
      * @param metaInfo is an auxiliary meta info
      */
-    public AbstractITextProductEvent(SequenceId sequenceId, IMetaInfo metaInfo) {
+    public AbstractITextProductEvent(SequenceId sequenceId, ProductData productData, IMetaInfo metaInfo) {
         super(metaInfo);
         this.sequenceId = new WeakReference<>(sequenceId);
+        this.productData = productData;
     }
 
     /**
      * Creates an event which is not associated with any object. It may contain auxiliary meta data.
      *
+     * @param productData is a description of the product which has generated an event
      * @param metaInfo is an auxiliary meta info
      */
-    public AbstractITextProductEvent(IMetaInfo metaInfo) {
-        super(metaInfo);
-        this.sequenceId = new WeakReference<>(null);
+    public AbstractITextProductEvent(ProductData productData, IMetaInfo metaInfo) {
+        this(null, productData, metaInfo);
     }
 
     /**
@@ -74,5 +68,14 @@ public abstract class AbstractITextProductEvent extends AbstractContextBasedITex
      */
     public SequenceId getSequenceId() {
         return (SequenceId) sequenceId.get();
+    }
+
+    /**
+     * Retrieves a product data.
+     *
+     * @return information about the product which triggered the event
+     */
+    public ProductData getProductData() {
+        return productData;
     }
 }

@@ -20,9 +20,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.actions.events;
+package com.itextpdf.kernel.actions.data;
 
-import com.itextpdf.kernel.actions.ecosystem.TestMetaInfo;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -31,14 +30,15 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class InitiateEventTest extends ExtendedITextTest {
+public class ProductDataTest extends ExtendedITextTest {
     @Test
-    public void instantiationTest() {
-        InitiateEvent event = new InitiateEvent("test-product", new TestMetaInfo("test-meta-data"));
+    public void productDataCreationTest() {
+        ProductData productData = new ProductData("productName", "moduleName", "1.2", 1900, 2100);
 
-        Assert.assertEquals("initiate-product-session-event", event.getEventType());
-        Assert.assertEquals("test-product", event.getProductName());
-        Assert.assertEquals("test-meta-data", ((TestMetaInfo)event.getMetaInfo()).getMetaData());
-        Assert.assertNull(event.getSequenceId());
+        Assert.assertEquals("productName", productData.getPublicProductName());
+        Assert.assertEquals("moduleName", productData.getModuleName());
+        Assert.assertEquals("1.2", productData.getVersion());
+        Assert.assertEquals(1900, productData.getSinceCopyrightYear());
+        Assert.assertEquals(2100, productData.getToCopyrightYear());
     }
 }

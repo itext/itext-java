@@ -45,12 +45,12 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class PdfDocumentInfoTest extends ExtendedITextTest {
@@ -90,8 +90,8 @@ public class PdfDocumentInfoTest extends ExtendedITextTest {
 
         CompareTool ct = new CompareTool();
         Assert.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
-        // TODO DEVSIX-5054 update test with a new producer line
-        // Assert.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
+        // TODO DEVSIX-5323 update test with a new producer line
+        Assert.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
         Assert.assertNull(ct.compareXmp(outFile, cmpFile, true));
     }
 
@@ -109,8 +109,8 @@ public class PdfDocumentInfoTest extends ExtendedITextTest {
 
         CompareTool ct = new CompareTool();
         Assert.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
-        // TODO DEVSIX-5054 update test with a new producer line
-        // Assert.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
+        // TODO DEVSIX-5323 update test with a new producer line
+        Assert.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
         Assert.assertNull(ct.compareXmp(outFile, cmpFile, true));
     }
 

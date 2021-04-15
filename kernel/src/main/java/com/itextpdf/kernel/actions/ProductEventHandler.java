@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.actions;
 
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.actions.events.ITextProductEventWrapper;
 import com.itextpdf.kernel.actions.processors.DefaultITextProductEventProcessor;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
@@ -57,7 +58,7 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
             )));
 
     private final ConcurrentHashMap<String, ITextProductEventProcessor> processors = new ConcurrentHashMap<>();
-    private final WeakHashMap<SequenceId, List<AbstractITextProductEvent>> events = new WeakHashMap<>();
+    private final WeakHashMap<SequenceId, List<ITextProductEventWrapper>> events = new WeakHashMap<>();
 
     private ProductEventHandler() {
         super(UnknownContext.PERMISSIVE);
@@ -72,6 +73,8 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
     protected void onAcceptedEvent(ITextEvent event) {
         if (event instanceof AbstractITextProductEvent) {
             final AbstractITextProductEvent iTextEvent = (AbstractITextProductEvent) event;
+            final ITextProductEventProcessor productEventProcessor =
+                    findProcessorForProduct(iTextEvent.getProductName());
 
             if (iTextEvent.getSequenceId() != null) {
                 synchronized (events) {
@@ -81,11 +84,15 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
                         events.put(id, new ArrayList<>());
                     }
 
-                    events.get(id).add(iTextEvent);
+                    // TODO DEVSIX-5053 if event reporting will be done on document closing then
+                    //  event wrapping should be done there
+                    events.get(id).add(new ITextProductEventWrapper(iTextEvent,
+                            productEventProcessor.getUsageType(),
+                            productEventProcessor.getProducer()));
                 }
             }
 
-            findProcessorForProduct(iTextEvent.getProductName()).onEvent(iTextEvent);
+            productEventProcessor.onEvent(iTextEvent);
         }
     }
 
@@ -105,19 +112,19 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
         return Collections.unmodifiableMap(new HashMap<>(processors));
     }
 
-    List<AbstractITextProductEvent> getEvents(SequenceId id) {
+    List<ITextProductEventWrapper> getEvents(SequenceId id) {
         synchronized (events) {
-            final List<AbstractITextProductEvent> listOfEvents = events.get(id);
+            final List<ITextProductEventWrapper> listOfEvents = events.get(id);
             if (listOfEvents == null) {
-                return Collections.<AbstractITextProductEvent>emptyList();
+                return Collections.<ITextProductEventWrapper>emptyList();
             }
-            return Collections.<AbstractITextProductEvent>unmodifiableList(new ArrayList<>(listOfEvents));
+            return Collections.<ITextProductEventWrapper>unmodifiableList(new ArrayList<>(listOfEvents));
         }
     }
 
-    void addEvent(SequenceId id, AbstractITextProductEvent event) {
+    void addEvent(SequenceId id, ITextProductEventWrapper event) {
         synchronized (events) {
-            List<AbstractITextProductEvent> listOfEvents = events.get(id);
+            List<ITextProductEventWrapper> listOfEvents = events.get(id);
 
             if (listOfEvents == null) {
                 listOfEvents = new ArrayList<>();

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.actions.ecosystem;
 
+import com.itextpdf.kernel.actions.data.ProductData;
 import com.itextpdf.kernel.actions.events.AbstractITextProductEvent;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.counter.event.IMetaInfo;
@@ -31,18 +32,17 @@ public class ITextTestEvent extends AbstractITextProductEvent {
     private final String eventType;
     private final String productName;
 
-    public ITextTestEvent(PdfDocument document, IMetaInfo metaInfo, String eventType,
+    public ITextTestEvent(SequenceId sequenceId, IMetaInfo metaInfo, String eventType,
             String productName) {
-        super(document, metaInfo);
+        super(sequenceId, null, metaInfo);
         this.eventType = eventType;
         this.productName = productName;
     }
 
-    public ITextTestEvent(SequenceId sequenceId, IMetaInfo metaInfo, String eventType,
-            String productName) {
-        super(sequenceId, metaInfo);
+    public ITextTestEvent(SequenceId sequenceId, ProductData productData, IMetaInfo metaInfo, String eventType) {
+        super(sequenceId, productData, metaInfo);
         this.eventType = eventType;
-        this.productName = productName;
+        this.productName = productData.getModuleName();
     }
 
     @Override

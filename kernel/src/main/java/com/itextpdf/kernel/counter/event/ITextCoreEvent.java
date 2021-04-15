@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.counter.event;
 
 import com.itextpdf.kernel.actions.ProductNameConstant;
+import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.actions.events.AbstractITextProductEvent;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -36,24 +37,13 @@ public class ITextCoreEvent extends AbstractITextProductEvent {
     private final String eventType;
 
     /**
-     * Creates an event associated with the provided Pdf Document and additional meta data.
-     *
-     * @param document is a document associated with the event
-     * @param metaInfo is an additional meta info
-     */
-    public ITextCoreEvent(PdfDocument document, IMetaInfo metaInfo, String eventType) {
-        super(document, metaInfo);
-        this.eventType = eventType;
-    }
-
-    /**
      * Creates an event associated with a general identifier and additional meta data.
      *
      * @param sequenceId is an identifier associated with the event
      * @param metaInfo is an additional meta info
      */
     public ITextCoreEvent(SequenceId sequenceId, IMetaInfo metaInfo, String eventType) {
-        super(sequenceId, metaInfo);
+        super(sequenceId, ITextCoreProductData.getInstance(), metaInfo);
         this.eventType = eventType;
     }
 

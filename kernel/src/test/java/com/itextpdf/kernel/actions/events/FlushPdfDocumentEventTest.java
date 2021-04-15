@@ -23,10 +23,13 @@
 package com.itextpdf.kernel.actions.events;
 
 import com.itextpdf.kernel.KernelLogMessageConstant;
+import com.itextpdf.kernel.Toggle;
 import com.itextpdf.kernel.actions.ProductEventHandlerAccess;
 import com.itextpdf.kernel.actions.ProductNameConstant;
+import com.itextpdf.kernel.actions.data.ProductData;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
+import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.actions.session.ClosingSession;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -39,20 +42,34 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class ClosePdfDocumentEventTest extends ExtendedITextTest {
+public class FlushPdfDocumentEventTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/actions/";
+
+    @Before
+    public void before() {
+        // TODO DEVSIX-5323 remove toggle set up when the old mechanism deleted
+        Toggle.NEW_PRODUCER_LINE = true;
+    }
+
+    @After
+    public void after() {
+        // TODO DEVSIX-5323 remove toggle set up when the old mechanism deleted
+        Toggle.NEW_PRODUCER_LINE = false;
+    }
 
     @Test
     public void fieldsTest() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
-            ClosePdfDocumentEvent event = new ClosePdfDocumentEvent(document);
-            Assert.assertEquals("close-document-event", event.getEventType());
+            FlushPdfDocumentEvent event = new FlushPdfDocumentEvent(document);
+            Assert.assertEquals("flush-document-event", event.getEventType());
             Assert.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
         }
     }
@@ -66,12 +83,14 @@ public class ClosePdfDocumentEventTest extends ExtendedITextTest {
             access.addProcessor(new TestProductEventProcessor("test-product-1", forMessages));
             access.addProcessor(new TestProductEventProcessor("test-product-2", forMessages));
 
-            access.addEvent(document.getDocumentIdWrapper(), new ITextTestEvent(document, null, "testing", "test-product-1"));
-            access.addEvent(document.getDocumentIdWrapper(), new ITextTestEvent(document, null, "testing", "test-product-1"));
-            access.addEvent(document.getDocumentIdWrapper(), new ITextTestEvent(document, null, "testing", "test-product-2"));
-            access.addEvent(document.getDocumentIdWrapper(), new ITextTestEvent(document, null, "testing", "test-product-2"));
 
-            new ClosePdfDocumentEvent(document).doAction();
+
+            access.addEvent(document.getDocumentIdWrapper(), getEvent("test-product-1", document.getDocumentIdWrapper()));
+            access.addEvent(document.getDocumentIdWrapper(), getEvent("test-product-1", document.getDocumentIdWrapper()));
+            access.addEvent(document.getDocumentIdWrapper(), getEvent("test-product-2", document.getDocumentIdWrapper()));
+            access.addEvent(document.getDocumentIdWrapper(), getEvent("test-product-2", document.getDocumentIdWrapper()));
+
+            new FlushPdfDocumentEvent(document).doAction();
 
             Assert.assertEquals(4, forMessages.size());
             Assert.assertTrue(forMessages.contains("aggregation message from test-product-1"));
@@ -90,22 +109,22 @@ public class ClosePdfDocumentEventTest extends ExtendedITextTest {
     @Test
     @LogMessages(
             messages = {
-                    @LogMessage(messageTemplate = KernelLogMessageConstant.UNKNOWN_PRODUCT_INVOLVED, count = 2)
+                    @LogMessage(messageTemplate = KernelLogMessageConstant.UNKNOWN_PRODUCT_INVOLVED)
             }
     )
     public void unknownProductTest() throws IOException {
             try (ProductEventHandlerAccess access = new ProductEventHandlerAccess();
                     PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
 
-            access.addEvent(document.getDocumentIdWrapper(), new ITextTestEvent(document, null, "testing", "unknown product"));
+            access.addEvent(document.getDocumentIdWrapper(), getEvent("unknown product", document.getDocumentIdWrapper()));
 
-            AssertUtil.doesNotThrow(() ->new ClosePdfDocumentEvent(document).doAction());
+            AssertUtil.doesNotThrow(() -> new FlushPdfDocumentEvent(document).doAction());
         }
     }
 
     @Test
     public void doActionNullDocumentTest() {
-        ClosePdfDocumentEvent closeEvent = new ClosePdfDocumentEvent(null);
+        FlushPdfDocumentEvent closeEvent = new FlushPdfDocumentEvent(null);
         AssertUtil.doesNotThrow(() -> closeEvent.doAction());
     }
 
@@ -129,6 +148,16 @@ public class ClosePdfDocumentEventTest extends ExtendedITextTest {
         }
 
         @Override
+        public String getUsageType() {
+            return "AGPL Version";
+        }
+
+        @Override
+        public String getProducer() {
+            return "iText";
+        }
+
+        @Override
         public void aggregationOnClose(ClosingSession session) {
             aggregatedMessages.add("aggregation message from " + processorId);
         }
@@ -138,4 +167,10 @@ public class ClosePdfDocumentEventTest extends ExtendedITextTest {
             aggregatedMessages.add("completion message from " + processorId);
         }
     }
+
+    private static ITextProductEventWrapper getEvent(String productName, SequenceId sequenceId) {
+        ProductData productData = new ProductData(productName, productName, "2.0", 1999, 2020);
+        return new ITextProductEventWrapper(new ITextTestEvent(sequenceId, productData, null, "testing"), "AGPL Version", "iText");
+    }
+
 }

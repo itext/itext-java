@@ -23,18 +23,15 @@
 package com.itextpdf.kernel.actions.processors;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.Toggle;
 import com.itextpdf.kernel.actions.events.AbstractITextProductEvent;
 import com.itextpdf.kernel.actions.session.ClosingSession;
-import com.itextpdf.kernel.pdf.PdfDocument;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Defines a default strategy of product event processing.
  */
 public class DefaultITextProductEventProcessor implements ITextProductEventProcessor {
-    // TODO: DEVSIX-5054 should be removed when new producer line building logic is implemented
+    // TODO: DEVSIX-5323 should be removed when new producer line building logic is implemented
     private final static String OLD_MECHANISM_PRODUCER_LINE_WAS_SET = "old-mechanism-producer-line-was-set";
 
     private final String productName;
@@ -72,16 +69,33 @@ public class DefaultITextProductEventProcessor implements ITextProductEventProce
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public String getUsageType() {
+        return "AGPL";
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public String getProducer() {
+        return "iText\u00ae ${usedProducts:P V (T 'version')} \u00a9${copyrightSince}-${copyrightTo} iText Group NV";
+    }
+
+    /**
      * Collects info about products involved into document processing.
      *
      * @param closingSession is a closing session
      */
     @Override
     public void aggregationOnClose(ClosingSession closingSession) {
-        if (closingSession.getProducer() == null) {
-            closingSession.setProducer(new ArrayList<>());
-        }
-        closingSession.getProducer().add(getProducer());
+
     }
 
     /**
@@ -91,32 +105,14 @@ public class DefaultITextProductEventProcessor implements ITextProductEventProce
      */
     @Override
     public void completionOnClose(ClosingSession closingSession) {
-        if (closingSession.getProducer() != null) {
-            final List<String> lines = closingSession.getProducer();
-            updateProducerLine(closingSession.getDocument(), lines);
-            closingSession.setProducer(null);
-        }
-
-        //TODO: DEVSIX-5054 code below should be removed when new producer line building logic is implemented
-        if (closingSession.getProperty(OLD_MECHANISM_PRODUCER_LINE_WAS_SET) == null) {
-            if (closingSession.getDocument() != null) {
-                closingSession.getDocument().updateProducerInInfoDictionary();
+        // TODO DEVSIX-5323 remove the logic when all tests are ready
+        if (! Toggle.NEW_PRODUCER_LINE) {
+            if (closingSession.getProperty(OLD_MECHANISM_PRODUCER_LINE_WAS_SET) == null) {
+                if (closingSession.getDocument() != null) {
+                    closingSession.getDocument().updateProducerInInfoDictionary();
+                }
+                closingSession.setProperty(OLD_MECHANISM_PRODUCER_LINE_WAS_SET, Boolean.TRUE);
             }
-            closingSession.setProperty(OLD_MECHANISM_PRODUCER_LINE_WAS_SET, Boolean.TRUE);
         }
-    }
-
-    /**
-     * Gets a label which defines a product.
-     *
-     * @return a product label
-     */
-    protected String getProducer() {
-        // TODO: DEVSIX-5054: probably productName + "(AGPL)"
-        return productName;
-    }
-
-    private static void updateProducerLine(PdfDocument document, List<String> elements) {
-        // TODO: DEVSIX-5054
     }
 }

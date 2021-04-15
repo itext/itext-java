@@ -20,12 +20,26 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.actions;
+package com.itextpdf.kernel.actions.producer;
+
+import com.itextpdf.kernel.actions.events.ITextProductEventWrapper;
+
+import java.util.List;
 
 /**
- * Base marker interface for any generated event of any source.
- *
- * TODO: DEVSIX-5311 rename it IEvent when the oldest mechanism is deleted
+ * Interface for placeholder population.
  */
-public interface IBaseEvent {
+interface IPlaceholderPopulator {
+    /**
+     * Populates a placeholder based on the list of
+     * {@link ITextProductEventWrapper iTextProdecutEvemtWrappers} and the array of parts of
+     * placeholder.
+     *
+     * @param events is a list of event involved into document processing
+     * @param parameter is a parameter passed to a placeholder and separated via delimiter
+     *                  <code>:</code>
+     *
+     * @return value for placeholder replacement
+     */
+    String populate(List<ITextProductEventWrapper> events, String parameter);
 }

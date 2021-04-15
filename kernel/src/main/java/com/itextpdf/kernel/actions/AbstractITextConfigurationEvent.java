@@ -22,7 +22,7 @@
  */
 package com.itextpdf.kernel.actions;
 
-import com.itextpdf.kernel.actions.events.AbstractITextProductEvent;
+import com.itextpdf.kernel.actions.events.ITextProductEventWrapper;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 
@@ -92,23 +92,23 @@ public abstract class AbstractITextConfigurationEvent implements ITextEvent {
     }
 
     /**
-     * Gets events registered for provided identifier.
+     * Gets events wrapped with {@link ITextProductEventWrapper} registered for provided identifier.
      *
      * @param id is the identifier
      *
-     * @return the list of event for identifier
+     * @return the list of wrapped event for identifier
      */
-    protected List<AbstractITextProductEvent> getEvents(SequenceId id) {
+    protected List<ITextProductEventWrapper> getEvents(SequenceId id) {
         return ProductEventHandler.INSTANCE.getEvents(id);
     }
 
     /**
-     * Registers a new event for provided identifier.
+     * Registers a new event wrapped with {@link ITextProductEventWrapper} for provided identifier.
      *
      * @param id is the identifier
-     * @param event is the event to register
+     * @param event is the wrapped event to register
      */
-    protected void addEvent(SequenceId id, AbstractITextProductEvent event) {
+    protected void addEvent(SequenceId id, ITextProductEventWrapper event) {
         ProductEventHandler.INSTANCE.addEvent(id, event);
     }
     /**

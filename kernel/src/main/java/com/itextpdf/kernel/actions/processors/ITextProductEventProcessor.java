@@ -44,6 +44,20 @@ public interface ITextProductEventProcessor {
     String getProductName();
 
     /**
+     * Gets the usage type of the product to which this processor corresponds.
+     *
+     * @return the usage type
+     */
+    String getUsageType();
+
+    /**
+     * Gets the producer line for the product.
+     *
+     * @return the producer line
+     */
+    String getProducer();
+
+    /**
      * When document is closing it will search for every {@link ITextProductEventProcessor}
      * associated with the products involved into document processing and may aggregate some data
      * from them. Aggregation stage is the first stage of closing process. See also the second step:

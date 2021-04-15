@@ -59,25 +59,22 @@ public class LinkDocumentIdEventTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = KernelLogMessageConstant.UNKNOWN_PRODUCT_INVOLVED, count = 5
-    )})
     public void doActionLinkModifiedDocumentTest() throws IOException {
         try (ProductEventHandlerAccess access = new ProductEventHandlerAccess();
                 PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
 
             SequenceId sequenceId = new SequenceId();
-            access.addEvent(sequenceId, new ITextTestEvent(sequenceId, null, "sequenceId-testing",
-                    "test-product-0"));
-            access.addEvent(sequenceId, new ITextTestEvent(sequenceId, null, "sequenceId-testing",
-                    "test-product-1"));
-            access.addEvent(sequenceId, new ITextTestEvent(sequenceId, null, "sequenceId-testing",
-                    "test-product-2"));
+            access.addEvent(sequenceId, wrapEvent(new ITextTestEvent(sequenceId, null, "sequenceId-testing",
+                    "test-product-0")));
+            access.addEvent(sequenceId, wrapEvent(new ITextTestEvent(sequenceId, null, "sequenceId-testing",
+                    "test-product-1")));
+            access.addEvent(sequenceId, wrapEvent(new ITextTestEvent(sequenceId, null, "sequenceId-testing",
+                    "test-product-2")));
 
-            access.addEvent(document.getDocumentIdWrapper(), new ITextTestEvent(document, null, "document-testing",
-                    "test-product-3"));
-            access.addEvent(document.getDocumentIdWrapper(), new ITextTestEvent(document, null, "document-testing",
-                    "test-product-4"));
+            access.addEvent(document.getDocumentIdWrapper(), wrapEvent(new ITextTestEvent(document.getDocumentIdWrapper(), null, "document-testing",
+                    "test-product-3")));
+            access.addEvent(document.getDocumentIdWrapper(), wrapEvent(new ITextTestEvent(document.getDocumentIdWrapper(), null, "document-testing",
+                    "test-product-4")));
 
 
             int initialSequenceEventsNumber = access.getEvents(sequenceId).size();
@@ -87,11 +84,11 @@ public class LinkDocumentIdEventTest extends ExtendedITextTest {
 
             Assert.assertEquals(initialSequenceEventsNumber, access.getEvents(sequenceId).size());
 
-            List<AbstractITextProductEvent> actualDocumentEvents = access.getEvents(document.getDocumentIdWrapper());
+            List<ITextProductEventWrapper> actualDocumentEvents = access.getEvents(document.getDocumentIdWrapper());
             Assert.assertEquals(initialDocumentEventsNumber + 3, actualDocumentEvents.size());
 
             for (int i = initialDocumentEventsNumber; i < initialDocumentEventsNumber + 3; i++) {
-                AbstractITextProductEvent sequenceEvent = actualDocumentEvents.get(i);
+                AbstractITextProductEvent sequenceEvent = actualDocumentEvents.get(i).getEvent();
                 Assert.assertEquals("sequenceId-testing", sequenceEvent.getEventType());
                 Assert.assertEquals("test-product-" + (i - initialDocumentEventsNumber), sequenceEvent.getProductName());
                 Assert.assertNull(sequenceEvent.getMetaInfo());
@@ -107,5 +104,9 @@ public class LinkDocumentIdEventTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
             AssertUtil.doesNotThrow(() -> new LinkDocumentIdEvent(document, null, ProductNameConstant.ITEXT_CORE));
         }
+    }
+
+    private static ITextProductEventWrapper wrapEvent(AbstractITextProductEvent event) {
+        return new ITextProductEventWrapper(event, "AGPL Version", "iText");
     }
 }

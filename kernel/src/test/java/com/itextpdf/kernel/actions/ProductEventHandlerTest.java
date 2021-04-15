@@ -25,7 +25,9 @@ package com.itextpdf.kernel.actions;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.actions.events.AbstractITextProductEvent;
+import com.itextpdf.kernel.actions.events.ITextProductEventWrapper;
 import com.itextpdf.kernel.actions.exceptions.UnknownProductException;
+import com.itextpdf.kernel.actions.processors.DefaultITextProductEventProcessor;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -71,7 +73,13 @@ public class ProductEventHandlerTest extends ExtendedITextTest {
                 ProductNameConstant.ITEXT_CORE));
 
         Assert.assertEquals(1, handler.getEvents(sequenceId).size());
-        AbstractITextProductEvent event = handler.getEvents(sequenceId).get(0);
+
+        ITextProductEventWrapper wrapper = handler.getEvents(sequenceId).get(0);
+        DefaultITextProductEventProcessor processor = new DefaultITextProductEventProcessor(ProductNameConstant.ITEXT_CORE);
+        Assert.assertEquals(processor.getUsageType(), wrapper.getProductUsageType());
+        Assert.assertEquals(processor.getProducer(), wrapper.getProducerLine());
+
+        AbstractITextProductEvent event = handler.getEvents(sequenceId).get(0).getEvent();
         Assert.assertEquals(sequenceId.getId(), event.getSequenceId().getId());
         Assert.assertNull(event.getMetaInfo());
         Assert.assertEquals("test-event", event.getEventType());
@@ -85,16 +93,23 @@ public class ProductEventHandlerTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
 
             int alreadyRegisteredEvents = handler.getEvents(document.getDocumentIdWrapper()).size();
-            handler.onAcceptedEvent(new ITextTestEvent(document, null, "test-event",
+            handler.onAcceptedEvent(new ITextTestEvent(document.getDocumentIdWrapper(), null, "test-event",
                     ProductNameConstant.ITEXT_CORE));
 
             Assert.assertEquals(alreadyRegisteredEvents + 1, handler.getEvents(document.getDocumentIdWrapper()).size());
 
-            AbstractITextProductEvent event = handler.getEvents(document.getDocumentIdWrapper()).get(alreadyRegisteredEvents);
+            DefaultITextProductEventProcessor processor = new DefaultITextProductEventProcessor(ProductNameConstant.ITEXT_CORE);
+
+            ITextProductEventWrapper wrapper = handler.getEvents(document.getDocumentIdWrapper()).get(alreadyRegisteredEvents);
+            Assert.assertEquals(processor.getProducer(), wrapper.getProducerLine());
+            Assert.assertEquals(processor.getUsageType(), wrapper.getProductUsageType());
+
+            AbstractITextProductEvent event = wrapper.getEvent();
             Assert.assertEquals(document.getDocumentIdWrapper(), event.getSequenceId());
             Assert.assertNull(event.getMetaInfo());
             Assert.assertEquals("test-event", event.getEventType());
             Assert.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
+            Assert.assertNull(event.getProductData());
         }
     }
 }

@@ -47,41 +47,15 @@ public class DefaultITextProductEventProcessorTest extends ExtendedITextTest {
         new DefaultITextProductEventProcessor(null);
     }
 
+
     @Test
-    public void buildFirstLineOfProducerTest() {
+    public void oldMechanismSetProducerTest() {
         DefaultITextProductEventProcessor processor = new DefaultITextProductEventProcessor("test-product");
         ClosingSession session = new ClosingSession(null);
 
-        processor.aggregationOnClose(session);
-
-        Assert.assertNotNull(session.getProducer());
-        Assert.assertEquals(1, session.getProducer().size());
-        Assert.assertEquals("test-product", session.getProducer().get(0));
-
         processor.completionOnClose(session);
 
-        Assert.assertNull(session.getProducer());
-
-    }
-
-    @Test
-    public void buildSecondLineOfProducerTest() {
-        DefaultITextProductEventProcessor processor = new DefaultITextProductEventProcessor("test-product");
-        ClosingSession session = new ClosingSession(null);
-        List<String> producer = new ArrayList<>();
-        producer.add("some producer");
-        session.setProducer(producer);
-
-        processor.aggregationOnClose(session);
-
-        Assert.assertNotNull(session.getProducer());
-        Assert.assertEquals(2, session.getProducer().size());
-        Assert.assertEquals("some producer", session.getProducer().get(0));
-        Assert.assertEquals("test-product", session.getProducer().get(1));
-
-        processor.completionOnClose(session);
-
-        Assert.assertNull(session.getProducer());
+        Assert.assertEquals(Boolean.TRUE, session.getProperty("old-mechanism-producer-line-was-set"));
 
     }
 }

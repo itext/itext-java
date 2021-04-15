@@ -55,7 +55,7 @@ import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.VersionInfo;
 import com.itextpdf.kernel.actions.EventManager;
-import com.itextpdf.kernel.actions.events.ClosePdfDocumentEvent;
+import com.itextpdf.kernel.actions.events.FlushPdfDocumentEvent;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.counter.EventCounterHandler;
 import com.itextpdf.kernel.counter.event.CoreEvent;
@@ -838,13 +838,14 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             return;
         }
         isClosing = true;
-        EventManager.getInstance().onEvent(new ClosePdfDocumentEvent(this));
         try {
             if (writer != null) {
                 if (catalog.isFlushed()) {
                     throw new PdfException(
                             KernelExceptionMessageConstant.CANNOT_CLOSE_DOCUMENT_WITH_ALREADY_FLUSHED_PDF_CATALOG);
                 }
+                // The event will prepare document for flushing, i.e. will set an appropriate producer line
+                EventManager.getInstance().onEvent(new FlushPdfDocumentEvent(this));
                 updateXmpMetadata();
                 // In PDF 2.0, all the values except CreationDate and ModDate are deprecated. Remove them now
                 if (pdfVersion.compareTo(PdfVersion.PDF_2_0) >= 0) {
@@ -1859,7 +1860,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     /**
      * Updates producer line of the document.
      *
-     * TODO: DEVSIX-5054 should be removed when new producer line building logic is implemented
+     * TODO: DEVSIX-5323 should be removed when new producer line building logic is implemented
      */
     public void updateProducerInInfoDictionary() {
         String producer = null;
@@ -1951,7 +1952,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         this.encryptedEmbeddedStreamsHandler = new EncryptedEmbeddedStreamsHandler(this);
 
         try {
-            EventManager.getInstance().onEvent(new ITextCoreEvent(this, null,
+            EventManager.getInstance().onEvent(new ITextCoreEvent(this.getDocumentIdWrapper(), null,
                     ITextCoreEvent.OPEN_DOCUMENT));
             EventCounterHandler.getInstance().onEvent(CoreEvent.PROCESS, properties.metaInfo, getClass());
             boolean embeddedStreamsSavedOnReading = false;

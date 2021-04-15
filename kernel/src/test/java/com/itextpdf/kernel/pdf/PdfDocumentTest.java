@@ -45,10 +45,9 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.DeflaterOutputStream;
-import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.Toggle;
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
@@ -65,16 +64,16 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.nio.charset.StandardCharsets;
-
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -90,18 +89,33 @@ public class PdfDocumentTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @Before
+    public void before() {
+        // TODO DEVSIX-5323 remove toggle set up when the old mechanism deleted
+        Toggle.NEW_PRODUCER_LINE = true;
+    }
+
+    @After
+    public void after() {
+        // TODO DEVSIX-5323 remove toggle set up when the old mechanism deleted
+        Toggle.NEW_PRODUCER_LINE = false;
+    }
+
     @Test
-    @Ignore("DEVSIX-5054: update the test with a new format of producer line")
     public void missingProducerTest() throws IOException {
         String inputFile = SOURCE_FOLDER + "missingProducer.pdf";
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(outputStream))) {
             PdfDocumentInfo documentInfo = document.getDocumentInfo();
             Assert.assertNull(documentInfo.getPdfObject().get(PdfName.Producer));
             Assert.assertNull(documentInfo.getProducer());
         }
 
-        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(new ByteArrayOutputStream()))) {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputStream),
+                new PdfWriter(new ByteArrayOutputStream()))) {
             PdfDocumentInfo documentInfo = document.getDocumentInfo();
             Assert.assertNotNull(documentInfo.getPdfObject().get(PdfName.Producer));
             Assert.assertNotNull(document.getDocumentInfo().getProducer());
@@ -109,17 +123,19 @@ public class PdfDocumentTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-5054: update the test with a new format of producer line")
     public void nullProducerTest() throws IOException {
         String inputFile = SOURCE_FOLDER + "nullProducer.pdf";
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(outputStream))) {
             PdfDocumentInfo documentInfo = document.getDocumentInfo();
             Assert.assertEquals(PdfNull.PDF_NULL, documentInfo.getPdfObject().get(PdfName.Producer));
             Assert.assertNull(documentInfo.getProducer());
         }
 
-        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(new ByteArrayOutputStream()))) {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputStream), new PdfWriter(new ByteArrayOutputStream()))) {
             PdfDocumentInfo documentInfo = document.getDocumentInfo();
             Assert.assertNotNull(documentInfo.getPdfObject().get(PdfName.Producer));
             Assert.assertNotNull(document.getDocumentInfo().getProducer());
@@ -127,17 +143,19 @@ public class PdfDocumentTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-5054: update the test with a new format of producer line")
     public void nameProducerTest() throws IOException {
         String inputFile = SOURCE_FOLDER + "nameProducer.pdf";
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(outputStream))) {
             PdfDocumentInfo documentInfo = document.getDocumentInfo();
             Assert.assertEquals(new PdfName("producerAsName"), documentInfo.getPdfObject().get(PdfName.Producer));
             Assert.assertNull(documentInfo.getProducer());
         }
 
-        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(new ByteArrayOutputStream()))) {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputStream), new PdfWriter(new ByteArrayOutputStream()))) {
             PdfDocumentInfo documentInfo = document.getDocumentInfo();
             Assert.assertNotNull(documentInfo.getPdfObject().get(PdfName.Producer));
             Assert.assertNotNull(document.getDocumentInfo().getProducer());

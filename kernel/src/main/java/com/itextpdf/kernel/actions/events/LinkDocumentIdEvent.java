@@ -74,11 +74,11 @@ public final class LinkDocumentIdEvent extends AbstractITextConfigurationEvent {
             return;
         }
 
-        final List<AbstractITextProductEvent> anonymousEvents = getEvents(storedSequenceId);
+        final List<ITextProductEventWrapper> anonymousEvents = getEvents(storedSequenceId);
 
         if (anonymousEvents != null) {
             final SequenceId documentId = storedPdfDocument.getDocumentIdWrapper();
-            for (final AbstractITextProductEvent event : anonymousEvents) {
+            for (final ITextProductEventWrapper event : anonymousEvents) {
                 addEvent(documentId, event);
             }
         }
