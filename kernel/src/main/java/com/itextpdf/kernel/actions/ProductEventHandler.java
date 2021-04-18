@@ -60,7 +60,7 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
     private final WeakHashMap<SequenceId, List<AbstractITextProductEvent>> events = new WeakHashMap<>();
 
     private ProductEventHandler() {
-        super(UnknownContext.RESTRICTIVE);
+        super(UnknownContext.PERMISSIVE);
     }
 
     /**

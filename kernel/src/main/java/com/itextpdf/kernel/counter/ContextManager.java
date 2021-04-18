@@ -103,7 +103,7 @@ public class ContextManager {
     }
 
     /**
-     * Gets the singelton instance of this class
+     * Gets the singleton instance of this class
      *
      * @return the {@link ContextManager} instance
      */
@@ -155,8 +155,8 @@ public class ContextManager {
         return null;
     }
 
-    private void registerGenericContext(Collection<String> namespaces, Collection<String> eventIds) {
-        registerGenericContextForProducts(namespaces, eventIds, Collections.<String>emptyList());
+    void registerGenericContext(Collection<String> namespaces, Collection<String> products) {
+        registerGenericContextForProducts(namespaces, Collections.<String>emptyList(), products);
     }
 
     private void registerGenericContextForProducts(Collection<String> namespaces, Collection<String> eventIds,
