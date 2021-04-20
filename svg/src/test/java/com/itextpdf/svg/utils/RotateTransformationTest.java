@@ -50,15 +50,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class RotateTransformationTest extends ExtendedITextTest {
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void normalRotateTest() {
@@ -71,10 +67,10 @@ public class RotateTransformationTest extends ExtendedITextTest {
 
     @Test
     public void noRotateValuesTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
-
-        TransformUtils.parseTransform("rotate()");
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> TransformUtils.parseTransform("rotate()")
+        );
+        Assert.assertEquals(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test
@@ -87,10 +83,10 @@ public class RotateTransformationTest extends ExtendedITextTest {
 
     @Test
     public void twoRotateValuesTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
-
-        TransformUtils.parseTransform("rotate(23,58)");
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> TransformUtils.parseTransform("rotate(23,58)")
+        );
+        Assert.assertEquals(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test
@@ -104,10 +100,10 @@ public class RotateTransformationTest extends ExtendedITextTest {
 
     @Test
     public void tooManyRotateValuesTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
-
-        TransformUtils.parseTransform("rotate(1 2 3 4)");
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> TransformUtils.parseTransform("rotate(1 2 3 4)")
+        );
+        Assert.assertEquals(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test

@@ -61,17 +61,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class CssUtilsTest extends ExtendedITextTest {
     private static float EPS = 0.0001f;
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void extractShorthandPropertiesFromEmptyStringTest() {
@@ -116,20 +111,21 @@ public class CssUtilsTest extends ExtendedITextTest {
 
     @Test
     public void parseAbsoluteLengthFromNAN() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.NAN, "Definitely not a number"));
-
         String value = "Definitely not a number";
-        CssUtils.parseAbsoluteLength(value);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssUtils.parseAbsoluteLength(value)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.NAN, "Definitely not a number"),
+                e.getMessage());
     }
 
     @Test
     public void parseAbsoluteLengthFromNull() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.NAN, "null"));
-
         String value = null;
-        CssUtils.parseAbsoluteLength(value);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssUtils.parseAbsoluteLength(value)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.NAN, "null"), e.getMessage());
     }
 
     @Test
@@ -353,10 +349,10 @@ public class CssUtilsTest extends ExtendedITextTest {
 
     @Test
     public void parseResolutionInvalidUnit() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(LogMessageConstant.INCORRECT_RESOLUTION_UNIT_VALUE);
-
-        CssUtils.parseResolution("10incorrectUnit");
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssUtils.parseResolution("10incorrectUnit")
+        );
+        Assert.assertEquals(LogMessageConstant.INCORRECT_RESOLUTION_UNIT_VALUE, e.getMessage());
     }
 
     @Test

@@ -73,10 +73,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Set;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfACheckerTest extends ExtendedITextTest {

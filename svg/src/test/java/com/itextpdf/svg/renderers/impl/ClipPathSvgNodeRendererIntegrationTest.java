@@ -46,11 +46,10 @@ import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 
@@ -59,9 +58,6 @@ public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/ClipPathTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/ClipPathTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     private SvgConverterProperties properties;
 

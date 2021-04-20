@@ -62,17 +62,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
-import org.junit.Rule;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void validAmountOfIndirectObjectsTest() throws IOException {
@@ -101,10 +97,6 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
 
     @Test
     public void invalidAmountOfIndirectObjectsTest() throws IOException {
-
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.MAXIMUM_NUMBER_OF_INDIRECT_OBJECTS_EXCEEDED);
-
         PdfA1Checker testChecker = new PdfA1Checker(PdfAConformanceLevel.PDF_A_1B) {
             @Override
             protected long getMaxNumberOfIndirectObjects() {
@@ -115,10 +107,10 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
         try (
                 InputStream icm = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
                 OutputStream fos = new ByteArrayOutputStream();
-                Document document = new Document(new PdfADocument(new PdfWriter(fos),
-                        PdfAConformanceLevel.PDF_A_1B,
-                        getOutputIntent(icm)));
         ) {
+            Document document = new Document(new PdfADocument(new PdfWriter(fos),
+                    PdfAConformanceLevel.PDF_A_1B,
+                    getOutputIntent(icm)));
             PdfADocument pdfa = (PdfADocument) document.getPdfDocument();
             pdfa.checker = testChecker;
             document.add(buildContent());
@@ -126,15 +118,13 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
             // generated document contains exactly 10 indirect objects. Given 9 is the allowed
             // limit per "mock specification" conformance exception should be thrown as the limit
             // is exceeded
+            Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> document.close());
+            Assert.assertEquals(PdfAConformanceException.MAXIMUM_NUMBER_OF_INDIRECT_OBJECTS_EXCEEDED, e.getMessage());
         }
     }
 
     @Test
     public void invalidAmountOfIndirectObjectsAppendModeTest() throws IOException {
-
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.MAXIMUM_NUMBER_OF_INDIRECT_OBJECTS_EXCEEDED);
-
         PdfA1Checker testChecker = new PdfA1Checker(PdfAConformanceLevel.PDF_A_1B) {
             @Override
             protected long getMaxNumberOfIndirectObjects() {
@@ -145,13 +135,15 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
         try (
                 InputStream fis = new FileInputStream(sourceFolder + "pdfs/pdfa10IndirectObjects.pdf");
                 OutputStream fos = new ByteArrayOutputStream();
-                PdfADocument pdfa = new PdfADocument(new PdfReader(fis), new PdfWriter(fos), new StampingProperties().useAppendMode())
-
         ) {
+            PdfADocument pdfa = new PdfADocument(new PdfReader(fis), new PdfWriter(fos), new StampingProperties().useAppendMode());
             pdfa.checker = testChecker;
             pdfa.addNewPage();
+
             // during closing of pdfa object exception will be thrown as new document will contain
             // 12 indirect objects and limit per "mock specification" conformance will be exceeded
+            Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfa.close());
+            Assert.assertEquals(PdfAConformanceException.MAXIMUM_NUMBER_OF_INDIRECT_OBJECTS_EXCEEDED, e.getMessage());
         }
     }
 

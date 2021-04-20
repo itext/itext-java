@@ -77,12 +77,10 @@ import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import java.io.IOException;
 import java.util.Set;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
@@ -95,9 +93,6 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
     public static void setUp() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void contentStreamProcessorTest() throws IOException {
@@ -176,17 +171,14 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
     @Test
     @Ignore("DEVSIX-3608: this test currently throws StackOverflowError, which cannot be caught in .NET")
     public void parseCircularReferencesInResourcesTest() throws IOException {
-        junitExpectedException.expect(StackOverflowError.class);
-
         String fileName = "circularReferencesInResources.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + fileName));
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + fileName))) {
 
-        PdfCanvasProcessor processor = new PdfCanvasProcessor(new NoOpEventListener());
-        PdfPage page = pdfDocument.getFirstPage();
+            PdfCanvasProcessor processor = new PdfCanvasProcessor(new NoOpEventListener());
+            PdfPage page = pdfDocument.getFirstPage();
 
-        processor.processPageContent(page);
-
-        pdfDocument.close();
+            Assert.assertThrows(StackOverflowError.class, () -> processor.processPageContent(page));
+        }
     }
 
     @Test

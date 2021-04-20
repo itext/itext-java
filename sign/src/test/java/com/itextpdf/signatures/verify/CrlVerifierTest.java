@@ -55,10 +55,8 @@ import org.bouncycastle.asn1.x509.CRLReason;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -74,9 +72,6 @@ public class CrlVerifierTest extends ExtendedITextTest {
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final char[] password = "testpass".toCharArray();
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
     @BeforeClass
     public static void before() {
         Security.addProvider(new BouncyCastleProvider());
@@ -91,8 +86,6 @@ public class CrlVerifierTest extends ExtendedITextTest {
 
     @Test
     public void invalidRevokedCrl01() throws GeneralSecurityException, IOException {
-        junitExpectedException.expect(VerificationException.class);
-
         X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(certsSrc + "rootRsa.p12", password)[0];
         TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -1));
 
@@ -100,7 +93,7 @@ public class CrlVerifierTest extends ExtendedITextTest {
         X509Certificate checkCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(checkCertFileName, password)[0];
         crlBuilder.addCrlEntry(checkCert, DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -40), CRLReason.keyCompromise);
 
-        verifyTest(crlBuilder);
+        Assert.assertThrows(VerificationException.class, () -> verifyTest(crlBuilder));
     }
 
     @Test

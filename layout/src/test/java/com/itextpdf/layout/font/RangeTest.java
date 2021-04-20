@@ -44,31 +44,23 @@ package com.itextpdf.layout.font;
 
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
-
 import java.util.Random;
 
 @Category(UnitTest.class)
 public class RangeTest extends ExtendedITextTest {
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
-
     @Test
     public void testWrongRange() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        new RangeBuilder().addRange(11, 10);
+        Assert.assertThrows(IllegalArgumentException.class, () -> new RangeBuilder().addRange(11, 10));
     }
 
     @Test
     public void testWrongRangeSize() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        new RangeBuilder().create();
+        Assert.assertThrows(IllegalArgumentException.class, () -> new RangeBuilder().create());
     }
 
     @Test

@@ -44,18 +44,15 @@ package com.itextpdf.svg.renderers;
 
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
-
 import java.io.IOException;
+
 @Category(IntegrationTest.class)
 public class OpacityTest extends SvgIntegrationTest {
-
-  @Rule
-  public ExpectedException junitExpectedException = ExpectedException.none();
 
   private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/OpacityTest/";
   private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/OpacityTest/";
@@ -89,15 +86,17 @@ public class OpacityTest extends SvgIntegrationTest {
   @Test
   //TODO DEVSIX-2678
   public void testFillOpacityWithComma() throws IOException, InterruptedException {
-    junitExpectedException.expect(NumberFormatException.class);
-    convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testFillOpacityWithComma");
+    Assert.assertThrows(NumberFormatException.class,
+            () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testFillOpacityWithComma")
+    );
   }
 
   @Test
   //TODO DEVSIX-2678
   public void testFillOpacityWithPercents() throws IOException, InterruptedException {
-    junitExpectedException.expect(NumberFormatException.class);
-    convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testFillOpacityWithPercents");
+    Assert.assertThrows(NumberFormatException.class,
+            () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testFillOpacityWithPercents")
+    );
   }
 
   @Test
@@ -109,15 +108,17 @@ public class OpacityTest extends SvgIntegrationTest {
   @Test
   //TODO DEVSIX-2679
   public void testStrokeOpacityWithComma() throws IOException, InterruptedException {
-    junitExpectedException.expect(Exception.class);
-    convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testStrokeOpacityWithComma");
+    Assert.assertThrows(Exception.class,
+            () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testStrokeOpacityWithComma")
+    );
   }
 
   @Test
   //TODO DEVSIX-2679
   public void testStrokeOpacityWithPercents() throws IOException, InterruptedException {
-    junitExpectedException.expect(NumberFormatException.class);
-    convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testStrokeOpacityWithPercents");
+    Assert.assertThrows(NumberFormatException.class,
+            () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testStrokeOpacityWithPercents")
+    );
   }
 
   @Test

@@ -50,17 +50,12 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 import static com.itextpdf.io.IOException.ErrorAtFilePointer1;
 
 @Category(UnitTest.class)
 public class PdfTokenizerTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/io/util/";
 
@@ -262,14 +257,14 @@ public class PdfTokenizerTest extends ExtendedITextTest {
 
     @Test
     public void throwErrorTest() {
-        expectedException.expect(com.itextpdf.io.IOException.class);
-        expectedException.expectMessage(MessageFormatUtil.format(ErrorAtFilePointer1, 0));
-
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource("/Name1".getBytes(StandardCharsets.ISO_8859_1))));
 
-        tok.throwError(ErrorAtFilePointer1, 0);
+        Exception e = Assert.assertThrows(com.itextpdf.io.IOException.class,
+                () ->  tok.throwError(ErrorAtFilePointer1, 0)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(ErrorAtFilePointer1, 0), e.getMessage());
     }
 
     @Test

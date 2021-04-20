@@ -45,13 +45,11 @@ package com.itextpdf.io.util;
 import com.itextpdf.io.IoExceptionMessage;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -60,9 +58,6 @@ import java.io.IOException;
 public class GhostscriptHelperTest extends ExtendedITextTest {
     private final static String sourceFolder = "./src/test/resources/com/itextpdf/io/util/GhostscriptHelperTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/io/GhostscriptHelperTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -96,10 +91,10 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
 
     @Test
     public void ghostScriptEnvVarIsIncorrect() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(IoExceptionMessage.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED);
-
-        GhostscriptHelper ghostscriptHelper = new GhostscriptHelper("-");
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> new GhostscriptHelper("-")
+        );
+        Assert.assertEquals(IoExceptionMessage.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED, e.getMessage());
     }
 
     @Test
@@ -107,12 +102,13 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
         String inputPdf = sourceFolder + "imageHandlerUtilTest.pdf";
         String exceptionMessage = "Cannot open output directory for " + inputPdf;
 
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(exceptionMessage);
-
         GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
-        ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, "-",
-                "outputPageImage.png", "1");
+
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, "-",
+                        "outputPageImage.png", "1")
+        );
+        Assert.assertEquals(exceptionMessage, e.getMessage());
     }
 
     @Test
@@ -120,12 +116,13 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
         String inputPdf = sourceFolder + "imageHandlerUtilTest.pdf";
         String exceptionMessage = "GhostScript failed for " + inputPdf;
 
-        junitExpectedException.expect(GhostscriptHelper.GhostscriptExecutionException.class);
-        junitExpectedException.expectMessage(exceptionMessage);
-
         GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
-        ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, destinationFolder,
-                "outputPageImage.png", "q@W");
+
+        Exception e = Assert.assertThrows(GhostscriptHelper.GhostscriptExecutionException.class,
+                () ->  ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, destinationFolder,
+                        "outputPageImage.png", "q@W")
+        );
+        Assert.assertEquals(exceptionMessage, e.getMessage());
     }
 
     @Test

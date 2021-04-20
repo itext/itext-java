@@ -58,18 +58,13 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class ImageMasksTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/ImageMasksTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/canvas/ImageMasksTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -209,9 +204,10 @@ public class ImageMasksTest extends ExtendedITextTest {
     @Test
     public void imageWithInvalidMaskTest() throws IOException {
         ImageData mask = ImageDataFactory.create(sourceFolder + "mask.png");
-        junitExpectedException.expect(com.itextpdf.io.IOException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format
-                (com.itextpdf.io.IOException.ThisImageCanNotBeAnImageMask));
-        mask.makeMask();
+
+        Exception e = Assert.assertThrows(com.itextpdf.io.IOException.class,
+                () -> mask.makeMask()
+        );
+        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.IOException.ThisImageCanNotBeAnImageMask), e.getMessage());
     }
 }

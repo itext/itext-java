@@ -64,16 +64,11 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class LineSvgNodeRendererTest extends SvgIntegrationTest{
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/LineSvgNodeRendererTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/LineSvgNodeRendererTest/";
@@ -133,9 +128,6 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
 
     @Test
     public void invalidAttributeTest01() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.NAN, "notAnum"));
-
         PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         doc.addNewPage();
         ISvgNodeRenderer root = new LineSvgNodeRenderer();
@@ -149,7 +141,10 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
 
-        root.draw(context);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> root.draw(context)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.NAN, "notAnum"), e.getMessage());
     }
 
 

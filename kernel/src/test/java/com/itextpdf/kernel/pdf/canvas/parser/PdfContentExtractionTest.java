@@ -31,25 +31,18 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.Rule;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfContentExtractionTest extends ExtendedITextTest {
     
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/PdfContentExtractionTest/";
 
     @Test
     //TODO: remove the expected exception construct once the issue is fixed (DEVSIX-1279)
     public void contentExtractionInDocWithBigCoordinatesTest() throws IOException {
-        junitExpectedException.expect(ClipperException.class);
-        junitExpectedException.expectMessage(ClipperExceptionConstant.COORDINATE_OUTSIDE_ALLOWED_RANGE);
-
         String inputFileName = sourceFolder + "docWithBigCoordinates.pdf";
         //In this document the CTM shrinks coordinates and this coordinates are large numbers.
         // At the moment creation of this test clipper has a problem with handling large numbers
@@ -58,6 +51,10 @@ public class PdfContentExtractionTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputFileName));
         PdfDocumentContentParser contentParser = new PdfDocumentContentParser(pdfDocument);
-        contentParser.processContent(1, new LocationTextExtractionStrategy());
+
+        Exception e = Assert.assertThrows(ClipperException.class,
+                () -> contentParser.processContent(1, new LocationTextExtractionStrategy())
+        );
+        Assert.assertEquals(ClipperExceptionConstant.COORDINATE_OUTSIDE_ALLOWED_RANGE, e.getMessage());
     }
 }

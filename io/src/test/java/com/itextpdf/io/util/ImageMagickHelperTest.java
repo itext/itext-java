@@ -45,22 +45,17 @@ package com.itextpdf.io.util;
 import com.itextpdf.io.IoExceptionMessage;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
-
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class ImageMagickHelperTest extends ExtendedITextTest {
     private final static String sourceFolder = "./src/test/resources/com/itextpdf/io/util/ImageMagickHelperTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/io/ImageMagickHelperTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -100,10 +95,10 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
 
     @Test
     public void imageMagickEnvVarIsIncorrect() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(IoExceptionMessage.COMPARE_COMMAND_SPECIFIED_INCORRECTLY);
-
-        ImageMagickHelper imageMagickHelper = new ImageMagickHelper("-");
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> new ImageMagickHelper("-")
+        );
+        Assert.assertEquals(IoExceptionMessage.COMPARE_COMMAND_SPECIFIED_INCORRECTLY, e.getMessage());
     }
 
     @Test

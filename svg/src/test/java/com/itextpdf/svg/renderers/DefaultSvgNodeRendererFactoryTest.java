@@ -66,18 +66,13 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class DefaultSvgNodeRendererFactoryTest extends ExtendedITextTest {
 
     private ISvgNodeRendererFactory fact;
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -96,42 +91,39 @@ public class DefaultSvgNodeRendererFactoryTest extends ExtendedITextTest {
 
     @Test
     public void protectedConstructorTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
         Element protectedElement = new Element(Tag.valueOf("protected"), "");
         IElementNode tag = new JsoupElementNode(protectedElement);
-        fact.createSvgNodeRendererForTag(tag, null);
+
+        Assert.assertThrows(SvgProcessingException.class, () -> fact.createSvgNodeRendererForTag(tag, null));
     }
 
     @Test
     public void protectedConstructorInnerTest() throws ReflectiveOperationException {
-        junitExpectedException.expect(ReflectiveOperationException.class);
         Element protectedElement = new Element(Tag.valueOf("protected"), "");
         IElementNode tag = new JsoupElementNode(protectedElement);
-        try {
-            fact.createSvgNodeRendererForTag(tag, null);
-        } catch (SvgProcessingException spe) {
-            throw (ReflectiveOperationException) spe.getCause();
-        }
+
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> fact.createSvgNodeRendererForTag(tag, null)
+        );
+        Assert.assertTrue(e.getCause() instanceof ReflectiveOperationException);
     }
 
     @Test
     public void argumentedConstructorTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
         Element protectedElement = new Element(Tag.valueOf("argumented"), "");
         IElementNode tag = new JsoupElementNode(protectedElement);
-        Assert.assertNull(fact.createSvgNodeRendererForTag(tag, null));
+        Assert.assertThrows(SvgProcessingException.class, () -> Assert.assertNull(fact.createSvgNodeRendererForTag(tag, null)));
     }
 
     @Test
     public void argumentedConstructorInnerTest() throws ReflectiveOperationException {
-        junitExpectedException.expect(ReflectiveOperationException.class);
         Element protectedElement = new Element(Tag.valueOf("argumented"), "");
         IElementNode tag = new JsoupElementNode(protectedElement);
-        try {
-            fact.createSvgNodeRendererForTag(tag, null);
-        } catch (SvgProcessingException spe) {
-            throw (ReflectiveOperationException) spe.getCause();
-        }
+
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> fact.createSvgNodeRendererForTag(tag, null)
+        );
+        Assert.assertTrue(e.getCause() instanceof ReflectiveOperationException);
     }
 
     @Test
@@ -196,8 +188,7 @@ public class DefaultSvgNodeRendererFactoryTest extends ExtendedITextTest {
      */
     @Test
     public void faultyMapperTest() {
-        junitExpectedException.expect(RuntimeException.class);
-        fact = new DefaultSvgNodeRendererFactory(new FaultyTestMapper());
+        Assert.assertThrows(RuntimeException.class, () -> new DefaultSvgNodeRendererFactory(new FaultyTestMapper()));
     }
 
 }

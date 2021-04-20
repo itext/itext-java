@@ -27,19 +27,14 @@ import com.itextpdf.styledxmlparser.node.IAttributes;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class CssPseudoElementNodeTest extends ExtendedITextTest {
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void getPseudoElementNameTest() {
@@ -79,16 +74,13 @@ public class CssPseudoElementNodeTest extends ExtendedITextTest {
 
     @Test
     public void addAdditionalHtmlStylesTest() {
-        junitExpectedException.expect(UnsupportedOperationException.class);
-
         CssPseudoElementNode pseudoElementNode = new CssPseudoElementNode(null, "after");
 
         Map<String, String> styles = new HashMap<>();
         styles.put("font-size", "12px");
         styles.put("color", "red");
-        pseudoElementNode.addAdditionalHtmlStyles(styles);
 
-        Assert.fail();
+        Assert.assertThrows(UnsupportedOperationException.class, () -> pseudoElementNode.addAdditionalHtmlStyles(styles));
     }
 
     @Test
@@ -100,12 +92,10 @@ public class CssPseudoElementNodeTest extends ExtendedITextTest {
 
     @Test
     public void attributesStubSetAttributeTest() {
-        junitExpectedException.expect(UnsupportedOperationException.class);
-
         CssPseudoElementNode pseudoElementNode = new CssPseudoElementNode(null, "after");
-        pseudoElementNode.getAttributes().setAttribute("content", "iText");
+        IAttributes attributes = pseudoElementNode.getAttributes();
 
-        Assert.fail();
+        Assert.assertThrows(UnsupportedOperationException.class, () -> attributes.setAttribute("content", "iText"));
     }
 
     @Test

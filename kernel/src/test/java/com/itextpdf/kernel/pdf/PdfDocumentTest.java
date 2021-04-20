@@ -74,19 +74,14 @@ import java.io.FileOutputStream;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfDocumentTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfDocumentTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -550,9 +545,10 @@ public class PdfDocumentTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(SOURCE_FOLDER + "sample-with-invalid-catalog-version.pdf")
                 .setStrictnessLevel(StrictnessLevel.CONSERVATIVE)) {
 
-            junitExpectedException.expect(PdfException.class);
-            junitExpectedException.expectMessage(LogMessageConstant.DOCUMENT_VERSION_IN_CATALOG_CORRUPTED);
-            new PdfDocument(reader);
+            Exception e = Assert.assertThrows(PdfException.class,
+                    () -> new PdfDocument(reader)
+            );
+            Assert.assertEquals(LogMessageConstant.DOCUMENT_VERSION_IN_CATALOG_CORRUPTED, e.getMessage());
         }
     }
 

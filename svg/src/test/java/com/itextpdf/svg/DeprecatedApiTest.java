@@ -34,21 +34,16 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 //This test class can safely be removed in 7.2
 public class DeprecatedApiTest extends ExtendedITextTest {
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void processNullTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        SvgConverter.process(null);
+        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.process(null));
     }
 
     @Test

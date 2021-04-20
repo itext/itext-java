@@ -26,75 +26,70 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfNumberTest;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs.Rgb;
 import com.itextpdf.kernel.pdf.colorspace.PdfShading.Axial;
 import com.itextpdf.kernel.pdf.colorspace.PdfShading.Radial;
 import com.itextpdf.kernel.pdf.colorspace.PdfShading.ShadingType;
-import com.itextpdf.kernel.pdf.function.PdfFunction;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfShadingTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void axialShadingConstructorNullExtendArgumentTest() {
         boolean[] extendArray = null;
 
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("extend");
-        Axial axial = new Axial(
-                new Rgb(), 0f, 0f, new float[] {0f, 0f, 0f}, 0.5f, 0.5f, new float[]{0.5f, 0.5f, 0.5f},
-                extendArray
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> new Axial(
+                        new Rgb(), 0f, 0f, new float[] {0f, 0f, 0f}, 0.5f, 0.5f, new float[]{0.5f, 0.5f, 0.5f},
+                        extendArray
+                )
         );
+        Assert.assertEquals("extend", e.getMessage());
     }
 
     @Test
     public void axialShadingConstructorInvalidExtendArgumentTest() {
         boolean[] extendArray = new boolean[] {true};
 
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("extend");
-        Axial axial = new Axial(
-                new Rgb(), 0f, 0f, new float[] {0f, 0f, 0f}, 0.5f, 0.5f, new float[]{0.5f, 0.5f, 0.5f},
-                extendArray
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> new Axial(
+                        new Rgb(), 0f, 0f, new float[] {0f, 0f, 0f}, 0.5f, 0.5f, new float[]{0.5f, 0.5f, 0.5f},
+                        extendArray
+                )
         );
+        Assert.assertEquals("extend", e.getMessage());
     }
 
     @Test
     public void radialShadingConstructorNullExtendArgumentTest() {
         boolean[] extendArray = null;
 
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("extend");
-        new Radial(
-                new Rgb(), 0f, 0f, 0f, new float[] {0f, 0f, 0f}, 0.5f, 0.5f, 10f, new float[]{0.5f, 0.5f, 0.5f},
-                extendArray
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> new Radial(
+                        new Rgb(), 0f, 0f, 0f, new float[] {0f, 0f, 0f}, 0.5f, 0.5f, 10f, new float[]{0.5f, 0.5f, 0.5f},
+                        extendArray
+                )
         );
+        Assert.assertEquals("extend", e.getMessage());
     }
 
     @Test
     public void radialShadingConstructorInvalidExtendArgumentTest() {
         boolean[] extendArray = new boolean[] {true, false, false};
 
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("extend");
-        new Radial(
-                new Rgb(), 0f, 0f, 0f, new float[] {0f, 0f, 0f}, 0.5f, 0.5f, 10f, new float[]{0.5f, 0.5f, 0.5f},
-                extendArray
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> new Radial(
+                        new Rgb(), 0f, 0f, 0f, new float[] {0f, 0f, 0f}, 0.5f, 0.5f, 10f, new float[]{0.5f, 0.5f, 0.5f},
+                        extendArray
+                )
         );
+        Assert.assertEquals("extend", e.getMessage());
     }
 
     @Test

@@ -49,16 +49,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class TranslateTransformationTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void normalTranslateTest() {
@@ -70,10 +65,10 @@ public class TranslateTransformationTest extends ExtendedITextTest {
 
     @Test
     public void noTranslateValuesTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
-
-        TransformUtils.parseTransform("translate()");
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> TransformUtils.parseTransform("translate()")
+        );
+        Assert.assertEquals(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test
@@ -102,10 +97,9 @@ public class TranslateTransformationTest extends ExtendedITextTest {
 
     @Test
     public void tooManyTranslateValuesTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
-
-        TransformUtils.parseTransform("translate(1 2 3)");
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> TransformUtils.parseTransform("translate(1 2 3)")
+        );
+        Assert.assertEquals(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
-
 }

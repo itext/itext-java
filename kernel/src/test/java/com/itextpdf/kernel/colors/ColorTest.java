@@ -53,17 +53,13 @@ import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class ColorTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     private static final float EPS = 1e-4f;
 
@@ -85,13 +81,13 @@ public class ColorTest extends ExtendedITextTest {
 
     @Test
     public void setColorValueIncorrectComponentsNumberTest() {
-        expectedException.expect(PdfException.class);
-        expectedException.expectMessage(PdfException.IncorrectNumberOfComponents);
-
         float[] colorValues = new float[]{0.0f, 0.5f, 0.1f};
         Color color = Color.makeColor(PdfColorSpace.makeColorSpace(PdfName.DeviceRGB), colorValues);
 
-        color.setColorValue(new float[]{0.1f, 0.2f});
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> color.setColorValue(new float[]{0.1f, 0.2f})
+        );
+        Assert.assertEquals(PdfException.IncorrectNumberOfComponents, e.getMessage());
     }
 
     @Test
@@ -162,11 +158,10 @@ public class ColorTest extends ExtendedITextTest {
 
     @Test
     public void nullColorSpaceTest() {
-        expectedException.expect(PdfException.class);
-        expectedException.expectMessage("Unknown color space.");
-
         float[] colorValues = new float[]{0.0f, 0.5f, 0.1f};
-        Color color = Color.makeColor(null, colorValues);
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> Color.makeColor(null, colorValues));
+        Assert.assertEquals("Unknown color space.", e.getMessage());
     }
 
     @Test
@@ -209,10 +204,8 @@ public class ColorTest extends ExtendedITextTest {
 
     @Test
     public void unknownDeviceCsTest() {
-        expectedException.expect(PdfException.class);
-        expectedException.expectMessage("Unknown color space.");
-
-        Color color = Color.makeColor(new CustomDeviceCs(null));
+        Exception e = Assert.assertThrows(PdfException.class, () -> Color.makeColor(new CustomDeviceCs(null)));
+        Assert.assertEquals("Unknown color space.", e.getMessage());
     }
 
     @Test
@@ -310,10 +303,10 @@ public class ColorTest extends ExtendedITextTest {
 
     @Test
     public void unknownCieBasedCsTest() {
-        expectedException.expect(PdfException.class);
-        expectedException.expectMessage("Unknown color space.");
-
-        Color color = Color.makeColor(new CustomPdfCieBasedCs(new PdfArray()));
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> Color.makeColor(new CustomPdfCieBasedCs(new PdfArray()))
+        );
+        Assert.assertEquals("Unknown color space.", e.getMessage());
     }
 
     @Test
@@ -380,10 +373,10 @@ public class ColorTest extends ExtendedITextTest {
 
     @Test
     public void unknownSpecialCsTest() {
-        expectedException.expect(PdfException.class);
-        expectedException.expectMessage("Unknown color space.");
-
-        Color color = Color.makeColor(new CustomPdfSpecialCs(new PdfArray()));
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> Color.makeColor(new CustomPdfSpecialCs(new PdfArray()))
+        );
+        Assert.assertEquals("Unknown color space.", e.getMessage());
     }
 
     private static class CustomDeviceCs extends PdfDeviceCs {

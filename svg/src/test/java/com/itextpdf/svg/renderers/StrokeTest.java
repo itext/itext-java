@@ -51,16 +51,11 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.IOException;
 
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class StrokeTest extends SvgIntegrationTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/StrokeTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/StrokeTest/";

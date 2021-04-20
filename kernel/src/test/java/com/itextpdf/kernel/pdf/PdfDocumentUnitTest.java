@@ -63,17 +63,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfDocumentUnitTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentUnitTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     @LogMessages(messages = {
@@ -300,14 +295,10 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
 
     @Test
     public void getDocumentInfoAlreadyClosedTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "pdfWithMetadata.pdf"));
         pdfDocument.close();
 
-        pdfDocument.getDocumentInfo();
-
-        Assert.fail();
+        Assert.assertThrows(PdfException.class, () -> pdfDocument.getDocumentInfo());
     }
 
     @Test

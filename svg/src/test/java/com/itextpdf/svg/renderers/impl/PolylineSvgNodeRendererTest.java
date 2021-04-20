@@ -65,18 +65,13 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PolylineSvgNodeRendererTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/PolylineSvgNodeRendererTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -104,8 +99,6 @@ public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
 
     @Test
     public void polyLineInvalidAttributeTest01() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-
         PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         doc.addNewPage();
         ISvgNodeRenderer root = new PolylineSvgNodeRenderer();
@@ -115,13 +108,12 @@ public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
         SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
-        root.draw(context);
+
+        Assert.assertThrows(StyledXMLParserException.class, () -> root.draw(context));
     }
 
     @Test
     public void polyLineInvalidAttributeTest02() {
-        junitExpectedException.expect(SvgProcessingException.class);
-
         PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         doc.addNewPage();
         ISvgNodeRenderer root = new PolylineSvgNodeRenderer();
@@ -131,7 +123,8 @@ public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
         SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
-        root.draw(context);
+
+        Assert.assertThrows(SvgProcessingException.class, () -> root.draw(context));
     }
 
     @Test

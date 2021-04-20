@@ -61,16 +61,11 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class DefaultStylesTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void checkDefaultStrokeValuesTest() {
@@ -125,7 +120,7 @@ public class DefaultStylesTest extends ExtendedITextTest {
 
     @Test
     public void emptyStylesFallbackTest() throws IOException {
-        junitExpectedException.expect(IOException.class);
-        new SvgStyleResolver(new ExceptionInputStream(), new SvgProcessorContext(new SvgConverterProperties()));
+        Assert.assertThrows(IOException.class, () -> new SvgStyleResolver(new ExceptionInputStream(),
+                        new SvgProcessorContext(new SvgConverterProperties())));
     }
 }

@@ -44,21 +44,17 @@ package com.itextpdf.styledxmlparser.resolver.resource;
 
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
 
 @Category(UnitTest.class)
 public class UriResolverTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void uriResolverTest01() throws MalformedURLException {

@@ -63,11 +63,8 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,9 +88,6 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void collapsingMarginsTest01() throws IOException, InterruptedException {
@@ -343,29 +337,27 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
        change the type of the expected exception to a more specific one to make the test stricter.
     */
     public void columnRendererTest() throws IOException, InterruptedException {
-        junitExpectedException.expect(Exception.class);
         String outFileName = destinationFolder + "columnRendererTest.pdf";
         String cmpFileName = sourceFolder + "cmp_columnRendererTest.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
-        Document doc = new Document(pdfDocument);
-        doc.setProperty(Property.COLLAPSING_MARGINS, true);
+        try (Document doc = new Document(pdfDocument)) {
+            doc.setProperty(Property.COLLAPSING_MARGINS, true);
 
-        Paragraph p = new Paragraph();
-        for (int i = 0; i < 10; i++) {
-            p.add(TEXT_BYRON);
+            Paragraph p = new Paragraph();
+            for (int i = 0; i < 10; i++) {
+                p.add(TEXT_BYRON);
+            }
+
+            Div div = new Div().add(p);
+            List<Rectangle> areas = new ArrayList<>();
+            areas.add(new Rectangle(30, 30, 150, 600));
+            areas.add(new Rectangle(200, 30, 150, 600));
+            areas.add(new Rectangle(370, 30, 150, 600));
+            div.setNextRenderer(new CustomColumnDocumentRenderer(div, areas));
+
+            Assert.assertThrows(Exception.class, () -> doc.add(div));
         }
-
-        Div div = new Div().add(p);
-        List<Rectangle> areas = new ArrayList<>();
-        areas.add(new Rectangle(30, 30, 150, 600));
-        areas.add(new Rectangle(200, 30, 150, 600));
-        areas.add(new Rectangle(370, 30, 150, 600));
-        div.setNextRenderer(new CustomColumnDocumentRenderer(div, areas));
-
-        doc.add(div);
-
-        doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }

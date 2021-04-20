@@ -28,18 +28,15 @@ import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class XLinkDataTest extends SvgIntegrationTest {
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/XLinkDataTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/XLinkDataTest/";

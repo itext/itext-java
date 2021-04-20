@@ -77,19 +77,14 @@ import java.util.Arrays;
 import java.util.Set;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class GetImageBytesTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -199,17 +194,17 @@ public class GetImageBytesTest extends ExtendedITextTest {
     @Test
     public void expectedByteAlignedTiffImageExtractionTest() throws IOException {
         //Byte-aligned image is expected in pdf file, but in fact it's not
-        junitExpectedException.expect(com.itextpdf.io.IOException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format
-                (com.itextpdf.io.IOException.ExpectedTrailingZeroBitsForByteAlignedLines));
-
         String inFileName = sourceFolder + "expectedByteAlignedTiffImageExtraction.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
 
         ImageExtractor listener = new ImageExtractor();
         PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
-        processor.processPageContent(pdfDocument.getPage(1));
+
+        Exception e = Assert.assertThrows(com.itextpdf.io.IOException.class,
+                () -> processor.processPageContent(pdfDocument.getPage(1))
+        );
+        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.IOException.ExpectedTrailingZeroBitsForByteAlignedLines), e.getMessage());
     }
 
     private class ImageExtractor implements IEventListener {

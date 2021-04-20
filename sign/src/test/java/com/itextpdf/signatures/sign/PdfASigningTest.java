@@ -58,14 +58,13 @@ import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -93,9 +92,6 @@ public class PdfASigningTest extends ExtendedITextTest {
 
     private Certificate[] chain;
     private PrivateKey pk;
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void before() {

@@ -37,18 +37,14 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfType3FontTest extends ExtendedITextTest {
     private static final float EPS = 1e-4f;
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)})
@@ -176,8 +172,6 @@ public class PdfType3FontTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)})
     public void flushExceptionTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.NoGlyphsDefinedForType3Font);
         PdfDictionary dictionary = new PdfDictionary();
         dictionary.put(PdfName.FontMatrix, new PdfArray());
         PdfDictionary charProcs = new PdfDictionary();
@@ -185,7 +179,10 @@ public class PdfType3FontTest extends ExtendedITextTest {
         dictionary.put(PdfName.Widths, new PdfArray());
         PdfType3Font type3Font = new DisableEnsureUnderlyingObjectHasIndirectReference(dictionary);
 
-        type3Font.flush();
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> type3Font.flush()
+        );
+        Assert.assertEquals(PdfException.NoGlyphsDefinedForType3Font, e.getMessage());
     }
 
     @Test
@@ -254,10 +251,10 @@ public class PdfType3FontTest extends ExtendedITextTest {
         dictionary.put(PdfName.ToUnicode, PdfName.IdentityH);
         dictionary.put(PdfName.Encoding, new PdfName("zapfdingbatsencoding"));
 
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(
-                PdfException.MissingRequiredFieldInFontDictionary, PdfName.FontMatrix));
-        new PdfType3Font(dictionary);
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> new PdfType3Font(dictionary)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(PdfException.MissingRequiredFieldInFontDictionary, PdfName.FontMatrix), e.getMessage());
     }
 
     @Test
@@ -267,10 +264,11 @@ public class PdfType3FontTest extends ExtendedITextTest {
         dictionary.put(PdfName.ToUnicode, PdfName.IdentityH);
         dictionary.put(PdfName.Encoding, new PdfName("zapfdingbatsencoding"));
 
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(
-                PdfException.MissingRequiredFieldInFontDictionary, PdfName.Widths));
-        new PdfType3Font(dictionary);
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> new PdfType3Font(dictionary)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(
+                PdfException.MissingRequiredFieldInFontDictionary, PdfName.Widths), e.getMessage());
     }
 
     @Test

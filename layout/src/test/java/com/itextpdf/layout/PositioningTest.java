@@ -69,12 +69,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 
@@ -88,9 +87,6 @@ public class PositioningTest extends ExtendedITextTest {
     public static void beforeClass() {
        createOrClearDestinationFolder(destinationFolder);
     }
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void relativePositioningTest01() throws IOException, InterruptedException {
@@ -367,25 +363,26 @@ public class PositioningTest extends ExtendedITextTest {
 
     @Test
     public void showTextAlignedOnFlushedPageTest01() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.CannotDrawElementsOnAlreadyFlushedPages);
-
         String outFileName = destinationFolder + "showTextAlignedOnFlushedPageTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        Document doc = new Document(pdfDoc);
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+                Document doc = new Document(pdfDoc)) {
 
-        Paragraph p = new Paragraph();
-        for (int i = 0; i < 1000; ++i) {
-            p.add("abcdefghijklkmnopqrstuvwxyz");
+            Paragraph p = new Paragraph();
+            for (int i = 0; i < 1000; ++i) {
+                p.add("abcdefghijklkmnopqrstuvwxyz");
+            }
+
+            doc.add(p);
+            // First page will be flushed by now, because immediateFlush is set to false by default.
+            int pageNumberToDrawTextOn = 1;
+
+            Exception e = Assert.assertThrows(PdfException.class,
+                    () -> doc.showTextAligned(new Paragraph("Hello Bruno on page 1!"), 36, 36, pageNumberToDrawTextOn,
+                            TextAlignment.LEFT, VerticalAlignment.TOP, 0)
+            );
+            Assert.assertEquals(PdfException.CannotDrawElementsOnAlreadyFlushedPages, e.getMessage());
         }
-
-        doc.add(p);
-        // First page will be flushed by now, because immediateFlush is set to false by default.
-        int pageNumberToDrawTextOn = 1;
-        doc.showTextAligned(new Paragraph("Hello Bruno on page 1!"), 36, 36, pageNumberToDrawTextOn, TextAlignment.LEFT, VerticalAlignment.TOP, 0);
-
-        doc.close();
     }
 
 

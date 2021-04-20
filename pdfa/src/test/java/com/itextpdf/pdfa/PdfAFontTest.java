@@ -57,11 +57,11 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -80,9 +80,6 @@ public class PdfAFontTest extends ExtendedITextTest {
     public static void beforeClass() {
         createOrClearDestinationFolder(outputDir);
     }
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void fontCheckPdfA1_01() throws IOException, InterruptedException {
@@ -109,9 +106,6 @@ public class PdfAFontTest extends ExtendedITextTest {
 
     @Test
     public void fontCheckPdfA1_02() throws IOException {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "FreeSans"));
-
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -126,7 +120,10 @@ public class PdfAFontTest extends ExtendedITextTest {
                 .showText("Hello World! Pdf/A-1B")
                 .endText()
                 .restoreState();
-        doc.close();
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "FreeSans"),
+                e.getMessage());
     }
 
     @Test
@@ -155,9 +152,6 @@ public class PdfAFontTest extends ExtendedITextTest {
 
     @Test
     public void fontCheckPdfA1_04() throws IOException {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"));
-
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -173,7 +167,10 @@ public class PdfAFontTest extends ExtendedITextTest {
                 .showText("Hello World! Pdf/A-1B")
                 .endText()
                 .restoreState();
-        doc.close();
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                e.getMessage());
     }
 
     @Test
@@ -342,10 +339,12 @@ public class PdfAFontTest extends ExtendedITextTest {
 
     @Test
     public void symbolicTtfCharEncodingsPdfA1Test03() throws IOException, InterruptedException {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING_AS_THE_ENCODING_ENTRY);
         // if you specify encoding, symbolic font is treated as non-symbolic
-        createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test03.pdf", "Symbols1.ttf", "ISO-8859-1", PdfAConformanceLevel.PDF_A_1B);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test03.pdf", "Symbols1.ttf", "ISO-8859-1", PdfAConformanceLevel.PDF_A_1B)
+        );
+        Assert.assertEquals(PdfAConformanceException.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING_AS_THE_ENCODING_ENTRY,
+                e.getMessage());
     }
 
     @Test
@@ -357,10 +356,12 @@ public class PdfAFontTest extends ExtendedITextTest {
 
     @Test
     public void nonSymbolicTtfCharEncodingsPdfA1Test02() throws IOException, InterruptedException {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_ENCODING_OR_WIN_ANSI_ENCODING);
         // encoding must be either winansi or macroman, by default winansi is used
-        createDocumentWithFont("nonSymbolicTtfCharEncodingsPdfA1Test02.pdf", "FreeSans.ttf", "ISO-8859-1", PdfAConformanceLevel.PDF_A_2B);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> createDocumentWithFont("nonSymbolicTtfCharEncodingsPdfA1Test02.pdf", "FreeSans.ttf", "ISO-8859-1", PdfAConformanceLevel.PDF_A_2B)
+        );
+        Assert.assertEquals(PdfAConformanceException.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_ENCODING_OR_WIN_ANSI_ENCODING,
+                e.getMessage());
     }
 
     private void createDocumentWithFont(String outFileName, String fontFileName, String encoding, PdfAConformanceLevel conformanceLevel) throws IOException, InterruptedException {

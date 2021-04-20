@@ -54,17 +54,14 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 
 public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/RootSvgNodeRendererTest/svg/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/RootSvgNodeRendererTest/svg/";
@@ -125,28 +122,32 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
 
     @Test
     public void invalidHeight() throws IOException, InterruptedException {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.NAN, "abc"));
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidHeight");
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidHeight")
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.NAN, "abc"), e.getMessage());
     }
 
     @Test
     public void invalidWidth() throws IOException, InterruptedException {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.NAN, "abc"));
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidWidth");
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidWidth")
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.NAN, "abc"), e.getMessage());
     }
 
     @Test
     public void invalidX() throws IOException, InterruptedException {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidX");
+        Assert.assertThrows(StyledXMLParserException.class,
+                () ->  convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidX")
+        );
     }
 
     @Test
     public void invalidY() throws IOException, InterruptedException {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidY");
+        Assert.assertThrows(StyledXMLParserException.class,
+                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidY")
+        );
     }
 
     @Test

@@ -35,10 +35,8 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfObjectReleaseTest extends ExtendedITextTest {
@@ -50,9 +48,6 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FORBID_RELEASE_IS_SET, count = 108))
@@ -153,10 +148,11 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
 
             doc.getCatalog().put(PdfName.Outlines, releasedObj);
         } finally {
-            junitExpectedException.expect(PdfException.class);
-            junitExpectedException.expectMessage("Cannot write object after it was released."
-                    + " In normal situation the object must be read once again before being written.");
-            doc.close();
+            Exception e = Assert.assertThrows(PdfException.class,
+                    () -> doc.close()
+            );
+            Assert.assertEquals("Cannot write object after it was released."
+                    + " In normal situation the object must be read once again before being written.", e.getMessage());
         }
     }
 

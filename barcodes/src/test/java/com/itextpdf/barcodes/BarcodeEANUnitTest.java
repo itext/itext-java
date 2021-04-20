@@ -51,18 +51,13 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class BarcodeEANUnitTest extends ExtendedITextTest {
 
     public static final float EPS = 0.0001f;
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void calculateEANParityTest() throws PdfException {
@@ -227,9 +222,6 @@ public class BarcodeEANUnitTest extends ExtendedITextTest {
 
     @Test
     public void getBarcodeSizeIncorrectTypeTest() throws PdfException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage("Invalid code type");
-
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
         Barcode1D barcode = new BarcodeEAN(document);
@@ -239,6 +231,7 @@ public class BarcodeEANUnitTest extends ExtendedITextTest {
         barcode.setCodeType(1234);
 
         // We do expect an exception here
-        barcode.getBarcodeSize();
+        Exception e = Assert.assertThrows(PdfException.class, () -> barcode.getBarcodeSize());
+        Assert.assertEquals("Invalid code type", e.getMessage());
     }
 }

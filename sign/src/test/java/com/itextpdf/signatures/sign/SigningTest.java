@@ -61,14 +61,13 @@ import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -98,9 +97,6 @@ public class SigningTest extends ExtendedITextTest {
 
     private Certificate[] chain;
     private PrivateKey pk;
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void before() {
@@ -247,9 +243,6 @@ public class SigningTest extends ExtendedITextTest {
 
     @Test
     public void signPdf2CertificationAfterApproval() throws GeneralSecurityException, IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.CertificationSignatureCreationFailedDocShallNotContainSigs);
-
         String srcFile = "approvalSignedDocPdf2.pdf";
         String file = "signedPdf2CertificationAfterApproval.pdf";
         String src = sourceFolder + srcFile;
@@ -258,8 +251,11 @@ public class SigningTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(30, 50, 200, 100);
 
         String fieldName = "Signature2";
-        sign(src, fieldName, dest, chain, pk, DigestAlgorithms.RIPEMD160,
-                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED, null);
+
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> sign(src, fieldName, dest, chain, pk, DigestAlgorithms.RIPEMD160, PdfSigner.CryptoStandard.CADES,
+                        "Test 1", "TestCity", rect, false, true, PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED, null));
+        Assert.assertEquals(PdfException.CertificationSignatureCreationFailedDocShallNotContainSigs, e.getMessage());
     }
 
     @Test

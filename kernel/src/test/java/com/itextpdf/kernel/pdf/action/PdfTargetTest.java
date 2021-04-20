@@ -62,15 +62,11 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfTargetTest extends ExtendedITextTest {
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void createInstanceTest() {
@@ -209,9 +205,6 @@ public class PdfTargetTest extends ExtendedITextTest {
 
     @Test
     public void setAnnotationWithoutPageTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.AnnotationShallHaveReferenceToPage);
-
         try (PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             document.addNewPage();
 
@@ -219,7 +212,11 @@ public class PdfTargetTest extends ExtendedITextTest {
                     new Rectangle(0,0, 20, 20));
 
             PdfTarget target = PdfTarget.create(new PdfDictionary());
-            target.setAnnotation(annotation, document);
+
+            Exception e = Assert.assertThrows(PdfException.class,
+                    () -> target.setAnnotation(annotation, document)
+            );
+            Assert.assertEquals(PdfException.AnnotationShallHaveReferenceToPage, e.getMessage());
         }
     }
 

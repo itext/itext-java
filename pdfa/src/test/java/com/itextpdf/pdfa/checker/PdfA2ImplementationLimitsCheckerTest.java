@@ -60,10 +60,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
@@ -74,14 +72,8 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
         pdfA2Checker.setFullCheckMode(true);
     }
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
     @Test
     public void independentLongStringTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
-
         final int maxAllowedLength = pdfA2Checker.getMaxStringLength();
         final int testLength = maxAllowedLength + 1;
 
@@ -90,14 +82,14 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as provided String is longer then
         // it is allowed per specification
-        pdfA2Checker.checkPdfObject(longString);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA2Checker.checkPdfObject(longString)
+        );
+        Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
     public void longStringInContentStreamTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
-
         pdfA2Checker.setFullCheckMode(true);
 
         final int maxAllowedLength = pdfA2Checker.getMaxStringLength();
@@ -112,7 +104,10 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as content stream has a string which
         // is longer then it is allowed per specification
-        pdfA2Checker.checkContentStream(stream);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA2Checker.checkContentStream(stream)
+        );
+        Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -144,23 +139,22 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
     @Test
     public void independentLargeRealTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE);
-
         PdfNumber largeNumber = new PdfNumber(pdfA2Checker.getMaxRealValue());
 
         // TODO DEVSIX-4182
         // An exception is thrown as any number greater then 32767 is considered as Integer
-        pdfA2Checker.checkPdfObject(largeNumber);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA2Checker.checkPdfObject(largeNumber)
+        );
+        Assert.assertEquals(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
     }
 
     @Test
     public void deviceNColorspaceWithMoreThan32Components() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED);
-
-        checkColorspace(buildDeviceNColorspace(34));
-
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkColorspace(buildDeviceNColorspace(34))
+        );
+        Assert.assertEquals(PdfAConformanceException.THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED, e.getMessage());
     }
 
     @Test

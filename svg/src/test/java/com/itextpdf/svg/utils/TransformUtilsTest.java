@@ -42,64 +42,54 @@
  */
 package com.itextpdf.svg.utils;
 
-import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.geom.AffineTransform;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
-import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class TransformUtilsTest extends ExtendedITextTest {
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
     @Test
     public void nullStringTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.TRANSFORM_NULL);
-
-        TransformUtils.parseTransform(null);
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> TransformUtils.parseTransform(null)
+        );
+        Assert.assertEquals(SvgLogMessageConstant.TRANSFORM_NULL, e.getMessage());
     }
 
     @Test
     public void emptyTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.TRANSFORM_EMPTY);
-
-        TransformUtils.parseTransform("");
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> TransformUtils.parseTransform("")
+        );
+        Assert.assertEquals(SvgLogMessageConstant.TRANSFORM_EMPTY, e.getMessage());
     }
 
     @Test
     public void noTransformationTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.INVALID_TRANSFORM_DECLARATION);
-
-        TransformUtils.parseTransform("Lorem ipsum");
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> TransformUtils.parseTransform("Lorem ipsum")
+        );
+        Assert.assertEquals(SvgLogMessageConstant.INVALID_TRANSFORM_DECLARATION, e.getMessage());
     }
 
     @Test
     public void wrongTypeOfValuesTest() {
-        junitExpectedException.expect(NumberFormatException.class);
-
-        TransformUtils.parseTransform("matrix(a b c d e f)");
+        Assert.assertThrows(NumberFormatException.class, () -> TransformUtils.parseTransform("matrix(a b c d e f)"));
     }
 
     @Test
     public void tooManyParenthesesTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.INVALID_TRANSFORM_DECLARATION);
-
-        TransformUtils.parseTransform("(((())))");
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> TransformUtils.parseTransform("(((())))")
+        );
+        Assert.assertEquals(SvgLogMessageConstant.INVALID_TRANSFORM_DECLARATION, e.getMessage());
     }
 
     @Test
@@ -184,10 +174,10 @@ public class TransformUtilsTest extends ExtendedITextTest {
 
     @Test
     public void unknownTransformationTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.UNKNOWN_TRANSFORMATION_TYPE);
-
-        TransformUtils.parseTransform("unknown(1 2 3)");
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> TransformUtils.parseTransform("unknown(1 2 3)")
+        );
+        Assert.assertEquals(SvgLogMessageConstant.UNKNOWN_TRANSFORMATION_TYPE, e.getMessage());
     }
 
     @Test

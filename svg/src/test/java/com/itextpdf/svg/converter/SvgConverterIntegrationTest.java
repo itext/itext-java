@@ -72,12 +72,11 @@ import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -118,9 +117,6 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
     public static void beforeClass() {
         ITextTest.createDestinationFolder(destinationFolder);
     }
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void unusedXObjectIntegrationTest() throws IOException, InterruptedException {
@@ -651,10 +647,9 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void parseAndProcessIOExceptionTest() throws IOException {
-        junitExpectedException.expect(SvgProcessingException.class);
         InputStream fis = new ExceptionInputStream();
 
-        ISvgProcessorResult result = SvgConverter.parseAndProcess(fis);
+        Assert.assertThrows(SvgProcessingException.class, () -> SvgConverter.parseAndProcess(fis));
     }
 
     @Test

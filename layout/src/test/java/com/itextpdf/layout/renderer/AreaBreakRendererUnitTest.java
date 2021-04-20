@@ -23,7 +23,6 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.element.AreaBreak;
@@ -34,42 +33,36 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class AreaBreakRendererUnitTest extends ExtendedITextTest {
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
     @Test
     public void addChildTestUnsupported() {
-        junitExpectedException.expect(RuntimeException.class);
-
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        Assert.assertNull(areaBreakRenderer.getChildRenderers());
 
-        areaBreakRenderer.addChild(new TextRenderer(new Text("Test")));
+        Assert.assertNull(areaBreakRenderer.getChildRenderers());
+        Assert.assertThrows(Exception.class, () -> areaBreakRenderer.addChild(new TextRenderer(new Text("Test"))));
     }
 
     @Test
     public void drawTestUnsupported() {
-        junitExpectedException.expect(UnsupportedOperationException.class);
-
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        areaBreakRenderer.draw(new DrawContext(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())), null));
+
+        Assert.assertThrows(UnsupportedOperationException.class,
+                () -> areaBreakRenderer.draw(new DrawContext(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())), null))
+        );
     }
 
     @Test
     public void getOccupiedAreaTestUnsupported() {
-        junitExpectedException.expect(UnsupportedOperationException.class);
-
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        areaBreakRenderer.getOccupiedArea();
+
+        Assert.assertThrows(UnsupportedOperationException.class, () -> areaBreakRenderer.getOccupiedArea());
     }
 
     @Test
@@ -115,19 +108,17 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
     @Test
     //The BORDER_RADIUS property is chosen without any specific intention. It could be replaced with any other property.
     public void getPropertyWithDefaultValueTestUnsupported() {
-        junitExpectedException.expect(UnsupportedOperationException.class);
-
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        areaBreakRenderer.getProperty(Property.BORDER_RADIUS, 3);
+
+        Assert.assertThrows(UnsupportedOperationException.class, () -> areaBreakRenderer.getProperty(Property.BORDER_RADIUS, 3));
     }
 
     @Test
     //The BORDER_RADIUS property is chosen without any specific intention. It could be replaced with any other property.
     public void setPropertyTestUnsupported() {
-        junitExpectedException.expect(UnsupportedOperationException.class);
-
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        areaBreakRenderer.setProperty(Property.BORDER_RADIUS, 5);
+
+        Assert.assertThrows(UnsupportedOperationException.class, () -> areaBreakRenderer.setProperty(Property.BORDER_RADIUS, 5));
     }
 
     @Test
@@ -164,10 +155,9 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
 
     @Test
     public void moveTestUnsupported() {
-        junitExpectedException.expect(UnsupportedOperationException.class);
-
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-        areaBreakRenderer.move(2.0f, 2.0f);
+
+        Assert.assertThrows(UnsupportedOperationException.class, () -> areaBreakRenderer.move(2.0f, 2.0f));
     }
 
     @Test

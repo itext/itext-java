@@ -51,10 +51,8 @@ import java.security.Security;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTest {
@@ -63,9 +61,6 @@ public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTes
     public static void beforeClass() {
         Security.addProvider(new BouncyCastleProvider());
     }
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void supportedCriticalOIDsTest() {
@@ -146,9 +141,9 @@ public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTes
 
     @Test
     public void certificateIsNullTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage("X509Certificate can't be null.");
-
-        SignUtils.hasUnsupportedCriticalExtension(null);
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> SignUtils.hasUnsupportedCriticalExtension(null)
+        );
+        Assert.assertEquals("X509Certificate can't be null.", e.getMessage());
     }
 }

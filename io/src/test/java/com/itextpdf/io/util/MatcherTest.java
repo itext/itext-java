@@ -28,10 +28,8 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 /**
  * At the moment there is no com.itextpdf.io.util.Matcher class in Java (as we use
@@ -43,9 +41,6 @@ public class MatcherTest extends ExtendedITextTest {
     private static final String PATTERN_STRING = "(a+)(b+)?";
     private static final Pattern PATTERN = Pattern.compile(PATTERN_STRING);
     private static final Pattern FULL_MATCH_PATTERN = Pattern.compile("^" + PATTERN_STRING + "$");
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void matchesTest() {
@@ -94,8 +89,7 @@ public class MatcherTest extends ExtendedITextTest {
     public void startBeforeSearchTest() {
         Matcher matcher = PATTERN.matcher("aabb");
 
-        junitExpectedException.expect(IllegalStateException.class);
-        matcher.start();
+        Assert.assertThrows(IllegalStateException.class, () -> matcher.start());
     }
 
     @Test
@@ -104,16 +98,15 @@ public class MatcherTest extends ExtendedITextTest {
 
         while (matcher.find()) {
         }
-        junitExpectedException.expect(IllegalStateException.class);
-        matcher.start();
+
+        Assert.assertThrows(IllegalStateException.class, () -> matcher.start());
     }
 
     @Test
     public void endBeforeSearchTest() {
         Matcher matcher = PATTERN.matcher("aabb");
 
-        junitExpectedException.expect(IllegalStateException.class);
-        matcher.end();
+        Assert.assertThrows(IllegalStateException.class, () -> matcher.end());
     }
 
     @Test
@@ -122,16 +115,15 @@ public class MatcherTest extends ExtendedITextTest {
 
         while (matcher.find()) {
         }
-        junitExpectedException.expect(IllegalStateException.class);
-        matcher.end();
+
+        Assert.assertThrows(IllegalStateException.class, () -> matcher.end());
     }
 
     @Test
     public void groupBeforeSearchTest() {
         Matcher matcher = PATTERN.matcher("aabb");
 
-        junitExpectedException.expect(IllegalStateException.class);
-        matcher.group();
+        Assert.assertThrows(IllegalStateException.class, () -> matcher.group());
     }
 
     @Test
@@ -140,16 +132,15 @@ public class MatcherTest extends ExtendedITextTest {
 
         while (matcher.find()) {
         }
-        junitExpectedException.expect(IllegalStateException.class);
-        matcher.group();
+
+        Assert.assertThrows(IllegalStateException.class, () -> matcher.group());
     }
 
     @Test
     public void groupWithIndexBeforeSearchTest() {
         Matcher matcher = PATTERN.matcher("aabb");
 
-        junitExpectedException.expect(IllegalStateException.class);
-        matcher.group(0);
+        Assert.assertThrows(IllegalStateException.class, () -> matcher.group(0));
     }
 
     @Test
@@ -158,8 +149,8 @@ public class MatcherTest extends ExtendedITextTest {
 
         while (matcher.find()) {
         }
-        junitExpectedException.expect(IllegalStateException.class);
-        matcher.group(0);
+
+        Assert.assertThrows(IllegalStateException.class, () -> matcher.group(0));
     }
 
     @Test
@@ -167,8 +158,7 @@ public class MatcherTest extends ExtendedITextTest {
         Matcher matcher = PATTERN.matcher("aabb");
         Assert.assertTrue(matcher.find());
 
-        junitExpectedException.expect(IndexOutOfBoundsException.class);
-        matcher.group(-1);
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> matcher.group(-1));
     }
 
     @Test
@@ -176,16 +166,14 @@ public class MatcherTest extends ExtendedITextTest {
         Matcher matcher = PATTERN.matcher("aabb");
         Assert.assertTrue(matcher.find());
 
-        junitExpectedException.expect(IndexOutOfBoundsException.class);
-        matcher.group(3);
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> matcher.group(3));
     }
 
     @Test
     public void findNegativeIndexTest() {
         Matcher matcher = PATTERN.matcher("aabb");
 
-        junitExpectedException.expect(IndexOutOfBoundsException.class);
-        matcher.find(-1);
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> matcher.find(-1));
     }
 
     @Test
@@ -193,8 +181,7 @@ public class MatcherTest extends ExtendedITextTest {
         String input = "aabb";
         Matcher matcher = PATTERN.matcher(input);
 
-        junitExpectedException.expect(IndexOutOfBoundsException.class);
-        matcher.find(input.length() + 1);
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> matcher.find(input.length() + 1));
     }
 
     @Test
@@ -261,8 +248,7 @@ public class MatcherTest extends ExtendedITextTest {
         Assert.assertEquals("123", matcher.group(0));
         Assert.assertEquals("123", matcher.group(1));
 
-        junitExpectedException.expect(IndexOutOfBoundsException.class);
-        matcher.group(2);
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> matcher.group(2));
     }
 
     @Test
@@ -272,8 +258,7 @@ public class MatcherTest extends ExtendedITextTest {
         Matcher matcher = Pattern.compile(testPattern).matcher(input);
         Assert.assertFalse(matcher.find());
 
-        junitExpectedException.expect(IllegalStateException.class);
-        matcher.group(0);
+        Assert.assertThrows(IllegalStateException.class, () -> matcher.group(0));
     }
 
     @Test
@@ -305,10 +290,9 @@ public class MatcherTest extends ExtendedITextTest {
         String testPattern = "ef";
         String input = "abcde";
         Matcher matcher = Pattern.compile(testPattern).matcher(input);
-        Assert.assertFalse(matcher.find());
 
-        junitExpectedException.expect(IllegalStateException.class);
-        matcher.start();
+        Assert.assertFalse(matcher.find());
+        Assert.assertThrows(IllegalStateException.class, () -> matcher.start());
     }
 
     @Test
@@ -316,10 +300,9 @@ public class MatcherTest extends ExtendedITextTest {
         String testPattern = "ef";
         String input = "abcde";
         Matcher matcher = Pattern.compile(testPattern).matcher(input);
-        Assert.assertFalse(matcher.find());
 
-        junitExpectedException.expect(IllegalStateException.class);
-        matcher.end();
+        Assert.assertFalse(matcher.find());
+        Assert.assertThrows(IllegalStateException.class, () -> matcher.end());
     }
 
     @Test
@@ -376,8 +359,7 @@ public class MatcherTest extends ExtendedITextTest {
         int startIndex = 4;
         Matcher matcher = Pattern.compile(testPattern).matcher(input);
 
-        junitExpectedException.expect(IndexOutOfBoundsException.class);
-        matcher.find(startIndex);
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> matcher.find(startIndex));
     }
 
     @Test
@@ -389,8 +371,8 @@ public class MatcherTest extends ExtendedITextTest {
         Assert.assertTrue(matcher.find());
 
         int startIndex = 4;
-        junitExpectedException.expect(IndexOutOfBoundsException.class);
-        matcher.find(startIndex);
+
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> matcher.find(startIndex));
     }
 
     @Test
@@ -400,8 +382,7 @@ public class MatcherTest extends ExtendedITextTest {
         int startIndex = -1;
         Matcher matcher = Pattern.compile(testPattern).matcher(input);
 
-        junitExpectedException.expect(IndexOutOfBoundsException.class);
-        matcher.find(startIndex);
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> matcher.find(startIndex));
     }
 
     @Test
@@ -413,8 +394,8 @@ public class MatcherTest extends ExtendedITextTest {
         Assert.assertTrue(matcher.find());
 
         int startIndex = -1;
-        junitExpectedException.expect(IndexOutOfBoundsException.class);
-        matcher.find(startIndex);
+
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> matcher.find(startIndex));
     }
 
     @Test
@@ -552,36 +533,36 @@ public class MatcherTest extends ExtendedITextTest {
     @Test
     public void negativeStartOfRegionTest() {
         Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
-        junitExpectedException.expect(IndexOutOfBoundsException.class);
-        matcher.region(-1, 10);
+
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> matcher.region(-1, 10));
     }
 
     @Test
     public void tooLargeStartOfRegionTest() {
         Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
-        junitExpectedException.expect(IndexOutOfBoundsException.class);
-        matcher.region(24, 24);
+
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> matcher.region(24, 24));
     }
 
     @Test
     public void negativeEndOfRegionTest() {
         Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
-        junitExpectedException.expect(IndexOutOfBoundsException.class);
-        matcher.region(1, -1);
+
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> matcher.region(1, -1));
     }
 
     @Test
     public void tooLargeEndOfRegionTest() {
         Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
-        junitExpectedException.expect(IndexOutOfBoundsException.class);
-        matcher.region(1, 24);
+
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> matcher.region(1, 24));
     }
 
     @Test
     public void endGreaterThenStartRegionTest() {
         Matcher matcher = PATTERN.matcher("abbbbbbbbbbbbbbbbbbbbb");
-        junitExpectedException.expect(IndexOutOfBoundsException.class);
-        matcher.region(10, 9);
+
+        Assert.assertThrows(IndexOutOfBoundsException.class, () -> matcher.region(10, 9));
     }
 
     @Test
@@ -644,8 +625,7 @@ public class MatcherTest extends ExtendedITextTest {
         matcher.region(6, 13);
 
         Assert.assertFalse(matcher.find());
-        junitExpectedException.expect(IllegalStateException.class);
-        matcher.start();
+        Assert.assertThrows(IllegalStateException.class, () -> matcher.start());
     }
 
     @Test
@@ -654,8 +634,7 @@ public class MatcherTest extends ExtendedITextTest {
         matcher.region(6, 13);
 
         Assert.assertFalse(matcher.find());
-        junitExpectedException.expect(IllegalStateException.class);
-        matcher.end();
+        Assert.assertThrows(IllegalStateException.class, () -> matcher.end());
     }
 
     @Test
@@ -706,8 +685,7 @@ public class MatcherTest extends ExtendedITextTest {
         matcher.find();
         matcher.region(6, 13);
 
-        junitExpectedException.expect(IllegalStateException.class);
-        matcher.start();
+        Assert.assertThrows(IllegalStateException.class, () -> matcher.start());
     }
 
     @Test
@@ -716,8 +694,7 @@ public class MatcherTest extends ExtendedITextTest {
         matcher.find();
         matcher.region(6, 13);
 
-        junitExpectedException.expect(IllegalStateException.class);
-        matcher.end();
+        Assert.assertThrows(IllegalStateException.class, () -> matcher.end());
     }
 
     @Test
@@ -726,8 +703,7 @@ public class MatcherTest extends ExtendedITextTest {
         matcher.find();
         matcher.region(6, 13);
 
-        junitExpectedException.expect(IllegalStateException.class);
-        matcher.group();
+        Assert.assertThrows(IllegalStateException.class, () -> matcher.group());
     }
 
 }

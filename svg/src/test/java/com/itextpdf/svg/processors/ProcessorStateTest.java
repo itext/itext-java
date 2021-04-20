@@ -51,16 +51,11 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import java.util.EmptyStackException;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category( UnitTest.class )
 public class ProcessorStateTest extends ExtendedITextTest{
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     /**
      * Push test
@@ -120,10 +115,9 @@ public class ProcessorStateTest extends ExtendedITextTest{
 
     @Test
     public void processorStateTestPopEmpty() {
-        junitExpectedException.expect(EmptyStackException.class);
         ProcessorState testProcessorState = new ProcessorState();
 
-        testProcessorState.pop();
+        Assert.assertThrows(EmptyStackException.class, () -> testProcessorState.pop());
     }
 
     @Test
@@ -142,9 +136,9 @@ public class ProcessorStateTest extends ExtendedITextTest{
 
     @Test
     public void processorStateTestPeekEmpty() {
-        junitExpectedException.expect(EmptyStackException.class);
         ProcessorState testProcessorState = new ProcessorState();
-        testProcessorState.pop();
+
+        Assert.assertThrows(EmptyStackException.class, () -> testProcessorState.pop());
     }
 
 

@@ -65,10 +65,8 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 import org.xml.sax.SAXException;
 
 @Category(IntegrationTest.class)
@@ -76,9 +74,6 @@ public class CompareToolTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/CompareToolTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/CompareToolTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void setUp() {
@@ -181,11 +176,13 @@ public class CompareToolTest extends ExtendedITextTest {
 
     @Test
     public void gsEnvironmentVariableSpecifiedIncorrectlyTest() throws IOException, InterruptedException {
-        junitExpectedException.expect(CompareTool.CompareToolExecutionException.class);
-        junitExpectedException.expectMessage(IoExceptionMessage.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED);
         String outPdf = sourceFolder + "simple_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
-        new CompareTool("unspecified", null).compareVisually(outPdf, cmpPdf, destinationFolder, "diff_");
+
+        Exception e = Assert.assertThrows(CompareTool.CompareToolExecutionException.class,
+                () -> new CompareTool("unspecified", null).compareVisually(outPdf, cmpPdf, destinationFolder, "diff_")
+        );
+        Assert.assertEquals(IoExceptionMessage.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED, e.getMessage());
     }
 
     @Test

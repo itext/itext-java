@@ -56,10 +56,8 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,9 +76,6 @@ public class PdfReaderTest extends ExtendedITextTest {
     static final String author = "Alexander Chingarev";
     static final String creator = "iText 6";
     static final String title = "Empty iText 6 Document";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -1674,14 +1669,15 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     public void readerReuseTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.PdfReaderHasBeenAlreadyUtilized);
-
         String filename = sourceFolder + "hello.pdf";
 
         PdfReader reader = new PdfReader(filename);
         PdfDocument pdfDoc1 = new PdfDocument(reader);
-        PdfDocument pdfDoc2 = new PdfDocument(reader);
+
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> new PdfDocument(reader)
+        );
+        Assert.assertEquals(PdfException.PdfReaderHasBeenAlreadyUtilized, e.getMessage());
     }
 
     @Test
@@ -1732,11 +1728,10 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     public void hasRebuiltXrefPdfDocumentNotReadTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.DocumentHasNotBeenReadYet);
-
         PdfReader hasRebuiltXrefReader = pdfDocumentNotReadTestInit();
-        hasRebuiltXrefReader.hasRebuiltXref();
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> hasRebuiltXrefReader.hasRebuiltXref());
+        Assert.assertEquals(PdfException.DocumentHasNotBeenReadYet, e.getMessage());
     }
 
     @Test
@@ -1756,11 +1751,10 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     public void hasHybridXrefPdfDocumentNotReadTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.DocumentHasNotBeenReadYet);
-
         PdfReader hasHybridXrefPdfReader = pdfDocumentNotReadTestInit();
-        hasHybridXrefPdfReader.hasHybridXref();
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> hasHybridXrefPdfReader.hasHybridXref());
+        Assert.assertEquals(PdfException.DocumentHasNotBeenReadYet, e.getMessage());
     }
 
     @Test
@@ -1780,11 +1774,10 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     public void hasXrefStmPdfDocumentNotReadTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.DocumentHasNotBeenReadYet);
-
         PdfReader hasXrefStmReader = pdfDocumentNotReadTestInit();
-        hasXrefStmReader.hasXrefStm();
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> hasXrefStmReader.hasXrefStm());
+        Assert.assertEquals(PdfException.DocumentHasNotBeenReadYet, e.getMessage());
     }
 
     @Test
@@ -1804,11 +1797,10 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     public void hasFixedXrefPdfDocumentNotReadTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.DocumentHasNotBeenReadYet);
-
         PdfReader hasFixedXrefReader = pdfDocumentNotReadTestInit();
-        hasFixedXrefReader.hasFixedXref();
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> hasFixedXrefReader.hasFixedXref());
+        Assert.assertEquals(PdfException.DocumentHasNotBeenReadYet, e.getMessage());
     }
 
     @Test
@@ -1828,11 +1820,10 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     public void getLastXrefPdfDocumentNotReadTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.DocumentHasNotBeenReadYet);
-
         PdfReader getLastXrefReader = pdfDocumentNotReadTestInit();
-        getLastXrefReader.getLastXref();
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> getLastXrefReader.getLastXref());
+        Assert.assertEquals(PdfException.DocumentHasNotBeenReadYet, e.getMessage());
     }
 
     @Test
@@ -1852,11 +1843,10 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     public void getPermissionsPdfDocumentNotReadTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.DocumentHasNotBeenReadYet);
-
         PdfReader getPermissionsReader = pdfDocumentNotReadTestInit();
-        getPermissionsReader.getPermissions();
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> getPermissionsReader.getPermissions());
+        Assert.assertEquals(PdfException.DocumentHasNotBeenReadYet, e.getMessage());
     }
 
     @Test
@@ -1876,11 +1866,12 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     public void isOpenedWithFullPPdfDocumentNotReadTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.DocumentHasNotBeenReadYet);
-
         PdfReader isOpenedWithFullPReader = pdfDocumentNotReadTestInit();
-        isOpenedWithFullPReader.isOpenedWithFullPermission();
+
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> isOpenedWithFullPReader.isOpenedWithFullPermission()
+        );
+        Assert.assertEquals(PdfException.DocumentHasNotBeenReadYet, e.getMessage());
     }
 
     @Test
@@ -1900,11 +1891,10 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     public void getCryptoModePdfDocumentNotReadTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.DocumentHasNotBeenReadYet);
-
         PdfReader getCryptoModeReader = pdfDocumentNotReadTestInit();
-        getCryptoModeReader.getCryptoMode();
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> getCryptoModeReader.getCryptoMode());
+        Assert.assertEquals(PdfException.DocumentHasNotBeenReadYet, e.getMessage());
     }
 
     @Test
@@ -1924,11 +1914,12 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     public void computeUserPasswordPdfDocumentNotReadTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.DocumentHasNotBeenReadYet);
-
         PdfReader computeUserPasswordReader = pdfDocumentNotReadTestInit();
-        computeUserPasswordReader.computeUserPassword();
+
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> computeUserPasswordReader.computeUserPassword()
+        );
+        Assert.assertEquals(PdfException.DocumentHasNotBeenReadYet, e.getMessage());
     }
 
     @Test
@@ -1948,11 +1939,10 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     public void getOriginalFileIdPdfDocumentNotReadTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.DocumentHasNotBeenReadYet);
-
         PdfReader getOriginalFileIdReader = pdfDocumentNotReadTestInit();
-        getOriginalFileIdReader.getOriginalFileId();
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> getOriginalFileIdReader.getOriginalFileId());
+        Assert.assertEquals(PdfException.DocumentHasNotBeenReadYet, e.getMessage());
     }
 
     @Test
@@ -1972,11 +1962,10 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     public void getModifiedFileIdPdfDocumentNotReadTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.DocumentHasNotBeenReadYet);
-
         PdfReader getModifiedFileIdReader = pdfDocumentNotReadTestInit();
-        getModifiedFileIdReader.getModifiedFileId();
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> getModifiedFileIdReader.getModifiedFileId());
+        Assert.assertEquals(PdfException.DocumentHasNotBeenReadYet, e.getMessage());
     }
 
     @Test
@@ -1996,11 +1985,10 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     public void isEncryptedPdfDocumentNotReadTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.DocumentHasNotBeenReadYet);
-
         PdfReader isEncryptedReader = pdfDocumentNotReadTestInit();
-        isEncryptedReader.isEncrypted();
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> isEncryptedReader.isEncrypted());
+        Assert.assertEquals(PdfException.DocumentHasNotBeenReadYet, e.getMessage());
     }
 
     @Test
@@ -2031,10 +2019,8 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     private void readingNotCompletedTest(PdfReader reader) {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.DocumentHasNotBeenReadYet);
-
-        PdfDocument document = new PdfDocument(reader);
+        Exception e = Assert.assertThrows(PdfException.class, () -> new PdfDocument(reader));
+        Assert.assertEquals(PdfException.DocumentHasNotBeenReadYet, e.getMessage());
     }
 
     /**

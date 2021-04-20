@@ -34,11 +34,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class XMPMetaParserSecurityTest extends ExtendedITextTest {
@@ -57,9 +56,6 @@ public class XMPMetaParserSecurityTest extends ExtendedITextTest {
 
     private static final String DTD_EXCEPTION_MESSAGE = ExceptionTestUtil.getDoctypeIsDisallowedExceptionMessage();
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
     @Before
     public void resetXmlParserFactoryToDefault() {
         XmlProcessorCreator.setXmlParserFactory(new DefaultSafeXmlParserFactory());
@@ -67,32 +63,34 @@ public class XMPMetaParserSecurityTest extends ExtendedITextTest {
 
     @Test
     public void xxeTestFromString() throws XMPException {
-        junitExpectedException.expect(XMPException.class);
-        junitExpectedException.expectMessage(DTD_EXCEPTION_MESSAGE);
-        XMPMetaParser.parse(XMP_WITH_XXE, null);
+        Exception e = Assert.assertThrows(XMPException.class, () -> XMPMetaParser.parse(XMP_WITH_XXE, null));
+        Assert.assertEquals(DTD_EXCEPTION_MESSAGE, e.getMessage());
     }
 
     @Test
     public void xxeTestFromByteBuffer() throws XMPException {
-        junitExpectedException.expect(XMPException.class);
-        junitExpectedException.expectMessage(DTD_EXCEPTION_MESSAGE);
-        XMPMetaParser.parse(XMP_WITH_XXE.getBytes(StandardCharsets.UTF_8), null);
+        Exception e = Assert.assertThrows(XMPException.class,
+                () -> XMPMetaParser.parse(XMP_WITH_XXE.getBytes(StandardCharsets.UTF_8), null)
+        );
+        Assert.assertEquals(DTD_EXCEPTION_MESSAGE, e.getMessage());
     }
 
     @Test
     public void xxeTestFromInputStream() throws XMPException, IOException {
         try (InputStream inputStream = new ByteArrayInputStream(XMP_WITH_XXE.getBytes(StandardCharsets.UTF_8))) {
-            junitExpectedException.expect(XMPException.class);
-            junitExpectedException.expectMessage(DTD_EXCEPTION_MESSAGE);
-            XMPMetaParser.parse(inputStream, null);
+            Exception e = Assert.assertThrows(XMPException.class,
+                    () -> XMPMetaParser.parse(inputStream, null)
+            );
+            Assert.assertEquals(DTD_EXCEPTION_MESSAGE, e.getMessage());
         }
     }
 
     @Test
     public void xxeTestFromStringCustomXmlParser() throws XMPException {
         XmlProcessorCreator.setXmlParserFactory(new SecurityTestXmlParserFactory());
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage("Test message");
-        XMPMetaParser.parse(XMP_WITH_XXE, null);
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> XMPMetaParser.parse(XMP_WITH_XXE, null)
+        );
+        Assert.assertEquals("Test message", e.getMessage());
     }
 }

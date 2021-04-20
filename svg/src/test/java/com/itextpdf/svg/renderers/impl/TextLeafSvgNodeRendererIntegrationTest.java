@@ -44,21 +44,16 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class TextLeafSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void getContentLengthBaseTest() throws Exception {

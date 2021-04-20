@@ -64,18 +64,13 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PolygonSvgNodeRendererTest extends SvgIntegrationTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PolygonSvgNoderendererTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/PolygonSvgNoderendererTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {

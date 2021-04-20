@@ -57,11 +57,10 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -81,9 +80,6 @@ public class PdfA2EmbeddedFilesCheckTest extends ExtendedITextTest {
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     @LogMessages(messages = {

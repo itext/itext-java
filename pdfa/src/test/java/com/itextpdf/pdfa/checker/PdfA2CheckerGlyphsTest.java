@@ -40,11 +40,10 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfA2CheckerGlyphsTest extends ExtendedITextTest {
@@ -55,9 +54,6 @@ public class PdfA2CheckerGlyphsTest extends ExtendedITextTest {
     public void before() {
         pdfA2Checker.setFullCheckMode(true);
     }
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void checkValidFontGlyphsTest() throws IOException {
@@ -105,11 +101,10 @@ public class PdfA2CheckerGlyphsTest extends ExtendedITextTest {
 
             PdfFont font = createFontWithCharProcsAndEncodingDifferences(document, charProcs, differences);
 
-            junitExpectedException.expect(PdfAConformanceException.class);
-            junitExpectedException.expectMessage(
-                    PdfAConformanceException.A_FORM_XOBJECT_DICTIONARY_SHALL_NOT_CONTAIN_SUBTYPE2_KEY_WITH_A_VALUE_OF_PS);
-
-            pdfA2Checker.checkFontGlyphs(font, null);
+            Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                    () -> pdfA2Checker.checkFontGlyphs(font, null)
+            );
+            Assert.assertEquals(PdfAConformanceException.A_FORM_XOBJECT_DICTIONARY_SHALL_NOT_CONTAIN_SUBTYPE2_KEY_WITH_A_VALUE_OF_PS, e.getMessage());
         }
     }
 

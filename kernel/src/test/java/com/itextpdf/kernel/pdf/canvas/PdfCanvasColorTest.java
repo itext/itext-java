@@ -85,18 +85,13 @@ import java.util.ArrayList;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfCanvasColorTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasColorTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/canvas/PdfCanvasColorTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -616,27 +611,26 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
 
     @Test
     public void patternColorUncoloredPatternCsUnitTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-
         PdfDocument doc = new PdfDocument(new PdfWriter(new java.io.ByteArrayOutputStream()));
 
         PdfPattern.Tiling circle = new PdfPattern.Tiling(15, 15, 10, 20, false);
         new PdfPatternCanvas(circle, doc).circle(7.5f, 7.5f, 2.5f).fill().release();
 
-        new PatternColor(circle, new PdfSpecialCs.Pattern(), new float[0]);
+        Assert.assertThrows(IllegalArgumentException.class,
+                () -> new PatternColor(circle, new PdfSpecialCs.Pattern(), new float[0])
+        );
     }
 
     @Test
     public void patternColorUncoloredPatternColorUnitTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-
         PdfDocument doc = new PdfDocument(new PdfWriter(new java.io.ByteArrayOutputStream()));
 
         PdfPattern.Tiling circle = new PdfPattern.Tiling(15, 15, 10, 20, false);
         new PdfPatternCanvas(circle, doc).circle(7.5f, 7.5f, 2.5f).fill().release();
 
         PatternColor redCirclePattern = new PatternColor(circle, ColorConstants.RED);
-        new PatternColor(circle, redCirclePattern);
+
+        Assert.assertThrows(IllegalArgumentException.class, () -> new PatternColor(circle, redCirclePattern));
     }
 
     private static int countSubstringOccurrences(String str, String findStr) {

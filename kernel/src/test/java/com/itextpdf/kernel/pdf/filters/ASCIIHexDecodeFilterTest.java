@@ -30,18 +30,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class ASCIIHexDecodeFilterTest extends ExtendedITextTest {
     public static final String SOURCE_FILE =
             "./src/test/resources/com/itextpdf/kernel/pdf/filters/ASCIIHex.bin";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void decodingTest() throws IOException {
@@ -63,9 +58,11 @@ public class ASCIIHexDecodeFilterTest extends ExtendedITextTest {
     @Test
     public void decodingIllegalaCharacterTest() {
         byte[] bytes = "4c6f72656d20697073756d2eg>".getBytes();
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.IllegalCharacterInAsciihexdecode);
-        ASCIIHexDecodeFilter.ASCIIHexDecode(bytes);
+
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> ASCIIHexDecodeFilter.ASCIIHexDecode(bytes)
+        );
+        Assert.assertEquals(PdfException.IllegalCharacterInAsciihexdecode, e.getMessage());
     }
 
     @Test

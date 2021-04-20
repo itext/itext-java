@@ -56,11 +56,11 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfALongStringTest extends ExtendedITextTest {
@@ -69,9 +69,6 @@ public class PdfALongStringTest extends ExtendedITextTest {
     private static final String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis condimentum, tortor sit amet fermentum pharetra, sem felis finibus enim, vel consectetur nunc justo at nisi. In hac habitasse platea dictumst. Donec quis suscipit eros. Nam urna purus, scelerisque in placerat in, convallis vel sapien. Suspendisse sed lacus sit amet orci ornare vulputate. In hac habitasse platea dictumst. Ut eu aliquet felis, at consectetur neque.";
     private static final int STRING_LENGTH_LIMIT = 32767;
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
     @BeforeClass
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
@@ -79,22 +76,18 @@ public class PdfALongStringTest extends ExtendedITextTest {
 
     @Test
     public void runTest() throws Exception {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
         String file = "pdfALongString.pdf";
         String filename = destinationFolder + file;
         try (InputStream icm = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
-                Document document = new Document(
-                     new PdfADocument(new PdfWriter(new FileOutputStream(filename)),
-                        PdfAConformanceLevel.PDF_A_3U,
-                        new PdfOutputIntent("Custom", "",
-                                "http://www.color.org", "sRGB ICC preference", icm))
-                )) {
+                FileOutputStream fos = new FileOutputStream(filename)) {
+            Document document = new Document(new PdfADocument(new PdfWriter(fos), PdfAConformanceLevel.PDF_A_3U,
+                    new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB ICC preference", icm))
+            );
             StringBuilder stringBuilder = new StringBuilder(LOREM_IPSUM);
             while (stringBuilder.length() < STRING_LENGTH_LIMIT) {
                 stringBuilder.append(stringBuilder.toString());
             }
-            PdfFontFactory.register(sourceFolder + "FreeSans.ttf",sourceFolder + "FreeSans.ttf");
+            PdfFontFactory.register(sourceFolder + "FreeSans.ttf", sourceFolder + "FreeSans.ttf");
             PdfFont font = PdfFontFactory.createFont(
                     sourceFolder + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
             Paragraph p = new Paragraph(stringBuilder.toString());
@@ -102,9 +95,11 @@ public class PdfALongStringTest extends ExtendedITextTest {
             p.setFont(font);
             document.add(p);
 
-            // when document is auto-closing, ISO conformance check is performed
+            // when document is closing, ISO conformance check is performed
             // this document contain a string which is longer than it is allowed
             // per specification. That is why conformance exception should be thrown
+            Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> document.close());
+            Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
         }
     }
 }

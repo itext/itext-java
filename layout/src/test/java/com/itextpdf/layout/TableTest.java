@@ -80,13 +80,12 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -102,9 +101,6 @@ public class TableTest extends ExtendedITextTest {
     private static final String SHORT_TEXT_CONTENT = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
     private static final String MIDDLE_TEXT_CONTENT = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
             "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {

@@ -56,12 +56,11 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -74,9 +73,6 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PathSvgNodeRendererTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/PathSvgNodeRendererTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -317,14 +313,16 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
     @Test
     public void invalidZOperatorTest() throws IOException, InterruptedException {
-        junitExpectedException.expect(SvgProcessingException.class);
-        convertAndCompare(sourceFolder, destinationFolder, "invalidZOperatorTest01");
+        Assert.assertThrows(SvgProcessingException.class,
+                () -> convertAndCompare(sourceFolder, destinationFolder, "invalidZOperatorTest01")
+        );
     }
 
     @Test
     public void invalidOperatorTest() throws IOException, InterruptedException {
-        junitExpectedException.expect(SvgProcessingException.class);
-        convertAndCompare(sourceFolder, destinationFolder, "invalidOperatorTest01");
+        Assert.assertThrows(SvgProcessingException.class,
+                () -> convertAndCompare(sourceFolder, destinationFolder, "invalidOperatorTest01")
+        );
     }
 
 
@@ -406,8 +404,9 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
     @Test
     public void eofillUnsuportedPathTest() throws IOException, InterruptedException {
-        junitExpectedException.expect(SvgProcessingException.class);
-        convertAndCompare(sourceFolder, destinationFolder, "eofillUnsuportedPathTest");
+        Assert.assertThrows(SvgProcessingException.class,
+                () -> convertAndCompare(sourceFolder, destinationFolder, "eofillUnsuportedPathTest")
+        );
     }
 
     @Test

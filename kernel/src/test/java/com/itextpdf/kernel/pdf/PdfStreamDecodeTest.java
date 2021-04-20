@@ -33,10 +33,8 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Arrays;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfStreamDecodeTest extends ExtendedITextTest {
@@ -67,9 +65,6 @@ public class PdfStreamDecodeTest extends ExtendedITextTest {
             (byte) 0x16, (byte) 0xad
     };
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = KernelLogMessageConstant.DCTDECODE_FILTER_DECODING, logLevel = LogLevelConstants.INFO)
@@ -86,11 +81,10 @@ public class PdfStreamDecodeTest extends ExtendedITextTest {
         PdfStream pdfStream = new PdfStream(FLATE_DECODED_BYTES);
         pdfStream.put(PdfName.Filter, new PdfArray(Arrays.asList((PdfObject) PdfName.FlateDecode, (PdfObject) PdfName.JBIG2Decode)));
 
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(
-                PdfException.Filter1IsNotSupported, PdfName.JBIG2Decode));
-
-        pdfStream.getBytes(true);
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> pdfStream.getBytes(true)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(PdfException.Filter1IsNotSupported, PdfName.JBIG2Decode), e.getMessage());
     }
 
     @Test

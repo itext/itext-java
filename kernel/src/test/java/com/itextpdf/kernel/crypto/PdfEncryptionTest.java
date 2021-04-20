@@ -71,13 +71,12 @@ import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -126,9 +125,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
      * Owner password.
      */
     public static byte[] OWNER = "World".getBytes(StandardCharsets.ISO_8859_1);
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     private PrivateKey privateKey;
 
@@ -253,95 +249,98 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
     @Test
     public void openEncryptedDocWithoutPassword() throws IOException {
-        junitExpectedException.expect(BadPasswordException.class);
-        junitExpectedException.expectMessage(BadPasswordException.BadUserPassword);
-
-        PdfDocument doc = new PdfDocument(new PdfReader(sourceFolder + "encryptedWithPasswordStandard40.pdf"));
-        doc.close();
+        try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithPasswordStandard40.pdf")) {
+            Exception e = Assert.assertThrows(BadPasswordException.class, () -> new PdfDocument(reader));
+            Assert.assertEquals(BadPasswordException.BadUserPassword, e.getMessage());
+        }
     }
 
     @Test
     public void openEncryptedDocWithWrongPassword() throws IOException {
-        junitExpectedException.expect(BadPasswordException.class);
-        junitExpectedException.expectMessage(BadPasswordException.BadUserPassword);
+        try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithPasswordStandard40.pdf",
+                new ReaderProperties().setPassword("wrong_password".getBytes(StandardCharsets.ISO_8859_1)))) {
 
-        PdfReader reader = new PdfReader(sourceFolder + "encryptedWithPasswordStandard40.pdf",
-                new ReaderProperties().setPassword("wrong_password".getBytes(StandardCharsets.ISO_8859_1)));
-        PdfDocument doc = new PdfDocument(reader);
-        doc.close();
+            Exception e = Assert.assertThrows(BadPasswordException.class, () -> new PdfDocument(reader));
+            Assert.assertEquals(BadPasswordException.BadUserPassword, e.getMessage());
+        }
     }
 
     @Test
     public void openEncryptedDocWithoutCertificate() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.CertificateIsNotProvidedDocumentIsEncryptedWithPublicKeyCertificate);
+        try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf")) {
 
-        PdfDocument doc = new PdfDocument(new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf"));
-        doc.close();
+            Exception e = Assert.assertThrows(PdfException.class, () -> new PdfDocument(reader));
+            Assert.assertEquals(PdfException.CertificateIsNotProvidedDocumentIsEncryptedWithPublicKeyCertificate,
+                    e.getMessage());
+        }
     }
 
     @Test
     public void openEncryptedDocWithoutPrivateKey() throws IOException, CertificateException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.BadCertificateAndKey);
-
-        PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
+        try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
                 new ReaderProperties()
                         .setPublicKeySecurityParams(
                                 getPublicCertificate(sourceFolder + "wrong.cer"),
                                 null,
                                 "BC",
-                                null));
-        PdfDocument doc = new PdfDocument(reader);
-        doc.close();
+                                null))) {
+
+            Exception e = Assert.assertThrows(PdfException.class,
+                    () -> new PdfDocument(reader)
+            );
+            Assert.assertEquals(PdfException.BadCertificateAndKey, e.getMessage());
+        }
     }
 
     @Test
     public void openEncryptedDocWithWrongCertificate() throws IOException, GeneralSecurityException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.BadCertificateAndKey);
-
-        PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
+        try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
                 new ReaderProperties()
                         .setPublicKeySecurityParams(
                                 getPublicCertificate(sourceFolder + "wrong.cer"),
                                 getPrivateKey(),
                                 "BC",
-                                null));
-        PdfDocument doc = new PdfDocument(reader);
-        doc.close();
+                                null))) {
+
+            Exception e = Assert.assertThrows(PdfException.class,
+                    () -> new PdfDocument(reader)
+            );
+            Assert.assertEquals(PdfException.BadCertificateAndKey, e.getMessage());
+        }
     }
 
     @Test
     public void openEncryptedDocWithWrongPrivateKey() throws IOException, GeneralSecurityException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.PdfDecryption);
-
-        PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
+        try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
                 new ReaderProperties()
                         .setPublicKeySecurityParams(
                                 getPublicCertificate(CERT),
                                 CryptoUtil.readPrivateKeyFromPKCS12KeyStore(new FileInputStream(sourceFolder + "wrong.p12"), "demo", "password".toCharArray()),
                                 "BC",
-                                null));
-        PdfDocument doc = new PdfDocument(reader);
-        doc.close();
+                                null))) {
+
+            Exception e = Assert.assertThrows(PdfException.class,
+                    () -> new PdfDocument(reader)
+            );
+            Assert.assertEquals(PdfException.PdfDecryption, e.getMessage());
+        }
     }
 
     @Test
     public void openEncryptedDocWithWrongCertificateAndPrivateKey() throws IOException, GeneralSecurityException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.BadCertificateAndKey);
-
-        PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
+        try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
                 new ReaderProperties()
                         .setPublicKeySecurityParams(
                                 getPublicCertificate(sourceFolder + "wrong.cer"),
                                 CryptoUtil.readPrivateKeyFromPKCS12KeyStore(new FileInputStream(sourceFolder + "wrong.p12"), "demo", "password".toCharArray()),
                                 "BC",
-                                null));
-        PdfDocument doc = new PdfDocument(reader);
-        doc.close();
+                                null))) {
+
+            Exception e = Assert.assertThrows(PdfException.class,
+                    () -> new PdfDocument(reader)
+            );
+            Assert.assertEquals(PdfException.BadCertificateAndKey, e.getMessage());
+        }
     }
 
     @Test
@@ -389,12 +388,14 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
     @Test
     public void stampDocNoUserPassword() throws IOException {
-        junitExpectedException.expect(BadPasswordException.class);
-        junitExpectedException.expectMessage(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);
-
         String fileName = "stampedNoPassword.pdf";
-        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "noUserPassword.pdf"), new PdfWriter(destinationFolder + fileName));
-        document.close();
+
+        try (PdfReader reader = new PdfReader(sourceFolder + "noUserPassword.pdf");
+                PdfWriter writer = new PdfWriter(destinationFolder + fileName)) {
+
+            Exception e = Assert.assertThrows(BadPasswordException.class, () -> new PdfDocument(reader, writer));
+            Assert.assertEquals(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword, e.getMessage());
+        }
     }
 
     @Test

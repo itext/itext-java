@@ -53,18 +53,15 @@ import com.itextpdf.svg.renderers.path.impl.EllipticalCurveTo;
 import com.itextpdf.svg.renderers.path.impl.MoveTo;
 import com.itextpdf.svg.renderers.path.impl.SmoothSCurveTo;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.util.List;
 
 @Category(IntegrationTest.class)
 public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTest {
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void testRelativeArcOperatorShapes() {
@@ -136,20 +133,20 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
 
     @Test
     public void testNonsensePathNotExistingOperator() {
-        junitExpectedException.expect(SvgProcessingException.class);
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         String instructions = "F";
         path.setAttribute(SvgConstants.Attributes.D, instructions);
-        Assert.assertTrue(path.getShapes().isEmpty());
+
+        Assert.assertThrows(SvgProcessingException.class, () -> path.getShapes());
     }
 
     @Test
     public void testClosePathNoPrecedingPathsOperator() {
-        junitExpectedException.expect(SvgProcessingException.class);
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         String instructions = "z";
         path.setAttribute(SvgConstants.Attributes.D, instructions);
-        Assert.assertTrue(path.getShapes().isEmpty());
+
+        Assert.assertThrows(SvgProcessingException.class, () -> path.getShapes());
     }
 
     @Test
@@ -204,23 +201,21 @@ public class PathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTe
 
     @Test
     public void smoothCurveAsFirstShapeTest1() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgExceptionMessageConstant.INVALID_SMOOTH_CURVE_USE);
-
         String instructions = "S 100 200 300 400";
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.D, instructions);
-        path.getShapes();
+
+        Exception e = Assert.assertThrows(SvgProcessingException.class, () -> path.getShapes());
+        Assert.assertEquals(SvgExceptionMessageConstant.INVALID_SMOOTH_CURVE_USE, e.getMessage());
     }
 
     @Test
     public void smoothCurveAsFirstShapeTest2() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgExceptionMessageConstant.INVALID_SMOOTH_CURVE_USE);
-
         String instructions = "T 100,200";
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.D, instructions);
-        path.getShapes();
+
+        Exception e = Assert.assertThrows(SvgProcessingException.class, () -> path.getShapes());
+        Assert.assertEquals(SvgExceptionMessageConstant.INVALID_SMOOTH_CURVE_USE, e.getMessage());
     }
 }

@@ -55,10 +55,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -115,9 +113,6 @@ public class XmlProcessorCreatorSecurityTest extends ExtendedITextTest {
 
     private final static String DTD_EXCEPTION_MESSAGE = ExceptionTestUtil.getDoctypeIsDisallowedExceptionMessage();
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
     @Before
     public void resetXmlParserFactoryToDefault() {
         XmlProcessorCreator.setXmlParserFactory(new DefaultSafeXmlParserFactory());
@@ -138,9 +133,10 @@ public class XmlProcessorCreatorSecurityTest extends ExtendedITextTest {
         XmlProcessorCreator.setXmlParserFactory(new SecurityTestXmlParserFactory());
         DocumentBuilder documentBuilder = XmlProcessorCreator.createSafeDocumentBuilder(false, false);
         try (InputStream inputStream = new ByteArrayInputStream(XML_WITH_XXE.getBytes(StandardCharsets.UTF_8))) {
-            junitExpectedException.expect(PdfException.class);
-            junitExpectedException.expectMessage("Test message");
-            documentBuilder.parse(inputStream);
+            Exception e = Assert.assertThrows(PdfException.class,
+                    () -> documentBuilder.parse(inputStream)
+            );
+            Assert.assertEquals("Test message", e.getMessage());
         }
     }
 
@@ -211,9 +207,10 @@ public class XmlProcessorCreatorSecurityTest extends ExtendedITextTest {
         try (InputStream inputStream = new ByteArrayInputStream(
                 XmlProcessorCreatorSecurityTest.XML_WITH_XXE.getBytes(StandardCharsets.UTF_8))) {
             InputSource inputSource = new InputSource(inputStream);
-            junitExpectedException.expect(SAXParseException.class);
-            junitExpectedException.expectMessage(XmlProcessorCreatorSecurityTest.DTD_EXCEPTION_MESSAGE);
-            reader.parse(inputSource);
+            Exception e = Assert.assertThrows(SAXParseException.class,
+                    () -> reader.parse(inputSource)
+            );
+            Assert.assertEquals(XmlProcessorCreatorSecurityTest.DTD_EXCEPTION_MESSAGE, e.getMessage());
         }
     }
 
@@ -221,9 +218,10 @@ public class XmlProcessorCreatorSecurityTest extends ExtendedITextTest {
             throws IOException, SAXException {
         DocumentBuilder documentBuilder = XmlProcessorCreator.createSafeDocumentBuilder(nameSpace, comments);
         try (InputStream inputStream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))) {
-            junitExpectedException.expect(SAXParseException.class);
-            junitExpectedException.expectMessage(XmlProcessorCreatorSecurityTest.DTD_EXCEPTION_MESSAGE);
-            documentBuilder.parse(inputStream);
+            Exception e = Assert.assertThrows(SAXParseException.class,
+                    () -> documentBuilder.parse(inputStream)
+            );
+            Assert.assertEquals(XmlProcessorCreatorSecurityTest.DTD_EXCEPTION_MESSAGE, e.getMessage());
         }
     }
 }

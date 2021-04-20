@@ -50,16 +50,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class SkewXTransformationTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void normalSkewXTest() {
@@ -71,18 +66,18 @@ public class SkewXTransformationTest extends ExtendedITextTest {
 
     @Test
     public void noSkewXValuesTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
-
-        TransformUtils.parseTransform("skewX()");
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> TransformUtils.parseTransform("skewX()")
+        );
+        Assert.assertEquals(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test
     public void twoSkewXValuesTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
-
-        TransformUtils.parseTransform("skewX(1 2)");
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> TransformUtils.parseTransform("skewX(1 2)")
+        );
+        Assert.assertEquals(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test

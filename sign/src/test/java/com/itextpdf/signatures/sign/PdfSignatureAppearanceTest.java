@@ -69,7 +69,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -87,7 +86,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfSignatureAppearanceTest extends ExtendedITextTest {
@@ -99,9 +97,6 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
     private Certificate[] chain;
     private PrivateKey pk;
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void before() {
@@ -335,7 +330,6 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
         signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
 
-        junitExpectedException.expect(NullPointerException.class);
         signer.getSignatureAppearance()
                 .setLayer2Text("Verified and signed by me.")
                 .setReason("Test 1")
@@ -345,11 +339,9 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
                 BouncyCastleProvider.PROVIDER_NAME);
-        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null,
-                0, PdfSigner.CryptoStandard.CADES);
 
-        Assert.assertNull(new CompareTool().compareVisually(
-                dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
+        Assert.assertThrows(NullPointerException.class, () ->  signer.signDetached(new BouncyCastleDigest(),
+                pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES));
     }
 
     private void testSignatureOnRotatedPage(int pageNum, PdfSignatureAppearance.RenderingMode renderingMode, StringBuilder assertionResults) throws IOException, GeneralSecurityException, InterruptedException {

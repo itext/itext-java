@@ -49,16 +49,11 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PolyNodeTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void addAndGetChildTest() {
@@ -73,11 +68,11 @@ public class PolyNodeTest extends ExtendedITextTest {
 
     @Test
     public void unmodifiableListOfChildsTest() {
-        junitExpectedException.expect(UnsupportedOperationException.class);
         PolyNode node = new PolyNode();
 
         List<PolyNode> childs = node.getChilds();
-        childs.add(new PolyNode());
+
+        Assert.assertThrows(UnsupportedOperationException.class, () -> childs.add(new PolyNode()));
     }
 
     @Test

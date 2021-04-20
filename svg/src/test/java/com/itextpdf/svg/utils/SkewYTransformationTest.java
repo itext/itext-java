@@ -49,16 +49,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class SkewYTransformationTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void normalSkewYTest() {
@@ -70,18 +65,18 @@ public class SkewYTransformationTest extends ExtendedITextTest {
 
     @Test
     public void noSkewYValuesTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
-
-        TransformUtils.parseTransform("skewY()");
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> TransformUtils.parseTransform("skewY()")
+        );
+        Assert.assertEquals(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test
     public void twoSkewYValuesTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
-
-        TransformUtils.parseTransform("skewY(1 2)");
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> TransformUtils.parseTransform("skewY(1 2)")
+        );
+        Assert.assertEquals(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES, e.getMessage());
     }
 
     @Test

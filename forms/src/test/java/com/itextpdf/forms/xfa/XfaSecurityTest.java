@@ -58,11 +58,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class XfaSecurityTest extends ExtendedITextTest {
@@ -77,9 +76,6 @@ public class XfaSecurityTest extends ExtendedITextTest {
             + "<xdp:xdp xmlns:xdp=\"http://ns.adobe.com/xdp/\" timeStamp=\"2018-03-08T12:50:19Z\"\n"
             + "         uuid=\"36ac5111-55c5-4172-b0c1-0cbd783e2fcf\">\n"
             + "</xdp:xdp>\n";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Before
     public void resetXmlParserFactoryToDefault() {
@@ -107,9 +103,10 @@ public class XfaSecurityTest extends ExtendedITextTest {
         XmlProcessorCreator.setXmlParserFactory(new SecurityTestXmlParserFactory());
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inFileName),
                 new PdfWriter(new ByteArrayOutputStream()))) {
-            junitExpectedException.expect(PdfException.class);
-            junitExpectedException.expectMessage(ExceptionTestUtil.getXxeTestMessage());
-            PdfAcroForm.getAcroForm(pdfDoc, true);
+            Exception e = Assert.assertThrows(PdfException.class,
+                    () -> PdfAcroForm.getAcroForm(pdfDoc, true)
+            );
+            Assert.assertEquals(ExceptionTestUtil.getXxeTestMessage(), e.getMessage());
         }
     }
 
@@ -117,18 +114,16 @@ public class XfaSecurityTest extends ExtendedITextTest {
     public void xfaExternalFileXfaFormTest() throws IOException {
         String inFileName = SOURCE_FOLDER + "xfaExternalFile.pdf";
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inFileName))) {
-            junitExpectedException.expect(PdfException.class);
-            junitExpectedException.expectMessage(DTD_EXCEPTION_MESSAGE);
-            new XfaForm(pdfDoc);
+            Exception e = Assert.assertThrows(PdfException.class, () -> new XfaForm(pdfDoc));
+            Assert.assertEquals(DTD_EXCEPTION_MESSAGE, e.getMessage());
         }
     }
 
     @Test
     public void xfaWithDtdXfaFormTest() throws IOException {
         try (InputStream inputStream = new ByteArrayInputStream(XFA_WITH_DTD_XML.getBytes(StandardCharsets.UTF_8))) {
-            junitExpectedException.expect(PdfException.class);
-            junitExpectedException.expectMessage(DTD_EXCEPTION_MESSAGE);
-            new XfaForm(inputStream);
+            Exception e = Assert.assertThrows(PdfException.class, () -> new XfaForm(inputStream));
+            Assert.assertEquals(DTD_EXCEPTION_MESSAGE, e.getMessage());
         }
     }
 
@@ -136,18 +131,18 @@ public class XfaSecurityTest extends ExtendedITextTest {
     public void fillXfaFormTest() throws IOException {
         try (InputStream inputStream = new ByteArrayInputStream(XFA_WITH_DTD_XML.getBytes(StandardCharsets.UTF_8))) {
             XfaForm form = new XfaForm();
-            junitExpectedException.expect(PdfException.class);
-            junitExpectedException.expectMessage(DTD_EXCEPTION_MESSAGE);
-            form.fillXfaForm(inputStream, true);
+            Exception e = Assert.assertThrows(PdfException.class, () -> form.fillXfaForm(inputStream, true));
+            Assert.assertEquals(DTD_EXCEPTION_MESSAGE, e.getMessage());
         }
     }
 
     private void xfaSecurityExceptionTest(String inputFileName) throws IOException {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inputFileName),
                 new PdfWriter(new ByteArrayOutputStream()))) {
-            junitExpectedException.expect(PdfException.class);
-            junitExpectedException.expectMessage(DTD_EXCEPTION_MESSAGE);
-            PdfAcroForm.getAcroForm(pdfDoc, true);
+            Exception e = Assert.assertThrows(PdfException.class,
+                    () -> PdfAcroForm.getAcroForm(pdfDoc, true)
+            );
+            Assert.assertEquals(DTD_EXCEPTION_MESSAGE, e.getMessage());
         }
     }
 }
