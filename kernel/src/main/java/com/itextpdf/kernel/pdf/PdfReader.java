@@ -1312,8 +1312,19 @@ public class PdfReader implements Closeable, Serializable {
      * @throws IOException if there is a problem reading the byte source
      */
     private static PdfTokenizer getOffsetTokeniser(IRandomAccessSource byteSource) throws IOException {
+        com.itextpdf.io.IOException possibleException = null;
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(byteSource));
-        int offset = tok.getHeaderOffset();
+        int offset;
+        try {
+            offset = tok.getHeaderOffset();
+        } catch (com.itextpdf.io.IOException ex) {
+            possibleException = ex;
+            throw possibleException;
+        } finally {
+            if (possibleException != null) {
+                tok.close();
+            }
+        }
         if (offset != 0) {
             IRandomAccessSource offsetSource = new WindowRandomAccessSource(byteSource, offset);
             tok = new PdfTokenizer(new RandomAccessFileOrArray(offsetSource));

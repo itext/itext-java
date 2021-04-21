@@ -43,14 +43,26 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.io.IoExceptionMessage;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.util.GhostscriptHelper;
 import com.itextpdf.io.util.SystemUtil;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -58,9 +70,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class CompareToolTest extends ExtendedITextTest {
@@ -217,5 +226,67 @@ public class CompareToolTest extends ExtendedITextTest {
         Assert.assertTrue(result.contains("differs on page [1, 2]."));
         Assert.assertTrue(new File(destinationFolder + "diff_1.png").exists());
         Assert.assertTrue(new File(destinationFolder + "diff_2.png").exists());
+    }
+
+    @Test
+    public void compareDiffFilesWithSameLinkAnnotationTest() throws IOException {
+        String firstPdf = destinationFolder + "firstPdf.pdf";
+        String secondPdf = destinationFolder + "secondPdf.pdf";
+        PdfDocument firstDocument = new PdfDocument(new PdfWriter(firstPdf));
+
+        PdfPage page1FirstDocument = firstDocument.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1FirstDocument);
+        canvas.beginText();
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER_BOLD), 14);
+        canvas.moveText(100, 600);
+        canvas.showText("Page 1");
+        canvas.moveText(0, -30);
+        canvas.showText("Link to page 1. Click here!");
+        canvas.endText();
+        canvas.release();
+        page1FirstDocument.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 560, 260, 25)).setDestination(
+                PdfExplicitDestination.createFit(page1FirstDocument)).setBorder(new PdfArray(new float[] {0, 0, 1})));
+        page1FirstDocument.flush();
+        firstDocument.close();
+
+        PdfDocument secondDocument = new PdfDocument(new PdfWriter(secondPdf));
+        PdfPage page1secondDocument = secondDocument.addNewPage();
+        canvas = new PdfCanvas(page1secondDocument);
+        canvas.beginText();
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER_BOLD), 14);
+        canvas.moveText(100, 600);
+        canvas.showText("Page 1 wit different Text");
+        canvas.moveText(0, -30);
+        canvas.showText("Link to page 1. Click here!");
+        canvas.endText();
+        canvas.release();
+        page1secondDocument.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 560, 260, 25)).setDestination(
+                PdfExplicitDestination.createFit(page1secondDocument)).setBorder(new PdfArray(new float[] {0, 0, 1})));
+        page1secondDocument.flush();
+        secondDocument.close();
+
+        Assert.assertNull(new CompareTool().compareLinkAnnotations(firstPdf, secondPdf));
+    }
+
+    @Test
+    public void compareFilesWithDiffLinkAnnotationTest() throws IOException {
+        String firstPdf = destinationFolder + "outPdf.pdf";
+        String secondPdf = destinationFolder + "secondPdf.pdf";
+        PdfDocument firstDocument = new PdfDocument(new PdfWriter(firstPdf));
+        PdfDocument secondDocument = new PdfDocument(new PdfWriter(secondPdf));
+
+        PdfPage page1FirstDocument = firstDocument.addNewPage();
+        page1FirstDocument.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 560, 400, 50)).setDestination(
+                PdfExplicitDestination.createFit(page1FirstDocument)).setBorder(new PdfArray(new float[] {0, 0, 1})));
+        page1FirstDocument.flush();
+        firstDocument.close();
+
+        PdfPage page1SecondDocument = secondDocument.addNewPage();
+        page1SecondDocument.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 560, 260, 25)).setDestination(
+                PdfExplicitDestination.createFit(page1SecondDocument)).setBorder(new PdfArray(new float[] {0, 0, 1})));
+        page1SecondDocument.flush();
+        secondDocument.close();
+
+        Assert.assertNotNull(new CompareTool().compareLinkAnnotations(firstPdf, secondPdf));
     }
 }

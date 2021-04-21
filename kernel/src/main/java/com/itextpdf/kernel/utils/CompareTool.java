@@ -718,11 +718,12 @@ public class CompareTool {
      */
     public String compareXmp(String outPdf, String cmpPdf, boolean ignoreDateAndProducerProperties) {
         init(outPdf, cmpPdf);
-        PdfDocument cmpDocument = null;
-        PdfDocument outDocument = null;
-        try {
-            cmpDocument = new PdfDocument(new PdfReader(this.cmpPdf), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-            outDocument = new PdfDocument(new PdfReader(this.outPdf), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+        try (PdfReader readerCmp = new PdfReader(this.cmpPdf);
+                PdfDocument cmpDocument = new PdfDocument(readerCmp,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+                PdfReader readerOut = new PdfReader(this.outPdf);
+                PdfDocument outDocument = new PdfDocument(readerOut,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             byte[] cmpBytes = cmpDocument.getXmpMetadata(), outBytes = outDocument.getXmpMetadata();
             if (ignoreDateAndProducerProperties) {
                 XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(cmpBytes, new ParseOptions().setOmitNormalization(true));
@@ -748,11 +749,6 @@ public class CompareTool {
             }
         } catch (Exception ex) {
             return "XMP parsing failure!";
-        } finally {
-            if (cmpDocument != null)
-                cmpDocument.close();
-            if (outDocument != null)
-                outDocument.close();
         }
         return null;
     }
@@ -809,19 +805,21 @@ public class CompareTool {
         System.out.print("[itext] INFO  Comparing document info.......");
         String message = null;
         setPassword(outPass, cmpPass);
-        PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf, getOutReaderProperties()), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-        PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmpPdf, getCmpReaderProperties()), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-        String[] cmpInfo = convertInfo(cmpDocument.getDocumentInfo());
-        String[] outInfo = convertInfo(outDocument.getDocumentInfo());
-        for (int i = 0; i < cmpInfo.length; ++i) {
-            if (!cmpInfo[i].equals(outInfo[i])) {
-                message = MessageFormatUtil.format("Document info fail. Expected: \"{0}\", actual: \"{1}\"", cmpInfo[i], outInfo[i]);
-                break;
+        try (PdfReader readerOut = new PdfReader(outPdf, getOutReaderProperties());
+                PdfDocument outDocument = new PdfDocument(readerOut,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+                PdfReader readerCmp = new PdfReader(cmpPdf, getCmpReaderProperties());
+                PdfDocument cmpDocument = new PdfDocument(readerCmp,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
+            String[] cmpInfo = convertInfo(cmpDocument.getDocumentInfo());
+            String[] outInfo = convertInfo(outDocument.getDocumentInfo());
+            for (int i = 0; i < cmpInfo.length; ++i) {
+                if (!cmpInfo[i].equals(outInfo[i])) {
+                    message = MessageFormatUtil.format("Document info fail. Expected: \"{0}\", actual: \"{1}\"", cmpInfo[i], outInfo[i]);
+                    break;
+                }
             }
         }
-        outDocument.close();
-        cmpDocument.close();
-
         if (message == null)
             System.out.println("OK");
         else
@@ -853,25 +851,28 @@ public class CompareTool {
     public String compareLinkAnnotations(String outPdf, String cmpPdf) throws IOException {
         System.out.print("[itext] INFO  Comparing link annotations....");
         String message = null;
-        PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-        PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmpPdf), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-        for (int i = 0; i < outDocument.getNumberOfPages() && i < cmpDocument.getNumberOfPages(); i++) {
-            List<PdfLinkAnnotation> outLinks = getLinkAnnotations(i + 1, outDocument);
-            List<PdfLinkAnnotation> cmpLinks = getLinkAnnotations(i + 1, cmpDocument);
+        try (PdfReader readerOut = new PdfReader(outPdf);
+                PdfDocument outDocument = new PdfDocument(readerOut,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+                PdfReader readerCmp = new PdfReader(cmpPdf);
+                PdfDocument cmpDocument = new PdfDocument(readerCmp,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))){
+            for (int i = 0; i < outDocument.getNumberOfPages() && i < cmpDocument.getNumberOfPages(); i++) {
+                List<PdfLinkAnnotation> outLinks = getLinkAnnotations(i + 1, outDocument);
+                List<PdfLinkAnnotation> cmpLinks = getLinkAnnotations(i + 1, cmpDocument);
 
-            if (cmpLinks.size() != outLinks.size()) {
-                message = MessageFormatUtil.format("Different number of links on page {0}.", i + 1);
-                break;
-            }
-            for (int j = 0; j < cmpLinks.size(); j++) {
-                if (!compareLinkAnnotations(cmpLinks.get(j), outLinks.get(j), cmpDocument, outDocument)) {
-                    message = MessageFormatUtil.format("Different links on page {0}.\n{1}\n{2}", i + 1, cmpLinks.get(j).toString(), outLinks.get(j).toString());
+                if (cmpLinks.size() != outLinks.size()) {
+                    message = MessageFormatUtil.format("Different number of links on page {0}.", i + 1);
                     break;
+                }
+                for (int j = 0; j < cmpLinks.size(); j++) {
+                    if (!compareLinkAnnotations(cmpLinks.get(j), outLinks.get(j), cmpDocument, outDocument)) {
+                        message = MessageFormatUtil.format("Different links on page {0}.\n{1}\n{2}", i + 1, cmpLinks.get(j).toString(), outLinks.get(j).toString());
+                        break;
+                    }
                 }
             }
         }
-        outDocument.close();
-        cmpDocument.close();
         if (message == null)
             System.out.println("OK");
         else
@@ -902,20 +903,18 @@ public class CompareTool {
         String cmpXmlPath = outPdf.replace(".pdf", ".cmp.xml");
 
         String message = null;
-
-        PdfReader readerOut = new PdfReader(outPdf);
-        PdfDocument docOut = new PdfDocument(readerOut, new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-        FileOutputStream xmlOut = new FileOutputStream(outXmlPath);
-        new TaggedPdfReaderTool(docOut).setRootTag("root").convertToXml(xmlOut);
-        docOut.close();
-        xmlOut.close();
-
-        PdfReader readerCmp = new PdfReader(cmpPdf);
-        PdfDocument docCmp = new PdfDocument(readerCmp, new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-        FileOutputStream xmlCmp = new FileOutputStream(cmpXmlPath);
-        new TaggedPdfReaderTool(docCmp).setRootTag("root").convertToXml(xmlCmp);
-        docCmp.close();
-        xmlCmp.close();
+        try (PdfReader readerOut = new PdfReader(outPdf);
+                PdfDocument docOut = new PdfDocument(readerOut,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+                FileOutputStream xmlOut = new FileOutputStream(outXmlPath)) {
+            new TaggedPdfReaderTool(docOut).setRootTag("root").convertToXml(xmlOut);
+        }
+        try (PdfReader readerCmp = new PdfReader(cmpPdf);
+                PdfDocument docCmp = new PdfDocument(readerCmp,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+                FileOutputStream xmlCmp = new FileOutputStream(cmpXmlPath)) {
+            new TaggedPdfReaderTool(docCmp).setRootTag("root").convertToXml(xmlCmp);
+        }
 
         if (!compareXmls(outXmlPath, cmpXmlPath)) {
             message = "The tag structures are different.";
@@ -1000,7 +999,7 @@ public class CompareTool {
 
         GhostscriptHelper ghostscriptHelper = null;
         try {
-             ghostscriptHelper = new GhostscriptHelper(gsExec);
+            ghostscriptHelper = new GhostscriptHelper(gsExec);
         } catch (IllegalArgumentException e) {
             throw new CompareToolExecutionException(e.getMessage());
         }
@@ -1094,35 +1093,33 @@ public class CompareTool {
     }
 
     private void createIgnoredAreasPdfs(String outPath, Map<Integer, List<Rectangle>> ignoredAreas) throws IOException {
-        PdfWriter outWriter = new PdfWriter(outPath + IGNORED_AREAS_PREFIX + outPdfName);
-        PdfWriter cmpWriter = new PdfWriter(outPath + IGNORED_AREAS_PREFIX + cmpPdfName);
-
         StampingProperties properties = new StampingProperties();
         properties.setEventCountingMetaInfo(metaInfo);
-        PdfDocument pdfOutDoc = new PdfDocument(new PdfReader(outPdf), outWriter, properties);
-        PdfDocument pdfCmpDoc = new PdfDocument(new PdfReader(cmpPdf), cmpWriter, properties);
+        try (PdfWriter outWriter = new PdfWriter(outPath + IGNORED_AREAS_PREFIX + outPdfName);
+                PdfReader readerOut = new PdfReader(outPdf);
+                PdfDocument pdfOutDoc = new PdfDocument(readerOut, outWriter, properties);
+                PdfWriter cmpWriter = new PdfWriter(outPath + IGNORED_AREAS_PREFIX + cmpPdfName);
+                PdfReader readerCmp = new PdfReader(cmpPdf);
+                PdfDocument pdfCmpDoc = new PdfDocument(readerCmp, cmpWriter, properties)) {
+            for (Map.Entry<Integer, List<Rectangle>> entry : ignoredAreas.entrySet()) {
+                int pageNumber = entry.getKey();
+                List<Rectangle> rectangles = entry.getValue();
 
-        for (Map.Entry<Integer, List<Rectangle>> entry : ignoredAreas.entrySet()) {
-            int pageNumber = entry.getKey();
-            List<Rectangle> rectangles = entry.getValue();
+                if (rectangles != null && !rectangles.isEmpty()) {
+                    PdfCanvas outCanvas = new PdfCanvas(pdfOutDoc.getPage(pageNumber));
+                    PdfCanvas cmpCanvas = new PdfCanvas(pdfCmpDoc.getPage(pageNumber));
 
-            if (rectangles != null && !rectangles.isEmpty()) {
-                PdfCanvas outCanvas = new PdfCanvas(pdfOutDoc.getPage(pageNumber));
-                PdfCanvas cmpCanvas = new PdfCanvas(pdfCmpDoc.getPage(pageNumber));
-
-                outCanvas.saveState();
-                cmpCanvas.saveState();
-                for (Rectangle rect : rectangles) {
-                    outCanvas.rectangle(rect).fill();
-                    cmpCanvas.rectangle(rect).fill();
+                    outCanvas.saveState();
+                    cmpCanvas.saveState();
+                    for (Rectangle rect : rectangles) {
+                        outCanvas.rectangle(rect).fill();
+                        cmpCanvas.rectangle(rect).fill();
+                    }
+                    outCanvas.restoreState();
+                    cmpCanvas.restoreState();
                 }
-                outCanvas.restoreState();
-                cmpCanvas.restoreState();
             }
         }
-
-        pdfOutDoc.close();
-        pdfCmpDoc.close();
 
         init(outPath + IGNORED_AREAS_PREFIX + outPdfName, outPath + IGNORED_AREAS_PREFIX + cmpPdfName);
     }
@@ -1161,69 +1158,61 @@ public class CompareTool {
     private String compareByContent(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
         printOutCmpDirectories();
         System.out.print("Comparing by content..........");
-        PdfDocument outDocument;
-        try {
-            outDocument = new PdfDocument(new PdfReader(outPdf, getOutReaderProperties()), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-        } catch (IOException e) {
-            throw new IOException("File \"" + outPdf + "\" not found", e);
-        }
-        List<PdfDictionary> outPages = new ArrayList<>();
-        outPagesRef = new ArrayList<>();
-        loadPagesFromReader(outDocument, outPages, outPagesRef);
+        try (PdfReader readerOut = new PdfReader(outPdf, getOutReaderProperties());
+                PdfDocument outDocument = new PdfDocument(readerOut,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+                PdfReader readerCmp = new PdfReader(cmpPdf, getCmpReaderProperties());
+                PdfDocument cmpDocument = new PdfDocument(readerCmp,
+                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
 
-        PdfDocument cmpDocument;
-        try {
-            cmpDocument = new PdfDocument(new PdfReader(cmpPdf, getCmpReaderProperties()), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-        } catch (IOException e) {
-            throw new IOException("File \"" + cmpPdf + "\" not found", e);
-        }
-        List<PdfDictionary> cmpPages = new ArrayList<>();
-        cmpPagesRef = new ArrayList<>();
-        loadPagesFromReader(cmpDocument, cmpPages, cmpPagesRef);
+            List<PdfDictionary> outPages = new ArrayList<>();
+            outPagesRef = new ArrayList<>();
+            loadPagesFromReader(outDocument, outPages, outPagesRef);
 
-        if (outPages.size() != cmpPages.size())
-            return compareVisuallyAndCombineReports("Documents have different numbers of pages.", outPath, differenceImagePrefix, ignoredAreas, null);
+            List<PdfDictionary> cmpPages = new ArrayList<>();
+            cmpPagesRef = new ArrayList<>();
+            loadPagesFromReader(cmpDocument, cmpPages, cmpPagesRef);
 
-        CompareResult compareResult = new CompareResult(compareByContentErrorsLimit);
-        List<Integer> equalPages = new ArrayList<>(cmpPages.size());
-        for (int i = 0; i < cmpPages.size(); i++) {
-            ObjectPath currentPath = new ObjectPath(cmpPagesRef.get(i), outPagesRef.get(i));
-            if (compareDictionariesExtended(outPages.get(i), cmpPages.get(i), currentPath, compareResult))
-                equalPages.add(i);
-        }
+            if (outPages.size() != cmpPages.size())
+                return compareVisuallyAndCombineReports("Documents have different numbers of pages.", outPath, differenceImagePrefix, ignoredAreas, null);
 
-        ObjectPath catalogPath = new ObjectPath(cmpDocument.getCatalog().getPdfObject().getIndirectReference(),
-                outDocument.getCatalog().getPdfObject().getIndirectReference());
-        Set<PdfName> ignoredCatalogEntries = new LinkedHashSet<>(Arrays.asList(PdfName.Pages, PdfName.Metadata));
-        compareDictionariesExtended(outDocument.getCatalog().getPdfObject(), cmpDocument.getCatalog().getPdfObject(),
-                catalogPath, compareResult, ignoredCatalogEntries);
-
-        if (encryptionCompareEnabled) {
-            compareDocumentsEncryption(outDocument, cmpDocument, compareResult);
-        }
-
-        outDocument.close();
-        cmpDocument.close();
-
-        if (generateCompareByContentXmlReport) {
-            String outPdfName = new File(outPdf).getName();
-            FileOutputStream xml = new FileOutputStream(outPath + "/" + outPdfName.substring(0, outPdfName.length() - 3) + "report.xml");
-            try {
-                compareResult.writeReportToXml(xml);
-            } catch (Exception e) {
-                throw new RuntimeException(e.getMessage(), e);
-            } finally {
-                xml.close();
+            CompareResult compareResult = new CompareResult(compareByContentErrorsLimit);
+            List<Integer> equalPages = new ArrayList<>(cmpPages.size());
+            for (int i = 0; i < cmpPages.size(); i++) {
+                ObjectPath currentPath = new ObjectPath(cmpPagesRef.get(i), outPagesRef.get(i));
+                if (compareDictionariesExtended(outPages.get(i), cmpPages.get(i), currentPath, compareResult))
+                    equalPages.add(i);
             }
 
-        }
+            ObjectPath catalogPath = new ObjectPath(cmpDocument.getCatalog().getPdfObject().getIndirectReference(),
+                    outDocument.getCatalog().getPdfObject().getIndirectReference());
+            Set<PdfName> ignoredCatalogEntries = new LinkedHashSet<>(Arrays.asList(PdfName.Pages, PdfName.Metadata));
+            compareDictionariesExtended(outDocument.getCatalog().getPdfObject(), cmpDocument.getCatalog().getPdfObject(),
+                    catalogPath, compareResult, ignoredCatalogEntries);
 
-        if (equalPages.size() == cmpPages.size() && compareResult.isOk()) {
-            System.out.println("OK");
-            System.out.flush();
-            return null;
-        } else {
-            return compareVisuallyAndCombineReports(compareResult.getReport(), outPath, differenceImagePrefix, ignoredAreas, equalPages);
+            if (encryptionCompareEnabled) {
+                compareDocumentsEncryption(outDocument, cmpDocument, compareResult);
+            }
+            if (generateCompareByContentXmlReport) {
+                String outPdfName = new File(outPdf).getName();
+                FileOutputStream xml = new FileOutputStream(outPath + "/" + outPdfName.substring(0, outPdfName.length() - 3) + "report.xml");
+                try {
+                    compareResult.writeReportToXml(xml);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage(), e);
+                } finally {
+                    xml.close();
+                }
+
+            }
+
+            if (equalPages.size() == cmpPages.size() && compareResult.isOk()) {
+                System.out.println("OK");
+                System.out.flush();
+                return null;
+            } else {
+                return compareVisuallyAndCombineReports(compareResult.getReport(), outPath, differenceImagePrefix, ignoredAreas, equalPages);
+            }
         }
     }
 

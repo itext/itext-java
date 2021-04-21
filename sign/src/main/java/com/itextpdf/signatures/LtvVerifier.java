@@ -292,13 +292,15 @@ public class LtvVerifier extends RootStoreVerifier {
         List<String> names = sgnUtil.getSignatureNames();
         if (names.size() > 1) {
             signatureName = names.get(names.size() - 2);
-            document = new PdfDocument(new PdfReader(sgnUtil.extractRevision(signatureName)), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+            try (PdfReader readerTmp = new PdfReader(sgnUtil.extractRevision(signatureName))) {
+            document = new PdfDocument(readerTmp, new DocumentProperties().setEventCountingMetaInfo(metaInfo));
             this.acroForm = PdfAcroForm.getAcroForm(document, true);
             this.sgnUtil = new SignatureUtil(document);
             names = sgnUtil.getSignatureNames();
             signatureName = names.get(names.size() - 1);
             pkcs7 = coversWholeDocument();
             LOGGER.info(MessageFormatUtil.format("Checking {0}signature {1}", pkcs7.isTsp() ? "document-level timestamp " : "", signatureName));
+            }
         }
         else {
             LOGGER.info("No signatures in revision");

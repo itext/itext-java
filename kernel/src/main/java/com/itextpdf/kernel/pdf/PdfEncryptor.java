@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.security.PrivateKey;
 import java.util.Map;
@@ -241,12 +242,15 @@ public final class PdfEncryptor {
     public void encrypt(PdfReader reader, OutputStream os, Map<String, String> newInfo) {
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.encryptionProperties = properties;
-        PdfWriter writer = new PdfWriter(os, writerProperties);
         StampingProperties stampingProperties = new StampingProperties();
         stampingProperties.setEventCountingMetaInfo(metaInfo);
-        PdfDocument document = new PdfDocument(reader, writer, stampingProperties);
-        document.getDocumentInfo().setMoreInfo(newInfo);
-        document.close();
+        try (PdfWriter writer = new PdfWriter(os, writerProperties);
+                PdfDocument document = new PdfDocument(reader, writer, stampingProperties)) {
+            document.getDocumentInfo().setMoreInfo(newInfo);
+        } catch (IOException e) {
+            //The close() method of OutputStream throws an exception, but we don't need to do anything in this case,
+            // because OutputStream#close() does nothing.
+        }
     }
 
     /**
