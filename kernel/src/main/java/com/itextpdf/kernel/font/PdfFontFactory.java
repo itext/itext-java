@@ -1037,22 +1037,4 @@ public final class PdfFontFactory {
          */
         PREFER_NOT_EMBEDDED
     }
-
-    /**
-     * Checks if the provided dictionary is a valid font dictionary of the provided font type.
-     *
-     * @return <code>true</code> if the passed dictionary is a valid dictionary, <code>false</code> otherwise
-     */
-    private static boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType, boolean isException) {
-        if (fontDic == null || fontDic.get(PdfName.Subtype) == null
-                || !fontDic.get(PdfName.Subtype).equals(fontType)) {
-            if (isException) {
-                throw new PdfException(
-                        KernelExceptionMessageConstant.DICTIONARY_DOES_NOT_HAVE_THIS_FONT_DATA)
-                        .setMessageParams(fontType.getValue());
-            }
-            return false;
-        }
-        return true;
-    }
 }
