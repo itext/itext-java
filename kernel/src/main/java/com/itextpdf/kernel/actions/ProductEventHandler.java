@@ -32,13 +32,10 @@ import com.itextpdf.kernel.actions.events.AbstractITextProductEvent;
 import com.itextpdf.kernel.actions.exceptions.UnknownProductException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -47,15 +44,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 final class ProductEventHandler extends AbstractContextBasedEventHandler {
     static final ProductEventHandler INSTANCE = new ProductEventHandler();
-
-    private static final Set<String> PRODUCTS_NAMESPACES = Collections.unmodifiableSet(
-            new HashSet<>(Arrays.asList(
-                    ProductNameConstant.ITEXT_CORE,
-                    ProductNameConstant.PDF_HTML,
-                    ProductNameConstant.PDF_SWEEP,
-                    ProductNameConstant.PDF_OCR,
-                    ProductNameConstant.PDF_OCR_TESSERACT4
-            )));
 
     private final ConcurrentHashMap<String, ITextProductEventProcessor> processors = new ConcurrentHashMap<>();
     private final WeakHashMap<SequenceId, List<ITextProductEventWrapper>> events = new WeakHashMap<>();
@@ -142,7 +130,7 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
             return processor;
         }
 
-        if (PRODUCTS_NAMESPACES.contains(productName)) {
+        if (ProductNameConstant.PRODUCT_NAMES.contains(productName)) {
             processor = new DefaultITextProductEventProcessor(productName);
             processors.put(productName, processor);
             return processor;
