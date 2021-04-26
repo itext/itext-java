@@ -56,16 +56,20 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
+import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -83,6 +87,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfSignatureAppearanceTest extends ExtendedITextTest {
@@ -94,6 +99,9 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
     private Certificate[] chain;
     private PrivateKey pk;
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void before() {
@@ -240,6 +248,108 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         }
 
         Assert.assertEquals("", assertionResults.toString());
+    }
+
+    @Test
+    public void signatureFieldNotMergedWithWidgetTest() throws IOException, GeneralSecurityException {
+        try (PdfDocument outputDoc = new PdfDocument(new PdfReader(
+                sourceFolder + "signatureFieldNotMergedWithWidget.pdf"))) {
+
+            SignatureUtil sigUtil = new SignatureUtil(outputDoc);
+            PdfPKCS7 signatureData = sigUtil.readSignatureData("Signature1");
+            Assert.assertTrue(signatureData.verifySignatureIntegrityAndAuthenticity());
+        }
+    }
+
+    @Test
+    // TODO: DEVSIX-5162 (the signature is expected to have auto-generated appearance, but now it's empty)
+    public void signExistingNotMergedFieldNotReusedAPTest() throws GeneralSecurityException,
+            IOException, InterruptedException {
+        // Field is not merged with widget and has /P key
+        String src = sourceFolder + "emptyFieldNotMerged.pdf";
+        String fileName = "signExistingNotMergedFieldNotReusedAP.pdf";
+        String dest = destinationFolder + fileName;
+
+        PdfReader reader = new PdfReader(src);
+
+        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
+        signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
+
+        signer.getSignatureAppearance()
+                .setLayer2Text("Verified and signed by me.")
+                .setReason("Test 1")
+                .setLocation("TestCity")
+                .setReuseAppearance(false);
+        signer.setFieldName("Signature1");
+
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
+                BouncyCastleProvider.PROVIDER_NAME);
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null,
+                0, PdfSigner.CryptoStandard.CADES);
+
+        Assert.assertNull(new CompareTool().compareVisually(
+                dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    // TODO: DEVSIX-5162 (signature appearance expected to be updated (reused appearance will be used as a background))
+    public void signExistingNotMergedFieldReusedAPTest() throws GeneralSecurityException,
+            IOException, InterruptedException {
+        // Field is not merged with widget and has /P key
+        String src = sourceFolder + "emptyFieldNotMerged.pdf";
+        String fileName = "signExistingNotMergedFieldReusedAP.pdf";
+        String dest = destinationFolder + fileName;
+
+        PdfReader reader = new PdfReader(src);
+
+        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
+        signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
+
+        signer.getSignatureAppearance()
+                .setLayer2Text("Verified and signed by me.")
+                .setReason("Test 1")
+                .setLocation("TestCity")
+                .setReuseAppearance(true);
+        signer.setFieldName("Signature1");
+
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
+                BouncyCastleProvider.PROVIDER_NAME);
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null,
+                0, PdfSigner.CryptoStandard.CADES);
+
+        Assert.assertNull(new CompareTool().compareVisually(
+                dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    // TODO: DEVSIX-5162 (remove expected exception after fix)
+    public void signExistingNotMergedFieldReusedAPEntryNDicTest() throws GeneralSecurityException,
+            IOException, InterruptedException {
+        // Field is not merged with widget and has /P key
+        String src = sourceFolder + "emptyFieldNotMergedEntryNDict.pdf";
+        String fileName = "signExistingNotMergedFieldReusedAPEntryNDic.pdf";
+        String dest = destinationFolder + fileName;
+
+        PdfReader reader = new PdfReader(src);
+
+        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
+        signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
+
+        junitExpectedException.expect(NullPointerException.class);
+        signer.getSignatureAppearance()
+                .setLayer2Text("Verified and signed by me.")
+                .setReason("Test 1")
+                .setLocation("TestCity")
+                .setReuseAppearance(true);
+        signer.setFieldName("Signature1");
+
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
+                BouncyCastleProvider.PROVIDER_NAME);
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null,
+                0, PdfSigner.CryptoStandard.CADES);
+
+        Assert.assertNull(new CompareTool().compareVisually(
+                dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
     }
 
     private void testSignatureOnRotatedPage(int pageNum, PdfSignatureAppearance.RenderingMode renderingMode, StringBuilder assertionResults) throws IOException, GeneralSecurityException, InterruptedException {
