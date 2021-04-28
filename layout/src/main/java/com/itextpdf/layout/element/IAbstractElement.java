@@ -20,31 +20,18 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.actions.sequence;
+package com.itextpdf.layout.element;
+
+import java.util.List;
 
 /**
- * The class allows to make any element identifiable so that it is possible to store some metadata
- * for it.
+ * The interface represents abstract layout element and provides an access to its children.
  */
-public abstract class AbstractIdentifiableElement {
-
-    private SequenceId sequenceId;
-
+public interface IAbstractElement extends IElement {
     /**
-     * Obtains an identifier if it was set.
+     * Gets the child elements of this elements
      *
-     * @return identifier
+     * @return a list of children
      */
-    SequenceId getSequenceId() {
-        return sequenceId;
-    }
-
-    /**
-     * Sets an identifier.
-     *
-     * @param sequenceId is a new identifier for the element
-     */
-    void setSequenceId(SequenceId sequenceId) {
-        this.sequenceId = sequenceId;
-    }
+    List<IElement> getChildren();
 }

@@ -51,17 +51,6 @@ public final class KernelLogMessageConstant {
     public static final String DCTDECODE_FILTER_DECODING = "DCTDecode filter decoding into the "
             + "bit map is not supported. The stream data would be left in JPEG baseline format";
 
-    /**
-     * Message warns about overriding of the identifier of identifiable element. List of params:
-     *
-     * <ul>
-     * <li>0th is an original element identifier;
-     * <li>1st is a new element identifier;
-     * </ul>
-     */
-    public static final String ELEMENT_ALREADY_HAS_AN_IDENTIFIER = "Element already has sequence id: {0}, new id {1} " +
-            "will be ignored";
-
     public static final String FEATURE_IS_NOT_SUPPORTED =
             "Exception was thrown: {0}. The feature {1} is probably not supported by your XML processor.";
 

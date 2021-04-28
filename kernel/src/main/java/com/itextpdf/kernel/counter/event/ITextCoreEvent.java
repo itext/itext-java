@@ -40,7 +40,8 @@ public class ITextCoreEvent extends AbstractITextProductEvent {
      * Creates an event associated with a general identifier and additional meta data.
      *
      * @param sequenceId is an identifier associated with the event
-     * @param metaInfo is an additional meta info
+     * @param metaInfo   is an additional meta info
+     * @param eventType  is a string description of the event
      */
     public ITextCoreEvent(SequenceId sequenceId, IMetaInfo metaInfo, String eventType) {
         super(sequenceId, ITextCoreProductData.getInstance(), metaInfo);

@@ -22,10 +22,9 @@
  */
 package com.itextpdf.kernel.actions.sequence;
 
-import com.itextpdf.kernel.KernelLogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
@@ -33,32 +32,33 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class AbstractIdentifiableElementTest extends ExtendedITextTest {
+public class SequenceIdManagerTest extends ExtendedITextTest {
 
     @Test
-    public void setFirstIdTest() {
-        TestElement element = new TestElement();
+    public void setIdentifier() {
+        IdentifiableElement element = new IdentifiableElement();
+        Assert.assertNull(SequenceIdManager.getSequenceId(element));
+
         SequenceId sequenceId = new SequenceId();
-        element.setSequenceId(sequenceId);
-
-        Assert.assertEquals(sequenceId, element.getSequenceId());
+        SequenceIdManager.setSequenceId(element, sequenceId);
+        Assert.assertEquals(sequenceId, SequenceIdManager.getSequenceId(element));
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = KernelLogMessageConstant.ELEMENT_ALREADY_HAS_AN_IDENTIFIER)
-    })
-    public void setSecondIdTest() {
-        TestElement element = new TestElement();
-        SequenceId firstSequenceId = new SequenceId();
-        SequenceId secondSequenceId = new SequenceId();
-        element.setSequenceId(firstSequenceId);
-        element.setSequenceId(secondSequenceId);
-        Assert.assertEquals(firstSequenceId, element.getSequenceId());
-        Assert.assertNotEquals(secondSequenceId, element.getSequenceId());
+    public void overrideIdentifierTest() {
+        IdentifiableElement element = new IdentifiableElement();
+        SequenceId sequenceId1 = new SequenceId();
+        SequenceId sequenceId2 = new SequenceId();
+        SequenceIdManager.setSequenceId(element, sequenceId1);
+
+        Assert.assertThrows(
+                MessageFormatUtil.format(PdfException.ElementAlreadyHasIdentifier,
+                sequenceId1.getId(), sequenceId2.getId()),
+                IllegalStateException.class,
+                () -> SequenceIdManager.setSequenceId(element, sequenceId2));
     }
 
-    private static class TestElement extends AbstractIdentifiableElement {
+    private static class IdentifiableElement extends AbstractIdentifiableElement {
 
     }
 }
