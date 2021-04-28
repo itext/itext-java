@@ -120,11 +120,10 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     public Glyph getGlyph(int unicode) {
         if (fontEncoding.canEncode(unicode)) {
             Glyph glyph = getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(unicode));
-            //TODO TrueType what if font is specific?
             if (glyph == null && (glyph = notdefGlyphs.get(unicode)) == null) {
-                Glyph notdef = getFontProgram().getGlyphByCode(0);
+                final Glyph notdef = getFontProgram().getGlyphByCode(0);
                 if (notdef != null) {
-                    glyph = new Glyph(getFontProgram().getGlyphByCode(0), unicode);
+                    glyph = new Glyph(notdef, unicode);
                     notdefGlyphs.put(unicode, glyph);
                 }
             }
@@ -149,7 +148,6 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
             return;
         }
         ensureUnderlyingObjectHasIndirectReference();
-        //TODO make subtype class member and simplify this method
         if (newFont) {
             PdfName subtype;
             String fontName;
