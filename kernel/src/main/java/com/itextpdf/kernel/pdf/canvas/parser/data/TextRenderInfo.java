@@ -501,7 +501,7 @@ public class TextRenderInfo extends AbstractRenderInfo {
         checkGraphicsState();
         float[] result = new float[2];
 
-        result[0] = (float) ((double)gs.getFont().getContentWidth(string) / FontProgram.UNITS_NORMALIZATION);
+        result[0] = (float) ((double) gs.getFont().getContentWidth(string) / FontProgram.UNITS_NORMALIZATION);
         result[1] = " ".equals(string.getValue()) ? gs.getWordSpacing() : 0;
         return result;
     }

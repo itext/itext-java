@@ -524,6 +524,18 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         this.fontProgram = fontProgram;
     }
 
+    /**
+     * Gets glyph width which us ready to be written to the output file.
+     *
+     * @param glyph the glyph which widths is required to be written to the output file
+     *
+     * @return glyph width in glyph-space
+     *
+     * @deprecated This method was introduced to allow overriding of widths array entry writing to
+     *         output file. It's now replaced by more specific {@link #buildWidthsArray(int, int)} in order to
+     *         avoid confusion between this method and {@link Glyph#getWidth()}.
+     *         This method will be removed in the next major release.
+     */
     @Deprecated
     protected double getGlyphWidth(Glyph glyph) {
         return glyph != null ? glyph.getWidth() : 0;

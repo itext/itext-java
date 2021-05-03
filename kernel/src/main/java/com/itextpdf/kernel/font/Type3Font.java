@@ -147,7 +147,7 @@ public class Type3Font extends FontProgram {
      */
     @Override
     protected void setFontName(String fontName) {
-        // This dummy override allows PdfType3Font to set font name from different module.
+        // This dummy override allows PdfType3Font to use setter from different module.
         super.setFontName(fontName);
     }
 
@@ -158,7 +158,7 @@ public class Type3Font extends FontProgram {
      */
     @Override
     protected void setFontFamily(String fontFamily) {
-        // This dummy override allows PdfType3Font to set font name from different module.
+        // This dummy override allows PdfType3Font to use setter from different module.
         super.setFontFamily(fontFamily);
     }
 
@@ -169,7 +169,7 @@ public class Type3Font extends FontProgram {
      */
     @Override
     protected void setFontWeight(int fontWeight) {
-        // This dummy override allows PdfType3Font to set font name from different module.
+        // This dummy override allows PdfType3Font to use setter from different module.
         super.setFontWeight(fontWeight);
     }
 
@@ -180,7 +180,7 @@ public class Type3Font extends FontProgram {
      */
     @Override
     protected void setFontStretch(String fontWidth) {
-        // This dummy override allows PdfType3Font to set font name from different module.
+        // This dummy override allows PdfType3Font to use setter from different module.
         super.setFontStretch(fontWidth);
     }
 
@@ -189,7 +189,7 @@ public class Type3Font extends FontProgram {
      */
     @Override
     protected void setCapHeight(int capHeight) {
-        // This dummy override allows PdfType3Font to set the PostScript italicAngle from different module.
+        // This dummy override allows PdfType3Font to use setter from different module.
         super.setCapHeight(capHeight);
     }
 
@@ -198,7 +198,7 @@ public class Type3Font extends FontProgram {
      */
     @Override
     protected void setItalicAngle(int italicAngle) {
-        // This dummy override allows PdfType3Font to set the PostScript italicAngle from different module.
+        // This dummy override allows PdfType3Font to use setter from different module.
         super.setItalicAngle(italicAngle);
     }
 
@@ -207,7 +207,7 @@ public class Type3Font extends FontProgram {
      */
     @Override
     protected void setTypoAscender(int ascender) {
-        // This dummy override allows PdfType3Font to set typoAscender from different module.
+        // This dummy override allows PdfType3Font to use setter from different module.
         super.setTypoAscender(ascender);
     }
 
@@ -216,7 +216,7 @@ public class Type3Font extends FontProgram {
      */
     @Override
     protected void setTypoDescender(int descender) {
-        // This dummy override allows PdfType3Font to set typoDescender from different module.
+        // This dummy override allows PdfType3Font to use setter from different module.
         super.setTypoDescender(descender);
     }
 
