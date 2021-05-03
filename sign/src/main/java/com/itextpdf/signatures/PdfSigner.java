@@ -887,66 +887,9 @@ public class PdfSigner {
         cryptoDictionary.getPdfObject().makeIndirect(document);
 
         if (fieldExist) {
-            PdfSignatureFormField sigField = (PdfSignatureFormField) acroForm.getField(fieldName);
-            sigField.put(PdfName.V, cryptoDictionary.getPdfObject());
-
-            fieldLock = sigField.getSigFieldLockDictionary();
-
-            if (fieldLock == null && this.fieldLock != null) {
-                this.fieldLock.getPdfObject().makeIndirect(document);
-                sigField.put(PdfName.Lock, this.fieldLock.getPdfObject());
-                fieldLock = this.fieldLock;
-            }
-
-            sigField.put(PdfName.P, document.getPage(appearance.getPageNumber()).getPdfObject());
-            sigField.put(PdfName.V, cryptoDictionary.getPdfObject());
-            PdfObject obj = sigField.getPdfObject().get(PdfName.F);
-            int flags = 0;
-
-            if (obj != null && obj.isNumber()) {
-                flags = ((PdfNumber) obj).intValue();
-            }
-
-            flags |= PdfAnnotation.LOCKED;
-            sigField.put(PdfName.F, new PdfNumber(flags));
-            PdfDictionary ap = new PdfDictionary();
-            ap.put(PdfName.N, appearance.getAppearance().getPdfObject());
-            sigField.put(PdfName.AP, ap);
-            sigField.setModified();
+            fieldLock = populateExistingSignatureFormField(acroForm);
         } else {
-            PdfWidgetAnnotation widget = new PdfWidgetAnnotation(appearance.getPageRect());
-            widget.setFlags(PdfAnnotation.PRINT | PdfAnnotation.LOCKED);
-
-            PdfSignatureFormField sigField = PdfFormField.createSignature(document);
-            sigField.setFieldName(name);
-            sigField.put(PdfName.V, cryptoDictionary.getPdfObject());
-            sigField.addKid(widget);
-
-            if (this.fieldLock != null) {
-                this.fieldLock.getPdfObject().makeIndirect(document);
-                sigField.put(PdfName.Lock, this.fieldLock.getPdfObject());
-                fieldLock = this.fieldLock;
-            }
-
-            int pagen = appearance.getPageNumber();
-            widget.setPage(document.getPage(pagen));
-            PdfDictionary ap = widget.getAppearanceDictionary();
-
-            if (ap == null) {
-                ap = new PdfDictionary();
-                widget.put(PdfName.AP, ap);
-            }
-
-            ap.put(PdfName.N, appearance.getAppearance().getPdfObject());
-            acroForm.addField(sigField, document.getPage(pagen));
-
-            if (acroForm.getPdfObject().isIndirect()) {
-                acroForm.setModified();
-            } else {
-                //Acroform dictionary is a Direct dictionary,
-                //for proper flushing, catalog needs to be marked as modified
-                document.getCatalog().setModified();
-            }
+            fieldLock = createNewSignatureFormField(acroForm, name);
         }
 
         exclusionLocations = new HashMap<>();
@@ -1030,6 +973,106 @@ public class PdfSigner {
                 throw e;
             }
         }
+    }
+
+    /**
+     * Populates already existing signature form field in the acroForm object.
+     * This method is called during the {@link PdfSigner#preClose(Map)} method if the signature field already exists.
+     *
+     * @param acroForm {@link PdfAcroForm} object in which the signature field will be populated
+     * @return signature field lock dictionary
+     * @throws IOException if font for the appearance dictionary cannot be created
+     */
+    protected PdfSigFieldLock populateExistingSignatureFormField(PdfAcroForm acroForm) throws IOException {
+        PdfSignatureFormField sigField = (PdfSignatureFormField) acroForm.getField(fieldName);
+        sigField.put(PdfName.V, cryptoDictionary.getPdfObject());
+
+        PdfSigFieldLock sigFieldLock = sigField.getSigFieldLockDictionary();
+
+        if (sigFieldLock == null && this.fieldLock != null) {
+            this.fieldLock.getPdfObject().makeIndirect(document);
+            sigField.put(PdfName.Lock, this.fieldLock.getPdfObject());
+            sigFieldLock = this.fieldLock;
+        }
+
+        sigField.put(PdfName.P, document.getPage(appearance.getPageNumber()).getPdfObject());
+        sigField.put(PdfName.V, cryptoDictionary.getPdfObject());
+        PdfObject obj = sigField.getPdfObject().get(PdfName.F);
+        int flags = 0;
+
+        if (obj != null && obj.isNumber()) {
+            flags = ((PdfNumber) obj).intValue();
+        }
+
+        flags |= PdfAnnotation.LOCKED;
+        sigField.put(PdfName.F, new PdfNumber(flags));
+
+        if (appearance.isInvisible()) {
+            // According to the spec, appearance stream is not required if the width and height of the rectangle are 0
+            sigField.remove(PdfName.AP);
+        } else {
+            PdfDictionary ap = new PdfDictionary();
+            ap.put(PdfName.N, appearance.getAppearance().getPdfObject());
+            sigField.put(PdfName.AP, ap);
+        }
+
+        sigField.setModified();
+
+        return sigFieldLock;
+    }
+
+    /**
+     * Creates new signature form field and adds it to the acroForm object.
+     * This method is called during the {@link PdfSigner#preClose(Map)} method if the signature field doesn't exist.
+     *
+     * @param acroForm {@link PdfAcroForm} object in which new signature field will be added
+     * @param name     the name of the field
+     * @return signature field lock dictionary
+     * @throws IOException if font for the appearance dictionary cannot be created
+     */
+    protected PdfSigFieldLock createNewSignatureFormField(PdfAcroForm acroForm, String name) throws IOException {
+        PdfWidgetAnnotation widget = new PdfWidgetAnnotation(appearance.getPageRect());
+        widget.setFlags(PdfAnnotation.PRINT | PdfAnnotation.LOCKED);
+
+        PdfSignatureFormField sigField = PdfFormField.createSignature(document);
+        sigField.setFieldName(name);
+        sigField.put(PdfName.V, cryptoDictionary.getPdfObject());
+        sigField.addKid(widget);
+
+        PdfSigFieldLock sigFieldLock = sigField.getSigFieldLockDictionary();
+
+        if (this.fieldLock != null) {
+            this.fieldLock.getPdfObject().makeIndirect(document);
+            sigField.put(PdfName.Lock, this.fieldLock.getPdfObject());
+            sigFieldLock = this.fieldLock;
+        }
+
+        int pagen = appearance.getPageNumber();
+        widget.setPage(document.getPage(pagen));
+
+        if (appearance.isInvisible()) {
+            // According to the spec, appearance stream is not required if the width and height of the rectangle are 0
+            widget.remove(PdfName.AP);
+        } else {
+            PdfDictionary ap = widget.getAppearanceDictionary();
+            if (ap == null) {
+                ap = new PdfDictionary();
+                widget.put(PdfName.AP, ap);
+            }
+            ap.put(PdfName.N, appearance.getAppearance().getPdfObject());
+        }
+
+        acroForm.addField(sigField, document.getPage(pagen));
+
+        if (acroForm.getPdfObject().isIndirect()) {
+            acroForm.setModified();
+        } else {
+            //Acroform dictionary is a Direct dictionary,
+            //for proper flushing, catalog needs to be marked as modified
+            document.getCatalog().setModified();
+        }
+
+        return sigFieldLock;
     }
 
     /**
