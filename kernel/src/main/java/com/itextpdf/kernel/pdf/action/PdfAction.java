@@ -709,6 +709,12 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Validates not remote destination against the PDF specification and in case of invalidity logs a warning.
+     * See section 12.3.2.2 of ISO 32000-1.
+     *
+     * @param destination the {@link PdfDestination destination} to be validated
+     */
     public static void validateNotRemoteDestination(PdfDestination destination) {
         if (destination instanceof PdfExplicitRemoteGoToDestination) {
             LoggerFactory.getLogger(PdfAction.class).warn(LogMessageConstant.INVALID_DESTINATION_TYPE);
