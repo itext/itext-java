@@ -23,7 +23,6 @@
 package com.itextpdf.kernel.actions.events;
 
 import com.itextpdf.kernel.KernelLogMessageConstant;
-import com.itextpdf.kernel.Toggle;
 import com.itextpdf.kernel.actions.ProductEventHandlerAccess;
 import com.itextpdf.kernel.actions.ProductNameConstant;
 import com.itextpdf.kernel.actions.data.ProductData;
@@ -42,9 +41,7 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -52,18 +49,6 @@ import org.junit.experimental.categories.Category;
 public class FlushPdfDocumentEventTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/actions/";
-
-    @Before
-    public void before() {
-        // TODO DEVSIX-5323 remove toggle set up when the old mechanism deleted
-        Toggle.NEW_PRODUCER_LINE = true;
-    }
-
-    @After
-    public void after() {
-        // TODO DEVSIX-5323 remove toggle set up when the old mechanism deleted
-        Toggle.NEW_PRODUCER_LINE = false;
-    }
 
     @Test
     public void fieldsTest() throws IOException {

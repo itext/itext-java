@@ -133,8 +133,8 @@ public class CompareTool {
     private static final String DIFFERENT_PAGES = "File " + FILE_PROTOCOL + "<filename> differs on page <pagenumber>.";
     private static final String IGNORED_AREAS_PREFIX = "ignored_areas_";
 
-    private static final String VERSION_REGEXP = "(iText\u00ae( pdfX(FA|fa)| DITO)?|iTextSharp\u2122) (\\d+\\.)+\\d+(-SNAPSHOT)?";
-    private static final String VERSION_REPLACEMENT = "iText\u00ae <version>";
+    private static final String VERSION_REGEXP = "(\\d+\\.)+\\d+(-SNAPSHOT)?";
+    private static final String VERSION_REPLACEMENT = "<version>";
     private static final String COPYRIGHT_REGEXP = "\u00a9\\d+-\\d+ iText Group NV";
     private static final String COPYRIGHT_REPLACEMENT = "\u00a9<copyright years> iText Group NV";
 

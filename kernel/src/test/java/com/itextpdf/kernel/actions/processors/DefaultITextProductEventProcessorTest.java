@@ -46,16 +46,4 @@ public class DefaultITextProductEventProcessorTest extends ExtendedITextTest {
         junitExpectedException.expectMessage(PdfException.ProductNameCannotBeNull);
         new DefaultITextProductEventProcessor(null);
     }
-
-
-    @Test
-    public void oldMechanismSetProducerTest() {
-        DefaultITextProductEventProcessor processor = new DefaultITextProductEventProcessor("test-product");
-        ClosingSession session = new ClosingSession(null);
-
-        processor.completionOnClose(session);
-
-        Assert.assertEquals(Boolean.TRUE, session.getProperty("old-mechanism-producer-line-was-set"));
-
-    }
 }

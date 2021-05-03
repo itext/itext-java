@@ -46,7 +46,6 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.Toggle;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
@@ -70,9 +69,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -87,18 +84,6 @@ public class PdfDocumentTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @Before
-    public void before() {
-        // TODO DEVSIX-5323 remove toggle set up when the old mechanism deleted
-        Toggle.NEW_PRODUCER_LINE = true;
-    }
-
-    @After
-    public void after() {
-        // TODO DEVSIX-5323 remove toggle set up when the old mechanism deleted
-        Toggle.NEW_PRODUCER_LINE = false;
     }
 
     @Test

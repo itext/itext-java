@@ -90,7 +90,6 @@ public class PdfDocumentInfoTest extends ExtendedITextTest {
 
         CompareTool ct = new CompareTool();
         Assert.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
-        // TODO DEVSIX-5323 update test with a new producer line
         Assert.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
         Assert.assertNull(ct.compareXmp(outFile, cmpFile, true));
     }
@@ -109,7 +108,6 @@ public class PdfDocumentInfoTest extends ExtendedITextTest {
 
         CompareTool ct = new CompareTool();
         Assert.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
-        // TODO DEVSIX-5323 update test with a new producer line
         Assert.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
         Assert.assertNull(ct.compareXmp(outFile, cmpFile, true));
     }
@@ -150,7 +148,7 @@ public class PdfDocumentInfoTest extends ExtendedITextTest {
     public void simpleStampingMetadataLeaveUnchanged() throws IOException, InterruptedException {
         String inputFile = sourceFolder + "cmp_metadata_pdf_20_changed_append.pdf";
         String outFile = destinationFolder + "metadata_pdf_20_unchanged_stamper.pdf";
-        String cmpFile = sourceFolder + "cmp_metadata_pdf_20_changed_append.pdf";
+        String cmpFile = sourceFolder + "cmp_metadata_pdf_20_unchanged_append.pdf";
 
         PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(outFile), new StampingProperties());
         String author = document.getDocumentInfo().getAuthor();

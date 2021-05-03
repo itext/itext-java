@@ -24,7 +24,6 @@ package com.itextpdf.kernel.actions.events;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.KernelLogMessageConstant;
-import com.itextpdf.kernel.Toggle;
 import com.itextpdf.kernel.actions.AbstractITextConfigurationEvent;
 import com.itextpdf.kernel.actions.ProductNameConstant;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
@@ -112,12 +111,9 @@ public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent
             }
         }
 
-        //TODO DEVSIX-5323 remove the toggle when all tests are ready
-        if (Toggle.NEW_PRODUCER_LINE) {
-            final String oldProducer = pdfDocument.getDocumentInfo().getProducer();
-            final String newProducer = ProducerBuilder.modifyProducer(events, oldProducer);
-            pdfDocument.getDocumentInfo().setProducer(newProducer);
-        }
+        final String oldProducer = pdfDocument.getDocumentInfo().getProducer();
+        final String newProducer = ProducerBuilder.modifyProducer(events, oldProducer);
+        pdfDocument.getDocumentInfo().setProducer(newProducer);
 
         final ClosingSession session = new ClosingSession((PdfDocument) document.get());
         for (final Map.Entry<String, ITextProductEventProcessor> product: knownProducts.entrySet()) {

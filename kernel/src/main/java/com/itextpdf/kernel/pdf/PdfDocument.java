@@ -1858,26 +1858,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     /**
-     * Updates producer line of the document.
-     *
-     * TODO: DEVSIX-5323 should be removed when new producer line building logic is implemented
-     */
-    public void updateProducerInInfoDictionary() {
-        String producer = null;
-        if (reader == null) {
-            producer = versionInfo.getVersion();
-        } else {
-            if (info.getPdfObject().containsKey(PdfName.Producer)) {
-                final PdfString producerPdfStr = info.getPdfObject().getAsString(PdfName.Producer);
-                producer = producerPdfStr == null ? null : producerPdfStr.toUnicodeString();
-            }
-            producer = addModifiedPostfix(producer);
-        }
-        info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
-    }
-
-
-    /**
      * Gets list of indirect references.
      *
      * @return list of indirect references.
@@ -2440,23 +2420,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     private boolean writerHasEncryption() {
         return writer.properties.isStandardEncryptionUsed() || writer.properties.isPublicKeyEncryptionUsed();
-    }
-
-    private String addModifiedPostfix(String producer) {
-        if (producer == null || !versionInfo.getVersion().contains(versionInfo.getProduct())) {
-            return versionInfo.getVersion();
-        } else {
-            int idx = producer.indexOf("; modified using");
-            StringBuilder buf;
-            if (idx == -1) {
-                buf = new StringBuilder(producer);
-            } else {
-                buf = new StringBuilder(producer.substring(0, idx));
-            }
-            buf.append("; modified using ");
-            buf.append(versionInfo.getVersion());
-            return buf.toString();
-        }
     }
 
     private void updatePdfVersionFromCatalog() {

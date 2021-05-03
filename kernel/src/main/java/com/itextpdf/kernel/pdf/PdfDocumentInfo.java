@@ -103,7 +103,8 @@ public class PdfDocumentInfo {
      * @return this instance
      */
     public PdfDocumentInfo setProducer(String producer) {
-        return put(PdfName.Producer, new PdfString(producer, PdfEncodings.UNICODE_BIG));
+        getPdfObject().put(PdfName.Producer, new PdfString(producer, PdfEncodings.UNICODE_BIG));
+        return this;
     }
 
     public PdfDocumentInfo setTrapped(PdfName trapped) {
