@@ -328,7 +328,7 @@ public class PdfImageXObject extends PdfXObject {
         }
         stream = new PdfStream(image.getData());
         String filter = image.getFilter();
-        if (filter != null && "JPXDecode".equals(filter) && image.getColorSpace() <= 0) {
+        if (filter != null && "JPXDecode".equals(filter) && image.getColorEncodingComponentsNumber() <= 0) {
             stream.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
             image.setBpc(0);
         }
@@ -341,7 +341,7 @@ public class PdfImageXObject extends PdfXObject {
 
         if (!(image instanceof PngImageData)) {
             PdfName colorSpace;
-            switch (image.getColorSpace()) {
+            switch (image.getColorEncodingComponentsNumber()) {
                 case 1:
                     colorSpace = PdfName.DeviceGray;
                     break;
@@ -362,7 +362,7 @@ public class PdfImageXObject extends PdfXObject {
             stream.put(PdfName.Filter, new PdfName(image.getFilter()));
         }
 
-        if (image.getColorSpace() == -1) {
+        if (image.getColorEncodingComponentsNumber() == -1) {
             stream.remove(PdfName.ColorSpace);
         }
 

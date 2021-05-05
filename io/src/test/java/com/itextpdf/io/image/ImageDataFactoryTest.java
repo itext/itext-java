@@ -41,6 +41,31 @@ public class ImageDataFactoryTest extends ExtendedITextTest {
     private static final String IMAGE_NAME = "image";
 
     @Test
+    public void testGetColorEncodingComponentsNumber() {
+        byte data[] = new byte[1];
+        ImageData raw = ImageDataFactory.create(1, 1, 1, 8, data, null);
+
+        Assert.assertEquals(1, raw.getColorEncodingComponentsNumber());
+    }
+
+    @Test
+    public void testSetColorEncodingComponentsNumber() {
+        byte data[] = new byte[1];
+        ImageData raw = ImageDataFactory.create(1, 1, 1, 8, data, null);
+        raw.setColorEncodingComponentsNumber(3);
+
+        Assert.assertEquals(3, raw.getColorEncodingComponentsNumber());
+    }
+
+    @Test
+    public void testGetColorEncodingComponentsNumberCCITT() {
+        byte data[] = new byte[1];
+        ImageData raw = ImageDataFactory.create(1, 1, false, 0x100, 1, data, null);
+
+        Assert.assertEquals(1, raw.getColorEncodingComponentsNumber());
+    }
+
+    @Test
     public void testImageTypeSupportUnknownFile() throws IOException {
         testImageTypeSupport(UrlUtil.toURL(SOURCE_FOLDER + IMAGE_NAME + ".txt"), false);
     }

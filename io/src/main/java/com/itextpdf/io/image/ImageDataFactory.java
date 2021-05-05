@@ -143,7 +143,7 @@ public final class ImageDataFactory {
         image.setTypeCcitt(typeCCITT);
         image.height = height;
         image.width = width;
-        image.colorSpace = parameters;
+        image.colorEncodingComponentsNumber = parameters;
         image.transparency = transparency;
         return image;
     }
@@ -174,7 +174,7 @@ public final class ImageDataFactory {
             throw new IOException(IOException.ComponentsMustBe1_3Or4);
         if (bpc != 1 && bpc != 2 && bpc != 4 && bpc != 8)
             throw new IOException(IOException.BitsPerComponentMustBe1_2_4or8);
-        image.colorSpace = components;
+        image.colorEncodingComponentsNumber = components;
         image.bpc = bpc;
         image.data = data;
         image.transparency = transparency;

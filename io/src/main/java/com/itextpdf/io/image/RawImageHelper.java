@@ -56,11 +56,11 @@ public final class RawImageHelper {
         if (!image.isRawImage())
             throw new IllegalArgumentException("Raw image expected.");
         // will also have the CCITT parameters
-        int colorSpace = image.getColorSpace();
+        int colorSpace = image.getColorEncodingComponentsNumber();
         int typeCCITT = image.getTypeCcitt();
         if (typeCCITT > 0xff) {
             if (!image.isMask())
-                image.setColorSpace(1);
+                image.setColorEncodingComponentsNumber(1);
             image.setBpc(1);
             image.setFilter("CCITTFaxDecode");
             int k = typeCCITT - RawImageData.CCITTG3_1D;
@@ -97,7 +97,7 @@ public final class RawImageHelper {
                 image.setImageAttributes(additional);
             }
             if (image.isMask() && (image.getBpc() == 1 || image.getBpc() > 8))
-                image.setColorSpace(-1);
+                image.setColorEncodingComponentsNumber(-1);
             if (image.isDeflated()) {
                 image.setFilter("FlateDecode");
             }
@@ -123,7 +123,7 @@ public final class RawImageHelper {
             throw new IOException(IOException.ComponentsMustBe1_3Or4);
         if (bpc != 1 && bpc != 2 && bpc != 4 && bpc != 8)
             throw new IOException(IOException.BitsPerComponentMustBe1_2_4or8);
-        image.setColorSpace(components);
+        image.setColorEncodingComponentsNumber(components);
         image.setBpc(bpc);
         image.data = data;
     }
@@ -157,7 +157,7 @@ public final class RawImageHelper {
             TIFFFaxDecoder.reverseBits(data);
         image.setHeight(height);
         image.setWidth(width);
-        image.setColorSpace(parameters);
+        image.setColorEncodingComponentsNumber(parameters);
         image.setTypeCcitt(typeCcitt);
         image.data = data;
     }

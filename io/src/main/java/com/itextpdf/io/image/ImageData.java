@@ -79,8 +79,8 @@ public abstract class ImageData {
 
     protected int bpc = 1;
 
-    /** is the number of components used to encode colorspace, not actual colorspace. */
-    protected int colorSpace = -1;
+    /** Is the number of components used to encode colorspace. */
+    protected int colorEncodingComponentsNumber = -1;
 
     protected float[] decode;
 
@@ -201,16 +201,22 @@ public abstract class ImageData {
         return originalType;
     }
 
-    /***
-     * Gets the number of components used to encode colorspace, not actual colorspace.
+    /**
+     * Gets the number of components used to encode colorspace.
+     *
      * @return the number of components used to encode colorspace
      */
-    public int getColorSpace() {
-        return colorSpace;
+    public int getColorEncodingComponentsNumber() {
+        return colorEncodingComponentsNumber;
     }
 
-    public void setColorSpace(int colorSpace) {
-        this.colorSpace = colorSpace;
+    /**
+     * Sets the number of components used to encode colorspace.
+     *
+     * @param colorEncodingComponentsNumber the number of components used to encode colorspace
+     */
+    public void setColorEncodingComponentsNumber(int colorEncodingComponentsNumber) {
+        this.colorEncodingComponentsNumber = colorEncodingComponentsNumber;
     }
 
     public byte[] getData() {
@@ -222,7 +228,7 @@ public abstract class ImageData {
             if (bpc > 0xff)
                 return true;
         }
-        return colorSpace == 1;
+        return colorEncodingComponentsNumber == 1;
     }
 
     public boolean isMask() {
