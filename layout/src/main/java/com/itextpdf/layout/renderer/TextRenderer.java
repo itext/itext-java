@@ -1213,8 +1213,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      * for the overflow part. So if one wants to extend {@link TextRenderer}, one should override
      * this method: otherwise the default method will be used and thus the default rather than the custom
      * renderer will be created. Another method that should be overridden in case of
-     * {@TextRenderer}'s extension is {@link #createCopy(GlyphLine, PdfFont)}. This method is responsible
-     * for creation of {@TextRenderer}'s copies, which represent its parts of specific font.
+     * {@link TextRenderer}'s extension is {@link #createCopy(GlyphLine, PdfFont)}. This method is responsible
+     * for creation of {@link TextRenderer}'s copies, which represent its parts of specific font.
      * @return new renderer instance
      */
     @Override
