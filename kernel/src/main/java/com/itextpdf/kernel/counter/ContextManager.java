@@ -148,6 +148,12 @@ public class ContextManager {
         return null;
     }
 
+    // TODO DEVSIX-5311 rename into registerGenericContext (currently we cann't rename it as
+    //  the old method with the same arguments but different logic is used for old mechanism)
+    void registerGenericContextForProducts(Collection<String> namespaces, Collection<String> products) {
+        registerGenericContextForProducts(namespaces, Collections.<String>emptyList(), products);
+    }
+
     private IContext getNamespaceMapping(String namespace) {
         if (namespace != null) {
             return contextMappings.get(namespace);
@@ -155,10 +161,13 @@ public class ContextManager {
         return null;
     }
 
-    void registerGenericContext(Collection<String> namespaces, Collection<String> products) {
-        registerGenericContextForProducts(namespaces, Collections.<String>emptyList(), products);
+    // TODO DEVSIX-5311 This method is used for old logic of license mechanism, will be removed
+    private void registerGenericContext(Collection<String> namespaces, Collection<String> eventIds) {
+        registerGenericContextForProducts(namespaces, eventIds, Collections.<String>emptyList());
     }
 
+    // TODO DEVSIX-5311 This method is needed for similar working of new and old license mechanism,
+    //  should be moved to single properly method
     private void registerGenericContextForProducts(Collection<String> namespaces, Collection<String> eventIds,
             Collection<String> products) {
         final GenericContext context = new GenericContext(eventIds, products);
