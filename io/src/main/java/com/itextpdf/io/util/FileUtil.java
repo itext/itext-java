@@ -196,7 +196,7 @@ public final class FileUtil {
         new File(outPath).mkdirs();
     }
 
-    public static String getParentDirectory(File file) throws MalformedURLException {
+    public static String getParentDirectoryUri(File file) throws MalformedURLException {
         return file != null ? Paths.get(file.getParent()).toUri().toURL().toExternalForm() : "";
     }
 

@@ -313,7 +313,7 @@ public class SvgStyleResolver implements ICssResolver {
      */
     private void processXLink(final IAttribute attr, final Map<String, String> attributesMap) {
         String xlinkValue = attr.getValue();
-        if (!isStartedWithHash(xlinkValue) && !new ResourceResolver("").isDataSrc(xlinkValue)) {
+        if (!isStartedWithHash(xlinkValue) && !ResourceResolver.isDataSrc(xlinkValue)) {
             try {
                 xlinkValue = this.resourceResolver.resolveAgainstBaseUri(attr.getValue()).toExternalForm();
             } catch (MalformedURLException mue) {

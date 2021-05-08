@@ -236,7 +236,7 @@ public class ResourceResolver {
      * @param src string to test
      * @return true if source is under data URI scheme
      */
-    public boolean isDataSrc(String src) {
+    public static boolean isDataSrc(String src) {
         return src != null && src.toLowerCase().startsWith(DATA_SCHEMA_PREFIX) && src.contains(",");
     }
 

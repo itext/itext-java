@@ -167,11 +167,10 @@ public class ResourceResolverTest extends ExtendedITextTest {
 
     @Test
     public void isDataSrcTest() {
-        ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        Assert.assertTrue(resourceResolver.isDataSrc(bLogo));
-        Assert.assertTrue(resourceResolver.isDataSrc(bLogoCorruptedData));
-        Assert.assertTrue(resourceResolver.isDataSrc(bLogoIncorrect));
-        Assert.assertFalse(resourceResolver.isDataSrc("https://data.com/data"));
+        Assert.assertTrue(ResourceResolver.isDataSrc(bLogo));
+        Assert.assertTrue(ResourceResolver.isDataSrc(bLogoCorruptedData));
+        Assert.assertTrue(ResourceResolver.isDataSrc(bLogoIncorrect));
+        Assert.assertFalse(ResourceResolver.isDataSrc("https://data.com/data"));
     }
 
     // Retrieve pdfXObject tests block

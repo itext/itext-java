@@ -47,8 +47,6 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import org.junit.Assert;
@@ -81,14 +79,14 @@ public class UrlUtilTest extends ExtendedITextTest {
         String absolutePathRoot = Paths.get("").toAbsolutePath().toUri().toURL().toExternalForm();
         String expected = absolutePathRoot + destinationFolder;
         File tempFile = FileUtil.createTempFile(destinationFolder);
-        Assert.assertEquals(expected, FileUtil.getParentDirectory(tempFile));
+        Assert.assertEquals(expected, FileUtil.getParentDirectoryUri(tempFile));
     }
 
     @Test
     public void nullBaseUriTest() throws IOException {
         String expected = "";
         File tempFile = null;
-        Assert.assertEquals(expected, FileUtil.getParentDirectory(tempFile));
+        Assert.assertEquals(expected, FileUtil.getParentDirectoryUri(tempFile));
     }
 
     @Test

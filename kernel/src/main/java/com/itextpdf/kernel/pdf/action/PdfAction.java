@@ -714,7 +714,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param destination the {@link PdfDestination destination} to be validated
      */
-    public static void validateNotRemoteDestination(PdfDestination destination) {
+    private static void validateNotRemoteDestination(PdfDestination destination) {
         if (destination instanceof PdfExplicitRemoteGoToDestination) {
             LoggerFactory.getLogger(PdfAction.class).warn(LogMessageConstant.INVALID_DESTINATION_TYPE);
         } else if (destination instanceof PdfExplicitDestination) {

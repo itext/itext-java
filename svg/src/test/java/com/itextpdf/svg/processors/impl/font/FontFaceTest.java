@@ -273,7 +273,7 @@ public class FontFaceTest extends SvgIntegrationTest {
         String fileName = "resolveFonts_WithAllProperties";
         String svgFile = "fontSelectorTest";
         WriterProperties writerprops = new WriterProperties().setCompressionLevel(0);
-        String baseUri = FileUtil.getParentDirectory(new File(sourceFolder + svgFile + ".svg"));
+        String baseUri = FileUtil.getParentDirectoryUri(new File(sourceFolder + svgFile + ".svg"));
         ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(baseUri).setFontProvider(new BasicFontProvider()).setMediaDeviceDescription(new MediaDeviceDescription(MediaType.ALL));
         convertToSinglePage(new File(sourceFolder + svgFile + ".svg"), new File(destinationFolder + fileName + ".pdf"), properties, writerprops);
         compare(fileName, sourceFolder, destinationFolder);
@@ -293,7 +293,7 @@ public class FontFaceTest extends SvgIntegrationTest {
         String fileName = "resolveFonts_WithConverterPropsAndWriterProps";
         String svgFile = "fontSelectorTest";
         WriterProperties writerprops = new WriterProperties().setCompressionLevel(0);
-        String baseUri = FileUtil.getParentDirectory(new File(sourceFolder + svgFile + ".svg"));
+        String baseUri = FileUtil.getParentDirectoryUri(new File(sourceFolder + svgFile + ".svg"));
         ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(baseUri).setFontProvider(new BasicFontProvider()).setMediaDeviceDescription(new MediaDeviceDescription(MediaType.ALL));
         convertToSinglePage(new FileInputStream(sourceFolder + svgFile + ".svg"), new FileOutputStream(destinationFolder + fileName + ".pdf"), properties, writerprops);
         compare(fileName, sourceFolder, destinationFolder);

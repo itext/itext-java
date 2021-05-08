@@ -468,9 +468,9 @@ public final class SvgConverter {
      */
     public static void createPdf(File svgFile, File pdfFile, ISvgConverterProperties props, WriterProperties writerProps) throws IOException {
         if (props == null) {
-            props = new SvgConverterProperties().setBaseUri(FileUtil.getParentDirectory(svgFile));
+            props = new SvgConverterProperties().setBaseUri(FileUtil.getParentDirectoryUri(svgFile));
         } else if (props.getBaseUri() == null || props.getBaseUri().isEmpty()) {
-            String baseUri = FileUtil.getParentDirectory(svgFile);
+            String baseUri = FileUtil.getParentDirectoryUri(svgFile);
             props = convertToSvgConverterProps(props, baseUri);
         }
         try (FileInputStream fileInputStream = new FileInputStream(svgFile.getAbsolutePath());
