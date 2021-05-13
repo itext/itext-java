@@ -1077,7 +1077,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Gets {@link PdfStructTreeRoot} of tagged document.
      *
-     * @return {@link PdfStructTreeRoot} in case tagged document, otherwise false.
+     * @return {@link PdfStructTreeRoot} in case document is tagged, otherwise it returns null.
+     *
      * @see #isTagged()
      * @see #getNextStructParentIndex()
      */
@@ -1089,6 +1090,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Gets next parent index of tagged document.
      *
      * @return -1 if document is not tagged, or &gt;= 0 if tagged.
+     *
      * @see #isTagged()
      * @see #getNextStructParentIndex()
      */

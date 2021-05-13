@@ -68,6 +68,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Represents a wrapper-class for structure tree root dictionary. See ISO-32000-1 "14.7.2 Structure hierarchy".
+ */
 public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implements IStructureNode {
 
     private static final long serialVersionUID = 2168384302241193868L;
@@ -77,21 +80,40 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     private static Map<String, PdfName> staticRoleNames = new ConcurrentHashMap<>();
 
+    /**
+     * Creates a new structure tree root instance, this initializes empty logical structure in the document.
+     * This class also handles global state of parent tree, so it's not expected to create multiple instances
+     * of this class. Instead, use {@link PdfDocument#getStructTreeRoot()}.
+     *
+     * @param document a document to which new instance of struct tree root will be bound
+     */
     public PdfStructTreeRoot(PdfDocument document) {
         this((PdfDictionary) new PdfDictionary().makeIndirect(document), document);
         getPdfObject().put(PdfName.Type, PdfName.StructTreeRoot);
     }
 
-    public PdfStructTreeRoot(PdfDictionary pdfObject, PdfDocument document) {
-        super(pdfObject);
+    /**
+     * Creates wrapper instance for already existing logical structure tree root in the document.
+     * This class also handles global state of parent tree, so it's not expected to create multiple instances
+     * of this class. Instead, use {@link PdfDocument#getStructTreeRoot()}.
+     *
+     * @param structTreeRootDict a dictionary that defines document structure tree root
+     * @param document a document, which contains given structure tree root dictionary
+     */
+    public PdfStructTreeRoot(PdfDictionary structTreeRootDict, PdfDocument document) {
+        super(structTreeRootDict);
         this.document = document;
         if (this.document == null) {
-            ensureObjectIsAddedToDocument(pdfObject);
-            this.document = pdfObject.getIndirectReference().getDocument();
+            ensureObjectIsAddedToDocument(structTreeRootDict);
+            this.document = structTreeRootDict.getIndirectReference().getDocument();
         }
         setForbidRelease();
         parentTreeHandler = new ParentTreeHandler(this);
-        // TODO may be remove?
+
+        // Always init role map dictionary in order to avoid inconsistency, because
+        // iText often initializes it during role mapping resolution anyway.
+        // In future, better way might be to not write it to the document needlessly
+        // and avoid possible redundant modifications in append mode.
         getRoleMap();
     }
 
