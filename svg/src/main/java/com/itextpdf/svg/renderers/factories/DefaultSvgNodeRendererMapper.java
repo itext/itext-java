@@ -61,6 +61,7 @@ import com.itextpdf.svg.renderers.impl.RectangleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.StopSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SymbolSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.TextLeafSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer;
 import com.itextpdf.svg.renderers.impl.TextSvgTSpanBranchRenderer;
 import com.itextpdf.svg.renderers.impl.UseSvgNodeRenderer;
@@ -109,6 +110,7 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
         result.put(SvgConstants.Tags.TEXT, TextSvgBranchRenderer.class);
         result.put(SvgConstants.Tags.TSPAN, TextSvgTSpanBranchRenderer.class);
         result.put(SvgConstants.Tags.USE, UseSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.TEXT_LEAF, TextLeafSvgNodeRenderer.class);
 
         return result;
     }
