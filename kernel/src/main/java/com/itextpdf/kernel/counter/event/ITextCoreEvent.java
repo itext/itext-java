@@ -24,15 +24,19 @@ package com.itextpdf.kernel.counter.event;
 
 import com.itextpdf.kernel.actions.ProductNameConstant;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
-import com.itextpdf.kernel.actions.events.AbstractITextProductEvent;
+import com.itextpdf.kernel.actions.events.AbstractProductProcessITextEvent;
+import com.itextpdf.kernel.actions.events.EventConfirmationType;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
-import com.itextpdf.kernel.pdf.PdfDocument;
 
 /**
  * Class represents events registered in iText core module.
  */
-public class ITextCoreEvent extends AbstractITextProductEvent {
-    public static final String OPEN_DOCUMENT = "open-document-event";
+public class ITextCoreEvent extends AbstractProductProcessITextEvent {
+    /**
+     * Process pdf event type.
+     */
+    // TODO DEVSIX-5466 rename constant value
+    public static final String PROCESS_PDF = "open-document-event";
 
     private final String eventType;
 
@@ -42,27 +46,35 @@ public class ITextCoreEvent extends AbstractITextProductEvent {
      * @param sequenceId is an identifier associated with the event
      * @param metaInfo   is an additional meta info
      * @param eventType  is a string description of the event
+     * @param confirmationType defines when the event should be confirmed to notify that the
+     *                         associated process has finished successfully
      */
-    public ITextCoreEvent(SequenceId sequenceId, IMetaInfo metaInfo, String eventType) {
-        super(sequenceId, ITextCoreProductData.getInstance(), metaInfo);
+    private ITextCoreEvent(SequenceId sequenceId, IMetaInfo metaInfo, String eventType,
+            EventConfirmationType confirmationType) {
+        super(sequenceId, ITextCoreProductData.getInstance(), metaInfo, confirmationType);
         this.eventType = eventType;
     }
 
     /**
-     * {@inheritDoc}
+     * Creates an process pdf event which associated with a general identifier and additional meta data.
      *
-     * @return {@inheritDoc}
+     * @param sequenceId is an identifier associated with the event
+     * @param metaInfo is an additional meta info
+     * @param confirmationType defines when the event should be confirmed to notify that the
+     *                         associated process has finished successfully
+     *
+     * @return the process pdf event
      */
+    public static ITextCoreEvent createProcessPdfEvent(SequenceId sequenceId, IMetaInfo metaInfo,
+            EventConfirmationType confirmationType) {
+        return new ITextCoreEvent(sequenceId, metaInfo, PROCESS_PDF, confirmationType);
+    }
+
     @Override
     public String getProductName() {
         return ProductNameConstant.ITEXT_CORE;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@inheritDoc}
-     */
     @Override
     public String getEventType() {
         return eventType;

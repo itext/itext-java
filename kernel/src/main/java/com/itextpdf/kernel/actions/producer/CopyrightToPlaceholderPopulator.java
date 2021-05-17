@@ -24,7 +24,7 @@ package com.itextpdf.kernel.actions.producer;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.actions.events.ITextProductEventWrapper;
+import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
 
 import java.util.List;
 
@@ -50,7 +50,7 @@ class CopyrightToPlaceholderPopulator implements IPlaceholderPopulator {
      * @throws IllegalArgumentException if <code>parameter</code> is not <code>null</code>
      */
     @Override
-    public String populate(List<ITextProductEventWrapper> events, String parameter) {
+    public String populate(List<ConfirmedEventWrapper> events, String parameter) {
 
         if (parameter != null) {
             throw new IllegalArgumentException(
@@ -60,7 +60,7 @@ class CopyrightToPlaceholderPopulator implements IPlaceholderPopulator {
 
         // initial value, will be overwritten with product value
         int latestYear = Integer.MIN_VALUE;
-        for (ITextProductEventWrapper event : events) {
+        for (ConfirmedEventWrapper event : events) {
             int currentYear = event.getEvent().getProductData().getToCopyrightYear();
             if (currentYear > latestYear) {
                 latestYear = currentYear;

@@ -22,20 +22,24 @@
  */
 package com.itextpdf.kernel.actions;
 
+import com.itextpdf.kernel.actions.data.ProductData;
 import com.itextpdf.kernel.counter.event.IMetaInfo;
 
 /**
  * Represents a context-based event. See also {@link AbstractContextBasedEventHandler}.
+ * Only for internal usage.
  */
-public abstract class AbstractContextBasedITextEvent implements ITextEvent {
+public abstract class AbstractContextBasedITextEvent extends AbstractProductITextEvent {
     private final IMetaInfo metaInfo;
 
     /**
      * Creates an event containing auxiliary meta data.
      *
+     * @param productData is a description of the product which has generated an event
      * @param metaInfo is an auxiliary meta info
      */
-    public AbstractContextBasedITextEvent(IMetaInfo metaInfo) {
+    public AbstractContextBasedITextEvent(ProductData productData, IMetaInfo metaInfo) {
+        super(productData);
         this.metaInfo = metaInfo;
     }
 
@@ -46,5 +50,14 @@ public abstract class AbstractContextBasedITextEvent implements ITextEvent {
      */
     public IMetaInfo getMetaInfo() {
         return metaInfo;
+    }
+
+    /**
+     * Obtains a current event context class.
+     *
+     * @return context class
+     */
+    public Class<?> getClassFromContext() {
+        return this.getClass();
     }
 }

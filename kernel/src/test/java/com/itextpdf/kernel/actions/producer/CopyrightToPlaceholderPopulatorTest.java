@@ -24,7 +24,7 @@ package com.itextpdf.kernel.actions.producer;
 
 import com.itextpdf.kernel.actions.data.ProductData;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
-import com.itextpdf.kernel.actions.events.ITextProductEventWrapper;
+import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -41,31 +41,31 @@ public class CopyrightToPlaceholderPopulatorTest extends ExtendedITextTest {
 
     @Test
     public void oneEventTest() {
-        List<ITextProductEventWrapper> events = getEvents(2010);
+        List<ConfirmedEventWrapper> events = getEvents(2010);
         String result = populator.populate(events, null);
         Assert.assertEquals("2010", result);
     }
 
     @Test
     public void severalEventsTest() {
-        List<ITextProductEventWrapper> events = getEvents(2007, 2030, 2020);
+        List<ConfirmedEventWrapper> events = getEvents(2007, 2030, 2020);
         String result = populator.populate(events, null);
         Assert.assertEquals("2030", result);
     }
 
     @Test
     public void severalEventsWithSameYearTest() {
-        List<ITextProductEventWrapper> events = getEvents(2009, 1998, 2009, 1998);
+        List<ConfirmedEventWrapper> events = getEvents(2009, 1998, 2009, 1998);
         String result = populator.populate(events, null);
         Assert.assertEquals("2009", result);
     }
 
 
-    private List<ITextProductEventWrapper> getEvents(int ... years) {
-        List<ITextProductEventWrapper> events = new ArrayList<>();
+    private List<ConfirmedEventWrapper> getEvents(int ... years) {
+        List<ConfirmedEventWrapper> events = new ArrayList<>();
         for (int year : years) {
             final ProductData productData = new ProductData("iText Test", "itext-test", "25.3", 1900, year);
-            events.add(new ITextProductEventWrapper(
+            events.add(new ConfirmedEventWrapper(
                     new ITextTestEvent(new SequenceId(), productData, null, "testing"),
                     "AGPL", "iText test product line"));
         }

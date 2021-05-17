@@ -25,7 +25,7 @@ package com.itextpdf.kernel.actions.producer;
 import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.actions.events.ITextProductEventWrapper;
+import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -87,7 +87,7 @@ class CurrentDatePlaceholderPopulator extends AbstractFormattedPlaceholderPopula
      * @throws IllegalArgumentException if format of the date pattern is invalid
      */
     @Override
-    public String populate(List<ITextProductEventWrapper> events, String parameter) {
+    public String populate(List<ConfirmedEventWrapper> events, String parameter) {
         if (parameter == null) {
             throw new IllegalArgumentException(
                     MessageFormatUtil.format(PdfException.InvalidUsageFormatRequired, "currentDate")

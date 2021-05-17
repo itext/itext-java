@@ -26,7 +26,7 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.actions.data.ProductData;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
-import com.itextpdf.kernel.actions.events.ITextProductEventWrapper;
+import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -133,12 +133,12 @@ public class UsedProductsPlaceholderPopulatorTest extends ExtendedITextTest {
         populator.populate(getEvents(1), "PVTX");
     }
 
-    private List<ITextProductEventWrapper> getEvents(int ... indexes) {
-        List<ITextProductEventWrapper> events = new ArrayList<>();
+    private List<ConfirmedEventWrapper> getEvents(int ... indexes) {
+        List<ConfirmedEventWrapper> events = new ArrayList<>();
 
         for (int i : indexes) {
             final ProductData productData = new ProductData("product" + i, "module" + i, i + ".0", 1900, 2100);
-            events.add(new ITextProductEventWrapper(
+            events.add(new ConfirmedEventWrapper(
                     new ITextTestEvent(new SequenceId(), productData, null, "testing" + i),
                     "type" + i, "iText product " + i));
         }

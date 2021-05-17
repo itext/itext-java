@@ -44,7 +44,6 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
@@ -55,6 +54,8 @@ import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.VersionInfo;
 import com.itextpdf.kernel.actions.EventManager;
+import com.itextpdf.kernel.actions.events.ConfirmEvent;
+import com.itextpdf.kernel.actions.events.EventConfirmationType;
 import com.itextpdf.kernel.actions.events.FlushPdfDocumentEvent;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.counter.EventCounterHandler;
@@ -1932,8 +1933,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         this.encryptedEmbeddedStreamsHandler = new EncryptedEmbeddedStreamsHandler(this);
 
         try {
-            EventManager.getInstance().onEvent(new ITextCoreEvent(this.getDocumentIdWrapper(), null,
-                    ITextCoreEvent.OPEN_DOCUMENT));
+            final ITextCoreEvent event = ITextCoreEvent.createProcessPdfEvent(this.getDocumentIdWrapper(),
+                    properties.metaInfo,
+                    writer == null ? EventConfirmationType.ON_DEMAND : EventConfirmationType.ON_CLOSE);
+            EventManager.getInstance().onEvent(event);
             EventCounterHandler.getInstance().onEvent(CoreEvent.PROCESS, properties.metaInfo, getClass());
             boolean embeddedStreamsSavedOnReading = false;
             if (reader != null) {
@@ -2086,6 +2089,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         }
                     }
                 }
+            }
+            if (EventConfirmationType.ON_DEMAND == event.getConfirmationType()) {
+                // Event confirmation: opening has passed successfully
+                EventManager.getInstance().onEvent(new ConfirmEvent(event));
             }
         } catch (IOException e) {
             throw new PdfException(KernelExceptionMessageConstant.CANNOT_OPEN_DOCUMENT, e, this);

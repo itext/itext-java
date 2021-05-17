@@ -22,17 +22,13 @@
  */
 package com.itextpdf.kernel.actions.events;
 
-import com.itextpdf.kernel.KernelLogMessageConstant;
 import com.itextpdf.kernel.actions.ProductEventHandlerAccess;
-import com.itextpdf.kernel.actions.ProductNameConstant;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
@@ -45,18 +41,6 @@ import org.junit.experimental.categories.Category;
 public class LinkDocumentIdEventTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/actions/";
-
-    @Test
-    public void propertiesTest() throws IOException {
-        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
-
-            SequenceId sequenceId = new SequenceId();
-            LinkDocumentIdEvent event = new LinkDocumentIdEvent(document, sequenceId, ProductNameConstant.ITEXT_CORE);
-
-            Assert.assertEquals("link-document-id-event", event.getEventType());
-            Assert.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
-        }
-    }
 
     @Test
     public void doActionLinkModifiedDocumentTest() throws IOException {
@@ -80,15 +64,15 @@ public class LinkDocumentIdEventTest extends ExtendedITextTest {
             int initialSequenceEventsNumber = access.getEvents(sequenceId).size();
             int initialDocumentEventsNumber = access.getEvents(document.getDocumentIdWrapper()).size();
 
-            new LinkDocumentIdEvent(document, sequenceId, ProductNameConstant.ITEXT_CORE).doAction();
+            new LinkDocumentIdEvent(document, sequenceId).doAction();
 
             Assert.assertEquals(initialSequenceEventsNumber, access.getEvents(sequenceId).size());
 
-            List<ITextProductEventWrapper> actualDocumentEvents = access.getEvents(document.getDocumentIdWrapper());
+            List<AbstractProductProcessITextEvent> actualDocumentEvents = access.getEvents(document.getDocumentIdWrapper());
             Assert.assertEquals(initialDocumentEventsNumber + 3, actualDocumentEvents.size());
 
             for (int i = initialDocumentEventsNumber; i < initialDocumentEventsNumber + 3; i++) {
-                AbstractITextProductEvent sequenceEvent = actualDocumentEvents.get(i).getEvent();
+                AbstractProductProcessITextEvent sequenceEvent = actualDocumentEvents.get(i);
                 Assert.assertEquals("sequenceId-testing", sequenceEvent.getEventType());
                 Assert.assertEquals("test-product-" + (i - initialDocumentEventsNumber), sequenceEvent.getProductName());
                 Assert.assertNull(sequenceEvent.getMetaInfo());
@@ -99,14 +83,14 @@ public class LinkDocumentIdEventTest extends ExtendedITextTest {
 
     @Test
     public void nullValuesAreAcceptableTest() throws IOException {
-        AssertUtil.doesNotThrow(() -> new LinkDocumentIdEvent(null, null, ProductNameConstant.ITEXT_CORE));
-        AssertUtil.doesNotThrow(() -> new LinkDocumentIdEvent(null, new SequenceId(), ProductNameConstant.ITEXT_CORE));
+        AssertUtil.doesNotThrow(() -> new LinkDocumentIdEvent(null, null));
+        AssertUtil.doesNotThrow(() -> new LinkDocumentIdEvent(null, new SequenceId()));
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
-            AssertUtil.doesNotThrow(() -> new LinkDocumentIdEvent(document, null, ProductNameConstant.ITEXT_CORE));
+            AssertUtil.doesNotThrow(() -> new LinkDocumentIdEvent(document, null));
         }
     }
 
-    private static ITextProductEventWrapper wrapEvent(AbstractITextProductEvent event) {
-        return new ITextProductEventWrapper(event, "AGPL Version", "iText");
+    private static ConfirmedEventWrapper wrapEvent(AbstractProductProcessITextEvent event) {
+        return new ConfirmedEventWrapper(event, "AGPL Version", "iText");
     }
 }

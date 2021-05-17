@@ -23,26 +23,31 @@
 package com.itextpdf.kernel.actions.ecosystem;
 
 import com.itextpdf.kernel.actions.data.ProductData;
-import com.itextpdf.kernel.actions.events.AbstractITextProductEvent;
+import com.itextpdf.kernel.actions.events.AbstractProductProcessITextEvent;
+import com.itextpdf.kernel.actions.events.EventConfirmationType;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.counter.event.IMetaInfo;
-import com.itextpdf.kernel.pdf.PdfDocument;
 
-public class ITextTestEvent extends AbstractITextProductEvent {
+public class ITextTestEvent extends AbstractProductProcessITextEvent {
     private final String eventType;
     private final String productName;
 
     public ITextTestEvent(SequenceId sequenceId, IMetaInfo metaInfo, String eventType,
             String productName) {
-        super(sequenceId, null, metaInfo);
+        super(sequenceId, new ProductData("", "", "", 2000, 2100), metaInfo, EventConfirmationType.ON_CLOSE);
         this.eventType = eventType;
         this.productName = productName;
     }
 
-    public ITextTestEvent(SequenceId sequenceId, ProductData productData, IMetaInfo metaInfo, String eventType) {
-        super(sequenceId, productData, metaInfo);
+    public ITextTestEvent(SequenceId sequenceId, ProductData productData, IMetaInfo metaInfo, String eventType,
+            EventConfirmationType confirmationType) {
+        super(sequenceId, productData, metaInfo, confirmationType);
         this.eventType = eventType;
         this.productName = productData.getModuleName();
+    }
+
+    public ITextTestEvent(SequenceId sequenceId, ProductData productData, IMetaInfo metaInfo, String eventType) {
+        this(sequenceId, productData, metaInfo, eventType, EventConfirmationType.ON_CLOSE);
     }
 
     @Override

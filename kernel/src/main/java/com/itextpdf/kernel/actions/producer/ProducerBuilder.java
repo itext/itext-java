@@ -25,7 +25,7 @@ package com.itextpdf.kernel.actions.producer;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.KernelLogMessageConstant;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.actions.events.ITextProductEventWrapper;
+import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -79,7 +79,7 @@ public final class ProducerBuilder {
      * new producer line will be defined by the first event in the list. Placeholder will be
      * replaced and merged all together
      *
-     * @param events list of events wrapped with {@link ITextProductEventWrapper} registered for
+     * @param events list of events wrapped with {@link ConfirmedEventWrapper} registered for
      *               the document
      * @param oldProducer is an old producer line. If <code>null</code> or empty, will be replaced
      *                    with a new one. Otherwise new line will be attached with
@@ -87,7 +87,7 @@ public final class ProducerBuilder {
      *                    <code>modified using</code> substring, it will be overriden with a new one
      * @return modified producer line
      */
-    public static String modifyProducer(List<ITextProductEventWrapper> events, String oldProducer) {
+    public static String modifyProducer(List<ConfirmedEventWrapper> events, String oldProducer) {
         final String newProducer = buildProducer(events);
         if (oldProducer == null || oldProducer.isEmpty()) {
             return newProducer;
@@ -96,7 +96,7 @@ public final class ProducerBuilder {
         }
     }
 
-    private static String buildProducer(List<ITextProductEventWrapper> events) {
+    private static String buildProducer(List<ConfirmedEventWrapper> events) {
         if (events == null || events.isEmpty()) {
             throw new IllegalArgumentException(PdfException.NoEventsWereRegisteredForTheDocument);
         }
@@ -109,7 +109,7 @@ public final class ProducerBuilder {
         return populatePlaceholders(producer, events);
     }
 
-    private static String populatePlaceholders(String producerLine, List<ITextProductEventWrapper> events) {
+    private static String populatePlaceholders(String producerLine, List<ConfirmedEventWrapper> events) {
         int lastIndex = 0;
         Matcher matcher = PATTERN.matcher(producerLine);
 

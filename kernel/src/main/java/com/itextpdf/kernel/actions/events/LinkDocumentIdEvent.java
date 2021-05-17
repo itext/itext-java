@@ -33,10 +33,8 @@ import java.util.List;
  * An event allows to associated some {@link SequenceId} with {@link PdfDocument}.
  */
 public final class LinkDocumentIdEvent extends AbstractITextConfigurationEvent {
-    private static final String LINK_DOCUMENT_ID_EVENT_TYPE = "link-document-id-event";
     private final WeakReference<PdfDocument> document;
     private final WeakReference<SequenceId> sequenceId;
-    private final String productName;
 
     /**
      * Creates a new instance of the event associating provided {@link PdfDocument} with the
@@ -45,21 +43,10 @@ public final class LinkDocumentIdEvent extends AbstractITextConfigurationEvent {
      * @param document is a document
      * @param sequenceId is a general identifier to be associated with the document
      */
-    public LinkDocumentIdEvent(PdfDocument document, SequenceId sequenceId, String productName) {
+    public LinkDocumentIdEvent(PdfDocument document, SequenceId sequenceId) {
         super();
         this.document = new WeakReference<>(document);
         this.sequenceId = new WeakReference<>(sequenceId);
-        this.productName = productName;
-    }
-
-    /**
-     * Returns iText core product identifier.
-     *
-     * @return iText core product identifier
-     */
-    @Override
-    public String getProductName() {
-        return productName;
     }
 
     /**
@@ -74,18 +61,13 @@ public final class LinkDocumentIdEvent extends AbstractITextConfigurationEvent {
             return;
         }
 
-        final List<ITextProductEventWrapper> anonymousEvents = getEvents(storedSequenceId);
+        final List<AbstractProductProcessITextEvent> anonymousEvents = getEvents(storedSequenceId);
 
         if (anonymousEvents != null) {
             final SequenceId documentId = storedPdfDocument.getDocumentIdWrapper();
-            for (final ITextProductEventWrapper event : anonymousEvents) {
+            for (final AbstractProductProcessITextEvent event : anonymousEvents) {
                 addEvent(documentId, event);
             }
         }
-    }
-
-    @Override
-    public String getEventType() {
-        return LINK_DOCUMENT_ID_EVENT_TYPE;
     }
 }

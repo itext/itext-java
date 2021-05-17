@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.counter.context;
 
-import com.itextpdf.kernel.actions.ITextEvent;
+import com.itextpdf.kernel.actions.AbstractContextBasedITextEvent;
 import com.itextpdf.kernel.counter.event.IEvent;
 
 /**
@@ -70,5 +70,5 @@ public interface IContext {
      *
      * @return true if event is allowed by the actual context and false otherwise
      */
-    boolean isAllowed(ITextEvent event);
+    boolean isAllowed(AbstractContextBasedITextEvent event);
 }

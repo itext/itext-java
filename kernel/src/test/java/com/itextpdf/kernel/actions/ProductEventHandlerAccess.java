@@ -22,7 +22,7 @@
  */
 package com.itextpdf.kernel.actions;
 
-import com.itextpdf.kernel.actions.events.ITextProductEventWrapper;
+import com.itextpdf.kernel.actions.events.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 
@@ -54,11 +54,11 @@ public class ProductEventHandlerAccess implements Closeable {
         return ProductEventHandler.INSTANCE.getProcessors();
     }
 
-    public List<ITextProductEventWrapper> getEvents(SequenceId id) {
+    public List<AbstractProductProcessITextEvent> getEvents(SequenceId id) {
         return ProductEventHandler.INSTANCE.getEvents(id);
     }
 
-    public void addEvent(SequenceId id, ITextProductEventWrapper event) {
+    public void addEvent(SequenceId id, AbstractProductProcessITextEvent event) {
         ProductEventHandler.INSTANCE.addEvent(id, event);
     }
 

@@ -23,7 +23,7 @@
 package com.itextpdf.kernel.actions.processors;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.actions.events.AbstractITextProductEvent;
+import com.itextpdf.kernel.actions.events.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.session.ClosingSession;
 
 /**
@@ -45,41 +45,21 @@ public class DefaultITextProductEventProcessor implements ITextProductEventProce
         this.productName = productName;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param event to handle
-     */
     @Override
-    public void onEvent(AbstractITextProductEvent event) {
+    public void onEvent(AbstractProductProcessITextEvent event) {
         // TODO: DEVSIX-5341 provide appropriate logic if any
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@inheritDoc}
-     */
     @Override
     public String getProductName() {
         return productName;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@inheritDoc}
-     */
     @Override
     public String getUsageType() {
         return "AGPL";
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@inheritDoc}
-     */
     @Override
     public String getProducer() {
         return "iText\u00ae ${usedProducts:P V (T 'version')} \u00a9${copyrightSince}-${copyrightTo} iText Group NV";

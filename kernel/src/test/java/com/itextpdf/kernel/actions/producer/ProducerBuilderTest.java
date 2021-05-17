@@ -28,7 +28,7 @@ import com.itextpdf.kernel.KernelLogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.actions.data.ProductData;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
-import com.itextpdf.kernel.actions.events.ITextProductEventWrapper;
+import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
@@ -60,7 +60,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
 
     @Test
     public void plainTextNewProducerLineTest() {
-        List<ITextProductEventWrapper> events = getEvents("Plain Text", 1, 2, 3);
+        List<ConfirmedEventWrapper> events = getEvents("Plain Text", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
 
         Assert.assertEquals("Plain Text", newProducerLine);
@@ -68,7 +68,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
 
     @Test
     public void plainTextEmptyOldProducerLineTest() {
-        List<ITextProductEventWrapper> events = getEvents("Plain Text", 1, 2, 3);
+        List<ConfirmedEventWrapper> events = getEvents("Plain Text", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, "");
 
         Assert.assertEquals("Plain Text", newProducerLine);
@@ -76,7 +76,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
 
     @Test
     public void plainTextExistingOldProducerLineTest() {
-        List<ITextProductEventWrapper> events = getEvents("Plain Text", 1, 2, 3);
+        List<ConfirmedEventWrapper> events = getEvents("Plain Text", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, "Old producer");
 
         Assert.assertEquals("Old producer; modified using Plain Text", newProducerLine);
@@ -84,7 +84,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
 
     @Test
     public void plainTextExistingOldProducerWithModifiedPartLineTest() {
-        List<ITextProductEventWrapper> events = getEvents("New Author", 1, 2, 3);
+        List<ConfirmedEventWrapper> events = getEvents("New Author", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, "Old producer; modified using Plain Text");
 
         Assert.assertEquals("Old producer; modified using Plain Text; modified using New Author", newProducerLine);
@@ -93,7 +93,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
 
     @Test
     public void copyrightSinceProducerLineTest() {
-        List<ITextProductEventWrapper> events = getEvents("Prod. since ${copyrightSince}", 1, 2, 3);
+        List<ConfirmedEventWrapper> events = getEvents("Prod. since ${copyrightSince}", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
 
         Assert.assertEquals("Prod. since 1901", newProducerLine);
@@ -101,7 +101,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
 
     @Test
     public void copyrightToProducerLineTest() {
-        List<ITextProductEventWrapper> events = getEvents("All rights reserved, ${copyrightTo}", 1, 2, 3);
+        List<ConfirmedEventWrapper> events = getEvents("All rights reserved, ${copyrightTo}", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
 
         Assert.assertEquals("All rights reserved, 2103", newProducerLine);
@@ -109,7 +109,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
 
     @Test
     public void currentDateProducerLineTest() {
-        List<ITextProductEventWrapper> events = getEvents("Created at ${currentDate:yyyy}", 1, 2, 3);
+        List<ConfirmedEventWrapper> events = getEvents("Created at ${currentDate:yyyy}", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
 
         Assert.assertEquals("Created at " + DateTimeUtil.formatDate(DateTimeUtil.getCurrentTimeDate(), "yyyy"), newProducerLine);
@@ -117,7 +117,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
 
     @Test
     public void currentDateComplexFormatProducerLineTest() {
-        List<ITextProductEventWrapper> events = getEvents("Created at ${currentDate:yyyy, '{\\'yes::yes\\'', yyyy}", 1, 2, 3);
+        List<ConfirmedEventWrapper> events = getEvents("Created at ${currentDate:yyyy, '{\\'yes::yes\\'', yyyy}", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
         String currentYear = DateTimeUtil.formatDate(DateTimeUtil.getCurrentTimeDate(), "yyyy");
 
@@ -126,7 +126,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
 
     @Test
     public void currentDatePlaceholderFormatProducerLineTest() {
-        List<ITextProductEventWrapper> events = getEvents("Created at ${currentDate:'${currentDate'}", 1, 2, 3);
+        List<ConfirmedEventWrapper> events = getEvents("Created at ${currentDate:'${currentDate'}", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
 
         Assert.assertEquals("Created at ${currentDate", newProducerLine);
@@ -134,7 +134,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
 
     @Test
     public void currentDateNoFormatProducerLineTest() {
-        List<ITextProductEventWrapper> events = getEvents("Created at ${currentDate}", 1, 2, 3);
+        List<ConfirmedEventWrapper> events = getEvents("Created at ${currentDate}", 1, 2, 3);
 
         junitExpectedException.expect(IllegalArgumentException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfException.InvalidUsageFormatRequired, "currentDate"));
@@ -144,7 +144,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
 
     @Test
     public void currentDateEmptyFormatProducerLineTest() {
-        List<ITextProductEventWrapper> events = getEvents("Created at ${currentDate:}", 1, 2, 3);
+        List<ConfirmedEventWrapper> events = getEvents("Created at ${currentDate:}", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
 
         Assert.assertEquals("Created at ", newProducerLine);
@@ -152,7 +152,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
 
     @Test
     public void usedProductsProducerLineTest() {
-        List<ITextProductEventWrapper> events = getEvents("Used products: ${usedProducts:P #V (T 'version')}", 1, 2, 3);
+        List<ConfirmedEventWrapper> events = getEvents("Used products: ${usedProducts:P #V (T 'version')}", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
 
         Assert.assertEquals(
@@ -162,7 +162,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
 
     @Test
     public void usedProductsEmptyFormatProducerLineTest() {
-        List<ITextProductEventWrapper> events = getEvents("Used products: ${usedProducts}", 1, 2, 3);
+        List<ConfirmedEventWrapper> events = getEvents("Used products: ${usedProducts}", 1, 2, 3);
 
         junitExpectedException.expect(IllegalArgumentException.class);
         junitExpectedException.expectMessage(MessageFormatUtil.format(PdfException.InvalidUsageFormatRequired, "usedProducts"));
@@ -175,20 +175,20 @@ public class ProducerBuilderTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = KernelLogMessageConstant.UNKNOWN_PLACEHOLDER_WAS_IGNORED, count = 3, logLevel = LogLevelConstants.INFO)
     })
     public void unknownPlaceHoldersTest() {
-        List<ITextProductEventWrapper> events =
+        List<ConfirmedEventWrapper> events =
                 getEvents("${plchldr}|${plchldrWithParam:param}|${plchldrWithWeirdParam::$$:'''\\''}", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
 
         Assert.assertEquals("||", newProducerLine);
     }
 
-    private List<ITextProductEventWrapper> getEvents(String initialProducerLine, int ... indexes) {
-        List<ITextProductEventWrapper> events = new ArrayList<>();
+    private List<ConfirmedEventWrapper> getEvents(String initialProducerLine, int ... indexes) {
+        List<ConfirmedEventWrapper> events = new ArrayList<>();
 
         for (int ind = 0; ind < indexes.length; ind++) {
             int i = indexes[ind];
             final ProductData productData = new ProductData("product" + i, "module" + i, i + ".0", 1900 + i, 2100 + i);
-            events.add(new ITextProductEventWrapper(
+            events.add(new ConfirmedEventWrapper(
                     new ITextTestEvent(new SequenceId(), productData, null, "testing" + i),
                     "type" + i, ind == 0 ? initialProducerLine : "iText product " + i));
         }

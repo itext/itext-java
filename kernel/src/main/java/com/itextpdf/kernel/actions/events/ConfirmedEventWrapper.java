@@ -25,23 +25,24 @@ package com.itextpdf.kernel.actions.events;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 
 /**
- * A wrapper for a {@link AbstractITextProductEvent} storing additional meta data about the event.
+ * A wrapper for a {@link AbstractProductProcessITextEvent} storing additional data about the event.
  * If wrapped event is immutable then the instance of the wrapper is immutable too.
  */
-public class ITextProductEventWrapper {
-    private final AbstractITextProductEvent event;
+public class ConfirmedEventWrapper extends AbstractProductProcessITextEvent {
+    private final AbstractProductProcessITextEvent event;
     private final String productUsageType;
     private final String producerLine;
 
     /**
-     * Creates a wrapper for the event.
+     * Creates a wrapper for the event with additional data about the event.
      *
-     * @param event is a {@link AbstractITextProductEvent} to wrap
+     * @param event is a {@link AbstractProductProcessITextEvent} to wrap
      * @param productUsageType is a product usage marker
      * @param producerLine is a producer line defined by the {@link ITextProductEventProcessor}
      *                     which registered the event
      */
-    public ITextProductEventWrapper(AbstractITextProductEvent event, String productUsageType, String producerLine) {
+    public ConfirmedEventWrapper(AbstractProductProcessITextEvent event, String productUsageType, String producerLine) {
+        super(event.getSequenceId(), event.getProductData(), event.getMetaInfo(), EventConfirmationType.UNCONFIRMABLE);
         this.event = event;
         this.productUsageType = productUsageType;
         this.producerLine = producerLine;
@@ -52,7 +53,7 @@ public class ITextProductEventWrapper {
      *
      * @return wrapped event
      */
-    public AbstractITextProductEvent getEvent() {
+    public AbstractProductProcessITextEvent getEvent() {
         return event;
     }
 
@@ -73,5 +74,15 @@ public class ITextProductEventWrapper {
      */
     public String getProducerLine() {
         return producerLine;
+    }
+
+    @Override
+    public String getEventType() {
+        return event.getEventType();
+    }
+
+    @Override
+    public String getProductName() {
+        return event.getProductName();
     }
 }

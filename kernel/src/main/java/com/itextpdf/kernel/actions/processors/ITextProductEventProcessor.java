@@ -22,19 +22,19 @@
  */
 package com.itextpdf.kernel.actions.processors;
 
+import com.itextpdf.kernel.actions.events.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.session.ClosingSession;
-import com.itextpdf.kernel.actions.events.AbstractITextProductEvent;
 
 /**
  * Interface for product event processors.
  */
 public interface ITextProductEventProcessor {
     /**
-     * Handles the {@link AbstractITextProductEvent}.
+     * Handles the {@link AbstractProductProcessITextEvent}.
      *
      * @param event to handle
      */
-    void onEvent(AbstractITextProductEvent event);
+    void onEvent(AbstractProductProcessITextEvent event);
 
     /**
      * Gets the name of the product to which this processor corresponds.

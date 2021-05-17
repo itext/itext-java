@@ -23,12 +23,14 @@
 package com.itextpdf.kernel.actions;
 
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.actions.events.ITextProductEventWrapper;
+import com.itextpdf.kernel.KernelLogMessageConstant;
+import com.itextpdf.kernel.actions.events.AbstractProductProcessITextEvent;
+import com.itextpdf.kernel.actions.events.ConfirmEvent;
+import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
 import com.itextpdf.kernel.actions.processors.DefaultITextProductEventProcessor;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.counter.context.UnknownContext;
-import com.itextpdf.kernel.actions.events.AbstractITextProductEvent;
 import com.itextpdf.kernel.actions.exceptions.UnknownProductException;
 
 import java.util.ArrayList;
@@ -38,15 +40,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles events based oh their origin.
  */
 final class ProductEventHandler extends AbstractContextBasedEventHandler {
     static final ProductEventHandler INSTANCE = new ProductEventHandler();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductEventHandler.class);
 
     private final ConcurrentHashMap<String, ITextProductEventProcessor> processors = new ConcurrentHashMap<>();
-    private final WeakHashMap<SequenceId, List<ITextProductEventWrapper>> events = new WeakHashMap<>();
+    private final WeakHashMap<SequenceId, List<AbstractProductProcessITextEvent>> events = new WeakHashMap<>();
 
     private ProductEventHandler() {
         super(UnknownContext.PERMISSIVE);
@@ -58,29 +63,19 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
      * @param event to handle
      */
     @Override
-    protected void onAcceptedEvent(ITextEvent event) {
-        if (event instanceof AbstractITextProductEvent) {
-            final AbstractITextProductEvent iTextEvent = (AbstractITextProductEvent) event;
-            final ITextProductEventProcessor productEventProcessor =
-                    findProcessorForProduct(iTextEvent.getProductName());
-
-            if (iTextEvent.getSequenceId() != null) {
-                synchronized (events) {
-                    final SequenceId id = iTextEvent.getSequenceId();
-
-                    if (!events.containsKey(id)) {
-                        events.put(id, new ArrayList<>());
-                    }
-
-                    // TODO DEVSIX-5053 if event reporting will be done on document closing then
-                    //  event wrapping should be done there
-                    events.get(id).add(new ITextProductEventWrapper(iTextEvent,
-                            productEventProcessor.getUsageType(),
-                            productEventProcessor.getProducer()));
-                }
+    protected void onAcceptedEvent(AbstractContextBasedITextEvent event) {
+        if (! (event instanceof AbstractProductProcessITextEvent)) {
+            return;
+        }
+        final AbstractProductProcessITextEvent productEvent = (AbstractProductProcessITextEvent) event;
+        final ITextProductEventProcessor productEventProcessor = findProcessorForProduct(productEvent.getProductName());
+        productEventProcessor.onEvent(productEvent);
+        if (productEvent.getSequenceId() != null) {
+            if (productEvent instanceof ConfirmEvent) {
+                wrapConfirmedEvent((ConfirmEvent) productEvent, productEventProcessor);
+            } else {
+                addEvent(productEvent.getSequenceId(), productEvent);
             }
-
-            productEventProcessor.onEvent(iTextEvent);
         }
     }
 
@@ -100,19 +95,19 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
         return Collections.unmodifiableMap(new HashMap<>(processors));
     }
 
-    List<ITextProductEventWrapper> getEvents(SequenceId id) {
+    List<AbstractProductProcessITextEvent> getEvents(SequenceId id) {
         synchronized (events) {
-            final List<ITextProductEventWrapper> listOfEvents = events.get(id);
+            final List<AbstractProductProcessITextEvent> listOfEvents = events.get(id);
             if (listOfEvents == null) {
-                return Collections.<ITextProductEventWrapper>emptyList();
+                return Collections.<AbstractProductProcessITextEvent>emptyList();
             }
-            return Collections.<ITextProductEventWrapper>unmodifiableList(new ArrayList<>(listOfEvents));
+            return Collections.<AbstractProductProcessITextEvent>unmodifiableList(new ArrayList<>(listOfEvents));
         }
     }
 
-    void addEvent(SequenceId id, ITextProductEventWrapper event) {
+    void addEvent(SequenceId id, AbstractProductProcessITextEvent event) {
         synchronized (events) {
-            List<ITextProductEventWrapper> listOfEvents = events.get(id);
+            List<AbstractProductProcessITextEvent> listOfEvents = events.get(id);
 
             if (listOfEvents == null) {
                 listOfEvents = new ArrayList<>();
@@ -120,6 +115,23 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
             }
 
             listOfEvents.add(event);
+        }
+    }
+
+    private void wrapConfirmedEvent(ConfirmEvent event, ITextProductEventProcessor productEventProcessor) {
+        synchronized (events) {
+            final List<AbstractProductProcessITextEvent> eventsList = events.get(event.getSequenceId());
+
+            final AbstractProductProcessITextEvent confirmedEvent = event.getConfirmedEvent();
+            final int indexOfReportedEvent = eventsList.indexOf(confirmedEvent);
+            if (indexOfReportedEvent >= 0) {
+                eventsList.set(indexOfReportedEvent, new ConfirmedEventWrapper(confirmedEvent,
+                        productEventProcessor.getUsageType(),
+                        productEventProcessor.getProducer()));
+            } else {
+                LOGGER.warn(MessageFormatUtil.format(KernelLogMessageConstant.UNREPORTED_EVENT,
+                        confirmedEvent.getProductName(), confirmedEvent.getEventType()));
+            }
         }
     }
 

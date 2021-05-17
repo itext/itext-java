@@ -22,9 +22,11 @@
  */
 package com.itextpdf.kernel.actions.events;
 
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.KernelLogMessageConstant;
+import com.itextpdf.kernel.actions.EventManager;
 import com.itextpdf.kernel.actions.ProductEventHandlerAccess;
-import com.itextpdf.kernel.actions.ProductNameConstant;
+import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.actions.data.ProductData;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
@@ -32,32 +34,30 @@ import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.actions.session.ClosingSession;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class FlushPdfDocumentEventTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/actions/";
 
-    @Test
-    public void fieldsTest() throws IOException {
-        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
-            FlushPdfDocumentEvent event = new FlushPdfDocumentEvent(document);
-            Assert.assertEquals("flush-document-event", event.getEventType());
-            Assert.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
-        }
-    }
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void doActionTest() throws IOException {
@@ -67,8 +67,6 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
 
             access.addProcessor(new TestProductEventProcessor("test-product-1", forMessages));
             access.addProcessor(new TestProductEventProcessor("test-product-2", forMessages));
-
-
 
             access.addEvent(document.getDocumentIdWrapper(), getEvent("test-product-1", document.getDocumentIdWrapper()));
             access.addEvent(document.getDocumentIdWrapper(), getEvent("test-product-1", document.getDocumentIdWrapper()));
@@ -88,6 +86,70 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
             Assert.assertTrue(forMessages.get(1).startsWith("aggregation"));
             Assert.assertTrue(forMessages.get(2).startsWith("completion"));
             Assert.assertTrue(forMessages.get(3).startsWith("completion"));
+        }
+    }
+
+    @Test
+    public void onCloseReportingTest() throws IOException {
+        try (ProductEventHandlerAccess access = new ProductEventHandlerAccess();
+                PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
+
+            ITextTestEvent event = new ITextTestEvent(document.getDocumentIdWrapper(), ITextCoreProductData.getInstance(), null, "test-event", EventConfirmationType.ON_CLOSE);
+            int initialLength = access.getEvents(document.getDocumentIdWrapper()).size();
+
+            EventManager.getInstance().onEvent(event);
+            new FlushPdfDocumentEvent(document).doAction();
+
+            AbstractProductProcessITextEvent reportedEvent = access.getEvents(document.getDocumentIdWrapper()).get(initialLength);
+            Assert.assertTrue(reportedEvent instanceof ConfirmedEventWrapper);
+            ConfirmedEventWrapper wrappedEvent = (ConfirmedEventWrapper) reportedEvent;
+            Assert.assertEquals(event, wrappedEvent.getEvent());
+        }
+    }
+
+    @Test
+    @LogMessages(
+            messages = {
+                    @LogMessage(messageTemplate = KernelLogMessageConstant.UNCONFIRMED_EVENT)
+            }
+    )
+    public void onDemandReportingIgnoredTest() throws IOException {
+        try (ProductEventHandlerAccess access = new ProductEventHandlerAccess();
+                PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
+
+            ITextTestEvent event = new ITextTestEvent(document.getDocumentIdWrapper(),
+                    ITextCoreProductData.getInstance(), null, "test-event", EventConfirmationType.ON_DEMAND);
+            int initialLength = access.getEvents(document.getDocumentIdWrapper()).size();
+
+            EventManager.getInstance().onEvent(event);
+            new FlushPdfDocumentEvent(document).doAction();
+
+            AbstractProductProcessITextEvent reportedEvent = access.getEvents(document.getDocumentIdWrapper()).get(initialLength);
+            Assert.assertFalse(reportedEvent instanceof ConfirmedEventWrapper);
+        }
+    }
+
+    @Test
+    public void onDemandReportingConfirmedTest() throws IOException {
+        try (ProductEventHandlerAccess access = new ProductEventHandlerAccess();
+                PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
+
+            ITextTestEvent event = new ITextTestEvent(document.getDocumentIdWrapper(), ITextCoreProductData.getInstance(), null, "test-event", EventConfirmationType.ON_DEMAND);
+            int initialLength = access.getEvents(document.getDocumentIdWrapper()).size();
+
+            EventManager.getInstance().onEvent(event);
+
+            AbstractProductProcessITextEvent reportedEvent = access.getEvents(document.getDocumentIdWrapper()).get(initialLength);
+            Assert.assertFalse(reportedEvent instanceof ConfirmedEventWrapper);
+            Assert.assertEquals(event, reportedEvent);
+
+            EventManager.getInstance().onEvent(new ConfirmEvent(document.getDocumentIdWrapper(), event));
+            new FlushPdfDocumentEvent(document).doAction();
+
+            AbstractProductProcessITextEvent confirmedEvent = access.getEvents(document.getDocumentIdWrapper()).get(initialLength);
+            Assert.assertTrue(confirmedEvent instanceof ConfirmedEventWrapper);
+            ConfirmedEventWrapper wrappedEvent = (ConfirmedEventWrapper) confirmedEvent;
+            Assert.assertEquals(event, wrappedEvent.getEvent());
         }
     }
 
@@ -113,6 +175,22 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
         AssertUtil.doesNotThrow(() -> closeEvent.doAction());
     }
 
+    @Test
+    public void flushEventAfterEachEventTest() throws IOException {
+        String resourceInit = SOURCE_FOLDER + "hello.pdf";
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (PdfDocument pdf = new PdfDocument(new PdfReader(resourceInit), new PdfWriter(baos))) {
+            pdf.addNewPage();
+            EventManager.getInstance().onEvent(new FlushPdfDocumentEvent(pdf));
+        }
+
+        try (PdfDocument pdf = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())))) {
+            String producerLine = pdf.getDocumentInfo().getProducer();
+            String modifiedByItext = "modified using iText\u00ae Core";
+            Assert.assertNotEquals(producerLine.indexOf(modifiedByItext), producerLine.lastIndexOf(modifiedByItext));
+        }
+    }
+
     private static class TestProductEventProcessor implements ITextProductEventProcessor {
         public final List<String> aggregatedMessages;
         private final String processorId;
@@ -123,7 +201,7 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
         }
 
         @Override
-        public void onEvent(AbstractITextProductEvent event) {
+        public void onEvent(AbstractProductProcessITextEvent event) {
             // do nothing here
         }
 
@@ -153,9 +231,9 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
         }
     }
 
-    private static ITextProductEventWrapper getEvent(String productName, SequenceId sequenceId) {
+    private static ConfirmedEventWrapper getEvent(String productName, SequenceId sequenceId) {
         ProductData productData = new ProductData(productName, productName, "2.0", 1999, 2020);
-        return new ITextProductEventWrapper(new ITextTestEvent(sequenceId, productData, null, "testing"), "AGPL Version", "iText");
+        return new ConfirmedEventWrapper(new ITextTestEvent(sequenceId, productData, null, "testing"), "AGPL Version", "iText");
     }
 
 }

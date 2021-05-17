@@ -24,7 +24,7 @@ package com.itextpdf.kernel.actions.producer;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.actions.events.ITextProductEventWrapper;
+import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -76,14 +76,14 @@ class UsedProductsPlaceholderPopulator extends AbstractFormattedPlaceholderPopul
      * @throws IllegalArgumentException if format of the pattern is invalid
      */
     @Override
-    public String populate(List<ITextProductEventWrapper> events, String parameter) {
+    public String populate(List<ConfirmedEventWrapper> events, String parameter) {
         if (parameter == null) {
             throw new IllegalArgumentException(
                     MessageFormatUtil.format(PdfException.InvalidUsageFormatRequired, "usedProducts"));
         }
 
         final Set<ProductRepresentation> usedProducts = new LinkedHashSet<>();
-        for (ITextProductEventWrapper event : events) {
+        for (ConfirmedEventWrapper event : events) {
             usedProducts.add(new ProductRepresentation(event));
         }
 
@@ -138,7 +138,7 @@ class UsedProductsPlaceholderPopulator extends AbstractFormattedPlaceholderPopul
         private final String productUsageType;
         private final String version;
 
-        public ProductRepresentation(ITextProductEventWrapper event) {
+        public ProductRepresentation(ConfirmedEventWrapper event) {
             productName = event.getEvent().getProductData().getPublicProductName();
             productUsageType = event.getProductUsageType();
             version = event.getEvent().getProductData().getVersion();

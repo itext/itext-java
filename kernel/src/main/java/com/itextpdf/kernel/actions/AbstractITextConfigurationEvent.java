@@ -22,7 +22,7 @@
  */
 package com.itextpdf.kernel.actions;
 
-import com.itextpdf.kernel.actions.events.ITextProductEventWrapper;
+import com.itextpdf.kernel.actions.events.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 
@@ -30,27 +30,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class is recommended for internal usage. Represents system configuration events.
+ * Abstract class which represents system configuration events. Only for internal usage.
  */
-public abstract class AbstractITextConfigurationEvent implements ITextEvent {
-
-    private static final String INTERNAL_PACKAGE = "com.itextpdf.";
-    private static final String ONLY_FOR_INTERNAL_USE = "AbstractTextConfigurationEvent is only for internal usage.";
-
+public abstract class AbstractITextConfigurationEvent extends AbstractITextEvent {
     /**
-     * Creates an instance of configuration event.
-     */
-    public AbstractITextConfigurationEvent() {
-        super();
-        // TODO: DEVSIX-4958 if needed we can create some wrapper mechanism to allow creation
-        // of ITextConfigurationEvent in Pdf2Data
-        if (! this.getClass().getName().startsWith(INTERNAL_PACKAGE)) {
-            throw new UnsupportedOperationException(ONLY_FOR_INTERNAL_USE);
-        }
-    }
-
-    /**
-     * Add a new {@link ITextProductEventProcessor} for a product.
+     * Adds a new {@link ITextProductEventProcessor} for a product.
      *
      * @param processor is a new processor
      * 
@@ -92,25 +76,26 @@ public abstract class AbstractITextConfigurationEvent implements ITextEvent {
     }
 
     /**
-     * Gets events wrapped with {@link ITextProductEventWrapper} registered for provided identifier.
+     * Gets events registered for provided identifier.
      *
      * @param id is the identifier
      *
-     * @return the list of wrapped event for identifier
+     * @return the list of event for identifier
      */
-    protected List<ITextProductEventWrapper> getEvents(SequenceId id) {
+    protected List<AbstractProductProcessITextEvent> getEvents(SequenceId id) {
         return ProductEventHandler.INSTANCE.getEvents(id);
     }
 
     /**
-     * Registers a new event wrapped with {@link ITextProductEventWrapper} for provided identifier.
+     * Registers a new event for provided identifier.
      *
      * @param id is the identifier
-     * @param event is the wrapped event to register
+     * @param event is the event to register
      */
-    protected void addEvent(SequenceId id, ITextProductEventWrapper event) {
+    protected void addEvent(SequenceId id, AbstractProductProcessITextEvent event) {
         ProductEventHandler.INSTANCE.addEvent(id, event);
     }
+
     /**
      * Method defines the logic of action processing.
      */

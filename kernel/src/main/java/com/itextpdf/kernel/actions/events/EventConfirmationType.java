@@ -20,19 +20,27 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.actions.ecosystem;
+package com.itextpdf.kernel.actions.events;
 
-import com.itextpdf.kernel.actions.AbstractITextConfigurationEvent;
+import com.itextpdf.kernel.actions.EventManager;
+import com.itextpdf.kernel.actions.IBaseEvent;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class TestConfigurationEvent extends AbstractITextConfigurationEvent {
-    public static final String MESSAGE = "Test configuration event was processed";
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestConfigurationEvent.class);
-
-    @Override
-    protected void doAction() {
-        LOGGER.warn(MESSAGE);
-    }
+/**
+ * Defines the strategy of {@link AbstractProductProcessITextEvent} confirming.
+ */
+public enum EventConfirmationType {
+    /**
+     * The successful execution of the process associated with the event should be confirmed by the
+     * second invocation of the {@link EventManager#onEvent(IBaseEvent)} method.
+     */
+    ON_DEMAND,
+    /**
+     * The successful execution of the process associated with the event will be confirmed during
+     * the invocation of the {@link FlushPdfDocumentEvent#doAction()} method.
+     */
+    ON_CLOSE,
+    /**
+     * The process associated with the event shouldn't be confirmed.
+     */
+    UNCONFIRMABLE
 }

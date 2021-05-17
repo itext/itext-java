@@ -26,17 +26,15 @@ import com.itextpdf.kernel.actions.AbstractContextBasedITextEvent;
 import com.itextpdf.kernel.actions.data.ProductData;
 import com.itextpdf.kernel.counter.event.IMetaInfo;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
-import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.lang.ref.WeakReference;
 
 /**
- * Class is recommended for internal usage. Please see {@link AbstractContextBasedITextEvent} for customizable
- * event associated with {@link PdfDocument} or {@link SequenceId}.
+ * Abstract class which defines product process event. Only for internal usage.
  */
-public abstract class AbstractITextProductEvent extends AbstractContextBasedITextEvent {
+public abstract class AbstractProductProcessITextEvent extends AbstractContextBasedITextEvent {
     private final WeakReference<SequenceId> sequenceId;
-    private final ProductData productData;
+    private final EventConfirmationType confirmationType;
 
     /**
      * Creates an event associated with {@link SequenceId}. It may contain auxiliary meta data.
@@ -44,11 +42,15 @@ public abstract class AbstractITextProductEvent extends AbstractContextBasedITex
      * @param sequenceId is a general identifier for the event
      * @param productData is a description of the product which has generated an event
      * @param metaInfo is an auxiliary meta info
+     * @param confirmationType defines when the event should be confirmed to notify that the
+     *                         associated process has finished successfully
      */
-    public AbstractITextProductEvent(SequenceId sequenceId, ProductData productData, IMetaInfo metaInfo) {
-        super(metaInfo);
+    public AbstractProductProcessITextEvent(SequenceId sequenceId, ProductData productData, IMetaInfo metaInfo,
+            EventConfirmationType confirmationType) {
+        super(productData, metaInfo);
+
         this.sequenceId = new WeakReference<>(sequenceId);
-        this.productData = productData;
+        this.confirmationType = confirmationType;
     }
 
     /**
@@ -56,9 +58,12 @@ public abstract class AbstractITextProductEvent extends AbstractContextBasedITex
      *
      * @param productData is a description of the product which has generated an event
      * @param metaInfo is an auxiliary meta info
+     * @param confirmationType defines when the event should be confirmed to notify that the
+     *                         associated process has finished successfully
      */
-    public AbstractITextProductEvent(ProductData productData, IMetaInfo metaInfo) {
-        this(null, productData, metaInfo);
+    public AbstractProductProcessITextEvent(ProductData productData, IMetaInfo metaInfo,
+            EventConfirmationType confirmationType) {
+        this(null, productData, metaInfo, confirmationType);
     }
 
     /**
@@ -71,11 +76,19 @@ public abstract class AbstractITextProductEvent extends AbstractContextBasedITex
     }
 
     /**
-     * Retrieves a product data.
+     * Returns an event type.
      *
-     * @return information about the product which triggered the event
+     * @return event type
      */
-    public ProductData getProductData() {
-        return productData;
+    public abstract String getEventType();
+
+    /**
+     * Retrieves an {@link EventConfirmationType event confirmation type}.
+     *
+     * @return value of event confirmation type which defines when the event should be confirmed
+     * to notify that the associated process has finished successfully
+     */
+    public EventConfirmationType getConfirmationType() {
+        return confirmationType;
     }
 }

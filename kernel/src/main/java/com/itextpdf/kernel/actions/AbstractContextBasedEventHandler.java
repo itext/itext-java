@@ -44,25 +44,22 @@ public abstract class AbstractContextBasedEventHandler implements IBaseEventHand
 
     /**
      * Performs context validation and if event is allowed to be processed passes it to
-     * {@link AbstractContextBasedEventHandler#onAcceptedEvent(ITextEvent)}.
+     * {@link #onAcceptedEvent(AbstractContextBasedITextEvent)}.
      *
      * @param event to handle
      */
     public final void onEvent(IBaseEvent event) {
-        if (!(event instanceof ITextEvent)) {
+        if (!(event instanceof AbstractContextBasedITextEvent)) {
             return;
         }
 
-        final ITextEvent iTextEvent = (ITextEvent) event;
         IContext context = null;
-        if (event instanceof AbstractContextBasedITextEvent) {
-            final AbstractContextBasedITextEvent iTextProductEvent = (AbstractContextBasedITextEvent) event;
-            if (iTextProductEvent.getMetaInfo() != null) {
-                context = ContextManager.getInstance().getContext(iTextProductEvent.getMetaInfo().getClass());
-            }
-            if (context == null) {
-                context = ContextManager.getInstance().getContext(event.getClass());
-            }
+        final AbstractContextBasedITextEvent iTextEvent = (AbstractContextBasedITextEvent) event;
+        if (iTextEvent.getMetaInfo() != null) {
+            context = ContextManager.getInstance().getContext(iTextEvent.getMetaInfo().getClass());
+        }
+        if (context == null) {
+            context = ContextManager.getInstance().getContext(iTextEvent.getClassFromContext());
         }
 
         if (context == null) {
@@ -79,5 +76,5 @@ public abstract class AbstractContextBasedEventHandler implements IBaseEventHand
      *
      * @param event to handle
      */
-    protected abstract void onAcceptedEvent(ITextEvent event);
+    protected abstract void onAcceptedEvent(AbstractContextBasedITextEvent event);
 }

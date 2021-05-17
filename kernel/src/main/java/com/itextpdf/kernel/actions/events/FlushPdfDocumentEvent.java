@@ -25,13 +25,16 @@ package com.itextpdf.kernel.actions.events;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.KernelLogMessageConstant;
 import com.itextpdf.kernel.actions.AbstractITextConfigurationEvent;
+import com.itextpdf.kernel.actions.EventManager;
 import com.itextpdf.kernel.actions.ProductNameConstant;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.kernel.actions.producer.ProducerBuilder;
+import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.actions.session.ClosingSession;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,7 +49,6 @@ import org.slf4j.LoggerFactory;
 public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent {
     private static final Logger LOGGER = LoggerFactory.getLogger(FlushPdfDocumentEvent.class);
 
-    private static final String FLUSH_DOCUMENT_TYPE = "flush-document-event";
     private final WeakReference<PdfDocument> document;
 
     /**
@@ -60,26 +62,6 @@ public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return {@inheritDoc}
-     */
-    @Override
-    public String getProductName() {
-        return ProductNameConstant.ITEXT_CORE;
-    }
-
-    /**
-     * Returns a type of flushing event.
-     *
-     * @return {@inheritDoc}
-     */
-    @Override
-    public String getEventType() {
-        return FLUSH_DOCUMENT_TYPE;
-    }
-
-    /**
      * Prepares document for flushing.
      */
     @Override
@@ -88,15 +70,18 @@ public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent
         if (pdfDocument == null) {
             return;
         }
-        final List<ITextProductEventWrapper> events = getEvents(pdfDocument.getDocumentIdWrapper());
+        List<AbstractProductProcessITextEvent> events = getEvents(pdfDocument.getDocumentIdWrapper());
         final Set<String> products = new HashSet<>();
 
         if (events == null || events.isEmpty()) {
             return;
         }
 
-        for (final ITextProductEventWrapper event : events) {
-            products.add(event.getEvent().getProductName());
+        for (final AbstractProductProcessITextEvent event : events) {
+            if (event.getConfirmationType() == EventConfirmationType.ON_CLOSE) {
+                EventManager.getInstance().onEvent(new ConfirmEvent(pdfDocument.getDocumentIdWrapper(), event));
+            }
+            products.add(event.getProductName());
         }
 
         final Map<String, ITextProductEventProcessor> knownProducts = new HashMap<>();
@@ -112,7 +97,7 @@ public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent
         }
 
         final String oldProducer = pdfDocument.getDocumentInfo().getProducer();
-        final String newProducer = ProducerBuilder.modifyProducer(events, oldProducer);
+        final String newProducer = ProducerBuilder.modifyProducer(getConfirmedEvents(pdfDocument.getDocumentIdWrapper()), oldProducer);
         pdfDocument.getDocumentInfo().setProducer(newProducer);
 
         final ClosingSession session = new ClosingSession((PdfDocument) document.get());
@@ -125,5 +110,19 @@ public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent
         for (final Map.Entry<String, ITextProductEventProcessor> product: knownProducts.entrySet()) {
             product.getValue().completionOnClose(session);
         }
+    }
+
+    private List<ConfirmedEventWrapper> getConfirmedEvents(SequenceId sequenceId) {
+        final List<AbstractProductProcessITextEvent> events = getEvents(sequenceId);
+        final List<ConfirmedEventWrapper> confirmedEvents = new ArrayList<>();
+        for (AbstractProductProcessITextEvent event : events) {
+            if (event instanceof ConfirmedEventWrapper) {
+                confirmedEvents.add((ConfirmedEventWrapper) event);
+            } else {
+                LOGGER.warn(MessageFormatUtil.format(KernelLogMessageConstant.UNCONFIRMED_EVENT,
+                        event.getProductName(), event.getEventType()));
+            }
+        }
+        return confirmedEvents;
     }
 }

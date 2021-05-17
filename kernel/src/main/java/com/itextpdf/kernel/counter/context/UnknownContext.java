@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.counter.context;
 
-import com.itextpdf.kernel.actions.ITextEvent;
+import com.itextpdf.kernel.actions.AbstractContextBasedITextEvent;
 import com.itextpdf.kernel.counter.event.IEvent;
 
 /**
@@ -80,7 +80,7 @@ public class UnknownContext implements IContext {
      * @return {@inheritDoc}
      */
     @Override
-    public boolean isAllowed(ITextEvent event) {
+    public boolean isAllowed(AbstractContextBasedITextEvent event) {
         return allowEvents;
     }
 }

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.counter.context;
 
-import com.itextpdf.kernel.actions.ITextEvent;
+import com.itextpdf.kernel.actions.AbstractContextBasedITextEvent;
 import com.itextpdf.kernel.counter.event.IEvent;
 import com.itextpdf.kernel.counter.event.IGenericEvent;
 
@@ -95,7 +95,7 @@ public class GenericContext implements IContext {
      * @return {@inheritDoc}
      */
     @Override
-    public boolean isAllowed(ITextEvent event) {
+    public boolean isAllowed(AbstractContextBasedITextEvent event) {
         return supportedProducts.contains(event.getProductName());
     }
 }

@@ -91,6 +91,31 @@ public final class KernelLogMessageConstant {
     public static final String UNKNOWN_PRODUCT_INVOLVED =
             "Unknown product {0} was involved into PDF processing. It will be ignored";
 
+    /**
+     * Message warns that some event was reported but wasn't confirmed. Probably some processing has failed.
+     * List of params:
+     *
+     * <ul>
+     * <li>0th is a name of product for which event was reported;
+     * <li>1st is an event type;
+     * </ul>
+     */
+    public static final String UNCONFIRMED_EVENT =
+            "Event for the product {0} with type {1} was reported but was not confirmed. Probably appropriate process fail";
+
+    /**
+     * Message warns that some event is at confirmation stage but it is not known. Probably some processing has failed.
+     * List of params:
+     *
+     * <ul>
+     * <li>0th is a name of product for which event was reported;
+     * <li>1st is an event type;
+     * </ul>
+     */
+    public static final String UNREPORTED_EVENT =
+            "Event for the product {0} with type {1} attempted to be confirmed but it had not been reported yet. "
+                    + "Probably appropriate process fail";
+
     private KernelLogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly
     }

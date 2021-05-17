@@ -22,7 +22,7 @@
  */
 package com.itextpdf.kernel.actions.producer;
 
-import com.itextpdf.kernel.actions.events.ITextProductEventWrapper;
+import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
 
 import java.util.List;
 
@@ -31,15 +31,13 @@ import java.util.List;
  */
 interface IPlaceholderPopulator {
     /**
-     * Populates a placeholder based on the list of
-     * {@link ITextProductEventWrapper iTextProdecutEvemtWrappers} and the array of parts of
-     * placeholder.
+     * Populates a placeholder based on the list of {@link ConfirmedEventWrapper}
+     * and the array of parts of placeholder.
      *
      * @param events is a list of event involved into document processing
-     * @param parameter is a parameter passed to a placeholder and separated via delimiter
-     *                  <code>:</code>
+     * @param parameter is a parameter passed to a placeholder and separated via delimiter <code>:</code>
      *
      * @return value for placeholder replacement
      */
-    String populate(List<ITextProductEventWrapper> events, String parameter);
+    String populate(List<ConfirmedEventWrapper> events, String parameter);
 }
