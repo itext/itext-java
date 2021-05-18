@@ -592,9 +592,30 @@ public class PdfSigner {
         }
 
         Collection<byte[]> crlBytes = null;
-        int i = 0;
-        while (crlBytes == null && i < chain.length)
-            crlBytes = processCrl(chain[i++], crlList);
+        if (crlList != null) {
+            int i = 0;
+            crlBytes = new ArrayList<>();
+            while (i < chain.length - 1) {
+                Collection<byte[]> crls = processCrl(chain[i++], crlList);
+                if (crls != null) {
+                    Collection<byte[]> tempCrls = new ArrayList<>();
+                    for (byte[] e1 : crls) {
+                        boolean check = true;
+                        for (byte[] e2 : crlBytes) {
+                            if (Arrays.equals(e1, e2)) {
+                                check = false;
+                                break;
+                            }
+                        }
+                        if (check) {
+                            tempCrls.add(e1);
+                        }
+                    }
+                    crlBytes.addAll(tempCrls);
+                }
+            }
+        }
+        
         if (estimatedSize == 0) {
             estimatedSize = 8192;
             if (crlBytes != null) {
