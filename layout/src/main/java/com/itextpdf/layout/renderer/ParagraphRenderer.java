@@ -167,7 +167,15 @@ public class ParagraphRenderer extends BlockRenderer {
         Border[] borders = getBorders();
         UnitValue[] paddings = getPaddings();
 
-        float additionalWidth = applyBordersPaddingsMargins(parentBBox, borders, paddings);
+        float parentWidth = parentBBox.getWidth();
+
+        applyMargins(parentBBox, false);
+        applyBorderBox(parentBBox, borders, false);
+        if (isFixedLayout()) {
+            parentBBox.setX((float) this.getPropertyAsFloat(Property.LEFT));
+        }
+        applyPaddings(parentBBox, paddings, false);
+        float additionalWidth = parentWidth - parentBBox.getWidth();
         applyWidth(parentBBox, blockWidth, overflowX);
         wasHeightClipped = applyMaxHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, false, wasParentsHeightClipped, overflowY);
 

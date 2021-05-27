@@ -60,7 +60,7 @@ public final class CssTypesValidationUtils {
             value = value.trim();
         }
         for (String metricPostfix : ANGLE_MEASUREMENTS_VALUES) {
-            if (value.endsWith(metricPostfix) && isNumericValue(
+            if (value.endsWith(metricPostfix) && isNumber(
                     value.substring(0, value.length() - metricPostfix.length()))) {
                 return true;
             }
@@ -102,7 +102,7 @@ public final class CssTypesValidationUtils {
         } else {
             value = value.trim();
         }
-        return value.endsWith(CommonCssConstants.EM) && isNumericValue(
+        return value.endsWith(CommonCssConstants.EM) && isNumber(
                 value.substring(0, value.length() - CommonCssConstants.EM.length()));
     }
 
@@ -119,7 +119,7 @@ public final class CssTypesValidationUtils {
         } else {
             value = value.trim();
         }
-        return value != null && value.endsWith(CommonCssConstants.EX) && isNumericValue(
+        return value != null && value.endsWith(CommonCssConstants.EX) && isNumber(
                 value.substring(0, value.length() - CommonCssConstants.EX.length()));
     }
 
@@ -137,7 +137,7 @@ public final class CssTypesValidationUtils {
             value = value.trim();
         }
         for (String metricPostfix : CommonCssConstants.METRIC_MEASUREMENTS_VALUES) {
-            if (value.endsWith(metricPostfix) && isNumericValue(
+            if (value.endsWith(metricPostfix) && isNumber(
                     value.substring(0, value.length() - metricPostfix.length()))) {
                 return true;
             }
@@ -156,7 +156,7 @@ public final class CssTypesValidationUtils {
         if (value == null) {
             return false;
         }
-        if (isNumericValue(value) || isRelativeValue(value) || isMetricValue(value)) {
+        if (isNumber(value) || isRelativeValue(value) || isMetricValue(value)) {
             return value.startsWith("-");
         }
         return false;
@@ -169,7 +169,7 @@ public final class CssTypesValidationUtils {
      * @param value the string that needs to be checked
      * @return boolean true if value contains an allowed metric value
      */
-    public static boolean isNumericValue(final String value) {
+    public static boolean isNumber(final String value) {
         return value != null && (value.matches("^[-+]?\\d\\d*\\.\\d*$")
                 || value.matches("^[-+]?\\d\\d*$")
                 || value.matches("^[-+]?\\.\\d\\d*$"));
@@ -188,7 +188,7 @@ public final class CssTypesValidationUtils {
         } else {
             value = value.trim();
         }
-        return value.endsWith(CommonCssConstants.PERCENTAGE) && isNumericValue(
+        return value.endsWith(CommonCssConstants.PERCENTAGE) && isNumber(
                 value.substring(0, value.length() - CommonCssConstants.PERCENTAGE.length()));
     }
 
@@ -206,7 +206,7 @@ public final class CssTypesValidationUtils {
             value = value.trim();
         }
         for (String relativePostfix : RELATIVE_MEASUREMENTS_VALUES) {
-            if (value.endsWith(relativePostfix) && isNumericValue(
+            if (value.endsWith(relativePostfix) && isNumber(
                     value.substring(0, value.length() - relativePostfix.length()))) {
                 return true;
             }
@@ -227,7 +227,7 @@ public final class CssTypesValidationUtils {
         } else {
             value = value.trim();
         }
-        return value != null && value.endsWith(CommonCssConstants.REM) && isNumericValue(
+        return value != null && value.endsWith(CommonCssConstants.REM) && isNumber(
                 value.substring(0, value.length() - CommonCssConstants.REM.length()));
     }
 
@@ -241,7 +241,7 @@ public final class CssTypesValidationUtils {
         if (value == null || value.contains(" ")) {
             return false;
         }
-        return isRelativeValue(value) || isMetricValue(value) || isNumericValue(value);
+        return isRelativeValue(value) || isMetricValue(value) || isNumber(value);
     }
 
     /**

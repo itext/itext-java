@@ -139,7 +139,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
         Border[] borders = getBorders();
         UnitValue[] paddings = getPaddings();
 
-        applyBordersPaddingsMargins(parentBBox, borders, paddings);
+        applyMargins(parentBBox, false);
+        applyBorderBox(parentBBox, borders, false);
+        if (isFixedLayout()) {
+            parentBBox.setX((float) this.getPropertyAsFloat(Property.LEFT));
+        }
+        applyPaddings(parentBBox, paddings, false);
         Float blockMaxHeight = retrieveMaxHeight();
         OverflowPropertyValue overflowY = (null == blockMaxHeight || blockMaxHeight > parentBBox.getHeight())
                 && !wasParentsHeightClipped
@@ -974,28 +979,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
             float difference = layoutBox.getBottom() - occupiedArea.getBBox().getBottom();
             occupiedArea.getBBox().moveUp(difference).decreaseHeight(difference);
         }
-    }
-
-    /**
-     * Decreases parentBBox to the size of borders, paddings and margins.
-     *
-     * @param parentBBox {@link Rectangle} to be decreased
-     * @param borders the border values to decrease parentBBox
-     * @param paddings the padding values to decrease parentBBox
-     * @return the difference between previous and current parentBBox's
-     * @deprecated Need to be removed in next major release.
-     */
-    @Deprecated
-    protected float applyBordersPaddingsMargins(Rectangle parentBBox, Border[] borders, UnitValue[] paddings) {
-        float parentWidth = parentBBox.getWidth();
-
-        applyMargins(parentBBox, false);
-        applyBorderBox(parentBBox, borders, false);
-        if (isFixedLayout()) {
-            parentBBox.setX((float) this.getPropertyAsFloat(Property.LEFT));
-        }
-        applyPaddings(parentBBox, paddings, false);
-        return parentWidth - parentBBox.getWidth();
     }
 
     /**

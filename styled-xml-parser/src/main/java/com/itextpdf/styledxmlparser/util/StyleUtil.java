@@ -125,6 +125,6 @@ public final class StyleUtil {
             return false;
         }
         return value.endsWith(measurement) && CssTypesValidationUtils
-                .isNumericValue(value.substring(0, value.length() - measurement.length()).trim());
+                .isNumber(value.substring(0, value.length() - measurement.length()).trim());
     }
 }

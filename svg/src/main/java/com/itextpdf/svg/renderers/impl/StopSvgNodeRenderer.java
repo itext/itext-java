@@ -49,7 +49,7 @@ public class StopSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implement
         String offsetAttribute = getAttribute(Attributes.OFFSET);
         if (CssTypesValidationUtils.isPercentageValue(offsetAttribute)) {
             offset = (double) CssDimensionParsingUtils.parseRelativeValue(offsetAttribute, 1);
-        } else if (CssTypesValidationUtils.isNumericValue(offsetAttribute)) {
+        } else if (CssTypesValidationUtils.isNumber(offsetAttribute)) {
             offset = CssDimensionParsingUtils.parseDouble(offsetAttribute);
         }
         double result = offset != null ? offset.doubleValue() : 0d;

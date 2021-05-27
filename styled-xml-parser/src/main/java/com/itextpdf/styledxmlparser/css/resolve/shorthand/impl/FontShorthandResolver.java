@@ -138,7 +138,7 @@ public class FontShorthandResolver implements IShorthandResolver {
                 fontSizeValue = value.substring(0, slashSymbolIndex);
                 lineHeightValue = value.substring(slashSymbolIndex + 1, value.length());
             } else if (FONT_SIZE_VALUES.contains(value) || CssTypesValidationUtils.isMetricValue(value)
-                    || CssTypesValidationUtils.isNumericValue(value) || CssTypesValidationUtils.isRelativeValue(value)) {
+                    || CssTypesValidationUtils.isNumber(value) || CssTypesValidationUtils.isRelativeValue(value)) {
                 fontSizeValue = value;
             } else {
                 fontFamilyValue = value;

@@ -281,7 +281,7 @@ public final class CssDimensionParsingUtils {
      */
     public static UnitValue parseLengthValueToPt(final String value, final float emValue, final float remValue) {
         // TODO (DEVSIX-3596) Add support of 'lh' 'ch' units and viewport-relative units
-        if (CssTypesValidationUtils.isMetricValue(value) || CssTypesValidationUtils.isNumericValue(value)) {
+        if (CssTypesValidationUtils.isMetricValue(value) || CssTypesValidationUtils.isNumber(value)) {
             return new UnitValue(UnitValue.POINT, parseAbsoluteLength(value));
         } else if (value != null && value.endsWith(CommonCssConstants.PERCENTAGE)) {
             return new UnitValue(UnitValue.PERCENT, Float.parseFloat(value.substring(0, value.length() - 1)));

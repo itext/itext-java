@@ -60,7 +60,7 @@ import java.util.List;
  *     <li>{@link Point.LongPoint} to {@link com.itextpdf.kernel.geom.Point}
  * </ul>
  */
-public class ClipperBridge {
+public final class ClipperBridge {
 
     /**
      * Since the clipper library uses integer coordinates, we should convert
@@ -68,6 +68,10 @@ public class ClipperBridge {
      * this coefficient. Vary it to adjust the preciseness of the calculations.
      */
     public static double floatMultiplier = Math.pow(10, 14);
+
+    private ClipperBridge() {
+        //empty constructor
+    }
 
     /**
      * Converts Clipper library {@link PolyTree} abstraction into iText

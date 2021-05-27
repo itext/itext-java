@@ -178,7 +178,7 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
             } else if (SvgConstants.Values.AUTO_START_REVERSE.equals(orient) && SvgConstants.Attributes.MARKER_START
                     .equals(this.attributesAndStyles.get(SvgConstants.Tags.MARKER))) {
                 rotAngle = ((IMarkerCapable) getParent()).getAutoOrientAngle(this, true);
-            } else if (CssTypesValidationUtils.isAngleValue(orient) || CssTypesValidationUtils.isNumericValue(orient)) {
+            } else if (CssTypesValidationUtils.isAngleValue(orient) || CssTypesValidationUtils.isNumber(orient)) {
                 rotAngle = CssDimensionParsingUtils.parseAngle(this.attributesAndStyles.get(SvgConstants.Attributes.ORIENT));
             }
             if (!Double.isNaN(rotAngle)) {

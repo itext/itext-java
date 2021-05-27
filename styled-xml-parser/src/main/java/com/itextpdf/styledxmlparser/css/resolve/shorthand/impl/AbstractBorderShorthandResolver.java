@@ -106,7 +106,7 @@ public abstract class AbstractBorderShorthandResolver implements IShorthandResol
                 logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, shorthandExpression));
                 return Collections.<CssDeclaration>emptyList();
             }
-            if (CommonCssConstants.BORDER_WIDTH_VALUES.contains(value) || CssTypesValidationUtils.isNumericValue(value)
+            if (CommonCssConstants.BORDER_WIDTH_VALUES.contains(value) || CssTypesValidationUtils.isNumber(value)
                     || CssTypesValidationUtils.isMetricValue(value) || CssTypesValidationUtils.isRelativeValue(value)) {
                 borderWidthValue = value;
             } else if (CommonCssConstants.BORDER_STYLE_VALUES.contains(value) || value.equals(CommonCssConstants.AUTO)) { // AUTO property value is needed for outline property only

@@ -92,13 +92,13 @@ public class CssTypesValidationUtilsTest extends ExtendedITextTest {
 
     @Test
     public void validateNumericValue() {
-        Assert.assertTrue(CssTypesValidationUtils.isNumericValue("1"));
-        Assert.assertTrue(CssTypesValidationUtils.isNumericValue("12"));
-        Assert.assertTrue(CssTypesValidationUtils.isNumericValue("1.2"));
-        Assert.assertTrue(CssTypesValidationUtils.isNumericValue(".12"));
-        Assert.assertFalse(CssTypesValidationUtils.isNumericValue("12f"));
-        Assert.assertFalse(CssTypesValidationUtils.isNumericValue("f1.2"));
-        Assert.assertFalse(CssTypesValidationUtils.isNumericValue(".12f"));
+        Assert.assertTrue(CssTypesValidationUtils.isNumber("1"));
+        Assert.assertTrue(CssTypesValidationUtils.isNumber("12"));
+        Assert.assertTrue(CssTypesValidationUtils.isNumber("1.2"));
+        Assert.assertTrue(CssTypesValidationUtils.isNumber(".12"));
+        Assert.assertFalse(CssTypesValidationUtils.isNumber("12f"));
+        Assert.assertFalse(CssTypesValidationUtils.isNumber("f1.2"));
+        Assert.assertFalse(CssTypesValidationUtils.isNumber(".12f"));
     }
 
     @Test

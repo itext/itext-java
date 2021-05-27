@@ -184,7 +184,7 @@ public final class CssGradientUtil {
                     builder.addColorStop(lastCreatedStopColor);
                 } else {
                     for (int j = 1; j < elementsList.size(); ++j) {
-                        if (CssTypesValidationUtils.isNumericValue(elementsList.get(j))) {
+                        if (CssTypesValidationUtils.isNumber(elementsList.get(j))) {
                             // the numeric value is invalid in linear gradient function.
                             // So check it here as parsing method will use the default pt metric
                             throw new StyledXMLParserException(MessageFormatUtil
