@@ -167,36 +167,20 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
 
     @Test
     public void dSaferParamInGhostScriptHelperTest() throws IOException, InterruptedException {
-        String cmpPdf = sourceFolder + "maliciousPsInvokingCalcExe.ps";
-        String maliciousPsInvokingCalcExe = destinationFolder + "maliciousPsInvokingCalcExe.png";
-        int majorVersion = 0;
-        int minorVersion = 0;
-        boolean isWindows = identifyOsType().toLowerCase().contains("win");
-        if (isWindows) {
-            String gsExec = SystemUtil.getPropertyOrEnvironmentVariable(GhostscriptHelper.GHOSTSCRIPT_ENVIRONMENT_VARIABLE);
-            if (gsExec == null) {
-                gsExec = SystemUtil.getPropertyOrEnvironmentVariable(GhostscriptHelper.GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY);
-            }
-            String[] pathParts = gsExec.split("\\d\\.\\d\\d");
-            for (int i = 0; i < pathParts.length; i++) {
-                gsExec = gsExec.replace(pathParts[i], "");
-            }
-            String[] version = gsExec.split("\\.");
-            majorVersion = Integer.parseInt(version[0]);
-            minorVersion = Integer.parseInt(version[1]);
-        }
+        String input = sourceFolder + "unsafePostScript.ps";
+        String outputName = "unsafePostScript.png";
+        String maliciousResult1 = destinationFolder + "output1.txt";
+        String maliciousResult2 = destinationFolder + "output2.txt";
         try {
             GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
-            ghostscriptHelper.runGhostScriptImageGeneration(cmpPdf, destinationFolder, "maliciousPsInvokingCalcExe.png");
-            if (isWindows) {
-                Assert.assertTrue((majorVersion > 9 || (majorVersion == 9 && minorVersion >= 50)));
-            }
+            ghostscriptHelper.runGhostScriptImageGeneration(input, destinationFolder, outputName);
         } catch (GhostscriptHelper.GhostscriptExecutionException e) {
-            if (isWindows) {
-                Assert.assertTrue((majorVersion < 9 || (majorVersion == 9 && minorVersion < 50)));
-            }
+            System.out.println("Error code was returned on processing of malicious script with -dSAFER option enabled. "
+                    + "This is expected for some environments and ghostscript versions. "
+                    + "We assert only the absence of malicious script result (created file).\n");
         }
-        Assert.assertFalse(FileUtil.fileExists(maliciousPsInvokingCalcExe));
+        Assert.assertFalse(FileUtil.fileExists(maliciousResult1));
+        Assert.assertFalse(FileUtil.fileExists(maliciousResult2));
     }
 
     @Test
@@ -213,16 +197,5 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
         Assert.assertTrue(imageMagickHelper.runImageMagickImageCompare(resultantImage, cmpResultantImage, diff));
-    }
-
-    /**
-     * Identifies type of current OS and return it (win, linux).
-     *
-     * @return type of current os as {@link java.lang.String}
-     */
-    private static String identifyOsType() {
-        String os = System.getProperty("os.name") == null
-                ? System.getProperty("OS") : System.getProperty("os.name");
-        return os.toLowerCase();
     }
 }
