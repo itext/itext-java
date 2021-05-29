@@ -160,7 +160,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
         String diff = destinationFolder + "diff_differentImagesFuzzEnough.png";
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
-        boolean result = imageMagickHelper.runImageMagickImageCompare(inputImage, cmpImage, diff, "1.2");
+        boolean result = imageMagickHelper.runImageMagickImageCompare(inputImage, cmpImage, diff, "2.1");
 
         Assert.assertTrue(result);
         Assert.assertTrue(FileUtil.fileExists(diff));
