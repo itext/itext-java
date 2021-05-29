@@ -23,7 +23,9 @@
 package com.itextpdf.kernel.actions.events;
 
 import com.itextpdf.kernel.actions.AbstractITextConfigurationEvent;
+import com.itextpdf.kernel.actions.sequence.AbstractIdentifiableElement;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.kernel.actions.sequence.SequenceIdManager;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.lang.ref.WeakReference;
@@ -50,6 +52,17 @@ public final class LinkDocumentIdEvent extends AbstractITextConfigurationEvent {
     }
 
     /**
+     * Creates a new instance of the event associating provided {@link PdfDocument} with the
+     * appropriate {@link AbstractIdentifiableElement}.
+     *
+     * @param document is a document
+     * @param identifiableElement is an identifiable element to be associated with the document
+     */
+    public LinkDocumentIdEvent(PdfDocument document, AbstractIdentifiableElement identifiableElement) {
+        this(document, identifiableElement == null ? null : SequenceIdManager.getSequenceId(identifiableElement));
+    }
+
+    /**
      * Defines an association between {@link PdfDocument} and {@link SequenceId}.
      */
     @Override
@@ -66,7 +79,10 @@ public final class LinkDocumentIdEvent extends AbstractITextConfigurationEvent {
         if (anonymousEvents != null) {
             final SequenceId documentId = storedPdfDocument.getDocumentIdWrapper();
             for (final AbstractProductProcessITextEvent event : anonymousEvents) {
-                addEvent(documentId, event);
+                final List<AbstractProductProcessITextEvent> storedEvents = getEvents(documentId);
+                if (!storedEvents.contains(event)) {
+                    addEvent(documentId, event);
+                }
             }
         }
     }

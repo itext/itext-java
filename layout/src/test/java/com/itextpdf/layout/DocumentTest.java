@@ -23,21 +23,34 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.actions.EventManager;
+import com.itextpdf.kernel.actions.events.AbstractProductProcessITextEvent;
+import com.itextpdf.kernel.actions.sequence.AbstractIdentifiableElement;
+import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.kernel.actions.sequence.SequenceIdManager;
+import com.itextpdf.kernel.counter.event.ITextCoreEvent;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.IBlockElement;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
+import com.itextpdf.layout.testutil.TestConfigurationEvent;
+import com.itextpdf.layout.testutil.TestProductEvent;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Rule;
+import java.util.List;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
-@Category(IntegrationTest.class)
+@Category(UnitTest.class)
 public class DocumentTest extends ExtendedITextTest {
+    private static final TestConfigurationEvent CONFIGURATION_ACCESS = new TestConfigurationEvent();
+
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
 
@@ -53,5 +66,63 @@ public class DocumentTest extends ExtendedITextTest {
         document.add(paragraph);
         document.close();
         document.checkClosingStatus();
+    }
+
+    @Test
+    public void addBlockElemMethodLinkingTest() {
+        try (Document doc = new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())))) {
+            SequenceId sequenceId = new SequenceId();
+            EventManager.getInstance().onEvent(new TestProductEvent(sequenceId));
+
+            IBlockElement blockElement = new Paragraph("some text");
+            SequenceIdManager.setSequenceId((AbstractIdentifiableElement) blockElement, sequenceId);
+            doc.add(blockElement);
+
+            List<AbstractProductProcessITextEvent> events = CONFIGURATION_ACCESS.getPublicEvents(
+                    doc.getPdfDocument().getDocumentIdWrapper());
+            // Second event was linked by adding block element method
+            Assert.assertEquals(2, events.size());
+
+            Assert.assertTrue(events.get(0) instanceof ITextCoreEvent);
+            Assert.assertTrue(events.get(1) instanceof TestProductEvent);
+        }
+    }
+
+    @Test
+    public void addAreaBreakElemMethodLinkingTest() {
+        try (Document doc = new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())))) {
+            SequenceId sequenceId = new SequenceId();
+            EventManager.getInstance().onEvent(new TestProductEvent(sequenceId));
+
+            AreaBreak areaBreak = new AreaBreak();
+            SequenceIdManager.setSequenceId(areaBreak, sequenceId);
+            doc.add(areaBreak);
+
+            List<AbstractProductProcessITextEvent> events = CONFIGURATION_ACCESS.getPublicEvents(
+                    doc.getPdfDocument().getDocumentIdWrapper());
+            Assert.assertEquals(1, events.size());
+
+            Assert.assertTrue(events.get(0) instanceof ITextCoreEvent);
+        }
+    }
+
+    @Test
+    public void addImageElemMethodLinkingTest() {
+        try (Document doc = new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())))) {
+            SequenceId sequenceId = new SequenceId();
+            EventManager.getInstance().onEvent(new TestProductEvent(sequenceId));
+
+            Image image = new Image(new PdfFormXObject(new Rectangle(10, 10)));
+            SequenceIdManager.setSequenceId(image, sequenceId);
+            doc.add(image);
+
+            List<AbstractProductProcessITextEvent> events = CONFIGURATION_ACCESS.getPublicEvents(
+                    doc.getPdfDocument().getDocumentIdWrapper());
+            // Second event was linked by adding block element
+            Assert.assertEquals(2, events.size());
+
+            Assert.assertTrue(events.get(0) instanceof ITextCoreEvent);
+            Assert.assertTrue(events.get(1) instanceof TestProductEvent);
+        }
     }
 }

@@ -102,12 +102,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      * @see BlockElement
      */
     public T add(IBlockElement element) {
-        childElements.add(element);
-        createAndAddRendererSubTree(element);
-        if (immediateFlush) {
-            childElements.remove(childElements.size() - 1);
-        }
-        return (T) (Object) this;
+        return addElement(element);
     }
 
     /**
@@ -118,12 +113,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      * @see Image
      */
     public T add(Image image) {
-        childElements.add(image);
-        createAndAddRendererSubTree(image);
-        if (immediateFlush) {
-            childElements.remove(childElements.size() - 1);
-        }
-        return (T) (Object) this;
+        return addElement(image);
     }
 
     /**
@@ -379,5 +369,14 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
 
     private LayoutTaggingHelper initTaggingHelperIfNeeded() {
         return defaultLayoutTaggingHelper == null && pdfDocument.isTagged() ? defaultLayoutTaggingHelper = new LayoutTaggingHelper(pdfDocument, immediateFlush) : defaultLayoutTaggingHelper;
+    }
+
+    private T addElement(IElement element) {
+        childElements.add(element);
+        createAndAddRendererSubTree(element);
+        if (immediateFlush) {
+            childElements.remove(childElements.size() - 1);
+        }
+        return (T) (Object) this;
     }
 }

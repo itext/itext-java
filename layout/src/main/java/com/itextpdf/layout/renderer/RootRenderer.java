@@ -45,7 +45,12 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.actions.EventManager;
+import com.itextpdf.kernel.actions.events.LinkDocumentIdEvent;
+import com.itextpdf.kernel.actions.sequence.AbstractIdentifiableElement;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
@@ -359,6 +364,24 @@ public abstract class RootRenderer extends AbstractRenderer {
             }
         }
         waitingDrawingElements.removeAll(flushedElements);
+    }
+
+    final void linkRenderToDocument(IRenderer renderer, PdfDocument pdfDocument) {
+        if (renderer == null) {
+            return;
+        }
+        final IPropertyContainer container = renderer.getModelElement();
+        if (container instanceof AbstractIdentifiableElement) {
+            EventManager.getInstance().onEvent(
+                    new LinkDocumentIdEvent(pdfDocument, (AbstractIdentifiableElement) container)
+            );
+        }
+        final List<IRenderer> children = renderer.getChildRenderers();
+        if (children != null) {
+            for (IRenderer child : children) {
+                linkRenderToDocument(child, pdfDocument);
+            }
+        }
     }
 
     private void processRenderer(IRenderer renderer, List<IRenderer> resultRenderers) {

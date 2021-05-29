@@ -96,6 +96,8 @@ public class CanvasRenderer extends RootRenderer {
      */
     @Override
     protected void flushSingleRenderer(IRenderer resultRenderer) {
+        linkRenderToDocument(resultRenderer, canvas.getPdfDocument());
+
         Transform transformProp = resultRenderer.<Transform>getProperty(Property.TRANSFORM);
         if (!waitingDrawingElements.contains(resultRenderer)) {
             processWaitingDrawing(resultRenderer, transformProp, waitingDrawingElements);

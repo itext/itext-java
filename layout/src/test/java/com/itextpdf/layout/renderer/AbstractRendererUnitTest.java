@@ -62,6 +62,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -74,6 +75,7 @@ import com.itextpdf.layout.properties.BackgroundRepeat;
 import com.itextpdf.layout.properties.BackgroundRepeat.BackgroundRepeatValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -671,5 +673,18 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
 
         // This test checks that there is log message and there is no NPE so assertions are not required
         Assert.assertTrue(true);
+    }
+
+    @Test
+    public void nullChildTest() {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        pdfDocument.addNewPage();
+        try (Document doc = new Document(pdfDocument)) {
+            DocumentRenderer renderer = new DocumentRenderer(doc);
+            DivRenderer divRenderer = new DivRenderer(new Div());
+            divRenderer.childRenderers.add(null);
+
+            AssertUtil.doesNotThrow(() -> renderer.linkRenderToDocument(divRenderer, doc.getPdfDocument()));
+        }
     }
 }

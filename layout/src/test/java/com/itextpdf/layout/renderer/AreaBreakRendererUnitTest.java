@@ -131,7 +131,8 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
 
     @Test
     public void getModelElementTest() {
-        AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
+        AreaBreak areaBreak = new AreaBreak();
+        AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(areaBreak);
         Assert.assertNull(areaBreakRenderer.getModelElement());
     }
 

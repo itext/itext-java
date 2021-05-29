@@ -145,6 +145,8 @@ public class DocumentRenderer extends RootRenderer {
     }
 
     protected void flushSingleRenderer(IRenderer resultRenderer) {
+        linkRenderToDocument(resultRenderer, document.getPdfDocument());
+
         Transform transformProp = resultRenderer.<Transform>getProperty(Property.TRANSFORM);
         if (!waitingDrawingElements.contains(resultRenderer)) {
             processWaitingDrawing(resultRenderer, transformProp, waitingDrawingElements);
