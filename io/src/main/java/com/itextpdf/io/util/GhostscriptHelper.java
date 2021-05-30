@@ -47,6 +47,16 @@ import com.itextpdf.io.IoExceptionMessage;
 
 import java.io.IOException;
 
+/**
+ * A utility class that is used as an interface to run 3rd-party tool Ghostscript.
+ * Ghostscript is an interpreter for the PostScript language and PDF files, it allows to render them
+ * as images.
+ *
+ * <p>
+ * The Ghostscript needs to be installed independently on the system. This class provides a convenient
+ * way to run it by passing a terminal command. The command can either be specified explicitly or by a mean
+ * of environment variable {@link #GHOSTSCRIPT_ENVIRONMENT_VARIABLE}.
+ */
 public class GhostscriptHelper {
     /**
      * The name of the environment variable with the command to execute Ghostscript operations.
@@ -62,10 +72,19 @@ public class GhostscriptHelper {
 
     private String gsExec;
 
+    /**
+     * Creates new instance that will rely on Ghostscript execution command defined by {@link
+     * #GHOSTSCRIPT_ENVIRONMENT_VARIABLE} environment variable.
+     */
     public GhostscriptHelper() {
         this(null);
     }
 
+    /**
+     * Creates new instance that will rely on Ghostscript execution command defined as passed argument.
+     *
+     * @param newGsExec the Ghostscript execution command; if null - environment variables will be used instead
+     */
     public GhostscriptHelper(String newGsExec) {
         gsExec = newGsExec;
         if (gsExec == null) {
@@ -98,10 +117,12 @@ public class GhostscriptHelper {
      * @param pdf    Path to the pdf file.
      * @param outDir Path to the output directory
      * @param image  Path to the generated image
+     *
      * @throws IOException          if there are file's reading/writing issues
      * @throws InterruptedException if there is thread interruption while executing GhostScript.
      */
-    public void runGhostScriptImageGeneration(String pdf, String outDir, String image) throws IOException, InterruptedException {
+    public void runGhostScriptImageGeneration(String pdf, String outDir, String image)
+            throws IOException, InterruptedException {
         runGhostScriptImageGeneration(pdf, outDir, image, null);
     }
 
@@ -114,13 +135,15 @@ public class GhostscriptHelper {
      * @param pageList String with numbers of the required pages to extract as image. Should be formatted as string with
      *                 numbers, separated by commas, without whitespaces. Can be null, if it is required to extract
      *                 all pages as images.
+     *
      * @throws IOException          if there are file's reading/writing issues
      * @throws InterruptedException if there is thread interruption while executing GhostScript.
      */
     public void runGhostScriptImageGeneration(String pdf, String outDir, String image, String pageList)
             throws IOException, InterruptedException {
         if (!FileUtil.directoryExists(outDir)) {
-            throw new IllegalArgumentException(IoExceptionMessage.CANNOT_OPEN_OUTPUT_DIRECTORY.replace("<filename>", pdf));
+            throw new IllegalArgumentException(
+                    IoExceptionMessage.CANNOT_OPEN_OUTPUT_DIRECTORY.replace("<filename>", pdf));
         }
 
         pageList = (pageList == null) ? "" : "-sPageList=<pagelist>".replace("<pagelist>", pageList);

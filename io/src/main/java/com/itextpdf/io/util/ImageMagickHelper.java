@@ -47,6 +47,15 @@ import com.itextpdf.io.IoExceptionMessage;
 
 import java.io.IOException;
 
+/**
+ * A utility class that is used as an interface to run 3rd-party tool ImageMagick.
+ * ImageMagick among other things allows to compare images and this class provides means to utilize this feature.
+ *
+ * <p>
+ * The ImageMagick needs to be installed independently on the system. This class provides a convenient
+ * way to run it by passing a terminal command. The command can either be specified explicitly or by a mean
+ * of environment variable {@link #MAGICK_COMPARE_ENVIRONMENT_VARIABLE}.
+ */
 public class ImageMagickHelper {
     /**
      * The name of the environment variable with the command to execute ImageMagic comparison operations.
@@ -60,10 +69,19 @@ public class ImageMagickHelper {
 
     private String compareExec;
 
+    /**
+     * Creates new instance that will rely on ImageMagick execution command defined by {@link
+     * #MAGICK_COMPARE_ENVIRONMENT_VARIABLE} environment variable.
+     */
     public ImageMagickHelper() {
         this(null);
     }
 
+    /**
+     * Creates new instance that will rely on ImageMagick execution command defined as passed argument.
+     *
+     * @param newCompareExec the ImageMagick execution command; if null - environment variables will be used instead
+     */
     public ImageMagickHelper(String newCompareExec) {
         compareExec = newCompareExec;
         if (compareExec == null) {
@@ -95,7 +113,9 @@ public class ImageMagickHelper {
      * @param outImageFilePath Path to the output image file
      * @param cmpImageFilePath Path to the cmp image file
      * @param diffImageName    Path to the difference output image file
+     *
      * @return boolean result of comparing: true - images are visually equal
+     *
      * @throws IOException          if there are file's reading/writing issues
      * @throws InterruptedException if there is thread interruption while executing ImageMagick.
      */
@@ -112,13 +132,14 @@ public class ImageMagickHelper {
      * @param diffImageName    Path to the difference output image file
      * @param fuzzValue        String fuzziness value to compare images. Should be formatted as string with integer
      *                         or decimal number. Can be null, if it is not required to use fuzziness
+     *
      * @return boolean result of comparing: true - images are visually equal
+     *
      * @throws IOException          if there are file's reading/writing issues
      * @throws InterruptedException if there is thread interruption while executing ImageMagick.
      */
     public boolean runImageMagickImageCompare(String outImageFilePath, String cmpImageFilePath,
-                                              String diffImageName, String fuzzValue)
-            throws IOException, InterruptedException {
+            String diffImageName, String fuzzValue) throws IOException, InterruptedException {
         fuzzValue = (fuzzValue == null) ? "" : " -metric AE -fuzz <fuzzValue>%".replace("<fuzzValue>", fuzzValue);
 
         StringBuilder currCompareParams = new StringBuilder();
