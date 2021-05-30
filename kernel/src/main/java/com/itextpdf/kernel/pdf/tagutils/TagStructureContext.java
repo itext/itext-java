@@ -643,7 +643,8 @@ public class TagStructureContext {
                     removePageTagFromParent(structParent, parent.getParent());
                     PdfIndirectReference indRef = parentStructDict.getIndirectReference();
                     if (indRef != null) {
-                        // TODO how about possible references to structure element from refs or structure destination for instance?
+                        // TODO DEVSIX-5472 need to clean references to structure element from
+                        //  other structure elements /Ref entries and structure destinations
                         indRef.setFree();
                     }
                 }
