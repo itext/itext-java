@@ -108,7 +108,9 @@ public class DocumentRenderer extends RootRenderer {
      */
     @Override
     public IRenderer getNextRenderer() {
-        return new DocumentRenderer(document, immediateFlush);
+        DocumentRenderer renderer = new DocumentRenderer(document, immediateFlush);
+        renderer.targetCounterHandler = new TargetCounterHandler(targetCounterHandler);
+        return renderer;
     }
 
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
@@ -117,7 +119,8 @@ public class DocumentRenderer extends RootRenderer {
         if (taggingHelper != null) {
             taggingHelper.releaseFinishedHints();
         }
-        AreaBreak areaBreak = overflowResult != null && overflowResult.getAreaBreak() != null ? overflowResult.getAreaBreak() : null;
+        AreaBreak areaBreak = overflowResult != null && overflowResult.getAreaBreak() != null ?
+                overflowResult.getAreaBreak() : null;
         if (areaBreak != null && areaBreak.getType() == AreaBreakType.LAST_PAGE) {
             while (currentPageNumber < document.getPdfDocument().getNumberOfPages()) {
                 moveToNextPage();
@@ -126,7 +129,8 @@ public class DocumentRenderer extends RootRenderer {
             moveToNextPage();
         }
         PageSize customPageSize = areaBreak != null ? areaBreak.getPageSize() : null;
-        while (document.getPdfDocument().getNumberOfPages() >= currentPageNumber && document.getPdfDocument().getPage(currentPageNumber).isFlushed()) {
+        while (document.getPdfDocument().getNumberOfPages() >= currentPageNumber &&
+                document.getPdfDocument().getPage(currentPageNumber).isFlushed()) {
             currentPageNumber++;
         }
         PageSize lastPageSize = ensureDocumentHasNPages(currentPageNumber, customPageSize);
@@ -156,14 +160,16 @@ public class DocumentRenderer extends RootRenderer {
             }
 
             boolean wrapOldContent = pdfDocument.getReader() != null && pdfDocument.getWriter() != null &&
-                    correspondingPage.getContentStreamCount() > 0 && correspondingPage.getLastContentStream().getLength() > 0 &&
+                    correspondingPage.getContentStreamCount() > 0 &&
+                    correspondingPage.getLastContentStream().getLength() > 0 &&
                     !wrappedContentPage.contains(pageNum) && pdfDocument.getNumberOfPages() >= pageNum;
             wrappedContentPage.add(pageNum);
 
             if (pdfDocument.isTagged()) {
                 pdfDocument.getTagStructureContext().getAutoTaggingPointer().setPageForTagging(correspondingPage);
             }
-            resultRenderer.draw(new DrawContext(pdfDocument, new PdfCanvas(correspondingPage, wrapOldContent), pdfDocument.isTagged()));
+            resultRenderer.draw(new DrawContext(pdfDocument,
+                    new PdfCanvas(correspondingPage, wrapOldContent), pdfDocument.isTagged()));
         }
     }
 
@@ -178,7 +184,7 @@ public class DocumentRenderer extends RootRenderer {
 
     /**
      * Adds some pages so that the overall number is at least n.
-     * Returns the page size of the n'th page.
+     * Returns the page size of the page number {@code n}.
      */
     private PageSize ensureDocumentHasNPages(int n, PageSize customPageSize) {
         PageSize lastPageSize = null;
@@ -200,8 +206,8 @@ public class DocumentRenderer extends RootRenderer {
     }
 
     private void moveToNextPage() {
-        // We don't flush this page immediately, but only flush previous one because of manipulations with areas in case
-        // of keepTogether property.
+        // We don't flush this page immediately, but only flush previous one because of manipulations
+        // with areas in case of keepTogether property.
         if (immediateFlush && currentPageNumber > 1) {
             document.getPdfDocument().getPage(currentPageNumber - 1).flush();
         }
