@@ -196,6 +196,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             FloatingHelper.adjustFloatedBlockLayoutBox(this, layoutBox, null, floatRendererAreas, floatPropertyValue, overflowX);
         }
 
+        float preMarginBorderPaddingWidth = layoutBox.getWidth();
         UnitValue[] margins = getMargins();
         applyMargins(layoutBox, margins, false);
         Border[] borders = getBorders();
@@ -204,7 +205,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         UnitValue[] paddings = getPaddings();
         applyPaddings(layoutBox, paddings, false);
 
-        MinMaxWidth countedMinMaxWidth = new MinMaxWidth(area.getBBox().getWidth() - layoutBox.getWidth());
+        MinMaxWidth countedMinMaxWidth = new MinMaxWidth(preMarginBorderPaddingWidth - layoutBox.getWidth());
         AbstractWidthHandler widthHandler;
         if (noSoftWrap) {
             widthHandler = new SumSumWidthHandler(countedMinMaxWidth);

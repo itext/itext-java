@@ -385,4 +385,26 @@ public class TextRendererTest extends RendererUnitTest {
 
         Assert.assertTrue(minWidthAndItalicSimulation > minWidthNoItalicSimulation);
     }
+
+    @Test
+    public void floatingRightMinMaxWidth() throws IOException {
+        String longestWord = "float:right";
+        String wholeText = "text with " + longestWord;
+        TextRenderer textRenderer = new TextRenderer(new Text(wholeText));
+        textRenderer.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+
+        textRenderer.setParent(createDummyDocument().getRenderer());
+
+        PdfFont font = PdfFontFactory.createFont();
+        int fontSize = 12;
+        textRenderer.setProperty(Property.FONT, font);
+        textRenderer.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(fontSize));
+
+        float expectedMaxWidth = font.getWidth(wholeText, fontSize);
+        float expectedMinWidth = font.getWidth(longestWord, fontSize);
+
+        MinMaxWidth minMaxWidth = textRenderer.getMinMaxWidth();
+        Assert.assertEquals(expectedMinWidth, minMaxWidth.getMinWidth(), 0.01f);
+        Assert.assertEquals(expectedMaxWidth, minMaxWidth.getMaxWidth(), 0.01f);
+    }
 }
