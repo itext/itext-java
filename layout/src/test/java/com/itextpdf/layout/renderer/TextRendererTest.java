@@ -61,6 +61,7 @@ import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.OverflowPropertyValue;
 import com.itextpdf.layout.property.OverflowWrapPropertyValue;
 import com.itextpdf.layout.property.Property;
@@ -203,7 +204,7 @@ public class TextRendererTest extends RendererUnitTest {
 
     @Test
     public void getDescentTest() {
-        Document doc = createDocument();
+        Document doc = createDummyDocument();
         TextRenderer textRenderer = createLayoutedTextRenderer("hello", doc);
         textRenderer.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(20f));
         textRenderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(20f));
@@ -212,7 +213,7 @@ public class TextRendererTest extends RendererUnitTest {
 
     @Test
     public void getOccupiedAreaBBoxTest() {
-        Document doc = createDocument();
+        Document doc = createDummyDocument();
         TextRenderer textRenderer = createLayoutedTextRenderer("hello", doc);
         textRenderer.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(20f));
         textRenderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(20f));
@@ -224,7 +225,7 @@ public class TextRendererTest extends RendererUnitTest {
 
     @Test
     public void getInnerAreaBBoxTest() {
-        Document doc = createDocument();
+        Document doc = createDummyDocument();
         TextRenderer textRenderer = createLayoutedTextRenderer("hello", doc);
         textRenderer.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(20f));
         textRenderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(20f));
@@ -284,19 +285,14 @@ public class TextRendererTest extends RendererUnitTest {
         // u0433 Cyrillic Small Letter U
         Assert.assertFalse(TextRenderer.codePointIsOfSpecialScript(1091));
     }
-    
+
     @Test
     public void overflowWrapAnywhereProperty() {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        pdfDoc.addNewPage();
-        Document doc = new Document(pdfDoc);
-        RootRenderer documentRenderer = doc.getRenderer();
-
         Text text = new Text("wow");
         text.setProperty(Property.OVERFLOW_WRAP, OverflowWrapPropertyValue.ANYWHERE);
 
         TextRenderer textRenderer = (TextRenderer) text.getRenderer();
-        textRenderer.setParent(documentRenderer);
+        textRenderer.setParent(createDummyDocument().getRenderer());
 
         MinMaxWidth minMaxWidth = textRenderer.getMinMaxWidth();
 
@@ -305,17 +301,13 @@ public class TextRendererTest extends RendererUnitTest {
 
     @Test
     public void overflowWrapBreakWordProperty() {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        pdfDoc.addNewPage();
-        Document doc = new Document(pdfDoc);
-        RootRenderer documentRenderer = doc.getRenderer();
-
         Text text = new Text("wooow");
 
         TextRenderer textRenderer = (TextRenderer) text.getRenderer();
-        textRenderer.setParent(documentRenderer);
+        RootRenderer parentRenderer = createDummyDocument().getRenderer();
+        textRenderer.setParent(parentRenderer);
         // overflow is set here to mock LineRenderer#layout behavior
-        documentRenderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        parentRenderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
 
         float fullWordWidth = textRenderer.getMinMaxWidth().getMaxWidth();
 
@@ -332,16 +324,11 @@ public class TextRendererTest extends RendererUnitTest {
 
     @Test
     public void overflowWrapAnywhereBoldSimulationMaxWidth() {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        pdfDoc.addNewPage();
-        Document doc = new Document(pdfDoc);
-        RootRenderer documentRenderer = doc.getRenderer();
-
         Text text = new Text("wow");
         text.setBold();
 
         TextRenderer textRenderer = (TextRenderer) text.getRenderer();
-        textRenderer.setParent(documentRenderer);
+        textRenderer.setParent(createDummyDocument().getRenderer());
 
         float maxWidthNoOverflowWrap = textRenderer.getMinMaxWidth().getMaxWidth();
 
@@ -353,16 +340,11 @@ public class TextRendererTest extends RendererUnitTest {
 
     @Test
     public void overflowWrapAnywhereItalicSimulationMaxWidth() {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        pdfDoc.addNewPage();
-        Document doc = new Document(pdfDoc);
-        RootRenderer documentRenderer = doc.getRenderer();
-
         Text text = new Text("wow");
         text.setItalic();
 
         TextRenderer textRenderer = (TextRenderer) text.getRenderer();
-        textRenderer.setParent(documentRenderer);
+        textRenderer.setParent(createDummyDocument().getRenderer());
 
         float maxWidthNoOverflowWrap = textRenderer.getMinMaxWidth().getMaxWidth();
 
@@ -374,16 +356,11 @@ public class TextRendererTest extends RendererUnitTest {
 
     @Test
     public void overflowWrapAnywhereBoldSimulationMinWidth() {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        pdfDoc.addNewPage();
-        Document doc = new Document(pdfDoc);
-        RootRenderer documentRenderer = doc.getRenderer();
-
         Text text = new Text("wow");
         text.setProperty(Property.OVERFLOW_WRAP, OverflowWrapPropertyValue.ANYWHERE);
 
         TextRenderer textRenderer = (TextRenderer) text.getRenderer();
-        textRenderer.setParent(documentRenderer);
+        textRenderer.setParent(createDummyDocument().getRenderer());
 
         float minWidthNoBoldSimulation = textRenderer.getMinMaxWidth().getMinWidth();
 
@@ -395,16 +372,11 @@ public class TextRendererTest extends RendererUnitTest {
 
     @Test
     public void overflowWrapAnywhereItalicSimulationMinWidth() {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        pdfDoc.addNewPage();
-        Document doc = new Document(pdfDoc);
-        RootRenderer documentRenderer = doc.getRenderer();
-
         Text text = new Text("wow");
         text.setProperty(Property.OVERFLOW_WRAP, OverflowWrapPropertyValue.ANYWHERE);
 
         TextRenderer textRenderer = (TextRenderer) text.getRenderer();
-        textRenderer.setParent(documentRenderer);
+        textRenderer.setParent(createDummyDocument().getRenderer());
 
         float minWidthNoItalicSimulation = textRenderer.getMinMaxWidth().getMinWidth();
 
