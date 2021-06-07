@@ -59,6 +59,10 @@ import org.junit.experimental.categories.Category;
 @Category(UnitTest.class)
 public class FlexUtilTest extends ExtendedITextTest {
 
+    /* To see integration tests for flex algorithm go to FlexAlgoTest in html2pdf module.
+    The names are preserved: one can go to FlexAlgoTest and see the corresponding tests, but be aware that with
+    time they might change and we will not maintain such correspondence */
+
     private static final float EPS = 0.001f;
 
     private static final Style DEFAULT_STYLE;
@@ -66,8 +70,6 @@ public class FlexUtilTest extends ExtendedITextTest {
 
     private static final List<UnitValue> NULL_FLEX_BASIS_LIST;
 
-    // Here one can find an html version for all of the tests
-    // TODO DEVSIX-5049 Make html2pdf+layout tests from these htmls
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/FlexUtilTest/";
 
     static {
