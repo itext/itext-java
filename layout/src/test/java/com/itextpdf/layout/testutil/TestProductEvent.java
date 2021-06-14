@@ -49,7 +49,7 @@ import com.itextpdf.kernel.actions.sequence.SequenceId;
 
 public  class TestProductEvent extends AbstractProductProcessITextEvent {
     public TestProductEvent(SequenceId sequenceId) {
-        super(sequenceId, new ProductData("itext7-core", "layout", "", 1998, 2100), null, EventConfirmationType.ON_CLOSE);
+        super(sequenceId, new ProductData("itext-core", "layout", "", 1998, 2100), null, EventConfirmationType.ON_CLOSE);
     }
 
     @Override

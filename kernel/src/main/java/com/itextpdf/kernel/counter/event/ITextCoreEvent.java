@@ -35,8 +35,7 @@ public class ITextCoreEvent extends AbstractProductProcessITextEvent {
     /**
      * Process pdf event type.
      */
-    // TODO DEVSIX-5466 rename constant value
-    public static final String PROCESS_PDF = "open-document-event";
+    public static final String PROCESS_PDF = "process-pdf";
 
     private final String eventType;
 

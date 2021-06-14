@@ -45,6 +45,7 @@ package com.itextpdf.kernel.counter;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.util.Collections;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -54,17 +55,32 @@ public class ContextManagerTest extends ExtendedITextTest {
 
     @Test
     public void getRecognisedNamespaceForSpecificNamespaceTest() {
-        String outerNamespaces = NamespaceConstant.PDF_OCR.toLowerCase();
-        String innerNamespaces = NamespaceConstant.PDF_OCR_TESSERACT4.toLowerCase();
+        String outerNamespaces = NamespaceConstant.ITEXT.toLowerCase();
+        String innerNamespaces = NamespaceConstant.PDF_HTML.toLowerCase();
 
-        // Since both NamespaceConstant.PDF_OCR and NamespaceConstant.PDF_OCR_TESSERACT4 are registered
-        // and the latter one begins with the former, we should check that correct namespaces are
-        // recognized for each of them
         Assert.assertTrue(innerNamespaces.startsWith(outerNamespaces));
+
+        ContextManager managerOuterBeforeInner = new ContextManager();
+        managerOuterBeforeInner.registerGenericContextForProducts(Collections.singletonList(outerNamespaces),
+                Collections.<String>emptyList());
+        managerOuterBeforeInner.registerGenericContextForProducts(Collections.singletonList(innerNamespaces),
+                Collections.<String>emptyList());
+
         Assert.assertEquals(outerNamespaces,
-                ContextManager.getInstance().getRecognisedNamespace(outerNamespaces));
+                managerOuterBeforeInner.getRecognisedNamespace(outerNamespaces));
         Assert.assertEquals(innerNamespaces,
-                ContextManager.getInstance().getRecognisedNamespace(innerNamespaces));
+                managerOuterBeforeInner.getRecognisedNamespace(innerNamespaces));
+
+        ContextManager managerInnerBeforeOuter = new ContextManager();
+        managerInnerBeforeOuter.registerGenericContextForProducts(Collections.singletonList(innerNamespaces),
+                Collections.<String>emptyList());
+        managerInnerBeforeOuter.registerGenericContextForProducts(Collections.singletonList(outerNamespaces),
+                Collections.<String>emptyList());
+
+        Assert.assertEquals(outerNamespaces,
+                managerInnerBeforeOuter.getRecognisedNamespace(outerNamespaces));
+        Assert.assertEquals(innerNamespaces,
+                managerInnerBeforeOuter.getRecognisedNamespace(innerNamespaces));
     }
 
     @Test
@@ -73,5 +89,13 @@ public class ContextManagerTest extends ExtendedITextTest {
 
         Assert.assertEquals(null,
                 ContextManager.getInstance().getRecognisedNamespace(notRegisteredNamespace));
+    }
+
+    @Test
+    public void registeredNamespaceTest() {
+        String registeredNamespace = "com.itextpdf.layout.custompackage";
+
+        Assert.assertEquals(NamespaceConstant.CORE_LAYOUT,
+                ContextManager.getInstance().getRecognisedNamespace(registeredNamespace));
     }
 }

@@ -59,12 +59,12 @@ import java.util.TreeMap;
  */
 public class ContextManager {
 
-    private static final ContextManager instance = new ContextManager();
-
+    private static final ContextManager INSTANCE;
     private final SortedMap<String, IContext> contextMappings = new TreeMap<>(new LengthComparator());
 
-    private ContextManager() {
-        registerGenericContextForProducts(Arrays.asList(
+    static {
+        ContextManager local = new ContextManager();
+        local.registerGenericContextForProducts(Arrays.asList(
                 NamespaceConstant.CORE_IO,
                 NamespaceConstant.CORE_KERNEL,
                 NamespaceConstant.CORE_LAYOUT,
@@ -77,29 +77,31 @@ public class ContextManager {
                 Collections.singletonList(NamespaceConstant.ITEXT),
                 Collections.singleton(ProductNameConstant.ITEXT_CORE));
 
-        registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_DEBUG),
+        local.registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_DEBUG),
                 Collections.singletonList(NamespaceConstant.PDF_DEBUG),
                 Collections.<String>emptyList());
 
-        registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_HTML),
+        local.registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_HTML),
                 Collections.singletonList(NamespaceConstant.PDF_HTML),
                 Collections.singleton(ProductNameConstant.PDF_HTML));
 
-        registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_INVOICE),
+        local.registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_INVOICE),
                 Collections.singletonList(NamespaceConstant.PDF_INVOICE),
                 Collections.<String>emptyList());
 
-        registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_SWEEP),
+        local.registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_SWEEP),
                 Collections.singletonList(NamespaceConstant.PDF_SWEEP),
                 Collections.singleton(ProductNameConstant.PDF_SWEEP));
 
-        registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_OCR_TESSERACT4),
+        local.registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_OCR_TESSERACT4),
                 Collections.singletonList(NamespaceConstant.PDF_OCR_TESSERACT4),
                 Collections.singleton(ProductNameConstant.PDF_OCR_TESSERACT4));
 
-        registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_OCR),
-                Collections.<String>emptyList(),
-                Collections.singleton(ProductNameConstant.PDF_OCR));
+        INSTANCE = local;
+    }
+
+    ContextManager() {
+
     }
 
     /**
@@ -108,7 +110,7 @@ public class ContextManager {
      * @return the {@link ContextManager} instance
      */
     public static ContextManager getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     /**

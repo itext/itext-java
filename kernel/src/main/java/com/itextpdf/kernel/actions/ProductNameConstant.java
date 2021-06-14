@@ -28,10 +28,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class ProductNameConstant {
-    public static final String ITEXT_CORE = "itext7-core";
+    public static final String ITEXT_CORE = "itext-core";
     public static final String PDF_HTML = "pdfHtml";
     public static final String PDF_SWEEP = "pdfSweep";
-    public static final String PDF_OCR = ITEXT_CORE + "pdfOcr";
     public static final String PDF_OCR_TESSERACT4 = "pdfOcr-tesseract4";
 
     public static final Set<String> PRODUCT_NAMES = Collections.unmodifiableSet(
@@ -39,7 +38,6 @@ public final class ProductNameConstant {
                     ProductNameConstant.ITEXT_CORE,
                     ProductNameConstant.PDF_HTML,
                     ProductNameConstant.PDF_SWEEP,
-                    ProductNameConstant.PDF_OCR,
                     ProductNameConstant.PDF_OCR_TESSERACT4
             )));
 
