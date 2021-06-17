@@ -63,7 +63,6 @@ public class ITextCoreEventTest extends ExtendedITextTest {
 
         Assert.assertEquals(ITextCoreEvent.PROCESS_PDF, event.getEventType());
         Assert.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
-        Assert.assertEquals("meta data", ((TestMetaInfo)event.getMetaInfo()).getMetaData());
         Assert.assertEquals(EventConfirmationType.ON_CLOSE, event.getConfirmationType());
         Assert.assertEquals(sequenceId, event.getSequenceId());
 

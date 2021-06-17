@@ -49,7 +49,11 @@ import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.TextUtil;
+import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.TabStop;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -1489,7 +1493,15 @@ public class LineRenderer extends AbstractRenderer {
                     }
                 }
             }
-            levels = unicodeIdsReorderingList.size() > 0 ? TypographyUtils.getBidiLevels(baseDirection, ArrayUtil.toIntArray(unicodeIdsReorderingList)) : null;
+            if (unicodeIdsReorderingList.size() > 0) {
+                final PdfDocument pdfDocument = getPdfDocument();
+                final SequenceId sequenceId = pdfDocument == null ? null : pdfDocument.getDocumentIdWrapper();
+                final IMetaInfo metaInfo = pdfDocument == null ? null : pdfDocument.getMetaInfo();
+                levels = TypographyUtils.getBidiLevels(baseDirection, ArrayUtil.toIntArray(unicodeIdsReorderingList),
+                        sequenceId, metaInfo);
+            } else {
+                levels = null;
+            }
         }
     }
 

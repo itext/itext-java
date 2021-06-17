@@ -66,6 +66,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Div;
@@ -2365,6 +2366,23 @@ public abstract class AbstractRenderer implements IRenderer {
             ancestor = parent;
         }
         return isFirstOnRootArea;
+    }
+
+    /**
+     * Gets pdf document from root renderers.
+     *
+     * @return PdfDocument, or null if there are no document
+     */
+    PdfDocument getPdfDocument() {
+        RootRenderer renderer = getRootRenderer();
+        if (renderer instanceof DocumentRenderer) {
+            final Document document = ((DocumentRenderer) renderer).document;
+            return document.getPdfDocument();
+        } else if (renderer instanceof CanvasRenderer) {
+            return ((CanvasRenderer) renderer).canvas.getPdfDocument();
+        } else {
+            return null;
+        }
     }
 
     RootRenderer getRootRenderer() {

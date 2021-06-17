@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.actions.events;
 
+import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.ProductEventHandlerAccess;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.actions.sequence.AbstractIdentifiableElement;
@@ -76,7 +77,6 @@ public class LinkDocumentIdEventTest extends ExtendedITextTest {
                 AbstractProductProcessITextEvent sequenceEvent = actualDocumentEvents.get(i);
                 Assert.assertEquals("sequenceId-testing", sequenceEvent.getEventType());
                 Assert.assertEquals("test-product-" + (i - initialDocumentEventsNumber), sequenceEvent.getProductName());
-                Assert.assertNull(sequenceEvent.getMetaInfo());
                 Assert.assertEquals(sequenceId, sequenceEvent.getSequenceId());
             }
         }
@@ -117,7 +117,6 @@ public class LinkDocumentIdEventTest extends ExtendedITextTest {
                 AbstractProductProcessITextEvent sequenceEvent = actualDocumentEvents.get(i);
                 Assert.assertEquals("sequenceId-testing", sequenceEvent.getEventType());
                 Assert.assertEquals("test-product-" + (i - initialDocumentEventsNumber), sequenceEvent.getProductName());
-                Assert.assertNull(sequenceEvent.getMetaInfo());
                 Assert.assertEquals(sequenceId, sequenceEvent.getSequenceId());
             }
         }

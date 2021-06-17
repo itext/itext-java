@@ -61,6 +61,7 @@ import com.itextpdf.kernel.actions.events.FlushPdfDocumentEvent;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.counter.EventCounterHandler;
 import com.itextpdf.kernel.counter.event.CoreEvent;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 import com.itextpdf.kernel.counter.event.ITextCoreEvent;
 import com.itextpdf.kernel.crypto.BadPasswordException;
 import com.itextpdf.kernel.events.EventDispatcher;
@@ -683,6 +684,16 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             XmpMetaInfoConverter.appendMetadataToInfo(xmpMetadata, info);
         }
         return info;
+    }
+
+    /**
+     * Gets document MetaInfo.
+     *
+     * @return meta info
+     */
+    // TODO DEVSIX-5605 remove this public method before new license key release. Refactor logic to get metaInfo for pdfCalligraph module
+    public IMetaInfo getMetaInfo() {
+        return properties != null ? properties.metaInfo : null;
     }
 
     /**

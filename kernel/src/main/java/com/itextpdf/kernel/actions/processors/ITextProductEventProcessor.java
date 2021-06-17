@@ -22,7 +22,7 @@
  */
 package com.itextpdf.kernel.actions.processors;
 
-import com.itextpdf.kernel.actions.events.AbstractProductProcessITextEvent;
+import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.session.ClosingSession;
 
 /**

@@ -22,7 +22,6 @@
  */
 package com.itextpdf.kernel.actions;
 
-import com.itextpdf.kernel.actions.events.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 

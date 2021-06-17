@@ -24,7 +24,6 @@ package com.itextpdf.kernel.actions;
 
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.actions.ecosystem.TestMetaInfo;
-import com.itextpdf.kernel.actions.events.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.counter.context.IContext;
 import com.itextpdf.kernel.counter.context.UnknownContext;

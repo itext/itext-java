@@ -22,14 +22,15 @@
  */
 package com.itextpdf.kernel.actions.events;
 
+import com.itextpdf.kernel.actions.AbstractEventWrapper;
+import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 
 /**
  * A wrapper for a {@link AbstractProductProcessITextEvent} storing additional data about the event.
  * If wrapped event is immutable then the instance of the wrapper is immutable too.
  */
-public class ConfirmedEventWrapper extends AbstractProductProcessITextEvent {
-    private final AbstractProductProcessITextEvent event;
+public class ConfirmedEventWrapper extends AbstractEventWrapper {
     private final String productUsageType;
     private final String producerLine;
 
@@ -41,20 +42,11 @@ public class ConfirmedEventWrapper extends AbstractProductProcessITextEvent {
      * @param producerLine is a producer line defined by the {@link ITextProductEventProcessor}
      *                     which registered the event
      */
-    public ConfirmedEventWrapper(AbstractProductProcessITextEvent event, String productUsageType, String producerLine) {
-        super(event.getSequenceId(), event.getProductData(), event.getMetaInfo(), EventConfirmationType.UNCONFIRMABLE);
-        this.event = event;
+    public ConfirmedEventWrapper(AbstractProductProcessITextEvent event, String productUsageType,
+            String producerLine) {
+        super(event, EventConfirmationType.UNCONFIRMABLE);
         this.productUsageType = productUsageType;
         this.producerLine = producerLine;
-    }
-
-    /**
-     * Obtains the wrapped event.
-     *
-     * @return wrapped event
-     */
-    public AbstractProductProcessITextEvent getEvent() {
-        return event;
     }
 
     /**
@@ -74,15 +66,5 @@ public class ConfirmedEventWrapper extends AbstractProductProcessITextEvent {
      */
     public String getProducerLine() {
         return producerLine;
-    }
-
-    @Override
-    public String getEventType() {
-        return event.getEventType();
-    }
-
-    @Override
-    public String getProductName() {
-        return event.getProductName();
     }
 }

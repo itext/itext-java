@@ -44,7 +44,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.actions.EventManager;
-import com.itextpdf.kernel.actions.events.AbstractProductProcessITextEvent;
+import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.sequence.AbstractIdentifiableElement;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.actions.sequence.SequenceIdManager;

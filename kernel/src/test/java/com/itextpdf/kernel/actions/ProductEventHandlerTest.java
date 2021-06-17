@@ -24,7 +24,6 @@ package com.itextpdf.kernel.actions;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
-import com.itextpdf.kernel.actions.events.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.events.ConfirmEvent;
 import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
 import com.itextpdf.kernel.actions.exceptions.UnknownProductException;

@@ -48,7 +48,7 @@ public abstract class AbstractContextBasedITextEvent extends AbstractProductITex
      *
      * @return meta info
      */
-    public IMetaInfo getMetaInfo() {
+    IMetaInfo getMetaInfo() {
         return metaInfo;
     }
 

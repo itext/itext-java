@@ -23,7 +23,7 @@
 package com.itextpdf.kernel.actions.ecosystem;
 
 import com.itextpdf.kernel.actions.data.ProductData;
-import com.itextpdf.kernel.actions.events.AbstractProductProcessITextEvent;
+import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.events.EventConfirmationType;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.counter.event.IMetaInfo;

@@ -22,14 +22,15 @@
  */
 package com.itextpdf.kernel.actions.events;
 
+import com.itextpdf.kernel.actions.AbstractEventWrapper;
+import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 
 /**
  * Used to confirm that process associated with some {@link AbstractProductProcessITextEvent}
  * ended successfully.
  */
-public class ConfirmEvent extends AbstractProductProcessITextEvent {
-    private final AbstractProductProcessITextEvent confirmedEvent;
+public class ConfirmEvent extends AbstractEventWrapper {
 
     /**
      * Creates an instance of confirmation event.
@@ -40,10 +41,7 @@ public class ConfirmEvent extends AbstractProductProcessITextEvent {
      * @param confirmedEvent is an event to confirm
      */
     public ConfirmEvent(SequenceId updatedSequenceId, AbstractProductProcessITextEvent confirmedEvent) {
-        super(updatedSequenceId, confirmedEvent.getProductData(), confirmedEvent.getMetaInfo(),
-                EventConfirmationType.UNCONFIRMABLE);
-
-        this.confirmedEvent = confirmedEvent;
+        super(updatedSequenceId, confirmedEvent, EventConfirmationType.UNCONFIRMABLE);
     }
 
     /**
@@ -55,30 +53,21 @@ public class ConfirmEvent extends AbstractProductProcessITextEvent {
         this(confirmedEvent.getSequenceId(), confirmedEvent);
     }
 
-    @Override
-    public String getEventType() {
-        return confirmedEvent.getEventType();
-    }
-
-    @Override
-    public String getProductName() {
-        return confirmedEvent.getProductName();
-    }
-
     /**
      * Returns the {@link AbstractProductProcessITextEvent} associated with confirmed process.
      *
      * @return confirmed event
      */
     public AbstractProductProcessITextEvent getConfirmedEvent() {
-        if (confirmedEvent instanceof ConfirmEvent) {
-            return ((ConfirmEvent) confirmedEvent).getConfirmedEvent();
+        AbstractProductProcessITextEvent event = getEvent();
+        if (event instanceof ConfirmEvent) {
+            return ((ConfirmEvent) event).getConfirmedEvent();
         }
-        return confirmedEvent;
+        return event;
     }
 
     @Override
     public Class<?> getClassFromContext() {
-        return confirmedEvent.getClassFromContext();
+        return getEvent().getClassFromContext();
     }
 }

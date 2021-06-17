@@ -20,10 +20,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.actions.events;
+package com.itextpdf.kernel.actions;
 
-import com.itextpdf.kernel.actions.AbstractContextBasedITextEvent;
 import com.itextpdf.kernel.actions.data.ProductData;
+import com.itextpdf.kernel.actions.events.EventConfirmationType;
 import com.itextpdf.kernel.counter.event.IMetaInfo;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 

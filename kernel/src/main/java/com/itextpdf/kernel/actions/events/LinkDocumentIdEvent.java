@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.actions.events;
 
 import com.itextpdf.kernel.actions.AbstractITextConfigurationEvent;
+import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.sequence.AbstractIdentifiableElement;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.actions.sequence.SequenceIdManager;

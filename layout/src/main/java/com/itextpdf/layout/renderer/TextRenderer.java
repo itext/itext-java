@@ -52,15 +52,21 @@ import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.EnumUtil;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.TextUtil;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.counter.ContextManager;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.font.PdfType1Font;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
@@ -746,6 +752,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         updateFontAndText();
         Character.UnicodeScript script = this.<Character.UnicodeScript>getProperty(Property.FONT_SCRIPT);
         if (!otfFeaturesApplied && TypographyUtils.isPdfCalligraphAvailable() && text.start < text.end) {
+            final PdfDocument pdfDocument = getPdfDocument();
+            final SequenceId sequenceId = pdfDocument == null ? null : pdfDocument.getDocumentIdWrapper();
+            final IMetaInfo metaInfo = pdfDocument == null ? null : pdfDocument.getMetaInfo();
             if (hasOtfFont()) {
                 Object typographyConfig = this.<Object>getProperty(Property.TYPOGRAPHY_CONFIG);
                 Collection<Character.UnicodeScript> supportedScripts = null;
@@ -803,7 +812,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         // from text renderers (see LineRenderer#applyOtf).
                         setProperty(Property.BASE_DIRECTION, BaseDirection.DEFAULT_BIDI);
                     }
-                    TypographyUtils.applyOtfScript(font.getFontProgram(), text, scriptsRange.script, typographyConfig);
+                    TypographyUtils.applyOtfScript(font.getFontProgram(), text, scriptsRange.script, typographyConfig, sequenceId, metaInfo);
 
                     delta += text.end - scriptsRange.rangeEnd;
                     scriptsRange.rangeEnd = shapingRangeStart = text.end;
@@ -814,7 +823,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
             FontKerning fontKerning = (FontKerning) this.<FontKerning>getProperty(Property.FONT_KERNING, FontKerning.NO);
             if (fontKerning == FontKerning.YES) {
-                TypographyUtils.applyKerning(font.getFontProgram(), text);
+                TypographyUtils.applyKerning(font.getFontProgram(), text, sequenceId, metaInfo);
             }
 
             otfFeaturesApplied = true;
