@@ -196,6 +196,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             FloatingHelper.adjustFloatedBlockLayoutBox(this, layoutBox, null, floatRendererAreas, floatPropertyValue, overflowX);
         }
 
+        float preMarginBorderPaddingWidth = layoutBox.getWidth();
         UnitValue[] margins = getMargins();
         applyMargins(layoutBox, margins, false);
         Border[] borders = getBorders();
@@ -204,7 +205,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         UnitValue[] paddings = getPaddings();
         applyPaddings(layoutBox, paddings, false);
 
-        MinMaxWidth countedMinMaxWidth = new MinMaxWidth(area.getBBox().getWidth() - layoutBox.getWidth());
+        MinMaxWidth countedMinMaxWidth = new MinMaxWidth(preMarginBorderPaddingWidth - layoutBox.getWidth());
         AbstractWidthHandler widthHandler;
         if (noSoftWrap) {
             widthHandler = new SumSumWidthHandler(countedMinMaxWidth);
@@ -1204,8 +1205,22 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         return tabAnchorCharacterPosition;
     }
 
+    /**
+     * Gets a new instance of this class to be used as a next renderer, after this renderer is used, if
+     * {@link #layout(LayoutContext)} is called more than once.
+     *
+     * <p>
+     * If {@link TextRenderer} overflows to the next line, iText uses this method to create a renderer
+     * for the overflow part. So if one wants to extend {@link TextRenderer}, one should override
+     * this method: otherwise the default method will be used and thus the default rather than the custom
+     * renderer will be created. Another method that should be overridden in case of
+     * {@link TextRenderer}'s extension is {@link #createCopy(GlyphLine, PdfFont)}. This method is responsible
+     * for creation of {@link TextRenderer}'s copies, which represent its parts of specific font.
+     * @return new renderer instance
+     */
     @Override
     public IRenderer getNextRenderer() {
+        logWarningIfGetNextRendererNotOverridden(TextRenderer.class, this.getClass());
         return new TextRenderer((Text) modelElement);
     }
 
@@ -1579,7 +1594,24 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         setProperty(Property.FONT, font);
     }
 
+    /**
+     * Creates a copy of this {@link TextRenderer}, which corresponds to the passed {@link GlyphLine}
+     * with {@link PdfFont}.
+     * <p>
+     * While processing {@link TextRenderer}, iText uses this method to create {@link GlyphLine glyph lines}
+     * of specific {@link PdfFont fonts}, which represent the {@link TextRenderer}'s parts. If one extends
+     * {@link TextRenderer}, one should override this method, otherwise if {@link com.itextpdf.layout.font.FontSelector}
+     * related logic is triggered, copies of this {@link TextRenderer} will have the default behavior rather than
+     * the custom one.
+     * @param gl a {@link GlyphLine} which represents some of this {@link TextRenderer}'s content
+     * @param font a {@link PdfFont} for this part of the {@link TextRenderer}'s content
+     * @return copy of this {@link TextRenderer}, which correspond to the passed {@link GlyphLine} with {@link PdfFont}
+     */
     protected TextRenderer createCopy(GlyphLine gl, PdfFont font) {
+        if (TextRenderer.class != this.getClass()) {
+            Logger logger = LoggerFactory.getLogger(TextRenderer.class);
+            logger.error(MessageFormatUtil.format(LogMessageConstant.CREATE_COPY_SHOULD_BE_OVERRIDDEN));
+        }
         TextRenderer copy = new TextRenderer(this);
         copy.setProcessedGlyphLineAndFont(gl, font);
         return copy;

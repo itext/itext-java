@@ -29,6 +29,7 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.Style;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -58,6 +59,10 @@ import org.junit.experimental.categories.Category;
 @Category(UnitTest.class)
 public class FlexUtilTest extends ExtendedITextTest {
 
+    /* To see integration tests for flex algorithm go to FlexAlgoTest in html2pdf module.
+    The names are preserved: one can go to FlexAlgoTest and see the corresponding tests, but be aware that with
+    time they might change and we will not maintain such correspondence */
+
     private static final float EPS = 0.001f;
 
     private static final Style DEFAULT_STYLE;
@@ -65,8 +70,6 @@ public class FlexUtilTest extends ExtendedITextTest {
 
     private static final List<UnitValue> NULL_FLEX_BASIS_LIST;
 
-    // Here one can find an html version for all of the tests
-    // TODO DEVSIX-5049 Make html2pdf+layout tests from these htmls
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/FlexUtilTest/";
 
     static {
@@ -2266,6 +2269,150 @@ public class FlexUtilTest extends ExtendedITextTest {
         Assert.assertEquals(200f, rectangleTable.get(0).get(2).getRectangle().getWidth(), EPS);
     }
 
+    @Test
+    public void calculateMinContentWithMinWidthTest() {
+        DivRenderer divRenderer = new DivRenderer(new Div());
+        divRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(100));
+        divRenderer.setProperty(Property.MIN_WIDTH, UnitValue.createPointValue(30));
+
+        FlexUtil.FlexItemCalculationInfo info = createFlexItemCalculationInfo(divRenderer);
+        Assert.assertEquals(30f, info.minContent, EPS);
+
+        divRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(30));
+        divRenderer.setProperty(Property.MIN_WIDTH, UnitValue.createPointValue(100));
+
+        info = createFlexItemCalculationInfo(divRenderer);
+        Assert.assertEquals(100f, info.minContent, EPS);
+    }
+
+    @Test
+    public void calculateMinContentForDivWithContentTest() {
+        Div div = new Div();
+        div.add(new Div().setWidth(50));
+        IRenderer divRenderer = div.createRendererSubTree();
+
+        FlexUtil.FlexItemCalculationInfo info = createFlexItemCalculationInfo((AbstractRenderer) divRenderer);
+        Assert.assertEquals(50.0f, info.minContent, EPS);
+    }
+
+    @Test
+    public void calculateMinContentForDivWithWidthTest() {
+        DivRenderer divRenderer = new DivRenderer(new Div());
+        divRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(100));
+
+        FlexUtil.FlexItemCalculationInfo info = createFlexItemCalculationInfo(divRenderer);
+        Assert.assertEquals(0.0f, info.minContent, EPS);
+    }
+
+    @Test
+    public void calculateMinContentForDivWithWidthAndContentTest() {
+        Div div = new Div();
+        div.add(new Div().setWidth(50));
+        IRenderer divRenderer = div.createRendererSubTree();
+        divRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(100));
+
+        FlexUtil.FlexItemCalculationInfo info = createFlexItemCalculationInfo((AbstractRenderer) divRenderer);
+        Assert.assertEquals(50.0f, info.minContent, EPS);
+
+        div = new Div();
+        div.add(new Div().setWidth(150));
+        divRenderer = div.createRendererSubTree();
+        divRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(100));
+
+        info = createFlexItemCalculationInfo((AbstractRenderer) divRenderer);
+        Assert.assertEquals(100.0f, info.minContent, EPS);
+    }
+
+    @Test
+    public void calculateMinContentForDivWithWidthMaxWidthAndContentTest() {
+        Div div = new Div();
+        div.add(new Div().setWidth(50));
+        div.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(45));
+        IRenderer divRenderer = div.createRendererSubTree();
+        divRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(100));
+
+        FlexUtil.FlexItemCalculationInfo info = createFlexItemCalculationInfo((AbstractRenderer) divRenderer);
+        Assert.assertEquals(45.0f, info.minContent, EPS);
+
+        div = new Div();
+        div.add(new Div().setWidth(150));
+        div.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(120));
+        divRenderer = div.createRendererSubTree();
+        divRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(100));
+
+        info = createFlexItemCalculationInfo((AbstractRenderer) divRenderer);
+        Assert.assertEquals(100.0f, info.minContent, EPS);
+    }
+
+    @Test
+    public void calculateMinContentForImageTest() {
+        Image image = new Image(new PdfFormXObject(new Rectangle(60, 150)));
+        IRenderer imageRenderer = image.createRendererSubTree();
+
+        FlexUtil.FlexItemCalculationInfo info = createFlexItemCalculationInfo((AbstractRenderer) imageRenderer);
+        Assert.assertEquals(60.0f, info.minContent, EPS);
+    }
+
+    @Test
+    public void calculateMinContentForImageWithHeightTest() {
+        Image image = new Image(new PdfFormXObject(new Rectangle(60, 150)));
+        image.setHeight(300);
+        IRenderer imageRenderer = image.createRendererSubTree();
+
+        FlexUtil.FlexItemCalculationInfo info = createFlexItemCalculationInfo((AbstractRenderer) imageRenderer);
+        Assert.assertEquals(60.0f, info.minContent, EPS);
+
+        image = new Image(new PdfFormXObject(new Rectangle(60, 150)));
+        image.setHeight(100);
+        imageRenderer = image.createRendererSubTree();
+
+        info = createFlexItemCalculationInfo((AbstractRenderer) imageRenderer);
+        Assert.assertEquals(40.0f, info.minContent, EPS);
+    }
+
+    @Test
+    public void calculateMinContentForImageWithHeightAndMinMaxHeightsTest() {
+        Image image = new Image(new PdfFormXObject(new Rectangle(60, 150)));
+        image.setHeight(300);
+        image.setMinHeight(20);
+        image.setMaxHeight(100);
+        IRenderer imageRenderer = image.createRendererSubTree();
+
+        FlexUtil.FlexItemCalculationInfo info = createFlexItemCalculationInfo((AbstractRenderer) imageRenderer);
+        Assert.assertEquals(40.0f, info.minContent, EPS);
+
+        image = new Image(new PdfFormXObject(new Rectangle(60, 150)));
+        image.setHeight(100);
+        image.setMinHeight(20);
+        image.setMaxHeight(75);
+        imageRenderer = image.createRendererSubTree();
+
+        info = createFlexItemCalculationInfo((AbstractRenderer) imageRenderer);
+        Assert.assertEquals(30.0f, info.minContent, EPS);
+    }
+
+    @Test
+    public void calculateMinContentForImageWithHeightAndWidthTest() {
+        Image image = new Image(new PdfFormXObject(new Rectangle(60, 150)));
+        image.setHeight(50);
+        image.setWidth(100);
+        IRenderer imageRenderer = image.createRendererSubTree();
+
+        FlexUtil.FlexItemCalculationInfo info = createFlexItemCalculationInfo((AbstractRenderer) imageRenderer);
+        Assert.assertEquals(60.0f, info.minContent, EPS);
+
+        image = new Image(new PdfFormXObject(new Rectangle(60, 150)));
+        image.setHeight(50);
+        image.setWidth(50);
+        imageRenderer = image.createRendererSubTree();
+
+        info = createFlexItemCalculationInfo((AbstractRenderer) imageRenderer);
+        Assert.assertEquals(50.0f, info.minContent, EPS);
+    }
+
+    private static FlexUtil.FlexItemCalculationInfo createFlexItemCalculationInfo(AbstractRenderer renderer) {
+        return new FlexUtil.FlexItemCalculationInfo(renderer, 0, 0, 0, 0, false);
+    }
 
     private static List<List<FlexItemInfo>> testFlex(List<UnitValue> flexBasisValues, List<Float> flexGrowValues,
             List<Float> flexShrinkValues) {

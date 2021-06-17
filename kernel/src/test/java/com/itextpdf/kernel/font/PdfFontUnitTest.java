@@ -60,10 +60,8 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfFontUnitTest extends ExtendedITextTest {
@@ -203,9 +201,6 @@ public class PdfFontUnitTest extends ExtendedITextTest {
             setTypoAscender(FONT_METRICS_ASCENT);
         }
     }
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void constructorWithoutParamsTest() {
@@ -569,9 +564,10 @@ public class PdfFontUnitTest extends ExtendedITextTest {
     public void getEmptyPdfStreamTest() {
         TestFont font = new TestFont();
 
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.FontEmbeddingIssue);
-        font.getPdfFontStream(null, null);
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> font.getPdfFontStream(null, null)
+        );
+        Assert.assertEquals(PdfException.FontEmbeddingIssue, e.getMessage());
     }
 
     @Test

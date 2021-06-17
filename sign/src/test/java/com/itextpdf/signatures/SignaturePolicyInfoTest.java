@@ -45,6 +45,7 @@ package com.itextpdf.signatures;
 import com.itextpdf.io.codec.Base64;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DEROctetString;
@@ -55,10 +56,8 @@ import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class SignaturePolicyInfoTest extends ExtendedITextTest {
@@ -67,9 +66,6 @@ public class SignaturePolicyInfoTest extends ExtendedITextTest {
     private final static byte[] POLICY_HASH = Base64.decode(POLICY_HASH_BASE64);
     private final static String POLICY_DIGEST_ALGORITHM = "SHA-256";
     private final static String POLICY_URI = "https://sede.060.gob.es/politica_de_firma_anexo_1.pdf";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void checkConstructorTest() {
@@ -95,58 +91,50 @@ public class SignaturePolicyInfoTest extends ExtendedITextTest {
 
     @Test
     public void nullIdentifierIsNotAllowedTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage("Policy identifier cannot be null");
-
-        new SignaturePolicyInfo(null, POLICY_HASH,
-                POLICY_DIGEST_ALGORITHM, POLICY_URI);
-
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> new SignaturePolicyInfo(null, POLICY_HASH, POLICY_DIGEST_ALGORITHM, POLICY_URI)
+        );
+        Assert.assertEquals("Policy identifier cannot be null", e.getMessage());
     }
 
     @Test
     public void emptyIdentifierIsNotAllowedTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage("Policy identifier cannot be null");
-
-        new SignaturePolicyInfo("", POLICY_HASH,
-                POLICY_DIGEST_ALGORITHM, POLICY_URI);
-
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> new SignaturePolicyInfo("", POLICY_HASH, POLICY_DIGEST_ALGORITHM, POLICY_URI)
+        );
+        Assert.assertEquals("Policy identifier cannot be null", e.getMessage());
     }
 
     @Test
     public void nullPolicyHashIsNotAllowedTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage("Policy hash cannot be null");
-
-        new SignaturePolicyInfo(POLICY_IDENTIFIER, (byte[]) null,
-                POLICY_DIGEST_ALGORITHM, POLICY_URI);
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> new SignaturePolicyInfo(POLICY_IDENTIFIER, (byte[]) null, POLICY_DIGEST_ALGORITHM, POLICY_URI)
+        );
+        Assert.assertEquals("Policy hash cannot be null", e.getMessage());
     }
 
     @Test
     public void nullEncodedPolicyHashIsNotAllowedTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage("Policy hash cannot be null");
-
-        new SignaturePolicyInfo(POLICY_IDENTIFIER, (String) null,
-                POLICY_DIGEST_ALGORITHM, POLICY_URI);
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> new SignaturePolicyInfo(POLICY_IDENTIFIER, (String) null, POLICY_DIGEST_ALGORITHM, POLICY_URI)
+        );
+        Assert.assertEquals("Policy hash cannot be null", e.getMessage());
     }
 
     @Test
     public void nullDigestAlgorithmIsNotAllowedTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage("Policy digest algorithm cannot be null");
-
-        new SignaturePolicyInfo(POLICY_IDENTIFIER, POLICY_HASH,
-                null, POLICY_URI);
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> new SignaturePolicyInfo(POLICY_IDENTIFIER, POLICY_HASH, null, POLICY_URI)
+        );
+        Assert.assertEquals("Policy digest algorithm cannot be null", e.getMessage());
     }
 
     @Test
     public void emptyDigestAlgorithmIsNotAllowedTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage("Policy digest algorithm cannot be null");
-
-        new SignaturePolicyInfo(POLICY_IDENTIFIER, POLICY_HASH,
-                "", POLICY_URI);
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> new SignaturePolicyInfo(POLICY_IDENTIFIER, POLICY_HASH, "", POLICY_URI)
+        );
+        Assert.assertEquals("Policy digest algorithm cannot be null", e.getMessage());
     }
 
     @Test
@@ -176,10 +164,11 @@ public class SignaturePolicyInfoTest extends ExtendedITextTest {
 
     @Test
     public void toSignaturePolicyIdentifierUnexpectedAlgorithmTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage("Invalid policy hash algorithm");
+        SignaturePolicyInfo info = new SignaturePolicyInfo(POLICY_IDENTIFIER, POLICY_HASH, "SHA-12345", POLICY_URI);
 
-        new SignaturePolicyInfo(POLICY_IDENTIFIER, POLICY_HASH,
-                "SHA-12345", POLICY_URI).toSignaturePolicyIdentifier();
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> info.toSignaturePolicyIdentifier()
+        );
+        Assert.assertEquals("Invalid policy hash algorithm", e.getMessage());
     }
 }

@@ -46,10 +46,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfAnnotationCopyingTest extends ExtendedITextTest {
@@ -57,19 +56,14 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfAnnotationCopyingTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfAnnotationCopyingTest/";
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
-    // TODO remove expected exception and thus enable assertions when DEVSIX-3585 is implemented
+    @Ignore("Unignore when DEVSIX-3585 would be implemented")
     public void testCopyingPageWithAnnotationContainingPopupKey() throws IOException {
-        junitExpectedException.expect(AssertionError.class);
-
         String inFilePath = sourceFolder + "annotation-with-popup.pdf";
         String outFilePath = destinationFolder + "copy-annotation-with-popup.pdf";
         PdfDocument originalDocument = new PdfDocument(new PdfReader(inFilePath));
@@ -112,10 +106,8 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO remove expected exception and thus enable assertions when DEVSIX-3585 is implemented
+    @Ignore("Unignore when DEVSIX-3585 would be implemented")
     public void testCopyingPageWithAnnotationContainingIrtKey() throws IOException {
-        junitExpectedException.expect(AssertionError.class);
-
         String inFilePath = sourceFolder + "annotation-with-irt.pdf";
         String outFilePath = destinationFolder + "copy-annotation-with-irt.pdf";
         PdfDocument originalDocument = new PdfDocument(new PdfReader(inFilePath));

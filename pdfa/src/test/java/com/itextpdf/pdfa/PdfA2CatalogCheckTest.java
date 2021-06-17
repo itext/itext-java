@@ -57,10 +57,8 @@ import com.itextpdf.test.pdfa.VeraPdfValidator;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -79,9 +77,6 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void catalogCheck03() throws IOException, InterruptedException {
@@ -114,9 +109,6 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
 
     @Test
     public void catalogCheck04() throws FileNotFoundException {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY_SHALL_CONTAIN_NAME_ENTRY);
-
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -135,7 +127,8 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
 
         doc.getCatalog().put(PdfName.OCProperties, ocProperties);
 
-        doc.close();
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assert.assertEquals(PdfAConformanceException.OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY_SHALL_CONTAIN_NAME_ENTRY, e.getMessage());
     }
 
     @Test

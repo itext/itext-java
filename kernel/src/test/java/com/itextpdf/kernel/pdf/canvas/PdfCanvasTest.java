@@ -42,7 +42,6 @@
  */
 package com.itextpdf.kernel.pdf.canvas;
 
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
@@ -51,8 +50,8 @@ import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -60,20 +59,16 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
-import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import java.awt.Toolkit;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -81,7 +76,6 @@ import java.util.HashMap;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -106,7 +100,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void createSimpleCanvas() throws IOException, FileNotFoundException {
+    public void createSimpleCanvas() throws IOException {
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
@@ -133,6 +127,38 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
         Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         reader.close();
+    }
+
+    @Test
+    public void canvasDrawArcsTest() throws IOException, InterruptedException {
+        String fileName = "canvasDrawArcsTest.pdf";
+        String output = destinationFolder + fileName;
+        String cmp = sourceFolder + "cmp_" + fileName;
+
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(output))) {
+            PdfPage page = doc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+
+            canvas.setLineWidth(5);
+
+            canvas.setStrokeColor(ColorConstants.BLUE);
+            canvas.moveTo(10, 300);
+            canvas.lineTo(50, 300);
+            canvas.arc(100, 550, 200, 600, 90, -135);
+            canvas.closePath();
+            canvas.stroke();
+
+            canvas.setStrokeColor(ColorConstants.RED);
+            canvas.moveTo(210, 300);
+            canvas.lineTo(250, 300);
+            canvas.arcContinuous(300, 550, 400, 600, 90, -135);
+            canvas.closePath();
+            canvas.stroke();
+
+            canvas.release();
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder, "diff_"));
     }
 
     @Test

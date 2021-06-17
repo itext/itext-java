@@ -82,6 +82,11 @@ public final class LogMessageConstant {
     public static final String COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT = "The Comb flag may be set only if the MaxLen entry is present in the text field dictionary and if the Multiline, Password, and FileSelect flags are clear.";
     public static final String COULD_NOT_FIND_GLYPH_WITH_CODE = "Could not find glyph with the following code: {0}";
     public static final String CREATED_ROOT_TAG_HAS_MAPPING = "Created root tag has role mapping: \"/Document\" role{0} is mapped{1}. Resulting tag structure might have invalid root tag.";
+    public static final String CREATE_COPY_SHOULD_BE_OVERRIDDEN = "While processing an instance of TextRenderer, "
+            + "iText uses createCopy() to create glyph lines of specific fonts, which represent its parts. "
+            + "So if one extends TextRenderer, one should override createCopy, otherwise if FontSelector "
+            + "related logic is triggered, copies of this TextRenderer will have the default behavior "
+            + "rather than the custom one.";
     public static final String DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET = "Destinations are not permitted for link annotations that already have actions. The old action will be removed.";
     public static final String DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT = "DirectOnly object cannot be indirect";
     public static final String DOCFONT_HAS_ILLEGAL_DIFFERENCES = "Document Font has illegal differences array. Entry {0} references a glyph ID over 255 and will be ignored.";
@@ -110,6 +115,8 @@ public final class LogMessageConstant {
     public static final String FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX = "Failed to process a transformation matrix which is noninvertible. Some content may be placed not as expected.";
     public static final String FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY = "Value \"{0}\" is not contained in /Opt array of field \"{1}\".";
     public static final String FILE_CHANNEL_CLOSING_FAILED = "Closing of the file channel this source is based on failed.";
+    public static final String FLEX_ITEM_LAYOUT_RESULT_IS_NOT_FULL =
+            "Flex item layout result isn't full, but it must be. The cross size of the flex item will be 0.";
     public static final String FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE = "Flushed object contains indirect reference which is free. Null object will be written instead.";
     public static final String FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT = "Flushed object contains indirect reference which doesn't refer to any other object. Null object will be written instead.";
     public static final String FONT_DICTIONARY_WITH_NO_FONT_DESCRIPTOR = "Font dictionary does not contain required /FontDescriptor entry.";
@@ -120,6 +127,10 @@ public final class LogMessageConstant {
     public static final String FONT_SUBSET_ISSUE = "Font subset issue. Full font will be embedded.";
     public static final String FORBID_RELEASE_IS_SET = "ForbidRelease flag is set and release is called. Releasing will not be performed.";
     public static final String FORM_FIELD_WAS_FLUSHED = "A form field was flushed. There's no way to create this field in the AcroForm dictionary.";
+    public static final String GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN = "If a renderer overflows, "
+            + "iText uses this method to create another renderer for the overflow part. So if one wants "
+            + "to extend the renderer, one should override this method: otherwise the default method "
+            + "will be used and thus the default rather than the custom renderer will be created.";
     public static final String GPOS_LOOKUP_SUBTABLE_FORMAT_NOT_SUPPORTED =
             "Subtable format {0} of GPOS Lookup Type {1} is not supported yet";
     public static final String GRAPHICS_STATE_WAS_DELETED = "Graphics state is always deleted after event dispatching. If you want to preserve it in renderer info, use preserveGraphicsState method after receiving renderer info.";
@@ -143,6 +154,7 @@ public final class LogMessageConstant {
     public static final String INDIRECT_REFERENCE_USED_IN_FLUSHED_OBJECT_MADE_FREE = "An attempt is made to free an indirect reference which was already used in the flushed object. Indirect reference wasn't freed.";
     public static final String INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED = "Inline block element does not fit into parent element and will be clipped";
     public static final String INPUT_STREAM_CONTENT_IS_LOST_ON_PDFSTREAM_SERIALIZATION = "PdfStream contains not null input stream. It's content will be lost in serialized object.";
+    public static final String INVALID_DISTRIBUTION_POINT = "Skipped CRL: {0}";
     public static final String INVALID_DESTINATION_TYPE = "When destination's not associated with a Remote or Embedded Go-To action, it shall specify page dictionary instead of page number. Otherwise destination might be considered invalid";
     public static final String INVALID_INDIRECT_REFERENCE = "Invalid indirect reference {0} {1} R";
     public static final String INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE = "Invalid key value: key {0} has null value.";

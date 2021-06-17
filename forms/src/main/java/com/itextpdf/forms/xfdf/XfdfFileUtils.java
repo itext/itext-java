@@ -42,24 +42,20 @@
  */
 package com.itextpdf.forms.xfdf;
 
-import org.w3c.dom.Document;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.utils.XmlProcessorCreator;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.StringReader;
+import org.w3c.dom.Document;
 
 final class XfdfFileUtils {
 
@@ -68,32 +64,40 @@ final class XfdfFileUtils {
 
     /**
      * Creates a new xml-styled document for writing xfdf info.
+     *
      * @throws ParserConfigurationException in case of failure to create a new document.
      */
-    static Document createNewXfdfDocument() throws ParserConfigurationException {
-        DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-        documentBuilder.setEntityResolver(new XfdfFileUtils.SafeEmptyEntityResolver());
-        return documentBuilder.newDocument();
+    static Document createNewXfdfDocument() {
+        try {
+            DocumentBuilder db = XmlProcessorCreator.createSafeDocumentBuilder(false, false);
+            return db.newDocument();
+        } catch (Exception e) {
+            throw new PdfException(e.getMessage(), e);
+        }
     }
 
     /**
      * Creates a new xfdf document based on given input stream.
+     *
      * @param inputStream containing xfdf info.
      */
-    static Document createXfdfDocumentFromStream(InputStream inputStream) throws ParserConfigurationException, IOException, SAXException {
-        DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-        documentBuilder.setEntityResolver(new XfdfFileUtils.SafeEmptyEntityResolver());
-        return documentBuilder.parse(inputStream);
+    static Document createXfdfDocumentFromStream(InputStream inputStream) {
+        try {
+            DocumentBuilder db = XmlProcessorCreator.createSafeDocumentBuilder(false, false);
+            return db.parse(inputStream);
+        } catch (Exception e) {
+            throw new PdfException(e.getMessage(), e);
+        }
     }
 
     /**
-     * Saves the info from output stream to xml-styled document.
-     * @param document to save info to.
-     * @param outputStream the stream containing xfdf info.
+     * Saves the info from XML-styled {@link Document} to {@link OutputStream}.
+     *
+     * @param document     input {@link Document} that contains XFDF info
+     * @param outputStream the output stream
      */
-    static void saveXfdfDocumentToFile(Document document, OutputStream outputStream) throws TransformerException {
+    static void saveXfdfDocumentToFile(Document document, OutputStream outputStream)
+            throws TransformerException {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
@@ -102,12 +106,5 @@ final class XfdfFileUtils {
         DOMSource domSource = new DOMSource(document);
         StreamResult streamResult = new StreamResult(outputStream);
         transformer.transform(domSource, streamResult);
-    }
-
-    // Prevents XXE attacks
-    private static class SafeEmptyEntityResolver implements EntityResolver {
-        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-            return new InputSource(new StringReader(""));
-        }
     }
 }

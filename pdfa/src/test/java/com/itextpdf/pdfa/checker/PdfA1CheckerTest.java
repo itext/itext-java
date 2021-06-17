@@ -42,32 +42,17 @@
  */
 package com.itextpdf.pdfa.checker;
 
-import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.colors.PatternColor;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
-import com.itextpdf.kernel.pdf.colorspace.PdfPattern.Shading;
-import com.itextpdf.kernel.pdf.colorspace.PdfPattern.Tiling;
-import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.pdfa.PdfAConformanceException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.nio.charset.StandardCharsets;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfA1CheckerTest extends ExtendedITextTest {
@@ -79,42 +64,40 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
         pdfA1Checker.setFullCheckMode(true);
     }
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
     @Test
     public void checkCatalogDictionaryWithoutAAEntry() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY);
-
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.AA, new PdfDictionary());
 
-        pdfA1Checker.checkCatalogValidEntries(catalog);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA1Checker.checkCatalogValidEntries(catalog)
+        );
+        Assert.assertEquals(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY, e.getMessage());
     }
 
     @Test
     public void checkCatalogDictionaryWithoutOCPropertiesEntry() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_OCPROPERTIES_KEY);
-
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.OCProperties, new PdfDictionary());
 
-        pdfA1Checker.checkCatalogValidEntries(catalog);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA1Checker.checkCatalogValidEntries(catalog)
+        );
+        Assert.assertEquals(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_OCPROPERTIES_KEY, e.getMessage());
     }
 
     @Test
     public void checkCatalogDictionaryWithoutEmbeddedFiles() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.A_NAME_DICTIONARY_SHALL_NOT_CONTAIN_THE_EMBEDDED_FILES_KEY);
-
         PdfDictionary names = new PdfDictionary();
         names.put(PdfName.EmbeddedFiles, new PdfDictionary());
 
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.Names, names);
 
-        pdfA1Checker.checkCatalogValidEntries(catalog);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA1Checker.checkCatalogValidEntries(catalog)
+        );
+        Assert.assertEquals(PdfAConformanceException.A_NAME_DICTIONARY_SHALL_NOT_CONTAIN_THE_EMBEDDED_FILES_KEY, e.getMessage());
     }
 
     @Test

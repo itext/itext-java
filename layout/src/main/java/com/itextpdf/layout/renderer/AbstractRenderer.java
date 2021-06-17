@@ -149,6 +149,13 @@ public abstract class AbstractRenderer implements IRenderer {
      */
     static final int LEFT_SIDE = 3;
 
+    private static final int ARC_RIGHT_DEGREE = 0;
+    private static final int ARC_TOP_DEGREE = 90;
+    private static final int ARC_LEFT_DEGREE = 180;
+    private static final int ARC_BOTTOM_DEGREE = 270;
+
+    private static final int ARC_QUARTER_CLOCKWISE_EXTENT = -90;
+
     // TODO linkedList?
     protected List<IRenderer> childRenderers = new ArrayList<>();
     protected List<IRenderer> positionedRenderers = new ArrayList<>();
@@ -767,8 +774,6 @@ public abstract class AbstractRenderer implements IRenderer {
         // border widths should be considered only once
         assert false == considerBordersBeforeOuterClipping || false == considerBordersBeforeInnerClipping;
 
-        final double curv = 0.4477f;
-
         // border widths
         float[] borderWidths = {0, 0, 0, 0};
         // outer box
@@ -805,7 +810,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
             // clip border area outside
             if (clipOuter) {
-                clipOuterArea(canvas, curv, horizontalRadii, verticalRadii, outerBox, cornersX, cornersY);
+                clipOuterArea(canvas, horizontalRadii, verticalRadii, outerBox, cornersX, cornersY);
             }
 
             if (considerBordersBeforeInnerClipping) {
@@ -814,28 +819,27 @@ public abstract class AbstractRenderer implements IRenderer {
 
             // clip border area inside
             if (clipInner) {
-                clipInnerArea(canvas, curv, horizontalRadii, verticalRadii, outerBox, cornersX, cornersY, borderWidths);
+                clipInnerArea(canvas, horizontalRadii, verticalRadii, outerBox, cornersX, cornersY, borderWidths);
             }
         }
         return hasNotNullRadius;
     }
 
-    private void clipOuterArea(PdfCanvas canvas, double curv, float[] horizontalRadii, float[] verticalRadii, float[] outerBox, float[] cornersX, float[] cornersY) {
-        float top = outerBox[0], right = outerBox[1],
-                bottom = outerBox[2],
-                left = outerBox[3];
-
-        float x1 = cornersX[0], y1 = cornersY[0],
-                x2 = cornersX[1], y2 = cornersY[1],
-                x3 = cornersX[2], y3 = cornersY[2],
-                x4 = cornersX[3], y4 = cornersY[3];
+    private void clipOuterArea(PdfCanvas canvas, float[] horizontalRadii, float[] verticalRadii,
+            float[] outerBox, float[] cornersX, float[] cornersY) {
+        final double top = outerBox[TOP_SIDE];
+        final double right = outerBox[RIGHT_SIDE];
+        final double bottom = outerBox[BOTTOM_SIDE];
+        final double left = outerBox[LEFT_SIDE];
 
         // left top corner
         if (0 != horizontalRadii[0] || 0 != verticalRadii[0]) {
+            double arcBottom = ((double) cornersY[TOP_SIDE]) - verticalRadii[TOP_SIDE];
+            double arcRight = ((double) cornersX[TOP_SIDE]) + horizontalRadii[TOP_SIDE];
             canvas
                     .moveTo(left, bottom)
-                    .lineTo(left, y1)
-                    .curveTo(left, y1 + verticalRadii[0] * curv, x1 - horizontalRadii[0] * curv, top, x1, top)
+                    .arcContinuous(left, arcBottom, arcRight, top,
+                            ARC_LEFT_DEGREE, ARC_QUARTER_CLOCKWISE_EXTENT)
                     .lineTo(right, top)
                     .lineTo(right, bottom)
                     .lineTo(left, bottom);
@@ -843,10 +847,12 @@ public abstract class AbstractRenderer implements IRenderer {
         }
         // right top corner
         if (0 != horizontalRadii[1] || 0 != verticalRadii[1]) {
+            double arcLeft = ((double) cornersX[RIGHT_SIDE]) - horizontalRadii[RIGHT_SIDE];
+            double arcBottom = ((double) cornersY[RIGHT_SIDE]) - verticalRadii[RIGHT_SIDE];
             canvas
                     .moveTo(left, top)
-                    .lineTo(x2, top)
-                    .curveTo(x2 + horizontalRadii[1] * curv, top, right, y2 + verticalRadii[1] * curv, right, y2)
+                    .arcContinuous(arcLeft, top, right, arcBottom,
+                            ARC_TOP_DEGREE, ARC_QUARTER_CLOCKWISE_EXTENT)
                     .lineTo(right, bottom)
                     .lineTo(left, bottom)
                     .lineTo(left, top);
@@ -854,10 +860,12 @@ public abstract class AbstractRenderer implements IRenderer {
         }
         // right bottom corner
         if (0 != horizontalRadii[2] || 0 != verticalRadii[2]) {
+            double arcTop = ((double) cornersY[BOTTOM_SIDE]) + verticalRadii[BOTTOM_SIDE];
+            double arcLeft = ((double) cornersX[BOTTOM_SIDE]) - horizontalRadii[BOTTOM_SIDE];
             canvas
                     .moveTo(right, top)
-                    .lineTo(right, y3)
-                    .curveTo(right, y3 - verticalRadii[2] * curv, x3 + horizontalRadii[2] * curv, bottom, x3, bottom)
+                    .arcContinuous(right, arcTop, arcLeft, bottom,
+                            ARC_RIGHT_DEGREE, ARC_QUARTER_CLOCKWISE_EXTENT)
                     .lineTo(left, bottom)
                     .lineTo(left, top)
                     .lineTo(right, top);
@@ -865,10 +873,12 @@ public abstract class AbstractRenderer implements IRenderer {
         }
         // left bottom corner
         if (0 != horizontalRadii[3] || 0 != verticalRadii[3]) {
+            double arcRight = ((double) cornersX[LEFT_SIDE]) + horizontalRadii[LEFT_SIDE];
+            double arcTop = ((double) cornersY[LEFT_SIDE]) + verticalRadii[LEFT_SIDE];
             canvas
                     .moveTo(right, bottom)
-                    .lineTo(x4, bottom)
-                    .curveTo(x4 - horizontalRadii[3] * curv, bottom, left, y4 - verticalRadii[3] * curv, left, y4)
+                    .arcContinuous(arcRight, bottom, left, arcTop,
+                            ARC_BOTTOM_DEGREE, ARC_QUARTER_CLOCKWISE_EXTENT)
                     .lineTo(left, top)
                     .lineTo(right, top)
                     .lineTo(right, bottom);
@@ -876,26 +886,32 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    private void clipInnerArea(PdfCanvas canvas, double curv, float[] horizontalRadii, float[] verticalRadii, float[] outerBox, float[] cornersX, float[] cornersY, float[] borderWidths) {
-        float top = outerBox[0],
-                right = outerBox[1],
-                bottom = outerBox[2],
-                left = outerBox[3];
+    private void clipInnerArea(PdfCanvas canvas, float[] horizontalRadii, float[] verticalRadii,
+            float[] outerBox, float[] cornersX, float[] cornersY, float[] borderWidths) {
+        final double top = outerBox[TOP_SIDE];
+        final double right = outerBox[RIGHT_SIDE];
+        final double bottom = outerBox[BOTTOM_SIDE];
+        final double left = outerBox[LEFT_SIDE];
 
-        float x1 = cornersX[0], y1 = cornersY[0],
-                x2 = cornersX[1], y2 = cornersY[1],
-                x3 = cornersX[2], y3 = cornersY[2],
-                x4 = cornersX[3], y4 = cornersY[3];
-        float topBorderWidth = borderWidths[0],
-                rightBorderWidth = borderWidths[1],
-                bottomBorderWidth = borderWidths[2],
-                leftBorderWidth = borderWidths[3];
+        final double x1 = cornersX[TOP_SIDE];
+        final double y1 = cornersY[TOP_SIDE];
+        final double x2 = cornersX[RIGHT_SIDE];
+        final double y2 = cornersY[RIGHT_SIDE];
+        final double x3 = cornersX[BOTTOM_SIDE];
+        final double y3 = cornersY[BOTTOM_SIDE];
+        final double x4 = cornersX[LEFT_SIDE];
+        final double y4 = cornersY[LEFT_SIDE];
+        final double topBorderWidth = borderWidths[TOP_SIDE];
+        final double rightBorderWidth = borderWidths[RIGHT_SIDE];
+        final double bottomBorderWidth = borderWidths[BOTTOM_SIDE];
+        final double leftBorderWidth = borderWidths[LEFT_SIDE];
 
         // left top corner
         if (0 != horizontalRadii[0] || 0 != verticalRadii[0]) {
             canvas
-                    .moveTo(left, y1)
-                    .curveTo(left, y1 + verticalRadii[0] * curv, x1 - horizontalRadii[0] * curv, top, x1, top)
+                    .arc(left, y1 - verticalRadii[TOP_SIDE],
+                            x1 + horizontalRadii[TOP_SIDE], top,
+                            ARC_LEFT_DEGREE, ARC_QUARTER_CLOCKWISE_EXTENT)
                     .lineTo(x2, top)
                     .lineTo(right, y2)
                     .lineTo(right, y3)
@@ -914,8 +930,9 @@ public abstract class AbstractRenderer implements IRenderer {
         // right top corner
         if (0 != horizontalRadii[1] || 0 != verticalRadii[1]) {
             canvas
-                    .moveTo(x2, top)
-                    .curveTo(x2 + horizontalRadii[1] * curv, top, right, y2 + verticalRadii[1] * curv, right, y2)
+                    .arc(x2 - horizontalRadii[RIGHT_SIDE], top, right,
+                            y2 - verticalRadii[RIGHT_SIDE],
+                            ARC_TOP_DEGREE, ARC_QUARTER_CLOCKWISE_EXTENT)
                     .lineTo(right, y3)
                     .lineTo(x3, bottom)
                     .lineTo(x4, bottom)
@@ -934,8 +951,9 @@ public abstract class AbstractRenderer implements IRenderer {
         // right bottom corner
         if (0 != horizontalRadii[2] || 0 != verticalRadii[2]) {
             canvas
-                    .moveTo(right, y3)
-                    .curveTo(right, y3 - verticalRadii[2] * curv, x3 + horizontalRadii[2] * curv, bottom, x3, bottom)
+                    .arc(right, y3 + verticalRadii[BOTTOM_SIDE],
+                            x3 - horizontalRadii[BOTTOM_SIDE], bottom,
+                            ARC_RIGHT_DEGREE, ARC_QUARTER_CLOCKWISE_EXTENT)
                     .lineTo(x4, bottom)
                     .lineTo(left, y4)
                     .lineTo(left, y1)
@@ -954,8 +972,9 @@ public abstract class AbstractRenderer implements IRenderer {
         // left bottom corner
         if (0 != horizontalRadii[3] || 0 != verticalRadii[3]) {
             canvas
-                    .moveTo(x4, bottom)
-                    .curveTo(x4 - horizontalRadii[3] * curv, bottom, left, y4 - verticalRadii[3] * curv, left, y4)
+                    .arc(x4 + horizontalRadii[LEFT_SIDE], bottom,
+                            left, y4 + verticalRadii[LEFT_SIDE],
+                            ARC_BOTTOM_DEGREE, ARC_QUARTER_CLOCKWISE_EXTENT)
                     .lineTo(left, y1)
                     .lineTo(x1, top)
                     .lineTo(x2, top)
@@ -1306,6 +1325,55 @@ public abstract class AbstractRenderer implements IRenderer {
 
     protected static boolean isOverflowFit(OverflowPropertyValue rendererOverflowProperty) {
         return rendererOverflowProperty == null || OverflowPropertyValue.FIT.equals(rendererOverflowProperty);
+    }
+
+    /**
+     * Replaces given property own value with the given value.
+     *
+     * @param property the property to be replaced
+     * @param replacementValue the value with which property will be replaced
+     * @param <T> the type associated with the property
+     * @return previous property value
+     */
+    <T> T replaceOwnProperty(int property, T replacementValue) {
+        T ownProperty = this.<T>getOwnProperty(property);
+        setProperty(property, replacementValue);
+        return ownProperty;
+    }
+
+    /**
+     * Returns back own value of the given property.
+     *
+     * @param property the property to be returned back
+     * @param prevValue the value which will be returned back
+     * @param <T> the type associated with the property
+     */
+    <T> void returnBackOwnProperty(int property, T prevValue) {
+        if (prevValue == null) {
+            deleteOwnProperty(property);
+        } else {
+            setProperty(property, prevValue);
+        }
+    }
+
+    /**
+     * Checks if this renderer has intrinsic aspect ratio.
+     *
+     * @return true, if aspect ratio is defined for this renderer, false otherwise
+     */
+    boolean hasAspectRatio() {
+        // TODO DEVSIX-5255 This method should be changed after we support aspect-ratio property
+        return false;
+    }
+
+    /**
+     * Gets intrinsic aspect ratio for this renderer.
+     *
+     * @return aspect ratio, if it is defined for this renderer, null otherwise
+     */
+    Float getAspectRatio() {
+        // TODO DEVSIX-5255 This method should be changed after we support aspect-ratio property
+        return null;
     }
 
     static void processWaitingDrawing(IRenderer child, Transform transformProp, List<IRenderer> waitingDrawing) {
@@ -2664,6 +2732,16 @@ public abstract class AbstractRenderer implements IRenderer {
     void setThisAsParent(Collection<IRenderer> children) {
         for (final IRenderer child : children) {
             child.setParent(this);
+        }
+    }
+
+    boolean logWarningIfGetNextRendererNotOverridden(Class<?> baseClass, Class<?> rendererClass) {
+        if (baseClass != rendererClass) {
+            final Logger logger = LoggerFactory.getLogger(baseClass);
+            logger.warn(MessageFormatUtil.format(LogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN));
+            return false;
+        } else {
+            return true;
         }
     }
 

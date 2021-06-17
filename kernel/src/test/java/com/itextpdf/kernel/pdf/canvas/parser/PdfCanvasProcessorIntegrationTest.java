@@ -58,6 +58,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.data.PathRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
+import com.itextpdf.kernel.pdf.canvas.parser.util.InlineImageParsingUtils.InlineImageParseException;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.test.AssertUtil;
@@ -74,26 +75,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 import java.io.IOException;
 import java.util.Set;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/PdfCanvasProcessorTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/parser/PdfCanvasProcessorTest/";
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/parser/PdfCanvasProcessorTest/";
+
+    @BeforeClass
+    public static void setUp() {
+        createDestinationFolder(DESTINATION_FOLDER);
+    }
 
     @Test
     public void contentStreamProcessorTest() throws IOException {
-        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "tableWithImageAndText.pdf"), new PdfWriter(new ByteArrayOutputStream()));
+        PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "tableWithImageAndText.pdf"), new PdfWriter(new ByteArrayOutputStream()));
 
         StringBuilder pageEventsLog = new StringBuilder();
         for (int i = 1; i <= document.getNumberOfPages(); ++i) {
@@ -105,7 +108,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
 
         }
 
-        byte[] logBytes = Files.readAllBytes(Paths.get(sourceFolder + "contentStreamProcessorTest_events_log.dat"));
+        byte[] logBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "contentStreamProcessorTest_events_log.dat"));
         String expectedPageEventsLog = new String(logBytes, StandardCharsets.UTF_8);
 
         Assert.assertEquals(expectedPageEventsLog, pageEventsLog.toString());
@@ -113,7 +116,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void processGraphicsStateResourceOperatorFillOpacityTest() throws IOException {
-        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "transparentText.pdf"));
+        PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "transparentText.pdf"));
         Float expOpacity = 0.5f;
 
         Map<String, Object> textRenderInfo = new HashMap<>();
@@ -127,7 +130,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void processGraphicsStateResourceOperatorStrokeOpacityTest() throws IOException {
-        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "hiddenText.pdf"));
+        PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hiddenText.pdf"));
         Float expOpacity = 0.0f;
 
         Map<String, Object> textRenderInfo = new HashMap<>();
@@ -142,7 +145,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
     @Test
     public void testClosingEmptyPath() throws IOException {
         String fileName = "closingEmptyPath.pdf";
-        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + fileName));
+        PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + fileName));
         PdfCanvasProcessor processor = new PdfCanvasProcessor(new NoOpEventListener());
         // Assert than no exception is thrown when an empty path is handled
         AssertUtil.doesNotThrow(() -> processor.processPageContent(document.getPage(1)));
@@ -152,7 +155,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX, count = 1))
     public void testNoninvertibleMatrix() throws IOException {
         String fileName = "noninvertibleMatrix.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + fileName));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + fileName));
 
         LocationTextExtractionStrategy strategy = new LocationTextExtractionStrategy();
         PdfCanvasProcessor processor = new PdfCanvasProcessor(strategy);
@@ -168,23 +171,20 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
     @Test
     @Ignore("DEVSIX-3608: this test currently throws StackOverflowError, which cannot be caught in .NET")
     public void parseCircularReferencesInResourcesTest() throws IOException {
-        junitExpectedException.expect(StackOverflowError.class);
-
         String fileName = "circularReferencesInResources.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + fileName));
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + fileName))) {
 
-        PdfCanvasProcessor processor = new PdfCanvasProcessor(new NoOpEventListener());
-        PdfPage page = pdfDocument.getFirstPage();
+            PdfCanvasProcessor processor = new PdfCanvasProcessor(new NoOpEventListener());
+            PdfPage page = pdfDocument.getFirstPage();
 
-        processor.processPageContent(page);
-
-        pdfDocument.close();
+            Assert.assertThrows(StackOverflowError.class, () -> processor.processPageContent(page));
+        }
     }
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE))
     public void patternColorParsingNotValidPdfTest() throws IOException {
-        String inputFile = sourceFolder + "patternColorParsingNotValidPdfTest.pdf";
+        String inputFile = SOURCE_FOLDER + "patternColorParsingNotValidPdfTest.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputFile));
 
         for (int i = 1; i <= pdfDocument.getNumberOfPages(); ++i) {
@@ -203,7 +203,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void patternColorParsingValidPdfTest() throws IOException {
-        String inputFile = sourceFolder + "patternColorParsingValidPdfTest.pdf";
+        String inputFile = SOURCE_FOLDER + "patternColorParsingValidPdfTest.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputFile));
 
         for (int i = 1; i <= pdfDocument.getNumberOfPages(); ++i) {

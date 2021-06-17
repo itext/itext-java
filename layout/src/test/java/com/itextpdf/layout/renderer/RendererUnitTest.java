@@ -57,7 +57,7 @@ import com.itextpdf.test.ExtendedITextTest;
 public abstract class RendererUnitTest extends ExtendedITextTest {
 
     // This also can be converted to a @Rule to have it all at hand in the future
-    protected static Document createDocument() {
+    protected static Document createDummyDocument() {
         return new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
     }
 

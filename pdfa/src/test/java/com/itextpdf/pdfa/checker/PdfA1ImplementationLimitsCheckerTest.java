@@ -71,10 +71,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
@@ -86,9 +84,6 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
     public void before() {
         pdfA1Checker.setFullCheckMode(true);
     }
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void validObjectsTest() {
@@ -145,55 +140,54 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
     @Test
     public void independentLongStringTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
-
         PdfString longString = buildLongString();
 
         // An exception should be thrown as provided String is longer then
         // it is allowed per specification
-        pdfA1Checker.checkPdfObject(longString);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA1Checker.checkPdfObject(longString)
+        );
+        Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
     public void independentLongNameTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_NAME_IS_TOO_LONG);
-
         PdfName longName = buildLongName();
 
         // An exception should be thrown as provided name is longer then
         // it is allowed per specification
-        pdfA1Checker.checkPdfObject(longName);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA1Checker.checkPdfObject(longName)
+        );
+        Assert.assertEquals(PdfAConformanceException.PDF_NAME_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
     public void independentLargeIntegerTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE);
-
         PdfNumber largeNumber = new PdfNumber(pdfA1Checker.getMaxIntegerValue() + 1L);
 
         // An exception should be thrown as provided integer is larger then
         // it is allowed per specification
-        pdfA1Checker.checkPdfObject(largeNumber);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA1Checker.checkPdfObject(largeNumber)
+        );
+        Assert.assertEquals(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
     }
 
     @Test
     public void independentLargeNegativeIntegerTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE);
-
         PdfNumber largeNumber = new PdfNumber(pdfA1Checker.getMinIntegerValue() - 1L);
 
         // An exception should be thrown as provided integer is smaller then
         // it is allowed per specification
-        pdfA1Checker.checkPdfObject(largeNumber);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA1Checker.checkPdfObject(largeNumber)
+        );
+        Assert.assertEquals(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
     }
 
     @Test
     public void independentLargeRealTest() {
-
         PdfNumber largeNumber = new PdfNumber(pdfA1Checker.getMaxRealValue() + 1.0);
 
         // TODO DEVSIX-4182
@@ -203,57 +197,54 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
     @Test
     public void independentLongArrayTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.MAXIMUM_ARRAY_CAPACITY_IS_EXCEEDED);
-
         PdfArray longArray = buildLongArray();
 
         // An exception should be thrown as provided array has more elements then
         // it is allowed per specification
-        pdfA1Checker.checkPdfObject(longArray);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA1Checker.checkPdfObject(longArray)
+        );
+        Assert.assertEquals(PdfAConformanceException.MAXIMUM_ARRAY_CAPACITY_IS_EXCEEDED, e.getMessage());
     }
 
     @Test
     public void independentLongDictionaryTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED);
-
         PdfDictionary longDictionary = buildLongDictionary();
 
         // An exception should be thrown as provided dictionary has more entries
         // then it is allowed per specification
-        pdfA1Checker.checkPdfObject(longDictionary);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA1Checker.checkPdfObject(longDictionary)
+        );
+        Assert.assertEquals(PdfAConformanceException.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED, e.getMessage());
     }
 
     @Test
     public void independentStreamWithLongDictionaryTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED);
-
         PdfStream longStream = buildStreamWithLongDictionary();
 
         // An exception should be thrown as dictionary of the stream has more entries
         // then it is allowed per specification
-        pdfA1Checker.checkPdfObject(longStream);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA1Checker.checkPdfObject(longStream)
+        );
+        Assert.assertEquals(PdfAConformanceException.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED, e.getMessage());
     }
 
     @Test
     public void longStringInDictionaryTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
-
         PdfString longString = buildLongString();
 
         // An exception should be thrown as dictionary contains value which is longer then
         // it is allowed per specification
-        checkInDictionary(longString);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkInDictionary(longString)
+        );
+        Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
     public void longNameAsKeyInDictionaryTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_NAME_IS_TOO_LONG);
-
         PdfName longName = buildLongName();
 
         PdfDictionary dict = new PdfDictionary();
@@ -263,66 +254,69 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as dictionary contains key which is longer then
         // it is allowed per specification
-        pdfA1Checker.checkPdfObject(dict);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA1Checker.checkPdfObject(dict)
+        );
+        Assert.assertEquals(PdfAConformanceException.PDF_NAME_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
     public void longStringInArrayTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
-
         PdfString longString = buildLongString();
         // An exception should be thrown as one element is longer then
         // it is allowed per specification
-        checkInArray(longString);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkInArray(longString)
+        );
+        Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
     public void longStringInContentStreamTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
-
         PdfString longString = buildLongString();
 
         // An exception should be thrown as content stream has a string which
         // is longer then it is allowed per specification
-        checkInContentStream(longString);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkInContentStream(longString)
+        );
+        Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
     public void longNameInContentStreamTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_NAME_IS_TOO_LONG);
-
         PdfName longName = buildLongName();
 
         // An exception should be thrown as content stream has a name which
         // is longer then it is allowed per specification
-        checkInContentStream(longName);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkInContentStream(longName)
+        );
+        Assert.assertEquals(PdfAConformanceException.PDF_NAME_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
     public void largeIntegerInContentStreamTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE);
-
         PdfNumber largeNumber = new PdfNumber(pdfA1Checker.getMaxIntegerValue() + 1L);
 
         // An exception should be thrown as provided integer is larger then
         // it is allowed per specification
-        checkInContentStream(largeNumber);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkInContentStream(largeNumber)
+        );
+        Assert.assertEquals(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
     }
 
     @Test
     public void largeNegativeIntegerInContentStreamTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE);
-
         PdfNumber largeNumber = new PdfNumber(pdfA1Checker.getMinIntegerValue() - 1L);
 
         // An exception should be thrown as provided integer is smaller then
         // it is allowed per specification
-        checkInContentStream(largeNumber);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkInContentStream(largeNumber)
+        );
+        Assert.assertEquals(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
     }
 
     @Test
@@ -337,26 +331,26 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
     @Test
     public void LongArrayInContentStreamTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.MAXIMUM_ARRAY_CAPACITY_IS_EXCEEDED);
-
         PdfArray longArray = buildLongArray();
 
         // An exception should be thrown as provided array has more elements then
         // it is allowed per specification
-        checkInContentStream(longArray);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkInContentStream(longArray)
+        );
+        Assert.assertEquals(PdfAConformanceException.MAXIMUM_ARRAY_CAPACITY_IS_EXCEEDED, e.getMessage());
     }
 
     @Test
     public void longDictionaryInContentStream() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED);
-
         PdfDictionary longDictionary = buildLongDictionary();
 
         // An exception should be thrown as provided dictionary has more entries
         // then it is allowed per specification
-        checkInContentStream(longDictionary);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkInContentStream(longDictionary)
+        );
+        Assert.assertEquals(PdfAConformanceException.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED, e.getMessage());
     }
 
 
@@ -389,33 +383,30 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
     @Test
     public void longStringInArrayInContentStreamTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
-
         PdfString longString = buildLongString();
 
         // An exception should be thrown as content stream has a string which
         // is longer then it is allowed per specification
-        checkInArrayInContentStream(longString);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkInArrayInContentStream(longString)
+        );
+        Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
     public void longStringInDictionaryInContentStreamTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
-
         PdfString longString = buildLongString();
 
         // An exception should be thrown as content stream has a string which
         // is longer then it is allowed per specification
-        checkInDictionaryInContentStream(longString);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkInDictionaryInContentStream(longString)
+        );
+        Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
     public void longNameAsKeyInDictionaryInContentStreamTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_NAME_IS_TOO_LONG);
-
         PdfName longName = buildLongName();
 
         PdfDictionary dict = new PdfDictionary();
@@ -425,67 +416,69 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // An exception should be thrown as content stream has a string which
         // is longer then it is allowed per specification
-        checkInContentStream(dict);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkInContentStream(dict)
+        );
+        Assert.assertEquals(PdfAConformanceException.PDF_NAME_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
     public void longStringInComplexStructureTest() {
-
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
-
         PdfString longString = buildLongString();
 
         // An exception should be thrown as there is a string element which
         // doesn't match the limitations provided in specification
-        checkInComplexStructure(longString);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkInComplexStructure(longString)
+        );
+        Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
     public void LongArrayInComplexStructureTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.MAXIMUM_ARRAY_CAPACITY_IS_EXCEEDED);
-
         PdfArray longArray = buildLongArray();
 
         // An exception should be thrown as provided array has more elements then
         // it is allowed per specification
-        checkInComplexStructure(longArray);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkInComplexStructure(longArray)
+        );
+        Assert.assertEquals(PdfAConformanceException.MAXIMUM_ARRAY_CAPACITY_IS_EXCEEDED, e.getMessage());
     }
 
     @Test
     public void longDictionaryInComplexStructureTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED);
-
         PdfDictionary longDictionary = buildLongDictionary();
 
         // An exception should be thrown as provided dictionary has more entries
         // then it is allowed per specification
-        checkInComplexStructure(longDictionary);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkInComplexStructure(longDictionary)
+        );
+        Assert.assertEquals(PdfAConformanceException.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED, e.getMessage());
     }
 
     @Test
     public void longStringInPdfFormXObjectTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
-
         PdfString longString = buildLongString();
 
         // An exception should be thrown as form xobject content stream has a string which
         // is longer then it is allowed per specification
-        checkInFormXObject(longString);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkInFormXObject(longString)
+        );
+        Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
     public void longStringInTilingPatternTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
-
         PdfString longString = buildLongString();
         // An exception should be thrown as tiling pattern's content stream has a string which
         // is longer then it is allowed per specification
-        checkInTilingPattern(longString);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkInTilingPattern(longString)
+        );
+        Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -499,21 +492,22 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
     @Test
     public void longStringInType3FontTest() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.PDF_STRING_IS_TOO_LONG);
-
         PdfString longString = buildLongString();
         // An exception should be thrown as content stream of type3 font has a string which
         // is longer then it is allowed per specification
-        checkInType3Font(longString);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkInType3Font(longString)
+        );
+        Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
     public void deviceNColorspaceWithMoreThan8Components() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED);
-
-        checkColorspace(buildDeviceNColorspace(10));
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> checkColorspace(buildDeviceNColorspace(10))
+        );
+        Assert.assertEquals(PdfAConformanceException.THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED,
+                e.getMessage());
     }
 
     @Test

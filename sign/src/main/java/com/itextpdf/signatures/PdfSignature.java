@@ -60,6 +60,8 @@ import com.itextpdf.kernel.pdf.PdfString;
  */
 public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
 
+    private static final long serialVersionUID = 8367728573140319531L;
+
     /**
      * Creates new PdfSignature.
      */
@@ -166,6 +168,23 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfString getCert() {
         return getPdfObject().getAsString(PdfName.Cert);
+    }
+
+    /**
+     * Gets the /Cert entry value of this signature.
+     * /Cert entry required when SubFilter is adbe.x509.rsa_sha1. May be array or byte string.
+     *
+     * @return the signature cert value
+     */
+    public PdfObject getCertObject() {
+        PdfString certAsStr = getPdfObject().getAsString(PdfName.Cert);
+        PdfArray certAsArray = getPdfObject().getAsArray(PdfName.Cert);
+
+        if (certAsStr != null) {
+            return certAsStr;
+        } else {
+            return certAsArray;
+        }
     }
 
     /**

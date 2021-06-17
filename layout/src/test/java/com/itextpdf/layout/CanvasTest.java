@@ -62,10 +62,8 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class CanvasTest extends ExtendedITextTest {
@@ -77,9 +75,6 @@ public class CanvasTest extends ExtendedITextTest {
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN))
@@ -254,8 +249,6 @@ public class CanvasTest extends ExtendedITextTest {
     @Test
     //TODO: DEVSIX-4820 (NullPointerException on processing absolutely positioned elements in small canvas area)
     public void nestedElementWithAbsolutePositioningInCanvasTest() throws IOException, InterruptedException {
-        junitExpectedException.expect(NullPointerException.class);
-
         String testName = "nestedElementWithAbsolutePositioningInCanvas";
         String out = destinationFolder + testName + ".pdf";
         String cmp = sourceFolder + "cmp_" + testName + ".pdf";
@@ -272,8 +265,8 @@ public class CanvasTest extends ExtendedITextTest {
             divWithPosition.add(new Paragraph("Paragraph in Div with set position"));
 
             notFittingDiv.add(divWithPosition);
-            canvas.add(notFittingDiv);
-            
+
+            Assert.assertThrows(NullPointerException.class, () -> canvas.add(notFittingDiv));
             canvas.close();
         }
 

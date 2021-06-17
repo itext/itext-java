@@ -58,12 +58,9 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 import org.xml.sax.SAXException;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.FileInputStream;
@@ -74,10 +71,6 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/XfdfWriterTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/XfdfWriterTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
 
     @BeforeClass
     public static void beforeClass() {
@@ -1047,10 +1040,6 @@ public class XfdfWriterTest extends ExtendedITextTest {
 
     @Test
     public void xfdfEmptyAttributeTest() {
-
-        junitExpectedException.expect(XfdfException.class);
-        junitExpectedException.expectMessage(XfdfException.ATTRIBUTE_NAME_OR_VALUE_MISSING);
-
         XfdfObject xfdfObject = new XfdfObject();
 
         AnnotsObject annots = new AnnotsObject();
@@ -1064,8 +1053,13 @@ public class XfdfWriterTest extends ExtendedITextTest {
         String valuePresent = "value";
         String valueAbsent = null;
 
-        annot.addAttribute(new AttributeObject(nameAbsent, valuePresent));
-        annot.addAttribute(new AttributeObject(namePresent, valueAbsent));
-
+        Exception e = Assert.assertThrows(XfdfException.class,
+                () -> annot.addAttribute(new AttributeObject(nameAbsent, valuePresent))
+        );
+        Assert.assertEquals(XfdfException.ATTRIBUTE_NAME_OR_VALUE_MISSING, e.getMessage());
+        Exception e2 = Assert.assertThrows(XfdfException.class,
+                () -> annot.addAttribute(new AttributeObject(namePresent, valueAbsent))
+        );
+        Assert.assertEquals(XfdfException.ATTRIBUTE_NAME_OR_VALUE_MISSING, e2.getMessage());
     }
 }

@@ -77,6 +77,8 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     protected FontProgram fontProgram;
 
     protected static final byte[] EMPTY_BYTES = new byte[0];
+
+    @Deprecated
     protected static final double[] DEFAULT_FONT_MATRIX = {0.001, 0, 0, 0.001, 0, 0};
 
     protected Map<Integer, Glyph> notdefGlyphs = new HashMap<>();
@@ -208,6 +210,19 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public abstract void writeText(String text, PdfOutputStream stream);
 
+    /**
+     * Gets the transformation matrix that defines relation between text and glyph spaces.
+     *
+     * @return the font matrix
+     *
+     * @deprecated Use {@link FontProgram#UNITS_NORMALIZATION} constant for conversion between text and glyph space.
+     *         For now we opted to always expect that all {@link PdfFont} metrics in glyph-space
+     *         are related to text space as 1 to 1000, as it is defined for the majority of fonts. For fonts
+     *         which don't necessary follow this rule (see {@link PdfType3Font}), we perform internal normalization
+     *         of font metrics in order to adhere to this common expectation.
+     *         This method will be removed in next major release.
+     */
+    @Deprecated
     public double[] getFontMatrix() {
         return DEFAULT_FONT_MATRIX;
     }

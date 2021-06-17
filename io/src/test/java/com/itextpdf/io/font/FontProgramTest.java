@@ -43,32 +43,28 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-import com.itextpdf.io.util.MessageFormatUtil;
 
 @Category(UnitTest.class)
 public class FontProgramTest extends ExtendedITextTest {
     private static final String notExistingFont = "some-font.ttf";
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
     @Test
     public void exceptionMessageTest() throws IOException {
-        junitExpectedException.expect(java.io.IOException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(com.itextpdf.io.IOException._1NotFoundAsFileOrResource, notExistingFont));
-        FontProgramFactory.createFont(notExistingFont);
+        Exception e = Assert.assertThrows(java.io.IOException.class,
+                () -> FontProgramFactory.createFont(notExistingFont)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.IOException._1NotFoundAsFileOrResource, notExistingFont), e.getMessage());
     }
 
     @Test

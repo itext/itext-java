@@ -49,7 +49,7 @@ public final class CssTypesValidationUtils {
     /**
      * Checks whether a string contains an allowed metric unit in HTML/CSS; rad, deg and grad.
      *
-     * @param value the string that needs to be checked
+     * @param valueArgument the string that needs to be checked
      * @return boolean true if value contains an allowed angle value
      */
     public static boolean isAngleValue(final String valueArgument) {
@@ -92,7 +92,7 @@ public final class CssTypesValidationUtils {
     /**
      * Checks whether a string contains an allowed value relative to parent value.
      *
-     * @param value the string that needs to be checked
+     * @param valueArgument the string that needs to be checked
      * @return boolean true if value contains a em value
      */
     public static boolean isEmValue(final String valueArgument) {
@@ -109,7 +109,7 @@ public final class CssTypesValidationUtils {
     /**
      * Checks whether a string contains an allowed value relative to element font height.
      *
-     * @param value the string that needs to be checked
+     * @param valueArgument the string that needs to be checked
      * @return boolean true if value contains a ex value
      */
     public static boolean isExValue(final String valueArgument) {
@@ -126,7 +126,7 @@ public final class CssTypesValidationUtils {
     /**
      * Checks whether a string contains an allowed metric unit in HTML/CSS; px, in, cm, mm, pc, Q or pt.
      *
-     * @param value the string that needs to be checked
+     * @param valueArgument the string that needs to be checked
      * @return boolean true if value contains an allowed metric value
      */
     public static boolean isMetricValue(final String valueArgument) {
@@ -178,7 +178,7 @@ public final class CssTypesValidationUtils {
     /**
      * Checks whether a string contains a percentage value
      *
-     * @param value the string that needs to be checked
+     * @param valueArgument the string that needs to be checked
      * @return boolean true if value contains an allowed percentage value
      */
     public static boolean isPercentageValue(final String valueArgument) {
@@ -195,7 +195,7 @@ public final class CssTypesValidationUtils {
     /**
      * Checks whether a string contains an allowed value relative to previously set value.
      *
-     * @param value the string that needs to be checked
+     * @param valueArgument the string that needs to be checked
      * @return boolean true if value contains an allowed metric value
      */
     public static boolean isRelativeValue(final String valueArgument) {
@@ -217,7 +217,7 @@ public final class CssTypesValidationUtils {
     /**
      * Checks whether a string contains an allowed value relative to previously set root value.
      *
-     * @param value the string that needs to be checked
+     * @param valueArgument the string that needs to be checked
      * @return boolean true if value contains a rem value
      */
     public static boolean isRemValue(final String valueArgument) {

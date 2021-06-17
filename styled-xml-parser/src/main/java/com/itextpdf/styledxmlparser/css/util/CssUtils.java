@@ -53,6 +53,8 @@ import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.TokenType;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +73,8 @@ public class CssUtils {
     private static final float EPSILON = 1e-6f;
 
     private static final  Logger logger = LoggerFactory.getLogger(CssUtils.class);
+
+    private static final int QUANTITY_OF_PARAMS_WITH_FALLBACK_OR_TYPE = 2;
 
     /**
      * Creates a new {@link CssUtils} instance.
@@ -624,6 +628,45 @@ public class CssUtils {
     }
 
     /**
+     * Parses string and return attribute value.
+     *
+     * @param attrStr the string contains attr() to extract attribute value
+     * @param element the parentNode from which we extract information
+     * @return the value of attribute
+     */
+    public static String extractAttributeValue(final String attrStr, IElementNode element) {
+        String attrValue = null;
+        if (attrStr.startsWith(CommonCssConstants.ATTRIBUTE + '(')
+                && attrStr.length() > CommonCssConstants.ATTRIBUTE.length() + 2 && attrStr.endsWith(")")) {
+            String fallback = null;
+            String typeOfAttribute = null;
+            final String stringToSplit = attrStr.substring(5, attrStr.length() - 1);
+            final List<String> paramsWithFallback = splitString(stringToSplit, ',', new EscapeGroup('\"'),
+                    new EscapeGroup('\''));
+            if (paramsWithFallback.size() > QUANTITY_OF_PARAMS_WITH_FALLBACK_OR_TYPE) {
+                return null;
+            }
+            if (paramsWithFallback.size() == QUANTITY_OF_PARAMS_WITH_FALLBACK_OR_TYPE) {
+                fallback = extractFallback(paramsWithFallback.get(1));
+            }
+            final List<String> params = splitString(paramsWithFallback.get(0), ' ');
+            if (params.size() > QUANTITY_OF_PARAMS_WITH_FALLBACK_OR_TYPE) {
+                return null;
+            } else if (params.size() == QUANTITY_OF_PARAMS_WITH_FALLBACK_OR_TYPE) {
+                typeOfAttribute = extractTypeOfAttribute(params.get(1));
+                if (typeOfAttribute == null) {
+                    return null;
+                }
+            }
+            String attributeName = params.get(0);
+            if (isAttributeNameValid(attributeName)) {
+                attrValue = getAttributeValue(attributeName, typeOfAttribute, fallback, element);
+            }
+        }
+        return attrValue;
+    }
+
+    /**
      * Checks if a data is base 64 encoded.
      *
      * @param data the data
@@ -809,5 +852,43 @@ public class CssUtils {
         }
         builder.addRange(l, r);
         return true;
+    }
+
+    private static boolean isAttributeNameValid(String attributeName) {
+        return !(attributeName.contains("'") || attributeName.contains("\"") || attributeName.contains("(")
+                || attributeName.contains(")"));
+    }
+
+    private static String extractFallback(String fallbackString) {
+        String tmpString;
+        if ((fallbackString.startsWith("'") && fallbackString.endsWith("'")) || (fallbackString.startsWith("\"")
+                && fallbackString.endsWith("\""))) {
+            tmpString = fallbackString.substring(1, fallbackString.length() - 1);
+        } else {
+            tmpString = fallbackString;
+        }
+        return extractUrl(tmpString);
+    }
+
+    private static String extractTypeOfAttribute(String typeString) {
+        if (typeString.equals(CommonCssConstants.URL) || typeString.equals(CommonCssConstants.STRING)) {
+            return typeString;
+        }
+        return null;
+    }
+
+    private static String getAttributeValue(final String attributeName, final String typeOfAttribute,
+            final String fallback,
+            IElementNode elementNode) {
+        String returnString = elementNode.getAttribute(attributeName);
+        if (CommonCssConstants.URL.equals(typeOfAttribute)) {
+            returnString = returnString == null ? null : extractUrl(returnString);
+        } else {
+            returnString = returnString == null ? "" : returnString;
+        }
+        if (fallback != null && (returnString == null || returnString.isEmpty())) {
+            returnString = fallback;
+        }
+        return returnString;
     }
 }

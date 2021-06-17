@@ -60,10 +60,8 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -80,9 +78,6 @@ public class PdfPagesTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfPagesTest/";
     private static final PdfName PageNum = new PdfName("PageNum");
     private static final PdfName PageNum5 = new PdfName("PageNum");
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void setup() {
@@ -228,9 +223,10 @@ public class PdfPagesTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.removePage(page);
 
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.FlushedPageCannotBeAddedOrInserted);
-        pdfDoc.addPage(1, page);
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> pdfDoc.addPage(1, page)
+        );
+        Assert.assertEquals(PdfException.FlushedPageCannotBeAddedOrInserted, e.getMessage());
     }
 
     @Test
@@ -244,9 +240,10 @@ public class PdfPagesTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.removePage(page);
 
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.FlushedPageCannotBeAddedOrInserted);
-        pdfDoc.addPage(page);
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> pdfDoc.addPage(page)
+        );
+        Assert.assertEquals(PdfException.FlushedPageCannotBeAddedOrInserted, e.getMessage());
     }
 
     @Test
@@ -284,9 +281,10 @@ public class PdfPagesTest extends ExtendedITextTest {
             pdfDocument.addNewPage();
             pdfDocument.getPage(1).flush();
 
-            junitExpectedException.expect(PdfException.class);
-            junitExpectedException.expectMessage(PdfException.FLUSHED_PAGE_CANNOT_BE_REMOVED);
-            pdfDocument.removePage(1);
+            Exception e = Assert.assertThrows(PdfException.class,
+                    () -> pdfDocument.removePage(1)
+            );
+            Assert.assertEquals(PdfException.FLUSHED_PAGE_CANNOT_BE_REMOVED, e.getMessage());
         }
     }
 
@@ -297,9 +295,10 @@ public class PdfPagesTest extends ExtendedITextTest {
             pdfDocument.addNewPage();
             pdfDocument.getPage(1).flush();
 
-            junitExpectedException.expect(PdfException.class);
-            junitExpectedException.expectMessage(PdfException.FLUSHED_PAGE_CANNOT_BE_REMOVED);
-            pdfDocument.removePage(1);
+            Exception e = Assert.assertThrows(PdfException.class,
+                    () -> pdfDocument.removePage(1)
+            );
+            Assert.assertEquals(PdfException.FLUSHED_PAGE_CANNOT_BE_REMOVED, e.getMessage());
         }
     }
 
@@ -555,10 +554,8 @@ public class PdfPagesTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(reader);
         PdfPage pageOne = pdfDoc.getPage(1);
 
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException
-                .expectMessage(MessageFormatUtil.format(PdfException.WRONGMEDIABOXSIZETOOFEWARGUMENTS, 3));
-        pageOne.getPageSize();
+        Exception e = Assert.assertThrows(PdfException.class, () -> pageOne.getPageSize());
+        Assert.assertEquals(MessageFormatUtil.format(PdfException.WRONGMEDIABOXSIZETOOFEWARGUMENTS, 3), e.getMessage());
     }
 
     @Test

@@ -58,10 +58,8 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 /**
  * @author Michael Demey
@@ -70,9 +68,6 @@ import org.junit.rules.ExpectedException;
 public class PdfDocumentIdTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentTestID/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfDocumentTestID/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -386,9 +381,8 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(sourceFolder + "pdfWithNoId.pdf")
                 .setStrictnessLevel(StrictnessLevel.CONSERVATIVE)) {
 
-            junitExpectedException.expect(PdfException.class);
-            junitExpectedException.expectMessage(LogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED);
-            new PdfDocument(reader);
+            Exception e = Assert.assertThrows(PdfException.class, () -> new PdfDocument(reader));
+            Assert.assertEquals(LogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED, e.getMessage());
         }
     }
 

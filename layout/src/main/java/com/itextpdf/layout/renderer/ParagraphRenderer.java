@@ -67,6 +67,7 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.RenderingMode;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
+
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -501,10 +502,19 @@ public class ParagraphRenderer extends BlockRenderer {
     }
 
     /**
-     * {@inheritDoc}
+     * Gets a new instance of this class to be used as a next renderer, after this renderer is used, if
+     * {@link #layout(LayoutContext)} is called more than once.
+     *
+     * <p>
+     * If a renderer overflows to the next area, iText uses this method to create a renderer
+     * for the overflow part. So if one wants to extend {@link ParagraphRenderer}, one should override
+     * this method: otherwise the default method will be used and thus the default rather than the custom
+     * renderer will be created.
+     * @return new renderer instance
      */
     @Override
     public IRenderer getNextRenderer() {
+        logWarningIfGetNextRendererNotOverridden(ParagraphRenderer.class, this.getClass());
         return new ParagraphRenderer((Paragraph) modelElement);
     }
 

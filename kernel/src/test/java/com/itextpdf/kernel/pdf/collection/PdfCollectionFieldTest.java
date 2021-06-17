@@ -49,20 +49,18 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.canvas.parser.clipper.ClipperException;
+import com.itextpdf.kernel.pdf.canvas.parser.clipper.ClipperExceptionConstant;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfCollectionFieldTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     private static final PdfName[] ALLOWED_PDF_NAMES = {
             PdfName.D,
@@ -212,15 +210,13 @@ public class PdfCollectionFieldTest extends ExtendedITextTest {
         final String stringValue = "string value";
         final String fieldName = "fieldName";
 
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfException._1IsNotAnAcceptableValueForTheField2,
-                stringValue, fieldName));
-
         PdfCollectionField field = new PdfCollectionField(fieldName, PdfCollectionField.FILENAME);
 
         // this line will throw an exception as getValue() method is not
         // supported for subType which differs from S, N and D.
-        field.getValue(stringValue);
+        Exception e = Assert.assertThrows(PdfException.class, () -> field.getValue(stringValue));
+        Assert.assertEquals(MessageFormatUtil.format(PdfException._1IsNotAnAcceptableValueForTheField2,
+                stringValue, fieldName), e.getMessage());
     }
 
     @Test

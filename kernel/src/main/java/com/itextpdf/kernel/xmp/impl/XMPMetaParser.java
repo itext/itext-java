@@ -30,6 +30,7 @@
 
 package com.itextpdf.kernel.xmp.impl;
 
+import com.itextpdf.kernel.utils.XmlProcessorCreator;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPError;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -42,17 +43,11 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
-import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -68,8 +63,6 @@ public class XMPMetaParser
 {
 	/**  */
 	private static final Object XMP_RDF = new Object();
-	/** the DOM Parser Factory, options are set */ 
-	private static DocumentBuilderFactory factory = createDocumentBuilderFactory();
 
 	/**
 	 * Hidden constructor, initialises the SAX parser handler.
@@ -286,26 +279,14 @@ public class XMPMetaParser
 	 * @return Returns an XML DOM-Document.
 	 * @throws XMPException Wraps parsing and I/O-exceptions into an XMPException.
 	 */
-	private static Document parseInputSource(InputSource source) throws XMPException
-	{
-		try
-		{
-			DocumentBuilder builder = factory.newDocumentBuilder();
+	private static Document parseInputSource(InputSource source) throws XMPException {
+		try {
+			DocumentBuilder builder = XmlProcessorCreator.createSafeDocumentBuilder(true, true);
 			builder.setErrorHandler(null);
-			builder.setEntityResolver(new SafeEmptyEntityResolver());
 			return builder.parse(source);
-		}
-		catch (SAXException e)
-		{
-			throw new XMPException("XML parsing failure", XMPError.BADXML, e);
-		}
-		catch (ParserConfigurationException e)
-		{
-			throw new XMPException("XML Parser not correctly configured",
-					XMPError.UNKNOWN, e);
-		}
-		catch (IOException e)
-		{
+		} catch (SAXException e) {
+			throw new XMPException(e.getMessage(), XMPError.BADXML, e);
+		} catch (IOException e) {
 			throw new XMPException("Error reading the XML-file", XMPError.BADSTREAM, e);
 		}
 	}
@@ -405,37 +386,5 @@ public class XMPMetaParser
 		// no appropriate node has been found
 		return null;
 		//     is extracted here in the C++ Toolkit		
-	}
-
-	
-	/**
-	 * @return Creates, configures and returnes the document builder factory for
-	 *         the Metadata Parser.
-	 */
-	private static DocumentBuilderFactory createDocumentBuilderFactory()
-	{
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true);
-		factory.setIgnoringComments(true);
-		
-		try
-		{
-			// honor System parsing limits, e.g.
-			// System.setProperty("entityExpansionLimit", "10");
-			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-		}
-		catch (Exception e)
-		{
-			// Ignore IllegalArgumentException and ParserConfigurationException
-			// in case the configured XML-Parser does not implement the feature.
-		}
-		return factory;
-	}
-
-	// Prevents XXE attacks
-	private static class SafeEmptyEntityResolver implements EntityResolver {
-		public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-			return new InputSource(new StringReader(""));
-		}
 	}
 }

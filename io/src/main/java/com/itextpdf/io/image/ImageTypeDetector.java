@@ -49,7 +49,8 @@ public final class ImageTypeDetector {
     }
 
     /**
-     * Detect image type by magic bytes given the byte array source
+     * Detect image type by magic bytes given the byte array source.
+     *
      * @param source image bytes
      * @return detected image type, see{@link ImageType}. Returns {@link ImageType#NONE} if image type is unknown
      */
@@ -59,12 +60,24 @@ public final class ImageTypeDetector {
     }
 
     /**
-     * Detect image type by magic bytes given the source URL
+     * Detect image type by magic bytes given the source URL.
+     *
      * @param source image URL
      * @return detected image type, see{@link ImageType}. Returns {@link ImageType#NONE} if image type is unknown
      */
     public static ImageType detectImageType(URL source) {
         byte[] header = readImageType(source);
+        return detectImageTypeByHeader(header);
+    }
+
+    /**
+     * Detect image type by magic bytes given the input stream.
+     *
+     * @param stream image stream
+     * @return detected image type, see{@link ImageType}. Returns {@link ImageType#NONE} if image type is unknown
+     */
+    public static ImageType detectImageType(InputStream stream) {
+        byte[] header = readImageType(stream);
         return detectImageTypeByHeader(header);
     }
 
@@ -99,6 +112,14 @@ public final class ImageTypeDetector {
 
     private static byte[] readImageType(URL source) {
         try (InputStream stream = UrlUtil.openStream(source)) {
+            return readImageType(stream);
+        } catch (java.io.IOException e) {
+            throw new IOException(IOException.IoException, e);
+        }
+    }
+
+    private static byte[] readImageType(InputStream stream) {
+        try {
             byte[] bytes = new byte[8];
             stream.read(bytes);
             return bytes;

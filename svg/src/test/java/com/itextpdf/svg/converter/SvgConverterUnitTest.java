@@ -68,6 +68,7 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -79,10 +80,8 @@ import java.util.Map;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class SvgConverterUnitTest extends ExtendedITextTest {
@@ -91,10 +90,6 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
     private PdfDocument doc;
     private final String content = "<svg width=\"10\" height=\"10\"/>";
     private InputStream is;
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
 
     @Before
     public void setup() {
@@ -322,10 +317,10 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
 
     @Test
     public void checkNullTest(){
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.PARAMETER_CANNOT_BE_NULL);
-        SvgConverter.drawOnDocument("test",null,1);
-
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> SvgConverter.drawOnDocument("test",null,1)
+        );
+        Assert.assertEquals(SvgLogMessageConstant.PARAMETER_CANNOT_BE_NULL, e.getMessage());
     }
 
     @Test

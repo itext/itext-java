@@ -78,7 +78,7 @@ public final class Version {
      * This String contains the version number of this iText release.
      * For debugging purposes, we request you NOT to change this constant.
      */
-    private static final String release = "7.1.15";
+    private static final String release = "7.1.16";
     /**
      * This String contains the iText version as shown in the producer line.
      * iText is a product developed by iText Group NV.
@@ -109,27 +109,31 @@ public final class Version {
 
     /**
      * Gets an instance of the iText version that is currently used.
+     *
      * <p>
      * Note that iText Group requests that you retain the iText producer line
      * in every PDF that is created or manipulated using iText.
      * @return an instance of {@link Version}.
      */
     public static Version getInstance() {
-        synchronized (staticLock) {
-            if (version != null) {
-                try {
-                    licenseScheduledCheck();
-                } catch (Exception e) {
-                    // If any exception occurs during scheduled check of core license,
-                    // then it means that license is not valid yet, so roll back to AGPL.
-                    // The key value is null as it is similar to case
-                    // when an exception has been thrown during initial license loading
-                    atomicSetVersion(initAGPLVersion(e, null));
-                }
-                return version;
+        Version localVersion = version;
+        // It's crucial to work with 'localVersion' local variable, because 'version' field can be
+        // changed by some other thread. We also don't want to block Version class lock when calling
+        // for scheduled check in order to avoid synchronization issues with parallel loading license.
+        if (localVersion != null) {
+            try {
+                licenseScheduledCheck(localVersion);
+                return localVersion;
+            } catch (Exception e) {
+                // If any exception occurs during scheduled check of core license it means that
+                // license is not valid, in this particular case we want to reset to AGPL Version,
+                // however "normal" initialization logic will not switch to AGPL unless license is
+                // unloaded.
+
+                // not saving this AGPL version in order to avoid race condition with loaded proper license
+                return initAGPLVersion(e, null);
             }
         }
-        Version localVersion;
         String key = null;
         try {
             String coreVersion = release;
@@ -386,8 +390,8 @@ public final class Version {
         }
     }
 
-    private static void licenseScheduledCheck() {
-        if (version.isAGPL()) {
+    private static void licenseScheduledCheck(Version localVersion) {
+        if (localVersion.isAGPL()) {
             return;
         }
 

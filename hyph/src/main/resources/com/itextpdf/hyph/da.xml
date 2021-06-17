@@ -15,7 +15,6 @@
   limitations under the License.
 -->
 <!-- $Id: da.xml,v 1.4 2004/03/05 13:33:01 jeremias Exp $ -->
-<!DOCTYPE hyphenation-info SYSTEM "hyphenation.dtd">
 <!-- 
 This file contains the hyphenation patterns for danish.
 Adapted from dkhyph.tex, dkcommon.tex and dkspecial.tex

@@ -65,18 +65,13 @@ import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfCanvasXObjectTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasXObjectTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/canvas/PdfCanvasXObjectTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -154,11 +149,14 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
     @Test
     @Category(UnitTest.class)
     public void addCustomXObjectAtTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage("PdfFormXObject or PdfImageXObject expected.");
         PdfXObject pdfXObject = new CustomPdfXObject(new PdfStream());
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        new PdfCanvas(document.addNewPage()).addXObjectAt(pdfXObject, 0, 0);
+
+        PdfCanvas canvas = new PdfCanvas(document.addNewPage());
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> canvas.addXObjectAt(pdfXObject, 0, 0)
+        );
+        Assert.assertEquals("PdfFormXObject or PdfImageXObject expected.", e.getMessage());
     }
 
     // addXObjectFittedIntoRectangle(PdfXObject, Rectangle) test block (use PdfXObject#calculateProportionallyFitRectangleWithWidth)
@@ -448,11 +446,14 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
     @Test
     @Category(UnitTest.class)
     public void addCustomXObjectFittedIntoRectangleTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage("PdfFormXObject or PdfImageXObject expected.");
         PdfXObject pdfXObject = new CustomPdfXObject(new PdfStream());
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        new PdfCanvas(document.addNewPage()).addXObjectFittedIntoRectangle(pdfXObject, new Rectangle(0, 0, 0, 0));
+
+        PdfCanvas pdfCanvas = new PdfCanvas(document.addNewPage());
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> pdfCanvas.addXObjectFittedIntoRectangle(pdfXObject, new Rectangle(0, 0, 0, 0))
+        );
+        Assert.assertEquals("PdfFormXObject or PdfImageXObject expected.", e.getMessage());
     }
 
     // addXObject(PdfXObject) test block
@@ -571,11 +572,14 @@ public class PdfCanvasXObjectTest extends ExtendedITextTest {
     @Test
     @Category(UnitTest.class)
     public void addCustomXObjectTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage("PdfFormXObject or PdfImageXObject expected.");
         PdfXObject pdfXObject = new CustomPdfXObject(new PdfStream());
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        new PdfCanvas(document.addNewPage()).addXObject(pdfXObject);
+
+        PdfCanvas canvas = new PdfCanvas(document.addNewPage());
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> canvas.addXObject(pdfXObject)
+        );
+        Assert.assertEquals("PdfFormXObject or PdfImageXObject expected.", e.getMessage());
     }
 
     private static class CustomPdfXObject extends PdfXObject {

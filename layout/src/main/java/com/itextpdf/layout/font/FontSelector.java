@@ -42,6 +42,8 @@
  */
 package com.itextpdf.layout.font;
 
+import com.itextpdf.io.font.FontProgramDescriptor;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,6 +59,8 @@ public class FontSelector {
 
     private static final int EXPECTED_FONT_IS_BOLD_AWARD = 5;
     private static final int EXPECTED_FONT_IS_NOT_BOLD_AWARD = 3;
+    private static final int EXPECTED_FONT_WEIGHT_IS_EQUALS_AWARD = 1;
+    private static final int EXPECTED_FONT_WEIGHT_IS_FAR_AWARD = 1;
     private static final int EXPECTED_FONT_IS_ITALIC_AWARD = 5;
     private static final int EXPECTED_FONT_IS_NOT_ITALIC_AWARD = 3;
     private static final int EXPECTED_FONT_IS_MONOSPACED_AWARD = 5;
@@ -171,9 +175,10 @@ public class FontSelector {
          */
         // TODO DEVSIX-2120 Update javadoc if necessary
         private static int characteristicsSimilarity(String fontFamily, FontCharacteristics fc, FontInfo fontInfo, boolean isLastFontFamilyToBeProcessed) {
-            boolean isFontBold = fontInfo.getDescriptor().isBold() || fontInfo.getDescriptor().getFontWeight() > 500;
-            boolean isFontItalic = fontInfo.getDescriptor().isItalic() || fontInfo.getDescriptor().getItalicAngle() < 0;
-            boolean isFontMonospace = fontInfo.getDescriptor().isMonospace();
+            FontProgramDescriptor fontDescriptor = fontInfo.getDescriptor();
+            boolean isFontBold = fontDescriptor.isBold() || fontDescriptor.getFontWeight() > 500;
+            boolean isFontItalic = fontDescriptor.isItalic() || fontDescriptor.getItalicAngle() < 0;
+            boolean isFontMonospace = fontDescriptor.isMonospace();
             int score = 0;
 
             // if font-family is monospace, serif or sans-serif, actual font's name shouldn't be checked
@@ -197,9 +202,9 @@ public class FontSelector {
                 // if alias is set, fontInfo's descriptor should not be checked
                 if (!"".equals(fontFamily)
                         && (null == fontInfo.getAlias()
-                                && null != fontInfo.getDescriptor().getFamilyNameLowerCase()
-                                && fontInfo.getDescriptor().getFamilyNameLowerCase().equals(fontFamily)
-                            || (null != fontInfo.getAlias() && fontInfo.getAlias().toLowerCase().equals(fontFamily)))) {
+                                && null != fontDescriptor.getFamilyNameLowerCase()
+                                && fontDescriptor.getFamilyNameLowerCase().equals(fontFamily)
+                        || (null != fontInfo.getAlias() && fontInfo.getAlias().toLowerCase().equals(fontFamily)))) {
                     score += FONT_FAMILY_EQUALS_AWARD;
                 } else {
                     if (!isLastFontFamilyToBeProcessed) {
@@ -209,6 +214,13 @@ public class FontSelector {
             }
 
             // calculate style characteristics
+            int maxWeight = Math.max(fontDescriptor.getFontWeight(), fc.getFontWeight());
+            int minWeight = Math.min(fontDescriptor.getFontWeight(), fc.getFontWeight());
+            if (maxWeight == minWeight) {
+                score += EXPECTED_FONT_WEIGHT_IS_EQUALS_AWARD;
+            } else if (maxWeight - minWeight >= 300) {
+                score -= EXPECTED_FONT_WEIGHT_IS_FAR_AWARD;
+            }
             if (fc.isBold()) {
                 if (isFontBold) {
                     score += EXPECTED_FONT_IS_BOLD_AWARD;

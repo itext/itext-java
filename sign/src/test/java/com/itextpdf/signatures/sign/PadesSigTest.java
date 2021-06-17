@@ -54,6 +54,7 @@ import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.SignaturePolicyInfo;
 import com.itextpdf.signatures.SignatureUtil;
+import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
@@ -96,6 +97,8 @@ public class PadesSigTest extends ExtendedITextTest {
         signApproval(certsSrc + "signCertRsa01.p12", destinationFolder + "padesRsaSigTest01.pdf");
 
         basicCheckSignedDoc(destinationFolder + "padesRsaSigTest01.pdf", "Signature1");
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
+                + "padesRsaSigTest01.pdf", sourceFolder + "cmp_padesRsaSigTest01.pdf"));
     }
 
     @Test
@@ -103,6 +106,8 @@ public class PadesSigTest extends ExtendedITextTest {
         signApproval(certsSrc + "signCertRsaWithChain.p12", destinationFolder + "padesRsaSigTestWithChain01.pdf");
 
         basicCheckSignedDoc(destinationFolder + "padesRsaSigTestWithChain01.pdf", "Signature1");
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
+                + "padesRsaSigTestWithChain01.pdf", sourceFolder + "cmp_padesRsaSigTestWithChain01.pdf"));
     }
 
     @Test
@@ -117,6 +122,8 @@ public class PadesSigTest extends ExtendedITextTest {
                 destinationFolder + "padesEccSigTest01.pdf");
 
         basicCheckSignedDoc(destinationFolder + "padesEccSigTest01.pdf", "Signature1");
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
+                + "padesEccSigTest01.pdf", sourceFolder + "cmp_padesEccSigTest01.pdf"));
     }
 
     @Test
@@ -135,6 +142,8 @@ public class PadesSigTest extends ExtendedITextTest {
         signApproval(certsSrc + "signCertRsa01.p12", destinationFolder + "padesEpesProfileTest01.pdf", sigPolicyIdentifier);
 
         basicCheckSignedDoc(destinationFolder + "padesEpesProfileTest01.pdf", "Signature1");
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder +
+                "padesEpesProfileTest01.pdf", sourceFolder + "cmp_padesEpesProfileTest01.pdf"));
     }
 
     @Test
@@ -148,6 +157,8 @@ public class PadesSigTest extends ExtendedITextTest {
         signApproval(certsSrc + "signCertRsa01.p12", signedFileName, spi);
 
         basicCheckSignedDoc(signedFileName, "Signature1");
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(signedFileName,
+                sourceFolder + "cmp_signaturePolicyInfoUnavailableUrl_signed.pdf"));
     }
 
     private void signApproval(String signCertFileName, String outFileName) throws IOException, GeneralSecurityException {

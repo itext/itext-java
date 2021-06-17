@@ -52,17 +52,12 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
     private static final float DELTA = 0;
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void getOffsetPercentageValueTest() {
@@ -296,8 +291,9 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
     public void doDrawTest() {
         StopSvgNodeRenderer renderer = new StopSvgNodeRenderer();
 
-        junitExpectedException.expect(UnsupportedOperationException.class);
-        junitExpectedException.expectMessage("Can't draw current SvgNodeRenderer.");
-        renderer.doDraw(new SvgDrawContext(null, null));
+        Exception e = Assert.assertThrows(UnsupportedOperationException.class,
+                () -> renderer.doDraw(new SvgDrawContext(null, null))
+        );
+        Assert.assertEquals("Can't draw current SvgNodeRenderer.", e.getMessage());
     }
 }

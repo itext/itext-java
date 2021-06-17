@@ -204,6 +204,10 @@ public class Document extends RootElement<Document> {
             throw new IllegalStateException("Operation not supported with immediate flush");
         }
 
+        if (rootRenderer instanceof DocumentRenderer) {
+            ((DocumentRenderer) rootRenderer).getTargetCounterHandler().prepareHandlerToRelayout();
+        }
+
         IRenderer nextRelayoutRenderer = rootRenderer != null ? rootRenderer.getNextRenderer() : null;
         if (nextRelayoutRenderer == null || !(nextRelayoutRenderer instanceof RootRenderer)) {
             nextRelayoutRenderer = new DocumentRenderer(this, immediateFlush);

@@ -47,21 +47,15 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class RAFRandomAccessSourceTest extends ExtendedITextTest {
     private final static String SOURCE_FILE = "./src/test/resources/com/itextpdf/io/source/RAF.txt";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     private final byte[] content = "Hello, world!".getBytes();
 

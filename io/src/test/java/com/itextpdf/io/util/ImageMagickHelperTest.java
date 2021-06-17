@@ -45,26 +45,21 @@ package com.itextpdf.io.util;
 import com.itextpdf.io.IoExceptionMessage;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
-
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class ImageMagickHelperTest extends ExtendedITextTest {
-    private final static String sourceFolder = "./src/test/resources/com/itextpdf/io/util/ImageMagickHelperTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/io/ImageMagickHelperTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
+    private final static String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/util/ImageMagickHelperTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/io/ImageMagickHelperTest/";
 
     @Before
     public void setUp() {
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
@@ -87,9 +82,9 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
 
     @Test
     public void imageMagickEnvVarIsNull() throws IOException, InterruptedException {
-        String inputImage = sourceFolder + "image.png";
-        String cmpImage = sourceFolder + "cmp_image.png";
-        String diff = destinationFolder + "diff.png";
+        String inputImage = SOURCE_FOLDER + "image.png";
+        String cmpImage = SOURCE_FOLDER + "cmp_image.png";
+        String diff = DESTINATION_FOLDER + "diff.png";
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper(null);
         boolean result = imageMagickHelper.runImageMagickImageCompare(inputImage, cmpImage, diff);
@@ -100,17 +95,17 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
 
     @Test
     public void imageMagickEnvVarIsIncorrect() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(IoExceptionMessage.COMPARE_COMMAND_SPECIFIED_INCORRECTLY);
-
-        ImageMagickHelper imageMagickHelper = new ImageMagickHelper("-");
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> new ImageMagickHelper("-")
+        );
+        Assert.assertEquals(IoExceptionMessage.COMPARE_COMMAND_SPECIFIED_INCORRECTLY, e.getMessage());
     }
 
     @Test
     public void runImageMagickForEqualImages() throws IOException, InterruptedException {
-        String inputImage = sourceFolder + "image.png";
-        String cmpImage = sourceFolder + "cmp_image.png";
-        String diff = destinationFolder + "diff_equalImages.png";
+        String inputImage = SOURCE_FOLDER + "image.png";
+        String cmpImage = SOURCE_FOLDER + "cmp_image.png";
+        String diff = DESTINATION_FOLDER + "diff_equalImages.png";
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
         boolean result = imageMagickHelper.runImageMagickImageCompare(inputImage, cmpImage, diff);
@@ -121,9 +116,9 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
 
     @Test
     public void runImageMagickForEqualImagesWithFuzzParam() throws IOException, InterruptedException {
-        String inputImage = sourceFolder + "image.png";
-        String cmpImage = sourceFolder + "cmp_image.png";
-        String diff = destinationFolder + "diff_equalImagesFuzzParam.png";
+        String inputImage = SOURCE_FOLDER + "image.png";
+        String cmpImage = SOURCE_FOLDER + "cmp_image.png";
+        String diff = DESTINATION_FOLDER + "diff_equalImagesFuzzParam.png";
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
         boolean result = imageMagickHelper.runImageMagickImageCompare(inputImage, cmpImage, diff, "0.5");
@@ -134,9 +129,9 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
 
     @Test
     public void runImageMagickForDifferentImages() throws IOException, InterruptedException {
-        String inputImage = sourceFolder + "Im1_1.jpg";
-        String cmpImage = sourceFolder + "cmp_Im1_1.jpg";
-        String diff = destinationFolder + "diff_differentImages.png";
+        String inputImage = SOURCE_FOLDER + "Im1_1.jpg";
+        String cmpImage = SOURCE_FOLDER + "cmp_Im1_1.jpg";
+        String diff = DESTINATION_FOLDER + "diff_differentImages.png";
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
         boolean result = imageMagickHelper.runImageMagickImageCompare(inputImage, cmpImage, diff);
@@ -147,9 +142,9 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
 
     @Test
     public void runImageMagickForDifferentImagesWithFuzzParamNotEqual() throws IOException, InterruptedException {
-        String inputImage = sourceFolder + "Im1_1.jpg";
-        String cmpImage = sourceFolder + "cmp_Im1_1.jpg";
-        String diff = destinationFolder + "diff_differentImagesFuzzNotEnough.png";
+        String inputImage = SOURCE_FOLDER + "Im1_1.jpg";
+        String cmpImage = SOURCE_FOLDER + "cmp_Im1_1.jpg";
+        String diff = DESTINATION_FOLDER + "diff_differentImagesFuzzNotEnough.png";
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
         boolean result = imageMagickHelper.runImageMagickImageCompare(inputImage, cmpImage, diff, "0.1");
@@ -160,12 +155,12 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
 
     @Test
     public void runImageMagickForDifferentImagesWithFuzzParamEqual() throws IOException, InterruptedException {
-        String inputImage = sourceFolder + "Im1_1.jpg";
-        String cmpImage = sourceFolder + "cmp_Im1_1.jpg";
-        String diff = destinationFolder + "diff_differentImagesFuzzEnough.png";
+        String inputImage = SOURCE_FOLDER + "Im1_1.jpg";
+        String cmpImage = SOURCE_FOLDER + "cmp_Im1_1.jpg";
+        String diff = DESTINATION_FOLDER + "diff_differentImagesFuzzEnough.png";
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
-        boolean result = imageMagickHelper.runImageMagickImageCompare(inputImage, cmpImage, diff, "1.2");
+        boolean result = imageMagickHelper.runImageMagickImageCompare(inputImage, cmpImage, diff, "2.1");
 
         Assert.assertTrue(result);
         Assert.assertTrue(FileUtil.fileExists(diff));

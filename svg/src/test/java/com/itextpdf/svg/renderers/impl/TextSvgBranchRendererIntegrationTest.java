@@ -49,17 +49,13 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/TextSvgBranchRendererIntegrationTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/TextSvgBranchRendererIntegrationTest/";
@@ -158,8 +154,9 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void textAbsolutePositionInvalidXTest() throws IOException, InterruptedException {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-invalidX");
+        Assert.assertThrows(StyledXMLParserException.class,
+                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-invalidX")
+        );
     }
 
     //Y
@@ -180,8 +177,9 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void textAbsolutePositionInvalidYTest() throws IOException, InterruptedException {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-invalidY");
+        Assert.assertThrows(StyledXMLParserException.class,
+                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-absolutePosition-invalidY")
+        );
     }
 
     //Relative move
@@ -203,8 +201,9 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void textRelativeMoveInvalidXTest() throws IOException, InterruptedException {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidX");
+        Assert.assertThrows(StyledXMLParserException.class,
+                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidX")
+        );
     }
 
     //Y
@@ -225,8 +224,9 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void textRelativeMoveInvalidYTest() throws IOException, InterruptedException {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidY");
+        Assert.assertThrows(StyledXMLParserException.class,
+                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidY")
+        );
     }
 
     @Test

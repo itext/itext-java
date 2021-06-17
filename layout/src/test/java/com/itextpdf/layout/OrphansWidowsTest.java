@@ -559,6 +559,11 @@ public class OrphansWidowsTest extends ExtendedITextTest {
         public CustomParagraphRenderer(CustomParagraph modelElement) {
             super(modelElement);
         }
+
+        @Override
+        public IRenderer getNextRenderer() {
+            return new CustomParagraphRenderer((CustomParagraph) this.modelElement);
+        }
     }
 
     private static class CustomParagraph extends Paragraph {

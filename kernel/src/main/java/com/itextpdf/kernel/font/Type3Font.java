@@ -147,7 +147,7 @@ public class Type3Font extends FontProgram {
      */
     @Override
     protected void setFontName(String fontName) {
-        //This dummy override allows PdfType3Font to set font name because of different modules.
+        // This dummy override allows PdfType3Font to use setter from different module.
         super.setFontName(fontName);
     }
 
@@ -158,7 +158,7 @@ public class Type3Font extends FontProgram {
      */
     @Override
     protected void setFontFamily(String fontFamily) {
-        //This dummy override allows PdfType3Font to set font name because of different modules.
+        // This dummy override allows PdfType3Font to use setter from different module.
         super.setFontFamily(fontFamily);
     }
 
@@ -169,7 +169,7 @@ public class Type3Font extends FontProgram {
      */
     @Override
     protected void setFontWeight(int fontWeight) {
-        //This dummy override allows PdfType3Font to set font name because of different modules.
+        // This dummy override allows PdfType3Font to use setter from different module.
         super.setFontWeight(fontWeight);
     }
 
@@ -180,21 +180,44 @@ public class Type3Font extends FontProgram {
      */
     @Override
     protected void setFontStretch(String fontWidth) {
-        //This dummy override allows PdfType3Font to set font name because of different modules.
+        // This dummy override allows PdfType3Font to use setter from different module.
         super.setFontStretch(fontWidth);
     }
 
     /**
-     * Sets the PostScript italic angel.
-     * <p>
-     * Italic angle in counter-clockwise degrees from the vertical. Zero for upright text, negative for text that leans to the right (forward).
-     *
-     * @param italicAngle in counter-clockwise degrees from the vertical
+     * {@inheritDoc}
      */
-    @Override   //This dummy override allows PdfType3Font to set the PostScript italicAngel because of different modules.
+    @Override
+    protected void setCapHeight(int capHeight) {
+        // This dummy override allows PdfType3Font to use setter from different module.
+        super.setCapHeight(capHeight);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     protected void setItalicAngle(int italicAngle) {
-        //This dummy override allows PdfType3Font to set font name because of different modules.
+        // This dummy override allows PdfType3Font to use setter from different module.
         super.setItalicAngle(italicAngle);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void setTypoAscender(int ascender) {
+        // This dummy override allows PdfType3Font to use setter from different module.
+        super.setTypoAscender(ascender);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void setTypoDescender(int descender) {
+        // This dummy override allows PdfType3Font to use setter from different module.
+        super.setTypoDescender(descender);
     }
 
     /**

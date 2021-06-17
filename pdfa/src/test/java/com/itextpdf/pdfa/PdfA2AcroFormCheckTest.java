@@ -53,12 +53,11 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -77,9 +76,6 @@ public class PdfA2AcroFormCheckTest extends ExtendedITextTest {
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void acroFormCheck01() throws FileNotFoundException {
@@ -131,9 +127,6 @@ public class PdfA2AcroFormCheckTest extends ExtendedITextTest {
 
     @Test
     public void acroFormCheck04() throws FileNotFoundException {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.THE_INTERACTIVE_FORM_DICTIONARY_SHALL_NOT_CONTAIN_THE_XFA_KEY);
-
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -142,7 +135,8 @@ public class PdfA2AcroFormCheckTest extends ExtendedITextTest {
         acroForm.put(PdfName.XFA, new PdfArray());
         doc.getCatalog().put(PdfName.AcroForm, acroForm);
 
-        doc.close();
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assert.assertEquals(PdfAConformanceException.THE_INTERACTIVE_FORM_DICTIONARY_SHALL_NOT_CONTAIN_THE_XFA_KEY, e.getMessage());
     }
 
     private void compareResult(String outPdf, String cmpPdf) throws IOException, InterruptedException {

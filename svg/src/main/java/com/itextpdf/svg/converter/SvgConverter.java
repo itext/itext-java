@@ -546,39 +546,40 @@ public final class SvgConverter {
         if (writerProps == null) {
             writerProps = new WriterProperties();
         }
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(pdfDest, writerProps));
-        // Process
-        ISvgProcessorResult processorResult = process(parse(svgStream, props), props);
+        try (PdfWriter writer = new PdfWriter(pdfDest, writerProps);
+                PdfDocument pdfDocument = new PdfDocument(writer)) {
+            // Process
+            ISvgProcessorResult processorResult = process(parse(svgStream, props), props);
 
-        ResourceResolver resourceResolver = SvgConverter.getResourceResolver(processorResult, props);
-        SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider());
-        if (processorResult instanceof SvgProcessorResult) {
-            drawContext.setCssContext(((SvgProcessorResult) processorResult).getContext().getCssContext());
+            ResourceResolver resourceResolver = SvgConverter.getResourceResolver(processorResult, props);
+            SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider());
+            if (processorResult instanceof SvgProcessorResult) {
+                drawContext.setCssContext(((SvgProcessorResult) processorResult).getContext().getCssContext());
+            }
+
+            drawContext.addNamedObjects(processorResult.getNamedObjects());
+            // Add temp fonts
+            drawContext.setTempFonts(processorResult.getTempFonts());
+
+            ISvgNodeRenderer topSvgRenderer = processorResult.getRootRenderer();
+            // Extract topmost dimensions
+            checkNull(topSvgRenderer);
+            checkNull(pdfDocument);
+            float width, height;
+
+            float[] wh = extractWidthAndHeight(topSvgRenderer);
+            width = wh[0];
+            height = wh[1];
+
+            // Adjust pagesize and create new page
+            pdfDocument.setDefaultPageSize(new PageSize(width, height));
+            PdfPage page = pdfDocument.addNewPage();
+            PdfCanvas pageCanvas = new PdfCanvas(page);
+            // Add to the first page
+            PdfFormXObject xObject = convertToXObject(topSvgRenderer, pdfDocument, drawContext);
+            // Draw
+            draw(xObject, pageCanvas);
         }
-
-        drawContext.addNamedObjects(processorResult.getNamedObjects());
-        // Add temp fonts
-        drawContext.setTempFonts(processorResult.getTempFonts());
-
-        ISvgNodeRenderer topSvgRenderer = processorResult.getRootRenderer();
-        // Extract topmost dimensions
-        checkNull(topSvgRenderer);
-        checkNull(pdfDocument);
-        float width, height;
-
-        float[] wh = extractWidthAndHeight(topSvgRenderer);
-        width = wh[0];
-        height = wh[1];
-
-        // Adjust pagesize and create new page
-        pdfDocument.setDefaultPageSize(new PageSize(width, height));
-        PdfPage page = pdfDocument.addNewPage();
-        PdfCanvas pageCanvas = new PdfCanvas(page);
-        // Add to the first page
-        PdfFormXObject xObject = convertToXObject(topSvgRenderer, pdfDocument, drawContext);
-        // Draw
-        draw(xObject, pageCanvas);
-        pdfDocument.close();
     }
 
     /**

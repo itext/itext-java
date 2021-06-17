@@ -106,8 +106,20 @@ public class TabRenderer extends AbstractRenderer {
         }
     }
 
+    /**
+     * Gets a new instance of this class to be used as a next renderer, after this renderer is used, if
+     * {@link #layout(LayoutContext)} is called more than once.
+     *
+     * <p>
+     * If a renderer overflows to the next area, iText uses this method to create a renderer
+     * for the overflow part. So if one wants to extend {@link TabRenderer}, one should override
+     * this method: otherwise the default method will be used and thus the default rather than the custom
+     * renderer will be created.
+     * @return new renderer instance
+     */
     @Override
     public IRenderer getNextRenderer() {
+        logWarningIfGetNextRendererNotOverridden(TabRenderer.class, this.getClass());
         return new TabRenderer((Tab) modelElement);
     }
 }

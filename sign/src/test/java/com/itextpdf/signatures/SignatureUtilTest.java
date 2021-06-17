@@ -42,11 +42,16 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.security.Security;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -57,6 +62,11 @@ import java.util.List;
 public class SignatureUtilTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/SignatureUtilTest/";
+
+    @BeforeClass
+    public static void before() {
+        Security.addProvider(new BouncyCastleProvider());
+    }
 
     @Test
     public void getSignaturesTest01() throws IOException {
@@ -167,5 +177,125 @@ public class SignatureUtilTest extends ExtendedITextTest {
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
         Assert.assertTrue(signatureUtil.signatureCoversWholeDocument("Signature1"));
+    }
+
+    @Test
+    public void emptySignatureReadSignatureDataTest() throws IOException {
+        String inPdf = sourceFolder + "emptySignature.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertNull(signatureUtil.readSignatureData("Signature1", null));
+    }
+
+    @Test
+    public void readSignatureDataTest() throws IOException {
+        String inPdf = sourceFolder + "simpleSignature.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertNotNull(signatureUtil.readSignatureData("Signature1"));
+        Assert.assertTrue(signatureUtil.readSignatureData("Signature1") instanceof PdfPKCS7);
+    }
+
+    @Test
+    public void readSignatureDataWithSpecialSubFilterTest() throws IOException {
+        String inPdf = sourceFolder + "adbe.x509.rsa_sha1_signature.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertNotNull(signatureUtil.readSignatureData("Signature1"));
+        Assert.assertTrue(signatureUtil.readSignatureData("Signature1") instanceof PdfPKCS7);
+    }
+
+    @Test
+    public void byteRangeAndContentsEntriesTest() throws IOException {
+        String inPdf = sourceFolder + "byteRangeAndContentsEntries.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertThrows(PdfException.class,
+                () -> signatureUtil.readSignatureData("Signature1"));
+    }
+
+    @Test
+    public void doesSignatureFieldExistTest() throws IOException {
+        String inPdf = sourceFolder + "simpleSignature.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertTrue(signatureUtil.doesSignatureFieldExist("Signature1"));
+    }
+
+    @Test
+    public void doesSignatureFieldExistEmptySignatureTest() throws IOException {
+        String inPdf = sourceFolder + "emptySignature.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertTrue(signatureUtil.doesSignatureFieldExist("Signature1"));
+    }
+
+    @Test
+    public void signatureInTextTypeFieldTest() throws IOException {
+        String inPdf = sourceFolder + "signatureInTextTypeField.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertFalse(signatureUtil.doesSignatureFieldExist("Signature1"));
+    }
+
+    @Test
+    public void getTotalRevisionsTest() throws IOException {
+        String inPdf = sourceFolder + "simpleSignature.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertEquals(1, signatureUtil.getTotalRevisions());
+    }
+
+    @Test
+    public void getRevisionTest() throws IOException {
+        String inPdf = sourceFolder + "simpleSignature.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertEquals(1, signatureUtil.getRevision("Signature1"));
+    }
+
+    @Test
+    public void getRevisionEmptyFieldsTest() throws IOException {
+        String inPdf = sourceFolder + "emptySignature.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertEquals(0, signatureUtil.getRevision("Signature1"));
+    }
+
+    @Test
+    public void getRevisionXfaFormTest() throws IOException {
+        String inPdf = sourceFolder + "simpleSignatureWithXfa.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertEquals(1, signatureUtil.getRevision("Signature1"));
+    }
+
+    @Test
+    public void extractRevisionTest() throws IOException {
+        String inPdf = sourceFolder + "simpleSignature.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertNotNull(signatureUtil.extractRevision("Signature1"));
+    }
+
+    @Test
+    public void extractRevisionNotSignatureFieldTest() throws IOException {
+        String inPdf = sourceFolder + "signatureInTextTypeField.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
+        SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+
+        Assert.assertNull(signatureUtil.extractRevision("Signature1"));
     }
 }

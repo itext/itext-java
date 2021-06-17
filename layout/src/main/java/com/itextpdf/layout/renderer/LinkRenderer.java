@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.layout.layout.LayoutContext;
 
 public class LinkRenderer extends TextRenderer {
 
@@ -88,8 +89,20 @@ public class LinkRenderer extends TextRenderer {
 
     }
 
+    /**
+     * Gets a new instance of this class to be used as a next renderer, after this renderer is used, if
+     * {@link #layout(LayoutContext)} is called more than once.
+     *
+     * <p>
+     * If a renderer overflows to the next area, iText uses this method to create a renderer
+     * for the overflow part. So if one wants to extend {@link LinkRenderer}, one should override
+     * this method: otherwise the default method will be used and thus the default rather than the custom
+     * renderer will be created.
+     * @return new renderer instance
+     */
     @Override
     public IRenderer getNextRenderer() {
+        logWarningIfGetNextRendererNotOverridden(LinkRenderer.class, this.getClass());
         return new LinkRenderer((Link) modelElement);
     }
 }

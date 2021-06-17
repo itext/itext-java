@@ -48,15 +48,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfCollectionSortTest extends ExtendedITextTest {
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void oneKeyConstructorTest() {
@@ -91,19 +87,17 @@ public class PdfCollectionSortTest extends ExtendedITextTest {
 
     @Test
     public void incorrectSortOrderForOneKeyTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.YouNeedASingleBooleanForThisCollectionSortDictionary);
-
         final String key = "testKey";
         final boolean[] testAscendings = {true, false};
         PdfCollectionSort sort = new PdfCollectionSort(key);
 
-        sort.setSortOrder(testAscendings);
-
         // this line will throw an exception as number of parameters of setSortOrder()
         // method should be exactly the same as number of keys of PdfCollectionSort
         // here we have one key but two params
-        Assert.assertTrue(sort.getPdfObject().getAsBool(PdfName.A));
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> sort.setSortOrder(testAscendings)
+        );
+        Assert.assertEquals(PdfException.YouNeedASingleBooleanForThisCollectionSortDictionary, e.getMessage());
     }
 
     @Test
@@ -122,9 +116,6 @@ public class PdfCollectionSortTest extends ExtendedITextTest {
 
     @Test
     public void singleSortOrderForMultipleKeysTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.YouHaveToDefineABooleanArrayForThisCollectionSortDictionary);
-
         final String[] keys = { "testKey1", "testKey2", "testKey3"};
         final boolean testAscending = true;
 
@@ -133,14 +124,14 @@ public class PdfCollectionSortTest extends ExtendedITextTest {
         // this line will throw an exception as number of parameters of setSortOrder()
         // method should be exactly the same as number of keys of PdfCollectionSort
         // here we have three keys but one param
-        sort.setSortOrder(testAscending);
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> sort.setSortOrder(testAscending)
+        );
+        Assert.assertEquals(PdfException.YouHaveToDefineABooleanArrayForThisCollectionSortDictionary, e.getMessage());
     }
 
     @Test
     public void incorrectMultipleSortOrderForMultipleKeysTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.NumberOfBooleansInTheArrayDoesntCorrespondWithTheNumberOfFields);
-
         final String[] keys = { "testKey1", "testKey2", "testKey3"};
         final boolean[] testAscendings = {true, false};
 
@@ -150,7 +141,10 @@ public class PdfCollectionSortTest extends ExtendedITextTest {
         // this line will throw an exception as number of parameters of setSortOrder()
         // method should be exactly the same as number of keys of PdfCollectionSort
         // here we have three keys but two params
-        sort.setSortOrder(testAscendings);
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> sort.setSortOrder(testAscendings)
+        );
+        Assert.assertEquals(PdfException.NumberOfBooleansInTheArrayDoesntCorrespondWithTheNumberOfFields, e.getMessage());
     }
 
     @Test

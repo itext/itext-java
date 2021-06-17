@@ -51,11 +51,11 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -73,31 +73,25 @@ public class PdfA2CanvasCheckTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
     @Test
     public void canvasCheckTest1() throws IOException {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.GRAPHICS_STATE_STACK_DEPTH_IS_GREATER_THAN_28);
-
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, outputIntent);
 
-        pdfDocument.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(pdfDocument.getLastPage());
+        try (PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, outputIntent)) {
+            pdfDocument.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(pdfDocument.getLastPage());
 
-        for (int i = 0; i < 29; i++) {
-            canvas.saveState();
+            Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                    () -> {
+                        for (int i = 0; i < 29; i++) {
+                            canvas.saveState();
+                        }
+                    }
+            );
+            Assert.assertEquals(PdfAConformanceException.GRAPHICS_STATE_STACK_DEPTH_IS_GREATER_THAN_28, e.getMessage());
         }
-
-        for (int i = 0; i < 28; i++) {
-            canvas.restoreState();
-        }
-
-        pdfDocument.close();
     }
 
     @Test
@@ -108,20 +102,20 @@ public class PdfA2CanvasCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, outputIntent);
 
-        pdfDocument.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(pdfDocument.getLastPage());
+        try (PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, outputIntent)) {
 
-        for (int i = 0; i < 28; i++) {
-            canvas.saveState();
+            pdfDocument.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(pdfDocument.getLastPage());
+
+            for (int i = 0; i < 28; i++) {
+                canvas.saveState();
+            }
+
+            for (int i = 0; i < 28; i++) {
+                canvas.restoreState();
+            }
         }
-
-        for (int i = 0; i < 28; i++) {
-            canvas.restoreState();
-        }
-
-        pdfDocument.close();
 
         String result = new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
         if (result != null) {
@@ -131,20 +125,20 @@ public class PdfA2CanvasCheckTest extends ExtendedITextTest {
 
     @Test
     public void canvasCheckTest3() throws IOException {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.IF_SPECIFIED_RENDERING_SHALL_BE_ONE_OF_THE_FOLLOWING_RELATIVECOLORIMETRIC_ABSOLUTECOLORIMETRIC_PERCEPTUAL_OR_SATURATION);
-
         PdfWriter writer = new PdfWriter(new java.io.ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, outputIntent);
 
-        pdfDocument.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(pdfDocument.getLastPage());
+        try (PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, outputIntent)) {
+            pdfDocument.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(pdfDocument.getLastPage());
 
-        canvas.setRenderingIntent(new PdfName("Test"));
-
-        pdfDocument.close();
+            Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                    () -> canvas.setRenderingIntent(new PdfName("Test"))
+            );
+            Assert.assertEquals(
+                    PdfAConformanceException.IF_SPECIFIED_RENDERING_SHALL_BE_ONE_OF_THE_FOLLOWING_RELATIVECOLORIMETRIC_ABSOLUTECOLORIMETRIC_PERCEPTUAL_OR_SATURATION,
+                    e.getMessage());
+        }
     }
 }
-

@@ -52,18 +52,13 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class StylesTest extends ExtendedITextTest {
 
     public static float EPS = 0.0001f;
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void copyConstructorTest() {
@@ -133,18 +128,9 @@ public class StylesTest extends ExtendedITextTest {
 
     @Test
     public void addNullAsStyleTest() {
-        // Sharpen mappings map NPE to NullReferenceException, however in .NET in this situation
-        // ArgumentNullException is thrown. In order not to introduce any porting issues,
-        // which unfortunately couldn't be handled in a convenient way, the most basic Exception
-        // is set to be expected.
-        junitExpectedException.expect(Exception.class);
+        Paragraph p = new Paragraph("text");
 
-        Style myStyle = null;
-
-        Paragraph p = new Paragraph("text").addStyle(myStyle);
-
-        // the following line should produce a NPE
-        p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR);
+        Assert.assertThrows(IllegalArgumentException.class, () -> p.addStyle(null));
     }
 
     @Test

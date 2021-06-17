@@ -61,7 +61,6 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -72,15 +71,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfXObjectTest extends ExtendedITextTest{
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfXObjectTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfXObjectTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     public static final String[] images = new String[]{SOURCE_FOLDER + "WP_20140410_001.bmp",
             SOURCE_FOLDER + "WP_20140410_001.JPC",
@@ -309,10 +304,12 @@ public class PdfXObjectTest extends ExtendedITextTest{
     @Test
     @Category(UnitTest.class)
     public void calculateProportionallyFitRectangleWithWidthForCustomXObjectTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage("PdfFormXObject or PdfImageXObject expected.");
         PdfXObject pdfXObject = new CustomPdfXObject(new PdfStream());
-        PdfXObject.calculateProportionallyFitRectangleWithWidth(pdfXObject, 0, 0, 20);
+
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> PdfXObject.calculateProportionallyFitRectangleWithWidth(pdfXObject, 0, 0, 20)
+        );
+        Assert.assertEquals("PdfFormXObject or PdfImageXObject expected.", e.getMessage());
     }
 
     @Test
@@ -348,10 +345,12 @@ public class PdfXObjectTest extends ExtendedITextTest{
     @Test
     @Category(UnitTest.class)
     public void calculateProportionallyFitRectangleWithHeightForCustomXObjectTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage("PdfFormXObject or PdfImageXObject expected.");
         PdfXObject pdfXObject = new CustomPdfXObject(new PdfStream());
-        PdfXObject.calculateProportionallyFitRectangleWithHeight(pdfXObject, 0, 0, 20);
+
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> PdfXObject.calculateProportionallyFitRectangleWithHeight(pdfXObject, 0, 0, 20)
+        );
+        Assert.assertEquals("PdfFormXObject or PdfImageXObject expected.", e.getMessage());
     }
 
     private static class CustomPdfXObject extends PdfXObject {

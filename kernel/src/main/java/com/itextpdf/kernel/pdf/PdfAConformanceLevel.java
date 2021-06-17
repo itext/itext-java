@@ -120,7 +120,7 @@ public class PdfAConformanceLevel implements Serializable {
         try {
             conformanceXmpProperty = meta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE);
             partXmpProperty = meta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.PART);
-        } catch (XMPException exc) {
+        } catch (XMPException ignored) {
         }
         if (conformanceXmpProperty == null || partXmpProperty == null) {
             return null;

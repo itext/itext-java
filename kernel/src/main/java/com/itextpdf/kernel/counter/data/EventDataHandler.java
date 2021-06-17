@@ -71,6 +71,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @param <V> data type
  */
 public abstract class EventDataHandler<T, V extends EventData<T>> {
+    private final Object createLock = new Object();
     private final Object processLock = new Object();
 
     private final IEventDataCache<T, V> cache;
@@ -97,8 +98,7 @@ public abstract class EventDataHandler<T, V extends EventData<T>> {
 
     public void register(IEvent event, IMetaInfo metaInfo) {
         V data;
-        //Synchronization is left here mostly in consistency with cache and process, but factories are usually not thread safe anyway.
-        synchronized (factory) {
+        synchronized (createLock) {
             data = factory.create(event, metaInfo);
         }
         if (data != null) {

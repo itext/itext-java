@@ -54,11 +54,8 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.VersionConforming;
+import com.itextpdf.kernel.utils.XmlProcessorCreator;
 import com.itextpdf.kernel.xmp.XmlDomWriter;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -66,16 +63,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -107,13 +103,14 @@ public class XfaForm {
 
     /**
      * Creates an XFA form by the stream containing all xml information
+     *
      * @param inputStream the InputStream
      */
     public XfaForm(InputStream inputStream) {
         try {
             initXfaForm(inputStream);
         } catch (Exception e) {
-            throw new PdfException(e);
+            throw new PdfException(e.getMessage(), e);
         }
     }
 
@@ -140,7 +137,7 @@ public class XfaForm {
             try {
                 initXfaForm(xfa);
             } catch (Exception e) {
-                throw new PdfException(e);
+                throw new PdfException(e.getMessage(), e);
             }
         }
     }
@@ -157,7 +154,7 @@ public class XfaForm {
             try {
                 initXfaForm(xfa);
             } catch (Exception e) {
-                throw new PdfException(e);
+                throw new PdfException(e.getMessage(), e);
             }
         }
     }
@@ -497,17 +494,12 @@ public class XfaForm {
      * @throws java.io.IOException if any I/O issue occurs on the {@link InputSource}
      */
     public void fillXfaForm(InputSource is, boolean readOnly) throws IOException {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db;
         try {
-            db = dbf.newDocumentBuilder();
-            db.setEntityResolver(new SafeEmptyEntityResolver());
+            DocumentBuilder db = XmlProcessorCreator.createSafeDocumentBuilder(false, false);
             Document newdoc = db.parse(is);
             fillXfaForm(newdoc.getDocumentElement(), readOnly);
-        } catch (ParserConfigurationException e) {
-            throw new PdfException(e);
         } catch (SAXException e) {
-            throw new PdfException(e);
+            throw new PdfException(e.getMessage(), e);
         }
     }
 
@@ -631,11 +623,8 @@ public class XfaForm {
         initXfaForm(new ByteArrayInputStream(bout.toByteArray()));
     }
 
-    private void initXfaForm(InputStream inputStream) throws ParserConfigurationException, IOException, SAXException {
-        DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
-        fact.setNamespaceAware(true);
-        DocumentBuilder db = fact.newDocumentBuilder();
-        db.setEntityResolver(new SafeEmptyEntityResolver());
+    private void initXfaForm(InputStream inputStream) throws IOException, SAXException {
+        DocumentBuilder db = XmlProcessorCreator.createSafeDocumentBuilder(true, false);
         setDomDocument(db.parse(inputStream));
         xfaPresent = true;
     }
@@ -696,12 +685,4 @@ public class XfaForm {
         }
         return null;
     }
-
-    // Prevents XXE attacks
-    private static class SafeEmptyEntityResolver implements EntityResolver {
-        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-            return new InputSource(new StringReader(""));
-        }
-    }
-
 }

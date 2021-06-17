@@ -1,0 +1,10 @@
+/outfile1 (target/test/com/itextpdf/io/GhostscriptHelperTest/output1.txt) (w) file def
+outfile1 (This is important data that is evaluated on post script runtime. It's stored in one file, then read from it and written to another.) writestring
+outfile1 closefile 
+/inputfile (target/test/com/itextpdf/io/GhostscriptHelperTest/output1.txt) (r) file def
+inputfile 131 string readstring
+pop
+inputfile closefile
+/outfile2 (target/test/com/itextpdf/io/GhostscriptHelperTest/output2.txt) (w) file def
+outfile2 exch writestring
+outfile2 closefile 

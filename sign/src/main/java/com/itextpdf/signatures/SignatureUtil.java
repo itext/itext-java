@@ -340,9 +340,8 @@ public class SignatureUtil {
      *
      * @param field the signature field name
      * @return an InputStream covering the revision. Returns null if it's not a signature field
-     * @throws IOException signals that an I/O exception has occurred.
      */
-    public InputStream extractRevision(String field) throws IOException {
+    public InputStream extractRevision(String field) {
         getSignatureNames();
         if (!sigNames.containsKey(field))
             return null;

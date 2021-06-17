@@ -71,16 +71,11 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     //Main success scenario
 
@@ -188,9 +183,6 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
 
     @Test
     public void dummyProcessingNoSvgTagInInput() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.NOROOT);
-
         Element jsoupSVGRoot = new Element(Tag.valueOf("polygon"), "");
         Element jsoupSVGCircle = new Element(Tag.valueOf("circle"), "");
         INode root = new JsoupElementNode(jsoupSVGRoot);
@@ -199,15 +191,17 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
         ISvgConverterProperties props = new DummySvgConverterProperties();
 
-        processor.process(root, props).getRootRenderer();
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> processor.process(root, props).getRootRenderer()
+        );
+        Assert.assertEquals(SvgLogMessageConstant.NOROOT, e.getMessage());
     }
 
     @Test
     public void dummyProcessingTestNullInput() {
-        junitExpectedException.expect(SvgProcessingException.class);
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
 
-        processor.process(null, null);
+        Assert.assertThrows(SvgProcessingException.class, () -> processor.process(null, null));
     }
 
     @Test

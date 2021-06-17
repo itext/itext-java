@@ -30,16 +30,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class SvgCoordinateUtilsTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     private final static double DELTA = 0.0000001;
 
@@ -183,51 +178,58 @@ public class SvgCoordinateUtilsTest extends ExtendedITextTest {
 
     @Test
     public void applyViewBoxViewBoxIsNullTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(SvgExceptionMessageConstant.VIEWBOX_IS_INCORRECT);
-        SvgCoordinateUtils.applyViewBox(null, new Rectangle(10F, 10F), null, null);
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> SvgCoordinateUtils.applyViewBox(null, new Rectangle(10F, 10F), null, null)
+        );
+        Assert.assertEquals(SvgExceptionMessageConstant.VIEWBOX_IS_INCORRECT, e.getMessage());
     }
 
     @Test
     public void applyViewBoxViewBoxWidthIsZeroTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(SvgExceptionMessageConstant.VIEWBOX_IS_INCORRECT);
-        SvgCoordinateUtils.applyViewBox(new Rectangle(0F, 10F), new Rectangle(10F, 10F), null, null);
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> SvgCoordinateUtils.applyViewBox(new Rectangle(0F, 10F), new Rectangle(10F, 10F), null, null)
+        );
+        Assert.assertEquals(SvgExceptionMessageConstant.VIEWBOX_IS_INCORRECT, e.getMessage());
     }
 
     @Test
     public void applyViewBoxViewBoxHeightIsZeroTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(SvgExceptionMessageConstant.VIEWBOX_IS_INCORRECT);
-        SvgCoordinateUtils.applyViewBox(new Rectangle(10F, 0F), new Rectangle(10F, 10F), null, null);
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> SvgCoordinateUtils.applyViewBox(new Rectangle(10F, 0F), new Rectangle(10F, 10F), null, null)
+        );
+        Assert.assertEquals(SvgExceptionMessageConstant.VIEWBOX_IS_INCORRECT, e.getMessage());
     }
 
     @Test
     public void applyViewBoxViewBoxWidthIsNegativeTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(SvgExceptionMessageConstant.VIEWBOX_IS_INCORRECT);
-        SvgCoordinateUtils.applyViewBox(new Rectangle(-10F, 10F), new Rectangle(10F, 10F), null, null);
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> SvgCoordinateUtils.applyViewBox(new Rectangle(-10F, 10F), new Rectangle(10F, 10F), null, null)
+        );
+        Assert.assertEquals(SvgExceptionMessageConstant.VIEWBOX_IS_INCORRECT, e.getMessage());
     }
 
     @Test
     public void applyViewBoxViewBoxHeightIsNegativeTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(SvgExceptionMessageConstant.VIEWBOX_IS_INCORRECT);
-        SvgCoordinateUtils.applyViewBox(new Rectangle(10F, -10F), new Rectangle(10F, 10F), null, null);
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> SvgCoordinateUtils.applyViewBox(new Rectangle(10F, -10F), new Rectangle(10F, 10F), null, null)
+        );
+        Assert.assertEquals(SvgExceptionMessageConstant.VIEWBOX_IS_INCORRECT, e.getMessage());
     }
 
     @Test
     public void applyViewBoxCurrentViewPortIsNullTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(SvgExceptionMessageConstant.CURRENT_VIEWPORT_IS_NULL);
-        SvgCoordinateUtils.applyViewBox(new Rectangle(10F, 10F), null, null, null);
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> SvgCoordinateUtils.applyViewBox(new Rectangle(10F, 10F), null, null, null)
+        );
+        Assert.assertEquals(SvgExceptionMessageConstant.CURRENT_VIEWPORT_IS_NULL, e.getMessage());
     }
 
     @Test
     public void applyViewBoxAllNullTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(SvgExceptionMessageConstant.CURRENT_VIEWPORT_IS_NULL);
-        SvgCoordinateUtils.applyViewBox(null, null, null, null);
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> SvgCoordinateUtils.applyViewBox(null, null, null, null)
+        );
+        Assert.assertEquals(SvgExceptionMessageConstant.CURRENT_VIEWPORT_IS_NULL, e.getMessage());
     }
 
     @Test

@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
@@ -228,6 +229,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Handler which will be used for decompression of pdf streams.
      */
     MemoryLimitsAwareHandler memoryLimitsAwareHandler = null;
+
+    private EncryptedEmbeddedStreamsHandler encryptedEmbeddedStreamsHandler;
 
     /**
      * Open PDF document in reading mode.
@@ -460,6 +463,17 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
+     * Marks {@link PdfStream} object as embedded file stream. Note that this method is for internal usage.
+     * To add an embedded file to the PDF document please use specialized API for file attachments.
+     * (e.g. {@link PdfDocument#addFileAttachment(String, PdfFileSpec)}, {@link PdfPage#addAnnotation(PdfAnnotation)})
+     *
+     * @param stream to be marked as embedded file stream
+     */
+    public void markStreamAsEmbeddedFile(PdfStream stream) {
+        encryptedEmbeddedStreamsHandler.storeEmbeddedStream(stream);
+    }
+
+    /**
      * Creates and adds new page to the end of document.
      *
      * @return added page
@@ -664,11 +678,18 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Gets document information dictionary.
+     * {@link PdfDocument#info} is lazy initialized. It will be initialized during the first call of this method.
      *
      * @return document information dictionary.
      */
     public PdfDocumentInfo getDocumentInfo() {
         checkClosingStatus();
+        if (info == null) {
+            PdfObject infoDict = trailer.get(PdfName.Info);
+            info = new PdfDocumentInfo(
+                    infoDict instanceof PdfDictionary ? (PdfDictionary) infoDict : new PdfDictionary(), this);
+            XmpMetaInfoConverter.appendMetadataToInfo(xmpMetadata, info);
+        }
         return info;
     }
 
@@ -839,7 +860,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 // In PDF 2.0, all the values except CreationDate and ModDate are deprecated. Remove them now
                 if (pdfVersion.compareTo(PdfVersion.PDF_2_0) >= 0) {
                     for (PdfName deprecatedKey : PdfDocumentInfo.PDF20_DEPRECATED_KEYS) {
-                        info.getPdfObject().remove(deprecatedKey);
+                        getDocumentInfo().getPdfObject().remove(deprecatedKey);
                     }
                 }
                 if (getXmpMetadata() != null) {
@@ -892,8 +913,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     }
 
 
-                    if (info.getPdfObject().isModified()) {
-                        info.getPdfObject().flush(false);
+                    if (getDocumentInfo().getPdfObject().isModified()) {
+                        getDocumentInfo().getPdfObject().flush(false);
                     }
                     flushFonts();
 
@@ -941,7 +962,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         tryFlushTagStructure(false);
                     }
                     catalog.getPdfObject().flush(false);
-                    info.getPdfObject().flush(false);
+                    getDocumentInfo().getPdfObject().flush(false);
                     flushFonts();
 
                     if (writer.crypto != null) {
@@ -977,7 +998,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 // entries existing in the trailer object and corresponding fields. This inconsistency
                 // may appear when user gets trailer and explicitly sets new root or info dictionaries.
                 trailer.put(PdfName.Root, catalog.getPdfObject());
-                trailer.put(PdfName.Info, info.getPdfObject());
+                trailer.put(PdfName.Info, getDocumentInfo().getPdfObject());
 
 
                 //By this time original and modified document ids should always be not null due to initializing in
@@ -1056,7 +1077,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Gets {@link PdfStructTreeRoot} of tagged document.
      *
-     * @return {@link PdfStructTreeRoot} in case tagged document, otherwise false.
+     * @return {@link PdfStructTreeRoot} in case document is tagged, otherwise it returns null.
+     *
      * @see #isTagged()
      * @see #getNextStructParentIndex()
      */
@@ -1068,6 +1090,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Gets next parent index of tagged document.
      *
      * @return -1 if document is not tagged, or &gt;= 0 if tagged.
+     *
      * @see #isTagged()
      * @see #getNextStructParentIndex()
      */
@@ -1905,9 +1928,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     protected void open(PdfVersion newPdfVersion) {
         this.fingerPrint = new FingerPrint();
+        this.encryptedEmbeddedStreamsHandler = new EncryptedEmbeddedStreamsHandler(this);
 
         try {
             EventCounterHandler.getInstance().onEvent(CoreEvent.PROCESS, properties.metaInfo, getClass());
+            boolean embeddedStreamsSavedOnReading = false;
             if (reader != null) {
                 if (reader.pdfDocument != null) {
                     throw new PdfException(PdfException.PdfReaderHasBeenAlreadyUtilized);
@@ -1918,6 +1943,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     memoryLimitsAwareHandler = new MemoryLimitsAwareHandler(reader.tokens.getSafeFile().length());
                 }
                 reader.readPdf();
+                if (reader.decrypt != null && reader.decrypt.isEmbeddedFilesOnly()) {
+                    encryptedEmbeddedStreamsHandler.storeAllEmbeddedStreams();
+                    embeddedStreamsSavedOnReading = true;
+                }
                 for (ICounter counter : getCounters()) {
                     counter.onDocumentRead(reader.getFileLength());
                 }
@@ -1931,14 +1960,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 PdfStream xmpMetadataStream = catalog.getPdfObject().getAsStream(PdfName.Metadata);
                 if (xmpMetadataStream != null) {
                     xmpMetadata = xmpMetadataStream.getBytes();
-                    try {
-                        reader.pdfAConformanceLevel = PdfAConformanceLevel.getConformanceLevel(XMPMetaFactory.parseFromBuffer(xmpMetadata));
-                    } catch (XMPException ignored) {
+                    if (!this.getClass().equals(PdfDocument.class)) {
+                        // TODO DEVSIX-5292 If somebody extends PdfDocument we have to initialize document info
+                        //  and conformance level to provide compatibility. This code block shall be removed
+                        reader.getPdfAConformanceLevel();
+                        getDocumentInfo();
                     }
                 }
-                PdfObject infoDict = trailer.get(PdfName.Info);
-                info = new PdfDocumentInfo(infoDict instanceof PdfDictionary ? (PdfDictionary) infoDict : new PdfDictionary(), this);
-                XmpMetaInfoConverter.appendMetadataToInfo(xmpMetadata, info);
 
                 PdfDictionary str = catalog.getPdfObject().getAsDictionary(PdfName.StructTreeRoot);
                 if (str != null) {
@@ -1964,10 +1992,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     info = new PdfDocumentInfo(this).addCreationDate();
                 }
                 updateProducerInInfoDictionary();
-                info.addModDate();
+                getDocumentInfo().addModDate();
                 trailer = new PdfDictionary();
                 trailer.put(PdfName.Root, catalog.getPdfObject().getIndirectReference());
-                trailer.put(PdfName.Info, info.getPdfObject().getIndirectReference());
+                trailer.put(PdfName.Info, getDocumentInfo().getPdfObject().getIndirectReference());
 
                 if (reader != null) {
                     // If the reader's trailer contains an ID entry, let's copy it over to the new trailer
@@ -2046,6 +2074,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     writer.initCryptoIfSpecified(pdfVersion);
                 }
                 if (writer.crypto != null) {
+                    if (!embeddedStreamsSavedOnReading && writer.crypto.isEmbeddedFilesOnly()) {
+                        encryptedEmbeddedStreamsHandler.storeAllEmbeddedStreams();
+                    }
                     if (writer.crypto.getCryptoMode() < EncryptionConstants.ENCRYPTION_AES_256) {
                         VersionConforming.validatePdfVersionForDeprecatedFeatureLogWarn(this, PdfVersion.PDF_2_0, VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS);
                     } else if (writer.crypto.getCryptoMode() == EncryptionConstants.ENCRYPTION_AES_256) {
@@ -2093,7 +2124,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     protected XMPMeta updateDefaultXmpMetadata() throws XMPException {
         XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(getXmpMetadata(true));
-        XmpMetaInfoConverter.appendDocumentInfoToMetadata(info, xmpMeta);
+        XmpMetaInfoConverter.appendDocumentInfoToMetadata(getDocumentInfo(), xmpMeta);
 
         if (isTagged() && writer.properties.addUAXmpMetadata && !isXmpMetaHasProperty(xmpMeta, XMPConst.NS_PDFUA_ID, XMPConst.PART)) {
             xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART, 1, new PropertyOptions(PropertyOptions.SEPARATE_NODE));
@@ -2188,6 +2219,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return documentId;
     }
 
+    boolean doesStreamBelongToEmbeddedFile(PdfStream stream) {
+        return encryptedEmbeddedStreamsHandler.isStreamStoredAsEmbedded(stream);
+    }
+
     /**
      * Gets iText version info.
      *
@@ -2203,16 +2238,18 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     private void updateProducerInInfoDictionary() {
         String producer = null;
+        PdfDictionary documentInfoObject = getDocumentInfo().getPdfObject();
         if (reader == null) {
             producer = versionInfo.getVersion();
         } else {
-            if (info.getPdfObject().containsKey(PdfName.Producer)) {
-                final PdfString producerPdfStr = info.getPdfObject().getAsString(PdfName.Producer);
+            if (documentInfoObject.containsKey(PdfName.Producer)) {
+                final PdfString producerPdfStr = documentInfoObject.getAsString(PdfName.Producer);
                 producer = producerPdfStr == null ? null : producerPdfStr.toUnicodeString();
             }
             producer = addModifiedPostfix(producer);
         }
-        info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
+
+        documentInfoObject.put(PdfName.Producer, new PdfString(producer, PdfEncodings.UNICODE_BIG));
     }
 
     /**

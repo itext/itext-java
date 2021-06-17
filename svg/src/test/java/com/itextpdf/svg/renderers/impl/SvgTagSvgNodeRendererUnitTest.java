@@ -55,16 +55,11 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import java.io.ByteArrayOutputStream;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class SvgTagSvgNodeRendererUnitTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void calculateNestedViewportSameAsParentTest() {

@@ -50,10 +50,8 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class Pdf20SigningTest extends ExtendedITextTest {
@@ -64,9 +62,6 @@ public class Pdf20SigningTest extends ExtendedITextTest {
 
     private Certificate[] chain;
     private PrivateKey pk;
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void before() {

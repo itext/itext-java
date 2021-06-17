@@ -85,6 +85,11 @@ public class CommonCssConstants {
     public static final String ALIGN_SELF = "align-self";
 
     /**
+     * The constant ATTRIBUTE.
+     */
+    public static final String ATTRIBUTE = "attr";
+
+    /**
      * The Constant BACKGROUND.
      */
     public static final String BACKGROUND = "background";
@@ -1428,6 +1433,11 @@ public class CommonCssConstants {
     public static final String STRETCH = "stretch";
 
     /**
+     * The Constant STRING.
+     */
+    public static final String STRING = "string";
+
+    /**
      * The Constant THICK.
      */
     public static final String THICK = "thick";
@@ -1759,6 +1769,11 @@ public class CommonCssConstants {
      * The Constant TARGET.
      */
     public static final String TARGET = "target";
+
+    /**
+     * The Constant URL.
+     */
+    public static final String URL = "url";
 
     /**
      * The Constant VALID.

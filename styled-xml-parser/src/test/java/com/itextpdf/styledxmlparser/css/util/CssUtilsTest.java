@@ -47,9 +47,12 @@ import com.itextpdf.layout.property.BlendMode;
 import com.itextpdf.styledxmlparser.CommonAttributeConstants;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.styledxmlparser.css.pseudo.CssPseudoElementNode;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
+import com.itextpdf.styledxmlparser.node.IElementNode;
+import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -61,17 +64,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class CssUtilsTest extends ExtendedITextTest {
     private static float EPS = 0.0001f;
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void extractShorthandPropertiesFromEmptyStringTest() {
@@ -116,20 +114,21 @@ public class CssUtilsTest extends ExtendedITextTest {
 
     @Test
     public void parseAbsoluteLengthFromNAN() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.NAN, "Definitely not a number"));
-
         String value = "Definitely not a number";
-        CssUtils.parseAbsoluteLength(value);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssUtils.parseAbsoluteLength(value)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.NAN, "Definitely not a number"),
+                e.getMessage());
     }
 
     @Test
     public void parseAbsoluteLengthFromNull() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.NAN, "null"));
-
         String value = null;
-        CssUtils.parseAbsoluteLength(value);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssUtils.parseAbsoluteLength(value)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.NAN, "null"), e.getMessage());
     }
 
     @Test
@@ -353,10 +352,10 @@ public class CssUtilsTest extends ExtendedITextTest {
 
     @Test
     public void parseResolutionInvalidUnit() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(LogMessageConstant.INCORRECT_RESOLUTION_UNIT_VALUE);
-
-        CssUtils.parseResolution("10incorrectUnit");
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssUtils.parseResolution("10incorrectUnit")
+        );
+        Assert.assertEquals(LogMessageConstant.INCORRECT_RESOLUTION_UNIT_VALUE, e.getMessage());
     }
 
     @Test
@@ -468,5 +467,130 @@ public class CssUtilsTest extends ExtendedITextTest {
         Assert.assertTrue(CssUtils.isNegativeValue("-12"));
         Assert.assertTrue(CssUtils.isNegativeValue("-0.123"));
         Assert.assertTrue(CssUtils.isNegativeValue("-.34"));
+    }
+
+    @Test
+    public void testWrongAttrTest01() {
+        String strToParse = "attr((href))";
+        String result = CssUtils.extractAttributeValue(strToParse, null);
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void testWrongAttrTest02() {
+        String strToParse = "attr('href')";
+        String result = CssUtils.extractAttributeValue(strToParse, null);
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void testWrongAttrTest03() {
+        String strToParse = "attrrname)";
+        String result = CssUtils.extractAttributeValue(strToParse, null);
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void testExtractingAttrTest01() {
+        IElementNode iNode = new CssPseudoElementNode(null, "url");
+        String strToParse = "attr(url)";
+        String result = CssUtils.extractAttributeValue(strToParse, iNode);
+        Assert.assertEquals("", result);
+    }
+
+    @Test
+    public void testExtractingAttrTest02() {
+        IElementNode iNode = new CssPseudoElementNode(null, "test");
+        String strToParse = "attr(url url)";
+        String result = CssUtils.extractAttributeValue(strToParse, iNode);
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void testExtractingAttrTest03() {
+        IElementNode iNode = new CssPseudoElementNode(null, "test");
+        String strToParse = "attr(url url,#one)";
+        String result = CssUtils.extractAttributeValue(strToParse, iNode);
+        Assert.assertEquals("#one", result);
+    }
+
+    @Test
+    public void testExtractingAttrTest04() {
+        IElementNode iNode = new CssPseudoElementNode(null, "test");
+        String strToParse = "attr()";
+        String result = CssUtils.extractAttributeValue(strToParse, iNode);
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void testExtractingAttrTest05() {
+        IElementNode iNode = new CssPseudoElementNode(null, "test");
+        String strToParse = "attr('\')";
+        String result = CssUtils.extractAttributeValue(strToParse, iNode);
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void testExtractingAttrTest06() {
+        IElementNode iNode = new CssPseudoElementNode(null, "test");
+        String strToParse = "attr(str,\"hey\")";
+        String result = CssUtils.extractAttributeValue(strToParse, iNode);
+        Assert.assertEquals("hey", result);
+    }
+
+    @Test
+    public void testExtractingAttrTest07() {
+        IElementNode iNode = new CssPseudoElementNode(null, "test");
+        String strToParse = "attr(str string)";
+        String result = CssUtils.extractAttributeValue(strToParse, iNode);
+        Assert.assertEquals("", result);
+    }
+
+    @Test
+    public void testExtractingAttrTest08() {
+        IElementNode iNode = new CssPseudoElementNode(null, "test");
+        String strToParse = "attr(str string,\"value\")";
+        String result = CssUtils.extractAttributeValue(strToParse, iNode);
+        Assert.assertEquals("value", result);
+    }
+
+    @Test
+    public void testExtractingAttrTest09() {
+        IElementNode iNode = new CssPseudoElementNode(null, "test");
+        String strToParse = "attr(str string,\"val,ue\")";
+        String result = CssUtils.extractAttributeValue(strToParse, iNode);
+        Assert.assertEquals("val,ue", result);
+    }
+
+    @Test
+    public void testExtractingAttrTest10() {
+        IElementNode iNode = new CssPseudoElementNode(null, "test");
+        String strToParse = "attr(str string,'val,ue')";
+        String result = CssUtils.extractAttributeValue(strToParse, iNode);
+        Assert.assertEquals("val,ue", result);
+    }
+
+    @Test
+    public void testExtractingAttrTest11() {
+        IElementNode iNode = new CssPseudoElementNode(null, "test");
+        String strToParse = "attr(name, \"value\", \"value\", \"value\")";
+        String result = CssUtils.extractAttributeValue(strToParse, iNode);
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void wrongAttributeTypeTest() {
+        IElementNode iNode = new CssPseudoElementNode(null, "test");
+        String strToParse = "attr(str mem)";
+        String result = CssUtils.extractAttributeValue(strToParse, iNode);
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void wrongParamsInAttrFunctionTest() {
+        IElementNode iNode = new CssPseudoElementNode(null, "test");
+        String strToParse = "attr(str mem lol)";
+        String result = CssUtils.extractAttributeValue(strToParse, iNode);
+        Assert.assertNull(result);
     }
 }

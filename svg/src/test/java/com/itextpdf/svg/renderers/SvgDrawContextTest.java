@@ -60,10 +60,8 @@ import java.util.NoSuchElementException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class SvgDrawContextTest extends ExtendedITextTest {
@@ -71,9 +69,6 @@ public class SvgDrawContextTest extends ExtendedITextTest {
     private PdfDocument tokenDoc;
     private PdfCanvas page1, page2;
     private SvgDrawContext context;
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -91,14 +86,12 @@ public class SvgDrawContextTest extends ExtendedITextTest {
 
     @Test
     public void drawContextEmptyDequeGetFirstTest() {
-        junitExpectedException.expect(NoSuchElementException.class);
-        context.getCurrentCanvas();
+        Assert.assertThrows(NoSuchElementException.class, () -> context.getCurrentCanvas());
     }
 
     @Test
     public void drawContextEmptyDequePopTest() {
-        junitExpectedException.expect(NoSuchElementException.class);
-        context.popCanvas();
+        Assert.assertThrows(NoSuchElementException.class, () -> context.popCanvas());
     }
     
     @Test
@@ -167,29 +160,32 @@ public class SvgDrawContextTest extends ExtendedITextTest {
 
     @Test
     public void addNullToNamedObjects() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.NAMED_OBJECT_NULL);
-
         String name = "expected";
-        this.context.addNamedObject(name, null);
+
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> this.context.addNamedObject(name, null)
+        );
+        Assert.assertEquals(SvgLogMessageConstant.NAMED_OBJECT_NULL, e.getMessage());
     }
 
     @Test
     public void addNamedObjectWithNullName() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY);
-
         ISvgNodeRenderer expected = new DummySvgNodeRenderer();
-        this.context.addNamedObject(null, expected);
+
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> this.context.addNamedObject(null, expected)
+        );
+        Assert.assertEquals(SvgLogMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY, e.getMessage());
     }
 
     @Test
     public void addNamedObjectWithEmptyName() {
-        junitExpectedException.expect(SvgProcessingException.class);
-        junitExpectedException.expectMessage(SvgLogMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY);
-
         ISvgNodeRenderer expected = new DummySvgNodeRenderer();
-        this.context.addNamedObject("", expected);
+
+        Exception e = Assert.assertThrows(SvgProcessingException.class,
+                () -> this.context.addNamedObject("", expected)
+        );
+        Assert.assertEquals(SvgLogMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY, e.getMessage());
     }
 
     @Test

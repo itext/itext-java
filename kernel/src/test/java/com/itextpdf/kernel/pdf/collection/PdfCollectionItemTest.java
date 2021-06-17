@@ -51,18 +51,12 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.util.TimeZone;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfCollectionItemTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void addItemTest() {
@@ -188,8 +182,6 @@ public class PdfCollectionItemTest extends ExtendedITextTest {
 
     @Test
     public void addPrefixToEmptyFieldTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.YouMustSetAValueBeforeAddingAPrefix);
         final String fieldName = "fieldName";
         final String fieldPrefix = "fieldPrefix";
 
@@ -205,7 +197,10 @@ public class PdfCollectionItemTest extends ExtendedITextTest {
 
         // this line will throw an exception as setPrefix() method may be called
         // only if value was set previously
-        item.setPrefix(fieldName, fieldPrefix);
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> item.setPrefix(fieldName, fieldPrefix)
+        );
+        Assert.assertEquals(PdfException.YouMustSetAValueBeforeAddingAPrefix, e.getMessage());
     }
 
     @Test

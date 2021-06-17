@@ -127,7 +127,7 @@ public class PageFlushingTest extends ExtendedITextTest {
         int total = 817;
         int flushedExpected = 0;
         // link annots, line annots, actions and images: one hundred of each
-        int notReadExpected = 401;
+        int notReadExpected = 402;
 
         test("baseReading01.pdf", DocMode.READING, FlushMode.NONE, PagesOp.READ,
                 total, flushedExpected, notReadExpected);
@@ -137,7 +137,7 @@ public class PageFlushingTest extends ExtendedITextTest {
     public void releaseDeepReading01() throws IOException {
         int total = 817;
         int flushedExpected = 0;
-        int notReadExpected = 803;
+        int notReadExpected = 804;
 
         test("releaseDeepReading01.pdf", DocMode.READING, FlushMode.RELEASE_DEEP, PagesOp.READ,
                 total, flushedExpected, notReadExpected);

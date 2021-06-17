@@ -54,19 +54,14 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.util.Collections;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfStreamTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfStreamTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfStreamTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void before() {
@@ -146,19 +141,18 @@ public class PdfStreamTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-1193 remove junitExpectedException and expected NullPointerException after fix
+    // TODO DEVSIX-1193 remove NullPointerException after fix
     public void indirectFilterInCatalogTest() throws IOException {
         String inFile = sourceFolder + "indFilterInCatalog.pdf";
 
         PdfDocument doc = new PdfDocument(new PdfReader(inFile),
                 new PdfWriter(destinationFolder + "indFilterInCatalog.pdf"));
 
-        junitExpectedException.expect(NullPointerException.class);
-        doc.close();
+        Assert.assertThrows(NullPointerException.class, () -> doc.close());
     }
 
     @Test
-    // TODO DEVSIX-1193 remove junitExpectedException after fix
+    // TODO DEVSIX-1193 remove NullPointerException after fix
     public void indirectFilterFlushedBeforeStreamTest() throws IOException {
         String inFile = sourceFolder + "indFilterInCatalog.pdf";
         String out = destinationFolder + "indirectFilterFlushedBeforeStreamTest.pdf";
@@ -170,12 +164,11 @@ public class PdfStreamTest extends ExtendedITextTest {
         PdfObject filterObject = pdfDoc.getPdfObject(6);
         filterObject.flush();
 
-        junitExpectedException.expect(NullPointerException.class);
-        pdfDoc.close();
+        Assert.assertThrows(NullPointerException.class, () -> pdfDoc.close());
     }
 
     @Test
-    // TODO DEVSIX-1193 remove junitExpectedException after fix
+    // TODO DEVSIX-1193 remove NullPointerException after fix
     public void indirectFilterMarkedToBeFlushedBeforeStreamTest() throws IOException {
         String inFile = sourceFolder + "indFilterInCatalog.pdf";
         String out = destinationFolder + "indirectFilterMarkedToBeFlushedBeforeStreamTest.pdf";
@@ -190,9 +183,9 @@ public class PdfStreamTest extends ExtendedITextTest {
         // The image stream will be marked as MUST_BE_FLUSHED after page is flushed.
         pdfDoc.getFirstPage().getPdfObject().getIndirectReference().setState(PdfObject.MUST_BE_FLUSHED);
 
-        junitExpectedException.expect(NullPointerException.class);
-        writer.flushWaitingObjects(Collections.<PdfIndirectReference>emptySet());
-
-        pdfDoc.close();
+        Assert.assertThrows(NullPointerException.class,
+                () -> writer.flushWaitingObjects(Collections.<PdfIndirectReference>emptySet())
+        );
+        Assert.assertThrows(NullPointerException.class, () -> pdfDoc.close());
     }
 }

@@ -200,14 +200,29 @@ public abstract class FontProgram implements Serializable {
         }
     }
 
+    /**
+     * Sets typo ascender. See also {@link FontMetrics#setTypoAscender(int)}.
+     *
+     * @param ascender typo ascender value in 1000-units
+     */
     protected void setTypoAscender(int ascender) {
         fontMetrics.setTypoAscender(ascender);
     }
 
+    /**
+     * Sets typo descender. See also {@link FontMetrics#setTypoDescender(int)}.
+     *
+     * @param descender typo descender value in 1000-units
+     */
     protected void setTypoDescender(int descender) {
         fontMetrics.setTypoDescender(descender);
     }
 
+    /**
+     * Sets the capital letters height. See also {@link FontMetrics#setCapHeight(int)}.
+     *
+     * @param capHeight cap height in 1000-units
+     */
     protected void setCapHeight(int capHeight) {
         fontMetrics.setCapHeight(capHeight);
     }
@@ -217,7 +232,8 @@ public abstract class FontProgram implements Serializable {
     }
 
     /**
-     * Sets the PostScript italic angel.
+     * Sets the PostScript italic angle.
+     *
      * <p>
      * Italic angle in counter-clockwise degrees from the vertical. Zero for upright text, negative for text that leans to the right (forward).
      *

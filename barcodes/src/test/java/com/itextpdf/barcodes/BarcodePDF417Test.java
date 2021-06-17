@@ -62,10 +62,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class BarcodePDF417Test extends ExtendedITextTest {
@@ -76,9 +74,6 @@ public class BarcodePDF417Test extends ExtendedITextTest {
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
@@ -440,9 +435,6 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
     @Test
     public void barcode417OptionsWithBarcodeGenerationInvalidSizeTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage("Invalid codeword size.");
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(baos);
         PdfDocument document = new PdfDocument(writer);
@@ -452,8 +444,11 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         BarcodePDF417 barcode = new BarcodePDF417();
         barcode.setOptions(64);
-        barcode.placeBarcode(canvas, null);
 
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> barcode.placeBarcode(canvas, null)
+        );
+        Assert.assertEquals("Invalid codeword size.", e.getMessage());
         Assert.assertEquals(64, barcode.getOptions());
     }
 

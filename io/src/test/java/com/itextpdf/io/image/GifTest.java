@@ -52,17 +52,12 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import java.io.FileInputStream;
 import java.util.List;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class GifTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/io/image/GifTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void gifImageTest() throws IOException, java.io.IOException {
@@ -76,9 +71,9 @@ public class GifTest extends ExtendedITextTest {
 
     @Test
     public void gifImageFrameOutOfBoundsTest() throws java.io.IOException {
-        junitExpectedException.expect(IOException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(IOException.CannotFind1Frame, 2));
-        ImageDataFactory.createGifFrame(UrlUtil.toURL(sourceFolder + "image-2frames.gif"), 3);
+        Exception e = Assert.assertThrows(IOException.class,
+                () -> ImageDataFactory.createGifFrame(UrlUtil.toURL(sourceFolder + "image-2frames.gif"), 3));
+        Assert.assertEquals(MessageFormatUtil.format(IOException.CannotFind1Frame, 2), e.getMessage());
     }
 
     @Test

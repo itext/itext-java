@@ -37,16 +37,11 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class CssGradientUtilTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void nullValueTest() {
@@ -162,167 +157,182 @@ public class CssGradientUtilTest extends ExtendedITextTest {
 
     @Test
     public void emptyParsedArguments1Test() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_FUNCTION_ARGUMENTS_LIST, "linear-gradient()"));
-
         String gradientValue = "linear-gradient()";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_FUNCTION_ARGUMENTS_LIST, "linear-gradient()"),
+                e.getMessage());
     }
 
     @Test
     public void emptyParsedArguments2Test() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_FUNCTION_ARGUMENTS_LIST, "linear-gradient( , )"));
-
         String gradientValue = "linear-gradient( , )";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_FUNCTION_ARGUMENTS_LIST, "linear-gradient( , )"),
+                e.getMessage());
     }
 
     @Test
     public void invalidFirstArgumentTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "not-angle-or-color"));
-
         String gradientValue = "linear-gradient(not-angle-or-color, orange 100pt, red 150pt, green 200pt, blue 250pt)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "not-angle-or-color"),
+                e.getMessage());
     }
 
     @Test
     public void invalidToSideTest0() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "to"));
-
         String gradientValue = "linear-gradient(to , orange 100pt, red 150pt, green 200pt, blue 250pt)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "to"),
+                e.getMessage());
     }
 
     @Test
     public void invalidToSideTest1() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "to"));
-
         String gradientValue = "linear-gradient(to, orange 100pt, red 150pt, green 200pt, blue 250pt)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "to"),
+                e.getMessage());
     }
 
     @Test
     public void invalidToSideTest2() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING, "to left left"));
-
         String gradientValue = "linear-gradient(to left left, orange 100pt, red 150pt, green 200pt, blue 250pt)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING, "to left left"),
+                e.getMessage());
     }
 
     @Test
     public void invalidToSideTest3() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING, "to bottom top"));
-
         String gradientValue = "linear-gradient(to bottom top, orange 100pt, red 150pt, green 200pt, blue 250pt)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING, "to bottom top"),
+                e.getMessage());
     }
 
     @Test
     public void invalidToSideTest4() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING, "to left right"));
-
         String gradientValue = "linear-gradient(to left right, orange 100pt, red 150pt, green 200pt, blue 250pt)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING, "to left right"),
+                e.getMessage());
     }
 
     @Test
     public void invalidToSideTest5() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING, "to top right right"));
-
         String gradientValue = "linear-gradient(to top right right, orange 100pt, red 150pt, green 200pt, blue 250pt)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_TO_SIDE_OR_CORNER_STRING, "to top right right"),
+                e.getMessage());
     }
 
     @Test
     public void invalidColorWithThreeOffsetsValueTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 20pt 30pt 100pt"));
-
         String gradientValue = "linear-gradient(red, orange 20pt 30pt 100pt, green 200pt, blue 250pt)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 20pt 30pt 100pt"),
+                e.getMessage());
     }
 
     @Test
     public void invalidColorOffsetValueTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 20"));
-
         String gradientValue = "linear-gradient(red, orange 20, green 200pt, blue 250pt)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 20"),
+                e.getMessage());
     }
 
     @Test
     public void invalidMultipleHintsInARowValueTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "30%"));
-
         String gradientValue = "linear-gradient(red, orange, 20%, 30%, green 200pt, blue 250pt)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "30%"),
+                e.getMessage());
     }
 
     @Test
     public void invalidMultipleHintsInARowWithoutCommaValueTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "20% 30%"));
-
         String gradientValue = "linear-gradient(red, orange, 20% 30%, green 200pt, blue 250pt)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "20% 30%"),
+                e.getMessage());
     }
 
     @Test
     public void invalidFirstElementIsAHintValueTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "5%"));
-
         String gradientValue = "linear-gradient(5%, red, orange, 30%, green 200pt, blue 250pt)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "5%"),
+                e.getMessage());
     }
 
     @Test
     public void invalidLastElementIsAHintValueTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "120%"));
-
         String gradientValue = "linear-gradient(red, orange, 30%, green 200pt, blue 250pt, 120%)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "120%"),
+                e.getMessage());
     }
 
     @Test
@@ -742,42 +752,45 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-3595. Remove junitExpectedException expectation after fix and update the logic of the test similar to the already existed tests logic
+    // TODO: DEVSIX-3595. Remove Exception expectation after fix and update the logic of the test similar to the already existed tests logic
     public void linearGradDifferentTurnPositiveTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "0.17turn"));
-
         String gradientValue = "linear-gradient(0.17turn, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "0.17turn"),
+                e.getMessage());
     }
 
     @Test
-    // TODO: DEVSIX-3595. Remove junitExpectedException expectation after fix and update the logic of the test similar to the already existed tests logic
+    // TODO: DEVSIX-3595. Remove Exception expectation after fix and update the logic of the test similar to the already existed tests logic
     public void linearGradDifferentTurnNegativeTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "-0.17turn"));
-
         String gradientValue = "linear-gradient(-0.17turn, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "-0.17turn"),
+                e.getMessage());
     }
 
     @Test
-    // TODO: DEVSIX-3595. Remove junitExpectedException expectation after fix and update the logic of the test similar to the already existed tests logic
+    // TODO: DEVSIX-3595. Remove Exception expectation after fix and update the logic of the test similar to the already existed tests logic
     public void linearGradDifferentTurnZeroTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "0turn"));
-
         String gradientValue = "linear-gradient(0turn, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "0turn"),
+                e.getMessage());
     }
 
     @Test
@@ -1197,42 +1210,45 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-3595. Remove junitExpectedException expectation after fix and update the logic of the test similar to the already existed tests logic
+    // TODO: DEVSIX-3595. Remove Exception expectation after fix and update the logic of the test similar to the already existed tests logic
     public void repeatingLinearGradDifferentTurnPositiveTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "0.17turn"));
-
         String gradientValue = "repeating-linear-gradient(0.17turn, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "0.17turn"),
+                e.getMessage());
     }
 
     @Test
-    // TODO: DEVSIX-3595. Remove junitExpectedException expectation after fix and update the logic of the test similar to the already existed tests logic
+    // TODO: DEVSIX-3595. Remove Exception expectation after fix and update the logic of the test similar to the already existed tests logic
     public void repeatingLinearGradDifferentTurnNegativeTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "-0.17turn"));
-
         String gradientValue = "repeating-linear-gradient(-0.17turn, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "-0.17turn"),
+                e.getMessage());
     }
 
     @Test
-    // TODO: DEVSIX-3595. Remove junitExpectedException expectation after fix and update the logic of the test similar to the already existed tests logic
+    // TODO: DEVSIX-3595. Remove Exception expectation after fix and update the logic of the test similar to the already existed tests logic
     public void repeatingLinearGradDifferentTurnZeroTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "0turn"));
-
         String gradientValue = "repeating-linear-gradient(0turn, orange -20pt, red 0%, green, blue 100%, orange 120%)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "0turn"),
+                e.getMessage());
     }
 
     @Test
@@ -1692,63 +1708,73 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-3596. Remove junitExpectedException expectation after fix and update the logic of the test similar to the already existed tests logic
+    // TODO: DEVSIX-3596. Remove Exception expectation after fix and update the logic of the test similar to the already existed tests logic
     public void linearGradDiffMetricsFontRelatedChTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3ch"));
         String gradientValue = "linear-gradient(to right, orange 3ch, red 3ch, green 9ch, blue 9ch)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 24, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3ch"),
+                e.getMessage());
     }
 
     @Test
-    // TODO: DEVSIX-3596. Remove junitExpectedException expectation after fix and update the logic of the test similar to the already existed tests logic
+    // TODO: DEVSIX-3596. Remove Exception expectation after fix and update the logic of the test similar to the already existed tests logic
     public void linearGradDiffMetricsFontRelatedVhTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vh"));
         String gradientValue = "linear-gradient(to right, orange 3vh, red 3vh, green 9vh, blue 9vh)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vh"),
+                e.getMessage());
     }
 
     @Test
-    // TODO: DEVSIX-3596. Remove junitExpectedException expectation after fix and update the logic of the test similar to the already existed tests logic
+    // TODO: DEVSIX-3596. Remove Exception expectation after fix and update the logic of the test similar to the already existed tests logic
     public void linearGradDiffMetricsViewPortVwTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vw"));
         String gradientValue = "linear-gradient(to right, orange 3vw, red 3vw, green 9vw, blue 9vw)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vw"),
+                e.getMessage());
     }
 
     @Test
-    // TODO: DEVSIX-3596. Remove junitExpectedException expectation after fix and update the logic of the test similar to the already existed tests logic
+    // TODO: DEVSIX-3596. Remove Exception expectation after fix and update the logic of the test similar to the already existed tests logic
     public void linearGradDiffMetricsViewPortVminTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vmin"));
         String gradientValue = "linear-gradient(to right, orange 3vmin, red 3vmin, green 9vmin, blue 9vmin)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vmin"),
+                e.getMessage());
     }
 
     @Test
-    // TODO: DEVSIX-3596. Remove junitExpectedException expectation after fix and update the logic of the test similar to the already existed tests logic
+    // TODO: DEVSIX-3596. Remove Exception expectation after fix and update the logic of the test similar to the already existed tests logic
     public void linearGradDiffMetricsViewPortVmaxTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vmax"));
         String gradientValue = "linear-gradient(to right, orange 3vmax, red 3vmax, green 9vmax, blue 9vmax)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vmax"),
+                e.getMessage());
     }
 
     @Test
@@ -1952,63 +1978,73 @@ public class CssGradientUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-3596. Remove junitExpectedException expectation after fix and update the logic of the test similar to the already existed tests logic
+    // TODO: DEVSIX-3596. Remove Exception expectation after fix and update the logic of the test similar to the already existed tests logic
     public void repeatLinearGradDiffMetricsFontRelatedChTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3ch"));
         String gradientValue = "repeating-linear-gradient(to right, orange 3ch, red 3ch, green 9ch, blue 9ch)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3ch"),
+                e.getMessage());
     }
 
     @Test
-    // TODO: DEVSIX-3596. Remove junitExpectedException expectation after fix and update the logic of the test similar to the already existed tests logic
+    // TODO: DEVSIX-3596. Remove Exception expectation after fix and update the logic of the test similar to the already existed tests logic
     public void repeatLinearGradDiffMetricsFontRelatedVhTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vh"));
         String gradientValue = "repeating-linear-gradient(to right, orange 3vh, red 3vh, green 9vh, blue 9vh)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vh"),
+                e.getMessage());
     }
 
     @Test
-    // TODO: DEVSIX-3596. Remove junitExpectedException expectation after fix and update the logic of the test similar to the already existed tests logic
+    // TODO: DEVSIX-3596. Remove Exception expectation after fix and update the logic of the test similar to the already existed tests logic
     public void repeatLinearGradDiffMetricsViewPortVwTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vw"));
         String gradientValue = "repeating-linear-gradient(to right, orange 3vw, red 3vw, green 9vw, blue 9vw)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vw"),
+                e.getMessage());
     }
 
     @Test
-    // TODO: DEVSIX-3596. Remove junitExpectedException expectation after fix and update the logic of the test similar to the already existed tests logic
+    // TODO: DEVSIX-3596. Remove Exception expectation after fix and update the logic of the test similar to the already existed tests logic
     public void repeatLinearGradDiffMetricsViewPortVminTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vmin"));
         String gradientValue = "repeating-linear-gradient(to right, orange 3vmin, red 3vmin, green 9vmin, blue 9vmin)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vmin"),
+                e.getMessage());
     }
 
     @Test
-    // TODO: DEVSIX-3596. Remove junitExpectedException expectation after fix and update the logic of the test similar to the already existed tests logic
+    // TODO: DEVSIX-3596. Remove Exception expectation after fix and update the logic of the test similar to the already existed tests logic
     public void repeatLinearGradDiffMetricsViewPortVmaxTest() {
-        junitExpectedException.expect(StyledXMLParserException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vmax"));
         String gradientValue = "repeating-linear-gradient(to right, orange 3vmax, red 3vmax, green 9vmax, blue 9vmax)";
 
         Assert.assertTrue(CssGradientUtil.isCssLinearGradientValue(gradientValue));
 
-        CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12);
+        Exception e = Assert.assertThrows(StyledXMLParserException.class,
+                () -> CssGradientUtil.parseCssLinearGradient(gradientValue, 12, 12)
+        );
+        Assert.assertEquals(MessageFormatUtil.format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, "orange 3vmax"),
+                e.getMessage());
     }
 
     @Test

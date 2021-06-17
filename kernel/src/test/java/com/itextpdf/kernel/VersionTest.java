@@ -26,16 +26,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class VersionTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void parseCurrentVersionTest() {
@@ -71,20 +66,20 @@ public class VersionTest extends ExtendedITextTest {
 
     @Test
     public void parseVersionIncorrectMajorTest() {
-        junitExpectedException.expect(LicenseVersionException.class);
-        junitExpectedException.expectMessage(LicenseVersionException.MAJOR_VERSION_IS_NOT_NUMERIC);
-
         // the line below is expected to produce an exception
-        String[] parseResults = Version.parseVersionString("a.9.11");
+        Exception e = Assert.assertThrows(LicenseVersionException.class,
+                () -> Version.parseVersionString("a.9.11")
+        );
+        Assert.assertEquals(LicenseVersionException.MAJOR_VERSION_IS_NOT_NUMERIC, e.getMessage());
     }
 
     @Test
     public void parseVersionIncorrectMinorTest() {
-        junitExpectedException.expect(LicenseVersionException.class);
-        junitExpectedException.expectMessage(LicenseVersionException.MINOR_VERSION_IS_NOT_NUMERIC);
-
         // the line below is expected to produce an exception
-        Version.parseVersionString("1.a.11");
+        Exception e = Assert.assertThrows(LicenseVersionException.class,
+                () -> Version.parseVersionString("1.a.11")
+        );
+        Assert.assertEquals(LicenseVersionException.MINOR_VERSION_IS_NOT_NUMERIC, e.getMessage());
     }
 
     @Test

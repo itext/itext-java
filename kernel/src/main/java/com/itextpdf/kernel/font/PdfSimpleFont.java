@@ -439,17 +439,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         if (isForceWidthsOutput() || !isBuiltInFont() || fontEncoding.hasDifferences()) {
             getPdfObject().put(PdfName.FirstChar, new PdfNumber(firstChar));
             getPdfObject().put(PdfName.LastChar, new PdfNumber(lastChar));
-            PdfArray wd = new PdfArray();
-            for (int k = firstChar; k <= lastChar; ++k) {
-                if (shortTag[k] == 0) {
-                    wd.add(new PdfNumber(0));
-                } else {
-                    //prevent lost of widths info
-                    int uni = fontEncoding.getUnicode(k);
-                    Glyph glyph = uni > -1 ? getGlyph(uni) : fontProgram.getGlyphByCode(k);
-                    wd.add(new PdfNumber(getGlyphWidth(glyph)));
-                }
-            }
+            PdfArray wd = buildWidthsArray(firstChar, lastChar);
             getPdfObject().put(PdfName.Widths, wd);
         }
         PdfDictionary fontDescriptor = !isBuiltInFont() ? getFontDescriptor(fontName) : null;
@@ -514,12 +504,39 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         return fontDescriptor;
     }
 
+    protected PdfArray buildWidthsArray(int firstChar, int lastChar) {
+        PdfArray wd = new PdfArray();
+        for (int k = firstChar; k <= lastChar; ++k) {
+            if (shortTag[k] == 0) {
+                wd.add(new PdfNumber(0));
+            } else {
+                int uni = fontEncoding.getUnicode(k);
+                Glyph glyph = uni > -1 ? getGlyph(uni) : fontProgram.getGlyphByCode(k);
+                wd.add(new PdfNumber(glyph != null ? glyph.getWidth() : 0));
+            }
+        }
+        return wd;
+    }
+
     protected abstract void addFontStream(PdfDictionary fontDescriptor);
 
     protected void setFontProgram(T fontProgram) {
         this.fontProgram = fontProgram;
     }
 
+    /**
+     * Gets glyph width which us ready to be written to the output file.
+     *
+     * @param glyph the glyph which widths is required to be written to the output file
+     *
+     * @return glyph width in glyph-space
+     *
+     * @deprecated This method was introduced to allow overriding of widths array entry writing to
+     *         output file. It's now replaced by more specific {@link #buildWidthsArray(int, int)} in order to
+     *         avoid confusion between this method and {@link Glyph#getWidth()}.
+     *         This method will be removed in the next major release.
+     */
+    @Deprecated
     protected double getGlyphWidth(Glyph glyph) {
         return glyph != null ? glyph.getWidth() : 0;
     }

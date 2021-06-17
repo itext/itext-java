@@ -43,10 +43,14 @@
 package com.itextpdf.svg.processors.impl;
 
 import com.itextpdf.styledxmlparser.css.ICssResolver;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.ITextNode;
+import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.SvgConstants.Tags;
 import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
@@ -63,7 +67,6 @@ import com.itextpdf.svg.renderers.impl.DefsSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.ISvgTextNodeRenderer;
 import com.itextpdf.svg.renderers.impl.LinearGradientSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.StopSvgNodeRenderer;
-import com.itextpdf.svg.renderers.impl.TextLeafSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer;
 import com.itextpdf.svg.utils.SvgTextUtil;
 
@@ -255,7 +258,9 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         if (parentRenderer instanceof TextSvgBranchRenderer) {
             String wholeText = textNode.wholeText();
             if (!"".equals(wholeText) && !SvgTextUtil.isOnlyWhiteSpace(wholeText)) {
-                TextLeafSvgNodeRenderer textLeaf = new TextLeafSvgNodeRenderer();
+                final IElementNode textLeafElement = new JsoupElementNode(new Element(Tag.valueOf(Tags.TEXT_LEAF), ""));
+                ISvgTextNodeRenderer textLeaf = (ISvgTextNodeRenderer) this.rendererFactory
+                        .createSvgNodeRendererForTag(textLeafElement, parentRenderer);
                 textLeaf.setParent(parentRenderer);
                 textLeaf.setAttribute(SvgConstants.Attributes.TEXT_CONTENT, wholeText);
                 ((TextSvgBranchRenderer) parentRenderer).addChild(textLeaf);

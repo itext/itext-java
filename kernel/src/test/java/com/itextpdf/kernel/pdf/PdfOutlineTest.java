@@ -48,36 +48,26 @@ import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import org.xml.sax.SAXException;
-
 import javax.xml.parsers.ParserConfigurationException;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfOutlineTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfOutlineTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfOutlineTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void before() {
@@ -226,12 +216,14 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
     @Test
     public void getOutlinesInvalidParentLink() throws IOException, InterruptedException {
-        junitExpectedException.expect(NullPointerException.class);
         PdfReader reader = new PdfReader(SOURCE_FOLDER + "outlinesInvalidParentLink.pdf");
         String filename = "updateOutlineTitleInvalidParentLink.pdf";
         PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
-        PdfOutline outlines = pdfDoc.getOutlines(false);
+
+        Assert.assertThrows(NullPointerException.class,
+                () -> pdfDoc.getOutlines(false)
+        );
     }
 
     @Test

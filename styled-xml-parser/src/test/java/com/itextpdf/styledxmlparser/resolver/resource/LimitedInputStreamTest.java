@@ -34,17 +34,12 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class LimitedInputStreamTest extends ExtendedITextTest {
     private final String baseUri = "./src/test/resources/com/itextpdf/styledxmlparser/resolver/retrieveStreamTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void readingByteAfterFileReadingTest() throws IOException {
@@ -92,8 +87,8 @@ public class LimitedInputStreamTest extends ExtendedITextTest {
         for (int i = 0; i < 88; i++) {
             Assert.assertNotEquals(-1, stream.read());
         }
-        junitExpectedException.expect(ReadingByteLimitException.class);
-        stream.read();
+
+        Assert.assertThrows(ReadingByteLimitException.class, () -> stream.read());
     }
 
     @Test
@@ -107,8 +102,7 @@ public class LimitedInputStreamTest extends ExtendedITextTest {
         Assert.assertEquals(88, numOfReadBytes);
         Assert.assertEquals(10, bytes[87]);
         Assert.assertEquals(0, bytes[88]);
-        junitExpectedException.expect(ReadingByteLimitException.class);
-        stream.read(new byte[1]);
+        Assert.assertThrows(ReadingByteLimitException.class, () -> stream.read(new byte[1]));
     }
 
     @Test
@@ -122,8 +116,7 @@ public class LimitedInputStreamTest extends ExtendedITextTest {
         Assert.assertEquals(88, numOfReadBytes);
         Assert.assertEquals(10, bytes[87]);
         Assert.assertEquals(0, bytes[88]);
-        junitExpectedException.expect(ReadingByteLimitException.class);
-        stream.read(bytes, 88, 1);
+        Assert.assertThrows(ReadingByteLimitException.class, () -> stream.read(bytes, 88, 1));
     }
 
     @Test
@@ -193,24 +186,24 @@ public class LimitedInputStreamTest extends ExtendedITextTest {
     @Test
     public void readingByteWithZeroLimitTest() throws IOException {
         LimitedInputStream stream = new LimitedInputStream(new ByteArrayInputStream(new byte[1]), 0);
-        junitExpectedException.expect(ReadingByteLimitException.class);
-        stream.read();
+
+        Assert.assertThrows(ReadingByteLimitException.class, () -> stream.read());
     }
 
     @Test
     public void readingByteArrayWithZeroLimitTest() throws IOException {
         LimitedInputStream stream = new LimitedInputStream(new ByteArrayInputStream(new byte[1]), 0);
         byte[] bytes = new byte[100];
-        junitExpectedException.expect(ReadingByteLimitException.class);
-        stream.read(bytes);
+
+        Assert.assertThrows(ReadingByteLimitException.class, () -> stream.read(bytes));
     }
 
     @Test
     public void readingByteArrayWithOffsetAndZeroLimitTest() throws IOException {
         LimitedInputStream stream = new LimitedInputStream(new ByteArrayInputStream(new byte[1]), 0);
         byte[] bytes = new byte[100];
-        junitExpectedException.expect(ReadingByteLimitException.class);
-        stream.read(bytes, 0, 100);
+
+        Assert.assertThrows(ReadingByteLimitException.class, () -> stream.read(bytes, 0, 100));
     }
 
     @Test
@@ -235,8 +228,9 @@ public class LimitedInputStreamTest extends ExtendedITextTest {
 
     @Test
     public void illegalReadingByteLimitValueTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(StyledXmlParserExceptionMessage.READING_BYTE_LIMIT_MUST_NOT_BE_LESS_ZERO);
-        new LimitedInputStream(new ByteArrayInputStream(new byte[0]), -1);
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> new LimitedInputStream(new ByteArrayInputStream(new byte[0]), -1)
+        );
+        Assert.assertEquals(StyledXmlParserExceptionMessage.READING_BYTE_LIMIT_MUST_NOT_BE_LESS_ZERO, e.getMessage());
     }
 }

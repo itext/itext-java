@@ -298,7 +298,8 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 java.io.OutputStream fout = this;
                 DeflaterOutputStream def = null;
                 OutputStreamEncryption ose = null;
-                if (crypto != null && !crypto.isEmbeddedFilesOnly()) {
+                if (crypto != null &&
+                        (!crypto.isEmbeddedFilesOnly() || document.doesStreamBelongToEmbeddedFile(pdfStream))) {
                     fout = ose = crypto.getEncryptionStream(fout);
                 }
                 if (toCompress && (allowCompression || userDefinedCompression)) {
@@ -390,7 +391,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     }
 
     protected boolean checkEncryption(PdfStream pdfStream) {
-        if (crypto == null || crypto.isEmbeddedFilesOnly()) {
+        if (crypto == null || (crypto.isEmbeddedFilesOnly() && !document.doesStreamBelongToEmbeddedFile(pdfStream))) {
             return false;
         } else if (isXRefStream(pdfStream)) {
             // The cross-reference stream shall not be encrypted

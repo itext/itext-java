@@ -459,6 +459,11 @@ public final class SvgConstants {
         public static final String TEXT = "text";
 
         /**
+         * Phantom tag for text leaf.
+         */
+        public static final String TEXT_LEAF = ":text-leaf";
+
+        /**
          * Tag defining a path on which text can be drawn.
          */
         public static final String TEXT_PATH = "textPath";

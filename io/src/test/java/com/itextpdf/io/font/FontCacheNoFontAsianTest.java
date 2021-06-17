@@ -43,24 +43,18 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.font.cmap.CMapCidUni;
 import com.itextpdf.io.font.otf.Glyph;
-import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import java.nio.charset.StandardCharsets;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class FontCacheNoFontAsianTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Before
     public void before() {
@@ -151,38 +145,30 @@ public class FontCacheNoFontAsianTest extends ExtendedITextTest {
 
     @Test
     public void getCid2UniCMapNoFontAsian() {
-        junitExpectedException.expect(IOException.class);
-
         // Without font-asian module in the class path
         // no CMap can be found.
-        FontCache.getCid2UniCmap("UniJIS-UTF16-H");
+        Assert.assertThrows(IOException.class, () -> FontCache.getCid2UniCmap("UniJIS-UTF16-H"));
     }
 
     @Test
     public void getUni2CidCMapNoFontAsian() {
-        junitExpectedException.expect(IOException.class);
-
         // Without font-asian module in the class path
         // no CMap can be found.
-        FontCache.getUni2CidCmap("UniJIS-UTF16-H");
+        Assert.assertThrows(IOException.class, () -> FontCache.getUni2CidCmap("UniJIS-UTF16-H"));
     }
 
     @Test
     public void getByte2CidCMapNoFontAsian() {
-        junitExpectedException.expect(IOException.class);
-
         // Without font-asian module in the class path
         // no CMap can be found.
-        FontCache.getByte2CidCmap("78ms-RKSJ-H");
+        Assert.assertThrows(IOException.class, () -> FontCache.getByte2CidCmap("78ms-RKSJ-H"));
     }
 
     @Test
     public void getCid2ByteCMapNoFontAsian() {
-        junitExpectedException.expect(IOException.class);
-
         // Without font-asian module in the class path
         // no CMap can be found.
-        FontCache.getCid2Byte("78ms-RKSJ-H");
+        Assert.assertThrows(IOException.class, () -> FontCache.getCid2Byte("78ms-RKSJ-H"));
     }
 
     private static class FontProgramMock extends FontProgram {

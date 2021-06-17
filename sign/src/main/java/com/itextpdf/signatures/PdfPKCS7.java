@@ -798,12 +798,20 @@ public class PdfPKCS7 {
      * in the signerInfo can also be set, and/or a time-stamp-authority client
      * may be provided.
      *
+     * <p>
+     *     Note: do not pass in the full DER-encoded OCSPResponse object obtained from the responder,
+     *     only the DER-encoded BasicOCSPResponse value contained in the response data.
+     *
      * @param secondDigest the digest in the authenticatedAttributes
      * @param tsaClient    TSAClient - null or an optional time stamp authority client
-     * @param ocsp DER-encoded OCSP response for the first certificate in the signature certificates chain, or null if OCSP revocation data is not to be added.
-     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain, or null if CRL revocation data is not to be added.
-     * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere: either basic CMS or CAdES
+     * @param ocsp DER-encoded BasicOCSPResponse for the first certificate in the signature certificates chain,
+     *             or null if OCSP revocation data is not to be added.
+     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain,
+     *                 or null if CRL revocation data is not to be added.
+     * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere:
+     *                either basic CMS or CAdES
      * @return byte[] the bytes for the PKCS7SignedData object
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc6960#section-4.2.1">RFC 6960 § 4.2.1</a>
      * @deprecated This overload is deprecated, use {@link #getEncodedPKCS7(byte[], PdfSigner.CryptoStandard, ITSAClient, Collection, Collection)} instead.
      */
     @Deprecated
@@ -816,11 +824,18 @@ public class PdfPKCS7 {
      * in the signerInfo can also be set, and/or a time-stamp-authority client
      * may be provided.
      *
+     * <p>
+     *     Note: do not pass in the full DER-encoded OCSPResponse object obtained from the responder,
+     *     only the DER-encoded BasicOCSPResponse value contained in the response data.
+     *
      * @param secondDigest the digest in the authenticatedAttributes
      * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere: either basic CMS or CAdES
      * @param tsaClient    TSAClient - null or an optional time stamp authority client
-     * @param ocsp collection of DER-encoded OCSP responses for the  certificate in the signature certificates chain, or null if OCSP revocation data is not to be added.
-     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain, or null if CRL revocation data is not to be added.
+     * @param ocsp collection of DER-encoded BasicOCSPResponses for the  certificate in the signature certificates
+     *             chain, or null if OCSP revocation data is not to be added.
+     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain,
+     *                 or null if CRL revocation data is not to be added.
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc6960#section-4.2.1">RFC 6960 § 4.2.1</a>
      * @return byte[] the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7(byte[] secondDigest, PdfSigner.CryptoStandard sigtype, ITSAClient tsaClient, Collection<byte[]> ocsp, Collection<byte[]> crlBytes) {
@@ -978,6 +993,12 @@ public class PdfPKCS7 {
      * The document digest is generated and put inside the attribute. The signing is done over the DER encoded
      * authenticatedAttributes. This method provides that encoding and the parameters must be
      * exactly the same as in {@link #getEncodedPKCS7(byte[])}.
+     *
+     * <p>
+     *     Note: do not pass in the full DER-encoded OCSPResponse object obtained from the responder,
+     *     only the DER-encoded BasicOCSPResponse value contained in the response data.
+     *
+     *
      * <p>
      * A simple example:
      * <pre>
@@ -997,10 +1018,14 @@ public class PdfPKCS7 {
      * </pre>
      *
      * @param secondDigest the content digest
-     * @param ocsp collection of DER-encoded OCSP responses for the  certificate in the signature certificates chain, or null if OCSP revocation data is not to be added.
-     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain, or null if CRL revocation data is not to be added.
-     * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere: either basic CMS or CAdES
+     * @param ocsp collection of DER-encoded BasicOCSPResponses for the  certificate in the signature certificates
+     *             chain, or null if OCSP revocation data is not to be added.
+     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain,
+     *                 or null if CRL revocation data is not to be added.
+     * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere:
+     *                either basic CMS or CAdES
      * @return the byte array representation of the authenticatedAttributes ready to be signed
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc6960#section-4.2.1">RFC 6960 § 4.2.1</a>
      * @deprecated This method overload is deprecated. Please use {@link #getAuthenticatedAttributeBytes(byte[], PdfSigner.CryptoStandard, Collection, Collection)}
      */
     @Deprecated
@@ -1013,6 +1038,11 @@ public class PdfPKCS7 {
      * The document digest is generated and put inside the attribute. The signing is done over the DER encoded
      * authenticatedAttributes. This method provides that encoding and the parameters must be
      * exactly the same as in {@link #getEncodedPKCS7(byte[])}.
+     *
+     * <p>
+     *     Note: do not pass in the full DER-encoded OCSPResponse object obtained from the responder,
+     *     only the DER-encoded BasicOCSPResponse value contained in the response data.
+     *
      * <p>
      * A simple example:
      * <pre>
@@ -1032,10 +1062,14 @@ public class PdfPKCS7 {
      * </pre>
      *
      * @param secondDigest the content digest
-     * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere: either basic CMS or CAdES
-     * @param ocsp collection of DER-encoded OCSP responses for the  certificate in the signature certificates chain, or null if OCSP revocation data is not to be added.
-     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain, or null if CRL revocation data is not to be added.
+     * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere:
+     *                either basic CMS or CAdES
+     * @param ocsp collection of DER-encoded BasicOCSPResponses for the  certificate in the signature certificates
+     *             chain, or null if OCSP revocation data is not to be added.
+     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain,
+     *                 or null if CRL revocation data is not to be added.
      * @return the byte array representation of the authenticatedAttributes ready to be signed
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc6960#section-4.2.1">RFC 6960 § 4.2.1</a>
      */
     public byte[] getAuthenticatedAttributeBytes(byte[] secondDigest, PdfSigner.CryptoStandard sigtype, Collection<byte[]> ocsp, Collection<byte[]> crlBytes) {
         try {

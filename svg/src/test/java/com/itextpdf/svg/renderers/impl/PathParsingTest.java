@@ -46,27 +46,23 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.util.Collection;
 
 @Category(UnitTest.class)
 public class PathParsingTest extends ExtendedITextTest {
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
     @Test
     public void pathParsingNoDOperatorTest() {
         // Path objects must have a d attribute
-        junitExpectedException.expect(SvgProcessingException.class);
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.STROKE, "black");
-        path.parsePathOperations();
+
+        Assert.assertThrows(SvgProcessingException.class, () -> path.parsePathOperations());
     }
 
     @Test
@@ -87,18 +83,18 @@ public class PathParsingTest extends ExtendedITextTest {
 
     @Test
     public void pathParsingOperatorBadOperatorTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.D, "b 1 1");
-        path.parsePathOperations();
+
+        Assert.assertThrows(SvgProcessingException.class, () -> path.parsePathOperations());
     }
 
     @Test
     public void pathParsingOperatorLaterBadOperatorTest() {
-        junitExpectedException.expect(SvgProcessingException.class);
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.D, "m 200 100 l 50 50 x");
-        path.parsePathOperations();
+
+        Assert.assertThrows(SvgProcessingException.class, () -> path.parsePathOperations());
     }
 
     @Test

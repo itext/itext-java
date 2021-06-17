@@ -40,16 +40,11 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class DataHandlerCounterTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void disableHooksTest() throws InterruptedException {
@@ -84,9 +79,8 @@ public class DataHandlerCounterTest extends ExtendedITextTest {
 
         counter.close();
 
-        junitExpectedException.expect(IllegalStateException.class);
-        junitExpectedException.expectMessage(PdfException.DataHandlerCounterHasBeenDisabled);
-        counter.onEvent(testEvent, null);
+        Exception e = Assert.assertThrows(IllegalStateException.class, () -> counter.onEvent(testEvent, null));
+        Assert.assertEquals(PdfException.DataHandlerCounterHasBeenDisabled, e.getMessage());
     }
 
     @Test

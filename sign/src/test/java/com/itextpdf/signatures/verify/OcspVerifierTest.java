@@ -51,6 +51,7 @@ import com.itextpdf.signatures.testutils.cert.TestCertificateBuilder;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
@@ -73,19 +74,14 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class OcspVerifierTest extends ExtendedITextTest {
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final char[] password = "testpass".toCharArray();
     private static final String caCertFileName = certsSrc + "rootRsa.p12";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void before() {
@@ -165,16 +161,15 @@ public class OcspVerifierTest extends ExtendedITextTest {
 
     @Test
     public void expiredAuthorizedOCSPResponderTest_now() throws GeneralSecurityException, IOException, OperatorCreationException {
-        junitExpectedException.expect(CertificateExpiredException.class);
-
         Date ocspResponderCertStartDate = DateTimeUtil.parseSimpleFormat("15/10/2005", "dd/MM/yyyy");
         Date ocspResponderCertEndDate = DateTimeUtil.parseSimpleFormat("15/10/2010", "dd/MM/yyyy");
         Date checkDate = DateTimeUtil.getCurrentTimeDate();
 
-        boolean verifyRes = verifyAuthorizedOCSPResponderTest(ocspResponderCertStartDate, ocspResponderCertEndDate, checkDate);
-
+        Assert.assertThrows(CertificateExpiredException.class,
+                () -> verifyAuthorizedOCSPResponderTest(ocspResponderCertStartDate, ocspResponderCertEndDate, checkDate)
+        );
         // Not getting here because of exception
-        Assert.assertFalse(verifyRes);
+        //Assert.assertFalse(verifyRes);
     }
 
     private boolean verifyTest(TestOcspResponseBuilder rootRsaOcspBuilder) throws IOException, GeneralSecurityException {

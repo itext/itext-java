@@ -269,9 +269,9 @@ public class LtvVerification {
      * Adds verification to the signature.
      *
      * @param signatureName name of the signature
-     * @param ocsps collection of ocsp responses
-     * @param crls collection of crls
-     * @param certs collection of certificates
+     * @param ocsps collection of DER-encoded BasicOCSPResponses
+     * @param crls collection of DER-encoded CRLs
+     * @param certs collection of DER-encoded certificates
      * @return boolean
      * @throws IOException signals that an I/O exception has occurred
      * @throws GeneralSecurityException when requested cryptographic algorithm or security provider

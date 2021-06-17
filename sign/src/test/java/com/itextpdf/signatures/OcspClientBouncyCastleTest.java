@@ -49,6 +49,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
+
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.CertificateID;
 import org.bouncycastle.cert.ocsp.OCSPException;
@@ -58,10 +59,8 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.security.PrivateKey;
 import java.security.Security;
@@ -76,9 +75,6 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     private static X509Certificate checkCert;
     private static X509Certificate rootCert;
     private static TestOcspResponseBuilder builder;
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void before() {

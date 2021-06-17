@@ -35,18 +35,13 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfType0FontTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/font/PdfType0FontTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void trueTypeFontAndCmapConstructorTest() throws IOException {
@@ -68,11 +63,12 @@ public class PdfType0FontTest extends ExtendedITextTest {
 
     @Test
     public void unsupportedCmapTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(PdfException.OnlyIdentityCMapsSupportsWithTrueType);
-
         TrueTypeFont ttf = new TrueTypeFont(sourceFolder + "NotoSerif-Regular_v1.7.ttf");
-        PdfType0Font type0Font = new PdfType0Font(ttf, PdfEncodings.WINANSI);
+
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> new PdfType0Font(ttf, PdfEncodings.WINANSI)
+        );
+        Assert.assertEquals(PdfException.OnlyIdentityCMapsSupportsWithTrueType, e.getMessage());
     }
 
     @Test

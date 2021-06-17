@@ -132,6 +132,9 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
      * @return this element
      */
     public T addStyle(Style style) {
+        if (style == null) {
+            throw new IllegalArgumentException("Style can not be null.");
+        }
         if (styles == null) {
             styles = new LinkedHashSet<>();
         }

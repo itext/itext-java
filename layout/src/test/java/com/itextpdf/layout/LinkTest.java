@@ -70,13 +70,11 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class LinkTest extends ExtendedITextTest {
@@ -90,9 +88,6 @@ public class LinkTest extends ExtendedITextTest {
             + "Curabitur non nunc in libero pretium dictum rutrum at lorem. Suspendisse nec magna id libero bibendum porta. Nullam urna tellus, ornare nec massa quis, fringilla fermentum leo. Vestibulum ac velit pulvinar ex feugiat varius vel eu nunc. Mauris vitae purus porttitor, sagittis elit eu, volutpat quam. Nunc mattis pretium arcu, vitae pellentesque mauris tincidunt vitae. Proin congue sem eget commodo pulvinar. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eu augue tortor. Vestibulum porta enim eget neque semper scelerisque. Nulla et enim ac nulla luctus viverra sed nec risus. Aliquam blandit, lorem non consectetur auctor, ex ipsum blandit ipsum, ut faucibus orci sem non odio. Nulla ut condimentum ante. Proin dignissim risus vitae arcu tristique, ac ultricies lacus lobortis. Aliquam sodales orci justo, vitae imperdiet elit volutpat id. Nullam vitae interdum erat.\n"
             + "Donec fringilla sapien sed neque finibus, non luctus justo lobortis. Praesent commodo pellentesque ligula, vel fringilla odio commodo id. Nam ultrices justo a dignissim congue. Nullam imperdiet sem eget placerat aliquam. Suspendisse non faucibus libero. Aenean purus arcu, auctor vitae tincidunt in, tincidunt at ante. Pellentesque euismod, velit vel vulputate faucibus, dolor erat consectetur sapien, ut elementum dui turpis nec lacus. In hac habitasse platea dictumst. Aenean vel elit ultrices, varius mi quis, congue erat."
             + "Curabitur sit amet nunc porttitor, congue elit vestibulum, vestibulum sapien. Fusce ut arcu consequat, scelerisque sapien vitae, dignissim ligula. Duis gravida mollis volutpat. Maecenas condimentum pulvinar urna in cursus. Nulla ornare est non tellus elementum auctor. Mauris ornare, elit non ornare lobortis, risus augue consectetur orci, ac efficitur ex nunc nec leo. Aenean dictum mattis magna vitae bibendum.";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {

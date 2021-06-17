@@ -84,7 +84,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
     @Test
     public void adjustChildPositionsAfterReorderingSimpleTest01() {
-        Document dummyDocument = createDocument();
+        Document dummyDocument = createDummyDocument();
         IRenderer dummy1 = createLayoutedTextRenderer("Hello", dummyDocument);
         IRenderer dummy2 = createLayoutedTextRenderer("world", dummyDocument);
         IRenderer dummyImage = createLayoutedImageRenderer(100, 100, dummyDocument);
@@ -101,7 +101,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, count = 4)})
     public void adjustChildPositionsAfterReorderingTestWithPercentMargins01() {
-        Document dummyDocument = createDocument();
+        Document dummyDocument = createDummyDocument();
         IRenderer dummy1 = createLayoutedTextRenderer("Hello", dummyDocument);
         dummy1.setProperty(Property.MARGIN_LEFT, UnitValue.createPercentValue(10));
         dummy1.setProperty(Property.MARGIN_RIGHT, UnitValue.createPercentValue(10));
@@ -118,7 +118,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
     @Test
     public void adjustChildPositionsAfterReorderingTestWithFloats01() {
-        Document dummyDocument = createDocument();
+        Document dummyDocument = createDummyDocument();
         IRenderer dummy1 = createLayoutedTextRenderer("Hello", dummyDocument);
         IRenderer dummy2 = createLayoutedTextRenderer("world", dummyDocument);
         IRenderer dummyImage = createLayoutedImageRenderer(100, 100, dummyDocument);
@@ -136,7 +136,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED)})
     public void inlineBlockWithBigMinWidth01() {
-        Document dummyDocument = createDocument();
+        Document dummyDocument = createDummyDocument();
         LineRenderer lineRenderer = (LineRenderer) new LineRenderer().setParent(dummyDocument.getRenderer());
         Div div = new Div().setMinWidth(2000).setHeight(100);
         DivRenderer inlineBlockRenderer = (DivRenderer) div.createRendererSubTree();
@@ -150,7 +150,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
     @Test
     public void adjustChildrenYLineTextChildHtmlModeTest() {
-        Document document = createDocument();
+        Document document = createDummyDocument();
 
         LineRenderer lineRenderer = new LineRenderer();
         lineRenderer.setParent(document.getRenderer());
@@ -172,7 +172,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
     @Test
     public void adjustChildrenYLineImageChildHtmlModeTest() {
-        Document document = createDocument();
+        Document document = createDummyDocument();
 
         LineRenderer lineRenderer = new LineRenderer();
         lineRenderer.setParent(document.getRenderer());
@@ -231,7 +231,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
     @Test
     public void lineRendererLayoutInHtmlModeWithLineHeightAndNoChildrenTest() {
-        Document document = createDocument();
+        Document document = createDummyDocument();
 
         LineRenderer lineRenderer = new LineRenderer();
         lineRenderer.setParent(document.getRenderer());
@@ -246,7 +246,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
     @Test
     public void lineRendererLayoutInHtmlModeWithLineHeightAndChildrenInDefaultModeTest() {
-        Document document = createDocument();
+        Document document = createDummyDocument();
 
         LineRenderer lineRenderer = new LineRenderer();
         lineRenderer.setParent(document.getRenderer());
@@ -270,7 +270,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
     @Test
     public void lineRendererLayoutInHtmlModeWithLineHeightAndChildInHtmlModeTest() {
-        Document document = createDocument();
+        Document document = createDummyDocument();
 
         LineRenderer lineRenderer = new LineRenderer();
         lineRenderer.setParent(document.getRenderer());
@@ -294,7 +294,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
     @Test
     public void lineRendererLayoutInHtmlModeWithLineHeightPropertyNotSet() throws IOException {
         LineRenderer lineRenderer = new LineRenderer();
-        lineRenderer.setParent(createDocument().getRenderer());
+        lineRenderer.setParent(createDummyDocument().getRenderer());
         lineRenderer.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
 
         // Set fonts with different ascent/descent to line and text
@@ -316,9 +316,6 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
     @Test
     public void minMaxWidthEqualsActualMarginsBordersPaddings() {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        Document document = new Document(pdfDocument);
-
         Text ranText = new Text("ran");
         ranText.setProperty(Property.MARGIN_LEFT, new UnitValue(UnitValue.POINT, 8f));
 
@@ -341,7 +338,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
                 new Rectangle(AbstractRenderer.INF, AbstractRenderer.INF));
 
         LineRenderer lineRenderer = new LineRenderer();
-        lineRenderer.setParent(document.getRenderer());
+        lineRenderer.setParent(createDummyDocument().getRenderer());
         lineRenderer.addChild(ran);
         lineRenderer.addChild(dom);
 
@@ -353,7 +350,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
     @Test
     public void splitLineIntoGlyphsSimpleTest() {
-        Document dummyDocument = createDocument();
+        Document dummyDocument = createDummyDocument();
         TextRenderer dummy1 = createLayoutedTextRenderer("hello", dummyDocument);
         TextRenderer dummy2 = createLayoutedTextRenderer("world", dummyDocument);
         TextRenderer dummy3 = createLayoutedTextRenderer("!!!", dummyDocument);
@@ -386,7 +383,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
     @Test
     public void splitLineIntoGlyphsWithLineBreakTest() {
-        Document dummyDocument = createDocument();
+        Document dummyDocument = createDummyDocument();
         TextRenderer dummy1 = createLayoutedTextRenderer("hello", dummyDocument);
         TextRenderer dummy2 = createLayoutedTextRenderer("world", dummyDocument);
         dummy2.line.set(2, new Glyph('\n', 0, '\n'));
@@ -419,7 +416,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
     @Test
     public void reorderSimpleTest() {
-        Document dummyDocument = createDocument();
+        Document dummyDocument = createDummyDocument();
         IRenderer dummy1 = createLayoutedTextRenderer("hello", dummyDocument);
         IRenderer dummy2 = createLayoutedTextRenderer("world", dummyDocument);
         IRenderer dummy3 = createLayoutedTextRenderer("!!!", dummyDocument);

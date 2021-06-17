@@ -49,11 +49,11 @@ import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 
@@ -62,9 +62,6 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PathParsingIntegrationTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/PathParsingIntegrationTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -103,14 +100,16 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void invalidOperatorTest() throws IOException, InterruptedException {
-        junitExpectedException.expect(SvgProcessingException.class);
-        convertAndCompare(sourceFolder, destinationFolder, "invalidOperator");
+        Assert.assertThrows(SvgProcessingException.class,
+                () -> convertAndCompare(sourceFolder, destinationFolder, "invalidOperator")
+        );
     }
 
     @Test
     public void invalidOperatorCSensTest() throws IOException, InterruptedException {
-        junitExpectedException.expect(SvgProcessingException.class);
-        convertAndCompare(sourceFolder, destinationFolder, "invalidOperatorCSens");
+        Assert.assertThrows(SvgProcessingException.class,
+                () -> convertAndCompare(sourceFolder, destinationFolder, "invalidOperatorCSens")
+        );
     }
 
     @Test

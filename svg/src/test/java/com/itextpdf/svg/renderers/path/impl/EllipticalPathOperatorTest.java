@@ -45,17 +45,14 @@ package com.itextpdf.svg.renderers.path.impl;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class EllipticalPathOperatorTest extends ExtendedITextTest {
     // tests for coordinates
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
     @Test
     public void testBasicParameterSet() {
         EllipticalCurveTo absoluteElliptic = new EllipticalCurveTo();
@@ -103,22 +100,22 @@ public class EllipticalPathOperatorTest extends ExtendedITextTest {
 
     @Test
     public void testNotEnoughParameterSet() {
-        junitExpectedException.expect(IllegalArgumentException.class);
         EllipticalCurveTo absoluteElliptic = new EllipticalCurveTo();
         // String array length = 6
-        absoluteElliptic.setCoordinates(new String[]{"40", "0", "0", "0", "20", "20"}, new Point());
-        String[] result = absoluteElliptic.getCoordinates();
-        Assert.assertEquals(0, result.length);
+
+        Assert.assertThrows(IllegalArgumentException.class,
+                () -> absoluteElliptic.setCoordinates(new String[]{"40", "0", "0", "0", "20", "20"}, new Point())
+        );
     }
 
     @Test
     public void testNoParameterSet() {
-        junitExpectedException.expect(IllegalArgumentException.class);
         EllipticalCurveTo absoluteElliptic = new EllipticalCurveTo();
+
         // String array length = 0
-        absoluteElliptic.setCoordinates(new String[]{}, new Point());
-        String[] result = absoluteElliptic.getCoordinates();
-        Assert.assertEquals(0, result.length);
+        Assert.assertThrows(IllegalArgumentException.class,
+                () -> absoluteElliptic.setCoordinates(new String[]{}, new Point())
+        );
     }
 
     // rotate tests

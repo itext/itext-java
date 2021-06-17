@@ -46,7 +46,6 @@ import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
@@ -58,23 +57,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfA2CheckerTest extends ExtendedITextTest {
     private PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B);
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
     @Test
     public void checkNameEntryShouldBeUniqueBetweenDefaultAndAdditionalConfigs() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.VALUE_OF_NAME_ENTRY_SHALL_BE_UNIQUE_AMONG_ALL_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARIES);
-
         PdfDictionary ocProperties = new PdfDictionary();
         PdfDictionary d = new PdfDictionary();
         d.put(PdfName.Name, new PdfString("CustomName"));
@@ -88,14 +79,15 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.OCProperties, ocProperties);
 
-        pdfA2Checker.checkCatalogValidEntries(catalog);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA2Checker.checkCatalogValidEntries(catalog)
+        );
+        Assert.assertEquals(PdfAConformanceException.VALUE_OF_NAME_ENTRY_SHALL_BE_UNIQUE_AMONG_ALL_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARIES,
+                e.getMessage());
     }
 
     @Test
     public void checkNameEntryShouldBeUniqueBetweenAdditionalConfigs() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.VALUE_OF_NAME_ENTRY_SHALL_BE_UNIQUE_AMONG_ALL_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARIES);
-
         PdfDictionary ocProperties = new PdfDictionary();
         PdfDictionary d = new PdfDictionary();
         d.put(PdfName.Name, new PdfString("CustomName"));
@@ -112,14 +104,15 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.OCProperties, ocProperties);
 
-        pdfA2Checker.checkCatalogValidEntries(catalog);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA2Checker.checkCatalogValidEntries(catalog)
+        );
+        Assert.assertEquals(PdfAConformanceException.VALUE_OF_NAME_ENTRY_SHALL_BE_UNIQUE_AMONG_ALL_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARIES,
+                e.getMessage());
     }
 
     @Test
     public void checkOCCDContainName() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY_SHALL_CONTAIN_NAME_ENTRY);
-
         PdfDictionary ocProperties = new PdfDictionary();
         PdfDictionary d = new PdfDictionary();
         PdfArray configs = new PdfArray();
@@ -135,14 +128,15 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.OCProperties, ocProperties);
 
-        pdfA2Checker.checkCatalogValidEntries(catalog);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA2Checker.checkCatalogValidEntries(catalog)
+        );
+        Assert.assertEquals(PdfAConformanceException.OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY_SHALL_CONTAIN_NAME_ENTRY,
+                e.getMessage());
     }
 
     @Test
     public void checkOrderArrayDoesNotContainRedundantReferences()  {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS);
-
         PdfDictionary ocProperties = new PdfDictionary();
         PdfDictionary d = new PdfDictionary();
         d.put(PdfName.Name, new PdfString("CustomName"));
@@ -172,14 +166,14 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.OCProperties, ocProperties);
 
-        pdfA2Checker.checkCatalogValidEntries(catalog);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA2Checker.checkCatalogValidEntries(catalog)
+        );
+        Assert.assertEquals(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS, e.getMessage());
     }
 
     @Test
     public void checkOrderArrayContainsReferencesToAllOCGs() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS);
-
         PdfDictionary ocProperties = new PdfDictionary();
         PdfDictionary d = new PdfDictionary();
         d.put(PdfName.Name, new PdfString("CustomName"));
@@ -208,14 +202,14 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.OCProperties, ocProperties);
 
-        pdfA2Checker.checkCatalogValidEntries(catalog);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA2Checker.checkCatalogValidEntries(catalog)
+        );
+        Assert.assertEquals(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS, e.getMessage());
     }
 
     @Test
     public void checkOrderArrayAndOCGsMatch() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS);
-
         PdfDictionary ocProperties = new PdfDictionary();
         PdfDictionary d = new PdfDictionary();
         d.put(PdfName.Name, new PdfString("CustomName"));
@@ -249,7 +243,10 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.OCProperties, ocProperties);
 
-        pdfA2Checker.checkCatalogValidEntries(catalog);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA2Checker.checkCatalogValidEntries(catalog)
+        );
+        Assert.assertEquals(PdfAConformanceException.ORDER_ARRAY_SHALL_CONTAIN_REFERENCES_TO_ALL_OCGS, e.getMessage());
     }
 
     @Test
@@ -317,36 +314,32 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkCatalogDictionaryWithoutAlternatePresentations() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_ALTERNATEPRESENTATIONS_NAMES_ENTRY);
-
         PdfDictionary names = new PdfDictionary();
         names.put(PdfName.AlternatePresentations, new PdfDictionary());
 
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.Names, names);
 
-        pdfA2Checker.checkCatalogValidEntries(catalog);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA2Checker.checkCatalogValidEntries(catalog)
+        );
+        Assert.assertEquals(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_ALTERNATEPRESENTATIONS_NAMES_ENTRY,
+                e.getMessage());
     }
 
     @Test
     public void checkCatalogDictionaryWithoutRequirements() {
-        junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_REQUIREMENTS_ENTRY);
-
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.Requirements, new PdfDictionary());
 
-        pdfA2Checker.checkCatalogValidEntries(catalog);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA2Checker.checkCatalogValidEntries(catalog)
+        );
+        Assert.assertEquals(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_REQUIREMENTS_ENTRY, e.getMessage());
     }
 
     @Test
     public void deviceNColorspaceNoAttributesDictionary() {
-        //TODO DEVSIX-4203 should not cause an IndexOutOfBoundException.
-        // Should throw PdfAConformanceException as Colorants dictionary always must be present
-        // for Pdf/A-2
-        junitExpectedException.expect(RuntimeException.class);
-
         int numberOfComponents = 2;
         List<String> tmpArray = new ArrayList<String>(numberOfComponents);
         float[] transformArray = new float[numberOfComponents * 2];
@@ -360,8 +353,13 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
                 (new PdfArray(transformArray), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0}".getBytes(StandardCharsets.ISO_8859_1));
 
         PdfDictionary currentColorSpaces = new PdfDictionary();
-        pdfA2Checker.checkColorSpace(new  PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function),
-        currentColorSpaces, true, false);
 
+        //TODO DEVSIX-4203 should not cause an IndexOutOfBoundException.
+        // Should throw PdfAConformanceException as Colorants dictionary always must be present
+        // for Pdf/A-2
+        Assert.assertThrows(RuntimeException.class,
+                () -> pdfA2Checker.checkColorSpace(new PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function),
+                        currentColorSpaces, true, false)
+        );
     }
 }
