@@ -181,7 +181,7 @@ public class SignaturesCompareTool {
                 }
             }
         } catch (Exception e) {
-            errorText.append(e.getMessage()).append("\n");
+            errorText.append(e.getMessage());
         }
 
         if (!errorText.toString().isEmpty()) {

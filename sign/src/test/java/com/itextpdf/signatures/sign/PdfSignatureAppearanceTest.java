@@ -61,16 +61,9 @@ import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.SignatureUtil;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -86,14 +79,20 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PdfSignatureAppearanceTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PdfSignatureAppearanceTest/";
-    public static final String keystorePath = "./src/test/resources/com/itextpdf/signatures/sign/SigningTest/test.p12";
-    public static final char[] password = "kspass".toCharArray();
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/PdfSignatureAppearanceTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/PdfSignatureAppearanceTest/";
+    public static final String KEYSTORE_PATH = "./src/test/resources/com/itextpdf/signatures/sign/PdfSignatureAppearanceTest/test.p12";
+    public static final char[] PASSWORD = "kspass".toCharArray();
 
     private Certificate[] chain;
     private PrivateKey pk;
@@ -101,19 +100,19 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     @BeforeClass
     public static void before() {
         Security.addProvider(new BouncyCastleProvider());
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Before
     public void init() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
-        pk = Pkcs12FileHelper.readFirstKey(keystorePath, password, password);
-        chain = Pkcs12FileHelper.readFirstChain(keystorePath, password);
+        pk = Pkcs12FileHelper.readFirstKey(KEYSTORE_PATH, PASSWORD, PASSWORD);
+        chain = Pkcs12FileHelper.readFirstChain(KEYSTORE_PATH, PASSWORD);
     }
 
     @Test
     public void textAutoscaleTest01() throws GeneralSecurityException, IOException {
         String fileName = "textAutoscaleTest01.pdf";
-        String dest = destinationFolder + fileName;
+        String dest = DESTINATION_FOLDER + fileName;
 
         Rectangle rect = new Rectangle(36, 648, 200, 100);
         testSignatureAppearanceAutoscale(dest, rect, PdfSignatureAppearance.RenderingMode.DESCRIPTION);
@@ -124,7 +123,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     @Test
     public void textAutoscaleTest02() throws GeneralSecurityException, IOException {
         String fileName = "textAutoscaleTest02.pdf";
-        String dest = destinationFolder + fileName;
+        String dest = DESTINATION_FOLDER + fileName;
 
         Rectangle rect = new Rectangle(36, 648, 100, 50);
         testSignatureAppearanceAutoscale(dest, rect, PdfSignatureAppearance.RenderingMode.DESCRIPTION);
@@ -135,7 +134,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     @Test
     public void textAutoscaleTest03() throws GeneralSecurityException, IOException {
         String fileName = "textAutoscaleTest03.pdf";
-        String dest = destinationFolder + fileName;
+        String dest = DESTINATION_FOLDER + fileName;
 
         Rectangle rect = new Rectangle(36, 648, 200, 100);
         testSignatureAppearanceAutoscale(dest, rect, PdfSignatureAppearance.RenderingMode.NAME_AND_DESCRIPTION);
@@ -146,7 +145,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     @Test
     public void textAutoscaleTest04() throws GeneralSecurityException, IOException {
         String fileName = "textAutoscaleTest04.pdf";
-        String dest = destinationFolder + fileName;
+        String dest = DESTINATION_FOLDER + fileName;
 
         Rectangle rect = new Rectangle(36, 648, 100, 50);
         testSignatureAppearanceAutoscale(dest, rect, PdfSignatureAppearance.RenderingMode.NAME_AND_DESCRIPTION);
@@ -157,7 +156,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     @Test
     public void textAutoscaleTest05() throws GeneralSecurityException, IOException {
         String fileName = "textAutoscaleTest05.pdf";
-        String dest = destinationFolder + fileName;
+        String dest = DESTINATION_FOLDER + fileName;
 
         Rectangle rect = new Rectangle(36, 648, 200, 100);
         testSignatureAppearanceAutoscale(dest, rect, PdfSignatureAppearance.RenderingMode.GRAPHIC_AND_DESCRIPTION);
@@ -168,7 +167,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     @Test
     public void textAutoscaleTest06() throws GeneralSecurityException, IOException {
         String fileName = "textAutoscaleTest06.pdf";
-        String dest = destinationFolder + fileName;
+        String dest = DESTINATION_FOLDER + fileName;
 
         Rectangle rect = new Rectangle(36, 648, 100, 50);
         testSignatureAppearanceAutoscale(dest, rect, PdfSignatureAppearance.RenderingMode.GRAPHIC_AND_DESCRIPTION);
@@ -178,9 +177,9 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
     @Test
     public void testSigningInAppendModeWithHybridDocument() throws IOException, GeneralSecurityException, InterruptedException {
-        String src = sourceFolder + "hybrid.pdf";
-        String dest = destinationFolder + "signed_hybrid.pdf";
-        String cmp = sourceFolder + "cmp_signed_hybrid.pdf";
+        String src = SOURCE_FOLDER + "hybrid.pdf";
+        String dest = DESTINATION_FOLDER + "signed_hybrid.pdf";
+        String cmp = SOURCE_FOLDER + "cmp_signed_hybrid.pdf";
 
         PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties().useAppendMode());
 
@@ -203,17 +202,17 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         new PdfDocument(new PdfReader(dest)).close();
 
         // Assert that the document can be rendered correctly
-        Assert.assertNull(new CompareTool().compareVisually(dest, cmp, destinationFolder, "diff_",
+        Assert.assertNull(new CompareTool().compareVisually(dest, cmp, DESTINATION_FOLDER, "diff_",
                 getIgnoredAreaTestMap(new Rectangle(36, 748, 200, 100))));
     }
 
     @Test
     public void fontColorTest01() throws GeneralSecurityException, IOException, InterruptedException {
         String fileName = "fontColorTest01.pdf";
-        String dest = destinationFolder + fileName;
+        String dest = DESTINATION_FOLDER + fileName;
 
         Rectangle rect = new Rectangle(36, 648, 100, 50);
-        String src = sourceFolder + "simpleDocument.pdf";
+        String src = SOURCE_FOLDER + "simpleDocument.pdf";
 
         PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
         // Creating the appearance
@@ -227,7 +226,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
-        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
+        Assert.assertNull(new CompareTool().compareVisually(dest, SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER,
                 "diff_"));
     }
 
@@ -248,7 +247,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     @Test
     public void signatureFieldNotMergedWithWidgetTest() throws IOException, GeneralSecurityException {
         try (PdfDocument outputDoc = new PdfDocument(new PdfReader(
-                sourceFolder + "signatureFieldNotMergedWithWidget.pdf"))) {
+                SOURCE_FOLDER + "signatureFieldNotMergedWithWidget.pdf"))) {
 
             SignatureUtil sigUtil = new SignatureUtil(outputDoc);
             PdfPKCS7 signatureData = sigUtil.readSignatureData("Signature1");
@@ -261,9 +260,9 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     public void signExistingNotMergedFieldNotReusedAPTest() throws GeneralSecurityException,
             IOException, InterruptedException {
         // Field is not merged with widget and has /P key
-        String src = sourceFolder + "emptyFieldNotMerged.pdf";
+        String src = SOURCE_FOLDER + "emptyFieldNotMerged.pdf";
         String fileName = "signExistingNotMergedFieldNotReusedAP.pdf";
-        String dest = destinationFolder + fileName;
+        String dest = DESTINATION_FOLDER + fileName;
 
         PdfReader reader = new PdfReader(src);
 
@@ -283,7 +282,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
                 0, PdfSigner.CryptoStandard.CADES);
 
         Assert.assertNull(new CompareTool().compareVisually(
-                dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
+                dest, SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -291,9 +290,9 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     public void signExistingNotMergedFieldReusedAPTest() throws GeneralSecurityException,
             IOException, InterruptedException {
         // Field is not merged with widget and has /P key
-        String src = sourceFolder + "emptyFieldNotMerged.pdf";
+        String src = SOURCE_FOLDER + "emptyFieldNotMerged.pdf";
         String fileName = "signExistingNotMergedFieldReusedAP.pdf";
-        String dest = destinationFolder + fileName;
+        String dest = DESTINATION_FOLDER + fileName;
 
         PdfReader reader = new PdfReader(src);
 
@@ -313,7 +312,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
                 0, PdfSigner.CryptoStandard.CADES);
 
         Assert.assertNull(new CompareTool().compareVisually(
-                dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
+                dest, SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -321,9 +320,9 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     public void signExistingNotMergedFieldReusedAPEntryNDicTest() throws GeneralSecurityException,
             IOException, InterruptedException {
         // Field is not merged with widget and has /P key
-        String src = sourceFolder + "emptyFieldNotMergedEntryNDict.pdf";
+        String src = SOURCE_FOLDER + "emptyFieldNotMergedEntryNDict.pdf";
         String fileName = "signExistingNotMergedFieldReusedAPEntryNDic.pdf";
-        String dest = destinationFolder + fileName;
+        String dest = DESTINATION_FOLDER + fileName;
 
         PdfReader reader = new PdfReader(src);
 
@@ -346,8 +345,8 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
     private void testSignatureOnRotatedPage(int pageNum, PdfSignatureAppearance.RenderingMode renderingMode, StringBuilder assertionResults) throws IOException, GeneralSecurityException, InterruptedException {
         String fileName = "signaturesOnRotatedPages" + pageNum + "_mode_" + renderingMode.name() + ".pdf";
-        String src = sourceFolder + "documentWithRotatedPages.pdf";
-        String dest = destinationFolder + fileName;
+        String src = SOURCE_FOLDER + "documentWithRotatedPages.pdf";
+        String dest = DESTINATION_FOLDER + fileName;
 
         PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties().useAppendMode());
 
@@ -357,7 +356,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
                 .setLayer2Text("Digitally signed by Test User. All rights reserved. Take care!")
                 .setPageRect(new Rectangle(100, 100, 100, 50))
                 .setRenderingMode(renderingMode)
-                .setSignatureGraphic(ImageDataFactory.create(sourceFolder + "itext.png"))
+                .setSignatureGraphic(ImageDataFactory.create(SOURCE_FOLDER + "itext.png"))
                 .setPageNumber(pageNum);
 
         signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
@@ -370,7 +369,8 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
         try {
             // TODO DEVSIX-864 compareVisually() should be changed to compareByContent() because it slows down the test
-            String testResult = new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_");
+            String testResult = new CompareTool().compareVisually(dest, SOURCE_FOLDER + "cmp_" + fileName,
+                    DESTINATION_FOLDER, "diff_");
             if (null != testResult) {
                 assertionResults.append(testResult);
             }
@@ -380,7 +380,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     private void testSignatureAppearanceAutoscale(String dest, Rectangle rect, PdfSignatureAppearance.RenderingMode renderingMode) throws IOException, GeneralSecurityException {
-        String src = sourceFolder + "simpleDocument.pdf";
+        String src = SOURCE_FOLDER + "simpleDocument.pdf";
 
         PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
         // Creating the appearance
@@ -390,7 +390,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
                 .setLocation("TestCity")
                 .setPageRect(rect)
                 .setRenderingMode(renderingMode)
-                .setSignatureGraphic(ImageDataFactory.create(sourceFolder + "itext.png"));
+                .setSignatureGraphic(ImageDataFactory.create(SOURCE_FOLDER + "itext.png"));
 
         signer.setFieldName("Signature1");
         // Creating the signature
