@@ -112,7 +112,7 @@ public class PdfWriter extends PdfOutputStream {
     }
 
     public PdfWriter(java.io.OutputStream os, WriterProperties properties) {
-        super(FileUtil.wrapWithBufferedOutputStream(os));
+        super(new CountOutputStream(FileUtil.wrapWithBufferedOutputStream(os)));
         this.properties = properties;
         if (properties.debugMode) {
             duplicateStream = new PdfOutputStream(new ByteArrayOutputStream());

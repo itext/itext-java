@@ -217,6 +217,7 @@ public class PdfA1ActionCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.addNewPage();
         doc.getCatalog().setAdditionalAction(PdfName.C, PdfAction.createJavaScript("js"));
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());

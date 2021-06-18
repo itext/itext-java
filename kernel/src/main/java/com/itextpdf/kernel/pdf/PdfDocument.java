@@ -54,6 +54,7 @@ import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.VersionInfo;
 import com.itextpdf.kernel.actions.EventManager;
+import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.actions.events.ConfirmEvent;
 import com.itextpdf.kernel.actions.events.EventConfirmationType;
 import com.itextpdf.kernel.actions.events.FlushPdfDocumentEvent;
@@ -81,6 +82,8 @@ import com.itextpdf.kernel.pdf.collection.PdfCollection;
 import com.itextpdf.kernel.pdf.filespec.PdfEncryptedPayloadFileSpecFactory;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
+import com.itextpdf.kernel.pdf.statistics.NumberOfPagesStatisticsEvent;
+import com.itextpdf.kernel.pdf.statistics.SizeOfPdfStatisticsEvent;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.xmp.PdfConst;
@@ -845,8 +848,13 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     throw new PdfException(
                             KernelExceptionMessageConstant.CANNOT_CLOSE_DOCUMENT_WITH_ALREADY_FLUSHED_PDF_CATALOG);
                 }
+
+                EventManager manager = EventManager.getInstance();
+                manager.onEvent(new NumberOfPagesStatisticsEvent(
+                        catalog.getPageTree().getNumberOfPages(), ITextCoreProductData.getInstance()));
                 // The event will prepare document for flushing, i.e. will set an appropriate producer line
-                EventManager.getInstance().onEvent(new FlushPdfDocumentEvent(this));
+                manager.onEvent(new FlushPdfDocumentEvent(this));
+
                 updateXmpMetadata();
                 // In PDF 2.0, all the values except CreationDate and ModDate are deprecated. Remove them now
                 if (pdfVersion.compareTo(PdfVersion.PDF_2_0) >= 0) {
@@ -1004,6 +1012,13 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         ByteUtils.getIsoBytes(modifiedDocumentId.getValue()));
                 xref.writeXrefTableAndTrailer(this, fileId, crypto);
                 writer.flush();
+                if (writer.getOutputStream() instanceof CountOutputStream) {
+                    long amountOfBytes = ((CountOutputStream) writer.getOutputStream()).getAmountOfWrittenBytes();
+                    manager.onEvent(new SizeOfPdfStatisticsEvent(amountOfBytes, ITextCoreProductData.getInstance()));
+                }
+                for (ICounter counter : getCounters()) {
+                    counter.onDocumentWritten(writer.getCurrentPos());
+                }
             }
             catalog.getPageTree().clearPageRefs();
             removeAllHandlers();

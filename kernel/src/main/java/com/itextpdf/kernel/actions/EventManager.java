@@ -25,7 +25,9 @@ package com.itextpdf.kernel.actions;
 import com.itextpdf.kernel.actions.exceptions.AggregatedException;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Entry point for event handling mechanism. Class is a singleton,
@@ -34,7 +36,7 @@ import java.util.List;
 public final class EventManager {
     private static final EventManager INSTANCE = new EventManager();
 
-    private final List<IBaseEventHandler> handlers = new ArrayList<>();
+    private final Set<IBaseEventHandler> handlers = new LinkedHashSet<>();
 
     private EventManager() {
         handlers.add(ProductEventHandler.INSTANCE);

@@ -51,6 +51,9 @@ public final class KernelLogMessageConstant {
     public static final String DCTDECODE_FILTER_DECODING = "DCTDecode filter decoding into the "
             + "bit map is not supported. The stream data would be left in JPEG baseline format";
 
+    public static final String INVALID_STATISTICS_NAME =
+            "Statistics name {0} is invalid. Cannot find corresponding statistics aggregator.";
+
     public static final String FEATURE_IS_NOT_SUPPORTED =
             "Exception was thrown: {0}. The feature {1} is probably not supported by your XML processor.";
 
