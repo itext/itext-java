@@ -530,6 +530,9 @@ public class LineRenderer extends AbstractRenderer {
 
                         childPos = lastFittingChildRendererData.childIndex;
                         childResult = lastFittingChildRendererData.childLayoutResult;
+                        if (0 == childPos && LayoutResult.NOTHING == childResult.getStatus()) {
+                            anythingPlaced = false;
+                        }
                         textRendererLayoutResults.put(childPos, childResult);
 
                         MinMaxWidth textSequenceElemminMaxWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth();

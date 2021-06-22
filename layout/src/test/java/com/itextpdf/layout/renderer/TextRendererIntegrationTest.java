@@ -29,6 +29,7 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -771,6 +772,94 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         doc.add(new Paragraph(text));
 
         doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void nbspCannotBeFitAndIsTheOnlySymbolTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "nbspCannotBeFitAndIsTheOnlySymbolTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_nbspCannotBeFitAndIsTheOnlySymbolTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        // No place for any symbol (page width is fully occupied by margins)
+        Document doc = new Document(pdfDocument, new PageSize(72, 1000));
+
+        Paragraph paragraph = new Paragraph()
+                .add(new Text("\u00A0"));
+
+        paragraph.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        doc.add(paragraph);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void nbspCannotBeFitAndMakesTheFirstChunkTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "nbspCannotBeFitAndMakesTheFirstChunkTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_nbspCannotBeFitAndMakesTheFirstChunkTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        // No place for any symbol (page width is fully occupied by margins)
+        Document doc = new Document(pdfDocument, new PageSize(72, 1000));
+
+        Paragraph paragraph = new Paragraph()
+                .add(new Text("\u00A0"))
+                .add(new Text("SecondChunk"));
+
+        paragraph.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        doc.add(paragraph);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void nbspCannotBeFitAndIsTheFirstSymbolOfChunkTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "nbspCannotBeFitAndIsTheFirstSymbolOfChunkTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_nbspCannotBeFitAndIsTheFirstSymbolOfChunkTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        // No place for any symbol (page width is fully occupied by margins)
+        Document doc = new Document(pdfDocument, new PageSize(72, 1000));
+
+        Paragraph paragraph = new Paragraph()
+                .add(new Text("\u00A0First"));
+
+        paragraph.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        doc.add(paragraph);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void nbspCannotBeFitAndIsTheLastSymbolOfFirstChunkTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "nbspCannotBeFitAndIsTheLastSymbolOfFirstChunkTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_nbspCannotBeFitAndIsTheLastSymbolOfFirstChunkTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        // No place for the second symbol
+        Document doc = new Document(pdfDocument, new PageSize(81, 1000));
+
+        Paragraph paragraph = new Paragraph()
+                .add(new Text("H\u00A0"))
+                .add(new Text("ello"));
+
+        paragraph.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        doc.add(paragraph);
+
+        doc.close();
+
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
