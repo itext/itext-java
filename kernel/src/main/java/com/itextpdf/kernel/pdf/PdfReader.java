@@ -923,7 +923,8 @@ public class PdfReader implements Closeable, Serializable {
             tokens.nextValidToken();
             if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
                 break;
-            if (tokens.getTokenType() != PdfTokenizer.TokenType.Name)
+            //following needed for a pdf created with ipad where the dictionary started with a String not a name
+            if (tokens.getTokenType() != PdfTokenizer.TokenType.Name && tokens.getTokenType()!=PdfTokenizer.TokenType.String)
                 tokens.throwError(PdfException.DictionaryKey1IsNotAName, tokens.getStringValue());
             PdfName name = readPdfName(true);
             PdfObject obj = readObject(true, objStm);
