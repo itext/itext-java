@@ -22,21 +22,19 @@
  */
 package com.itextpdf.kernel.actions.data;
 
-import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.actions.ProductNameConstant;
 
 /**
  * Stores an instance of {@link ProductData} related to iText core module.
  */
 public class ITextCoreProductData {
-
     private static final String CORE_PUBLIC_PRODUCT_NAME = "Core";
+    private static final String CORE_VERSION = "7.1.16-SNAPSHOT";
     private static final int CORE_COPYRIGHT_SINCE = 1998;
     private static final int CORE_COPYRIGHT_TO = 2021;
 
     private static final ProductData ITEXT_PRODUCT_DATA = new ProductData(CORE_PUBLIC_PRODUCT_NAME,
-            ProductNameConstant.ITEXT_CORE, Version.getInstance().getInfo().getRelease(),
-            CORE_COPYRIGHT_SINCE, CORE_COPYRIGHT_TO);
+            ProductNameConstant.ITEXT_CORE, CORE_VERSION, CORE_COPYRIGHT_SINCE, CORE_COPYRIGHT_TO);
 
     /**
      * Getter for an instance of {@link ProductData} related to iText core module.

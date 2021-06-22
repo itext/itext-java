@@ -318,8 +318,7 @@ public final class Version {
     }
 
     private static Class<?> getLicenseKeyClass() throws ClassNotFoundException {
-        String licenseKeyClassFullName = "com.itextpdf.licensekey.LicenseKey";
-        return getClassFromLicenseKey(licenseKeyClassFullName);
+        throw new ClassNotFoundException();
     }
 
     private static Class<?> getClassFromLicenseKey(String classFullName) throws ClassNotFoundException {
