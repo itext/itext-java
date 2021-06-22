@@ -58,8 +58,9 @@ import java.util.List;
  */
 class PdfPagesTree {
 
+    static final int DEFAULT_LEAF_SIZE = 10;
 
-    private final int leafSize = 10;
+    private final int leafSize = DEFAULT_LEAF_SIZE;
 
     private List<PdfIndirectReference> pageRefs;
     private List<PdfPages> parents;
@@ -303,7 +304,6 @@ class PdfPagesTree {
                             dynamicLeafSize = leafSize;
                         }
                     }
-                    assert current != null;
                     current.addPages(pages);
                 }
                 parents = nextParents;

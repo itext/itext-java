@@ -80,7 +80,6 @@ public class PdfPagesTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfPagesTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfPagesTest/";
     private static final PdfName PageNum = new PdfName("PageNum");
-    private static final PdfName PageNum5 = new PdfName("PageNum");
 
     @BeforeClass
     public static void setup() {
@@ -713,6 +712,30 @@ public class PdfPagesTest extends ExtendedITextTest {
 
         findAndAssertNullPages(pdfDocument, nullPages);
     }
+    
+    @Test
+    public void testPageTreeGenerationWhenFirstPdfPagesHasOnePageOnly() {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+
+        int totalPageCount = PdfPagesTree.DEFAULT_LEAF_SIZE + 4;
+        for (int i = 0; i < totalPageCount; i++) {
+            pdfDocument.addNewPage();
+        }
+        Assert.assertEquals(2, pdfDocument.getCatalog().getPageTree().getParents().size());
+        Assert.assertEquals(PdfPagesTree.DEFAULT_LEAF_SIZE,
+                pdfDocument.getCatalog().getPageTree().getParents().get(0).getCount());
+
+        // Leave only one page in the first pages tree
+        for (int i = PdfPagesTree.DEFAULT_LEAF_SIZE - 1; i >= 1; i--) {
+            pdfDocument.removePage(i);
+        }
+        Assert.assertEquals(2, pdfDocument.getCatalog().getPageTree().getParents().size());
+        Assert.assertEquals(1,
+                pdfDocument.getCatalog().getPageTree().getParents().get(0).getCount());
+
+        // TODO DEVSIX-5575 remove expected exception and add proper assertions
+        Assert.assertThrows(NullPointerException.class, () -> pdfDocument.close());
+    }
 
     private static void findAndAssertNullPages(PdfDocument pdfDocument, Set<Integer> nullPages) {
         for (Integer e : nullPages) {
@@ -738,7 +761,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
             Assert.assertNotNull(page);
-            PdfNumber number = page.getAsNumber(PageNum5);
+            PdfNumber number = page.getAsNumber(PageNum);
             Assert.assertEquals("Page number", i, number.intValue());
         }
 
