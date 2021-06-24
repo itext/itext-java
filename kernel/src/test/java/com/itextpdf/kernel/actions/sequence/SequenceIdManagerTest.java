@@ -51,11 +51,11 @@ public class SequenceIdManagerTest extends ExtendedITextTest {
         SequenceId sequenceId2 = new SequenceId();
         SequenceIdManager.setSequenceId(element, sequenceId1);
 
-        Assert.assertThrows(
-                MessageFormatUtil.format(PdfException.ElementAlreadyHasIdentifier,
-                sequenceId1.getId(), sequenceId2.getId()),
-                IllegalStateException.class,
+        Exception e = Assert.assertThrows(IllegalStateException.class,
                 () -> SequenceIdManager.setSequenceId(element, sequenceId2));
+
+        Assert.assertEquals(MessageFormatUtil.format(PdfException.ElementAlreadyHasIdentifier,
+                sequenceId1.getId(), sequenceId2.getId()), e.getMessage());
     }
 
     private static class IdentifiableElement extends AbstractIdentifiableElement {
