@@ -93,9 +93,9 @@ public class ContextManagerTest extends ExtendedITextTest {
 
     @Test
     public void registeredNamespaceTest() {
-        String registeredNamespace = "com.itextpdf.layout.custompackage";
+        String registeredNamespace = NamespaceConstant.CORE_LAYOUT + "custompackage";
 
-        Assert.assertEquals(NamespaceConstant.CORE_LAYOUT,
+        Assert.assertEquals(NamespaceConstant.CORE_LAYOUT.toLowerCase(),
                 ContextManager.getInstance().getRecognisedNamespace(registeredNamespace));
     }
 }
