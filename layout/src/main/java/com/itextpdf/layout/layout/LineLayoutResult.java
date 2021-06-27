@@ -95,21 +95,30 @@ public class LineLayoutResult extends MinMaxWidthLayoutResult {
     }
 
     /**
-     * Sets {@link #setSplitForcedByNewline}
+     * Sets a flat that split was forced by new line symbol in rendered text.
      *
      * @param isSplitForcedByNewline indicates that split was forced by new line symbol in rendered text.
      * @return {@link com.itextpdf.layout.layout.LineLayoutResult this layout result} the setting was applied on.
-     * @see #setSplitForcedByNewline
      */
     public LineLayoutResult setSplitForcedByNewline(boolean isSplitForcedByNewline) {
         this.splitForcedByNewline = isSplitForcedByNewline;
         return this;
     }
 
+    /**
+     * Gets the list of floats overflowed to next page.
+     *
+     * @return list of floats overflowed to next page
+     */
     public List<IRenderer> getFloatsOverflowedToNextPage() {
         return floatsOverflowedToNextPage;
     }
 
+    /**
+     * Sets the list of floats overflowed to next page.
+     *
+     * @param floatsOverflowedToNextPage the floats overflowed to next page
+     */
     public void setFloatsOverflowedToNextPage(List<IRenderer> floatsOverflowedToNextPage) {
         this.floatsOverflowedToNextPage = floatsOverflowedToNextPage;
     }

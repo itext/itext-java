@@ -42,17 +42,30 @@
  */
 package com.itextpdf.layout.layout;
 
+/**
+ * Represents the result of positioning for layout context.
+ */
 public class PositionedLayoutContext extends LayoutContext {
 
     private LayoutArea parentOccupiedArea;
 
+    /**
+     * Creates position for layout context.
+     *
+     * @param area for the content to be placed on
+     * @param parentOccupiedArea the parent content to be placed on
+     */
     public PositionedLayoutContext(LayoutArea area, LayoutArea parentOccupiedArea) {
         super(area);
         this.parentOccupiedArea = parentOccupiedArea;
     }
 
+    /**
+     * Gets the value of the parent occupied area.
+     *
+     * @return the parent occupied area
+     */
     public LayoutArea getParentOccupiedArea() {
         return parentOccupiedArea;
     }
-
 }
