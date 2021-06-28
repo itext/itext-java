@@ -54,8 +54,8 @@ import com.itextpdf.layout.layout.PositionedLayoutContext;
 import com.itextpdf.layout.layout.RootLayoutArea;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
-import com.itextpdf.layout.property.ClearPropertyValue;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.ClearPropertyValue;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.util.ArrayList;

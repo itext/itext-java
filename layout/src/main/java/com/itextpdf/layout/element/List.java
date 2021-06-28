@@ -46,10 +46,10 @@ package com.itextpdf.layout.element;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.layout.property.ListNumberingType;
-import com.itextpdf.layout.property.ListSymbolAlignment;
-import com.itextpdf.layout.property.ListSymbolPosition;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.ListNumberingType;
+import com.itextpdf.layout.properties.ListSymbolAlignment;
+import com.itextpdf.layout.properties.ListSymbolPosition;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ListRenderer;
 

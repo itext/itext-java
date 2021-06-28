@@ -51,14 +51,14 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
-import com.itextpdf.layout.property.ObjectFit;
+import com.itextpdf.layout.properties.ObjectFit;
 import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.layout.LayoutPosition;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ImageRenderer;
 

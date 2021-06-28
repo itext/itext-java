@@ -45,7 +45,7 @@ package com.itextpdf.layout.tagging;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.IPropertyContainer;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.Property;
 
 public class TaggingDummyElement implements IAccessibleElement, IPropertyContainer {
     private DefaultAccessibilityProperties properties;

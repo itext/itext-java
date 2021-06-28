@@ -44,7 +44,7 @@ package com.itextpdf.svg.utils;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.svg.SvgConstants;

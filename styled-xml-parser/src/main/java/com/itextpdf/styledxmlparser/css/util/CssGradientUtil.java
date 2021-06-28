@@ -30,7 +30,7 @@ import com.itextpdf.kernel.colors.gradients.GradientColorStop.HintOffsetType;
 import com.itextpdf.kernel.colors.gradients.GradientColorStop.OffsetType;
 import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder;
 import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder.GradientStrategy;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;

@@ -59,7 +59,7 @@ import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontInfo;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSelector;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;

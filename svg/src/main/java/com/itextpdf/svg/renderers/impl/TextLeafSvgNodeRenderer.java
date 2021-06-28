@@ -47,7 +47,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.layout.property.RenderingMode;
+import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.renderer.TextRenderer;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;

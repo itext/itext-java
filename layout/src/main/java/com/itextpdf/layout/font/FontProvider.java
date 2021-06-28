@@ -72,7 +72,7 @@ import java.util.Map;
  * FontProvider the only end point for creating {@link PdfFont}.
  * <p>
  * It is allowed to use only one {@link FontProvider} per document. If additional fonts per element needed,
- * another instance of  {@link FontSet} can be used. For more details see {@link com.itextpdf.layout.property.Property#FONT_SET},
+ * another instance of  {@link FontSet} can be used. For more details see {@link com.itextpdf.layout.properties.Property#FONT_SET},
  * {@link #getPdfFont(FontInfo, FontSet)}, {@link #getStrategy(String, List, FontCharacteristics, FontSet)}.
  * <p>
  * Note, FontProvider does not close created {@link FontProgram}s, because of possible conflicts with {@link FontCache}.

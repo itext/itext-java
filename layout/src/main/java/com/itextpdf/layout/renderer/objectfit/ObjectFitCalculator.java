@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout.renderer.objectfit;
 
-import com.itextpdf.layout.property.ObjectFit;
+import com.itextpdf.layout.properties.ObjectFit;
 
 /**
  * Utility class which supports the {@link ObjectFit} property.

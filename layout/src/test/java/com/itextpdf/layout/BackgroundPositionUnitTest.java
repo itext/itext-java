@@ -22,8 +22,8 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.layout.property.BackgroundPosition;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.BackgroundPosition;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;

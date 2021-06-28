@@ -61,12 +61,12 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.BaseDirection;
-import com.itextpdf.layout.property.IListSymbolFactory;
-import com.itextpdf.layout.property.ListNumberingType;
-import com.itextpdf.layout.property.ListSymbolPosition;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.BaseDirection;
+import com.itextpdf.layout.properties.IListSymbolFactory;
+import com.itextpdf.layout.properties.ListNumberingType;
+import com.itextpdf.layout.properties.ListSymbolPosition;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -260,17 +260,17 @@ public class ListRenderer extends BlockRenderer {
     }
 
     /**
-     * Corrects split and overflow renderers when {@link com.itextpdf.layout.property.Property#FORCED_PLACEMENT} is applied.
+     * Corrects split and overflow renderers when {@link com.itextpdf.layout.properties.Property#FORCED_PLACEMENT} is applied.
      * <p>
-     * We assume that {@link com.itextpdf.layout.property.Property#FORCED_PLACEMENT} is applied when the first
+     * We assume that {@link com.itextpdf.layout.properties.Property#FORCED_PLACEMENT} is applied when the first
      * {@link com.itextpdf.layout.renderer.ListItemRenderer} cannot be fully layouted.
      * This means that the problem has occurred in one of the first list item renderer's children.
      * In that case we force the placement of all first item renderer's children before the one,
      * which was the cause of {@link com.itextpdf.layout.layout.LayoutResult#NOTHING}, including this child.
      * <p>
-     * Notice that we do not expect {@link com.itextpdf.layout.property.Property#FORCED_PLACEMENT} to be applied
+     * Notice that we do not expect {@link com.itextpdf.layout.properties.Property#FORCED_PLACEMENT} to be applied
      * if we can render the first item renderer and strongly recommend not to set
-     * {@link com.itextpdf.layout.property.Property#FORCED_PLACEMENT} manually.
+     * {@link com.itextpdf.layout.properties.Property#FORCED_PLACEMENT} manually.
      *
      * @param splitRenderer    the {@link IRenderer split renderer} before correction
      * @param overflowRenderer the {@link IRenderer overflow renderer} before correction

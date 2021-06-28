@@ -52,7 +52,7 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutArea;
-import com.itextpdf.layout.property.AreaBreakType;
+import com.itextpdf.layout.properties.AreaBreakType;
 import com.itextpdf.layout.renderer.DivRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.test.ExtendedITextTest;

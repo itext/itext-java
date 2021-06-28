@@ -61,11 +61,11 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.FloatPropertyValue;
-import com.itextpdf.layout.property.ObjectFit;
-import com.itextpdf.layout.property.OverflowPropertyValue;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.FloatPropertyValue;
+import com.itextpdf.layout.properties.ObjectFit;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

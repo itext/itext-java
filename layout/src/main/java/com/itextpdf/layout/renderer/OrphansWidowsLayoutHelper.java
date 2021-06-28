@@ -27,9 +27,9 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
-import com.itextpdf.layout.property.ParagraphOrphansControl;
-import com.itextpdf.layout.property.ParagraphWidowsControl;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.ParagraphOrphansControl;
+import com.itextpdf.layout.properties.ParagraphWidowsControl;
+import com.itextpdf.layout.properties.Property;
 import java.util.ArrayList;
 
 class OrphansWidowsLayoutHelper {

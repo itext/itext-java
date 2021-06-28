@@ -52,7 +52,7 @@ import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.ILargeElement;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;

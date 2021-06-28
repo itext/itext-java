@@ -50,9 +50,9 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.BorderCollapsePropertyValue;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.BorderCollapsePropertyValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

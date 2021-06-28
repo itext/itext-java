@@ -50,8 +50,8 @@ import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.layout.property.BaseDirection;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.BaseDirection;
+import com.itextpdf.layout.properties.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

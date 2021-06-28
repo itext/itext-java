@@ -55,7 +55,7 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.DivRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.test.ExtendedITextTest;

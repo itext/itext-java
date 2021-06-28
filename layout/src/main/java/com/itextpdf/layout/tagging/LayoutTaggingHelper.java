@@ -54,7 +54,7 @@ import com.itextpdf.kernel.pdf.tagutils.WaitingTagsManager;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.ILargeElement;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.AreaBreakRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 

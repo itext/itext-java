@@ -25,8 +25,8 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.layout.LayoutArea;
-import com.itextpdf.layout.property.OverflowPropertyValue;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 

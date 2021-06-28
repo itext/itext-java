@@ -49,9 +49,9 @@ import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.RootLayoutArea;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.Property;
 
-import com.itextpdf.layout.property.Transform;
+import com.itextpdf.layout.properties.Transform;
 import org.slf4j.LoggerFactory;
 
 public class CanvasRenderer extends RootRenderer {

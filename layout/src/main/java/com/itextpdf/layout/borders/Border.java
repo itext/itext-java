@@ -50,7 +50,7 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.layout.property.TransparentColor;
+import com.itextpdf.layout.properties.TransparentColor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

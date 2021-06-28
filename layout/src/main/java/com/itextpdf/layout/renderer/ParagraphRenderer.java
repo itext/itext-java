@@ -57,16 +57,16 @@ import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.BaseDirection;
-import com.itextpdf.layout.property.FloatPropertyValue;
-import com.itextpdf.layout.property.Leading;
-import com.itextpdf.layout.property.OverflowPropertyValue;
-import com.itextpdf.layout.property.ParagraphOrphansControl;
-import com.itextpdf.layout.property.ParagraphWidowsControl;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.RenderingMode;
-import com.itextpdf.layout.property.TextAlignment;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.BaseDirection;
+import com.itextpdf.layout.properties.FloatPropertyValue;
+import com.itextpdf.layout.properties.Leading;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.ParagraphOrphansControl;
+import com.itextpdf.layout.properties.ParagraphWidowsControl;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
 
 import org.slf4j.LoggerFactory;
 

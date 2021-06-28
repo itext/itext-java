@@ -46,7 +46,7 @@ package com.itextpdf.layout.element;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.DivRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 

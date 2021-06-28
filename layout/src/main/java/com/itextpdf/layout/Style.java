@@ -45,9 +45,9 @@ package com.itextpdf.layout;
 
 import com.itextpdf.layout.element.AbstractElement;
 import com.itextpdf.layout.element.BlockElement;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
-import com.itextpdf.layout.property.VerticalAlignment;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalAlignment;
 
 /**
  * Container object for style properties of an element. A style can be used as

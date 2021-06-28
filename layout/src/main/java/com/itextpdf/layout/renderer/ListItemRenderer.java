@@ -50,11 +50,11 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.property.BaseDirection;
-import com.itextpdf.layout.property.ListSymbolAlignment;
-import com.itextpdf.layout.property.ListSymbolPosition;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.BaseDirection;
+import com.itextpdf.layout.properties.ListSymbolAlignment;
+import com.itextpdf.layout.properties.ListSymbolPosition;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

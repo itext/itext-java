@@ -44,8 +44,8 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.layout.property.AreaBreakType;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.AreaBreakType;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.AreaBreakRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 

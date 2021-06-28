@@ -24,7 +24,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
-import com.itextpdf.layout.property.BackgroundImage;
+import com.itextpdf.layout.properties.BackgroundImage;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 

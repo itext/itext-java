@@ -46,7 +46,7 @@ import com.itextpdf.layout.font.RangeBuilder;
 import com.itextpdf.styledxmlparser.CommonAttributeConstants;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.layout.font.Range;
-import com.itextpdf.layout.property.BlendMode;
+import com.itextpdf.layout.properties.BlendMode;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;

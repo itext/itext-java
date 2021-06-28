@@ -52,7 +52,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 import com.itextpdf.layout.renderer.TextRenderer;
