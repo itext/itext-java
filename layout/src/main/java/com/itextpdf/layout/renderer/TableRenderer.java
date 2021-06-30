@@ -493,11 +493,14 @@ public class TableRenderer extends AbstractRenderer {
             // the element which was the first to cause Layout.Nothing
             IRenderer firstCauseOfNothing = null;
 
-            // the width of the widest bottom border of the row
+            // In the next lines we pretend as if the current row will be the last on the current area:
+            // in this case it will be collapsed with the table's bottom border / the footer's top border
             bordersHandler.setFinishRow(rowRange.getStartRow() + row);
-            Border widestRowBottomBorder = bordersHandler.getWidestHorizontalBorder(rowRange.getStartRow() + row + 1);
-            bordersHandler.setFinishRow(rowRange.getFinishRow());
+            final List<Border> rowBottomBorderIfLastOnPage =
+                    bordersHandler.getHorizontalBorder(rowRange.getStartRow() + row + 1);
+            Border widestRowBottomBorder = TableBorderUtil.getWidestBorder(rowBottomBorderIfLastOnPage);
             float widestRowBottomBorderWidth = null == widestRowBottomBorder ? 0 : widestRowBottomBorder.getWidth();
+            bordersHandler.setFinishRow(rowRange.getFinishRow());
 
             // if cell is in the last row on the page, its borders shouldn't collapse with the next row borders
             while (cellProcessingQueue.size() > 0) {
@@ -540,8 +543,41 @@ public class TableRenderer extends AbstractRenderer {
                 float[] cellIndents = bordersHandler.getCellBorderIndents(currentCellInfo.finishRowInd, col,
                         rowspan, colspan);
                 if (!(bordersHandler instanceof SeparatedTableBorders)) {
+                    // Bottom indent to be applied consists of two parts which should be summed up:
+                    // a) half of the border of the current row (in case it is the last row on the area)
+                    // b) half of the widest possible bottom border (in case it is the last row on the area)
+                    //
+                    // The following "image" demonstrates the idea: C represents some content,
+                    // 1 represents border, 0 represents not occupied space, - represents
+                    // the middle of a horizontal border, | represents vertical border
+                    // (the latter could be of customized width as well, however, for the reasons
+                    // of this comment it could omitted)
+                    // CCCCC|CCCCC
+                    // CCCCC|11111
+                    // CCCCC|11111
+                    // 11111|11111
+                    // -----|-----
+                    // 11111|11111
+                    // 00000|11111
+                    // 00000|11111
+                    //
+                    // The question arises, however: what if the top border of the cell below is wider than the
+                    // bottom border of the table. This is already considered: when considering rowHeight
+                    // the width of the real collapsed border will be added to it.
+                    // It is quite important to understand that in case it is not possible
+                    // to add any other row, the current row should be collapsed with the table's bottom
+                    // footer's top borders rather than with the next row. If it is the case, iText
+                    // will revert collapsing to the one considered in the next calculations.
+
+                    // Be aware that if the col-th border of rowBottomBorderIfLastOnPage is null,
+                    // cellIndents[2] might not be null: imagine a table without borders,
+                    // a cell with no border (the current cell) and a cell below with some top border.
+                    // Nevertheless, a stated above we do not need to consider cellIndents[2] here.
+                    final float potentialWideCellBorder = null == rowBottomBorderIfLastOnPage.get(col)
+                            ? 0
+                            : rowBottomBorderIfLastOnPage.get(col).getWidth();
                     bordersHandler.applyCellIndents(cellArea.getBBox(), cellIndents[0], cellIndents[1],
-                            cellIndents[2] + widestRowBottomBorderWidth, cellIndents[3], false);
+                            potentialWideCellBorder + widestRowBottomBorderWidth, cellIndents[3], false);
                 }
                 // update cell width
                 cellWidth = cellArea.getBBox().getWidth();

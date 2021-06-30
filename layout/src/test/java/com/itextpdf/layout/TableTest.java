@@ -91,7 +91,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class TableTest extends ExtendedITextTest {
+public class TableTest extends AbstractTableTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TableTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/TableTest/";
 
@@ -1755,7 +1755,7 @@ public class TableTest extends ExtendedITextTest {
                 .setBorderBottom(new SolidBorder(ColorConstants.MAGENTA, 100))
         );
 
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
         doc.add(new AreaBreak());
 
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
@@ -1765,11 +1765,11 @@ public class TableTest extends ExtendedITextTest {
                 .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
                 .addCell(new Cell().add(new Paragraph("Hello"))
                 ));
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
         doc.add(new AreaBreak());
 
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setMinHeight(300).setBorderRight(new SolidBorder(ColorConstants.ORANGE, 5)).setBorderTop(new SolidBorder(100)).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 50)));
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -1790,7 +1790,7 @@ public class TableTest extends ExtendedITextTest {
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         table.setVerticalBorderSpacing(20);
         doc.add(table);
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -2905,33 +2905,92 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Ignored because the test enters an infinite loop when closing a document. Remove ignore after fixing DEVSIX-3356")
-    // TODO remove ignore after fixing DEVSIX-3356
-    public void infiniteLoopOnUnfitCellAndBigRowspanTest() throws IOException {
-        String testName = "infiniteLoopOnUnfitCellAndBigRowspanTest.pdf";
+    public void firstRowPartiallyFitWideBottomBorderTest() throws IOException, InterruptedException {
+        String testName = "firstRowPartiallyFitWideBottomBorderTest.pdf";
         String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        Document doc = new Document(pdfDoc, PageSize.A4.rotate());
+        Document doc = new Document(pdfDoc, PageSize.A4);
 
-        Table table = new Table(38);
-        table.useAllAvailableWidth();
-        table.setFixedLayout();
+        Table table = new Table(1);
+        table.setBorderBottom(new SolidBorder(ColorConstants.RED, 250));
 
-        Cell cellNum1 = new Cell(1, 1);
-        table.addCell(cellNum1);
+        Cell notFitCell = new Cell();
+        notFitCell.add(new Paragraph("Some text which should be big enough."));
+        notFitCell.setFontSize(100);
+        table.addCell(notFitCell);
 
-        Cell cellNum2 = new Cell(2, 2);
-        Image img = new Image(ImageDataFactory.create(sourceFolder + "itext.png"));
-        cellNum2.add(img);
-        table.addCell(cellNum2);
-
-        Cell cellNum3 = new Cell(2, 36);
-        cellNum3.add(new Paragraph("text"));
-        table.addCell(cellNum3);
+        table.addCell("row 2 col 1");
+        table.addCell("row 2 col 2");
 
         doc.add(table);
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
+        doc.add(new AreaBreak());
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        doc.add(table);
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
         doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void collapseWithNextRowWiderThanWithTableBorderTest() throws IOException, InterruptedException {
+        String testName = "collapseWithNextRowWiderThanWithTableBorderTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A4);
+
+        Table table = new Table(1);
+
+        Cell cell1 = new Cell();
+        cell1.add(new Paragraph("Usual bottom border"));
+        cell1.setHeight(300);
+        table.addCell(cell1);
+
+        Cell cell2 = new Cell();
+        cell2.add(new Paragraph("Top border: 600pt"));
+        cell2.setBorderTop(new SolidBorder(600));
+        table.addCell(cell2);
+
+        doc.add(table);
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
+        doc.add(new AreaBreak());
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        doc.add(table);
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableBottomBorderWideTest() throws IOException, InterruptedException {
+        String testName = "tableBottomBorderWideTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(1)
+                .setBorderBottom(new SolidBorder(ColorConstants.RED, 500))
+                .addCell(new Cell().add(new Paragraph(TEXT_CONTENT + TEXT_CONTENT + TEXT_CONTENT + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("Hello World")));
+        doc.add(table);
+        doc.add(new AreaBreak());
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        doc.add(table);
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
