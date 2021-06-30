@@ -3055,6 +3055,74 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void infiniteLoopOnUnfitCellAndBigRowspanTest() throws IOException, InterruptedException {
+        String testName = "infiniteLoopOnUnfitCellAndBigRowspanTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A4.rotate());
+
+        Table table = new Table(38);
+        table.useAllAvailableWidth();
+        table.setFixedLayout();
+
+        Cell cellNum1 = new Cell(1, 1);
+        table.addCell(cellNum1);
+
+        Cell cellNum2 = new Cell(2, 2);
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itext.png"));
+        cellNum2.add(img);
+        table.addCell(cellNum2);
+
+        Cell cellNum3 = new Cell(2, 36);
+        cellNum3.add(new Paragraph("text"));
+        table.addCell(cellNum3);
+
+        doc.add(table);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
+            @LogMessage(messageTemplate = LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)
+    })
+    public void firstRowNotFitBigRowspanTest() throws IOException, InterruptedException {
+        String testName = "firstRowNotFitBigRowspanTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A4);
+
+        Table table = new Table(4);
+
+        table.addCell("row 1 col 1");
+
+        Cell notFitCell = new Cell(2, 1);
+        notFitCell.add(new Paragraph("row 1-2 col 2"));
+        notFitCell.setFontSize(1000);
+        table.addCell(notFitCell);
+
+        Cell fitCell = new Cell(2, 2);
+        fitCell.add(new Paragraph("row 1-2 col 3-4"));
+        table.addCell(fitCell);
+
+        table.addCell("row 2 col 1");
+
+        doc.add(table);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     // TODO DEVSIX-5250 The first column should be fully red
     public void bigRowSpanTooFarFullTest() throws IOException, InterruptedException {
         String filename = "bigRowSpanTooFarFullTest.pdf";
