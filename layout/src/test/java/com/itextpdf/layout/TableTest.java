@@ -181,15 +181,11 @@ public class TableTest extends AbstractTableTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
-
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)));
-        table.addCell(new Cell(3, 1).add(new Paragraph("cell 1, 2:3\n" + textContent + textContent + textContent)));
-        table.addCell(new Cell().add(new Paragraph("cell 2, 1\n" + textContent)));
-        table.addCell(new Cell().add(new Paragraph("cell 3, 1\n" + textContent)));
+                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + TEXT_CONTENT)));
+        table.addCell(new Cell(3, 1).add(new Paragraph("cell 1, 2:3\n" + TEXT_CONTENT + TEXT_CONTENT + TEXT_CONTENT)));
+        table.addCell(new Cell().add(new Paragraph("cell 2, 1\n" + TEXT_CONTENT)));
+        table.addCell(new Cell().add(new Paragraph("cell 3, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -204,15 +200,11 @@ public class TableTest extends AbstractTableTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
-
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell(3, 1).add(new Paragraph("cell 1, 1:3\n" + textContent + textContent + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 1, 2\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + textContent)));
+                .addCell(new Cell(3, 1).add(new Paragraph("cell 1, 1:3\n" + TEXT_CONTENT + TEXT_CONTENT + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 2\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -227,15 +219,11 @@ public class TableTest extends AbstractTableTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
-
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)))
-                .addCell(new Cell(3, 1).add(new Paragraph("cell 1, 2:3\n" + textContent + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + textContent)));
+                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell(3, 1).add(new Paragraph("cell 1, 2:3\n" + TEXT_CONTENT + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -250,15 +238,11 @@ public class TableTest extends AbstractTableTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
-
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell(3, 1).add(new Paragraph("cell 1, 1:3\n" + textContent + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 1, 2\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + textContent)));
+                .addCell(new Cell(3, 1).add(new Paragraph("cell 1, 1:3\n" + TEXT_CONTENT + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 2\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -273,18 +257,15 @@ public class TableTest extends AbstractTableTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
         Table table = new Table(new float[]{130, 130, 260})
-                .addCell(new Cell(3, 2).add(new Paragraph("cell 1:2, 1:3\n" + textContent + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 1, 3\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + textContent)))
+                .addCell(new Cell(3, 2).add(new Paragraph("cell 1:2, 1:3\n" + TEXT_CONTENT + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 3\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + TEXT_CONTENT)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)));
@@ -302,9 +283,6 @@ public class TableTest extends AbstractTableTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
@@ -313,7 +291,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 1, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 1, 3\n" + middleTextContent)))
-                .addCell(new Cell(3, 2).add(new Paragraph("cell 2:2, 1:3\n" + textContent + textContent)))
+                .addCell(new Cell(3, 2).add(new Paragraph("cell 2:2, 1:3\n" + TEXT_CONTENT + TEXT_CONTENT)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)))
@@ -480,18 +458,15 @@ public class TableTest extends AbstractTableTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
         Table table = new Table(new float[]{130, 130, 260})
-                .addCell(new Cell(3, 2).add(new Paragraph("cell 1:2, 1:3\n" + textContent + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 1, 3\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + textContent)))
+                .addCell(new Cell(3, 2).add(new Paragraph("cell 1:2, 1:3\n" + TEXT_CONTENT + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 3\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + TEXT_CONTENT)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)))
@@ -515,9 +490,6 @@ public class TableTest extends AbstractTableTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
@@ -529,10 +501,10 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + middleTextContent)))
-                .addCell(new Cell(3, 2).add(new Paragraph("cell 3:2, 1:3\n" + textContent + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 5, 3\n" + textContent)))
+                .addCell(new Cell(3, 2).add(new Paragraph("cell 3:2, 1:3\n" + TEXT_CONTENT + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 3\n" + TEXT_CONTENT)))
                 .addCell(new Cell().add(new Paragraph("cell 6, 1\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 6, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + middleTextContent)))
@@ -553,14 +525,11 @@ public class TableTest extends AbstractTableTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
-        String longTextContent = "1. " + textContent + "2. " + textContent + "3. " + textContent + "4. " + textContent
-                + "5. " + textContent + "6. " + textContent + "7. " + textContent + "8. " + textContent + "9. " + textContent;
+        String longTextContent = "1. " + TEXT_CONTENT + "2. " + TEXT_CONTENT + "3. " + TEXT_CONTENT + "4. " + TEXT_CONTENT
+                + "5. " + TEXT_CONTENT + "6. " + TEXT_CONTENT + "7. " + TEXT_CONTENT + "8. " + TEXT_CONTENT + "9. " + TEXT_CONTENT;
 
         Table table = new Table(new float[]{250, 250})
                 .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + longTextContent)))
@@ -704,14 +673,11 @@ public class TableTest extends AbstractTableTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
-        doc.add(new Paragraph(textContent));
+        doc.add(new Paragraph(TEXT_CONTENT));
 
         Table table = new Table(new float[]{130, 130, 260})
                 .addCell(new Cell().add(new Image(ImageDataFactory.create(sourceFolder + "red.png"))))
@@ -825,17 +791,14 @@ public class TableTest extends AbstractTableTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
-        String longTextContent = "1. " + textContent + "2. " + textContent + "3. " + textContent + "4. " + textContent
-                + "5. " + textContent + "6. " + textContent + "7. " + textContent + "8. " + textContent + "9. " + textContent;
+        String longTextContent = "1. " + TEXT_CONTENT + "2. " + TEXT_CONTENT + "3. " + TEXT_CONTENT + "4. " + TEXT_CONTENT
+                + "5. " + TEXT_CONTENT + "6. " + TEXT_CONTENT + "7. " + TEXT_CONTENT + "8. " + TEXT_CONTENT + "9. " + TEXT_CONTENT;
 
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + TEXT_CONTENT)))
                 .addCell(new Cell(5, 1).add(new Paragraph("cell 1, 2\n" + longTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + middleTextContent)))
@@ -855,22 +818,19 @@ public class TableTest extends AbstractTableTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
-        String longTextContent = "1. " + textContent + "2. " + textContent + "3. " + textContent + "4. " + textContent
-                + "5. " + textContent + "6. " + textContent + "7. " + textContent + "8. " + textContent + "9. " + textContent;
+        String longTextContent = "1. " + TEXT_CONTENT + "2. " + TEXT_CONTENT + "3. " + TEXT_CONTENT + "4. " + TEXT_CONTENT
+                + "5. " + TEXT_CONTENT + "6. " + TEXT_CONTENT + "7. " + TEXT_CONTENT + "8. " + TEXT_CONTENT + "9. " + TEXT_CONTENT;
 
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + TEXT_CONTENT)))
                 .addCell(new Cell(5, 1).add(new Paragraph("cell 1, 2\n" + longTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + textContent)));
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -885,19 +845,16 @@ public class TableTest extends AbstractTableTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + TEXT_CONTENT)))
                 .addCell(new Cell(5, 1).add(new Paragraph("cell 1, 2\n" + middleTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + textContent)));
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -912,22 +869,19 @@ public class TableTest extends AbstractTableTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
-        String longTextContent = "1. " + textContent + "2. " + textContent + "3. " + textContent + "4. " + textContent
-                + "5. " + textContent + "6. " + textContent + "7. " + textContent + "8. " + textContent + "9. " + textContent;
+        String longTextContent = "1. " + TEXT_CONTENT + "2. " + TEXT_CONTENT + "3. " + TEXT_CONTENT + "4. " + TEXT_CONTENT
+                + "5. " + TEXT_CONTENT + "6. " + TEXT_CONTENT + "7. " + TEXT_CONTENT + "8. " + TEXT_CONTENT + "9. " + TEXT_CONTENT;
 
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + TEXT_CONTENT)))
                 .addCell(new Cell(5, 1).add(new Paragraph("cell 1, 2\n" + longTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + textContent)))
-                .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 4, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + textContent)));
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 4, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -942,18 +896,15 @@ public class TableTest extends AbstractTableTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
-        String longTextContent = "1. " + textContent + "2. " + textContent + "3. " + textContent + "4. " + textContent
-                + "5. " + textContent + "6. " + textContent + "7. " + textContent + "8. " + textContent + "9. " + textContent;
+        String longTextContent = "1. " + TEXT_CONTENT + "2. " + TEXT_CONTENT + "3. " + TEXT_CONTENT + "4. " + TEXT_CONTENT
+                + "5. " + TEXT_CONTENT + "6. " + TEXT_CONTENT + "7. " + TEXT_CONTENT + "8. " + TEXT_CONTENT + "9. " + TEXT_CONTENT;
 
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + TEXT_CONTENT)))
                 .addCell(new Cell(2, 1).add(new Paragraph("cell 1, 1 and 2\n" + longTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + textContent)));
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + TEXT_CONTENT)));
 
         doc.add(table);
         doc.close();
