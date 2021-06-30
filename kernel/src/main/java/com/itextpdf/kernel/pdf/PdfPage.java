@@ -402,7 +402,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         PdfPage page = getDocument().getPageFactory().createPdfPage(dictionary);
         copyInheritedProperties(page, toDocument);
         for (PdfAnnotation annot : getAnnotations()) {
-            if (annot.getSubtype().equals(PdfName.Link)) {
+            if (PdfName.Link.equals(annot.getSubtype())) {
                 getDocument().storeLinkAnnotation(page, (PdfLinkAnnotation) annot);
             } else {
                 PdfAnnotation newAnnot = PdfAnnotation.makeAnnotation(
