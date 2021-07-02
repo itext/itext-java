@@ -724,14 +724,12 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Constructs {@link PdfCatalog#outlines} iteratively
      */
-    private void constructOutlines(PdfDictionary outlineRoot, Map<String, PdfObject> names) {
+    void constructOutlines(PdfDictionary outlineRoot, Map<String, PdfObject> names) {
         if (outlineRoot == null) {
             return;
         }
         PdfDictionary first = outlineRoot.getAsDictionary(PdfName.First);
         PdfDictionary current = first;
-        PdfDictionary next;
-        PdfDictionary parent;
         HashMap<PdfDictionary, PdfOutline> parentOutlineMap = new HashMap<>();
 
         outlines = new PdfOutline(OutlineRoot, outlineRoot, getDocument());
@@ -740,11 +738,23 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
         while (current != null) {
             first = current.getAsDictionary(PdfName.First);
-            next = current.getAsDictionary(PdfName.Next);
-            parent = current.getAsDictionary(PdfName.Parent);
-
+            PdfDictionary next = current.getAsDictionary(PdfName.Next);
+            PdfDictionary parent = current.getAsDictionary(PdfName.Parent);
+            if (null == parent) {
+                throw new PdfException(
+                        MessageFormatUtil.format(
+                                PdfException.CORRUPTED_OUTLINE_NO_PARENT_ENTRY,
+                                current.indirectReference));
+            }
+            PdfString title = current.getAsString(PdfName.Title);
+            if (null == title) {
+                throw new PdfException(
+                        MessageFormatUtil.format(
+                                PdfException.CORRUPTED_OUTLINE_NO_TITLE_ENTRY,
+                                current.indirectReference));
+            }
             parentOutline = parentOutlineMap.get(parent);
-            PdfOutline currentOutline = new PdfOutline(current.getAsString(PdfName.Title).toUnicodeString(), current, parentOutline);
+            PdfOutline currentOutline = new PdfOutline(title.toUnicodeString(), current, parentOutline);
             addOutlineToPage(currentOutline, current, names);
             parentOutline.getAllChildren().add(currentOutline);
 
@@ -752,8 +762,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                 parentOutlineMap.put(current, currentOutline);
             }
             current = getNextOutline(first, next, parent);
-
         }
     }
-
 }

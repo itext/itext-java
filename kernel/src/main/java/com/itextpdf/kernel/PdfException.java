@@ -330,6 +330,11 @@ public class PdfException extends RuntimeException {
     public static final String YouNeedASingleBooleanForThisCollectionSortDictionary = "You need a single boolean for this collection sort dictionary.";
     public static final String QuadPointArrayLengthIsNotAMultipleOfEight = "The QuadPoint Array length is not a multiple of 8.";
 
+    public static final String CORRUPTED_OUTLINE_NO_PARENT_ENTRY =
+            "Document outline is corrupted: some outline (PDF object: \"{0}\") lacks the required parent entry.";
+    public static final String CORRUPTED_OUTLINE_NO_TITLE_ENTRY =
+            "Document outline is corrupted: some outline (PDF object: \"{0}\") lacks the required title entry.";
+
     /**
      * Object for more details
      */
