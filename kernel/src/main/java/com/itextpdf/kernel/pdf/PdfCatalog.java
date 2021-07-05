@@ -562,6 +562,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     PdfDestination copyDestination(PdfObject dest, Map<PdfPage, PdfPage> page2page, PdfDocument toDocument) {
+        if (null == dest) {
+            return null;
+        }
         PdfDestination d = null;
         if (dest.isArray()) {
             PdfObject pageObject = ((PdfArray) dest).get(0);
