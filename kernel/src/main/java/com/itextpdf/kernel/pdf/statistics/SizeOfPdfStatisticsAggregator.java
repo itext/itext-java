@@ -22,12 +22,14 @@
  */
 package com.itextpdf.kernel.pdf.statistics;
 
+import com.itextpdf.io.util.MapUtil;
 import com.itextpdf.kernel.actions.AbstractStatisticsAggregator;
 import com.itextpdf.kernel.actions.AbstractStatisticsEvent;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -68,7 +70,7 @@ public class SizeOfPdfStatisticsAggregator extends AbstractStatisticsAggregator 
 
     private final Object lock = new Object();
 
-    private final Map<String, AtomicLong> numberOfDocuments = new ConcurrentHashMap<>();
+    private final Map<String, AtomicLong> numberOfDocuments = new LinkedHashMap<>();
 
     /**
      * Aggregates size of the PDF document from the provided event.
@@ -99,12 +101,32 @@ public class SizeOfPdfStatisticsAggregator extends AbstractStatisticsAggregator 
     }
 
     /**
-     * Retrieves Map where keys are ranges of pages and values are the amounts of such PDF documents.
+     * Retrieves Map where keys are ranges of document sizes and values are the amounts of such PDF documents.
      *
      * @return aggregated {@link Map}
      */
     @Override
     public Object retrieveAggregation() {
-        return numberOfDocuments;
+        return Collections.unmodifiableMap(numberOfDocuments);
+    }
+
+    /**
+     * Merges data about amounts of ranges of document sizes from the provided aggregator into this aggregator.
+     *
+     * @param aggregator {@link SizeOfPdfStatisticsAggregator} from which data will be taken.
+     */
+    @Override
+    public void merge(AbstractStatisticsAggregator aggregator) {
+        if (!(aggregator instanceof SizeOfPdfStatisticsAggregator)) {
+            return;
+        }
+
+        Map<String, AtomicLong> numberOfDocuments = ((SizeOfPdfStatisticsAggregator) aggregator).numberOfDocuments;
+        synchronized (lock) {
+            MapUtil.merge(this.numberOfDocuments, numberOfDocuments, (el1, el2) -> {
+                el1.addAndGet(el2.get());
+                return el1;
+            });
+        }
     }
 }

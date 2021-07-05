@@ -40,4 +40,11 @@ public abstract class AbstractStatisticsAggregator {
      * @return aggregated data as {@link Object}
      */
     public abstract Object retrieveAggregation();
+
+    /**
+     * Merges data from the provided aggregator into this aggregator.
+     *
+     * @param aggregator from which data will be taken.
+     */
+    public abstract void merge(AbstractStatisticsAggregator aggregator);
 }

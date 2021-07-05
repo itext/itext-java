@@ -85,7 +85,6 @@ public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
         aggregator.aggregate(event);
 
         Object aggregation = aggregator.retrieveAggregation();
-        Assert.assertTrue(aggregation instanceof Map);
         Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
 
         Assert.assertEquals(4, castedAggregation.size());
@@ -109,7 +108,6 @@ public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
     public void nothingAggregatedTest() {
         NumberOfPagesStatisticsAggregator aggregator = new NumberOfPagesStatisticsAggregator();
         Object aggregation = aggregator.retrieveAggregation();
-        Assert.assertTrue(aggregation instanceof Map);
         Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
 
         Assert.assertTrue(castedAggregation.isEmpty());
@@ -121,9 +119,53 @@ public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
         aggregator.aggregate(new SizeOfPdfStatisticsEvent(200, ITextCoreProductData.getInstance()));
 
         Object aggregation = aggregator.retrieveAggregation();
-        Assert.assertTrue(aggregation instanceof Map);
         Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
 
         Assert.assertTrue(castedAggregation.isEmpty());
+    }
+
+    @Test
+    public void mergeTest() {
+        NumberOfPagesStatisticsAggregator aggregator1 = new NumberOfPagesStatisticsAggregator();
+        NumberOfPagesStatisticsAggregator aggregator2 = new NumberOfPagesStatisticsAggregator();
+
+        NumberOfPagesStatisticsEvent event = new NumberOfPagesStatisticsEvent(5, ITextCoreProductData.getInstance());
+        aggregator1.aggregate(event);
+        event = new NumberOfPagesStatisticsEvent(1, ITextCoreProductData.getInstance());
+        aggregator1.aggregate(event);
+        event = new NumberOfPagesStatisticsEvent(7, ITextCoreProductData.getInstance());
+        aggregator1.aggregate(event);
+        event = new NumberOfPagesStatisticsEvent(10, ITextCoreProductData.getInstance());
+        aggregator1.aggregate(event);
+        event = new NumberOfPagesStatisticsEvent(1000, ITextCoreProductData.getInstance());
+        aggregator1.aggregate(event);
+
+        event = new NumberOfPagesStatisticsEvent(500, ITextCoreProductData.getInstance());
+        aggregator2.aggregate(event);
+        event = new NumberOfPagesStatisticsEvent(100000000, ITextCoreProductData.getInstance());
+        aggregator2.aggregate(event);
+        event = new NumberOfPagesStatisticsEvent(2, ITextCoreProductData.getInstance());
+        aggregator2.aggregate(event);
+
+        aggregator1.merge(aggregator2);
+
+        Object aggregation = aggregator1.retrieveAggregation();
+        Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
+
+        Assert.assertEquals(4, castedAggregation.size());
+
+        long numberOfPages = castedAggregation.get("1").get();
+        Assert.assertEquals(1, numberOfPages);
+
+        numberOfPages = castedAggregation.get("2-10").get();
+        Assert.assertEquals(4, numberOfPages);
+
+        Assert.assertNull(castedAggregation.get("11-100"));
+
+        numberOfPages = castedAggregation.get("101-1000").get();
+        Assert.assertEquals(2, numberOfPages);
+
+        numberOfPages = castedAggregation.get("1001+").get();
+        Assert.assertEquals(1, numberOfPages);
     }
 }

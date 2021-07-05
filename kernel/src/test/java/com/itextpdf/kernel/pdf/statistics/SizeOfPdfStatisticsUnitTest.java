@@ -83,7 +83,6 @@ public class SizeOfPdfStatisticsUnitTest extends ExtendedITextTest {
         aggregator.aggregate(event);
 
         Object aggregation = aggregator.retrieveAggregation();
-        Assert.assertTrue(aggregation instanceof Map);
         Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
 
         Assert.assertEquals(4, castedAggregation.size());
@@ -107,7 +106,6 @@ public class SizeOfPdfStatisticsUnitTest extends ExtendedITextTest {
     public void nothingAggregatedTest() {
         SizeOfPdfStatisticsAggregator aggregator = new SizeOfPdfStatisticsAggregator();
         Object aggregation = aggregator.retrieveAggregation();
-        Assert.assertTrue(aggregation instanceof Map);
         Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
 
         Assert.assertTrue(castedAggregation.isEmpty());
@@ -119,9 +117,51 @@ public class SizeOfPdfStatisticsUnitTest extends ExtendedITextTest {
         aggregator.aggregate(new NumberOfPagesStatisticsEvent(200, ITextCoreProductData.getInstance()));
 
         Object aggregation = aggregator.retrieveAggregation();
-        Assert.assertTrue(aggregation instanceof Map);
         Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
 
         Assert.assertTrue(castedAggregation.isEmpty());
+    }
+
+    @Test
+    public void mergeTest() {
+        SizeOfPdfStatisticsAggregator aggregator1 = new SizeOfPdfStatisticsAggregator();
+        SizeOfPdfStatisticsAggregator aggregator2 = new SizeOfPdfStatisticsAggregator();
+
+        SizeOfPdfStatisticsEvent event = new SizeOfPdfStatisticsEvent(100, ITextCoreProductData.getInstance());
+        aggregator1.aggregate(event);
+        event = new SizeOfPdfStatisticsEvent(128 * 1024, ITextCoreProductData.getInstance());
+        aggregator1.aggregate(event);
+        event = new SizeOfPdfStatisticsEvent(128 * 1024 + 1, ITextCoreProductData.getInstance());
+        aggregator1.aggregate(event);
+        event = new SizeOfPdfStatisticsEvent(100000000, ITextCoreProductData.getInstance());
+        aggregator1.aggregate(event);
+
+        event = new SizeOfPdfStatisticsEvent(1024 * 1024, ITextCoreProductData.getInstance());
+        aggregator2.aggregate(event);
+        event = new SizeOfPdfStatisticsEvent(167972160, ITextCoreProductData.getInstance());
+        aggregator2.aggregate(event);
+        event = new SizeOfPdfStatisticsEvent(999999999999L, ITextCoreProductData.getInstance());
+        aggregator2.aggregate(event);
+
+        aggregator1.merge(aggregator2);
+
+        Object aggregation = aggregator1.retrieveAggregation();
+        Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
+
+        Assert.assertEquals(4, castedAggregation.size());
+
+        long numberOfPages = castedAggregation.get("<128kb").get();
+        Assert.assertEquals(2, numberOfPages);
+
+        numberOfPages = castedAggregation.get("128kb-1mb").get();
+        Assert.assertEquals(2, numberOfPages);
+
+        Assert.assertNull(castedAggregation.get("1mb-16mb"));
+
+        numberOfPages = castedAggregation.get("16mb-128mb").get();
+        Assert.assertEquals(1, numberOfPages);
+
+        numberOfPages = castedAggregation.get("128mb+").get();
+        Assert.assertEquals(2, numberOfPages);
     }
 }

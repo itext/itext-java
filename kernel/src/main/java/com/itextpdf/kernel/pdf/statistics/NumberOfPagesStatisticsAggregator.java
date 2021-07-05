@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.statistics;
 
+import com.itextpdf.io.util.MapUtil;
 import com.itextpdf.kernel.actions.AbstractStatisticsAggregator;
 import com.itextpdf.kernel.actions.AbstractStatisticsEvent;
 
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -66,7 +68,7 @@ public class NumberOfPagesStatisticsAggregator extends AbstractStatisticsAggrega
 
     private final Object lock = new Object();
 
-    private final Map<String, AtomicLong> numberOfDocuments = new ConcurrentHashMap<>();
+    private final Map<String, AtomicLong> numberOfDocuments = new LinkedHashMap<>();
 
     /**
      * Aggregates number of pages from the provided event.
@@ -103,6 +105,26 @@ public class NumberOfPagesStatisticsAggregator extends AbstractStatisticsAggrega
      */
     @Override
     public Object retrieveAggregation() {
-        return numberOfDocuments;
+        return Collections.unmodifiableMap(numberOfDocuments);
+    }
+
+    /**
+     * Merges data about amounts of ranges of pages from the provided aggregator into this aggregator.
+     *
+     * @param aggregator {@link NumberOfPagesStatisticsAggregator} from which data will be taken.
+     */
+    @Override
+    public void merge(AbstractStatisticsAggregator aggregator) {
+        if (!(aggregator instanceof NumberOfPagesStatisticsAggregator)) {
+            return;
+        }
+
+        Map<String, AtomicLong> numberOfDocuments = ((NumberOfPagesStatisticsAggregator) aggregator).numberOfDocuments;
+        synchronized (lock) {
+            MapUtil.merge(this.numberOfDocuments, numberOfDocuments, (el1, el2) -> {
+                el1.addAndGet(el2.get());
+                return el1;
+            });
+        }
     }
 }
