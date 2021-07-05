@@ -680,7 +680,8 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
         String font = fontsFolder + "abserif4_5.ttf";
-        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, EmbeddingStrategy.FORCE_EMBEDDED);
+        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, PdfEncodings.WINANSI,
+                EmbeddingStrategy.FORCE_EMBEDDED);
         Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
         pdfTrueTypeFont.setSubset(true);
         PdfPage page = pdfDoc.addNewPage();
@@ -697,7 +698,8 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
 
         byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream(font));
-        pdfTrueTypeFont = PdfFontFactory.createFont(ttf, EmbeddingStrategy.FORCE_EMBEDDED);
+        pdfTrueTypeFont = PdfFontFactory.createFont(ttf, PdfEncodings.WINANSI,
+                EmbeddingStrategy.FORCE_EMBEDDED);
         Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
         pdfTrueTypeFont.setSubset(true);
         page = pdfDoc.addNewPage();
@@ -729,7 +731,8 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
         String font = fontsFolder + "abserif4_5.ttf";
-        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, EmbeddingStrategy.FORCE_NOT_EMBEDDED);
+        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, PdfEncodings.WINANSI,
+                EmbeddingStrategy.FORCE_NOT_EMBEDDED);
         Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
         pdfTrueTypeFont.setSubset(true);
         PdfPage page = pdfDoc.addNewPage();
@@ -746,7 +749,8 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
 
         byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream(font));
-        pdfTrueTypeFont = PdfFontFactory.createFont(ttf, EmbeddingStrategy.FORCE_NOT_EMBEDDED);
+        pdfTrueTypeFont = PdfFontFactory.createFont(ttf, PdfEncodings.WINANSI,
+                EmbeddingStrategy.FORCE_NOT_EMBEDDED);
         Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
         pdfTrueTypeFont.setSubset(true);
         page = pdfDoc.addNewPage();
@@ -781,7 +785,8 @@ public class PdfFontTest extends ExtendedITextTest {
 
         String font = fontsFolder + "Puritan2.otf";
 
-        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, EmbeddingStrategy.FORCE_EMBEDDED);
+        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, PdfEncodings.WINANSI,
+                EmbeddingStrategy.FORCE_EMBEDDED);
         Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
         pdfTrueTypeFont.setSubset(true);
         PdfPage page = pdfDoc.addNewPage();
@@ -799,7 +804,8 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
 
         byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream(font));
-        pdfTrueTypeFont = PdfFontFactory.createFont(ttf, EmbeddingStrategy.FORCE_EMBEDDED);
+        pdfTrueTypeFont = PdfFontFactory.createFont(ttf, PdfEncodings.WINANSI,
+                EmbeddingStrategy.FORCE_EMBEDDED);
         Assert.assertTrue("PdfTrueTypeFont expected", pdfTrueTypeFont instanceof PdfTrueTypeFont);
         pdfTrueTypeFont.setSubset(true);
         page = pdfDoc.addNewPage();
@@ -1942,7 +1948,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfFont pdfFont = PdfFontFactory.createRegisteredFont("aller");
         //clear font cache for other tests
         FontProgramFactory.clearRegisteredFonts();
-        Assert.assertTrue(pdfFont instanceof PdfTrueTypeFont);
+        Assert.assertTrue(pdfFont instanceof PdfType0Font);
         pdfDoc.addNewPage();
         pdfDoc.close();
     }

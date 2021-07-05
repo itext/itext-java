@@ -110,7 +110,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi");
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", PdfEncodings.WINANSI,
+                EmbeddingStrategy.FORCE_NOT_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .setFillColor(ColorConstants.GREEN)
@@ -345,6 +346,18 @@ public class PdfAFontTest extends ExtendedITextTest {
         );
         Assert.assertEquals(PdfAConformanceException.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING_AS_THE_ENCODING_ENTRY,
                 e.getMessage());
+    }
+
+    @Test
+    public void symbolicTtfCharEncodingsPdfA1Test04() throws IOException, InterruptedException {
+        // emulate behaviour with default WinAnsi, which was present in 7.1
+        createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test04.pdf", "Symbols1.ttf", PdfEncodings.WINANSI, PdfAConformanceLevel.PDF_A_1B);
+    }
+
+    @Test
+    public void symbolicTtfCharEncodingsPdfA1Test05() throws IOException, InterruptedException {
+        // Identity-H behaviour should be the same as the default one, starting from 7.2
+        createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test05.pdf", "Symbols1.ttf", PdfEncodings.IDENTITY_H, PdfAConformanceLevel.PDF_A_1B);
     }
 
     @Test

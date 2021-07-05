@@ -64,6 +64,7 @@ import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfLiteral;
@@ -86,6 +87,10 @@ import org.slf4j.LoggerFactory;
 
 public class PdfType0Font extends PdfFont {
 
+    /**
+     * This is the default encoding to use.
+     */
+    private static final String DEFAULT_ENCODING = "";
 
     /**
      * The code length shall not be greater than 4.
@@ -599,8 +604,8 @@ public class PdfType0Font extends PdfFont {
 
     @Override
     public boolean isBuiltWith(String fontProgram, String encoding) {
-        return getFontProgram().isBuiltWith(fontProgram) &&
-                cmapEncoding.isBuiltWith(encoding);
+        return getFontProgram().isBuiltWith(fontProgram)
+                && cmapEncoding.isBuiltWith(normalizeEncoding(encoding));
     }
 
     @Override
@@ -967,5 +972,11 @@ public class PdfType0Font extends PdfFont {
                 return new CMapEncoding(cmapName, uniMap);
             }
         }
+    }
+
+    private static String normalizeEncoding(String encoding) {
+        return null == encoding || DEFAULT_ENCODING.equals(encoding)
+                ? PdfEncodings.IDENTITY_H
+                : encoding;
     }
 }

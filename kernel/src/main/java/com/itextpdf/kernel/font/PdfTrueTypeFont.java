@@ -162,6 +162,13 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     }
 
     @Override
+    public boolean isBuiltWith(String fontProgram, String encoding) {
+        // Now Identity-H is default for true type fonts. However, in case of Identity-H the method from
+        // PdfType0Font would be triggered, hence we need to return false there.
+        return null != encoding && !"".equals(encoding) && super.isBuiltWith(fontProgram, encoding);
+    }
+
+    @Override
     protected void addFontStream(PdfDictionary fontDescriptor) {
         if (embedded) {
             PdfName fontFileName;

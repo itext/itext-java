@@ -319,27 +319,6 @@ public class PdfFontFactoryTest extends ExtendedITextTest {
         Assert.assertEquals(KernelExceptionMessageConstant.DICTIONARY_DOES_NOT_HAVE_SUPPORTED_FONT_DATA, e.getMessage());
     }
 
-    @Test
-    public void deprecatedEmbeddedFlagTrueWorksAsPreferEmbeddedTest() throws IOException {
-        // simply checks that embedded = true works as prefer embedded
-        // this test can be safely removed with clean up of deprecated methods in PdfFontFactory
-        PdfType1Font font = (PdfType1Font) PdfFontFactory.createFont(StandardFonts.HELVETICA, true);
-        Assert.assertNotNull(font);
-        Assert.assertFalse(font.isEmbedded());
-    }
-
-    @Test
-    public void deprecatedEmbeddedFlagFalseWorksAsPreferNotEmbeddedTest() throws IOException {
-        // simply checks that embedded = false works as prefer not embedded
-        // this test can be safely removed with clean up of deprecated methods in PdfFontFactory
-        TrueTypeFont fontProgram = new CustomTrueTypeFontProgram(true);
-
-        PdfType0Font font = (PdfType0Font) PdfFontFactory.createFont(
-                fontProgram, PdfEncodings.IDENTITY_H, false);
-        Assert.assertNotNull(font);
-        Assert.assertTrue(font.isEmbedded());
-    }
-
     private static class CustomType1FontProgram extends Type1Font {
         @Override
         public boolean isBuiltInFont() {

@@ -286,7 +286,8 @@ public class EncodingTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "Symbols1.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "Symbols1.ttf", PdfEncodings.WINANSI,
+                EmbeddingStrategy.PREFER_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         StringBuilder str = new StringBuilder();
         for (int i = 32; i <= 65; i++) {
