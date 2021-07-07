@@ -46,6 +46,15 @@ package com.itextpdf.signatures;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.io.util.StreamUtil;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.security.Security;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
 import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.CertificateID;
@@ -58,15 +67,6 @@ import org.bouncycastle.cert.ocsp.SingleResp;
 import org.bouncycastle.operator.OperatorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.security.Security;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
 
 /**
  * OcspClient implementation using BouncyCastle.
@@ -86,6 +86,7 @@ public class OcspClientBouncyCastle implements IOcspClient {
      * Create {@code OcspClient}
      *
      * @param verifier will be used for response verification.
+     *
      * @see OCSPVerifier
      */
     public OcspClientBouncyCastle(OCSPVerifier verifier) {
@@ -154,11 +155,14 @@ public class OcspClientBouncyCastle implements IOcspClient {
      *
      * @param issuerCert   certificate of the issues
      * @param serialNumber serial number
+     *
      * @return an OCSP request
+     *
      * @throws OCSPException
      * @throws IOException
      */
-    private static OCSPReq generateOCSPRequest(X509Certificate issuerCert, BigInteger serialNumber) throws OCSPException, IOException,
+    private static OCSPReq generateOCSPRequest(X509Certificate issuerCert, BigInteger serialNumber)
+            throws OCSPException, IOException,
             OperatorException, CertificateEncodingException {
         //Add provider BC
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
@@ -175,23 +179,27 @@ public class OcspClientBouncyCastle implements IOcspClient {
      *
      * @param checkCert to certificate to check
      * @param rootCert  the parent certificate
-     * @param url       to get the verification. It it's null it will be taken
+     * @param url       to get the verification. If it's null it will be taken
      *                  from the check cert or from other implementation specific source
+     *
      * @return an OCSP response
+     *
      * @throws GeneralSecurityException if any execution errors occur
-     * @throws OCSPException if any errors occur while handling OCSP requests/responses
-     * @throws IOException if any I/O execution errors occur
-     * @throws OperatorException if any BC execution errors occur
+     * @throws OCSPException            if any errors occur while handling OCSP requests/responses
+     * @throws IOException              if any I/O execution errors occur
+     * @throws OperatorException        if any BC execution errors occur
      */
     OCSPResp getOcspResponse(X509Certificate checkCert, X509Certificate rootCert, String url)
             throws GeneralSecurityException, OCSPException, IOException, OperatorException {
-        if (checkCert == null || rootCert == null)
+        if (checkCert == null || rootCert == null) {
             return null;
+        }
         if (url == null) {
             url = CertificateUtil.getOCSPURL(checkCert);
         }
-        if (url == null)
+        if (url == null) {
             return null;
+        }
         LOGGER.info("Getting OCSP from " + url);
         OCSPReq request = generateOCSPRequest(rootCert, checkCert.getSerialNumber());
         byte[] array = request.getEncoded();
