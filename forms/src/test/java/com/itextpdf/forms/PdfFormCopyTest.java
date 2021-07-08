@@ -64,8 +64,8 @@ import java.io.IOException;
 @Category(IntegrationTest.class)
 public class PdfFormCopyTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldsCopyTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldsCopyTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormCopyTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormCopyTest/";
 
     @BeforeClass
     public static void beforeClass() {
@@ -517,9 +517,9 @@ public class PdfFormCopyTest extends ExtendedITextTest {
     })
     public void copyAndEditTextFields() throws IOException, InterruptedException {
         //TODO: update after DEVSIX-2354
-        String srcFileName = sourceFolder + "/checkPdfFormCopy_Source.pdf";
+        String srcFileName = sourceFolder + "checkPdfFormCopy_Source.pdf";
         String destFilename = destinationFolder + "copyAndEditTextFields.pdf";
-        String cmpFileName = sourceFolder + "/cmp_copyAndEditTextFields.pdf";
+        String cmpFileName = sourceFolder + "cmp_copyAndEditTextFields.pdf";
 
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFileName));
         PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
@@ -548,9 +548,9 @@ public class PdfFormCopyTest extends ExtendedITextTest {
     })
     public void copyAndEditCheckboxes() throws IOException, InterruptedException {
         //TODO: update after DEVSIX-2354
-        String srcFileName = sourceFolder + "/checkPdfFormCopy_Source.pdf";
+        String srcFileName = sourceFolder + "checkPdfFormCopy_Source.pdf";
         String destFilename = destinationFolder + "copyAndEditCheckboxes.pdf";
-        String cmpFileName = sourceFolder + "/cmp_copyAndEditCheckboxes.pdf";
+        String cmpFileName = sourceFolder + "cmp_copyAndEditCheckboxes.pdf";
 
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFileName));
         PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
@@ -577,9 +577,9 @@ public class PdfFormCopyTest extends ExtendedITextTest {
     })
     public void copyAndEditRadioButtons() throws IOException, InterruptedException {
         //TODO: update after DEVSIX-2354
-        String srcFileName = sourceFolder + "/checkPdfFormCopy_Source.pdf";
+        String srcFileName = sourceFolder + "checkPdfFormCopy_Source.pdf";
         String destFilename = destinationFolder + "copyAndEditRadioButtons.pdf";
-        String cmpFileName = sourceFolder + "/cmp_copyAndEditRadioButtons.pdf";
+        String cmpFileName = sourceFolder + "cmp_copyAndEditRadioButtons.pdf";
 
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFileName));
         PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
