@@ -53,6 +53,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -73,7 +74,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 13)
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 32)
     })
     public void copyFieldsTest01() throws IOException, InterruptedException {
         String srcFilename1 = sourceFolder + "appearances1.pdf";
@@ -328,7 +329,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 13)
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 32)
     })
     public void copyFieldsTest07() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "datasheet.pdf";
@@ -350,7 +351,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 13)
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 32)
     })
     public void copyFieldsTest08() throws IOException, InterruptedException {
         String srcFilename1 = sourceFolder + "appearances1.pdf";
@@ -378,7 +379,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 26)
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 64)
     })
     public void copyFieldsTest09() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "datasheet.pdf";
@@ -593,6 +594,105 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         destDoc.close();
         srcDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD)
+    })
+    public void mergeMergedFieldAndMergedFieldTest() throws IOException, InterruptedException {
+        String srcFileName1 = sourceFolder + "fieldMergedWithWidget.pdf";
+        String destFilename = destinationFolder + "mergeMergedFieldAndMergedFieldTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_mergeMergedFieldAndMergedFieldTest.pdf";
+
+        try (
+                PdfWriter writer = new PdfWriter(destFilename);
+                PdfDocument resultPdfDocument = new PdfDocument(writer);
+                PdfReader reader1 = new PdfReader(srcFileName1);
+                PdfDocument sourceDoc1 = new PdfDocument(reader1);) {
+            PdfAcroForm.getAcroForm(resultPdfDocument, true);
+            PdfPageFormCopier formCopier = new PdfPageFormCopier();
+
+            sourceDoc1.copyPagesTo(1, sourceDoc1.getNumberOfPages(), resultPdfDocument, formCopier);
+            sourceDoc1.copyPagesTo(1, sourceDoc1.getNumberOfPages(), resultPdfDocument, formCopier);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 2)
+    })
+    public void mergeMergedFieldAndTwoWidgetsTest() throws IOException, InterruptedException {
+        String srcFileName1 = sourceFolder + "fieldMergedWithWidget.pdf";
+        String srcFileName2 = sourceFolder + "fieldTwoWidgets.pdf";
+        String destFilename = destinationFolder + "mergeMergedFieldAndTwoWidgetsTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_mergeMergedFieldAndTwoWidgetsTest.pdf";
+
+        try (
+                PdfWriter writer = new PdfWriter(destFilename);
+                PdfDocument resultPdfDocument = new PdfDocument(writer);
+                PdfReader reader1 = new PdfReader(srcFileName1);
+                PdfDocument sourceDoc1 = new PdfDocument(reader1);
+                PdfReader reader2 = new PdfReader(srcFileName2);
+                PdfDocument sourceDoc2 = new PdfDocument(reader2);) {
+            PdfAcroForm.getAcroForm(resultPdfDocument, true);
+            PdfPageFormCopier formCopier = new PdfPageFormCopier();
+
+            sourceDoc1.copyPagesTo(1, sourceDoc1.getNumberOfPages(), resultPdfDocument, formCopier);
+            sourceDoc2.copyPagesTo(1, sourceDoc2.getNumberOfPages(), resultPdfDocument, formCopier);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD)
+    })
+    public void mergeTwoWidgetsAndMergedFieldTest() throws IOException, InterruptedException {
+        String srcFileName1 = sourceFolder + "fieldMergedWithWidget.pdf";
+        String srcFileName2 = sourceFolder + "fieldTwoWidgets.pdf";
+        String destFilename = destinationFolder + "mergeTwoWidgetsAndMergedFieldTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_mergeTwoWidgetsAndMergedFieldTest.pdf";
+
+        try (
+                PdfWriter writer = new PdfWriter(destFilename);
+                PdfDocument resultPdfDocument = new PdfDocument(writer);
+                PdfReader reader1 = new PdfReader(srcFileName1);
+                PdfDocument sourceDoc1 = new PdfDocument(reader1);
+                PdfReader reader2 = new PdfReader(srcFileName2);
+                PdfDocument sourceDoc2 = new PdfDocument(reader2);) {
+            PdfAcroForm.getAcroForm(resultPdfDocument, true);
+            PdfPageFormCopier formCopier = new PdfPageFormCopier();
+
+            sourceDoc2.copyPagesTo(1, sourceDoc2.getNumberOfPages(), resultPdfDocument, formCopier);
+            sourceDoc1.copyPagesTo(1, sourceDoc1.getNumberOfPages(), resultPdfDocument, formCopier);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void mergeTwoWidgetsAndTwoWidgetsTest() throws IOException, InterruptedException {
+        String srcFileName2 = sourceFolder + "fieldTwoWidgets.pdf";
+        String destFilename = destinationFolder + "mergeTwoWidgetsAndTwoWidgetsTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_mergeTwoWidgetsAndTwoWidgetsTest.pdf";
+
+        try (
+                PdfWriter writer = new PdfWriter(destFilename);
+                PdfDocument resultPdfDocument = new PdfDocument(writer);
+                PdfReader reader2 = new PdfReader(srcFileName2);
+                PdfDocument sourceDoc2 = new PdfDocument(reader2);) {
+            PdfAcroForm.getAcroForm(resultPdfDocument, true);
+            PdfPageFormCopier formCopier = new PdfPageFormCopier();
+
+            sourceDoc2.copyPagesTo(1, sourceDoc2.getNumberOfPages(), resultPdfDocument, formCopier);
+            sourceDoc2.copyPagesTo(1, sourceDoc2.getNumberOfPages(), resultPdfDocument, formCopier);
+        }
 
         Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
     }

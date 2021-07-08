@@ -167,12 +167,14 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                                      PdfAnnotation annot, PdfFormField parentField) {
         PdfString parentName = parentField.getFieldName();
         if (!fieldsTo.containsKey(parentName.toUnicodeString())) {
+            // no such field, hence we should simply add it
             PdfFormField field = createParentFieldCopy(annot.getPdfObject(), documentTo);
             PdfArray kids = field.getKids();
             field.getPdfObject().remove(PdfName.Kids);
             formTo.addField(field, toPage);
             field.getPdfObject().put(PdfName.Kids, kids);
         } else {
+            // it is either a field (field name will not be null) or a widget (field name is not null)
             PdfFormField field = makeFormField(annot.getPdfObject());
             if (field == null) {
                 return;
@@ -190,18 +192,36 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                             fieldsTo);
                 }
             } else {
-                if (!parentField.getKids().contains(field.getPdfObject())) {
+                if (!parentField.getKids().contains(field.getPdfObject())
+                        && formTo.getFields().contains(parentField.getPdfObject())) {
+                    // its parent is already a field of the resultant document,
+                    // hence we only need to update its children
                     HashSet<String> existingFields = new HashSet<>();
                     getAllFieldNames(formTo.getFields(), existingFields);
                     addChildToExistingParent(annot.getPdfObject(), existingFields);
+                } else {
+                    // its parent is not a field of the resultant document, but the latter contains
+                    // a field of the same name, therefore we should merge them (note that merging in this context
+                    // differs from merging a widget and an annotation into a single entity)
+                    PdfFormField mergedField = mergeFieldsWithTheSameName(field);
+                    // we need to add the field not to its representation (#getFormFields()), but to
+                    // /Fields entry of the acro form
+                    formTo.addField(mergedField, toPage);
                 }
             }
         }
     }
 
     private PdfFormField mergeFieldsWithTheSameName(PdfFormField newField) {
-        String fullFieldName = newField.getFieldName().toUnicodeString();
         PdfString fieldName = newField.getPdfObject().getAsString(PdfName.T);
+        if (null == fieldName) {
+            fieldName = newField.getParent().getAsString(PdfName.T);
+        }
+
+        String fullFieldName = fieldName.toUnicodeString();
+        if (null != newField.getFieldName()) {
+            fullFieldName = newField.getFieldName().toUnicodeString();
+        }
 
         logger.warn(MessageFormatUtil.format(LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, fullFieldName));
 
