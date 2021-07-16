@@ -1,69 +1,22 @@
-/*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
-    Authors: iText Software.
+package org.jsoup.parser;
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
-
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
- */
-package com.itextpdf.styledxmlparser.jsoup.parser;
-
-import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Attribute;
+import org.jsoup.nodes.Attributes;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import com.itextpdf.styledxmlparser.jsoup.Jsoup;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Attribute;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
-import com.itextpdf.styledxmlparser.jsoup.nodes.BooleanAttribute;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
-import com.itextpdf.styledxmlparser.jsoup.select.Elements;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  Test suite for attribute parser.
 
  @author Jonathan Hedley, jonathan@hedley.net */
-@Category(UnitTest.class)
-public class AttributeParseTest extends ExtendedITextTest {
+public class AttributeParseTest {
 
     @Test public void parsesRoughAttributeString() {
         String html = "<a id=\"123\" class=\"baz = 'bar'\" style = 'border: 2px'qux zim foo = 12 mux=18 />";
@@ -85,7 +38,7 @@ public class AttributeParseTest extends ExtendedITextTest {
         String html = "<a\r\nfoo='bar\r\nqux'\r\nbar\r\n=\r\ntwo>One</a>";
         Element el = Jsoup.parse(html).select("a").first();
         assertEquals(2, el.attributes().size());
-        assertEquals("bar\r\nqux", el.attr("foo"));
+        assertEquals("bar\r\nqux", el.attr("foo")); // currently preserves newlines in quoted attributes. todo confirm if should.
         assertEquals("two", el.attr("bar"));
     }
 
@@ -98,6 +51,8 @@ public class AttributeParseTest extends ExtendedITextTest {
 
     @Test public void canStartWithEq() {
         String html = "<a =empty />";
+        // TODO this is the weirdest thing in the spec - why not consider this an attribute with an empty name, not where name is '='?
+        // am I reading it wrong? https://html.spec.whatwg.org/multipage/parsing.html#before-attribute-name-state
         Element el = Jsoup.parse(html).getElementsByTag("a").get(0);
         Attributes attr = el.attributes();
         assertEquals(1, attr.size());
@@ -117,24 +72,28 @@ public class AttributeParseTest extends ExtendedITextTest {
         Elements els = Jsoup.parse(html).select("a");
         assertEquals("&wr_id=123&mid-size=true&ok=&wr", els.first().attr("href"));
     }
-    
+
     @Test public void parsesBooleanAttributes() {
         String html = "<a normal=\"123\" boolean empty=\"\"></a>";
         Element el = Jsoup.parse(html).select("a").first();
-        
+
         assertEquals("123", el.attr("normal"));
         assertEquals("", el.attr("boolean"));
         assertEquals("", el.attr("empty"));
-        
+
         List<Attribute> attributes = el.attributes().asList();
-        assertEquals("There should be 3 attribute present", 3, attributes.size());
-        
-        // Assuming the list order always follows the parsed html
-		assertFalse("'normal' attribute should not be boolean", attributes.get(0) instanceof BooleanAttribute);        
-		assertTrue("'boolean' attribute should be boolean", attributes.get(1) instanceof BooleanAttribute);        
-		assertFalse("'empty' attribute should not be boolean", attributes.get(2) instanceof BooleanAttribute);        
-        
-        assertEquals(html, el.outerHtml());
+        assertEquals(3, attributes.size(), "There should be 3 attribute present");
+
+        assertEquals(html, el.outerHtml()); // vets boolean syntax
     }
-    
+
+    @Test public void dropsSlashFromAttributeName() {
+        String html = "<img /onerror='doMyJob'/>";
+        Document doc = Jsoup.parse(html);
+        assertFalse(doc.select("img[onerror]").isEmpty(), "SelfClosingStartTag ignores last character");
+        assertEquals("<img onerror=\"doMyJob\">", doc.body().html());
+
+        doc = Jsoup.parse(html, "", Parser.xmlParser());
+        assertEquals("<img onerror=\"doMyJob\" />", doc.html());
+    }
 }

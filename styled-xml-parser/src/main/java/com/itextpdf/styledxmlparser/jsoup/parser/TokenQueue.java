@@ -1,49 +1,7 @@
-/*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
-    Authors: iText Software.
+package org.jsoup.parser;
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
-
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
- */
-package com.itextpdf.styledxmlparser.jsoup.parser;
-
-import com.itextpdf.styledxmlparser.jsoup.helper.StringUtil;
-import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import org.jsoup.internal.StringUtil;
+import org.jsoup.helper.Validate;
 
 /**
  * A character queue with parsing helpers.
@@ -82,7 +40,7 @@ public class TokenQueue {
      * @return First character, or 0 if empty.
      */
     public char peek() {
-        return isEmpty() ? '\u0000' : queue.charAt(pos);
+        return isEmpty() ? 0 : queue.charAt(pos);
     }
 
     /**
@@ -292,7 +250,7 @@ public class TokenQueue {
 
     /**
      * Pulls a balanced string off the queue. E.g. if queue is "(one (two) three) four", (,) will return "one (two) three",
-     * and leave " four" on the queue. Unbalanced openers and closers can quoted (with ' or ") or escaped (with \). Those escapes will be left
+     * and leave " four" on the queue. Unbalanced openers and closers can be quoted (with ' or ") or escaped (with \). Those escapes will be left
      * in the returned string, which is suitable for regexes (where we need to preserve the escape), but unsuitable for
      * contains text strings; use unescape for that.
      * @param open opener
@@ -303,23 +261,27 @@ public class TokenQueue {
         int start = -1;
         int end = -1;
         int depth = 0;
-        char last = '\u0000';
-        boolean inQuote = false;
+        char last = 0;
+        boolean inSingleQuote = false;
+        boolean inDoubleQuote = false;
 
         do {
             if (isEmpty()) break;
-            Character c = consume();
-            if (last == 0 || last != ESC) {
-                if ((c.equals('\'') || c.equals('"')) && c != open)
-                    inQuote = !inQuote;
-                if (inQuote)
+            char c = consume();
+            if (last != ESC) {
+                if (c == '\'' && c != open && !inDoubleQuote)
+                    inSingleQuote = !inSingleQuote;
+                else if (c == '"' && c != open && !inSingleQuote)
+                    inDoubleQuote = !inDoubleQuote;
+                if (inSingleQuote || inDoubleQuote)
                     continue;
-                if (c.equals(open)) {
+
+                if (c == open) {
                     depth++;
                     if (start == -1)
                         start = pos;
                 }
-                else if (c.equals(close))
+                else if (c == close)
                     depth--;
             }
 
@@ -327,27 +289,31 @@ public class TokenQueue {
                 end = pos; // don't include the outer match pair in the return
             last = c;
         } while (depth > 0);
-        return (end >= 0) ? queue.substring(start, end) : "";
+        final String out = (end >= 0) ? queue.substring(start, end) : "";
+        if (depth > 0) {// ran out of queue before seeing enough )
+            Validate.fail("Did not find balanced marker at '" + out + "'");
+        }
+        return out;
     }
     
     /**
-     * Unescaped a \ escaped string.
+     * Unescape a \ escaped string.
      * @param in backslash escaped string
      * @return unescaped string
      */
     public static String unescape(String in) {
-        StringBuilder out = new StringBuilder();
-        char last = '\u0000';
+        StringBuilder out = StringUtil.borrowBuilder();
+        char last = 0;
         for (char c : in.toCharArray()) {
             if (c == ESC) {
-                if (last != 0 && last == ESC)
+                if (last == ESC)
                     out.append(c);
             }
             else 
                 out.append(c);
             last = c;
         }
-        return out.toString();
+        return StringUtil.releaseBuilder(out);
     }
 
     /**
@@ -388,13 +354,13 @@ public class TokenQueue {
     }
     
     /**
-     * Consume a CSS element selector (tag name, but | instead of : for namespaces, to not conflict with :pseudo selects).
+     * Consume a CSS element selector (tag name, but | instead of : for namespaces (or *| for wildcard namespace), to not conflict with :pseudo selects).
      * 
      * @return tag name
      */
     public String consumeElementSelector() {
         int start = pos;
-        while (!isEmpty() && (matchesWord() || matchesAny('|', '_', '-')))
+        while (!isEmpty() && (matchesWord() || matchesAny("*|","|", "_", "-")))
             pos++;
         
         return queue.substring(start, pos);
@@ -430,7 +396,7 @@ public class TokenQueue {
      @return remained of queue.
      */
     public String remainder() {
-        final String remainder = queue.substring(pos, queue.length());
+        final String remainder = queue.substring(pos);
         pos = queue.length();
         return remainder;
     }

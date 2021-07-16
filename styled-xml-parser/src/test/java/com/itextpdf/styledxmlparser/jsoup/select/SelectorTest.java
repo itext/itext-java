@@ -1,68 +1,25 @@
-/*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
-    Authors: iText Software.
+package org.jsoup.select;
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+import org.jsoup.Jsoup;
+import org.jsoup.MultiLocaleExtension.MultiLocaleTest;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
+import org.junit.jupiter.api.Test;
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
+import java.util.Locale;
 
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
- */
-package com.itextpdf.styledxmlparser.jsoup.select;
-
-import com.itextpdf.styledxmlparser.jsoup.Jsoup;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
-import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-
-import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
-
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests that the selector selects correctly.
  *
  * @author Jonathan Hedley, jonathan@hedley.net
  */
-@Category(UnitTest.class)
-public class SelectorTest extends ExtendedITextTest {
+public class SelectorTest {
     @Test public void testByTag() {
-        Elements els = Jsoup.parse("<div id=1><div id=2><p>Hello</p></div></div><div id=3>").select("div");
+        // should be case insensitive
+        Elements els = Jsoup.parse("<div id=1><div id=2><p>Hello</p></div></div><DIV id=3>").select("DIV");
         assertEquals(3, els.size());
         assertEquals("1", els.get(0).id());
         assertEquals("2", els.get(1).id());
@@ -83,7 +40,7 @@ public class SelectorTest extends ExtendedITextTest {
     }
 
     @Test public void testByClass() {
-        Elements els = Jsoup.parse("<p id=0 class='one two'><p id=1 class='one'><p id=2 class='two'>").select("p.one");
+        Elements els = Jsoup.parse("<p id=0 class='ONE two'><p id=1 class='one'><p id=2 class='two'>").select("P.One");
         assertEquals(2, els.size());
         assertEquals("0", els.get(0).id());
         assertEquals("1", els.get(1).id());
@@ -95,15 +52,29 @@ public class SelectorTest extends ExtendedITextTest {
         assertEquals(1, els2.size());
     }
 
-    @Test public void testByAttribute() {
-        String h = "<div Title=Foo /><div Title=Bar /><div Style=Qux /><div title=Bam /><div title=SLAM />" +
+    @Test public void testByClassCaseInsensitive() {
+        String html = "<p Class=foo>One <p Class=Foo>Two <p class=FOO>Three <p class=farp>Four";
+        Elements elsFromClass = Jsoup.parse(html).select("P.Foo");
+        Elements elsFromAttr = Jsoup.parse(html).select("p[class=foo]");
+
+        assertEquals(elsFromAttr.size(), elsFromClass.size());
+        assertEquals(3, elsFromClass.size());
+        assertEquals("Two", elsFromClass.get(1).text());
+    }
+
+
+    @MultiLocaleTest
+    public void testByAttribute(Locale locale) {
+        Locale.setDefault(locale);
+
+        String h = "<div Title=Foo /><div Title=Bar /><div Style=Qux /><div title=Balim /><div title=SLIM />" +
                 "<div data-name='with spaces'/>";
         Document doc = Jsoup.parse(h);
 
         Elements withTitle = doc.select("[title]");
         assertEquals(4, withTitle.size());
 
-        Elements foo = doc.select("[title=foo]");
+        Elements foo = doc.select("[TITLE=foo]");
         assertEquals(1, foo.size());
 
         Elements foo2 = doc.select("[title=\"foo\"]");
@@ -123,17 +94,17 @@ public class SelectorTest extends ExtendedITextTest {
         Elements starts = doc.select("[title^=ba]");
         assertEquals(2, starts.size());
         assertEquals("Bar", starts.first().attr("title"));
-        assertEquals("Bam", starts.last().attr("title"));
+        assertEquals("Balim", starts.last().attr("title"));
 
-        Elements ends = doc.select("[title$=am]");
+        Elements ends = doc.select("[title$=im]");
         assertEquals(2, ends.size());
-        assertEquals("Bam", ends.first().attr("title"));
-        assertEquals("SLAM", ends.last().attr("title"));
+        assertEquals("Balim", ends.first().attr("title"));
+        assertEquals("SLIM", ends.last().attr("title"));
 
-        Elements contains = doc.select("[title*=a]");
-        assertEquals(3, contains.size());
-        assertEquals("Bar", contains.first().attr("title"));
-        assertEquals("SLAM", contains.last().attr("title"));
+        Elements contains = doc.select("[title*=i]");
+        assertEquals(2, contains.size());
+        assertEquals("Balim", contains.first().attr("title"));
+        assertEquals("SLIM", contains.last().attr("title"));
     }
 
     @Test public void testNamespacedTag() {
@@ -157,8 +128,72 @@ public class SelectorTest extends ExtendedITextTest {
         assertEquals("2", byContains.last().id());
     }
 
-    @Test public void testByAttributeStarting() {
-        Document doc = Jsoup.parse("<div id=1 data-name=jsoup>Hello</div><p data-val=5 id=2>There</p><p id=3>No</p>");
+    @Test public void testWildcardNamespacedTag() {
+        Document doc = Jsoup.parse("<div><abc:def id=1>Hello</abc:def></div> <abc:def class=bold id=2>There</abc:def>");
+        Elements byTag = doc.select("*|def");
+        assertEquals(2, byTag.size());
+        assertEquals("1", byTag.first().id());
+        assertEquals("2", byTag.last().id());
+
+        Elements byAttr = doc.select(".bold");
+        assertEquals(1, byAttr.size());
+        assertEquals("2", byAttr.last().id());
+
+        Elements byTagAttr = doc.select("*|def.bold");
+        assertEquals(1, byTagAttr.size());
+        assertEquals("2", byTagAttr.last().id());
+
+        Elements byContains = doc.select("*|def:contains(e)");
+        assertEquals(2, byContains.size());
+        assertEquals("1", byContains.first().id());
+        assertEquals("2", byContains.last().id());
+    }
+
+    @Test public void testWildcardNamespacedXmlTag() {
+        Document doc = Jsoup.parse(
+            "<div><Abc:Def id=1>Hello</Abc:Def></div> <Abc:Def class=bold id=2>There</abc:def>",
+            "", Parser.xmlParser()
+        );
+
+        Elements byTag = doc.select("*|Def");
+        assertEquals(2, byTag.size());
+        assertEquals("1", byTag.first().id());
+        assertEquals("2", byTag.last().id());
+
+        Elements byAttr = doc.select(".bold");
+        assertEquals(1, byAttr.size());
+        assertEquals("2", byAttr.last().id());
+
+        Elements byTagAttr = doc.select("*|Def.bold");
+        assertEquals(1, byTagAttr.size());
+        assertEquals("2", byTagAttr.last().id());
+
+        Elements byContains = doc.select("*|Def:contains(e)");
+        assertEquals(2, byContains.size());
+        assertEquals("1", byContains.first().id());
+        assertEquals("2", byContains.last().id());
+    }
+
+    @Test public void testWildCardNamespacedCaseVariations() {
+        Document doc = Jsoup.parse("<One:Two>One</One:Two><three:four>Two</three:four>", "", Parser.xmlParser());
+        Elements els1 = doc.select("One|Two");
+        Elements els2 = doc.select("one|two");
+        Elements els3 = doc.select("Three|Four");
+        Elements els4 = doc.select("three|Four");
+
+        assertEquals(els1, els2);
+        assertEquals(els3, els4);
+        assertEquals("One", els1.text());
+        assertEquals(1, els1.size());
+        assertEquals("Two", els3.text());
+        assertEquals(1, els2.size());
+    }
+
+    @MultiLocaleTest
+    public void testByAttributeStarting(Locale locale) {
+        Locale.setDefault(locale);
+
+        Document doc = Jsoup.parse("<div id=1 ATTRIBUTE data-name=jsoup>Hello</div><p data-val=5 id=2>There</p><p id=3>No</p>");
         Elements withData = doc.select("[^data-]");
         assertEquals(2, withData.size());
         assertEquals("1", withData.first().id());
@@ -167,6 +202,8 @@ public class SelectorTest extends ExtendedITextTest {
         withData = doc.select("p[^data-]");
         assertEquals(1, withData.size());
         assertEquals("2", withData.first().id());
+
+        assertEquals(1, doc.select("[^attrib]").size());
     }
 
     @Test public void testByAttributeRegex() {
@@ -229,7 +266,7 @@ public class SelectorTest extends ExtendedITextTest {
         assertEquals("div", els.get(1).tagName());
         assertEquals("bar", els.get(1).attr("title"));
         assertEquals("div", els.get(2).tagName());
-        assertTrue(els.get(2).attr("title").length() == 0); // missing attributes come back as empty string
+        assertEquals(0, els.get(2).attr("title").length()); // missing attributes come back as empty string
         assertFalse(els.get(2).hasAttr("title"));
         assertEquals("p", els.get(3).tagName());
         assertEquals("span", els.get(4).tagName());
@@ -248,8 +285,8 @@ public class SelectorTest extends ExtendedITextTest {
     @Test public void descendant() {
         String h = "<div class=head><p class=first>Hello</p><p>There</p></div><p>None</p>";
         Document doc = Jsoup.parse(h);
-        Element root = doc.getElementsByClass("head").first();
-        
+        Element root = doc.getElementsByClass("HEAD").first();
+
         Elements els = root.select(".head p");
         assertEquals(2, els.size());
         assertEquals("Hello", els.get(0).text());
@@ -261,7 +298,7 @@ public class SelectorTest extends ExtendedITextTest {
 
         Elements empty = root.select("p .first"); // self, not descend, should not match
         assertEquals(0, empty.size());
-        
+
         Elements aboveRoot = root.select("body div.head");
         assertEquals(0, aboveRoot.size());
     }
@@ -353,10 +390,10 @@ public class SelectorTest extends ExtendedITextTest {
         String h = "<dIv tItle=bAr><div>"; // mixed case so a simple toLowerCase() on value doesn't catch
         Document doc = Jsoup.parse(h);
 
-        assertEquals(2, doc.select("DIV").size());
-        assertEquals(1, doc.select("DIV[TITLE]").size());
-        assertEquals(1, doc.select("DIV[TITLE=BAR]").size());
-        assertEquals(0, doc.select("DIV[TITLE=BARBARELLA").size());
+        assertEquals(2, doc.select("DiV").size());
+        assertEquals(1, doc.select("DiV[TiTLE]").size());
+        assertEquals(1, doc.select("DiV[TiTLE=BAR]").size());
+        assertEquals(0, doc.select("DiV[TiTLE=BARBARELLA]").size());
     }
 
     @Test public void adjacentSiblings() {
@@ -498,7 +535,7 @@ public class SelectorTest extends ExtendedITextTest {
         assertEquals("0", divs1.get(0).id());
         assertEquals("1", divs1.get(1).id());
 
-        Elements divs2 = doc.select("div:has([class]");
+        Elements divs2 = doc.select("div:has([class])");
         assertEquals(1, divs2.size());
         assertEquals("1", divs2.get(0).id());
 
@@ -513,6 +550,11 @@ public class SelectorTest extends ExtendedITextTest {
         assertEquals("body", els1.first().tagName());
         assertEquals("0", els1.get(1).id());
         assertEquals("2", els1.get(2).id());
+
+        Elements els2 = doc.body().select(":has(> span)");
+        assertEquals(2,els2.size()); // p, div
+        assertEquals("p",els2.first().tagName());
+        assertEquals("1", els2.get(1).id());
     }
 
     @Test public void testNestedHas() {
@@ -534,8 +576,11 @@ public class SelectorTest extends ExtendedITextTest {
         assertEquals("Two", divs.first().text());
     }
 
-    @Test public void testPseudoContains() {
-        Document doc = Jsoup.parse("<div><p>The Rain.</p> <p class=light>The <i>rain</i>.</p> <p>Rain, the.</p></div>");
+    @MultiLocaleTest
+    public void testPseudoContains(Locale locale) {
+        Locale.setDefault(locale);
+
+        Document doc = Jsoup.parse("<div><p>The Rain.</p> <p class=light>The <i>RAIN</i>.</p> <p>Rain, the.</p></div>");
 
         Elements ps1 = doc.select("p:contains(Rain)");
         assertEquals(3, ps1.size());
@@ -543,7 +588,7 @@ public class SelectorTest extends ExtendedITextTest {
         Elements ps2 = doc.select("p:contains(the rain)");
         assertEquals(2, ps2.size());
         assertEquals("The Rain.", ps2.first().html());
-        assertEquals("The <i>rain</i>.", ps2.last().html());
+        assertEquals("The <i>RAIN</i>.", ps2.last().html());
 
         Elements ps3 = doc.select("p:contains(the Rain):has(i)");
         assertEquals(1, ps3.size());
@@ -555,6 +600,9 @@ public class SelectorTest extends ExtendedITextTest {
 
         Elements ps5 = doc.select(":contains(rain)");
         assertEquals(8, ps5.size()); // html, body, div,...
+
+        Elements ps6 = doc.select(":contains(RAIN)");
+        assertEquals(8, ps6.size());
     }
 
     @Test public void testPsuedoContainsWithParentheses() {
@@ -569,13 +617,20 @@ public class SelectorTest extends ExtendedITextTest {
         assertEquals("2", ps2.first().id());
     }
 
-    @Test public void containsOwn() {
-        Document doc = Jsoup.parse("<p id=1>Hello <b>there</b> now</p>");
-        Elements ps = doc.select("p:containsOwn(Hello now)");
+    @MultiLocaleTest
+    public void containsOwn(Locale locale) {
+        Locale.setDefault(locale);
+
+        Document doc = Jsoup.parse("<p id=1>Hello <b>there</b> igor</p>");
+        Elements ps = doc.select("p:containsOwn(Hello IGOR)");
         assertEquals(1, ps.size());
         assertEquals("1", ps.first().id());
 
         assertEquals(0, doc.select("p:containsOwn(there)").size());
+
+        Document doc2 = Jsoup.parse("<p>Hello <b>there</b> IGOR</p>");
+        assertEquals(1, doc2.select("p:containsOwn(igor)").size());
+
     }
 
     @Test public void testMatches() {
@@ -677,24 +732,24 @@ public class SelectorTest extends ExtendedITextTest {
         assertEquals("div", doc.select("div[k" + s + "]").first().tagName());
         assertEquals("div", doc.select("div:containsOwn(" + s + ")").first().tagName());
     }
-    
+
     @Test
     public void selectClassWithSpace() {
         final String html = "<div class=\"value\">class without space</div>\n"
                           + "<div class=\"value \">class with space</div>";
-        
+
         Document doc = Jsoup.parse(html);
-        
+
         Elements found = doc.select("div[class=value ]");
         assertEquals(2, found.size());
         assertEquals("class without space", found.get(0).text());
         assertEquals("class with space", found.get(1).text());
-        
+
         found = doc.select("div[class=\"value \"]");
         assertEquals(2, found.size());
         assertEquals("class without space", found.get(0).text());
         assertEquals("class with space", found.get(1).text());
-        
+
         found = doc.select("div[class=\"value\\ \"]");
         assertEquals(0, found.size());
     }
@@ -713,9 +768,232 @@ public class SelectorTest extends ExtendedITextTest {
     @Test public void attributeWithBrackets() {
         String html = "<div data='End]'>One</div> <div data='[Another)]]'>Two</div>";
         Document doc = Jsoup.parse(html);
-        assertEquals("One", doc.select("div[data='End]'").first().text());
-        assertEquals("Two", doc.select("div[data='[Another)]]'").first().text());
-        assertEquals("One", doc.select("div[data=\"End]\"").first().text());
-        assertEquals("Two", doc.select("div[data=\"[Another)]]\"").first().text());
+        assertEquals("One", doc.select("div[data='End]']").first().text());
+        assertEquals("Two", doc.select("div[data='[Another)]]']").first().text());
+        assertEquals("One", doc.select("div[data=\"End]\"]").first().text());
+        assertEquals("Two", doc.select("div[data=\"[Another)]]\"]").first().text());
+    }
+
+    @MultiLocaleTest
+    public void containsData(Locale locale) {
+        Locale.setDefault(locale);
+
+        String html = "<p>function</p><script>FUNCTION</script><style>item</style><span><!-- comments --></span>";
+        Document doc = Jsoup.parse(html);
+        Element body = doc.body();
+
+        Elements dataEls1 = body.select(":containsData(function)");
+        Elements dataEls2 = body.select("script:containsData(function)");
+        Elements dataEls3 = body.select("span:containsData(comments)");
+        Elements dataEls4 = body.select(":containsData(o)");
+        Elements dataEls5 = body.select("style:containsData(ITEM)");
+
+        assertEquals(2, dataEls1.size()); // body and script
+        assertEquals(1, dataEls2.size());
+        assertEquals(dataEls1.last(), dataEls2.first());
+        assertEquals("<script>FUNCTION</script>", dataEls2.outerHtml());
+        assertEquals(1, dataEls3.size());
+        assertEquals("span", dataEls3.first().tagName());
+        assertEquals(3, dataEls4.size());
+        assertEquals("body", dataEls4.first().tagName());
+        assertEquals("script", dataEls4.get(1).tagName());
+        assertEquals("span", dataEls4.get(2).tagName());
+        assertEquals(1, dataEls5.size());
+    }
+
+    @Test public void containsWithQuote() {
+        String html = "<p>One'One</p><p>One'Two</p>";
+        Document doc = Jsoup.parse(html);
+        Elements els = doc.select("p:contains(One\\'One)");
+        assertEquals(1, els.size());
+        assertEquals("One'One", els.text());
+    }
+
+    @Test public void selectFirst() {
+        String html = "<p>One<p>Two<p>Three";
+        Document doc = Jsoup.parse(html);
+        assertEquals("One", doc.selectFirst("p").text());
+    }
+
+    @Test public void selectFirstWithAnd() {
+        String html = "<p>One<p class=foo>Two<p>Three";
+        Document doc = Jsoup.parse(html);
+        assertEquals("Two", doc.selectFirst("p.foo").text());
+    }
+
+    @Test public void selectFirstWithOr() {
+        String html = "<p>One<p>Two<p>Three<div>Four";
+        Document doc = Jsoup.parse(html);
+        assertEquals("One", doc.selectFirst("p, div").text());
+    }
+
+    @Test public void matchText() {
+        String html = "<p>One<br>Two</p>";
+        Document doc = Jsoup.parse(html);
+        String origHtml = doc.html();
+
+        Elements one = doc.select("p:matchText:first-child");
+        assertEquals("One", one.first().text());
+
+        Elements two = doc.select("p:matchText:last-child");
+        assertEquals("Two", two.first().text());
+
+        assertEquals(origHtml, doc.html());
+
+        assertEquals("Two", doc.select("p:matchText + br + *").text());
+    }
+
+    @Test public void nthLastChildWithNoParent() {
+        Element el = new Element("p").text("Orphan");
+        Elements els = el.select("p:nth-last-child(1)");
+        assertEquals(0, els.size());
+    }
+
+    @Test public void splitOnBr() {
+        String html = "<div><p>One<br>Two<br>Three</p></div>";
+        Document doc = Jsoup.parse(html);
+
+        Elements els = doc.select("p:matchText");
+        assertEquals(3, els.size());
+        assertEquals("One", els.get(0).text());
+        assertEquals("Two", els.get(1).text());
+        assertEquals("Three", els.get(2).toString());
+    }
+
+    @Test public void matchTextAttributes() {
+        Document doc = Jsoup.parse("<div><p class=one>One<br>Two<p class=two>Three<br>Four");
+        Elements els = doc.select("p.two:matchText:last-child");
+
+        assertEquals(1, els.size());
+        assertEquals("Four", els.text());
+    }
+
+    @Test public void findBetweenSpan() {
+        Document doc = Jsoup.parse("<p><span>One</span> Two <span>Three</span>");
+        Elements els = doc.select("span ~ p:matchText"); // the Two becomes its own p, sibling of the span
+        // todo - think this should really be 'p:matchText span ~ p'. The :matchText should behave as a modifier to expand the nodes.
+
+        assertEquals(1, els.size());
+        assertEquals("Two", els.text());
+    }
+
+    @Test public void startsWithBeginsWithSpace() {
+        Document doc = Jsoup.parse("<small><a href=\" mailto:abc@def.net\">(abc@def.net)</a></small>");
+        Elements els = doc.select("a[href^=' mailto']");
+
+        assertEquals(1, els.size());
+    }
+
+    @Test public void endsWithEndsWithSpaces() {
+        Document doc = Jsoup.parse("<small><a href=\" mailto:abc@def.net \">(abc@def.net)</a></small>");
+        Elements els = doc.select("a[href$='.net ']");
+
+        assertEquals(1, els.size());
+    }
+
+    // https://github.com/jhy/jsoup/issues/1257
+    private final String mixedCase =
+        "<html xmlns:n=\"urn:ns\"><n:mixedCase>text</n:mixedCase></html>";
+    private final String lowercase =
+        "<html xmlns:n=\"urn:ns\"><n:lowercase>text</n:lowercase></html>";
+
+    @Test
+    public void html_mixed_case_simple_name() {
+        Document doc = Jsoup.parse(mixedCase, "", Parser.htmlParser());
+        assertEquals(0, doc.select("mixedCase").size());
+    }
+
+    @Test
+    public void html_mixed_case_wildcard_name() {
+        Document doc = Jsoup.parse(mixedCase, "", Parser.htmlParser());
+        assertEquals(1, doc.select("*|mixedCase").size());
+    }
+
+    @Test
+    public void html_lowercase_simple_name() {
+        Document doc = Jsoup.parse(lowercase, "", Parser.htmlParser());
+        assertEquals(0, doc.select("lowercase").size());
+    }
+
+    @Test
+    public void html_lowercase_wildcard_name() {
+        Document doc = Jsoup.parse(lowercase, "", Parser.htmlParser());
+        assertEquals(1, doc.select("*|lowercase").size());
+    }
+
+    @Test
+    public void xml_mixed_case_simple_name() {
+        Document doc = Jsoup.parse(mixedCase, "", Parser.xmlParser());
+        assertEquals(0, doc.select("mixedCase").size());
+    }
+
+    @Test
+    public void xml_mixed_case_wildcard_name() {
+        Document doc = Jsoup.parse(mixedCase, "", Parser.xmlParser());
+        assertEquals(1, doc.select("*|mixedCase").size());
+    }
+
+    @Test
+    public void xml_lowercase_simple_name() {
+        Document doc = Jsoup.parse(lowercase, "", Parser.xmlParser());
+        assertEquals(0, doc.select("lowercase").size());
+    }
+
+    @Test
+    public void xml_lowercase_wildcard_name() {
+        Document doc = Jsoup.parse(lowercase, "", Parser.xmlParser());
+        assertEquals(1, doc.select("*|lowercase").size());
+    }
+
+    @Test
+    public void trimSelector() {
+        // https://github.com/jhy/jsoup/issues/1274
+        Document doc = Jsoup.parse("<p><span>Hello");
+        Elements els = doc.select(" p span ");
+        assertEquals(1, els.size());
+        assertEquals("Hello", els.first().text());
+    }
+
+    @Test
+    public void xmlWildcardNamespaceTest() {
+        // https://github.com/jhy/jsoup/issues/1208
+        Document doc = Jsoup.parse("<ns1:MyXmlTag>1111</ns1:MyXmlTag><ns2:MyXmlTag>2222</ns2:MyXmlTag>", "", Parser.xmlParser());
+        Elements select = doc.select("*|MyXmlTag");
+        assertEquals(2, select.size());
+        assertEquals("1111", select.get(0).text());
+        assertEquals("2222", select.get(1).text());
+    }
+
+    @Test
+    public void childElements() {
+        // https://github.com/jhy/jsoup/issues/1292
+        String html = "<body><span id=1>One <span id=2>Two</span></span></body>";
+        Document doc = Jsoup.parse(html);
+
+        Element outer = doc.selectFirst("span");
+        Element span = outer.selectFirst("span");
+        Element inner = outer.selectFirst("* span");
+
+        assertEquals("1", outer.id());
+        assertEquals("1", span.id());
+        assertEquals("2", inner.id());
+        assertEquals(outer, span);
+        assertNotEquals(outer, inner);
+    }
+
+    @Test
+    public void selectFirstLevelChildrenOnly() {
+        // testcase for https://github.com/jhy/jsoup/issues/984
+        String html = "<div><span>One <span>Two</span></span> <span>Three <span>Four</span></span>";
+        Document doc = Jsoup.parse(html);
+
+        Element div = doc.selectFirst("div");
+        assertNotNull(div);
+
+        // want to select One and Three only - the first level children
+        Elements spans = div.select(":root > span");
+        assertEquals(2, spans.size());
+        assertEquals("One Two", spans.get(0).text());
+        assertEquals("Three Four", spans.get(1).text());
     }
 }

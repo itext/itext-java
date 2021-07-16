@@ -1,81 +1,34 @@
-/*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
-    Authors: iText Software.
+package org.jsoup.integration;
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+import org.jsoup.Jsoup;
+import org.jsoup.helper.DataUtil;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.ParseErrorList;
+import org.jsoup.parser.Parser;
+import org.jsoup.select.Elements;
+import org.junit.jupiter.api.Test;
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
- */
-package com.itextpdf.styledxmlparser.jsoup.integration;
-
-import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
-import com.itextpdf.styledxmlparser.jsoup.Jsoup;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
-import com.itextpdf.styledxmlparser.jsoup.select.Elements;
-import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.zip.GZIPInputStream;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Integration test: parses from real-world example HTML.
  *
  * @author Jonathan Hedley, jonathan@hedley.net
  */
-@Category(IntegrationTest.class)
-public class ParseTest extends ExtendedITextTest {
+public class ParseTest {
 
     @Test
     public void testSmhBizArticle() throws IOException {
-        File in = getFile("/htmltests/smh-biz-article-1.html");
+        File in = getFile("/htmltests/smh-biz-article-1.html.gz");
         Document doc = Jsoup.parse(in, "UTF-8",
                 "http://www.smh.com.au/business/the-boards-next-fear-the-female-quota-20100106-lteq.html");
         assertEquals("The board’s next fear: the female quota",
@@ -90,7 +43,7 @@ public class ParseTest extends ExtendedITextTest {
 
     @Test
     public void testNewsHomepage() throws IOException {
-        File in = getFile("/htmltests/news-com-au-home.html");
+        File in = getFile("/htmltests/news-com-au-home.html.gz");
         Document doc = Jsoup.parse(in, "UTF-8", "http://www.news.com.au/");
         assertEquals("News.com.au | News from Australia and around the world online | NewsComAu", doc.title());
         assertEquals("Brace yourself for Metro meltdown", doc.select(".id1225817868581 h4").text().trim());
@@ -108,7 +61,7 @@ public class ParseTest extends ExtendedITextTest {
 
     @Test
     public void testGoogleSearchIpod() throws IOException {
-        File in = getFile("/htmltests/google-ipod.html");
+        File in = getFile("/htmltests/google-ipod.html.gz");
         Document doc = Jsoup.parse(in, "UTF-8", "http://www.google.com/search?hl=en&q=ipod&aq=f&oq=&aqi=g10");
         assertEquals("ipod - Google Search", doc.title());
         Elements results = doc.select("h3.r > a");
@@ -121,16 +74,8 @@ public class ParseTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testBinary() throws IOException {
-        File in = getFile("/htmltests/thumb.jpg");
-        Document doc = Jsoup.parse(in, "UTF-8");
-        // nothing useful, but did not blow up
-        assertTrue(doc.text().contains("gd-jpeg"));
-    }
-
-    @Test
     public void testYahooJp() throws IOException {
-        File in = getFile("/htmltests/yahoo-jp.html");
+        File in = getFile("/htmltests/yahoo-jp.html.gz");
         Document doc = Jsoup.parse(in, "UTF-8", "http://www.yahoo.co.jp/index.html"); // http charset is utf-8.
         assertEquals("Yahoo! JAPAN", doc.title());
         Element a = doc.select("a[href=t/2322m2]").first();
@@ -139,14 +84,12 @@ public class ParseTest extends ExtendedITextTest {
         assertEquals("全国、人気の駅ランキング", a.text());
     }
 
-    private static final String newsHref = "http://news.baidu.com";
-
     @Test
     public void testBaidu() throws IOException {
         // tests <meta http-equiv="Content-Type" content="text/html;charset=gb2312">
         File in = getFile("/htmltests/baidu-cn-home.html");
         Document doc = Jsoup.parse(in, null,
-                "http://www.baidu.com"); // http charset is gb2312, but NOT specifying it, to test http-equiv parse
+                "http://www.baidu.com/"); // http charset is gb2312, but NOT specifying it, to test http-equiv parse
         Element submit = doc.select("#su").first();
         assertEquals("百度一下", submit.attr("value"));
 
@@ -154,7 +97,7 @@ public class ParseTest extends ExtendedITextTest {
         submit = doc.select("input[value=百度一下]").first();
         assertEquals("su", submit.id());
         Element newsLink = doc.select("a:contains(新)").first();
-        assertEquals(newsHref, newsLink.absUrl("href"));
+        assertEquals("http://news.baidu.com", newsLink.absUrl("href"));
 
         // check auto-detect from meta
         assertEquals("GB2312", doc.outputSettings().charset().displayName());
@@ -188,7 +131,7 @@ public class ParseTest extends ExtendedITextTest {
         in = getFile("/htmltests/meta-charset-2.html"); //
         doc = Jsoup.parse(in, null, "http://example.com"); // gb2312, no charset
         assertEquals("UTF-8", doc.outputSettings().charset().displayName());
-        assertFalse("新".equals(doc.text()));
+        assertNotEquals("新", doc.text());
 
         // confirm fallback to utf8
         in = getFile("/htmltests/meta-charset-3.html");
@@ -210,7 +153,7 @@ public class ParseTest extends ExtendedITextTest {
     @Test
     public void testNytArticle() throws IOException {
         // has tags like <nyt_text>
-        File in = getFile("/htmltests/nyt-article-1.html");
+        File in = getFile("/htmltests/nyt-article-1.html.gz");
         Document doc = Jsoup.parse(in, null, "http://www.nytimes.com/2010/07/26/business/global/26bp.html?hp");
 
         Element headline = doc.select("nyt_headline[version=1.0]").first();
@@ -219,67 +162,96 @@ public class ParseTest extends ExtendedITextTest {
 
     @Test
     public void testYahooArticle() throws IOException {
-        File in = getFile("/htmltests/yahoo-article-1.html");
+        File in = getFile("/htmltests/yahoo-article-1.html.gz");
         Document doc = Jsoup.parse(in, "UTF-8", "http://news.yahoo.com/s/nm/20100831/bs_nm/us_gm_china");
-        Element p = doc.select("p:contains(Volt will be sold in the United States").first();
+        Element p = doc.select("p:contains(Volt will be sold in the United States)").first();
         assertEquals("In July, GM said its electric Chevrolet Volt will be sold in the United States at $41,000 -- $8,000 more than its nearest competitor, the Nissan Leaf.", p.text());
     }
 
     @Test
-    public void parseDoubleIntegerValueTest(){
-        Double expectedString = 5.0;
-        Double actualString = CssDimensionParsingUtils.parseDouble("5");
+    public void testLowercaseUtf8Charset() throws IOException {
+        File in = getFile("/htmltests/lowercase-charset-test.html");
+        Document doc = Jsoup.parse(in, null);
 
-        Assert.assertEquals(expectedString, actualString);
+        Element form = doc.select("#form").first();
+        assertEquals(2, form.children().size());
+        assertEquals("UTF-8", doc.outputSettings().charset().name());
     }
 
     @Test
-    public void parseDoubleManyCharsAfterDotTest(){
-        Double expectedString = 5.123456789;
-        Double actualString = CssDimensionParsingUtils.parseDouble("5.123456789");
+    public void testXwiki() throws IOException {
+        // https://github.com/jhy/jsoup/issues/1324
+        // this tests that when in CharacterReader we hit a buffer while marked, we preserve the mark when buffered up and can rewind
+        File in = getFile("/htmltests/xwiki-1324.html.gz");
+        Document doc = Jsoup.parse(in, null, "https://localhost/");
+        assertEquals("XWiki Jetty HSQLDB 12.1-SNAPSHOT", doc.select("#xwikiplatformversion").text());
 
-        Assert.assertEquals(expectedString, actualString);
+        // was getting busted at =userdirectory, because it hit the bufferup point but the mark was then lost. so
+        // updated to preserve the mark.
+        String wantHtml = "<a class=\"list-group-item\" data-id=\"userdirectory\" href=\"/xwiki/bin/admin/XWiki/XWikiPreferences?editor=globaladmin&amp;section=userdirectory\" title=\"Customize the user directory live table.\">User Directory</a>";
+        assertEquals(wantHtml, doc.select("[data-id=userdirectory]").outerHtml());
     }
 
     @Test
-    public void parseDoubleManyCharsAfterDotNegativeTest(){
-        Double expectedString = -5.123456789;
-        Double actualString = CssDimensionParsingUtils.parseDouble("-5.123456789");
+    public void testXwikiExpanded() throws IOException {
+        // https://github.com/jhy/jsoup/issues/1324
+        // this tests that if there is a huge illegal character reference, we can get through a buffer and rewind, and still catch that it's an invalid refence,
+        // and the parse tree is correct.
+        File in = getFile("/htmltests/xwiki-edit.html.gz");
+        Parser parser = Parser.htmlParser();
+        Document doc = Jsoup.parse(new GZIPInputStream(new FileInputStream(in)), "UTF-8", "https://localhost/", parser.setTrackErrors(100));
+        ParseErrorList errors = parser.getErrors();
 
-        Assert.assertEquals(expectedString, actualString);
+        assertEquals("XWiki Jetty HSQLDB 12.1-SNAPSHOT", doc.select("#xwikiplatformversion").text());
+        assertEquals(0, errors.size()); // not an invalid reference because did not look legit
+
+        // was getting busted at =userdirectory, because it hit the bufferup point but the mark was then lost. so
+        // updated to preserve the mark.
+        String wantHtml = "<a class=\"list-group-item\" data-id=\"userdirectory\" href=\"/xwiki/bin/admin/XWiki/XWikiPreferences?editor=globaladmin&amp;RIGHTHERERIGHTHERERIGHTHERERIGHTHERE";
+        assertTrue(doc.select("[data-id=userdirectory]").outerHtml().startsWith(wantHtml));
     }
 
-    @Test
-    public void parseDoubleNullValueTest(){
-        Double expectedString = null;
-        Double actualString = CssDimensionParsingUtils.parseDouble(null);
-
-        Assert.assertEquals(expectedString, actualString);
+    @Test public void testWikiExpandedFromString() throws IOException {
+        File in = getFile("/htmltests/xwiki-edit.html.gz");
+        String html = getFileAsString(in);
+        Document doc = Jsoup.parse(html);
+        assertEquals("XWiki Jetty HSQLDB 12.1-SNAPSHOT", doc.select("#xwikiplatformversion").text());
+        String wantHtml = "<a class=\"list-group-item\" data-id=\"userdirectory\" href=\"/xwiki/bin/admin/XWiki/XWikiPreferences?editor=globaladmin&amp;RIGHTHERERIGHTHERERIGHTHERERIGHTHERE";
+        assertTrue(doc.select("[data-id=userdirectory]").outerHtml().startsWith(wantHtml));
     }
 
-    @Test
-    public void parseDoubleNegativeTextTest(){
-        Double expectedString = null;
-        Double actualString = CssDimensionParsingUtils.parseDouble("text");
-
-        Assert.assertEquals(expectedString, actualString);
+    @Test public void testWikiFromString() throws IOException {
+        File in = getFile("/htmltests/xwiki-1324.html.gz");
+        String html = getFileAsString(in);
+        Document doc = Jsoup.parse(html);
+        assertEquals("XWiki Jetty HSQLDB 12.1-SNAPSHOT", doc.select("#xwikiplatformversion").text());
+        String wantHtml = "<a class=\"list-group-item\" data-id=\"userdirectory\" href=\"/xwiki/bin/admin/XWiki/XWikiPreferences?editor=globaladmin&amp;section=userdirectory\" title=\"Customize the user directory live table.\">User Directory</a>";
+        assertEquals(wantHtml, doc.select("[data-id=userdirectory]").outerHtml());
     }
 
     public static File getFile(String resourceName) {
         try {
-            File file = new File(ParseTest.class.getResource("/com/itextpdf/styledxmlparser/jsoup" + resourceName).toURI());
-            return file;
+            URL resource = ParseTest.class.getResource(resourceName);
+            return resource != null ? new File(resource.toURI()) : new File("/404");
         } catch (URISyntaxException e) {
             throw new IllegalStateException(e);
         }
     }
 
     public static InputStream inputStreamFrom(String s) {
-        try {
-            return new ByteArrayInputStream(s.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Unsupported encoding", e);
+        return new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static String getFileAsString(File file) throws IOException {
+        byte[] bytes;
+        if (file.getName().endsWith(".gz")) {
+            InputStream stream = new GZIPInputStream(new FileInputStream(file));
+            ByteBuffer byteBuffer = DataUtil.readToByteBuffer(stream, 0);
+            bytes = byteBuffer.array();
+        } else {
+            bytes = Files.readAllBytes(file.toPath());
         }
+        return new String(bytes);
     }
 
 }

@@ -1,62 +1,19 @@
-/*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
-    Authors: iText Software.
+package org.jsoup.parser;
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+import org.junit.jupiter.api.Test;
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
+import java.io.BufferedReader;
+import java.io.StringReader;
 
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
- */
-package com.itextpdf.styledxmlparser.jsoup.parser;
-
-import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test suite for character reader.
  *
  * @author Jonathan Hedley, jonathan@hedley.net
  */
-@Category(UnitTest.class)
-public class CharacterReaderTest extends ExtendedITextTest {
+public class CharacterReaderTest {
+    public final static int maxBufferLen = CharacterReader.maxBufferLen;
 
     @Test public void consume() {
         CharacterReader r = new CharacterReader("one");
@@ -92,20 +49,31 @@ public class CharacterReaderTest extends ExtendedITextTest {
         assertTrue(r.isEmpty());
 
         assertEquals(CharacterReader.EOF, r.consume());
-        r.unconsume();
+        r.unconsume(); // read past, so have to eat again
         assertTrue(r.isEmpty());
-        assertEquals(CharacterReader.EOF, r.current());
+        r.unconsume();
+        assertFalse(r.isEmpty());
+
+        assertEquals('e', r.consume());
+        assertTrue(r.isEmpty());
+
+        assertEquals(CharacterReader.EOF, r.consume());
+        assertTrue(r.isEmpty());
     }
 
     @Test public void mark() {
         CharacterReader r = new CharacterReader("one");
         r.consume();
         r.mark();
+        assertEquals(1, r.pos());
         assertEquals('n', r.consume());
         assertEquals('e', r.consume());
         assertTrue(r.isEmpty());
         r.rewindToMark();
+        assertEquals(1, r.pos());
         assertEquals('n', r.consume());
+        assertFalse(r.isEmpty());
+        assertEquals(2, r.pos());
     }
 
     @Test public void consumeToEnd() {
@@ -163,7 +131,15 @@ public class CharacterReaderTest extends ExtendedITextTest {
         assertEquals('T', r.consume());
         assertEquals("wo ", r.consumeTo("Two"));
         assertEquals('T', r.consume());
-        assertEquals("wo Four", r.consumeTo("Qux"));
+        // To handle strings straddling across buffers, consumeTo() may return the
+        // data in multiple pieces near EOF.
+        StringBuilder builder = new StringBuilder();
+        String part;
+        do {
+            part = r.consumeTo("Qux");
+            builder.append(part);
+        } while (!part.isEmpty());
+        assertEquals("wo Four", builder.toString());
     }
 
     @Test public void advance() {
@@ -212,6 +188,7 @@ public class CharacterReaderTest extends ExtendedITextTest {
         assertFalse(r.matches("ne Two Three Four"));
         assertEquals("ne Two Three", r.consumeToEnd());
         assertFalse(r.matches("ne"));
+        assertTrue(r.isEmpty());
     }
 
     @Test
@@ -267,10 +244,10 @@ public class CharacterReaderTest extends ExtendedITextTest {
         assertEquals("Check", two);
         assertEquals("Check", three);
         assertEquals("CHOKE", four);
-        assertTrue(one == two);
-        assertTrue(two == three);
-        assertTrue(three != four);
-        assertTrue(four != five);
+        assertSame(one, two);
+        assertSame(two, three);
+        assertNotSame(three, four);
+        assertNotSame(four, five);
         assertEquals(five, "A string that is longer than 16 chars");
     }
 
@@ -291,5 +268,72 @@ public class CharacterReaderTest extends ExtendedITextTest {
         assertFalse(r.rangeEquals(18, 5, "CHIKE"));
     }
 
+    @Test
+    public void empty() {
+        CharacterReader r = new CharacterReader("One");
+        assertTrue(r.matchConsume("One"));
+        assertTrue(r.isEmpty());
+
+        r = new CharacterReader("Two");
+        String two = r.consumeToEnd();
+        assertEquals("Two", two);
+    }
+
+    @Test
+    public void consumeToNonexistentEndWhenAtAnd() {
+        CharacterReader r = new CharacterReader("<!");
+        assertTrue(r.matchConsume("<!"));
+        assertTrue(r.isEmpty());
+
+        String after = r.consumeTo('>');
+        assertEquals("", after);
+
+        assertTrue(r.isEmpty());
+    }
+
+    @Test
+    public void notEmptyAtBufferSplitPoint() {
+        CharacterReader r = new CharacterReader(new StringReader("How about now"), 3);
+        assertEquals("How", r.consumeTo(' '));
+        assertFalse(r.isEmpty(), "Should not be empty");
+
+        assertEquals(' ', r.consume());
+        assertFalse(r.isEmpty());
+        assertEquals(4, r.pos());
+        assertEquals('a', r.consume());
+        assertEquals(5, r.pos());
+        assertEquals('b', r.consume());
+        assertEquals('o', r.consume());
+        assertEquals('u', r.consume());
+        assertEquals('t', r.consume());
+        assertEquals(' ', r.consume());
+        assertEquals('n', r.consume());
+        assertEquals('o', r.consume());
+        assertEquals('w', r.consume());
+        assertTrue(r.isEmpty());
+    }
+
+    @Test public void bufferUp() {
+        String note = "HelloThere"; // + ! = 11 chars
+        int loopCount = 64;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < loopCount; i++) {
+            sb.append(note);
+            sb.append("!");
+        }
+
+        String s = sb.toString();
+        BufferedReader br = new BufferedReader(new StringReader(s));
+
+        CharacterReader r = new CharacterReader(br);
+        for (int i = 0; i < loopCount; i++) {
+            String pull = r.consumeTo('!');
+            assertEquals(note, pull);
+            assertEquals('!', r.current());
+            r.advance();
+        }
+
+        assertTrue(r.isEmpty());
+    }
 
 }

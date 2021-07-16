@@ -1,77 +1,30 @@
-/*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
-    Authors: iText Software.
+package org.jsoup.parser;
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
-
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
- */
-package com.itextpdf.styledxmlparser.jsoup.parser;
-
-import com.itextpdf.styledxmlparser.jsoup.Jsoup;
-import com.itextpdf.styledxmlparser.jsoup.TextUtil;
-import com.itextpdf.styledxmlparser.jsoup.helper.StringUtil;
-import com.itextpdf.styledxmlparser.jsoup.integration.ParseTest;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
-import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
-import com.itextpdf.styledxmlparser.jsoup.nodes.XmlDeclaration;
-import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.jsoup.Jsoup;
+import org.jsoup.TextUtil;
+import org.jsoup.internal.StringUtil;
+import org.jsoup.nodes.*;
+import org.jsoup.select.Elements;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static com.itextpdf.styledxmlparser.jsoup.nodes.Document.OutputSettings.Syntax;
-import static org.junit.Assert.assertEquals;
+import static org.jsoup.nodes.Document.OutputSettings.Syntax;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests XmlTreeBuilder.
  *
  * @author Jonathan Hedley
  */
-@Category(UnitTest.class)
-public class XmlTreeBuilderTest extends ExtendedITextTest {
+public class XmlTreeBuilderTest {
     @Test
     public void testSimpleXmlParse() {
         String xml = "<doc id=2 href='/bar'>Foo <br /><link>One</link><link>Two</link></doc>";
@@ -94,10 +47,10 @@ public class XmlTreeBuilderTest extends ExtendedITextTest {
 
     @Test
     public void testCommentAndDocType() {
-        String xml = "<!DOCTYPE html><!-- a comment -->One <qux />Two";
+        String xml = "<!DOCTYPE HTML><!-- a comment -->One <qux />Two";
         XmlTreeBuilder tb = new XmlTreeBuilder();
         Document doc = tb.parse(xml, "http://foo.com/");
-        assertEquals("<!DOCTYPE html><!-- a comment -->One <qux />Two",
+        assertEquals("<!DOCTYPE HTML><!-- a comment -->One <qux />Two",
                 TextUtil.stripNewlines(doc.html()));
     }
 
@@ -109,10 +62,29 @@ public class XmlTreeBuilderTest extends ExtendedITextTest {
                 TextUtil.stripNewlines(doc.html()));
     }
 
+    @Disabled
     @Test
-    public void testSupplyParserToDataStream() throws IOException {
-        File xmlFile = ParseTest.getFile("/htmltests/xml-test.xml");
-        InputStream inStream = new FileInputStream(xmlFile.getAbsolutePath());
+    public void testSupplyParserToConnection() throws IOException {
+        String xmlUrl = "http://direct.infohound.net/tools/jsoup-xml-test.xml";
+
+        // parse with both xml and html parser, ensure different
+        Document xmlDoc = Jsoup.connect(xmlUrl).parser(Parser.xmlParser()).get();
+        Document htmlDoc = Jsoup.connect(xmlUrl).parser(Parser.htmlParser()).get();
+        Document autoXmlDoc = Jsoup.connect(xmlUrl).get(); // check connection auto detects xml, uses xml parser
+
+        assertEquals("<doc><val>One<val>Two</val>Three</val></doc>",
+                TextUtil.stripNewlines(xmlDoc.html()));
+        assertNotEquals(htmlDoc, xmlDoc);
+        assertEquals(xmlDoc, autoXmlDoc);
+        assertEquals(1, htmlDoc.select("head").size()); // html parser normalises
+        assertEquals(0, xmlDoc.select("head").size()); // xml parser does not
+        assertEquals(0, autoXmlDoc.select("head").size()); // xml parser does not
+    }
+
+    @Test
+    public void testSupplyParserToDataStream() throws IOException, URISyntaxException {
+        File xmlFile = new File(XmlTreeBuilder.class.getResource("/htmltests/xml-test.xml").toURI());
+        InputStream inStream = new FileInputStream(xmlFile);
         Document doc = Jsoup.parse(inStream, null, "http://foo.com", Parser.xmlParser());
         assertEquals("<doc><val>One<val>Two</val>Three</val></doc>",
                 TextUtil.stripNewlines(doc.html()));
@@ -131,8 +103,7 @@ public class XmlTreeBuilderTest extends ExtendedITextTest {
     @Test public void handlesXmlDeclarationAsDeclaration() {
         String html = "<?xml encoding='UTF-8' ?><body>One</body><!-- comment -->";
         Document doc = Jsoup.parse(html, "", Parser.xmlParser());
-        assertEquals("<?xml encoding=\"UTF-8\"?> <body> One </body> <!-- comment -->",
-                StringUtil.normaliseWhitespace(doc.outerHtml()));
+        assertEquals("<?xml encoding=\"UTF-8\"?><body>One</body><!-- comment -->",doc.outerHtml());
         assertEquals("#declaration", doc.childNode(0).nodeName());
         assertEquals("#comment", doc.childNode(2).nodeName());
     }
@@ -160,12 +131,12 @@ public class XmlTreeBuilderTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testDetectCharsetEncodingDeclaration() throws IOException {
-        File xmlFile = ParseTest.getFile("/htmltests/xml-charset.xml");
-        InputStream inStream = new FileInputStream(xmlFile.getAbsolutePath());
+    public void testDetectCharsetEncodingDeclaration() throws IOException, URISyntaxException {
+        File xmlFile = new File(XmlTreeBuilder.class.getResource("/htmltests/xml-charset.xml").toURI());
+        InputStream inStream = new FileInputStream(xmlFile);
         Document doc = Jsoup.parse(inStream, null, "http://example.com/", Parser.xmlParser());
         assertEquals("ISO-8859-1", doc.charset().name());
-        assertEquals("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?> <data>äöåéü</data>",
+        assertEquals("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><data>äöåéü</data>",
             TextUtil.stripNewlines(doc.html()));
     }
 
@@ -182,14 +153,131 @@ public class XmlTreeBuilderTest extends ExtendedITextTest {
     }
 
     @Test
+    public void caseSensitiveDeclaration() {
+        String xml = "<?XML version='1' encoding='UTF-8' something='else'?>";
+        Document doc = Jsoup.parse(xml, "", Parser.xmlParser());
+        assertEquals("<?XML version=\"1\" encoding=\"UTF-8\" something=\"else\"?>", doc.outerHtml());
+    }
+
+    @Test
     public void testCreatesValidProlog() {
         Document document = Document.createShell("");
         document.outputSettings().syntax(Syntax.xml);
-        document.charset(Charset.forName("utf-8"));
+        document.charset(StandardCharsets.UTF_8);
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<html>\n" +
             " <head></head>\n" +
             " <body></body>\n" +
             "</html>", document.outerHtml());
     }
+
+    @Test
+    public void preservesCaseByDefault() {
+        String xml = "<CHECK>One</CHECK><TEST ID=1>Check</TEST>";
+        Document doc = Jsoup.parse(xml, "", Parser.xmlParser());
+        assertEquals("<CHECK>One</CHECK><TEST ID=\"1\">Check</TEST>", TextUtil.stripNewlines(doc.html()));
+    }
+
+    @Test
+    public void appendPreservesCaseByDefault() {
+        String xml = "<One>One</One>";
+        Document doc = Jsoup.parse(xml, "", Parser.xmlParser());
+        Elements one = doc.select("One");
+        one.append("<Two ID=2>Two</Two>");
+        assertEquals("<One>One<Two ID=\"2\">Two</Two></One>", TextUtil.stripNewlines(doc.html()));
+    }
+
+    @Test
+    public void disablesPrettyPrintingByDefault() {
+        String xml = "\n\n<div><one>One</one><one>\n Two</one>\n</div>\n ";
+        Document doc = Jsoup.parse(xml, "", Parser.xmlParser());
+        assertEquals(xml, doc.html());
+    }
+
+    @Test
+    public void canNormalizeCase() {
+        String xml = "<TEST ID=1>Check</TEST>";
+        Document doc = Jsoup.parse(xml, "", Parser.xmlParser().settings(ParseSettings.htmlDefault));
+        assertEquals("<test id=\"1\">Check</test>", TextUtil.stripNewlines(doc.html()));
+    }
+
+    @Test public void normalizesDiscordantTags() {
+        Parser parser = Parser.xmlParser().settings(ParseSettings.htmlDefault);
+        Document document = Jsoup.parse("<div>test</DIV><p></p>", "", parser);
+        assertEquals("<div>test</div><p></p>", document.html());
+        // was failing -> toString() = "<div>\n test\n <p></p>\n</div>"
+    }
+
+    @Test public void roundTripsCdata() {
+        String xml = "<div id=1><![CDATA[\n<html>\n <foo><&amp;]]></div>";
+        Document doc = Jsoup.parse(xml, "", Parser.xmlParser());
+
+        Element div = doc.getElementById("1");
+        assertEquals("<html>\n <foo><&amp;", div.text());
+        assertEquals(0, div.children().size());
+        assertEquals(1, div.childNodeSize()); // no elements, one text node
+
+        assertEquals("<div id=\"1\"><![CDATA[\n<html>\n <foo><&amp;]]></div>", div.outerHtml());
+
+        CDataNode cdata = (CDataNode) div.textNodes().get(0);
+        assertEquals("\n<html>\n <foo><&amp;", cdata.text());
+    }
+
+    @Test public void cdataPreservesWhiteSpace() {
+        String xml = "<script type=\"text/javascript\">//<![CDATA[\n\n  foo();\n//]]></script>";
+        Document doc = Jsoup.parse(xml, "", Parser.xmlParser());
+        assertEquals(xml, doc.outerHtml());
+
+        assertEquals("//\n\n  foo();\n//", doc.selectFirst("script").text());
+    }
+
+    @Test
+    public void handlesDodgyXmlDecl() {
+        String xml = "<?xml version='1.0'><val>One</val>";
+        Document doc = Jsoup.parse(xml, "", Parser.xmlParser());
+        assertEquals("One", doc.select("val").text());
+    }
+
+    @Test
+    public void handlesLTinScript() {
+        // https://github.com/jhy/jsoup/issues/1139
+        String html = "<script> var a=\"<?\"; var b=\"?>\"; </script>";
+        Document doc = Jsoup.parse(html, "", Parser.xmlParser());
+        assertEquals("<script> var a=\"<!--?\"; var b=\"?-->\"; </script>", doc.html()); // converted from pseudo xmldecl to comment
+    }
+
+    @Test public void dropsDuplicateAttributes() {
+        // case sensitive, so should drop Four and Five
+        String html = "<p One=One ONE=Two one=Three One=Four ONE=Five two=Six two=Seven Two=Eight>Text</p>";
+        Parser parser = Parser.xmlParser().setTrackErrors(10);
+        Document doc = parser.parseInput(html, "");
+
+        assertEquals("<p One=\"One\" ONE=\"Two\" one=\"Three\" two=\"Six\" Two=\"Eight\">Text</p>", doc.selectFirst("p").outerHtml());
+    }
+
+    @Test public void readerClosedAfterParse() {
+        Document doc = Jsoup.parse("Hello", "", Parser.xmlParser());
+        TreeBuilder treeBuilder = doc.parser().getTreeBuilder();
+        assertNull(treeBuilder.reader);
+        assertNull(treeBuilder.tokeniser);
+    }
+
+    @Test public void xmlParserEnablesXmlOutputAndEscapes() {
+        // Test that when using the XML parser, the output mode and escape mode default to XHTML entities
+        // https://github.com/jhy/jsoup/issues/1420
+        Document doc = Jsoup.parse("<p one='&lt;two&gt;&copy'>Three</p>", "", Parser.xmlParser());
+        assertEquals(doc.outputSettings().syntax(), Syntax.xml);
+        assertEquals(doc.outputSettings().escapeMode(), Entities.EscapeMode.xhtml);
+        assertEquals("<p one=\"&lt;two>©\">Three</p>", doc.html()); // only the < should be escaped
+    }
+
+    @Test public void xmlSyntaxEscapesLtInAttributes() {
+        // Regardless of the entity escape mode, make sure < is escaped in attributes when in XML
+        Document doc = Jsoup.parse("<p one='&lt;two&gt;&copy'>Three</p>", "", Parser.xmlParser());
+        doc.outputSettings().escapeMode(Entities.EscapeMode.extended);
+        doc.outputSettings().charset("ascii"); // to make sure &copy; is output
+        assertEquals(doc.outputSettings().syntax(), Syntax.xml);
+        assertEquals("<p one=\"&lt;two>&copy;\">Three</p>", doc.html());
+    }
+
 }

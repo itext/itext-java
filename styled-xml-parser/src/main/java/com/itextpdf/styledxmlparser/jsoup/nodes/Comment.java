@@ -1,64 +1,22 @@
-/*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
-    Authors: iText Software.
+package org.jsoup.nodes;
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+import org.jsoup.parser.ParseSettings;
+import org.jsoup.parser.Parser;
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
- */
-package com.itextpdf.styledxmlparser.jsoup.nodes;
-
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
  A comment node.
 
  @author Jonathan Hedley, jonathan@hedley.net */
-public class Comment extends Node {
-    private static final String COMMENT_KEY = "comment";
-
+public class Comment extends LeafNode {
     /**
      Create a new comment node.
      @param data The contents of the comment
-     @param baseUri base URI
      */
-    public Comment(String data, String baseUri) {
-        super(baseUri);
-        attributes.put(COMMENT_KEY, data);
+    public Comment(String data) {
+        value = data;
     }
 
     public String nodeName() {
@@ -70,11 +28,16 @@ public class Comment extends Node {
      @return comment content
      */
     public String getData() {
-        return attributes.get(COMMENT_KEY);
+        return coreValue();
+    }
+
+    public Comment setData(String data) {
+        coreValue(data);
+        return this;
     }
 
 	void outerHtmlHead(Appendable accum, int depth, Document.OutputSettings out) throws IOException {
-        if (out.prettyPrint())
+        if (out.prettyPrint() && ((siblingIndex() == 0 && parentNode instanceof Element && ((Element) parentNode).tag().formatAsBlock()) || (out.outline() )))
             indent(accum, depth, out);
         accum
                 .append("<!--")
@@ -87,5 +50,47 @@ public class Comment extends Node {
     @Override
     public String toString() {
         return outerHtml();
+    }
+
+    @Override
+    public Comment clone() {
+        return (Comment) super.clone();
+    }
+
+    /**
+     * Check if this comment looks like an XML Declaration.
+     * @return true if it looks like, maybe, it's an XML Declaration.
+     */
+    public boolean isXmlDeclaration() {
+        String data = getData();
+        return isXmlDeclarationData(data);
+    }
+
+    private static boolean isXmlDeclarationData(String data) {
+        return (data.length() > 1 && (data.startsWith("!") || data.startsWith("?")));
+    }
+
+    /**
+     * Attempt to cast this comment to an XML Declaration node.
+     * @return an XML declaration if it could be parsed as one, null otherwise.
+     */
+    public @Nullable XmlDeclaration asXmlDeclaration() {
+        String data = getData();
+
+        XmlDeclaration decl = null;
+        String declContent = data.substring(1, data.length() - 1);
+        // make sure this bogus comment is not immediately followed by another, treat as comment if so
+        if (isXmlDeclarationData(declContent))
+            return null;
+
+        String fragment = "<" + declContent + ">";
+        // use the HTML parser not XML, so we don't get into a recursive XML Declaration on contrived data
+        Document doc = Parser.htmlParser().settings(ParseSettings.preserveCase).parseInput(fragment, baseUri());
+        if (doc.body().children().size() > 0) {
+            Element el = doc.body().child(0);
+            decl = new XmlDeclaration(NodeUtils.parser(doc).settings().normalizeTag(el.tagName()), data.startsWith("!"));
+            decl.attributes().addAll(el.attributes());
+        }
+        return decl;
     }
 }

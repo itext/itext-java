@@ -1,53 +1,17 @@
-/*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
-    Authors: iText Software.
+package org.jsoup.nodes;
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.helper.DataUtil;
+import org.jsoup.helper.Validate;
+import org.jsoup.internal.StringUtil;
+import org.jsoup.parser.ParseSettings;
+import org.jsoup.parser.Parser;
+import org.jsoup.parser.Tag;
+import org.jsoup.select.Elements;
+import org.jsoup.select.Evaluator;
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
- */
-package com.itextpdf.styledxmlparser.jsoup.nodes;
-
-import com.itextpdf.styledxmlparser.jsoup.Jsoup;
-import com.itextpdf.styledxmlparser.jsoup.helper.StringUtil;
-import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
-import com.itextpdf.styledxmlparser.jsoup.select.Elements;
-import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
-
+import javax.annotation.Nullable;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
@@ -58,20 +22,23 @@ import java.util.List;
 
  @author Jonathan Hedley, jonathan@hedley.net */
 public class Document extends Element {
+    private @Nullable Connection connection; // the connection this doc was fetched from, if any
     private OutputSettings outputSettings = new OutputSettings();
+    private Parser parser; // the parser used to parse this document
     private QuirksMode quirksMode = QuirksMode.noQuirks;
-    private String location;
+    private final String location;
     private boolean updateMetaCharset = false;
 
     /**
      Create a new, empty Document.
      @param baseUri base URI of document
-     @see Jsoup#parse
+     @see org.jsoup.Jsoup#parse
      @see #createShell
      */
     public Document(String baseUri) {
-        super(Tag.valueOf("#root"), baseUri);
+        super(Tag.valueOf("#root", ParseSettings.htmlDefault), baseUri);
         this.location = baseUri;
+        this.parser = Parser.htmlParser(); // default, but overridable
     }
 
     /**
@@ -79,10 +46,11 @@ public class Document extends Element {
      @param baseUri baseUri of document
      @return document with html, head, and body elements.
      */
-    static public Document createShell(String baseUri) {
+    public static Document createShell(String baseUri) {
         Validate.notNull(baseUri);
 
         Document doc = new Document(baseUri);
+        doc.parser = doc.parser();
         Element html = doc.appendElement("html");
         html.appendElement("head");
         html.appendElement("body");
@@ -93,26 +61,86 @@ public class Document extends Element {
     /**
      * Get the URL this Document was parsed from. If the starting URL is a redirect,
      * this will return the final URL from which the document was served from.
+     * <p>Will return an empty string if the location is unknown (e.g. if parsed from a String).
      * @return location
      */
     public String location() {
-     return location;
-    }
-    
-    /**
-     Accessor to the document's {@code head} element.
-     @return {@code head}
-     */
-    public Element head() {
-        return findFirstElementByTagName("head", this);
+        return location;
     }
 
     /**
-     Accessor to the document's {@code body} element.
-     @return {@code body}
+     Returns the Connection (Request/Response) object that was used to fetch this document, if any; otherwise, a new
+     default Connection object. This can be used to continue a session, preserving settings and cookies, etc.
+     @return the Connection (session) associated with this Document, or an empty one otherwise.
+     @see Connection#newRequest()
+     */
+    public Connection connection() {
+        if (connection == null)
+            return Jsoup.newSession();
+        else
+            return connection;
+    }
+
+    /**
+     * Returns this Document's doctype.
+     * @return document type, or null if not set
+     */
+    public @Nullable DocumentType documentType() {
+        for (Node node : childNodes) {
+            if (node instanceof DocumentType)
+                return (DocumentType) node;
+            else if (!(node instanceof LeafNode)) // scans forward across comments, text, processing instructions etc
+                break;
+        }
+        return null;
+        // todo - add a set document type?
+    }
+
+    /**
+     Find the root HTML element, or create it if it doesn't exist.
+     @return the root HTML element.
+     */
+    private Element htmlEl() {
+        for (Element el: childElementsList()) {
+            if (el.normalName().equals("html"))
+                return el;
+        }
+        return appendElement("html");
+    }
+
+    /**
+     Get this document's {@code head} element.
+     <p>
+     As a side-effect, if this Document does not already have a HTML structure, it will be created. If you do not want
+     that, use {@code #selectFirst("head")} instead.
+
+     @return {@code head} element.
+     */
+    public Element head() {
+        Element html = htmlEl();
+        for (Element el: html.childElementsList()) {
+            if (el.normalName().equals("head"))
+                return el;
+        }
+        return html.prependElement("head");
+    }
+
+    /**
+     Get this document's {@code <body>} or {@code <frameset>} element.
+     <p>
+     As a <b>side-effect</b>, if this Document does not already have a HTML structure, it will be created with a {@code
+    <body>} element. If you do not want that, use {@code #selectFirst("body")} instead.
+
+     @return {@code body} element for documents with a {@code <body>}, a new {@code <body>} element if the document
+     had no contents, or the outermost {@code <frameset> element} for frameset documents.
      */
     public Element body() {
-        return findFirstElementByTagName("body", this);
+        Element html = htmlEl();
+        for (Element el: html.childElementsList()) {
+            if ("body".equals(el.normalName()) || "frameset".equals(el.normalName()))
+                return el;
+        }
+        return html.appendElement("body");
     }
 
     /**
@@ -121,9 +149,10 @@ public class Document extends Element {
      */
     public String title() {
         // title is a preserve whitespace tag (for document output), but normalised here
-        Element titleEl = getElementsByTag("title").first();
+        Element titleEl = head().selectFirst(titleEval);
         return titleEl != null ? StringUtil.normaliseWhitespace(titleEl.text()).trim() : "";
     }
+    private static final Evaluator titleEval = new Evaluator.Tag("title");
 
     /**
      Set the document's {@code title} element. Updates the existing element, or adds {@code title} to {@code head} if
@@ -132,12 +161,10 @@ public class Document extends Element {
      */
     public void title(String title) {
         Validate.notNull(title);
-        Element titleEl = getElementsByTag("title").first();
-        if (titleEl == null) { // add to head
-            head().appendElement("title").text(title);
-        } else {
-            titleEl.text(title);
-        }
+        Element titleEl = head().selectFirst(titleEval);
+        if (titleEl == null) // add to head
+            titleEl = head().appendElement("title");
+        titleEl.text(title);
     }
 
     /**
@@ -146,7 +173,7 @@ public class Document extends Element {
      @return new element
      */
     public Element createElement(String tagName) {
-        return new Element(Tag.valueOf(tagName), this.baseUri());
+        return new Element(Tag.valueOf(tagName, ParseSettings.preserveCase), this.baseUri());
     }
 
     /**
@@ -155,17 +182,13 @@ public class Document extends Element {
      @return this document after normalisation
      */
     public Document normalise() {
-        Element htmlEl = findFirstElementByTagName("html", this);
-        if (htmlEl == null)
-            htmlEl = appendElement("html");
-        if (head() == null)
-            htmlEl.prependElement("head");
-        if (body() == null)
-            htmlEl.appendElement("body");
+        Element htmlEl = htmlEl(); // these all create if not found
+        Element head = head();
+        body();
 
         // pull text nodes out of root, html, and head els, and push into body. non-text nodes are already taken care
         // of. do in inverse order to maintain text order.
-        normaliseTextNodes(head());
+        normaliseTextNodes(head);
         normaliseTextNodes(htmlEl);
         normaliseTextNodes(this);
 
@@ -179,7 +202,7 @@ public class Document extends Element {
 
     // does not recurse.
     private void normaliseTextNodes(Element element) {
-        List<Node> toMove = new ArrayList<Node>();
+        List<Node> toMove = new ArrayList<>();
         for (Node node: element.childNodes) {
             if (node instanceof TextNode) {
                 TextNode tn = (TextNode) node;
@@ -191,7 +214,7 @@ public class Document extends Element {
         for (int i = toMove.size()-1; i >= 0; i--) {
             Node node = toMove.get(i);
             element.removeChild(node);
-            body().prependChild(new TextNode(" ", ""));
+            body().prependChild(new TextNode(" "));
             body().prependChild(node);
         }
     }
@@ -201,11 +224,10 @@ public class Document extends Element {
         Elements elements = this.getElementsByTag(tag);
         Element master = elements.first(); // will always be available as created above if not existent
         if (elements.size() > 1) { // dupes, move contents to master
-            List<Node> toMove = new ArrayList<Node>();
+            List<Node> toMove = new ArrayList<>();
             for (int i = 1; i < elements.size(); i++) {
                 Node dupe = elements.get(i);
-                for (Node node : dupe.childNodes)
-                    toMove.add(node);
+                toMove.addAll(dupe.ensureChildNodes());
                 dupe.remove();
             }
 
@@ -213,23 +235,9 @@ public class Document extends Element {
                 master.appendChild(dupe);
         }
         // ensure parented by <html>
-        if (!master.parent().equals(htmlEl)) {
+        if (master.parent() != null && !master.parent().equals(htmlEl)) {
             htmlEl.appendChild(master); // includes remove()            
         }
-    }
-
-    // fast method to get first by tag name, used for html, head, body finders
-    private Element findFirstElementByTagName(String tag, Node node) {
-        if (node.nodeName().equals(tag))
-            return (Element) node;
-        else {
-            for (Node child: node.childNodes) {
-                Element found = findFirstElementByTagName(tag, child);
-                if (found != null)
-                    return found;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -259,17 +267,17 @@ public class Document extends Element {
      * OutputSettings.charset(Charset)} but in addition it updates the
      * charset / encoding element within the document.
      * 
-     * <p>
-     * This enables
-     * {@link #updateMetaCharsetElement(boolean) meta charset update}.
-     * <p>
-     * If there's no element with charset / encoding information yet it will
-     * be created. Obsolete charset / encoding definitions are removed!
-     * <p>
-     * <b>Elements used:</b>
+     * <p>This enables
+     * {@link #updateMetaCharsetElement(boolean) meta charset update}.</p>
+     * 
+     * <p>If there's no element with charset / encoding information yet it will
+     * be created. Obsolete charset / encoding definitions are removed!</p>
+     * 
+     * <p><b>Elements used:</b></p>
+     * 
      * <ul>
-     * <li><b>Html:</b> <i>&lt;meta charset="CHARSET"&gt;</i><
-     * <li><b>Xml:</b> <i>&lt;?xml version="1.0" encoding="CHARSET"&gt;</i>
+     * <li><b>Html:</b> <i>&lt;meta charset="CHARSET"&gt;</i></li>
+     * <li><b>Xml:</b> <i>&lt;?xml version="1.0" encoding="CHARSET"&gt;</i></li>
      * </ul>
      * 
      * @param charset Charset
@@ -299,9 +307,9 @@ public class Document extends Element {
      * Sets whether the element with charset information in this document is
      * updated on changes through {@link #charset(java.nio.charset.Charset)
      * Document.charset(Charset)} or not.
-     * <p>
-     * If set to <tt>false</tt> <i>(default)</i> there are no elements
-     * modified.
+     * 
+     * <p>If set to <tt>false</tt> <i>(default)</i> there are no elements
+     * modified.</p>
      * 
      * @param update If <tt>true</tt> the element updated on charset
      * changes, <tt>false</tt> if not
@@ -325,9 +333,9 @@ public class Document extends Element {
     }
 
     @Override
-    public Object clone() {
+    public Document clone() {
         Document clone = (Document) super.clone();
-        clone.outputSettings = (OutputSettings) this.outputSettings.clone();
+        clone.outputSettings = this.outputSettings.clone();
         return clone;
     }
     
@@ -338,15 +346,16 @@ public class Document extends Element {
      * <tt>true</tt>, otherwise this method does nothing.
      * 
      * <ul>
-     * <li>An exsiting element gets updated with the current charset
-     * <li>If there's no element yet it will be inserted
-     * <li>Obsolete elements are removed
+     * <li>An existing element gets updated with the current charset</li>
+     * <li>If there's no element yet it will be inserted</li>
+     * <li>Obsolete elements are removed</li>
      * </ul>
-     * <b>Elements used:</b>
+     * 
+     * <p><b>Elements used:</b></p>
      * 
      * <ul>
-     * <li><b>Html:</b> <i>&lt;meta charset="CHARSET"&gt;</i>
-     * <li><b>Xml:</b> <i>&lt;?xml version="1.0" encoding="CHARSET"&gt;</i>
+     * <li><b>Html:</b> <i>&lt;meta charset="CHARSET"&gt;</i></li>
+     * <li><b>Xml:</b> <i>&lt;?xml version="1.0" encoding="CHARSET"&gt;</i></li>
      * </ul>
      */
     private void ensureMetaCharsetElement() {
@@ -354,46 +363,31 @@ public class Document extends Element {
             OutputSettings.Syntax syntax = outputSettings().syntax();
 
             if (syntax == OutputSettings.Syntax.html) {
-                Element metaCharset = select("meta[charset]").first();
-
+                Element metaCharset = selectFirst("meta[charset]");
                 if (metaCharset != null) {
                     metaCharset.attr("charset", charset().displayName());
                 } else {
-                    Element head = head();
-
-                    if (head != null) {
-                        head.appendElement("meta").attr("charset", charset().displayName());
-                    }
+                    head().appendElement("meta").attr("charset", charset().displayName());
                 }
-
-                // Remove obsolete elements
-                select("meta[name=charset]").remove();
+                select("meta[name=charset]").remove(); // Remove obsolete elements
             } else if (syntax == OutputSettings.Syntax.xml) {
-                Node node = childNodes().get(0);
-
+                Node node = ensureChildNodes().get(0);
                 if (node instanceof XmlDeclaration) {
                     XmlDeclaration decl = (XmlDeclaration) node;
-
                     if (decl.name().equals("xml")) {
                         decl.attr("encoding", charset().displayName());
-
-                        final String version = decl.attr("version");
-
-                        if (version != null) {
+                        if (decl.hasAttr("version"))
                             decl.attr("version", "1.0");
-                        }
                     } else {
-                        decl = new XmlDeclaration("xml", baseUri, false);
+                        decl = new XmlDeclaration("xml", false);
                         decl.attr("version", "1.0");
                         decl.attr("encoding", charset().displayName());
-
                         prependChild(decl);
                     }
                 } else {
-                    XmlDeclaration decl = new XmlDeclaration("xml", baseUri, false);
+                    XmlDeclaration decl = new XmlDeclaration("xml", false);
                     decl.attr("version", "1.0");
                     decl.attr("encoding", charset().displayName());
-
                     prependChild(decl);
                 }
             }
@@ -411,16 +405,16 @@ public class Document extends Element {
         public enum Syntax {html, xml}
 
         private Entities.EscapeMode escapeMode = Entities.EscapeMode.base;
-        private Charset charset = Charset.forName("UTF-8");
-        private CharsetEncoder charsetEncoder;
+        private Charset charset = DataUtil.UTF_8;
+        private final ThreadLocal<CharsetEncoder> encoderThreadLocal = new ThreadLocal<>(); // initialized by start of OuterHtmlVisitor
+        @Nullable Entities.CoreCharset coreCharset; // fast encoders for ascii and utf8
+
         private boolean prettyPrint = true;
         private boolean outline = false;
         private int indentAmount = 1;
         private Syntax syntax = Syntax.html;
 
-        public OutputSettings() {
-            charsetEncoder = charset.newEncoder();
-        }
+        public OutputSettings() {}
         
         /**
          * Get the document's current HTML escape mode: <code>base</code>, which provides a limited set of named HTML
@@ -464,7 +458,6 @@ public class Document extends Element {
          */
         public OutputSettings charset(Charset charset) {
             this.charset = charset;
-            charsetEncoder = charset.newEncoder();
             return this;
         }
 
@@ -478,8 +471,17 @@ public class Document extends Element {
             return this;
         }
 
+        CharsetEncoder prepareEncoder() {
+            // created at start of OuterHtmlVisitor so each pass has own encoder, so OutputSettings can be shared among threads
+            CharsetEncoder encoder = charset.newEncoder();
+            encoderThreadLocal.set(encoder);
+            coreCharset = Entities.CoreCharset.byName(encoder.charset().name());
+            return encoder;
+        }
+
         CharsetEncoder encoder() {
-            return charsetEncoder;
+            CharsetEncoder encoder = encoderThreadLocal.get();
+            return encoder != null ? encoder : prepareEncoder();
         }
 
         /**
@@ -559,21 +561,17 @@ public class Document extends Element {
         }
 
         @Override
-        public Object clone() {
+        public OutputSettings clone() {
             OutputSettings clone;
-            clone = (OutputSettings) partialClone();
+            try {
+                clone = (OutputSettings) super.clone();
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
             clone.charset(charset.name()); // new charset and charset encoder
             clone.escapeMode = Entities.EscapeMode.valueOf(escapeMode.name());
             // indentAmount, prettyPrint are primitives so object.clone() will handle
             return clone;
-        }
-
-        private Object partialClone() {
-            try {
-                return super.clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 
@@ -606,6 +604,40 @@ public class Document extends Element {
 
     public Document quirksMode(QuirksMode quirksMode) {
         this.quirksMode = quirksMode;
+        return this;
+    }
+
+    /**
+     * Get the parser that was used to parse this document.
+     * @return the parser
+     */
+    public Parser parser() {
+        return parser;
+    }
+
+    /**
+     * Set the parser used to create this document. This parser is then used when further parsing within this document
+     * is required.
+     * @param parser the configured parser to use when further parsing is required for this document.
+     * @return this document, for chaining.
+     */
+    public Document parser(Parser parser) {
+        this.parser = parser;
+        return this;
+    }
+
+    /**
+     Set the Connection used to fetch this document. This Connection is used as a session object when further requests are
+     made (e.g. when a form is submitted).
+
+     @param connection to set
+     @return this document, for chaining
+     @see Connection#newRequest()
+     @since 1.14.1
+     */
+    public Document connection(Connection connection) {
+        Validate.notNull(connection);
+        this.connection = connection;
         return this;
     }
 }

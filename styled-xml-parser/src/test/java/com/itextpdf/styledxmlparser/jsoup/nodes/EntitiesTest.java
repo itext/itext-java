@@ -1,66 +1,20 @@
-/*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
-    Authors: iText Software.
+package org.jsoup.nodes;
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+import org.jsoup.Jsoup;
+import org.junit.jupiter.api.Test;
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
+import static org.jsoup.nodes.Document.OutputSettings;
+import static org.jsoup.nodes.Entities.EscapeMode.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
- */
-package com.itextpdf.styledxmlparser.jsoup.nodes;
-
-import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-
-import com.itextpdf.styledxmlparser.jsoup.Jsoup;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import static com.itextpdf.styledxmlparser.jsoup.nodes.Document.OutputSettings;
-import static org.junit.Assert.*;
-
-@Category(UnitTest.class)
-public class EntitiesTest extends ExtendedITextTest {
+public class EntitiesTest {
     @Test public void escape() {
         String text = "Hello &<> Å å π 新 there ¾ © »";
-        String escapedAscii = Entities.escape(text, new OutputSettings().charset("ascii").escapeMode(Entities.EscapeMode.base));
-        String escapedAsciiFull = Entities.escape(text, new OutputSettings().charset("ascii").escapeMode(Entities.EscapeMode.extended));
-        String escapedAsciiXhtml = Entities.escape(text, new OutputSettings().charset("ascii").escapeMode(Entities.EscapeMode.xhtml));
-        String escapedUtfFull = Entities.escape(text, new OutputSettings().charset("UTF-8").escapeMode(Entities.EscapeMode.extended));
-        String escapedUtfMin = Entities.escape(text, new OutputSettings().charset("UTF-8").escapeMode(Entities.EscapeMode.xhtml));
+        String escapedAscii = Entities.escape(text, new OutputSettings().charset("ascii").escapeMode(base));
+        String escapedAsciiFull = Entities.escape(text, new OutputSettings().charset("ascii").escapeMode(extended));
+        String escapedAsciiXhtml = Entities.escape(text, new OutputSettings().charset("ascii").escapeMode(xhtml));
+        String escapedUtfFull = Entities.escape(text, new OutputSettings().charset("UTF-8").escapeMode(extended));
+        String escapedUtfMin = Entities.escape(text, new OutputSettings().charset("UTF-8").escapeMode(xhtml));
 
         assertEquals("Hello &amp;&lt;&gt; &Aring; &aring; &#x3c0; &#x65b0; there &frac34; &copy; &raquo;", escapedAscii);
         assertEquals("Hello &amp;&lt;&gt; &angst; &aring; &pi; &#x65b0; there &frac34; &copy; &raquo;", escapedAsciiFull);
@@ -77,17 +31,67 @@ public class EntitiesTest extends ExtendedITextTest {
         assertEquals(text, Entities.unescape(escapedUtfMin));
     }
 
-    @Test public void escapeSupplementaryCharacter() {
-        String text = new String(Character.toChars(135361));
-        String escapedAscii = Entities.escape(text, new OutputSettings().charset("ascii").escapeMode(Entities.EscapeMode.base));
-        assertEquals("&#x210c1;", escapedAscii);
-        String escapedUtf = Entities.escape(text, new OutputSettings().charset("UTF-8").escapeMode(Entities.EscapeMode.base));
+    @Test public void escapedSupplementary() {
+        String text = "\uD835\uDD59";
+        String escapedAscii = Entities.escape(text, new OutputSettings().charset("ascii").escapeMode(base));
+        assertEquals("&#x1d559;", escapedAscii);
+        String escapedAsciiFull = Entities.escape(text, new OutputSettings().charset("ascii").escapeMode(extended));
+        assertEquals("&hopf;", escapedAsciiFull);
+        String escapedUtf= Entities.escape(text, new OutputSettings().charset("UTF-8").escapeMode(extended));
         assertEquals(text, escapedUtf);
     }
 
+    @Test public void unescapeMultiChars() {
+        String text = "&NestedGreaterGreater; &nGg; &nGt; &nGtv; &Gt; &gg;"; // gg is not combo, but 8811 could conflict with NestedGreaterGreater or others
+        String un = "≫ ⋙̸ ≫⃒ ≫̸ ≫ ≫";
+        assertEquals(un, Entities.unescape(text));
+        String escaped = Entities.escape(un, new OutputSettings().charset("ascii").escapeMode(extended));
+        assertEquals("&Gt; &Gg;&#x338; &Gt;&#x20d2; &Gt;&#x338; &Gt; &Gt;", escaped);
+        assertEquals(un, Entities.unescape(escaped));
+    }
+
+    @Test public void xhtml() {
+        assertEquals(38, xhtml.codepointForName("amp"));
+        assertEquals(62, xhtml.codepointForName("gt"));
+        assertEquals(60, xhtml.codepointForName("lt"));
+        assertEquals(34, xhtml.codepointForName("quot"));
+
+        assertEquals("amp", xhtml.nameForCodepoint(38));
+        assertEquals("gt", xhtml.nameForCodepoint(62));
+        assertEquals("lt", xhtml.nameForCodepoint(60));
+        assertEquals("quot", xhtml.nameForCodepoint(34));
+    }
+
+    @Test public void getByName() {
+        assertEquals("≫⃒", Entities.getByName("nGt"));
+        assertEquals("fj", Entities.getByName("fjlig"));
+        assertEquals("≫", Entities.getByName("gg"));
+        assertEquals("©", Entities.getByName("copy"));
+    }
+
+    @Test public void escapeSupplementaryCharacter() {
+        String text = new String(Character.toChars(135361));
+        String escapedAscii = Entities.escape(text, new OutputSettings().charset("ascii").escapeMode(base));
+        assertEquals("&#x210c1;", escapedAscii);
+        String escapedUtf = Entities.escape(text, new OutputSettings().charset("UTF-8").escapeMode(base));
+        assertEquals(text, escapedUtf);
+    }
+
+    @Test public void notMissingMultis() {
+        String text = "&nparsl;";
+        String un = "\u2AFD\u20E5";
+        assertEquals(un, Entities.unescape(text));
+    }
+
+    @Test public void notMissingSupplementals() {
+        String text = "&npolint; &qfr;";
+        String un = "⨔ \uD835\uDD2E"; // 𝔮
+        assertEquals(un, Entities.unescape(text));
+    }
+
     @Test public void unescape() {
-        String text = "Hello &amp;&LT&gt; &reg &angst; &angst &#960; &#960 &#x65B0; there &! &frac34; &copy; &COPY;";
-        assertEquals("Hello &<> ® Å &angst π π 新 there &! ¾ © ©", Entities.unescape(text));
+        String text = "Hello &AElig; &amp;&LT&gt; &reg &angst; &angst &#960; &#960 &#x65B0; there &! &frac34; &copy; &COPY;";
+        assertEquals("Hello Æ &<> ® Å &angst π π 新 there &! ¾ © ©", Entities.unescape(text));
 
         assertEquals("&0987654321; &unknown", Entities.unescape("&0987654321; &unknown"));
     }
@@ -99,20 +103,20 @@ public class EntitiesTest extends ExtendedITextTest {
         assertEquals("Hello &= &", Entities.unescape(text, false));
     }
 
-    
+
     @Test public void caseSensitive() {
         String unescaped = "Ü ü & &";
         assertEquals("&Uuml; &uuml; &amp; &amp;",
-                Entities.escape(unescaped, new OutputSettings().charset("ascii").escapeMode(Entities.EscapeMode.extended)));
-        
+                Entities.escape(unescaped, new OutputSettings().charset("ascii").escapeMode(extended)));
+
         String escaped = "&Uuml; &uuml; &amp; &AMP";
         assertEquals("Ü ü & &", Entities.unescape(escaped));
     }
-    
+
     @Test public void quoteReplacements() {
         String escaped = "&#92; &#36;";
         String unescaped = "\\ $";
-        
+
         assertEquals(unescaped, Entities.unescape(escaped));
     }
 
@@ -140,10 +144,10 @@ public class EntitiesTest extends ExtendedITextTest {
         Document doc = Jsoup.parse(docHtml);
         Element element = doc.select("a").first();
 
-        doc.outputSettings().escapeMode(Entities.EscapeMode.base);
+        doc.outputSettings().escapeMode(base);
         assertEquals("<a title=\"<p>One</p>\">One</a>", element.outerHtml());
 
-        doc.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
+        doc.outputSettings().escapeMode(xhtml);
         assertEquals("<a title=\"&lt;p>One&lt;/p>\">One</a>", element.outerHtml());
     }
 }

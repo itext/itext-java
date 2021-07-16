@@ -1,61 +1,12 @@
-/*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
-    Authors: iText Software.
+package org.jsoup.parser;
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
-
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
- */
-package com.itextpdf.styledxmlparser.jsoup.parser;
-
-import java.util.Arrays;
+import org.jsoup.nodes.DocumentType;
 
 /**
  * States and transition activations for the Tokeniser.
  */
-abstract class TokeniserState {
-    
-    static TokeniserState Data = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "Data";
-        }
-        
+enum TokeniserState {
+    Data {
         // in data state, gather characters until a character reference or tag is found
         void read(Tokeniser t, CharacterReader r) {
             switch (r.current()) {
@@ -78,28 +29,14 @@ abstract class TokeniserState {
                     break;
             }
         }
-    };
-    
-    static TokeniserState CharacterReferenceInData = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "CharacterReferenceInData";
-        }
-        
+    },
+    CharacterReferenceInData {
         // from & in data
         void read(Tokeniser t, CharacterReader r) {
             readCharRef(t, Data);
         }
-    };
-    
-    static TokeniserState Rcdata = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "Rcdata";
-        }
-        
+    },
+    Rcdata {
         /// handles data in title, textarea etc
         void read(Tokeniser t, CharacterReader r) {
             switch (r.current()) {
@@ -118,56 +55,28 @@ abstract class TokeniserState {
                     t.emit(new Token.EOF());
                     break;
                 default:
-                    String data = r.consumeToAny('&', '<', nullChar);
+                    String data = r.consumeData();
                     t.emit(data);
                     break;
             }
         }
-    };
-    
-    static TokeniserState CharacterReferenceInRcdata = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "CharacterReferenceInRcdata";
-        }
-        
+    },
+    CharacterReferenceInRcdata {
         void read(Tokeniser t, CharacterReader r) {
             readCharRef(t, Rcdata);
         }
-    };
-    
-    static TokeniserState Rawtext = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "Rawtext";
-        }
-        
+    },
+    Rawtext {
         void read(Tokeniser t, CharacterReader r) {
-            readData(t, r, this, RawtextLessthanSign);
+            readRawData(t, r, this, RawtextLessthanSign);
         }
-    };
-    
-    static TokeniserState ScriptData = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptData";
-        }
-        
+    },
+    ScriptData {
         void read(Tokeniser t, CharacterReader r) {
-            readData(t, r, this, ScriptDataLessthanSign);
+            readRawData(t, r, this, ScriptDataLessthanSign);
         }
-    };
-    
-    static TokeniserState PLAINTEXT = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "PLAINTEXT";
-        }
-        
+    },
+    PLAINTEXT {
         void read(Tokeniser t, CharacterReader r) {
             switch (r.current()) {
                 case nullChar:
@@ -184,15 +93,8 @@ abstract class TokeniserState {
                     break;
             }
         }
-    };
-    
-    static TokeniserState TagOpen = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "TagOpen";
-        }
-        
+    },
+    TagOpen {
         // from < in data
         void read(Tokeniser t, CharacterReader r) {
             switch (r.current()) {
@@ -203,6 +105,7 @@ abstract class TokeniserState {
                     t.advanceTransition(EndTagOpen);
                     break;
                 case '?':
+                    t.createBogusCommentPending();
                     t.advanceTransition(BogusComment);
                     break;
                 default:
@@ -217,15 +120,8 @@ abstract class TokeniserState {
                     break;
             }
         }
-    };
-    
-    static TokeniserState EndTagOpen = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "EndTagOpen";
-        }
-        
+    },
+    EndTagOpen {
         void read(Tokeniser t, CharacterReader r) {
             if (r.isEmpty()) {
                 t.eofError(this);
@@ -239,26 +135,21 @@ abstract class TokeniserState {
                 t.advanceTransition(Data);
             } else {
                 t.error(this);
+                t.createBogusCommentPending();
                 t.advanceTransition(BogusComment);
             }
         }
-    };
-    
-    static TokeniserState TagName = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "TagName";
-        }
-        
+    },
+    TagName {
         // from < or </ in data, will have start or end tag pending
         void read(Tokeniser t, CharacterReader r) {
             // previous TagOpen state did NOT consume, will have a letter char in current
             //String tagName = r.consumeToAnySorted(tagCharsSorted).toLowerCase();
-            String tagName = r.consumeTagName().toLowerCase();
+            String tagName = r.consumeTagName();
             t.tagPending.appendTagName(tagName);
 
-            switch (r.consume()) {
+            char c = r.consume();
+            switch (c) {
                 case '\t':
                 case '\n':
                 case '\r':
@@ -269,6 +160,10 @@ abstract class TokeniserState {
                 case '/':
                     t.transition(SelfClosingStartTag);
                     break;
+                case '<': // NOTE: out of spec, but clear author intent
+                    r.unconsume();
+                    t.error(this);
+                    // intended fall through to next >
                 case '>':
                     t.emitTagPending();
                     t.transition(Data);
@@ -279,18 +174,13 @@ abstract class TokeniserState {
                 case eof: // should emit pending tag?
                     t.eofError(this);
                     t.transition(Data);
-                // no default, as covered with above consumeToAny
+                    break;
+                default: // buffer underrun
+                    t.tagPending.appendTagName(c);
             }
         }
-    };
-    
-    static TokeniserState RcdataLessthanSign = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "RcdataLessthanSign";
-        }
-        
+    },
+    RcdataLessthanSign {
         // from < in rcdata
         void read(Tokeniser t, CharacterReader r) {
             if (r.matches('/')) {
@@ -301,46 +191,31 @@ abstract class TokeniserState {
                 // consuming to EOF; break out here
                 t.tagPending = t.createTagPending(false).name(t.appropriateEndTagName());
                 t.emitTagPending();
-                r.unconsume(); // undo "<"
-                t.transition(Data);
+                t.transition(TagOpen); // straight into TagOpen, as we came from < and looks like we're on a start tag
             } else {
                 t.emit("<");
                 t.transition(Rcdata);
             }
         }
-    };
-    
-    static TokeniserState RCDATAEndTagOpen = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "RCDATAEndTagOpen";
-        }
-        
+    },
+    RCDATAEndTagOpen {
         void read(Tokeniser t, CharacterReader r) {
             if (r.matchesLetter()) {
                 t.createTagPending(false);
-                t.tagPending.appendTagName(Character.toLowerCase(r.current()));
-                t.dataBuffer.append(Character.toLowerCase(r.current()));
+                t.tagPending.appendTagName(r.current());
+                t.dataBuffer.append(r.current());
                 t.advanceTransition(RCDATAEndTagName);
             } else {
                 t.emit("</");
                 t.transition(Rcdata);
             }
         }
-    };
-    
-    static TokeniserState RCDATAEndTagName = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "RCDATAEndTagName";
-        }
-        
+    },
+    RCDATAEndTagName {
         void read(Tokeniser t, CharacterReader r) {
             if (r.matchesLetter()) {
                 String name = r.consumeLetterSequence();
-                t.tagPending.appendTagName(name.toLowerCase());
+                t.tagPending.appendTagName(name);
                 t.dataBuffer.append(name);
                 return;
             }
@@ -377,19 +252,13 @@ abstract class TokeniserState {
         }
 
         private void anythingElse(Tokeniser t, CharacterReader r) {
-            t.emit("</" + t.dataBuffer.toString());
+            t.emit("</");
+            t.emit(t.dataBuffer);
             r.unconsume();
             t.transition(Rcdata);
         }
-    };
-    
-    static TokeniserState RawtextLessthanSign = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "RawtextLessthanSign";
-        }
-        
+    },
+    RawtextLessthanSign {
         void read(Tokeniser t, CharacterReader r) {
             if (r.matches('/')) {
                 t.createTempBuffer();
@@ -399,39 +268,18 @@ abstract class TokeniserState {
                 t.transition(Rawtext);
             }
         }
-    };
-    
-    static TokeniserState RawtextEndTagOpen = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "RawtextEndTagOpen";
-        }
-        
+    },
+    RawtextEndTagOpen {
         void read(Tokeniser t, CharacterReader r) {
             readEndTag(t, r, RawtextEndTagName, Rawtext);
         }
-    };
-    
-    static TokeniserState RawtextEndTagName = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "RawtextEndTagName";
-        }
-        
+    },
+    RawtextEndTagName {
         void read(Tokeniser t, CharacterReader r) {
             handleDataEndTag(t, r, Rawtext);
         }
-    };
-    
-    static TokeniserState ScriptDataLessthanSign = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptDataLessthanSign";
-        }
-        
+    },
+    ScriptDataLessthanSign {
         void read(Tokeniser t, CharacterReader r) {
             switch (r.consume()) {
                 case '/':
@@ -442,45 +290,29 @@ abstract class TokeniserState {
                     t.emit("<!");
                     t.transition(ScriptDataEscapeStart);
                     break;
+                case eof:
+                    t.emit("<");
+                    t.eofError(this);
+                    t.transition(Data);
+                    break;
                 default:
                     t.emit("<");
                     r.unconsume();
                     t.transition(ScriptData);
             }
         }
-    };
-    
-    static TokeniserState ScriptDataEndTagOpen = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptDataEndTagOpen";
-        }
-        
+    },
+    ScriptDataEndTagOpen {
         void read(Tokeniser t, CharacterReader r) {
             readEndTag(t, r, ScriptDataEndTagName, ScriptData);
         }
-    };
-    
-    static TokeniserState ScriptDataEndTagName = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptDataEndTagName";
-        }
-        
+    },
+    ScriptDataEndTagName {
         void read(Tokeniser t, CharacterReader r) {
             handleDataEndTag(t, r, ScriptData);
         }
-    };
-    
-    static TokeniserState ScriptDataEscapeStart = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptDataEscapeStart";
-        }
-        
+    },
+    ScriptDataEscapeStart {
         void read(Tokeniser t, CharacterReader r) {
             if (r.matches('-')) {
                 t.emit('-');
@@ -489,15 +321,8 @@ abstract class TokeniserState {
                 t.transition(ScriptData);
             }
         }
-    };
-    
-    static TokeniserState ScriptDataEscapeStartDash = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptDataEscapeStartDash";
-        }
-        
+    },
+    ScriptDataEscapeStartDash {
         void read(Tokeniser t, CharacterReader r) {
             if (r.matches('-')) {
                 t.emit('-');
@@ -506,15 +331,8 @@ abstract class TokeniserState {
                 t.transition(ScriptData);
             }
         }
-    };
-    
-    static TokeniserState ScriptDataEscaped = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptDataEscaped";
-        }
-        
+    },
+    ScriptDataEscaped {
         void read(Tokeniser t, CharacterReader r) {
             if (r.isEmpty()) {
                 t.eofError(this);
@@ -540,15 +358,8 @@ abstract class TokeniserState {
                     t.emit(data);
             }
         }
-    };
-    
-    static TokeniserState ScriptDataEscapedDash = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptDataEscapedDash";
-        }
-        
+    },
+    ScriptDataEscapedDash {
         void read(Tokeniser t, CharacterReader r) {
             if (r.isEmpty()) {
                 t.eofError(this);
@@ -575,15 +386,8 @@ abstract class TokeniserState {
                     t.transition(ScriptDataEscaped);
             }
         }
-    };
-    
-    static TokeniserState ScriptDataEscapedDashDash = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptDataEscapedDashDash";
-        }
-        
+    },
+    ScriptDataEscapedDashDash {
         void read(Tokeniser t, CharacterReader r) {
             if (r.isEmpty()) {
                 t.eofError(this);
@@ -613,20 +417,14 @@ abstract class TokeniserState {
                     t.transition(ScriptDataEscaped);
             }
         }
-    };
-    
-    static TokeniserState ScriptDataEscapedLessthanSign = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptDataEscapedLessthanSign";
-        }
-        
+    },
+    ScriptDataEscapedLessthanSign {
         void read(Tokeniser t, CharacterReader r) {
             if (r.matchesLetter()) {
                 t.createTempBuffer();
-                t.dataBuffer.append(Character.toLowerCase(r.current()));
-                t.emit("<" + r.current());
+                t.dataBuffer.append(r.current());
+                t.emit("<");
+                t.emit(r.current());
                 t.advanceTransition(ScriptDataDoubleEscapeStart);
             } else if (r.matches('/')) {
                 t.createTempBuffer();
@@ -636,19 +434,12 @@ abstract class TokeniserState {
                 t.transition(ScriptDataEscaped);
             }
         }
-    };
-    
-    static TokeniserState ScriptDataEscapedEndTagOpen = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptDataEscapedEndTagOpen";
-        }
-        
+    },
+    ScriptDataEscapedEndTagOpen {
         void read(Tokeniser t, CharacterReader r) {
             if (r.matchesLetter()) {
                 t.createTagPending(false);
-                t.tagPending.appendTagName(Character.toLowerCase(r.current()));
+                t.tagPending.appendTagName(r.current());
                 t.dataBuffer.append(r.current());
                 t.advanceTransition(ScriptDataEscapedEndTagName);
             } else {
@@ -656,39 +447,18 @@ abstract class TokeniserState {
                 t.transition(ScriptDataEscaped);
             }
         }
-    };
-    
-    static TokeniserState ScriptDataEscapedEndTagName = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptDataEscapedEndTagName";
-        }
-        
+    },
+    ScriptDataEscapedEndTagName {
         void read(Tokeniser t, CharacterReader r) {
             handleDataEndTag(t, r, ScriptDataEscaped);
         }
-    };
-    
-    static TokeniserState ScriptDataDoubleEscapeStart = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptDataDoubleEscapeStart";
-        }
-        
+    },
+    ScriptDataDoubleEscapeStart {
         void read(Tokeniser t, CharacterReader r) {
             handleDataDoubleEscapeTag(t, r, ScriptDataDoubleEscaped, ScriptDataEscaped);
         }
-    };
-    
-    static TokeniserState ScriptDataDoubleEscaped = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptDataDoubleEscaped";
-        }
-        
+    },
+    ScriptDataDoubleEscaped {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.current();
             switch (c) {
@@ -714,15 +484,8 @@ abstract class TokeniserState {
                     t.emit(data);
             }
         }
-    };
-    
-    static TokeniserState ScriptDataDoubleEscapedDash = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptDataDoubleEscapedDash";
-        }
-        
+    },
+    ScriptDataDoubleEscapedDash {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -748,15 +511,8 @@ abstract class TokeniserState {
                     t.transition(ScriptDataDoubleEscaped);
             }
         }
-    };
-    
-    static TokeniserState ScriptDataDoubleEscapedDashDash = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptDataDoubleEscapedDashDash";
-        }
-        
+    },
+    ScriptDataDoubleEscapedDashDash {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -785,15 +541,8 @@ abstract class TokeniserState {
                     t.transition(ScriptDataDoubleEscaped);
             }
         }
-    };
-    
-    static TokeniserState ScriptDataDoubleEscapedLessthanSign = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptDataDoubleEscapedLessthanSign";
-        }
-        
+    },
+    ScriptDataDoubleEscapedLessthanSign {
         void read(Tokeniser t, CharacterReader r) {
             if (r.matches('/')) {
                 t.emit('/');
@@ -803,27 +552,13 @@ abstract class TokeniserState {
                 t.transition(ScriptDataDoubleEscaped);
             }
         }
-    };
-    
-    static TokeniserState ScriptDataDoubleEscapeEnd = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "ScriptDataDoubleEscapeEnd";
-        }
-        
+    },
+    ScriptDataDoubleEscapeEnd {
         void read(Tokeniser t, CharacterReader r) {
             handleDataDoubleEscapeTag(t,r, ScriptDataEscaped, ScriptDataDoubleEscaped);
         }
-    };
-    
-    static TokeniserState BeforeAttributeName = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "BeforeAttributeName";
-        }
-        
+    },
+    BeforeAttributeName {
         // from tagname <xxx
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
@@ -837,14 +572,18 @@ abstract class TokeniserState {
                 case '/':
                     t.transition(SelfClosingStartTag);
                     break;
+                case '<': // NOTE: out of spec, but clear (spec has this as a part of the attribute name)
+                    r.unconsume();
+                    t.error(this);
+                    // intended fall through as if >
                 case '>':
                     t.emitTagPending();
                     t.transition(Data);
                     break;
                 case nullChar:
+                    r.unconsume();
                     t.error(this);
                     t.tagPending.newAttribute();
-                    r.unconsume();
                     t.transition(AttributeName);
                     break;
                 case eof:
@@ -853,7 +592,6 @@ abstract class TokeniserState {
                     break;
                 case '"':
                 case '\'':
-                case '<':
                 case '=':
                     t.error(this);
                     t.tagPending.newAttribute();
@@ -866,19 +604,12 @@ abstract class TokeniserState {
                     t.transition(AttributeName);
             }
         }
-    };
-    
-    static TokeniserState AttributeName = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "AttributeName";
-        }
-        
+    },
+    AttributeName {
         // from before attribute name
         void read(Tokeniser t, CharacterReader r) {
             String name = r.consumeToAnySorted(attributeNameCharsSorted);
-            t.tagPending.appendAttributeName(name.toLowerCase());
+            t.tagPending.appendAttributeName(name);
 
             char c = r.consume();
             switch (c) {
@@ -912,18 +643,13 @@ abstract class TokeniserState {
                 case '<':
                     t.error(this);
                     t.tagPending.appendAttributeName(c);
-                // no default, as covered in consumeToAny
+                    break;
+                default: // buffer underrun
+                    t.tagPending.appendAttributeName(c);
             }
         }
-    };
-    
-    static TokeniserState AfterAttributeName = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "AfterAttributeName";
-        }
-        
+    },
+    AfterAttributeName {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -967,15 +693,8 @@ abstract class TokeniserState {
                     t.transition(AttributeName);
             }
         }
-    };
-    
-    static TokeniserState BeforeAttributeValue = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "BeforeAttributeValue";
-        }
-        
+    },
+    BeforeAttributeValue {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1023,17 +742,10 @@ abstract class TokeniserState {
                     t.transition(AttributeValue_unquoted);
             }
         }
-    };
-    
-    static TokeniserState AttributeValue_doubleQuoted = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "AttributeValue_doubleQuoted";
-        }
-        
+    },
+    AttributeValue_doubleQuoted {
         void read(Tokeniser t, CharacterReader r) {
-            String value = r.consumeToAny(attributeDoubleValueCharsSorted);
+            String value = r.consumeAttributeQuoted(false);
             if (value.length() > 0)
                 t.tagPending.appendAttributeValue(value);
             else
@@ -1045,7 +757,7 @@ abstract class TokeniserState {
                     t.transition(AfterAttributeValue_quoted);
                     break;
                 case '&':
-                    char[] ref = t.consumeCharacterReference('"', true);
+                    int[] ref = t.consumeCharacterReference('"', true);
                     if (ref != null)
                         t.tagPending.appendAttributeValue(ref);
                     else
@@ -1059,20 +771,14 @@ abstract class TokeniserState {
                     t.eofError(this);
                     t.transition(Data);
                     break;
-                // no default, handled in consume to any above
+                default: // hit end of buffer in first read, still in attribute
+                    t.tagPending.appendAttributeValue(c);
             }
         }
-    };
-    
-    static TokeniserState AttributeValue_singleQuoted = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "AttributeValue_singleQuoted";
-        }
-        
+    },
+    AttributeValue_singleQuoted {
         void read(Tokeniser t, CharacterReader r) {
-            String value = r.consumeToAny(attributeSingleValueCharsSorted);
+            String value = r.consumeAttributeQuoted(true);
             if (value.length() > 0)
                 t.tagPending.appendAttributeValue(value);
             else
@@ -1084,7 +790,7 @@ abstract class TokeniserState {
                     t.transition(AfterAttributeValue_quoted);
                     break;
                 case '&':
-                    char[] ref = t.consumeCharacterReference('\'', true);
+                    int[] ref = t.consumeCharacterReference('\'', true);
                     if (ref != null)
                         t.tagPending.appendAttributeValue(ref);
                     else
@@ -1098,18 +804,12 @@ abstract class TokeniserState {
                     t.eofError(this);
                     t.transition(Data);
                     break;
-                // no default, handled in consume to any above
+                default: // hit end of buffer in first read, still in attribute
+                    t.tagPending.appendAttributeValue(c);
             }
         }
-    };
-    
-    static TokeniserState AttributeValue_unquoted = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "AttributeValue_unquoted";
-        }
-        
+    },
+    AttributeValue_unquoted {
         void read(Tokeniser t, CharacterReader r) {
             String value = r.consumeToAnySorted(attributeValueUnquoted);
             if (value.length() > 0)
@@ -1125,7 +825,7 @@ abstract class TokeniserState {
                     t.transition(BeforeAttributeName);
                     break;
                 case '&':
-                    char[] ref = t.consumeCharacterReference('>', true);
+                    int[] ref = t.consumeCharacterReference('>', true);
                     if (ref != null)
                         t.tagPending.appendAttributeValue(ref);
                     else
@@ -1151,20 +851,14 @@ abstract class TokeniserState {
                     t.error(this);
                     t.tagPending.appendAttributeValue(c);
                     break;
-                // no default, handled in consume to any above
+                default: // hit end of buffer in first read, still in attribute
+                    t.tagPending.appendAttributeValue(c);
             }
 
         }
-    };
+    },
     // CharacterReferenceInAttributeValue state handled inline
-    
-    static TokeniserState AfterAttributeValue_quoted = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "AfterAttributeValue_quoted";
-        }
-        
+    AfterAttributeValue_quoted {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1187,21 +881,14 @@ abstract class TokeniserState {
                     t.transition(Data);
                     break;
                 default:
-                    t.error(this);
                     r.unconsume();
+                    t.error(this);
                     t.transition(BeforeAttributeName);
             }
 
         }
-    };
-    
-    static TokeniserState SelfClosingStartTag = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "SelfClosingStartTag";
-        }
-        
+    },
+    SelfClosingStartTag {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1215,39 +902,27 @@ abstract class TokeniserState {
                     t.transition(Data);
                     break;
                 default:
+                    r.unconsume();
                     t.error(this);
                     t.transition(BeforeAttributeName);
             }
         }
-    };
-    
-    static TokeniserState BogusComment = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "BogusComment";
-        }
-        
+    },
+    BogusComment {
         void read(Tokeniser t, CharacterReader r) {
             // todo: handle bogus comment starting from eof. when does that trigger?
             // rewind to capture character that lead us here
             r.unconsume();
-            Token.Comment comment = new Token.Comment();
-            comment.bogus = true;
-            comment.data.append(r.consumeTo('>'));
+            t.commentPending.append(r.consumeTo('>'));
             // todo: replace nullChar with replaceChar
-            t.emit(comment);
-            t.advanceTransition(Data);
+            char next = r.consume();
+            if (next == '>' || next == eof) {
+                t.emitCommentPending();
+                t.transition(Data);
+            }
         }
-    };
-    
-    static TokeniserState MarkupDeclarationOpen = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "MarkupDeclarationOpen";
-        }
-        
+    },
+    MarkupDeclarationOpen {
         void read(Tokeniser t, CharacterReader r) {
             if (r.matchConsume("--")) {
                 t.createCommentPending();
@@ -1258,21 +933,16 @@ abstract class TokeniserState {
                 // todo: should actually check current namepspace, and only non-html allows cdata. until namespace
                 // is implemented properly, keep handling as cdata
                 //} else if (!t.currentNodeInHtmlNS() && r.matchConsume("[CDATA[")) {
+                t.createTempBuffer();
                 t.transition(CdataSection);
             } else {
                 t.error(this);
+                t.createBogusCommentPending();
                 t.advanceTransition(BogusComment); // advance so this character gets in bogus comment data's rewind
             }
         }
-    };
-    
-    static TokeniserState CommentStart = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "CommentStart";
-        }
-        
+    },
+    CommentStart {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1281,7 +951,7 @@ abstract class TokeniserState {
                     break;
                 case nullChar:
                     t.error(this);
-                    t.commentPending.data.append(replacementChar);
+                    t.commentPending.append(replacementChar);
                     t.transition(Comment);
                     break;
                 case '>':
@@ -1295,19 +965,12 @@ abstract class TokeniserState {
                     t.transition(Data);
                     break;
                 default:
-                    t.commentPending.data.append(c);
+                    r.unconsume();
                     t.transition(Comment);
             }
         }
-    };
-    
-    static TokeniserState CommentStartDash = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "CommentStartDash";
-        }
-        
+    },
+    CommentStartDash {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1316,7 +979,7 @@ abstract class TokeniserState {
                     break;
                 case nullChar:
                     t.error(this);
-                    t.commentPending.data.append(replacementChar);
+                    t.commentPending.append(replacementChar);
                     t.transition(Comment);
                     break;
                 case '>':
@@ -1330,19 +993,12 @@ abstract class TokeniserState {
                     t.transition(Data);
                     break;
                 default:
-                    t.commentPending.data.append(c);
+                    t.commentPending.append(c);
                     t.transition(Comment);
             }
         }
-    };
-    
-    static TokeniserState Comment = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "Comment";
-        }
-        
+    },
+    Comment {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.current();
             switch (c) {
@@ -1352,7 +1008,7 @@ abstract class TokeniserState {
                 case nullChar:
                     t.error(this);
                     r.advance();
-                    t.commentPending.data.append(replacementChar);
+                    t.commentPending.append(replacementChar);
                     break;
                 case eof:
                     t.eofError(this);
@@ -1360,18 +1016,11 @@ abstract class TokeniserState {
                     t.transition(Data);
                     break;
                 default:
-                    t.commentPending.data.append(r.consumeToAny('-', nullChar));
+                    t.commentPending.append(r.consumeToAny('-', nullChar));
             }
         }
-    };
-    
-    static TokeniserState CommentEndDash = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "CommentEndDash";
-        }
-        
+    },
+    CommentEndDash {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1380,7 +1029,7 @@ abstract class TokeniserState {
                     break;
                 case nullChar:
                     t.error(this);
-                    t.commentPending.data.append('-').append(replacementChar);
+                    t.commentPending.append('-').append(replacementChar);
                     t.transition(Comment);
                     break;
                 case eof:
@@ -1389,19 +1038,12 @@ abstract class TokeniserState {
                     t.transition(Data);
                     break;
                 default:
-                    t.commentPending.data.append('-').append(c);
+                    t.commentPending.append('-').append(c);
                     t.transition(Comment);
             }
         }
-    };
-    
-    static TokeniserState CommentEnd = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "CommentEnd";
-        }
-        
+    },
+    CommentEnd {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1411,7 +1053,7 @@ abstract class TokeniserState {
                     break;
                 case nullChar:
                     t.error(this);
-                    t.commentPending.data.append("--").append(replacementChar);
+                    t.commentPending.append("--").append(replacementChar);
                     t.transition(Comment);
                     break;
                 case '!':
@@ -1420,7 +1062,7 @@ abstract class TokeniserState {
                     break;
                 case '-':
                     t.error(this);
-                    t.commentPending.data.append('-');
+                    t.commentPending.append('-');
                     break;
                 case eof:
                     t.eofError(this);
@@ -1429,24 +1071,17 @@ abstract class TokeniserState {
                     break;
                 default:
                     t.error(this);
-                    t.commentPending.data.append("--").append(c);
+                    t.commentPending.append("--").append(c);
                     t.transition(Comment);
             }
         }
-    };
-    
-    static TokeniserState CommentEndBang = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "CommentEndBang";
-        }
-        
+    },
+    CommentEndBang {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
                 case '-':
-                    t.commentPending.data.append("--!");
+                    t.commentPending.append("--!");
                     t.transition(CommentEndDash);
                     break;
                 case '>':
@@ -1455,7 +1090,7 @@ abstract class TokeniserState {
                     break;
                 case nullChar:
                     t.error(this);
-                    t.commentPending.data.append("--!").append(replacementChar);
+                    t.commentPending.append("--!").append(replacementChar);
                     t.transition(Comment);
                     break;
                 case eof:
@@ -1464,19 +1099,12 @@ abstract class TokeniserState {
                     t.transition(Data);
                     break;
                 default:
-                    t.commentPending.data.append("--!").append(c);
+                    t.commentPending.append("--!").append(c);
                     t.transition(Comment);
             }
         }
-    };
-    
-    static TokeniserState Doctype = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "Doctype";
-        }
-        
+    },
+    Doctype {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1502,15 +1130,8 @@ abstract class TokeniserState {
                     t.transition(BeforeDoctypeName);
             }
         }
-    };
-    
-    static TokeniserState BeforeDoctypeName = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "BeforeDoctypeName";
-        }
-        
+    },
+    BeforeDoctypeName {
         void read(Tokeniser t, CharacterReader r) {
             if (r.matchesLetter()) {
                 t.createDoctypePending();
@@ -1544,19 +1165,12 @@ abstract class TokeniserState {
                     t.transition(DoctypeName);
             }
         }
-    };
-    
-    static TokeniserState DoctypeName = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "DoctypeName";
-        }
-        
+    },
+    DoctypeName {
         void read(Tokeniser t, CharacterReader r) {
             if (r.matchesLetter()) {
                 String name = r.consumeLetterSequence();
-                t.doctypePending.name.append(name.toLowerCase());
+                t.doctypePending.name.append(name);
                 return;
             }
             char c = r.consume();
@@ -1586,15 +1200,8 @@ abstract class TokeniserState {
                     t.doctypePending.name.append(c);
             }
         }
-    };
-    
-    static TokeniserState AfterDoctypeName = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "AfterDoctypeName";
-        }
-        
+    },
+    AfterDoctypeName {
         void read(Tokeniser t, CharacterReader r) {
             if (r.isEmpty()) {
                 t.eofError(this);
@@ -1608,9 +1215,11 @@ abstract class TokeniserState {
             else if (r.matches('>')) {
                 t.emitDoctypePending();
                 t.advanceTransition(Data);
-            } else if (r.matchConsumeIgnoreCase("PUBLIC")) {
+            } else if (r.matchConsumeIgnoreCase(DocumentType.PUBLIC_KEY)) {
+                t.doctypePending.pubSysKey = DocumentType.PUBLIC_KEY;
                 t.transition(AfterDoctypePublicKeyword);
-            } else if (r.matchConsumeIgnoreCase("SYSTEM")) {
+            } else if (r.matchConsumeIgnoreCase(DocumentType.SYSTEM_KEY)) {
+                t.doctypePending.pubSysKey = DocumentType.SYSTEM_KEY;
                 t.transition(AfterDoctypeSystemKeyword);
             } else {
                 t.error(this);
@@ -1619,15 +1228,8 @@ abstract class TokeniserState {
             }
 
         }
-    };
-    
-    static TokeniserState AfterDoctypePublicKeyword = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "AfterDoctypePublicKeyword";
-        }
-        
+    },
+    AfterDoctypePublicKeyword {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1666,15 +1268,8 @@ abstract class TokeniserState {
                     t.transition(BogusDoctype);
             }
         }
-    };
-    
-    static TokeniserState BeforeDoctypePublicIdentifier = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "BeforeDoctypePublicIdentifier";
-        }
-        
+    },
+    BeforeDoctypePublicIdentifier {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1710,15 +1305,8 @@ abstract class TokeniserState {
                     t.transition(BogusDoctype);
             }
         }
-    };
-    
-    static TokeniserState DoctypePublicIdentifier_doubleQuoted = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "DoctypePublicIdentifier_doubleQuoted";
-        }
-        
+    },
+    DoctypePublicIdentifier_doubleQuoted {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1745,15 +1333,8 @@ abstract class TokeniserState {
                     t.doctypePending.publicIdentifier.append(c);
             }
         }
-    };
-    
-    static TokeniserState DoctypePublicIdentifier_singleQuoted = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "DoctypePublicIdentifier_singleQuoted";
-        }
-        
+    },
+    DoctypePublicIdentifier_singleQuoted {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1780,15 +1361,8 @@ abstract class TokeniserState {
                     t.doctypePending.publicIdentifier.append(c);
             }
         }
-    };
-    
-    static TokeniserState AfterDoctypePublicIdentifier = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "AfterDoctypePublicIdentifier";
-        }
-        
+    },
+    AfterDoctypePublicIdentifier {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1825,15 +1399,8 @@ abstract class TokeniserState {
                     t.transition(BogusDoctype);
             }
         }
-    };
-    
-    static TokeniserState BetweenDoctypePublicAndSystemIdentifiers = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "BetweenDoctypePublicAndSystemIdentifiers";
-        }
-        
+    },
+    BetweenDoctypePublicAndSystemIdentifiers {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1869,15 +1436,8 @@ abstract class TokeniserState {
                     t.transition(BogusDoctype);
             }
         }
-    };
-    
-    static TokeniserState AfterDoctypeSystemKeyword = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "AfterDoctypeSystemKeyword";
-        }
-        
+    },
+    AfterDoctypeSystemKeyword {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1916,15 +1476,8 @@ abstract class TokeniserState {
                     t.emitDoctypePending();
             }
         }
-    };
-    
-    static TokeniserState BeforeDoctypeSystemIdentifier = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "BeforeDoctypeSystemIdentifier";
-        }
-        
+    },
+    BeforeDoctypeSystemIdentifier {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1960,15 +1513,8 @@ abstract class TokeniserState {
                     t.transition(BogusDoctype);
             }
         }
-    };
-    
-    static TokeniserState DoctypeSystemIdentifier_doubleQuoted = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "DoctypeSystemIdentifier_doubleQuoted";
-        }
-        
+    },
+    DoctypeSystemIdentifier_doubleQuoted {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1995,15 +1541,8 @@ abstract class TokeniserState {
                     t.doctypePending.systemIdentifier.append(c);
             }
         }
-    };
-    
-    static TokeniserState DoctypeSystemIdentifier_singleQuoted = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "DoctypeSystemIdentifier_singleQuoted";
-        }
-        
+    },
+    DoctypeSystemIdentifier_singleQuoted {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -2030,15 +1569,8 @@ abstract class TokeniserState {
                     t.doctypePending.systemIdentifier.append(c);
             }
         }
-    };
-    
-    static TokeniserState AfterDoctypeSystemIdentifier = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "AfterDoctypeSystemIdentifier";
-        }
-        
+    },
+    AfterDoctypeSystemIdentifier {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -2064,15 +1596,8 @@ abstract class TokeniserState {
                     // NOT force quirks
             }
         }
-    };
-    
-    static TokeniserState BogusDoctype = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "BogusDoctype";
-        }
-        
+    },
+    BogusDoctype {
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -2089,50 +1614,29 @@ abstract class TokeniserState {
                     break;
             }
         }
-    };
-    
-    static TokeniserState CdataSection = new TokeniserState() {
-        
-        @Override
-        String getName() {
-            return "CdataSection";
-        }
-        
+    },
+    CdataSection {
         void read(Tokeniser t, CharacterReader r) {
             String data = r.consumeTo("]]>");
-            t.emit(data);
-            r.matchConsume("]]>");
-            t.transition(Data);
+            t.dataBuffer.append(data);
+            if (r.matchConsume("]]>") || r.isEmpty()) {
+                t.emit(new Token.CData(t.dataBuffer.toString()));
+                t.transition(Data);
+            }// otherwise, buffer underrun, stay in data section
         }
     };
-    
-    @Override
-    public String toString() {
-        return getName();
-    }
-    
-    abstract String getName();
-    
 
 
     abstract void read(Tokeniser t, CharacterReader r);
 
     static final char nullChar = '\u0000';
-    private static final char[] attributeSingleValueCharsSorted = new char[]{'\'', '&', nullChar};
-    private static final char[] attributeDoubleValueCharsSorted = new char[]{'"', '&', nullChar};
-    private static final char[] attributeNameCharsSorted = new char[]{'\t', '\n', '\r', '\f', ' ', '/', '=', '>', nullChar, '"', '\'', '<'};
-    private static final char[] attributeValueUnquoted = new char[]{'\t', '\n', '\r', '\f', ' ', '&', '>', nullChar, '"', '\'', '<', '=', '`'};
+    // char searches. must be sorted, used in inSorted. MUST update TokenisetStateTest if more arrays are added.
+    static final char[] attributeNameCharsSorted = new char[]{nullChar, '\t', '\n', '\f', '\r', ' ', '"', '\'', '/', '<', '=', '>'};
+    static final char[] attributeValueUnquoted = new char[]{nullChar, '\t', '\n', '\f', '\r', ' ', '"', '&', '\'', '<', '=', '>', '`'};
 
     private static final char replacementChar = Tokeniser.replacementChar;
     private static final String replacementStr = String.valueOf(Tokeniser.replacementChar);
     private static final char eof = CharacterReader.EOF;
-
-    static {
-        Arrays.sort(attributeSingleValueCharsSorted);
-        Arrays.sort(attributeDoubleValueCharsSorted);
-        Arrays.sort(attributeNameCharsSorted);
-        Arrays.sort(attributeValueUnquoted);
-    }
 
     /**
      * Handles RawtextEndTagName, ScriptDataEndTagName, and ScriptDataEscapedEndTagName. Same body impl, just
@@ -2141,7 +1645,7 @@ abstract class TokeniserState {
     private static void handleDataEndTag(Tokeniser t, CharacterReader r, TokeniserState elseTransition) {
         if (r.matchesLetter()) {
             String name = r.consumeLetterSequence();
-            t.tagPending.appendTagName(name.toLowerCase());
+            t.tagPending.appendTagName(name);
             t.dataBuffer.append(name);
             return;
         }
@@ -2173,12 +1677,13 @@ abstract class TokeniserState {
         }
 
         if (needsExitTransition) {
-            t.emit("</" + t.dataBuffer.toString());
+            t.emit("</");
+            t.emit(t.dataBuffer);
             t.transition(elseTransition);
         }
     }
 
-    private static void readData(Tokeniser t, CharacterReader r, TokeniserState current, TokeniserState advance) {
+    private static void readRawData(Tokeniser t, CharacterReader r, TokeniserState current, TokeniserState advance) {
         switch (r.current()) {
             case '<':
                 t.advanceTransition(advance);
@@ -2192,14 +1697,14 @@ abstract class TokeniserState {
                 t.emit(new Token.EOF());
                 break;
             default:
-                String data = r.consumeToAny('<', nullChar);
+                String data = r.consumeRawData();
                 t.emit(data);
                 break;
         }
     }
 
     private static void readCharRef(Tokeniser t, TokeniserState advance) {
-        char[] c = t.consumeCharacterReference(null, false);
+        int[] c = t.consumeCharacterReference(null, false);
         if (c == null)
             t.emit('&');
         else
@@ -2220,7 +1725,7 @@ abstract class TokeniserState {
     private static void handleDataDoubleEscapeTag(Tokeniser t, CharacterReader r, TokeniserState primary, TokeniserState fallback) {
         if (r.matchesLetter()) {
             String name = r.consumeLetterSequence();
-            t.dataBuffer.append(name.toLowerCase());
+            t.dataBuffer.append(name);
             t.emit(name);
             return;
         }

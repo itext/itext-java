@@ -1,64 +1,21 @@
-/*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
-    Authors: iText Software.
+package org.jsoup.parser;
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
- */
-package com.itextpdf.styledxmlparser.jsoup.parser;
-
-import com.itextpdf.styledxmlparser.jsoup.Jsoup;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
-
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.List;
 
 /**
- * Parses HTML into a {@link Document}. Generally best to use one of the  more convenient parse methods
- * in {@link Jsoup}.
+ * Parses HTML into a {@link org.jsoup.nodes.Document}. Generally best to use one of the  more convenient parse methods
+ * in {@link org.jsoup.Jsoup}.
  */
 public class Parser {
-    private static final int DEFAULT_MAX_ERRORS = 0; // by default, error tracking is disabled.
-    
     private TreeBuilder treeBuilder;
-    private int maxErrors = DEFAULT_MAX_ERRORS;
     private ParseErrorList errors;
+    private ParseSettings settings;
 
     /**
      * Create a new Parser, using the specified TreeBuilder
@@ -66,13 +23,35 @@ public class Parser {
      */
     public Parser(TreeBuilder treeBuilder) {
         this.treeBuilder = treeBuilder;
+        settings = treeBuilder.defaultSettings();
+        errors = ParseErrorList.noTracking();
+    }
+
+    /**
+     Creates a new Parser as a deep copy of this; including initializing a new TreeBuilder. Allows independent (multi-threaded) use.
+     @return a copied parser
+     */
+    public Parser newInstance() {
+        return new Parser(this);
+    }
+
+    private Parser(Parser copy) {
+        treeBuilder = copy.treeBuilder.newInstance(); // because extended
+        errors = new ParseErrorList(copy.errors); // only copies size, not contents
+        settings = new ParseSettings(copy.settings);
     }
     
     public Document parseInput(String html, String baseUri) {
-        errors = isTrackErrors() ? ParseErrorList.tracking(maxErrors) : ParseErrorList.noTracking();
-        return treeBuilder.parse(html, baseUri, errors);
+        return treeBuilder.parse(new StringReader(html), baseUri, this);
     }
 
+    public Document parseInput(Reader inputHtml, String baseUri) {
+        return treeBuilder.parse(inputHtml, baseUri, this);
+    }
+
+    public List<Node> parseFragmentInput(String fragment, Element context, String baseUri) {
+        return treeBuilder.parseFragment(fragment, context, baseUri, this);
+    }
     // gets & sets
     /**
      * Get the TreeBuilder currently in use.
@@ -89,6 +68,7 @@ public class Parser {
      */
     public Parser setTreeBuilder(TreeBuilder treeBuilder) {
         this.treeBuilder = treeBuilder;
+        treeBuilder.parser = this;
         return this;
     }
 
@@ -97,7 +77,7 @@ public class Parser {
      * @return current track error state.
      */
     public boolean isTrackErrors() {
-        return maxErrors > 0;
+        return errors.getMaxSize() > 0;
     }
 
     /**
@@ -106,7 +86,7 @@ public class Parser {
      * @return this, for chaining
      */
     public Parser setTrackErrors(int maxErrors) {
-        this.maxErrors = maxErrors;
+        errors = maxErrors > 0 ? ParseErrorList.tracking(maxErrors) : ParseErrorList.noTracking();
         return this;
     }
 
@@ -114,8 +94,25 @@ public class Parser {
      * Retrieve the parse errors, if any, from the last parse.
      * @return list of parse errors, up to the size of the maximum errors tracked.
      */
-    public List<ParseError> getErrors() {
+    public ParseErrorList getErrors() {
         return errors;
+    }
+
+    public Parser settings(ParseSettings settings) {
+        this.settings = settings;
+        return this;
+    }
+
+    public ParseSettings settings() {
+        return settings;
+    }
+
+    /**
+     (An internal method, visible for Element. For HTML parse, signals that script and style text should be treated as
+     Data Nodes).
+     */
+    public boolean isContentForTagData(String normalName) {
+        return getTreeBuilder().isContentForTagData(normalName);
     }
 
     // static parse functions below
@@ -129,19 +126,7 @@ public class Parser {
      */
     public static Document parse(String html, String baseUri) {
         TreeBuilder treeBuilder = new HtmlTreeBuilder();
-        return treeBuilder.parse(html, baseUri, ParseErrorList.noTracking());
-    }
-    /**
-     * Parse XML into a Document.
-     *
-     * @param xml XML to parse
-     * @param baseUri base URI of document (i.e. original fetch location), for resolving relative URLs.
-     *
-     * @return parsed Document
-     */
-    public static Document parseXml(String xml, String baseUri){
-        TreeBuilder treeBuilder = new XmlTreeBuilder();
-        return treeBuilder.parse(xml, baseUri, ParseErrorList.noTracking());
+        return treeBuilder.parse(new StringReader(html), baseUri, new Parser(treeBuilder));
     }
 
     /**
@@ -156,7 +141,25 @@ public class Parser {
      */
     public static List<Node> parseFragment(String fragmentHtml, Element context, String baseUri) {
         HtmlTreeBuilder treeBuilder = new HtmlTreeBuilder();
-        return treeBuilder.parseFragment(fragmentHtml, context, baseUri, ParseErrorList.noTracking());
+        return treeBuilder.parseFragment(fragmentHtml, context, baseUri, new Parser(treeBuilder));
+    }
+
+    /**
+     * Parse a fragment of HTML into a list of nodes. The context element, if supplied, supplies parsing context.
+     *
+     * @param fragmentHtml the fragment of HTML to parse
+     * @param context (optional) the element that this HTML fragment is being parsed for (i.e. for inner HTML). This
+     * provides stack context (for implicit element creation).
+     * @param baseUri base URI of document (i.e. original fetch location), for resolving relative URLs.
+     * @param errorList list to add errors to
+     *
+     * @return list of nodes parsed from the input HTML. Note that the context element, if supplied, is not modified.
+     */
+    public static List<Node> parseFragment(String fragmentHtml, Element context, String baseUri, ParseErrorList errorList) {
+        HtmlTreeBuilder treeBuilder = new HtmlTreeBuilder();
+        Parser parser = new Parser(treeBuilder);
+        parser.errors = errorList;
+        return treeBuilder.parseFragment(fragmentHtml, context, baseUri, parser);
     }
 
     /**
@@ -168,7 +171,7 @@ public class Parser {
      */
     public static List<Node> parseXmlFragment(String fragmentXml, String baseUri) {
         XmlTreeBuilder treeBuilder = new XmlTreeBuilder();
-        return treeBuilder.parseFragment(fragmentXml, baseUri, ParseErrorList.noTracking());
+        return treeBuilder.parseFragment(fragmentXml, baseUri, new Parser(treeBuilder));
     }
 
     /**
@@ -183,7 +186,7 @@ public class Parser {
         Document doc = Document.createShell(baseUri);
         Element body = doc.body();
         List<Node> nodeList = parseFragment(bodyHtml, body, baseUri);
-        Node[] nodes = nodeList.toArray(new Node[nodeList.size()]); // the node list gets modified when re-parented
+        Node[] nodes = nodeList.toArray(new Node[0]); // the node list gets modified when re-parented
         for (int i = nodes.length - 1; i > 0; i--) {
             nodes[i].remove();
         }
@@ -204,17 +207,6 @@ public class Parser {
         return tokeniser.unescapeEntities(inAttribute);
     }
 
-    /**
-     * @param bodyHtml HTML to parse
-     * @param baseUri baseUri base URI of document (i.e. original fetch location), for resolving relative URLs.
-     *
-     * @return parsed Document
-     * @deprecated Use {@link #parseBodyFragment} or {@link #parseFragment} instead.
-     */
-    public static Document parseBodyFragmentRelaxed(String bodyHtml, String baseUri) {
-        return parse(bodyHtml, baseUri);
-    }
-    
     // builders
 
     /**

@@ -1,56 +1,15 @@
-/*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
-    Authors: iText Software.
+package org.jsoup.select;
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
-
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
- */
-package com.itextpdf.styledxmlparser.jsoup.select;
-
-import com.itextpdf.styledxmlparser.jsoup.PortUtil;
-import com.itextpdf.styledxmlparser.jsoup.helper.StringUtil;
-import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
-import com.itextpdf.styledxmlparser.jsoup.parser.TokenQueue;
+import org.jsoup.internal.StringUtil;
+import org.jsoup.helper.Validate;
+import org.jsoup.parser.TokenQueue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.jsoup.internal.Normalizer.normalize;
 
 /**
  * Parses a CSS selector into an Evaluator tree.
@@ -59,15 +18,17 @@ public class QueryParser {
     private final static String[] combinators = {",", ">", "+", "~", " "};
     private static final String[] AttributeEvals = new String[]{"=", "!=", "^=", "$=", "*=", "~="};
 
-    private TokenQueue tq;
-    private String query;
-    private List<Evaluator> evals = new ArrayList<Evaluator>();
+    private final TokenQueue tq;
+    private final String query;
+    private final List<Evaluator> evals = new ArrayList<>();
 
     /**
      * Create a new QueryParser.
      * @param query CSS query
      */
     private QueryParser(String query) {
+        Validate.notEmpty(query);
+        query = query.trim();
         this.query = query;
         this.tq = new TokenQueue(query);
     }
@@ -76,10 +37,15 @@ public class QueryParser {
      * Parse a CSS query into an Evaluator.
      * @param query CSS query
      * @return Evaluator
+     * @see Selector selector query syntax
      */
     public static Evaluator parse(String query) {
-        QueryParser p = new QueryParser(query);
-        return p.parse();
+        try {
+            QueryParser p = new QueryParser(query);
+            return p.parse();
+        } catch (IllegalArgumentException e) {
+            throw new Selector.SelectorParseException(e.getMessage());
+        }
     }
 
     /**
@@ -129,6 +95,7 @@ public class QueryParser {
             // make sure OR (,) has precedence:
             if (rootEval instanceof CombiningEvaluator.Or && combinator != ',') {
                 currentEval = ((CombiningEvaluator.Or) currentEval).rightMostEvaluator();
+                assert currentEval != null; // rightMost signature can return null (if none set), but always will have one by this point
                 replaceRightMost = true;
             }
         }
@@ -138,28 +105,33 @@ public class QueryParser {
         evals.clear();
 
         // for most combinators: change the current eval into an AND of the current eval and the new eval
-        if (combinator == '>')
-            currentEval = new CombiningEvaluator.And(newEval, new StructuralEvaluator.ImmediateParent(currentEval));
-        else if (combinator == ' ')
-            currentEval = new CombiningEvaluator.And(newEval, new StructuralEvaluator.Parent(currentEval));
-        else if (combinator == '+')
-            currentEval = new CombiningEvaluator.And(newEval, new StructuralEvaluator.ImmediatePreviousSibling(currentEval));
-        else if (combinator == '~')
-            currentEval = new CombiningEvaluator.And(newEval, new StructuralEvaluator.PreviousSibling(currentEval));
-        else if (combinator == ',') { // group or.
-            CombiningEvaluator.Or or;
-            if (currentEval instanceof CombiningEvaluator.Or) {
-                or = (CombiningEvaluator.Or) currentEval;
+        switch (combinator) {
+            case '>':
+                currentEval = new CombiningEvaluator.And(new StructuralEvaluator.ImmediateParent(currentEval), newEval);
+                break;
+            case ' ':
+                currentEval = new CombiningEvaluator.And(new StructuralEvaluator.Parent(currentEval), newEval);
+                break;
+            case '+':
+                currentEval = new CombiningEvaluator.And(new StructuralEvaluator.ImmediatePreviousSibling(currentEval), newEval);
+                break;
+            case '~':
+                currentEval = new CombiningEvaluator.And(new StructuralEvaluator.PreviousSibling(currentEval), newEval);
+                break;
+            case ',':
+                CombiningEvaluator.Or or;
+                if (currentEval instanceof CombiningEvaluator.Or) {
+                    or = (CombiningEvaluator.Or) currentEval;
+                } else {
+                    or = new CombiningEvaluator.Or();
+                    or.add(currentEval);
+                }
                 or.add(newEval);
-            } else {
-                or = new CombiningEvaluator.Or();
-                or.add(currentEval);
-                or.add(newEval);
-            }
-            currentEval = or;
+                currentEval = or;
+                break;
+            default:
+                throw new Selector.SelectorParseException("Unknown combinator: " + combinator);
         }
-        else
-            throw new Selector.SelectorParseException("Unknown combinator: " + combinator);
 
         if (replaceRightMost)
             ((CombiningEvaluator.Or) rootEval).replaceRightMostEvaluator(currentEval);
@@ -168,7 +140,7 @@ public class QueryParser {
     }
 
     private String consumeSubQuery() {
-        StringBuilder sq = new StringBuilder();
+        StringBuilder sq = StringUtil.borrowBuilder();
         while (!tq.isEmpty()) {
             if (tq.matches("("))
                 sq.append("(").append(tq.chompBalanced('(', ')')).append(")");
@@ -179,7 +151,7 @@ public class QueryParser {
             else
                 sq.append(tq.consume());
         }
-        return sq.toString();
+        return StringUtil.releaseBuilder(sq);
     }
 
     private void findElements() {
@@ -187,7 +159,7 @@ public class QueryParser {
             byId();
         else if (tq.matchChomp("."))
             byClass();
-        else if (tq.matchesWord())
+        else if (tq.matchesWord() || tq.matches("*|"))
             byTag();
         else if (tq.matches("["))
             byAttribute();
@@ -205,6 +177,8 @@ public class QueryParser {
             contains(false);
         else if (tq.matches(":containsOwn("))
             contains(true);
+        else if (tq.matches(":containsData("))
+            containsData();
         else if (tq.matches(":matches("))
             matches(false);
         else if (tq.matches(":matchesOwn("))
@@ -235,8 +209,10 @@ public class QueryParser {
         	evals.add(new Evaluator.IsEmpty());
         else if (tq.matchChomp(":root"))
         	evals.add(new Evaluator.IsRoot());
+        else if (tq.matchChomp(":matchText"))
+            evals.add(new Evaluator.MatchText());
 		else // unhandled
-            throw new Selector.SelectorParseException("Could not parse query " + PortUtil.escapedSingleBracket + "{0}" + PortUtil.escapedSingleBracket + ": unexpected token at " + PortUtil.escapedSingleBracket + "{1}" + PortUtil.escapedSingleBracket, query, tq.remainder());
+            throw new Selector.SelectorParseException("Could not parse query '%s': unexpected token at '%s'", query, tq.remainder());
 
     }
 
@@ -249,18 +225,26 @@ public class QueryParser {
     private void byClass() {
         String className = tq.consumeCssIdentifier();
         Validate.notEmpty(className);
-        evals.add(new Evaluator.Class(className.trim().toLowerCase()));
+        evals.add(new Evaluator.Class(className.trim()));
     }
 
     private void byTag() {
-        String tagName = tq.consumeElementSelector();
+        // todo - these aren't dealing perfectly with case sensitivity. For case sensitive parsers, we should also make
+        // the tag in the selector case-sensitive (and also attribute names). But for now, normalize (lower-case) for
+        // consistency - both the selector and the element tag
+        String tagName = normalize(tq.consumeElementSelector());
         Validate.notEmpty(tagName);
 
-        // namespaces: if element name is "abc:def", selector must be "abc|def", so flip:
-        if (tagName.contains("|"))
-            tagName = tagName.replace("|", ":");
+        // namespaces: wildcard match equals(tagName) or ending in ":"+tagName
+        if (tagName.startsWith("*|")) {
+            evals.add(new CombiningEvaluator.Or(new Evaluator.Tag(tagName), new Evaluator.TagEndsWith(tagName.replace("*|", ":"))));
+        } else {
+            // namespaces: if element name is "abc:def", selector must be "abc|def", so flip:
+            if (tagName.contains("|"))
+                tagName = tagName.replace("|", ":");
 
-        evals.add(new Evaluator.Tag(tagName.trim().toLowerCase()));
+            evals.add(new Evaluator.Tag(tagName));
+        }
     }
 
     private void byAttribute() {
@@ -293,7 +277,7 @@ public class QueryParser {
             else if (cq.matchChomp("~="))
                 evals.add(new Evaluator.AttributeWithValueMatching(key, Pattern.compile(cq.remainder())));
             else
-                throw new Selector.SelectorParseException("Could not parse attribute query " + PortUtil.escapedSingleBracket + "{0}" + PortUtil.escapedSingleBracket + ": unexpected token at " + PortUtil.escapedSingleBracket + "{1}" + PortUtil.escapedSingleBracket, query, cq.remainder());
+                throw new Selector.SelectorParseException("Could not parse attribute query '%s': unexpected token at '%s'", query, cq.remainder());
         }
     }
 
@@ -315,11 +299,11 @@ public class QueryParser {
     }
     
     //pseudo selectors :first-child, :last-child, :nth-child, ...
-    private static final Pattern NTH_AB = Pattern.compile("((\\+|-)?(\\d+)?)n(\\s*(\\+|-)?\\s*\\d+)?", Pattern.CASE_INSENSITIVE);
-    private static final Pattern NTH_B  = Pattern.compile("(\\+|-)?(\\d+)");
+    private static final Pattern NTH_AB = Pattern.compile("(([+-])?(\\d+)?)n(\\s*([+-])?\\s*\\d+)?", Pattern.CASE_INSENSITIVE);
+    private static final Pattern NTH_B  = Pattern.compile("([+-])?(\\d+)");
 
 	private void cssNthChild(boolean backwards, boolean ofType) {
-		String argS = tq.chompTo(")").trim().toLowerCase();
+		String argS = normalize(tq.chompTo(")"));
 		Matcher mAB = NTH_AB.matcher(argS);
 		Matcher mB = NTH_B.matcher(argS);
 		final int a, b;
@@ -336,7 +320,7 @@ public class QueryParser {
 			a = 0;
 			b = Integer.parseInt(mB.group().replaceFirst("^\\+", ""));
 		} else {
-			throw new Selector.SelectorParseException("Could not parse nth-index " + PortUtil.escapedSingleBracket + "{0}" + PortUtil.escapedSingleBracket + ": unexpected format", argS);
+			throw new Selector.SelectorParseException("Could not parse nth-index '%s': unexpected format", argS);
 		}
 		if (ofType)
 			if (backwards)
@@ -376,6 +360,14 @@ public class QueryParser {
             evals.add(new Evaluator.ContainsText(searchText));
     }
 
+    // pseudo selector :containsData(data)
+    private void containsData() {
+        tq.consume(":containsData");
+        String searchText = TokenQueue.unescape(tq.chompBalanced('(', ')'));
+        Validate.notEmpty(searchText, ":containsData(text) query must not be empty");
+        evals.add(new Evaluator.ContainsData(searchText));
+    }
+
     // :matches(regex), matchesOwn(regex)
     private void matches(boolean own) {
         tq.consume(own ? ":matchesOwn" : ":matches");
@@ -396,4 +388,11 @@ public class QueryParser {
 
         evals.add(new StructuralEvaluator.Not(parse(subQuery)));
     }
+
+    @Override
+    public String toString() {
+        return query;
+    }
+
+
 }

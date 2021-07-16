@@ -1,84 +1,36 @@
-/*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
-    Authors: iText Software.
+package org.jsoup.select;
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.parser.Tag;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
+import static org.junit.jupiter.api.Assertions.*;
 
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
 
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
- */
-package com.itextpdf.styledxmlparser.jsoup.select;
-
-import com.itextpdf.styledxmlparser.jsoup.Jsoup;
-import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-
-import com.itextpdf.io.util.MessageFormatUtil;
-
-import static org.junit.Assert.*;
-
-import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
-import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-@Category(UnitTest.class)
-public class CssTest extends ExtendedITextTest {
+public class CssTest {
 
 	private Document html = null;
 	private static String htmlString;
 
-	@BeforeClass
+	@BeforeAll
 	public static void initClass() {
 		StringBuilder sb = new StringBuilder("<html><head></head><body>");
 
 		sb.append("<div id='pseudo'>");
 		for (int i = 1; i <= 10; i++) {
-			sb.append(MessageFormatUtil.format("<p>{0}</p>",i));
+			sb.append(String.format("<p>%d</p>",i));
 		}
 		sb.append("</div>");
 
 		sb.append("<div id='type'>");
 		for (int i = 1; i <= 10; i++) {
-			sb.append(MessageFormatUtil.format("<p>{0}</p>",i));
-			sb.append(MessageFormatUtil.format("<span>{0}</span>",i));
-			sb.append(MessageFormatUtil.format("<em>{0}</em>",i));
-            sb.append(MessageFormatUtil.format("<svg>{0}</svg>",i));
+			sb.append(String.format("<p>%d</p>",i));
+			sb.append(String.format("<span>%d</span>",i));
+			sb.append(String.format("<em>%d</em>",i));
+            sb.append(String.format("<svg>%d</svg>",i));
 		}
 		sb.append("</div>");
 
@@ -93,7 +45,7 @@ public class CssTest extends ExtendedITextTest {
 		htmlString = sb.toString();
 	}
 
-	@Before
+	@BeforeEach
 	public void init() {
 		html  = Jsoup.parse(htmlString);
 	}
@@ -113,35 +65,35 @@ public class CssTest extends ExtendedITextTest {
 	@Test
 	public void nthChild_simple() {
 		for(int i = 1; i <=10; i++) {
-			check(html.select(MessageFormatUtil.format("#pseudo :nth-child({0})", i)), String.valueOf(i));
+			check(html.select(String.format("#pseudo :nth-child(%d)", i)), String.valueOf(i));
 		}
 	}
 
     @Test
     public void nthOfType_unknownTag() {
         for(int i = 1; i <=10; i++) {
-            check(html.select(MessageFormatUtil.format("#type svg:nth-of-type({0})", i)), String.valueOf(i));
+            check(html.select(String.format("#type svg:nth-of-type(%d)", i)), String.valueOf(i));
         }
     }
 
 	@Test
 	public void nthLastChild_simple() {
 		for(int i = 1; i <=10; i++) {
-			check(html.select(MessageFormatUtil.format("#pseudo :nth-last-child({0})", i)), String.valueOf(11-i));
+			check(html.select(String.format("#pseudo :nth-last-child(%d)", i)), String.valueOf(11-i));
 		}
 	}
 
 	@Test
 	public void nthOfType_simple() {
 		for(int i = 1; i <=10; i++) {
-			check(html.select(MessageFormatUtil.format("#type p:nth-of-type({0})", i)), String.valueOf(i));
+			check(html.select(String.format("#type p:nth-of-type(%d)", i)), String.valueOf(i));
 		}
 	}
 
 	@Test
 	public void nthLastOfType_simple() {
 		for(int i = 1; i <=10; i++) {
-			check(html.select(MessageFormatUtil.format("#type :nth-last-of-type({0})", i)), String.valueOf(11-i),String.valueOf(11-i),String.valueOf(11-i),String.valueOf(11-i));
+			check(html.select(String.format("#type :nth-last-of-type(%d)", i)), String.valueOf(11-i),String.valueOf(11-i),String.valueOf(11-i),String.valueOf(11-i));
 		}
 	}
 
@@ -246,13 +198,12 @@ public class CssTest extends ExtendedITextTest {
 	}
 
 	protected void check(Elements result, String...expectedContent ) {
-		assertEquals("Number of elements", expectedContent.length, result.size());
+		assertEquals(expectedContent.length, result.size(), "Number of elements");
 		for (int i = 0; i < expectedContent.length; i++) {
 			assertNotNull(result.get(i));
-			assertEquals("Expected element",expectedContent[i], result.get(i).ownText());
+			assertEquals(expectedContent[i], result.get(i).ownText(), "Expected element");
 		}
 	}
-
 
 	@Test
 	public void root() {

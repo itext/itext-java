@@ -1,112 +1,98 @@
-/*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
-    Authors: iText Software.
+package org.jsoup.parser;
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+import org.jsoup.helper.Validate;
+import org.jsoup.nodes.Attributes;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
- */
-package com.itextpdf.styledxmlparser.jsoup.parser;
-
-import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
-
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.Reader;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Jonathan Hedley
  */
-public abstract class TreeBuilder {
+abstract class TreeBuilder {
+    protected Parser parser;
     CharacterReader reader;
     Tokeniser tokeniser;
     protected Document doc; // current doc we are building into
     protected ArrayList<Element> stack; // the stack of open elements
     protected String baseUri; // current base uri, for creating new elements
-    Token currentToken; // currentToken is used only for error tracking.
-    ParseErrorList errors; // null when not tracking errors
+    protected Token currentToken; // currentToken is used only for error tracking.
+    protected ParseSettings settings;
 
     private Token.StartTag start = new Token.StartTag(); // start tag to process
     private Token.EndTag end  = new Token.EndTag();
+    abstract ParseSettings defaultSettings();
 
-    void initialiseParse(String input, String baseUri, ParseErrorList errors) {
+    @ParametersAreNonnullByDefault
+    protected void initialiseParse(Reader input, String baseUri, Parser parser) {
         Validate.notNull(input, "String input must not be null");
         Validate.notNull(baseUri, "BaseURI must not be null");
+        Validate.notNull(parser);
 
         doc = new Document(baseUri);
+        doc.parser(parser);
+        this.parser = parser;
+        settings = parser.settings();
         reader = new CharacterReader(input);
-        this.errors = errors;
-        tokeniser = new Tokeniser(reader, errors);
-        stack = new ArrayList<Element>(32);
+        currentToken = null;
+        tokeniser = new Tokeniser(reader, parser.getErrors());
+        stack = new ArrayList<>(32);
         this.baseUri = baseUri;
     }
 
-    Document parse(String input, String baseUri) {
-        return parse(input, baseUri, ParseErrorList.noTracking());
-    }
-
-    Document parse(String input, String baseUri, ParseErrorList errors) {
-        initialiseParse(input, baseUri, errors);
+    @ParametersAreNonnullByDefault
+    Document parse(Reader input, String baseUri, Parser parser) {
+        initialiseParse(input, baseUri, parser);
         runParser();
+
+        // tidy up - as the Parser and Treebuilder are retained in document for settings / fragments
+        reader.close();
+        reader = null;
+        tokeniser = null;
+        stack = null;
+
         return doc;
     }
 
+    /**
+     Create a new copy of this TreeBuilder
+     @return copy, ready for a new parse
+     */
+    abstract TreeBuilder newInstance();
+
+    abstract List<Node> parseFragment(String inputFragment, Element context, String baseUri, Parser parser);
+
     protected void runParser() {
+        final Tokeniser tokeniser = this.tokeniser;
+        final Token.TokenType eof = Token.TokenType.EOF;
+
         while (true) {
             Token token = tokeniser.read();
             process(token);
             token.reset();
 
-            if (token.type == Token.TokenType.EOF)
+            if (token.type == eof)
                 break;
         }
     }
 
-    abstract boolean process(Token token);
+    protected abstract boolean process(Token token);
 
     protected boolean processStartTag(String name) {
+        final Token.StartTag start = this.start;
         if (currentToken == start) { // don't recycle an in-use token
             return process(new Token.StartTag().name(name));
         }
-        return process(((Token.Tag)start.reset()).name(name));
+        return process(start.reset().name(name));
     }
 
     public boolean processStartTag(String name, Attributes attrs) {
+        final Token.StartTag start = this.start;
         if (currentToken == start) { // don't recycle an in-use token
             return process(new Token.StartTag().nameAttr(name, attrs));
         }
@@ -119,12 +105,30 @@ public abstract class TreeBuilder {
         if (currentToken == end) { // don't recycle an in-use token
             return process(new Token.EndTag().name(name));
         }
-        return process(((Token.Tag)end.reset()).name(name));
+        return process(end.reset().name(name));
     }
 
 
     protected Element currentElement() {
         int size = stack.size();
         return size > 0 ? stack.get(size-1) : null;
+    }
+
+    /**
+     * If the parser is tracking errors, add an error at the current position.
+     * @param msg error message
+     */
+    protected void error(String msg) {
+        ParseErrorList errors = parser.getErrors();
+        if (errors.canAddError())
+            errors.add(new ParseError(reader.pos(), msg));
+    }
+
+    /**
+     (An internal method, visible for Element. For HTML parse, signals that script and style text should be treated as
+     Data Nodes).
+     */
+    protected boolean isContentForTagData(String normalName) {
+        return false;
     }
 }
