@@ -120,6 +120,10 @@ public final class KernelExceptionMessageConstant {
     public static final String CONTENT_STREAM_MUST_NOT_INVOKE_OPERATORS_THAT_SPECIFY_COLORS_OR_OTHER_COLOR_RELATED_PARAMETERS =
             "Content stream must not invoke operators that specify colors or other color related parameters in "
                     + "the graphics state.";
+    public static final String CORRUPTED_OUTLINE_NO_PARENT_ENTRY =
+            "Document outline is corrupted: some outline (PDF object: \"{0}\") lacks the required parent entry.";
+    public static final String CORRUPTED_OUTLINE_NO_TITLE_ENTRY =
+            "Document outline is corrupted: some outline (PDF object: \"{0}\") lacks the required title entry.";
     public static final String DATA_HANDLER_COUNTER_HAS_BEEN_DISABLED = "Data handler counter has been disabled";
     public static final String DEFAULT_CRYPT_FILTER_NOT_FOUND_ENCRYPTION = "/DefaultCryptFilter not found "
             + "(encryption).";

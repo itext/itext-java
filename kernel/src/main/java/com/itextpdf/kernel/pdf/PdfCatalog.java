@@ -746,14 +746,14 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             if (null == parent) {
                 throw new PdfException(
                         MessageFormatUtil.format(
-                                PdfException.CORRUPTED_OUTLINE_NO_PARENT_ENTRY,
+                                KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_PARENT_ENTRY,
                                 current.indirectReference));
             }
             PdfString title = current.getAsString(PdfName.Title);
             if (null == title) {
                 throw new PdfException(
                         MessageFormatUtil.format(
-                                PdfException.CORRUPTED_OUTLINE_NO_TITLE_ENTRY,
+                                KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_TITLE_ENTRY,
                                 current.indirectReference));
             }
             parentOutline = parentOutlineMap.get(parent);

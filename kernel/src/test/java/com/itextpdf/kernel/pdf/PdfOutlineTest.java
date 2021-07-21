@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
@@ -531,7 +532,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
                     () -> pdfDocument.getCatalog().constructOutlines(outlineDictionary, new HashMap<String, PdfObject>())
             );
             Assert.assertEquals(
-                    MessageFormatUtil.format(PdfException.CORRUPTED_OUTLINE_NO_PARENT_ENTRY,
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_PARENT_ENTRY,
                             first.indirectReference),
                     exception.getMessage());
         }
@@ -559,7 +560,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
                             .constructOutlines(outlineDictionary, new HashMap<String, PdfObject>())
             );
             Assert.assertEquals(
-                    MessageFormatUtil.format(PdfException.CORRUPTED_OUTLINE_NO_TITLE_ENTRY,
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_TITLE_ENTRY,
                             first.indirectReference),
                     exception.getMessage());
         }

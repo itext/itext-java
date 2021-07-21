@@ -54,11 +54,6 @@ import java.util.List;
  */
 public class PdfException extends RuntimeException {
 
-    public static final String CORRUPTED_OUTLINE_NO_PARENT_ENTRY =
-            "Document outline is corrupted: some outline (PDF object: \"{0}\") lacks the required parent entry.";
-    public static final String CORRUPTED_OUTLINE_NO_TITLE_ENTRY =
-            "Document outline is corrupted: some outline (PDF object: \"{0}\") lacks the required title entry.";
-
     /**
      * Object for more details
      */
