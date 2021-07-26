@@ -33,10 +33,10 @@ import org.junit.experimental.categories.Category;
 public class ProductDataTest extends ExtendedITextTest {
     @Test
     public void productDataCreationTest() {
-        ProductData productData = new ProductData("productName", "moduleName", "1.2", 1900, 2100);
+        ProductData productData = new ProductData("publicProductName", "productName", "1.2", 1900, 2100);
 
-        Assert.assertEquals("productName", productData.getPublicProductName());
-        Assert.assertEquals("moduleName", productData.getModuleName());
+        Assert.assertEquals("publicProductName", productData.getPublicProductName());
+        Assert.assertEquals("productName", productData.getProductName());
         Assert.assertEquals("1.2", productData.getVersion());
         Assert.assertEquals(1900, productData.getSinceCopyrightYear());
         Assert.assertEquals(2100, productData.getToCopyrightYear());

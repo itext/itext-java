@@ -61,6 +61,6 @@ public abstract class AbstractProductITextEvent extends AbstractITextEvent {
      * @return product name
      */
     public String getProductName() {
-        return productData.getModuleName();
+        return productData.getProductName();
     }
 }

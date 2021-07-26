@@ -67,7 +67,7 @@ public class ITextCoreEventTest extends ExtendedITextTest {
         Assert.assertEquals(sequenceId, event.getSequenceId());
 
         Assert.assertEquals(ITextCoreProductData.getInstance().getPublicProductName(), event.getProductData().getPublicProductName());
-        Assert.assertEquals(ITextCoreProductData.getInstance().getModuleName(), event.getProductData().getModuleName());
+        Assert.assertEquals(ITextCoreProductData.getInstance().getProductName(), event.getProductData().getProductName());
         Assert.assertEquals(ITextCoreProductData.getInstance().getVersion(), event.getProductData().getVersion());
         Assert.assertEquals(ITextCoreProductData.getInstance().getSinceCopyrightYear(), event.getProductData().getSinceCopyrightYear());
         Assert.assertEquals(ITextCoreProductData.getInstance().getToCopyrightYear(), event.getProductData().getToCopyrightYear());

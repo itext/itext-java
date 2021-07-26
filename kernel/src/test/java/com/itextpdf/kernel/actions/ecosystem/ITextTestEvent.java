@@ -43,7 +43,7 @@ public class ITextTestEvent extends AbstractProductProcessITextEvent {
             EventConfirmationType confirmationType) {
         super(sequenceId, productData, metaInfo, confirmationType);
         this.eventType = eventType;
-        this.productName = productData.getModuleName();
+        this.productName = productData.getProductName();
     }
 
     public ITextTestEvent(SequenceId sequenceId, ProductData productData, IMetaInfo metaInfo, String eventType) {

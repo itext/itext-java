@@ -27,7 +27,7 @@ package com.itextpdf.kernel.actions.data;
  */
 public final class ProductData {
     private final String publicProductName;
-    private final String moduleName;
+    private final String productName;
     private final String version;
     private final int sinceCopyrightYear;
     private final int toCopyrightYear;
@@ -36,15 +36,15 @@ public final class ProductData {
      * Creates a new instance of product data.
      *
      * @param publicProductName is a product name
-     * @param moduleName is a technical name of the addon
+     * @param productName is a technical name of the product
      * @param version is a version of the product
      * @param sinceCopyrightYear is the first year of a product development
      * @param toCopyrightYear is a last year of a product development
      */
-    public ProductData(String publicProductName, String moduleName, String version, int sinceCopyrightYear,
+    public ProductData(String publicProductName, String productName, String version, int sinceCopyrightYear,
             int toCopyrightYear) {
         this.publicProductName = publicProductName;
-        this.moduleName = moduleName;
+        this.productName = productName;
         this.version = version;
         this.sinceCopyrightYear = sinceCopyrightYear;
         this.toCopyrightYear = toCopyrightYear;
@@ -60,12 +60,12 @@ public final class ProductData {
     }
 
     /**
-     * Getter for a technical name of the addon.
+     * Getter for a technical name of the product.
      *
-     * @return name of the module
+     * @return the technical name of the product
      */
-    public String getModuleName() {
-        return moduleName;
+    public String getProductName() {
+        return productName;
     }
 
     /**
