@@ -43,6 +43,8 @@
  */
 package com.itextpdf.kernel;
 
+import com.itextpdf.kernel.actions.data.ITextCoreProductData;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -75,17 +77,13 @@ public final class Version {
      */
     private static final String iTextProductName = "iText\u00ae";
     /**
-     * This String contains the version number of this iText release.
-     * For debugging purposes, we request you NOT to change this constant.
-     */
-    private static final String release = "7.2.0-SNAPSHOT";
-    /**
      * This String contains the iText version as shown in the producer line.
      * iText is a product developed by iText Group NV.
      * iText Group requests that you retain the iText producer line
      * in every PDF that is created or manipulated using iText.
      */
-    private static final String producerLine = iTextProductName + " " + release + " \u00a92000-2021 iText Group NV";
+    private static final String producerLine = iTextProductName + " " + ITextCoreProductData.getInstance().getVersion()
+            + " \u00a92000-2021 iText Group NV";
 
     /**
      * The version info;
@@ -128,7 +126,7 @@ public final class Version {
         }
         String key = null;
         try {
-            String coreVersion = release;
+            String coreVersion = ITextCoreProductData.getInstance().getVersion();
             String[] info = getLicenseeInfoFromLicenseKey(coreVersion);
             if(info != null){
                 if (info[3] != null && info[3].trim().length() > 0) {
@@ -208,17 +206,6 @@ public final class Version {
      */
     public String getProduct() {
         return info.getProduct();
-    }
-
-    /**
-     * Gets the release number.
-     * iText Group NV requests that you retain the iText producer line
-     * in every PDF that is created or manipulated using iText.
-     *
-     * @return the release number
-     */
-    public String getRelease() {
-        return info.getRelease();
     }
 
     /**
@@ -314,7 +301,7 @@ public final class Version {
     }
 
     private static Version initVersion(String producer, String key, boolean expired) {
-        return new Version(new VersionInfo(iTextProductName, release, producer, key), expired);
+        return new Version(new VersionInfo(iTextProductName, producer, key), expired);
     }
 
     private static Class<?> getLicenseKeyClass() throws ClassNotFoundException {

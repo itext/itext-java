@@ -47,13 +47,11 @@ public class VersionInfo {
 
 
     private final String productName;
-    private final String releaseNumber;
     private final String producerLine;
     private final String licenseKey;
 
-    public VersionInfo(String productName, String releaseNumber, String producerLine, String licenseKey) {
+    public VersionInfo(String productName, String producerLine, String licenseKey) {
         this.productName = productName;
-        this.releaseNumber = releaseNumber;
         this.producerLine = producerLine;
         this.licenseKey = licenseKey;
     }
@@ -67,17 +65,6 @@ public class VersionInfo {
      */
     public String getProduct() {
         return productName;
-    }
-
-    /**
-     * Gets the release number.
-     * iText Group NV requests that you retain the iText producer line
-     * in every PDF that is created or manipulated using iText.
-     *
-     * @return the release number
-     */
-    public String getRelease() {
-        return releaseNumber;
     }
 
     /**

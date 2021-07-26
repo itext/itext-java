@@ -33,38 +33,6 @@ import org.junit.experimental.categories.Category;
 public class VersionTest extends ExtendedITextTest {
 
     @Test
-    public void parseCurrentVersionTest() {
-        Version instance = Version.getInstance();
-
-        // expected values
-        String release = instance.getRelease();
-        String major = "7";
-        String minor = release.split("\\.")[1];
-
-        String[] parseResults = Version.parseVersionString(release);
-
-        Assert.assertEquals(2, parseResults.length);
-        Assert.assertEquals(major, parseResults[0]);
-        Assert.assertEquals(minor, parseResults[1]);
-    }
-
-    @Test
-    public void parseCustomCorrectVersionTest() {
-        Version customVersion = new Version(new VersionInfo("iText®", "7.5.1-SNAPSHOT",
-                "iText® 7.5.1-SNAPSHOT ©2000-2090 iText Group NV (AGPL-version)", null), false);
-
-        // expected values
-        String major = "7";
-        String minor = "5";
-
-        String[] parseResults = Version.parseVersionString(customVersion.getRelease());
-
-        Assert.assertEquals(2, parseResults.length);
-        Assert.assertEquals(major, parseResults[0]);
-        Assert.assertEquals(minor, parseResults[1]);
-    }
-
-    @Test
     public void parseVersionIncorrectMajorTest() {
         // the line below is expected to produce an exception
         Exception e = Assert.assertThrows(LicenseVersionException.class,
@@ -114,7 +82,7 @@ public class VersionTest extends ExtendedITextTest {
 
     @Test
     public void isAGPLTrueTest() {
-        Version customVersion = new Version(new VersionInfo("iText®", "7.5.1-SNAPSHOT",
+        Version customVersion = new Version(new VersionInfo("iText®",
                 "iText® 7.5.1-SNAPSHOT ©2000-2090 iText Group NV (AGPL-version)", null), false);
         Assert.assertTrue(customVersion.isAGPL());
     }
@@ -122,7 +90,7 @@ public class VersionTest extends ExtendedITextTest {
     @Test
     public void isAGPLFalseTest() {
         Version customVersion = new Version(
-                new VersionInfo("iText®", "7.5.1-SNAPSHOT", "iText® 7.5.1-SNAPSHOT ©2000-2090 iText Group NV", null),
+                new VersionInfo("iText®", "iText® 7.5.1-SNAPSHOT ©2000-2090 iText Group NV", null),
                 false);
         Assert.assertFalse(customVersion.isAGPL());
     }
@@ -141,7 +109,7 @@ public class VersionTest extends ExtendedITextTest {
     @Test
     public void customVersionCorrectTest() {
         Version customVersion = new Version(
-                new VersionInfo("iText®", "7.5.1-SNAPSHOT", "iText® 7.5.1-SNAPSHOT ©2000-2090 iText Group NV", null),
+                new VersionInfo("iText®", "iText® 7.5.1-SNAPSHOT ©2000-2090 iText Group NV", null),
                 false);
         checkVersionInstance(customVersion);
     }
@@ -149,7 +117,7 @@ public class VersionTest extends ExtendedITextTest {
     @Test
     public void customVersionIncorrectMajorTest() {
         Version customVersion = new Version(
-                new VersionInfo("iText®", "8.5.1-SNAPSHOT", "iText® 8.5.1-SNAPSHOT ©2000-2090 iText Group NV", null),
+                new VersionInfo("iText®", "iText® 8.5.1-SNAPSHOT ©2000-2090 iText Group NV", null),
                 false);
         Assert.assertFalse(checkVersion(customVersion.getVersion()));
     }
@@ -157,7 +125,7 @@ public class VersionTest extends ExtendedITextTest {
     @Test
     public void customVersionIncorrectMinorTest() {
         Version customVersion = new Version(
-                new VersionInfo("iText®", "7.a.1-SNAPSHOT", "iText® 7.a.1-SNAPSHOT ©2000-2090 iText Group NV", null),
+                new VersionInfo("iText®", "iText® 7.a.1-SNAPSHOT ©2000-2090 iText Group NV", null),
                 false);
         Assert.assertFalse(checkVersion(customVersion.getVersion()));
     }
@@ -165,23 +133,19 @@ public class VersionTest extends ExtendedITextTest {
     @Test
     public void customVersionIncorrectPatchTest() {
         Version customVersion = new Version(
-                new VersionInfo("iText®", "7.50.a-SNAPSHOT", "iText® 7.50.a-SNAPSHOT ©2000-2090 iText Group NV", null),
+                new VersionInfo("iText®", "iText® 7.50.a-SNAPSHOT ©2000-2090 iText Group NV", null),
                 false);
         Assert.assertFalse(checkVersion(customVersion.getVersion()));
     }
 
     private static void checkVersionInstance(Version instance) {
         String product = instance.getProduct();
-        String release = instance.getRelease();
         String version = instance.getVersion();
         String key = instance.getKey();
         VersionInfo info = instance.getInfo();
 
         Assert.assertEquals(product, info.getProduct());
         Assert.assertEquals("iText®", product);
-
-        Assert.assertEquals(release, info.getRelease());
-        Assert.assertTrue(release.matches("[7]\\.[0-9]+\\.[0-9]+(-SNAPSHOT)?$"));
 
         Assert.assertEquals(version, info.getVersion());
 

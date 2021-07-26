@@ -48,6 +48,8 @@ import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.VersionInfo;
+import com.itextpdf.kernel.actions.data.ITextCoreProductData;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -519,7 +521,7 @@ public class PdfXrefTable {
         if (k == null) {
             k = "iText";
         }
-        writer.writeString(MessageFormatUtil.format("%{0}-{1}{2}\n", k, versionInfo.getRelease(), platform));
+        writer.writeString(MessageFormatUtil.format("%{0}-{1}{2}\n", k, ITextCoreProductData.getInstance().getVersion(), platform));
 
         for (ProductInfo productInfo : fingerPrint.getProducts() ) {
             writer.writeString(MessageFormatUtil.format("%{0}\n", productInfo));
