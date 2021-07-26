@@ -86,7 +86,7 @@ public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent
 
         final Map<String, ITextProductEventProcessor> knownProducts = new HashMap<>();
         for (final String product: products) {
-            final ITextProductEventProcessor processor = getProcessor(product);
+            final ITextProductEventProcessor processor = getActiveProcessor(product);
             if (processor == null) {
                 if (LOGGER.isWarnEnabled()) {
                     LOGGER.warn(MessageFormatUtil.format(KernelLogMessageConstant.UNKNOWN_PRODUCT_INVOLVED, product));

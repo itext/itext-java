@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.actions;
 
+import com.itextpdf.kernel.actions.processors.DefaultITextProductEventProcessor;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 
@@ -57,12 +58,16 @@ public abstract class AbstractITextConfigurationEvent extends AbstractITextEvent
     /**
      * Gets a processor registered for a product.
      *
+     * <p>
+     * If processor isn't registered and product supports AGPL mode
+     * {@link DefaultITextProductEventProcessor} will be obtained otherwise null will be returned.
+     *
      * @param productName is a product for which processor is obtained
      *
      * @return processor for the product
      */
-    protected ITextProductEventProcessor getProcessor(String productName) {
-        return ProductEventHandler.INSTANCE.getProcessor(productName);
+    protected ITextProductEventProcessor getActiveProcessor(String productName) {
+        return ProductEventHandler.INSTANCE.getActiveProcessor(productName);
     }
 
     /**

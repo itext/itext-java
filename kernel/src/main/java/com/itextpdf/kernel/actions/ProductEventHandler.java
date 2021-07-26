@@ -67,7 +67,12 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
             return;
         }
         final AbstractProductProcessITextEvent productEvent = (AbstractProductProcessITextEvent) event;
-        final ITextProductEventProcessor productEventProcessor = findProcessorForProduct(productEvent.getProductName());
+        final String productName = productEvent.getProductName();
+        final ITextProductEventProcessor productEventProcessor = getActiveProcessor(productName);
+        if (productEventProcessor == null) {
+            throw new UnknownProductException(
+                    MessageFormatUtil.format(UnknownProductException.UNKNOWN_PRODUCT, productName));
+        }
         productEventProcessor.onEvent(productEvent);
         if (productEvent.getSequenceId() != null) {
             if (productEvent instanceof ConfirmEvent) {
@@ -86,8 +91,20 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
         return processors.remove(productName);
     }
 
-    ITextProductEventProcessor getProcessor(String productName) {
-        return processors.get(productName);
+    ITextProductEventProcessor getActiveProcessor(String productName) {
+        ITextProductEventProcessor processor = processors.get(productName);
+
+        if (processor != null) {
+            return processor;
+        }
+
+        if (ProductNameConstant.PRODUCT_NAMES.contains(productName)) {
+            processor = new DefaultITextProductEventProcessor(productName);
+            processors.put(productName, processor);
+            return processor;
+        } else {
+            return null;
+        }
     }
 
     Map<String, ITextProductEventProcessor> getProcessors() {
@@ -131,23 +148,6 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
                 LOGGER.warn(MessageFormatUtil.format(KernelLogMessageConstant.UNREPORTED_EVENT,
                         confirmedEvent.getProductName(), confirmedEvent.getEventType()));
             }
-        }
-    }
-
-    private ITextProductEventProcessor findProcessorForProduct(String productName) {
-        ITextProductEventProcessor processor = processors.get(productName);
-
-        if (processor != null) {
-            return processor;
-        }
-
-        if (ProductNameConstant.PRODUCT_NAMES.contains(productName)) {
-            processor = new DefaultITextProductEventProcessor(productName);
-            processors.put(productName, processor);
-            return processor;
-        } else {
-            throw new UnknownProductException(
-                    MessageFormatUtil.format(UnknownProductException.UNKNOWN_PRODUCT, productName));
         }
     }
 }
