@@ -23,12 +23,12 @@
 package com.itextpdf.kernel.actions;
 
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.KernelLogMessageConstant;
 import com.itextpdf.kernel.actions.data.ProductData;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.List;
 
 /**
  * Abstract class which defines statistics event. Only for internal usage.

@@ -23,7 +23,7 @@
 package com.itextpdf.kernel.actions.sequence;
 
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 /**
  * Util class which is responsible for marking of {@link AbstractIdentifiableElement} with
@@ -48,7 +48,7 @@ public final class SequenceIdManager {
                 element.setSequenceId(sequenceId);
             } else {
                     throw new IllegalStateException(MessageFormatUtil.format(
-                            PdfException.ElementAlreadyHasIdentifier,
+                            KernelExceptionMessageConstant.ELEMENT_ALREADY_HAS_IDENTIFIER,
                             element.getSequenceId().getId(), sequenceId.getId()));
             }
         }

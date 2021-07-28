@@ -23,7 +23,6 @@
 package com.itextpdf.kernel.actions.events;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.KernelLogMessageConstant;
 import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.EventManager;
 import com.itextpdf.kernel.actions.ProductEventHandlerAccess;
@@ -33,6 +32,7 @@ import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.actions.session.ClosingSession;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;

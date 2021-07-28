@@ -23,8 +23,8 @@
 package com.itextpdf.kernel.actions.producer;
 
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ class CopyrightSincePlaceholderPopulator implements IPlaceholderPopulator {
 
         if (parameter != null) {
             throw new IllegalArgumentException(
-                    MessageFormatUtil.format(PdfException.InvalidUsageConfigurationForbidden, "copyrightSince")
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.INVALID_USAGE_CONFIGURATION_FORBIDDEN, "copyrightSince")
             );
         }
 

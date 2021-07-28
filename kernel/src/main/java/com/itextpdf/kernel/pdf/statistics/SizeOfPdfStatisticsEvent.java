@@ -22,10 +22,10 @@
  */
 package com.itextpdf.kernel.pdf.statistics;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.actions.AbstractStatisticsAggregator;
 import com.itextpdf.kernel.actions.AbstractStatisticsEvent;
 import com.itextpdf.kernel.actions.data.ProductData;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 import java.util.Collections;
 import java.util.List;
@@ -48,7 +48,7 @@ public class SizeOfPdfStatisticsEvent extends AbstractStatisticsEvent {
     public SizeOfPdfStatisticsEvent(long amountOfBytes, ProductData productData) {
         super(productData);
         if (amountOfBytes < 0) {
-            throw new IllegalArgumentException(PdfException.AmountOfBytesLessThanZero);
+            throw new IllegalArgumentException(KernelExceptionMessageConstant.AMOUNT_OF_BYTES_LESS_THAN_ZERO);
         }
         this.amountOfBytes = amountOfBytes;
     }

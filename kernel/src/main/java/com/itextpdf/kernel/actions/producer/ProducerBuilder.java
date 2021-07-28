@@ -23,9 +23,9 @@
 package com.itextpdf.kernel.actions.producer;
 
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.KernelLogMessageConstant;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -98,7 +98,7 @@ public final class ProducerBuilder {
 
     private static String buildProducer(List<ConfirmedEventWrapper> events) {
         if (events == null || events.isEmpty()) {
-            throw new IllegalArgumentException(PdfException.NoEventsWereRegisteredForTheDocument);
+            throw new IllegalArgumentException(KernelExceptionMessageConstant.NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT);
         }
 
         // we expects here that the first event was thrown by

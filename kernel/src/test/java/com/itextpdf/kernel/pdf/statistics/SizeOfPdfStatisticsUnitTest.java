@@ -22,20 +22,20 @@
  */
 package com.itextpdf.kernel.pdf.statistics;
 
-import com.itextpdf.kernel.KernelLogMessageConstant;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class SizeOfPdfStatisticsUnitTest extends ExtendedITextTest {
@@ -53,7 +53,7 @@ public class SizeOfPdfStatisticsUnitTest extends ExtendedITextTest {
         Exception exception =
                 Assert.assertThrows(IllegalArgumentException.class,
                         () -> new SizeOfPdfStatisticsEvent(-1, ITextCoreProductData.getInstance()));
-        Assert.assertEquals(PdfException.AmountOfBytesLessThanZero, exception.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.AMOUNT_OF_BYTES_LESS_THAN_ZERO, exception.getMessage());
     }
 
     @Test

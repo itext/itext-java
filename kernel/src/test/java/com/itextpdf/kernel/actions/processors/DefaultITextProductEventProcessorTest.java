@@ -22,14 +22,10 @@
  */
 package com.itextpdf.kernel.actions.processors;
 
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.actions.session.ClosingSession;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -43,7 +39,7 @@ public class DefaultITextProductEventProcessorTest extends ExtendedITextTest {
     @Test
     public void constructorWithNullProductNameTest() {
         junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(PdfException.ProductNameCannotBeNull);
+        junitExpectedException.expectMessage(KernelExceptionMessageConstant.PRODUCT_NAME_CAN_NOT_BE_NULL);
         new DefaultITextProductEventProcessor(null);
     }
 }

@@ -23,14 +23,14 @@
 package com.itextpdf.kernel.actions;
 
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.KernelLogMessageConstant;
 import com.itextpdf.kernel.actions.events.ConfirmEvent;
 import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
+import com.itextpdf.kernel.actions.exceptions.UnknownProductException;
 import com.itextpdf.kernel.actions.processors.DefaultITextProductEventProcessor;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.counter.context.UnknownContext;
-import com.itextpdf.kernel.actions.exceptions.UnknownProductException;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 
 import java.util.ArrayList;
 import java.util.Collections;

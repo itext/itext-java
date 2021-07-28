@@ -22,7 +22,7 @@
  */
 package com.itextpdf.kernel.actions.producer;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 /**
  * Abstract populator for placeholders consuming a parameter which is a pattern string. Any latin
@@ -73,7 +73,7 @@ abstract class AbstractFormattedPlaceholderPopulator implements IPlaceholderPopu
         }
 
         if (index == formatArray.length) {
-            throw new IllegalArgumentException(PdfException.PatternContainsOpenQuotation);
+            throw new IllegalArgumentException(KernelExceptionMessageConstant.PATTERN_CONTAINS_OPEN_QUOTATION);
         }
 
         return index;

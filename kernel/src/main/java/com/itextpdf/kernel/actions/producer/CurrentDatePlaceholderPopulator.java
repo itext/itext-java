@@ -24,8 +24,8 @@ package com.itextpdf.kernel.actions.producer;
 
 import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -90,7 +90,7 @@ class CurrentDatePlaceholderPopulator extends AbstractFormattedPlaceholderPopula
     public String populate(List<ConfirmedEventWrapper> events, String parameter) {
         if (parameter == null) {
             throw new IllegalArgumentException(
-                    MessageFormatUtil.format(PdfException.InvalidUsageFormatRequired, "currentDate")
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "currentDate")
             );
         }
 
@@ -128,7 +128,7 @@ class CurrentDatePlaceholderPopulator extends AbstractFormattedPlaceholderPopula
             builder.append(DateTimeUtil.formatDate(date, piece));
         } else {
             throw new IllegalArgumentException(
-                    MessageFormatUtil.format(PdfException.PatternContainsUnexpectedComponent, piece)
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_COMPONENT, piece)
             );
         }
 

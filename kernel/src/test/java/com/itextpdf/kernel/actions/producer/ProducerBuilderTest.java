@@ -24,12 +24,12 @@ package com.itextpdf.kernel.actions.producer;
 
 import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.KernelLogMessageConstant;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.actions.data.ProductData;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
@@ -53,7 +53,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
     @Test
     public void emptyEventsProducerLineTest() {
         junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(PdfException.NoEventsWereRegisteredForTheDocument);
+        junitExpectedException.expectMessage(KernelExceptionMessageConstant.NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT);
 
         ProducerBuilder.modifyProducer(null, null);
     }
@@ -137,7 +137,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         List<ConfirmedEventWrapper> events = getEvents("Created at ${currentDate}", 1, 2, 3);
 
         junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfException.InvalidUsageFormatRequired, "currentDate"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(KernelExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "currentDate"));
 
         ProducerBuilder.modifyProducer(events, null);
     }
@@ -165,7 +165,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         List<ConfirmedEventWrapper> events = getEvents("Used products: ${usedProducts}", 1, 2, 3);
 
         junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfException.InvalidUsageFormatRequired, "usedProducts"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(KernelExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "usedProducts"));
 
         ProducerBuilder.modifyProducer(events, null);
     }

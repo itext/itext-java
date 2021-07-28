@@ -23,7 +23,6 @@
 package com.itextpdf.kernel.actions.events;
 
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.KernelLogMessageConstant;
 import com.itextpdf.kernel.actions.AbstractITextConfigurationEvent;
 import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.EventManager;
@@ -31,6 +30,7 @@ import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.kernel.actions.producer.ProducerBuilder;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.actions.session.ClosingSession;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.lang.ref.WeakReference;

@@ -23,8 +23,8 @@
 package com.itextpdf.kernel.actions.producer;
 
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -79,7 +79,7 @@ class UsedProductsPlaceholderPopulator extends AbstractFormattedPlaceholderPopul
     public String populate(List<ConfirmedEventWrapper> events, String parameter) {
         if (parameter == null) {
             throw new IllegalArgumentException(
-                    MessageFormatUtil.format(PdfException.InvalidUsageFormatRequired, "usedProducts"));
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "usedProducts"));
         }
 
         final Set<ProductRepresentation> usedProducts = new LinkedHashSet<>();
@@ -129,7 +129,7 @@ class UsedProductsPlaceholderPopulator extends AbstractFormattedPlaceholderPopul
             return product.getProductUsageType();
         } else {
             throw new IllegalArgumentException(
-                    MessageFormatUtil.format(PdfException.PatternContainsUnexpectedCharacter, letter));
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_CHARACTER, letter));
         }
     }
 

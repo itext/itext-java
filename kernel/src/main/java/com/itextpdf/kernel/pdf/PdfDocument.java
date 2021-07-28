@@ -44,11 +44,9 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.Version;
@@ -72,6 +70,7 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
 import com.itextpdf.kernel.numbering.RomanNumbering;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
@@ -97,7 +96,6 @@ import com.itextpdf.kernel.xmp.options.SerializeOptions;
 
 import java.io.Closeable;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1026,9 +1024,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 if (writer.getOutputStream() instanceof CountOutputStream) {
                     long amountOfBytes = ((CountOutputStream) writer.getOutputStream()).getAmountOfWrittenBytes();
                     manager.onEvent(new SizeOfPdfStatisticsEvent(amountOfBytes, ITextCoreProductData.getInstance()));
-                }
-                for (ICounter counter : getCounters()) {
-                    counter.onDocumentWritten(writer.getCurrentPos());
                 }
             }
             catalog.getPageTree().clearPageRefs();

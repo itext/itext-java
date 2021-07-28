@@ -22,20 +22,20 @@
  */
 package com.itextpdf.kernel.pdf.statistics;
 
-import com.itextpdf.kernel.KernelLogMessageConstant;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
@@ -50,10 +50,8 @@ public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    public void invalidArgumentEventTest() {
-        Exception exception =
-                Assert.assertThrows(PdfException.class, () -> new NumberOfPagesStatisticsEvent(0, ITextCoreProductData.getInstance()));
-        Assert.assertEquals(PdfException.DocumentHasNoPages, exception.getMessage());
+    public void zeroNumberOfPagesTest() {
+        AssertUtil.doesNotThrow(() -> new NumberOfPagesStatisticsEvent(0, ITextCoreProductData.getInstance()));
     }
 
     @Test

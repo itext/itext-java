@@ -23,11 +23,11 @@
 package com.itextpdf.kernel.actions.producer;
 
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.actions.data.ProductData;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -48,7 +48,7 @@ public class UsedProductsPlaceholderPopulatorTest extends ExtendedITextTest {
     @Test
     public void nullTest() {
         junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfException.InvalidUsageFormatRequired, "usedProducts"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(KernelExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "usedProducts"));
 
         populator.populate(getEvents(1), null);
     }
@@ -128,7 +128,7 @@ public class UsedProductsPlaceholderPopulatorTest extends ExtendedITextTest {
     @Test
     public void invalidLetterFormatTest() {
         junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfException.PatternContainsUnexpectedCharacter, "X"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(KernelExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_CHARACTER, "X"));
 
         populator.populate(getEvents(1), "PVTX");
     }

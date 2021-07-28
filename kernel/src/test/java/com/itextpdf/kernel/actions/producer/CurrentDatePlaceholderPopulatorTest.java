@@ -24,7 +24,7 @@ package com.itextpdf.kernel.actions.producer;
 
 import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -46,7 +46,7 @@ public class CurrentDatePlaceholderPopulatorTest extends ExtendedITextTest {
     @Test
     public void nullTest() {
         junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfException.InvalidUsageFormatRequired, "currentDate"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(KernelExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "currentDate"));
 
         populator.populate(null, null);
     }
@@ -90,7 +90,7 @@ public class CurrentDatePlaceholderPopulatorTest extends ExtendedITextTest {
     @Test
     public void plainTextEndlessQuotationErrorTest() {
         junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(PdfException.PatternContainsOpenQuotation);
+        junitExpectedException.expectMessage(KernelExceptionMessageConstant.PATTERN_CONTAINS_OPEN_QUOTATION);
 
         populator.populate(null, "'plain text");
     }
@@ -98,7 +98,7 @@ public class CurrentDatePlaceholderPopulatorTest extends ExtendedITextTest {
     @Test
     public void plainTextMultipleQuotationsEndlessQuotationErrorTest() {
         junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(PdfException.PatternContainsOpenQuotation);
+        junitExpectedException.expectMessage(KernelExceptionMessageConstant.PATTERN_CONTAINS_OPEN_QUOTATION);
 
         populator.populate(null, "'plain'' ''text");
     }
@@ -106,7 +106,7 @@ public class CurrentDatePlaceholderPopulatorTest extends ExtendedITextTest {
     @Test
     public void plainTextEscapedApostropheEndlessQuotationErrorTest() {
         junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(PdfException.PatternContainsOpenQuotation);
+        junitExpectedException.expectMessage(KernelExceptionMessageConstant.PATTERN_CONTAINS_OPEN_QUOTATION);
 
         populator.populate(null, "'plain text\\'");
     }
@@ -129,7 +129,7 @@ public class CurrentDatePlaceholderPopulatorTest extends ExtendedITextTest {
     @Test
     public void unexpectedLetterComponentTest() {
         junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfException.PatternContainsUnexpectedComponent, "t"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(KernelExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_COMPONENT, "t"));
 
         populator.populate(null, "dd MM tyy yyyy HH");
     }
@@ -137,7 +137,7 @@ public class CurrentDatePlaceholderPopulatorTest extends ExtendedITextTest {
     @Test
     public void unexpectedLongComponentTest() {
         junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfException.PatternContainsUnexpectedComponent, "MMMMM"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(KernelExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_COMPONENT, "MMMMM"));
 
         populator.populate(null, "dd MMMMM yy yyyy HH");
     }
@@ -145,7 +145,7 @@ public class CurrentDatePlaceholderPopulatorTest extends ExtendedITextTest {
     @Test
     public void unexpectedShortComponentTest() {
         junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfException.PatternContainsUnexpectedComponent, "y"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(KernelExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_COMPONENT, "y"));
 
         populator.populate(null, "dd MM y yyyy HH");
     }

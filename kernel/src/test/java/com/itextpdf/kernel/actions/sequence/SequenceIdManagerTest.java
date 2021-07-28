@@ -23,7 +23,7 @@
 package com.itextpdf.kernel.actions.sequence;
 
 import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -54,7 +54,7 @@ public class SequenceIdManagerTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(IllegalStateException.class,
                 () -> SequenceIdManager.setSequenceId(element, sequenceId2));
 
-        Assert.assertEquals(MessageFormatUtil.format(PdfException.ElementAlreadyHasIdentifier,
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.ELEMENT_ALREADY_HAS_IDENTIFIER,
                 sequenceId1.getId(), sequenceId2.getId()), e.getMessage());
     }
 

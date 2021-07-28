@@ -22,9 +22,8 @@
  */
 package com.itextpdf.kernel.pdf.statistics;
 
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.actions.AbstractStatisticsEvent;
 import com.itextpdf.kernel.actions.AbstractStatisticsAggregator;
+import com.itextpdf.kernel.actions.AbstractStatisticsEvent;
 import com.itextpdf.kernel.actions.data.ProductData;
 
 import java.util.Collections;
@@ -47,9 +46,6 @@ public class NumberOfPagesStatisticsEvent extends AbstractStatisticsEvent {
      */
     public NumberOfPagesStatisticsEvent(int numberOfPages, ProductData productData) {
         super(productData);
-        if (numberOfPages <= 0) {
-            throw new PdfException(PdfException.DocumentHasNoPages);
-        }
         this.numberOfPages = numberOfPages;
     }
 

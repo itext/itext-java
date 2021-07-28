@@ -45,6 +45,7 @@ package com.itextpdf.kernel;
 
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,17 +54,6 @@ import java.util.List;
  * Exception class for exceptions in kernel module.
  */
 public class PdfException extends RuntimeException {
-
-    // Producer representation exceptions
-    public static final String InvalidUsageFormatRequired = "Invalid usage of placeholder \"{0}\": format is required";
-    public static final String InvalidUsageConfigurationForbidden = "Invalid usage of placeholder \"{0}\": any "
-            + "configuration is forbidden";
-    public static final String NoEventsWereRegisteredForTheDocument = "No events were registered for the document!";
-    public static final String PatternContainsOpenQuotation = "Pattern contains open quotation!";
-    public static final String PatternContainsUnexpectedCharacter = "Pattern contains unexpected character {0}";
-    public static final String PatternContainsUnexpectedComponent = "Pattern contains unexpected component {0}";
-
-
     /**
      * Object for more details
      */

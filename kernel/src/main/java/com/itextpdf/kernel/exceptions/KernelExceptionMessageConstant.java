@@ -26,6 +26,8 @@ package com.itextpdf.kernel.exceptions;
  * Class that bundles all the error message templates as constants.
  */
 public final class KernelExceptionMessageConstant {
+    public static final String AMOUNT_OF_BYTES_LESS_THAN_ZERO =
+            "Amount of bytes in the PDF document cannot be less than zero";
     public static final String ANNOTATION_SHALL_HAVE_REFERENCE_TO_PAGE = "Annotation shall have reference to page.";
     public static final String APPEND_MODE_REQUIRES_A_DOCUMENT_WITHOUT_ERRORS_EVEN_IF_RECOVERY_IS_POSSIBLE = "Append "
             + "mode requires a document without errors, even if recovery is possible.";
@@ -147,6 +149,16 @@ public final class KernelExceptionMessageConstant {
             + "parameter of ReaderProperties's MemoryLimitsAwareHandler.";
     public static final String DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_THAN_MAX_INTEGER_VALUE = "During "
             + "decompression a single stream occupied more than a maximum integer value. Please check your pdf.";
+    /**
+     * Message warns about overriding of the identifier of identifiable element. List of params:
+     *
+     * <ul>
+     * <li>0th is an original element identifier;
+     * <li>1st is a new element identifier;
+     * </ul>
+     */
+    public static final String ELEMENT_ALREADY_HAS_IDENTIFIER = "Element already has sequence id: {0}, new id {1} " +
+            "will be ignored";
     public static final String END_OF_CONTENT_STREAM_REACHED_BEFORE_END_OF_IMAGE_DATA = "End of content stream "
             + "reached before end of image data.";
     public static final String ERROR_WHILE_READING_OBJECT_STREAM = "Error while reading Object Stream.";
@@ -198,6 +210,9 @@ public final class KernelExceptionMessageConstant {
             + "must be PdfDictionary.";
     public static final String INVALID_RANGE_ARRAY = "Invalid range array.";
     public static final String INVALID_OFFSET_FOR_THIS_OBJECT = "Invalid offset for object {0}.";
+    public static final String INVALID_USAGE_FORMAT_REQUIRED = "Invalid usage of placeholder \"{0}\": format is required";
+    public static final String INVALID_USAGE_CONFIGURATION_FORBIDDEN = "Invalid usage of placeholder \"{0}\": any "
+            + "configuration is forbidden";
     public static final String INVALID_XREF_STREAM = "Invalid xref stream.";
     public static final String INVALID_XREF_TABLE = "Invalid xref table.";
     public static final String IO_EXCEPTION = "I/O exception.";
@@ -207,6 +222,7 @@ public final class KernelExceptionMessageConstant {
     public static final String MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY
             = "Missing required field {0} in font dictionary.";
     public static final String MUST_BE_A_TAGGED_DOCUMENT = "Must be a tagged document.";
+    public static final String NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT = "No events were registered for the document!";
     public static final String NOT_A_VALID_PLACEABLE_WINDOWS_METAFILE = "{0} is not a valid placeable windows "
             + "metafile.";
     public static final String NUMBER_OF_ENTRIES_IN_THIS_XREF_SUBSECTION_NOT_FOUND = "Number of entries in this xref "
@@ -235,6 +251,9 @@ public final class KernelExceptionMessageConstant {
                     + "to this document ({2}).";
     public static final String PAGE_IS_NOT_SET_FOR_THE_PDF_TAG_STRUCTURE = "Page is not set for the pdf tag structure.";
     public static final String PAGE_ALREADY_FLUSHED = "The page has been already flushed.";
+    public static final String PATTERN_CONTAINS_OPEN_QUOTATION = "Pattern contains open quotation!";
+    public static final String PATTERN_CONTAINS_UNEXPECTED_CHARACTER = "Pattern contains unexpected character {0}";
+    public static final String PATTERN_CONTAINS_UNEXPECTED_COMPONENT = "Pattern contains unexpected component {0}";
     public static final String PDF_ENCRYPTION = "PdfEncryption exception.";
     public static final String PDF_DECRYPTION = "Exception occurred with PDF document decryption. One of the possible "
             + "reasons is wrong password or wrong public key certificate and private key.";
@@ -249,6 +268,7 @@ public final class KernelExceptionMessageConstant {
     public static final String PDF_INDIRECT_OBJECT_BELONGS_TO_OTHER_PDF_DOCUMENT = "Pdf indirect object belongs to "
             + "other PDF document. Copy object to current pdf document.";
     public static final String PDF_VERSION_IS_NOT_VALID = "PDF version is not valid.";
+    public static final String PRODUCT_NAME_CAN_NOT_BE_NULL = "Product name can not be null.";
     public static final String REF_ARRAY_ITEMS_IN_STRUCTURE_ELEMENT_DICTIONARY_SHALL_BE_INDIRECT_OBJECTS = "Ref array "
             + "items in structure element dictionary shall be indirect objects.";
     public static final String REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS = "Requested page number {0} is out of bounds.";

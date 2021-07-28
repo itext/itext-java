@@ -22,9 +22,9 @@
  */
 package com.itextpdf.kernel.actions.processors;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.session.ClosingSession;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 /**
  * Defines a default strategy of product event processing.
@@ -40,7 +40,7 @@ public class DefaultITextProductEventProcessor implements ITextProductEventProce
      */
     public DefaultITextProductEventProcessor(String productName) {
         if (productName == null) {
-            throw new IllegalArgumentException(PdfException.ProductNameCannotBeNull);
+            throw new IllegalArgumentException(KernelExceptionMessageConstant.PRODUCT_NAME_CAN_NOT_BE_NULL);
         }
         this.productName = productName;
     }

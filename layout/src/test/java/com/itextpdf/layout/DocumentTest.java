@@ -23,8 +23,9 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.actions.EventManager;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
+import com.itextpdf.kernel.actions.EventManager;
 import com.itextpdf.kernel.actions.sequence.AbstractIdentifiableElement;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 import com.itextpdf.kernel.actions.sequence.SequenceIdManager;
@@ -37,6 +38,7 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.testutil.TestConfigurationEvent;
 import com.itextpdf.layout.testutil.TestProductEvent;
 import com.itextpdf.test.ExtendedITextTest;
@@ -44,8 +46,10 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class DocumentTest extends ExtendedITextTest {

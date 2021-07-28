@@ -22,15 +22,12 @@
  */
 package com.itextpdf.kernel.actions.sequence;
 
-import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * The class represents unique numeric identifier with autoincrement strategy of generation.
  */
-public final class SequenceId implements Serializable {
-    private static final long serialVersionUID = 357623956390011L;
-
+public final class SequenceId {
     private static final AtomicLong ID_GENERATOR = new AtomicLong();
 
     private final long id;
