@@ -45,6 +45,8 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.io.source.IRandomAccessSource;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
@@ -53,6 +55,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -2010,6 +2017,38 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void pdf11VersionValidTest() throws IOException {
         String fileName = sourceFolder + "pdf11Version.pdf";
         new PdfDocument(new PdfReader(fileName));
+    }
+
+    @Test
+    public void closeStreamCreatedByITextTest() throws IOException {
+        String fileName = sourceFolder + "emptyPdf.pdf";
+        String copiedFileName = destinationFolder + "emptyPdf.pdf";
+        //Later in the test we will need to delete a file. Since we do not want to delete it from sources, we will
+        // copy it to destination folder.
+        File copiedFile = copyFileForTest(fileName, copiedFileName);
+        Exception e = Assert.assertThrows(com.itextpdf.io.IOException.class, () -> new PdfReader(fileName));
+        Assert.assertEquals(com.itextpdf.io.IOException.PdfHeaderNotFound, e.getMessage());
+        //This check is meaningfull only on Windows, since on other OS the fact of a stream being open doesn't
+        // prevent the stream from being deleted.
+        Assert.assertTrue(FileUtil.deleteFile(copiedFile));
+    }
+
+    @Test
+    public void notCloseUserStreamTest() throws IOException {
+        String fileName = sourceFolder + "emptyPdf.pdf";
+        try (InputStream pdfStream = new FileInputStream(fileName)) {
+                IRandomAccessSource randomAccessSource = new RandomAccessSourceFactory()
+                        .createSource(pdfStream);
+                Exception e = Assert.assertThrows(com.itextpdf.io.IOException.class,
+                        () -> new PdfReader(randomAccessSource, new ReaderProperties()));
+            //An exception would be thrown, if stream is closed.
+            Assert.assertEquals(-1, pdfStream.read());
+        }
+    }
+    private File copyFileForTest(String fileName, String copiedFileName) throws IOException {
+        File copiedFile = new File(copiedFileName);
+        Files.copy(Paths.get(fileName), Paths.get(copiedFileName));
+        return copiedFile;
     }
 
     private PdfReader pdfDocumentNotReadTestInit() throws IOException {
