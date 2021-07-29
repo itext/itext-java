@@ -83,7 +83,7 @@ public class OcspClientBouncyCastle implements IOcspClient {
     private final OCSPVerifier verifier;
 
     /**
-     * Create {@code OcspClient}
+     * Creates {@code OcspClient}.
      *
      * @param verifier will be used for response verification.
      *
@@ -158,8 +158,8 @@ public class OcspClientBouncyCastle implements IOcspClient {
      *
      * @return an OCSP request
      *
-     * @throws OCSPException
-     * @throws IOException
+     * @throws OCSPException is thrown if any errors occur while handling OCSP requests/responses
+     * @throws IOException signals that an I/O exception has occurred
      */
     private static OCSPReq generateOCSPRequest(X509Certificate issuerCert, BigInteger serialNumber)
             throws OCSPException, IOException,
