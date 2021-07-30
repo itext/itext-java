@@ -107,14 +107,23 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     private static final int FONT_BBOX_LLY = 1;
     private static final int FONT_BBOX_URX = 2;
     private static final int FONT_BBOX_URY = 3;
+    private static final double[] DEFAULT_FONT_MATRIX = {0.001, 0, 0, 0.001, 0, 0};
 
-    @Deprecated
     private double[] fontMatrix = DEFAULT_FONT_MATRIX;
 
     /**
      * Used to normalize font metrics expressed in glyph space units. See {@link PdfType3Font}.
      */
     private double glyphSpaceNormalizationFactor;
+
+    /**
+     * Gets the transformation matrix that defines relation between text and glyph spaces.
+     *
+     * @return the font matrix
+     */
+    private double[] getFontMatrix() {
+        return this.fontMatrix;
+    }
 
     /**
      * Creates a Type 3 font.
@@ -276,22 +285,6 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         return true;
     }
 
-    @Override
-    public double[] getFontMatrix() {
-        return this.fontMatrix;
-    }
-
-    /**
-     * Sets font matrix, mapping glyph space to text space. Must be identity matrix divided by 1000.
-     * @param fontMatrix an array of six numbers specifying the font matrix,
-     *                   mapping glyph space to text space.
-     * @deprecated will be made internal in next major release
-     */
-    @Deprecated
-    public void setFontMatrix(double[] fontMatrix) {
-        this.fontMatrix = fontMatrix;
-    }
-
     /**
      * Gets count of glyphs in Type 3 font.
      *
@@ -431,11 +424,6 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
     protected PdfDocument getDocument() {
         return getPdfObject().getIndirectReference().getDocument();
-    }
-
-    @Override
-    protected double getGlyphWidth(Glyph glyph) {
-        return glyph != null ? glyph.getWidth() / this.getGlyphSpaceNormalizationFactor() : 0;
     }
 
     final double getGlyphSpaceNormalizationFactor() {

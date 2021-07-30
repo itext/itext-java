@@ -134,19 +134,6 @@ public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Retrieves view as {@link PdfNumber pdf number}.
-     *
-     * @return the view
-     * @deprecated Will always return null. The return will be changed to PdfName in 7.2.
-     *             Use {@code getPdfObject().getAsName(PdfName.View)},
-     *             or one of {@link #isViewDetails()}, {@link #isViewTile()}, {@link #isViewHidden()}.
-     */
-    @Deprecated
-    public PdfNumber getView() {
-        return getPdfObject().getAsNumber(PdfName.View);
-    }
-
-    /**
      * Check if view is in details mode.
      *
      * @return true if view is in details mode and false otherwise

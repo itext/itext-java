@@ -57,18 +57,6 @@ import com.itextpdf.kernel.pdf.PdfObject;
 
 public abstract class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
 
-
-	/**
-     * @deprecated , use {@link PdfName#Polygon} instead.
-     */
-	@Deprecated
-    public static final PdfName Polygon = PdfName.Polygon;
-    /**
-     * @deprecated , use {@link PdfName#PolyLine} instead.
-     */
-	@Deprecated
-    public static final PdfName PolyLine = PdfName.PolyLine;
-
     PdfPolyGeomAnnotation(Rectangle rect, float[] vertices) {
         super(rect);
         setVertices(vertices);

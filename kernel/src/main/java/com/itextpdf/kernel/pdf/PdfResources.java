@@ -311,20 +311,6 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Sets the 'modified' flag to this {@link PdfResources} indirect object.
-     * The flag denotes that the object was modified since the document opening.
-     *
-     * @param isModified {@code true} if this {@link PdfResources} indirect object has been modified,
-     *                              otherwise {@code false}.
-     * @see PdfObject#setModified()
-     * @deprecated Please use {@link #setModified()}.
-     */
-    @Deprecated
-    protected void setModified(boolean isModified) {
-        this.isModified = isModified;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override

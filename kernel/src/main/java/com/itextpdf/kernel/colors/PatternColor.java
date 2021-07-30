@@ -82,17 +82,6 @@ public class PatternColor extends Color {
         underlyingColor.setColorValue(value);
     }
 
-    /**
-     * Changes pattern for {@link PatternColor}. Be sure to only set uncolored patterns for uncolored {@link PatternColor},
-     * and vice versa, only set colored patterns for colored {@link PatternColor}.
-     * @param pattern a pattern to be set for this instance.
-     * @deprecated To be removed in iText 7.2. In order to change pattern one shall create a new {@link PatternColor}.
-     */
-    @Deprecated
-    public void setPattern(PdfPattern pattern) {
-        this.pattern = pattern;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (!super.equals(o)) {

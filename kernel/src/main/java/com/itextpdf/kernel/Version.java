@@ -94,14 +94,6 @@ public final class Version {
 
     private boolean expired;
 
-    /**
-     * @deprecated Use {@link Version#getInstance()} instead. Will be removed in next major release.
-     */
-    @Deprecated
-    public Version() {
-        this.info = new VersionInfo(iTextProductName, release, producerLine, null);
-    }
-
     Version(VersionInfo info, boolean expired) {
         this.info = info;
         this.expired = expired;

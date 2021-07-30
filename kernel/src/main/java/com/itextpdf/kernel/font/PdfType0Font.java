@@ -628,19 +628,6 @@ public class PdfType0Font extends PdfFont {
         return cmapEncoding;
     }
 
-    /**
-     * Creates a ToUnicode CMap to allow copy and paste from Acrobat.
-     *
-     * @param metrics metrics[0] contains the glyph index and metrics[2]
-     *                contains the Unicode code
-     * @return the stream representing this CMap or <CODE>null</CODE>
-     * @deprecated will be removed in 7.2. Use {@link #getToUnicode()} instead
-     */
-    @Deprecated
-    public PdfStream getToUnicode(Object[] metrics) {
-        return getToUnicode();
-    }
-
     @Override
     protected PdfDictionary getFontDescriptor(String fontName) {
         PdfDictionary fontDescriptor = new PdfDictionary();
@@ -660,21 +647,6 @@ public class PdfType0Font extends PdfFont {
             fontDescriptor.put(PdfName.Style, styleDictionary);
         }
         return fontDescriptor;
-    }
-
-    /**
-     * Generates the CIDFontType2 dictionary.
-     *
-     * @param ttf a font program of this font instance
-     * @param fontDescriptor the font descriptor dictionary
-     * @param fontName       a name of the font
-     * @param metrics        the horizontal width metrics
-     * @return fully initialized CIDFont
-     * @deprecated will be removed in 7.2
-     */
-    @Deprecated
-    protected PdfDictionary getCidFontType2(TrueTypeFont ttf, PdfDictionary fontDescriptor, String fontName, int[][] metrics) {
-        return getCidFont(fontDescriptor, fontName, ttf != null && !ttf.isCff());
     }
 
     private void convertToBytes(Glyph glyph, ByteBuffer result) {
@@ -785,22 +757,6 @@ public class PdfType0Font extends PdfFont {
         } else {
             throw new IllegalStateException("Unsupported CID Font");
         }
-    }
-
-    /**
-     * Generates the CIDFontType2 dictionary.
-     *
-     * @param ttf a font program of this font instance
-     * @param fontDescriptor the indirect reference to the font descriptor
-     * @param fontName       a name of the font
-     * @param glyphIds       glyph ids used in from the font
-     * @return fully initialized CIDFont
-     * @deprecated use {@link #getCidFont(PdfDictionary, String, boolean)} instead.
-     */
-    @Deprecated
-    protected PdfDictionary getCidFontType2(TrueTypeFont ttf, PdfDictionary fontDescriptor, String fontName,
-                                            int[] glyphIds) {
-        return getCidFont(fontDescriptor, fontName, ttf != null && !ttf.isCff());
     }
 
     /**

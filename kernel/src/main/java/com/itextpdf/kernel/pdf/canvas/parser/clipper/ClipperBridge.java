@@ -294,20 +294,4 @@ public final class ClipperBridge {
             path.closeSubpath();
         }
     }
-
-    /**
-     * Adds rectangle path based on array of {@link com.itextpdf.kernel.geom.Point} (internally converting
-     * them by {@link #convertToLongPoints}) and adds this path to {@link IClipper} instance.
-     *
-     * @param clipper      {@link IClipper} instance to which the created rectangle path will be added.
-     * @param rectVertices an array of {@link com.itextpdf.kernel.geom.Point} which will be internally converted
-     *                     to clipper path and added to the clipper instance.
-     * @param polyType     either {@link IClipper.PolyType#SUBJECT} or {@link IClipper.PolyType#CLIP} denoting whether added
-     *                     path is a subject of clipping or a part of the clipping polygon.
-     * @deprecated use {@link #addPolygonToClipper} instead.
-     */
-    @Deprecated
-    public static void addRectToClipper(IClipper clipper, com.itextpdf.kernel.geom.Point[] rectVertices, IClipper.PolyType polyType) {
-        clipper.addPath(new Path(convertToLongPoints(new ArrayList<>(Arrays.asList(rectVertices)))), polyType, true);
-    }
 }

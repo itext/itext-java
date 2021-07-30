@@ -64,43 +64,6 @@ import java.util.zip.InflaterInputStream;
 public class FlateDecodeFilter extends MemoryLimitsAwareFilter {
 
     /**
-     * Defines how the corrupted streams should be treated.
-     *
-     * @deprecated will be removed in 7.2, use {@link FlateDecodeStrictFilter} instead.
-     */
-    @Deprecated
-    private boolean strictDecoding = false;
-
-    /**
-     * Creates a FlateDecodeFilter.
-     */
-    public FlateDecodeFilter() {
-        this(false);
-    }
-
-    /**
-     * Creates a FlateDecodeFilter.
-     *
-     * @param strictDecoding defines whether the decoder will try to read a corrupted stream
-     * @deprecated will be removed in 7.2, use {@link FlateDecodeStrictFilter} instead.
-     */
-    @Deprecated
-    public FlateDecodeFilter(boolean strictDecoding) {
-        this.strictDecoding = strictDecoding;
-    }
-
-    /**
-     * Checks whether the decoder will try to read a corrupted stream (not strict) or not (strict)
-     *
-     * @return true if the decoder will try to read a corrupted stream otherwise false
-     * @deprecated will be removed in 7.2, use {@link FlateDecodeStrictFilter} instead.
-     */
-    @Deprecated
-    public boolean isStrictDecoding() {
-        return strictDecoding;
-    }
-
-    /**
      * A helper to flateDecode.
      *
      * @param in     the input data
@@ -237,26 +200,12 @@ public class FlateDecodeFilter extends MemoryLimitsAwareFilter {
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
         ByteArrayOutputStream outputStream = enableMemoryLimitsAwareHandler(streamDictionary);
         byte[] res = flateDecodeInternal(b, true, outputStream);
-        if (res == null && !strictDecoding) {
+        if (res == null) {
             outputStream.reset();
             res = flateDecodeInternal(b, false, outputStream);
         }
         b = decodePredictor(res, decodeParams);
         return b;
-    }
-
-
-    /**
-     * Defines how the corrupted streams should be treated.
-     *
-     * @param strict true if the decoder should try to read a corrupted stream otherwise false
-     * @return the decoder
-     * @deprecated will be removed in 7.2, use {@link FlateDecodeStrictFilter} instead.
-     */
-    @Deprecated
-    public FlateDecodeFilter setStrictDecoding(boolean strict) {
-        this.strictDecoding = strict;
-        return this;
     }
 
     /**

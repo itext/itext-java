@@ -228,13 +228,6 @@ public class PdfFontUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    public void getFontMatrixTest() {
-        TestFont font = new TestFont();
-
-        Assert.assertArrayEquals(PdfFont.DEFAULT_FONT_MATRIX, font.getFontMatrix(), 0.0001);
-    }
-
-    @Test
     public void getWidthUnicodeTest() {
         TestFont font = new TestFont();
 
