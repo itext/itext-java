@@ -64,8 +64,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -80,7 +78,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class FontSelectorTest extends ExtendedITextTest {
@@ -88,9 +85,6 @@ public class FontSelectorTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FontSelectorTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/FontSelectorTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -178,9 +172,6 @@ public class FontSelectorTest extends ExtendedITextTest {
 
     @Test
     public void cyrillicAndLatinGroupFontAsStringValue() throws Exception {
-        junitExpectedException.expect(IllegalStateException.class);
-        junitExpectedException.expectMessage("Invalid FONT property value type.");
-
         String fileName = "cyrillicAndLatinGroupDeprecatedFontAsStringValue";
         String outFileName = destinationFolder + fileName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
@@ -200,10 +191,13 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.setProperty(Property.FONT, "'Puritan', \"FreeSans\"");
         Text text = new Text(s).setBackgroundColor(ColorConstants.LIGHT_GRAY);
         Paragraph paragraph = new Paragraph(text);
-        doc.add(paragraph);
-        doc.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+        Exception exception = Assert.assertThrows(IllegalStateException.class, () -> {
+            doc.add(paragraph);
+            doc.close();
+            Assert.assertNull(
+                    new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
+        });
+        Assert.assertEquals("Invalid FONT property value type.", exception.getMessage());
     }
 
     @Test
@@ -561,8 +555,6 @@ public class FontSelectorTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-2120 Currently both light and regular fonts have the same score so that light is picked up lexicographically. After the changes are implemented the correct one (regular) font shall be selected and the expected constants should be updated
-    // TODO Default font shall be specified.
     public void openSansFontSetIncorrectNameTest01() {
         FontSet set = getOpenSansFontSet();
         addTimesFonts(set);
@@ -658,8 +650,6 @@ public class FontSelectorTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-2120 Currently both light and regular fonts have the same score so that light is picked up lexicographically. After the changes are implemented the correct one (regular) font shall be selected and the expected constants should be updated
-    // TODO Default font shall be specified.
     public void openSansFontSetRegularTest01() {
         FontSet set = getOpenSansFontSet();
         addTimesFonts(set);
@@ -756,8 +746,6 @@ public class FontSelectorTest extends ExtendedITextTest {
 
     @Test
     // TODO DEVSIX-2127 After DEVSIX-2120 the font should be selected correctly, but the text will still need to be bolded via emulation
-    // TODO DEVSIX-2120 Light subfamily is not processed
-    // TODO Default font shall be specified.
     public void openSansFontSetLightTest01() {
         FontSet set = getOpenSansFontSet();
         addTimesFonts(set);
@@ -853,9 +841,7 @@ public class FontSelectorTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-2120 ExtraBold subfamily is not processed
     // TODO DEVSIX-2135 if FontCharacteristics instance is not modified, font-family is parsed and 'bold' substring is considered as a reason to set bold flag in FontCharacteristics instance. That should be reviewed.
-    @Ignore("DEVSIX-2120: we cannot set a wrong expected string for normal font characteristics because in different contexts iText selects different fonts")
     public void openSansFontSetExtraBoldTest01() {
         FontSet set = getOpenSansFontSet();
         addTimesFonts(set);
