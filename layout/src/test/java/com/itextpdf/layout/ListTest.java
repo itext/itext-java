@@ -615,4 +615,59 @@ public class ListTest extends ExtendedITextTest {
         // TODO DEVSIX-1655: partially not fitting list symbol not shown at all, however this might be improved
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
     }
+
+    @Test
+    // There is no symbol indent in html: one uses margins for such a purpose.
+    public void bothSymbolIndentAndMarginAreSetTest() throws Exception {
+        String outFileName = destinationFolder + "bothSymbolIndentAndMarginAreSetTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_bothSymbolIndentAndMarginAreSetTest.pdf";
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+
+        List l = createTestList();
+
+        ListItem li = new ListItem("Only symbol indent: 50pt");
+        li.setBackgroundColor(ColorConstants.BLUE);
+        l.add(li);
+        li = new ListItem("Symbol indent: 50pt and margin-left: 50pt = 100pt");
+        li.setMarginLeft(50);
+        li.setBackgroundColor(ColorConstants.YELLOW);
+        l.add(li);
+
+        document.add(l);
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED))
+    public void listItemMarginInPercentTest() throws Exception {
+        String outFileName = destinationFolder + "listItemMarginInPercentTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_listItemMarginInPercentTest.pdf";
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+
+        List l = createTestList();
+
+        ListItem li = new ListItem("Left margin in percent: 50%");
+        li.setProperty(Property.MARGIN_LEFT, UnitValue.createPercentValue(50));
+        li.setBackgroundColor(ColorConstants.BLUE);
+        l.add(li);
+
+        document.add(l);
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    private static List createTestList() {
+        List l = new List();
+        l.setWidth(300);
+        l.setBackgroundColor(ColorConstants.RED);
+        l.setSymbolIndent(50);
+        l.setListSymbol("\u2022");
+
+        return l;
+    }
 }
