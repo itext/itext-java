@@ -25,6 +25,7 @@ package com.itextpdf.kernel.pdf.statistics;
 import com.itextpdf.kernel.actions.AbstractStatisticsAggregator;
 import com.itextpdf.kernel.actions.AbstractStatisticsEvent;
 import com.itextpdf.kernel.actions.data.ProductData;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +47,9 @@ public class NumberOfPagesStatisticsEvent extends AbstractStatisticsEvent {
      */
     public NumberOfPagesStatisticsEvent(int numberOfPages, ProductData productData) {
         super(productData);
+        if (numberOfPages < 0) {
+            throw new IllegalStateException(KernelExceptionMessageConstant.NUMBER_OF_PAGES_CAN_NOT_BE_NEGATIVE);
+        }
         this.numberOfPages = numberOfPages;
     }
 

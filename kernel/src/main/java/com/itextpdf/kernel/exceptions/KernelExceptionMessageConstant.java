@@ -235,6 +235,7 @@ public final class KernelExceptionMessageConstant {
     public static final String NOT_A_PLACEABLE_WINDOWS_METAFILE = "Not a placeable windows metafile.";
     public static final String NOT_A_WMF_IMAGE = "Not a WMF image.";
     public static final String NO_VALID_ENCRYPTION_MODE = "No valid encryption mode.";
+    public static final String NUMBER_OF_PAGES_CAN_NOT_BE_NEGATIVE = "Number of pages can not be negative.";
     public static final String NUMBER_OF_BOOLEANS_IN_THE_ARRAY_DOES_NOT_CORRESPOND_WITH_THE_NUMBER_OF_FIELDS = "The "
             + "number of booleans in the array doesn't correspond with the number of fields.";
     public static final String OBJECT_MUST_BE_INDIRECT_TO_WORK_WITH_THIS_WRAPPER = "Object must be indirect to work "

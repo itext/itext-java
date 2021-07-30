@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.pdf.statistics;
 
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
@@ -50,8 +51,31 @@ public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    public void invalidArgumentEventTest() {
+        Exception exception =
+                Assert.assertThrows(
+                        IllegalStateException.class,
+                        () -> new NumberOfPagesStatisticsEvent(-1, ITextCoreProductData.getInstance()));
+        Assert.assertEquals(KernelExceptionMessageConstant.NUMBER_OF_PAGES_CAN_NOT_BE_NEGATIVE, exception.getMessage());
+    }
+
+    @Test
     public void zeroNumberOfPagesTest() {
         AssertUtil.doesNotThrow(() -> new NumberOfPagesStatisticsEvent(0, ITextCoreProductData.getInstance()));
+    }
+
+    @Test
+    public void aggregateZeroPageEventTest() {
+        NumberOfPagesStatisticsAggregator aggregator = new NumberOfPagesStatisticsAggregator();
+        aggregator.aggregate(new NumberOfPagesStatisticsEvent(0, ITextCoreProductData.getInstance()));
+
+        Object aggregation = aggregator.retrieveAggregation();
+        Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
+
+        Assert.assertEquals(1, castedAggregation.size());
+
+        long numberOfPages = castedAggregation.get("1").get();
+        Assert.assertEquals(1, numberOfPages);
     }
 
     @Test
