@@ -155,7 +155,6 @@ public abstract class AbstractRenderer implements IRenderer {
 
     private static final int ARC_QUARTER_CLOCKWISE_EXTENT = -90;
 
-    // TODO linkedList?
     protected List<IRenderer> childRenderers = new ArrayList<>();
     protected List<IRenderer> positionedRenderers = new ArrayList<>();
     protected IPropertyContainer modelElement;

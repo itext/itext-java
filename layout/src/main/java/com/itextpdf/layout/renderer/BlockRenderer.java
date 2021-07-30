@@ -298,7 +298,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 if (currentAreaPos + 1 < areas.size() && !(result.getAreaBreak() != null && result.getAreaBreak().getType() == AreaBreakType.NEXT_PAGE)) {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
                         childRenderers.set(childPos, result.getSplitRenderer());
-                        // TODO linkedList would make it faster
                         childRenderers.add(childPos + 1, result.getOverflowRenderer());
                     } else {
                         if (result.getOverflowRenderer() != null) {
