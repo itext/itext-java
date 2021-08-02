@@ -701,7 +701,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         ImageData image = ImageDataFactory.create(SOURCE_FOLDER + pictureName);
         PdfFormXObject template = new PdfFormXObject(new Rectangle(image.getWidth(), image.getHeight()));
         PdfCanvas canvas = new PdfCanvas(template, pdfDocument);
-        canvas.addImage(image, 0, 0, image.getWidth(), false).flush();
+        canvas.addImageFittedIntoRectangle(image, new Rectangle(0, 0, image.getWidth(), image.getHeight()), false).flush();
         canvas.release();
         template.flush();
 

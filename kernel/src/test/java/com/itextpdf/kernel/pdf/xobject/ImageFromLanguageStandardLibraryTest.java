@@ -91,7 +91,7 @@ public class ImageFromLanguageStandardLibraryTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
         PdfPage firstPage = pdfDocument.getFirstPage();
-        canvas.addXObject(image, firstPage.getPageSize());
+        canvas.addXObjectFittedIntoRectangle(image, firstPage.getPageSize());
         canvas
                 .beginText()
                 .setTextMatrix(36, 790)
@@ -128,7 +128,7 @@ public class ImageFromLanguageStandardLibraryTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
         PdfPage firstPage = pdfDocument.getFirstPage();
-        canvas.addXObject(image, firstPage.getPageSize());
+        canvas.addXObjectFittedIntoRectangle(image, firstPage.getPageSize());
         canvas
                 .beginText()
                 .setTextMatrix(36, 790)

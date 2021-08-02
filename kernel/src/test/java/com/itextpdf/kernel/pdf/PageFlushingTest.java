@@ -416,7 +416,7 @@ public class PageFlushingTest extends ExtendedITextTest {
             pdfCanvas.saveState();
             for (int j = 0; j < numOfAddedXObjectsPerPage; ++j) {
                 PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "simple.jpg"));
-                pdfCanvas.addXObject(xObject, new Rectangle(36, 720 - j * 150, 20, 20));
+                pdfCanvas.addXObjectFittedIntoRectangle(xObject, new Rectangle(36, 720 - j * 150, 20, 20));
                 xObject.makeIndirect(pdf).flush();
             }
             pdfCanvas.restoreState();
@@ -598,12 +598,12 @@ public class PageFlushingTest extends ExtendedITextTest {
                 .stroke()
                 .restoreState();
 
-        canvas.addXObject(xObject, 100, 500, 400);
+        canvas.addXObjectFittedIntoRectangle(xObject, new Rectangle(100, 500, 400, xObject.getHeight()));
 
         PdfImageXObject xObject2 = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itext.png"));
         xObject2.makeIndirect(pdfPage.getDocument());
 
-        canvas.addXObject(xObject2, 100, 300, 400);
+        canvas.addXObjectFittedIntoRectangle(xObject2, new Rectangle(100, 500, 400, xObject2.getHeight()));
     }
 
     private static PdfCanvas addBasicContent(PdfPage pdfPage, PdfFont font) {

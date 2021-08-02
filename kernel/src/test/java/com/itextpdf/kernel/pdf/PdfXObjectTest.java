@@ -104,15 +104,15 @@ public class PdfXObjectTest extends ExtendedITextTest{
         for (int i = 0; i < 4; i++) {
             PdfPage page = document.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
-            canvas.addXObject(images[i], PageSize.Default);
+            canvas.addXObjectFittedIntoRectangle(images[i], PageSize.Default);
             page.flush();
         }
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
-        canvas.addXObject(images[0], 0, 0, 200);
-        canvas.addXObject(images[1], 300, 0, 200);
-        canvas.addXObject(images[2], 0, 300, 200);
-        canvas.addXObject(images[3], 300, 300, 200);
+        canvas.addXObjectFittedIntoRectangle(images[0], new Rectangle(0, 0, 200, 112.35f));
+        canvas.addXObjectFittedIntoRectangle(images[1], new Rectangle(300, 0, 200, 112.35f));
+        canvas.addXObjectFittedIntoRectangle(images[2], new Rectangle(0, 300, 200, 112.35f));
+        canvas.addXObjectFittedIntoRectangle(images[3], new Rectangle(300, 300, 200, 112.35f));
         canvas.release();
         page.flush();
         document.close();
@@ -135,8 +135,8 @@ public class PdfXObjectTest extends ExtendedITextTest{
         ImageData image = ImageDataFactory.create(SOURCE_FOLDER + "itext.jpg");
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
-        canvas.addImage(image, 50, 500, 100, true);
-        canvas.addImage(image, 200, 500, 100, false).flush();
+        canvas.addImageFittedIntoRectangle(image, new Rectangle(50, 500, 100, 14.16f), true);
+        canvas.addImageFittedIntoRectangle(image, new Rectangle(200, 500, 100, 14.16f), false).flush();
         canvas.release();
         page.flush();
 

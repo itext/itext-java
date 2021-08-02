@@ -588,7 +588,7 @@ public class MetaDo {
                         float height = -destHeight * bmpImage.getHeight() / srcHeight;
                         float x = xDest - destWidth * xSrc / srcWidth;
                         float y = yDest + destHeight * ySrc / srcHeight - height;
-                        cb.addXObject(imageXObject, new Rectangle(x, y, width, height));
+                        cb.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(x, y, width, height));
                         cb.restoreState();
                     }
                     catch (Exception e) {

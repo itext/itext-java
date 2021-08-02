@@ -64,13 +64,11 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.IOException;
-
 import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
@@ -175,7 +173,8 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
         page.getResources().setDefaultRgb(new PdfCieBasedCs.CalRgb(new float[]{0.3f, 0.4f, 0.5f}));
 
         canvas.saveState();
-        canvas.addImage(ImageDataFactory.create(sourceFolder + "itext.png"), 0, 0, page.getPageSize().getWidth() / 2, false);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "itext.png"),
+                new Rectangle(0, 0, page.getPageSize().getWidth() / 2, page.getPageSize().getHeight() / 2), false);
         canvas.restoreState();
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());

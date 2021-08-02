@@ -135,8 +135,8 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         PdfCanvas pdfCanvas = new PdfCanvas(pdfDocument.addNewPage());
 
-        pdfCanvas.addXObject(createMacroBarcodePart(pdfDocument, "This is PDF417 segment 0", 1, 1, 0), 1, 0, 0, 1, 36, 791);
-        pdfCanvas.addXObject(createMacroBarcodePart(pdfDocument, "This is PDF417 segment 1", 1, 1, 1), 1, 0, 0, 1, 36, 676);
+        pdfCanvas.addXObjectWithTransformationMatrix(createMacroBarcodePart(pdfDocument, "This is PDF417 segment 0", 1, 1, 0), 1, 0, 0, 1, 36, 791);
+        pdfCanvas.addXObjectWithTransformationMatrix(createMacroBarcodePart(pdfDocument, "This is PDF417 segment 1", 1, 1, 1), 1, 0, 0, 1, 36, 676);
 
         pdfDocument.close();
 
@@ -212,7 +212,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         Image image = barcode.createAwtImage(Color.MAGENTA, Color.ORANGE);
         ImageData imageData = ImageDataFactory.create(image, Color.BLACK);
 
-        canvas.addImage(imageData, 10, 650, false);
+        canvas.addImageAt(imageData, 10, 650, false);
 
         document.close();
 

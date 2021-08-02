@@ -48,6 +48,7 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -90,7 +91,7 @@ public class ImageFormatsTest extends ExtendedITextTest {
                 .endText()
                 .restoreState();
         ImageData img = ImageDataFactory.create(sourceFolder + "manualTransparency_8bit.png");
-        canvas.addImage(img, 100, 780, 200, false);
+        canvas.addImageFittedIntoRectangle(img, new Rectangle(100, 780, 200, 292.59f), false);
 
 
         canvas
@@ -103,7 +104,7 @@ public class ImageFormatsTest extends ExtendedITextTest {
                 .endText()
                 .restoreState();
         img = ImageDataFactory.create(sourceFolder + "manualTransparency_24bit.png");
-        canvas.addImage(img, 300, 780, 200, false);
+        canvas.addImageFittedIntoRectangle(img, new Rectangle(300, 780, 200, 292.59f), false);
 
 
         canvas
@@ -116,7 +117,7 @@ public class ImageFormatsTest extends ExtendedITextTest {
                 .endText()
                 .restoreState();
         img = ImageDataFactory.create(sourceFolder + "manualTransparency_32bit.png");
-        canvas.addImage(img, 500, 780, 200, false);
+        canvas.addImageFittedIntoRectangle(img, new Rectangle(500, 780, 200, 292.59f), false);
 
         canvas
                 .saveState()
@@ -128,7 +129,7 @@ public class ImageFormatsTest extends ExtendedITextTest {
                 .endText()
                 .restoreState();
         img = ImageDataFactory.create(sourceFolder + "manualTransparency_gif.gif");
-        canvas.addImage(img, 100, 300, 200, false);
+        canvas.addImageFittedIntoRectangle(img, new Rectangle(100, 300, 200, 292.59f), false);
 
         canvas
                 .saveState()
@@ -140,7 +141,7 @@ public class ImageFormatsTest extends ExtendedITextTest {
                 .endText()
                 .restoreState();
         img = ImageDataFactory.create(sourceFolder + "manualTransparency_tif.tif");
-        canvas.addImage(img, 300, 300, 200, false);
+        canvas.addImageFittedIntoRectangle(img, new Rectangle(300, 300, 200, 292.59f), false);
 
         canvas.release();
         pdfDocument.close();
@@ -149,7 +150,7 @@ public class ImageFormatsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void png_imageTransparancy_8bitDepthImage() throws IOException, InterruptedException {
+    public void png_imageTransparency_8bitDepthImage() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "png_imageTransparancy_8bitDepthImage.pdf";
         String cmpFileName = sourceFolder + "cmp_png_imageTransparancy_8bitDepthImage.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName, new WriterProperties()
@@ -171,7 +172,7 @@ public class ImageFormatsTest extends ExtendedITextTest {
                 .endText()
                 .restoreState();
         ImageData img = ImageDataFactory.create(sourceFolder + "manualTransparency_8bit.png");
-        canvas.addImage(img, 100, 450, 200, false);
+        canvas.addImageFittedIntoRectangle(img, new Rectangle(100, 450, 200, 292.59f), false);
 
         canvas.release();
         pdfDocument.close();
@@ -180,7 +181,7 @@ public class ImageFormatsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void png_imageTransparancy_24bitDepthImage() throws IOException, InterruptedException {
+    public void png_imageTransparency_24bitDepthImage() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "png_imageTransparancy_24bitDepthImage.pdf";
         String cmpFileName = sourceFolder + "cmp_png_imageTransparancy_24bitDepthImage.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName, new WriterProperties()
@@ -202,7 +203,7 @@ public class ImageFormatsTest extends ExtendedITextTest {
                 .endText()
                 .restoreState();
         ImageData img = ImageDataFactory.create(sourceFolder + "manualTransparency_24bit.png");
-        canvas.addImage(img, 100, 450, 200, false);
+        canvas.addImageFittedIntoRectangle(img, new Rectangle(100, 450, 200, 292.59f), false);
 
         canvas
                 .saveState()
@@ -214,7 +215,7 @@ public class ImageFormatsTest extends ExtendedITextTest {
                 .endText()
                 .restoreState();
         img = ImageDataFactory.create(sourceFolder + "manualTransparency_32bit.png");
-        canvas.addImage(img, 116, 100, 200, false);
+        canvas.addImageFittedIntoRectangle(img, new Rectangle(116, 100, 200, 292.59f), false);
 
         canvas.release();
         pdfDocument.close();

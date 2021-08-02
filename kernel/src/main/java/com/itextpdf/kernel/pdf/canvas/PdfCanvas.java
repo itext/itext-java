@@ -1284,16 +1284,6 @@ public class PdfCanvas {
     }
 
     /**
-     * @return current canvas.
-     * Ends the path without filling or stroking it.
-     * @deprecated in favour of endPath(), which does exactly the same thing but is better named
-     */
-    @Deprecated
-    public PdfCanvas newPath() {
-        return this.endPath();
-    }
-
-    /**
      * Ends the path without filling or stroking it.
      *
      * @return current canvas.
@@ -1885,57 +1875,9 @@ public class PdfCanvas {
      * @param f     an element of the transformation matrix
      * @return the created imageXObject or null in case of in-line image (asInline = true)
      * @see #concatMatrix(double, double, double, double, double, double)
-     * @deprecated will be removed in 7.2, use
-     * {@link #addImageWithTransformationMatrix(ImageData, float, float, float, float, float, float)}
-     * or {@link #addXObjectWithTransformationMatrix(PdfXObject, float, float, float, float, float, float)} instead
-     */
-    @Deprecated
-    public PdfXObject addImage(ImageData image, float a, float b, float c, float d, float e, float f) {
-        return addImageWithTransformationMatrix(image, a, b, c, d, e, f);
-    }
-
-    /**
-     * Creates {@link PdfImageXObject} from image and adds it to canvas.
-     *
-     * <p>
-     * The float arguments will be used in concatenating the transformation matrix as operands.
-     *
-     * @param image the image from which {@link PdfImageXObject} will be created
-     * @param a     an element of the transformation matrix
-     * @param b     an element of the transformation matrix
-     * @param c     an element of the transformation matrix
-     * @param d     an element of the transformation matrix
-     * @param e     an element of the transformation matrix
-     * @param f     an element of the transformation matrix
-     * @return the created imageXObject or null in case of in-line image (asInline = true)
-     * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfXObject addImageWithTransformationMatrix(ImageData image, float a, float b, float c, float d, float e, float f) {
         return addImageWithTransformationMatrix(image, a, b, c, d, e, f, false);
-    }
-
-    /**
-     * Creates {@link PdfImageXObject} from image and adds it to canvas.
-     *
-     * <p>
-     * The float arguments will be used in concatenating the transformation matrix as operands.
-     *
-     * @param image    the image from which {@link PdfImageXObject} will be created
-     * @param a        an element of the transformation matrix
-     * @param b        an element of the transformation matrix
-     * @param c        an element of the transformation matrix
-     * @param d        an element of the transformation matrix
-     * @param e        an element of the transformation matrix
-     * @param f        an element of the transformation matrix
-     * @param asInline true if to add image as in-line
-     * @return the created imageXObject or null in case of in-line image (asInline = true)
-     * @see #concatMatrix(double, double, double, double, double, double)
-     * @deprecated will be removed in 7.2, use
-     * {@link #addImageWithTransformationMatrix(ImageData, float, float, float, float, float, float, boolean)} instead
-     */
-    @Deprecated
-    public PdfXObject addImage(ImageData image, float a, float b, float c, float d, float e, float f, boolean asInline) {
-        return addImageWithTransformationMatrix(image, a, b, c, d, e, f, asInline);
     }
 
     /**
@@ -1959,7 +1901,7 @@ public class PdfCanvas {
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             PdfXObject xObject = wmf.createFormXObject(document);
-            addXObject(xObject, a, b, c, d, e, f);
+            addXObjectWithTransformationMatrix(xObject, a, b, c, d, e, f);
             return xObject;
         } else {
             PdfImageXObject imageXObject = new PdfImageXObject(image);
@@ -1971,28 +1913,6 @@ public class PdfCanvas {
                 return imageXObject;
             }
         }
-    }
-
-    /**
-     * Creates {@link PdfImageXObject} from image and fitted into specific rectangle on canvas.
-     * The created imageXObject will be fit inside on the specified rectangle without preserving aspect ratio.
-     *
-     * <p>
-     * The x, y, width and height parameters of the rectangle will be used in concatenating
-     * the transformation matrix as operands.
-     *
-     * @param image the image from which {@link PdfImageXObject} will be created
-     * @param rect the rectangle in which the created imageXObject will be fit
-     * @param asInline true if to add image as in-line
-     * @return the created imageXObject or null in case of in-line image (asInline = true)
-     * @see #concatMatrix(double, double, double, double, double, double)
-     * @deprecated will be removed in 7.2, use
-     * {@link #addImageFittedIntoRectangle(ImageData, Rectangle, boolean)} or
-     * {@link #addXObjectFittedIntoRectangle(PdfXObject, Rectangle)}instead
-     */
-    @Deprecated
-    public PdfXObject addImage(ImageData image, Rectangle rect, boolean asInline) {
-        return addImageFittedIntoRectangle(image, rect, asInline);
     }
 
     /**
@@ -2024,28 +1944,12 @@ public class PdfCanvas {
      * @param y the vertical position of the imageXObject
      * @param asInline true if to add image as in-line
      * @return the created imageXObject or null in case of in-line image (asInline = true)
-     * @deprecated will be removed in 7.2, use {@link #addImageAt(ImageData, float, float, boolean)} or
-     * {@link #addXObjectAt(PdfXObject, float, float)} instead
-     */
-    @Deprecated
-    public PdfXObject addImage(ImageData image, float x, float y, boolean asInline) {
-        return addImageAt(image, x, y, asInline);
-    }
-
-    /**
-     * Creates {@link PdfImageXObject} from image and adds it to the specified position.
-     *
-     * @param image the image from which {@link PdfImageXObject} will be created
-     * @param x the horizontal position of the imageXObject
-     * @param y the vertical position of the imageXObject
-     * @param asInline true if to add image as in-line
-     * @return the created imageXObject or null in case of in-line image (asInline = true)
      */
     public PdfXObject addImageAt(ImageData image, float x, float y, boolean asInline) {
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             PdfXObject xObject = wmf.createFormXObject(document);
-            addXObject(xObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
+            addXObjectWithTransformationMatrix(xObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
             return xObject;
         } else {
             PdfImageXObject imageXObject = new PdfImageXObject(image);
@@ -2057,67 +1961,6 @@ public class PdfCanvas {
                 return imageXObject;
             }
         }
-    }
-
-    /**
-     * Creates {@link PdfImageXObject} from image and adds it to the specified
-     * position with specified width preserving aspect ratio.
-     *
-     * <p>
-     * The float arguments will be used in concatenating the transformation matrix as operand.
-     *
-     * @param image the image from which {@link PdfImageXObject} will be created
-     * @param x the horizontal position of the imageXObject
-     * @param y the vertical position of the imageXObject
-     * @param width the width of the created imageXObject on the basis of which the height will be calculated
-     * @param asInline true if to add image as in-line
-     * @return the created imageXObject or null in case of in-line image (asInline = true)
-     * @see #concatMatrix(double, double, double, double, double, double)
-     * @deprecated will be removed in 7.2, use {@link #addImageFittedIntoRectangle(ImageData, Rectangle, boolean)}
-     * or {@link #addXObjectFittedIntoRectangle(PdfXObject, Rectangle)} instead
-     */
-    @Deprecated
-    public PdfXObject addImage(ImageData image, float x, float y, float width, boolean asInline) {
-        if (image.getOriginalType() == ImageType.WMF) {
-            WmfImageHelper wmf = new WmfImageHelper(image);
-            PdfXObject xObject = wmf.createFormXObject(document);
-            addImageWithTransformationMatrix(xObject, width, 0, 0, width, x, y);
-            return xObject;
-        } else {
-            PdfImageXObject imageXObject = new PdfImageXObject(image);
-            if (asInline && image.canImageBeInline()) {
-                addInlineImage(imageXObject, width, 0, 0, (width / image.getWidth()) * image.getHeight(), x, y);
-                return null;
-            } else {
-                addImageWithTransformationMatrix(imageXObject, width, 0, 0, (width / image.getWidth()) * image.getHeight(), x, y);
-                return imageXObject;
-            }
-        }
-    }
-
-    /**
-     * Creates {@link PdfImageXObject} from image and adds it to the specified
-     * position with specified height preserving aspect ratio.
-     *
-     * <p>
-     * The float arguments will be used in concatenating the transformation matrix as operand.
-     *
-     * @param image the image from which {@link PdfImageXObject} will be created
-     * @param x the horizontal position of the imageXObject
-     * @param y the vertical position of the imageXObject
-     * @param height the height of the created imageXObject on the basis of which the width will be calculated
-     * @param asInline true if to add image as in-line
-     * @param dummy flag to note that the method works with the height parameter as opposed to the method
-     *              {@link #addImage(ImageData, float, float, float, boolean)}
-     * @return the created imageXObject or null in case of in-line image (asInline = true)
-     * @see #concatMatrix(double, double, double, double, double, double)
-     * @deprecated will be removed in 7.2, use {@link #addImageFittedIntoRectangle(ImageData, Rectangle, boolean)}
-     * or {@link #addXObjectFittedIntoRectangle(PdfXObject, Rectangle)} instead
-     */
-    @Deprecated
-    public PdfXObject addImage(ImageData image, float x, float y, float height, boolean asInline, boolean dummy) {
-        return addImageWithTransformationMatrix(image, (height / image.getHeight()) * image.getWidth(),
-                0, 0, height, x, y, asInline);
     }
 
     /**
@@ -2144,29 +1987,6 @@ public class PdfCanvas {
         } else {
             throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
         }
-    }
-
-    /**
-     * Adds {@link PdfXObject} to canvas.
-     *
-     * <p>
-     * The float arguments will be used in concatenating the transformation matrix as operands.
-     *
-     * @param xObject the xObject to add
-     * @param a       an element of the transformation matrix
-     * @param b       an element of the transformation matrix
-     * @param c       an element of the transformation matrix
-     * @param d       an element of the transformation matrix
-     * @param e       an element of the transformation matrix
-     * @param f       an element of the transformation matrix
-     * @return the current canvas
-     * @see #concatMatrix(double, double, double, double, double, double)
-     * @deprecated will be removed in 7.2, use
-     * {@link #addXObjectWithTransformationMatrix(PdfXObject, float, float, float, float, float, float)} instead
-     */
-    @Deprecated
-    public PdfCanvas addXObject(PdfXObject xObject, float a, float b, float c, float d, float e, float f) {
-        return addXObjectWithTransformationMatrix(xObject, a, b, c, d, e, f);
     }
 
     /**
@@ -2198,6 +2018,7 @@ public class PdfCanvas {
      * @deprecated will be removed in 7.2, use {@link #addXObjectAt(PdfXObject, float, float)} instead
      */
     @Deprecated
+    //TODO DEVSIX-5729 Remove deprecated api in PdfCanvas
     public PdfCanvas addXObject(PdfXObject xObject, float x, float y) {
         if (xObject instanceof PdfFormXObject) {
             return addForm((PdfFormXObject) xObject, x, y);
@@ -2222,91 +2043,6 @@ public class PdfCanvas {
             return addFormFittedIntoRectangle((PdfFormXObject) xObject, rect);
         } else if (xObject instanceof PdfImageXObject) {
             return addImageFittedIntoRectangle((PdfImageXObject) xObject, rect);
-        } else {
-            throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
-        }
-    }
-
-    /**
-     * Adds {@link PdfXObject} fitted into specific rectangle on canvas in the case of the {@link PdfImageXObject}
-     * or moves to the specified offset and scales in the case of {@link PdfFormXObject}.
-     * Do note that using this method of adding an {@link PdfFormXObject} <b>will scale</b>
-     * the xObject using the width and the height of the provided Rectangle.
-     *
-     * @param xObject the xObject to add
-     * @param rect the rectangle containing x and y coordinates and width and height information in the case of the
-     * {@link PdfImageXObject} or x and y offset and scale information in the case of the {@link PdfFormXObject}
-     * @return the current canvas
-     * @deprecated will be removed in 7.2, use {@link #addXObjectFittedIntoRectangle(PdfXObject, Rectangle)} instead
-     */
-    @Deprecated
-    public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) {
-        if (xObject instanceof PdfFormXObject) {
-            return addForm((PdfFormXObject) xObject, rect);
-        } else if (xObject instanceof PdfImageXObject) {
-            return addImageFittedIntoRectangle((PdfImageXObject) xObject, rect);
-        } else {
-            throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
-        }
-    }
-
-    /**
-     * Adds {@link PdfXObject} to the specified position with specified width preserving aspect ratio in the case of
-     * {@link PdfImageXObject} or moves to the specified offset and scales horizontally in the case of {@link PdfFormXObject}.
-     *
-     * <p>
-     * The float arguments will be used in concatenating the transformation matrix as operand.
-     *
-     * @param xObject the xObject to add
-     * @param x the horizontal offset of the formXObject position or the horizontal position of the imageXObject
-     * @param y the vertical offset of the formXObject position or the vertical position of the imageXObject
-     * @param width the width of the xObject on the basis of which the height will be calculated in the case of the
-     * {@link PdfImageXObject} or scale horizontally coefficient in the case of the {@link PdfFormXObject}
-     * @return the current canvas
-     * @see #concatMatrix(double, double, double, double, double, double)
-     * @deprecated will be removed in 7.2, use
-     * {@link #addXObjectFittedIntoRectangle(PdfXObject, Rectangle)} (PdfXObject, Rectangle)} and
-     * {@link PdfXObject#calculateProportionallyFitRectangleWithWidth(PdfXObject, float, float, float)} instead
-     */
-    @Deprecated
-    public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float width) {
-        if (xObject instanceof PdfFormXObject) {
-            return addForm((PdfFormXObject) xObject, x, y, width);
-        } else if (xObject instanceof PdfImageXObject) {
-            Rectangle rect = PdfXObject.calculateProportionallyFitRectangleWithWidth(xObject, x, y, width);
-            return addXObject(xObject, rect);
-        } else {
-            throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
-        }
-    }
-
-    /**
-     * Adds {@link PdfXObject} to the specified position with specified height preserving aspect ratio in the case of
-     * {@link PdfImageXObject} or moves to the specified offset and scales vertically in the case of {@link PdfFormXObject}.
-     *
-     * <p>
-     * The float arguments will be used in concatenating the transformation matrix as operand.
-     *
-     * @param xObject the xObject to add
-     * @param x the horizontal offset of the formXObject position or the horizontal position of the imageXObject
-     * @param y the vertical offset of the formXObject position or the vertical position of the imageXObject
-     * @param height the height of the xObject on the basis of which the width will be calculated in the case of the
-     * {@link PdfImageXObject} or scale vertically coefficient in the case of the {@link PdfFormXObject}
-     * @param dummy the flag to note that the method works with the height parameter as opposed to the method
-     *              {@link #addXObject(PdfXObject, float, float, float)}
-     * @return the current canvas
-     * @see #concatMatrix(double, double, double, double, double, double)
-     * @deprecated will be removed in 7.2, use
-     * {@link #addXObjectFittedIntoRectangle(PdfXObject, Rectangle)} (PdfXObject, Rectangle)} and
-     * {@link PdfXObject#calculateProportionallyFitRectangleWithHeight(PdfXObject, float, float, float)} instead
-     */
-    @Deprecated
-    public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float height, boolean dummy) {
-        if (xObject instanceof PdfFormXObject) {
-            return addForm((PdfFormXObject) xObject, x, y, height, dummy);
-        } else if (xObject instanceof PdfImageXObject) {
-            Rectangle rect = PdfXObject.calculateProportionallyFitRectangleWithHeight(xObject, x, y, height);
-            return addXObject(xObject, rect);
         } else {
             throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
         }
@@ -2546,30 +2282,6 @@ public class PdfCanvas {
     }
 
     /**
-     * Adds {@link PdfFormXObject} to canvas.
-     *
-     * @param form the formXObject to add
-     * @param a    an element of the transformation matrix
-     * @param b    an element of the transformation matrix
-     * @param c    an element of the transformation matrix
-     * @param d    an element of the transformation matrix
-     * @param e    an element of the transformation matrix
-     * @param f    an element of the transformation matrix
-     * @return current canvas
-     * @deprecated will be removed in 7.2, use
-     * {@link #addFormWithTransformationMatrix(PdfFormXObject, float, float, float, float, float, float, boolean)} instead
-     */
-    @Deprecated
-    private PdfCanvas addForm(PdfFormXObject form, float a, float b, float c, float d, float e, float f) {
-        saveState();
-        concatMatrix(a, b, c, d, e, f);
-        PdfName name = resources.addForm(form);
-        contentStream.getOutputStream().write(name).writeSpace().writeBytes(Do);
-        restoreState();
-        return this;
-    }
-
-    /**
      * Adds {@link PdfFormXObject} to the specified position.
      *
      * @param form the formXObject to add
@@ -2599,50 +2311,9 @@ public class PdfCanvas {
      * @deprecated will be removed in 7.2, use {@link #addFormAt(PdfFormXObject, float, float)} instead
      */
     @Deprecated
+    //TODO DEVSIX-5729 Remove deprecated api in PdfCanvas
     private PdfCanvas addForm(PdfFormXObject form, float x, float y) {
-        return addForm(form, 1, 0, 0, 1, x, y);
-    }
-
-    /**
-     * Adds {@link PdfFormXObject} to the canvas and moves to the specified offset and scales horizontally.
-     *
-     * @param form the formXObject to add
-     * @param x the horizontal offset of the formXObject position
-     * @param y the vertical offset of the formXObject position
-     * @param width the scale horizontally coefficient
-     * @return current canvas
-     * @deprecated will be removed in 7.2, use {@link #addFormFittedIntoRectangle(PdfFormXObject, Rectangle)} instead
-     */
-    @Deprecated
-    private PdfCanvas addForm(PdfFormXObject form, float x, float y, float width) {
-        PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
-        if (bbox == null)
-            throw new PdfException(KernelExceptionMessageConstant.PDF_FORM_XOBJECT_HAS_INVALID_BBOX);
-        float formWidth = Math.abs(bbox.getAsNumber(2).floatValue() - bbox.getAsNumber(0).floatValue());
-        float formHeight = Math.abs(bbox.getAsNumber(3).floatValue() - bbox.getAsNumber(1).floatValue());
-        return addForm(form, width, 0, 0, width / formWidth * formHeight, x, y);
-    }
-
-    /**
-     * Adds {@link PdfFormXObject} to the canvas and moves to the specified offset and scales vertically.
-     *
-     * @param form the formXObject to add
-     * @param x the horizontal offset of the formXObject position
-     * @param y the vertical offset of the formXObject position
-     * @param height the scale vertically coefficient
-     * @param dummy flag to note that the method works with the height parameter as opposed to the method
-     *              {@link #addForm(PdfFormXObject, float, float, float)}
-     * @return current canvas
-     * @deprecated will be removed in 7.2, use {@link #addFormFittedIntoRectangle(PdfFormXObject, Rectangle)} instead
-     */
-    @Deprecated
-    private PdfCanvas addForm(PdfFormXObject form, float x, float y, float height, boolean dummy) {
-        PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
-        if (bbox == null)
-            throw new PdfException(KernelExceptionMessageConstant.PDF_FORM_XOBJECT_HAS_INVALID_BBOX);
-        float formWidth = Math.abs(bbox.getAsNumber(2).floatValue() - bbox.getAsNumber(0).floatValue());
-        float formHeight = Math.abs(bbox.getAsNumber(3).floatValue() - bbox.getAsNumber(1).floatValue());
-        return addForm(form, height / formHeight * formWidth, 0, 0, height, x, y);
+        return addFormWithTransformationMatrix(form, 1, 0, 0, 1, x, y, true);
     }
 
     /**
@@ -2661,19 +2332,6 @@ public class PdfCanvas {
 
         float[] result = PdfCanvas.calculateTransformationMatrix(rectMin, rectMax, bBoxMin, bBoxMax);
         return addFormWithTransformationMatrix(form, result[0], result[1], result[2], result[3], result[4], result[5], false);
-    }
-
-    /**
-     * Adds {@link PdfFormXObject} to canvas and moves to the specified offset and scales.
-     *
-     * @param form the formXObject to add
-     * @param rect the rectangle containing x and y offset and scale information
-     * @return current canvas
-     * @deprecated will be removed in 7.2, use {@link #addFormFittedIntoRectangle(PdfFormXObject, Rectangle)} instead
-     */
-    @Deprecated
-    private PdfCanvas addForm(PdfFormXObject form, Rectangle rect) {
-        return addForm(form, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY());
     }
 
     /**

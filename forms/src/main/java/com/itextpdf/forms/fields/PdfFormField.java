@@ -2796,10 +2796,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         if (img != null) {
             PdfImageXObject imgXObj = new PdfImageXObject(img);
-            canvas.addXObject(imgXObj, width - borderWidth, 0, 0, height - borderWidth, borderWidth / 2, borderWidth / 2);
+            canvas.addXObjectWithTransformationMatrix(imgXObj, width - borderWidth, 0, 0, height - borderWidth,
+                    borderWidth / 2, borderWidth / 2);
             xObject.getResources().addImage(imgXObj);
         } else if (form != null) {
-            canvas.addXObject(form, (height - borderWidth) / form.getHeight(), 0, 0, (height - borderWidth) / form.getHeight(), borderWidth / 2, borderWidth / 2);
+            canvas.addXObjectWithTransformationMatrix(form, (height - borderWidth) / form.getHeight(), 0, 0,
+                    (height - borderWidth) / form.getHeight(), borderWidth / 2, borderWidth / 2);
             xObject.getResources().addForm(form);
         } else {
             drawButton(canvas, 0, 0, width, height, text, font, fontSize);

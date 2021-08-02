@@ -713,7 +713,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                     AffineTransform at = calcFieldAppTransformToAnnotRect(xObject, annotBBox);
                     float[] m = new float[6];
                     at.getMatrix(m);
-                    canvas.addXObject(xObject, m[0], m[1], m[2], m[3], m[4], m[5]);
+                    canvas.addXObjectWithTransformationMatrix(xObject, m[0], m[1], m[2], m[3], m[4], m[5]);
 
                     if (tagPointer != null) {
                         canvas.closeTag();

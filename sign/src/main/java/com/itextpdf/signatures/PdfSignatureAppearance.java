@@ -694,7 +694,8 @@ public class PdfSignatureAppearance {
             if (image != null) {
                 if (imageScale == 0) {
                     canvas = new PdfCanvas(n2, document);
-                    canvas.addImage(image, rotatedRect.getWidth(), 0, 0, rotatedRect.getHeight(), 0, 0);
+                    canvas.addImageWithTransformationMatrix(image, rotatedRect.getWidth(), 0, 0,
+                            rotatedRect.getHeight(), 0, 0);
                 } else {
                     float usableScale = imageScale;
 
@@ -708,7 +709,7 @@ public class PdfSignatureAppearance {
                     float y = (rotatedRect.getHeight() - h) / 2;
 
                     canvas = new PdfCanvas(n2, document);
-                    canvas.addImage(image, w, 0, 0, h, x, y);
+                    canvas.addImageWithTransformationMatrix(image, w, 0, 0, h, x, y);
                 }
             }
 
@@ -808,7 +809,7 @@ public class PdfSignatureAppearance {
                     float y = signatureRect.getBottom() + (signatureRect.getHeight() - imgHeight) / 2;
 
                     canvas = new PdfCanvas(n2, document);
-                    canvas.addImage(signatureGraphic, imgWidth, 0, 0, imgHeight, x, y);
+                    canvas.addImageWithTransformationMatrix(signatureGraphic, imgWidth, 0, 0, imgHeight, x, y);
                     break;
                 }
                 case GRAPHIC:
@@ -834,7 +835,7 @@ public class PdfSignatureAppearance {
                     float y = signatureRect.getBottom() + (signatureRect.getHeight() - imgHeight) / 2;
 
                     canvas = new PdfCanvas(n2, document);
-                    canvas.addImage(signatureGraphic, imgWidth, 0, 0, imgHeight, x, y);
+                    canvas.addImageWithTransformationMatrix(signatureGraphic, imgWidth, 0, 0, imgHeight, x, y);
                     break;
             }
 
@@ -858,7 +859,7 @@ public class PdfSignatureAppearance {
                 if (stream != null) {
                     topLayer.getResources().addForm(xobj, new PdfName("n0"));
                     PdfCanvas canvas1 = new PdfCanvas(topLayer, document);
-                    canvas1.addXObject(xobj, 1, 0, 0, 1, 0, 0);
+                    canvas1.addXObjectWithTransformationMatrix(xobj, 1, 0, 0, 1, 0, 0);
                 } else {
                     reuseAppearance = false;
 
@@ -871,12 +872,12 @@ public class PdfSignatureAppearance {
             if (!reuseAppearance) {
                 topLayer.getResources().addForm(n0, new PdfName("n0"));
                 PdfCanvas canvas1 = new PdfCanvas(topLayer, document);
-                canvas1.addXObject(n0, 1, 0, 0, 1, 0, 0);
+                canvas1.addXObjectWithTransformationMatrix(n0, 1, 0, 0, 1, 0, 0);
             }
 
             topLayer.getResources().addForm(n2, new PdfName("n2"));
             PdfCanvas canvas1 = new PdfCanvas(topLayer, document);
-            canvas1.addXObject(n2, 1, 0, 0, 1, 0, 0);
+            canvas1.addXObjectWithTransformationMatrix(n2, 1, 0, 0, 1, 0, 0);
         }
 
         PdfFormXObject napp = new PdfFormXObject(rotated);

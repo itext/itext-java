@@ -27,6 +27,7 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -70,13 +71,13 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
-        canvas.addImage(ImageDataFactory.create(sourceFolder + "Desert.jpg"), 36, 700, 100, true);
-        canvas.addImage(ImageDataFactory.create(sourceFolder + "bulb.gif"), 36, 600, 100, true);
-        canvas.addImage(ImageDataFactory.create(sourceFolder + "smpl.bmp"), 36, 500, 100, true);
-        canvas.addImage(ImageDataFactory.create(sourceFolder + "itext.png"), 36, 460, 100, true);
-        canvas.addImage(ImageDataFactory.create(sourceFolder + "0047478.jpg"), 36, 300, 100, true);
-        canvas.addImage(ImageDataFactory.create(sourceFolder + "map.jp2"), 36, 200, 100, true);
-        canvas.addImage(ImageDataFactory.create(sourceFolder + "amb.jb2"), 36, 30, 100, true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "Desert.jpg"), new Rectangle(36, 700, 100, 75), true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "bulb.gif"), new Rectangle(36, 600, 100, 100), true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "smpl.bmp"), new Rectangle(36, 500, 100, 100), true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "itext.png"), new Rectangle(36, 460, 100, 14.16f), true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "0047478.jpg"), new Rectangle(36, 300, 100, 141.41f), true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "map.jp2"), new Rectangle(36, 200, 100, 76.34f), true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "amb.jb2"), new Rectangle(36, 30, 100, 150), true);
 
         document.close();
 
@@ -101,37 +102,37 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
         InputStream stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "Desert.jpg"));
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
-        canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 700, 100, true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(baos.toByteArray()), new Rectangle( 36, 700, 100, 75), true);
         stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "bulb.gif"));
 
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
-        canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 600, 100, true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(baos.toByteArray()), new Rectangle(36, 600, 100, 100), true);
         stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "smpl.bmp"));
 
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
-        canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 500, 100, true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(baos.toByteArray()), new Rectangle(36, 500, 100, 100), true);
         stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "itext.png"));
 
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
-        canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 460, 100, true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(baos.toByteArray()), new Rectangle(36, 460, 100, 14.16f), true);
         stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "0047478.jpg"));
 
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
-        canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 300, 100, true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(baos.toByteArray()), new Rectangle(36, 300, 100, 141.41f), true);
         stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "map.jp2"));
 
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
-        canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 200, 100, true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(baos.toByteArray()), new Rectangle(36, 200, 100, 76.34f), true);
         stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "amb.jb2"));
 
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
-        canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 30, 100, true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(baos.toByteArray()), new Rectangle(36, 30, 100, 150), true);
 
         document.close();
 
@@ -149,7 +150,7 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
-        canvas.addImage(ImageDataFactory.create(sourceFolder + "bulb.gif"), 36, 600, 100, true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "bulb.gif"), new Rectangle(36, 600, 100, 100), true);
 
         document.close();
 
@@ -165,7 +166,7 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
-        canvas.addImage(ImageDataFactory.create(sourceFolder + "5.png"), 36, 700, 100, true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "5.png"), new Rectangle(36, 700, 100, 100), true);
 
         document.close();
 
@@ -181,7 +182,7 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
-        canvas.addImage(ImageDataFactory.create(sourceFolder + "3.png"), 36, 700, 100, true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "3.png"), new Rectangle(36, 700, 100, 100), true);
 
         document.close();
 

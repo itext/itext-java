@@ -167,6 +167,6 @@ public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
         }
 
         float v = y + height;
-        currentCanvas.addXObject(xObject, width, 0, 0, -height, x, v);
+        currentCanvas.addXObjectWithTransformationMatrix(xObject, width, 0, 0, -height, x, v);
     }
 }

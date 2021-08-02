@@ -522,7 +522,7 @@ public class PdfPagesTest extends ExtendedITextTest {
             PdfFormXObject pageCopy = sourcePage.copyAsFormXObject(outputPdf);
             PdfPage page = outputPdf.addNewPage(PageSize.A4);
             PdfCanvas outputCanvas = new PdfCanvas(page);
-            outputCanvas.addXObject(pageCopy, scaleX, 0, 0, scaleY, 0, 0);
+            outputCanvas.addXObjectWithTransformationMatrix(pageCopy, scaleX, 0, 0, scaleY, 0, 0);
             page.flush();
         }
 

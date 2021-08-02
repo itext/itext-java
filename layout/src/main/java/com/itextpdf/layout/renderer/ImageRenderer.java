@@ -340,7 +340,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
 
         final float renderedImageShiftX = ((float) width - renderedImageWidth) / 2;
         final float renderedImageShiftY = ((float) height - renderedImageHeight) / 2;
-        canvas.addXObject(xObject, matrix[0], matrix[1], matrix[2], matrix[3], (float) fixedXPosition +
+        canvas.addXObjectWithTransformationMatrix(xObject, matrix[0], matrix[1], matrix[2], matrix[3], (float) fixedXPosition +
                 deltaX + renderedImageShiftX, (float) fixedYPosition + renderedImageShiftY);
 
         endElementOpacityApplying(drawContext);
