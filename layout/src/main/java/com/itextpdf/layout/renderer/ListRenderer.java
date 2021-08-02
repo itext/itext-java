@@ -367,17 +367,26 @@ public class ListRenderer extends BlockRenderer {
             listItemNum = 0;
             for (IRenderer childRenderer : childRenderers) {
                 childRenderer.setParent(this);
-                childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
-                UnitValue marginLeftUV = childRenderer.getProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(0f));
-                if (!marginLeftUV.isPointValue()) {
+
+                // Symbol indent's value should be summed with the margin's value
+                boolean isRtl = BaseDirection.RIGHT_TO_LEFT ==
+                        childRenderer.<BaseDirection>getProperty(Property.BASE_DIRECTION);
+                int marginToSet = isRtl ? Property.MARGIN_RIGHT : Property.MARGIN_LEFT;
+                childRenderer.deleteOwnProperty(marginToSet);
+                UnitValue marginToSetUV =
+                        childRenderer.<UnitValue>getProperty(marginToSet, UnitValue.createPointValue(0f));
+                if (!marginToSetUV.isPointValue()) {
                     Logger logger = LoggerFactory.getLogger(ListRenderer.class);
-                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+                    logger.error(MessageFormatUtil.format(
+                            LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                            marginToSet));
                 }
-                float calculatedMargin = marginLeftUV.getValue();
+                float calculatedMargin = marginToSetUV.getValue();
                 if ((ListSymbolPosition) getListItemOrListProperty(childRenderer, this, Property.LIST_SYMBOL_POSITION) == ListSymbolPosition.DEFAULT) {
                     calculatedMargin += maxSymbolWidth + (float) (symbolIndent != null ? symbolIndent : 0f);
                 }
-                childRenderer.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(calculatedMargin));
+                childRenderer.setProperty(marginToSet, UnitValue.createPointValue(calculatedMargin));
+
                 IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
                 ((ListItemRenderer) childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);
                 if (symbolRenderer != null) {
