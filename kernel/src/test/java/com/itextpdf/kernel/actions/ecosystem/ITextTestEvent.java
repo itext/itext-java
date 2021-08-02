@@ -30,20 +30,17 @@ import com.itextpdf.kernel.counter.event.IMetaInfo;
 
 public class ITextTestEvent extends AbstractProductProcessITextEvent {
     private final String eventType;
-    private final String productName;
 
     public ITextTestEvent(SequenceId sequenceId, IMetaInfo metaInfo, String eventType,
             String productName) {
-        super(sequenceId, new ProductData("", "", "", 2000, 2100), metaInfo, EventConfirmationType.ON_CLOSE);
+        super(sequenceId, new ProductData("", productName, "", 2000, 2100), metaInfo, EventConfirmationType.ON_CLOSE);
         this.eventType = eventType;
-        this.productName = productName;
     }
 
     public ITextTestEvent(SequenceId sequenceId, ProductData productData, IMetaInfo metaInfo, String eventType,
             EventConfirmationType confirmationType) {
         super(sequenceId, productData, metaInfo, confirmationType);
         this.eventType = eventType;
-        this.productName = productData.getProductName();
     }
 
     public ITextTestEvent(SequenceId sequenceId, ProductData productData, IMetaInfo metaInfo, String eventType) {
@@ -53,10 +50,5 @@ public class ITextTestEvent extends AbstractProductProcessITextEvent {
     @Override
     public String getEventType() {
         return eventType;
-    }
-
-    @Override
-    public String getProductName() {
-        return productName;
     }
 }

@@ -101,6 +101,15 @@ public abstract class AbstractITextConfigurationEvent extends AbstractITextEvent
     }
 
     /**
+     * Registers internal namespace.
+     *
+     * @param namespace is the namespace to register
+     */
+    protected void registerInternalNamespace(String namespace) {
+        AbstractITextEvent.registerNamespace(namespace);
+    }
+
+    /**
      * Method defines the logic of action processing.
      */
     protected abstract void doAction();

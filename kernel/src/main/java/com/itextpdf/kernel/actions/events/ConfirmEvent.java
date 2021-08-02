@@ -65,9 +65,4 @@ public class ConfirmEvent extends AbstractEventWrapper {
         }
         return event;
     }
-
-    @Override
-    public Class<?> getClassFromContext() {
-        return getEvent().getClassFromContext();
-    }
 }

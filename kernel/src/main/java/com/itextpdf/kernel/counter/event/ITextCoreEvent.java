@@ -70,11 +70,6 @@ public class ITextCoreEvent extends AbstractProductProcessITextEvent {
     }
 
     @Override
-    public String getProductName() {
-        return ProductNameConstant.ITEXT_CORE;
-    }
-
-    @Override
     public String getEventType() {
         return eventType;
     }

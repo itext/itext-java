@@ -64,16 +64,7 @@ public class ContextManager {
 
     static {
         ContextManager local = new ContextManager();
-        local.registerGenericContextForProducts(Arrays.asList(
-                NamespaceConstant.CORE_IO,
-                NamespaceConstant.CORE_KERNEL,
-                NamespaceConstant.CORE_LAYOUT,
-                NamespaceConstant.CORE_BARCODES,
-                NamespaceConstant.CORE_PDFA,
-                NamespaceConstant.CORE_SIGN,
-                NamespaceConstant.CORE_FORMS,
-                NamespaceConstant.CORE_SXP,
-                NamespaceConstant.CORE_SVG),
+        local.registerGenericContextForProducts(NamespaceConstant.ITEXT_CORE_NAMESPACES,
                 Collections.singletonList(NamespaceConstant.ITEXT),
                 Collections.singleton(ProductNameConstant.ITEXT_CORE));
 

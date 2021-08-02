@@ -42,6 +42,7 @@
  */
 package com.itextpdf.layout.testutil;
 
+import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.actions.data.ProductData;
 import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.events.EventConfirmationType;
@@ -49,16 +50,11 @@ import com.itextpdf.kernel.actions.sequence.SequenceId;
 
 public  class TestProductEvent extends AbstractProductProcessITextEvent {
     public TestProductEvent(SequenceId sequenceId) {
-        super(sequenceId, new ProductData("itext-core", "layout", "", 1998, 2100), null, EventConfirmationType.ON_CLOSE);
+        super(sequenceId, ITextCoreProductData.getInstance(), null, EventConfirmationType.ON_CLOSE);
     }
 
     @Override
     public String getEventType() {
         return "testEvent";
-    }
-
-    @Override
-    public String getProductName() {
-        return getProductData().getPublicProductName();
     }
 }

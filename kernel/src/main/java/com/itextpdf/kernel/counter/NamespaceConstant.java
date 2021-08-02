@@ -43,7 +43,11 @@
  */
 package com.itextpdf.kernel.counter;
 
-public class NamespaceConstant {
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+public final class NamespaceConstant {
     
     public static final String ITEXT = "com.itextpdf";
 
@@ -65,4 +69,19 @@ public class NamespaceConstant {
     public static final String PDF_SWEEP = ITEXT + ".pdfcleanup";
     public static final String PDF_OCR = ITEXT + ".pdfocr";
     public static final String PDF_OCR_TESSERACT4 = PDF_OCR + ".tesseract4";
+
+    public static final List<String> ITEXT_CORE_NAMESPACES = Collections.unmodifiableList(Arrays.asList(
+            NamespaceConstant.CORE_IO,
+            NamespaceConstant.CORE_KERNEL,
+            NamespaceConstant.CORE_LAYOUT,
+            NamespaceConstant.CORE_BARCODES,
+            NamespaceConstant.CORE_PDFA,
+            NamespaceConstant.CORE_SIGN,
+            NamespaceConstant.CORE_FORMS,
+            NamespaceConstant.CORE_SXP,
+            NamespaceConstant.CORE_SVG)
+    );
+
+    private NamespaceConstant() {
+    }
 }

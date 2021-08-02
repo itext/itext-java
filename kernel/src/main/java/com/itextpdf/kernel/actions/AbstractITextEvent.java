@@ -22,19 +22,40 @@
  */
 package com.itextpdf.kernel.actions;
 
+import com.itextpdf.kernel.counter.NamespaceConstant;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * Abstract class which defines events only for internal usage.
  */
 public abstract class AbstractITextEvent implements IBaseEvent {
-    private static final String INTERNAL_PACKAGE = "com.itextpdf.";
     private static final String ONLY_FOR_INTERNAL_USE = "AbstractITextEvent is only for internal usage.";
+
+    private static final Map<String, Object> INTERNAL_PACKAGES = new ConcurrentHashMap<>();
+
+    static {
+        registerNamespace(NamespaceConstant.ITEXT);
+    }
 
     /**
      * Creates an instance of abstract iText event. Only for internal usage.
      */
     public AbstractITextEvent() {
-        if (! this.getClass().getName().startsWith(INTERNAL_PACKAGE)) {
+        boolean isUnknown = true;
+        for (String namespace : INTERNAL_PACKAGES.keySet()) {
+            if (this.getClass().getName().startsWith(namespace)) {
+                isUnknown = false;
+                break;
+            }
+        }
+        if (isUnknown) {
             throw new UnsupportedOperationException(ONLY_FOR_INTERNAL_USE);
         }
+    }
+
+    static void registerNamespace(String namespace) {
+        INTERNAL_PACKAGES.put(namespace + ".", new Object());
     }
 }

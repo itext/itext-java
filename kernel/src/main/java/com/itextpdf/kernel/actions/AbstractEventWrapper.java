@@ -67,12 +67,12 @@ public abstract class AbstractEventWrapper extends AbstractProductProcessITextEv
     }
 
     @Override
-    public String getEventType() {
-        return event.getEventType();
+    public Class<?> getClassFromContext() {
+        return getEvent().getClassFromContext();
     }
 
     @Override
-    public String getProductName() {
-        return event.getProductName();
+    public String getEventType() {
+        return getEvent().getEventType();
     }
 }
