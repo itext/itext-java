@@ -31,7 +31,7 @@ import com.itextpdf.kernel.actions.ProductNameConstant;
 public class ITextCoreProductData {
     private static final String CORE_PUBLIC_PRODUCT_NAME = "Core";
     private static final String CORE_VERSION = "7.2.0-SNAPSHOT";
-    private static final int CORE_COPYRIGHT_SINCE = 1998;
+    private static final int CORE_COPYRIGHT_SINCE = 2000;
     private static final int CORE_COPYRIGHT_TO = 2021;
 
     private static final ProductData ITEXT_PRODUCT_DATA = new ProductData(CORE_PUBLIC_PRODUCT_NAME,
