@@ -125,8 +125,7 @@ public class PdfReader implements Closeable {
      * @throws IOException if an I/O error occurs
      */
     public PdfReader(IRandomAccessSource byteSource, ReaderProperties properties) throws IOException {
-        this.properties = properties;
-        this.tokens = getOffsetTokeniser(byteSource);
+        this(byteSource, properties, false);
     }
 
     /**
@@ -138,7 +137,7 @@ public class PdfReader implements Closeable {
      * @throws IOException on error
      */
     public PdfReader(InputStream is, ReaderProperties properties) throws IOException {
-        this(new RandomAccessSourceFactory().createSource(is), properties);
+        this(new RandomAccessSourceFactory().createSource(is), properties, true);
     }
 
     /**
@@ -175,7 +174,8 @@ public class PdfReader implements Closeable {
                 new RandomAccessSourceFactory()
                         .setForceRead(false)
                         .createBestSource(filename),
-                properties
+                properties,
+                true
         );
     }
 
@@ -188,6 +188,11 @@ public class PdfReader implements Closeable {
     public PdfReader(String filename) throws IOException {
         this(filename, new ReaderProperties());
 
+    }
+
+    PdfReader(IRandomAccessSource byteSource, ReaderProperties properties, boolean closeStream) throws IOException {
+        this.properties = properties;
+        this.tokens = getOffsetTokeniser(byteSource, closeStream);
     }
 
     /**
@@ -1312,7 +1317,8 @@ public class PdfReader implements Closeable {
      * @return a tokeniser that is guaranteed to start at the PDF header
      * @throws IOException if there is a problem reading the byte source
      */
-    private static PdfTokenizer getOffsetTokeniser(IRandomAccessSource byteSource) throws IOException {
+    private static PdfTokenizer getOffsetTokeniser(IRandomAccessSource byteSource, boolean closeStream)
+            throws IOException {
         com.itextpdf.io.IOException possibleException = null;
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(byteSource));
         int offset;
@@ -1322,7 +1328,7 @@ public class PdfReader implements Closeable {
             possibleException = ex;
             throw possibleException;
         } finally {
-            if (possibleException != null) {
+            if (possibleException != null && closeStream) {
                 tok.close();
             }
         }
