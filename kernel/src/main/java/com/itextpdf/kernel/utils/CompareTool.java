@@ -957,9 +957,12 @@ public class CompareTool {
         this.cmpPdf = cmpPdf;
         outPdfName = new File(outPdf).getName();
         cmpPdfName = new File(cmpPdf).getName();
-        outImage = outPdfName + "-%03d.png";
-        if (cmpPdfName.startsWith("cmp_")) cmpImage = cmpPdfName + "-%03d.png";
-        else cmpImage = "cmp_" + cmpPdfName + "-%03d.png";
+        outImage = outPdfName;
+        if (cmpPdfName.startsWith("cmp_")) {
+            cmpImage = cmpPdfName;
+        } else {
+            cmpImage = "cmp_" + cmpPdfName;
+        }
     }
 
     private void setPassword(byte[] outPass, byte[] cmpPass) {

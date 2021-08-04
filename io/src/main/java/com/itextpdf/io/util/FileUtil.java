@@ -43,11 +43,6 @@
  */
 package com.itextpdf.io.util;
 
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -55,6 +50,7 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -63,11 +59,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import org.slf4j.LoggerFactory;
 
 /**
  * This file is a helper class for internal usage only.
@@ -216,6 +216,86 @@ public final class FileUtil {
      */
     public static String parentDirectory(URL url) throws URISyntaxException {
             return url.toURI().resolve(".").toString();
+    }
+
+    /**
+     * Creates a temporary file.
+     *
+     * @param tempFilePrefix the prefix of the copied file's name
+     * @param tempFilePostfix the postfix of the copied file's name
+     *
+     * @return the path to the copied file
+     */
+    public static File createTempFile(String tempFilePrefix, String tempFilePostfix) throws IOException {
+        return File.createTempFile(tempFilePrefix, tempFilePostfix);
+    }
+
+    /**
+     * Creates a temporary copy of a file.
+     *
+     * @param file the path to the file to be copied
+     * @param tempFilePrefix the prefix of the copied file's name
+     * @param tempFilePostfix the postfix of the copied file's name
+     *
+     * @return the path to the copied file
+     */
+    public static String createTempCopy(String file, String tempFilePrefix, String tempFilePostfix)
+            throws IOException {
+        Path replacementFilePath = null;
+        try {
+            replacementFilePath = Files.createTempFile(tempFilePrefix, tempFilePostfix);
+            Path pathToPassedFile = Paths.get(file);
+            Files.copy(pathToPassedFile, replacementFilePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            if (null != replacementFilePath) {
+                FileUtil.removeFiles(new String[] {replacementFilePath.toString()});
+            }
+            throw e;
+        }
+        return replacementFilePath.toString();
+    }
+
+    /**
+     * Creates a copy of a file.
+     *
+     * @param inputFile the path to the file to be copied
+     * @param outputFile the path, to which the passed file should be copied
+     */
+    public static void copy(String inputFile, String outputFile)
+            throws IOException {
+        Files.copy(Paths.get(inputFile), Paths.get(outputFile), StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    /**
+     * Creates a temporary directory.
+     *
+     * @param tempFilePrefix the prefix of the temporary directory's name
+     * @return the path to the temporary directory
+     */
+    public static String createTempDirectory(String tempFilePrefix)
+            throws IOException {
+        return Files.createTempDirectory(tempFilePrefix).toString();
+    }
+
+    /**
+     * Removes all of the passed files.
+     *
+     * @param paths paths to files, which should be removed
+     *
+     * @return true if all the files have been successfully removed, false otherwise
+     */
+    public static boolean removeFiles(String[] paths) {
+        boolean allFilesAreRemoved = true;
+        for (String path : paths) {
+            try {
+                if (null != path) {
+                    Files.delete(Paths.get(path));
+                }
+            } catch (Exception e) {
+                allFilesAreRemoved = false;
+            }
+        }
+        return allFilesAreRemoved;
     }
 
     private static class CaseSensitiveFileComparator implements Comparator<File> {
