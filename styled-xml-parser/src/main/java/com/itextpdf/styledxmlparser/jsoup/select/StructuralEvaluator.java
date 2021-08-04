@@ -1,6 +1,29 @@
-package org.jsoup.select;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.nodes.Element;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.select;
+
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 
 /**
  * Base structural evaluator.
@@ -29,7 +52,7 @@ abstract class StructuralEvaluator extends Evaluator {
 
         @Override
         public String toString() {
-            return String.format(":has(%s)", evaluator);
+            return MessageFormatUtil.format(":has({0})", evaluator);
         }
     }
 
@@ -44,7 +67,7 @@ abstract class StructuralEvaluator extends Evaluator {
 
         @Override
         public String toString() {
-            return String.format(":not(%s)", evaluator);
+            return MessageFormatUtil.format(":not({0})", evaluator);
         }
     }
 
@@ -57,20 +80,20 @@ abstract class StructuralEvaluator extends Evaluator {
             if (root == element)
                 return false;
 
-            Element parent = element.parent();
+            Element parent = (Element) element.parent();
             while (parent != null) {
                 if (evaluator.matches(root, parent))
                     return true;
                 if (parent == root)
                     break;
-                parent = parent.parent();
+                parent = (Element) parent.parent();
             }
             return false;
         }
 
         @Override
         public String toString() {
-            return String.format("%s ", evaluator);
+            return MessageFormatUtil.format("{0} ", evaluator);
         }
     }
 
@@ -83,13 +106,13 @@ abstract class StructuralEvaluator extends Evaluator {
             if (root == element)
                 return false;
 
-            Element parent = element.parent();
+            Element parent = (Element) element.parent();
             return parent != null && evaluator.matches(root, parent);
         }
 
         @Override
         public String toString() {
-            return String.format("%s > ", evaluator);
+            return MessageFormatUtil.format("{0} > ", evaluator);
         }
     }
 
@@ -115,7 +138,7 @@ abstract class StructuralEvaluator extends Evaluator {
 
         @Override
         public String toString() {
-            return String.format("%s ~ ", evaluator);
+            return MessageFormatUtil.format("{0} ~ ", evaluator);
         }
     }
 
@@ -134,7 +157,7 @@ abstract class StructuralEvaluator extends Evaluator {
 
         @Override
         public String toString() {
-            return String.format("%s + ", evaluator);
+            return MessageFormatUtil.format("{0} + ", evaluator);
         }
     }
 }

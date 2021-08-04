@@ -105,6 +105,11 @@ class DefaultSvgNodeRendererMapper {
         result.put(SvgConstants.Tags.USE, UseSvgNodeRenderer.class);
         result.put(SvgConstants.Tags.TEXT_LEAF, TextLeafSvgNodeRenderer.class);
 
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        result.put(SvgConstants.Tags.CLIP_PATH.toLowerCase(), ClipPathSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.LINEAR_GRADIENT.toLowerCase(), LinearGradientSvgNodeRenderer.class);
+        result.put(SvgConstants.Tags.TEXT_LEAF.toLowerCase(), TextLeafSvgNodeRenderer.class);
+
         return result;
     }
 

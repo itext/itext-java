@@ -1,17 +1,36 @@
-package org.jsoup.nodes;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.helper.DataUtil;
-import org.jsoup.helper.Validate;
-import org.jsoup.internal.StringUtil;
-import org.jsoup.parser.ParseSettings;
-import org.jsoup.parser.Parser;
-import org.jsoup.parser.Tag;
-import org.jsoup.select.Elements;
-import org.jsoup.select.Evaluator;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-import javax.annotation.Nullable;
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.nodes;
+
+import com.itextpdf.styledxmlparser.jsoup.helper.DataUtil;
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
+import com.itextpdf.styledxmlparser.jsoup.parser.ParseSettings;
+import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
+import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
+import com.itextpdf.styledxmlparser.jsoup.select.Elements;
+import com.itextpdf.styledxmlparser.jsoup.select.Evaluator;
+
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
@@ -22,7 +41,6 @@ import java.util.List;
 
  @author Jonathan Hedley, jonathan@hedley.net */
 public class Document extends Element {
-    private @Nullable Connection connection; // the connection this doc was fetched from, if any
     private OutputSettings outputSettings = new OutputSettings();
     private Parser parser; // the parser used to parse this document
     private QuirksMode quirksMode = QuirksMode.noQuirks;
@@ -32,7 +50,7 @@ public class Document extends Element {
     /**
      Create a new, empty Document.
      @param baseUri base URI of document
-     @see org.jsoup.Jsoup#parse
+     @see com.itextpdf.styledxmlparser.jsoup.Jsoup#parse
      @see #createShell
      */
     public Document(String baseUri) {
@@ -69,23 +87,10 @@ public class Document extends Element {
     }
 
     /**
-     Returns the Connection (Request/Response) object that was used to fetch this document, if any; otherwise, a new
-     default Connection object. This can be used to continue a session, preserving settings and cookies, etc.
-     @return the Connection (session) associated with this Document, or an empty one otherwise.
-     @see Connection#newRequest()
-     */
-    public Connection connection() {
-        if (connection == null)
-            return Jsoup.newSession();
-        else
-            return connection;
-    }
-
-    /**
      * Returns this Document's doctype.
      * @return document type, or null if not set
      */
-    public @Nullable DocumentType documentType() {
+    public DocumentType documentType() {
         for (Node node : childNodes) {
             if (node instanceof DocumentType)
                 return (DocumentType) node;
@@ -93,8 +98,7 @@ public class Document extends Element {
                 break;
         }
         return null;
-        // todo - add a set document type?
-    }
+        }
 
     /**
      Find the root HTML element, or create it if it doesn't exist.
@@ -267,17 +271,18 @@ public class Document extends Element {
      * OutputSettings.charset(Charset)} but in addition it updates the
      * charset / encoding element within the document.
      * 
-     * <p>This enables
-     * {@link #updateMetaCharsetElement(boolean) meta charset update}.</p>
+     * <p>
+     * This enables
+     * {@link #updateMetaCharsetElement(boolean) meta charset update}.
+     * <p>
+     * If there's no element with charset / encoding information yet it will be created.
+     * Obsolete charset / encoding definitions are removed!
      * 
-     * <p>If there's no element with charset / encoding information yet it will
-     * be created. Obsolete charset / encoding definitions are removed!</p>
-     * 
-     * <p><b>Elements used:</b></p>
+     * <p><b>Elements used:</b>
      * 
      * <ul>
-     * <li><b>Html:</b> <i>&lt;meta charset="CHARSET"&gt;</i></li>
-     * <li><b>Xml:</b> <i>&lt;?xml version="1.0" encoding="CHARSET"&gt;</i></li>
+     * <li><b>Html:</b> <i>&lt;meta charset="CHARSET"&gt;</i>
+     * <li><b>Xml:</b> <i>&lt;?xml version="1.0" encoding="CHARSET"&gt;</i>
      * </ul>
      * 
      * @param charset Charset
@@ -308,8 +313,8 @@ public class Document extends Element {
      * updated on changes through {@link #charset(java.nio.charset.Charset)
      * Document.charset(Charset)} or not.
      * 
-     * <p>If set to <tt>false</tt> <i>(default)</i> there are no elements
-     * modified.</p>
+     * <p>
+     * If set to <tt>false</tt> <i>(default)</i> there are no elements modified.
      * 
      * @param update If <tt>true</tt> the element updated on charset
      * changes, <tt>false</tt> if not
@@ -333,9 +338,9 @@ public class Document extends Element {
     }
 
     @Override
-    public Document clone() {
+    public Object clone() {
         Document clone = (Document) super.clone();
-        clone.outputSettings = this.outputSettings.clone();
+        clone.outputSettings = (OutputSettings) this.outputSettings.clone();
         return clone;
     }
     
@@ -346,16 +351,15 @@ public class Document extends Element {
      * <tt>true</tt>, otherwise this method does nothing.
      * 
      * <ul>
-     * <li>An existing element gets updated with the current charset</li>
-     * <li>If there's no element yet it will be inserted</li>
-     * <li>Obsolete elements are removed</li>
+     * <li>An existing element gets updated with the current charset
+     * <li>If there's no element yet it will be inserted
+     * <li>Obsolete elements are removed
      * </ul>
-     * 
-     * <p><b>Elements used:</b></p>
+     * <b>Elements used:</b>
      * 
      * <ul>
-     * <li><b>Html:</b> <i>&lt;meta charset="CHARSET"&gt;</i></li>
-     * <li><b>Xml:</b> <i>&lt;?xml version="1.0" encoding="CHARSET"&gt;</i></li>
+     * <li><b>Html:</b> <i>&lt;meta charset="CHARSET"&gt;</i>
+     * <li><b>Xml:</b> <i>&lt;?xml version="1.0" encoding="CHARSET"&gt;</i>
      * </ul>
      */
     private void ensureMetaCharsetElement() {
@@ -407,7 +411,7 @@ public class Document extends Element {
         private Entities.EscapeMode escapeMode = Entities.EscapeMode.base;
         private Charset charset = DataUtil.UTF_8;
         private final ThreadLocal<CharsetEncoder> encoderThreadLocal = new ThreadLocal<>(); // initialized by start of OuterHtmlVisitor
-        @Nullable Entities.CoreCharset coreCharset; // fast encoders for ascii and utf8
+        Entities.CoreCharset coreCharset; // fast encoders for ascii and utf8
 
         private boolean prettyPrint = true;
         private boolean outline = false;
@@ -475,7 +479,7 @@ public class Document extends Element {
             // created at start of OuterHtmlVisitor so each pass has own encoder, so OutputSettings can be shared among threads
             CharsetEncoder encoder = charset.newEncoder();
             encoderThreadLocal.set(encoder);
-            coreCharset = Entities.CoreCharset.byName(encoder.charset().name());
+            coreCharset = Entities.getCoreCharsetByName(encoder.charset().name());
             return encoder;
         }
 
@@ -561,17 +565,20 @@ public class Document extends Element {
         }
 
         @Override
-        public OutputSettings clone() {
-            OutputSettings clone;
+        public Object clone() {
+            OutputSettings clone = (OutputSettings) partialClone();
+            // new charset and charset encoder
+            clone.charset(charset.name());
+            clone.escapeMode = escapeMode;
+            return clone;
+        }
+
+        private Object partialClone() {
             try {
-                clone = (OutputSettings) super.clone();
+                return super.clone();
             } catch (CloneNotSupportedException e) {
                 throw new RuntimeException(e);
             }
-            clone.charset(charset.name()); // new charset and charset encoder
-            clone.escapeMode = Entities.EscapeMode.valueOf(escapeMode.name());
-            // indentAmount, prettyPrint are primitives so object.clone() will handle
-            return clone;
         }
     }
 
@@ -623,21 +630,6 @@ public class Document extends Element {
      */
     public Document parser(Parser parser) {
         this.parser = parser;
-        return this;
-    }
-
-    /**
-     Set the Connection used to fetch this document. This Connection is used as a session object when further requests are
-     made (e.g. when a form is submitted).
-
-     @param connection to set
-     @return this document, for chaining
-     @see Connection#newRequest()
-     @since 1.14.1
-     */
-    public Document connection(Connection connection) {
-        Validate.notNull(connection);
-        this.connection = connection;
         return this;
     }
 }

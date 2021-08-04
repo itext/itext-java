@@ -1,10 +1,31 @@
-package org.jsoup.nodes;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.SerializationException;
-import org.jsoup.internal.StringUtil;
-import org.jsoup.helper.Validate;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-import javax.annotation.Nullable;
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.nodes;
+
+import com.itextpdf.styledxmlparser.jsoup.SerializationException;
+import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
@@ -21,8 +42,8 @@ public class Attribute implements Map.Entry<String, String>, Cloneable  {
     };
 
     private String key;
-    @Nullable private String val;
-    @Nullable Attributes parent; // used to update the holding Attributes when the key / value is changed via this interface
+    private String val;
+    Attributes parent; // used to update the holding Attributes when the key / value is changed via this interface
 
     /**
      * Create a new attribute from unencoded (raw) key and value.
@@ -30,7 +51,7 @@ public class Attribute implements Map.Entry<String, String>, Cloneable  {
      * @param value attribute value (may be null)
      * @see #createFromEncoded
      */
-    public Attribute(String key, @Nullable String value) {
+    public Attribute(String key, String value) {
         this(key, value, null);
     }
 
@@ -40,7 +61,7 @@ public class Attribute implements Map.Entry<String, String>, Cloneable  {
      * @param val attribute value (may be null)
      * @param parent the containing Attributes (this Attribute is not automatically added to said Attributes)
      * @see #createFromEncoded*/
-    public Attribute(String key, @Nullable String val, @Nullable Attributes parent) {
+    public Attribute(String key, String val, Attributes parent) {
         Validate.notNull(key);
         key = key.trim();
         Validate.notEmpty(key); // trimming could potentially make empty, so validate here
@@ -120,7 +141,7 @@ public class Attribute implements Map.Entry<String, String>, Cloneable  {
         return StringUtil.releaseBuilder(sb);
     }
 
-    protected static void html(String key, @Nullable String val, Appendable accum, Document.OutputSettings out) throws IOException {
+    protected static void html(String key, String val, Appendable accum, Document.OutputSettings out) throws IOException {
         accum.append(key);
         if (!shouldCollapseAttribute(key, val, out)) {
             accum.append("=\"");
@@ -171,7 +192,7 @@ public class Attribute implements Map.Entry<String, String>, Cloneable  {
         return shouldCollapseAttribute(key, val, out);
     }
 
-    protected static boolean shouldCollapseAttribute(final String key, @Nullable final String val, final Document.OutputSettings out) {
+    protected static boolean shouldCollapseAttribute(final String key, final String val, final Document.OutputSettings out) {
         return (
             out.syntax() == Document.OutputSettings.Syntax.html &&
                 (val == null || (val.isEmpty() || val.equalsIgnoreCase(key)) && Attribute.isBooleanAttribute(key)));
@@ -201,9 +222,9 @@ public class Attribute implements Map.Entry<String, String>, Cloneable  {
     }
 
     @Override
-    public Attribute clone() {
+    public Object clone() {
         try {
-            return (Attribute) super.clone();
+            return super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }

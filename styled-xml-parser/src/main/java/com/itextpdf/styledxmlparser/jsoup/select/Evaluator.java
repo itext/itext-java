@@ -1,21 +1,42 @@
-package org.jsoup.select;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.helper.Validate;
-import org.jsoup.nodes.Comment;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.DocumentType;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.nodes.PseudoTextElement;
-import org.jsoup.nodes.TextNode;
-import org.jsoup.nodes.XmlDeclaration;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.select;
+
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.internal.Normalizer;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Comment;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
+import com.itextpdf.styledxmlparser.jsoup.nodes.DocumentType;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
+import com.itextpdf.styledxmlparser.jsoup.nodes.PseudoTextElement;
+import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
+import com.itextpdf.styledxmlparser.jsoup.nodes.XmlDeclaration;
 
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.jsoup.internal.Normalizer.lowerCase;
-import static org.jsoup.internal.Normalizer.normalize;
 
 
 /**
@@ -52,7 +73,7 @@ public abstract class Evaluator {
 
         @Override
         public String toString() {
-            return String.format("%s", tagName);
+            return MessageFormatUtil.format("{0}", tagName);
         }
     }
 
@@ -74,7 +95,7 @@ public abstract class Evaluator {
 
         @Override
         public String toString() {
-            return String.format("%s", tagName);
+            return MessageFormatUtil.format("{0}", tagName);
         }
     }
 
@@ -95,7 +116,7 @@ public abstract class Evaluator {
 
         @Override
         public String toString() {
-            return String.format("#%s", id);
+            return MessageFormatUtil.format("#{0}", id);
         }
 
     }
@@ -117,7 +138,7 @@ public abstract class Evaluator {
 
         @Override
         public String toString() {
-            return String.format(".%s", className);
+            return MessageFormatUtil.format(".{0}", className);
         }
 
     }
@@ -139,7 +160,7 @@ public abstract class Evaluator {
 
         @Override
         public String toString() {
-            return String.format("[%s]", key);
+            return MessageFormatUtil.format("[{0}]", key);
         }
 
     }
@@ -152,14 +173,14 @@ public abstract class Evaluator {
 
         public AttributeStarting(String keyPrefix) {
             Validate.notEmpty(keyPrefix);
-            this.keyPrefix = lowerCase(keyPrefix);
+            this.keyPrefix = Normalizer.lowerCase(keyPrefix);
         }
 
         @Override
         public boolean matches(Element root, Element element) {
-            List<org.jsoup.nodes.Attribute> values = element.attributes().asList();
-            for (org.jsoup.nodes.Attribute attribute : values) {
-                if (lowerCase(attribute.getKey()).startsWith(keyPrefix))
+            List<com.itextpdf.styledxmlparser.jsoup.nodes.Attribute> values = element.attributes().asList();
+            for (com.itextpdf.styledxmlparser.jsoup.nodes.Attribute attribute : values) {
+                if (Normalizer.lowerCase(attribute.getKey()).startsWith(keyPrefix))
                     return true;
             }
             return false;
@@ -167,7 +188,7 @@ public abstract class Evaluator {
 
         @Override
         public String toString() {
-            return String.format("[^%s]", keyPrefix);
+            return MessageFormatUtil.format("[^{0}]", keyPrefix);
         }
 
     }
@@ -187,7 +208,7 @@ public abstract class Evaluator {
 
         @Override
         public String toString() {
-            return String.format("[%s=%s]", key, value);
+            return MessageFormatUtil.format("[{0}={1}]", key, value);
         }
 
     }
@@ -207,7 +228,7 @@ public abstract class Evaluator {
 
         @Override
         public String toString() {
-            return String.format("[%s!=%s]", key, value);
+            return MessageFormatUtil.format("[{0}!={1}]", key, value);
         }
 
     }
@@ -222,12 +243,12 @@ public abstract class Evaluator {
 
         @Override
         public boolean matches(Element root, Element element) {
-            return element.hasAttr(key) && lowerCase(element.attr(key)).startsWith(value); // value is lower case already
+            return element.hasAttr(key) && Normalizer.lowerCase(element.attr(key)).startsWith(value); // value is lower case already
         }
 
         @Override
         public String toString() {
-            return String.format("[%s^=%s]", key, value);
+            return MessageFormatUtil.format("[{0}^={1}]", key, value);
         }
 
     }
@@ -242,12 +263,12 @@ public abstract class Evaluator {
 
         @Override
         public boolean matches(Element root, Element element) {
-            return element.hasAttr(key) && lowerCase(element.attr(key)).endsWith(value); // value is lower case
+            return element.hasAttr(key) && Normalizer.lowerCase(element.attr(key)).endsWith(value); // value is lower case
         }
 
         @Override
         public String toString() {
-            return String.format("[%s$=%s]", key, value);
+            return MessageFormatUtil.format("[{0}$={1}]", key, value);
         }
 
     }
@@ -262,12 +283,12 @@ public abstract class Evaluator {
 
         @Override
         public boolean matches(Element root, Element element) {
-            return element.hasAttr(key) && lowerCase(element.attr(key)).contains(value); // value is lower case
+            return element.hasAttr(key) && Normalizer.lowerCase(element.attr(key)).contains(value); // value is lower case
         }
 
         @Override
         public String toString() {
-            return String.format("[%s*=%s]", key, value);
+            return MessageFormatUtil.format("[{0}*={1}]", key, value);
         }
 
     }
@@ -280,7 +301,7 @@ public abstract class Evaluator {
         Pattern pattern;
 
         public AttributeWithValueMatching(String key, Pattern pattern) {
-            this.key = normalize(key);
+            this.key = Normalizer.normalize(key);
             this.pattern = pattern;
         }
 
@@ -291,7 +312,7 @@ public abstract class Evaluator {
 
         @Override
         public String toString() {
-            return String.format("[%s~=%s]", key, pattern.toString());
+            return MessageFormatUtil.format("[{0}~={1}]", key, pattern.toString());
         }
 
     }
@@ -311,14 +332,14 @@ public abstract class Evaluator {
             Validate.notEmpty(key);
             Validate.notEmpty(value);
 
-            this.key = normalize(key);
+            this.key = Normalizer.normalize(key);
             boolean isStringLiteral = value.startsWith("'") && value.endsWith("'")
                                         || value.startsWith("\"") && value.endsWith("\"");
             if (isStringLiteral) {
                 value = value.substring(1, value.length()-1);
             }
 
-            this.value = trimValue ? normalize(value) : normalize(value, isStringLiteral);
+            this.value = trimValue ? Normalizer.normalize(value) : Normalizer.normalize(value, isStringLiteral);
         }
     }
 
@@ -353,7 +374,7 @@ public abstract class Evaluator {
 
         @Override
         public String toString() {
-            return String.format(":lt(%d)", index);
+            return MessageFormatUtil.format(":lt({0})", index);
         }
 
     }
@@ -373,7 +394,7 @@ public abstract class Evaluator {
 
         @Override
         public String toString() {
-            return String.format(":gt(%d)", index);
+            return MessageFormatUtil.format(":gt({0})", index);
         }
 
     }
@@ -393,7 +414,7 @@ public abstract class Evaluator {
 
         @Override
         public String toString() {
-            return String.format(":eq(%d)", index);
+            return MessageFormatUtil.format(":eq({0})", index);
         }
 
     }
@@ -404,7 +425,7 @@ public abstract class Evaluator {
     public static final class IsLastChild extends Evaluator {
 		@Override
 		public boolean matches(Element root, Element element) {
-			final Element p = element.parent();
+			final Element p = (Element) element.parent();
 			return p != null && !(p instanceof Document) && element.elementSiblingIndex() == p.children().size()-1;
 		}
 
@@ -448,7 +469,7 @@ public abstract class Evaluator {
 
     	@Override
     	public boolean matches(Element root, Element element) {
-    		final Element p = element.parent();
+    		final Element p = (Element) element.parent();
     		if (p == null || (p instanceof Document)) return false;
 
     		final int pos = calculatePosition(root, element);
@@ -460,10 +481,10 @@ public abstract class Evaluator {
 		@Override
 		public String toString() {
 			if (a == 0)
-				return String.format(":%s(%d)",getPseudoClass(), b);
+				return MessageFormatUtil.format(":{0}({1})",getPseudoClass(), b);
 			if (b == 0)
-				return String.format(":%s(%dn)",getPseudoClass(), a);
-			return String.format(":%s(%dn%+d)", getPseudoClass(),a, b);
+				return MessageFormatUtil.format(":{0}({1}n)",getPseudoClass(), a);
+			return MessageFormatUtil.format(":{0}({1}n{2})", getPseudoClass(),a, b);
 		}
 
 		protected abstract String getPseudoClass();
@@ -504,9 +525,10 @@ public abstract class Evaluator {
 
         @Override
         protected int calculatePosition(Element root, Element element) {
-    	    if (element.parent() == null)
+            Element parent = (Element) element.parent();
+            if (parent == null)
     	        return 0;
-        	return element.parent().children().size() - element.elementSiblingIndex();
+        	return parent.children().size() - element.elementSiblingIndex();
         }
 
 		@Override
@@ -526,9 +548,10 @@ public abstract class Evaluator {
 
 		protected int calculatePosition(Element root, Element element) {
 			int pos = 0;
-            if (element.parent() == null)
+            Element parent = (Element) element.parent();
+            if (parent == null)
                 return 0;
-        	Elements family = element.parent().children();
+        	Elements family = parent.children();
             for (Element el : family) {
                 if (el.tag().equals(element.tag())) pos++;
                 if (el == element) break;
@@ -551,9 +574,10 @@ public abstract class Evaluator {
 		@Override
 		protected int calculatePosition(Element root, Element element) {
 			int pos = 0;
-            if (element.parent() == null)
+            Element parent = (Element) element.parent();
+            if (parent == null)
                 return 0;
-        	Elements family = element.parent().children();
+        	Elements family = parent.children();
         	for (int i = element.elementSiblingIndex(); i < family.size(); i++) {
         		if (family.get(i).tag().equals(element.tag())) pos++;
         	}
@@ -572,7 +596,7 @@ public abstract class Evaluator {
     public static final class IsFirstChild extends Evaluator {
     	@Override
     	public boolean matches(Element root, Element element) {
-    		final Element p = element.parent();
+    		final Element p = (Element) element.parent();
     		return p != null && !(p instanceof Document) && element.elementSiblingIndex() == 0;
     	}
 
@@ -602,7 +626,7 @@ public abstract class Evaluator {
     public static final class IsOnlyChild extends Evaluator {
 		@Override
 		public boolean matches(Element root, Element element) {
-			final Element p = element.parent();
+			final Element p = (Element) element.parent();
 			return p!=null && !(p instanceof Document) && element.siblingElements().isEmpty();
 		}
     	@Override
@@ -614,7 +638,7 @@ public abstract class Evaluator {
     public static final class IsOnlyOfType extends Evaluator {
 		@Override
 		public boolean matches(Element root, Element element) {
-			final Element p = element.parent();
+			final Element p = (Element) element.parent();
 			if (p==null || p instanceof Document) return false;
 
 			int pos = 0;
@@ -665,17 +689,17 @@ public abstract class Evaluator {
         private final String searchText;
 
         public ContainsText(String searchText) {
-            this.searchText = lowerCase(searchText);
+            this.searchText = Normalizer.lowerCase(searchText);
         }
 
         @Override
         public boolean matches(Element root, Element element) {
-            return lowerCase(element.text()).contains(searchText);
+            return Normalizer.lowerCase(element.text()).contains(searchText);
         }
 
         @Override
         public String toString() {
-            return String.format(":contains(%s)", searchText);
+            return MessageFormatUtil.format(":contains({0})", searchText);
         }
     }
 
@@ -686,17 +710,17 @@ public abstract class Evaluator {
         private final String searchText;
 
         public ContainsData(String searchText) {
-            this.searchText = lowerCase(searchText);
+            this.searchText = Normalizer.lowerCase(searchText);
         }
 
         @Override
         public boolean matches(Element root, Element element) {
-            return lowerCase(element.data()).contains(searchText);
+            return Normalizer.lowerCase(element.data()).contains(searchText);
         }
 
         @Override
         public String toString() {
-            return String.format(":containsData(%s)", searchText);
+            return MessageFormatUtil.format(":containsData({0})", searchText);
         }
     }
 
@@ -707,17 +731,17 @@ public abstract class Evaluator {
         private final String searchText;
 
         public ContainsOwnText(String searchText) {
-            this.searchText = lowerCase(searchText);
+            this.searchText = Normalizer.lowerCase(searchText);
         }
 
         @Override
         public boolean matches(Element root, Element element) {
-            return lowerCase(element.ownText()).contains(searchText);
+            return Normalizer.lowerCase(element.ownText()).contains(searchText);
         }
 
         @Override
         public String toString() {
-            return String.format(":containsOwn(%s)", searchText);
+            return MessageFormatUtil.format(":containsOwn({0})", searchText);
         }
     }
 
@@ -739,7 +763,7 @@ public abstract class Evaluator {
 
         @Override
         public String toString() {
-            return String.format(":matches(%s)", pattern);
+            return MessageFormatUtil.format(":matches({0})", pattern);
         }
     }
 
@@ -761,7 +785,7 @@ public abstract class Evaluator {
 
         @Override
         public String toString() {
-            return String.format(":matchesOwn(%s)", pattern);
+            return MessageFormatUtil.format(":matchesOwn({0})", pattern);
         }
     }
 
@@ -775,7 +799,7 @@ public abstract class Evaluator {
             List<TextNode> textNodes = element.textNodes();
             for (TextNode textNode : textNodes) {
                 PseudoTextElement pel = new PseudoTextElement(
-                    org.jsoup.parser.Tag.valueOf(element.tagName()), element.baseUri(), element.attributes());
+                    com.itextpdf.styledxmlparser.jsoup.parser.Tag.valueOf(element.tagName()), element.baseUri(), element.attributes());
                 textNode.replaceWith(pel);
                 pel.appendChild(textNode);
             }

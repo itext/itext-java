@@ -1,14 +1,36 @@
-package org.jsoup.parser;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.helper.Validate;
-import org.jsoup.nodes.Attributes;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-import static org.jsoup.internal.Normalizer.lowerCase;
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.parser;
+
+import com.itextpdf.styledxmlparser.jsoup.PortUtil;
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.internal.Normalizer;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
 
 /**
  * Parse tokens for the Tokeniser.
  */
-abstract class Token {
+public abstract class Token {
     TokenType type;
 
     private Token() {
@@ -84,7 +106,7 @@ abstract class Token {
         Attributes attributes; // start tags get attributes on construction. End tags get attributes on first new attribute (but only for parser convenience, not used).
 
         @Override
-        Tag reset() {
+        Token reset() {
             tagName = null;
             normalName = null;
             pendingAttributeName = null;
@@ -103,7 +125,7 @@ abstract class Token {
 
             if (pendingAttributeName != null) {
                 // the tokeniser has skipped whitespace control chars, but trimming could collapse to empty for other control codes, so verify here
-                pendingAttributeName = pendingAttributeName.trim();
+                pendingAttributeName = PortUtil.trimControlCodes(pendingAttributeName);
                 if (pendingAttributeName.length() > 0) {
                     String value;
                     if (hasPendingAttributeValue)
@@ -155,7 +177,7 @@ abstract class Token {
 
         final Tag name(String name) {
             tagName = name;
-            normalName = lowerCase(name);
+            normalName = Normalizer.lowerCase(name);
             return this;
         }
 
@@ -165,8 +187,8 @@ abstract class Token {
 
         // these appenders are rarely hit in not null state-- caused by null chars.
         final void appendTagName(String append) {
-            tagName = tagName == null ? append : tagName.concat(append);
-            normalName = lowerCase(tagName);
+            tagName = tagName == null ? append : tagName + append;
+            normalName = Normalizer.lowerCase(tagName);
         }
 
         final void appendTagName(char append) {
@@ -174,7 +196,7 @@ abstract class Token {
         }
 
         final void appendAttributeName(String append) {
-            pendingAttributeName = pendingAttributeName == null ? append : pendingAttributeName.concat(append);
+            pendingAttributeName = pendingAttributeName == null ? append : pendingAttributeName + append;
         }
 
         final void appendAttributeName(char append) {
@@ -231,7 +253,7 @@ abstract class Token {
         }
 
         @Override
-        Tag reset() {
+        Token reset() {
             super.reset();
             attributes = null;
             return this;
@@ -240,7 +262,7 @@ abstract class Token {
         StartTag nameAttr(String name, Attributes attributes) {
             this.tagName = name;
             this.attributes = attributes;
-            normalName = lowerCase(tagName);
+            normalName = Normalizer.lowerCase(tagName);
             return this;
         }
 

@@ -1,8 +1,30 @@
-package org.jsoup.nodes;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.internal.StringUtil;
-import org.jsoup.helper.Validate;
-import org.jsoup.nodes.Document.OutputSettings.Syntax;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.nodes;
+
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Document.OutputSettings.Syntax;
 
 import java.io.IOException;
 
@@ -10,15 +32,12 @@ import java.io.IOException;
  * A {@code <!DOCTYPE>} node.
  */
 public class DocumentType extends LeafNode {
-    // todo needs a bit of a chunky cleanup. this level of detail isn't needed
     public static final String PUBLIC_KEY = "PUBLIC";
     public static final String SYSTEM_KEY = "SYSTEM";
     private static final String NAME = "name";
     private static final String PUB_SYS_KEY = "pubSysKey"; // PUBLIC or SYSTEM
     private static final String PUBLIC_ID = "publicId";
     private static final String SYSTEM_ID = "systemId";
-    // todo: quirk mode from publicId and systemId
-
     /**
      * Create a new doctype element.
      * @param name the doctype's name

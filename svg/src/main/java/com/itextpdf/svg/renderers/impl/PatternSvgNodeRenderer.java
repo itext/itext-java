@@ -243,7 +243,10 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
     }
 
     private boolean isObjectBoundingBoxInPatternUnits() {
-        final String patternUnits = getAttribute(Attributes.PATTERN_UNITS);
+        String patternUnits = getAttribute(Attributes.PATTERN_UNITS);
+        if (patternUnits == null) {
+            patternUnits = getAttribute(Attributes.PATTERN_UNITS.toLowerCase());
+        }
         if (Values.USER_SPACE_ON_USE.equals(patternUnits)) {
             return false;
         } else if (patternUnits != null && !Values.OBJECT_BOUNDING_BOX.equals(patternUnits)) {
@@ -254,7 +257,10 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
     }
 
     private boolean isObjectBoundingBoxInPatternContentUnits() {
-        final String patternContentUnits = getAttribute(Attributes.PATTERN_CONTENT_UNITS);
+        String patternContentUnits = getAttribute(Attributes.PATTERN_CONTENT_UNITS);
+        if (patternContentUnits == null) {
+            patternContentUnits = getAttribute(Attributes.PATTERN_CONTENT_UNITS.toLowerCase());
+        }
         if (Values.OBJECT_BOUNDING_BOX.equals(patternContentUnits)) {
             return true;
         } else if (patternContentUnits != null && !Values.USER_SPACE_ON_USE
@@ -323,6 +329,9 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
 
     private AffineTransform getPatternTransform() {
         String patternTransform = getAttribute(SvgConstants.Attributes.PATTERN_TRANSFORM);
+        if (patternTransform == null) {
+            patternTransform = getAttribute(SvgConstants.Attributes.PATTERN_TRANSFORM.toLowerCase());
+        }
         if (patternTransform != null && !patternTransform.isEmpty()) {
             return TransformUtils.parseTransform(patternTransform);
         }

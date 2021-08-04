@@ -1,20 +1,39 @@
-package org.jsoup.nodes;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.SerializationException;
-import org.jsoup.internal.StringUtil;
-import org.jsoup.helper.Validate;
-import org.jsoup.nodes.Document.OutputSettings;
-import org.jsoup.parser.CharacterReader;
-import org.jsoup.parser.Parser;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.nodes;
+
+import com.itextpdf.io.util.ArrayUtil;
+import com.itextpdf.styledxmlparser.jsoup.SerializationException;
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Document.OutputSettings;
+import com.itextpdf.styledxmlparser.jsoup.parser.CharacterReader;
+import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
 
 import java.io.IOException;
 import java.nio.charset.CharsetEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
-
-import static org.jsoup.nodes.Document.OutputSettings.*;
-import static org.jsoup.nodes.Entities.EscapeMode.base;
-import static org.jsoup.nodes.Entities.EscapeMode.extended;
 
 /**
  * HTML entities, and escape routines. Source: <a href="http://www.w3.org/TR/html5/named-character-references.html#named-character-references">W3C
@@ -28,34 +47,34 @@ public class Entities {
     private static final HashMap<String, String> multipoints = new HashMap<>(); // name -> multiple character references
     private static final OutputSettings DefaultOutput = new OutputSettings();
 
-    public enum EscapeMode {
+    public static class EscapeMode {
         /**
          * Restricted entities suitable for XHTML output: lt, gt, amp, and quot only.
          */
-        xhtml(EntitiesData.xmlPoints, 4),
+        public static EscapeMode xhtml = new EscapeMode(EntitiesData.xmlPoints, 4);
         /**
          * Default HTML output entities.
          */
-        base(EntitiesData.basePoints, 106),
+        public static EscapeMode base = new EscapeMode(EntitiesData.basePoints, 106);
         /**
          * Complete HTML entities.
          */
-        extended(EntitiesData.fullPoints, 2125);
+        public static EscapeMode extended = new EscapeMode(EntitiesData.fullPoints, 2125);
 
         // table of named references to their codepoints. sorted so we can binary search. built by BuildEntities.
-        private String[] nameKeys;
-        private int[] codeVals; // limitation is the few references with multiple characters; those go into multipoints.
+        String[] nameKeys;
+        int[] codeVals; // limitation is the few references with multiple characters; those go into multipoints.
 
         // table of codepoints to named entities.
-        private int[] codeKeys; // we don't support multicodepoints to single named value currently
-        private String[] nameVals;
+        int[] codeKeys; // we don't support multicodepoints to single named value currently
+        String[] nameVals;
 
         EscapeMode(String file, int size) {
             load(this, file, size);
         }
 
         int codepointForName(final String name) {
-            int index = Arrays.binarySearch(nameKeys, name);
+            int index = ArrayUtil.indexOf(nameKeys, name);
             return index >= 0 ? codeVals[index] : empty;
         }
 
@@ -85,7 +104,7 @@ public class Entities {
      * @return true if a known named entity
      */
     public static boolean isNamedEntity(final String name) {
-        return extended.codepointForName(name) != empty;
+        return EscapeMode.extended.codepointForName(name) != empty;
     }
 
     /**
@@ -96,7 +115,7 @@ public class Entities {
      * @see #isNamedEntity(String)
      */
     public static boolean isBaseNamedEntity(final String name) {
-        return base.codepointForName(name) != empty;
+        return EscapeMode.base.codepointForName(name) != empty;
     }
 
     /**
@@ -109,9 +128,9 @@ public class Entities {
         String val = multipoints.get(name);
         if (val != null)
             return val;
-        int codepoint = extended.codepointForName(name);
+        int codepoint = EscapeMode.extended.codepointForName(name);
         if (codepoint != empty)
-            return new String(new int[]{codepoint}, 0, 1);
+            return new String(new char[]{(char) codepoint}, 0, 1);
         return emptyName;
     }
 
@@ -122,7 +141,7 @@ public class Entities {
             codepoints[1] = val.codePointAt(1);
             return 2;
         }
-        int codepoint = extended.codepointForName(name);
+        int codepoint = EscapeMode.extended.codepointForName(name);
         if (codepoint != empty) {
             codepoints[0] = codepoint;
             return 1;
@@ -161,7 +180,7 @@ public class Entities {
     }
 
     // this method is ugly, and does a lot. but other breakups cause rescanning and stringbuilder generations
-    static void escape(Appendable accum, String string, OutputSettings out,
+    static void escape(Appendable accum, String str, OutputSettings out,
                        boolean inAttribute, boolean normaliseWhite, boolean stripLeadingWhite) throws IOException {
 
         boolean lastWasWhite = false;
@@ -169,11 +188,11 @@ public class Entities {
         final EscapeMode escapeMode = out.escapeMode();
         final CharsetEncoder encoder = out.encoder();
         final CoreCharset coreCharset = out.coreCharset; // init in out.prepareEncoder()
-        final int length = string.length();
+        final int length = str.length();
 
         int codePoint;
         for (int offset = 0; offset < length; offset += Character.charCount(codePoint)) {
-            codePoint = string.codePointAt(offset);
+            codePoint = str.codePointAt(offset);
 
             if (normaliseWhite) {
                 if (StringUtil.isWhitespace(codePoint)) {
@@ -195,7 +214,7 @@ public class Entities {
                     case '&':
                         accum.append("&amp;");
                         break;
-                    case 0xA0:
+                    case (char) 0xA0:
                         if (escapeMode != EscapeMode.xhtml)
                             accum.append("&nbsp;");
                         else
@@ -203,7 +222,7 @@ public class Entities {
                         break;
                     case '<':
                         // escape when in character data or when in a xml attribute val or XML syntax; not needed in html attr val
-                        if (!inAttribute || escapeMode == EscapeMode.xhtml || out.syntax() == Syntax.xml)
+                        if (!inAttribute || escapeMode == EscapeMode.xhtml || out.syntax() == Document.OutputSettings.Syntax.xml)
                             accum.append("&lt;");
                         else
                             accum.append(c);
@@ -279,27 +298,27 @@ public class Entities {
      * Jsoup: 167, 2
      */
     private static boolean canEncode(final CoreCharset charset, final char c, final CharsetEncoder fallback) {
-        // todo add more charset tests if impacted by Android's bad perf in canEncode
         switch (charset) {
             case ascii:
                 return c < 0x80;
             case utf:
-                return true; // real is:!(Character.isLowSurrogate(c) || Character.isHighSurrogate(c)); - but already check above
+                // real is:!(Character.isLowSurrogate(c) || Character.isHighSurrogate(c)); - but already check above
+                return true;
             default:
                 return fallback.canEncode(c);
         }
     }
 
     enum CoreCharset {
-        ascii, utf, fallback;
+        ascii, utf, fallback
+    }
 
-        static CoreCharset byName(final String name) {
-            if (name.equals("US-ASCII"))
-                return ascii;
-            if (name.startsWith("UTF-")) // covers UTF-8, UTF-16, et al
-                return utf;
-            return fallback;
-        }
+    static CoreCharset getCoreCharsetByName(final String name) {
+        if (name.equals("US-ASCII"))
+            return CoreCharset.ascii;
+        if (name.startsWith("UTF-")) // covers UTF-8, UTF-16, et al
+            return CoreCharset.utf;
+        return CoreCharset.fallback;
     }
 
     private static void load(EscapeMode e, String pointsData, int size) {
@@ -336,7 +355,7 @@ public class Entities {
             e.nameVals[index] = name;
 
             if (cp2 != empty) {
-                multipoints.put(name, new String(new int[]{cp1, cp2}, 0, 2));
+                multipoints.put(name, new String(new char[]{(char) cp1, (char) cp2}, 0, 2));
             }
             i++;
         }

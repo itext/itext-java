@@ -1,51 +1,76 @@
-package org.jsoup.nodes;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.Jsoup;
-import org.jsoup.select.Elements;
-import org.jsoup.select.NodeFilter;
-import org.junit.jupiter.api.Test;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-import static org.junit.jupiter.api.Assertions.*;
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-public class LeafNodeTest {
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.nodes;
+
+import com.itextpdf.styledxmlparser.jsoup.Jsoup;
+import com.itextpdf.styledxmlparser.jsoup.select.Elements;
+import com.itextpdf.styledxmlparser.jsoup.select.NodeFilter;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+@Category(UnitTest.class)
+public class LeafNodeTest extends ExtendedITextTest {
 
     @Test
     public void doesNotGetAttributesTooEasily() {
         // test to make sure we're not setting attributes on all nodes right away
         String body = "<p>One <!-- Two --> Three<![CDATA[Four]]></p>";
         Document doc = Jsoup.parse(body);
-        assertTrue(hasAnyAttributes(doc)); // should have one - the base uri on the doc
+        Assert.assertTrue(hasAnyAttributes(doc)); // should have one - the base uri on the doc
 
         Element html = doc.child(0);
-        assertFalse(hasAnyAttributes(html));
+        Assert.assertFalse(hasAnyAttributes(html));
 
         String s = doc.outerHtml();
-        assertFalse(hasAnyAttributes(html));
+        Assert.assertFalse(hasAnyAttributes(html));
 
         Elements els = doc.select("p");
         Element p = els.first();
-        assertEquals(1, els.size());
-        assertFalse(hasAnyAttributes(html));
+        Assert.assertEquals(1, els.size());
+        Assert.assertFalse(hasAnyAttributes(html));
 
         els = doc.select("p.none");
-        assertFalse(hasAnyAttributes(html));
+        Assert.assertFalse(hasAnyAttributes(html));
 
         String id = p.id();
-        assertEquals("", id);
-        assertFalse(p.hasClass("Foobs"));
-        assertFalse(hasAnyAttributes(html));
+        Assert.assertEquals("", id);
+        Assert.assertFalse(p.hasClass("Foobs"));
+        Assert.assertFalse(hasAnyAttributes(html));
 
         p.addClass("Foobs");
-        assertTrue(p.hasClass("Foobs"));
-        assertTrue(hasAnyAttributes(html));
-        assertTrue(hasAnyAttributes(p));
+        Assert.assertTrue(p.hasClass("Foobs"));
+        Assert.assertTrue(hasAnyAttributes(html));
+        Assert.assertTrue(hasAnyAttributes(p));
 
         Attributes attributes = p.attributes();
-        assertTrue(attributes.hasKey("class"));
+        Assert.assertTrue(attributes.hasKey("class"));
         p.clearAttributes();
-        assertFalse(hasAnyAttributes(p));
-        assertFalse(hasAnyAttributes(html));
-        assertFalse(attributes.hasKey("class"));
+        Assert.assertFalse(hasAnyAttributes(p));
+        Assert.assertFalse(hasAnyAttributes(html));
+        Assert.assertFalse(attributes.hasKey("class"));
     }
 
     private boolean hasAnyAttributes(Node node) {

@@ -1,11 +1,30 @@
-package org.jsoup.nodes;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.helper.HttpConnection;
-import org.jsoup.helper.Validate;
-import org.jsoup.parser.Tag;
-import org.jsoup.select.Elements;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.nodes;
+
+import com.itextpdf.styledxmlparser.jsoup.helper.KeyVal;
+import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
+import com.itextpdf.styledxmlparser.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,30 +68,7 @@ public class FormElement extends Element {
     @Override
     protected void removeChild(Node out) {
         super.removeChild(out);
-        elements.remove(out);
-    }
-
-    /**
-     Prepare to submit this form. A Connection object is created with the request set up from the form values. This
-     Connection will inherit the settings and the cookies (etc) of the connection/session used to request this Document
-     (if any), as available in {@link Document#connection()}
-     <p>You can then set up other options (like user-agent, timeout, cookies), then execute it.</p>
-
-     @return a connection prepared from the values of this form, in the same session as the one used to request it
-     @throws IllegalArgumentException if the form's absolute action URL cannot be determined. Make sure you pass the
-     document's base URI when parsing.
-     */
-    public Connection submit() {
-        String action = hasAttr("action") ? absUrl("action") : baseUri();
-        Validate.notEmpty(action, "Could not determine a form action URL for submit. Ensure you set a base URI when parsing.");
-        Connection.Method method = attr("method").equalsIgnoreCase("POST") ?
-                Connection.Method.POST : Connection.Method.GET;
-
-        Document owner = ownerDocument();
-        Connection connection = owner != null? owner.connection().newRequest() : Jsoup.newSession();
-        return connection.url(action)
-                .data(formData())
-                .method(method);
+        elements.remove((Element) out);
     }
 
     /**
@@ -80,8 +76,8 @@ public class FormElement extends Element {
      * list will not be reflected in the DOM.
      * @return a list of key vals
      */
-    public List<Connection.KeyVal> formData() {
-        ArrayList<Connection.KeyVal> data = new ArrayList<>();
+    public List<KeyVal> formData() {
+        ArrayList<KeyVal> data = new ArrayList<>();
 
         // iterate the form control elements and accumulate their values
         for (Element el: elements) {
@@ -97,29 +93,29 @@ public class FormElement extends Element {
                 Elements options = el.select("option[selected]");
                 boolean set = false;
                 for (Element option: options) {
-                    data.add(HttpConnection.KeyVal.create(name, option.val()));
+                    data.add(KeyVal.create(name, option.val()));
                     set = true;
                 }
                 if (!set) {
                     Element option = el.selectFirst("option");
                     if (option != null)
-                        data.add(HttpConnection.KeyVal.create(name, option.val()));
+                        data.add(KeyVal.create(name, option.val()));
                 }
             } else if ("checkbox".equalsIgnoreCase(type) || "radio".equalsIgnoreCase(type)) {
                 // only add checkbox or radio if they have the checked attribute
                 if (el.hasAttr("checked")) {
                     final String val = el.val().length() >  0 ? el.val() : "on";
-                    data.add(HttpConnection.KeyVal.create(name, val));
+                    data.add(KeyVal.create(name, val));
                 }
             } else {
-                data.add(HttpConnection.KeyVal.create(name, el.val()));
+                data.add(KeyVal.create(name, el.val()));
             }
         }
         return data;
     }
 
     @Override
-    public FormElement clone() {
+    public Object clone() {
         return (FormElement) super.clone();
     }
 }

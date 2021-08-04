@@ -1,19 +1,44 @@
-package org.jsoup.nodes;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.Jsoup;
-import org.jsoup.TextUtil;
-import org.jsoup.internal.StringUtil;
-import org.junit.jupiter.api.Test;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.nodes;
+
+import com.itextpdf.styledxmlparser.jsoup.Jsoup;
+import com.itextpdf.styledxmlparser.jsoup.TextUtil;
+import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  Test TextNodes
 
  @author Jonathan Hedley, jonathan@hedley.net */
-public class TextNodeTest {
+@Category(UnitTest.class)
+public class TextNodeTest extends ExtendedITextTest {
     @Test public void testBlank() {
         TextNode one = new TextNode("");
         TextNode two = new TextNode("     ");
@@ -21,11 +46,11 @@ public class TextNodeTest {
         TextNode four = new TextNode("Hello");
         TextNode five = new TextNode("  \nHello ");
 
-        assertTrue(one.isBlank());
-        assertTrue(two.isBlank());
-        assertTrue(three.isBlank());
-        assertFalse(four.isBlank());
-        assertFalse(five.isBlank());
+        Assert.assertTrue(one.isBlank());
+        Assert.assertTrue(two.isBlank());
+        Assert.assertTrue(three.isBlank());
+        Assert.assertFalse(four.isBlank());
+        Assert.assertFalse(five.isBlank());
     }
 
     @Test public void testTextBean() {
@@ -33,19 +58,19 @@ public class TextNodeTest {
         Element p = doc.select("p").first();
 
         Element span = doc.select("span").first();
-        assertEquals("two &", span.text());
+        Assert.assertEquals("two &", span.text());
         TextNode spanText = (TextNode) span.childNode(0);
-        assertEquals("two &", spanText.text());
+        Assert.assertEquals("two &", spanText.text());
 
         TextNode tn = (TextNode) p.childNode(2);
-        assertEquals(" three &", tn.text());
+        Assert.assertEquals(" three &", tn.text());
 
         tn.text(" POW!");
-        assertEquals("One <span>two &amp;</span> POW!", TextUtil.stripNewlines(p.html()));
+        Assert.assertEquals("One <span>two &amp;</span> POW!", TextUtil.stripNewlines(p.html()));
 
         tn.attr(tn.nodeName(), "kablam &");
-        assertEquals("kablam &", tn.text());
-        assertEquals("One <span>two &amp;</span>kablam &amp;", TextUtil.stripNewlines(p.html()));
+        Assert.assertEquals("kablam &", tn.text());
+        Assert.assertEquals("One <span>two &amp;</span>kablam &amp;", TextUtil.stripNewlines(p.html()));
     }
 
     @Test public void testSplitText() {
@@ -53,11 +78,11 @@ public class TextNodeTest {
         Element div = doc.select("div").first();
         TextNode tn = (TextNode) div.childNode(0);
         TextNode tail = tn.splitText(6);
-        assertEquals("Hello ", tn.getWholeText());
-        assertEquals("there", tail.getWholeText());
+        Assert.assertEquals("Hello ", tn.getWholeText());
+        Assert.assertEquals("there", tail.getWholeText());
         tail.text("there!");
-        assertEquals("Hello there!", div.text());
-        assertSame(tn.parent(), tail.parent());
+        Assert.assertEquals("Hello there!", div.text());
+        Assert.assertSame(tn.parent(), tail.parent());
     }
 
     @Test public void testSplitAnEmbolden() {
@@ -67,13 +92,13 @@ public class TextNodeTest {
         TextNode tail = tn.splitText(6);
         tail.wrap("<b></b>");
 
-        assertEquals("Hello <b>there</b>", TextUtil.stripNewlines(div.html())); // not great that we get \n<b>there there... must correct
+        Assert.assertEquals("Hello <b>there</b>", TextUtil.stripNewlines(div.html())); // not great that we get \n<b>there there... must correct
     }
 
     @Test public void testWithSupplementaryCharacter(){
         Document doc = Jsoup.parse(new String(Character.toChars(135361)));
         TextNode t = doc.body().textNodes().get(0);
-        assertEquals(new String(Character.toChars(135361)), t.outerHtml().trim());
+        Assert.assertEquals(new String(Character.toChars(135361)), t.outerHtml().trim());
     }
 
     @Test public void testLeadNodesHaveNoChildren() {
@@ -81,7 +106,7 @@ public class TextNodeTest {
         Element div = doc.select("div").first();
         TextNode tn = (TextNode) div.childNode(0);
         List<Node> nodes = tn.childNodes();
-        assertEquals(0, nodes.size());
+        Assert.assertEquals(0, nodes.size());
     }
 
     @Test public void testSpaceNormalise() {
@@ -89,41 +114,41 @@ public class TextNodeTest {
         String whole = "Two  spaces";
         String norm = "Two spaces";
         TextNode tn = new TextNode(whole); // there are 2 spaces between the words
-        assertEquals(whole, tn.getWholeText());
-        assertEquals(norm, tn.text());
-        assertEquals(norm, tn.outerHtml());
-        assertEquals(norm, tn.toString());
+        Assert.assertEquals(whole, tn.getWholeText());
+        Assert.assertEquals(norm, tn.text());
+        Assert.assertEquals(norm, tn.outerHtml());
+        Assert.assertEquals(norm, tn.toString());
 
         Element el = new Element("p");
         el.appendChild(tn); // this used to change the context
         //tn.setParentNode(el); // set any parent
-        assertEquals(whole, tn.getWholeText());
-        assertEquals(norm, tn.text());
-        assertEquals(norm, tn.outerHtml());
-        assertEquals(norm, tn.toString());
+        Assert.assertEquals(whole, tn.getWholeText());
+        Assert.assertEquals(norm, tn.text());
+        Assert.assertEquals(norm, tn.outerHtml());
+        Assert.assertEquals(norm, tn.toString());
 
-        assertEquals("<p>" + norm + "</p>", el.outerHtml());
-        assertEquals(norm, el.html());
-        assertEquals(whole, el.wholeText());
+        Assert.assertEquals("<p>" + norm + "</p>", el.outerHtml());
+        Assert.assertEquals(norm, el.html());
+        Assert.assertEquals(whole, el.wholeText());
     }
 
     @Test
     public void testClone() {
         // https://github.com/jhy/jsoup/issues/1176
         TextNode x = new TextNode("zzz");
-        TextNode y = x.clone();
+        TextNode y = (TextNode) x.clone();
 
-        assertNotSame(x, y);
-        assertEquals(x.outerHtml(), y.outerHtml());
+        Assert.assertNotSame(x, y);
+        Assert.assertEquals(x.outerHtml(), y.outerHtml());
 
         y.text("yyy");
-        assertNotEquals(x.outerHtml(), y.outerHtml());
-        assertEquals("zzz", x.text());
+        Assert.assertNotEquals(x.outerHtml(), y.outerHtml());
+        Assert.assertEquals("zzz", x.text());
 
         x.attributes(); // already cloned so no impact
         y.text("xxx");
-        assertEquals("zzz", x.text());
-        assertEquals("xxx", y.text());
+        Assert.assertEquals("zzz", x.text());
+        Assert.assertEquals("xxx", y.text());
     }
 
     @Test
@@ -131,10 +156,10 @@ public class TextNodeTest {
         // https://github.com/jhy/jsoup/issues/1176
         TextNode x = new TextNode("zzz");
         x.attributes(); // moves content from leafnode value to attributes, which were missed in clone
-        TextNode y = x.clone();
+        TextNode y = (TextNode) x.clone();
         y.text("xxx");
-        assertEquals("zzz", x.text());
-        assertEquals("xxx", y.text());
+        Assert.assertEquals("zzz", x.text());
+        Assert.assertEquals("xxx", y.text());
     }
 
     @Test
@@ -146,15 +171,15 @@ public class TextNodeTest {
             for (Node node : el.childNodes()) {
                 if (node instanceof TextNode) {
                     TextNode textNode = (TextNode) node;
-                    assertFalse(StringUtil.isBlank(textNode.text()));
+                    Assert.assertFalse(StringUtil.isBlank(textNode.text()));
                     if (!foundFirst) {
                         foundFirst = true;
-                        assertEquals("One ", textNode.text());
-                        assertEquals("One ", textNode.getWholeText());
+                        Assert.assertEquals("One ", textNode.text());
+                        Assert.assertEquals("One ", textNode.getWholeText());
                     }
                 }
             }
         }
-        assertTrue(foundFirst);
+        Assert.assertTrue(foundFirst);
     }
 }

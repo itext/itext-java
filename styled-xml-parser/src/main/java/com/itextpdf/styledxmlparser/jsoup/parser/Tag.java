@@ -1,7 +1,29 @@
-package org.jsoup.parser;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.helper.Validate;
-import org.jsoup.internal.Normalizer;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.parser;
+
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.internal.Normalizer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +72,6 @@ public class Tag implements Cloneable {
      * Get a Tag by name. If not previously defined (unknown), returns a new generic tag, that can do anything.
      * <p>
      * Pre-defined tags (P, DIV etc) will be ==, but unknown tags are not registered and will only .equals().
-     * </p>
      * 
      * @param tagName Name of tag, e.g. "p". Case insensitive.
      * @param settings used to control tag name sensitivity
@@ -71,7 +92,7 @@ public class Tag implements Cloneable {
                 tag = new Tag(tagName);
                 tag.isBlock = false;
             } else if (settings.preserveTagCase() && !tagName.equals(normalName))  {
-                tag = tag.clone(); // get a new version vs the static one, so name update doesn't reset all
+                tag = (Tag) tag.clone(); // get a new version vs the static one, so name update doesn't reset all
                 tag.tagName = tagName;
             }
         }
@@ -82,7 +103,6 @@ public class Tag implements Cloneable {
      * Get a Tag by name. If not previously defined (unknown), returns a new generic tag, that can do anything.
      * <p>
      * Pre-defined tags (P, DIV etc) will be ==, but unknown tags are not registered and will only .equals().
-     * </p>
      *
      * @param tagName Name of tag, e.g. "p". <b>Case sensitive</b>.
      * @return The tag, either defined or new generic.
@@ -221,12 +241,17 @@ public class Tag implements Cloneable {
     }
 
     @Override
-    protected Tag clone() {
-        try {
-            return (Tag) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
+    public Object clone() {
+        Tag newTag = new Tag(this.tagName);
+        newTag.normalName = this.normalName;
+        newTag.empty = this.empty;
+        newTag.formatAsBlock = this.formatAsBlock;
+        newTag.formList = this.formList;
+        newTag.formSubmit = this.formSubmit;
+        newTag.preserveWhitespace = this.preserveWhitespace;
+        newTag.selfClosing = this.selfClosing;
+        newTag.isBlock = this.isBlock;
+        return newTag;
     }
 
     // internal static initialisers:
@@ -251,7 +276,6 @@ public class Tag implements Cloneable {
             "meta", "link", "base", "frame", "img", "br", "wbr", "embed", "hr", "input", "keygen", "col", "command",
             "device", "area", "basefont", "bgsound", "menuitem", "param", "source", "track"
     };
-    // todo - rework this to format contents as inline; and update html emitter in Element. Same output, just neater.
     private static final String[] formatAsInlineTags = {
             "title", "a", "p", "h1", "h2", "h3", "h4", "h5", "h6", "pre", "address", "li", "th", "td", "script", "style",
             "ins", "del", "s"
@@ -260,7 +284,6 @@ public class Tag implements Cloneable {
             "pre", "plaintext", "title", "textarea"
             // script is not here as it is a data node, which always preserve whitespace
     };
-    // todo: I think we just need submit tags, and can scrub listed
     private static final String[] formListedTags = {
             "button", "fieldset", "input", "keygen", "object", "output", "select", "textarea"
     };

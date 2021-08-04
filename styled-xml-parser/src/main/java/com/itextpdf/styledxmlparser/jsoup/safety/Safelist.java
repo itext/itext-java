@@ -1,66 +1,86 @@
-package org.jsoup.safety;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
+
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.safety;
 
 /*
     Thank you to Ryan Grove (wonko.com) for the Ruby HTML cleaner http://github.com/rgrove/sanitize/, which inspired
     this safe-list configuration, and the initial defaults.
  */
 
-import org.jsoup.helper.Validate;
-import org.jsoup.nodes.Attribute;
-import org.jsoup.nodes.Attributes;
-import org.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.internal.Normalizer;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Attribute;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jsoup.internal.Normalizer.lowerCase;
-
 
 /**
- Safe-lists define what HTML (elements and attributes) to allow through the cleaner. Everything else is removed.
- <p>
- Start with one of the defaults:
- </p>
- <ul>
- <li>{@link #none}
- <li>{@link #simpleText}
- <li>{@link #basic}
- <li>{@link #basicWithImages}
- <li>{@link #relaxed}
- </ul>
- <p>
- If you need to allow more through (please be careful!), tweak a base safelist with:
- </p>
- <ul>
- <li>{@link #addTags(String... tagNames)}
- <li>{@link #addAttributes(String tagName, String... attributes)}
- <li>{@link #addEnforcedAttribute(String tagName, String attribute, String value)}
- <li>{@link #addProtocols(String tagName, String attribute, String... protocols)}
- </ul>
- <p>
- You can remove any setting from an existing safelist with:
- </p>
- <ul>
- <li>{@link #removeTags(String... tagNames)}
- <li>{@link #removeAttributes(String tagName, String... attributes)}
- <li>{@link #removeEnforcedAttribute(String tagName, String attribute)}
- <li>{@link #removeProtocols(String tagName, String attribute, String... removeProtocols)}
- </ul>
-
- <p>
- The cleaner and these safelists assume that you want to clean a <code>body</code> fragment of HTML (to add user
- supplied HTML into a templated page), and not to clean a full HTML document. If the latter is the case, either wrap the
- document HTML around the cleaned body HTML, or create a safelist that allows <code>html</code> and <code>head</code>
- elements as appropriate.
- </p>
- <p>
- If you are going to extend a safelist, please be very careful. Make sure you understand what attributes may lead to
- XSS attack vectors. URL attributes are particularly vulnerable and require careful validation. See 
- the <a href="https://owasp.org/www-community/xss-filter-evasion-cheatsheet">XSS Filter Evasion Cheat Sheet</a> for some
- XSS attack examples (that jsoup will safegaurd against the default Cleaner and Safelist configuration).
- </p>
+ * Safe-lists define what HTML (elements and attributes) to allow through the cleaner. Everything else is removed.
+ * <p>
+ * Start with one of the defaults:
+ *
+ * <ul>
+ * <li>{@link #none}
+ * <li>{@link #simpleText}
+ * <li>{@link #basic}
+ * <li>{@link #basicWithImages}
+ * <li>{@link #relaxed}
+ * </ul>
+ * <p>
+ * If you need to allow more through (please be careful!), tweak a base safelist with:
+ *
+ * <ul>
+ * <li>{@link #addTags(String... tagNames)}
+ * <li>{@link #addAttributes(String tagName, String... attributes)}
+ * <li>{@link #addEnforcedAttribute(String tagName, String attribute, String value)}
+ * <li>{@link #addProtocols(String tagName, String attribute, String... protocols)}
+ * </ul>
+ * <p>
+ * You can remove any setting from an existing safelist with:
+ *
+ * <ul>
+ * <li>{@link #removeTags(String... tagNames)}
+ * <li>{@link #removeAttributes(String tagName, String... attributes)}
+ * <li>{@link #removeEnforcedAttribute(String tagName, String attribute)}
+ * <li>{@link #removeProtocols(String tagName, String attribute, String... removeProtocols)}
+ * </ul>
+ *
+ * <p>
+ * The cleaner and these safelists assume that you want to clean a <code>body</code> fragment of HTML (to add user
+ * supplied HTML into a templated page), and not to clean a full HTML document. If the latter is the case, either wrap the
+ * document HTML around the cleaned body HTML, or create a safelist that allows <code>html</code> and <code>head</code>
+ * elements as appropriate.
+ *
+ * <p>
+ * If you are going to extend a safelist, please be very careful. Make sure you understand what attributes may lead to
+ * XSS attack vectors. URL attributes are particularly vulnerable and require careful validation. See
+ * the <a href="https://owasp.org/www-community/xss-filter-evasion-cheatsheet">XSS Filter Evasion Cheat Sheet</a> for some
+ * XSS attack examples (that jsoup will safegaurd against the default Cleaner and Safelist configuration).
  */
 public class Safelist {
     private Set<TagName> tagNames; // tags allowed, lower case. e.g. [p, br, span]
@@ -70,19 +90,19 @@ public class Safelist {
     private boolean preserveRelativeLinks; // option to preserve relative links
 
     /**
-     This safelist allows only text nodes: all HTML will be stripped.
-
-     @return safelist
+     * This safelist allows only text nodes: all HTML will be stripped.
+     *
+     * @return safelist
      */
     public static Safelist none() {
         return new Safelist();
     }
 
     /**
-     This safelist allows only simple text formatting: <code>b, em, i, strong, u</code>. All other HTML (tags and
-     attributes) will be removed.
-
-     @return safelist
+     * This safelist allows only simple text formatting: <code>b, em, i, strong, u</code>. All other HTML (tags and
+     * attributes) will be removed.
+     *
+     * @return safelist
      */
     public static Safelist simpleText() {
         return new Safelist()
@@ -91,19 +111,16 @@ public class Safelist {
     }
 
     /**
-     <p>
-     This safelist allows a fuller range of text nodes: <code>a, b, blockquote, br, cite, code, dd, dl, dt, em, i, li,
-     ol, p, pre, q, small, span, strike, strong, sub, sup, u, ul</code>, and appropriate attributes.
-     </p>
-     <p>
-     Links (<code>a</code> elements) can point to <code>http, https, ftp, mailto</code>, and have an enforced
-     <code>rel=nofollow</code> attribute.
-     </p>
-     <p>
-     Does not allow images.
-     </p>
-
-     @return safelist
+     * <p>
+     * This safelist allows a fuller range of text nodes: <code>a, b, blockquote, br, cite, code, dd, dl, dt, em, i, li,
+     * ol, p, pre, q, small, span, strike, strong, sub, sup, u, ul</code>, and appropriate attributes.
+     * <p>
+     * Links (<code>a</code> elements) can point to <code>http, https, ftp, mailto</code>, and have an enforced
+     * <code>rel=nofollow</code> attribute.
+     * <p>
+     * Does not allow images.
+     *
+     * @return safelist
      */
     public static Safelist basic() {
         return new Safelist()
@@ -126,10 +143,10 @@ public class Safelist {
     }
 
     /**
-     This safelist allows the same text tags as {@link #basic}, and also allows <code>img</code> tags, with appropriate
-     attributes, with <code>src</code> pointing to <code>http</code> or <code>https</code>.
-
-     @return safelist
+     * This safelist allows the same text tags as {@link #basic}, and also allows <code>img</code> tags, with appropriate
+     * attributes, with <code>src</code> pointing to <code>http</code> or <code>https</code>.
+     *
+     * @return safelist
      */
     public static Safelist basicWithImages() {
         return basic()
@@ -140,14 +157,13 @@ public class Safelist {
     }
 
     /**
-     This safelist allows a full range of text and structural body HTML: <code>a, b, blockquote, br, caption, cite,
-     code, col, colgroup, dd, div, dl, dt, em, h1, h2, h3, h4, h5, h6, i, img, li, ol, p, pre, q, small, span, strike, strong, sub,
-     sup, table, tbody, td, tfoot, th, thead, tr, u, ul</code>
-     <p>
-     Links do not have an enforced <code>rel=nofollow</code> attribute, but you can add that if desired.
-     </p>
-
-     @return safelist
+     * This safelist allows a full range of text and structural body HTML: <code>a, b, blockquote, br, caption, cite,
+     * code, col, colgroup, dd, div, dl, dt, em, h1, h2, h3, h4, h5, h6, i, img, li, ol, p, pre, q, small, span, strike, strong, sub,
+     * sup, table, tbody, td, tfoot, th, thead, tr, u, ul</code>
+     * <p>
+     * Links do not have an enforced <code>rel=nofollow</code> attribute, but you can add that if desired.
+     *
+     * @return safelist
      */
     public static Safelist relaxed() {
         return new Safelist()
@@ -181,12 +197,12 @@ public class Safelist {
     }
 
     /**
-     Create a new, empty safelist. Generally it will be better to start with a default prepared safelist instead.
-
-     @see #basic()
-     @see #basicWithImages()
-     @see #simpleText()
-     @see #relaxed()
+     * Create a new, empty safelist. Generally it will be better to start with a default prepared safelist instead.
+     *
+     * @see #basic()
+     * @see #basicWithImages()
+     * @see #simpleText()
+     * @see #relaxed()
      */
     public Safelist() {
         tagNames = new HashSet<>();
@@ -197,8 +213,9 @@ public class Safelist {
     }
 
     /**
-     Deep copy an existing Safelist to a new Safelist.
-     @param copy the Safelist to copy
+     * Deep copy an existing Safelist to a new Safelist.
+     *
+     * @param copy the Safelist to copy
      */
     public Safelist(Safelist copy) {
         this();
@@ -210,10 +227,10 @@ public class Safelist {
     }
 
     /**
-     Add a list of allowed elements to a safelist. (If a tag is not allowed, it will be removed from the HTML.)
-
-     @param tags tag names to allow
-     @return this (for chaining)
+     * Add a list of allowed elements to a safelist. (If a tag is not allowed, it will be removed from the HTML.)
+     *
+     * @param tags tag names to allow
+     * @return this (for chaining)
      */
     public Safelist addTags(String... tags) {
         Validate.notNull(tags);
@@ -226,19 +243,19 @@ public class Safelist {
     }
 
     /**
-     Remove a list of allowed elements from a safelist. (If a tag is not allowed, it will be removed from the HTML.)
-
-     @param tags tag names to disallow
-     @return this (for chaining)
+     * Remove a list of allowed elements from a safelist. (If a tag is not allowed, it will be removed from the HTML.)
+     *
+     * @param tags tag names to disallow
+     * @return this (for chaining)
      */
     public Safelist removeTags(String... tags) {
         Validate.notNull(tags);
 
-        for(String tag: tags) {
+        for (String tag : tags) {
             Validate.notEmpty(tag);
             TagName tagName = TagName.valueOf(tag);
 
-            if(tagNames.remove(tagName)) { // Only look in sub-maps if tag was allowed
+            if (tagNames.remove(tagName)) { // Only look in sub-maps if tag was allowed
                 attributes.remove(tagName);
                 enforcedAttributes.remove(tagName);
                 protocols.remove(tagName);
@@ -248,19 +265,17 @@ public class Safelist {
     }
 
     /**
-     Add a list of allowed attributes to a tag. (If an attribute is not allowed on an element, it will be removed.)
-     <p>
-     E.g.: <code>addAttributes("a", "href", "class")</code> allows <code>href</code> and <code>class</code> attributes
-     on <code>a</code> tags.
-     </p>
-     <p>
-     To make an attribute valid for <b>all tags</b>, use the pseudo tag <code>:all</code>, e.g.
-     <code>addAttributes(":all", "class")</code>.
-     </p>
-
-     @param tag  The tag the attributes are for. The tag will be added to the allowed tag list if necessary.
-     @param attributes List of valid attributes for the tag
-     @return this (for chaining)
+     * Add a list of allowed attributes to a tag. (If an attribute is not allowed on an element, it will be removed.)
+     * <p>
+     * E.g.: <code>addAttributes("a", "href", "class")</code> allows <code>href</code> and <code>class</code> attributes
+     * on <code>a</code> tags.
+     * <p>
+     * To make an attribute valid for <b>all tags</b>, use the pseudo tag <code>:all</code>, e.g.
+     * <code>addAttributes(":all", "class")</code>.
+     *
+     * @param tag        The tag the attributes are for. The tag will be added to the allowed tag list if necessary.
+     * @param attributes List of valid attributes for the tag
+     * @return this (for chaining)
      */
     public Safelist addAttributes(String tag, String... attributes) {
         Validate.notEmpty(tag);
@@ -284,19 +299,17 @@ public class Safelist {
     }
 
     /**
-     Remove a list of allowed attributes from a tag. (If an attribute is not allowed on an element, it will be removed.)
-     <p>
-     E.g.: <code>removeAttributes("a", "href", "class")</code> disallows <code>href</code> and <code>class</code>
-     attributes on <code>a</code> tags.
-     </p>
-     <p>
-     To make an attribute invalid for <b>all tags</b>, use the pseudo tag <code>:all</code>, e.g.
-     <code>removeAttributes(":all", "class")</code>.
-     </p>
-
-     @param tag  The tag the attributes are for.
-     @param attributes List of invalid attributes for the tag
-     @return this (for chaining)
+     * Remove a list of allowed attributes from a tag. (If an attribute is not allowed on an element, it will be removed.)
+     * <p>
+     * E.g.: <code>removeAttributes("a", "href", "class")</code> disallows <code>href</code> and <code>class</code>
+     * attributes on <code>a</code> tags.
+     * <p>
+     * To make an attribute invalid for <b>all tags</b>, use the pseudo tag <code>:all</code>, e.g.
+     * <code>removeAttributes(":all", "class")</code>.
+     *
+     * @param tag        The tag the attributes are for.
+     * @param attributes List of invalid attributes for the tag
+     * @return this (for chaining)
      */
     public Safelist removeAttributes(String tag, String... attributes) {
         Validate.notEmpty(tag);
@@ -328,17 +341,16 @@ public class Safelist {
     }
 
     /**
-     Add an enforced attribute to a tag. An enforced attribute will always be added to the element. If the element
-     already has the attribute set, it will be overridden with this value.
-     <p>
-     E.g.: <code>addEnforcedAttribute("a", "rel", "nofollow")</code> will make all <code>a</code> tags output as
-     <code>&lt;a href="..." rel="nofollow"&gt;</code>
-     </p>
-
-     @param tag   The tag the enforced attribute is for. The tag will be added to the allowed tag list if necessary.
-     @param attribute   The attribute name
-     @param value The enforced attribute value
-     @return this (for chaining)
+     * Add an enforced attribute to a tag. An enforced attribute will always be added to the element. If the element
+     * already has the attribute set, it will be overridden with this value.
+     * <p>
+     * E.g.: <code>addEnforcedAttribute("a", "rel", "nofollow")</code> will make all <code>a</code> tags output as
+     * <code>&lt;a href="..." rel="nofollow"&gt;</code>
+     *
+     * @param tag       The tag the enforced attribute is for. The tag will be added to the allowed tag list if necessary.
+     * @param attribute The attribute name
+     * @param value     The enforced attribute value
+     * @return this (for chaining)
      */
     public Safelist addEnforcedAttribute(String tag, String attribute, String value) {
         Validate.notEmpty(tag);
@@ -361,11 +373,11 @@ public class Safelist {
     }
 
     /**
-     Remove a previously configured enforced attribute from a tag.
-
-     @param tag   The tag the enforced attribute is for.
-     @param attribute   The attribute name
-     @return this (for chaining)
+     * Remove a previously configured enforced attribute from a tag.
+     *
+     * @param tag       The tag the enforced attribute is for.
+     * @param attribute The attribute name
+     * @return this (for chaining)
      */
     public Safelist removeEnforcedAttribute(String tag, String attribute) {
         Validate.notEmpty(tag);
@@ -392,7 +404,6 @@ public class Safelist {
      * parsing, so that the link's protocol can be confirmed. Regardless of the setting of the {@code preserve relative
      * links} option, the link must be resolvable against the base URI to an allowed protocol; otherwise the attribute
      * will be removed.
-     * </p>
      *
      * @param preserve {@code true} to allow relative links, {@code false} (default) to deny
      * @return this Safelist, for chaining.
@@ -404,20 +415,18 @@ public class Safelist {
     }
 
     /**
-     Add allowed URL protocols for an element's URL attribute. This restricts the possible values of the attribute to
-     URLs with the defined protocol.
-     <p>
-     E.g.: <code>addProtocols("a", "href", "ftp", "http", "https")</code>
-     </p>
-     <p>
-     To allow a link to an in-page URL anchor (i.e. <code>&lt;a href="#anchor"&gt;</code>, add a <code>#</code>:<br>
-     E.g.: <code>addProtocols("a", "href", "#")</code>
-     </p>
-
-     @param tag       Tag the URL protocol is for
-     @param attribute       Attribute name
-     @param protocols List of valid protocols
-     @return this, for chaining
+     * Add allowed URL protocols for an element's URL attribute. This restricts the possible values of the attribute to
+     * URLs with the defined protocol.
+     * <p>
+     * E.g.: <code>addProtocols("a", "href", "ftp", "http", "https")</code>
+     * <p>
+     * To allow a link to an in-page URL anchor (i.e. <code>&lt;a href="#anchor"&gt;</code>, add a <code>#</code>:<br>
+     * E.g.: <code>addProtocols("a", "href", "#")</code>
+     *
+     * @param tag       Tag the URL protocol is for
+     * @param attribute Attribute name
+     * @param protocols List of valid protocols
+     * @return this, for chaining
      */
     public Safelist addProtocols(String tag, String attribute, String... protocols) {
         Validate.notEmpty(tag);
@@ -450,16 +459,15 @@ public class Safelist {
     }
 
     /**
-     Remove allowed URL protocols for an element's URL attribute. If you remove all protocols for an attribute, that
-     attribute will allow any protocol.
-     <p>
-     E.g.: <code>removeProtocols("a", "href", "ftp")</code>
-     </p>
-
-     @param tag Tag the URL protocol is for
-     @param attribute Attribute name
-     @param removeProtocols List of invalid protocols
-     @return this, for chaining
+     * Remove allowed URL protocols for an element's URL attribute. If you remove all protocols for an attribute, that
+     * attribute will allow any protocol.
+     * <p>
+     * E.g.: <code>removeProtocols("a", "href", "ftp")</code>
+     *
+     * @param tag             Tag the URL protocol is for
+     * @param attribute       Attribute name
+     * @param removeProtocols List of invalid protocols
+     * @return this, for chaining
      */
     public Safelist removeProtocols(String tag, String attribute, String... removeProtocols) {
         Validate.notEmpty(tag);
@@ -491,6 +499,7 @@ public class Safelist {
 
     /**
      * Test if the supplied tag is allowed by this safelist
+     *
      * @param tag test tag
      * @return true if allowed
      */
@@ -500,9 +509,10 @@ public class Safelist {
 
     /**
      * Test if the supplied attribute is allowed by this safelist for this tag
+     *
      * @param tagName tag to consider allowing the attribute in
-     * @param el element under test, to confirm protocol
-     * @param attr attribute under test
+     * @param el      element under test, to confirm protocol
+     * @param attr    attribute under test
      * @return true if allowed
      */
     protected boolean isSafeAttribute(String tagName, Element el, Attribute attr) {
@@ -554,7 +564,7 @@ public class Safelist {
 
             prot += ":";
 
-            if (lowerCase(value).startsWith(prot)) {
+            if (Normalizer.lowerCase(value).startsWith(prot)) {
                 return true;
             }
         }

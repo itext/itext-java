@@ -1,36 +1,62 @@
-package org.jsoup.select;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.parser.Tag;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-import static org.junit.jupiter.api.Assertions.*;
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.select;
+
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.styledxmlparser.jsoup.Jsoup;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
+import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 
-public class CssTest {
+@Category(UnitTest.class)
+public class CssTest extends ExtendedITextTest {
 
 	private Document html = null;
 	private static String htmlString;
 
-	@BeforeAll
+	@BeforeClass
 	public static void initClass() {
 		StringBuilder sb = new StringBuilder("<html><head></head><body>");
 
 		sb.append("<div id='pseudo'>");
 		for (int i = 1; i <= 10; i++) {
-			sb.append(String.format("<p>%d</p>",i));
+			sb.append(MessageFormatUtil.format("<p>{0}</p>",i));
 		}
 		sb.append("</div>");
 
 		sb.append("<div id='type'>");
 		for (int i = 1; i <= 10; i++) {
-			sb.append(String.format("<p>%d</p>",i));
-			sb.append(String.format("<span>%d</span>",i));
-			sb.append(String.format("<em>%d</em>",i));
-            sb.append(String.format("<svg>%d</svg>",i));
+			sb.append(MessageFormatUtil.format("<p>{0}</p>",i));
+			sb.append(MessageFormatUtil.format("<span>{0}</span>",i));
+			sb.append(MessageFormatUtil.format("<em>{0}</em>",i));
+            sb.append(MessageFormatUtil.format("<svg>{0}</svg>",i));
 		}
 		sb.append("</div>");
 
@@ -45,7 +71,7 @@ public class CssTest {
 		htmlString = sb.toString();
 	}
 
-	@BeforeEach
+	@Before
 	public void init() {
 		html  = Jsoup.parse(htmlString);
 	}
@@ -65,35 +91,35 @@ public class CssTest {
 	@Test
 	public void nthChild_simple() {
 		for(int i = 1; i <=10; i++) {
-			check(html.select(String.format("#pseudo :nth-child(%d)", i)), String.valueOf(i));
+			check(html.select(MessageFormatUtil.format("#pseudo :nth-child({0})", i)), String.valueOf(i));
 		}
 	}
 
     @Test
     public void nthOfType_unknownTag() {
         for(int i = 1; i <=10; i++) {
-            check(html.select(String.format("#type svg:nth-of-type(%d)", i)), String.valueOf(i));
+            check(html.select(MessageFormatUtil.format("#type svg:nth-of-type({0})", i)), String.valueOf(i));
         }
     }
 
 	@Test
 	public void nthLastChild_simple() {
 		for(int i = 1; i <=10; i++) {
-			check(html.select(String.format("#pseudo :nth-last-child(%d)", i)), String.valueOf(11-i));
+			check(html.select(MessageFormatUtil.format("#pseudo :nth-last-child({0})", i)), String.valueOf(11-i));
 		}
 	}
 
 	@Test
 	public void nthOfType_simple() {
 		for(int i = 1; i <=10; i++) {
-			check(html.select(String.format("#type p:nth-of-type(%d)", i)), String.valueOf(i));
+			check(html.select(MessageFormatUtil.format("#type p:nth-of-type({0})", i)), String.valueOf(i));
 		}
 	}
 
 	@Test
 	public void nthLastOfType_simple() {
 		for(int i = 1; i <=10; i++) {
-			check(html.select(String.format("#type :nth-last-of-type(%d)", i)), String.valueOf(11-i),String.valueOf(11-i),String.valueOf(11-i),String.valueOf(11-i));
+			check(html.select(MessageFormatUtil.format("#type :nth-last-of-type({0})", i)), String.valueOf(11-i),String.valueOf(11-i),String.valueOf(11-i),String.valueOf(11-i));
 		}
 	}
 
@@ -169,17 +195,17 @@ public class CssTest {
 	@Test
 	public void empty() {
 		final Elements sel = html.select(":empty");
-		assertEquals(3, sel.size());
-		assertEquals("head", sel.get(0).tagName());
-		assertEquals("br", sel.get(1).tagName());
-		assertEquals("p", sel.get(2).tagName());
+		Assert.assertEquals(3, sel.size());
+	    Assert.assertEquals("head", sel.get(0).tagName());
+		Assert.assertEquals("br", sel.get(1).tagName());
+		Assert.assertEquals("p", sel.get(2).tagName());
 	}
 
 	@Test
 	public void onlyChild() {
 		final Elements sel = html.select("span :only-child");
-		assertEquals(1, sel.size());
-		assertEquals("br", sel.get(0).tagName());
+		Assert.assertEquals(1, sel.size());
+		Assert.assertEquals("br", sel.get(0).tagName());
 
 		check(html.select("#only :only-child"), "only");
 	}
@@ -187,35 +213,35 @@ public class CssTest {
 	@Test
 	public void onlyOfType() {
 		final Elements sel = html.select(":only-of-type");
-		assertEquals(6, sel.size());
-		assertEquals("head", sel.get(0).tagName());
-		assertEquals("body", sel.get(1).tagName());
-		assertEquals("span", sel.get(2).tagName());
-		assertEquals("br", sel.get(3).tagName());
-		assertEquals("p", sel.get(4).tagName());
-		assertTrue(sel.get(4).hasClass("empty"));
-		assertEquals("em", sel.get(5).tagName());
+		Assert.assertEquals(6, sel.size());
+		Assert.assertEquals("head", sel.get(0).tagName());
+		Assert.assertEquals("body", sel.get(1).tagName());
+		Assert.assertEquals("span", sel.get(2).tagName());
+		Assert.assertEquals("br", sel.get(3).tagName());
+		Assert.assertEquals("p", sel.get(4).tagName());
+		Assert.assertTrue(sel.get(4).hasClass("empty"));
+		Assert.assertEquals("em", sel.get(5).tagName());
 	}
 
 	protected void check(Elements result, String...expectedContent ) {
-		assertEquals(expectedContent.length, result.size(), "Number of elements");
+		Assert.assertEquals(expectedContent.length, result.size());
 		for (int i = 0; i < expectedContent.length; i++) {
-			assertNotNull(result.get(i));
-			assertEquals(expectedContent[i], result.get(i).ownText(), "Expected element");
+			Assert.assertNotNull(result.get(i));
+			Assert.assertEquals(expectedContent[i], result.get(i).ownText());
 		}
 	}
 
 	@Test
 	public void root() {
 		Elements sel = html.select(":root");
-		assertEquals(1, sel.size());
-		assertNotNull(sel.get(0));
-		assertEquals(Tag.valueOf("html"), sel.get(0).tag());
+		Assert.assertEquals(1, sel.size());
+		Assert.assertNotNull(sel.get(0));
+		Assert.assertEquals(Tag.valueOf("html"), sel.get(0).tag());
 
 		Elements sel2 = html.select("body").select(":root");
-		assertEquals(1, sel2.size());
-		assertNotNull(sel2.get(0));
-		assertEquals(Tag.valueOf("body"), sel2.get(0).tag());
+		Assert.assertEquals(1, sel2.size());
+		Assert.assertNotNull(sel2.get(0));
+		Assert.assertEquals(Tag.valueOf("body"), sel2.get(0).tag());
 	}
 
 }

@@ -1,18 +1,40 @@
-package org.jsoup.safety;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.helper.Validate;
-import org.jsoup.nodes.Attribute;
-import org.jsoup.nodes.Attributes;
-import org.jsoup.nodes.DataNode;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
-import org.jsoup.parser.ParseErrorList;
-import org.jsoup.parser.Parser;
-import org.jsoup.parser.Tag;
-import org.jsoup.select.NodeTraversor;
-import org.jsoup.select.NodeVisitor;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.safety;
+
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Attribute;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
+import com.itextpdf.styledxmlparser.jsoup.nodes.DataNode;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
+import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
+import com.itextpdf.styledxmlparser.jsoup.parser.ParseErrorList;
+import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
+import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
+import com.itextpdf.styledxmlparser.jsoup.select.NodeTraversor;
+import com.itextpdf.styledxmlparser.jsoup.select.NodeVisitor;
 
 import java.util.List;
 
@@ -23,21 +45,19 @@ import java.util.List;
  <p>
  The HTML cleaner parses the input as HTML and then runs it through a safe-list, so the output HTML can only contain
  HTML that is allowed by the safelist.
- </p>
  <p>
  It is assumed that the input HTML is a body fragment; the clean methods only pull from the source's body, and the
  canned safe-lists only allow body contained tags.
- </p>
  <p>
- Rather than interacting directly with a Cleaner object, generally see the {@code clean} methods in {@link org.jsoup.Jsoup}.
- </p>
+ Rather than interacting directly with a Cleaner object, generally see the {@code clean} methods in {@link com.itextpdf.styledxmlparser.jsoup.Jsoup}.
  */
 public class Cleaner {
     private final Safelist safelist;
 
     /**
-     Create a new cleaner, that sanitizes documents using the supplied safelist.
-     @param safelist safe-list to clean with
+     * Create a new cleaner, that sanitizes documents using the supplied safelist.
+     *
+     * @param safelist safe-list to clean with
      */
     public Cleaner(Safelist safelist) {
         Validate.notNull(safelist);
@@ -45,8 +65,9 @@ public class Cleaner {
     }
 
     /**
-     Use {@link #Cleaner(Safelist)} instead.
-     @deprecated as of 1.14.1.
+     * Use {@link #Cleaner(Safelist)} instead.
+     *
+     * @deprecated as of 1.14.1.
      */
     @Deprecated
     public Cleaner(Whitelist whitelist) {
@@ -55,32 +76,33 @@ public class Cleaner {
     }
 
     /**
-     Creates a new, clean document, from the original dirty document, containing only elements allowed by the safelist.
-     The original document is not modified. Only elements from the dirty document's <code>body</code> are used. The
-     OutputSettings of the original document are cloned into the clean document.
-     @param dirtyDocument Untrusted base document to clean.
-     @return cleaned document.
+     * Creates a new, clean document, from the original dirty document, containing only elements allowed by the safelist.
+     * The original document is not modified. Only elements from the dirty document's <code>body</code> are used. The
+     * OutputSettings of the original document are cloned into the clean document.
+     *
+     * @param dirtyDocument Untrusted base document to clean.
+     * @return cleaned document.
      */
     public Document clean(Document dirtyDocument) {
         Validate.notNull(dirtyDocument);
 
         Document clean = Document.createShell(dirtyDocument.baseUri());
         copySafeNodes(dirtyDocument.body(), clean.body());
-        clean.outputSettings(dirtyDocument.outputSettings().clone());
+        clean.outputSettings((Document.OutputSettings) dirtyDocument.outputSettings().clone());
 
         return clean;
     }
 
     /**
-     Determines if the input document <b>body</b>is valid, against the safelist. It is considered valid if all the tags and attributes
-     in the input HTML are allowed by the safelist, and that there is no content in the <code>head</code>.
-     <p>
-     This method can be used as a validator for user input. An invalid document will still be cleaned successfully
-     using the {@link #clean(Document)} document. If using as a validator, it is recommended to still clean the document
-     to ensure enforced attributes are set correctly, and that the output is tidied.
-     </p>
-     @param dirtyDocument document to test
-     @return true if no tags or attributes need to be removed; false if they do
+     * Determines if the input document <b>body</b>is valid, against the safelist. It is considered valid if all the tags and attributes
+     * in the input HTML are allowed by the safelist, and that there is no content in the <code>head</code>.
+     * <p>
+     * This method can be used as a validator for user input. An invalid document will still be cleaned successfully
+     * using the {@link #clean(Document)} document. If using as a validator, it is recommended to still clean the document
+     * to ensure enforced attributes are set correctly, and that the output is tidied.
+     *
+     * @param dirtyDocument document to test
+     * @return true if no tags or attributes need to be removed; false if they do
      */
     public boolean isValid(Document dirtyDocument) {
         Validate.notNull(dirtyDocument);
@@ -102,14 +124,16 @@ public class Cleaner {
     }
 
     /**
-     Iterates the input and copies trusted nodes (tags, attributes, text) into the destination.
+     * Iterates the input and copies trusted nodes (tags, attributes, text) into the destination.
      */
     private final class CleaningVisitor implements NodeVisitor {
-        private int numDiscarded = 0;
+
+        int numDiscarded = 0;
+
         private final Element root;
         private Element destination; // current element to append nodes to
 
-        private CleaningVisitor(Element root, Element destination) {
+        CleaningVisitor(Element root, Element destination) {
             this.root = root;
             this.destination = destination;
         }
@@ -143,7 +167,7 @@ public class Cleaner {
 
         public void tail(Node source, int depth) {
             if (source instanceof Element && safelist.isSafeTag(source.nodeName())) {
-                destination = destination.parent(); // would have descended, so pop destination stack
+                destination = (Element) destination.parent(); // would have descended, so pop destination stack
             }
         }
     }

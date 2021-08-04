@@ -1,29 +1,50 @@
-package org.jsoup.nodes;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.SerializationException;
-import org.jsoup.helper.Validate;
-import org.jsoup.internal.StringUtil;
-import org.jsoup.select.NodeFilter;
-import org.jsoup.select.NodeTraversor;
-import org.jsoup.select.NodeVisitor;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-import javax.annotation.Nullable;
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.nodes;
+
+import com.itextpdf.styledxmlparser.jsoup.SerializationException;
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
+import com.itextpdf.styledxmlparser.jsoup.select.NodeFilter;
+import com.itextpdf.styledxmlparser.jsoup.select.NodeTraversor;
+import com.itextpdf.styledxmlparser.jsoup.select.NodeVisitor;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- The base, abstract Node model. Elements, Documents, Comments etc are all Node instances.
-
- @author Jonathan Hedley, jonathan@hedley.net */
+ * The base, abstract Node model. Elements, Documents, Comments etc are all Node instances.
+ *
+ * @author Jonathan Hedley, jonathan@hedley.net
+ */
 public abstract class Node implements Cloneable {
-    static final List<Node> EmptyNodes = Collections.emptyList();
+    static final List<Node> EmptyNodes = Collections.<Node>emptyList();
     static final String EmptyString = "";
-    @Nullable Node parentNode; // Nodes don't always have parents
+    Node parentNode; // Nodes don't always have parents
     int siblingIndex;
 
     /**
@@ -33,8 +54,9 @@ public abstract class Node implements Cloneable {
     }
 
     /**
-     Get the node name of this node. Use for debugging purposes and not logic switching (for that, use instanceof).
-     @return node name
+     * Get the node name of this node. Use for debugging purposes and not logic switching (for that, use instanceof).
+     *
+     * @return node name
      */
     public abstract String nodeName();
 
@@ -44,9 +66,10 @@ public abstract class Node implements Cloneable {
     protected abstract boolean hasAttributes();
 
     /**
-     Checks if this node has a parent. Nodes won't have parents if (e.g.) they are newly created and not added as a child
-     to an existing node, or if they are a {@link #shallowClone()}. In such cases, {@link #parent()} will return {@code null}.
-     @return if this node has a parent.
+     * Checks if this node has a parent. Nodes won't have parents if (e.g.) they are newly created and not added as a child
+     * to an existing node, or if they are a {@link #shallowClone()}. In such cases, {@link #parent()} will return {@code null}.
+     *
+     * @return if this node has a parent.
      */
     public boolean hasParent() {
         return parentNode != null;
@@ -57,7 +80,7 @@ public abstract class Node implements Cloneable {
      * <p>
      * To get an absolute URL from an attribute that may be a relative URL, prefix the key with <code><b>abs</b></code>,
      * which is a shortcut to the {@link #absUrl} method.
-     * </p>
+     * <p>
      * E.g.:
      * <blockquote><code>String url = a.attr("abs:href");</code></blockquote>
      *
@@ -82,6 +105,7 @@ public abstract class Node implements Cloneable {
 
     /**
      * Get all of the element's attributes.
+     *
      * @return attributes (which implements iterable, in same order as presented in original HTML).
      */
     public abstract Attributes attributes();
@@ -89,7 +113,8 @@ public abstract class Node implements Cloneable {
     /**
      * Set an attribute (key=value). If the attribute already exists, it is replaced. The attribute key comparison is
      * <b>case insensitive</b>. The key will be set with case sensitivity as set in the parser settings.
-     * @param attributeKey The attribute key.
+     *
+     * @param attributeKey   The attribute key.
      * @param attributeValue The attribute value.
      * @return this (for chaining)
      */
@@ -101,6 +126,7 @@ public abstract class Node implements Cloneable {
 
     /**
      * Test if this element has an attribute. <b>Case insensitive</b>
+     *
      * @param attributeKey The attribute key to check.
      * @return true if the attribute exists, false if not.
      */
@@ -119,6 +145,7 @@ public abstract class Node implements Cloneable {
 
     /**
      * Remove an attribute from this node.
+     *
      * @param attributeKey The attribute to remove.
      * @return this (for chaining)
      */
@@ -131,37 +158,39 @@ public abstract class Node implements Cloneable {
 
     /**
      * Clear (remove) all of the attributes in this node.
+     *
      * @return this, for chaining
      */
     public Node clearAttributes() {
         if (hasAttributes()) {
-            Iterator<Attribute> it = attributes().iterator();
-            while (it.hasNext()) {
-                it.next();
-                it.remove();
+            Attributes attributes = attributes();
+            for (Attribute attribute : attributes) {
+                attributes.remove(attribute.getKey());
             }
         }
         return this;
     }
 
     /**
-     Get the base URI that applies to this node. Will return an empty string if not defined. Used to make relative links
-     absolute.
-
-     @return base URI
-     @see #absUrl
+     * Get the base URI that applies to this node. Will return an empty string if not defined. Used to make relative links
+     * absolute.
+     *
+     * @return base URI
+     * @see #absUrl
      */
     public abstract String baseUri();
 
     /**
      * Set the baseUri for just this node (not its descendants), if this Node tracks base URIs.
+     *
      * @param baseUri new URI
      */
     protected abstract void doSetBaseUri(String baseUri);
 
     /**
-     Update the base URI of this node and all of its descendants.
-     @param baseUri base URI to set
+     * Update the base URI of this node and all of its descendants.
+     *
+     * @param baseUri base URI to set
      */
     public void setBaseUri(final String baseUri) {
         Validate.notNull(baseUri);
@@ -173,17 +202,14 @@ public abstract class Node implements Cloneable {
      * <code>&lt;img src&gt;</code>).
      * <p>
      * E.g.: <code>String absUrl = linkEl.absUrl("href");</code>
-     * </p>
      * <p>
      * If the attribute value is already absolute (i.e. it starts with a protocol, like
      * <code>http://</code> or <code>https://</code> etc), and it successfully parses as a URL, the attribute is
      * returned directly. Otherwise, it is treated as a URL relative to the element's {@link #baseUri}, and made
      * absolute using that.
-     * </p>
      * <p>
      * As an alternate, you can use the {@link #attr} method with the <code>abs:</code> prefix, e.g.:
      * <code>String absUrl = linkEl.attr("abs:href");</code>
-     * </p>
      *
      * @param attributeKey The attribute key
      * @return An absolute URL if one could be made, or an empty string (not null) if the attribute was missing or
@@ -202,18 +228,20 @@ public abstract class Node implements Cloneable {
     protected abstract List<Node> ensureChildNodes();
 
     /**
-     Get a child node by its 0-based index.
-     @param index index of child node
-     @return the child node at this index. Throws a {@code IndexOutOfBoundsException} if the index is out of bounds.
+     * Get a child node by its 0-based index.
+     *
+     * @param index index of child node
+     * @return the child node at this index. Throws a {@code IndexOutOfBoundsException} if the index is out of bounds.
      */
     public Node childNode(int index) {
         return ensureChildNodes().get(index);
     }
 
     /**
-     Get this node's children. Presented as an unmodifiable list: new children can not be added, but the child nodes
-     themselves can be manipulated.
-     @return list of children. If no children, returns an empty list.
+     * Get this node's children. Presented as an unmodifiable list: new children can not be added, but the child nodes
+     * themselves can be manipulated.
+     *
+     * @return list of children. If no children, returns an empty list.
      */
     public List<Node> childNodes() {
         if (childNodeSize() == 0)
@@ -228,19 +256,21 @@ public abstract class Node implements Cloneable {
     /**
      * Returns a deep copy of this node's children. Changes made to these nodes will not be reflected in the original
      * nodes
+     *
      * @return a deep copy of this node's children
      */
     public List<Node> childNodesCopy() {
         final List<Node> nodes = ensureChildNodes();
         final ArrayList<Node> children = new ArrayList<>(nodes.size());
         for (Node node : nodes) {
-            children.add(node.clone());
+            children.add((Node) node.clone());
         }
         return children;
     }
 
     /**
      * Get the number of child nodes that this node holds.
+     *
      * @return the number of child nodes that this node holds.
      */
     public abstract int childNodeSize();
@@ -251,30 +281,34 @@ public abstract class Node implements Cloneable {
 
     /**
      * Delete all this node's children.
+     *
      * @return this node, for chaining
      */
     public abstract Node empty();
 
 
     /**
-     Gets this node's parent node.
-     @return parent node; or null if no parent.
-     @see #hasParent()
+     * Gets this node's parent node.
+     *
+     * @return parent node; or null if no parent.
+     * @see #hasParent()
      */
-    public @Nullable Node parent() {
+    public Node parent() {
         return parentNode;
     }
 
     /**
-     Gets this node's parent node. Not overridable by extending classes, so useful if you really just need the Node type.
-     @return parent node; or null if no parent.
+     * Gets this node's parent node. Not overridable by extending classes, so useful if you really just need the Node type.
+     *
+     * @return parent node; or null if no parent.
      */
-    public @Nullable final Node parentNode() {
+    public final Node parentNode() {
         return parentNode;
     }
 
     /**
      * Get this node's root node; that is, its topmost ancestor. If this node is the top ancestor, returns {@code this}.
+     *
      * @return topmost ancestor.
      */
     public Node root() {
@@ -286,9 +320,10 @@ public abstract class Node implements Cloneable {
 
     /**
      * Gets the Document associated with this Node.
+     *
      * @return the Document associated with this Node, or null if there is no such Document.
      */
-    public @Nullable Document ownerDocument() {
+    public Document ownerDocument() {
         Node root = root();
         return (root instanceof Document) ? (Document) root : null;
     }
@@ -303,6 +338,7 @@ public abstract class Node implements Cloneable {
 
     /**
      * Insert the specified HTML into the DOM before this node (as a preceding sibling).
+     *
      * @param html HTML to add before this node
      * @return this node, for chaining
      * @see #after(String)
@@ -314,6 +350,7 @@ public abstract class Node implements Cloneable {
 
     /**
      * Insert the specified node into the DOM before this node (as a preceding sibling).
+     *
      * @param node to add before this node
      * @return this node, for chaining
      * @see #after(Node)
@@ -328,6 +365,7 @@ public abstract class Node implements Cloneable {
 
     /**
      * Insert the specified HTML into the DOM after this node (as a following sibling).
+     *
      * @param html HTML to add after this node
      * @return this node, for chaining
      * @see #before(String)
@@ -339,6 +377,7 @@ public abstract class Node implements Cloneable {
 
     /**
      * Insert the specified node into the DOM after this node (as a following sibling).
+     *
      * @param node to add after this node
      * @return this node, for chaining
      * @see #before(Node)
@@ -361,11 +400,11 @@ public abstract class Node implements Cloneable {
     }
 
     /**
-     Wrap the supplied HTML around this node.
-
-     @param html HTML to wrap around this node, e.g. {@code <div class="head"></div>}. Can be arbitrarily deep. If
-     the input HTML does not parse to a result starting with an Element, this will be a no-op.
-     @return this node, for chaining.
+     * Wrap the supplied HTML around this node.
+     *
+     * @param html HTML to wrap around this node, e.g. {@code <div class="head"></div>}. Can be arbitrarily deep. If
+     *             the input HTML does not parse to a result starting with an Element, this will be a no-op.
+     * @return this node, for chaining.
      */
     public Node wrap(String html) {
         Validate.notEmpty(html);
@@ -408,17 +447,18 @@ public abstract class Node implements Cloneable {
      * the node but keeping its children.
      * <p>
      * For example, with the input html:
-     * </p>
-     * <p>{@code <div>One <span>Two <b>Three</b></span></div>}</p>
+     * <p>
+     * {@code <div>One <span>Two <b>Three</b></span></div>}
      * Calling {@code element.unwrap()} on the {@code span} element will result in the html:
-     * <p>{@code <div>One Two <b>Three</b></div>}</p>
+     * <p>
+     * {@code <div>One Two <b>Three</b></div>}
      * and the {@code "Two "} {@link TextNode} being returned.
      *
      * @return the first child of this node, after the node has been unwrapped. @{code Null} if the node had no children.
      * @see #remove()
      * @see #wrap(String)
      */
-    public @Nullable Node unwrap() {
+    public Node unwrap() {
         Validate.notNull(parentNode);
         final List<Node> childNodes = ensureChildNodes();
         Node firstChild = childNodes.size() > 0 ? childNodes.get(0) : null;
@@ -442,6 +482,7 @@ public abstract class Node implements Cloneable {
 
     /**
      * Replace this node in the DOM with the supplied node.
+     *
      * @param in the node that will will replace the existing node.
      */
     public void replaceWith(Node in) {
@@ -542,13 +583,14 @@ public abstract class Node implements Cloneable {
     }
 
     /**
-     Retrieves this node's sibling nodes. Similar to {@link #childNodes()  node.parent.childNodes()}, but does not
-     include this node (a node is not a sibling of itself).
-     @return node siblings. If the node has no parent, returns an empty list.
+     * Retrieves this node's sibling nodes. Similar to {@link #childNodes()  node.parent.childNodes()}, but does not
+     * include this node (a node is not a sibling of itself).
+     *
+     * @return node siblings. If the node has no parent, returns an empty list.
      */
     public List<Node> siblingNodes() {
         if (parentNode == null)
-            return Collections.emptyList();
+            return Collections.<Node>emptyList();
 
         List<Node> nodes = parentNode.ensureChildNodes();
         List<Node> siblings = new ArrayList<>(nodes.size() - 1);
@@ -559,10 +601,11 @@ public abstract class Node implements Cloneable {
     }
 
     /**
-     Get this node's next sibling.
-     @return next sibling, or @{code null} if this is the last sibling
+     * Get this node's next sibling.
+     *
+     * @return next sibling, or @{code null} if this is the last sibling
      */
-    public @Nullable Node nextSibling() {
+    public Node nextSibling() {
         if (parentNode == null)
             return null; // root
 
@@ -575,10 +618,11 @@ public abstract class Node implements Cloneable {
     }
 
     /**
-     Get this node's previous sibling.
-     @return the previous sibling, or @{code null} if this is the first sibling
+     * Get this node's previous sibling.
+     *
+     * @return the previous sibling, or @{code null} if this is the first sibling
      */
-    public @Nullable Node previousSibling() {
+    public Node previousSibling() {
         if (parentNode == null)
             return null; // root
 
@@ -591,8 +635,9 @@ public abstract class Node implements Cloneable {
     /**
      * Get the list index of this node in its node sibling list. E.g. if this is the first node
      * sibling, returns 0.
+     *
      * @return position in node sibling list
-     * @see org.jsoup.nodes.Element#elementSiblingIndex()
+     * @see com.itextpdf.styledxmlparser.jsoup.nodes.Element#elementSiblingIndex()
      */
     public int siblingIndex() {
         return siblingIndex;
@@ -604,6 +649,7 @@ public abstract class Node implements Cloneable {
 
     /**
      * Perform a depth-first traversal through this node and its descendants.
+     *
      * @param nodeVisitor the visitor callbacks to perform on each node
      * @return this node, for chaining
      */
@@ -615,6 +661,7 @@ public abstract class Node implements Cloneable {
 
     /**
      * Perform a depth-first filtering through this node and its descendants.
+     *
      * @param nodeFilter the filter callbacks to perform on each node
      * @return this node, for chaining
      */
@@ -625,10 +672,11 @@ public abstract class Node implements Cloneable {
     }
 
     /**
-     Get the outer HTML of this node. For example, on a {@code p} element, may return {@code <p>Para</p>}.
-     @return outer HTML
-     @see Element#html()
-     @see Element#text()
+     * Get the outer HTML of this node. For example, on a {@code p} element, may return {@code <p>Para</p>}.
+     *
+     * @return outer HTML
+     * @see Element#html()
+     * @see Element#text()
      */
     public String outerHtml() {
         StringBuilder accum = StringUtil.borrowBuilder();
@@ -641,9 +689,10 @@ public abstract class Node implements Cloneable {
     }
 
     /**
-     Get the outer HTML of this node.
-     @param accum accumulator to place HTML into
-     @throws IOException if appending to the given accumulator fails.
+     * Get the outer HTML of this node.
+     *
+     * @param accum accumulator to place HTML into
+     * @throws IOException if appending to the given accumulator fails.
      */
     abstract void outerHtmlHead(final Appendable accum, int depth, final Document.OutputSettings out) throws IOException;
 
@@ -655,13 +704,14 @@ public abstract class Node implements Cloneable {
      * @param appendable the {@link Appendable} to write to.
      * @return the supplied {@link Appendable}, for chaining.
      */
-    public <T extends Appendable> T html(T appendable) {
+    public Appendable html(Appendable appendable) {
         outerHtml(appendable);
         return appendable;
     }
 
     /**
      * Gets this node's outer HTML.
+     *
      * @return outer HTML.
      * @see #outerHtml()
      */
@@ -675,7 +725,9 @@ public abstract class Node implements Cloneable {
 
     /**
      * Check if this node is the same instance of another (object identity test).
-     * <p>For an node value equality check, see {@link #hasSameValue(Object)}</p>
+     * <p>
+     * For an node value equality check, see {@link #hasSameValue(Object)}
+     *
      * @param o other object to compare to
      * @return true if the content of this node is the same as the other
      * @see Node#hasSameValue(Object)
@@ -689,10 +741,11 @@ public abstract class Node implements Cloneable {
     /**
      * Check if this node is has the same content as another node. A node is considered the same if its name, attributes and content match the
      * other node; particularly its position in the tree does not influence its similarity.
+     *
      * @param o other object to compare to
      * @return true if the content of this node is the same as the other
      */
-    public boolean hasSameValue(@Nullable Object o) {
+    public boolean hasSameValue(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -705,11 +758,12 @@ public abstract class Node implements Cloneable {
      * original node.
      * <p>
      * The cloned node may be adopted into another Document or node structure using {@link Element#appendChild(Node)}.
+     *
      * @return a stand-alone cloned node, including clones of any children
      * @see #shallowClone()
      */
     @Override
-    public Node clone() {
+    public Object clone() {
         Node thisClone = doClone(null); // splits for orphan
 
         // Queue up nodes that need their children cloned (BFS).
@@ -734,6 +788,7 @@ public abstract class Node implements Cloneable {
     /**
      * Create a stand-alone, shallow copy of this node. None of its children (if any) will be cloned, and it will have
      * no parent or sibling nodes.
+     *
      * @return a single independent copy of this node
      * @see #clone()
      */
@@ -745,19 +800,21 @@ public abstract class Node implements Cloneable {
      * Return a clone of the node using the given parent (which can be null).
      * Not a deep copy of children.
      */
-    protected Node doClone(@Nullable Node parent) {
-        Node clone;
-
-        try {
-            clone = (Node) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
+    protected Node doClone(Node parent) {
+        Node clone = (Node) partialClone();
 
         clone.parentNode = parent; // can be null, to create an orphan split
         clone.siblingIndex = parent == null ? 0 : siblingIndex;
 
         return clone;
+    }
+
+    private Object partialClone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static class OuterHtmlVisitor implements NodeVisitor {

@@ -1,18 +1,40 @@
-package org.jsoup.helper;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.UncheckedIOException;
-import org.jsoup.internal.ConstrainableInputStream;
-import org.jsoup.internal.Normalizer;
-import org.jsoup.internal.StringUtil;
-import org.jsoup.nodes.Comment;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.nodes.XmlDeclaration;
-import org.jsoup.parser.Parser;
-import org.jsoup.select.Elements;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-import javax.annotation.Nullable;
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.helper;
+
+import com.itextpdf.styledxmlparser.jsoup.PortUtil;
+import com.itextpdf.styledxmlparser.jsoup.UncheckedIOException;
+import com.itextpdf.styledxmlparser.jsoup.internal.ConstrainableInputStream;
+import com.itextpdf.styledxmlparser.jsoup.internal.Normalizer;
+import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Comment;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
+import com.itextpdf.styledxmlparser.jsoup.nodes.XmlDeclaration;
+import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
+import com.itextpdf.styledxmlparser.jsoup.select.Elements;
+
 import java.io.BufferedReader;
 import java.io.CharArrayReader;
 import java.io.File;
@@ -23,9 +45,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.IllegalCharsetNameException;
 import java.util.Locale;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -60,7 +80,7 @@ public final class DataUtil {
      * @return Document
      * @throws IOException on IO error
      */
-    public static Document load(File in, @Nullable String charsetName, String baseUri) throws IOException {
+    public static Document load(File in, String charsetName, String baseUri) throws IOException {
         InputStream stream = new FileInputStream(in);
         String name = Normalizer.lowerCase(in.getName());
         if (name.endsWith(".gz") || name.endsWith(".z")) {
@@ -111,12 +131,12 @@ public final class DataUtil {
         }
     }
 
-    static Document parseInputStream(@Nullable InputStream input, @Nullable String charsetName, String baseUri, Parser parser) throws IOException  {
+    static Document parseInputStream(InputStream input, String charsetName, String baseUri, Parser parser) throws IOException  {
         if (input == null) // empty body
             return new Document(baseUri);
         input = ConstrainableInputStream.wrap(input, bufferSize, 0);
 
-        @Nullable Document doc = null;
+        Document doc = null;
 
         // read the start of the stream and look for a BOM or meta charset
         input.mark(bufferSize);
@@ -131,11 +151,8 @@ public final class DataUtil {
 
         if (charsetName == null) { // determine from meta. safe first parse as UTF-8
             try {
-                CharBuffer defaultDecoded = UTF_8.decode(firstBytes);
-                if (defaultDecoded.hasArray())
-                    doc = parser.parseInput(new CharArrayReader(defaultDecoded.array(), defaultDecoded.arrayOffset(), defaultDecoded.limit()), baseUri);
-                else
-                    doc = parser.parseInput(defaultDecoded.toString(), baseUri);
+                String defaultDecoded = UTF_8.decode(firstBytes).toString();
+                doc = parser.parseInput(new CharArrayReader(defaultDecoded.toCharArray(), 0, defaultDecoded.length()), baseUri);
             } catch (UncheckedIOException e) {
                 throw e.ioException();
             }
@@ -183,9 +200,10 @@ public final class DataUtil {
             if (charsetName == null)
                 charsetName = defaultCharsetName;
             BufferedReader reader = new BufferedReader(new InputStreamReader(input, charsetName), bufferSize);
-            if (bomCharset != null && bomCharset.offset) { // creating the buffered reader ignores the input pos, so must skip here
+            if (bomCharset != null && bomCharset.offset) {
+                // creating the buffered reader ignores the input pos, so must skip here
                 long skipped = reader.skip(1);
-                Validate.isTrue(skipped == 1); // WTF if this fails.
+                Validate.isTrue(skipped == 1);
             }
             try {
                 doc = parser.parseInput(reader, baseUri);
@@ -228,7 +246,7 @@ public final class DataUtil {
      * @param contentType e.g. "text/html; charset=EUC-JP"
      * @return "EUC-JP", or null if not found. Charset is trimmed and uppercased.
      */
-    static @Nullable String getCharsetFromContentType(@Nullable String contentType) {
+    static String getCharsetFromContentType(String contentType) {
         if (contentType == null) return null;
         Matcher m = charsetPattern.matcher(contentType);
         if (m.find()) {
@@ -239,16 +257,12 @@ public final class DataUtil {
         return null;
     }
 
-    private @Nullable static String validateCharset(@Nullable String cs) {
+    private static String validateCharset(String cs) {
         if (cs == null || cs.length() == 0) return null;
         cs = cs.trim().replaceAll("[\"']", "");
-        try {
-            if (Charset.isSupported(cs)) return cs;
-            cs = cs.toUpperCase(Locale.ENGLISH);
-            if (Charset.isSupported(cs)) return cs;
-        } catch (IllegalCharsetNameException e) {
-            // if our this charset matching fails.... we just take the default
-        }
+        if (PortUtil.charsetIsSupported(cs)) return cs;
+        cs = cs.toUpperCase(Locale.ENGLISH);
+        if (PortUtil.charsetIsSupported(cs)) return cs;
         return null;
     }
 
@@ -264,7 +278,7 @@ public final class DataUtil {
         return StringUtil.releaseBuilder(mime);
     }
 
-    private static @Nullable BomCharset detectCharsetFromBom(final ByteBuffer byteData) {
+    private static BomCharset detectCharsetFromBom(final ByteBuffer byteData) {
         @SuppressWarnings("UnnecessaryLocalVariable") final Buffer buffer = byteData; // .mark and rewind used to return Buffer, now ByteBuffer, so cast for backward compat
         buffer.mark();
         byte[] bom = new byte[4];

@@ -106,4 +106,14 @@ public final class ArrayUtil {
     public static int[] cloneArray(int[] src) {
         return (int[]) src.clone();
     }
+
+    public static int indexOf(Object[] a, Object key) {
+        for (int i = 0; i < a.length; i++) {
+            Object el = a[i];
+            if (el.equals(key)) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }

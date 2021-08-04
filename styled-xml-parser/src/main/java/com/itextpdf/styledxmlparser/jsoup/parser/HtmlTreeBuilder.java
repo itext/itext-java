@@ -1,31 +1,49 @@
-package org.jsoup.parser;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.helper.Validate;
-import org.jsoup.internal.StringUtil;
-import org.jsoup.nodes.CDataNode;
-import org.jsoup.nodes.Comment;
-import org.jsoup.nodes.DataNode;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.FormElement;
-import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
-import org.jsoup.select.Elements;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.parser;
+
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
+import com.itextpdf.styledxmlparser.jsoup.nodes.CDataNode;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Comment;
+import com.itextpdf.styledxmlparser.jsoup.nodes.DataNode;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.nodes.FormElement;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
+import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
+import com.itextpdf.styledxmlparser.jsoup.select.Elements;
+
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jsoup.internal.StringUtil.inSorted;
-
 /**
  * HTML Tree Builder; creates a DOM from Tokens.
  */
 public class HtmlTreeBuilder extends TreeBuilder {
-    // tag searches. must be sorted, used in inSorted. HtmlTreeBuilderTest validates they're sorted.
+    // tag searches. must be sorted, used in StringUtil.inSorted. HtmlTreeBuilderTest validates they're sorted.
     static final String[] TagsSearchInScope = new String[]{"applet", "caption", "html", "marquee", "object", "table", "td", "th"};
     static final String[] TagSearchList = new String[]{"ol", "ul"};
     static final String[] TagSearchButton = new String[]{"button"};
@@ -47,9 +65,9 @@ public class HtmlTreeBuilder extends TreeBuilder {
     private HtmlTreeBuilderState originalState; // original / marked state
 
     private boolean baseUriSetFromDoc;
-    private @Nullable Element headElement; // the current head element
-    private @Nullable FormElement formElement; // the current form element
-    private @Nullable Element contextElement; // fragment parse context -- could be null even if fragment parsing
+    private Element headElement; // the current head element
+    private FormElement formElement; // the current form element
+    private Element contextElement; // fragment parse context -- could be null even if fragment parsing
     private ArrayList<Element> formattingElements; // active (open) formatting elements
     private List<String> pendingTableCharacters; // chars in table to be shifted out
     private Token.EndTag emptyEnd; // reused empty end tag
@@ -63,15 +81,15 @@ public class HtmlTreeBuilder extends TreeBuilder {
     }
 
     @Override
-    HtmlTreeBuilder newInstance() {
+    TreeBuilder newInstance() {
         return new HtmlTreeBuilder();
     }
 
-    @Override @ParametersAreNonnullByDefault
+    @Override
     protected void initialiseParse(Reader input, String baseUri, Parser parser) {
         super.initialiseParse(input, baseUri, parser);
 
-        // this is a bit mucky. todo - probably just create new parser objects to ensure all reset.
+        // this is a bit mucky.
         state = HtmlTreeBuilderState.Initial;
         originalState = null;
         baseUriSetFromDoc = false;
@@ -86,7 +104,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
         fragmentParsing = false;
     }
 
-    List<Node> parseFragment(String inputFragment, @Nullable Element context, String baseUri, Parser parser) {
+    List<Node> parseFragment(String inputFragment, Element context, String baseUri, Parser parser) {
         // context may be null
         state = HtmlTreeBuilderState.Initial;
         initialiseParse(new StringReader(inputFragment), baseUri, parser);
@@ -204,7 +222,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
 
     void error(HtmlTreeBuilderState state) {
         if (parser.getErrors().canAddError())
-            parser.getErrors().add(new ParseError(reader.pos(), "Unexpected token [%s] when in state [%s]", currentToken.tokenType(), state));
+            parser.getErrors().add(new ParseError(reader.pos(), "Unexpected token [{0}] when in state [{1}]", currentToken.tokenType(), state));
     }
 
     Element insert(final Token.StartTag startTag) {
@@ -222,7 +240,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
             Element el = insertEmpty(startTag);
             stack.add(el);
             tokeniser.transition(TokeniserState.Data); // handles <script />, otherwise needs breakout steps from script data
-            tokeniser.emit(emptyEnd.reset().name(el.tagName()));  // ensure we get out of whatever state we are in. emitted for yielded processing
+            tokeniser.emit(((Token.Tag) emptyEnd.reset()).name(el.tagName()));  // ensure we get out of whatever state we are in. emitted for yielded processing
             return el;
         }
 
@@ -371,7 +389,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
         for (int pos = stack.size() -1; pos >= 0; pos--) {
             Element next = stack.get(pos);
             stack.remove(pos);
-            if (inSorted(next.normalName(), elNames))
+            if (StringUtil.inSorted(next.normalName(), elNames))
                 break;
         }
     }
@@ -485,7 +503,6 @@ public class HtmlTreeBuilder extends TreeBuilder {
         }
     }
 
-    // todo: tidy up in specific scope methods
     private String[] specificScopeTarget = {null};
 
     private boolean inSpecificScope(String targetName, String[] baseTypes, String[] extraTypes) {
@@ -501,11 +518,11 @@ public class HtmlTreeBuilder extends TreeBuilder {
 
         for (int pos = bottom; pos >= top; pos--) {
             final String elName = stack.get(pos).normalName();
-            if (inSorted(elName, targetNames))
+            if (StringUtil.inSorted(elName, targetNames))
                 return true;
-            if (inSorted(elName, baseTypes))
+            if (StringUtil.inSorted(elName, baseTypes))
                 return false;
-            if (extraTypes != null && inSorted(elName, extraTypes))
+            if (extraTypes != null && StringUtil.inSorted(elName, extraTypes))
                 return false;
         }
         //Validate.fail("Should not be reachable"); // would end up false because hitting 'html' at root (basetypes)
@@ -522,9 +539,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
 
     boolean inScope(String targetName, String[] extras) {
         return inSpecificScope(targetName, TagsSearchInScope, extras);
-        // todo: in mathml namespace: mi, mo, mn, ms, mtext annotation-xml
-        // todo: in svg namespace: forignOjbect, desc, title
-    }
+        }
 
     boolean inListItemScope(String targetName) {
         return inScope(targetName, TagSearchList);
@@ -544,7 +559,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
             String elName = el.normalName();
             if (elName.equals(targetName))
                 return true;
-            if (!inSorted(elName, TagSearchSelectScope)) // all elements except
+            if (!StringUtil.inSorted(elName, TagSearchSelectScope)) // all elements except
                 return false;
         }
         Validate.fail("Should not be reachable");
@@ -584,17 +599,18 @@ public class HtmlTreeBuilder extends TreeBuilder {
     }
 
     /**
-     11.2.5.2 Closing elements that have implied end tags<p/>
-     When the steps below require the UA to generate implied end tags, then, while the current node is a dd element, a
-     dt element, an li element, an option element, an optgroup element, a p element, an rp element, or an rt element,
-     the UA must pop the current node off the stack of open elements.
-
-     @param excludeTag If a step requires the UA to generate implied end tags but lists an element to exclude from the
-     process, then the UA must perform the above steps as if that element was not in the above list.
+     * 11.2.5.2 Closing elements that have implied end tags
+     * <p>
+     * When the steps below require the UA to generate implied end tags, then, while the current node is a dd element, a
+     * dt element, an li element, an option element, an optgroup element, a p element, an rp element, or an rt element,
+     * the UA must pop the current node off the stack of open elements.
+     *
+     * @param excludeTag If a step requires the UA to generate implied end tags but lists an element to exclude from the
+     *                   process, then the UA must perform the above steps as if that element was not in the above list.
      */
     void generateImpliedEndTags(String excludeTag) {
         while ((excludeTag != null && !currentElement().normalName().equals(excludeTag)) &&
-                inSorted(currentElement().normalName(), TagSearchEndTags))
+                StringUtil.inSorted(currentElement().normalName(), TagSearchEndTags))
             pop();
     }
 
@@ -603,10 +619,8 @@ public class HtmlTreeBuilder extends TreeBuilder {
     }
 
     boolean isSpecial(Element el) {
-        // todo: mathml's mi, mo, mn
-        // todo: svg's foreigObject, desc, title
         String name = el.normalName();
-        return inSorted(name, TagSearchSpecial);
+        return StringUtil.inSorted(name, TagSearchSpecial);
     }
 
     Element lastFormattingElement() {
@@ -662,8 +676,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
         return a.normalName().equals(b.normalName()) &&
                 // a.namespace().equals(b.namespace()) &&
                 a.attributes().equals(b.attributes());
-        // todo: namespaces
-    }
+        }
 
     void reconstructFormattingElements() {
         Element last = lastFormattingElement();
@@ -690,8 +703,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
 
             // 8. create new element from element, 9 insert into current node, onto stack
             skip = false; // can only skip increment from 4.
-            Element newEl = insertStartTag(entry.normalName()); // todo: avoid fostering here?
-            // newEl.namespace(entry.namespace()); // todo: namespaces
+            Element newEl = insertStartTag(entry.normalName());
             newEl.attributes().addAll(entry.attributes());
 
             // 10. replace entry with new entry
@@ -750,7 +762,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
         boolean isLastTableParent = false;
         if (lastTable != null) {
             if (lastTable.parent() != null) {
-                fosterParent = lastTable.parent();
+                fosterParent = (Element) lastTable.parent();
                 isLastTableParent = true;
             } else
                 fosterParent = aboveOnStack(lastTable);

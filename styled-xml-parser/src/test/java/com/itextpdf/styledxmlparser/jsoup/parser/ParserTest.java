@@ -1,15 +1,40 @@
-package org.jsoup.parser;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.junit.jupiter.api.Test;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-public class ParserTest {
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.parser;
+
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+@Category(UnitTest.class)
+public class ParserTest extends ExtendedITextTest {
 
     @Test
     public void unescapeEntities() {
         String s = Parser.unescapeEntities("One &amp; Two", false);
-        assertEquals("One & Two", s);
+        Assert.assertEquals("One & Two", s);
     }
 
     @Test
@@ -20,6 +45,6 @@ public class ParserTest {
         } while (longBody.length() < 64 * 1024);
 
         String body = longBody.toString();
-        assertEquals(body, Parser.unescapeEntities(body, false));
+        Assert.assertEquals(body, Parser.unescapeEntities(body, false));
     }
 }

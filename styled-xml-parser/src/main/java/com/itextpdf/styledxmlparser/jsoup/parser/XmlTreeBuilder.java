@@ -1,17 +1,38 @@
-package org.jsoup.parser;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.helper.Validate;
-import org.jsoup.nodes.CDataNode;
-import org.jsoup.nodes.Comment;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.DocumentType;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Entities;
-import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
-import org.jsoup.nodes.XmlDeclaration;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-import javax.annotation.ParametersAreNonnullByDefault;
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.parser;
+
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.nodes.CDataNode;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Comment;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
+import com.itextpdf.styledxmlparser.jsoup.nodes.DocumentType;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Entities;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
+import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
+import com.itextpdf.styledxmlparser.jsoup.nodes.XmlDeclaration;
+
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
@@ -19,7 +40,8 @@ import java.util.List;
 /**
  * Use the {@code XmlTreeBuilder} when you want to parse XML without any of the HTML DOM rules being applied to the
  * document.
- * <p>Usage example: {@code Document xmlDoc = Jsoup.parse(html, baseUrl, Parser.xmlParser());}</p>
+ * <p>
+ * Usage example: {@code Document xmlDoc = Jsoup.parse(html, baseUrl, Parser.xmlParser());}
  *
  * @author Jonathan Hedley
  */
@@ -28,7 +50,7 @@ public class XmlTreeBuilder extends TreeBuilder {
         return ParseSettings.preserveCase;
     }
 
-    @Override @ParametersAreNonnullByDefault
+    @Override
     protected void initialiseParse(Reader input, String baseUri, Parser parser) {
         super.initialiseParse(input, baseUri, parser);
         stack.add(doc); // place the document onto the stack. differs from HtmlTreeBuilder (not on stack)
@@ -47,7 +69,7 @@ public class XmlTreeBuilder extends TreeBuilder {
     }
 
     @Override
-    XmlTreeBuilder newInstance() {
+    TreeBuilder newInstance() {
         return new XmlTreeBuilder();
     }
 
@@ -84,7 +106,6 @@ public class XmlTreeBuilder extends TreeBuilder {
 
     Element insert(Token.StartTag startTag) {
         Tag tag = Tag.valueOf(startTag.name(), settings);
-        // todo: wonder if for xml parsing, should treat all tags as unknown? because it's not html.
         if (startTag.hasAttributes())
             startTag.attributes.deduplicate(settings);
 

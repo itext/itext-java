@@ -1,34 +1,63 @@
-package org.jsoup.helper;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.parser.Parser;
-import org.junit.jupiter.api.Test;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-import java.io.*;
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.helper;
+
+import com.itextpdf.styledxmlparser.jsoup.Jsoup;
+import com.itextpdf.styledxmlparser.jsoup.integration.ParseTest;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
+import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
-import static org.jsoup.integration.ParseTest.getFile;
-import static org.junit.jupiter.api.Assertions.*;
-
-public class DataUtilTest {
+@Category(UnitTest.class)
+public class DataUtilTest extends ExtendedITextTest {
     @Test
     public void testCharset() {
-        assertEquals("utf-8", DataUtil.getCharsetFromContentType("text/html;charset=utf-8 "));
-        assertEquals("UTF-8", DataUtil.getCharsetFromContentType("text/html; charset=UTF-8"));
-        assertEquals("ISO-8859-1", DataUtil.getCharsetFromContentType("text/html; charset=ISO-8859-1"));
-        assertNull(DataUtil.getCharsetFromContentType("text/html"));
-        assertNull(DataUtil.getCharsetFromContentType(null));
-        assertNull(DataUtil.getCharsetFromContentType("text/html;charset=Unknown"));
+        Assert.assertEquals("utf-8", DataUtil.getCharsetFromContentType("text/html;charset=utf-8 "));
+        Assert.assertEquals("UTF-8", DataUtil.getCharsetFromContentType("text/html; charset=UTF-8"));
+        Assert.assertEquals("ISO-8859-1", DataUtil.getCharsetFromContentType("text/html; charset=ISO-8859-1"));
+        Assert.assertNull(DataUtil.getCharsetFromContentType("text/html"));
+        Assert.assertNull(DataUtil.getCharsetFromContentType(null));
+        Assert.assertNull(DataUtil.getCharsetFromContentType("text/html;charset=Unknown"));
     }
 
     @Test
     public void testQuotedCharset() {
-        assertEquals("utf-8", DataUtil.getCharsetFromContentType("text/html; charset=\"utf-8\""));
-        assertEquals("UTF-8", DataUtil.getCharsetFromContentType("text/html;charset=\"UTF-8\""));
-        assertEquals("ISO-8859-1", DataUtil.getCharsetFromContentType("text/html; charset=\"ISO-8859-1\""));
-        assertNull(DataUtil.getCharsetFromContentType("text/html; charset=\"Unsupported\""));
-        assertEquals("UTF-8", DataUtil.getCharsetFromContentType("text/html; charset='UTF-8'"));
+        Assert.assertEquals("utf-8", DataUtil.getCharsetFromContentType("text/html; charset=\"utf-8\""));
+        Assert.assertEquals("UTF-8", DataUtil.getCharsetFromContentType("text/html;charset=\"UTF-8\""));
+        Assert.assertEquals("ISO-8859-1", DataUtil.getCharsetFromContentType("text/html; charset=\"ISO-8859-1\""));
+        Assert.assertNull(DataUtil.getCharsetFromContentType("text/html; charset=\"Unsupported\""));
+        Assert.assertEquals("UTF-8", DataUtil.getCharsetFromContentType("text/html; charset='UTF-8'"));
     }
 
     private InputStream stream(String data) {
@@ -39,7 +68,7 @@ public class DataUtilTest {
         try {
             return new ByteArrayInputStream(data.getBytes(charset));
         } catch (UnsupportedEncodingException e) {
-            fail();
+            Assert.fail();
         }
         return null;
     }
@@ -48,36 +77,36 @@ public class DataUtilTest {
     public void discardsSpuriousByteOrderMark() throws IOException {
         String html = "\uFEFF<html><head><title>One</title></head><body>Two</body></html>";
         Document doc = DataUtil.parseInputStream(stream(html), "UTF-8", "http://foo.com/", Parser.htmlParser());
-        assertEquals("One", doc.head().text());
+        Assert.assertEquals("One", doc.head().text());
     }
 
     @Test
     public void discardsSpuriousByteOrderMarkWhenNoCharsetSet() throws IOException {
         String html = "\uFEFF<html><head><title>One</title></head><body>Two</body></html>";
         Document doc = DataUtil.parseInputStream(stream(html), null, "http://foo.com/", Parser.htmlParser());
-        assertEquals("One", doc.head().text());
-        assertEquals("UTF-8", doc.outputSettings().charset().displayName());
+        Assert.assertEquals("One", doc.head().text());
+        Assert.assertEquals("UTF-8", doc.outputSettings().charset().displayName());
     }
 
     @Test
     public void shouldNotThrowExceptionOnEmptyCharset() {
-        assertNull(DataUtil.getCharsetFromContentType("text/html; charset="));
-        assertNull(DataUtil.getCharsetFromContentType("text/html; charset=;"));
+        Assert.assertNull(DataUtil.getCharsetFromContentType("text/html; charset="));
+        Assert.assertNull(DataUtil.getCharsetFromContentType("text/html; charset=;"));
     }
 
     @Test
     public void shouldSelectFirstCharsetOnWeirdMultileCharsetsInMetaTags() {
-        assertEquals("ISO-8859-1", DataUtil.getCharsetFromContentType("text/html; charset=ISO-8859-1, charset=1251"));
+        Assert.assertEquals("ISO-8859-1", DataUtil.getCharsetFromContentType("text/html; charset=ISO-8859-1, charset=1251"));
     }
 
     @Test
     public void shouldCorrectCharsetForDuplicateCharsetString() {
-        assertEquals("iso-8859-1", DataUtil.getCharsetFromContentType("text/html; charset=charset=iso-8859-1"));
+        Assert.assertEquals("iso-8859-1", DataUtil.getCharsetFromContentType("text/html; charset=charset=iso-8859-1"));
     }
 
     @Test
     public void shouldReturnNullForIllegalCharsetNames() {
-        assertNull(DataUtil.getCharsetFromContentType("text/html; charset=$HJKDF§$/("));
+        Assert.assertNull(DataUtil.getCharsetFromContentType("text/html; charset=$HJKDF§$/("));
     }
 
     @Test
@@ -85,9 +114,9 @@ public class DataUtilTest {
         String m1 = DataUtil.mimeBoundary();
         String m2 = DataUtil.mimeBoundary();
 
-        assertEquals(DataUtil.boundaryLength, m1.length());
-        assertEquals(DataUtil.boundaryLength, m2.length());
-        assertNotSame(m1, m2);
+        Assert.assertEquals(DataUtil.boundaryLength, m1.length());
+        Assert.assertEquals(DataUtil.boundaryLength, m2.length());
+        Assert.assertNotSame(m1, m2);
     }
 
     @Test
@@ -103,7 +132,7 @@ public class DataUtilTest {
                 " <body></body>\n" +
                 "</html>";
 
-        assertEquals(expected, doc.toString());
+        Assert.assertEquals(expected, doc.toString());
     }
 
     @Test
@@ -115,7 +144,7 @@ public class DataUtilTest {
 
         Document doc = DataUtil.parseInputStream(stream(html, "euc-kr"), null, "http://example.com", Parser.htmlParser());
 
-        assertEquals("한국어", doc.body().text());
+        Assert.assertEquals("한국어", doc.body().text());
     }
 
     @Test
@@ -127,38 +156,38 @@ public class DataUtilTest {
 
         Document doc = DataUtil.parseInputStream(stream(html, "iso-8859-1"), null, "http://example.com", Parser.htmlParser());
 
-        assertEquals("Übergrößenträger", doc.body().text());
+        Assert.assertEquals("Übergrößenträger", doc.body().text());
     }
 
     @Test
     public void supportsBOMinFiles() throws IOException {
         // test files from http://www.i18nl10n.com/korean/utftest/
-        File in = getFile("/bomtests/bom_utf16be.html");
+        File in = ParseTest.getFile("/bomtests/bom_utf16be.html");
         Document doc = Jsoup.parse(in, null, "http://example.com");
-        assertTrue(doc.title().contains("UTF-16BE"));
-        assertTrue(doc.text().contains("가각갂갃간갅"));
+        Assert.assertTrue(doc.title().contains("UTF-16BE"));
+        Assert.assertTrue(doc.text().contains("가각갂갃간갅"));
 
-        in = getFile("/bomtests/bom_utf16le.html");
+        in = ParseTest.getFile("/bomtests/bom_utf16le.html");
         doc = Jsoup.parse(in, null, "http://example.com");
-        assertTrue(doc.title().contains("UTF-16LE"));
-        assertTrue(doc.text().contains("가각갂갃간갅"));
+        Assert.assertTrue(doc.title().contains("UTF-16LE"));
+        Assert.assertTrue(doc.text().contains("가각갂갃간갅"));
 
-        in = getFile("/bomtests/bom_utf32be.html");
+        in = ParseTest.getFile("/bomtests/bom_utf32be.html");
         doc = Jsoup.parse(in, null, "http://example.com");
-        assertTrue(doc.title().contains("UTF-32BE"));
-        assertTrue(doc.text().contains("가각갂갃간갅"));
+        Assert.assertTrue(doc.title().contains("UTF-32BE"));
+        Assert.assertTrue(doc.text().contains("가각갂갃간갅"));
 
-        in = getFile("/bomtests/bom_utf32le.html");
+        in = ParseTest.getFile("/bomtests/bom_utf32le.html");
         doc = Jsoup.parse(in, null, "http://example.com");
-        assertTrue(doc.title().contains("UTF-32LE"));
-        assertTrue(doc.text().contains("가각갂갃간갅"));
+        Assert.assertTrue(doc.title().contains("UTF-32LE"));
+        Assert.assertTrue(doc.text().contains("가각갂갃간갅"));
     }
 
     @Test
     public void supportsUTF8BOM() throws IOException {
-        File in = getFile("/bomtests/bom_utf8.html");
+        File in = ParseTest.getFile("/bomtests/bom_utf8.html");
         Document doc = Jsoup.parse(in, null, "http://example.com");
-        assertEquals("OK", doc.head().select("title").text());
+        Assert.assertEquals("OK", doc.head().select("title").text());
     }
 
     @Test
@@ -166,15 +195,15 @@ public class DataUtilTest {
     	final byte[] b = "<html><head><meta charset=\"UTF-8\"></head><body><div><u>ü</u>ü</div></body></html>".getBytes("UTF-8");
     	
     	Document doc = Jsoup.parse(new ByteArrayInputStream(b), null, "");
-    	assertFalse( doc.outerHtml().contains("\u0000") );
+        Assert.assertFalse( doc.outerHtml().contains("\u0000") );
     }
 
     @Test
     public void supportsZippedUTF8BOM() throws IOException {
-        File in = getFile("/bomtests/bom_utf8.html.gz");
+        File in = ParseTest.getFile("/bomtests/bom_utf8.html.gz");
         Document doc = Jsoup.parse(in, null, "http://example.com");
-        assertEquals("OK", doc.head().select("title").text());
-        assertEquals("There is a UTF8 BOM at the top (before the XML decl). If not read correctly, will look like a non-joining space.", doc.body().text());
+        Assert.assertEquals("OK", doc.head().select("title").text());
+        Assert.assertEquals("There is a UTF8 BOM at the top (before the XML decl). If not read correctly, will look like a non-joining space.", doc.body().text());
     }
 
     @Test
@@ -187,32 +216,32 @@ public class DataUtilTest {
         ).getBytes(encoding));
 
         Document doc = Jsoup.parse(soup, null, "");
-        assertEquals("Hellö Wörld!", doc.body().text());
+        Assert.assertEquals("Hellö Wörld!", doc.body().text());
     }
 
 
     @Test
     public void lLoadsGzipFile() throws IOException {
-        File in = getFile("/htmltests/gzip.html.gz");
+        File in = ParseTest.getFile("/htmltests/gzip.html.gz");
         Document doc = Jsoup.parse(in, null);
-        assertEquals("Gzip test", doc.title());
-        assertEquals("This is a gzipped HTML file.", doc.selectFirst("p").text());
+        Assert.assertEquals("Gzip test", doc.title());
+        Assert.assertEquals("This is a gzipped HTML file.", doc.selectFirst("p").text());
     }
 
     @Test
     public void loadsZGzipFile() throws IOException {
         // compressed on win, with z suffix
-        File in = getFile("/htmltests/gzip.html.z");
+        File in = ParseTest.getFile("/htmltests/gzip.html.z");
         Document doc = Jsoup.parse(in, null);
-        assertEquals("Gzip test", doc.title());
-        assertEquals("This is a gzipped HTML file.", doc.selectFirst("p").text());
+        Assert.assertEquals("Gzip test", doc.title());
+        Assert.assertEquals("This is a gzipped HTML file.", doc.selectFirst("p").text());
     }
 
     @Test
     public void handlesFakeGzipFile() throws IOException {
-        File in = getFile("/htmltests/fake-gzip.html.gz");
+        File in = ParseTest.getFile("/htmltests/fake-gzip.html.gz");
         Document doc = Jsoup.parse(in, null);
-        assertEquals("This is not gzipped", doc.title());
-        assertEquals("And should still be readable.", doc.selectFirst("p").text());
+        Assert.assertEquals("This is not gzipped", doc.title());
+        Assert.assertEquals("And should still be readable.", doc.selectFirst("p").text());
     }
 }

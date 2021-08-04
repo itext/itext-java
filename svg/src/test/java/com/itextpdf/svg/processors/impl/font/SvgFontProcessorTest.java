@@ -69,7 +69,7 @@ public class SvgFontProcessorTest extends ExtendedITextTest {
                 "\t\tfont-family:Courier;\n" +
                 "\t\tsrc:local(Courier);\n" +
                 "\t}\n" +
-                "  ", "");
+                "  ");
         JsoupElementNode jSoupStyle = new JsoupElementNode(styleTag);
         jSoupStyle.addChild(new JsoupTextNode(styleContents));
         SvgProcessorContext context = new SvgProcessorContext(new SvgConverterProperties());

@@ -1,6 +1,26 @@
-package org.jsoup.helper;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import javax.annotation.Nullable;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.helper;
 
 /**
  * Simple validation methods. Designed for jsoup internal use
@@ -13,7 +33,7 @@ public final class Validate {
      * Validates that the object is not null
      * @param obj object to test
      */
-    public static void notNull(@Nullable Object obj) {
+    public static void notNull(Object obj) {
         if (obj == null)
             throw new IllegalArgumentException("Object must not be null");
     }
@@ -23,7 +43,7 @@ public final class Validate {
      * @param obj object to test
      * @param msg message to output if validation fails
      */
-    public static void notNull(@Nullable Object obj, String msg) {
+    public static void notNull(Object obj, String msg) {
         if (obj == null)
             throw new IllegalArgumentException(msg);
     }
@@ -89,7 +109,7 @@ public final class Validate {
      * Validates that the string is not null and is not empty
      * @param string the string to test
      */
-    public static void notEmpty(@Nullable String string) {
+    public static void notEmpty(String string) {
         if (string == null || string.length() == 0)
             throw new IllegalArgumentException("String must not be empty");
     }
@@ -99,17 +119,9 @@ public final class Validate {
      * @param string the string to test
      * @param msg message to output if validation fails
      */
-    public static void notEmpty(@Nullable String string, String msg) {
+    public static void notEmpty(String string, String msg) {
         if (string == null || string.length() == 0)
             throw new IllegalArgumentException(msg);
-    }
-
-    /**
-     * Blow up if we reach an unexpected state.
-     * @param msg message to think about
-     */
-    public static void wtf(String msg) {
-        throw new IllegalStateException(msg);
     }
 
     /**

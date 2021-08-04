@@ -1,7 +1,29 @@
-package org.jsoup.parser;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.UncheckedIOException;
-import org.jsoup.helper.Validate;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.parser;
+
+import com.itextpdf.styledxmlparser.jsoup.UncheckedIOException;
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -13,7 +35,7 @@ import java.util.Locale;
  CharacterReader consumes tokens off a string. Used internally by jsoup. API subject to changes.
  */
 public final class CharacterReader {
-    static final char EOF = (char) -1;
+    static final char EOF = '\uffff';
     private static final int maxStringCacheLen = 12;
     static final int maxBufferLen = 1024 * 32; // visible for testing
     static final int readAheadLimit = (int) (maxBufferLen * 0.75); // visible for testing
@@ -87,7 +109,7 @@ public final class CharacterReader {
             }
             reader.reset();
             if (read > 0) {
-                Validate.isTrue(skipped == pos); // Previously asserted that there is room in buf to skip, so this will be a WTF
+                Validate.isTrue(skipped == pos);
                 bufLength = read;
                 readerPos += pos;
                 bufPos = offset;
@@ -141,8 +163,10 @@ public final class CharacterReader {
      Unconsume one character (bufPos--). MUST only be called directly after a consume(), and no chance of a bufferUp.
      */
     void unconsume() {
-        if (bufPos < 1)
-            throw new UncheckedIOException(new IOException("WTF: No buffer left to unconsume.")); // a bug if this fires, need to trace it.
+        if (bufPos < 1) {
+            // a bug if this fires, need to trace it.
+            throw new UncheckedIOException(new IOException("No buffer left to unconsume."));
+        }
 
         bufPos--;
     }

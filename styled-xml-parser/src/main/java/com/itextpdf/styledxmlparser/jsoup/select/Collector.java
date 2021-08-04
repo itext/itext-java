@@ -1,12 +1,29 @@
-package org.jsoup.select;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-import javax.annotation.Nullable;
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-import static org.jsoup.select.NodeFilter.FilterResult.CONTINUE;
-import static org.jsoup.select.NodeFilter.FilterResult.STOP;
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.select;
+
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
 
 /**
  * Collects a list of elements that match the supplied criteria.
@@ -60,15 +77,16 @@ public class Collector {
      @param root root of tree to descend
      @return the first match; {@code null} if none
      */
-    public static @Nullable Element findFirst(Evaluator eval, Element root) {
+    public static Element findFirst(Evaluator eval, Element root) {
         FirstFinder finder = new FirstFinder(root, eval);
         NodeTraversor.filter(finder, root);
         return finder.match;
     }
 
     private static class FirstFinder implements NodeFilter {
+        Element match = null;
+
         private final Element root;
-        private @Nullable Element match = null;
         private final Evaluator eval;
 
         FirstFinder(Element root, Evaluator eval) {
@@ -82,15 +100,15 @@ public class Collector {
                 Element el = (Element) node;
                 if (eval.matches(root, el)) {
                     match = el;
-                    return STOP;
+                    return FilterResult.STOP;
                 }
             }
-            return CONTINUE;
+            return FilterResult.CONTINUE;
         }
 
         @Override
         public FilterResult tail(Node node, int depth) {
-            return CONTINUE;
+            return FilterResult.CONTINUE;
         }
     }
 

@@ -161,9 +161,6 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ERROR_RESOLVING_PARENT_STYLES),
-                })
     public void dummyProcessingSvgTagIsNotRootOfInput() {
         Element jsoupRandomElement = new Element(Tag.valueOf("body"), "");
         Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");

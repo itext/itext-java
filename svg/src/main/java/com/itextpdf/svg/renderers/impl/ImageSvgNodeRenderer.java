@@ -111,6 +111,9 @@ public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO)) {
             preserveAspectRatio = attributesAndStyles.get(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO);
+        } else if (attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO.toLowerCase())) {
+            // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+            preserveAspectRatio = attributesAndStyles.get(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO.toLowerCase());
         }
 
         preserveAspectRatio = preserveAspectRatio.toLowerCase();

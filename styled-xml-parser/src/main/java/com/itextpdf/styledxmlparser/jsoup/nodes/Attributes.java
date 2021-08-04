@@ -1,11 +1,33 @@
-package org.jsoup.nodes;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.SerializationException;
-import org.jsoup.helper.Validate;
-import org.jsoup.internal.StringUtil;
-import org.jsoup.parser.ParseSettings;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-import javax.annotation.Nullable;
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.nodes;
+
+import com.itextpdf.styledxmlparser.jsoup.SerializationException;
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.internal.Normalizer;
+import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
+import com.itextpdf.styledxmlparser.jsoup.parser.ParseSettings;
+
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
@@ -17,18 +39,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jsoup.internal.Normalizer.lowerCase;
-
 /**
  * The attributes of an Element.
  * <p>
  * Attributes are treated as a map: there can be only one value associated with an attribute key/name.
- * </p>
  * <p>
  * Attribute name and value comparisons are  generally <b>case sensitive</b>. By default for HTML, attribute names are
  * normalized to lower-case on parsing. That means you should use lower-case strings when referring to attributes by
  * name.
- * </p>
  *
  * @author Jonathan Hedley, jonathan@hedley.net
  */
@@ -83,7 +101,7 @@ public class Attributes implements Iterable<Attribute>, Cloneable {
     }
 
     // we track boolean attributes as null in values - they're just keys. so returns empty for consumers
-    static String checkNotNull(@Nullable String val) {
+    static String checkNotNull(String val) {
         return val == null ? EmptyString : val;
     }
 
@@ -112,7 +130,7 @@ public class Attributes implements Iterable<Attribute>, Cloneable {
      * Adds a new attribute. Will produce duplicates if the key already exists.
      * @see Attributes#put(String, String)
      */
-    public Attributes add(String key, @Nullable String value) {
+    public Attributes add(String key, String value) {
         checkCapacity(size + 1);
         keys[size] = key;
         vals[size] = value;
@@ -136,7 +154,7 @@ public class Attributes implements Iterable<Attribute>, Cloneable {
         return this;
     }
 
-    void putIgnoreCase(String key, @Nullable String value) {
+    void putIgnoreCase(String key, String value) {
         int i = indexOfKeyIgnoreCase(key);
         if (i != NotFound) {
             vals[i] = value;
@@ -275,7 +293,6 @@ public class Attributes implements Iterable<Attribute>, Cloneable {
         checkCapacity(size + incoming.size);
 
         for (Attribute attr : incoming) {
-            // todo - should this be case insensitive?
             put(attr);
         }
 
@@ -302,11 +319,6 @@ public class Attributes implements Iterable<Attribute>, Cloneable {
                 final Attribute attr = new Attribute(keys[i], vals[i], Attributes.this);
                 i++;
                 return attr;
-            }
-
-            @Override
-            public void remove() {
-                Attributes.this.remove(--i); // next() advanced, so rewind
             }
         };
     }
@@ -404,7 +416,7 @@ public class Attributes implements Iterable<Attribute>, Cloneable {
     }
 
     @Override
-    public Attributes clone() {
+    public Object clone() {
         Attributes clone;
         try {
             clone = (Attributes) super.clone();
@@ -422,7 +434,7 @@ public class Attributes implements Iterable<Attribute>, Cloneable {
      */
     public void normalize() {
         for (int i = 0; i < size; i++) {
-            keys[i] = lowerCase(keys[i]);
+            keys[i] = Normalizer.lowerCase(keys[i]);
         }
     }
 
@@ -453,7 +465,7 @@ public class Attributes implements Iterable<Attribute>, Cloneable {
     private static class Dataset extends AbstractMap<String, String> {
         private final Attributes attributes;
 
-        private Dataset(Attributes attributes) {
+        Dataset(Attributes attributes) {
             this.attributes = attributes;
         }
 

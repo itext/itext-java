@@ -1,136 +1,160 @@
-package org.jsoup.parser;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.junit.jupiter.api.Test;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.parser;
+
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test suite for character reader.
  *
  * @author Jonathan Hedley, jonathan@hedley.net
  */
-public class CharacterReaderTest {
-    public final static int maxBufferLen = CharacterReader.maxBufferLen;
+@Category(UnitTest.class)
+public class CharacterReaderTest extends ExtendedITextTest {
 
     @Test public void consume() {
         CharacterReader r = new CharacterReader("one");
-        assertEquals(0, r.pos());
-        assertEquals('o', r.current());
-        assertEquals('o', r.consume());
-        assertEquals(1, r.pos());
-        assertEquals('n', r.current());
-        assertEquals(1, r.pos());
-        assertEquals('n', r.consume());
-        assertEquals('e', r.consume());
-        assertTrue(r.isEmpty());
-        assertEquals(CharacterReader.EOF, r.consume());
-        assertTrue(r.isEmpty());
-        assertEquals(CharacterReader.EOF, r.consume());
+        Assert.assertEquals(0, r.pos());
+        Assert.assertEquals('o', r.current());
+        Assert.assertEquals('o', r.consume());
+        Assert.assertEquals(1, r.pos());
+        Assert.assertEquals('n', r.current());
+        Assert.assertEquals(1, r.pos());
+        Assert.assertEquals('n', r.consume());
+        Assert.assertEquals('e', r.consume());
+        Assert.assertTrue(r.isEmpty());
+        Assert.assertEquals(CharacterReader.EOF, r.consume());
+        Assert.assertTrue(r.isEmpty());
+        Assert.assertEquals(CharacterReader.EOF, r.consume());
     }
 
     @Test public void unconsume() {
         CharacterReader r = new CharacterReader("one");
-        assertEquals('o', r.consume());
-        assertEquals('n', r.current());
+        Assert.assertEquals('o', r.consume());
+        Assert.assertEquals('n', r.current());
         r.unconsume();
-        assertEquals('o', r.current());
+        Assert.assertEquals('o', r.current());
 
-        assertEquals('o', r.consume());
-        assertEquals('n', r.consume());
-        assertEquals('e', r.consume());
-        assertTrue(r.isEmpty());
+        Assert.assertEquals('o', r.consume());
+        Assert.assertEquals('n', r.consume());
+        Assert.assertEquals('e', r.consume());
+        Assert.assertTrue(r.isEmpty());
         r.unconsume();
-        assertFalse(r.isEmpty());
-        assertEquals('e', r.current());
-        assertEquals('e', r.consume());
-        assertTrue(r.isEmpty());
+        Assert.assertFalse(r.isEmpty());
+        Assert.assertEquals('e', r.current());
+        Assert.assertEquals('e', r.consume());
+        Assert.assertTrue(r.isEmpty());
 
-        assertEquals(CharacterReader.EOF, r.consume());
+        Assert.assertEquals(CharacterReader.EOF, r.consume());
         r.unconsume(); // read past, so have to eat again
-        assertTrue(r.isEmpty());
+        Assert.assertTrue(r.isEmpty());
         r.unconsume();
-        assertFalse(r.isEmpty());
+        Assert.assertFalse(r.isEmpty());
 
-        assertEquals('e', r.consume());
-        assertTrue(r.isEmpty());
+        Assert.assertEquals('e', r.consume());
+        Assert.assertTrue(r.isEmpty());
 
-        assertEquals(CharacterReader.EOF, r.consume());
-        assertTrue(r.isEmpty());
+        Assert.assertEquals(CharacterReader.EOF, r.consume());
+        Assert.assertTrue(r.isEmpty());
     }
 
     @Test public void mark() {
         CharacterReader r = new CharacterReader("one");
         r.consume();
         r.mark();
-        assertEquals(1, r.pos());
-        assertEquals('n', r.consume());
-        assertEquals('e', r.consume());
-        assertTrue(r.isEmpty());
+        Assert.assertEquals(1, r.pos());
+        Assert.assertEquals('n', r.consume());
+        Assert.assertEquals('e', r.consume());
+        Assert.assertTrue(r.isEmpty());
         r.rewindToMark();
-        assertEquals(1, r.pos());
-        assertEquals('n', r.consume());
-        assertFalse(r.isEmpty());
-        assertEquals(2, r.pos());
+        Assert.assertEquals(1, r.pos());
+        Assert.assertEquals('n', r.consume());
+        Assert.assertFalse(r.isEmpty());
+        Assert.assertEquals(2, r.pos());
     }
 
     @Test public void consumeToEnd() {
         String in = "one two three";
         CharacterReader r = new CharacterReader(in);
         String toEnd = r.consumeToEnd();
-        assertEquals(in, toEnd);
-        assertTrue(r.isEmpty());
+        Assert.assertEquals(in, toEnd);
+        Assert.assertTrue(r.isEmpty());
     }
 
     @Test public void nextIndexOfChar() {
         String in = "blah blah";
         CharacterReader r = new CharacterReader(in);
 
-        assertEquals(-1, r.nextIndexOf('x'));
-        assertEquals(3, r.nextIndexOf('h'));
+        Assert.assertEquals(-1, r.nextIndexOf('x'));
+        Assert.assertEquals(3, r.nextIndexOf('h'));
         String pull = r.consumeTo('h');
-        assertEquals("bla", pull);
+        Assert.assertEquals("bla", pull);
         r.consume();
-        assertEquals(2, r.nextIndexOf('l'));
-        assertEquals(" blah", r.consumeToEnd());
-        assertEquals(-1, r.nextIndexOf('x'));
+        Assert.assertEquals(2, r.nextIndexOf('l'));
+        Assert.assertEquals(" blah", r.consumeToEnd());
+        Assert.assertEquals(-1, r.nextIndexOf('x'));
     }
 
     @Test public void nextIndexOfString() {
         String in = "One Two something Two Three Four";
         CharacterReader r = new CharacterReader(in);
 
-        assertEquals(-1, r.nextIndexOf("Foo"));
-        assertEquals(4, r.nextIndexOf("Two"));
-        assertEquals("One Two ", r.consumeTo("something"));
-        assertEquals(10, r.nextIndexOf("Two"));
-        assertEquals("something Two Three Four", r.consumeToEnd());
-        assertEquals(-1, r.nextIndexOf("Two"));
+        Assert.assertEquals(-1, r.nextIndexOf("Foo"));
+        Assert.assertEquals(4, r.nextIndexOf("Two"));
+        Assert.assertEquals("One Two ", r.consumeTo("something"));
+        Assert.assertEquals(10, r.nextIndexOf("Two"));
+        Assert.assertEquals("something Two Three Four", r.consumeToEnd());
+        Assert.assertEquals(-1, r.nextIndexOf("Two"));
     }
 
     @Test public void nextIndexOfUnmatched() {
         CharacterReader r = new CharacterReader("<[[one]]");
-        assertEquals(-1, r.nextIndexOf("]]>"));
+        Assert.assertEquals(-1, r.nextIndexOf("]]>"));
     }
 
     @Test public void consumeToChar() {
         CharacterReader r = new CharacterReader("One Two Three");
-        assertEquals("One ", r.consumeTo('T'));
-        assertEquals("", r.consumeTo('T')); // on Two
-        assertEquals('T', r.consume());
-        assertEquals("wo ", r.consumeTo('T'));
-        assertEquals('T', r.consume());
-        assertEquals("hree", r.consumeTo('T')); // consume to end
+        Assert.assertEquals("One ", r.consumeTo('T'));
+        Assert.assertEquals("", r.consumeTo('T')); // on Two
+        Assert.assertEquals('T', r.consume());
+        Assert.assertEquals("wo ", r.consumeTo('T'));
+        Assert.assertEquals('T', r.consume());
+        Assert.assertEquals("hree", r.consumeTo('T')); // consume to end
     }
 
     @Test public void consumeToString() {
         CharacterReader r = new CharacterReader("One Two Two Four");
-        assertEquals("One ", r.consumeTo("Two"));
-        assertEquals('T', r.consume());
-        assertEquals("wo ", r.consumeTo("Two"));
-        assertEquals('T', r.consume());
+        Assert.assertEquals("One ", r.consumeTo("Two"));
+        Assert.assertEquals('T', r.consume());
+        Assert.assertEquals("wo ", r.consumeTo("Two"));
+        Assert.assertEquals('T', r.consume());
         // To handle strings straddling across buffers, consumeTo() may return the
         // data in multiple pieces near EOF.
         StringBuilder builder = new StringBuilder();
@@ -139,93 +163,93 @@ public class CharacterReaderTest {
             part = r.consumeTo("Qux");
             builder.append(part);
         } while (!part.isEmpty());
-        assertEquals("wo Four", builder.toString());
+        Assert.assertEquals("wo Four", builder.toString());
     }
 
     @Test public void advance() {
         CharacterReader r = new CharacterReader("One Two Three");
-        assertEquals('O', r.consume());
+        Assert.assertEquals('O', r.consume());
         r.advance();
-        assertEquals('e', r.consume());
+        Assert.assertEquals('e', r.consume());
     }
 
     @Test public void consumeToAny() {
         CharacterReader r = new CharacterReader("One &bar; qux");
-        assertEquals("One ", r.consumeToAny('&', ';'));
-        assertTrue(r.matches('&'));
-        assertTrue(r.matches("&bar;"));
-        assertEquals('&', r.consume());
-        assertEquals("bar", r.consumeToAny('&', ';'));
-        assertEquals(';', r.consume());
-        assertEquals(" qux", r.consumeToAny('&', ';'));
+        Assert.assertEquals("One ", r.consumeToAny('&', ';'));
+        Assert.assertTrue(r.matches('&'));
+        Assert.assertTrue(r.matches("&bar;"));
+        Assert.assertEquals('&', r.consume());
+        Assert.assertEquals("bar", r.consumeToAny('&', ';'));
+        Assert.assertEquals(';', r.consume());
+        Assert.assertEquals(" qux", r.consumeToAny('&', ';'));
     }
 
     @Test public void consumeLetterSequence() {
         CharacterReader r = new CharacterReader("One &bar; qux");
-        assertEquals("One", r.consumeLetterSequence());
-        assertEquals(" &", r.consumeTo("bar;"));
-        assertEquals("bar", r.consumeLetterSequence());
-        assertEquals("; qux", r.consumeToEnd());
+        Assert.assertEquals("One", r.consumeLetterSequence());
+        Assert.assertEquals(" &", r.consumeTo("bar;"));
+        Assert.assertEquals("bar", r.consumeLetterSequence());
+        Assert.assertEquals("; qux", r.consumeToEnd());
     }
 
     @Test public void consumeLetterThenDigitSequence() {
         CharacterReader r = new CharacterReader("One12 Two &bar; qux");
-        assertEquals("One12", r.consumeLetterThenDigitSequence());
-        assertEquals(' ', r.consume());
-        assertEquals("Two", r.consumeLetterThenDigitSequence());
-        assertEquals(" &bar; qux", r.consumeToEnd());
+        Assert.assertEquals("One12", r.consumeLetterThenDigitSequence());
+        Assert.assertEquals(' ', r.consume());
+        Assert.assertEquals("Two", r.consumeLetterThenDigitSequence());
+        Assert.assertEquals(" &bar; qux", r.consumeToEnd());
     }
 
     @Test public void matches() {
         CharacterReader r = new CharacterReader("One Two Three");
-        assertTrue(r.matches('O'));
-        assertTrue(r.matches("One Two Three"));
-        assertTrue(r.matches("One"));
-        assertFalse(r.matches("one"));
-        assertEquals('O', r.consume());
-        assertFalse(r.matches("One"));
-        assertTrue(r.matches("ne Two Three"));
-        assertFalse(r.matches("ne Two Three Four"));
-        assertEquals("ne Two Three", r.consumeToEnd());
-        assertFalse(r.matches("ne"));
-        assertTrue(r.isEmpty());
+        Assert.assertTrue(r.matches('O'));
+        Assert.assertTrue(r.matches("One Two Three"));
+        Assert.assertTrue(r.matches("One"));
+        Assert.assertFalse(r.matches("one"));
+        Assert.assertEquals('O', r.consume());
+        Assert.assertFalse(r.matches("One"));
+        Assert.assertTrue(r.matches("ne Two Three"));
+        Assert.assertFalse(r.matches("ne Two Three Four"));
+        Assert.assertEquals("ne Two Three", r.consumeToEnd());
+        Assert.assertFalse(r.matches("ne"));
+        Assert.assertTrue(r.isEmpty());
     }
 
     @Test
     public void matchesIgnoreCase() {
         CharacterReader r = new CharacterReader("One Two Three");
-        assertTrue(r.matchesIgnoreCase("O"));
-        assertTrue(r.matchesIgnoreCase("o"));
-        assertTrue(r.matches('O'));
-        assertFalse(r.matches('o'));
-        assertTrue(r.matchesIgnoreCase("One Two Three"));
-        assertTrue(r.matchesIgnoreCase("ONE two THREE"));
-        assertTrue(r.matchesIgnoreCase("One"));
-        assertTrue(r.matchesIgnoreCase("one"));
-        assertEquals('O', r.consume());
-        assertFalse(r.matchesIgnoreCase("One"));
-        assertTrue(r.matchesIgnoreCase("NE Two Three"));
-        assertFalse(r.matchesIgnoreCase("ne Two Three Four"));
-        assertEquals("ne Two Three", r.consumeToEnd());
-        assertFalse(r.matchesIgnoreCase("ne"));
+        Assert.assertTrue(r.matchesIgnoreCase("O"));
+        Assert.assertTrue(r.matchesIgnoreCase("o"));
+        Assert.assertTrue(r.matches('O'));
+        Assert.assertFalse(r.matches('o'));
+        Assert.assertTrue(r.matchesIgnoreCase("One Two Three"));
+        Assert.assertTrue(r.matchesIgnoreCase("ONE two THREE"));
+        Assert.assertTrue(r.matchesIgnoreCase("One"));
+        Assert.assertTrue(r.matchesIgnoreCase("one"));
+        Assert.assertEquals('O', r.consume());
+        Assert.assertFalse(r.matchesIgnoreCase("One"));
+        Assert.assertTrue(r.matchesIgnoreCase("NE Two Three"));
+        Assert.assertFalse(r.matchesIgnoreCase("ne Two Three Four"));
+        Assert.assertEquals("ne Two Three", r.consumeToEnd());
+        Assert.assertFalse(r.matchesIgnoreCase("ne"));
     }
 
     @Test public void containsIgnoreCase() {
         CharacterReader r = new CharacterReader("One TWO three");
-        assertTrue(r.containsIgnoreCase("two"));
-        assertTrue(r.containsIgnoreCase("three"));
+        Assert.assertTrue(r.containsIgnoreCase("two"));
+        Assert.assertTrue(r.containsIgnoreCase("three"));
         // weird one: does not find one, because it scans for consistent case only
-        assertFalse(r.containsIgnoreCase("one"));
+        Assert.assertFalse(r.containsIgnoreCase("one"));
     }
 
     @Test public void matchesAny() {
         char[] scan = {' ', '\n', '\t'};
         CharacterReader r = new CharacterReader("One\nTwo\tThree");
-        assertFalse(r.matchesAny(scan));
-        assertEquals("One", r.consumeToAny(scan));
-        assertTrue(r.matchesAny(scan));
-        assertEquals('\n', r.consume());
-        assertFalse(r.matchesAny(scan));
+        Assert.assertFalse(r.matchesAny(scan));
+        Assert.assertEquals("One", r.consumeToAny(scan));
+        Assert.assertTrue(r.matchesAny(scan));
+        Assert.assertEquals('\n', r.consume());
+        Assert.assertFalse(r.matchesAny(scan));
     }
 
     @Test public void cachesStrings() {
@@ -240,77 +264,77 @@ public class CharacterReaderTest {
         r.consume();
         String five = r.consumeTo('\t');
 
-        assertEquals("Check", one);
-        assertEquals("Check", two);
-        assertEquals("Check", three);
-        assertEquals("CHOKE", four);
-        assertSame(one, two);
-        assertSame(two, three);
-        assertNotSame(three, four);
-        assertNotSame(four, five);
-        assertEquals(five, "A string that is longer than 16 chars");
+        Assert.assertEquals("Check", one);
+        Assert.assertEquals("Check", two);
+        Assert.assertEquals("Check", three);
+        Assert.assertEquals("CHOKE", four);
+        Assert.assertSame(one, two);
+        Assert.assertSame(two, three);
+        Assert.assertNotSame(three, four);
+        Assert.assertNotSame(four, five);
+        Assert.assertEquals(five, "A string that is longer than 16 chars");
     }
 
     @Test
     public void rangeEquals() {
         CharacterReader r = new CharacterReader("Check\tCheck\tCheck\tCHOKE");
-        assertTrue(r.rangeEquals(0, 5, "Check"));
-        assertFalse(r.rangeEquals(0, 5, "CHOKE"));
-        assertFalse(r.rangeEquals(0, 5, "Chec"));
+        Assert.assertTrue(r.rangeEquals(0, 5, "Check"));
+        Assert.assertFalse(r.rangeEquals(0, 5, "CHOKE"));
+        Assert.assertFalse(r.rangeEquals(0, 5, "Chec"));
 
-        assertTrue(r.rangeEquals(6, 5, "Check"));
-        assertFalse(r.rangeEquals(6, 5, "Chuck"));
+        Assert.assertTrue(r.rangeEquals(6, 5, "Check"));
+        Assert.assertFalse(r.rangeEquals(6, 5, "Chuck"));
 
-        assertTrue(r.rangeEquals(12, 5, "Check"));
-        assertFalse(r.rangeEquals(12, 5, "Cheeky"));
+        Assert.assertTrue(r.rangeEquals(12, 5, "Check"));
+        Assert.assertFalse(r.rangeEquals(12, 5, "Cheeky"));
 
-        assertTrue(r.rangeEquals(18, 5, "CHOKE"));
-        assertFalse(r.rangeEquals(18, 5, "CHIKE"));
+        Assert.assertTrue(r.rangeEquals(18, 5, "CHOKE"));
+        Assert.assertFalse(r.rangeEquals(18, 5, "CHIKE"));
     }
 
     @Test
     public void empty() {
         CharacterReader r = new CharacterReader("One");
-        assertTrue(r.matchConsume("One"));
-        assertTrue(r.isEmpty());
+        Assert.assertTrue(r.matchConsume("One"));
+        Assert.assertTrue(r.isEmpty());
 
         r = new CharacterReader("Two");
         String two = r.consumeToEnd();
-        assertEquals("Two", two);
+        Assert.assertEquals("Two", two);
     }
 
     @Test
     public void consumeToNonexistentEndWhenAtAnd() {
         CharacterReader r = new CharacterReader("<!");
-        assertTrue(r.matchConsume("<!"));
-        assertTrue(r.isEmpty());
+        Assert.assertTrue(r.matchConsume("<!"));
+        Assert.assertTrue(r.isEmpty());
 
         String after = r.consumeTo('>');
-        assertEquals("", after);
+        Assert.assertEquals("", after);
 
-        assertTrue(r.isEmpty());
+        Assert.assertTrue(r.isEmpty());
     }
 
     @Test
     public void notEmptyAtBufferSplitPoint() {
         CharacterReader r = new CharacterReader(new StringReader("How about now"), 3);
-        assertEquals("How", r.consumeTo(' '));
-        assertFalse(r.isEmpty(), "Should not be empty");
+        Assert.assertEquals("How", r.consumeTo(' '));
+        Assert.assertFalse(r.isEmpty());
 
-        assertEquals(' ', r.consume());
-        assertFalse(r.isEmpty());
-        assertEquals(4, r.pos());
-        assertEquals('a', r.consume());
-        assertEquals(5, r.pos());
-        assertEquals('b', r.consume());
-        assertEquals('o', r.consume());
-        assertEquals('u', r.consume());
-        assertEquals('t', r.consume());
-        assertEquals(' ', r.consume());
-        assertEquals('n', r.consume());
-        assertEquals('o', r.consume());
-        assertEquals('w', r.consume());
-        assertTrue(r.isEmpty());
+        Assert.assertEquals(' ', r.consume());
+        Assert.assertFalse(r.isEmpty());
+        Assert.assertEquals(4, r.pos());
+        Assert.assertEquals('a', r.consume());
+        Assert.assertEquals(5, r.pos());
+        Assert.assertEquals('b', r.consume());
+        Assert.assertEquals('o', r.consume());
+        Assert.assertEquals('u', r.consume());
+        Assert.assertEquals('t', r.consume());
+        Assert.assertEquals(' ', r.consume());
+        Assert.assertEquals('n', r.consume());
+        Assert.assertEquals('o', r.consume());
+        Assert.assertEquals('w', r.consume());
+        Assert.assertTrue(r.isEmpty());
     }
 
     @Test public void bufferUp() {
@@ -328,12 +352,12 @@ public class CharacterReaderTest {
         CharacterReader r = new CharacterReader(br);
         for (int i = 0; i < loopCount; i++) {
             String pull = r.consumeTo('!');
-            assertEquals(note, pull);
-            assertEquals('!', r.current());
+            Assert.assertEquals(note, pull);
+            Assert.assertEquals('!', r.current());
             r.advance();
         }
 
-        assertTrue(r.isEmpty());
+        Assert.assertTrue(r.isEmpty());
     }
 
 }

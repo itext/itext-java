@@ -1,10 +1,34 @@
-package org.jsoup.parser;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.helper.Validate;
-import org.jsoup.internal.StringUtil;
-import org.jsoup.nodes.Entities;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.parser;
+
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Entities;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Readers the input stream into tokens.
@@ -134,7 +158,23 @@ final class Tokeniser {
     }
 
     void emit(int[] codepoints) {
-        emit(new String(codepoints, 0, codepoints.length));
+        // We have to do this conversion manually because .NET doesn't support creating String from int array.
+        List<Character> chars = new ArrayList<>();
+        for (int codepoint : codepoints) {
+            if (codepoint >>> 16 == 0) {
+                chars.add((char) codepoint);
+            } else {
+                char highSymbol = (char) ((codepoint >>> 10) + ('\uD800' - (0x010000 >>> 10)));
+                chars.add(highSymbol);
+                char lowSymbol = (char) ((codepoint & 0x3ff) + '\uDC00');
+                chars.add(lowSymbol);
+            }
+        }
+        char[] charsArray = new char[chars.size()];
+        for (int i = 0; i < chars.size(); i++) {
+            charsArray[i] = chars.get(i);
+        }
+        emit(charsArray);
     }
 
     TokeniserState getState() {
@@ -190,8 +230,6 @@ final class Tokeniser {
                     charval = win1252Extensions[charval - win1252ExtensionsStart];
                 }
 
-                // todo: implement number replacement table
-                // todo: check for extra illegal unicode points as parse errors
                 codeRef[0] = charval;
             }
             return codeRef;
@@ -231,7 +269,7 @@ final class Tokeniser {
     }
 
     Token.Tag createTagPending(boolean start) {
-        tagPending = start ? startPending.reset() : endPending.reset();
+        tagPending = (Token.Tag) (start ? startPending.reset() : endPending.reset());
         return tagPending;
     }
 
@@ -275,17 +313,17 @@ final class Tokeniser {
 
     void error(TokeniserState state) {
         if (errors.canAddError())
-            errors.add(new ParseError(reader.pos(), "Unexpected character '%s' in input state [%s]", reader.current(), state));
+            errors.add(new ParseError(reader.pos(), "Unexpected character '{0}' in input state [{1}]", reader.current(), state));
     }
 
     void eofError(TokeniserState state) {
         if (errors.canAddError())
-            errors.add(new ParseError(reader.pos(), "Unexpectedly reached end of file (EOF) in input state [%s]", state));
+            errors.add(new ParseError(reader.pos(), "Unexpectedly reached end of file (EOF) in input state [{0}]", state));
     }
 
     private void characterReferenceError(String message) {
         if (errors.canAddError())
-            errors.add(new ParseError(reader.pos(), "Invalid character reference: %s", message));
+            errors.add(new ParseError(reader.pos(), "Invalid character reference: {0}", message));
     }
 
     void error(String errorMsg) {
@@ -294,7 +332,6 @@ final class Tokeniser {
     }
 
     boolean currentNodeInHtmlNS() {
-        // todo: implement namespaces correctly
         return true;
         // Element currentNode = currentNode();
         // return currentNode != null && currentNode.namespace().equals("HTML");

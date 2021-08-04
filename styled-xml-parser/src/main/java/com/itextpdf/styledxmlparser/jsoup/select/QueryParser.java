@@ -1,15 +1,36 @@
-package org.jsoup.select;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.internal.StringUtil;
-import org.jsoup.helper.Validate;
-import org.jsoup.parser.TokenQueue;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.select;
+
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.internal.Normalizer;
+import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
+import com.itextpdf.styledxmlparser.jsoup.parser.TokenQueue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.jsoup.internal.Normalizer.normalize;
 
 /**
  * Parses a CSS selector into an Evaluator tree.
@@ -212,7 +233,7 @@ public class QueryParser {
         else if (tq.matchChomp(":matchText"))
             evals.add(new Evaluator.MatchText());
 		else // unhandled
-            throw new Selector.SelectorParseException("Could not parse query '%s': unexpected token at '%s'", query, tq.remainder());
+            throw new Selector.SelectorParseException("Could not parse query '{0}': unexpected token at '{1}'", query, tq.remainder());
 
     }
 
@@ -229,10 +250,9 @@ public class QueryParser {
     }
 
     private void byTag() {
-        // todo - these aren't dealing perfectly with case sensitivity. For case sensitive parsers, we should also make
         // the tag in the selector case-sensitive (and also attribute names). But for now, normalize (lower-case) for
         // consistency - both the selector and the element tag
-        String tagName = normalize(tq.consumeElementSelector());
+        String tagName = Normalizer.normalize(tq.consumeElementSelector());
         Validate.notEmpty(tagName);
 
         // namespaces: wildcard match equals(tagName) or ending in ":"+tagName
@@ -277,7 +297,7 @@ public class QueryParser {
             else if (cq.matchChomp("~="))
                 evals.add(new Evaluator.AttributeWithValueMatching(key, Pattern.compile(cq.remainder())));
             else
-                throw new Selector.SelectorParseException("Could not parse attribute query '%s': unexpected token at '%s'", query, cq.remainder());
+                throw new Selector.SelectorParseException("Could not parse attribute query '{0}': unexpected token at '{1}'", query, cq.remainder());
         }
     }
 
@@ -303,7 +323,7 @@ public class QueryParser {
     private static final Pattern NTH_B  = Pattern.compile("([+-])?(\\d+)");
 
 	private void cssNthChild(boolean backwards, boolean ofType) {
-		String argS = normalize(tq.chompTo(")"));
+		String argS = Normalizer.normalize(tq.chompTo(")"));
 		Matcher mAB = NTH_AB.matcher(argS);
 		Matcher mB = NTH_B.matcher(argS);
 		final int a, b;
@@ -320,7 +340,7 @@ public class QueryParser {
 			a = 0;
 			b = Integer.parseInt(mB.group().replaceFirst("^\\+", ""));
 		} else {
-			throw new Selector.SelectorParseException("Could not parse nth-index '%s': unexpected format", argS);
+			throw new Selector.SelectorParseException("Could not parse nth-index '{0}': unexpected format", argS);
 		}
 		if (ofType)
 			if (backwards)

@@ -1,29 +1,50 @@
-package org.jsoup.select;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.helper.Validate;
-import org.jsoup.internal.StringUtil;
-import org.jsoup.nodes.Comment;
-import org.jsoup.nodes.DataNode;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.FormElement;
-import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-import javax.annotation.Nullable;
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.select;
+
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Comment;
+import com.itextpdf.styledxmlparser.jsoup.nodes.DataNode;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.nodes.FormElement;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
+import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
- A list of {@link Element}s, with methods that act on every element in the list.
- <p>
- To get an {@code Elements} object, use the {@link Element#select(String)} method.
- </p>
-
- @author Jonathan Hedley, jonathan@hedley.net */
+ * A list of {@link Element}s, with methods that act on every element in the list.
+ * <p>
+ * To get an {@code Elements} object, use the {@link Element#select(String)} method.
+ *
+ * @author Jonathan Hedley, jonathan@hedley.net
+ */
 public class Elements extends ArrayList<Element> {
     public Elements() {
     }
@@ -46,25 +67,27 @@ public class Elements extends ArrayList<Element> {
 
     /**
      * Creates a deep copy of these elements.
+     *
      * @return a deep copy
      */
     @Override
-	public Elements clone() {
+	public Object clone() {
         Elements clone = new Elements(size());
 
         for(Element e : this)
-    		clone.add(e.clone());
+    		clone.add((Element) e.clone());
     	
     	return clone;
 	}
 
 	// attribute methods
     /**
-     Get an attribute value from the first matched element that has the attribute.
-     @param attributeKey The attribute key.
-     @return The attribute value from the first matched element that has the attribute.. If no elements were matched (isEmpty() == true),
-     or if the no elements have the attribute, returns empty string.
-     @see #hasAttr(String)
+     * Get an attribute value from the first matched element that has the attribute.
+     *
+     * @param attributeKey The attribute key.
+     * @return The attribute value from the first matched element that has the attribute.. If no elements were matched (isEmpty() == true),
+     * or if the no elements have the attribute, returns empty string.
+     * @see #hasAttr(String)
      */
     public String attr(String attributeKey) {
         for (Element element : this) {
@@ -75,9 +98,10 @@ public class Elements extends ArrayList<Element> {
     }
 
     /**
-     Checks if any of the matched elements have this attribute defined.
-     @param attributeKey attribute key
-     @return true if any of the elements have the attribute; false if none do.
+     * Checks if any of the matched elements have this attribute defined.
+     *
+     * @param attributeKey attribute key
+     * @return true if any of the elements have the attribute; false if none do.
      */
     public boolean hasAttr(String attributeKey) {
         for (Element element : this) {
@@ -129,9 +153,10 @@ public class Elements extends ArrayList<Element> {
     }
 
     /**
-     Add the class name to every matched element's {@code class} attribute.
-     @param className class name to add
-     @return this
+     * Add the class name to every matched element's {@code class} attribute.
+     *
+     * @param className class name to add
+     * @return this
      */
     public Elements addClass(String className) {
         for (Element element : this) {
@@ -141,9 +166,10 @@ public class Elements extends ArrayList<Element> {
     }
 
     /**
-     Remove the class name from every matched element's {@code class} attribute, if present.
-     @param className class name to remove
-     @return this
+     * Remove the class name from every matched element's {@code class} attribute, if present.
+     *
+     * @param className class name to remove
+     * @return this
      */
     public Elements removeClass(String className) {
         for (Element element : this) {
@@ -153,9 +179,10 @@ public class Elements extends ArrayList<Element> {
     }
 
     /**
-     Toggle the class name on every matched element's {@code class} attribute.
-     @param className class name to add if missing, or remove if present, from every element.
-     @return this
+     * Toggle the class name on every matched element's {@code class} attribute.
+     *
+     * @param className class name to add if missing, or remove if present, from every element.
+     * @return this
      */
     public Elements toggleClass(String className) {
         for (Element element : this) {
@@ -165,9 +192,10 @@ public class Elements extends ArrayList<Element> {
     }
 
     /**
-     Determine if any of the matched elements have this class name set in their {@code class} attribute.
-     @param className class name to check for
-     @return true if any do, false if none do
+     * Determine if any of the matched elements have this class name set in their {@code class} attribute.
+     *
+     * @param className class name to check for
+     * @return true if any do, false if none do
      */
     public boolean hasClass(String className) {
         for (Element element : this) {
@@ -221,9 +249,10 @@ public class Elements extends ArrayList<Element> {
     }
 
     /**
-     Test if any matched Element has any text content, that is not just whitespace.
-     @return true if any element has non-blank text content.
-     @see Element#hasText()
+     * Test if any matched Element has any text content, that is not just whitespace.
+     *
+     * @return true if any element has non-blank text content.
+     * @see Element#hasText()
      */
     public boolean hasText() {
         for (Element element: this) {
@@ -374,13 +403,14 @@ public class Elements extends ArrayList<Element> {
     }
 
     /**
-     Wrap the supplied HTML around each matched elements. For example, with HTML
-     {@code <p><b>This</b> is <b>Jsoup</b></p>},
-     <code>doc.select("b").wrap("&lt;i&gt;&lt;/i&gt;");</code>
-     becomes {@code <p><i><b>This</b></i> is <i><b>jsoup</b></i></p>}
-     @param html HTML to wrap around each element, e.g. {@code <div class="head"></div>}. Can be arbitrarily deep.
-     @return this (for chaining)
-     @see Element#wrap
+     * Wrap the supplied HTML around each matched elements. For example, with HTML
+     * {@code <p><b>This</b> is <b>Jsoup</b></p>},
+     * <code>doc.select("b").wrap("&lt;i&gt;&lt;/i&gt;");</code>
+     * becomes {@code <p><i><b>This</b></i> is <i><b>jsoup</b></i></p>}
+     *
+     * @param html HTML to wrap around each element, e.g. {@code <div class="head"></div>}. Can be arbitrarily deep.
+     * @return this (for chaining)
+     * @see Element#wrap
      */
     public Elements wrap(String html) {
         Validate.notEmpty(html);
@@ -395,11 +425,13 @@ public class Elements extends ArrayList<Element> {
      * dropping the elements but keeping their children.
      * <p>
      * This is useful for e.g removing unwanted formatting elements but keeping their contents.
-     * </p>
      * 
-     * E.g. with HTML: <p>{@code <div><font>One</font> <font><a href="/">Two</a></font></div>}</p>
-     * <p>{@code doc.select("font").unwrap();}</p>
-     * <p>HTML = {@code <div>One <a href="/">Two</a></div>}</p>
+     * E.g. with HTML: <p>
+     * {@code <div><font>One</font> <font><a href="/">Two</a></font></div>}
+     * <p>
+     * {@code doc.select("font").unwrap();}
+     * <p>
+     * HTML = {@code <div>One <a href="/">Two</a></div>}
      *
      * @return this (for chaining)
      * @see Node#unwrap
@@ -418,6 +450,7 @@ public class Elements extends ArrayList<Element> {
      * E.g. HTML: {@code <div><p>Hello <b>there</b></p> <p>now</p></div>}<br>
      * <code>doc.select("p").empty();</code><br>
      * HTML = {@code <div><p></p> <p></p></div>}
+     *
      * @return this, for chaining
      * @see Element#empty()
      * @see #remove()
@@ -436,7 +469,8 @@ public class Elements extends ArrayList<Element> {
      * <code>doc.select("p").remove();</code><br>
      * HTML = {@code <div> <img /></div>}
      * <p>
-     * Note that this method should not be used to clean user-submitted HTML; rather, use {@link org.jsoup.safety.Cleaner} to clean HTML.
+     * Note that this method should not be used to clean user-submitted HTML; rather, use {@link com.itextpdf.styledxmlparser.jsoup.safety.Cleaner} to clean HTML.
+     *
      * @return this, for chaining
      * @see Element#empty()
      * @see #empty()
@@ -567,18 +601,19 @@ public class Elements extends ArrayList<Element> {
         return siblings(query, false, true);
     }
 
-    private Elements siblings(@Nullable String query, boolean next, boolean all) {
+    private Elements siblings(String query, boolean next, boolean all) {
         Elements els = new Elements();
         Evaluator eval = query != null? QueryParser.parse(query) : null;
         for (Element e : this) {
+            Element temp = e;
             do {
-                Element sib = next ? e.nextElementSibling() : e.previousElementSibling();
+                Element sib = next ? temp.nextElementSibling() : temp.previousElementSibling();
                 if (sib == null) break;
                 if (eval == null)
                     els.add(sib);
                 else if (sib.is(eval))
                     els.add(sib);
-                e = sib;
+                temp = sib;
             } while (all);
         }
         return els;
@@ -589,7 +624,7 @@ public class Elements extends ArrayList<Element> {
      * @return all of the parents and ancestor elements of the matched elements
      */
     public Elements parents() {
-        HashSet<Element> combo = new LinkedHashSet<>();
+        Set<Element> combo = new LinkedHashSet<>();
         for (Element e: this) {
             combo.addAll(e.parents());
         }
@@ -601,7 +636,7 @@ public class Elements extends ArrayList<Element> {
      Get the first matched element.
      @return The first matched element, or <code>null</code> if contents is empty.
      */
-    public @Nullable Element first() {
+    public Element first() {
         return isEmpty() ? null : get(0);
     }
 
@@ -609,7 +644,7 @@ public class Elements extends ArrayList<Element> {
      Get the last matched element.
      @return The last matched element, or <code>null</code> if contents is empty.
      */
-    public @Nullable Element last() {
+    public Element last() {
         return isEmpty() ? null : get(size() - 1);
     }
 

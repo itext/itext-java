@@ -929,6 +929,10 @@ public final class SvgConverter {
 
         //Parse viewbox
         String vbString = topSvgRenderer.getAttribute(SvgConstants.Attributes.VIEWBOX);
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        if (vbString == null) {
+            vbString = topSvgRenderer.getAttribute(SvgConstants.Attributes.VIEWBOX.toLowerCase());
+        }
         float[] values = {0, 0, 0, 0};
         if (vbString != null) {
             List<String> valueStrings = SvgCssUtils.splitValueList(vbString);

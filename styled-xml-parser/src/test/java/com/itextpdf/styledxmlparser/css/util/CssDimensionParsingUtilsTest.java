@@ -30,7 +30,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -200,4 +199,45 @@ public class CssDimensionParsingUtilsTest extends ExtendedITextTest {
         // the difference between java and .net. So the test verifies this fix
         Assert.assertEquals(8.503937f, CssDimensionParsingUtils.parseAbsoluteLength("12q"), 0f);
     }
+
+    @Test
+    public void parseDoubleIntegerValueTest(){
+        Double expectedString = 5.0;
+        Double actualString = CssDimensionParsingUtils.parseDouble("5");
+
+        Assert.assertEquals(expectedString, actualString);
+    }
+
+    @Test
+    public void parseDoubleManyCharsAfterDotTest(){
+        Double expectedString = 5.123456789;
+        Double actualString = CssDimensionParsingUtils.parseDouble("5.123456789");
+
+        Assert.assertEquals(expectedString, actualString);
+    }
+
+    @Test
+    public void parseDoubleManyCharsAfterDotNegativeTest(){
+        Double expectedString = -5.123456789;
+        Double actualString = CssDimensionParsingUtils.parseDouble("-5.123456789");
+
+        Assert.assertEquals(expectedString, actualString);
+    }
+
+    @Test
+    public void parseDoubleNullValueTest(){
+        Double expectedString = null;
+        Double actualString = CssDimensionParsingUtils.parseDouble(null);
+
+        Assert.assertEquals(expectedString, actualString);
+    }
+
+    @Test
+    public void parseDoubleNegativeTextTest(){
+        Double expectedString = null;
+        Double actualString = CssDimensionParsingUtils.parseDouble("text");
+
+        Assert.assertEquals(expectedString, actualString);
+    }
+
 }

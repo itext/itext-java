@@ -127,10 +127,18 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
         if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.MARKER_WIDTH)) {
             String markerWidthRawValue = attributesAndStyles.get(SvgConstants.Attributes.MARKER_WIDTH);
             markerWidth = CssDimensionParsingUtils.parseAbsoluteLength(markerWidthRawValue);
+        } else if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.MARKER_WIDTH.toLowerCase())) {
+            // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+            String markerWidthRawValue = attributesAndStyles.get(SvgConstants.Attributes.MARKER_WIDTH.toLowerCase());
+            markerWidth = CssDimensionParsingUtils.parseAbsoluteLength(markerWidthRawValue);
         }
         float markerHeight = DEFAULT_MARKER_HEIGHT;
         if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.MARKER_HEIGHT)) {
             String markerHeightRawValue = attributesAndStyles.get(SvgConstants.Attributes.MARKER_HEIGHT);
+            markerHeight = CssDimensionParsingUtils.parseAbsoluteLength(markerHeightRawValue);
+        } else if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.MARKER_HEIGHT.toLowerCase())) {
+            // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+            String markerHeightRawValue = attributesAndStyles.get(SvgConstants.Attributes.MARKER_HEIGHT.toLowerCase());
             markerHeight = CssDimensionParsingUtils.parseAbsoluteLength(markerHeightRawValue);
         }
         return new float[] {markerWidth, markerHeight};
@@ -139,7 +147,15 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
     private static boolean markerWidthHeightAreCorrect(MarkerSvgNodeRenderer namedObject) {
         Logger log = LoggerFactory.getLogger(MarkerSvgNodeRenderer.class);
         String markerWidth = namedObject.getAttribute(SvgConstants.Attributes.MARKER_WIDTH);
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        if (markerWidth == null) {
+            markerWidth = namedObject.getAttribute(SvgConstants.Attributes.MARKER_WIDTH.toLowerCase());
+        }
         String markerHeight = namedObject.getAttribute(SvgConstants.Attributes.MARKER_HEIGHT);
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        if (markerHeight == null) {
+            markerHeight = namedObject.getAttribute(SvgConstants.Attributes.MARKER_HEIGHT.toLowerCase());
+        }
         boolean isCorrect = true;
         if (markerWidth != null) {
             float absoluteMarkerWidthValue = CssDimensionParsingUtils.parseAbsoluteLength(markerWidth);
@@ -188,9 +204,16 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
     }
 
     private void applyUserSpaceScaling(SvgDrawContext context) {
-        if (!this.attributesAndStyles.containsKey(SvgConstants.Attributes.MARKER_UNITS)
-                || SvgConstants.Values.STROKEWIDTH
-                .equals(this.attributesAndStyles.get(SvgConstants.Attributes.MARKER_UNITS))) {
+        boolean markerUnitsEqualsStrokeWidth =
+                !this.attributesAndStyles.containsKey(SvgConstants.Attributes.MARKER_UNITS) ||
+                        SvgConstants.Values.STROKEWIDTH.equals(
+                                this.attributesAndStyles.get(SvgConstants.Attributes.MARKER_UNITS));
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        boolean markerUnitsLowerEqualsStrokeWidth =
+                !this.attributesAndStyles.containsKey(SvgConstants.Attributes.MARKER_UNITS.toLowerCase()) ||
+                        SvgConstants.Values.STROKEWIDTH.equals(
+                                this.attributesAndStyles.get(SvgConstants.Attributes.MARKER_UNITS.toLowerCase()));
+        if (markerUnitsEqualsStrokeWidth && markerUnitsLowerEqualsStrokeWidth) {
             String parentValue = this.getParent().getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
             if (parentValue != null) {
                 // If stroke width is a percentage value is always computed as a percentage of the normalized viewBox diagonal length.
@@ -220,10 +243,21 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
             moveX = parseAbsoluteLength(refX, context.getRootViewPort().getWidth(), moveX, context);
             //Apply scale
             moveX *= -1 * xScale;
+        } else if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.REFX.toLowerCase())) {
+            // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+            String refX = this.attributesAndStyles.get(SvgConstants.Attributes.REFX.toLowerCase());
+            moveX = parseAbsoluteLength(refX, context.getRootViewPort().getWidth(), moveX, context);
+            //Apply scale
+            moveX *= -1 * xScale;
         }
         float moveY = DEFAULT_REF_Y;
         if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.REFY)) {
             String refY = this.attributesAndStyles.get(SvgConstants.Attributes.REFY);
+            moveY = parseAbsoluteLength(refY, context.getRootViewPort().getHeight(), moveY, context);
+            moveY *= -1 * yScale;
+        } else if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.REFY.toLowerCase())) {
+            // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+            String refY = this.attributesAndStyles.get(SvgConstants.Attributes.REFY.toLowerCase());
             moveY = parseAbsoluteLength(refY, context.getRootViewPort().getHeight(), moveY, context);
             moveY *= -1 * yScale;
         }

@@ -228,7 +228,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
                 "\t\tstroke:#da0000;\n" +
                 "\t\tstroke-opacity:1;\n" +
                 "\t}\n" +
-                "  ", "");
+                "  ");
         JsoupElementNode jSoupStyle = new JsoupElementNode(styleTag);
         jSoupStyle.addChild(new JsoupTextNode(styleContents));
         Element ellipse = new Element(Tag.valueOf("ellipse"), "");
@@ -256,7 +256,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
                 "\t\tfont-family:Courier;\n" +
                 "\t\tsrc:url(#Super Sans);\n" +
                 "\t}\n" +
-                "  ", "");
+                "  ");
         JsoupElementNode jSoupStyle = new JsoupElementNode(styleTag);
         jSoupStyle.addChild(new JsoupTextNode(styleContents));
         SvgProcessorContext context = new SvgProcessorContext(new SvgConverterProperties());

@@ -1,15 +1,39 @@
-package org.jsoup.select;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.junit.jupiter.api.Test;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-public class TraversorTest {
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.select;
+
+import com.itextpdf.styledxmlparser.jsoup.Jsoup;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+@Category(UnitTest.class)
+public class TraversorTest extends ExtendedITextTest {
     // Note: NodeTraversor.traverse(new NodeVisitor) is tested in
     // ElementsTest#traverse()
 
@@ -30,7 +54,7 @@ public class TraversorTest {
                 return FilterResult.CONTINUE;
             }
         }, doc.select("div"));
-        assertEquals("<div><p><#text></#text></p></div><div><#text></#text></div>", accum.toString());
+        Assert.assertEquals("<div><p><#text></#text></p></div><div><#text></#text></div>", accum.toString());
     }
 
     @Test
@@ -51,7 +75,7 @@ public class TraversorTest {
                 return FilterResult.CONTINUE;
             }
         }, doc.select("div"));
-        assertEquals("<div><p></p></div><div><#text></#text></div>", accum.toString());
+        Assert.assertEquals("<div><p></p></div><div><#text></#text></div>", accum.toString());
     }
 
     @Test
@@ -74,7 +98,7 @@ public class TraversorTest {
                 return FilterResult.CONTINUE;
             }
         }, doc.select("div"));
-        assertEquals("<div></div><div><#text></#text></div>", accum.toString());
+        Assert.assertEquals("<div></div><div><#text></#text></div>", accum.toString());
     }
 
     @Test
@@ -93,7 +117,7 @@ public class TraversorTest {
                 return ("b".equals(node.nodeName())) ? FilterResult.REMOVE : FilterResult.CONTINUE;
             }
         }, doc.select("div"));
-        assertEquals("<div></div>\n<div>\n There be \n</div>", doc.select("body").html());
+        Assert.assertEquals("<div></div>\n<div>\n There be \n</div>", doc.select("body").html());
     }
 
     @Test
@@ -114,7 +138,7 @@ public class TraversorTest {
                 return ("p".equals(node.nodeName())) ? FilterResult.STOP : FilterResult.CONTINUE;
             }
         }, doc.select("div"));
-        assertEquals("<div><p><#text></#text></p>", accum.toString());
+        Assert.assertEquals("<div><p><#text></#text></p>", accum.toString());
     }
 
     @Test public void replaceElement() {
@@ -140,8 +164,8 @@ public class TraversorTest {
         }, doc);
 
         Element p = doc.selectFirst("p");
-        assertNotNull(p);
-        assertEquals("<p>One <u>two</u> <u>three</u> four.</p>", p.outerHtml());
+        Assert.assertNotNull(p);
+        Assert.assertEquals("<p>One <u>two</u> <u>three</u> four.</p>", p.outerHtml());
     }
 
     @Test public void canAddChildren() {
@@ -166,7 +190,7 @@ public class TraversorTest {
             }
         }, doc);
 
-        assertEquals("<div>\n" +
+        Assert.assertEquals("<div>\n" +
             " <p><span>0</span><span>1</span></p>\n" +
             " <p><span>2</span><span>3</span></p>\n" +
             "</div>", doc.body().html());

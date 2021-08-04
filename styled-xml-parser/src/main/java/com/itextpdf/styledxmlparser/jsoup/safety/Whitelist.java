@@ -1,19 +1,42 @@
-package org.jsoup.safety;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.nodes.Attribute;
-import org.jsoup.nodes.Attributes;
-import org.jsoup.nodes.Element;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.safety;
+
+import com.itextpdf.styledxmlparser.jsoup.nodes.Attribute;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 
 /**
- @deprecated As of release <code>v1.14.1</code>, this class is deprecated in favour of {@link Safelist}. The name has
- been changed with the intent of promoting more inclusive language. {@link Safelist} is a drop-in replacement, and no
- further changes other than updating the name in your code are required to cleanly migrate. This class will be
- removed in <code>v1.15.1</code>. Until that release, this class acts as a shim to maintain code compatibility
- (source and binary).
- <p>
- For a clear rationale of the removal of this change, please see
- <a href="https://tools.ietf.org/html/draft-knodel-terminology-04" title="draft-knodel-terminology-04">Terminology,
- Power, and Inclusive Language in Internet-Drafts and RFCs</a> */
+ * @deprecated As of release <code>v1.14.1</code>, this class is deprecated in favour of {@link Safelist}. The name has
+ * been changed with the intent of promoting more inclusive language. {@link Safelist} is a drop-in replacement, and no
+ * further changes other than updating the name in your code are required to cleanly migrate. This class will be
+ * removed in <code>v1.15.1</code>. Until that release, this class acts as a shim to maintain code compatibility
+ * (source and binary).
+ * <p>
+ * For a clear rationale of the removal of this change, please see
+ * <a href="https://tools.ietf.org/html/draft-knodel-terminology-04" title="draft-knodel-terminology-04">Terminology,
+ * Power, and Inclusive Language in Internet-Drafts and RFCs</a>
+ */
 @Deprecated
 public class Whitelist extends Safelist {
     public Whitelist() {
@@ -45,55 +68,55 @@ public class Whitelist extends Safelist {
     }
 
     @Override
-    public Whitelist addTags(String... tags) {
+    public Safelist addTags(String... tags) {
         super.addTags(tags);
         return this;
     }
 
     @Override
-    public Whitelist removeTags(String... tags) {
+    public Safelist removeTags(String... tags) {
         super.removeTags(tags);
         return this;
     }
 
     @Override
-    public Whitelist addAttributes(String tag, String... attributes) {
+    public Safelist addAttributes(String tag, String... attributes) {
         super.addAttributes(tag, attributes);
         return this;
     }
 
     @Override
-    public Whitelist removeAttributes(String tag, String... attributes) {
+    public Safelist removeAttributes(String tag, String... attributes) {
         super.removeAttributes(tag, attributes);
         return this;
     }
 
     @Override
-    public Whitelist addEnforcedAttribute(String tag, String attribute, String value) {
+    public Safelist addEnforcedAttribute(String tag, String attribute, String value) {
         super.addEnforcedAttribute(tag, attribute, value);
         return this;
     }
 
     @Override
-    public Whitelist removeEnforcedAttribute(String tag, String attribute) {
+    public Safelist removeEnforcedAttribute(String tag, String attribute) {
         super.removeEnforcedAttribute(tag, attribute);
         return this;
     }
 
     @Override
-    public Whitelist preserveRelativeLinks(boolean preserve) {
+    public Safelist preserveRelativeLinks(boolean preserve) {
         super.preserveRelativeLinks(preserve);
         return this;
     }
 
     @Override
-    public Whitelist addProtocols(String tag, String attribute, String... protocols) {
+    public Safelist addProtocols(String tag, String attribute, String... protocols) {
         super.addProtocols(tag, attribute, protocols);
         return this;
     }
 
     @Override
-    public Whitelist removeProtocols(String tag, String attribute, String... removeProtocols) {
+    public Safelist removeProtocols(String tag, String attribute, String... removeProtocols) {
         super.removeProtocols(tag, attribute, removeProtocols);
         return this;
     }

@@ -1,7 +1,29 @@
-package org.jsoup.parser;
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2021 iText Group NV
+    Authors: iText Software.
 
-import org.jsoup.internal.StringUtil;
-import org.jsoup.helper.Validate;
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.styledxmlparser.jsoup.parser;
+
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
 
 /**
  * A character queue with parsing helpers.
@@ -40,7 +62,7 @@ public class TokenQueue {
      * @return First character, or 0 if empty.
      */
     public char peek() {
-        return isEmpty() ? 0 : queue.charAt(pos);
+        return isEmpty() ? '\u0000' : queue.charAt(pos);
     }
 
     /**
@@ -217,7 +239,6 @@ public class TokenQueue {
      @param seq any number of terminators to consume to. <b>Case insensitive.</b>
      @return consumed string   
      */
-    // todo: method name. not good that consumeTo cares for case, and consume to any doesn't. And the only use for this
     // is is a case sensitive time...
     public String consumeToAny(String... seq) {
         int start = pos;
@@ -261,7 +282,7 @@ public class TokenQueue {
         int start = -1;
         int end = -1;
         int depth = 0;
-        char last = 0;
+        char last = '\u0000';
         boolean inSingleQuote = false;
         boolean inDoubleQuote = false;
 
@@ -303,7 +324,7 @@ public class TokenQueue {
      */
     public static String unescape(String in) {
         StringBuilder out = StringUtil.borrowBuilder();
-        char last = 0;
+        char last = '\u0000';
         for (char c : in.toCharArray()) {
             if (c == ESC) {
                 if (last == ESC)

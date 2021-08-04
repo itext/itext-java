@@ -58,6 +58,10 @@ public abstract class AbstractGradientSvgNodeRenderer extends AbstractBranchSvgN
      */
     protected boolean isObjectBoundingBoxUnits() {
         String gradientUnits = getAttribute(Attributes.GRADIENT_UNITS);
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        if (gradientUnits == null) {
+            getAttribute(Attributes.GRADIENT_UNITS.toLowerCase());
+        }
         if (Values.USER_SPACE_ON_USE.equals(gradientUnits)) {
             return false;
         } else if (gradientUnits != null && !Values.OBJECT_BOUNDING_BOX.equals(gradientUnits)) {
@@ -73,6 +77,10 @@ public abstract class AbstractGradientSvgNodeRenderer extends AbstractBranchSvgN
      */
     protected AffineTransform getGradientTransform() {
         String gradientTransform = getAttribute(Attributes.GRADIENT_TRANSFORM);
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        if (gradientTransform == null) {
+            gradientTransform = getAttribute(Attributes.GRADIENT_TRANSFORM.toLowerCase());
+        }
         if (gradientTransform != null && !gradientTransform.isEmpty()) {
             return TransformUtils.parseTransform(gradientTransform);
         }
@@ -99,6 +107,9 @@ public abstract class AbstractGradientSvgNodeRenderer extends AbstractBranchSvgN
      */
     protected GradientSpreadMethod parseSpreadMethod() {
         String spreadMethodValue = getAttribute(Attributes.SPREAD_METHOD);
+        if (spreadMethodValue == null) {
+            spreadMethodValue = getAttribute(Attributes.SPREAD_METHOD.toLowerCase());
+        }
         if (spreadMethodValue == null) {
             // returning svg default spread method
             return GradientSpreadMethod.PAD;
