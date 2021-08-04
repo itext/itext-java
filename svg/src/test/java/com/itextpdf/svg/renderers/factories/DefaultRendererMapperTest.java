@@ -40,34 +40,33 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.svg.dummy.factories;
+package com.itextpdf.svg.renderers.factories;
 
-import com.itextpdf.svg.dummy.renderers.impl.DummyArgumentedConstructorSvgNodeRenderer;
-import com.itextpdf.svg.dummy.renderers.impl.DummyProcessableSvgNodeRenderer;
-import com.itextpdf.svg.dummy.renderers.impl.DummyProtectedSvgNodeRenderer;
-import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
-import com.itextpdf.svg.renderers.factories.ISvgNodeRendererMapper;
+import com.itextpdf.test.AssertUtil;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+@Category(UnitTest.class)
+public class DefaultRendererMapperTest extends ExtendedITextTest {
 
-public class DummySvgNodeMapper implements ISvgNodeRendererMapper {
-
-    @Override
-    public Map<String, Class<? extends ISvgNodeRenderer>> getMapping() {
-        Map<String, Class<? extends ISvgNodeRenderer>> result = new HashMap<>();
-        result.put("dummy", DummySvgNodeRenderer.class);
-        result.put("processable", DummyProcessableSvgNodeRenderer.class);
-        result.put("protected", DummyProtectedSvgNodeRenderer.class);
-        result.put("argumented", DummyArgumentedConstructorSvgNodeRenderer.class);
-        return result;
+    @Test
+    public void mapperNotEmptyTest() {
+        DefaultSvgNodeRendererMapper mapper = new DefaultSvgNodeRendererMapper();
+        Assert.assertFalse(mapper.getMapping().isEmpty());
     }
 
-    @Override
-    public Collection<String> getIgnoredTags() {
-        return new ArrayList<>();
+    @Test
+    public void createAllRenderersTest() throws InstantiationException, IllegalAccessException {
+        DefaultSvgNodeRendererMapper mapper = new DefaultSvgNodeRendererMapper();
+
+        for (Class<? extends ISvgNodeRenderer> rendererClazz : mapper.getMapping().values()) {
+            // the test is that this method does not throw an exception on any class here
+            // meaning that every (non-abstract) implementation must have a public no-args constructor
+            AssertUtil.doesNotThrow(() -> rendererClazz.newInstance());
+        }
     }
 }

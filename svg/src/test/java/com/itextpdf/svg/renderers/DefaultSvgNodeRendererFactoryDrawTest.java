@@ -46,27 +46,19 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
-import com.itextpdf.svg.dummy.factories.DummySvgNodeMapper;
+import com.itextpdf.svg.dummy.factories.DummySvgNodeFactory;
 import com.itextpdf.svg.dummy.renderers.impl.DummyProcessableSvgNodeRenderer;
-import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class DefaultSvgNodeRendererFactoryDrawTest extends ExtendedITextTest {
     
-    private ISvgNodeRendererFactory fact;
-    
-    @Before
-    public void setUp() {
-        fact = new DefaultSvgNodeRendererFactory(new DummySvgNodeMapper());
-    }
+    private final ISvgNodeRendererFactory fact = new DummySvgNodeFactory();
     
     @Test
     public void basicProcessedRendererTest() {

@@ -72,23 +72,15 @@ import java.util.HashSet;
 import java.util.Map;
 
 /**
- * The implementation of {@link ISvgNodeRendererMapper} that will be used by
- * default in the {@link DefaultSvgNodeRendererFactory}. It contains the mapping
- * of the default implementations, provided by this project for the standard SVG
+ * Contains the mapping of the default implementations, provided by this project for the standard SVG
  * tags as defined in the SVG Specification.
- *
- * @deprecated The public access to this class will be removed in 7.2. The class itself can become
- * either package private or the inner private static class for
- * the {@link DefaultSvgNodeRendererFactory}. Users should override {@link ISvgNodeRendererFactory}
- * (or at least {@link DefaultSvgNodeRendererFactory}) and should not deal with the mapping class
- * as it's more of an implementation detail.
  */
-@Deprecated
-// TODO DEVSIX-5081 7.2 svg: Remove deprecated API and refactor tests related to ISvgNodeRendererMapper
-public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
+class DefaultSvgNodeRendererMapper {
 
-    @Override
-    public Map<String, Class<? extends ISvgNodeRenderer>> getMapping() {
+    DefaultSvgNodeRendererMapper() {
+    }
+
+    Map<String, Class<? extends ISvgNodeRenderer>> getMapping() {
         Map<String, Class<? extends ISvgNodeRenderer>> result = new HashMap<>();
 
         result.put(SvgConstants.Tags.CIRCLE, CircleSvgNodeRenderer.class);
@@ -116,8 +108,7 @@ public class DefaultSvgNodeRendererMapper implements ISvgNodeRendererMapper {
         return result;
     }
 
-    @Override
-    public Collection<String> getIgnoredTags() {
+    Collection<String> getIgnoredTags() {
         Collection<String> ignored = new HashSet<>();
 
         // Not supported tags as of yet

@@ -72,30 +72,9 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
      * Default constructor with default {@link ISvgNodeRenderer} creation logic.
      */
     public DefaultSvgNodeRendererFactory() {
-        this(new DefaultSvgNodeRendererMapper());
-    }
-
-    /**
-     * Constructor which allows injecting a custom
-     * {@link ISvgNodeRendererMapper} implementation.
-     *
-     * @param mapper the custom mapper implementation - if null, then we fall
-     * back to the {@link DefaultSvgNodeRendererMapper}
-     * @deprecated Will be removed in 7.2. The user should use the custom
-     * {@link ISvgNodeRendererFactory} implementation (or the custom
-     * {@link DefaultSvgNodeRendererFactory} extension) to create extensions of the factory.
-     */
-    @Deprecated
-    // TODO DEVSIX-5081 7.2 svg: Remove deprecated API and refactor tests related to ISvgNodeRendererMapper
-    public DefaultSvgNodeRendererFactory(ISvgNodeRendererMapper mapper) {
-        if (mapper != null) {
-            rendererMap.putAll(mapper.getMapping());
-            ignoredTags.addAll(mapper.getIgnoredTags());
-        } else {
-            ISvgNodeRendererMapper defaultMapper = new DefaultSvgNodeRendererMapper();
-            rendererMap.putAll(defaultMapper.getMapping());
-            ignoredTags.addAll(defaultMapper.getIgnoredTags());
-        }
+        final DefaultSvgNodeRendererMapper defaultMapper = new DefaultSvgNodeRendererMapper();
+        rendererMap.putAll(defaultMapper.getMapping());
+        ignoredTags.addAll(defaultMapper.getIgnoredTags());
     }
 
     @Override

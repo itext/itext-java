@@ -56,7 +56,7 @@ public class DefaultSvgNodeRendererFactoryTest extends ExtendedITextTest {
 
     @Test
     public void createSvgNodeRenderer() {
-        ISvgNodeRendererFactory nodeRendererFactory = new DefaultSvgNodeRendererFactory(null);
+        ISvgNodeRendererFactory nodeRendererFactory = new DefaultSvgNodeRendererFactory();
 
         Exception e = Assert.assertThrows(SvgProcessingException.class,
                 () -> nodeRendererFactory.createSvgNodeRendererForTag(null, null)
