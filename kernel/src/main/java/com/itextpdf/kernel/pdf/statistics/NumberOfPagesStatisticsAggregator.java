@@ -26,14 +26,12 @@ import com.itextpdf.io.util.MapUtil;
 import com.itextpdf.kernel.actions.AbstractStatisticsAggregator;
 import com.itextpdf.kernel.actions.AbstractStatisticsEvent;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -68,7 +66,7 @@ public class NumberOfPagesStatisticsAggregator extends AbstractStatisticsAggrega
 
     private final Object lock = new Object();
 
-    private final Map<String, AtomicLong> numberOfDocuments = new LinkedHashMap<>();
+    private final Map<String, Long> numberOfDocuments = new LinkedHashMap<>();
 
     /**
      * Aggregates number of pages from the provided event.
@@ -89,12 +87,9 @@ public class NumberOfPagesStatisticsAggregator extends AbstractStatisticsAggrega
             }
         }
         synchronized (lock) {
-            AtomicLong documentsOfThisRange = numberOfDocuments.get(range);
-            if (documentsOfThisRange == null) {
-                numberOfDocuments.put(range, new AtomicLong(1));
-            } else {
-                documentsOfThisRange.incrementAndGet();
-            }
+            Long documentsOfThisRange = numberOfDocuments.get(range);
+            Long currentValue = documentsOfThisRange == null ? 1L : documentsOfThisRange.longValue() + 1L;
+            numberOfDocuments.put(range, currentValue);
         }
     }
 
@@ -119,11 +114,14 @@ public class NumberOfPagesStatisticsAggregator extends AbstractStatisticsAggrega
             return;
         }
 
-        Map<String, AtomicLong> numberOfDocuments = ((NumberOfPagesStatisticsAggregator) aggregator).numberOfDocuments;
+        Map<String, Long> numberOfDocuments = ((NumberOfPagesStatisticsAggregator) aggregator).numberOfDocuments;
         synchronized (lock) {
             MapUtil.merge(this.numberOfDocuments, numberOfDocuments, (el1, el2) -> {
-                el1.addAndGet(el2.get());
-                return el1;
+                if (el2 == null) {
+                    return el1;
+                } else {
+                    return el1 + el2;
+                }
             });
         }
     }

@@ -70,7 +70,7 @@ public class SizeOfPdfStatisticsAggregator extends AbstractStatisticsAggregator 
 
     private final Object lock = new Object();
 
-    private final Map<String, AtomicLong> numberOfDocuments = new LinkedHashMap<>();
+    private final Map<String, Long> numberOfDocuments = new LinkedHashMap<>();
 
     /**
      * Aggregates size of the PDF document from the provided event.
@@ -91,12 +91,9 @@ public class SizeOfPdfStatisticsAggregator extends AbstractStatisticsAggregator 
             }
         }
         synchronized (lock) {
-            AtomicLong documentsOfThisRange = numberOfDocuments.get(range);
-            if (documentsOfThisRange == null) {
-                numberOfDocuments.put(range, new AtomicLong(1));
-            } else {
-                documentsOfThisRange.incrementAndGet();
-            }
+            Long documentsOfThisRange = numberOfDocuments.get(range);
+            Long currentValue = documentsOfThisRange == null ? 1L : documentsOfThisRange.longValue() + 1L;
+            numberOfDocuments.put(range, currentValue);
         }
     }
 
@@ -121,11 +118,14 @@ public class SizeOfPdfStatisticsAggregator extends AbstractStatisticsAggregator 
             return;
         }
 
-        Map<String, AtomicLong> numberOfDocuments = ((SizeOfPdfStatisticsAggregator) aggregator).numberOfDocuments;
+        Map<String, Long> numberOfDocuments = ((SizeOfPdfStatisticsAggregator) aggregator).numberOfDocuments;
         synchronized (lock) {
             MapUtil.merge(this.numberOfDocuments, numberOfDocuments, (el1, el2) -> {
-                el1.addAndGet(el2.get());
-                return el1;
+                if (el2 == null) {
+                    return el1;
+                } else {
+                    return el1 + el2;
+                }
             });
         }
     }

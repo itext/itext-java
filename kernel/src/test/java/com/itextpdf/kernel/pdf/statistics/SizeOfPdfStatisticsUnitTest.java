@@ -32,7 +32,6 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -83,30 +82,30 @@ public class SizeOfPdfStatisticsUnitTest extends ExtendedITextTest {
         aggregator.aggregate(event);
 
         Object aggregation = aggregator.retrieveAggregation();
-        Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
+        Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
         Assert.assertEquals(4, castedAggregation.size());
 
-        long numberOfPages = castedAggregation.get("<128kb").get();
-        Assert.assertEquals(2, numberOfPages);
+        Long numberOfPages = castedAggregation.get("<128kb");
+        Assert.assertEquals(new Long(2L), numberOfPages);
 
-        numberOfPages = castedAggregation.get("128kb-1mb").get();
-        Assert.assertEquals(2, numberOfPages);
+        numberOfPages = castedAggregation.get("128kb-1mb");
+        Assert.assertEquals(new Long(2L), numberOfPages);
 
         Assert.assertNull(castedAggregation.get("1mb-16mb"));
 
-        numberOfPages = castedAggregation.get("16mb-128mb").get();
-        Assert.assertEquals(1, numberOfPages);
+        numberOfPages = castedAggregation.get("16mb-128mb");
+        Assert.assertEquals(new Long(1L), numberOfPages);
 
-        numberOfPages = castedAggregation.get("128mb+").get();
-        Assert.assertEquals(2, numberOfPages);
+        numberOfPages = castedAggregation.get("128mb+");
+        Assert.assertEquals(new Long(2L), numberOfPages);
     }
 
     @Test
     public void nothingAggregatedTest() {
         SizeOfPdfStatisticsAggregator aggregator = new SizeOfPdfStatisticsAggregator();
         Object aggregation = aggregator.retrieveAggregation();
-        Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
+        Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
         Assert.assertTrue(castedAggregation.isEmpty());
     }
@@ -117,7 +116,7 @@ public class SizeOfPdfStatisticsUnitTest extends ExtendedITextTest {
         aggregator.aggregate(new NumberOfPagesStatisticsEvent(200, ITextCoreProductData.getInstance()));
 
         Object aggregation = aggregator.retrieveAggregation();
-        Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
+        Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
         Assert.assertTrue(castedAggregation.isEmpty());
     }
@@ -146,22 +145,22 @@ public class SizeOfPdfStatisticsUnitTest extends ExtendedITextTest {
         aggregator1.merge(aggregator2);
 
         Object aggregation = aggregator1.retrieveAggregation();
-        Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
+        Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
         Assert.assertEquals(4, castedAggregation.size());
 
-        long numberOfPages = castedAggregation.get("<128kb").get();
-        Assert.assertEquals(2, numberOfPages);
+        Long numberOfPages = castedAggregation.get("<128kb");
+        Assert.assertEquals(new Long(2L), numberOfPages);
 
-        numberOfPages = castedAggregation.get("128kb-1mb").get();
-        Assert.assertEquals(2, numberOfPages);
+        numberOfPages = castedAggregation.get("128kb-1mb");
+        Assert.assertEquals(new Long(2L), numberOfPages);
 
         Assert.assertNull(castedAggregation.get("1mb-16mb"));
 
-        numberOfPages = castedAggregation.get("16mb-128mb").get();
-        Assert.assertEquals(1, numberOfPages);
+        numberOfPages = castedAggregation.get("16mb-128mb");
+        Assert.assertEquals(new Long(1L), numberOfPages);
 
-        numberOfPages = castedAggregation.get("128mb+").get();
-        Assert.assertEquals(2, numberOfPages);
+        numberOfPages = castedAggregation.get("128mb+");
+        Assert.assertEquals(new Long(2L), numberOfPages);
     }
 }

@@ -33,7 +33,6 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -70,12 +69,12 @@ public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
         aggregator.aggregate(new NumberOfPagesStatisticsEvent(0, ITextCoreProductData.getInstance()));
 
         Object aggregation = aggregator.retrieveAggregation();
-        Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
+        Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
         Assert.assertEquals(1, castedAggregation.size());
 
-        long numberOfPages = castedAggregation.get("1").get();
-        Assert.assertEquals(1, numberOfPages);
+        Long numberOfPages = castedAggregation.get("1");
+        Assert.assertEquals(new Long(1L), numberOfPages);
     }
 
     @Test
@@ -107,30 +106,30 @@ public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
         aggregator.aggregate(event);
 
         Object aggregation = aggregator.retrieveAggregation();
-        Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
+        Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
         Assert.assertEquals(4, castedAggregation.size());
 
-        long numberOfPages = castedAggregation.get("1").get();
-        Assert.assertEquals(1, numberOfPages);
+        Long numberOfPages = castedAggregation.get("1");
+        Assert.assertEquals(new Long(1L), numberOfPages);
 
-        numberOfPages = castedAggregation.get("2-10").get();
-        Assert.assertEquals(4, numberOfPages);
+        numberOfPages = castedAggregation.get("2-10");
+        Assert.assertEquals(new Long(4L), numberOfPages);
 
         Assert.assertNull(castedAggregation.get("11-100"));
 
-        numberOfPages = castedAggregation.get("101-1000").get();
-        Assert.assertEquals(2, numberOfPages);
+        numberOfPages = castedAggregation.get("101-1000");
+        Assert.assertEquals(new Long(2L), numberOfPages);
 
-        numberOfPages = castedAggregation.get("1001+").get();
-        Assert.assertEquals(1, numberOfPages);
+        numberOfPages = castedAggregation.get("1001+");
+        Assert.assertEquals(new Long(1L), numberOfPages);
     }
 
     @Test
     public void nothingAggregatedTest() {
         NumberOfPagesStatisticsAggregator aggregator = new NumberOfPagesStatisticsAggregator();
         Object aggregation = aggregator.retrieveAggregation();
-        Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
+        Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
         Assert.assertTrue(castedAggregation.isEmpty());
     }
@@ -141,7 +140,7 @@ public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
         aggregator.aggregate(new SizeOfPdfStatisticsEvent(200, ITextCoreProductData.getInstance()));
 
         Object aggregation = aggregator.retrieveAggregation();
-        Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
+        Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
         Assert.assertTrue(castedAggregation.isEmpty());
     }
@@ -172,22 +171,22 @@ public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
         aggregator1.merge(aggregator2);
 
         Object aggregation = aggregator1.retrieveAggregation();
-        Map<String, AtomicLong> castedAggregation = (Map<String, AtomicLong>) aggregation;
+        Map<String, Long> castedAggregation = (Map<String, Long>) aggregation;
 
         Assert.assertEquals(4, castedAggregation.size());
 
-        long numberOfPages = castedAggregation.get("1").get();
-        Assert.assertEquals(1, numberOfPages);
+        Long numberOfPages = castedAggregation.get("1");
+        Assert.assertEquals(new Long(1L), numberOfPages);
 
-        numberOfPages = castedAggregation.get("2-10").get();
-        Assert.assertEquals(4, numberOfPages);
+        numberOfPages = castedAggregation.get("2-10");
+        Assert.assertEquals(new Long(4L), numberOfPages);
 
         Assert.assertNull(castedAggregation.get("11-100"));
 
-        numberOfPages = castedAggregation.get("101-1000").get();
-        Assert.assertEquals(2, numberOfPages);
+        numberOfPages = castedAggregation.get("101-1000");
+        Assert.assertEquals(new Long(2L), numberOfPages);
 
-        numberOfPages = castedAggregation.get("1001+").get();
-        Assert.assertEquals(1, numberOfPages);
+        numberOfPages = castedAggregation.get("1001+");
+        Assert.assertEquals(new Long(1L), numberOfPages);
     }
 }
