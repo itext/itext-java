@@ -22,9 +22,9 @@
  */
 package com.itextpdf.kernel.pdf.statistics;
 
+import com.itextpdf.events.data.ProductData;
 import com.itextpdf.kernel.actions.AbstractStatisticsAggregator;
 import com.itextpdf.kernel.actions.AbstractStatisticsEvent;
-import com.itextpdf.kernel.actions.data.ProductData;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 import java.util.Collections;

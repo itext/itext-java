@@ -42,9 +42,8 @@
  */
 package com.itextpdf.layout.testutil;
 
-import com.itextpdf.kernel.actions.data.ITextCoreProductData;
-import com.itextpdf.kernel.actions.data.ProductData;
 import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
+import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.actions.events.EventConfirmationType;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
 

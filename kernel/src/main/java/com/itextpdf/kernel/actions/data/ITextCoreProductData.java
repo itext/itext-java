@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.actions.data;
 
+import com.itextpdf.events.data.ProductData;
 import com.itextpdf.kernel.actions.ProductNameConstant;
 
 /**

@@ -22,7 +22,7 @@
  */
 package com.itextpdf.kernel.actions;
 
-import com.itextpdf.kernel.actions.data.ProductData;
+import com.itextpdf.events.data.ProductData;
 import com.itextpdf.kernel.counter.event.IMetaInfo;
 
 /**

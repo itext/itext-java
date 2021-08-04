@@ -22,12 +22,12 @@
  */
 package com.itextpdf.kernel.actions.events;
 
+import com.itextpdf.events.data.ProductData;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.EventManager;
 import com.itextpdf.kernel.actions.ProductEventHandlerAccess;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
-import com.itextpdf.kernel.actions.data.ProductData;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.kernel.actions.sequence.SequenceId;

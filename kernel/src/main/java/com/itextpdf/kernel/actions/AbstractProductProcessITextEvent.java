@@ -22,10 +22,10 @@
  */
 package com.itextpdf.kernel.actions;
 
-import com.itextpdf.kernel.actions.data.ProductData;
+import com.itextpdf.events.data.ProductData;
 import com.itextpdf.kernel.actions.events.EventConfirmationType;
-import com.itextpdf.kernel.counter.event.IMetaInfo;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.kernel.counter.event.IMetaInfo;
 
 import java.lang.ref.WeakReference;
 

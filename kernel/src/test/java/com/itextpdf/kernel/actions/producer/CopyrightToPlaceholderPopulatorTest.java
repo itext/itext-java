@@ -22,7 +22,7 @@
  */
 package com.itextpdf.kernel.actions.producer;
 
-import com.itextpdf.kernel.actions.data.ProductData;
+import com.itextpdf.events.data.ProductData;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
 import com.itextpdf.kernel.actions.sequence.SequenceId;
