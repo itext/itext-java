@@ -122,12 +122,6 @@ public class PdfReader implements Closeable, Serializable {
     protected boolean hybridXref = false;
     protected boolean fixedXref = false;
     protected boolean xrefStm = false;
-
-    PdfReader(IRandomAccessSource byteSource, ReaderProperties properties, boolean closeStream) throws IOException {
-        this.properties = properties;
-        this.tokens = getOffsetTokeniser(byteSource, closeStream);
-    }
-    
     /**
      * Constructs a new PdfReader.
      *
@@ -200,6 +194,11 @@ public class PdfReader implements Closeable, Serializable {
     public PdfReader(String filename) throws IOException {
         this(filename, new ReaderProperties());
 
+    }
+
+    PdfReader(IRandomAccessSource byteSource, ReaderProperties properties, boolean closeStream) throws IOException {
+        this.properties = properties;
+        this.tokens = getOffsetTokeniser(byteSource, closeStream);
     }
 
     /**

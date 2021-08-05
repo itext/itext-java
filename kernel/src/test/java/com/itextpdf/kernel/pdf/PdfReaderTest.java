@@ -2045,7 +2045,8 @@ public class PdfReaderTest extends ExtendedITextTest {
             Assert.assertEquals(-1, pdfStream.read());
         }
     }
-    private File copyFileForTest(String fileName, String copiedFileName) throws IOException {
+    
+    private static File copyFileForTest(String fileName, String copiedFileName) throws IOException {
         File copiedFile = new File(copiedFileName);
         Files.copy(Paths.get(fileName), Paths.get(copiedFileName));
         return copiedFile;
