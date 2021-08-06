@@ -159,6 +159,7 @@ public final class Property {
     public static final int MARGIN_TOP = 46;
     public static final int MAX_HEIGHT = 84;
     public static final int MAX_WIDTH = 79;
+    public static final int META_INFO = 135;
     public static final int MIN_HEIGHT = 85;
     public static final int MIN_WIDTH = 80;
     public static final int NO_SOFT_WRAP_INLINE = 118;
@@ -223,7 +224,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 124;
+    private static final int MAX_INHERITED_PROPERTY_ID = 135;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -266,6 +267,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.RENDERING_MODE] = true;
         INHERITED_PROPERTIES[Property.LINE_HEIGHT] = true;
         INHERITED_PROPERTIES[Property.OVERFLOW_WRAP] = true;
+        INHERITED_PROPERTIES[Property.META_INFO] = true;
     }
 
     private Property() {

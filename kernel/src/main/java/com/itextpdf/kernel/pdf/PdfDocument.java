@@ -685,16 +685,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     /**
-     * Gets document MetaInfo.
-     *
-     * @return meta info
-     */
-    // TODO DEVSIX-5605 remove this public method before new license key release. Refactor logic to get metaInfo for pdfCalligraph module
-    public IMetaInfo getMetaInfo() {
-        return properties != null ? properties.metaInfo : null;
-    }
-
-    /**
      * Gets original document id
      *
      * In order to set originalDocumentId  {@link WriterProperties#setInitialDocumentId} should be used

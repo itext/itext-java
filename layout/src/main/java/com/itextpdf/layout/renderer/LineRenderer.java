@@ -1495,7 +1495,8 @@ public class LineRenderer extends AbstractRenderer {
             if (unicodeIdsReorderingList.size() > 0) {
                 final PdfDocument pdfDocument = getPdfDocument();
                 final SequenceId sequenceId = pdfDocument == null ? null : pdfDocument.getDocumentIdWrapper();
-                final IMetaInfo metaInfo = pdfDocument == null ? null : pdfDocument.getMetaInfo();
+                final MetaInfoContainer metaInfoContainer = this.<MetaInfoContainer>getProperty(Property.META_INFO);
+                final IMetaInfo metaInfo = metaInfoContainer == null ? null : metaInfoContainer.getMetaInfo();
                 levels = TypographyUtils.getBidiLevels(baseDirection, ArrayUtil.toIntArray(unicodeIdsReorderingList),
                         sequenceId, metaInfo);
             } else {
