@@ -42,8 +42,8 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
@@ -80,13 +80,12 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class TableTest extends AbstractTableTest {
@@ -537,6 +536,38 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void wideFirstCellBorderDoesntAffectSecondCellTest() throws IOException, InterruptedException {
+        String testName = "wideFirstCellBorderDoesntAffectSecondCellTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        String longTextContent = "1. " + TEXT_CONTENT + "2. " + TEXT_CONTENT + "3. " + TEXT_CONTENT + "4. "
+                + TEXT_CONTENT + "5. " + TEXT_CONTENT + "6. " + TEXT_CONTENT + "7. " + TEXT_CONTENT + "8. "
+                + TEXT_CONTENT + "9. " + TEXT_CONTENT;
+
+        Table table = new Table(new float[] {250, 250})
+                .addCell(new Cell().add(new Paragraph("cell 1, 1")))
+                .addCell(new Cell().add(new Paragraph("cell 1, 2")).setBorder(new SolidBorder(ColorConstants.RED, 100)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + longTextContent)));
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(
+                new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -3229,6 +3260,35 @@ public class TableTest extends AbstractTableTest {
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
                 sourceFolder + "cmp_" + filename, destinationFolder));
+    }
+
+    @Test
+    // TODO DEVSIX-5916 The first cell's width is the same as the second one's, however, it's not respected
+    public void setWidthShouldBeRespectedTest() throws IOException, InterruptedException {
+        String fileName = "setWidthShouldBeRespectedTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + fileName));
+        Document doc = new Document(pdfDocument, new PageSize(842, 1400));
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 90f));
+
+        Cell cell;
+        cell = new Cell().add(new Paragraph("100pt"));
+        cell.setBorder(new SolidBorder(ColorConstants.BLUE, 20f));
+        cell.setWidth(100).setMargin(0).setPadding(0);
+        table.addCell(cell);
+
+        cell = new Cell().add(new Paragraph("100pt"));
+        cell.setBorder(new SolidBorder(ColorConstants.RED, 120f));
+        cell.setWidth(100).setMargin(0).setPadding(0);
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+                sourceFolder + "cmp_" + fileName, destinationFolder));
     }
 
     private static class RotatedDocumentRenderer extends DocumentRenderer {

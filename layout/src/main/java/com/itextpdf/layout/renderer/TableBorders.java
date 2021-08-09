@@ -48,11 +48,11 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.properties.Property;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 abstract class TableBorders {
     /**
@@ -138,9 +138,9 @@ abstract class TableBorders {
     // region abstract
 
     // region draw
-    protected abstract TableBorders drawHorizontalBorder(int i, float startX, float y1, PdfCanvas canvas, float[] countedColumnWidth);
+    protected abstract TableBorders drawHorizontalBorder(PdfCanvas canvas, TableBorderDescriptor borderDescriptor);
 
-    protected abstract TableBorders drawVerticalBorder(int i, float startY, float x1, PdfCanvas canvas, List<Float> heights);
+    protected abstract TableBorders drawVerticalBorder(PdfCanvas canvas, TableBorderDescriptor borderDescriptor);
     // endregion
 
     // region area occupation
