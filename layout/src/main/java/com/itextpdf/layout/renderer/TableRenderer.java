@@ -65,8 +65,6 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -75,6 +73,8 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Table}
@@ -781,7 +781,7 @@ public class TableRenderer extends AbstractRenderer {
                     // And now, when we possess such knowledge, we are performing the second attempt, but we need to nullify results
                     // from the previous attempt
                     if (bordersHandler instanceof CollapsedTableBorders) {
-                        ((CollapsedTableBorders)bordersHandler).setBottomBorderCollapseWith(null);
+                        ((CollapsedTableBorders) bordersHandler).setBottomBorderCollapseWith(null, null);
                     }
                     bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, hasContent || 0 != childRenderers.size());
 
@@ -1050,10 +1050,6 @@ public class TableRenderer extends AbstractRenderer {
                 }
             }
         } else {
-            // the bottom border should be processed and placed lately
-            if (0 != heights.size()) {
-                heights.set(heights.size() - 1, heights.get(heights.size() - 1) - bottomTableBorderWidth / 2);
-            }
             if (null == footerRenderer) {
                 if (0 != childRenderers.size()) {
                     bordersHandler.applyBottomTableBorder(occupiedArea.getBBox(), layoutBox, 0 == childRenderers.size(), false, true);
@@ -1460,7 +1456,7 @@ public class TableRenderer extends AbstractRenderer {
         }
 
 
-        // process halves of the borders here
+        // process halves of horizontal bounding borders
         if (childRenderers.size() == 0) {
             Border[] borders = bordersHandler.tableBoundingBorders;
             if (null != borders[0]) {
@@ -1492,56 +1488,72 @@ public class TableRenderer extends AbstractRenderer {
 
         if (bordersHandler instanceof CollapsedTableBorders) {
             if (hasFooter) {
-                ((CollapsedTableBorders) bordersHandler).setBottomBorderCollapseWith(footerRenderer.bordersHandler.getFirstHorizontalBorder());
+                ((CollapsedTableBorders) bordersHandler).setBottomBorderCollapseWith(
+                        footerRenderer.bordersHandler.getFirstHorizontalBorder(),
+                        ((CollapsedTableBorders) footerRenderer.bordersHandler)
+                                .getVerticalBordersCrossingTopHorizontalBorder());
             } else if (isBottomTablePart) {
-                ((CollapsedTableBorders) bordersHandler).setBottomBorderCollapseWith(null);
+                ((CollapsedTableBorders) bordersHandler).setBottomBorderCollapseWith(null, null);
             }
         }
         // we do not need to fix top border, because either this is header or the top border has been already written
         float y1 = startY;
-        if (isFooterRendererOfLargeTable) {
-            bordersHandler.drawHorizontalBorder(0, startX, y1, drawContext.getCanvas(), countedColumnWidth);
-        }
-        if (0 != heights.size()) {
-            y1 -= (float) heights.get(0);
-        }
-        for (int i = 1; i < heights.size(); i++) {
-            bordersHandler.drawHorizontalBorder(i, startX, y1, drawContext.getCanvas(), countedColumnWidth);
-            if (i < heights.size()) {
-                y1 -= (float) heights.get(i);
-            }
-        }
-        if (!isBottomTablePart && isComplete) {
-            bordersHandler.drawHorizontalBorder(heights.size(), startX, y1, drawContext.getCanvas(), countedColumnWidth);
+
+        float[] heightsArray = new float[heights.size()];
+        for (int j = 0; j < heights.size(); j++) {
+            heightsArray[j] = heights.get(j);
         }
 
+        // draw vertical borders
         float x1 = startX;
-        if (countedColumnWidth.length > 0) {
-            x1 += countedColumnWidth[0];
-        }
-        for (int i = 1; i < bordersHandler.getNumberOfColumns(); i++) {
-            bordersHandler.drawVerticalBorder(i, startY, x1, drawContext.getCanvas(), heights);
+        for (int i = 0; i <= bordersHandler.getNumberOfColumns(); i++) {
+            bordersHandler.drawVerticalBorder(drawContext.getCanvas(),
+                    new TableBorderDescriptor(i, startY, x1, heightsArray));
             if (i < countedColumnWidth.length) {
                 x1 += countedColumnWidth[i];
             }
         }
 
-        // Draw bounding borders. Vertical borders are the last to draw in order to collapse with header / footer
-        if (isTopTablePart) {
-            bordersHandler.drawHorizontalBorder(0, startX, startY, drawContext.getCanvas(), countedColumnWidth);
+        // draw horizontal borders
+
+        // draw top border
+        if (isFooterRendererOfLargeTable) {
+            bordersHandler.drawHorizontalBorder(drawContext.getCanvas(), new TableBorderDescriptor(0, startX, y1,
+                    countedColumnWidth));
         }
+        if (isTopTablePart) {
+            bordersHandler.drawHorizontalBorder(drawContext.getCanvas(), new TableBorderDescriptor(0, startX, startY,
+                    countedColumnWidth));
+        }
+
+        // draw inner borders
+        if (!heights.isEmpty()) {
+            y1 -= (float) heights.get(0);
+        }
+        for (int i = 1; i < heights.size(); i++) {
+            bordersHandler.drawHorizontalBorder(drawContext.getCanvas(),
+                    new TableBorderDescriptor(i, startX, y1, countedColumnWidth));
+            if (i < heights.size()) {
+                y1 -= (float) heights.get(i);
+            }
+        }
+
+        // draw bottom border
+        // TODO DEVSIX-5867 Check hasFooter, so that two footers are not drawn
+        if (!isBottomTablePart && isComplete) {
+            bordersHandler.drawHorizontalBorder(drawContext.getCanvas(),
+                    new TableBorderDescriptor(heights.size(), startX, y1, countedColumnWidth));
+        }
+
         //!isLastRendererForModelElement is a check that this is a split render. This is the case with the splitting of
         // one cell when part of the cell moves to the next page. Therefore, if such a splitting occurs, a bottom border
         // should be drawn. However, this should not be done for empty renderers that are also created during splitting,
         // but this splitting, if the table does not fit on the page and the next cell is added to the next page.
         // In this case, this code should not be processed, since the border in the above code has already been drawn.
         if (isBottomTablePart && (isComplete || (!isLastRendererForModelElement && !isEmptyTableRenderer()))) {
-            bordersHandler.drawHorizontalBorder(heights.size(), startX, y1, drawContext.getCanvas(), countedColumnWidth);
+            bordersHandler.drawHorizontalBorder(drawContext.getCanvas(), new TableBorderDescriptor(
+                    heights.size(), startX, y1, countedColumnWidth));
         }
-        // draw left
-        bordersHandler.drawVerticalBorder(0, startY, startX, drawContext.getCanvas(), heights);
-        // draw right
-        bordersHandler.drawVerticalBorder(bordersHandler.getNumberOfColumns(), startY, x1, drawContext.getCanvas(), heights);
 
         if (isTagged) {
             drawContext.getCanvas().closeTag();

@@ -50,20 +50,32 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.Property;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 class CollapsedTableBorders extends TableBorders {
     /**
-     * The list of the cells' borders which should be collapsed
-     * with the first border of this TableRenderer instance, to be drawn on the area.
+     * Horizontal borders to be collapsed with
+     * the first-on-the-area row's cell top borders of this TableRenderer instance.
      */
     private List<Border> topBorderCollapseWith = new ArrayList<Border>();
 
     /**
-     * The list of the cells' borders which should be collapsed
-     * with the last border of this TableRenderer instance, to be drawn on the area.
+     * Horizontal borders to be collapsed with
+     * the last-on-the-area row's cell bottom borders of this TableRenderer instance.
      */
     private List<Border> bottomBorderCollapseWith = new ArrayList<Border>();
+
+    // NOTE: Currently body's top border is written at header level and footer's top border is written
+    //  at body's level, hence there is no need in the same array for vertical top borders.
+    /**
+     * Vertical borders to be collapsed with
+     * the last-on-the-area row's cell bottom borders of this TableRenderer instance.
+     */
+    private List<Border> verticalBottomBorderCollapseWith = null;
+
+    private static Comparator<Border> borderComparator = new BorderComparator();
 
     // region constructors
     public CollapsedTableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders) {
@@ -124,12 +136,32 @@ class CollapsedTableBorders extends TableBorders {
         return indents;
     }
 
+    /**
+     * Gets vertical borders which cross the top horizontal border.
+     *
+     * @return vertical borders which cross the top horizontal border
+     */
+    public List<Border> getVerticalBordersCrossingTopHorizontalBorder() {
+        List<Border> borders = new ArrayList<>(numberOfColumns + 1);
+        for (int i = 0; i <= numberOfColumns; i++) {
+            final List<Border> verticalBorder = getVerticalBorder(i);
+            // the passed index indicates the index of the border on the page, not in the entire document
+            Border borderToAdd = startRow - largeTableIndexOffset < verticalBorder.size()
+                    ? verticalBorder.get(startRow - largeTableIndexOffset) : null;
+            borders.add(borderToAdd);
+        }
+        return borders;
+    }
+
+    @Override
     public List<Border> getVerticalBorder(int index) {
         if (index == 0) {
-            List<Border> borderList = TableBorderUtil.createAndFillBorderList(null, tableBoundingBorders[3], verticalBorders.get(0).size());
+            List<Border> borderList = TableBorderUtil
+                    .createAndFillBorderList(null, tableBoundingBorders[3], verticalBorders.get(0).size());
             return getCollapsedList(verticalBorders.get(0), borderList);
         } else if (index == numberOfColumns) {
-            List<Border> borderList = TableBorderUtil.createAndFillBorderList(null, tableBoundingBorders[1], verticalBorders.get(0).size());
+            List<Border> borderList = TableBorderUtil.createAndFillBorderList(null, tableBoundingBorders[1],
+                    verticalBorders.get(verticalBorders.size() - 1).size());
             return getCollapsedList(verticalBorders.get(verticalBorders.size() - 1), borderList);
         } else {
             return verticalBorders.get(index);
@@ -213,10 +245,15 @@ class CollapsedTableBorders extends TableBorders {
         return this;
     }
 
-    public CollapsedTableBorders setBottomBorderCollapseWith(List<Border> bottomBorderCollapseWith) {
+    public CollapsedTableBorders setBottomBorderCollapseWith(List<Border> bottomBorderCollapseWith,
+            List<Border> verticalBordersCrossingBottomBorder) {
         this.bottomBorderCollapseWith = new ArrayList<Border>();
         if (null != bottomBorderCollapseWith) {
             this.bottomBorderCollapseWith.addAll(bottomBorderCollapseWith);
+        }
+        this.verticalBottomBorderCollapseWith = null;
+        if (null != verticalBordersCrossingBottomBorder) {
+            this.verticalBottomBorderCollapseWith = new ArrayList<Border>(verticalBordersCrossingBottomBorder);
         }
         return this;
     }
@@ -372,84 +409,131 @@ class CollapsedTableBorders extends TableBorders {
     // endregion
 
     // region draw
-    protected TableBorders drawHorizontalBorder(int i, float startX, float y1, PdfCanvas canvas, float[] countedColumnWidth) {
-        List<Border> borders = getHorizontalBorder(startRow /*- largeTableIndexOffset*/ + i);
+    protected TableBorders drawHorizontalBorder(PdfCanvas canvas, TableBorderDescriptor borderDescriptor) {
+        int i = borderDescriptor.getBorderIndex();
+        float startX = borderDescriptor.getMainCoordinateStart();
+        float y1 = borderDescriptor.getCrossCoordinate();
+        float[] countedColumnWidth = borderDescriptor.getMainCoordinateWidths();
+
+        List<Border> horizontalBorder = getHorizontalBorder(startRow + i);
         float x1 = startX;
         float x2 = x1 + countedColumnWidth[0];
-        if (i == 0) {
-            Border firstBorder = getFirstVerticalBorder().get(startRow - largeTableIndexOffset);
-            if (firstBorder != null) {
-                x1 -= firstBorder.getWidth() / 2;
-            }
-        } else if (i == finishRow - startRow + 1) {
-            Border firstBorder = getFirstVerticalBorder().get(startRow - largeTableIndexOffset + finishRow - startRow + 1 - 1);
-            if (firstBorder != null) {
-                x1 -= firstBorder.getWidth() / 2;
-            }
-        }
 
-        int j;
-        for (j = 1; j < borders.size(); j++) {
-            Border prevBorder = borders.get(j - 1);
-            Border curBorder = borders.get(j);
-            if (prevBorder != null) {
-                if (!prevBorder.equals(curBorder)) {
-                    prevBorder.drawCellBorder(canvas, x1, y1, x2, y1, Border.Side.NONE);
-                    x1 = x2;
+        for (int j = 1; j <= horizontalBorder.size(); j++) {
+            Border currentBorder = horizontalBorder.get(j - 1);
+            Border nextBorder = j < horizontalBorder.size() ? horizontalBorder.get(j) : null;
+            if (currentBorder != null) {
+                List<Border> crossingBordersAtStart = getCrossingBorders(i, j - 1);
+                float startCornerWidth = getWidestBorderWidth(crossingBordersAtStart.get(1),
+                        crossingBordersAtStart.get(3));
+                List<Border> crossingBordersAtEnd = getCrossingBorders(i, j);
+                float endCornerWidth = getWidestBorderWidth(crossingBordersAtEnd.get(1), crossingBordersAtEnd.get(3));
+
+                // TODO DEVSIX-5962 Once the ticket is done, remove this workaround, which allows
+                //  horizontal borders to win at vertical-0. Bear in mind that this workaround helps
+                //  in standard cases, when borders are of the same width. If they are not then
+                //  this workaround doesn't help to improve corner collapsing
+                if (1 == j) {
+                    crossingBordersAtStart.add(0, currentBorder);
                 }
+                if (0 == i) {
+                    if (1 != j) {
+                        crossingBordersAtStart.add(0, crossingBordersAtStart.get(3));
+                    }
+                    crossingBordersAtEnd.add(0, crossingBordersAtEnd.get(3));
+                }
+
+                Collections.sort(crossingBordersAtStart, borderComparator);
+                Collections.sort(crossingBordersAtEnd, borderComparator);
+
+                float x1Offset = currentBorder.equals(crossingBordersAtStart.get(0))
+                        ? -startCornerWidth / 2
+                        : startCornerWidth / 2;
+                float x2Offset = currentBorder.equals(crossingBordersAtEnd.get(0))
+                        ? endCornerWidth / 2
+                        : -endCornerWidth / 2;
+                currentBorder.drawCellBorder(canvas, x1 + x1Offset, y1, x2 + x2Offset, y1, Border.Side.NONE);
+                x1 = x2;
             } else {
+                // if current border is null, then just skip it's processing.
+                // Border corners will be processed by borders which are not null.
                 x1 += countedColumnWidth[j - 1];
                 x2 = x1;
             }
-            if (curBorder != null) {
+            if (nextBorder != null && j != horizontalBorder.size()) {
                 x2 += countedColumnWidth[j];
             }
-        }
-
-        Border lastBorder = borders.size() > j - 1 ? borders.get(j - 1) : null;
-        if (lastBorder != null) {
-            if (i == 0) {
-                if (getVerticalBorder(j).get(startRow - largeTableIndexOffset + i) != null)
-                    x2 += getVerticalBorder(j).get(startRow - largeTableIndexOffset + i).getWidth() / 2;
-            } else if (i == finishRow - startRow + 1 && getVerticalBorder(j).size() > startRow - largeTableIndexOffset + i - 1 && getVerticalBorder(j).get(startRow - largeTableIndexOffset + i - 1) != null) {
-                x2 += getVerticalBorder(j).get(startRow - largeTableIndexOffset + i - 1).getWidth() / 2;
-            }
-
-            lastBorder.drawCellBorder(canvas, x1, y1, x2, y1, Border.Side.NONE);
         }
         return this;
     }
 
-    protected TableBorders drawVerticalBorder(int i, float startY, float x1, PdfCanvas canvas, List<Float> heights) {
+    protected TableBorders drawVerticalBorder(PdfCanvas canvas, TableBorderDescriptor borderDescriptor) {
+        int i = borderDescriptor.getBorderIndex();
+        float startY = borderDescriptor.getMainCoordinateStart();
+        float x1 = borderDescriptor.getCrossCoordinate();
+        float[] heights = borderDescriptor.getMainCoordinateWidths();
+
         List<Border> borders = getVerticalBorder(i);
         float y1 = startY;
         float y2 = y1;
-        if (!heights.isEmpty()) {
-            y2 = y1 - (float) heights.get(0);
+        if (0 != heights.length) {
+            y2 = y1 - heights[0];
         }
-        int j;
-        for (j = 1; j < heights.size(); j++) {
-            Border prevBorder = borders.get(startRow - largeTableIndexOffset + j - 1);
-            Border curBorder = borders.get(startRow - largeTableIndexOffset + j);
-            if (prevBorder != null) {
-                if (!prevBorder.equals(curBorder)) {
-                    prevBorder.drawCellBorder(canvas, x1, y1, x1, y2, Border.Side.NONE);
+        Float y1Offset = null;
+        for (int j = 1; j <= heights.length; j++) {
+            Border currentBorder = borders.get(startRow - largeTableIndexOffset + j - 1);
+            Border nextBorder = j < heights.length ? borders.get(startRow - largeTableIndexOffset + j) : null;
+            if (currentBorder != null) {
+                List<Border> crossingBordersAtStart = getCrossingBorders(j - 1, i);
+                float startCornerWidth = getWidestBorderWidth(crossingBordersAtStart.get(0),
+                        crossingBordersAtStart.get(2));
+                // TODO DEVSIX-5962 Once the ticket is done, remove this workaround, which allows
+                //  vertical borders to win at horizontal-0. Bear in mind that this workaround helps
+                //  in standard cases, when borders are of the same width. If they are not then
+                //  this workaround doesn't help to improve corner collapsing
+                if (1 == j) {
+                    crossingBordersAtStart.add(0, currentBorder);
+                }
+                Collections.sort(crossingBordersAtStart, borderComparator);
+
+                List<Border> crossingBordersAtEnd = getCrossingBorders(j, i);
+                float endCornerWidth = getWidestBorderWidth(crossingBordersAtEnd.get(0), crossingBordersAtEnd.get(2));
+                Collections.sort(crossingBordersAtEnd, borderComparator);
+
+                // if all the borders are equal, we need to draw them at the end
+                if (!currentBorder.equals(nextBorder)) {
+                    if (null == y1Offset) {
+                        y1Offset = currentBorder.equals(crossingBordersAtStart.get(0))
+                                ? startCornerWidth / 2
+                                : -startCornerWidth / 2;
+                    }
+                    float y2Offset = currentBorder.equals(crossingBordersAtEnd.get(0))
+                            ? -endCornerWidth / 2
+                            : endCornerWidth / 2;
+
+                    currentBorder
+                            .drawCellBorder(canvas, x1, y1 + (float) y1Offset, x1, y2 + y2Offset, Border.Side.NONE);
                     y1 = y2;
+                    y1Offset = null;
+                } else {
+                    // if current border equal the next one, we apply an optimization here, which allows us
+                    // to draw equal borders at once and not by part. Therefore for the first of such borders
+                    // we store its start offset
+                    if (null == y1Offset) {
+                        y1Offset = currentBorder.equals(crossingBordersAtStart.get(0))
+                                ? startCornerWidth / 2
+                                : -startCornerWidth / 2;
+                    }
                 }
             } else {
-                y1 -= (float) heights.get(j - 1);
+                // if current border is null, then just skip it's processing.
+                // Border corners will be processed by borders which are not null.
+                y1 -= heights[j - 1];
                 y2 = y1;
             }
-            if (curBorder != null) {
-                y2 -= (float) heights.get(j);
+            if (nextBorder != null) {
+                y2 -= heights[j];
             }
-        }
-        if (borders.size() == 0) {
-            return this;
-        }
-        Border lastBorder = borders.get(startRow - largeTableIndexOffset + j - 1);
-        if (lastBorder != null) {
-            lastBorder.drawCellBorder(canvas, x1, y1, x1, y2, Border.Side.NONE);
         }
         return this;
     }
@@ -555,10 +639,11 @@ class CollapsedTableBorders extends TableBorders {
                     rightBorderMaxWidth = getMaxRightWidth();
                     leftBorderMaxWidth = getMaxLeftWidth();
                 }
+                // in case of large table and no content (Table#complete is called right after Table#flush)
                 setTopBorderCollapseWith(((Table) currentRenderer.getModelElement()).getLastRowBottomBorder());
             } else {
                 setTopBorderCollapseWith(null);
-                setBottomBorderCollapseWith(null);
+                setBottomBorderCollapseWith(null, null);
             }
         }
         if (null != footerRenderer) {
@@ -582,7 +667,7 @@ class CollapsedTableBorders extends TableBorders {
 
     protected TableBorders skipFooter(Border[] borders) {
         setTableBoundingBorders(borders);
-        setBottomBorderCollapseWith(null);
+        setBottomBorderCollapseWith(null, null);
         return this;
     }
 
@@ -593,15 +678,19 @@ class CollapsedTableBorders extends TableBorders {
     }
 
     protected TableBorders collapseTableWithFooter(TableBorders footerBordersHandler, boolean hasContent) {
-        ((CollapsedTableBorders) footerBordersHandler).setTopBorderCollapseWith(hasContent ? getLastHorizontalBorder() : getTopBorderCollapseWith());
-        setBottomBorderCollapseWith(footerBordersHandler.getHorizontalBorder(0));
+        ((CollapsedTableBorders) footerBordersHandler).setTopBorderCollapseWith(
+                hasContent ? getLastHorizontalBorder() : getTopBorderCollapseWith());
+        setBottomBorderCollapseWith(footerBordersHandler.getHorizontalBorder(0),
+                ((CollapsedTableBorders) footerBordersHandler).getVerticalBordersCrossingTopHorizontalBorder());
         return this;
     }
 
     protected TableBorders collapseTableWithHeader(TableBorders headerBordersHandler, boolean updateBordersHandler) {
-        ((CollapsedTableBorders) headerBordersHandler).setBottomBorderCollapseWith(getHorizontalBorder(startRow));
+        ((CollapsedTableBorders) headerBordersHandler).setBottomBorderCollapseWith(getHorizontalBorder(startRow),
+                getVerticalBordersCrossingTopHorizontalBorder());
         if (updateBordersHandler) {
-            setTopBorderCollapseWith(headerBordersHandler.getLastHorizontalBorder());
+            setTopBorderCollapseWith(
+                    headerBordersHandler.getLastHorizontalBorder());
         }
         return this;
     }
@@ -613,4 +702,113 @@ class CollapsedTableBorders extends TableBorders {
         return this;
     }
     // endregion
+
+    /**
+     * Returns the {@link Border} instances, which intersect in the specified point.
+     *
+     * <p>
+     * The order of the borders: first the left one, then the top, the right and the bottom ones.
+     *
+     * @param horizontalIndex index of horizontal border
+     * @param verticalIndex   index of vertical border
+     * @return a list of {@link Border} instances, which intersect in the specified point
+     */
+    List<Border> getCrossingBorders(int horizontalIndex, int verticalIndex) {
+        List<Border> horizontalBorder = getHorizontalBorder(startRow + horizontalIndex);
+        List<Border> verticalBorder = getVerticalBorder(verticalIndex);
+
+        List<Border> crossingBorders = new ArrayList<>(4);
+        crossingBorders.add(verticalIndex > 0 ? horizontalBorder.get(verticalIndex - 1) : null);
+        crossingBorders.add(horizontalIndex > 0
+                ? verticalBorder.get(startRow - largeTableIndexOffset + horizontalIndex - 1) : null);
+        crossingBorders.add(verticalIndex < numberOfColumns ? horizontalBorder.get(verticalIndex) : null);
+        crossingBorders.add(horizontalIndex <= finishRow - startRow
+                ? verticalBorder.get(startRow - largeTableIndexOffset + horizontalIndex) : null);
+
+        // In case the last horizontal border on the page is specified,
+        // we need to consider a vertical border of the table's bottom part
+        // (f.e., for header it is table's body).
+        if (horizontalIndex == finishRow - startRow + 1 && null != verticalBottomBorderCollapseWith) {
+            if (isBorderWider(verticalBottomBorderCollapseWith.get(verticalIndex), crossingBorders.get(3))) {
+                crossingBorders.set(3, verticalBottomBorderCollapseWith.get(verticalIndex));
+            }
+        }
+        return crossingBorders;
+    }
+
+    /**
+     * A comparison function to compare two {@link Border} instances.
+     */
+    private static class BorderComparator implements Comparator<Border> {
+
+        @Override
+        /**
+         * Compares its two {@link Border} instances for order. Returns a negative integer,
+         *      zero, or a positive integer as the first argument is wider than, of equal width,
+         *      or more narrow than the second.
+         */
+        public int compare(Border o1, Border o2) {
+            if (o1 == o2) {
+                return 0;
+            } else if (null == o1) {
+                return 1;
+            } else if (null == o2) {
+                return -1;
+            } else {
+                return Float.compare(o2.getWidth(), o1.getWidth());
+            }
+        }
+    }
+
+    /**
+     * Gets the width of the widest border in the specified list.
+     *
+     * @param borders the borders which widths should be considered
+     * @return the width of the widest border in the specified list
+     */
+    private float getWidestBorderWidth(Border... borders) {
+        float maxWidth = 0;
+        for (Border border : borders) {
+            if (null != border && maxWidth < border.getWidth()) {
+                maxWidth = border.getWidth();
+            }
+        }
+        return maxWidth;
+    }
+
+    /**
+     * Compares borders and defines whether this border is wider than the other.
+     *
+     * <p>
+     * Note that by default the comparison will be strict, e.g. if this border
+     * is of the same width as the other border, then false will be returned.
+     *
+     * @param thisBorder  this border
+     * @param otherBorder the other border to be compared with
+     * @return whether this border is wider than the other
+     */
+    private static boolean isBorderWider(Border thisBorder, Border otherBorder) {
+        return isBorderWider(thisBorder, otherBorder, true);
+    }
+
+    /**
+     * Compares borders and defines whether this border is wider than the other.
+     *
+     * @param thisBorder  this border
+     * @param otherBorder the other border to be compared with
+     * @param strict      if true, then in case this border is of the same width as the other border,
+     *                    true will be returned. If false, it will be checked whether the width
+     *                    of this border is strictly greater than the other border's width
+     * @return whether this border is wider than the other
+     */
+    private static boolean isBorderWider(Border thisBorder, Border otherBorder, boolean strict) {
+        if (null == thisBorder) {
+            return false;
+        }
+        if (null == otherBorder) {
+            return true;
+        }
+        int comparisonResult = Float.compare(thisBorder.getWidth(), otherBorder.getWidth());
+        return strict ? comparisonResult > 0 : comparisonResult >= 0;
+    }
 }

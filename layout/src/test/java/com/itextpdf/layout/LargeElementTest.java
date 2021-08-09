@@ -251,6 +251,7 @@ public class LargeElementTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO DEVSIX-5868 Look at page 2: large table's vertical borders are shorter in length than expected
     public void largeTableWithHeaderFooterTest01C() throws IOException, InterruptedException {
         String testName = "largeTableWithHeaderFooterTest01C.pdf";
         String outFileName = destinationFolder + testName;
@@ -776,6 +777,7 @@ public class LargeElementTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO DEVSIX-5865 Table last horizontal border is drawn twice: at final Table#flush and then at Table#complete
     public void largeTableWithTableBorderSplitTest() throws IOException, InterruptedException {
         String testName = "largeTableWithTableBorderSplitTest.pdf";
         String outFileName = destinationFolder + testName;
@@ -807,7 +809,68 @@ public class LargeElementTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO DEVSIX-5865 Table last horizontal border is drawn twice: at final Table#flush and then at Table#complete
+    public void largeTableWithTableBorderSplitTest02() throws IOException, InterruptedException {
+        String testName = "largeTableWithTableBorderSplitTest02.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(595, 100));
+
+        Table table = new Table(2, true);
+        doc.add(table);
+
+        table.setBorder(new SolidBorder(ColorConstants.BLUE, 2));
+
+        table.addCell(new Cell().setBackgroundColor(ColorConstants.RED).setHeight(50).setMargin(0).setPadding(0));
+        table.addCell(new Cell().setBackgroundColor(ColorConstants.RED).setHeight(50).setMargin(0).setPadding(0));
+
+        table.flush();
+        table.complete();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    // TODO DEVSIX-5866 at #complete left border is initialized as null
+    public void largeTableWithCellBordersSplitTest1() throws IOException, InterruptedException {
+        String testName = "largeTableWithCellBordersSplitTest1.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        float[] colWidths = new float[]{30, 30, 30};
+
+        Table table = new Table(colWidths, true).setWidth(290);
+        doc.add(table);
+
+        table.addCell(new Cell().add(new Paragraph("Cell" + 0))
+                .setPadding(0).setMargin(0)
+                .setBorder(new SolidBorder(ColorConstants.MAGENTA, 50))
+                .setBorderBottom(new SolidBorder(ColorConstants.BLUE, 50)));
+        table.addCell(new Cell().add(new Paragraph("Cell" + 1))
+                .setPadding(0).setMargin(0)
+                .setBorder(new SolidBorder(ColorConstants.MAGENTA, 50))
+                .setBorderBottom(new SolidBorder(ColorConstants.RED, 50)));
+        table.addCell(new Cell().add(new Paragraph("Cell" + 3))
+                .setPadding(0).setMargin(0)
+                .setBorder(new SolidBorder(ColorConstants.MAGENTA, 50))
+                .setBorderBottom(new SolidBorder(ColorConstants.BLUE, 50)));
+
+        table.flush();
+        table.complete();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    // TODO DEVSIX-5866 at #complete left border is initialized as null
     public void largeTableWithCellBordersSplitTest() throws IOException, InterruptedException {
         String testName = "largeTableWithCellBordersSplitTest.pdf";
         String outFileName = destinationFolder + testName;
@@ -821,27 +884,79 @@ public class LargeElementTest extends ExtendedITextTest {
         Table table = new Table(UnitValue.createPointArray(colWidths), true);
         doc.add(table);
 
-        for (int i = 0; i < 1; i++) {
-            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 0)))
-                    .setBorderBottom(new SolidBorder(ColorConstants.BLUE, 2)));
-            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 1)))
-                    .setBorderBottom(new SolidBorder(ColorConstants.RED, 5)));
-            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 2)))
-                    .setBorderBottom(new SolidBorder(ColorConstants.GREEN, 7)));
-            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 3)))
-                    .setBorderBottom(new SolidBorder(ColorConstants.BLUE, 10)));
+        table.addCell(new Cell().add(new Paragraph("Cell" + 0))
+                .setBorderBottom(new SolidBorder(ColorConstants.BLUE, 2)));
+        table.addCell(new Cell().add(new Paragraph("Cell" + 1))
+                .setBorderBottom(new SolidBorder(ColorConstants.RED, 5)));
+        table.addCell(new Cell().add(new Paragraph("Cell" + 2))
+                .setBorderBottom(new SolidBorder(ColorConstants.GREEN, 7)));
+        table.addCell(new Cell().add(new Paragraph("Cell" + 3))
+                .setBorderBottom(new SolidBorder(ColorConstants.BLUE, 10)));
 
-            table.flush();
-        }
-
+        table.flush();
         table.complete();
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    // TODO DEVSIX-5866 at #complete left border is initialized as null
+    public void largeTableWithCellBordersSplitTest02() throws IOException, InterruptedException {
+        String testName = "largeTableWithCellBordersSplitTest02.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(595, 100));
+
+        float[] colWidths = new float[]{200, 40};
+
+        Table table = new Table(UnitValue.createPointArray(colWidths), true);
+        doc.add(table);
+
+        table.addCell(new Cell().add(new Paragraph("Cell" + 0)).setBackgroundColor(ColorConstants.YELLOW)
+                .setBorderBottom(new SolidBorder(ColorConstants.BLUE, 2)));
+        table.addCell(new Cell().add(new Paragraph("Cell" + 3)).setBackgroundColor(ColorConstants.YELLOW)
+                .setBorderBottom(new SolidBorder(ColorConstants.BLUE, 10)));
+
+        table.flush();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
 
     @Test
+    // TODO DEVSIX-5866 at #complete left border is initialized as null
+    public void simpleLargeTableDifferentCellBottomBorderTest() throws IOException, InterruptedException {
+        String testName = "simpleLargeTableDifferentCellBottomBorderTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(2, true);
+        doc.add(table);
+
+        table.addCell(new Cell().add(new Paragraph("Cell" + 0)).setHeight(30).setMargin(0).setPadding(0)
+                .setBackgroundColor(ColorConstants.RED).setBorder(new SolidBorder(ColorConstants.BLUE, 10)));
+        table.addCell(new Cell().add(new Paragraph("Cell" + 1)).setHeight(30).setMargin(0).setPadding(0)
+                .setBackgroundColor(ColorConstants.RED).setBorder(new SolidBorder(10))
+                .setBorderBottom(new SolidBorder(ColorConstants.BLUE, 100)));
+
+        table.flush();
+        table.complete();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    // TODO DEVSIX-5867 footer's top / table body's bottom border gets drawn twice at different coordinates
+    //  (Look at yellow border at page 2: it might not be tat obvious, however, there are two yelow borders
+    //  there which overlap each other a bit)
     public void largeTableSplitFooter2Test() throws IOException, InterruptedException {
         String testName = "largeTableSplitFooter2Test.pdf";
         String outFileName = destinationFolder + testName;
@@ -861,6 +976,61 @@ public class LargeElementTest extends ExtendedITextTest {
         table.addCell(new Cell().add(new Paragraph("Cell2")).setHeight(200).setBorderTop(new SolidBorder(ColorConstants.RED, 10)));
 
         table.complete();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    // TODO DEVSIX-5867 footer's top / table body's bottom border gets drawn twice at different coordinates
+    //  (Look at yellow border: it might not be tat obvious, however, there are two yelow borders
+    //  there which overlap each other a bit)
+    public void largeTableSplitFooter2ATest() throws IOException, InterruptedException {
+        String testName = "largeTableSplitFooter2ATest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(1, true);
+        doc.add(table);
+        table.addFooterCell(new Cell().add(new Paragraph("Footer"))
+                .setBorderTop(new SolidBorder(ColorConstants.YELLOW, 15))
+        );
+
+        table.addCell(new Cell().add(new Paragraph("Cell1")).setHeight(50)
+                .setBorderBottom(new SolidBorder(ColorConstants.BLUE, 20)));
+        table.flush();
+        table.addCell(new Cell().add(new Paragraph("Cell2")).setHeight(50));
+
+        table.complete();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    // TODO DEVSIX-5869 large table's width should not change between flushes
+    public void largeTableSplitFooter2BTest() throws IOException, InterruptedException {
+        String testName = "largeTableSplitFooter2BTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(595, 900));
+
+        addSpecificTableConsideringFlushes(doc, false, false);
+        doc.add(new AreaBreak());
+
+        addSpecificTableConsideringFlushes(doc, true, false);
+        doc.add(new AreaBreak());
+
+        addSpecificTableConsideringFlushes(doc, false, true);
+        doc.add(new AreaBreak());
+
+        addSpecificTableConsideringFlushes(doc, true, true);
+        doc.add(new AreaBreak());
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
@@ -1014,7 +1184,6 @@ public class LargeElementTest extends ExtendedITextTest {
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
-
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 1)})
@@ -1236,8 +1405,8 @@ public class LargeElementTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-3953
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)})
+    // TODO DEVSIX-3953 Footer is not placed on the first page in case of large table, but fits the page for a usual table
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void largeTableFooterNotFitTest() throws IOException, InterruptedException {
         String testName = "largeTableFooterNotFitTest.pdf";
         String outFileName = destinationFolder + testName;
@@ -1246,25 +1415,51 @@ public class LargeElementTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(595, 100));
 
-        float[] colWidths = new float[]{200, -1, 40, 40};
-
-        Table table = new Table(UnitValue.createPointArray(colWidths), true);
-        Cell footerCell = new Cell(1, 4).add(new Paragraph("Table footer: continue on next page"));
+        Table table = new Table(1, true);
+        Cell footerCell = new Cell().add(new Paragraph("Table footer: continue on next page"));
         table.addFooterCell(footerCell);
         doc.add(table);
 
-        for (int i = 0; i < 2; i++) {
-            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 0))));
-            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 1))));
-            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 2))));
-            table.addCell(new Cell().add(new Paragraph("Cell" + (i * 4 + 3))));
+        table.addCell(new Cell().add(new Paragraph("Cell")).setBackgroundColor(ColorConstants.RED));
 
-            table.flush();
-        }
+        // If one comments flush, then the table fits the page
+        table.flush();
 
         table.complete();
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    private static void addSpecificTableConsideringFlushes(Document doc, boolean flushFirst, boolean flushSecond) {
+        Table table = new Table(UnitValue.createPercentArray(1), true);
+        doc.add(table);
+
+        table.addFooterCell(new Cell().add(new Paragraph("Footer"))
+                .setBorderTop(new SolidBorder(ColorConstants.YELLOW, 15))
+                .setHeight(100).setMargin(0).setPadding(0)
+        );
+
+        table.addCell(new Cell().add(new Paragraph("Cell1"))
+                .setHeight(100).setMargin(0).setPadding(0)
+                .setBackgroundColor(ColorConstants.RED)
+        );
+
+        if (flushFirst) {
+            table.flush();
+        }
+
+        table.addCell(new Cell().add(new Paragraph("Cell2"))
+                .setHeight(100).setMargin(0).setPadding(0)
+                .setBackgroundColor(ColorConstants.RED)
+                .setBorderLeft(new SolidBorder(ColorConstants.GREEN, 50))
+                .setBorderRight(new SolidBorder(ColorConstants.GREEN, 50))
+
+                .setBorderTop(new SolidBorder(ColorConstants.MAGENTA, 10)));
+
+        if (flushSecond) {
+            table.flush();
+        }
+        table.complete();
     }
 }
