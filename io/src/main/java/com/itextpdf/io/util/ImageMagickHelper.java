@@ -151,7 +151,9 @@ public class ImageMagickHelper {
             replacementOutFile = FileUtil.createTempCopy(outImageFilePath, TEMP_FILE_PREFIX, null);
             replacementCmpFile = FileUtil.createTempCopy(cmpImageFilePath, TEMP_FILE_PREFIX, null);
 
-            replacementDiff = FileUtil.createTempFile(TEMP_FILE_PREFIX, null).toString();
+            // ImageMagick generates difference images in .png format, therefore we can specify it.
+            // For some reason .webp comparison fails if the extension of diff image is not specified.
+            replacementDiff = FileUtil.createTempFile(TEMP_FILE_PREFIX, ".png").getAbsolutePath();
             String currCompareParams = fuzzValue + " '"
                     + replacementOutFile + "' '"
                     + replacementCmpFile + "' '"
