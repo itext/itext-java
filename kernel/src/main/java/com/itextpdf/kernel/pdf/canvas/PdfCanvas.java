@@ -1949,7 +1949,8 @@ public class PdfCanvas {
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             PdfXObject xObject = wmf.createFormXObject(document);
-            addXObjectWithTransformationMatrix(xObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
+            //For FormXObject args "a" and "d" will become multipliers and will not set the size, as for ImageXObject
+            addXObjectWithTransformationMatrix(xObject, 1, 0, 0, 1, x, y);
             return xObject;
         } else {
             PdfImageXObject imageXObject = new PdfImageXObject(image);
