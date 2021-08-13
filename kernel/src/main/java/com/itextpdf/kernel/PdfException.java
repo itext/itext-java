@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.events.util.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 import java.util.ArrayList;

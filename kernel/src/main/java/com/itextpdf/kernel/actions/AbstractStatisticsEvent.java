@@ -23,7 +23,7 @@
 package com.itextpdf.kernel.actions;
 
 import com.itextpdf.events.data.ProductData;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.events.util.MessageFormatUtil;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 
 import java.util.List;

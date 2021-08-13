@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.counter.event;
 
-import com.itextpdf.kernel.counter.NamespaceConstant;
+import com.itextpdf.events.NamespaceConstant;
 
 /**
  * The generic event for core

@@ -22,11 +22,10 @@
  */
 package com.itextpdf.kernel.counter.event;
 
-import com.itextpdf.kernel.actions.ProductNameConstant;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.events.EventConfirmationType;
-import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.events.sequence.SequenceId;
 
 /**
  * Class represents events registered in iText core module.

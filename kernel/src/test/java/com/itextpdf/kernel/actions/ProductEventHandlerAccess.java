@@ -23,7 +23,7 @@
 package com.itextpdf.kernel.actions;
 
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
-import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.events.sequence.SequenceId;
 
 import java.io.Closeable;
 import java.util.HashSet;

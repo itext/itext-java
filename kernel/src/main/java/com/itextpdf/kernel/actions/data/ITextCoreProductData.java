@@ -23,7 +23,7 @@
 package com.itextpdf.kernel.actions.data;
 
 import com.itextpdf.events.data.ProductData;
-import com.itextpdf.kernel.actions.ProductNameConstant;
+import com.itextpdf.events.ProductNameConstant;
 
 /**
  * Stores an instance of {@link ProductData} related to iText core module.

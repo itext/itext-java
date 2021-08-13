@@ -43,10 +43,9 @@
 package com.itextpdf.styledxmlparser.css.resolve;
 
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.events.util.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
-import com.itextpdf.styledxmlparser.css.CssDeclaration;
 
 import java.util.HashMap;
 import java.util.Map;

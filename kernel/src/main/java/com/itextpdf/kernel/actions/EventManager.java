@@ -22,7 +22,9 @@
  */
 package com.itextpdf.kernel.actions;
 
-import com.itextpdf.kernel.actions.exceptions.AggregatedException;
+import com.itextpdf.events.IBaseEvent;
+import com.itextpdf.events.IBaseEventHandler;
+import com.itextpdf.events.exceptions.AggregatedException;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

@@ -44,10 +44,10 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.events.util.MessageFormatUtil;
 import com.itextpdf.kernel.actions.EventManager;
 import com.itextpdf.kernel.actions.events.LinkDocumentIdEvent;
-import com.itextpdf.kernel.actions.sequence.AbstractIdentifiableElement;
+import com.itextpdf.events.sequence.AbstractIdentifiableElement;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.IPropertyContainer;

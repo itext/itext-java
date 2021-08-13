@@ -24,7 +24,7 @@ package com.itextpdf.kernel.actions;
 
 import com.itextpdf.kernel.actions.events.EventConfirmationType;
 import com.itextpdf.kernel.actions.events.LinkDocumentIdEvent;
-import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.events.sequence.SequenceId;
 
 /**
  * Base class to wrap events.

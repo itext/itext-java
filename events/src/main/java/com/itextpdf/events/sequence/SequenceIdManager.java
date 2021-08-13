@@ -20,10 +20,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.actions.sequence;
+package com.itextpdf.events.sequence;
 
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.events.exceptions.EventsExceptionMessageConstant;
+import com.itextpdf.events.util.MessageFormatUtil;
 
 /**
  * Util class which is responsible for marking of {@link AbstractIdentifiableElement} with
@@ -48,7 +48,7 @@ public final class SequenceIdManager {
                 element.setSequenceId(sequenceId);
             } else {
                     throw new IllegalStateException(MessageFormatUtil.format(
-                            KernelExceptionMessageConstant.ELEMENT_ALREADY_HAS_IDENTIFIER,
+                            EventsExceptionMessageConstant.ELEMENT_ALREADY_HAS_IDENTIFIER,
                             element.getSequenceId().getId(), sequenceId.getId()));
             }
         }

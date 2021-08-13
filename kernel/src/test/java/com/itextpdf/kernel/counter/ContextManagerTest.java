@@ -42,6 +42,7 @@
  */
 package com.itextpdf.kernel.counter;
 
+import com.itextpdf.events.NamespaceConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 

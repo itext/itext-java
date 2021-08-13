@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.actions.exceptions;
+package com.itextpdf.events.exceptions;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Composite exception class.
  */
-public class AggregatedException extends RuntimeException {
+public class AggregatedException extends ITextException {
     /**
      * Notifies that event processing failed.
      */

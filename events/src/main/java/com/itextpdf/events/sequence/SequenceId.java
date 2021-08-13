@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.actions.sequence;
+package com.itextpdf.events.sequence;
 
 import java.util.concurrent.atomic.AtomicLong;
 

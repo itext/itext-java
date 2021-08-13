@@ -43,11 +43,11 @@
  */
 package com.itextpdf.kernel.counter;
 
-import com.itextpdf.kernel.actions.ProductNameConstant;
+import com.itextpdf.events.NamespaceConstant;
+import com.itextpdf.events.ProductNameConstant;
 import com.itextpdf.kernel.counter.context.GenericContext;
 import com.itextpdf.kernel.counter.context.IContext;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;

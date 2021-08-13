@@ -22,10 +22,13 @@
  */
 package com.itextpdf.kernel.actions;
 
+import com.itextpdf.events.IBaseEvent;
+import com.itextpdf.events.IBaseEventHandler;
+import com.itextpdf.events.ProductNameConstant;
+import com.itextpdf.events.exceptions.AggregatedException;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.actions.ecosystem.TestConfigurationEvent;
-import com.itextpdf.kernel.actions.exceptions.AggregatedException;
-import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.events.sequence.SequenceId;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;

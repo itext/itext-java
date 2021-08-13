@@ -22,7 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.parser;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.events.util.MessageFormatUtil;
 
 /**
  * A Parse Error records an error in the input HTML that occurs in either the tokenisation or the tree building phase.

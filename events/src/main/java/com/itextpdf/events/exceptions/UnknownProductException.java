@@ -20,14 +20,12 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.actions.exceptions;
-
-import com.itextpdf.kernel.PdfException;
+package com.itextpdf.events.exceptions;
 
 /**
  * An exception notifies that unknown product was found in iText ecosystem.
  */
-public class UnknownProductException extends PdfException {
+public class UnknownProductException extends ITextException {
     /**
      * Message notifies that event corresponding to unknown product was met. It is a parametrized
      * message. List of params:

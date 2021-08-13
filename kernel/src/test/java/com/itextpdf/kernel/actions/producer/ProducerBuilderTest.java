@@ -23,11 +23,11 @@
 package com.itextpdf.kernel.actions.producer;
 
 import com.itextpdf.events.data.ProductData;
-import com.itextpdf.io.util.DateTimeUtil;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.events.util.DateTimeUtil;
+import com.itextpdf.events.util.MessageFormatUtil;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
-import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.events.sequence.SequenceId;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;

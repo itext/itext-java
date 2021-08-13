@@ -22,23 +22,20 @@
  */
 package com.itextpdf.kernel.actions.events;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.events.sequence.SequenceId;
+import com.itextpdf.events.util.MessageFormatUtil;
 import com.itextpdf.kernel.actions.AbstractITextConfigurationEvent;
 import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.EventManager;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.kernel.actions.producer.ProducerBuilder;
-import com.itextpdf.kernel.actions.sequence.SequenceId;
-import com.itextpdf.kernel.actions.session.ClosingSession;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,32 +81,16 @@ public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent
             products.add(event.getProductName());
         }
 
-        final Map<String, ITextProductEventProcessor> knownProducts = new HashMap<>();
         for (final String product: products) {
             final ITextProductEventProcessor processor = getActiveProcessor(product);
-            if (processor == null) {
-                if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn(MessageFormatUtil.format(KernelLogMessageConstant.UNKNOWN_PRODUCT_INVOLVED, product));
-                }
-            } else {
-                knownProducts.put(product, processor);
+            if (processor == null && LOGGER.isWarnEnabled()) {
+                LOGGER.warn(MessageFormatUtil.format(KernelLogMessageConstant.UNKNOWN_PRODUCT_INVOLVED, product));
             }
         }
 
         final String oldProducer = pdfDocument.getDocumentInfo().getProducer();
         final String newProducer = ProducerBuilder.modifyProducer(getConfirmedEvents(pdfDocument.getDocumentIdWrapper()), oldProducer);
         pdfDocument.getDocumentInfo().setProducer(newProducer);
-
-        final ClosingSession session = new ClosingSession((PdfDocument) document.get());
-        for (final Map.Entry<String, ITextProductEventProcessor> product: knownProducts.entrySet()) {
-            product.getValue().aggregationOnClose(session);
-        }
-
-        // do not join these loops into one as order of processing is important!
-
-        for (final Map.Entry<String, ITextProductEventProcessor> product: knownProducts.entrySet()) {
-            product.getValue().completionOnClose(session);
-        }
     }
 
     private List<ConfirmedEventWrapper> getConfirmedEvents(SequenceId sequenceId) {

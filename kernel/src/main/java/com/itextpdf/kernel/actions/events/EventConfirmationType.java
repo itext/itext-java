@@ -22,9 +22,9 @@
  */
 package com.itextpdf.kernel.actions.events;
 
+import com.itextpdf.events.IBaseEvent;
 import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.EventManager;
-import com.itextpdf.kernel.actions.IBaseEvent;
 
 /**
  * Defines the strategy of {@link AbstractProductProcessITextEvent} confirming.

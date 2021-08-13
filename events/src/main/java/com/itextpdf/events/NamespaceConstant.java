@@ -41,7 +41,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.counter;
+package com.itextpdf.events;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,6 +52,7 @@ public final class NamespaceConstant {
     public static final String ITEXT = "com.itextpdf";
 
     //Core
+    public static final String CORE_EVENTS = ITEXT + ".events";
     public static final String CORE_IO = ITEXT + ".io";
     public static final String CORE_KERNEL = ITEXT + ".kernel";
     public static final String CORE_LAYOUT = ITEXT + ".layout";
@@ -71,6 +72,7 @@ public final class NamespaceConstant {
     public static final String PDF_OCR_TESSERACT4 = PDF_OCR + ".tesseract4";
 
     public static final List<String> ITEXT_CORE_NAMESPACES = Collections.unmodifiableList(Arrays.asList(
+            NamespaceConstant.CORE_EVENTS,
             NamespaceConstant.CORE_IO,
             NamespaceConstant.CORE_KERNEL,
             NamespaceConstant.CORE_LAYOUT,

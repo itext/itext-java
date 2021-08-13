@@ -22,7 +22,7 @@
  */
 package com.itextpdf.kernel.actions.producer;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.events.util.MessageFormatUtil;
 import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 

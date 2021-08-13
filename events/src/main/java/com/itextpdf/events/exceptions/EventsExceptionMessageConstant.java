@@ -20,18 +20,24 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.actions;
+package com.itextpdf.events.exceptions;
 
 /**
- * The interface for an event handler.
- *
- * TODO: DEVSIX-5311 rename it IEventHandler when the oldest mechanism is deleted
+ * Class that bundles all the error message templates as constants.
  */
-public interface IBaseEventHandler {
+public final class EventsExceptionMessageConstant {
     /**
-     * Handles the event.
+     * Message warns about overriding of the identifier of identifiable element. List of params:
      *
-     * @param event to handle
+     * <ul>
+     * <li>0th is an original element identifier;
+     * <li>1st is a new element identifier;
+     * </ul>
      */
-    void onEvent(IBaseEvent event);
+    public static final String ELEMENT_ALREADY_HAS_IDENTIFIER = "Element already has sequence id: {0}, new id {1} " +
+            "will be ignored";
+
+    public static final String UNKNOWN_ITEXT_EXCEPTION = "Unknown ITextException.";
+
+    private EventsExceptionMessageConstant(){}
 }

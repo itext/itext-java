@@ -23,7 +23,7 @@
 package com.itextpdf.layout.properties;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.events.util.MessageFormatUtil;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
 import org.slf4j.Logger;

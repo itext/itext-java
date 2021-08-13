@@ -48,14 +48,12 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.sequence.SequenceId;
 import com.itextpdf.kernel.counter.event.IMetaInfo;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.properties.BaseDirection;
 import com.itextpdf.layout.properties.Property;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.layout.Document;
 
 import java.lang.Character.UnicodeScript;
 import java.lang.reflect.AccessibleObject;

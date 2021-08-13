@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.actions;
+package com.itextpdf.events;
 
 /**
  * Base marker interface for any generated event of any source.

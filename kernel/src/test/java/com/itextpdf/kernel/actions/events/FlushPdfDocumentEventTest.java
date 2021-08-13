@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.actions.events;
 
 import com.itextpdf.events.data.ProductData;
+import com.itextpdf.events.sequence.SequenceId;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.EventManager;
@@ -30,8 +31,6 @@ import com.itextpdf.kernel.actions.ProductEventHandlerAccess;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
-import com.itextpdf.kernel.actions.sequence.SequenceId;
-import com.itextpdf.kernel.actions.session.ClosingSession;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -44,8 +43,6 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -59,36 +56,6 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
 
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
-
-    @Test
-    public void doActionTest() throws IOException {
-        try (ProductEventHandlerAccess access = new ProductEventHandlerAccess();
-                PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
-            List<String> forMessages = new ArrayList<>();
-
-            access.addProcessor(new TestProductEventProcessor("test-product-1", forMessages));
-            access.addProcessor(new TestProductEventProcessor("test-product-2", forMessages));
-
-            access.addEvent(document.getDocumentIdWrapper(), getEvent("test-product-1", document.getDocumentIdWrapper()));
-            access.addEvent(document.getDocumentIdWrapper(), getEvent("test-product-1", document.getDocumentIdWrapper()));
-            access.addEvent(document.getDocumentIdWrapper(), getEvent("test-product-2", document.getDocumentIdWrapper()));
-            access.addEvent(document.getDocumentIdWrapper(), getEvent("test-product-2", document.getDocumentIdWrapper()));
-
-            new FlushPdfDocumentEvent(document).doAction();
-
-            Assert.assertEquals(4, forMessages.size());
-            Assert.assertTrue(forMessages.contains("aggregation message from test-product-1"));
-            Assert.assertTrue(forMessages.contains("aggregation message from test-product-2"));
-            Assert.assertTrue(forMessages.contains("completion message from test-product-1"));
-            Assert.assertTrue(forMessages.contains("completion message from test-product-2"));
-
-            // check order
-            Assert.assertTrue(forMessages.get(0).startsWith("aggregation"));
-            Assert.assertTrue(forMessages.get(1).startsWith("aggregation"));
-            Assert.assertTrue(forMessages.get(2).startsWith("completion"));
-            Assert.assertTrue(forMessages.get(3).startsWith("completion"));
-        }
-    }
 
     @Test
     public void onCloseReportingTest() throws IOException {
@@ -193,12 +160,10 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
     }
 
     private static class TestProductEventProcessor implements ITextProductEventProcessor {
-        public final List<String> aggregatedMessages;
         private final String processorId;
 
-        public TestProductEventProcessor(String processorId, List<String> aggregatedMessages) {
+        public TestProductEventProcessor(String processorId) {
             this.processorId = processorId;
-            this.aggregatedMessages = aggregatedMessages;
         }
 
         @Override
@@ -219,16 +184,6 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
         @Override
         public String getProducer() {
             return "iText";
-        }
-
-        @Override
-        public void aggregationOnClose(ClosingSession session) {
-            aggregatedMessages.add("aggregation message from " + processorId);
-        }
-
-        @Override
-        public void completionOnClose(ClosingSession session) {
-            aggregatedMessages.add("completion message from " + processorId);
         }
     }
 

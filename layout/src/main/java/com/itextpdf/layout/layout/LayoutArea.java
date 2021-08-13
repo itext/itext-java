@@ -46,7 +46,7 @@ package com.itextpdf.layout.layout;
 import com.itextpdf.io.util.HashCode;
 import com.itextpdf.kernel.geom.Rectangle;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.events.util.MessageFormatUtil;
 
 /**
  * Represents the area for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.

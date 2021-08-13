@@ -20,22 +20,37 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.actions.sequence;
+package com.itextpdf.events.exceptions;
 
-import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+/**
+ * General iText exception.
+ *
+ * <p>
+ * Important note, not all iText exceptions are extended from ITextException.
+ */
+public class ITextException extends RuntimeException {
+    /**
+     * Creates a new ITextException with no error message and cause.
+     */
+    public ITextException() {
+        super();
+    }
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+    /**
+     * Creates a new ITextException.
+     *
+     * @param message the detail message
+     */
+    public ITextException(String message) {
+        super(message);
+    }
 
-@Category(UnitTest.class)
-public class SequenceIdTest extends ExtendedITextTest {
-    @Test
-    public void differentIdsCreatedTest() {
-        SequenceId sequenceId1 = new SequenceId();
-        SequenceId sequenceId2 = new SequenceId();
-
-        Assert.assertNotEquals(sequenceId1.getId(), sequenceId2.getId());
+    /**
+     * Creates a new ITextException.
+     *
+     * @param cause the cause (which is saved for later retrieval by {@link #getCause()} method)
+     */
+    public ITextException(Throwable cause) {
+        super(EventsExceptionMessageConstant.UNKNOWN_ITEXT_EXCEPTION, cause);
     }
 }

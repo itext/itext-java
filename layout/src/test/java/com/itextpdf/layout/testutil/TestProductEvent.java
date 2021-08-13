@@ -45,7 +45,7 @@ package com.itextpdf.layout.testutil;
 import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.actions.events.EventConfirmationType;
-import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.events.sequence.SequenceId;
 
 public  class TestProductEvent extends AbstractProductProcessITextEvent {
     public TestProductEvent(SequenceId sequenceId) {

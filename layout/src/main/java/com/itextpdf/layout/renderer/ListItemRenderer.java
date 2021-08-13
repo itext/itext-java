@@ -58,7 +58,7 @@ import com.itextpdf.layout.properties.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.events.util.MessageFormatUtil;
 import com.itextpdf.layout.tagging.TaggingDummyElement;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import com.itextpdf.layout.tagging.TaggingHintKey;

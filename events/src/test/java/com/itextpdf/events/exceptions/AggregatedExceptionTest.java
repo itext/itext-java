@@ -20,9 +20,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.actions.exceptions;
+package com.itextpdf.events.exceptions;
 
-import com.itextpdf.io.IOException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -40,7 +39,7 @@ public class AggregatedExceptionTest extends ExtendedITextTest {
         List<RuntimeException> exceptions = new ArrayList<>();
         exceptions.add(new RuntimeException("Message 1"));
         exceptions.add(new RuntimeException("Message 2"));
-        exceptions.add(new IOException("Message 3"));
+        exceptions.add(new CustomException("Message 3"));
 
         AggregatedException exception = new AggregatedException("General message", exceptions);
         Assert.assertEquals(exceptions, exception.getAggregatedExceptions());
@@ -55,12 +54,18 @@ public class AggregatedExceptionTest extends ExtendedITextTest {
         List<RuntimeException> exceptions = new ArrayList<>();
         exceptions.add(new RuntimeException("Message 1"));
         exceptions.add(new RuntimeException("Message 2"));
-        exceptions.add(new IOException("Message 3"));
+        exceptions.add(new CustomException("Message 3"));
 
         AggregatedException exception = new AggregatedException(exceptions);
         Assert.assertEquals("Aggregated message:\n"
                 + "0) Message 1\n"
                 + "1) Message 2\n"
                 + "2) Message 3\n", exception.getMessage());
+    }
+
+    private static final class CustomException extends RuntimeException {
+        public CustomException(String message) {
+            super(message);
+        }
     }
 }

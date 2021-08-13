@@ -43,6 +43,7 @@
  */
 package com.itextpdf.io.util;
 
+import com.itextpdf.events.util.MessageFormatUtil;
 import com.itextpdf.io.IoExceptionMessage;
 
 import java.io.IOException;

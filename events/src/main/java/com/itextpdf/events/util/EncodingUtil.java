@@ -41,17 +41,50 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.io.util;
+package com.itextpdf.events.util;
 
-import java.text.MessageFormat;
-import java.util.Locale;
+import java.io.UnsupportedEncodingException;
+import java.nio.Buffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
 
 /**
  * This file is a helper class for internal usage only.
  * Be aware that its API and functionality may be changed in future.
  */
-public class MessageFormatUtil {
-    public static String format(String pattern, Object... arguments) {
-        return new MessageFormat(pattern, Locale.ROOT).format(arguments);
+public final class EncodingUtil {
+    private static final String UTF8 = "UTF-8";
+
+
+
+    private EncodingUtil() {
+    }
+
+    public static byte[] convertToBytes(char[] chars, String encoding) throws CharacterCodingException {
+        Charset cc = Charset.forName(encoding);
+        CharsetEncoder ce = cc.newEncoder();
+        ce.onUnmappableCharacter(CodingErrorAction.IGNORE);
+        java.nio.ByteBuffer bb = ce.encode(CharBuffer.wrap(chars));
+        ((Buffer) bb).rewind();
+        int lim = ((Buffer) bb).limit();
+        int offset = EncodingUtil.UTF8.equals(encoding) ? 3 : 0;
+        byte[] br = new byte[lim + offset];
+        if (EncodingUtil.UTF8.equals(encoding)) {
+            br[0] = (byte) 0xEF;
+            br[1] = (byte) 0xBB;
+            br[2] = (byte) 0xBF;
+        }
+        bb.get(br, offset, lim);
+        return br;
+    }
+
+    public static String convertToString(byte[] bytes, String encoding) throws UnsupportedEncodingException {
+        if (encoding.equals(EncodingUtil.UTF8) &&
+                bytes[0] == (byte) 0xEF && bytes[1] == (byte) 0xBB && bytes[2] == (byte) 0xBF)
+            return new String(bytes, 3, bytes.length - 3, EncodingUtil.UTF8);
+        return new String(bytes, encoding);
     }
 }

@@ -20,31 +20,18 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.actions.sequence;
+package com.itextpdf.events;
 
 /**
- * The class allows to make any element identifiable so that it is possible to store some metadata
- * for it.
+ * The interface for an event handler.
+ *
+ * TODO: DEVSIX-5311 rename it IEventHandler when the oldest mechanism is deleted
  */
-public abstract class AbstractIdentifiableElement {
-
-    private SequenceId sequenceId;
-
+public interface IBaseEventHandler {
     /**
-     * Obtains an identifier if it was set.
+     * Handles the event.
      *
-     * @return identifier
+     * @param event to handle
      */
-    SequenceId getSequenceId() {
-        return sequenceId;
-    }
-
-    /**
-     * Sets an identifier.
-     *
-     * @param sequenceId is a new identifier for the element
-     */
-    void setSequenceId(SequenceId sequenceId) {
-        this.sequenceId = sequenceId;
-    }
+    void onEvent(IBaseEvent event);
 }

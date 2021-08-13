@@ -20,26 +20,31 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.actions;
+package com.itextpdf.events.sequence;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+/**
+ * The class allows to make any element identifiable so that it is possible to store some metadata
+ * for it.
+ */
+public abstract class AbstractIdentifiableElement {
 
-public final class ProductNameConstant {
-    public static final String ITEXT_CORE = "itext-core";
-    public static final String PDF_HTML = "pdfHtml";
-    public static final String PDF_SWEEP = "pdfSweep";
-    public static final String PDF_OCR_TESSERACT4 = "pdfOcr-tesseract4";
+    private SequenceId sequenceId;
 
-    public static final Set<String> PRODUCT_NAMES = Collections.unmodifiableSet(
-            new HashSet<>(Arrays.asList(
-                    ProductNameConstant.ITEXT_CORE,
-                    ProductNameConstant.PDF_HTML,
-                    ProductNameConstant.PDF_SWEEP,
-                    ProductNameConstant.PDF_OCR_TESSERACT4
-            )));
+    /**
+     * Obtains an identifier if it was set.
+     *
+     * @return identifier
+     */
+    SequenceId getSequenceId() {
+        return sequenceId;
+    }
 
-    private ProductNameConstant() {}
+    /**
+     * Sets an identifier.
+     *
+     * @param sequenceId is a new identifier for the element
+     */
+    void setSequenceId(SequenceId sequenceId) {
+        this.sequenceId = sequenceId;
+    }
 }

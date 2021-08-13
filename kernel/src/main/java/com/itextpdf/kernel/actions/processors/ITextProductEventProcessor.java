@@ -23,7 +23,6 @@
 package com.itextpdf.kernel.actions.processors;
 
 import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
-import com.itextpdf.kernel.actions.session.ClosingSession;
 
 /**
  * Interface for product event processors.
@@ -56,24 +55,4 @@ public interface ITextProductEventProcessor {
      * @return the producer line
      */
     String getProducer();
-
-    /**
-     * When document is closing it will search for every {@link ITextProductEventProcessor}
-     * associated with the products involved into document processing and may aggregate some data
-     * from them. Aggregation stage is the first stage of closing process. See also the second step:
-     * {@link ITextProductEventProcessor#completionOnClose(ClosingSession)}
-     *
-     * @param session is a closing session
-     */
-    void aggregationOnClose(ClosingSession session);
-
-    /**
-     * When document is closing it will search for every {@link ITextProductEventProcessor}
-     * associated with the products involved into document processing and may aggregate some data
-     * from them. Completion stage is the second stage of closing process. See also the first step:
-     * {@link ITextProductEventProcessor#aggregationOnClose(ClosingSession)}
-     *
-     * @param session is a closing session
-     */
-    void completionOnClose(ClosingSession session);
 }

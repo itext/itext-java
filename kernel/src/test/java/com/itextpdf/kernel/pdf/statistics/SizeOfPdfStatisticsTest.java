@@ -22,25 +22,25 @@
  */
 package com.itextpdf.kernel.pdf.statistics;
 
+import com.itextpdf.events.IBaseEvent;
+import com.itextpdf.events.IBaseEventHandler;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.actions.EventManager;
-import com.itextpdf.kernel.actions.IBaseEvent;
-import com.itextpdf.kernel.actions.IBaseEventHandler;
 import com.itextpdf.kernel.pdf.CountOutputStream;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Category(IntegrationTest.class)
 public class SizeOfPdfStatisticsTest extends ExtendedITextTest {

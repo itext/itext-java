@@ -54,7 +54,7 @@ import com.itextpdf.io.util.IntHashtable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.events.util.MessageFormatUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

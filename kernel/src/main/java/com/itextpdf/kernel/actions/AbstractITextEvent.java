@@ -22,7 +22,8 @@
  */
 package com.itextpdf.kernel.actions;
 
-import com.itextpdf.kernel.counter.NamespaceConstant;
+import com.itextpdf.events.IBaseEvent;
+import com.itextpdf.events.NamespaceConstant;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

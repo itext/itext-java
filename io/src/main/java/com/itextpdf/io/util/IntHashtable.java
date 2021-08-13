@@ -43,6 +43,8 @@
  */
 package com.itextpdf.io.util;
 
+import com.itextpdf.events.util.MessageFormatUtil;
+
 import java.util.Arrays;
 
 /**

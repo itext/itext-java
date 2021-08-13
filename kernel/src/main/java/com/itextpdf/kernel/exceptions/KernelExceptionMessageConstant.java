@@ -149,16 +149,6 @@ public final class KernelExceptionMessageConstant {
             + "parameter of ReaderProperties's MemoryLimitsAwareHandler.";
     public static final String DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_THAN_MAX_INTEGER_VALUE = "During "
             + "decompression a single stream occupied more than a maximum integer value. Please check your pdf.";
-    /**
-     * Message warns about overriding of the identifier of identifiable element. List of params:
-     *
-     * <ul>
-     * <li>0th is an original element identifier;
-     * <li>1st is a new element identifier;
-     * </ul>
-     */
-    public static final String ELEMENT_ALREADY_HAS_IDENTIFIER = "Element already has sequence id: {0}, new id {1} " +
-            "will be ignored";
     public static final String END_OF_CONTENT_STREAM_REACHED_BEFORE_END_OF_IMAGE_DATA = "End of content stream "
             + "reached before end of image data.";
     public static final String ERROR_WHILE_READING_OBJECT_STREAM = "Error while reading Object Stream.";

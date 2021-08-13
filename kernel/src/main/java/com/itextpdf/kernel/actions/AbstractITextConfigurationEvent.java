@@ -24,7 +24,7 @@ package com.itextpdf.kernel.actions;
 
 import com.itextpdf.kernel.actions.processors.DefaultITextProductEventProcessor;
 import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
-import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.events.sequence.SequenceId;
 
 import java.util.List;
 import java.util.Map;

@@ -23,7 +23,6 @@
 package com.itextpdf.kernel.actions.processors;
 
 import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
-import com.itextpdf.kernel.actions.session.ClosingSession;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 /**
@@ -64,22 +63,4 @@ public class DefaultITextProductEventProcessor implements ITextProductEventProce
     public String getProducer() {
         return "iText\u00ae ${usedProducts:P V (T 'version')} \u00a9${copyrightSince}-${copyrightTo} iText Group NV";
     }
-
-    /**
-     * Collects info about products involved into document processing.
-     *
-     * @param closingSession is a closing session
-     */
-    @Override
-    public void aggregationOnClose(ClosingSession closingSession) {
-
-    }
-
-    /**
-     * Updates meta info of the document.
-     *
-     * @param closingSession is a closing session
-     */
-    @Override
-    public void completionOnClose(ClosingSession closingSession) {}
 }

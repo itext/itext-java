@@ -48,7 +48,7 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.GhostscriptHelper;
 import com.itextpdf.io.util.ImageMagickHelper;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.events.util.MessageFormatUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.io.util.XmlUtil;
 import com.itextpdf.kernel.counter.event.IMetaInfo;

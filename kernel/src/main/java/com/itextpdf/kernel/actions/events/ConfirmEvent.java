@@ -24,7 +24,7 @@ package com.itextpdf.kernel.actions.events;
 
 import com.itextpdf.kernel.actions.AbstractEventWrapper;
 import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
-import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.events.sequence.SequenceId;
 
 /**
  * Used to confirm that process associated with some {@link AbstractProductProcessITextEvent}

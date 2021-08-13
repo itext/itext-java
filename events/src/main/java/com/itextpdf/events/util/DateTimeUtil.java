@@ -41,7 +41,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.io.util;
+package com.itextpdf.events.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

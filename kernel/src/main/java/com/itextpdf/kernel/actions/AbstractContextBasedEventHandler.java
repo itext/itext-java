@@ -22,6 +22,8 @@
  */
 package com.itextpdf.kernel.actions;
 
+import com.itextpdf.events.IBaseEvent;
+import com.itextpdf.events.IBaseEventHandler;
 import com.itextpdf.kernel.counter.ContextManager;
 import com.itextpdf.kernel.counter.context.IContext;
 

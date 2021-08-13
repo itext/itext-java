@@ -43,7 +43,7 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.io.util.DateTimeUtil;
+import com.itextpdf.events.util.DateTimeUtil;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.slf4j.Logger;

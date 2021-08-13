@@ -44,7 +44,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.actions.sequence.AbstractIdentifiableElement;
+import com.itextpdf.events.sequence.AbstractIdentifiableElement;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.layout.borders.Border;

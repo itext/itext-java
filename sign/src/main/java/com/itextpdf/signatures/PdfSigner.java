@@ -52,7 +52,7 @@ import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.io.util.DateTimeUtil;
+import com.itextpdf.events.util.DateTimeUtil;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.PdfException;

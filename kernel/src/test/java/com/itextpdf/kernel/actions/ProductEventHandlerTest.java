@@ -22,13 +22,14 @@
  */
 package com.itextpdf.kernel.actions;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.events.ProductNameConstant;
+import com.itextpdf.events.exceptions.UnknownProductException;
+import com.itextpdf.events.util.MessageFormatUtil;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.actions.events.ConfirmEvent;
 import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
-import com.itextpdf.kernel.actions.exceptions.UnknownProductException;
 import com.itextpdf.kernel.actions.processors.DefaultITextProductEventProcessor;
-import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.events.sequence.SequenceId;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;

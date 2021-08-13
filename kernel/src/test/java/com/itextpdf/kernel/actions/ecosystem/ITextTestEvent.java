@@ -25,7 +25,7 @@ package com.itextpdf.kernel.actions.ecosystem;
 import com.itextpdf.events.data.ProductData;
 import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.events.EventConfirmationType;
-import com.itextpdf.kernel.actions.sequence.SequenceId;
+import com.itextpdf.events.sequence.SequenceId;
 import com.itextpdf.kernel.counter.event.IMetaInfo;
 
 public class ITextTestEvent extends AbstractProductProcessITextEvent {

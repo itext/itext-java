@@ -20,10 +20,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.actions.sequence;
+package com.itextpdf.events.sequence;
 
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -32,33 +30,12 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class SequenceIdManagerTest extends ExtendedITextTest {
-
+public class SequenceIdTest extends ExtendedITextTest {
     @Test
-    public void setIdentifier() {
-        IdentifiableElement element = new IdentifiableElement();
-        Assert.assertNull(SequenceIdManager.getSequenceId(element));
-
-        SequenceId sequenceId = new SequenceId();
-        SequenceIdManager.setSequenceId(element, sequenceId);
-        Assert.assertEquals(sequenceId, SequenceIdManager.getSequenceId(element));
-    }
-
-    @Test
-    public void overrideIdentifierTest() {
-        IdentifiableElement element = new IdentifiableElement();
+    public void differentIdsCreatedTest() {
         SequenceId sequenceId1 = new SequenceId();
         SequenceId sequenceId2 = new SequenceId();
-        SequenceIdManager.setSequenceId(element, sequenceId1);
 
-        Exception e = Assert.assertThrows(IllegalStateException.class,
-                () -> SequenceIdManager.setSequenceId(element, sequenceId2));
-
-        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.ELEMENT_ALREADY_HAS_IDENTIFIER,
-                sequenceId1.getId(), sequenceId2.getId()), e.getMessage());
-    }
-
-    private static class IdentifiableElement extends AbstractIdentifiableElement {
-
+        Assert.assertNotEquals(sequenceId1.getId(), sequenceId2.getId());
     }
 }
