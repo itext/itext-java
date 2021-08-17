@@ -42,7 +42,7 @@
  */
 package com.itextpdf.signatures.verify;
 
-import com.itextpdf.events.util.DateTimeUtil;
+import com.itextpdf.events.utils.DateTimeUtil;
 import com.itextpdf.signatures.CRLVerifier;
 import com.itextpdf.signatures.VerificationException;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;

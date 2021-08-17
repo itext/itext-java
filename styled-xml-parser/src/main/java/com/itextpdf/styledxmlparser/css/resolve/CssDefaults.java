@@ -43,7 +43,7 @@
 package com.itextpdf.styledxmlparser.css.resolve;
 
 
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 

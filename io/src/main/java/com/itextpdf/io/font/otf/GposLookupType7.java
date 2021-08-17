@@ -44,7 +44,7 @@ package com.itextpdf.io.font.otf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.otf.lookuptype7.PosTableLookup7Format2;
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;

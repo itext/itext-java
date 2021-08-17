@@ -23,8 +23,8 @@
 package com.itextpdf.kernel.pdf.statistics;
 
 import com.itextpdf.io.util.MapUtil;
-import com.itextpdf.kernel.actions.AbstractStatisticsAggregator;
-import com.itextpdf.kernel.actions.AbstractStatisticsEvent;
+import com.itextpdf.events.AbstractStatisticsAggregator;
+import com.itextpdf.events.AbstractStatisticsEvent;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Statistics aggregator which aggregates number of pages in PDF documents.

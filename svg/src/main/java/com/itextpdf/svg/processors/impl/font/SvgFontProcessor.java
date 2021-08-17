@@ -45,7 +45,7 @@ package com.itextpdf.svg.processors.impl.font;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.layout.font.FontInfo;
 import com.itextpdf.layout.font.Range;
 import com.itextpdf.styledxmlparser.LogMessageConstant;

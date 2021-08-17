@@ -43,7 +43,7 @@
 package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfFormField;
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;

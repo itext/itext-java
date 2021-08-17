@@ -42,7 +42,7 @@
  */
 package com.itextpdf.signatures.verify;
 
-import com.itextpdf.events.util.DateTimeUtil;
+import com.itextpdf.events.utils.DateTimeUtil;
 import com.itextpdf.signatures.OCSPVerifier;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;

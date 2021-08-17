@@ -22,7 +22,7 @@
  */
 package com.itextpdf.kernel.actions.ecosystem;
 
-import com.itextpdf.kernel.actions.AbstractITextConfigurationEvent;
+import com.itextpdf.events.AbstractITextConfigurationEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

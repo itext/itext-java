@@ -22,15 +22,18 @@
  */
 package com.itextpdf.kernel.actions.events;
 
+import com.itextpdf.events.AbstractProductProcessITextEvent;
+import com.itextpdf.events.EventManager;
+import com.itextpdf.events.confirmations.ConfirmEvent;
+import com.itextpdf.events.confirmations.ConfirmedEventWrapper;
+import com.itextpdf.events.confirmations.EventConfirmationType;
 import com.itextpdf.events.data.ProductData;
+import com.itextpdf.events.processors.ITextProductEventProcessor;
 import com.itextpdf.events.sequence.SequenceId;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
-import com.itextpdf.kernel.actions.EventManager;
 import com.itextpdf.kernel.actions.ProductEventHandlerAccess;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
-import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -63,12 +66,12 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
                 PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
 
             ITextTestEvent event = new ITextTestEvent(document.getDocumentIdWrapper(), ITextCoreProductData.getInstance(), null, "test-event", EventConfirmationType.ON_CLOSE);
-            int initialLength = access.getEvents(document.getDocumentIdWrapper()).size();
+            int initialLength = access.publicGetEvents(document.getDocumentIdWrapper()).size();
 
             EventManager.getInstance().onEvent(event);
             new FlushPdfDocumentEvent(document).doAction();
 
-            AbstractProductProcessITextEvent reportedEvent = access.getEvents(document.getDocumentIdWrapper()).get(initialLength);
+            AbstractProductProcessITextEvent reportedEvent = access.publicGetEvents(document.getDocumentIdWrapper()).get(initialLength);
             Assert.assertTrue(reportedEvent instanceof ConfirmedEventWrapper);
             ConfirmedEventWrapper wrappedEvent = (ConfirmedEventWrapper) reportedEvent;
             Assert.assertEquals(event, wrappedEvent.getEvent());
@@ -87,12 +90,12 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
 
             ITextTestEvent event = new ITextTestEvent(document.getDocumentIdWrapper(),
                     ITextCoreProductData.getInstance(), null, "test-event", EventConfirmationType.ON_DEMAND);
-            int initialLength = access.getEvents(document.getDocumentIdWrapper()).size();
+            int initialLength = access.publicGetEvents(document.getDocumentIdWrapper()).size();
 
             EventManager.getInstance().onEvent(event);
             new FlushPdfDocumentEvent(document).doAction();
 
-            AbstractProductProcessITextEvent reportedEvent = access.getEvents(document.getDocumentIdWrapper()).get(initialLength);
+            AbstractProductProcessITextEvent reportedEvent = access.publicGetEvents(document.getDocumentIdWrapper()).get(initialLength);
             Assert.assertFalse(reportedEvent instanceof ConfirmedEventWrapper);
         }
     }
@@ -103,18 +106,18 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
                 PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
 
             ITextTestEvent event = new ITextTestEvent(document.getDocumentIdWrapper(), ITextCoreProductData.getInstance(), null, "test-event", EventConfirmationType.ON_DEMAND);
-            int initialLength = access.getEvents(document.getDocumentIdWrapper()).size();
+            int initialLength = access.publicGetEvents(document.getDocumentIdWrapper()).size();
 
             EventManager.getInstance().onEvent(event);
 
-            AbstractProductProcessITextEvent reportedEvent = access.getEvents(document.getDocumentIdWrapper()).get(initialLength);
+            AbstractProductProcessITextEvent reportedEvent = access.publicGetEvents(document.getDocumentIdWrapper()).get(initialLength);
             Assert.assertFalse(reportedEvent instanceof ConfirmedEventWrapper);
             Assert.assertEquals(event, reportedEvent);
 
             EventManager.getInstance().onEvent(new ConfirmEvent(document.getDocumentIdWrapper(), event));
             new FlushPdfDocumentEvent(document).doAction();
 
-            AbstractProductProcessITextEvent confirmedEvent = access.getEvents(document.getDocumentIdWrapper()).get(initialLength);
+            AbstractProductProcessITextEvent confirmedEvent = access.publicGetEvents(document.getDocumentIdWrapper()).get(initialLength);
             Assert.assertTrue(confirmedEvent instanceof ConfirmedEventWrapper);
             ConfirmedEventWrapper wrappedEvent = (ConfirmedEventWrapper) confirmedEvent;
             Assert.assertEquals(event, wrappedEvent.getEvent());
@@ -131,7 +134,7 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
             try (ProductEventHandlerAccess access = new ProductEventHandlerAccess();
                     PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
 
-            access.addEvent(document.getDocumentIdWrapper(), getEvent("unknown product", document.getDocumentIdWrapper()));
+            access.publicAddEvent(document.getDocumentIdWrapper(), getEvent("unknown product", document.getDocumentIdWrapper()));
 
             AssertUtil.doesNotThrow(() -> new FlushPdfDocumentEvent(document).doAction());
         }

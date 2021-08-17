@@ -43,7 +43,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;

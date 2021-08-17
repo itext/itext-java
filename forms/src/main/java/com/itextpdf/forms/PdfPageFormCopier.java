@@ -45,7 +45,7 @@ package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.IPdfPageExtraCopier;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;

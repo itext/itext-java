@@ -43,7 +43,7 @@
 package com.itextpdf.signatures.testutils.builder;
 
 
-import com.itextpdf.events.util.DateTimeUtil;
+import com.itextpdf.events.utils.DateTimeUtil;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.CertificateEncodingException;

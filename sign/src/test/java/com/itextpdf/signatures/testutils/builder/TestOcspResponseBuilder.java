@@ -42,7 +42,7 @@
  */
 package com.itextpdf.signatures.testutils.builder;
 
-import com.itextpdf.events.util.DateTimeUtil;
+import com.itextpdf.events.utils.DateTimeUtil;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.Extension;

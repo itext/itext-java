@@ -42,7 +42,7 @@
  */
 package com.itextpdf.signatures.testutils.client;
 
-import com.itextpdf.events.util.DateTimeUtil;
+import com.itextpdf.events.utils.DateTimeUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;

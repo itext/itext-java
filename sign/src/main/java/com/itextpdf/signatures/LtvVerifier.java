@@ -44,9 +44,9 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.events.util.DateTimeUtil;
-import com.itextpdf.events.util.MessageFormatUtil;
-import com.itextpdf.kernel.counter.event.IMetaInfo;
+import com.itextpdf.events.utils.DateTimeUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.events.contexts.IMetaInfo;
 import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;

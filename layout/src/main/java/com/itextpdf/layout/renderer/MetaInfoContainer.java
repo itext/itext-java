@@ -22,7 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.kernel.counter.event.IMetaInfo;
+import com.itextpdf.events.contexts.IMetaInfo;
 
 /**
  * Class to store metaInfo that will be used for layout renderers.

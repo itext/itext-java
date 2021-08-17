@@ -42,7 +42,7 @@
  */
 package com.itextpdf.io.util;
 
-import com.itextpdf.events.util.DateTimeUtil;
+import com.itextpdf.events.utils.DateTimeUtil;
 
 import java.io.BufferedReader;
 import java.io.File;

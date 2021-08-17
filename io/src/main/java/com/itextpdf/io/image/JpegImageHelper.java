@@ -49,7 +49,7 @@ import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.colors.IccProfile;
 
 import java.io.InputStream;
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import java.util.HashMap;
 import java.util.Map;
 

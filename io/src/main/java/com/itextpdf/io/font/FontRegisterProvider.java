@@ -48,7 +48,7 @@ import com.itextpdf.io.font.constants.FontStyles;
 import com.itextpdf.io.font.constants.StandardFontFamilies;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.util.FileUtil;
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

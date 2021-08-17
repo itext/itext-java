@@ -43,7 +43,7 @@
  */
 package com.itextpdf.layout.properties;
 
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 
 /**
  * A specialized class that holds a value and the unit it is measured in.

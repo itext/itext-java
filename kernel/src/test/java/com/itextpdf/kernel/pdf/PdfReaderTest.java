@@ -48,7 +48,7 @@ import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.FileUtil;
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.utils.CompareTool;

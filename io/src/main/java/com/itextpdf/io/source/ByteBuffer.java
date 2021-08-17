@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.source;
 
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 
 public class ByteBuffer {
 

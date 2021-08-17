@@ -50,7 +50,7 @@ import com.itextpdf.io.font.woff2.FontCompressionException;
 import com.itextpdf.io.font.woff2.Woff2Converter;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 
 import java.util.Set;
 

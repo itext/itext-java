@@ -44,7 +44,7 @@
 package com.itextpdf.layout.borders;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Point;

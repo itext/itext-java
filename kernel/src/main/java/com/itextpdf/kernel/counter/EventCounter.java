@@ -43,10 +43,10 @@
  */
 package com.itextpdf.kernel.counter;
 
-import com.itextpdf.kernel.counter.context.IContext;
-import com.itextpdf.kernel.counter.context.UnknownContext;
+import com.itextpdf.events.contexts.IContext;
+import com.itextpdf.events.contexts.UnknownContext;
 import com.itextpdf.kernel.counter.event.IEvent;
-import com.itextpdf.kernel.counter.event.IMetaInfo;
+import com.itextpdf.events.contexts.IMetaInfo;
 
 /**
  * Class that can be extended if you want to count iText events, for example the number of documents

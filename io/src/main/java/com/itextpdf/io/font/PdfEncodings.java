@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.font;
 
-import com.itextpdf.events.util.EncodingUtil;
+import com.itextpdf.events.utils.EncodingUtil;
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.util.IntHashtable;
 

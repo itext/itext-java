@@ -22,12 +22,13 @@
  */
 package com.itextpdf.kernel.actions.events;
 
-import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
-import com.itextpdf.kernel.actions.ProductEventHandlerAccess;
-import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
+import com.itextpdf.events.AbstractProductProcessITextEvent;
+import com.itextpdf.events.confirmations.ConfirmedEventWrapper;
 import com.itextpdf.events.sequence.AbstractIdentifiableElement;
 import com.itextpdf.events.sequence.SequenceId;
 import com.itextpdf.events.sequence.SequenceIdManager;
+import com.itextpdf.kernel.actions.ProductEventHandlerAccess;
+import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.AssertUtil;
@@ -50,27 +51,27 @@ public class LinkDocumentIdEventTest extends ExtendedITextTest {
                 PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
 
             SequenceId sequenceId = new SequenceId();
-            access.addEvent(sequenceId, wrapEvent(new ITextTestEvent(sequenceId, null, "sequenceId-testing",
+            access.publicAddEvent(sequenceId, wrapEvent(new ITextTestEvent(sequenceId, null, "sequenceId-testing",
                     "test-product-0")));
-            access.addEvent(sequenceId, wrapEvent(new ITextTestEvent(sequenceId, null, "sequenceId-testing",
+            access.publicAddEvent(sequenceId, wrapEvent(new ITextTestEvent(sequenceId, null, "sequenceId-testing",
                     "test-product-1")));
-            access.addEvent(sequenceId, wrapEvent(new ITextTestEvent(sequenceId, null, "sequenceId-testing",
+            access.publicAddEvent(sequenceId, wrapEvent(new ITextTestEvent(sequenceId, null, "sequenceId-testing",
                     "test-product-2")));
 
-            access.addEvent(document.getDocumentIdWrapper(), wrapEvent(new ITextTestEvent(document.getDocumentIdWrapper(), null, "document-testing",
+            access.publicAddEvent(document.getDocumentIdWrapper(), wrapEvent(new ITextTestEvent(document.getDocumentIdWrapper(), null, "document-testing",
                     "test-product-3")));
-            access.addEvent(document.getDocumentIdWrapper(), wrapEvent(new ITextTestEvent(document.getDocumentIdWrapper(), null, "document-testing",
+            access.publicAddEvent(document.getDocumentIdWrapper(), wrapEvent(new ITextTestEvent(document.getDocumentIdWrapper(), null, "document-testing",
                     "test-product-4")));
 
 
-            int initialSequenceEventsNumber = access.getEvents(sequenceId).size();
-            int initialDocumentEventsNumber = access.getEvents(document.getDocumentIdWrapper()).size();
+            int initialSequenceEventsNumber = access.publicGetEvents(sequenceId).size();
+            int initialDocumentEventsNumber = access.publicGetEvents(document.getDocumentIdWrapper()).size();
 
             new LinkDocumentIdEvent(document, sequenceId).doAction();
 
-            Assert.assertEquals(initialSequenceEventsNumber, access.getEvents(sequenceId).size());
+            Assert.assertEquals(initialSequenceEventsNumber, access.publicGetEvents(sequenceId).size());
 
-            List<AbstractProductProcessITextEvent> actualDocumentEvents = access.getEvents(document.getDocumentIdWrapper());
+            List<AbstractProductProcessITextEvent> actualDocumentEvents = access.publicGetEvents(document.getDocumentIdWrapper());
             Assert.assertEquals(initialDocumentEventsNumber + 3, actualDocumentEvents.size());
 
             for (int i = initialDocumentEventsNumber; i < initialDocumentEventsNumber + 3; i++) {
@@ -88,29 +89,29 @@ public class LinkDocumentIdEventTest extends ExtendedITextTest {
                 PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
 
             SequenceId sequenceId = new SequenceId();
-            access.addEvent(sequenceId, wrapEvent(new ITextTestEvent(sequenceId, null, "sequenceId-testing",
+            access.publicAddEvent(sequenceId, wrapEvent(new ITextTestEvent(sequenceId, null, "sequenceId-testing",
                     "test-product-0")));
-            access.addEvent(sequenceId, wrapEvent(new ITextTestEvent(sequenceId, null, "sequenceId-testing",
+            access.publicAddEvent(sequenceId, wrapEvent(new ITextTestEvent(sequenceId, null, "sequenceId-testing",
                     "test-product-1")));
-            access.addEvent(sequenceId, wrapEvent(new ITextTestEvent(sequenceId, null, "sequenceId-testing",
+            access.publicAddEvent(sequenceId, wrapEvent(new ITextTestEvent(sequenceId, null, "sequenceId-testing",
                     "test-product-2")));
 
-            access.addEvent(document.getDocumentIdWrapper(), wrapEvent(new ITextTestEvent(document.getDocumentIdWrapper(), null, "document-testing",
+            access.publicAddEvent(document.getDocumentIdWrapper(), wrapEvent(new ITextTestEvent(document.getDocumentIdWrapper(), null, "document-testing",
                     "test-product-3")));
-            access.addEvent(document.getDocumentIdWrapper(), wrapEvent(new ITextTestEvent(document.getDocumentIdWrapper(), null, "document-testing",
+            access.publicAddEvent(document.getDocumentIdWrapper(), wrapEvent(new ITextTestEvent(document.getDocumentIdWrapper(), null, "document-testing",
                     "test-product-4")));
 
 
-            int initialSequenceEventsNumber = access.getEvents(sequenceId).size();
-            int initialDocumentEventsNumber = access.getEvents(document.getDocumentIdWrapper()).size();
+            int initialSequenceEventsNumber = access.publicGetEvents(sequenceId).size();
+            int initialDocumentEventsNumber = access.publicGetEvents(document.getDocumentIdWrapper()).size();
 
             IdentifiableElement identifiableElement = new IdentifiableElement();
             SequenceIdManager.setSequenceId(identifiableElement, sequenceId);
             new LinkDocumentIdEvent(document, identifiableElement).doAction();
 
-            Assert.assertEquals(initialSequenceEventsNumber, access.getEvents(sequenceId).size());
+            Assert.assertEquals(initialSequenceEventsNumber, access.publicGetEvents(sequenceId).size());
 
-            List<AbstractProductProcessITextEvent> actualDocumentEvents = access.getEvents(document.getDocumentIdWrapper());
+            List<AbstractProductProcessITextEvent> actualDocumentEvents = access.publicGetEvents(document.getDocumentIdWrapper());
             Assert.assertEquals(initialDocumentEventsNumber + 3, actualDocumentEvents.size());
 
             for (int i = initialDocumentEventsNumber; i < initialDocumentEventsNumber + 3; i++) {
@@ -128,17 +129,17 @@ public class LinkDocumentIdEventTest extends ExtendedITextTest {
                 PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
 
             SequenceId sequenceId = new SequenceId();
-            access.addEvent(sequenceId, new ITextTestEvent(sequenceId, null, "sequenceId-testing",
+            access.publicAddEvent(sequenceId, new ITextTestEvent(sequenceId, null, "sequenceId-testing",
                     "test-product-1"));
 
-            access.addEvent(document.getDocumentIdWrapper(), new ITextTestEvent(sequenceId, null, "sequenceId-testing",
+            access.publicAddEvent(document.getDocumentIdWrapper(), new ITextTestEvent(sequenceId, null, "sequenceId-testing",
                     "test-product-1"));
 
             new LinkDocumentIdEvent(document, sequenceId).doAction();
 
             // Check that first event will be linked to document but it was the
             // similar to stored second event, but they have different instance
-            Assert.assertEquals(3, access.getEvents(document.getDocumentIdWrapper()).size());
+            Assert.assertEquals(3, access.publicGetEvents(document.getDocumentIdWrapper()).size());
 
         }
     }

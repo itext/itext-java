@@ -22,14 +22,10 @@
  */
 package com.itextpdf.kernel.actions;
 
+import com.itextpdf.events.AbstractProductProcessITextEvent;
+import com.itextpdf.events.EventManager;
 import com.itextpdf.events.ProductNameConstant;
-import com.itextpdf.events.exceptions.UnknownProductException;
-import com.itextpdf.events.util.MessageFormatUtil;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
-import com.itextpdf.kernel.actions.events.ConfirmEvent;
-import com.itextpdf.kernel.actions.events.ConfirmedEventWrapper;
-import com.itextpdf.kernel.actions.processors.DefaultITextProductEventProcessor;
-import com.itextpdf.events.sequence.SequenceId;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
@@ -51,98 +47,23 @@ public class ProductEventHandlerTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
-    public void unknownProductTest() {
-        ProductEventHandler handler = ProductEventHandler.INSTANCE;
-
-        junitExpectedException.expect(UnknownProductException.class);
-        junitExpectedException.expectMessage(
-                MessageFormatUtil.format(UnknownProductException.UNKNOWN_PRODUCT, "Unknown Product"));
-        
-        handler.onAcceptedEvent(new ITextTestEvent(new SequenceId(), null, "test-event",
-                "Unknown Product"));
-    }
-
-    @Test
-    public void sequenceIdBasedEventTest() {
-        ProductEventHandler handler = ProductEventHandler.INSTANCE;
-
-        SequenceId sequenceId = new SequenceId();
-
-        Assert.assertTrue(handler.getEvents(sequenceId).isEmpty());
-
-        handler.onAcceptedEvent(new ITextTestEvent(sequenceId, null, "test-event",
-                ProductNameConstant.ITEXT_CORE));
-
-        Assert.assertEquals(1, handler.getEvents(sequenceId).size());
-
-        AbstractProductProcessITextEvent event = handler.getEvents(sequenceId).get(0);
-        Assert.assertEquals(sequenceId.getId(), event.getSequenceId().getId());
-        Assert.assertNull(event.getMetaInfo());
-        Assert.assertEquals("test-event", event.getEventType());
-        Assert.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
-    }
-
-    @Test
     public void documentIdBasedEventTest() throws IOException {
-        ProductEventHandler handler = ProductEventHandler.INSTANCE;
+        ProductEventHandlerAccess handler = new ProductEventHandlerAccess();
 
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
 
-            int alreadyRegisteredEvents = handler.getEvents(document.getDocumentIdWrapper()).size();
-            handler.onAcceptedEvent(new ITextTestEvent(document.getDocumentIdWrapper(), null, "test-event",
+            int alreadyRegisteredEvents = handler.publicGetEvents(document.getDocumentIdWrapper()).size();
+            EventManager.getInstance().onEvent(new ITextTestEvent(document.getDocumentIdWrapper(), null, "test-event",
                     ProductNameConstant.ITEXT_CORE));
 
-            Assert.assertEquals(alreadyRegisteredEvents + 1, handler.getEvents(document.getDocumentIdWrapper()).size());
+            Assert.assertEquals(alreadyRegisteredEvents + 1, handler.publicGetEvents(document.getDocumentIdWrapper()).size());
 
-            DefaultITextProductEventProcessor processor = new DefaultITextProductEventProcessor(ProductNameConstant.ITEXT_CORE);
 
-            AbstractProductProcessITextEvent event = handler.getEvents(document.getDocumentIdWrapper()).get(alreadyRegisteredEvents);
+            AbstractProductProcessITextEvent event = handler.publicGetEvents(document.getDocumentIdWrapper()).get(alreadyRegisteredEvents);
             Assert.assertEquals(document.getDocumentIdWrapper(), event.getSequenceId());
-            Assert.assertNull(event.getMetaInfo());
             Assert.assertEquals("test-event", event.getEventType());
             Assert.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
             Assert.assertNotNull(event.getProductData());
         }
-    }
-
-    @Test
-    public void reportEventSeveralTimesTest() {
-        ProductEventHandler handler = ProductEventHandler.INSTANCE;
-
-        SequenceId sequenceId = new SequenceId();
-
-        Assert.assertTrue(handler.getEvents(sequenceId).isEmpty());
-
-        ITextTestEvent event = new ITextTestEvent(sequenceId, null, "test-event",
-                ProductNameConstant.ITEXT_CORE);
-        EventManager.getInstance().onEvent(event);
-
-        Assert.assertEquals(1, handler.getEvents(sequenceId).size());
-        Assert.assertEquals(event, handler.getEvents(sequenceId).get(0));
-
-        EventManager.getInstance().onEvent(event);
-        Assert.assertEquals(2, handler.getEvents(sequenceId).size());
-        Assert.assertEquals(event, handler.getEvents(sequenceId).get(0));
-        Assert.assertEquals(event, handler.getEvents(sequenceId).get(1));
-    }
-
-    @Test
-    public void confirmEventTest() {
-        ProductEventHandler handler = ProductEventHandler.INSTANCE;
-
-        SequenceId sequenceId = new SequenceId();
-
-        Assert.assertTrue(handler.getEvents(sequenceId).isEmpty());
-
-        ITextTestEvent event = new ITextTestEvent(sequenceId, null, "test-event",
-                ProductNameConstant.ITEXT_CORE);
-        EventManager.getInstance().onEvent(event);
-
-        ConfirmEvent confirmEvent = new ConfirmEvent(sequenceId, event);
-        EventManager.getInstance().onEvent(confirmEvent);
-
-        Assert.assertEquals(1, handler.getEvents(sequenceId).size());
-        Assert.assertTrue(handler.getEvents(sequenceId).get(0) instanceof ConfirmedEventWrapper);
-        Assert.assertEquals(event, ((ConfirmedEventWrapper) handler.getEvents(sequenceId).get(0)).getEvent());
     }
 }

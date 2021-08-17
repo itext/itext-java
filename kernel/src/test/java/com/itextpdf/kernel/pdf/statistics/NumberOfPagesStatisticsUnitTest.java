@@ -22,9 +22,9 @@
  */
 package com.itextpdf.kernel.pdf.statistics;
 
+import com.itextpdf.events.logs.EventsLogMessageConstant;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
-import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -78,7 +78,7 @@ public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.INVALID_STATISTICS_NAME))
+    @LogMessages(messages = @LogMessage(messageTemplate = EventsLogMessageConstant.INVALID_STATISTICS_NAME))
     public void invalidStatisticsNameEventTest() {
         NumberOfPagesStatisticsEvent event = new NumberOfPagesStatisticsEvent(5, ITextCoreProductData.getInstance());
         Assert.assertNull(event.createStatisticsAggregatorFromName("invalid name"));

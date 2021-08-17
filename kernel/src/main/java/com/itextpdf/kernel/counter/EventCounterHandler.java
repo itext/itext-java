@@ -43,9 +43,10 @@
  */
 package com.itextpdf.kernel.counter;
 
-import com.itextpdf.kernel.counter.context.IContext;
+import com.itextpdf.events.contexts.ContextManager;
+import com.itextpdf.events.contexts.IContext;
+import com.itextpdf.events.contexts.IMetaInfo;
 import com.itextpdf.kernel.counter.event.IEvent;
-import com.itextpdf.kernel.counter.event.IMetaInfo;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -110,7 +111,7 @@ public class EventCounterHandler {
                     }
                     contextInitialized = true;
                 }
-                if ((context != null && context.allow(event)) || (context == null && counter.fallback.allow(event))) {
+                if (context != null) {
                     counter.onEvent(event, metaInfo);
                 }
             }

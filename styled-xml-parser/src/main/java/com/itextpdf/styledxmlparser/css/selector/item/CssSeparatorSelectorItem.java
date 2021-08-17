@@ -42,7 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.css.selector.item;
 
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.node.INode;
 
 /**

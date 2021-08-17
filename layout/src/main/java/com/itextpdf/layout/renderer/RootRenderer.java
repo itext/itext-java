@@ -44,8 +44,8 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.events.util.MessageFormatUtil;
-import com.itextpdf.kernel.actions.EventManager;
+import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.events.EventManager;
 import com.itextpdf.kernel.actions.events.LinkDocumentIdEvent;
 import com.itextpdf.events.sequence.AbstractIdentifiableElement;
 import com.itextpdf.kernel.geom.Rectangle;

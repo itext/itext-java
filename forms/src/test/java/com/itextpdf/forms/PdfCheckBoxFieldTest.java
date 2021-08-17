@@ -43,7 +43,7 @@
 package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfFormField;
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;

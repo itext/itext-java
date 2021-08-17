@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.utils.objectpathitems;
 
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import org.w3c.dom.Document;

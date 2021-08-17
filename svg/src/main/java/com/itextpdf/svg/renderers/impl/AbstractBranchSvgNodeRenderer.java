@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;

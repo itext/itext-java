@@ -42,7 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.resolver.resource;
 
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 
 import java.net.MalformedURLException;
 import java.net.URI;

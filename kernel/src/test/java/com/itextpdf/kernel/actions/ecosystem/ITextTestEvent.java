@@ -22,11 +22,11 @@
  */
 package com.itextpdf.kernel.actions.ecosystem;
 
+import com.itextpdf.events.AbstractProductProcessITextEvent;
+import com.itextpdf.events.confirmations.EventConfirmationType;
+import com.itextpdf.events.contexts.IMetaInfo;
 import com.itextpdf.events.data.ProductData;
-import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
-import com.itextpdf.kernel.actions.events.EventConfirmationType;
 import com.itextpdf.events.sequence.SequenceId;
-import com.itextpdf.kernel.counter.event.IMetaInfo;
 
 public class ITextTestEvent extends AbstractProductProcessITextEvent {
     private final String eventType;

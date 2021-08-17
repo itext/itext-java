@@ -22,7 +22,9 @@
  */
 package com.itextpdf.kernel.actions;
 
-import com.itextpdf.kernel.actions.processors.ITextProductEventProcessor;
+import com.itextpdf.events.AbstractITextConfigurationEvent;
+import com.itextpdf.events.AbstractProductProcessITextEvent;
+import com.itextpdf.events.processors.ITextProductEventProcessor;
 import com.itextpdf.events.sequence.SequenceId;
 
 import java.io.Closeable;
@@ -32,33 +34,38 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This class is used for testing purposes to have an access to {@link ProductEventHandler}. Note
+ * This class is used for testing purposes to have an access to ProductEventHandler. Note
  * that work with it may access further tests because the state of ProductEventHandler is shared
  * across application. It is strongly recommended to call {@link ProductEventHandlerAccess#close()}
  * method to return ProductEventHandler to initial state.
  */
-public class ProductEventHandlerAccess implements Closeable {
-    private Set<String> registeredProducts = new HashSet<>();
+public class ProductEventHandlerAccess extends AbstractITextConfigurationEvent implements Closeable {
+    private final Set<String> registeredProducts = new HashSet<>();
 
-    public ITextProductEventProcessor addProcessor(ITextProductEventProcessor processor) {
+    public ITextProductEventProcessor publicAddProcessor(ITextProductEventProcessor processor) {
         registeredProducts.add(processor.getProductName());
-        return ProductEventHandler.INSTANCE.addProcessor(processor);
+        return super.addProcessor(processor);
     }
 
-    public ITextProductEventProcessor removeProcessor(String productName) {
-        return ProductEventHandler.INSTANCE.removeProcessor(productName);
+    public ITextProductEventProcessor publicRemoveProcessor(String productName) {
+        return super.removeProcessor(productName);
     }
 
-    public Map<String, ITextProductEventProcessor> getProcessors() {
-        return ProductEventHandler.INSTANCE.getProcessors();
+    public Map<String, ITextProductEventProcessor> publicGetProcessors() {
+        return super.getProcessors();
     }
 
-    public List<AbstractProductProcessITextEvent> getEvents(SequenceId id) {
-        return ProductEventHandler.INSTANCE.getEvents(id);
+    public List<AbstractProductProcessITextEvent> publicGetEvents(SequenceId id) {
+        return super.getEvents(id);
     }
 
-    public void addEvent(SequenceId id, AbstractProductProcessITextEvent event) {
-        ProductEventHandler.INSTANCE.addEvent(id, event);
+    public void publicAddEvent(SequenceId id, AbstractProductProcessITextEvent event) {
+        super.addEvent(id, event);
+    }
+
+    @Override
+    protected void doAction() {
+        throw new IllegalStateException();
     }
 
     @Override

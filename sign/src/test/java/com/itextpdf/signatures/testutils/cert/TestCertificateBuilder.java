@@ -42,7 +42,7 @@
  */
 package com.itextpdf.signatures.testutils.cert;
 
-import com.itextpdf.events.util.DateTimeUtil;
+import com.itextpdf.events.utils.DateTimeUtil;
 import com.itextpdf.io.util.SystemUtil;
 import java.io.IOException;
 import java.math.BigInteger;

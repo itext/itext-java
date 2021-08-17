@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.counter.event.IMetaInfo;
+import com.itextpdf.events.contexts.IMetaInfo;
 
 public class DocumentProperties {
 

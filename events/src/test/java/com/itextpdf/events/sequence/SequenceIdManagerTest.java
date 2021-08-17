@@ -23,7 +23,7 @@
 package com.itextpdf.events.sequence;
 
 import com.itextpdf.events.exceptions.EventsExceptionMessageConstant;
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 

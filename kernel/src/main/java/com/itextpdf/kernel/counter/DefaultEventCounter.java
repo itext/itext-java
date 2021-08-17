@@ -45,9 +45,9 @@ package com.itextpdf.kernel.counter;
 
 import com.itextpdf.io.codec.Base64;
 import com.itextpdf.kernel.Version;
-import com.itextpdf.kernel.counter.context.UnknownContext;
+import com.itextpdf.events.contexts.UnknownContext;
 import com.itextpdf.kernel.counter.event.IEvent;
-import com.itextpdf.kernel.counter.event.IMetaInfo;
+import com.itextpdf.events.contexts.IMetaInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

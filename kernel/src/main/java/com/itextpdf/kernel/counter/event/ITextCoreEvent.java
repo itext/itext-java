@@ -22,9 +22,10 @@
  */
 package com.itextpdf.kernel.counter.event;
 
+import com.itextpdf.events.contexts.IMetaInfo;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
-import com.itextpdf.kernel.actions.AbstractProductProcessITextEvent;
-import com.itextpdf.kernel.actions.events.EventConfirmationType;
+import com.itextpdf.events.AbstractProductProcessITextEvent;
+import com.itextpdf.events.confirmations.EventConfirmationType;
 import com.itextpdf.events.sequence.SequenceId;
 
 /**

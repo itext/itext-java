@@ -45,7 +45,7 @@ package com.itextpdf.kernel.utils;
 
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.counter.event.IMetaInfo;
+import com.itextpdf.events.contexts.IMetaInfo;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfDocument;

@@ -43,7 +43,7 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;

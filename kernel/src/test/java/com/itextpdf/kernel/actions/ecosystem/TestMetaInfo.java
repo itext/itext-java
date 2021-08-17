@@ -22,7 +22,7 @@
  */
 package com.itextpdf.kernel.actions.ecosystem;
 
-import com.itextpdf.kernel.counter.event.IMetaInfo;
+import com.itextpdf.events.contexts.IMetaInfo;
 
 public class TestMetaInfo implements IMetaInfo {
     private final String metaData;

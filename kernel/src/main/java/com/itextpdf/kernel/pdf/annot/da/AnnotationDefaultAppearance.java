@@ -43,7 +43,7 @@
 package com.itextpdf.kernel.pdf.annot.da;
 
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;

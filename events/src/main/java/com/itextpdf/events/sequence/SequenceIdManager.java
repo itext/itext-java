@@ -23,7 +23,7 @@
 package com.itextpdf.events.sequence;
 
 import com.itextpdf.events.exceptions.EventsExceptionMessageConstant;
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 
 /**
  * Util class which is responsible for marking of {@link AbstractIdentifiableElement} with

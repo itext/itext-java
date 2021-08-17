@@ -43,9 +43,9 @@
  */
 package com.itextpdf.kernel.counter;
 
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.kernel.counter.event.IEvent;
-import com.itextpdf.kernel.counter.event.IMetaInfo;
+import com.itextpdf.events.contexts.IMetaInfo;
 
 /**
  * A {@link EventCounter} implementation that outputs event type to {@link System#out}

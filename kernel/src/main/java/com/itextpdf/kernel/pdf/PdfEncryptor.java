@@ -48,7 +48,7 @@ import java.io.OutputStream;
 import java.security.PrivateKey;
 import java.util.Map;
 
-import com.itextpdf.kernel.counter.event.IMetaInfo;
+import com.itextpdf.events.contexts.IMetaInfo;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.Recipient;
 import org.bouncycastle.cms.RecipientInformation;

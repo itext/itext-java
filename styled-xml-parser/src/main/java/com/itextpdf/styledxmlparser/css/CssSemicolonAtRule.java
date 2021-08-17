@@ -42,7 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.css;
 
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 
 /**
  * A {@link CssAtRule} implementation.

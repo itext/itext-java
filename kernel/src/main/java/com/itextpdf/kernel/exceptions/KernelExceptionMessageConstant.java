@@ -200,9 +200,6 @@ public final class KernelExceptionMessageConstant {
             + "must be PdfDictionary.";
     public static final String INVALID_RANGE_ARRAY = "Invalid range array.";
     public static final String INVALID_OFFSET_FOR_THIS_OBJECT = "Invalid offset for object {0}.";
-    public static final String INVALID_USAGE_FORMAT_REQUIRED = "Invalid usage of placeholder \"{0}\": format is required";
-    public static final String INVALID_USAGE_CONFIGURATION_FORBIDDEN = "Invalid usage of placeholder \"{0}\": any "
-            + "configuration is forbidden";
     public static final String INVALID_XREF_STREAM = "Invalid xref stream.";
     public static final String INVALID_XREF_TABLE = "Invalid xref table.";
     public static final String IO_EXCEPTION = "I/O exception.";
@@ -212,7 +209,6 @@ public final class KernelExceptionMessageConstant {
     public static final String MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY
             = "Missing required field {0} in font dictionary.";
     public static final String MUST_BE_A_TAGGED_DOCUMENT = "Must be a tagged document.";
-    public static final String NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT = "No events were registered for the document!";
     public static final String NOT_A_VALID_PLACEABLE_WINDOWS_METAFILE = "{0} is not a valid placeable windows "
             + "metafile.";
     public static final String NUMBER_OF_ENTRIES_IN_THIS_XREF_SUBSECTION_NOT_FOUND = "Number of entries in this xref "
@@ -242,9 +238,6 @@ public final class KernelExceptionMessageConstant {
                     + "to this document ({2}).";
     public static final String PAGE_IS_NOT_SET_FOR_THE_PDF_TAG_STRUCTURE = "Page is not set for the pdf tag structure.";
     public static final String PAGE_ALREADY_FLUSHED = "The page has been already flushed.";
-    public static final String PATTERN_CONTAINS_OPEN_QUOTATION = "Pattern contains open quotation!";
-    public static final String PATTERN_CONTAINS_UNEXPECTED_CHARACTER = "Pattern contains unexpected character {0}";
-    public static final String PATTERN_CONTAINS_UNEXPECTED_COMPONENT = "Pattern contains unexpected component {0}";
     public static final String PDF_ENCRYPTION = "PdfEncryption exception.";
     public static final String PDF_DECRYPTION = "Exception occurred with PDF document decryption. One of the possible "
             + "reasons is wrong password or wrong public key certificate and private key.";
@@ -259,7 +252,6 @@ public final class KernelExceptionMessageConstant {
     public static final String PDF_INDIRECT_OBJECT_BELONGS_TO_OTHER_PDF_DOCUMENT = "Pdf indirect object belongs to "
             + "other PDF document. Copy object to current pdf document.";
     public static final String PDF_VERSION_IS_NOT_VALID = "PDF version is not valid.";
-    public static final String PRODUCT_NAME_CAN_NOT_BE_NULL = "Product name can not be null.";
     public static final String REF_ARRAY_ITEMS_IN_STRUCTURE_ELEMENT_DICTIONARY_SHALL_BE_INDIRECT_OBJECTS = "Ref array "
             + "items in structure element dictionary shall be indirect objects.";
     public static final String REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS = "Requested page number {0} is out of bounds.";

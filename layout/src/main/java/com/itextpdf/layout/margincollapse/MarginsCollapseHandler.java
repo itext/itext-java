@@ -43,7 +43,7 @@
 package com.itextpdf.layout.margincollapse;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.properties.FloatPropertyValue;

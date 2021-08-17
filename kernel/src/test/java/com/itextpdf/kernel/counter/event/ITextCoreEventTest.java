@@ -43,10 +43,10 @@
 package com.itextpdf.kernel.counter.event;
 
 import com.itextpdf.events.ProductNameConstant;
+import com.itextpdf.events.confirmations.EventConfirmationType;
+import com.itextpdf.events.sequence.SequenceId;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.actions.ecosystem.TestMetaInfo;
-import com.itextpdf.kernel.actions.events.EventConfirmationType;
-import com.itextpdf.events.sequence.SequenceId;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 

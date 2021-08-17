@@ -44,7 +44,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.ArrayUtil;
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;

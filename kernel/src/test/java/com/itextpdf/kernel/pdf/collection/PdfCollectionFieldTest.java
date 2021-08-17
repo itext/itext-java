@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf.collection;
 
-import com.itextpdf.events.util.MessageFormatUtil;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
