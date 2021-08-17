@@ -116,7 +116,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * Default page size.
      * New page by default will be created with this size.
      */
-    protected PageSize defaultPageSize = PageSize.Default;
+    private PageSize defaultPageSize = PageSize.DEFAULT;
 
     protected EventDispatcher eventDispatcher = new EventDispatcher();
 
@@ -702,8 +702,9 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Gets default page size.
+     * New pages by default are created with this size.
      *
-     * @return default page size.
+     * @return default page size
      */
     public PageSize getDefaultPageSize() {
         return defaultPageSize;
@@ -711,8 +712,9 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Sets default page size.
+     * New pages by default will be created with this size.
      *
-     * @param pageSize page size to be set as default.
+     * @param pageSize page size to be set as default
      */
     public void setDefaultPageSize(PageSize pageSize) {
         defaultPageSize = pageSize;
@@ -1058,7 +1060,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * Specifies that document shall contain tag structure.
      * See ISO 32000-1, section 14.8 "Tagged PDF"
      *
-     * @return this PdfDocument
+     * @return this {@link PdfDocument} instance
      */
     public PdfDocument setTagged() {
         checkClosingStatus();

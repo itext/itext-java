@@ -75,7 +75,7 @@ public class SvgIntegrationTest extends ExtendedITextTest {
     }
 
     public void convert(String svg, String output) throws IOException {
-        convert(svg, output, PageSize.Default);
+        convert(svg, output, PageSize.DEFAULT);
     }
 
     public void convert(String svg, String output, PageSize size) throws IOException {
@@ -124,7 +124,7 @@ public class SvgIntegrationTest extends ExtendedITextTest {
     }
 
     public void convertAndCompare(String src, String dest, String fileName) throws IOException, InterruptedException {
-        convertAndCompare(src, dest, fileName, PageSize.Default);
+        convertAndCompare(src, dest, fileName, PageSize.DEFAULT);
     }
 
     public void convertAndCompare(String src, String dest, String fileName, PageSize size) throws IOException, InterruptedException {

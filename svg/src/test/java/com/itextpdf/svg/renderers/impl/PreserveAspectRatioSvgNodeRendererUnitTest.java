@@ -40,7 +40,7 @@ import java.util.Map;
 @Category(UnitTest.class)
 public class PreserveAspectRatioSvgNodeRendererUnitTest extends ExtendedITextTest {
 
-    private static final Rectangle VIEWPORT_VALUE = PageSize.Default;
+    private static final Rectangle VIEWPORT_VALUE = PageSize.DEFAULT;
     private static final float[] VIEWBOX_VALUES = new float[]{0, 0, 300, 400};
 
     @Test

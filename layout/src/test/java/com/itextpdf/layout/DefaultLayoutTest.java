@@ -50,15 +50,12 @@ import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
@@ -105,7 +102,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         Paragraph p = new Paragraph("Hello. I am a paragraph. I want you to process me correctly");
-        document.add(p).add(p).add(new AreaBreak(PageSize.Default)).add(p);
+        document.add(p).add(p).add(new AreaBreak(PageSize.DEFAULT)).add(p);
 
         document.close();
 
@@ -123,7 +120,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
         String str = "Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.";
         document.add(new Paragraph(new Text(str).setBackgroundColor(ColorConstants.RED)).setBackgroundColor(ColorConstants.GREEN)).
                 add(new Paragraph(str)).
-                add(new AreaBreak(PageSize.Default)).
+                add(new AreaBreak(PageSize.DEFAULT)).
                 add(new Paragraph(str));
 
         document.close();
@@ -301,7 +298,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
         baos.close();
 
         PdfDocument newDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes)));
-        Assert.assertTrue(PageSize.Default.equalsWithEpsilon(newDoc.getPage(1).getPageSize()));
+        Assert.assertTrue(PageSize.DEFAULT.equalsWithEpsilon(newDoc.getPage(1).getPageSize()));
         newDoc.close();
     }
 

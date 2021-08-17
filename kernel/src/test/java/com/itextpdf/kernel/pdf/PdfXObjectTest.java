@@ -104,7 +104,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
         for (int i = 0; i < 4; i++) {
             PdfPage page = document.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
-            canvas.addXObjectFittedIntoRectangle(images[i], PageSize.Default);
+            canvas.addXObjectFittedIntoRectangle(images[i], PageSize.DEFAULT);
             page.flush();
         }
         PdfPage page = document.addNewPage();

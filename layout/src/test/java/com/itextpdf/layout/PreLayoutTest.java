@@ -84,7 +84,7 @@ public class PreLayoutTest extends ExtendedITextTest{
         String cmpFileName = sourceFolder + "cmp_preLayoutTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName)).setTagged();
 
-        Document document = new Document(pdfDocument, PageSize.Default, false);
+        Document document = new Document(pdfDocument, PageSize.DEFAULT, false);
 
         List<Text> pageNumberTexts = new ArrayList<>();
         List<IRenderer> pageNumberRenderers = new ArrayList<>();
@@ -124,7 +124,7 @@ public class PreLayoutTest extends ExtendedITextTest{
         String cmpFileName = sourceFolder + "cmp_preLayoutTest02.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
 
-        Document document = new Document(pdfDoc, PageSize.Default, false);
+        Document document = new Document(pdfDoc, PageSize.DEFAULT, false);
 
         document.add(new Paragraph("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
 
@@ -164,7 +164,7 @@ public class PreLayoutTest extends ExtendedITextTest{
         String cmpFileName = sourceFolder + "cmp_columnDocumentRendererRelayoutTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName)).setTagged();
 
-        Document document = new Document(pdfDoc, PageSize.Default, false);
+        Document document = new Document(pdfDoc, PageSize.DEFAULT, false);
         Rectangle column1 = new Rectangle(40, 40, 200, 720);
         Rectangle column2 = new Rectangle(300, 40, 200, 720);
         document.setRenderer(new ColumnDocumentRenderer(document, false, new Rectangle[] {column1, column2}));
