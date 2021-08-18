@@ -137,7 +137,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.events.utils.FileUtil;
+import com.itextpdf.commons.utils.FileUtil;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;

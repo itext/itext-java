@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.renderers.factories;
 
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;

@@ -22,9 +22,9 @@
  */
 package com.itextpdf.layout.testutil;
 
-import com.itextpdf.events.AbstractITextConfigurationEvent;
-import com.itextpdf.events.AbstractProductProcessITextEvent;
-import com.itextpdf.events.sequence.SequenceId;
+import com.itextpdf.commons.actions.AbstractITextConfigurationEvent;
+import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
+import com.itextpdf.commons.actions.sequence.SequenceId;
 
 import java.util.List;
 

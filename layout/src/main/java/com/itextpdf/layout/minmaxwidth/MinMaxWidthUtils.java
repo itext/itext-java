@@ -43,7 +43,7 @@
 package com.itextpdf.layout.minmaxwidth;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.borders.Border;

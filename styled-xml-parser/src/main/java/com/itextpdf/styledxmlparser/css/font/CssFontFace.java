@@ -22,7 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.font;
 
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.util.FontFamilySplitterUtil;

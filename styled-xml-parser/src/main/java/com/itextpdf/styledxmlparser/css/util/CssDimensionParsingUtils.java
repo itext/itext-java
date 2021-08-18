@@ -22,7 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.util;
 
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.styledxmlparser.LogMessageConstant;

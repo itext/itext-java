@@ -45,7 +45,7 @@ package com.itextpdf.io.font.otf;
 
 import com.itextpdf.io.util.TextUtil;
 
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import java.util.Arrays;
 
 public class Glyph {

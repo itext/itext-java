@@ -22,14 +22,14 @@
  */
 package com.itextpdf.kernel.actions.events;
 
-import com.itextpdf.events.AbstractProductProcessITextEvent;
-import com.itextpdf.events.EventManager;
-import com.itextpdf.events.confirmations.ConfirmEvent;
-import com.itextpdf.events.confirmations.ConfirmedEventWrapper;
-import com.itextpdf.events.confirmations.EventConfirmationType;
-import com.itextpdf.events.data.ProductData;
-import com.itextpdf.events.processors.ITextProductEventProcessor;
-import com.itextpdf.events.sequence.SequenceId;
+import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
+import com.itextpdf.commons.actions.EventManager;
+import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
+import com.itextpdf.commons.actions.confirmations.ConfirmedEventWrapper;
+import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
+import com.itextpdf.commons.actions.data.ProductData;
+import com.itextpdf.commons.actions.processors.ITextProductEventProcessor;
+import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.actions.ProductEventHandlerAccess;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;

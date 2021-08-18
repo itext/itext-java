@@ -42,7 +42,7 @@
  */
 package com.itextpdf.io.source;
 
-import com.itextpdf.events.utils.FileUtil;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 

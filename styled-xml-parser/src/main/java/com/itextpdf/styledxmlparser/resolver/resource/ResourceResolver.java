@@ -42,8 +42,8 @@
  */
 package com.itextpdf.styledxmlparser.resolver.resource;
 
-import com.itextpdf.events.utils.Base64;
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;

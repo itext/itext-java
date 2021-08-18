@@ -46,7 +46,7 @@ package com.itextpdf.io.font;
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.events.utils.FileUtil;
+import com.itextpdf.commons.utils.FileUtil;
 
 /**
  * Use this class for working with true type collection font (*.ttc)

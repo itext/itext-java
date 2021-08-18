@@ -22,9 +22,9 @@
  */
 package com.itextpdf.kernel.actions;
 
-import com.itextpdf.events.AbstractProductProcessITextEvent;
-import com.itextpdf.events.EventManager;
-import com.itextpdf.events.ProductNameConstant;
+import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
+import com.itextpdf.commons.actions.EventManager;
+import com.itextpdf.commons.actions.ProductNameConstant;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;

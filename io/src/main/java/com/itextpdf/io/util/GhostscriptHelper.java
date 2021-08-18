@@ -43,9 +43,9 @@
  */
 package com.itextpdf.io.util;
 
-import com.itextpdf.events.utils.FileUtil;
-import com.itextpdf.events.utils.MessageFormatUtil;
-import com.itextpdf.events.utils.SystemUtil;
+import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.io.IoExceptionMessage;
 
 import java.io.IOException;

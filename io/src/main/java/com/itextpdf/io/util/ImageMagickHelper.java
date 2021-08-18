@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.util;
 
-import com.itextpdf.events.utils.SystemUtil;
+import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.io.IoExceptionMessage;
 
 import java.io.File;

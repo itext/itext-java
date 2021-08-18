@@ -22,7 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.gradients.GradientSpreadMethod;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.svg.SvgConstants.Attributes;

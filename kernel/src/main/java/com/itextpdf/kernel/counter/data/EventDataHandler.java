@@ -43,9 +43,9 @@
  */
 package com.itextpdf.kernel.counter.data;
 
-import com.itextpdf.events.utils.SystemUtil;
+import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.kernel.counter.event.IEvent;
-import com.itextpdf.events.contexts.IMetaInfo;
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
 
 import java.util.Collections;
 import java.util.List;

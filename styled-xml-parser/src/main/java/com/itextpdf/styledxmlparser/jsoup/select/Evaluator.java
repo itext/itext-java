@@ -22,7 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.select;
 
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
 import com.itextpdf.styledxmlparser.jsoup.internal.Normalizer;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Comment;

@@ -42,7 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.node.impl.jsoup;
 
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.IXmlParser;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;

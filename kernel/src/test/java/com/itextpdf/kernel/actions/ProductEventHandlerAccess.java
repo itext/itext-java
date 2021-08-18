@@ -22,10 +22,10 @@
  */
 package com.itextpdf.kernel.actions;
 
-import com.itextpdf.events.AbstractITextConfigurationEvent;
-import com.itextpdf.events.AbstractProductProcessITextEvent;
-import com.itextpdf.events.processors.ITextProductEventProcessor;
-import com.itextpdf.events.sequence.SequenceId;
+import com.itextpdf.commons.actions.AbstractITextConfigurationEvent;
+import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
+import com.itextpdf.commons.actions.processors.ITextProductEventProcessor;
+import com.itextpdf.commons.actions.sequence.SequenceId;
 
 import java.io.Closeable;
 import java.util.HashSet;

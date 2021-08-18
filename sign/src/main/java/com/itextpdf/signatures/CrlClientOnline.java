@@ -44,7 +44,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.events.utils.SystemUtil;
+import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;

@@ -43,7 +43,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 

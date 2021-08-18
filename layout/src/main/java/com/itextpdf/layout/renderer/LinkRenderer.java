@@ -48,7 +48,7 @@ import com.itextpdf.layout.element.Link;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.layout.layout.LayoutContext;
 
 public class LinkRenderer extends TextRenderer {

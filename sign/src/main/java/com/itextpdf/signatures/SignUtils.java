@@ -43,7 +43,7 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.events.utils.Base64;
+import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfEncryption;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;

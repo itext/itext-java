@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.crypto;
 
-import com.itextpdf.events.utils.SystemUtil;
+import com.itextpdf.commons.utils.SystemUtil;
 
 import java.nio.charset.StandardCharsets;
 

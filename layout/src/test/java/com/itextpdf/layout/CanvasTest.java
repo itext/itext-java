@@ -43,11 +43,11 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.events.EventManager;
-import com.itextpdf.events.AbstractProductProcessITextEvent;
-import com.itextpdf.events.sequence.AbstractIdentifiableElement;
-import com.itextpdf.events.sequence.SequenceId;
-import com.itextpdf.events.sequence.SequenceIdManager;
+import com.itextpdf.commons.actions.EventManager;
+import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
+import com.itextpdf.commons.actions.sequence.AbstractIdentifiableElement;
+import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.commons.actions.sequence.SequenceIdManager;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.counter.event.ITextCoreEvent;
 import com.itextpdf.kernel.geom.Rectangle;

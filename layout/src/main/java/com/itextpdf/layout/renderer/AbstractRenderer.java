@@ -44,7 +44,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.NumberUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;

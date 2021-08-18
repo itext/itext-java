@@ -43,8 +43,8 @@
  */
 package com.itextpdf.forms.fields;
 
-import com.itextpdf.events.utils.Base64;
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.fields.borders.FormBorderFactory;

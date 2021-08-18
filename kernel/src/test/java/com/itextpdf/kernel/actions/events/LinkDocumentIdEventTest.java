@@ -22,11 +22,11 @@
  */
 package com.itextpdf.kernel.actions.events;
 
-import com.itextpdf.events.AbstractProductProcessITextEvent;
-import com.itextpdf.events.confirmations.ConfirmedEventWrapper;
-import com.itextpdf.events.sequence.AbstractIdentifiableElement;
-import com.itextpdf.events.sequence.SequenceId;
-import com.itextpdf.events.sequence.SequenceIdManager;
+import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
+import com.itextpdf.commons.actions.confirmations.ConfirmedEventWrapper;
+import com.itextpdf.commons.actions.sequence.AbstractIdentifiableElement;
+import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.commons.actions.sequence.SequenceIdManager;
 import com.itextpdf.kernel.actions.ProductEventHandlerAccess;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.pdf.PdfDocument;

@@ -44,7 +44,7 @@ package com.itextpdf.kernel.counter;
 
 import com.itextpdf.kernel.counter.event.CoreEvent;
 import com.itextpdf.kernel.counter.event.IEvent;
-import com.itextpdf.events.contexts.IMetaInfo;
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;

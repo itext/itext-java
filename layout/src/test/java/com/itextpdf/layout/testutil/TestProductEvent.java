@@ -42,10 +42,10 @@
  */
 package com.itextpdf.layout.testutil;
 
-import com.itextpdf.events.AbstractProductProcessITextEvent;
+import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
-import com.itextpdf.events.confirmations.EventConfirmationType;
-import com.itextpdf.events.sequence.SequenceId;
+import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
+import com.itextpdf.commons.actions.sequence.SequenceId;
 
 public  class TestProductEvent extends AbstractProductProcessITextEvent {
     public TestProductEvent(SequenceId sequenceId) {

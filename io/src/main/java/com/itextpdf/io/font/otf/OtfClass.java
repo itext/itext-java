@@ -46,7 +46,7 @@ package com.itextpdf.io.font.otf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

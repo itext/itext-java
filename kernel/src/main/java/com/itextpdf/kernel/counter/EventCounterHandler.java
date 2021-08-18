@@ -43,9 +43,9 @@
  */
 package com.itextpdf.kernel.counter;
 
-import com.itextpdf.events.contexts.ContextManager;
-import com.itextpdf.events.contexts.IContext;
-import com.itextpdf.events.contexts.IMetaInfo;
+import com.itextpdf.commons.actions.contexts.ContextManager;
+import com.itextpdf.commons.actions.contexts.IContext;
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.kernel.counter.event.IEvent;
 
 import java.util.Map;

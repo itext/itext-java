@@ -44,7 +44,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.events.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.io.util.StreamUtil;
 
 import java.io.IOException;

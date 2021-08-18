@@ -44,7 +44,7 @@
 package com.itextpdf.kernel.colors;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

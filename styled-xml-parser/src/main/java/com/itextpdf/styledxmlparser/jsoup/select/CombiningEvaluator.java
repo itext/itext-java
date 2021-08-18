@@ -25,7 +25,7 @@ package com.itextpdf.styledxmlparser.jsoup.select;
 import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;

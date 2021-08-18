@@ -56,7 +56,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 
 @Category(IntegrationTest.class)
 public class DestinationTest extends ExtendedITextTest {

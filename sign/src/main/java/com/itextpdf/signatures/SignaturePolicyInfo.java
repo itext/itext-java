@@ -44,7 +44,7 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.events.utils.Base64;
+import com.itextpdf.commons.utils.Base64;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERIA5String;

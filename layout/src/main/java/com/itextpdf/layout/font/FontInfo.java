@@ -47,7 +47,7 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramDescriptor;
 import com.itextpdf.io.font.FontProgramDescriptorFactory;
 import com.itextpdf.io.util.ArrayUtil;
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
 
 import java.util.Arrays;

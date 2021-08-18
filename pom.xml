@@ -42,8 +42,8 @@
     </mailingList>
   </mailingLists>
   <modules>
+    <module>commons</module>
     <module>barcodes</module>
-    <module>events</module>
     <module>font-asian</module>
     <module>forms</module>
     <module>hyph</module>

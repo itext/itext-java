@@ -22,16 +22,16 @@
  */
 package com.itextpdf.kernel.actions.events;
 
-import com.itextpdf.events.confirmations.ConfirmEvent;
-import com.itextpdf.events.confirmations.ConfirmedEventWrapper;
-import com.itextpdf.events.confirmations.EventConfirmationType;
-import com.itextpdf.events.sequence.SequenceId;
-import com.itextpdf.events.utils.MessageFormatUtil;
-import com.itextpdf.events.AbstractITextConfigurationEvent;
-import com.itextpdf.events.AbstractProductProcessITextEvent;
-import com.itextpdf.events.EventManager;
-import com.itextpdf.events.processors.ITextProductEventProcessor;
-import com.itextpdf.events.producer.ProducerBuilder;
+import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
+import com.itextpdf.commons.actions.confirmations.ConfirmedEventWrapper;
+import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
+import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.actions.AbstractITextConfigurationEvent;
+import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
+import com.itextpdf.commons.actions.EventManager;
+import com.itextpdf.commons.actions.processors.ITextProductEventProcessor;
+import com.itextpdf.commons.actions.producer.ProducerBuilder;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 

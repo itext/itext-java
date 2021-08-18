@@ -46,7 +46,7 @@ package com.itextpdf.signatures;
 import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 
 /**
  * An exception that is thrown when something is wrong with a certificate.

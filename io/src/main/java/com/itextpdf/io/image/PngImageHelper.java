@@ -53,7 +53,7 @@ import com.itextpdf.io.source.ByteBuffer;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import org.slf4j.LoggerFactory;
 

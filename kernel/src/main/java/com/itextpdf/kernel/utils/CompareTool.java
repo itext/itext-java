@@ -45,13 +45,13 @@ package com.itextpdf.kernel.utils;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.events.utils.FileUtil;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.GhostscriptHelper;
 import com.itextpdf.io.util.ImageMagickHelper;
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.io.util.XmlUtil;
-import com.itextpdf.events.contexts.IMetaInfo;
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfArray;

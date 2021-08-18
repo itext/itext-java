@@ -12,7 +12,7 @@
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>events</artifactId>
+      <artifactId>commons</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

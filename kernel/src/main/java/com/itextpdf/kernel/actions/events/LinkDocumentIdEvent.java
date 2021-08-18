@@ -22,11 +22,11 @@
  */
 package com.itextpdf.kernel.actions.events;
 
-import com.itextpdf.events.AbstractITextConfigurationEvent;
-import com.itextpdf.events.AbstractProductProcessITextEvent;
-import com.itextpdf.events.sequence.AbstractIdentifiableElement;
-import com.itextpdf.events.sequence.SequenceId;
-import com.itextpdf.events.sequence.SequenceIdManager;
+import com.itextpdf.commons.actions.AbstractITextConfigurationEvent;
+import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
+import com.itextpdf.commons.actions.sequence.AbstractIdentifiableElement;
+import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.commons.actions.sequence.SequenceIdManager;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.lang.ref.WeakReference;

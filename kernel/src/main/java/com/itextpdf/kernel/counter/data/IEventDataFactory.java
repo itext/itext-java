@@ -44,7 +44,7 @@
 package com.itextpdf.kernel.counter.data;
 
 import com.itextpdf.kernel.counter.event.IEvent;
-import com.itextpdf.events.contexts.IMetaInfo;
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
 
 /**
  * Interface that is responsible for creating new instance of {@link EventData}.

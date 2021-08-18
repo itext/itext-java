@@ -25,7 +25,7 @@ package com.itextpdf.kernel.geom;
 
 import com.itextpdf.io.util.HashCode;
 
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 
 public class Point implements Cloneable {
 

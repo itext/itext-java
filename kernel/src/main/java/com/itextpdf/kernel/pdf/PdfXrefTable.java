@@ -45,7 +45,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.VersionInfo;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;

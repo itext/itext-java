@@ -59,7 +59,7 @@ import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.OutputStream;
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.PdfException;

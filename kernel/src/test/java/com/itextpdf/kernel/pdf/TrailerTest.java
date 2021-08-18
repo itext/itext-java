@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.events.utils.FileUtil;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.ProductInfo;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;

@@ -69,7 +69,7 @@ import com.itextpdf.layout.properties.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.layout.renderer.objectfit.ObjectFitApplyingResult;
 import com.itextpdf.layout.renderer.objectfit.ObjectFitCalculator;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;

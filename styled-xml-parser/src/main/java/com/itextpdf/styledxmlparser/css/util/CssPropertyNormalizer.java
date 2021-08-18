@@ -42,7 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.css.util;
 
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.PortUtil;
 import org.slf4j.LoggerFactory;

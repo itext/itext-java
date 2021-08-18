@@ -43,9 +43,9 @@
  */
 package com.itextpdf.kernel.counter;
 
-import com.itextpdf.events.contexts.IMetaInfo;
-import com.itextpdf.events.contexts.UnknownContext;
-import com.itextpdf.events.utils.Base64;
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
+import com.itextpdf.commons.actions.contexts.UnknownContext;
+import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.counter.event.IEvent;
 

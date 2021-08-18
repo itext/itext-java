@@ -42,7 +42,7 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.events.utils.Base64;
+import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 

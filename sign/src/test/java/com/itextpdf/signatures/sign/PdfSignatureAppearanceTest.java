@@ -44,7 +44,7 @@ package com.itextpdf.signatures.sign;
 
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;

@@ -44,7 +44,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.events.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.events.Event;
 import com.itextpdf.kernel.events.IEventHandler;

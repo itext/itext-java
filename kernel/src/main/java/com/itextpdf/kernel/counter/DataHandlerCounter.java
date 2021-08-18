@@ -43,13 +43,13 @@
  */
 package com.itextpdf.kernel.counter;
 
-import com.itextpdf.events.contexts.IContext;
-import com.itextpdf.events.contexts.UnknownContext;
+import com.itextpdf.commons.actions.contexts.IContext;
+import com.itextpdf.commons.actions.contexts.UnknownContext;
 import com.itextpdf.kernel.counter.data.EventDataHandler;
 import com.itextpdf.kernel.counter.data.EventDataHandlerUtil;
 import com.itextpdf.kernel.counter.data.EventData;
 import com.itextpdf.kernel.counter.event.IEvent;
-import com.itextpdf.events.contexts.IMetaInfo;
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 import java.io.Closeable;

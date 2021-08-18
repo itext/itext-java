@@ -22,10 +22,10 @@
  */
 package com.itextpdf.kernel.pdf.statistics;
 
-import com.itextpdf.events.IBaseEvent;
-import com.itextpdf.events.IBaseEventHandler;
+import com.itextpdf.commons.actions.IBaseEvent;
+import com.itextpdf.commons.actions.IBaseEventHandler;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.events.EventManager;
+import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
