@@ -43,7 +43,7 @@
  */
 package com.itextpdf.forms.fields;
 
-import com.itextpdf.io.codec.Base64;
+import com.itextpdf.events.utils.Base64;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;

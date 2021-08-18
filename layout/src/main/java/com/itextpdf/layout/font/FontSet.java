@@ -44,7 +44,7 @@ package com.itextpdf.layout.font;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontProgram;
-import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.events.utils.FileUtil;
 import com.itextpdf.kernel.font.Type3Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

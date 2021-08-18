@@ -22,9 +22,9 @@
  */
 package com.itextpdf.kernel.pdf.statistics;
 
-import com.itextpdf.io.util.MapUtil;
 import com.itextpdf.events.AbstractStatisticsAggregator;
 import com.itextpdf.events.AbstractStatisticsEvent;
+import com.itextpdf.events.utils.MapUtil;
 
 import java.util.Arrays;
 import java.util.Collections;

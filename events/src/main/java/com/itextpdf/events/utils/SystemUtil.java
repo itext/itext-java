@@ -40,9 +40,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.io.util;
-
-import com.itextpdf.events.utils.DateTimeUtil;
+package com.itextpdf.events.utils;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -42,9 +42,9 @@
  */
 package com.itextpdf.styledxmlparser.resolver.resource;
 
-import com.itextpdf.io.codec.Base64;
-import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.events.utils.Base64;
 import com.itextpdf.events.utils.MessageFormatUtil;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
@@ -52,10 +52,8 @@ import com.itextpdf.styledxmlparser.LogMessageConstant;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

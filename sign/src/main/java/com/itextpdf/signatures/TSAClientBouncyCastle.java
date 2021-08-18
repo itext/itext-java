@@ -43,10 +43,17 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.io.codec.Base64;
-import com.itextpdf.io.util.SystemUtil;
+import com.itextpdf.events.utils.Base64;
+import com.itextpdf.events.utils.SystemUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.tsp.TSPException;
@@ -57,13 +64,6 @@ import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.tsp.TimeStampTokenInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
 
 /**
  * Time Stamp Authority Client interface implementation using Bouncy Castle

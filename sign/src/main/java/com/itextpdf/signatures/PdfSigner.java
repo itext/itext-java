@@ -53,7 +53,7 @@ import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.events.utils.DateTimeUtil;
-import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.events.utils.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;

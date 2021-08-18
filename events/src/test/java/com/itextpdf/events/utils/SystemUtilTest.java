@@ -20,21 +20,19 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.io.util;
+package com.itextpdf.events.utils;
 
-import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,9 +40,12 @@ import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class SystemUtilTest extends ExtendedITextTest {
-    private final static String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/util/SystemUtilTest/";
+    private static final String MAGICK_COMPARE_ENVIRONMENT_VARIABLE = "ITEXT_MAGICK_COMPARE_EXEC";
+    private static final String MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY = "compareExec";
 
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/io/util/SystemUtilTest/";
+    private final static String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/events/utils/SystemUtilTest/";
+
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/events/utils/SystemUtilTest/";
 
     // This is empty file that used to check the logic for existed execution file
     private final static String STUB_EXEC_FILE = SOURCE_FOLDER + "folder with space/stubFile";
@@ -58,7 +59,7 @@ public class SystemUtilTest extends ExtendedITextTest {
     public void prepareProcessArgumentsStubExecFileTest() {
         List<String> processArguments = SystemUtil.prepareProcessArguments(STUB_EXEC_FILE, "param1 param2");
         Assert.assertEquals(Arrays.asList(
-                "./src/test/resources/com/itextpdf/io/util/SystemUtilTest/folder with space/stubFile", "param1",
+                "./src/test/resources/com/itextpdf/events/utils/SystemUtilTest/folder with space/stubFile", "param1",
                 "param2"),
                 processArguments);
     }
@@ -68,7 +69,7 @@ public class SystemUtilTest extends ExtendedITextTest {
         String testLine = "\"" + STUB_EXEC_FILE + "\"" + " compare";
         List<String> processArguments = SystemUtil.prepareProcessArguments(testLine, "param1 param2");
         Assert.assertEquals(Arrays.asList(
-                "./src/test/resources/com/itextpdf/io/util/SystemUtilTest/folder with space/stubFile", "compare",
+                "./src/test/resources/com/itextpdf/events/utils/SystemUtilTest/folder with space/stubFile", "compare",
                 "param1", "param2"),
                 processArguments);
     }
@@ -144,9 +145,9 @@ public class SystemUtilTest extends ExtendedITextTest {
 
     @Test
     public void runProcessAndWaitWithWorkingDirectoryTest() throws IOException, InterruptedException {
-        String imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(ImageMagickHelper.MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
+        String imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
         if (imageMagickPath == null) {
-            imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(ImageMagickHelper.MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY);
+            imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY);
         }
         String inputImage = "image.jpg";
         String cmpImage = "cmp_image.jpg";

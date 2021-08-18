@@ -43,16 +43,16 @@
  */
 package com.itextpdf.kernel.counter;
 
-import com.itextpdf.io.codec.Base64;
-import com.itextpdf.kernel.Version;
-import com.itextpdf.events.contexts.UnknownContext;
-import com.itextpdf.kernel.counter.event.IEvent;
 import com.itextpdf.events.contexts.IMetaInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.events.contexts.UnknownContext;
+import com.itextpdf.events.utils.Base64;
+import com.itextpdf.kernel.Version;
+import com.itextpdf.kernel.counter.event.IEvent;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicLong;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of the {@link EventCounter} interface that essentially doesn't do anything.

@@ -43,7 +43,7 @@
 package com.itextpdf.svg.processors.impl.font;
 
 
-import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.events.utils.FileUtil;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.media.MediaType;

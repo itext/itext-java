@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.converter;
 
-import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.events.utils.FileUtil;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;

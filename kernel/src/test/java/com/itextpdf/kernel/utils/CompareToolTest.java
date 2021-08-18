@@ -45,7 +45,7 @@ package com.itextpdf.kernel.utils;
 import com.itextpdf.io.IoExceptionMessage;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.util.GhostscriptHelper;
-import com.itextpdf.io.util.SystemUtil;
+import com.itextpdf.events.utils.SystemUtil;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;

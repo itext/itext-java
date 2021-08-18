@@ -47,6 +47,13 @@ package com.itextpdf.events.logs;
  * Class that bundles all the error message templates as constants.
  */
 public final class EventsLogMessageConstant {
+    /**
+     * Message notifies that an invalid statistics name was received, because there is no aggregator for it.
+     *
+     * <ul>
+     * <li>0th is a statistics name which is invalid;
+     * </ul>
+     */
     public static final String INVALID_STATISTICS_NAME =
             "Statistics name {0} is invalid. Cannot find corresponding statistics aggregator.";
 

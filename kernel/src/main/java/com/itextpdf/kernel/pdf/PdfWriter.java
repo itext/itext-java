@@ -46,7 +46,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.events.utils.FileUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

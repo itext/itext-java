@@ -1,4 +1,4 @@
-package com.itextpdf.io.codec;
+package com.itextpdf.events.utils;
 
 /**
  * Encodes and decodes to and from Base64 notation.

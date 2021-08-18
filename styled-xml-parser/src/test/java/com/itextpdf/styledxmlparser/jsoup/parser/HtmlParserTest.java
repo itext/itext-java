@@ -22,7 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.jsoup.parser;
 
-import com.itextpdf.io.util.SystemUtil;
+import com.itextpdf.events.utils.SystemUtil;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.TextUtil;
 import com.itextpdf.styledxmlparser.jsoup.integration.ParseTest;

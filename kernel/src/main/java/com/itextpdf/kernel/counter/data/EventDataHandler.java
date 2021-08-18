@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.counter.data;
 
-import com.itextpdf.io.util.SystemUtil;
+import com.itextpdf.events.utils.SystemUtil;
 import com.itextpdf.kernel.counter.event.IEvent;
 import com.itextpdf.events.contexts.IMetaInfo;
 

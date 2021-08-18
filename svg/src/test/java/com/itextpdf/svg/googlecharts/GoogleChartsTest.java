@@ -43,32 +43,17 @@
 package com.itextpdf.svg.googlecharts;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.codec.Base64;
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.font.FontProvider;
-import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
-import com.itextpdf.svg.converter.SvgConverter;
-import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.svg.utils.TestUtils;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 
 @Category(IntegrationTest.class)
 public class GoogleChartsTest extends SvgIntegrationTest {

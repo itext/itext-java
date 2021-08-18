@@ -43,12 +43,13 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.events.utils.Base64;
+import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.forms.fields.borders.FormBorderFactory;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
+import com.itextpdf.forms.fields.borders.FormBorderFactory;
 import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.codec.Base64;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -58,7 +59,6 @@ import com.itextpdf.io.source.OutputStream;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.events.utils.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -106,8 +106,6 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.IRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -119,6 +117,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm

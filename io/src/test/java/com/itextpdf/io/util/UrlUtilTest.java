@@ -42,6 +42,7 @@
  */
 package com.itextpdf.io.util;
 
+import com.itextpdf.events.utils.FileUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import java.io.File;

@@ -41,7 +41,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.io.util;
+package com.itextpdf.events.utils;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;

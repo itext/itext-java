@@ -45,7 +45,7 @@ package com.itextpdf.kernel.utils;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.events.utils.FileUtil;
 import com.itextpdf.io.util.GhostscriptHelper;
 import com.itextpdf.io.util.ImageMagickHelper;
 import com.itextpdf.events.utils.MessageFormatUtil;
