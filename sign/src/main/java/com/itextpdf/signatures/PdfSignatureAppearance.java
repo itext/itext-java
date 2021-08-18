@@ -279,6 +279,10 @@ public class PdfSignatureAppearance {
     /**
      * Get Layer 0 of the appearance.
      *
+     * <p>
+     * The size of the layer is determined by the rectangle set via
+     * {@link PdfSignatureAppearance#setPageRect(Rectangle)}
+     *
      * @return layer 0
      */
     public PdfFormXObject getLayer0() {
@@ -292,6 +296,10 @@ public class PdfSignatureAppearance {
 
     /**
      * Get Layer 2 of the appearance.
+     *
+     * <p>
+     * The size of the layer is determined by the rectangle set via
+     * {@link PdfSignatureAppearance#setPageRect(Rectangle)}
      *
      * @return layer 2
      */
@@ -666,29 +674,9 @@ public class PdfSignatureAppearance {
 
             Rectangle rotatedRect = rotateRectangle(this.rect, document.getPage(page).getRotation());
 
-            String text;
-
-            if (layer2Text == null) {
-                StringBuilder buf = new StringBuilder();
-                buf.append("Digitally signed by ");
-                String name = null;
-                CertificateInfo.X500Name x500name = CertificateInfo.getSubjectFields((X509Certificate)signCertificate);
-                if (x500name != null) {
-                    name = x500name.getField("CN");
-                    if (name == null)
-                        name = x500name.getField("E");
-                }
-                if (name == null)
-                    name = "";
-                buf.append(name).append('\n');
-                buf.append("Date: ").append(SignUtils.dateToString(signDate));
-                if (reason != null)
-                    buf.append('\n').append(reasonCaption).append(reason);
-                if (location != null)
-                    buf.append('\n').append(locationCaption).append(location);
-                text = buf.toString();
-            } else {
-                text = layer2Text;
+            String text = layer2Text;
+            if (null == text) {
+                text = generateLayer2Text();
             }
 
             if (image != null) {
@@ -971,6 +959,30 @@ public class PdfSignatureAppearance {
         paragraph.setFontSize(lFontSize);
     }
 
+    String generateLayer2Text() {
+        StringBuilder buf = new StringBuilder();
+        buf.append("Digitally signed by ");
+        String name = null;
+        CertificateInfo.X500Name x500name = CertificateInfo.getSubjectFields((X509Certificate)signCertificate);
+        if (x500name != null) {
+            name = x500name.getField("CN");
+            if (name == null) {
+                name = x500name.getField("E");
+            }
+        }
+        if (name == null) {
+            name = "";
+        }
+        buf.append(name).append('\n');
+        buf.append("Date: ").append(SignUtils.dateToString(signDate));
+        if (reason != null) {
+            buf.append('\n').append(reasonCaption).append(reason);
+        }
+        if (location != null) {
+            buf.append('\n').append(locationCaption).append(location);
+        }
+        return buf.toString();
+    }
     /**
      * Signature rendering modes.
      */
