@@ -22,15 +22,12 @@
  */
 package com.itextpdf.signatures.sign;
 
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
-import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
@@ -58,8 +55,7 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class EncryptedSigningTest extends ExtendedITextTest {
 
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign"
-            + "/EncryptedSigningTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/EncryptedSigningTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/EncryptedSigningTest/";
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
 
@@ -95,20 +91,16 @@ public class EncryptedSigningTest extends ExtendedITextTest {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(outPdf),
                 new StampingProperties().useAppendMode());
 
-        // Creating the appearance
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance()
-                .setReason("Test1")
-                .setLocation("TestCity");
-
         signer.setFieldName(fieldName);
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
                 BouncyCastleProvider.PROVIDER_NAME);
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
-        //TODO DEVSIX-5637 Improve SignaturesCompareTool#compareSignatures to check encrypted pdf
-        Assert.assertEquals(
-                KernelExceptionMessageConstant.BAD_USER_PASSWORD, SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+        //Password to open out and cmp files are the same
+        ReaderProperties properties = new ReaderProperties().setPassword(ownerPass);
+
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf, properties, properties));
     }
 
     @Test
@@ -127,8 +119,10 @@ public class EncryptedSigningTest extends ExtendedITextTest {
                 BouncyCastleProvider.PROVIDER_NAME);
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
-        //TODO DEVSIX-5637 Improve SignaturesCompareTool#compareSignatures to check encrypted pdf
-        Assert.assertEquals(KernelExceptionMessageConstant.CERTIFICATE_IS_NOT_PROVIDED_DOCUMENT_IS_ENCRYPTED_WITH_PUBLIC_KEY_CERTIFICATE,
-                SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+        ReaderProperties properties = new ReaderProperties().setPublicKeySecurityParams(chain[0], pk,
+                new BouncyCastleProvider().getName(),null);
+
+        //Public key to open out and cmp files are the same
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf, properties, properties));
     }
 }
