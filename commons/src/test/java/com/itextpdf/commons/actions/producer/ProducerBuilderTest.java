@@ -24,10 +24,10 @@ package com.itextpdf.commons.actions.producer;
 
 import com.itextpdf.commons.actions.confirmations.ConfirmedEventWrapper;
 import com.itextpdf.commons.actions.data.ProductData;
+import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.ecosystem.ITextTestEvent;
 import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
 import com.itextpdf.commons.logs.CommonsLogMessageConstant;
-import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.test.ExtendedITextTest;
@@ -112,14 +112,14 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         List<ConfirmedEventWrapper> events = getEvents("Created at ${currentDate:yyyy}", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
 
-        Assert.assertEquals("Created at " + DateTimeUtil.formatDate(DateTimeUtil.getCurrentTimeDate(), "yyyy"), newProducerLine);
+        Assert.assertEquals("Created at " + DateTimeUtil.format(DateTimeUtil.getCurrentTimeDate(), "yyyy"), newProducerLine);
     }
 
     @Test
     public void currentDateComplexFormatProducerLineTest() {
         List<ConfirmedEventWrapper> events = getEvents("Created at ${currentDate:yyyy, '{\\'yes::yes\\'', yyyy}", 1, 2, 3);
         String newProducerLine = ProducerBuilder.modifyProducer(events, null);
-        String currentYear = DateTimeUtil.formatDate(DateTimeUtil.getCurrentTimeDate(), "yyyy");
+        String currentYear = DateTimeUtil.format(DateTimeUtil.getCurrentTimeDate(), "yyyy");
 
         Assert.assertEquals("Created at " + currentYear + ", {'yes::yes', " + currentYear, newProducerLine);
     }

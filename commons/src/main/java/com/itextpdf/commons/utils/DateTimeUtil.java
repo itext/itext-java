@@ -43,6 +43,7 @@
  */
 package com.itextpdf.commons.utils;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -54,6 +55,7 @@ import java.util.GregorianCalendar;
  * Be aware that its API and functionality may be changed in future.
  */
 public final class DateTimeUtil {
+    private static final String DEFAULT_PATTERN = "yyyy-MM-dd";
 
     /**
      * Gets the {@link Calendar} as UTC milliseconds from the epoch.
@@ -93,22 +95,56 @@ public final class DateTimeUtil {
         return calendar;
     }
 
+    public static boolean isInPast(Date date) {
+        return date.before(getCurrentTimeDate());
+    }
+
+    public static long getRelativeTime(Date date) {
+        return date.getTime();
+    }
+
     public static Date addDaysToDate(Date date, int days) {
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = new GregorianCalendar();
         cal.setTime(date);
         cal.add(Calendar.DAY_OF_YEAR, days);
         return cal.getTime();
     }
 
-    public static Date parseSimpleFormat(String date, String format) {
+    /**
+     * Parses passing date with default {@code yyyy-MM-dd} pattern.
+     *
+     * @param date is date to be parse
+     * @return parse date
+     */
+    public static Date parseWithDefaultPattern(String date) {
+        return parse(date, DEFAULT_PATTERN);
+    }
+
+    public static Date parse(String date, String format) {
         try {
-            return new SimpleDateFormat(format).parse(date);
+            return initParserSDF(format).parse(date);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static String formatDate(Date date, String pattern) {
-        return new SimpleDateFormat(pattern).format(date);
+    /**
+     * Format passing date with default {@code yyyy-MM-dd} pattern.
+     *
+     * @param date is date to be format
+     * @return format date
+     */
+    public static String formatWithDefaultPattern(Date date) {
+        return format(date, DEFAULT_PATTERN);
+    }
+
+    public static String format(Date date, String pattern) {
+        return initParserSDF(pattern).format(date);
+    }
+
+    private static DateFormat initParserSDF(String pattern) {
+        final SimpleDateFormat parserSDF = new SimpleDateFormat(pattern);
+        parserSDF.setCalendar(new GregorianCalendar());
+        return parserSDF;
     }
 }

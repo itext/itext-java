@@ -122,7 +122,7 @@ public class CurrentDatePlaceholderPopulatorTest extends ExtendedITextTest {
         // be generated at the beginning of the next hour.
         Date date = DateTimeUtil.getCurrentTimeDate();
         String result = populator.populate(null, "dd MM yy yyyy HH");
-        String expectedResult = DateTimeUtil.formatDate(date, "dd MM yy yyyy HH");
+        String expectedResult = DateTimeUtil.format(date, "dd MM yy yyyy HH");
         Assert.assertEquals(expectedResult, result);
     }
 

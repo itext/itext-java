@@ -125,7 +125,7 @@ class CurrentDatePlaceholderPopulator extends AbstractFormattedPlaceholderPopula
         }
         final String piece = peaceBuilder.toString();
         if (ALLOWED_PATTERNS.contains(piece)) {
-            builder.append(DateTimeUtil.formatDate(date, piece));
+            builder.append(DateTimeUtil.format(date, piece));
         } else {
             throw new IllegalArgumentException(
                     MessageFormatUtil.format(CommonsExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_COMPONENT, piece)

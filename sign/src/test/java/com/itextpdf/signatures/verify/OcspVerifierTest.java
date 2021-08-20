@@ -44,13 +44,13 @@ package com.itextpdf.signatures.verify;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.signatures.OCSPVerifier;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import com.itextpdf.signatures.testutils.cert.TestCertificateBuilder;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -63,7 +63,6 @@ import java.security.cert.CertificateExpiredException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Date;
-
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
 import org.bouncycastle.asn1.x509.CRLReason;
@@ -151,9 +150,9 @@ public class OcspVerifierTest extends ExtendedITextTest {
 
     @Test
     public void expiredAuthorizedOCSPResponderTest_atValidPeriod() throws GeneralSecurityException, IOException, OperatorCreationException {
-        Date ocspResponderCertStartDate = DateTimeUtil.parseSimpleFormat("15/10/2005", "dd/MM/yyyy");
-        Date ocspResponderCertEndDate = DateTimeUtil.parseSimpleFormat("15/10/2010", "dd/MM/yyyy");
-        Date checkDate = DateTimeUtil.parseSimpleFormat("15/10/2008", "dd/MM/yyyy");
+        Date ocspResponderCertStartDate = DateTimeUtil.parse("15/10/2005", "dd/MM/yyyy");
+        Date ocspResponderCertEndDate = DateTimeUtil.parse("15/10/2010", "dd/MM/yyyy");
+        Date checkDate = DateTimeUtil.parse("15/10/2008", "dd/MM/yyyy");
 
         boolean verifyRes = verifyAuthorizedOCSPResponderTest(ocspResponderCertStartDate, ocspResponderCertEndDate, checkDate);
         Assert.assertTrue(verifyRes);
@@ -161,8 +160,8 @@ public class OcspVerifierTest extends ExtendedITextTest {
 
     @Test
     public void expiredAuthorizedOCSPResponderTest_now() throws GeneralSecurityException, IOException, OperatorCreationException {
-        Date ocspResponderCertStartDate = DateTimeUtil.parseSimpleFormat("15/10/2005", "dd/MM/yyyy");
-        Date ocspResponderCertEndDate = DateTimeUtil.parseSimpleFormat("15/10/2010", "dd/MM/yyyy");
+        Date ocspResponderCertStartDate = DateTimeUtil.parse("15/10/2005", "dd/MM/yyyy");
+        Date ocspResponderCertEndDate = DateTimeUtil.parse("15/10/2010", "dd/MM/yyyy");
         Date checkDate = DateTimeUtil.getCurrentTimeDate();
 
         Assert.assertThrows(CertificateExpiredException.class,
