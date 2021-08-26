@@ -45,6 +45,7 @@ package com.itextpdf.layout;
 import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -54,8 +55,14 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.FloatPropertyValue;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.FileNotFoundException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -154,5 +161,39 @@ public class InlineBlockTest extends ExtendedITextTest {
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void wrappingAfter100PercentWidthFloatTest() throws IOException, InterruptedException {
+        String name = "wrappingAfter100PercentWidthFloatTest.pdf";
+        String output = destinationFolder + name;
+        String cmp = sourceFolder + "cmp_" + name;
+
+        try (Document doc = new Document(new PdfDocument(new PdfWriter(output)))) {
+            Div floatingDiv = new Div()
+                    .setWidth(UnitValue.createPercentValue(100))
+                    .setHeight(10)
+                    .setBorder(new SolidBorder(1))
+                    .setBackgroundColor(ColorConstants.RED);
+            floatingDiv.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+            floatingDiv.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+            floatingDiv.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+            Div inlineDiv = new Div()
+                    .setWidth(UnitValue.createPercentValue(100))
+                    .setHeight(10)
+                    .setBorder(new SolidBorder(1))
+                    // gold color
+                    .setBackgroundColor(new DeviceRgb(255, 215, 0));
+            inlineDiv.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+            inlineDiv.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+
+            doc.add(new Div()
+                    .add(floatingDiv)
+                    .add(new Paragraph().add(inlineDiv))
+            );
+        }
+
+        // TODO DEVSIX-5796 inline-block should be wrapped to the next line
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
     }
 }
