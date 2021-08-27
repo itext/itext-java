@@ -67,6 +67,7 @@ public final class ClipperBridge {
      * our floating point numbers into fixed point numbers by multiplying by
      * this coefficient. Vary it to adjust the preciseness of the calculations.
      */
+    //TODO DEVSIX-5770 make this constant a single non-static configuration
     public static double floatMultiplier = Math.pow(10, 14);
 
     private ClipperBridge() {
