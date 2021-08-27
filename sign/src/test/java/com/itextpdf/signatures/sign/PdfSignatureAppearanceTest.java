@@ -402,6 +402,89 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
+    public void layer0WithImageTest() throws IOException, GeneralSecurityException {
+        String src = SOURCE_FOLDER + "simpleDocument.pdf";
+        String fileName = "layer0WithImageTest.pdf";
+        String dest = DESTINATION_FOLDER + fileName;
+
+        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+
+        // Creating the appearance
+        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
+        appearance.setImage(ImageDataFactory.create(SOURCE_FOLDER + "itext.png"));
+        signer.setFieldName("Signature1");
+
+        Rectangle rect = new Rectangle(0, 600, 100, 100);
+        appearance.setPageRect(rect);
+        // If we do not set any text, the text will be generated and the current date will be used,
+        // which we want to avoid because of visual comparison
+        appearance.setLayer2Text("Hello");
+
+        // Signing
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
+                BouncyCastleProvider.PROVIDER_NAME);
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        compareSignatureAppearances(dest, SOURCE_FOLDER + "cmp_" + fileName);
+    }
+
+    @Test
+    public void layer0WithImageAndPositiveImageScaleTest() throws IOException, GeneralSecurityException {
+        String src = SOURCE_FOLDER + "simpleDocument.pdf";
+        String fileName = "layer0WithImageAndPositiveImageScaleTest.pdf";
+        String dest = DESTINATION_FOLDER + fileName;
+
+        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+
+        // Creating the appearance
+        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
+        appearance.setImage(ImageDataFactory.create(SOURCE_FOLDER + "itext.png"));
+        appearance.setImageScale(1.5F);
+        signer.setFieldName("Signature1");
+
+        Rectangle rect = new Rectangle(0, 600, 100, 100);
+        appearance.setPageRect(rect);
+        // If we do not set any text, the text will be generated and the current date will be used,
+        // which we want to avoid because of visual comparison
+        appearance.setLayer2Text("Hello");
+
+        // Signing
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
+                BouncyCastleProvider.PROVIDER_NAME);
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        compareSignatureAppearances(dest, SOURCE_FOLDER + "cmp_" + fileName);
+    }
+
+    @Test
+    public void layer0WithImageAndNegativeImageScaleTest() throws IOException, GeneralSecurityException {
+        String src = SOURCE_FOLDER + "simpleDocument.pdf";
+        String fileName = "layer0WithImageAndNegativeImageScale.pdf";
+        String dest = DESTINATION_FOLDER + fileName;
+
+        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+
+        // Creating the appearance
+        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
+        appearance.setImage(ImageDataFactory.create(SOURCE_FOLDER + "itext.png"));
+        appearance.setImageScale(-15F);
+        signer.setFieldName("Signature1");
+
+        Rectangle rect = new Rectangle(0, 600, 100, 100);
+        appearance.setPageRect(rect);
+        // If we do not set any text, the text will be generated and the current date will be used,
+        // which we want to avoid because of visual comparison
+        appearance.setLayer2Text("Hello");
+
+        // Signing
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
+                BouncyCastleProvider.PROVIDER_NAME);
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        compareSignatureAppearances(dest, SOURCE_FOLDER + "cmp_" + fileName);
+    }
+
+    @Test
     public void layer2Test() throws IOException, GeneralSecurityException {
         String src = SOURCE_FOLDER + "simpleDocument.pdf";
         String fileName = "layer2Test.pdf";

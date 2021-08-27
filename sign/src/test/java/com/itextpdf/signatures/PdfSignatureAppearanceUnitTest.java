@@ -24,12 +24,15 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.signatures.PdfSignatureAppearance.RenderingMode;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -42,6 +45,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.Calendar;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -219,6 +224,23 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
         Color newColor = ColorConstants.RED;
         signatureAppearance.setLayer2FontColor(newColor);
         Assert.assertEquals(newColor, signatureAppearance.getLayer2FontColor());
+    }
+
+    @Test
+    public void getAppearanceInvisibleTest() throws IOException {
+        PdfSignatureAppearance appearance = new PdfSignatureAppearance(null, new Rectangle(0, 100), 1);
+        PdfFormXObject xObject = appearance.getAppearance();
+
+        Assert.assertTrue(new Rectangle(0, 0).equalsWithEpsilon(xObject.getBBox().toRectangle()));
+    }
+
+    @Test
+    public void getSignDateTest() {
+        PdfSignatureAppearance appearance = new PdfSignatureAppearance(null, new Rectangle(100, 100), 1);
+
+        Calendar current = DateTimeUtil.getCurrentTimeCalendar();
+        appearance.setSignDate(current);
+        Assert.assertEquals(current, appearance.getSignDate());
     }
 
     private static PdfSignatureAppearance getTestSignatureAppearance() throws IOException {
