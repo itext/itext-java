@@ -42,9 +42,11 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -62,6 +64,7 @@ import java.util.List;
 public class SignatureUtilTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/SignatureUtilTest/";
+    private static final double EPS = 0.001;
 
     @BeforeClass
     public static void before() {
@@ -194,8 +197,17 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertNotNull(signatureUtil.readSignatureData("Signature1"));
-        Assert.assertTrue(signatureUtil.readSignatureData("Signature1") instanceof PdfPKCS7);
+        PdfPKCS7 pkcs7 = signatureUtil.readSignatureData("Signature1");
+        Assert.assertNotNull(pkcs7);
+        Assert.assertEquals("Test 1", pkcs7.getReason());
+        Assert.assertNull(pkcs7.getSignName());
+        Assert.assertEquals("TestCity", pkcs7.getLocation());
+        // The number corresponds to 18 May, 2021 17:23:59.
+        double expectedMillis = (double) 1621347839000L;
+        Assert.assertEquals(
+                TimeTestUtil.getFullDaysMillis(expectedMillis),
+                TimeTestUtil.getFullDaysMillis(DateTimeUtil.getUtcMillisFromEpoch(pkcs7.getSignDate())),
+                EPS);
     }
 
     @Test
@@ -204,8 +216,18 @@ public class SignatureUtilTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf));
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
-        Assert.assertNotNull(signatureUtil.readSignatureData("Signature1"));
-        Assert.assertTrue(signatureUtil.readSignatureData("Signature1") instanceof PdfPKCS7);
+        PdfPKCS7 pkcs7 = signatureUtil.readSignatureData("Signature1");
+        Assert.assertNotNull(pkcs7);
+        Assert.assertNotNull(pkcs7);
+        Assert.assertEquals("Test", pkcs7.getReason());
+        Assert.assertNull(pkcs7.getSignName());
+        Assert.assertEquals("TestCity", pkcs7.getLocation());
+        // The number corresponds to 18 May, 2021 11:28:40.
+        double expectedMillis = (double) 1621326520000L;
+        Assert.assertEquals(
+                TimeTestUtil.getFullDaysMillis(expectedMillis),
+                TimeTestUtil.getFullDaysMillis(DateTimeUtil.getUtcMillisFromEpoch(pkcs7.getSignDate())),
+                EPS);
     }
 
     @Test

@@ -1,8 +1,7 @@
 /*
-
     This file is part of the iText (R) project.
     Copyright (c) 1998-2021 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -43,68 +42,22 @@
  */
 package com.itextpdf.io.util;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
+
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
-/**
- * This file is a helper class for internal usage only.
- * Be aware that its API and functionality may be changed in future.
- */
-public final class DateTimeUtil {
+@Category(UnitTest.class)
+public class DateTimeUtilTest extends ExtendedITextTest {
 
-    /**
-     * Gets the {@link Calendar} as UTC milliseconds from the epoch.
-     *
-     * @param calendar the calendar to be converted to millis
-     * @return the date as UTC milliseconds from the epoch
-     */
-    public static double getUtcMillisFromEpoch(Calendar calendar) {
-        if (calendar == null) {
-            calendar = new GregorianCalendar();
-        }
-        return calendar.getTimeInMillis();
-    }
-
-    /**
-     * Gets the date as {@link Calendar}.
-     *
-     * @param date the date to be returned as {@link Calendar}
-     * @return the date as {@link Calendar}
-     */
-    public static Calendar getCalendar(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        return calendar;
-    }
-
-    public static Calendar getCurrentTimeCalendar() {
-        return new GregorianCalendar();
-    }
-
-    public static Date getCurrentTimeDate() {
-        return new Date();
-    }
-
-    public static Calendar addDaysToCalendar(Calendar calendar, int days) {
-        calendar.add(Calendar.DAY_OF_YEAR, days);
-        return calendar;
-    }
-
-    public static Date addDaysToDate(Date date, int days) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.add(Calendar.DAY_OF_YEAR, days);
-        return cal.getTime();
-    }
-
-    public static Date parseSimpleFormat(String date, String format) {
-        try {
-            return new SimpleDateFormat(format).parse(date);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+    @Test
+    public void wrappingDateWithCalendarTest() {
+        Date currentDate = DateTimeUtil.getCurrentTimeDate();
+        Calendar currentCalendar = DateTimeUtil.getCalendar(currentDate);
+        Assert.assertEquals(0, currentCalendar.getTime().compareTo(currentDate));
     }
 }

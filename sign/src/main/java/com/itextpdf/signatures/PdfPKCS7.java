@@ -144,7 +144,7 @@ public class PdfPKCS7 {
     /**
      * Holds value of property signDate.
      */
-    private Calendar signDate;
+    private Calendar signDate = (Calendar) TimestampConstants.UNDEFINED_TIMESTAMP_DATE;
 
     // Constructors for creating new signatures
 
