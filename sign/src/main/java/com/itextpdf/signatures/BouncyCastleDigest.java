@@ -67,6 +67,7 @@ public class BouncyCastleDigest implements IExternalDigest {
 
     @Override
     public MessageDigest getMessageDigest(String hashAlgorithm) throws GeneralSecurityException {
+        // TODO DEVSIX-5800 throw an correct exception if there is no digest for an algorithm
         String oid = DigestAlgorithms.getAllowedDigest(hashAlgorithm);
 
         switch (oid) {
