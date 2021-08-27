@@ -47,13 +47,20 @@ import java.util.Collection;
 
 /**
  * This file is a helper class for internal usage only.
- * Be aware that its API and functionality may be changed in future.
+ * Be aware that its API and functionality may be changed in the future.
  */
 public final class ArrayUtil {
 
     private ArrayUtil() {
     }
 
+    /**
+     * Shortens byte array.
+     *
+     * @param src the byte array
+     * @param length the new length of bytes array
+     * @return the shortened byte array
+     */
     public static byte[] shortenArray(byte[] src, int length) {
         if (length < src.length) {
             byte[] shortened = new byte[length];
@@ -63,6 +70,12 @@ public final class ArrayUtil {
         return src;
     }
 
+    /**
+     * Converts a collection to an int array.
+     *
+     * @param collection the collection
+     * @return the int array
+     */
     public static int[] toIntArray(Collection<Integer> collection) {
         int[] array = new int[collection.size()];
         int k = 0;
@@ -72,6 +85,12 @@ public final class ArrayUtil {
         return array;
     }
 
+    /**
+     * Creates a hash of the given byte array.
+     *
+     * @param a the byte array
+     * @return the byte array
+     */
     public static int hashCode(byte[] a) {
         if (a == null)
             return 0;
@@ -83,6 +102,13 @@ public final class ArrayUtil {
         return result;
     }
 
+    /**
+     * Fills an array with the given value.
+     *
+     * @param a the int array
+     * @param value the number of a value
+     * @return the int array
+     */
     public static int[] fillWithValue(int[] a, int value) {
         for (int i = 0; i < a.length; i++) {
             a[i] = value;
@@ -90,6 +116,13 @@ public final class ArrayUtil {
         return a;
     }
 
+    /**
+     * Fills an array with the given value.
+     *
+     * @param a the float array
+     * @param value the number of a value
+     * @return the float array
+     */
     public static float[] fillWithValue(float[] a, float value) {
         for (int i = 0; i < a.length; i++) {
             a[i] = value;
@@ -97,16 +130,36 @@ public final class ArrayUtil {
         return a;
     }
 
+    /**
+     * Fills an array with the given value.
+     *
+     * @param a the array
+     * @param value the value of type
+     * @param <T> the type of the implementation
+     */
     public static <T> void fillWithValue(T[] a, T value) {
         for (int i = 0; i < a.length; i++) {
             a[i] = value;
         }
     }
 
+    /**
+     * Clones int array.
+     *
+     * @param src the int array
+     * @return the int array
+     */
     public static int[] cloneArray(int[] src) {
         return (int[]) src.clone();
     }
 
+    /**
+     * Gets the index of object.
+     *
+     * @param a the object array
+     * @param key the object key
+     * @return the index of object
+     */
     public static int indexOf(Object[] a, Object key) {
         for (int i = 0; i < a.length; i++) {
             Object el = a[i];

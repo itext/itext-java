@@ -44,6 +44,10 @@ package com.itextpdf.io.util;
 
 import java.io.PrintStream;
 
+/**
+ * This file is a helper class for internal usage only.
+ * Be aware that its API and functionality may be changed in the future.
+ */
 public class StandardOutUtil {
 
     static void restoreStandardOut(Object stream) {

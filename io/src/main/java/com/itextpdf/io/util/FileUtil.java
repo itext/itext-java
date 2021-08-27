@@ -212,6 +212,7 @@ public final class FileUtil {
      * Returns an URL of the parent directory for the resource
      *
      * @param url of resource
+     *
      * @return parent directory path| the same path if a catalog`s url is passed;
      */
     public static String parentDirectory(URL url) throws URISyntaxException {
@@ -221,10 +222,12 @@ public final class FileUtil {
     /**
      * Creates a temporary file.
      *
-     * @param tempFilePrefix the prefix of the copied file's name
+     * @param tempFilePrefix  the prefix of the copied file's name
      * @param tempFilePostfix the postfix of the copied file's name
      *
      * @return the path to the copied file
+     *
+     * @throws IOException signals that an I/O exception has occurred.
      */
     public static File createTempFile(String tempFilePrefix, String tempFilePostfix) throws IOException {
         return File.createTempFile(tempFilePrefix, tempFilePostfix);
@@ -233,11 +236,13 @@ public final class FileUtil {
     /**
      * Creates a temporary copy of a file.
      *
-     * @param file the path to the file to be copied
-     * @param tempFilePrefix the prefix of the copied file's name
+     * @param file            the path to the file to be copied
+     * @param tempFilePrefix  the prefix of the copied file's name
      * @param tempFilePostfix the postfix of the copied file's name
      *
      * @return the path to the copied file
+     *
+     * @throws IOException signals that an I/O exception has occurred.
      */
     public static String createTempCopy(String file, String tempFilePrefix, String tempFilePostfix)
             throws IOException {
@@ -258,8 +263,10 @@ public final class FileUtil {
     /**
      * Creates a copy of a file.
      *
-     * @param inputFile the path to the file to be copied
+     * @param inputFile  the path to the file to be copied
      * @param outputFile the path, to which the passed file should be copied
+     *
+     * @throws IOException signals that an I/O exception has occurred.
      */
     public static void copy(String inputFile, String outputFile)
             throws IOException {
@@ -270,7 +277,10 @@ public final class FileUtil {
      * Creates a temporary directory.
      *
      * @param tempFilePrefix the prefix of the temporary directory's name
+     *
      * @return the path to the temporary directory
+     *
+     * @throws IOException signals that an I/O exception has occurred.
      */
     public static String createTempDirectory(String tempFilePrefix)
             throws IOException {
