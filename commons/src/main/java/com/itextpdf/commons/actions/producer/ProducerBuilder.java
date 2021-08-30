@@ -22,11 +22,15 @@
  */
 package com.itextpdf.commons.actions.producer;
 
+import com.itextpdf.commons.actions.AbstractITextConfigurationEvent;
+import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.commons.actions.confirmations.ConfirmedEventWrapper;
+import com.itextpdf.commons.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
 import com.itextpdf.commons.logs.CommonsLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -39,8 +43,10 @@ import org.slf4j.LoggerFactory;
 /**
  * Class is used for producer line building.
  */
-public final class ProducerBuilder {
+public final class ProducerBuilder extends AbstractITextConfigurationEvent {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProducerBuilder.class);
+
+    private static final ProducerBuilder INSTANCE = new ProducerBuilder();
 
     private static final String CURRENT_DATE = "currentDate";
     private static final String USED_PRODUCTS = "usedProducts";
@@ -75,25 +81,47 @@ public final class ProducerBuilder {
     private ProducerBuilder() { }
 
     /**
-     * Modifies an old producer line according to events registered for the document. Format of the
-     * new producer line will be defined by the first event in the list. Placeholder will be
-     * replaced and merged all together
+     * Modifies an old producer line according to events registered for the document.
+     * Events can be either wrapped with {@link ConfirmedEventWrapper} or not.
+     * Format of the new producer line will be defined by the first event in the list.
+     * Placeholder will be replaced and merged all together
      *
-     * @param events list of events wrapped with {@link ConfirmedEventWrapper} registered for
-     *               the document
-     * @param oldProducer is an old producer line. If <code>null</code> or empty, will be replaced
+     * @param events      list of events registered for the document
+     * @param oldProducer old producer line. If <code>null</code> or empty, will be replaced
      *                    with a new one. Otherwise new line will be attached with
      *                    <code>modified using</code> prefix. If old producer line already contains
      *                    <code>modified using</code> substring, it will be overriden with a new one
      * @return modified producer line
      */
-    public static String modifyProducer(List<ConfirmedEventWrapper> events, String oldProducer) {
-        final String newProducer = buildProducer(events);
+    public static String modifyProducer(List<? extends AbstractProductProcessITextEvent> events, String oldProducer) {
+        List<ConfirmedEventWrapper> confirmedEvents = new ArrayList<>();
+        if (events != null) {
+            for (AbstractProductProcessITextEvent event : events) {
+                if (event instanceof ConfirmedEventWrapper) {
+                    confirmedEvents.add((ConfirmedEventWrapper) event);
+                } else {
+                    ITextProductEventProcessor processor = INSTANCE.getActiveProcessor(event.getProductName());
+                    confirmedEvents.add(new ConfirmedEventWrapper(event, processor.getUsageType(), processor.getProducer()));
+                }
+            }
+        }
+
+        final String newProducer = buildProducer(confirmedEvents);
         if (oldProducer == null || oldProducer.isEmpty()) {
             return newProducer;
         } else {
             return oldProducer + MODIFIED_USING + newProducer;
         }
+    }
+
+    /**
+     * Configuration events for util internal purposes are not expected to be sent.
+     *
+     * @throws IllegalStateException on every method call
+     */
+    @Override
+    protected void doAction() {
+        throw new IllegalStateException("Configuration events for util internal purposes are not expected to be sent");
     }
 
     private static String buildProducer(List<ConfirmedEventWrapper> events) {

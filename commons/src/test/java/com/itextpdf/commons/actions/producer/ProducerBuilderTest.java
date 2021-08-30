@@ -22,6 +22,7 @@
  */
 package com.itextpdf.commons.actions.producer;
 
+import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.commons.actions.confirmations.ConfirmedEventWrapper;
 import com.itextpdf.commons.actions.data.ProductData;
 import com.itextpdf.commons.actions.sequence.SequenceId;
@@ -55,7 +56,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         junitExpectedException.expect(IllegalArgumentException.class);
         junitExpectedException.expectMessage(CommonsExceptionMessageConstant.NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT);
 
-        ProducerBuilder.modifyProducer(null, null);
+        ProducerBuilder.modifyProducer((List<AbstractProductProcessITextEvent>)null, null);
     }
 
     @Test
