@@ -46,6 +46,7 @@ import com.itextpdf.commons.actions.NamespaceConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.util.Arrays;
 import java.util.Collections;
 import org.junit.Assert;
 import org.junit.Test;
@@ -88,8 +89,20 @@ public class ContextManagerTest extends ExtendedITextTest {
     public void notRegisteredNamespaceTest() {
         String notRegisteredNamespace = "com.hello.world";
 
-        Assert.assertEquals(null,
-                ContextManager.getInstance().getRecognisedNamespace(notRegisteredNamespace));
+        Assert.assertNull(ContextManager.getInstance().getRecognisedNamespace(notRegisteredNamespace));
+    }
+
+    @Test
+    public void unregisterNamespaceTest() {
+        String testNamespace = "com.hello.world";
+        ContextManager manager = new ContextManager();
+        Assert.assertNull(manager.getRecognisedNamespace(testNamespace));
+        manager.registerGenericContextForProducts(Arrays.asList(testNamespace),
+                Arrays.asList("myProduct"));
+        Assert.assertEquals(testNamespace,
+                manager.getRecognisedNamespace(testNamespace + ".MyClass"));
+        manager.unregisterGenericContextForProducts(Arrays.asList(testNamespace));
+        Assert.assertNull(manager.getRecognisedNamespace(testNamespace));
     }
 
     @Test

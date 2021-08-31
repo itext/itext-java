@@ -145,6 +145,13 @@ public class ContextManager {
         registerGenericContextForProducts(namespaces, Collections.<String>emptyList(), products);
     }
 
+    // TODO DEVSIX-5311 consider renaming to be in sync with renamed registerGenericContextForProducts
+    void unregisterGenericContextForProducts(Collection<String> namespaces) {
+        for (String namespace : namespaces) {
+            unregisterContext(namespace);
+        }
+    }
+
     private IContext getNamespaceMapping(String namespace) {
         if (namespace != null) {
             return contextMappings.get(namespace);
@@ -170,6 +177,10 @@ public class ContextManager {
 
     private void registerContext(String namespace, IContext context) {
         contextMappings.put(namespace, context);
+    }
+
+    private void unregisterContext(String namespace) {
+        contextMappings.remove(namespace);
     }
 
     private static class LengthComparator implements Comparator<String> {
