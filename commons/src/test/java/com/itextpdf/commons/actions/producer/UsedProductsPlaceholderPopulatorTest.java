@@ -32,6 +32,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -123,6 +124,16 @@ public class UsedProductsPlaceholderPopulatorTest extends ExtendedITextTest {
     public void complexFormatTest() {
         String result = populator.populate(getEvents(1, 2, 1, 2, 3), "'module:'P #V (T)");
         Assert.assertEquals("module:product1 #1.0 (type1), module:product2 #2.0 (type2), module:product3 #3.0 (type3)", result);
+    }
+
+    @Test
+    public void humanReadableNormalizationTest() {
+        ProductData productData = new ProductData("public-name", "name", "1.0.0", 2020, 2021);
+        ConfirmedEventWrapper event = new ConfirmedEventWrapper(
+                new ITextTestEvent(new SequenceId(), productData, null, "testing"),
+                "nonproduction", "iText product");
+        String result = populator.populate(Arrays.asList(event), "'module:'P #V (T)");
+        Assert.assertEquals("module:public-name #1.0.0 (non-production)", result);
     }
 
     @Test

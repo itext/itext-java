@@ -26,8 +26,11 @@ import com.itextpdf.commons.actions.confirmations.ConfirmedEventWrapper;
 import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -134,13 +137,25 @@ class UsedProductsPlaceholderPopulator extends AbstractFormattedPlaceholderPopul
     }
 
     private static class ProductRepresentation {
+        private static final Map<String, String> PRODUCT_USAGE_TYPE_TO_HUMAN_READABLE_FORM;
+
         private final String productName;
         private final String productUsageType;
         private final String version;
 
+        static {
+            Map<String, String> productUsageTypeMapping = new HashMap<>();
+            productUsageTypeMapping.put("nonproduction", "non-production");
+            PRODUCT_USAGE_TYPE_TO_HUMAN_READABLE_FORM = Collections.unmodifiableMap(productUsageTypeMapping);
+        }
+
         public ProductRepresentation(ConfirmedEventWrapper event) {
             productName = event.getEvent().getProductData().getPublicProductName();
-            productUsageType = event.getProductUsageType();
+            if (PRODUCT_USAGE_TYPE_TO_HUMAN_READABLE_FORM.containsKey(event.getProductUsageType())) {
+                productUsageType = PRODUCT_USAGE_TYPE_TO_HUMAN_READABLE_FORM.get(event.getProductUsageType());
+            } else {
+                productUsageType = event.getProductUsageType();
+            }
             version = event.getEvent().getProductData().getVersion();
         }
 
