@@ -94,7 +94,7 @@ public class ContextManager {
     }
 
     /**
-     * Gets the singleton instance of this class
+     * Gets the singleton instance of this class.
      *
      * @return the {@link ContextManager} instance
      */
@@ -110,7 +110,7 @@ public class ContextManager {
      * @return the {@link IContext} associated with the class, or {@code null} if the class is unknown.
      */
     public IContext getContext(Class<?> clazz) {
-        return clazz != null ? getContext(clazz.getName()) : null;
+        return clazz == null ? null : getContext(clazz.getName());
     }
 
     /**
@@ -139,16 +139,27 @@ public class ContextManager {
         return null;
     }
 
+    // TODO DEVSIX-5311 consider renaming to be in sync with renamed registerGenericContextForProducts
+    void unregisterGenericContextForProducts(Collection<String> namespaces) {
+        for (String namespace : namespaces) {
+            unregisterContext(namespace);
+        }
+    }
+
     // TODO DEVSIX-5311 rename into registerGenericContext (currently we cann't rename it as
     //  the old method with the same arguments but different logic is used for old mechanism)
     void registerGenericContextForProducts(Collection<String> namespaces, Collection<String> products) {
         registerGenericContextForProducts(namespaces, Collections.<String>emptyList(), products);
     }
 
-    // TODO DEVSIX-5311 consider renaming to be in sync with renamed registerGenericContextForProducts
-    void unregisterGenericContextForProducts(Collection<String> namespaces) {
+    // TODO DEVSIX-5311 This method is needed for similar working of new and old license mechanism,
+    //  should be moved to single properly method
+    private void registerGenericContextForProducts(Collection<String> namespaces, Collection<String> eventIds,
+                                                   Collection<String> products) {
+        final GenericContext context = new GenericContext(products);
         for (String namespace : namespaces) {
-            unregisterContext(namespace);
+            //Conversion to lowercase is done to be compatible with possible changes in case of packages/namespaces
+            registerContext(namespace.toLowerCase(), context);
         }
     }
 
@@ -164,17 +175,6 @@ public class ContextManager {
         registerGenericContextForProducts(namespaces, eventIds, Collections.<String>emptyList());
     }
 
-    // TODO DEVSIX-5311 This method is needed for similar working of new and old license mechanism,
-    //  should be moved to single properly method
-    private void registerGenericContextForProducts(Collection<String> namespaces, Collection<String> eventIds,
-            Collection<String> products) {
-        final GenericContext context = new GenericContext(products);
-        for (String namespace : namespaces) {
-            //Conversion to lowercase is done to be compatible with possible changes in case of packages/namespaces
-            registerContext(namespace.toLowerCase(), context);
-        }
-    }
-
     private void registerContext(String namespace, IContext context) {
         contextMappings.put(namespace, context);
     }
@@ -186,11 +186,11 @@ public class ContextManager {
     private static class LengthComparator implements Comparator<String> {
         @Override
         public int compare(String o1, String o2) {
-            int lengthComparison = -Integer.compare(o1.length(), o2.length());
-            if (0 != lengthComparison) {
-                return lengthComparison;
-            } else {
+            int lengthComparison = Integer.compare(o2.length(), o1.length());
+            if (0 == lengthComparison) {
                 return o1.compareTo(o2);
+            } else {
+                return lengthComparison;
             }
         }
     }

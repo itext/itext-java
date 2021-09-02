@@ -76,7 +76,8 @@ public final class EventManager {
 
         if (caughtExceptions.size() == 1) {
             throw caughtExceptions.get(0);
-        } else if (! caughtExceptions.isEmpty()) {
+        }
+        if (!caughtExceptions.isEmpty()) {
             throw new AggregatedException(AggregatedException.ERROR_DURING_EVENT_PROCESSING, caughtExceptions);
         }
     }

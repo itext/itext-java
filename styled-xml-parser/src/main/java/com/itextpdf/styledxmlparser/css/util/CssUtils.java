@@ -278,7 +278,8 @@ public class CssUtils {
             final List<String> params = splitString(paramsWithFallback.get(0), ' ');
             if (params.size() > QUANTITY_OF_PARAMS_WITH_FALLBACK_OR_TYPE) {
                 return null;
-            } else if (params.size() == QUANTITY_OF_PARAMS_WITH_FALLBACK_OR_TYPE) {
+            }
+            if (params.size() == QUANTITY_OF_PARAMS_WITH_FALLBACK_OR_TYPE) {
                 typeOfAttribute = extractTypeOfAttribute(params.get(1));
                 if (typeOfAttribute == null) {
                     return null;

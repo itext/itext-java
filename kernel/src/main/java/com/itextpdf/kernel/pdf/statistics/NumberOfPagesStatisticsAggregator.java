@@ -87,7 +87,7 @@ public class NumberOfPagesStatisticsAggregator extends AbstractStatisticsAggrega
         }
         synchronized (lock) {
             Long documentsOfThisRange = numberOfDocuments.get(range);
-            Long currentValue = documentsOfThisRange == null ? 1L : documentsOfThisRange.longValue() + 1L;
+            Long currentValue = documentsOfThisRange == null ? 1L : (documentsOfThisRange.longValue() + 1L);
             numberOfDocuments.put(range, currentValue);
         }
     }

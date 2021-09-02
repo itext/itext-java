@@ -46,16 +46,16 @@ package com.itextpdf.commons.actions.contexts;
 import com.itextpdf.commons.actions.AbstractContextBasedITextEvent;
 
 /**
- * The fallback {@link IContext}
+ * The fallback {@link IContext}.
  */
 public class UnknownContext implements IContext {
 
     /**
-     * The {@link IContext} that forbids all events
+     * The {@link IContext} that forbids all events.
      */
     public static final IContext RESTRICTIVE = new UnknownContext(false);
     /**
-     * The {@link IContext} that allows all events
+     * The {@link IContext} that allows all events.
      */
     public static final IContext PERMISSIVE = new UnknownContext(true);
 

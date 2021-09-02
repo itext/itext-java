@@ -37,7 +37,7 @@ public abstract class AbstractContextBasedEventHandler implements IBaseEventHand
      *
      * @param onUnknownContext is a fallback for events within unknown context
      */
-    public AbstractContextBasedEventHandler(IContext onUnknownContext) {
+    protected AbstractContextBasedEventHandler(IContext onUnknownContext) {
         super();
         this.defaultContext = onUnknownContext;
     }

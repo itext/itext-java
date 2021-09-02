@@ -84,8 +84,8 @@ public final class FileUtil {
             String fileSeparator = System.getProperty("file.separator");
             return winDir + fileSeparator + "fonts";
         } catch (SecurityException e) {
-            LoggerFactory.getLogger(FileUtil.class)
-                    .warn("Can't access System.getenv(\"windir\") to load fonts. Please, add RuntimePermission for getenv.windir.");
+            LoggerFactory.getLogger(FileUtil.class).warn("Can't access System.getenv(\"windir\") to load fonts. " +
+                    "Please, add RuntimePermission for getenv.windir.");
             return null;
         }
     }
@@ -122,7 +122,7 @@ public final class FileUtil {
                             list.add(file.getAbsolutePath());
                         }
                     }
-                    return list.toArray(new String[list.size()]);
+                    return list.toArray(new String[0]);
                 }
             }
         }
@@ -156,7 +156,8 @@ public final class FileUtil {
         }
     }
 
-    public static PrintWriter createPrintWriter(OutputStream output, String encoding) throws UnsupportedEncodingException {
+    public static PrintWriter createPrintWriter(OutputStream output,
+                                                String encoding) throws UnsupportedEncodingException {
         return new PrintWriter(new OutputStreamWriter(output, encoding));
     }
 
@@ -209,7 +210,7 @@ public final class FileUtil {
     }
 
     /**
-     * Returns an URL of the parent directory for the resource
+     * Returns an URL of the parent directory for the resource.
      *
      * @param url of resource
      *

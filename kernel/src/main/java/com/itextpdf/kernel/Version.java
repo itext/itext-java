@@ -75,15 +75,15 @@ public final class Version {
      * iText is a registered trademark by iText Group NV.
      * Please don't change this constant.
      */
-    private static final String iTextProductName = "iText\u00ae";
+    private static final String iTextProductName = "iText®";
     /**
      * This String contains the iText version as shown in the producer line.
      * iText is a product developed by iText Group NV.
      * iText Group requests that you retain the iText producer line
      * in every PDF that is created or manipulated using iText.
      */
-    private static final String producerLine = iTextProductName + " " + ITextCoreProductData.getInstance().getVersion()
-            + " \u00a92000-2021 iText Group NV";
+    private static final String PRODUCER_LINE = iTextProductName + " " + ITextCoreProductData.getInstance().getVersion()
+            + " ©2000-2021 iText Group NV";
 
     /**
      * The version info;
@@ -283,7 +283,7 @@ public final class Version {
     }
 
     private static Version initDefaultLicensedVersion(String ownerName, String key) {
-        String producer = producerLine + " (" + ownerName;
+        String producer = PRODUCER_LINE + " (" + ownerName;
         if (! key.toLowerCase().startsWith("trial")) {
             producer += "; licensed version)";
         } else {
@@ -293,7 +293,7 @@ public final class Version {
     }
 
     private static Version initAGPLVersion(Throwable cause, String key) {
-        String producer = producerLine + AGPL;
+        String producer = PRODUCER_LINE + AGPL;
 
         boolean expired = cause != null && cause.getMessage() != null && cause.getMessage().contains("expired");
 

@@ -82,9 +82,10 @@ public final class EncodingUtil {
     }
 
     public static String convertToString(byte[] bytes, String encoding) throws UnsupportedEncodingException {
-        if (encoding.equals(EncodingUtil.UTF8) &&
-                bytes[0] == (byte) 0xEF && bytes[1] == (byte) 0xBB && bytes[2] == (byte) 0xBF)
+        if (bytes[0] == (byte) 0xEF && bytes[1] == (byte) 0xBB
+                && bytes[2] == (byte) 0xBF && encoding.equals(EncodingUtil.UTF8)) {
             return new String(bytes, 3, bytes.length - 3, EncodingUtil.UTF8);
+        }
         return new String(bytes, encoding);
     }
 }

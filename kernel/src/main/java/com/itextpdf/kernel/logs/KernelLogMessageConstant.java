@@ -54,9 +54,10 @@ public final class KernelLogMessageConstant {
     public static final String FEATURE_IS_NOT_SUPPORTED =
             "Exception was thrown: {0}. The feature {1} is probably not supported by your XML processor.";
 
-    public static final String FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY = "Full compression mode requested "
-            + "in append mode but the original document has cross-reference table, not cross-reference stream. "
-            + "Falling back to cross-reference table in appended document and switching full compression off";
+    public static final String FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY =
+            "Full compression mode requested in append mode but the original document has cross-reference table, " +
+                    "not cross-reference stream. " +
+                    "Falling back to cross-reference table in appended document and switching full compression off";
 
     public static final String FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY = "Full compression mode was "
             + "requested to be switched off in append mode but the original document has cross-reference stream, not "
@@ -89,8 +90,8 @@ public final class KernelLogMessageConstant {
      * <li>1st is an event type;
      * </ul>
      */
-    public static final String UNCONFIRMED_EVENT =
-            "Event for the product {0} with type {1} was reported but was not confirmed. Probably appropriate process fail";
+    public static final String UNCONFIRMED_EVENT = "Event for the product {0} with type {1} was reported " +
+            "but was not confirmed. Probably appropriate process fail";
 
     private KernelLogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly

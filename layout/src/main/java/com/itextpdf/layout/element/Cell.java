@@ -52,10 +52,10 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;

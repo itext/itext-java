@@ -53,10 +53,10 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.itextpdf.commons.utils.MessageFormatUtil;
 
 public class TabRenderer extends AbstractRenderer {
     /**

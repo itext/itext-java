@@ -47,9 +47,9 @@ import com.itextpdf.io.IOException;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.colors.IccProfile;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.io.InputStream;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -55,13 +55,13 @@ import com.itextpdf.layout.properties.ListSymbolAlignment;
 import com.itextpdf.layout.properties.ListSymbolPosition;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.layout.tagging.TaggingDummyElement;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import com.itextpdf.layout.tagging.TaggingHintKey;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 

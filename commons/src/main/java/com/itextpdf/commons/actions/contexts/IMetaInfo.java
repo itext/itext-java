@@ -44,7 +44,7 @@
 package com.itextpdf.commons.actions.contexts;
 
 /**
- * The meta info that can holds information about instance that throws the event
+ * The meta info that can holds information about instance that throws the event.
  */
 public interface IMetaInfo {
 }

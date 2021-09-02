@@ -74,6 +74,10 @@ class CurrentDatePlaceholderPopulator extends AbstractFormattedPlaceholderPopula
                 "dd", "MM", "MMM", "MMMM", "yy", "yyyy", "ss", "mm", "HH"
             ));
 
+    public CurrentDatePlaceholderPopulator() {
+        // Empty constructor.
+    }
+
     /**
      * Builds a replacement for a placeholder <code>currentDate</code> in accordance with the
      * provided format.
@@ -89,8 +93,8 @@ class CurrentDatePlaceholderPopulator extends AbstractFormattedPlaceholderPopula
     @Override
     public String populate(List<ConfirmedEventWrapper> events, String parameter) {
         if (parameter == null) {
-            throw new IllegalArgumentException(
-                    MessageFormatUtil.format(CommonsExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "currentDate")
+            throw new IllegalArgumentException(MessageFormatUtil.format(
+                    CommonsExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "currentDate")
             );
         }
 
@@ -127,8 +131,8 @@ class CurrentDatePlaceholderPopulator extends AbstractFormattedPlaceholderPopula
         if (ALLOWED_PATTERNS.contains(piece)) {
             builder.append(DateTimeUtil.format(date, piece));
         } else {
-            throw new IllegalArgumentException(
-                    MessageFormatUtil.format(CommonsExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_COMPONENT, piece)
+            throw new IllegalArgumentException(MessageFormatUtil.format(
+                    CommonsExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_COMPONENT, piece)
             );
         }
 

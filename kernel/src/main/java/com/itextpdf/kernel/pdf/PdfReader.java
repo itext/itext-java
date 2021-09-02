@@ -1319,18 +1319,15 @@ public class PdfReader implements Closeable {
      */
     private static PdfTokenizer getOffsetTokeniser(IRandomAccessSource byteSource, boolean closeStream)
             throws IOException {
-        com.itextpdf.io.IOException possibleException = null;
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(byteSource));
         int offset;
         try {
             offset = tok.getHeaderOffset();
         } catch (com.itextpdf.io.IOException ex) {
-            possibleException = ex;
-            throw possibleException;
-        } finally {
-            if (possibleException != null && closeStream) {
+            if (closeStream) {
                 tok.close();
             }
+            throw ex;
         }
         if (offset != 0) {
             IRandomAccessSource offsetSource = new WindowRandomAccessSource(byteSource, offset);

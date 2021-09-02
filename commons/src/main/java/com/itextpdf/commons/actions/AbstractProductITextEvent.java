@@ -37,7 +37,7 @@ public abstract class AbstractProductITextEvent extends AbstractITextEvent {
      *
      * @param productData is a description of the product which has generated an event
      */
-    public AbstractProductITextEvent(ProductData productData) {
+    protected AbstractProductITextEvent(ProductData productData) {
         super();
         if (productData == null) {
             // IllegalStateException is thrown because AbstractProductITextEvent for internal usage

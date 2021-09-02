@@ -50,7 +50,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Generic context that allows {@link AbstractContextBasedITextEvent} based on the whitelist of supported events
+ * Generic context that allows {@link AbstractContextBasedITextEvent} based on the whitelist of supported events.
  */
 public class GenericContext implements IContext {
     private final Set<String> supportedProducts = new HashSet<>();

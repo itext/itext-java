@@ -37,7 +37,7 @@ public abstract class AbstractEventWrapper extends AbstractProductProcessITextEv
      * @param event is a {@link AbstractProductProcessITextEvent} to wrap
      * @param confirmationType event confirmation type
      */
-    public AbstractEventWrapper(AbstractProductProcessITextEvent event, EventConfirmationType confirmationType) {
+    protected AbstractEventWrapper(AbstractProductProcessITextEvent event, EventConfirmationType confirmationType) {
         super(event.getSequenceId(), event.getProductData(), event.getMetaInfo(), confirmationType);
         this.event = event;
     }
@@ -50,7 +50,8 @@ public abstract class AbstractEventWrapper extends AbstractProductProcessITextEv
      * @param event is a {@link AbstractProductProcessITextEvent} to wrap
      * @param confirmationType event confirmation type
      */
-    public AbstractEventWrapper(SequenceId updatedSequenceId, AbstractProductProcessITextEvent event, EventConfirmationType confirmationType) {
+    protected AbstractEventWrapper(SequenceId updatedSequenceId,
+                                   AbstractProductProcessITextEvent event, EventConfirmationType confirmationType) {
         super(updatedSequenceId, event.getProductData(), event.getMetaInfo(), confirmationType);
         this.event = event;
     }

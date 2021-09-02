@@ -69,7 +69,7 @@ public final class ProductData {
     }
 
     /**
-     * Getter for a version of the product
+     * Getter for a version of the product.
      *
      * @return version of the product
      */
@@ -87,7 +87,7 @@ public final class ProductData {
     }
 
     /**
-     * Getter for the last year of copyright period
+     * Getter for the last year of copyright period.
      *
      * @return the last year of copyright
      */

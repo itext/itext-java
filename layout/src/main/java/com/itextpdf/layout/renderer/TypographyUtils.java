@@ -127,7 +127,8 @@ public final class TypographyUtils {
         applierInstance.applyKerning(fontProgram, text, sequenceId, metaInfo);
     }
 
-    static byte[] getBidiLevels(BaseDirection baseDirection, int[] unicodeIds, SequenceId sequenceId, IMetaInfo metaInfo) {
+    static byte[] getBidiLevels(BaseDirection baseDirection, int[] unicodeIds,
+            SequenceId sequenceId, IMetaInfo metaInfo) {
         return applierInstance.getBidiLevels(baseDirection, unicodeIds, sequenceId, metaInfo);
     }
 

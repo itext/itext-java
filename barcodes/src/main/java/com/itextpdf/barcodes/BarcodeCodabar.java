@@ -178,8 +178,8 @@ public class BarcodeCodabar extends Barcode1D {
         for (int k = 0; k < len; ++k) {
             int idx = CHARS.indexOf(text.charAt(k));
             if (idx >= START_STOP_IDX && k > 0 && k < len - 1) {
-                throw new IllegalArgumentException(
-                        BarcodeExceptionMessageConstant.IN_CODABAR_START_STOP_CHARACTERS_ARE_ONLY_ALLOWED_AT_THE_EXTREMES);
+                throw new IllegalArgumentException(BarcodeExceptionMessageConstant.
+                        IN_CODABAR_START_STOP_CHARACTERS_ARE_ONLY_ALLOWED_AT_THE_EXTREMES);
             }
             if (idx < 0) {
                 throw new IllegalArgumentException(

@@ -31,6 +31,8 @@ import java.util.function.BiFunction;
  */
 public final class MapUtil {
 
+    private static final int HASH_MULTIPLIER = 31;
+
     private MapUtil() { }
 
     /**
@@ -114,8 +116,8 @@ public final class MapUtil {
         for (Map.Entry<K, V> entry : m1.entrySet()) {
             final K key = entry.getKey();
             final V value = entry.getValue();
-            hash = 31 * hash + (key == null ? 0 : key.hashCode());
-            hash = 31 * hash + (value == null ? 0 : value.hashCode());
+            hash = HASH_MULTIPLIER * hash + (key == null ? 0 : key.hashCode());
+            hash = HASH_MULTIPLIER * hash + (value == null ? 0 : value.hashCode());
         }
 
         return hash;

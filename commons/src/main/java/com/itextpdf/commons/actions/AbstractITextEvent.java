@@ -40,7 +40,7 @@ public abstract class AbstractITextEvent implements IBaseEvent {
     /**
      * Creates an instance of abstract iText event. Only for internal usage.
      */
-    public AbstractITextEvent() {
+    protected AbstractITextEvent() {
         boolean isUnknown = true;
         for (String namespace : INTERNAL_PACKAGES.keySet()) {
             if (this.getClass().getName().startsWith(namespace)) {

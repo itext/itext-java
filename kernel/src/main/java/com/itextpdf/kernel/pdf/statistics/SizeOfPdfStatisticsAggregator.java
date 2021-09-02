@@ -90,7 +90,7 @@ public class SizeOfPdfStatisticsAggregator extends AbstractStatisticsAggregator 
         }
         synchronized (lock) {
             Long documentsOfThisRange = numberOfDocuments.get(range);
-            Long currentValue = documentsOfThisRange == null ? 1L : documentsOfThisRange.longValue() + 1L;
+            Long currentValue = documentsOfThisRange == null ? 1L : (documentsOfThisRange.longValue() + 1L);
             numberOfDocuments.put(range, currentValue);
         }
     }
@@ -116,9 +116,9 @@ public class SizeOfPdfStatisticsAggregator extends AbstractStatisticsAggregator 
             return;
         }
 
-        Map<String, Long> numberOfDocuments = ((SizeOfPdfStatisticsAggregator) aggregator).numberOfDocuments;
+        Map<String, Long> amountOfDocuments = ((SizeOfPdfStatisticsAggregator) aggregator).numberOfDocuments;
         synchronized (lock) {
-            MapUtil.merge(this.numberOfDocuments, numberOfDocuments, (el1, el2) -> {
+            MapUtil.merge(this.numberOfDocuments, amountOfDocuments, (Long el1, Long el2) -> {
                 if (el2 == null) {
                     return el1;
                 } else {

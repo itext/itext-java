@@ -52,11 +52,11 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.filters.FlateDecodeFilter;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 
 public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 

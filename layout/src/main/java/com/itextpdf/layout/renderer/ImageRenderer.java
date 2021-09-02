@@ -66,14 +66,13 @@ import com.itextpdf.layout.properties.ObjectFit;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.layout.renderer.objectfit.ObjectFitApplyingResult;
 import com.itextpdf.layout.renderer.objectfit.ObjectFitCalculator;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public class ImageRenderer extends AbstractRenderer implements ILeafElementRenderer {

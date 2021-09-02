@@ -38,7 +38,7 @@ public abstract class AbstractContextBasedITextEvent extends AbstractProductITex
      * @param productData is a description of the product which has generated an event
      * @param metaInfo is an auxiliary meta info
      */
-    public AbstractContextBasedITextEvent(ProductData productData, IMetaInfo metaInfo) {
+    protected AbstractContextBasedITextEvent(ProductData productData, IMetaInfo metaInfo) {
         super(productData);
         this.metaInfo = metaInfo;
     }

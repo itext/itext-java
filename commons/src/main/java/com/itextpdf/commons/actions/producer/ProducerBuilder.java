@@ -126,7 +126,8 @@ public final class ProducerBuilder extends AbstractITextConfigurationEvent {
 
     private static String buildProducer(List<ConfirmedEventWrapper> events) {
         if (events == null || events.isEmpty()) {
-            throw new IllegalArgumentException(CommonsExceptionMessageConstant.NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT);
+            throw new IllegalArgumentException(
+                    CommonsExceptionMessageConstant.NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT);
         }
 
         // we expects here that the first event was thrown by
@@ -149,13 +150,12 @@ public final class ProducerBuilder extends AbstractITextConfigurationEvent {
             final String placeholder = matcher.group(1);
             final int delimiterPosition = placeholder.indexOf(FORMAT_DELIMITER);
             String placeholderName;
-            String parameter;
-            if (placeholder.indexOf(FORMAT_DELIMITER) != -1) {
+            String parameter = null;
+            if (placeholder.indexOf(FORMAT_DELIMITER) == -1) {
+                placeholderName = placeholder;
+            } else {
                 placeholderName = placeholder.substring(0, delimiterPosition);
                 parameter = placeholder.substring(delimiterPosition + 1);
-            } else {
-                placeholderName = placeholder;
-                parameter = null;
             }
 
             final IPlaceholderPopulator populator = PLACEHOLDER_POPULATORS.get(placeholderName);

@@ -129,7 +129,8 @@ public class SvgCoordinateUtils {
     public static double getCoordinateForObjectBoundingBox(String attributeValue, double defaultValue) {
         if (CssTypesValidationUtils.isPercentageValue(attributeValue)) {
             return CssDimensionParsingUtils.parseRelativeValue(attributeValue, 1);
-        } else if (CssTypesValidationUtils.isNumber(attributeValue)
+        }
+        if (CssTypesValidationUtils.isNumber(attributeValue)
                 || CssTypesValidationUtils.isMetricValue(attributeValue)
                 || CssTypesValidationUtils.isRelativeValue(attributeValue)) {
             // if there is incorrect value metric, then we do not need to parse the value

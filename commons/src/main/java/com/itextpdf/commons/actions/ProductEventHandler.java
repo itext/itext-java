@@ -111,6 +111,10 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
         return Collections.unmodifiableMap(new HashMap<>(processors));
     }
 
+    void clearProcessors() {
+        processors.clear();
+    }
+
     List<AbstractProductProcessITextEvent> getEvents(SequenceId id) {
         synchronized (events) {
             final List<AbstractProductProcessITextEvent> listOfEvents = events.get(id);

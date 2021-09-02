@@ -38,7 +38,7 @@ public abstract class AbstractStatisticsEvent extends AbstractProductITextEvent 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStatisticsEvent.class);
 
     /**
-     * @see AbstractProductITextEvent#AbstractProductITextEvent(ProductData).
+     * @see AbstractProductITextEvent#AbstractProductITextEvent(ProductData)
      */
     protected AbstractStatisticsEvent(ProductData productData) {
         super(productData);

@@ -71,12 +71,12 @@ public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent
             return;
         }
         List<AbstractProductProcessITextEvent> events = getEvents(pdfDocument.getDocumentIdWrapper());
-        final Set<String> products = new HashSet<>();
 
         if (events == null || events.isEmpty()) {
             return;
         }
 
+        final Set<String> products = new HashSet<>(events.size());
         for (final AbstractProductProcessITextEvent event : events) {
             if (event.getConfirmationType() == EventConfirmationType.ON_CLOSE) {
                 EventManager.getInstance().onEvent(new ConfirmEvent(pdfDocument.getDocumentIdWrapper(), event));
@@ -84,7 +84,7 @@ public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent
             products.add(event.getProductName());
         }
 
-        for (final String product: products) {
+        for (final String product : products) {
             final ITextProductEventProcessor processor = getActiveProcessor(product);
             if (processor == null && LOGGER.isWarnEnabled()) {
                 LOGGER.warn(MessageFormatUtil.format(KernelLogMessageConstant.UNKNOWN_PRODUCT_INVOLVED, product));
@@ -92,7 +92,8 @@ public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent
         }
 
         final String oldProducer = pdfDocument.getDocumentInfo().getProducer();
-        final String newProducer = ProducerBuilder.modifyProducer(getConfirmedEvents(pdfDocument.getDocumentIdWrapper()), oldProducer);
+        final String newProducer =
+                ProducerBuilder.modifyProducer(getConfirmedEvents(pdfDocument.getDocumentIdWrapper()), oldProducer);
         pdfDocument.getDocumentInfo().setProducer(newProducer);
     }
 

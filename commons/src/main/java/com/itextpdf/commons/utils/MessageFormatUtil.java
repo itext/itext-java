@@ -50,7 +50,12 @@ import java.util.Locale;
  * This file is a helper class for internal usage only.
  * Be aware that its API and functionality may be changed in future.
  */
-public class MessageFormatUtil {
+public final class MessageFormatUtil {
+
+    private MessageFormatUtil() {
+        // Empty constructor.
+    }
+
     public static String format(String pattern, Object... arguments) {
         return new MessageFormat(pattern, Locale.ROOT).format(arguments);
     }

@@ -45,7 +45,6 @@ package com.itextpdf.layout.layout;
 
 import com.itextpdf.io.util.HashCode;
 import com.itextpdf.kernel.geom.Rectangle;
-
 import com.itextpdf.commons.utils.MessageFormatUtil;
 
 /**

@@ -25,7 +25,7 @@ package com.itextpdf.commons.actions.data;
 /**
  * Stores an instance of {@link ProductData} related to iText commons module.
  */
-public class CommonsProductData {
+public final class CommonsProductData {
     private static final String COMMONS_PUBLIC_PRODUCT_NAME = "Commons";
     private static final String COMMONS_PRODUCT_NAME = "commons";
     private static final String COMMONS_VERSION = "7.2.0-SNAPSHOT";
@@ -34,6 +34,10 @@ public class CommonsProductData {
 
     private static final ProductData COMMONS_PRODUCT_DATA = new ProductData(COMMONS_PUBLIC_PRODUCT_NAME,
             COMMONS_PRODUCT_NAME, COMMONS_VERSION, COMMONS_COPYRIGHT_SINCE, COMMONS_COPYRIGHT_TO);
+
+    private CommonsProductData() {
+        // Empty constructor for util class
+    }
 
     /**
      * Getter for an instance of {@link ProductData} related to iText commons module.

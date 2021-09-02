@@ -68,10 +68,14 @@ public final class SystemUtil {
         return (int) System.currentTimeMillis();
     }
 
+    private SystemUtil() {
+        // Empty constructor.
+    }
+
     /**
      * Should be used in relative constructs (for example to check how many milliseconds have passed).
-     * <p>
-     * Shouldn't be used in the Date creation since the value returned by this method is different in С#.
+     *
+     * <p>Shouldn't be used in the Date creation since the value returned by this method is different in С#.
      * For getting current time consistently use {@link DateTimeUtil#getCurrentTimeDate()}.
      *
      * @return relative time in milliseconds.
@@ -102,7 +106,8 @@ public final class SystemUtil {
         return runProcessAndWait(exec, params, null);
     }
 
-    public static boolean runProcessAndWait(String exec, String params, String workingDirPath) throws IOException, InterruptedException {
+    public static boolean runProcessAndWait(String exec, String params,
+                                            String workingDirPath) throws IOException, InterruptedException {
         return runProcessAndGetExitCode(exec, params, workingDirPath) == 0;
     }
 
@@ -110,7 +115,8 @@ public final class SystemUtil {
         return runProcessAndGetExitCode(exec, params, null);
     }
 
-    public static int runProcessAndGetExitCode(String exec, String params, String workingDirPath) throws IOException, InterruptedException {
+    public static int runProcessAndGetExitCode(String exec, String params,
+                                               String workingDirPath) throws IOException, InterruptedException {
         Process p = runProcess(exec, params, workingDirPath);
         System.out.println(getProcessOutput(p));
         return p.waitFor();
@@ -126,7 +132,7 @@ public final class SystemUtil {
 
     static Process runProcess(String execPath, String params, String workingDirPath) throws IOException {
         List<String> cmdList = prepareProcessArguments(execPath, params);
-        String[] cmdArray = cmdList.toArray(new String[cmdList.size()]);
+        String[] cmdArray = cmdList.toArray(new String[0]);
         if (workingDirPath != null) {
             File workingDir = new File(workingDirPath);
             return Runtime.getRuntime().exec(cmdArray, null, workingDir);

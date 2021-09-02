@@ -38,6 +38,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -56,7 +57,15 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         junitExpectedException.expect(IllegalArgumentException.class);
         junitExpectedException.expectMessage(CommonsExceptionMessageConstant.NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT);
 
-        ProducerBuilder.modifyProducer((List<AbstractProductProcessITextEvent>)null, null);
+        ProducerBuilder.modifyProducer(Collections.emptyList(), null);
+    }
+
+    @Test
+    public void nullEventsProducerLineTest() {
+        junitExpectedException.expect(IllegalArgumentException.class);
+        junitExpectedException.expectMessage(CommonsExceptionMessageConstant.NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT);
+
+        ProducerBuilder.modifyProducer(null, null);
     }
 
     @Test

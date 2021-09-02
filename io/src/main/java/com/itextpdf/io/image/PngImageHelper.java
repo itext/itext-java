@@ -50,13 +50,11 @@ import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteBuffer;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import org.slf4j.LoggerFactory;
-
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 

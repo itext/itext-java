@@ -59,7 +59,8 @@ import java.util.Set;
  *
  * @param <T> the type of the implementation
  */
-public abstract class AbstractElement<T extends IElement> extends ElementPropertyContainer<T> implements IAbstractElement {
+public abstract class AbstractElement<T extends IElement>
+        extends ElementPropertyContainer<T> implements IAbstractElement {
 
     protected IRenderer nextRenderer;
     protected List<IElement> childElements = new ArrayList<>();

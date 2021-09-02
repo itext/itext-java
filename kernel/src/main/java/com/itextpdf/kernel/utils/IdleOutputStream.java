@@ -27,6 +27,6 @@ import java.io.OutputStream;
 class IdleOutputStream  extends OutputStream {
     @Override
     public void write(int b) {
-
+        // Idle output stream write method does nothing.
     }
 }

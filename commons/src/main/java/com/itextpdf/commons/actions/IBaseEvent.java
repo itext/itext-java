@@ -25,7 +25,7 @@ package com.itextpdf.commons.actions;
 /**
  * Base marker interface for any generated event of any source.
  *
- * TODO: DEVSIX-5311 rename it IEvent when the oldest mechanism is deleted
+ * <p>TODO: DEVSIX-5311 rename it IEvent when the oldest mechanism is deleted
  */
 public interface IBaseEvent {
 }

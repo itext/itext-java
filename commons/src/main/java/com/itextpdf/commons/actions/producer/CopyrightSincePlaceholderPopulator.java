@@ -35,6 +35,10 @@ import java.util.List;
  */
 class CopyrightSincePlaceholderPopulator implements IPlaceholderPopulator {
 
+    public CopyrightSincePlaceholderPopulator() {
+        // Empty constructor.
+    }
+
     /**
      * Builds a replacement for a placeholder <code>copyrightSince</code> in accordance with the
      * registered events.
@@ -53,8 +57,8 @@ class CopyrightSincePlaceholderPopulator implements IPlaceholderPopulator {
     public String populate(List<ConfirmedEventWrapper> events, String parameter) {
 
         if (parameter != null) {
-            throw new IllegalArgumentException(
-                    MessageFormatUtil.format(CommonsExceptionMessageConstant.INVALID_USAGE_CONFIGURATION_FORBIDDEN, "copyrightSince")
+            throw new IllegalArgumentException(MessageFormatUtil.format(
+                    CommonsExceptionMessageConstant.INVALID_USAGE_CONFIGURATION_FORBIDDEN, "copyrightSince")
             );
         }
 

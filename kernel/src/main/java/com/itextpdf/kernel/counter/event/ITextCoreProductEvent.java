@@ -31,7 +31,7 @@ import com.itextpdf.commons.actions.sequence.SequenceId;
 /**
  * Class represents events registered in iText core module.
  */
-public class ITextCoreProductEvent extends AbstractProductProcessITextEvent {
+public final class ITextCoreProductEvent extends AbstractProductProcessITextEvent {
     /**
      * Process pdf event type.
      */

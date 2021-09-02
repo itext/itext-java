@@ -45,7 +45,7 @@ public abstract class AbstractProductProcessITextEvent extends AbstractContextBa
      * @param confirmationType defines when the event should be confirmed to notify that the
      *                         associated process has finished successfully
      */
-    public AbstractProductProcessITextEvent(SequenceId sequenceId, ProductData productData, IMetaInfo metaInfo,
+    protected AbstractProductProcessITextEvent(SequenceId sequenceId, ProductData productData, IMetaInfo metaInfo,
             EventConfirmationType confirmationType) {
         super(productData, metaInfo);
 
@@ -61,7 +61,7 @@ public abstract class AbstractProductProcessITextEvent extends AbstractContextBa
      * @param confirmationType defines when the event should be confirmed to notify that the
      *                         associated process has finished successfully
      */
-    public AbstractProductProcessITextEvent(ProductData productData, IMetaInfo metaInfo,
+    protected AbstractProductProcessITextEvent(ProductData productData, IMetaInfo metaInfo,
             EventConfirmationType confirmationType) {
         this(null, productData, metaInfo, confirmationType);
     }

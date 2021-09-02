@@ -181,16 +181,17 @@ public final class InlineImageParsingUtils {
 
         if (colorSpaceDic != null) {
             PdfArray colorSpace = colorSpaceDic.getAsArray(colorSpaceName);
-            if (colorSpace != null) {
-                if (PdfName.Indexed.equals(colorSpace.getAsName(0))) {
-                    return 1;
-                } else if (PdfName.ICCBased.equals(colorSpace.getAsName(0))) {
-                    return colorSpace.getAsStream(1).getAsNumber(PdfName.N).intValue();
-                }
-            } else {
+            if (colorSpace == null) {
                 PdfName tempName = colorSpaceDic.getAsName(colorSpaceName);
                 if (tempName != null) {
                     return getComponentsPerPixel(tempName, colorSpaceDic);
+                }
+            } else {
+                if (PdfName.Indexed.equals(colorSpace.getAsName(0))) {
+                    return 1;
+                }
+                if (PdfName.ICCBased.equals(colorSpace.getAsName(0))) {
+                    return colorSpace.getAsStream(1).getAsNumber(PdfName.N).intValue();
                 }
             }
         }

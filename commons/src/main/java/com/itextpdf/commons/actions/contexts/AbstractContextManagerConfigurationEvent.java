@@ -33,7 +33,7 @@ public abstract class AbstractContextManagerConfigurationEvent extends AbstractI
     /**
      * Creates an instance of context manager configuration event.
      */
-    public AbstractContextManagerConfigurationEvent() {
+    protected AbstractContextManagerConfigurationEvent() {
         super();
     }
 

@@ -28,7 +28,7 @@ import com.itextpdf.commons.actions.ProductNameConstant;
 /**
  * Stores an instance of {@link ProductData} related to iText core module.
  */
-public class ITextCoreProductData {
+public final class ITextCoreProductData {
     private static final String CORE_PUBLIC_PRODUCT_NAME = "Core";
     private static final String CORE_VERSION = "7.2.0-SNAPSHOT";
     private static final int CORE_COPYRIGHT_SINCE = 2000;
@@ -36,6 +36,10 @@ public class ITextCoreProductData {
 
     private static final ProductData ITEXT_PRODUCT_DATA = new ProductData(CORE_PUBLIC_PRODUCT_NAME,
             ProductNameConstant.ITEXT_CORE, CORE_VERSION, CORE_COPYRIGHT_SINCE, CORE_COPYRIGHT_TO);
+
+    private ITextCoreProductData() {
+        // Empty constructor.
+    }
 
     /**
      * Getter for an instance of {@link ProductData} related to iText core module.

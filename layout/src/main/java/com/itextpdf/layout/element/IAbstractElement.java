@@ -29,7 +29,7 @@ import java.util.List;
  */
 public interface IAbstractElement extends IElement {
     /**
-     * Gets the child elements of this elements
+     * Gets the child elements of this elements.
      *
      * @return a list of children
      */

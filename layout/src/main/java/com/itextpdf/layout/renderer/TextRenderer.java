@@ -810,7 +810,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         // from text renderers (see LineRenderer#applyOtf).
                         setProperty(Property.BASE_DIRECTION, BaseDirection.DEFAULT_BIDI);
                     }
-                    TypographyUtils.applyOtfScript(font.getFontProgram(), text, scriptsRange.script, typographyConfig, sequenceId, metaInfo);
+                    TypographyUtils.applyOtfScript(
+                            font.getFontProgram(), text, scriptsRange.script, typographyConfig, sequenceId, metaInfo);
 
                     delta += text.end - scriptsRange.rangeEnd;
                     scriptsRange.rangeEnd = shapingRangeStart = text.end;

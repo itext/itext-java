@@ -57,6 +57,10 @@ import java.util.GregorianCalendar;
 public final class DateTimeUtil {
     private static final String DEFAULT_PATTERN = "yyyy-MM-dd";
 
+    private DateTimeUtil() {
+        // Empty constructor.
+    }
+
     /**
      * Gets the {@link Calendar} as UTC milliseconds from the epoch.
      *

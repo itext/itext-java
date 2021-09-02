@@ -41,7 +41,7 @@ public class MetaInfoContainer {
     }
 
     /**
-     * Return the IMetaInfo object
+     * Return the IMetaInfo object.
      *
      * @return returns IMetaInfo
      */

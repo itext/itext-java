@@ -67,6 +67,10 @@ class UsedProductsPlaceholderPopulator extends AbstractFormattedPlaceholderPopul
     private static final char USAGE_TYPE = 'T';
     private static final String PRODUCTS_SEPARATOR = ", ";
 
+    public UsedProductsPlaceholderPopulator() {
+        // Empty constructor.
+    }
+
     /**
      * Builds a replacement for a placeholder <code>usedProducts</code> in accordance with the
      * registered events and provided format.
@@ -81,8 +85,8 @@ class UsedProductsPlaceholderPopulator extends AbstractFormattedPlaceholderPopul
     @Override
     public String populate(List<ConfirmedEventWrapper> events, String parameter) {
         if (parameter == null) {
-            throw new IllegalArgumentException(
-                    MessageFormatUtil.format(CommonsExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "usedProducts"));
+            throw new IllegalArgumentException(MessageFormatUtil.format(
+                    CommonsExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "usedProducts"));
         }
 
         final Set<ProductRepresentation> usedProducts = new LinkedHashSet<>();
@@ -131,8 +135,8 @@ class UsedProductsPlaceholderPopulator extends AbstractFormattedPlaceholderPopul
         } else if (letter == USAGE_TYPE) {
             return product.getProductUsageType();
         } else {
-            throw new IllegalArgumentException(
-                    MessageFormatUtil.format(CommonsExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_CHARACTER, letter));
+            throw new IllegalArgumentException(MessageFormatUtil.format(
+                    CommonsExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_CHARACTER, letter));
         }
     }
 
@@ -182,22 +186,22 @@ class UsedProductsPlaceholderPopulator extends AbstractFormattedPlaceholderPopul
 
             ProductRepresentation that = (ProductRepresentation) o;
 
-            if (getProductName() != null ? !getProductName().equals(that.getProductName())
-                    : that.getProductName() != null) {
+            if (getProductName() == null ?
+                    that.getProductName() != null : !getProductName().equals(that.getProductName())) {
                 return false;
             }
-            if (getProductUsageType() != null ? !getProductUsageType().equals(that.getProductUsageType())
-                    : that.getProductUsageType() != null) {
+            if (getProductUsageType() == null ?
+                    that.getProductUsageType() != null : !getProductUsageType().equals(that.getProductUsageType())) {
                 return false;
             }
-            return getVersion() != null ? getVersion().equals(that.getVersion()) : that.getVersion() == null;
+            return getVersion() == null ? that.getVersion() == null : getVersion().equals(that.getVersion());
         }
 
         @Override
         public int hashCode() {
-            int result = getProductName() != null ? getProductName().hashCode() : 0;
-            result = 31 * result + (getProductUsageType() != null ? getProductUsageType().hashCode() : 0);
-            result = 31 * result + (getVersion() != null ? getVersion().hashCode() : 0);
+            int result = getProductName() == null ? 0 : getProductName().hashCode();
+            result = 31 * result + (getProductUsageType() == null ? 0 : getProductUsageType().hashCode());
+            result = 31 * result + (getVersion() == null ? 0 : getVersion().hashCode());
             return result;
         }
     }

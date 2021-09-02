@@ -54,7 +54,6 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
-
 import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import org.slf4j.Logger;

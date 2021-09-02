@@ -35,6 +35,10 @@ import java.util.List;
  */
 class CopyrightToPlaceholderPopulator implements IPlaceholderPopulator {
 
+    public CopyrightToPlaceholderPopulator() {
+        // Empty constructor.
+    }
+
     /**
      * Builds a replacement for a placeholder <code>copyrightTo</code> in accordance with the
      * registered events.
@@ -53,8 +57,8 @@ class CopyrightToPlaceholderPopulator implements IPlaceholderPopulator {
     public String populate(List<ConfirmedEventWrapper> events, String parameter) {
 
         if (parameter != null) {
-            throw new IllegalArgumentException(
-                    MessageFormatUtil.format(CommonsExceptionMessageConstant.INVALID_USAGE_CONFIGURATION_FORBIDDEN, "copyrightTo")
+            throw new IllegalArgumentException(MessageFormatUtil.format(
+                    CommonsExceptionMessageConstant.INVALID_USAGE_CONFIGURATION_FORBIDDEN, "copyrightTo")
             );
         }
 
