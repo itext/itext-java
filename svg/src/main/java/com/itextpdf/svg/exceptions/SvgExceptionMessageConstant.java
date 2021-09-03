@@ -54,7 +54,6 @@ public final class SvgExceptionMessageConstant {
             + "coordinates";
     public static final String COULD_NOT_DETERMINE_MIDDLE_POINT_OF_ELLIPTICAL_ARC = "Could not determine the middle "
             + "point of the ellipse traced by this elliptical arc";
-    public static final String COULD_NOT_INSTANTIATE = "Could not instantiate Renderer for tag {0}";
     public static final String CURVE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0 = "(x1 y1 x2 y2 x y)+ parameters are "
             + "expected for curves. Got: {0}";
     public static final String DRAW_NO_DRAW = "The renderer cannot be drawn.";

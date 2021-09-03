@@ -49,6 +49,7 @@ import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.INoDrawSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererMapper.ISvgNodeRendererCreator;
 import com.itextpdf.svg.renderers.impl.DefsSvgNodeRenderer;
 
 import java.util.Collection;
@@ -65,8 +66,8 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
 
-    private Map<String, Class<? extends ISvgNodeRenderer>> rendererMap = new HashMap<>();
-    private Collection<String> ignoredTags = new HashSet<>();
+    private final Map<String, ISvgNodeRendererCreator> rendererMap = new HashMap<>();
+    private final Collection<String> ignoredTags = new HashSet<>();
 
     /**
      * Default constructor with default {@link ISvgNodeRenderer} creation logic.
@@ -85,20 +86,15 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
             throw new SvgProcessingException(SvgExceptionMessageConstant.TAG_PARAMETER_NULL);
         }
 
-        try {
-            Class<? extends ISvgNodeRenderer> clazz = rendererMap.get(tag.name());
+        final ISvgNodeRendererCreator svgNodeRendererCreator = rendererMap.get(tag.name());
 
-            if (clazz == null) {
-                Logger logger = LoggerFactory.getLogger(this.getClass());
-                logger.warn(MessageFormatUtil.format(SvgLogMessageConstant.UNMAPPED_TAG, tag.name()));
-                return null;
-            }
-
-            result = (ISvgNodeRenderer) rendererMap.get(tag.name()).newInstance();
-        } catch (ReflectiveOperationException ex) {
-            throw new SvgProcessingException(SvgExceptionMessageConstant.COULD_NOT_INSTANTIATE, ex)
-                    .setMessageParams(tag.name());
+        if (svgNodeRendererCreator == null) {
+            Logger logger = LoggerFactory.getLogger(this.getClass());
+            logger.warn(MessageFormatUtil.format(SvgLogMessageConstant.UNMAPPED_TAG, tag.name()));
+            return null;
         }
+
+        result = svgNodeRendererCreator.create();
 
         // DefsSvgNodeRenderer should not have parental relationship with any renderer, it only serves as a storage
         if (parent != null && !(result instanceof INoDrawSvgNodeRenderer) && !(parent instanceof DefsSvgNodeRenderer)) {
