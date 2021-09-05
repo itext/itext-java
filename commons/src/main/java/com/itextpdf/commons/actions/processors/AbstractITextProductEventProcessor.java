@@ -20,22 +20,35 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.counter;
+package com.itextpdf.commons.actions.processors;
 
-import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
+import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+public abstract class AbstractITextProductEventProcessor implements ITextProductEventProcessor {
 
-@Category(UnitTest.class)
-public class StandardOutputEventCounterTest extends ExtendedITextTest {
+    private final String productName;
 
-    @Test
-    public void standardEventCounterFactoryTest() {
-        StandardOutputEventCounterFactory counterFactory = new StandardOutputEventCounterFactory();
+    public AbstractITextProductEventProcessor(String productName) {
+        if (productName == null) {
+            throw new IllegalArgumentException(CommonsExceptionMessageConstant.PRODUCT_NAME_CAN_NOT_BE_NULL);
+        }
+        this.productName = productName;
+    }
 
-        Assert.assertTrue(counterFactory.getCounter(getClass()) instanceof StandardOutputEventCounter);
+    @Override
+    public abstract void onEvent(AbstractProductProcessITextEvent event);
+
+    @Override
+    public abstract String getUsageType();
+
+    @Override
+    public String getProducer() {
+        return "iText\u00ae ${usedProducts:P V (T 'version')} \u00a9${copyrightSince}-${copyrightTo} iText Group NV";
+    }
+
+    @Override
+    public String getProductName() {
+        return productName;
     }
 }

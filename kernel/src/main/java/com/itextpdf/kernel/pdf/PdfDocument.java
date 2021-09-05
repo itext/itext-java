@@ -43,23 +43,19 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.actions.EventManager;
+import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
+import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
+import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.ProductInfo;
-import com.itextpdf.kernel.Version;
-import com.itextpdf.kernel.VersionInfo;
-import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
-import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
-import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
 import com.itextpdf.kernel.actions.events.FlushPdfDocumentEvent;
-import com.itextpdf.commons.actions.sequence.SequenceId;
-import com.itextpdf.kernel.counter.EventCounterHandler;
-import com.itextpdf.kernel.counter.event.CoreEvent;
-import com.itextpdf.kernel.counter.event.ITextCoreProductEvent;
+import com.itextpdf.kernel.actions.events.ITextCoreProductEvent;
 import com.itextpdf.kernel.crypto.BadPasswordException;
 import com.itextpdf.kernel.events.EventDispatcher;
 import com.itextpdf.kernel.events.IEventDispatcher;
@@ -201,7 +197,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     protected TagStructureContext tagStructureContext;
 
     private SequenceId documentId;
-    private VersionInfo versionInfo = Version.getInstance().getInfo();
 
     /**
      * Yet not copied link annotations from the other documents.
@@ -378,7 +373,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             addCustomMetadataExtensions(xmpMeta);
             try {
                 xmpMeta.setProperty(XMPConst.NS_DC, PdfConst.Format, "application/pdf");
-                xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, versionInfo.getVersion());
                 setXmpMetadata(xmpMeta);
             } catch (XMPException ignored) {
             }
@@ -1947,7 +1941,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     properties.metaInfo,
                     writer == null ? EventConfirmationType.ON_DEMAND : EventConfirmationType.ON_CLOSE);
             EventManager.getInstance().onEvent(event);
-            EventCounterHandler.getInstance().onEvent(CoreEvent.PROCESS, properties.metaInfo, getClass());
             boolean embeddedStreamsSavedOnReading = false;
             if (reader != null) {
                 if (reader.pdfDocument != null) {
@@ -2229,15 +2222,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     boolean doesStreamBelongToEmbeddedFile(PdfStream stream) {
         return encryptedEmbeddedStreamsHandler.isStreamStoredAsEmbedded(stream);
-    }
-
-    /**
-     * Gets iText version info.
-     *
-     * @return iText version info.
-     */
-    final VersionInfo getVersionInfo() {
-        return versionInfo;
     }
 
     boolean hasAcroForm() {

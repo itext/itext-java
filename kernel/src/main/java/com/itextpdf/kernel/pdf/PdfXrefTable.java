@@ -47,7 +47,6 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.ProductInfo;
-import com.itextpdf.kernel.VersionInfo;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 
 import org.slf4j.Logger;
@@ -515,13 +514,14 @@ public class PdfXrefTable {
         PdfWriter writer = document.getWriter();
         FingerPrint fingerPrint = document.getFingerPrint();
 
-        String platform = "";
-        VersionInfo versionInfo = document.getVersionInfo();
-        String k = versionInfo.getKey();
-        if (k == null) {
-            k = "iText";
-        }
-        writer.writeString(MessageFormatUtil.format("%{0}-{1}{2}\n", k, ITextCoreProductData.getInstance().getVersion(), platform));
+        //TODO DEVSIX-5712 in the scope of this ticket we will discuss, what information we would write.
+        //String platform = "";
+        //VersionInfo versionInfo = document.getVersionInfo();
+        //String k = versionInfo.getKey();
+        //if (k == null) {
+        //    k = "iText";
+        //}
+        //writer.writeString(MessageFormatUtil.format("%{0}-{1}{2}\n", k, versionInfo.getRelease(), platform));
 
         for (ProductInfo productInfo : fingerPrint.getProducts() ) {
             writer.writeString(MessageFormatUtil.format("%{0}\n", productInfo));

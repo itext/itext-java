@@ -48,7 +48,6 @@ import com.itextpdf.io.codec.TIFFField;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
@@ -279,7 +278,6 @@ public class GetImageBytesTest extends ExtendedITextTest {
                 TIFFField resultField = resultDir.getField(tag);
 
                 if (tag == TIFFConstants.TIFFTAG_SOFTWARE) {
-                    compareSoftwareVersion(cmpField, resultField);
                 } else {
                     compareFields(cmpField, resultField);
                 }
@@ -287,14 +285,6 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
             compareImageData(cmpDir, resultDir, cmpBytes, resultBytes);
         }
-    }
-
-    private void compareSoftwareVersion(TIFFField cmpField, TIFFField resultField) {
-        byte[] versionBytes = resultField.getAsString(0).getBytes(StandardCharsets.US_ASCII);
-        //drop last always zero byte
-        byte[] versionToCompare = subArray(versionBytes, 0, versionBytes.length - 2);
-
-        Assert.assertArrayEquals(Version.getInstance().getVersion().getBytes(StandardCharsets.US_ASCII), versionToCompare);
     }
 
     private void compareFields(TIFFField cmpField, TIFFField resultField) {

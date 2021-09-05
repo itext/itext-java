@@ -1,8 +1,7 @@
 /*
-
     This file is part of the iText (R) project.
     Copyright (c) 1998-2021 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -41,50 +40,37 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel;
+package com.itextpdf.kernel.actions.events;
 
-public class VersionInfo {
+import com.itextpdf.commons.actions.ProductNameConstant;
+import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
+import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.kernel.actions.data.ITextCoreProductData;
+import com.itextpdf.kernel.actions.ecosystem.TestMetaInfo;
+import com.itextpdf.kernel.actions.events.ITextCoreProductEvent;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
 
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
-    private final String productName;
-    private final String producerLine;
-    private final String licenseKey;
+@Category(UnitTest.class)
+public class ITextCoreProductEventTest extends ExtendedITextTest {
+    @Test
+    public void openDocumentEventTest() {
+        SequenceId sequenceId = new SequenceId();
+        ITextCoreProductEvent event = ITextCoreProductEvent.createProcessPdfEvent(sequenceId, new TestMetaInfo("meta data"), EventConfirmationType.ON_CLOSE);
 
-    public VersionInfo(String productName, String producerLine, String licenseKey) {
-        this.productName = productName;
-        this.producerLine = producerLine;
-        this.licenseKey = licenseKey;
-    }
+        Assert.assertEquals(ITextCoreProductEvent.PROCESS_PDF, event.getEventType());
+        Assert.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
+        Assert.assertEquals(EventConfirmationType.ON_CLOSE, event.getConfirmationType());
+        Assert.assertEquals(sequenceId, event.getSequenceId());
 
-    /**
-     * Gets the product name.
-     * iText Group NV requests that you retain the iText producer line
-     * in every PDF that is created or manipulated using iText.
-     *
-     * @return the product name
-     */
-    public String getProduct() {
-        return productName;
-    }
-
-    /**
-     * Returns the iText version as shown in the producer line.
-     * iText is a product developed by iText Group NV.
-     * iText Group requests that you retain the iText producer line
-     * in every PDF that is created or manipulated using iText.
-     *
-     * @return iText version
-     */
-    public String getVersion() {
-        return producerLine;
-    }
-
-    /**
-     * Returns a license key if one was provided, or null if not.
-     *
-     * @return a license key.
-     */
-    public String getKey() {
-        return licenseKey;
+        Assert.assertEquals(ITextCoreProductData.getInstance().getPublicProductName(), event.getProductData().getPublicProductName());
+        Assert.assertEquals(ITextCoreProductData.getInstance().getProductName(), event.getProductData().getProductName());
+        Assert.assertEquals(ITextCoreProductData.getInstance().getVersion(), event.getProductData().getVersion());
+        Assert.assertEquals(ITextCoreProductData.getInstance().getSinceCopyrightYear(), event.getProductData().getSinceCopyrightYear());
+        Assert.assertEquals(ITextCoreProductData.getInstance().getToCopyrightYear(), event.getProductData().getToCopyrightYear());
     }
 }

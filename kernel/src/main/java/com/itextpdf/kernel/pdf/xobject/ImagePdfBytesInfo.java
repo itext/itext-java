@@ -45,15 +45,22 @@ package com.itextpdf.kernel.pdf.xobject;
 import com.itextpdf.io.codec.PngWriter;
 import com.itextpdf.io.codec.TIFFConstants;
 import com.itextpdf.io.codec.TiffWriter;
-import com.itextpdf.kernel.Version;
+import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+
 import java.io.IOException;
 
 class ImagePdfBytesInfo {
+
+    private static final String TIFFTAG_SOFTWARE_VALUE = "iText\u00ae " +
+            ITextCoreProductData.getInstance().getVersion() + " \u00a9" + ITextCoreProductData.getInstance()
+            .getSinceCopyrightYear() + "-" + ITextCoreProductData.getInstance().getToCopyrightYear()
+            + " iText Group NV";
+
     private int pngColorType;
     private int pngBitDepth;
     private int bpc;
@@ -117,7 +124,7 @@ class ImagePdfBytesInfo {
             wr.addField(new TiffWriter.FieldRational(TIFFConstants.TIFFTAG_XRESOLUTION, new int[]{300, 1}));
             wr.addField(new TiffWriter.FieldRational(TIFFConstants.TIFFTAG_YRESOLUTION, new int[]{300, 1}));
             wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_RESOLUTIONUNIT, TIFFConstants.RESUNIT_INCH));
-            wr.addField(new TiffWriter.FieldAscii(TIFFConstants.TIFFTAG_SOFTWARE, Version.getInstance().getVersion()));
+            wr.addField(new TiffWriter.FieldAscii(TIFFConstants.TIFFTAG_SOFTWARE, TIFFTAG_SOFTWARE_VALUE));
             java.io.ByteArrayOutputStream comp = new java.io.ByteArrayOutputStream();
             TiffWriter.compressLZW(comp, 2, imageBytes, (int) height, 4, stride);
             byte[] buf = comp.toByteArray();

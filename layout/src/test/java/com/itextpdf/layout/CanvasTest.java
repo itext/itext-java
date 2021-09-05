@@ -49,7 +49,7 @@ import com.itextpdf.commons.actions.sequence.AbstractIdentifiableElement;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.actions.sequence.SequenceIdManager;
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.counter.event.ITextCoreProductEvent;
+import com.itextpdf.kernel.actions.events.ITextCoreProductEvent;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
