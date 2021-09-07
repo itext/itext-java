@@ -31,7 +31,7 @@ import com.itextpdf.commons.actions.sequence.SequenceId;
 /**
  * Class represents events registered in iText core module.
  */
-public class ITextCoreEvent extends AbstractProductProcessITextEvent {
+public class ITextCoreProductEvent extends AbstractProductProcessITextEvent {
     /**
      * Process pdf event type.
      */
@@ -48,7 +48,7 @@ public class ITextCoreEvent extends AbstractProductProcessITextEvent {
      * @param confirmationType defines when the event should be confirmed to notify that the
      *                         associated process has finished successfully
      */
-    private ITextCoreEvent(SequenceId sequenceId, IMetaInfo metaInfo, String eventType,
+    private ITextCoreProductEvent(SequenceId sequenceId, IMetaInfo metaInfo, String eventType,
             EventConfirmationType confirmationType) {
         super(sequenceId, ITextCoreProductData.getInstance(), metaInfo, confirmationType);
         this.eventType = eventType;
@@ -64,9 +64,9 @@ public class ITextCoreEvent extends AbstractProductProcessITextEvent {
      *
      * @return the process pdf event
      */
-    public static ITextCoreEvent createProcessPdfEvent(SequenceId sequenceId, IMetaInfo metaInfo,
+    public static ITextCoreProductEvent createProcessPdfEvent(SequenceId sequenceId, IMetaInfo metaInfo,
             EventConfirmationType confirmationType) {
-        return new ITextCoreEvent(sequenceId, metaInfo, PROCESS_PDF, confirmationType);
+        return new ITextCoreProductEvent(sequenceId, metaInfo, PROCESS_PDF, confirmationType);
     }
 
     @Override

@@ -59,7 +59,7 @@ import com.itextpdf.kernel.actions.events.FlushPdfDocumentEvent;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.kernel.counter.EventCounterHandler;
 import com.itextpdf.kernel.counter.event.CoreEvent;
-import com.itextpdf.kernel.counter.event.ITextCoreEvent;
+import com.itextpdf.kernel.counter.event.ITextCoreProductEvent;
 import com.itextpdf.kernel.crypto.BadPasswordException;
 import com.itextpdf.kernel.events.EventDispatcher;
 import com.itextpdf.kernel.events.IEventDispatcher;
@@ -1943,7 +1943,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         this.encryptedEmbeddedStreamsHandler = new EncryptedEmbeddedStreamsHandler(this);
 
         try {
-            final ITextCoreEvent event = ITextCoreEvent.createProcessPdfEvent(this.getDocumentIdWrapper(),
+            final ITextCoreProductEvent event = ITextCoreProductEvent.createProcessPdfEvent(this.getDocumentIdWrapper(),
                     properties.metaInfo,
                     writer == null ? EventConfirmationType.ON_DEMAND : EventConfirmationType.ON_CLOSE);
             EventManager.getInstance().onEvent(event);

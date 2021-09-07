@@ -49,7 +49,7 @@ import com.itextpdf.commons.actions.sequence.AbstractIdentifiableElement;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.actions.sequence.SequenceIdManager;
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.counter.event.ITextCoreEvent;
+import com.itextpdf.kernel.counter.event.ITextCoreProductEvent;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -307,7 +307,7 @@ public class CanvasTest extends ExtendedITextTest {
             // Second event was linked by adding block element method
             Assert.assertEquals(2, events.size());
 
-            Assert.assertTrue(events.get(0) instanceof ITextCoreEvent);
+            Assert.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
             Assert.assertTrue(events.get(1) instanceof TestProductEvent);
         }
     }
@@ -332,7 +332,7 @@ public class CanvasTest extends ExtendedITextTest {
             // Second event was linked by adding block element method
             Assert.assertEquals(2, events.size());
 
-            Assert.assertTrue(events.get(0) instanceof ITextCoreEvent);
+            Assert.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
             Assert.assertTrue(events.get(1) instanceof TestProductEvent);
         }
     }

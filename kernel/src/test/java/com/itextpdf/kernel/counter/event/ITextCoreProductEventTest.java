@@ -55,13 +55,13 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class ITextCoreEventTest extends ExtendedITextTest {
+public class ITextCoreProductEventTest extends ExtendedITextTest {
     @Test
     public void openDocumentEventTest() {
         SequenceId sequenceId = new SequenceId();
-        ITextCoreEvent event = ITextCoreEvent.createProcessPdfEvent(sequenceId, new TestMetaInfo("meta data"), EventConfirmationType.ON_CLOSE);
+        ITextCoreProductEvent event = ITextCoreProductEvent.createProcessPdfEvent(sequenceId, new TestMetaInfo("meta data"), EventConfirmationType.ON_CLOSE);
 
-        Assert.assertEquals(ITextCoreEvent.PROCESS_PDF, event.getEventType());
+        Assert.assertEquals(ITextCoreProductEvent.PROCESS_PDF, event.getEventType());
         Assert.assertEquals(ProductNameConstant.ITEXT_CORE, event.getProductName());
         Assert.assertEquals(EventConfirmationType.ON_CLOSE, event.getConfirmationType());
         Assert.assertEquals(sequenceId, event.getSequenceId());

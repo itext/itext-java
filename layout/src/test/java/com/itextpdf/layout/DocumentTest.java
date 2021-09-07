@@ -29,7 +29,7 @@ import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.commons.actions.sequence.AbstractIdentifiableElement;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.actions.sequence.SequenceIdManager;
-import com.itextpdf.kernel.counter.event.ITextCoreEvent;
+import com.itextpdf.kernel.counter.event.ITextCoreProductEvent;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -87,7 +87,7 @@ public class DocumentTest extends ExtendedITextTest {
             // Second event was linked by adding block element method
             Assert.assertEquals(2, events.size());
 
-            Assert.assertTrue(events.get(0) instanceof ITextCoreEvent);
+            Assert.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
             Assert.assertTrue(events.get(1) instanceof TestProductEvent);
         }
     }
@@ -106,7 +106,7 @@ public class DocumentTest extends ExtendedITextTest {
                     doc.getPdfDocument().getDocumentIdWrapper());
             Assert.assertEquals(1, events.size());
 
-            Assert.assertTrue(events.get(0) instanceof ITextCoreEvent);
+            Assert.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
         }
     }
 
@@ -125,7 +125,7 @@ public class DocumentTest extends ExtendedITextTest {
             // Second event was linked by adding block element
             Assert.assertEquals(2, events.size());
 
-            Assert.assertTrue(events.get(0) instanceof ITextCoreEvent);
+            Assert.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
             Assert.assertTrue(events.get(1) instanceof TestProductEvent);
         }
     }
