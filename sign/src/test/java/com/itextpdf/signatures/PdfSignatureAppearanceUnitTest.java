@@ -22,9 +22,9 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;

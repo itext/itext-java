@@ -22,8 +22,8 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;

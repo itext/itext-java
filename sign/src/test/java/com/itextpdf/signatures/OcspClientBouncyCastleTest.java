@@ -42,8 +42,8 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import com.itextpdf.test.ExtendedITextTest;

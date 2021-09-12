@@ -22,8 +22,8 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.io.util.DateTimeUtil;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
