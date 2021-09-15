@@ -1543,7 +1543,7 @@ public class LineRenderer extends AbstractRenderer {
         return normalizedChildWidth;
     }
 
-    static class RendererGlyph {
+    public static class RendererGlyph {
         public Glyph glyph;
         public TextRenderer renderer;
 
