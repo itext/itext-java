@@ -42,18 +42,18 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.actions.data.ProductData;
 import com.itextpdf.commons.utils.FileUtil;
-import com.itextpdf.kernel.ProductInfo;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -66,7 +66,7 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class TrailerTest extends ExtendedITextTest {
 
-    private ProductInfo productInfo;
+    private ProductData productData;
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/TrailerTest/";
 
     @BeforeClass
@@ -76,14 +76,14 @@ public class TrailerTest extends ExtendedITextTest {
 
     @Before
     public void beforeTest() {
-        this.productInfo = new ProductInfo("pdfProduct", 1, 0, 0, true);
+        this.productData = new ProductData("pdfProduct", "pdfProduct", "1.0.0", 1900, 2000);
     }
 
     @Test
     public void trailerFingerprintTest() throws IOException {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "output.pdf");
         PdfDocument pdf = new PdfDocument(new PdfWriter(fos));
-        pdf.registerProduct(this.productInfo);
+        pdf.registerProduct(this.productData);
         PdfPage page = pdf.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText()
@@ -93,7 +93,8 @@ public class TrailerTest extends ExtendedITextTest {
 
         pdf.close();
 
-        Assert.assertTrue(doesTrailerContainFingerprint(new File(destinationFolder + "output.pdf"), productInfo.toString()));
+        Assert.assertTrue(doesTrailerContainFingerprint(new File(destinationFolder + "output.pdf"), MessageFormatUtil
+                .format("%iText-{0}-{1}\n", productData.getProductName(), productData.getVersion())));
     }
 
     private boolean doesTrailerContainFingerprint(File file, String fingerPrint) throws IOException {
@@ -102,11 +103,11 @@ public class TrailerTest extends ExtendedITextTest {
         // put the pointer at the end of the file
         raf.seek(raf.length());
 
-        // look for startxref
-        String startxref = "startxref";
+        // look for coreProductData
+        String coreProductData = "%iText-Core-7.2.0-SNAPSHOT";
         String templine = "";
 
-        while ( ! templine.contains(startxref) ) {
+        while (!templine.contains(coreProductData)) {
             templine = (char) raf.read() + templine;
             raf.seek(raf.getFilePointer() - 2);
         }
@@ -115,7 +116,7 @@ public class TrailerTest extends ExtendedITextTest {
         char read = ' ';
         templine = "";
 
-        while ( read != '%' ) {
+        while (read != '%') {
             read = (char) raf.read();
             templine = read + templine;
             raf.seek(raf.getFilePointer() - 2);

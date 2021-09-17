@@ -22,6 +22,8 @@
  */
 package com.itextpdf.commons.actions.data;
 
+import java.util.Objects;
+
 /**
  * Class is used to describe used product information.
  */
@@ -93,5 +95,32 @@ public final class ProductData {
      */
     public int getToCopyrightYear() {
         return toCopyrightYear;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final ProductData other = (ProductData) o;
+        return Objects.equals(publicProductName, other.publicProductName) && Objects
+                .equals(productName, other.productName) &&
+                Objects.equals(version, other.version) && sinceCopyrightYear == other.sinceCopyrightYear
+                && toCopyrightYear == other.toCopyrightYear;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = publicProductName != null ? publicProductName.hashCode() : 0;
+        result += 31 * result + (productName != null ? productName.hashCode() : 0);
+        result += 31 * result + (version != null ? version.hashCode() : 0);
+        result += 31 * result + sinceCopyrightYear;
+        result += 31 * result + toCopyrightYear;
+        return result;
     }
 }

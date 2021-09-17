@@ -43,18 +43,18 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.commons.actions.EventManager;
-import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
-import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
-import com.itextpdf.commons.actions.sequence.SequenceId;
-import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.actions.data.ProductData;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.ProductInfo;
+import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
+import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
+import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
 import com.itextpdf.kernel.actions.events.FlushPdfDocumentEvent;
+import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.kernel.actions.events.ITextCoreProductEvent;
 import com.itextpdf.kernel.crypto.BadPasswordException;
 import com.itextpdf.kernel.events.EventDispatcher;
@@ -1812,11 +1812,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     /**
      * Registers a product for debugging purposes.
      *
-     * @param productInfo product to be registered.
+     * @param productData product to be registered.
      * @return true if the product hadn't been registered before.
      */
-    public boolean registerProduct(final ProductInfo productInfo) {
-        return this.fingerPrint.registerProduct(productInfo);
+    public boolean registerProduct(final ProductData productData) {
+        return this.fingerPrint.registerProduct(productData);
     }
 
     /**

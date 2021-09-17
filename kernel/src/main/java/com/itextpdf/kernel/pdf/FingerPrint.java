@@ -43,10 +43,12 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.ProductInfo;
+import com.itextpdf.commons.actions.data.ProductData;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -56,25 +58,25 @@ import java.util.Set;
  */
 public class FingerPrint {
 
-    private Set<ProductInfo> productInfoSet;
+    private Set<ProductData> productDataSet;
 
     /**
-     * Default constructor. Initializes the productInfoSet.
+     * Default constructor. Initializes the productDataSet.
      */
     public FingerPrint() {
-        this.productInfoSet = new HashSet<>();
+        this.productDataSet = new LinkedHashSet<>();
     }
 
     /**
      * Registers a product to be added to the fingerprint or other debugging info.
      *
-     * @param productInfo ProductInfo to be added
+     * @param productData ProductData to be added
      * @return true if the fingerprint did not already contain the specified element
      */
-    public boolean registerProduct(final ProductInfo productInfo) {
-        int initialSize = productInfoSet.size();
-        productInfoSet.add(productInfo);
-        return initialSize != productInfoSet.size();
+    public boolean registerProduct(final ProductData productData) {
+        int initialSize = productDataSet.size();
+        productDataSet.add(productData);
+        return initialSize != productDataSet.size();
     }
 
     /**
@@ -82,8 +84,8 @@ public class FingerPrint {
      *
      * @return registered products.
      */
-    public Collection<ProductInfo> getProducts() {
-        return this.productInfoSet;
+    public Collection<ProductData> getProducts() {
+        return Collections.unmodifiableSet(new LinkedHashSet<>(this.productDataSet));
     }
 
 }
