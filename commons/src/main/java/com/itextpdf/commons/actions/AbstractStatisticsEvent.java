@@ -38,7 +38,9 @@ public abstract class AbstractStatisticsEvent extends AbstractProductITextEvent 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStatisticsEvent.class);
 
     /**
-     * @see AbstractProductITextEvent#AbstractProductITextEvent(ProductData)
+     * Creates instance of abstract statistics iText event based on passed product data. Only for internal usage.
+     *
+     * @param productData is a description of the product which has generated an event
      */
     protected AbstractStatisticsEvent(ProductData productData) {
         super(productData);
@@ -49,7 +51,7 @@ public abstract class AbstractStatisticsEvent extends AbstractProductITextEvent 
      * By default prints log warning and returns <code>null</code>.
      *
      * @param statisticsName name of statistics based on which aggregator will be created.
-     *                       Shall be one of those returned from {@link this#getStatisticsNames()}
+     *                       Shall be one of those returned from {@link AbstractStatisticsEvent#getStatisticsNames()}
      * @return new instance of {@link AbstractStatisticsAggregator}
      */
     public AbstractStatisticsAggregator createStatisticsAggregatorFromName(String statisticsName) {

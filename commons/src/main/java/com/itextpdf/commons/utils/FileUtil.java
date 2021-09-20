@@ -203,7 +203,10 @@ public final class FileUtil {
 
     /**
      * Deletes a file and returns whether the operation succeeded.
-     * Node that only *files* are supported, not directories.
+     * Note that only *files* are supported, not directories.
+     *
+     * @param file file to be deleted
+     * @return true if file was deleted successfully, false otherwise
      */
     public static boolean deleteFile(File file) {
         return file.delete();
@@ -215,6 +218,8 @@ public final class FileUtil {
      * @param url of resource
      *
      * @return parent directory path| the same path if a catalog`s url is passed;
+     * @throws URISyntaxException if this URL is not formatted strictly according
+     *                            to RFC2396 and cannot be converted to a URI.
      */
     public static String parentDirectory(URL url) throws URISyntaxException {
             return url.toURI().resolve(".").toString();
